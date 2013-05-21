@@ -1,5 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,41 +25,32 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-
-// require_once 'include/OutboundEmail/OutboundEmail.php';
 require_once 'modules/Mailer/EmailIdentity.php';
 require_once 'modules/Mailer/MailerException.php';
 
-class MailRecord {
-
-    public  $emailBean;
-    static private $statuses = array (
-        "draft",    // draft
-        "ready",    // ready to be sent
-        "sending",  // transient status
-        "sent",     // final status
+class MailRecord
+{
+    static private $statuses = array(
+        "draft", // draft
+        "ready", // ready to be sent
+        "sending", // transient status
+        "sent", // final status
     );
 
-    var $current_user;
+    public $emailBean;
+    public $mailConfig;
+    public $toAddresses;
+    public $ccAddresses;
+    public $bccAddresses;
+    public $attachments;
+    public $documents;
+    public $teams;
+    public $related;
+    public $subject;
+    public $html_body;
+    public $text_body;
 
-    /* MailRecord Properties */
-    public  $mailConfig;
-    public  $toAddresses;
-    public  $ccAddresses;
-    public  $bccAddresses;
-
-    public  $attachments;
-    public  $documents;
-    public  $teams;
-    public  $related;
-
-    public  $subject;
-    public  $html_body;
-    public  $text_body;
-
-    private $email_id;
-
-    /* Mapping Error Code to Error Message */
+    // Mapping Error Code to Error Message
     static protected $errorMessageMappings = array(
         MailerException::ResourceNotFound              => 'LBL_INTERNAL_ERROR',
         MailerException::InvalidConfiguration          => 'LBL_INVALID_CONFIGURATION',
@@ -70,57 +63,40 @@ class MailRecord {
         MailerException::InvalidMailer                 => 'LBL_INTERNAL_ERROR',
     );
 
-    function __construct(User $current_user)
+    function __construct() {}
+
+    /**
+     * Saves the email as a draft.
+     *
+     * @return array
+     */
+    public function saveAsDraft()
     {
-        $this->current_user = $current_user;
+        return $this->toEmailBean("draft");
     }
 
-    static public function fromEmail(User $current_user, Email $email)
+    /**
+     * Saves and sends the email.
+     *
+     * @return array
+     */
+    public function send()
     {
-        // $email->retrieve($email_id);
-        $email->email2init();
-        $mailRecord = new MailRecord($current_user);
-        return $mailRecord;
+        return $this->toEmailBean("ready");
     }
 
-    public function saveAsDraft() {
-        $result = $this->toEmailBean("draft");
-        return $result;
-    }
+    /**
+     * Prepares and executes the email request according to the expectations of the status.
+     *
+     * @param $status
+     * @return array
+     * @throws MailerException
+     */
+    protected function toEmailBean($status)
+    {
+        $result = array();
+        $email  = null;
 
-    public function send() {
-        $result = $this->toEmailBean("ready");
-
-        /**
-        if ($result["SUCCESS"]) {
-        $email = $result["EMAIL"];
-        $email->type = "out";
-        $email->status = "sent";
-        $email->save();
-        }
-         **/
-
-        return $result;
-    }
-
-    public function schedule($timedate) {
-        // $pDate	= $timedate->to_display_date_time("08/12/2012 03:00:15");
-        $result = $this->toEmailBean("draft");
-
-        /**
-        if ($result["SUCCESS"]) {
-        $email = $result["EMAIL"];
-        $email->type = "out";
-        $email->status = "ready";
-        $email->save();
-        }
-         **/
-
-        return $result;
-    }
-
-
-    private function toEmailBean($status) {
         if (is_object($this->emailBean)) {
             $email = $this->emailBean;
         } else {
@@ -129,230 +105,237 @@ class MailRecord {
 
         $email->email2init();
 
-        if (empty($this->mailConfig)) {
-            $fromAccount = null;
-        } else {
+        $fromAccount = null;
+
+        if (!empty($this->mailConfig)) {
             $fromAccount = $this->mailConfig;
         }
 
-        $sendto = array();
-        if (is_array($this->toAddresses)) {
-            foreach ($this->toAddresses AS $toAddress) {
-                $recipient = $this->generateEmailIdentity($toAddress);
-                if ($recipient) {
-                    $sendto [] = array(
-                        "email"   => $recipient->getEmail(),
-                        "display" => $recipient->getName(),
-                    );
-                }
-            }
-        }
+        $to  = $this->addRecipients($this->toAddresses);
+        $cc  = $this->addRecipients($this->ccAddresses);
+        $bcc = $this->addRecipients($this->bccAddresses);
 
-        $sendcc = array();
-        if (is_array($this->ccAddresses)) {
-            foreach ($this->ccAddresses AS $ccAddress) {
-                $recipient = $this->generateEmailIdentity($ccAddress);
-                if ($recipient) {
-                    $sendcc [] = array(
-                        "email"   => $recipient->getEmail(),
-                        "display" => $recipient->getName(),
-                    );
-                }
-            }
-        }
+        $attachments = $this->addAttachments($this->attachments);
+        $documents   = $this->addAttachments($this->documents, true);
 
-        $sendbcc = array();
-        if (is_array($this->bccAddresses)) {
-            foreach ($this->bccAddresses AS $bccAddress) {
-                $recipient = $this->generateEmailIdentity($bccAddress);
-                if ($recipient) {
-                    $sendbcc [] = array(
-                        "email"   => $recipient->getEmail(),
-                        "display" => $recipient->getName(),
-                    );
-                }
-            }
-        }
-
-
-        /* Format Recipient Addresses As Comma-Separated strings */
-
-        $s = "";
-        for ($j=0; $j<count($sendto); $j++) {
-            $rec = $sendto[$j];
-            if (!empty($rec['display']))
-                $s .= trim($rec['display'])." ";
-            $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendto)) $s .= ', ';
-        }
-        $sendto_addresses = $s;
-
-        $s = "";
-        for ($j=0; $j<count($sendcc); $j++) {
-            $rec = $sendcc[$j];
-            if (!empty($rec['display']))
-                $s .= trim($rec['display'])." ";
-            $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendcc)) $s .= ',';
-        }
-        $sendcc_addresses = $s;
-
-        $s = "";
-        for ($j=0; $j<count($sendbcc); $j++) {
-            $rec = $sendbcc[$j];
-            if (!empty($rec['display']))
-                $s .= trim($rec['display'])." ";
-            $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendbcc)) $s .= ',';
-        }
-        $sendbcc_addresses= $s;
-
-        $attachments=null;
-        if (is_array($this->attachments) && ($numAttachments = count($this->attachments)) > 0) {
-            $attachments="";
-            for ($i=0; $i<$numAttachments; $i++) {
-                $attachment = $this->attachments[$i];
-                if ($i>0) {
-                    $attachments .= "::";
-                }
-                $attachments .= $attachment["id"].$attachment["name"];
-            }
-        }
-
-        $documents=null;
-        if (is_array($this->documents) && ($numDocuments = count($this->documents)) > 0) {
-            $documents="";
-            for ($i=0; $i<$numDocuments; $i++) {
-                $document = $this->documents[$i];
-                if ($i>0) {
-                    $documents .= "::";
-                }
-                $documents .= $document;
-            }
-        }
-
-        $request = array(
-            'fromAccount'       => $fromAccount,
-
-            'sendSubject'       => $this->subject,
-            'sendTo'            => $sendto_addresses,
-            'sendCc'            => $sendcc_addresses,
-            'sendBcc'           => $sendbcc_addresses,
-
-            /*******/
-
-            'saveToSugar'       => '1',
-
-        );
-
-        if (!empty($this->html_body)) {
-            $request['sendDescription']  = urldecode($this->html_body);
-            $request['setEditor'] = '1';
-
-        }
-        else if (!empty($this->text_body)) {
-            $request['sendDescription']  = urldecode($this->text_body);
-        }
-        else {
-            $request['sendDescription']  = '';
-        }
-
-        if (!empty($attachments)) {
-            $request['attachments']  = $attachments;
-        }
-
-        if (!empty($documents)) {
-            $request['documents']  = $documents;
-        }
-
-
-        if (is_array($this->related)) {
-            $related = $this->related;
-            if (!empty($related["type"]) && !empty($related["id"])) {
-                $request['parent_type'] = $related["type"];
-                $request['parent_id'] = $related["id"];
-            }
-        }
-
-
-        if (is_array($this->teams)) {
-            $teams = $this->teams;
-            if (!empty($teams["primary"])) {
-                $request['primaryteam'] = $teams["primary"];
-                $request['teamIds'] = $teams["primary"];
-                if (isset($teams["other"]) && is_array(($teams["other"]))) {
-                    foreach ($teams["other"] AS $team_id) {
-                        $request['teamIds'] .= ',' . $team_id;
-                    }
-                }
-            }
-        }
-
-        if ($status == "draft") {
-            $request['saveDraft'] = 'true';    // Send is the default behavior
-        }
-
+        $request  = $this->setupSendRequest($status, $fromAccount, $to, $cc, $bcc, $attachments, $documents);
         $_REQUEST = array_merge($_REQUEST, $request);
-        $edata=null;
+
+        $errorData  = null;
         $sendResult = false;
+
         try {
-            ob_start();
+            $this->startCapturingOutput();
             $sendResult = $email->email2Send($request);
-            $edata = ob_get_contents();
-            ob_end_clean();
-            if (strlen($edata) > 0) {
+            $errorData  = $this->endCapturingOutput();
+
+            if (strlen($errorData) > 0) {
                 throw new MailerException("Internal Error");
-            }
-        } catch (Exception $e) {
-            if ($edata == null) {
-                $edata = ob_get_contents();
-                ob_end_clean();
             }
 
             $result = array(
-                "SUCCESS"    => false,
-                "EMAIL"      => $email,
-                "REQUEST"    => $request,
-                "ERROR_MESSAGE" => $this->getErrorMessage($e),
-                "ERROR_DATA" => $edata,
+                "SUCCESS" => $sendResult,
+                "EMAIL"   => $email,
+                "REQUEST" => $request,
             );
-            return $result;
-        }
+        } catch (Exception $e) {
+            if (is_null($errorData)) {
+                $errorData = $this->endCapturingOutput();
+            }
 
-        $result = array(
-            "SUCCESS"    => $sendResult,
-            "EMAIL"      => $email,
-            "REQUEST"    => $request,
-        );
+            $result = array(
+                "SUCCESS"       => false,
+                "EMAIL"         => $email,
+                "REQUEST"       => $request,
+                "ERROR_MESSAGE" => $this->getErrorMessage($e),
+                "ERROR_DATA"    => $errorData,
+            );
+        }
 
         return $result;
     }
 
+    /**
+     * Constructs the email request that will passed on.
+     *
+     * @param string $status
+     * @param null   $from
+     * @param string $to
+     * @param string $cc
+     * @param string $bcc
+     * @param string $attachments
+     * @param string $documents
+     * @return array
+     */
+    protected function setupSendRequest(
+        $status = "ready",
+        $from = null,
+        $to = "",
+        $cc = "",
+        $bcc = "",
+        $attachments = "",
+        $documents = ""
+    ) {
+        $request = array(
+            "fromAccount"     => $from,
+            "sendSubject"     => $this->subject,
+            "sendTo"          => $to,
+            "sendCc"          => $cc,
+            "sendBcc"         => $bcc,
+            "saveToSugar"     => "1",
+            "sendDescription" => "", // defaulted to an empty string
+        );
+
+        if (!empty($this->html_body)) {
+            $request["sendDescription"] = urldecode($this->html_body);
+            $request["setEditor"]       = "1";
+        } elseif (!empty($this->text_body)) {
+            $request["sendDescription"] = urldecode($this->text_body);
+        }
+
+        if (!empty($attachments)) {
+            $request["attachments"] = $attachments;
+        }
+
+        if (!empty($documents)) {
+            $request["documents"] = $documents;
+        }
+
+        if (is_array($this->related) && !empty($this->related["type"]) && !empty($this->related["id"])) {
+            $request["parent_type"] = $this->related["type"];
+            $request["parent_id"]   = $this->related["id"];
+        }
+
+        if (is_array($this->teams) && !empty($this->teams["primary"])) {
+            $request["primaryteam"] = $this->teams["primary"];
+            $teamIds                = array($this->teams["primary"]);
+
+            if (isset($this->teams["other"]) && is_array(($this->teams["other"]))) {
+                foreach ($this->teams["other"] as $teamId) {
+                    $teamIds[] = $teamId;
+                }
+            }
+
+            $request["teamIds"] = implode(",", $teamIds);
+        }
+
+        if ($status == "draft") {
+            $request["saveDraft"] = "true"; // send ("ready") is the default behavior
+        }
+
+        return $request;
+    }
 
     /**
+     * Starts the output buffer. Wraps the function call so that it is possible to mock/stub this behavior.
+     */
+    protected function startCapturingOutput()
+    {
+        ob_start();
+    }
+
+    /**
+     * Collects the contents from the output buffer and cleans the buffer. Wraps the function calls so that it is
+     * possible to mock/stub this behavior.
+     *
+     * @return string
+     */
+    protected function endCapturingOutput()
+    {
+        $contents = ob_get_contents();
+        ob_end_clean();
+
+        return $contents;
+    }
+
+    /**
+     * Format recipient addresses as comma-separated strings.
+     *
+     * @param array $recipients
+     * @return string
+     */
+    protected function addRecipients($recipients = array())
+    {
+        $addedRecipients = array();
+
+        if (is_array($recipients)) {
+            foreach ($recipients as $recipient) {
+                $identity = $this->generateEmailIdentity($recipient);
+
+                if ($identity) {
+                    $formattedRecipient = array();
+                    $name               = $identity->getName();
+
+                    if (!empty($name)) {
+                        $formattedRecipient[] = $name;
+                    }
+
+                    $formattedRecipient[] = "<" . $identity->getEmail() . ">";
+
+                    // add the formatted recipient to the array of all recipients to be imploded
+                    // separate the name and email address by a single space
+                    $addedRecipients[] = implode(" ", $formattedRecipient);
+                }
+            }
+        }
+
+        return implode(", ", $addedRecipients);
+    }
+
+    /**
+     * Format attachments or documents for inclusion in the email request.
+     *
+     * @param array $attachments
+     * @param bool  $isDocuments
+     * @return string
+     */
+    protected function addAttachments($attachments = array(), $isDocuments = false)
+    {
+        $addedAttachments = array();
+
+        if (is_array($attachments)) {
+            foreach ($attachments as $attachment) {
+                $addedAttachments[] = ($isDocuments) ? $attachment : $attachment["id"] . $attachment["name"];
+            }
+        }
+
+        return implode("::", $addedAttachments);
+    }
+
+    /**
+     * Returns an EmailIdentity object from the set of recipients data that is passed in.
+     *
      * @param $data
      * @return EmailIdentity
      */
-    protected function generateEmailIdentity($data) {
-        $recipient=null;
+    protected function generateEmailIdentity($data)
+    {
+        $recipient = null;
+
         if (is_array($data) && !empty($data['email'])) {
             $email = $data['email'];
-            $name = null;
+            $name  = null;
+
             if (isset($data['name'])) {
                 $name = $data['name'];
             }
+
             $recipient = new EmailIdentity($email, $name);
         }
+
         return $recipient;
     }
 
     /**
      * Get the appropriate error message given the error code.
+     *
      * @param $exception
      * @return string
      */
-    protected function getErrorMessage($exception) {
+    protected function getErrorMessage($exception)
+    {
         global $mod_string;
+
         if (isset(self::$errorMessageMappings[$exception->getCode()])) {
             $exception_code = self::$errorMessageMappings[$exception->getCode()];
         }
@@ -365,5 +348,4 @@ class MailRecord {
 
         return $message;
     }
-
 }

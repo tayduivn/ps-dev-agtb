@@ -31,9 +31,9 @@ class ProspectListsService
      */
     public function addRecordsToProspectList($moduleName, $prospectListId, $recordIds)
     {
-        $prospectList = BeanFactory::getBean("ProspectLists", $prospectListId);
+        $prospectList = BeanFactory::getBean("ProspectLists", $prospectListId, array('strict_retrieve' => true));
 
-        if($prospectList === false) {
+        if(empty($prospectList)) {
             return false;
         }
 

@@ -23,10 +23,12 @@
  ********************************************************************************/
  
 require_once 'modules/Campaigns/Campaign.php';
+require_once 'modules/CampaignLog/CampaignLog.php';
 
 class SugarTestCampaignUtilities
 {
-    private static $_createdCampaigns = array();
+    private static $_createdCampaigns    = array();
+    private static $_createdCampaignLogs = array();
 
     private function __construct() {}
 
@@ -74,5 +76,38 @@ class SugarTestCampaignUtilities
             self::$_createdCampaigns[] = $campaign;
         }
     }
+
+    public static function createCampaignLog($campaignId, $activityType, $relatedBean)
+    {
+        $campaignLog                = BeanFactory::getBean("CampaignLog");
+        $campaignLog->campaign_id   = $campaignId;
+        $campaignLog->related_id    = $relatedBean->id;
+        $campaignLog->related_type  = $relatedBean->module_dir;
+        $campaignLog->activity_type = $activityType;
+        $campaignLog->target_type   = $relatedBean->module_dir;
+        $campaignLog->target_id     = $relatedBean->id;
+
+        $campaignLog->save();
+        $GLOBALS["db"]->commit();
+        self::$_createdCampaignLogs[] = $campaignLog;
+
+        return $campaignLog;
+    }
+
+    public static function removeAllCreatedCampaignLogs()
+    {
+        $campaignLogIds = self::getCreatedCampaignLogsIds();
+        $GLOBALS["db"]->query("DELETE FROM campaigns WHERE id IN ('" . implode("', '", $campaignLogIds) . "')");
+    }
+
+    public static function getCreatedCampaignLogsIds()
+    {
+        $campaignLogIds = array();
+
+        foreach (self::$_createdCampaignLogs as $campaignLog) {
+            $campaignLogIds[] = $campaignLog->id;
+        }
+
+        return $campaignLogIds;
+    }
 }
-?>

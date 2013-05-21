@@ -28,8 +28,6 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
-
-        $this->markTestIncomplete('SugarTestCampaignUtilities does not exist');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $campaign = SugarTestCampaignUtilities::createCampaign();
         $this->campaign_id = $campaign->id;
@@ -37,12 +35,12 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        //SugarTestCampaignUtilities::removeAllCreatedCampaigns();
+        SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
 
-    public function testLeadCaptureResponse()
+    public function testLeadCapture_ShortQueryString_ReturnsRedirectLocation()
     {
         // SET GLOBAL PHP VARIABLES
         $_POST = array
@@ -51,13 +49,12 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
             'last_name' => 'Baroudi',
             'campaign_id' => $this->campaign_id,
             'redirect_url' => 'http://www.sugarcrm.com/index.php',
-            'assigned_user_id' => 1,
+            'assigned_user_id' => '1',
             'team_id' => '1',
             'team_set_id' => 'Global',
             'req_id' => 'last_name;',
         );
 
-        // RUN TEST 1
         $postString = '';
         foreach($_POST as $k => $v)
         {
@@ -76,6 +73,10 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         $output = ob_get_clean();
 
         $matches = array();
+        preg_match('/form name="redirect"/', $output, $matches);
+        $this->assertTrue(count($matches) == 0, "Output Should Not have a form - since we do not have a long get string");
+
+        $matches = array();
         preg_match("/Location: .*/", $output, $matches);
         $this->assertTrue(count($matches) > 0, "Could not get the header information for the response");
 
@@ -88,21 +89,21 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         $query_string_array = explode("&", $query_string);
 
         $post_compare_array = array();
-        $skipKeys = array('module', 'action', 'entryPoint', 'client_id_address');
+        $expectedKeys = array('first_name', 'last_name', 'campaign_id', 'redirect_url', 'assigned_user_id', 'team_id', 'team_set_id', 'req_id');
         foreach($query_string_array as $key_val)
         {
             $key_val_array = explode("=", $key_val);
-            if(in_array($key_val_array[0], $skipKeys))
-                continue;
-            $post_compare_array[$key_val_array[0]] = $key_val_array[1];
+            if(in_array($key_val_array[0], $expectedKeys)) {
+                $post_compare_array[$key_val_array[0]] = '' . urldecode($key_val_array[1]);
+            }
         }
 
-        // the redirect_url doesn't get returned, so we unset it
-        unset($_POST['redirect_url']);
-
         $this->assertEquals($_POST, $post_compare_array, "The returned get location doesn't match that of the post passed in");
+    }
 
 
+    public function testLeadCapture_LongQueryString_ReturnsForm()
+    {
         // SET GLOBAL PHP VARIABLES
         $_POST = array
         (
@@ -160,7 +161,6 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         );
 
 
-        // RUN TEST 1
         $postString = '';
         foreach($_POST as $k => $v)
         {
@@ -178,8 +178,12 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         $output = ob_get_clean();
 
         $matches = array();
+        preg_match("/Location: .*/", $output, $matches);
+        $this->assertTrue(count($matches) == 0, "Should not have a Location redirect header - query string was not too long.");
+
+        $matches = array();
         preg_match('/form name="redirect"/', $output, $matches);
-        $this->assertTrue(count($matches) > 0, "Should have output a form since we have a long get string");
+        $this->assertTrue(count($matches) > 0, "Output Should have a form since we have a long get string");
     }
 }
 ?>

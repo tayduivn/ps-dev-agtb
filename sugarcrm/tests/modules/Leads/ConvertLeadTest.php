@@ -93,47 +93,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-    * @group bug39787
-    */
-    public function testOpportunityNameValueFilled()
-    {
-        $this->markTestIncomplete('This needs to be fixed by MAR Team');
-        $lead = SugarTestLeadUtilities::createLead();
-        $lead->opportunity_name = 'SBizzle Dollar Store';
-        $lead->save();
-
-        $_REQUEST['module'] = 'Leads';
-        $_REQUEST['action'] = 'ConvertLead';
-        $_REQUEST['record'] = $lead->id;
-
-        // Check that the opportunity name doesn't get populated when it's not in the Leads editview layout
-        require_once('include/MVC/Controller/ControllerFactory.php');
-        require_once('include/MVC/View/ViewFactory.php');
-        $GLOBALS['app']->controller = ControllerFactory::getController($_REQUEST['module']);
-        ob_start();
-        $GLOBALS['app']->controller->execute();
-        $output = ob_get_clean();
-
-        $matches_one = array();
-        $pattern = '/SBizzle Dollar Store/';
-        preg_match($pattern, $output, $matches_one);
-        $this->assertTrue(count($matches_one) == 0, "Opportunity name got carried over to the Convert Leads page when it shouldn't have.");
-
-        // Add the opportunity_name to the Leads EditView
-        SugarTestStudioUtilities::addFieldToLayout('Leads', 'editview', 'opportunity_name');
-
-        // Check that the opportunity name now DOES get populated now that it's in the Leads editview layout
-        ob_start();
-        $GLOBALS['app']->controller = ControllerFactory::getController($_REQUEST['module']);
-        $GLOBALS['app']->controller->execute();
-        $output = ob_get_clean();
-        $matches_two = array();
-        $pattern = '/SBizzle Dollar Store/';
-        preg_match($pattern, $output, $matches_two);
-        $this->assertTrue(count($matches_two) > 0, "Opportunity name did not carry over to the Convert Leads page when it should have.");
-    }
-
-    /**
      * @group bug44033
      */
     public function testActivityMove() {
@@ -262,72 +221,6 @@ class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $GLOBALS['db']->query($sql);
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertFalse(empty($row), "Meeting-Contact relationship has not been added.");
-    }
-
-    /**
-     * @outputBuffering enabled
-     */
-    public function testConversionAndMoveActivities() {
-        $this->markTestIncomplete('This needs to be fixed by MAR Team');
-        global $sugar_config;
-
-        // init
-        $lead = SugarTestLeadUtilities::createLead();
-        $account = SugarTestAccountUtilities::createAccount();
-        $meeting = SugarTestMeetingUtilities::createMeeting();
-        SugarTestMeetingUtilities::addMeetingParent($meeting->id, $lead->id);
-        $this->relation_id = $relation_id = SugarTestMeetingUtilities::addMeetingLeadRelation($meeting->id, $lead->id);
-        $_REQUEST['record'] = $lead->id;
-
-        // set the request/post parameters before converting the lead
-        $_REQUEST['module'] = 'Leads';
-        $_REQUEST['action'] = 'ConvertLead';
-        $_REQUEST['record'] = $lead->id;
-        $_REQUEST['handle'] = 'save';
-        $_REQUEST['selectedAccount'] = $account->id;
-        $sugar_config['lead_conv_activity_opt'] = 'move';
-        $_POST['lead_conv_ac_op_sel'] = 'Contacts';
-
-        // call display to trigger conversion
-        $vc = new ViewConvertLead();
-        $vc->display();
-
-        // refresh meeting
-        $meeting_id = $meeting->id;
-        $this->meeting = $meeting = new Meeting();
-        $meeting->retrieve($meeting_id);
-
-        // refresh lead
-        $lead_id = $lead->id;
-        $this->lead = $lead = new Lead();
-        $lead->retrieve($lead_id);
-
-        // retrieve the new contact id from the conversion
-        $this->contact_id = $contact_id = $lead->contact_id;
-
-        // 1. Lead's contact_id should not be null
-        $this->assertNotNull($contact_id, 'Lead has null contact id after conversion.');
-
-        // 2. Lead status should be 'Converted'
-        $this->assertEquals('Converted', $lead->status, "Lead atatus should be 'Converted'.");
-
-        // 3. new parent_type should be Contacts
-        $this->assertEquals('Contacts', $meeting->parent_type, 'Meeting parent type has not been set to Contacts');
-
-        // 4. new parent_id should be contact id
-        $this->assertEquals($contact_id, $meeting->parent_id, 'Meeting parent id has not been set to contact id.');
-
-        // 5. record should be deleted from meetings_leads table
-        $sql = "select id from meetings_leads where meeting_id='{$meeting->id}' and lead_id='{$lead->id}' and deleted=0";
-        $result = $GLOBALS['db']->query($sql);
-        $row = $GLOBALS['db']->fetchByAssoc($result);
-        $this->assertFalse($row, "Meeting-Lead relationship is not removed.");
-
-        // 6. record should be added to meetings_contacts table
-        $sql = "select id from meetings_contacts where meeting_id='{$meeting->id}' and contact_id='{$contact_id}' and deleted=0";
-        $result = $GLOBALS['db']->query($sql);
-        $row = $GLOBALS['db']->fetchByAssoc($result);
-        $this->assertFalse(empty($row), "Meeting-Contact relationship is not added.");
     }
 
     /**

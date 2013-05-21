@@ -27,11 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
 require_once('include/EditView/EditView2.php');
-
-require_once('modules/Campaigns/utils.php');
-
 
 require_once('modules/Campaigns/utils.php');
 
@@ -55,7 +51,7 @@ if(isset($_REQUEST['return_id']))
 {
     $xtpl->assign("RETURN_ID", $_REQUEST['return_id']);
 }
-if(isset($_REQUEST['return_id']))
+if(isset($_REQUEST['return_action']))
 {
     $xtpl->assign("RETURN_ACTION", $_REQUEST['return_action']);
 }

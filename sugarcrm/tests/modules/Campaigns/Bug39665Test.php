@@ -46,8 +46,6 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function setUp()
     {
-        $this->markTestIncomplete('Marking this skipped until we figure out why it is causing the SQL server connection to go away.');
-    	
     	$this->saved_current_user = $GLOBALS['current_user'];
     	$user = new User();
     	$user->retrieve('1');
@@ -173,7 +171,6 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-    	return;
     	$GLOBALS['current_user'] = $this->saved_current_user;
     	
     	if($this->remove_beans)
@@ -216,7 +213,6 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
     
 	function test_viewed_message()
 	{
-		$this->markTestSkipped('Marking this skipped until we figure out why it is causing the SQL server connection to go away.');
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_REQUEST['module'] = 'Campaigns';
 		require_once('include/SubPanel/SubPanelDefinitions.php');
@@ -242,7 +238,6 @@ class Bug39665Test extends Sugar_PHPUnit_Framework_TestCase
     
     protected function create_campaign_log($campaign, $target, $marketing, $prospectlist, $activity_type, $target_tracker_key='')
     {
-    	$this->markTestSkipped('Marking this skipped until we figure out why it is causing the SQL server connection to go away.');
 			$campaign_log = new CampaignLog();
 			$campaign_log->campaign_id=$campaign->id;
 			$campaign_log->target_tracker_key=$target_tracker_key;

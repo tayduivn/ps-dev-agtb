@@ -69,6 +69,7 @@ class OutboundEmailConfiguration
      * @access public
      */
     public function loadDefaultConfigs() {
+        $this->setMode();
         $this->setHostname();
         $this->setLocale();
         $this->setCharset();
@@ -294,7 +295,7 @@ class OutboundEmailConfiguration
      */
     public function setMode($mode = null) {
         if (empty($mode)) {
-            $mode = OutboundEmailConfigurationPeer::MODE_SMTP;
+            $mode = OutboundEmailConfigurationPeer::MODE_DEFAULT;
         }
 
         $mode = strtolower($mode); // make sure it's lower case

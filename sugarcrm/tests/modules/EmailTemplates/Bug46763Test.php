@@ -117,7 +117,6 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCustomModuleLocalizationIsUsed()
     {
-        $this->markTestIncomplete('This is testing the dropdown in a wrong way. - MAR Team will fix it');
         // set global variables in order to create the needed environment
         $_REQUEST['module']         = '';
         $_REQUEST['return_module']  = '';
@@ -129,7 +128,10 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
         global $mod_strings, $app_strings, $sugar_config;
         $app_list_strings = return_app_list_strings_language($this->language);
         $xtpl = null;
+
+        ob_start();
         require 'modules/EmailTemplates/EditView.php';
+        ob_get_clean();
 
         // clean up created global variables
         unset(
