@@ -289,6 +289,14 @@ class BeanFactory {
         return true;
     }
 
+    /**
+     * Override module's class with custom class
+     *
+     * For use mainly in unit tests
+     *
+     * @param string $module
+     * @param string $klass
+     */
     public static function setBeanClass($module, $klass = null)
     {
         if(empty($klass)) {
