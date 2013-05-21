@@ -28,7 +28,7 @@
  ********************************************************************************/
 
 $listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
-$listLayout->push(array('view' => 'list-top'));
+$listLayout->push(array('view' => 'list-headerpane'));
 $listLayout->push(array('view' => 'filter'));
 $listLayout->push(array("view" => "list", "primary" => true));
 $listLayout->push(array('view' => 'list-bottom'));

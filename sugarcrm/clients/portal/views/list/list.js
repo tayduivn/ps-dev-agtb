@@ -1,14 +1,16 @@
 ({
     extendsFrom: 'ListView',
-    toggled: false,
-    bindDataChange:function () {
-        app.view.invokeParent(this, {type: 'view', name: 'list', method: 'bindDataChange', platform: 'base'});
-        this.on('render', this.toggleSidebar);
+    toggledClosed: false,
+    initialize: function(options) {
+        app.view.invokeParent(this, {type: 'view', name: 'list', method: 'initialize', platform: 'base', args:[options]});
+        // Once the sidebartoggle is rendered we close the sidebar so the arrows are updated SP-719
+        app.controller.context.on("sidebartoggle:rendered", this.closeSidebar, this);
     },
-    toggleSidebar: function () {
-        if (!this.toggled) {
+    closeSidebar: function () {
+        debugger;
+        if (!this.toggledClosed) {
             app.controller.context.trigger('toggleSidebar');
-            this.toggled = true;
+            this.toggledClosed = true;
         }
     }
 })

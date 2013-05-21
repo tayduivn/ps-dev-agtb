@@ -28,9 +28,9 @@
     extendsFrom:'ResultsView',
     toggledClosed: false,
     bindDataChange:function () {
-        this.on('render', this.toggleSidebar);
+        this.on('render', this.closeSidebar);
     },
-    toggleSidebar: function () {
+    closeSidebar: function () {
         if (!this.toggledClosed) {
             app.controller.context.trigger('toggleSidebar');
             this.toggledClosed = true;
