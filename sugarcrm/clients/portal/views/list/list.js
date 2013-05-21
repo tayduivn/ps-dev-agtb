@@ -7,7 +7,6 @@
         app.controller.context.on("sidebartoggle:rendered", this.closeSidebar, this);
     },
     closeSidebar: function () {
-        debugger;
         if (!this.toggledClosed) {
             app.controller.context.trigger('toggleSidebar');
             this.toggledClosed = true;

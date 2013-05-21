@@ -14,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -27,34 +27,51 @@
 ({
     extendsFrom:'ResultsView',
     toggledClosed: false,
-    bindDataChange:function () {
-        this.on('render', this.closeSidebar);
-    },
     closeSidebar: function () {
         if (!this.toggledClosed) {
             app.controller.context.trigger('toggleSidebar');
             this.toggledClosed = true;
         }
     },
-    /**
-     * Loads the right side preview view when clicking icon for a particular search result.
-     */
+    _render: function() {
+        var self = this;
+        self.lastQuery = self.context.get('query');
+        self.fireSearchRequest(function(collection) {
+            // Bug 57853: Will brute force dismiss search dropdown if still present.
+            $('.search-query').searchahead('hide');
+            // Add the records to context's collection
+            if(collection && collection.length) {
+                app.view.View.prototype._render.call(self);
+                self.setHeaderpaneTitle();
+            } else {
+                self.setHeaderpaneTitle(app.lang.getAppString('LNK_SEARCH_NO_RESULTS'));
+            }
+        });
+    },
+    setHeaderpaneTitle: function(overrideMessage) {
+        // Once the sidebartoggle rendered we close the sidebar so the arrows are updated SP-719. Note we don't
+        // start listening for following event until we set title (since that will cause toggle render again!)
+        app.controller.context.on("sidebartoggle:rendered", this.closeSidebar, this);
+        // Actually sets the title on the headerpane
+        this.context.trigger("headerpane:title", overrideMessage ||
+            app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'),{'query' : this.lastQuery}));
+    },
+    // Loads the right side preview view when clicking icon for a particular search result.
     loadPreview: function(e) {
+        var searchRow, selectedResultId, model;
         if (this.toggledClosed) {
             app.controller.context.trigger('toggleSidebar');
             this.toggledClosed = false;
         }
-        var localGGrandparent, correspondingResultId, model;
-        localGGrandparent = this.$(e.currentTarget).closest('li');
-
-        // Remove previous 'on' class on lists <li>'s; add to clicked <li>
-        $(localGGrandparent).parent().find('li').removeClass('on');
-        $(localGGrandparent).addClass("on");
-        correspondingResultId = $(localGGrandparent).find('p a').attr('href').split('/')[1];
-
+        // Get the currently selected search result
+        searchRow = this.$(e.currentTarget).closest('li');
+        // Remove previous 'on' class on lists and apply to clicked
+        $(searchRow).parent().find('li').removeClass('on');
+        $(searchRow).addClass("on");
         // Grab search result model corresponding to preview icon clicked
-        model = this.collection.get(correspondingResultId);
+        selectedResultId = $(searchRow).find('p a').attr('href').split('/')[1];
+        model = this.collection.get(selectedResultId);
+        // This will result in result's data being displayed on preview
         app.events.trigger("preview:render", model);
     }
 })
-

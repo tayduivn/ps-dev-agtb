@@ -40,6 +40,6 @@
     },
     // If toggled from a user clicking on anchor simply trigger toggleSidebar
     toggle: function() {
-        app.controller.context.trigger('toggleSidebar');
+        this.context.trigger('toggleSidebar');
     }
 })

@@ -1,7 +1,6 @@
-<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
+ * Agreement (""License"") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -25,7 +24,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-$viewdefs['portal']['layout']['dashboard'] = array(
-    'components' => array(),
-);
+({
+    extendsFrom: 'BaseHeaderpaneView'
+})

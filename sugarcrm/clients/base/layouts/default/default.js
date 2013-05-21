@@ -10,13 +10,13 @@
         this.$('.main-pane').toggleClass('span12');
         this.$('.main-pane').toggleClass('span8');
         this.$('.side').toggle();
-        this.context.trigger("toggleSidebarArrows");
+        app.controller.context.trigger("toggleSidebarArrows");
     },
     openSide: function() {
         this.$('.main-pane').addClass('span8');
         this.$('.main-pane').removeClass('span12');
         this.$('.side').show();
-        this.context.trigger("sidebarArrowsOpen");
+        app.controller.context.trigger("sidebarArrowsOpen");
     },
     processDef: function() {
         this.$(".main-pane").addClass("span" + this.meta.components[0]["layout"].span);
