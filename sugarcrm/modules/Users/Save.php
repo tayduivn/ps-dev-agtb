@@ -27,12 +27,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarFields/SugarFieldHandler.php');
-require_once('modules/MySettings/TabController.php');
+require_once 'include/SugarFields/SugarFieldHandler.php';
+require_once 'modules/MySettings/TabController.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
-$display_tabs_def = isset($_REQUEST['display_tabs_def']) ? urldecode($_REQUEST['display_tabs_def']) : '';
-$hide_tabs_def = isset($_REQUEST['hide_tabs_def']) ? urldecode($_REQUEST['hide_tabs_def']): '';
-$remove_tabs_def = isset($_REQUEST['remove_tabs_def']) ? urldecode($_REQUEST['remove_tabs_def']): '';
+$display_tabs_def = isset($_REQUEST['display_tabs_def']) ? html_entity_decode($_REQUEST['display_tabs_def']) : '';
+$hide_tabs_def = isset($_REQUEST['hide_tabs_def']) ? html_entity_decode($_REQUEST['hide_tabs_def']): '';
+$remove_tabs_def = isset($_REQUEST['remove_tabs_def']) ? html_entity_decode($_REQUEST['remove_tabs_def']): '';
 
 $DISPLAY_ARR = array();
 $HIDE_ARR = array();
@@ -57,6 +58,17 @@ $focus = BeanFactory::getBean('Users', $_POST['record']);
 
 //update any ETag seeds that are tied to the user object changing
 $focus->incrementETag("mainMenuETag");
+
+// See if this request is for the current user
+$forCurrentUser = $_POST['record'] == $current_user->id;
+
+// [BR-200] Set the reauth forcing array of fields now for comparison later
+$mm = new MetaDataManager($current_user);
+$reauthFields = array_keys($mm->getUserPrefsToCache());
+$currentReauthPrefs = array();
+foreach ($reauthFields as $field) {
+    $currentReauthPrefs[$field] = $focus->getPreference($field);
+}
 
 // Flag to determine whether to save a new password or not.
 // Bug 43241 - Changed $focus->id to $focus->user_name to make sure that a system generated password is made when converting employee to user
@@ -250,23 +262,39 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	        $focus->setPreference('module_favicon', '', 0, 'global');
 	    }
 
-		$tabs = new TabController();
-		if(isset($_POST['display_tabs']))
-			$tabs->set_user_tabs($DISPLAY_ARR['display_tabs'], $focus, 'display');
-		if(isset($HIDE_ARR['hide_tabs'])){
-			$tabs->set_user_tabs($HIDE_ARR['hide_tabs'], $focus, 'hide');
+        // BR-237 Force a reauth for user metadata changes so that these changes
+        // are picked up by clients immediately
+        $refreshMetadata = false;
+        $tabs = new TabController();
+        
+        // Get the current display tabs to see if any of them are different
+        $curTabs = $tabs->get_tabs($current_user);
+        $curDisplay = array_keys($curTabs[0]);
 
-		}else{
-			$tabs->set_user_tabs(array(), $focus, 'hide');
-		}
-		if(is_admin($current_user)){
-			if(isset($REMOVE_ARR['remove_tabs'])){
-				$tabs->set_user_tabs($REMOVE_ARR['remove_tabs'], $focus, 'remove');
-			}else{
-				$tabs->set_user_tabs(array(), $focus, 'remove');
-			}
-		}
-
+        if(isset($DISPLAY_ARR['display_tabs'])) {
+            // Order is relevent on display modules, so a simple diff is not 
+            // sufficient in this case. We need sameness AND order. 
+            // NOTE: HIDE_ARR will always be changed if display is changed, so
+            // there is no need to check its state. Since REMOVE is no longer 
+            // supported there is no need to check that array for state either.
+            $refreshMetadata = array_values($DISPLAY_ARR['display_tabs']) !== array_values($curDisplay);
+            $tabs->set_user_tabs($DISPLAY_ARR['display_tabs'], $focus, 'display');
+        }
+        
+        if(isset($HIDE_ARR['hide_tabs'])){
+            $tabs->set_user_tabs($HIDE_ARR['hide_tabs'], $focus, 'hide');
+        }else{
+            $tabs->set_user_tabs(array(), $focus, 'hide');
+        }
+        
+        if(is_admin($current_user)){
+            if(isset($REMOVE_ARR['remove_tabs'])){
+                $tabs->set_user_tabs($REMOVE_ARR['remove_tabs'], $focus, 'remove');
+            }else{
+                $tabs->set_user_tabs(array(), $focus, 'remove');
+            }
+        }
+        
 	    if(isset($_POST['no_opps'])) {
 	        $focus->setPreference('no_opps',$_POST['no_opps'], 0, 'global');
 	    }
@@ -373,9 +401,26 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		exit;
 	}
 	else
-	{	$GLOBALS['sugar_config']['disable_team_access_check'] = true;
-		$focus->save();
-		$GLOBALS['sugar_config']['disable_team_access_check'] = false;
+	{
+        $GLOBALS['sugar_config']['disable_team_access_check'] = true;
+        $focus->save();
+        $GLOBALS['sugar_config']['disable_team_access_check'] = false;
+
+        // Handle setting of the metadata change for this user
+        if (!$refreshMetadata) {
+            foreach ($currentReauthPrefs as $key => $val) {
+                if ($focus->getPreference($key) != $val) {
+                    $refreshMetadata = true;
+                    break;
+                }
+            }
+        }
+
+        // [BR-200] Force reauth so user pref metadata is refreshed
+        if ($forCurrentUser && $refreshMetadata) {
+            $mm->setUserMetadataHasChanged($focus);
+        }
+        
 		$return_id = $focus->id;
 		$ieVerified = true;
 

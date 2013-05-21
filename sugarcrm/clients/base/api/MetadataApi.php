@@ -200,6 +200,10 @@ class MetadataApi extends SugarApi
         );
         $perModuleChunks = array('modules');
 
+        // BR-26 Set the metadata hash into the session so it can be inspected when
+        // changed.
+        $this->getMetadataManager()->setSessionHash($data['_hash']);
+        
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 

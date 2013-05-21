@@ -31,6 +31,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected $_user;
     protected $consumerId = "sugar";
     protected $version = '10';
+    protected $_platform = 'base';
     protected $accounts = array();
     protected $contacts = array();
     protected $opps = array();
@@ -173,6 +174,9 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             // Let's assume test users have a password the same as their username
             $password = $this->_user->user_name;
         }
+        
+        // Save the platform for reauth
+        $this->_platform = $platform;
 
         $args = array(
             'grant_type' => 'password',
@@ -193,9 +197,42 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
     }
+    
+    protected function _restReauth()
+    {
+        if ($this->refreshToken) {
+            $args = array(
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $this->refreshToken,
+                'client_id' => $this->consumerId,
+                'client_secret' => '',
+                'platform' => $this->_platform,
+            );
+            
+            // Prevents _restCall from automatically logging in
+            $this->authToken = 'LOGGING_IN';
+            $reply = $this->_restCall('oauth2/token',json_encode($args));
+            if (empty($reply['reply']['access_token'])) {
+                throw new Exception("Rest re-authentication failed, message looked like: ".$reply['replyRaw']);
+            }
+            $this->authToken = $reply['reply']['access_token'];
+            $this->refreshToken = $reply['reply']['refresh_token'];
+        } else {
+            throw new Exception("Attempt to reauth without a refresh token");
+        }
+    }
 
     protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
+        // Hold state in case we need to reauth
+        $funcArgs = array(
+            $urlPart,
+            $postBody,
+            $httpAction,
+            $addedOpts,
+            $addedHeaders
+        );
+        
         // Since this is going in to a new DB connection, we have to commit anything we have
         // lying around in an open transaction.
         $GLOBALS['db']->commit();
@@ -262,6 +299,19 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
         $httpReply = curl_exec($ch);
         $httpInfo = curl_getinfo($ch);
+        
+        // Handle reauth if need be. This will be called mostly for metadata cache 
+        // clears since that now forces an immediate invalidation of sessions
+        if (isset($httpInfo['http_code']) && $httpInfo['http_code'] == 401) {
+            if (
+                isset($httpReply['error']) && $httpReply['error'] == 'invalid_grant' &&
+                isset($httpReply['error_message']) && $httpReply['error_message'] == 'The access token has been invalidated.'
+            ) {
+                $this->_restReauth();
+                return $this->_restCall($funcArgs[0], $funcArgs[1], $funcArgs[2], $funcArgs[3], $funcArgs[4]);
+            }
+        }
+        
         $httpError = $httpReply === false ? curl_error($ch) : null;
         $GLOBALS['db']->commit();
         

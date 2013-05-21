@@ -25,6 +25,7 @@ require_once('include/api/ServiceDictionaryRest.php');
 require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 require_once('include/api/RestResponse.php');
 require_once('include/api/RestRequest.php');
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RestService extends ServiceBase {
 
@@ -138,7 +139,9 @@ class RestService extends ServiceBase {
             $GLOBALS['logic_hook']->call_custom_logic('', 'after_routing', array("api" => $this, "request" => $this->request));
             // Get it back in case hook changed it
             $route = $this->request->getRoute();
-
+            
+            // Get the request args early for use in current user api
+            $argArray = $this->getRequestArgs($route);
 
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 if ( !$isLoggedIn ) {
@@ -147,6 +150,30 @@ class RestService extends ServiceBase {
                         throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
                     } else {
                         throw $loginException;
+                    }
+                } else {
+                    // If we are logged in, but the metadata has changed since 
+                    // last login, then we need to invalidate the current login
+                    // and force a reauth so that the new metadata gets picked up.
+                    // 
+                    // This session var will be set the first time metadata is
+                    // fetched. When the metadata cache is cleared, it will be
+                    // reset to an empty string.
+                    $mm = new MetaDataManager($this->user, $this->platform);
+                    if (!$mm->isSessionHashValid($this->platform) || $mm->hasUserMetadataChanged($this->user)) {
+                        // Unset the session hash first
+                        $mm->unsetSessionHash();
+                        
+                        // Unset the user hash 
+                        $mm->unsetUserMetadataHasChanged($this->user);
+                        
+                        // Mismatch in hashes... invalidate the session. This is
+                        // done in a specific way to allow clients to understand
+                        // that this revocation of the grant is because of a change
+                        // in metadata.
+                        $e = new SugarApiExceptionNeedLogin('The access token has been invalidated.');
+                        $e->errorLabel = 'invalid_grant';
+                        throw $e;
                     }
                 }
             }
@@ -346,9 +373,6 @@ class RestService extends ServiceBase {
             $errorLabel = 'unknown_error';
             $message = $exception->getMessage();
         }
-        if(!empty($exception->extraData)) {
-            $data = $exception->extraData;
-        }
         $this->response->setStatus($httpError);
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
@@ -372,9 +396,6 @@ class RestService extends ServiceBase {
         );
         if( !empty($message) ) {
             $replyData['error_message'] = $message;
-        }
-        if(!empty($data)) {
-            $replyData = array_merge($replyData, $data);
         }
         $this->response->setContent($replyData);
     }
@@ -649,6 +670,72 @@ class RestService extends ServiceBase {
     {
         $this->response = $resp;
         return $this;
+    }
+    
+    /**
+     * Gets the full collection of arguments from the request
+     * 
+     * @param  array $route The route description for this request
+     * @return array
+     */
+    protected function getRequestArgs($route)
+    {
+        // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
+        $pathVars = $this->request->getPathVars($route);
+
+        $getVars = array();
+        if ( !empty($_GET)) {
+            // This has some get arguments, let's parse those in
+            $getVars = $_GET;
+            if ( !empty($route['jsonParams']) ) {
+                foreach ( $route['jsonParams'] as $fieldName ) {
+                    if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
+                         &&  isset($_GET[$fieldName]{0})
+                         && ( $_GET[$fieldName]{0} == '{'
+                               || $_GET[$fieldName]{0} == '[' )) {
+                        // This may be JSON data
+                        $jsonData = @json_decode($_GET[$fieldName],true,32);
+                        if ( $jsonData == null ) {
+                            // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
+                            continue;
+                        }
+                        // Need to dig through this array and make sure all of the elements in here are safe
+                        $getVars[$fieldName] = $jsonData;
+                    }
+                }
+            }
+        }
+
+        $postVars = array();
+        if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            // This route wants the raw post contents
+            // We just ignore it here, the function itself has to know how to deal with the raw post contents
+            // this will mostly be used for binary file uploads.
+        } else if ( !empty($_POST) ) {
+            // They have normal post arguments
+            $postVars = $_POST;
+        } else {
+            $postContents = null;
+            if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
+                $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+            } else {
+                $postContents = file_get_contents('php://input');
+            }
+            if ( !empty($postContents) ) {
+                // This looks like the post contents are JSON
+                // Note: If we want to support rest based XML, we will need to change this
+                $postVars = @json_decode($postContents,true,32);
+                if ( !is_array($postVars) ) {
+                    // FIXME: Handle improperly encoded JSON
+                    $postVars = array();
+                }
+            }
+        }
+        
+        // I know this looks a little weird, overriding post vars with get vars, but
+        // in the case of REST, get vars are fairly uncommon and pretty explicit, where
+        // the posted document is probably the output of a generated form.
+        return array_merge($postVars,$getVars,$pathVars);
     }
 }
 
