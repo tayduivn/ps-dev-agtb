@@ -109,12 +109,12 @@
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
-        this.plugins = _.clone(this.plugins)
+        this.plugins = _.clone(this.plugins);
         this.plugins.push('cte-tabbing');
         this.plugins.push('dirty-collection');
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
-        this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || ''
+        this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';
         this.context.set('skipFetch', (this.selectedUser.isManager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
     },
@@ -210,14 +210,14 @@
                  * When the collection is reset, we need checkForDraftRows
                  */
                 this.collection.on('reset', function() {
-                    var ctx = this.context.parent || this.context
+                    var ctx = this.context.parent || this.context;
                     ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
                     this.checkForDraftRows(ctx.get('currentForecastCommitDate'));
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:committed', function() {
                     if (this.layout.isVisible()) {
-                        var ctx = this.context.parent || this.context
+                        var ctx = this.context.parent || this.context;
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
                         this.refreshData();
                     }
@@ -253,7 +253,7 @@
         if (!_.isUndefined(this.dirtyModels)) {
             // when something gets added, the save_draft and commit buttons need to be enabled
             this.dirtyModels.on('add', function() {
-                var ctx = this.context.parent || this.context
+                var ctx = this.context.parent || this.context;
                 ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, true);
             }, this);
         }
@@ -269,18 +269,20 @@
             // check if the row is open, if it is, just destroy it
             var log_row = this.$el.find('tr[name="' + row_name + '_commit_history"]');
 
+            var field;
+
             // if we have a row, just close it and destroy the field
             if (log_row.length == 1) {
                 // remove it and dispose the field
                 log_row.remove();
                 // find the field
-                var field = _.find(this.fields, function(field, idx) {
+                field = _.find(this.fields, function(field, idx) {
                     return (field.name == row_name + '_commit_history');
                 }, this);
                 field.dispose();
             } else {
                 var rowTpl = app.template.getView('recordlist.commithistory', this.module);
-                var field = app.view.createField({
+                field = app.view.createField({
                     def: {
                         'type': 'commithistory',
                         'name': row_name + '_commit_history'
@@ -442,7 +444,6 @@
 
     /**
      * Method for the on('render') event
-     * @param changed
      */
     renderCallback: function() {
         var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON();

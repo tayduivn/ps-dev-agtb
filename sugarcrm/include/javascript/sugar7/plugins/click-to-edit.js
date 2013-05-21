@@ -112,7 +112,6 @@
                 this.on('init', _.bind(function() {
                     if (this.checkIfCanEdit()) {
                         this.bindPluginEvents();
-                        //this.setupValidateField();
                     }
                 }, this));
             },

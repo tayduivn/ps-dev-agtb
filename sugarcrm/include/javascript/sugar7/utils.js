@@ -103,31 +103,6 @@
                     //Compile the language string for the log
                     var text = hb({'key': lang_string_key, 'module': "Forecasts", 'args': final_args});
 
-                    // Check for first time run -- no date_entered for oldestModel
-                    var oldestDateEntered = oldestModel.get('date_entered');
-
-                    // This will always have a value and Format the date according to the user date and time preferences
-                    /*var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
-                        text2 = '',
-                        newestModelDisplayDate = app.date.format(newestModelDate, app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'));
-
-                    if(!_.isEmpty(oldestDateEntered)) {
-                        var oldestModelDate = new Date(Date.parse(oldestDateEntered)),
-                            yearDiff = oldestModelDate.getYear() - newestModelDate.getYear(),
-                            monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
-
-                        if(yearDiff == 0 && monthsDiff < 2) {
-                            args = [newestModelDisplayDate];
-                            text2 = hb({'key': 'LBL_COMMITTED_THIS_MONTH', 'module': 'Forecasts', 'args': args});
-                        } else {
-                            args = [monthsDiff, newestModelDisplayDate];
-                            text2 = hb({'key': 'LBL_COMMITTED_MONTHS_AGO', 'module': 'Forecasts', 'args': args});
-                        }
-                    } else {
-                        args = [newestModelDisplayDate];
-                        text2 = hb({'key': 'LBL_COMMITTED_THIS_MONTH', 'module': 'Forecasts', 'args': args});
-                    }*/
-
                     // need to tell Handelbars not to escape the string when it renders it, since there might be
                     // html in the string, args returned for testing purposes
                     return {'text': new Handlebars.SafeString(text)};
@@ -393,7 +368,7 @@
                     return returnValue;
                 },
                 /**
-                 * If the passed in User is a Manager, then get his direct reportee's, and then set the user
+                 * If the passed in User is a Manager, then get his direct reportees, and then set the user
                  * on the context, if they are not a Manager, just set user to the context
                  * @param selectedUser
                  * @param context

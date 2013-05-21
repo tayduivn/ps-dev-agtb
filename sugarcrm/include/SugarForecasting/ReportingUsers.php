@@ -37,7 +37,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
     public function process()
     {
 
-        // check if the current users is a manager, if they are not, we will load up their reports to
+        // check if the current user is a manager, if they are not, we will load up their reports to
         // as the starting user
         $getReportsTo = (!User::isManager($this->getArg('user_id')));
 
