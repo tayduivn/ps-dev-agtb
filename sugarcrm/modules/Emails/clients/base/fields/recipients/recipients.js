@@ -64,7 +64,9 @@
             $recipientsField.select2({
                 allowClear: true,
                 multiple: true,
-                query: _.bind(this.loadOptions, this)
+                query: _.bind(this.loadOptions, this),
+                formatSelection: _.bind(this.formatSelection, this),
+                formatResult:    _.bind(this.formatResult, this)
             });
         }
     },
@@ -91,10 +93,31 @@
                 name: 'three',
                 email: 'three@email.com',
                 text: 'Three'
-            }]
+            }],
+            more: false // there are no more results by default
         };
 
         query.callback(data);
+    },
+
+    /**
+     * Formats a recipient object for displaying selected recipients.
+     *
+     * @param recipient
+     * @return {String}
+     */
+    formatSelection: function(recipient) {
+        return recipient.name ? recipient.name : recipient.email;
+    },
+
+    /**
+     * Formats a recipient object for displaying items in the recipient options list.
+     *
+     * @param recipient
+     * @return {String}
+     */
+    formatResult: function(recipient) {
+        return this.formatSelection(recipient); // do the same as formatSelection by default
     },
 
     /**
@@ -104,6 +127,11 @@
      */
     unformat: function() {
         return this._getEmailField().select2('data');
+    },
+
+    unbindDom: function() {
+        this.getFieldElement().select2('destroy');
+        app.view.Field.prototype.unbindDom.call(this);
     },
 
     /**
@@ -123,8 +151,10 @@
             newRecipients = [newRecipients];
         }
 
-        _.each(newRecipients, function(recipient, index) {
+        _.each(newRecipients, function(recipient) {
             var translatedRecipient = this._translateRecipient(recipient);
+
+            // only add recipients whose id's are not found among the existing recipients
             if (_.where(existingRecipients, {id: translatedRecipient.id}).length === 0) {
                 filteredRecipients.push(translatedRecipient);
             }
@@ -283,21 +313,8 @@
                 // only set the name if it's actually available
                 translatedRecipient.name = name;
             }
-
-            translatedRecipient.text = this._formatRecipient(translatedRecipient);
         }
 
         return translatedRecipient;
-    },
-
-    /**
-     * Constructs a formatted string, for display purposes, from a recipient object.
-     *
-     * @param recipient
-     * @return {String}
-     * @private
-     */
-    _formatRecipient: function(recipient) {
-        return recipient.name ? recipient.name : recipient.email;
     }
 })
