@@ -59,7 +59,7 @@
     _render: function() {
         app.view.Field.prototype._render.call(this);
 
-        var $recipientsField = this._getEmailField();
+        var $recipientsField = this.getFieldElement();
         if ($recipientsField.length > 0) {
             $recipientsField.select2({
                 allowClear: true,
@@ -126,7 +126,7 @@
      * @returns {Array}
      */
     unformat: function() {
-        return this._getEmailField().select2('data');
+        return this.getFieldElement().select2('data');
     },
 
     unbindDom: function() {
@@ -160,7 +160,7 @@
             }
         }, this);
 
-        this._getEmailField().select2('data', _.union(existingRecipients, filteredRecipients));
+        this.getFieldElement().select2('data', _.union(existingRecipients, filteredRecipients));
     },
 
     /**
@@ -178,7 +178,7 @@
             recipients[index] = this._translateRecipient(recipient);
         }, this);
 
-        this._getEmailField().select2('data', recipients);
+        this.getFieldElement().select2('data', recipients);
     },
 
     /**
@@ -209,10 +209,10 @@
     /**
      * Gets the recipients DOM field
      *
-     * @returns {*}
+     * @returns {Object} DOM Element
      * @private
      */
-    _getEmailField: function() {
+    getFieldElement: function() {
         return this.$(this.fieldTag);
     },
 
