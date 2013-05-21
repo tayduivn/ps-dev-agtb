@@ -25,14 +25,7 @@ describe("forecastworksheets_view_filter", function () {
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile(
-            "../modules/ForecastWorksheets/clients/base/views/filter",
-            "filter",
-            "js",
-            function (d) {
-                return eval(d);
-            }
-        );
+        view = SugarTest.createView('base', 'ForecastWorksheets', 'filter', null, null, true);
     });
 
     afterEach(function() {
@@ -43,9 +36,6 @@ describe("forecastworksheets_view_filter", function () {
     describe("when rendering", function() {
         beforeEach(function() {
             sinon.stub(app.view.View.prototype, "_render");
-            view.$ = function(stuff) {
-                return stuff;
-            };
             sinon.stub(view, "_getRangeFilters");
             sinon.stub(view, "_setUpFilters");
         });
