@@ -80,6 +80,18 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
         $value = $field->exportSanitize($obj->amount, $vardef, $obj, array('currency_id'=>self::$currency->id));
         $this->assertEquals($expectedValue, $value);
+
+        //Test conversion to base_rate
+        $currency = SugarTestCurrencyUtilities::createCurrency('Singapore', '$', 'SGD', 1.246171, 'currency-sgd');
+        $obj->amount = '1000';
+        $obj->base_rate = $currency->conversion_rate;
+        $obj->currency_id = $currency->id;
+        $vardef['convertToBase'] = true;
+        $convertedValue = '802.46';
+        $expectedValue = SugarCurrency::formatAmountUserLocale($convertedValue, $obj->currency_id);
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+        $this->assertEquals($expectedValue, $value);
+
     }
 
 }

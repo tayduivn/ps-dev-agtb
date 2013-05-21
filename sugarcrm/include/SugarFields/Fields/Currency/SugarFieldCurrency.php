@@ -69,12 +69,13 @@ class SugarFieldCurrency extends SugarFieldFloat
      *
      * @return string sanitized value
      */
-    public function exportSanitize($value, $vardef, $focus, $row=array())
+    public function exportSanitize($value, $vardef, $focus, $row = array())
     {
         require_once('include/SugarCurrency/SugarCurrency.php');
-        if(isset($vardef['convertToBase']) && $vardef['convertToBase']) {
+        if (isset($vardef['convertToBase']) && $vardef['convertToBase']) {
             // convert amount to base
-            $value = SugarCurrency::convertWithRate($value, $row['base_rate']);
+            $baseRate = isset($row['base_rate']) ? $row['base_rate'] : $focus->base_rate;
+            $value = SugarCurrency::convertWithRate($value, $baseRate);
             $currency_id = '-99';
         } else {
             //If the row has a currency_id set, use that instead of the $focus->currency_id value
