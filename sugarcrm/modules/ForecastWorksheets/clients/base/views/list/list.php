@@ -22,7 +22,6 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'commit_stage',
                     'type' => 'enum',
-                    'options' => 'commit_stage_dom',
                     'searchBarThreshold' => 7,
                     'label' => 'LBL_FORECAST',
                     'sortable' => false,

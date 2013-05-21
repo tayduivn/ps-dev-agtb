@@ -14,7 +14,7 @@
 
 require_once('include/api/SugarApi.php');
 
-class ForecastWorksheetsApi extends SugarAPi
+class ForecastWorksheetsApi extends SugarApi
 {
 
     public function registerApiRest()
@@ -27,8 +27,31 @@ class ForecastWorksheetsApi extends SugarAPi
                 'method' => 'forecastWorksheetSave',
                 'shortHelp' => 'Updates a ForecastWorksheet model',
                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetPut.html',
-            )
+            ),
+            'commitstage' => array(
+                'reqType' => 'GET',
+                'path' => array('ForecastWorksheets', 'enum', 'commit_stage'),
+                'pathVars' => array('', '', ''),
+                'method' => 'commitStage',
+                'shortHelp' => 'Returns commit stages array per config settings',
+                'longHelp' => 'modules/ForecastWorksheets/clients/base/api/help/ForecastWorksheetsApiCommitStage.html',
+            ),
         );
+    }
+
+    /**
+     * Retrieves the commit_stage dropdown items based on the setting in the forecasts config
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return array
+     */
+    public function commitStage($api, $args)
+    {
+        global $app_list_strings;
+
+        $adminBean = BeanFactory::getBean('Administration');
+        $config = $adminBean->getConfigForModule('Forecasts', $api->platform);
+        return $app_list_strings[$config['buckets_dom']];
     }
 
     /**
