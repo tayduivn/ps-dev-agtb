@@ -1,4 +1,3 @@
-//FILE SUGARCRM flav=ent ONLY
 describe("Portal Signup View", function() {
 
     var view, app;
