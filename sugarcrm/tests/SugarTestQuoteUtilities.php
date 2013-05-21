@@ -62,7 +62,7 @@ class SugarTestQuoteUtilities
     	} // foreach
     } // fn
     
-    public static function removeAllCreatedQuotes() 
+    public static function removeAllCreatedQuotes()
     {
         $quote_ids = self::getCreatedQuoteIds();
         $GLOBALS['db']->query('DELETE FROM quotes WHERE id IN (\'' . implode("', '", $quote_ids) . '\')');
@@ -71,13 +71,24 @@ class SugarTestQuoteUtilities
         $GLOBALS['db']->query('DELETE FROM quotes_opportunities WHERE quote_id IN (\'' . implode("', '", $quote_ids) . '\')');
     }
         
-    public static function getCreatedQuoteIds() 
+    public static function getCreatedQuoteIds()
     {
         $quote_ids = array();
         foreach (self::$_createdQuotes as $quote) {
             $quote_ids[] = $quote->id;
         }
         return $quote_ids;
+    }
+
+    public static function relateQuoteToOpportunity($quoteId, $oppId)
+    {
+        $query = sprintf(
+            "insert into quotes_opportunities(id,opportunity_id,quote_id,date_modified,deleted) values('%s','%s','%s',NOW(),0)",
+            create_guid(),
+            $oppId,
+            $quoteId
+        );
+        $GLOBALS['db']->query($query);
     }
 }
 ?>

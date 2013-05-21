@@ -649,5 +649,32 @@ class Quote extends SugarBean {
 
 		return $locale->translateCharset($mod_strings[$type]."_{$filename}.pdf", 'UTF-8', $this->getExportCharset());
 	}
+
+    /**
+     * get the related opportunities
+     * @return array related opportunities
+     */
+    function getRelatedOpportunities()
+    {
+        $results = array();
+        $query = "select * from quotes_opportunities where quote_id = '{$this->id}'";
+        $result = $this->db->query($query);
+        while($row = $this->db->fetchByAssoc($result)) {
+            $results[] = $row;
+        }
+        return $results;
+    }
+
+    /**
+     * get the related opportunity count
+     * @return int number of related opportunities
+     */
+    function getRelatedOpportunityCount()
+    {
+        $query = "select count(id) from quotes_opportunities where quote_id = '{$this->id}'";
+        return $this->db->getOne($query);
+    }
+
+
 }
 ?>

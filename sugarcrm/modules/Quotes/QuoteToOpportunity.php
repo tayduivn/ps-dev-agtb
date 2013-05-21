@@ -48,34 +48,12 @@ function send_to_url($redirect_Url)
 // returns value of number of rows where the name already exists
 function query_opportunity_subject_exists($subj)
 {
-    global $db;
+    $db = DBManagerFactory::getInstance();
 
     $subject = $db->quoted($subj);
-    $query = "select count(id) as num from opportunities where name = $subject and deleted = 0";
-    $check = $db->query($query);
-
-    $row = $db->fetchByAssoc($check);
-
-    return $row["num"];
+    $query = "select count(id) from opportunities where name = $subject and deleted = 0";
+    return $db->getOne($query) > 0;
 }
-
-// returns true if quote has already be convert to opportunity
-function checkQuote2OppExists($quoteId)
-{
-    if (empty($quoteId)) {
-        return false;
-    }
-
-    global $db;
-
-    $query = "select count(id) as total from quotes_opportunities where quote_id = '{$quoteId}'";
-    $check = $db->query($query);
-
-    $row = $db->fetchByAssoc($check);
-
-    return $row["total"] > 0;
-}
-
 
 function generate_name_form(&$var)
 {
@@ -116,7 +94,9 @@ function generate_name_form(&$var)
     echo $retval;
 }
 
-if (checkQuote2OppExists($_REQUEST['record'])) {
+$quote = BeanFactory::getBean('Quotes', $_REQUEST['record']);
+
+if ($quote->getRelatedOpportunityCount() > 0) {
     global $app_strings;
     printf(
         "<span class=\"error\">%s</span>",
@@ -162,7 +142,6 @@ if (checkQuote2OppExists($_REQUEST['record'])) {
 
 
     //link quote contracts with the opportunity.
-    $quote = BeanFactory::getBean('Quotes', $_REQUEST['record']);
     $quote->load_relationship('contracts');
     $contracts = $quote->contracts->get();
 

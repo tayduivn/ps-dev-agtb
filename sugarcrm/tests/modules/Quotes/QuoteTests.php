@@ -29,13 +29,14 @@ class QuoteTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
     }
 
     public function tearDown()
     {
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestHelper::tearDown();
     }
 
@@ -44,14 +45,28 @@ class QuoteTests extends Sugar_PHPUnit_Framework_TestCase
      * of currency_id
      *
      */
-    public function testQuotaRate() {
+    public function testQuoteRate()
+    {
         $quote = SugarTestQuoteUtilities::createQuote();
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         $quote->currency_id = $currency->id;
         $quote->save();
         $this->assertEquals(
-            sprintf('%.6f',$quote->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
+            sprintf('%.6f', $quote->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
         );
     }
+
+    /**
+     * test related opportunity count
+     */
+    public function testGetRelatedOpportunityCount()
+    {
+        $quote = SugarTestQuoteUtilities::createQuote();
+        $this->assertEquals(0, $quote->getRelatedOpportunityCount());
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        SugarTestQuoteUtilities::relateQuoteToOpportunity($quote->id, $opp->id);
+        $this->assertEquals(1, $quote->getRelatedOpportunityCount());
+    }
+
 }
