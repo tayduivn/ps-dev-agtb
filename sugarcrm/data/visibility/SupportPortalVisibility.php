@@ -238,4 +238,34 @@ class SupportPortalVisibility extends SugarVisibility
         return;
     }
 
+    /**
+     * Add Visibility to a SugarQuery Object
+     * @param SugarQuery $sugarQuery
+     * @param array $options
+     * @return object|SugarQuery
+     */
+    public function addVisibilityFromQuery(SugarQuery $sugarQuery, $options = array())
+    {
+        $query = '';
+        $join = $this->addVisibilityPortal($query, 'from');
+        if(!empty($join)) {
+            $sugarQuery->joinRaw($join);
+        }
+        return $sugarQuery;
+    } 
+
+    /**
+     * Add Visibility to a SugarQuery Object
+     * @param SugarQuery $sugarQuery
+     * @param array $options
+     * @return object|SugarQuery
+     */
+    public function addVisibilityWhereQuery(SugarQuery $sugarQuery, $options = array())
+    {
+        $where = $this->addVisibilityPortal('', 'where');
+        if(!empty($where)) {
+            $sugarQuery->whereRaw($where);
+        }
+        return $sugarQuery;
+    }
 }
