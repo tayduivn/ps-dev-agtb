@@ -55,10 +55,19 @@
         var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
 
         _.each(fields, function (field) {
+            var userId, userName, isDuplicate;
             if (((field.name && field.name === 'assigned_user_id') || (field.id_name && field.id_name === 'assigned_user_id')) &&
                 (field.type && field.type === 'relate')) {
-                this.model.set('assigned_user_id', app.user.id);
-                this.model.set('assigned_user_name', app.user.attributes.full_name);
+
+                // set the default assigned user as current user, unless we are copying another record
+                isDuplicate = this.model.has('assigned_user_id') && this.model.has('assigned_user_name');
+                userId = isDuplicate ? this.model.get('assigned_user_id') : app.user.id;
+                userName = isDuplicate ?
+                    this.model.get('assigned_user_name') :
+                    app.user.attributes.full_name;
+
+                this.model.set('assigned_user_id', userId);
+                this.model.set('assigned_user_name', userName);
                 this.model._defaults = this.model._defaults || {};
                 this.model._defaults.assigned_user_id = app.user.id;
                 this.model._defaults.assigned_user_name = app.user.attributes.full_name;

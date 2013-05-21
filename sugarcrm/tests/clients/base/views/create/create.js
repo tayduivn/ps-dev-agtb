@@ -197,7 +197,48 @@ describe("Create View", function() {
             expect(view.model._defaults.assigned_user_name).toBe(full_name);
         });
 
+        it("Should create a record view having a Assigned-To field initialized with the Assigned-to user of the original record if performing a copy.", function() {
+            fields = [
+                {
+                    "group": "assigned_user_name",
+                    "id_name": "assigned_user_id",
+                    "module": "Users",
+                    "name": "assigned_user_id",
+                    "rname": "user_name",
+                    "table": "users",
+                    "type": "relate",
+                    "vname": "LBL_ASSIGNED_TO_ID"
+                }
+            ];
 
+            var copied_user_id = '98765',
+                copied_user_name = 'John Doe',
+                bean;
+            var context = SugarTest.app.context.getContext();
+
+            bean = SugarTest.app.data.createBean(moduleName, {
+                "assigned_user_id" : copied_user_id,
+                "assigned_user_name": copied_user_name
+            });
+            context.set({
+                module: moduleName,
+                isDuplicate: true,
+                model: bean,
+                create: true
+            });
+            context.prepare();
+
+            var view = SugarTest.createView("base", moduleName, viewName, null, context);
+
+            var user_id   = view.model.get('assigned_user_id');
+            var full_name = view.model.get('assigned_user_name');
+
+            expect(user_id).toEqual(copied_user_id);
+            expect(full_name).toEqual(copied_user_name);
+
+            expect(view.model._defaults.assigned_user_id).toBe(current_user_id);
+            expect(view.model._defaults.assigned_user_name).toBe(current_user_name);
+        });
         it("Should create a record view having a Assigned-To field - 'id_name' is assigned_user_id", function() {
             fields = [
                 {
