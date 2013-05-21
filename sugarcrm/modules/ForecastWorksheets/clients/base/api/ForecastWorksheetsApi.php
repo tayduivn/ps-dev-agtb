@@ -41,6 +41,7 @@ class ForecastWorksheetsApi extends SugarApi
 
     /**
      * Retrieves the commit_stage dropdown items based on the setting in the forecasts config
+     *
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
      * @param $args array The arguments array passed in from the API
      * @return array

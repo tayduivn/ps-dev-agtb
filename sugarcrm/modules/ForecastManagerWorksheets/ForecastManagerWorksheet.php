@@ -165,7 +165,7 @@ class ForecastManagerWorksheet extends SugarBean
     {
         /* @var $quotaSeed Quota */
         $quotaSeed = BeanFactory::getBean('Quotas');
-        
+
         if (!isset($data['timeperiod_id']) || !is_guid($data['timeperiod_id'])) {
             $data['timeperiod_id'] = TimePeriod::getCurrentId();
         }
@@ -226,7 +226,7 @@ class ForecastManagerWorksheet extends SugarBean
 
         //check to see if the manager has a quota, if not, we need to copy over base values to adjusted values
         $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, true);
-         
+
         // we don't have a row to update, so set the values to the adjusted column
         if (empty($this->id) || $quota['amount'] == 0) {
             // array key equals value on the bean, array value equals field in the data variable
@@ -240,15 +240,15 @@ class ForecastManagerWorksheet extends SugarBean
                 $copyMap[] = array('worst_case_adjusted' => 'worst_case');
             }
         }
-        if (empty($this->id)) {          
+        if (empty($this->id)) {
             if (!isset($data['quota']) || empty($data['quota'])) {
                 // we need to get a fresh bean to store the quota if one exists
                 $quotaSeed = BeanFactory::getBean('Quotas');
 
                 // check if we need to get the roll up amount
                 $getRollupQuota = (User::isManager(
-                    $reportee->id
-                ) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
+                        $reportee->id
+                    ) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
 
                 $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, $getRollupQuota);
 
@@ -375,51 +375,53 @@ class ForecastManagerWorksheet extends SugarBean
 
         if (empty($beans) && empty($this->date_modified)) {
             $this->show_history_log = 0;
-        } else if(empty($beans) && !empty($this->date_modified)) {
-            // When reportee has committed but manager has not
-            $this->show_history_log = 1;
         } else {
-            $bean = $beans[0];
-            $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
+            if (empty($beans) && !empty($this->date_modified)) {
+                // When reportee has committed but manager has not
+                $this->show_history_log = 1;
+            } else {
+                $bean = $beans[0];
+                $committed_date = $this->db->fromConvert($bean["date_modified"], "datetime");
 
-            if (strtotime($committed_date) < strtotime($this->date_modified)) {
+                if (strtotime($committed_date) < strtotime($this->date_modified)) {
 
-                // find the differences via the audit table
-                // we use a direct query since SugarQuery can't do the audit tables...
-                $sql = sprintf(
-                    "SELECT field_name, before_value_string, after_value_string FROM %s_audit
-                    WHERE parent_id = '%s' AND date_created >= '%s'",
-                    $this->table_name,
-                    $this->db->quote($this->id),
-                    $this->db->quote($this->fetched_row['date_modified'])
-                );
+                    // find the differences via the audit table
+                    // we use a direct query since SugarQuery can't do the audit tables...
+                    $sql = sprintf(
+                        "SELECT field_name, before_value_string, after_value_string FROM %s_audit
+                        WHERE parent_id = '%s' AND date_created >= '%s'",
+                        $this->table_name,
+                        $this->db->quote($this->id),
+                        $this->db->quote($this->fetched_row['date_modified'])
+                    );
 
-                $results = $this->db->query($sql);
+                    $results = $this->db->query($sql);
 
-                // get the setting for which fields to compare on
-                /* @var $admin Administration */
-                $admin = BeanFactory::getBean('Administration');
-                $settings = $admin->getConfigForModule('Forecasts', 'base');
+                    // get the setting for which fields to compare on
+                    /* @var $admin Administration */
+                    $admin = BeanFactory::getBean('Administration');
+                    $settings = $admin->getConfigForModule('Forecasts', 'base');
 
-                while ($row = $this->db->fetchByAssoc($results)) {
-                    $field = substr($row['field_name'], 0, strpos($row['field_name'], '_'));
-                    if ($settings['show_worksheet_' . $field] == "1") {
-                        // calculate the difference to make sure it actually changed at 2 digits vs changed at 6 digits
-                        $diff = SugarMath::init($row['after_value_string'], 6)->sub(
-                            $row['before_value_string']
-                        )->result();
-                        // due to decimal rounding on the front end, we only want to know about differences greater
-                        // of two decimal places.
-                        // todo-sfa: This hardcoded 0.01 value needs to be changed to a value determined by userprefs
-                        if (abs($diff) >= 0.01) {
-                            $this->show_history_log = 1;
-                            break;
+                    while ($row = $this->db->fetchByAssoc($results)) {
+                        $field = substr($row['field_name'], 0, strpos($row['field_name'], '_'));
+                        if ($settings['show_worksheet_' . $field] == "1") {
+                            // calculate the difference to make sure it actually changed at 2 digits vs changed at 6 digits
+                            $diff = SugarMath::init($row['after_value_string'], 6)->sub(
+                                $row['before_value_string']
+                            )->result();
+                            // due to decimal rounding on the front end, we only want to know about differences greater
+                            // of two decimal places.
+                            // todo-sfa: This hardcoded 0.01 value needs to be changed to a value determined by userprefs
+                            if (abs($diff) >= 0.01) {
+                                $this->show_history_log = 1;
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
-        if(!empty($this->user_id)) {
+        if (!empty($this->user_id)) {
             $this->isManager = User::isManager($this->user_id);
         }
     }
@@ -571,7 +573,7 @@ class ForecastManagerWorksheet extends SugarBean
                 'deleted' => 0,
             )
         );
-        
+
         if (is_null($return) && $isDraft === true) {
             $user = BeanFactory::getBean('Users', $manager_id);
             // no draft record found, create it based on the above params
@@ -591,13 +593,17 @@ class ForecastManagerWorksheet extends SugarBean
             $worksheet->closed_amount = 0;
             $worksheet->quota = 0;
             $worksheet->name = $user->full_name;
-            
-        } else if (!is_null($return) && $isDraft === false){
-            // only update the date_modified if it's a draft version
-            $worksheet->update_date_modified = false;
-        } else if(is_null($return) && $isDraft === false) {
-        	// we didn't find a committed row... we need to bail
-            return false;
+
+        } else {
+            if (!is_null($return) && $isDraft === false) {
+                // only update the date_modified if it's a draft version
+                $worksheet->update_date_modified = false;
+            } else {
+                if (is_null($return) && $isDraft === false) {
+                    // we didn't find a committed row... we need to bail
+                    return false;
+                }
+            }
         }
 
         if ($quota != $worksheet->quota) {
@@ -618,26 +624,26 @@ class ForecastManagerWorksheet extends SugarBean
     protected function recalcUserQuota($userId, $timeperiodId)
     {
         global $current_user;
-        
+
         $reporteeTotal = $this->getQuotaSum($userId, $timeperiodId);
         $managerQuota = $this->getManagerQuota($userId, $timeperiodId);
         $managerAmount = (isset($managerQuota['amount'])) ? $managerQuota['amount'] : '0';
         $newTotal = SugarMath::init($managerAmount, 6)->sub($reporteeTotal)->result();
         $quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
-        $directAmount = isset($quota->amount) ? $quota->amount: '0';
-                
+        $directAmount = isset($quota->amount) ? $quota->amount : '0';
+
         /* If the newTotal - manager direct amount is < 0, we want to leave the direct amount alone
          * (making newTotal the direct amount), unless this is a top level manager.  In that case,
          * just return the direct amount
         **/
-        if (SugarMath::init($newTotal, 6)->sub($directAmount)->result() < 0 || 
-            (($current_user->id == $userId) && empty($current_user->reports_to_id)))
-        {
-        	$newTotal = $directAmount;
+        if (SugarMath::init($newTotal, 6)->sub($directAmount)->result() < 0 ||
+            (($current_user->id == $userId) && empty($current_user->reports_to_id))
+        ) {
+            $newTotal = $directAmount;
         }
-                        
+
         //save Manager quota
-        if ($newTotal != $directAmount) {            
+        if ($newTotal != $directAmount) {
             $quota->user_id = $userId;
             $quota->timeperiod_id = $timeperiodId;
             $quota->quota_type = 'Direct';

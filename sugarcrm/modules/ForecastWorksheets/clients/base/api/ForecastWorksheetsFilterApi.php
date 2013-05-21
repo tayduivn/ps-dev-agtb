@@ -37,7 +37,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
             ),
             'forecastWorksheetTimePeriodGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets','?'),
+                'path' => array('ForecastWorksheets', '?'),
                 'pathVars' => array('module', 'timeperiod_id'),
                 'method' => 'forecastWorksheetsGet',
                 'jsonParams' => array(),
@@ -46,7 +46,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
             ),
             'forecastWorksheetTimePeriodUserIdGet' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastWorksheets','?', '?'),
+                'path' => array('ForecastWorksheets', '?', '?'),
                 'pathVars' => array('module', 'timeperiod_id', 'user_id'),
                 'method' => 'forecastWorksheetsGet',
                 'jsonParams' => array(),
@@ -110,15 +110,15 @@ class ForecastWorksheetsFilterApi extends FilterApi
     public function forecastWorksheetsGet(ServiceBase $api, array $args)
     {
         // if no timeperiod is set, just set it to false, and the current time period will be set
-        if(!isset($args['timeperiod_id'])) {
+        if (!isset($args['timeperiod_id'])) {
             $args['timeperiod_id'] = false;
         }
         // if no user id is set, just set it to false so it will use the default user
-        if(!isset($args['user_id'])) {
+        if (!isset($args['user_id'])) {
             $args['user_id'] = false;
         }
         // make sure the type arg is set to prevent notices
-        if(!isset($args['type'])) {
+        if (!isset($args['type'])) {
             $args['type'] = '';
         }
 
@@ -274,7 +274,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
             )
         );
 
-        if(empty($parent_type)) {
+        if (empty($parent_type)) {
             // get the forecast_by setting
             /* @var $admin Administration */
             $admin = BeanFactory::getBean('Administration');
