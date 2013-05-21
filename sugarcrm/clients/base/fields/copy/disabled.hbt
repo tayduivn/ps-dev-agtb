@@ -1,0 +1,6 @@
+{{#if def.sync}}
+    <label><input type="checkbox"{{#if value}} checked{{/if}} disabled="disabled"/>{{label}}</label>
+{{else}}
+    <button type="button" class="btn" disabled="disabled">{{label}}</button>
+{{/if}}
+<p class="help-block"></p>
