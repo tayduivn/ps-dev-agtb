@@ -58,8 +58,8 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
         $stub = new SugarSearchEngineElasticMappingTestStub();
         $result = $stub->constructMappingProperties($fieldDefs);
 
-        $diff = array_diff($expected, $result);
-        $this->assertEmpty($diff, 'result is different from expected array');
+        $this->assertArrayHasKey('first_name', $result);
+        $this->assertEquals($expected['first_name'], $result['first_name'], 'result is different from expected array');
     }
 
 }

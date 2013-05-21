@@ -155,7 +155,7 @@ function getControl(
         elseif(isset($fieldlist[$name]['options']) && is_string($fieldlist[$name]['options']) && isset($mod_strings[$fieldlist[$name]['options']]))
             $fieldlist[$name]['options'] = $mod_strings[$fieldlist[$name]['options']];
         // Bug 22730: make sure all enums have the ability to select blank as the default value.
-        if(!isset($fieldlist[$name]['options']['']))
+        if(isset($fieldlist[$name]['options']) && is_array($fieldlist[$name]['options']) && !isset($fieldlist[$name]['options']['']))
             $fieldlist[$name]['options'][''] = '';
     }
     // fill in function return values

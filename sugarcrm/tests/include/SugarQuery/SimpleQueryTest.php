@@ -131,16 +131,14 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $sq->execute();
         // only 1 record
-        $result = reset($result);
-
         $this->assertEquals(
-            $result['first_name'],
             'Test',
+            $result[0]['first_name'],
             'The First Name Did Not Match'
         );
         $this->assertEquals(
-            $result['last_name'],
             'McTester',
+            $result[0]['last_name'],
             'The Last Name Did Not Match'
         );
 
@@ -169,13 +167,13 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $result = reset($result);
 
         $this->assertEquals(
-            $result['first_name'],
             'Test',
+            $result['first_name'],
             'The First Name Did Not Match, the deleted record did not return'
         );
         $this->assertEquals(
-            $result['last_name'],
             'McTester',
+            $result['last_name'],
             'The Last Name Did Not Match, the deleted record did not return'
         );
 

@@ -70,7 +70,7 @@ class Bug48496Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
         $seed = BeanFactory::getBean('Accounts');
 
-        $lvfMock = $this->getMock('ListViewFacade', array('setup', 'display', 'build'), array($seed, 'Accounts'));
+        $lvfMock = $this->getMock('ListViewFacade', array('setup', 'display'), array($seed, 'Accounts'));
 
         $lvfMock->expects($this->any())
             ->method('setup')
