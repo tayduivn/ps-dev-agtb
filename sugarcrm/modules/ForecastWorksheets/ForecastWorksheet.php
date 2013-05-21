@@ -363,7 +363,8 @@ class ForecastWorksheet extends SugarBean
         $type = ucfirst(strtolower($settings['forecast_by']));
 
         $sq = new SugarQuery();
-        $sq->from(BeanFactory::getBean($type))->where()
+        // we want the deleted records
+        $sq->from(BeanFactory::getBean($type), array('add_deleted' => false))->where()
             ->equals('assigned_user_id', $user_id)
             ->queryAnd()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)

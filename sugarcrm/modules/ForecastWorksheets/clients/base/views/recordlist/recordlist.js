@@ -211,7 +211,7 @@
                         var ctx = this.context.parent || this.context
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
 
-                        if (this.selectedUser.isManager && app.metadata.get('Forecasts','config').show_forecasts_commit_warnings == 1) {
+                        if (this.selectedUser.isManager && app.metadata.get('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                             this.collection.once('reset', function() {
                                 this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', '');
                             }, this)
@@ -231,7 +231,7 @@
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:needs_commit', function(worksheetType) {
-                    if (this.worksheetType == worksheetType && app.metadata.getModule('Forecasts','config').show_forecasts_commit_warnings == 1) {
+                    if (this.worksheetType == worksheetType && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                         // only set this if they are a manager
                         this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_CONFIRM', '');
                     }
@@ -384,6 +384,9 @@
                 var tpl = app.template.getView('recordlist.totals', this.module);
                 this.$el.find('tbody').after(tpl(this));
             }
+
+            // figure out if any of the row actions need to be disabled
+            this.setRowActionButtonStates();
         } else {
             if (this.layout.isVisible()) {
                 this.layout.hide();
@@ -468,6 +471,19 @@
                 return false;
             }, this);
         }
+    },
+
+    /**
+     * Handles setting the proper state for the Preview in the row-actions
+     */
+    setRowActionButtonStates: function() {
+        _.each(this.fields, function(field) {
+            if (field.def.event === 'list:preview:fire') {
+                // we have a field that needs to be disabled, so disable it!
+                field.setDisabled((field.model.get('parent_deleted') == "1"));
+                field.render();
+            }
+        });
     },
 
     /**
@@ -667,8 +683,8 @@
 
         // Since parent_name breaks the XHR call in the order by, just use the name field instead
         // they are the same anyways.
-        if(!_.isUndefined(options.params.order_by) && options.params.order_by.indexOf('parent_name') === 0) {
-            options.params.order_by = options.params.order_by.replace('parent_','');
+        if (!_.isUndefined(options.params.order_by) && options.params.order_by.indexOf('parent_name') === 0) {
+            options.params.order_by = options.params.order_by.replace('parent_', '');
         }
 
         // custom success handler
@@ -810,6 +826,33 @@
                 'closed_amount': includedClosedAmount
 
             };
+        }
+    },
+
+    /**
+     * We need to overwrite so we pass in the filterd list
+     */
+    addPreviewEvents: function() {
+        //When clicking on eye icon, we need to trigger preview:render with model&collection
+        this.context.on("list:preview:fire", function(model) {
+            var previewCollection = new Backbone.Collection();
+            this.filteredCollection.each(function(model) {
+                if (model.get('parent_deleted') !== "1") {
+                    previewCollection.add(model);
+                }
+            }, this);
+
+            app.events.trigger("preview:render", model, previewCollection, true);
+        }, this);
+
+
+        //When switching to next/previous record from the preview panel, we need to update the highlighted row
+        app.events.on("list:preview:decorate", this.decorateRow, this);
+        if (this.layout) {
+            this.layout.on("list:sort:fire", function() {
+                //When sorting the list view, we need to close the preview panel
+                app.events.trigger("preview:close");
+            }, this);
         }
     }
 })

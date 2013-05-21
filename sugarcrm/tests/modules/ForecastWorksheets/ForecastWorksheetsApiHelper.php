@@ -14,6 +14,7 @@
  */
 
 require_once 'tests/SugarTestDatabaseMock.php';
+require_once 'modules/ForecastWorksheets/ForecastWorksheetsApiHelper.php';
 
 class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -29,58 +30,65 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-
-        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public function setUp()
     {
         $this->db = new SugarTestDatabaseMock();
         $this->db->setUp();
+        parent::setUp();
     }
 
     public function tearDown()
     {
         $this->db->tearDown();
+        parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
-        SugarTestForecastUtilities::tearDownForecastConfig();
         parent::tearDownAfterClass();
     }
 
-    public function testGetAccountReturnsEmpty()
+    public function dataProviderFormatForApiSetsParentDeleted()
     {
-        $this->db->queries['accountQuery'] = array(
-            'match' => '/my_test_id/',
-            'rows' => array(
-                array(
-                    'name' => 'My Test Account'
-                ),
-            ),
+        return array(
+            array(0),
+            array(1)
         );
-
-        $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $return = SugarTestReflection::callProtectedMethod($forecast_worksheet, 'getAccountName', array('test_id'));
-        $this->assertEmpty($return);
     }
 
-    public function testGetAccountReturnsName()
+    /**
+     *
+     * @dataProvider dataProviderFormatForApiSetsParentDeleted
+     *
+     * @param $parent_deleted
+     */
+    public function testFormatForApiSetsParentDeleted($parent_deleted)
     {
-        $acc_name = 'My Test Account';
-        $acc_id = 'my_test_id';
-        $this->db->queries['accountQuery'] = array(
-            'match' => '/' . $acc_id . '/',
-            'rows' => array(
-                array(
-                    'name' => $acc_name
+        $product_name = 'My Test Product';
+        $product_id = 'my_test_id';
+        if ($parent_deleted === 0) {
+            $this->db->queries['forecast_parent_query'] = array(
+                'match' => '/products.deleted = 0 AND products.id = \'' . $product_id . '\'/',
+                'rows' => array(
+                    array(
+                        'id' => $product_id,
+                        'name' => $product_name,
+                        'deleted' => $parent_deleted
+                    ),
                 ),
-            ),
-        );
+            );
+        }
 
+        /* @var $forecast_worksheet ForecastWorksheet */
         $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $return = SugarTestReflection::callProtectedMethod($forecast_worksheet, 'getAccountName', array($acc_id));
-        $this->assertEquals($acc_name, $return);
+        $forecast_worksheet->parent_type = 'Products';
+        $forecast_worksheet->parent_id = $product_id;
+
+        $api_helper = new ForecastWorksheetsApiHelper(SugarTestRestUtilities::getRestServiceMock());
+        $bean = $api_helper->formatForApi($forecast_worksheet);
+
+        $this->assertEquals($parent_deleted, $bean['parent_deleted']);
     }
 }

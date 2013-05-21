@@ -217,6 +217,15 @@ $dictionary['ForecastWorksheet'] = array(
             'comment' => 'Is A Draft Version',
             'studio' => false
         ),
+        'parent_deleted' =>
+        array(
+            'name' => 'parent_deleted',
+            'default' => 0,
+            'type' => 'int',
+            'comment' => 'Is Parent Deleted',
+            'studio' => false,
+            'source' => 'non-db'
+        ),
         'opportunity' =>
         array(
             'name' => 'opportunity',

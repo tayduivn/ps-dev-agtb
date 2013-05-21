@@ -42,7 +42,8 @@ $viewdefs['ForecastWorksheets']['base']['view']['list'] = array(
                     'readonly' => true,
                     'related_fields' => array(
                         'parent_id',
-                        'parent_type'
+                        'parent_type',
+                        'parent_deleted'
                     )
                 ),
 

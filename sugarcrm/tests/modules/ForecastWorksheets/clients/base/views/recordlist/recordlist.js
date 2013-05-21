@@ -509,7 +509,41 @@ describe("ForecastWorksheets.View.RecordList", function() {
                 view.sync('read', view.collection, options);
                 expect(options.params.order_by).toEqual('name:_desc');
                 expect(view.collection.orderBy.field).toEqual('parent_name');
-            })
-        })
-    })
+            });
+        });
+    });
+
+    describe('setRowActionButtonStates', function() {
+        var fieldDef = {}, field, fieldStub, viewFields = [];
+        beforeEach(function() {
+            fieldDef = {
+                'event': 'list:preview:fire',
+                'type': 'button',
+                'name': 'test_btn'
+            }
+            viewFields = view.fields;
+
+            field = SugarTest.createField('base', 'rowaction', 'rowaction', 'list', fieldDef);
+            fieldStub = sinon.stub(field, 'setDisabled', function() {});
+            view.fields = [field];
+        });
+
+        afterEach(function() {
+            view.fields = viewFields;
+            fieldStub.restore();
+            delete field;
+        });
+
+        it('should call field.setDisabled(false)', function() {
+            field.model.set('parent_deleted', 0);
+            view.setRowActionButtonStates();
+            expect(fieldStub).toHaveBeenCalledWith(false);
+        });
+
+        it('should call field.setDisabled(true) ', function() {
+            field.model.set('parent_deleted', 1);
+            view.setRowActionButtonStates();
+            expect(fieldStub).toHaveBeenCalledWith(true);
+        });
+    });
 });
