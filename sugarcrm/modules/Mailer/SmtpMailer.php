@@ -26,14 +26,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 /* Internal Module Imports */
 
 /**
- * Needs the PHPMailer library.
+ * Needs a proxy to the PHPMailer library.
  */
-require_once "lib/phpmailer/class.phpmailer.php";
-
-/**
- * Required to establish the SMTP connection prior to PHPMailer's send for error handling purposes.
- */
-require_once "lib/phpmailer/class.smtp.php";
+require_once "PHPMailerProxy.php";
 
 /**
  * Requires BaseMailer in order to extend it.
@@ -124,7 +119,7 @@ class SmtpMailer extends BaseMailer
      */
     protected function generateMailer()
     {
-        return new PHPMailer(true); // use PHPMailer with exceptions
+        return new PHPMailerProxy;
     }
 
     /**

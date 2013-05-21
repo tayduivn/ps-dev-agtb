@@ -19,14 +19,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Mailer/lib/phpmailer/class.phpmailer.php');
+require_once('modules/Mailer/PHPMailerProxy.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
  * Sugar mailer
  * @api
  */
-class SugarPHPMailer extends PHPMailer
+class SugarPHPMailer extends PHPMailerProxy
 {
     var $oe; // OutboundEmail
     var $protocol = "tcp://";
@@ -38,8 +38,11 @@ class SugarPHPMailer extends PHPMailer
 
     /**
      * Sole constructor
+     *
+     * Doesn't call PHPMailerProxy's constructor so that using PHPMailer with exceptions is not imposed on
+     * SugarPHPMailer.
      */
-    function SugarPHPMailer() {
+    public function SugarPHPMailer() {
         global $locale;
         global $current_user;
         global $sugar_config;
@@ -77,7 +80,7 @@ class SugarPHPMailer extends PHPMailer
     /**
      * Prefills outbound details
      */
-    function setMailer() {
+    public function setMailer() {
         global $current_user;
 
         require_once("include/OutboundEmail/OutboundEmail.php");
@@ -101,7 +104,7 @@ class SugarPHPMailer extends PHPMailer
             } // if
 
             if($oe->mail_smtpauth_req) {
-                $this->SMTPAuth = TRUE;
+                $this->SMTPAuth = true;
                 $this->Username = $oe->mail_smtpuser;
                 $this->Password = $oe->mail_smtppass;
             }
@@ -113,7 +116,7 @@ class SugarPHPMailer extends PHPMailer
     /**
      * Prefills mailer for system
      */
-    function setMailerForSystem() {
+    public function setMailerForSystem() {
         require_once("include/OutboundEmail/OutboundEmail.php");
         $oe = new OutboundEmail();
         $oe = $oe->getSystemMailerSettings();
@@ -134,7 +137,7 @@ class SugarPHPMailer extends PHPMailer
                 $this->SMTPSecure = 'tls';
             } // if
             if($oe->mail_smtpauth_req) {
-                $this->SMTPAuth = TRUE;
+                $this->SMTPAuth = true;
                 $this->Username = $oe->mail_smtpuser;
                 $this->Password = $oe->mail_smtppass;
             }
@@ -147,7 +150,7 @@ class SugarPHPMailer extends PHPMailer
      * handles Charset translation for all visual parts of the email.
      * @param string charset Default = ''
      */
-    function prepForOutbound() {
+    public function prepForOutbound() {
         global $locale;
 
         if($this->preppedForOutbound == false) {
@@ -263,7 +266,7 @@ eoq;
     /**
      * @param notes	array of note beans
      */
-    function handleAttachments($notes) {
+    public function handleAttachments($notes) {
         global $sugar_config;
 
 		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
@@ -309,17 +312,15 @@ eoq;
         }
     }
 
-	/**
-	 * overloads class.phpmailer's SetError() method so that we can log errors in sugarcrm.log
-	 *
-	 */
-	function SetError($msg) {
-		$GLOBALS['log']->fatal("SugarPHPMailer encountered an error: {$msg}");
-		parent::SetError($msg);
-	}
-
-	function SmtpConnect() {
-		$connection = parent::SmtpConnect();
+    /**
+     * Overloads PHPMailer::SmtpConnect() to log the correct error message based on the email configuration used for
+     * connecting to the SMTP server.
+     *
+     * @param array $options
+     * @return bool
+     */
+    public function SmtpConnect($options = array()) {
+		$connection = parent::SmtpConnect($options);
 		if (!$connection) {
 			global $app_strings;
 			if(isset($this->oe) && $this->oe->type == "system") {
@@ -334,7 +335,7 @@ eoq;
     /*
      * overloads PHPMailer::PreSend() to allow for empty messages to go out.
      */
-    protected function PreSend() {
+    public function PreSend() {
         //check to see if message body is empty
         if(empty($this->Body)){
             //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty

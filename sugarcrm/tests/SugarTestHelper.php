@@ -365,17 +365,17 @@ class SugarMockLogger
 
 	public function __call($method, $message)
 	{
-		$this->messages[] = strtoupper($method) . ': ' . $message[0];
+		$this->_messages[] = strtoupper($method) . ': ' . $message[0];
 	}
 
 	public function getLastMessage()
 	{
-		return end($this->messages);
+		return end($this->_messages);
 	}
 
 	public function getMessageCount()
 	{
-		return count($this->messages);
+		return count($this->_messages);
 	}
 }
 
