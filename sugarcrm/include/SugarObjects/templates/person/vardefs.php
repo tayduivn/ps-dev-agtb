@@ -35,6 +35,7 @@ $vardefs =array(
 			'options' => 'salutation_dom',
 			'massupdate' => false,
 			'len' => '255',
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'Contact salutation (e.g., Mr, Ms)'
 		),
 'first_name' =>
@@ -45,6 +46,7 @@ $vardefs =array(
 			'len' => '100',
 			'unified_search' => true,
 			'full_text_search' => array('boost' => 3),
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'First name of the contact',
             'merge_filter' => 'selected',
 
@@ -57,6 +59,7 @@ $vardefs =array(
 			'len' => '100',
 			'unified_search' => true,
 			'full_text_search' => array('boost' => 3),
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'Last name of the contact',
             'merge_filter' => 'selected',
             'required'=>true,
@@ -75,6 +78,7 @@ $vardefs =array(
 			'group'=>'last_name',
 			'db_concat_fields'=> array(0=>'first_name', 1=>'last_name'),
             'importable' => 'false',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'full_name' =>
 		array (
@@ -89,6 +93,7 @@ $vardefs =array(
 			'group'=>'last_name',
 			'db_concat_fields'=> array(0=>'first_name', 1=>'last_name'),
 			'studio' => array('listview' => false),
+            'duplicate_on_record_copy' => 'always',
 		),
 	'title' =>
 		array (
@@ -96,6 +101,7 @@ $vardefs =array(
 			'vname' => 'LBL_TITLE',
 			'type' => 'varchar',
 			'len' => '100',
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'The title of the contact'
 		),
     'linkedin' =>
@@ -104,6 +110,7 @@ $vardefs =array(
    			'vname' => 'LBL_LINKEDIN',
    			'type' => 'varchar',
    			'len' => '100',
+            'duplicate_on_record_copy' => 'always',
    			'comment' => 'The linkedin name of the user'
    		),
     'facebook' =>
@@ -112,6 +119,7 @@ $vardefs =array(
         'vname' => 'LBL_FACEBOOK',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The facebook name of the user'
     ),
     'twitter' =>
@@ -120,6 +128,7 @@ $vardefs =array(
         'vname' => 'LBL_TWITTER',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The twitter name of the user'
     ),
     'googleplus' =>
@@ -128,6 +137,7 @@ $vardefs =array(
         'vname' => 'LBL_GOOGLEPLUS',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The google plus id of the user'
     ),
 	'department' =>
@@ -136,6 +146,7 @@ $vardefs =array(
 			'vname' => 'LBL_DEPARTMENT',
 			'type' => 'varchar',
 			'len' => '255',
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'The department of the contact',
             'merge_filter' => 'enabled',
 		),
@@ -146,6 +157,7 @@ $vardefs =array(
 			'type' => 'bool',
 			'default' => '0',
 			'audited'=>true,
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'An indicator of whether contact can be called'
 		),
 	'phone_home' =>
@@ -157,6 +169,7 @@ $vardefs =array(
 			'len' => 100,
 			'unified_search' => true,
 			'full_text_search' => array('boost' => 1),
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'Home phone number of the contact',
             'merge_filter' => 'enabled',
 		),
@@ -173,6 +186,7 @@ $vardefs =array(
 			),
 			'vname' =>'LBL_ANY_EMAIL',
 			'studio' => array('visible'=>false, 'searchview'=>true),
+            'duplicate_on_record_copy' => 'always',
             'len' => 100
 		),
 	'phone_mobile' =>
@@ -186,6 +200,7 @@ $vardefs =array(
 			'full_text_search' => array('boost' => 1),
 			'comment' => 'Mobile phone number of the contact',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'phone_work' =>
 		array (
@@ -199,6 +214,7 @@ $vardefs =array(
 			'full_text_search' => array('boost' => 1),
 			'comment' => 'Work phone number of the contact',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'phone_other' =>
 		array (
@@ -211,6 +227,7 @@ $vardefs =array(
 			'full_text_search' => array('boost' => 1),
 			'comment' => 'Other phone number for the contact',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'phone_fax' =>
 		array (
@@ -223,6 +240,7 @@ $vardefs =array(
 			'full_text_search' => array('boost' => 1),
 			'comment' => 'Contact fax number',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'email1' =>
 		array(
@@ -237,6 +255,7 @@ $vardefs =array(
             'merge_filter' => 'enabled',
 		    'studio' => array('editview' => true, 'editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
 		    'full_text_search' => array('boost' => 3, 'index' => 'not_analyzed'), //bug 54567
+            'duplicate_on_record_copy' => 'always',
 		),
 	'email2' =>
 		array(
@@ -250,6 +269,7 @@ $vardefs =array(
 			'group'=>'email2',
             'merge_filter' => 'enabled',
 		    'studio' => 'false',
+            'duplicate_on_record_copy' => 'always',
 		),
     'invalid_email' =>
 		array(
@@ -259,6 +279,7 @@ $vardefs =array(
 			'type'		=> 'bool',
 		    'massupdate' => false,
 		    'studio' => 'false',
+            'duplicate_on_record_copy' => 'always',
 		),
     'email_opt_out' =>
 		array(
@@ -268,6 +289,7 @@ $vardefs =array(
 			'type'		=> 'bool',
 		    'massupdate' => false,
 			'studio'=>'false',
+            'duplicate_on_record_copy' => 'always',
 		),
 
 	'primary_address_street' =>
@@ -279,6 +301,7 @@ $vardefs =array(
 			'group'=>'primary_address',
 			'comment' => 'Street address for primary address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'primary_address_street_2' =>
 		array (
@@ -287,6 +310,7 @@ $vardefs =array(
 			'type' => 'varchar',
 			'len' => '150',
 			'source' => 'non-db',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'primary_address_street_3' =>
 		array (
@@ -295,6 +319,7 @@ $vardefs =array(
 			'type' => 'varchar',
 			'len' => '150',
 			'source' => 'non-db',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'primary_address_city' =>
 		array (
@@ -305,6 +330,7 @@ $vardefs =array(
 			'group'=>'primary_address',
 			'comment' => 'City for primary address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'primary_address_state' =>
 		array (
@@ -315,6 +341,7 @@ $vardefs =array(
 			'group'=>'primary_address',
 			'comment' => 'State for primary address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'primary_address_postalcode' =>
 		array (
@@ -325,6 +352,7 @@ $vardefs =array(
 			'group'=>'primary_address',
 			'comment' => 'Postal code for primary address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 
 		),
 	'primary_address_country' =>
@@ -335,6 +363,7 @@ $vardefs =array(
 			'group'=>'primary_address',
 			'comment' => 'Country for primary address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_street' =>
 		array (
@@ -345,6 +374,7 @@ $vardefs =array(
 			'group'=>'alt_address',
 			'comment' => 'Street address for alternate address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_street_2' =>
 		array (
@@ -353,6 +383,7 @@ $vardefs =array(
 			'type' => 'varchar',
 			'len' => '150',
 			'source' => 'non-db',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_street_3' =>
 		array (
@@ -361,6 +392,7 @@ $vardefs =array(
 			'type' => 'varchar',
 			'len' => '150',
 			'source' => 'non-db',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_city' =>
 		array (
@@ -371,6 +403,7 @@ $vardefs =array(
 			'group'=>'alt_address',
 			'comment' => 'City for alternate address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_state' =>
 		array (
@@ -381,6 +414,7 @@ $vardefs =array(
 			'group'=>'alt_address',
 			'comment' => 'State for alternate address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_postalcode' =>
 		array (
@@ -391,6 +425,7 @@ $vardefs =array(
 			'group'=>'alt_address',
 			'comment' => 'Postal code for alternate address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'alt_address_country' =>
 		array (
@@ -400,6 +435,7 @@ $vardefs =array(
 			'group'=>'alt_address',
 			'comment' => 'Country for alternate address',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 		'assistant' =>
 		array (
@@ -411,6 +447,7 @@ $vardefs =array(
 			'full_text_search' => array('boost' => 2),
 			'comment' => 'Name of the assistant of the contact',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 	'assistant_phone' =>
 		array (
@@ -424,6 +461,7 @@ $vardefs =array(
 			'full_text_search' => array('boost' => 1),
 			'comment' => 'Phone number of the assistant of the contact',
             'merge_filter' => 'enabled',
+            'duplicate_on_record_copy' => 'always',
 		),
 
 	'email_addresses_primary' =>
@@ -460,6 +498,7 @@ $vardefs =array(
             'width' => '42',
             'height' => '42',
             'border' => '',
+            'duplicate_on_record_copy' => 'always',
 		),
 	//END SUGARCRM flav!=com ONLY
 ),

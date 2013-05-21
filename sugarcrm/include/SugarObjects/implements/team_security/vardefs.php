@@ -42,7 +42,8 @@ $vardefs = array(
 			/*
 			'source' => 'non-db',
 			*/
-			'comment' => 'Team ID for the account'
+            'duplicate_on_record_copy' => 'always',
+            'comment' => 'Team ID for the account'
 		),
 		'team_set_id' =>
 		array (
@@ -54,7 +55,9 @@ $vardefs = array(
 		    'audited' => true,
 		    'studio' => 'false',
 			'dbType' => 'id',
-		),
+            'duplicate_on_record_copy' => 'always',
+
+        ),
 		'team_count' =>
 		array (
 			'name' => 'team_count',
@@ -75,7 +78,8 @@ $vardefs = array(
 			'importable' => 'false',
 			'reportable'=>false,
 		    'duplicate_merge' => 'disabled',
-			'studio' => 'false',
+            'duplicate_on_record_copy' => 'always',
+            'studio' => 'false',
 		    'hideacl' => true,
 		),
 		'team_name' =>
@@ -106,7 +110,8 @@ $vardefs = array(
                    'portaleditview' => false,
                    //END SUGARCRM flav=pro ONLY
                ), // don't show in studio fields list
-		),
+            'duplicate_on_record_copy' => 'always',
+        ),
 		'team_link' =>
 	    array (
 	      'name' => 'team_link',
@@ -119,7 +124,7 @@ $vardefs = array(
 	      'source' => 'non-db',
 	      'duplicate_merge' => 'disabled',
 	      'studio' => 'false',
-	    ),
+        ),
 	    'team_count_link' =>
   			array (
   			'name' => 'team_count_link',
@@ -132,7 +137,7 @@ $vardefs = array(
 		    'duplicate_merge' => 'disabled',
   			'reportable'=>false,
   			'studio' => 'false',
-  		),
+            ),
   		'teams' =>
 		array (
 		'name' => 'teams',
@@ -146,7 +151,7 @@ $vardefs = array(
 		'link_file' => 'modules/Teams/TeamSetLink.php',
 		'studio' => 'false',
 		'reportable'=>false,
-	),
+        ),
 	//END SUGARCRM flav=pro ONLY
 ),
 

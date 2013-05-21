@@ -37,6 +37,7 @@ $vardefs = array(
 	    'type' => 'id',
 	    'required'=>true,
 	    'reportable'=>true,
+        'duplicate_on_record_copy' => 'no',
 	    'comment' => 'Unique identifier'
 	  ),
 	  'name'=>
@@ -54,7 +55,8 @@ $vardefs = array(
         'duplicate_merge' => 'enabled',
         //'duplicate_merge_dom_value' => '3',
         'merge_filter' => 'selected',
-	    ),
+        'duplicate_on_record_copy' => 'always',
+        ),
 	  'date_entered' =>
 	  array (
 	    'name' => 'date_entered',
@@ -67,6 +69,7 @@ $vardefs = array(
 	    'studio' => array(
 	        'portaleditview' => false, // Bug58408 - hide from Portal edit layout
 	    ),
+        'duplicate_on_record_copy' => 'no',
 	  ),
 	  'date_modified' =>
 	  array (
@@ -80,6 +83,7 @@ $vardefs = array(
 	          'portaleditview' => false, // Bug58408 - hide from Portal edit layout
 	    ),
 	    'options' => 'date_range_search_dom',
+        'duplicate_on_record_copy' => 'no',
 	  ),
 		'modified_user_id' =>
 	  array (
@@ -95,6 +99,7 @@ $vardefs = array(
 	    'reportable'=>true,
 	    'comment' => 'User who last modified record',
         'massupdate' => false,
+        'duplicate_on_record_copy' => 'no',
 	  ),
 	  'modified_by_name' =>
 	  array (
@@ -110,6 +115,7 @@ $vardefs = array(
 	    'link'=>'modified_user_link',
 	    'duplicate_merge'=>'disabled',
         'massupdate' => false,
+        'duplicate_on_record_copy' => 'no',
 	  ),
 	  'created_by' =>
 	  array (
@@ -124,6 +130,7 @@ $vardefs = array(
 	    'group'=>'created_by_name',
 	    'comment' => 'User who created record',
         'massupdate' => false,
+        'duplicate_on_record_copy' => 'no',
 	  ),
 	  	'created_by_name' =>
 	  array (
@@ -140,6 +147,7 @@ $vardefs = array(
 		'duplicate_merge'=>'disabled',
         'importable' => 'false',
         'massupdate' => false,
+        'duplicate_on_record_copy' => 'no',
 	),
 	  'description' =>
 	  array (
@@ -149,6 +157,7 @@ $vardefs = array(
 	    'comment' => 'Full text of the note',
 	    'rows' => 6,
 	    'cols' => 80,
+        'duplicate_on_record_copy' => 'always',
 	  ),
 	  'deleted' =>
 	  array (
@@ -157,6 +166,7 @@ $vardefs = array(
 	    'type' => 'bool',
 	    'default' => '0',
 	    'reportable'=>false,
+        'duplicate_on_record_copy' => 'no',
 	    'comment' => 'Record deletion indicator'
 	  ),
 
@@ -191,7 +201,7 @@ $vardefs = array(
         'link_type' => 'many',
         'module' => 'Activities',
         'bean_name' => 'Activity',
-        'source' => 'non-db'
+        'source' => 'non-db',
     )
 
 ),

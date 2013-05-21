@@ -41,6 +41,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'required'=>true,
     'unified_search' => true,
     'full_text_search' => array('boost' => 3),
+    'duplicate_on_record_copy' => 'always',
   ),
 
 'name'=>
@@ -49,6 +50,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	'source'=>'non-db',
 	'type'=>'varchar',
 	'db_concat_fields'=> array(0=>'document_name'),
+    'duplicate_on_record_copy' => 'always',
 	),
 
 'filename' =>
@@ -60,6 +62,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	'importable' => 'required',
     'len' => '255',
     'studio' => 'false',
+    'duplicate_on_record_copy' => 'always',
   ),
   'file_ext' =>
   array (
@@ -67,6 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'vname' => 'LBL_FILE_EXTENSION',
     'type' => 'varchar',
     'len' => 100,
+    'duplicate_on_record_copy' => 'always',
   ),
   'file_mime_type' =>
   array (
@@ -74,6 +78,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'vname' => 'LBL_MIME',
     'type' => 'varchar',
     'len' => '100',
+    'duplicate_on_record_copy' => 'always',
   ),
 
 
@@ -83,6 +88,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      'vname' => 'LBL_FILE_UPLOAD',
      'type' => 'file',
      'source' => 'non-db',
+     'duplicate_on_record_copy' => 'always',
     //'noChange' => true,
     // jwhitcraft BUG44657 - Take this out as it was causing the remove button not to show up on custom modules
   ),
@@ -95,6 +101,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	'required'=>true,
     'importable' => 'required',
     'display_default' => 'now',
+    'duplicate_on_record_copy' => 'always',
   ),
 
 'exp_date' =>
@@ -102,6 +109,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'name' => 'exp_date',
     'vname' => 'LBL_DOC_EXP_DATE',
     'type' => 'date',
+    'duplicate_on_record_copy' => 'always',
   ),
 
   'category_id' =>
@@ -112,6 +120,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'len' => 100,
     'options' => 'document_category_dom',
     'reportable'=>false,
+    'duplicate_on_record_copy' => 'always',
   ),
 
   'subcategory_id' =>
@@ -122,6 +131,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'len' => 100,
     'options' => 'document_subcategory_dom',
     'reportable'=>false,
+    'duplicate_on_record_copy' => 'always',
   ),
 
   'status_id' =>
@@ -132,6 +142,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'len' => 100,
     'options' => 'document_status_dom',
     'reportable'=>false,
+    'duplicate_on_record_copy' => 'always',
   ),
 
   'status' =>
@@ -140,6 +151,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'vname' => 'LBL_DOC_STATUS',
     'type' => 'varchar',
     'source' => 'non-db',
+    'duplicate_on_record_copy' => 'always',
     'Comment' => 'Document status for Meta-Data framework',
   ),
  )
