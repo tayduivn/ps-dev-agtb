@@ -48,7 +48,9 @@
                         </li>
                         {{/each}}
                         {{else}}
-                             {{#if ../../context._dataFetched}}<div class="block-footer">{{str "LBL_STREAM_NO_RECORDS"}}</div>{{else}}{{str "LBL_LOADING"}}{{/if}}
+                            {{#if ../../emptyStream}}
+                                <div class="block-footer">{{str "LBL_STREAM_NO_RECORDS"}}</div>
+                            {{/if}}
                         {{/if}}
                     </ul>
                     {{/each}}

@@ -47,15 +47,32 @@
     },
 
     /**
+     * Handlebars flag for when activity stream contains no items
+     */
+    emptyStream: false,
+
+    /**
      * @override
      * @private
      */
     _render: function() {
+        if(this.hasLoadedActivities()){
+            this.emptyStream = this.collection.length < 1;
+        }
         // Bug 54597 activity view not respecting list ACL
         var oViewName = this.name;
         this.name = 'list';
         app.view.View.prototype._render.call(this);
         this.name = oViewName;
+    },
+
+    /**
+     * Test if activities collection has been fetched yet
+     * @returns boolean TRUE if activities have been fetched
+     */
+    hasLoadedActivities: function(){
+        //page has a value once fetch is complete
+        return _.isNumber(this.collection.page);
     },
 
     /**
