@@ -41,6 +41,7 @@ $vardefs = array (
 			'duplicate_merge' => 'disabled',
 			'disable_num_format' => true,
 			'studio' => array('quickcreate' => false),
+            'duplicate_on_record_copy' => 'no',
 		),
 
         'name' => array (
@@ -57,6 +58,7 @@ $vardefs = array (
 			'merge_filter' => 'selected',
 			'required'=>true,
             'importable' => 'required',
+            'duplicate_on_record_copy' => 'always',
 			
 		),
         'type' => array (
@@ -68,6 +70,7 @@ $vardefs = array (
             'comment' => 'The type of issue (ex: issue, feature)',
             'merge_filter' => 'enabled',
             'sortable' => true,
+            'duplicate_on_record_copy' => 'always',
         ),
 
 		'status' => array (
@@ -80,6 +83,7 @@ $vardefs = array (
             'comment' => 'The status of the issue',
             'merge_filter' => 'enabled',
             'sortable' => true,
+            'duplicate_on_record_copy' => 'always',
 		),
 
         'priority' => array (
@@ -92,6 +96,7 @@ $vardefs = array (
 			'comment' => 'An indication of the priorty of the issue',
 			'merge_filter' => 'enabled',
             'sortable' => true,
+            'duplicate_on_record_copy' => 'always',
 		),
 
         'resolution' => array (
@@ -104,6 +109,7 @@ $vardefs = array (
 			'comment' => 'An indication of how the issue was resolved',
 			'merge_filter' => 'enabled',
             'sortable' => true,
+            'duplicate_on_record_copy' => 'always',
 			
 		),
 
@@ -112,6 +118,7 @@ $vardefs = array (
 			'name' => 'system_id',
 			'vname' => 'LBL_SYSTEM_ID',
 			'type' => 'int',
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'The offline client device that created the bug'
 		),
 			//END SUGARCRM flav=pro ONLY
@@ -122,6 +129,7 @@ $vardefs = array (
 			'name' => 'work_log',
 			'vname' => 'LBL_WORK_LOG',
 			'type' => 'text',
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'Free-form text used to denote activities of interest'
 		),
 

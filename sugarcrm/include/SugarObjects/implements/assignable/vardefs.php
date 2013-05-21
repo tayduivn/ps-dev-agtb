@@ -41,6 +41,7 @@ $vardefs = array(
 			'isnull' => 'false',
 			'dbType' => 'id',
 			'audited'=>true,
+            'duplicate_on_record_copy' => 'always',
 			'comment' => 'User ID assigned to record',
             'duplicate_merge'=>'disabled'
 		),
@@ -56,8 +57,9 @@ $vardefs = array(
 		    'table' => 'users',
 		    'id_name' => 'assigned_user_id',
 		    'module'=>'Users',
-		    'duplicate_merge'=>'disabled'
-	 ),
+		    'duplicate_merge'=>'disabled',
+            'duplicate_on_record_copy' => 'always',
+     ),
 		      'assigned_user_link' =>
   array (
         'name' => 'assigned_user_link',

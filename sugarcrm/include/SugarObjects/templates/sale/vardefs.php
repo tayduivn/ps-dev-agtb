@@ -44,7 +44,8 @@ $vardefs = array(
 			'merge_filter'=>'selected',
 			'required' => true,
             'importable' => 'required',
-		),
+            'duplicate_on_record_copy' => 'always',
+         ),
 		strtolower($object_name).'_type' =>
 		 array(
 			'name'=>strtolower($object_name).'_type',
@@ -52,6 +53,7 @@ $vardefs = array(
 			'type'=>'enum',
 			'options'=>strtolower($object_name).'_type_dom',
 			'len' => 100,
+            'duplicate_on_record_copy' => 'always',
 			'comment'=>'The Sale is of this type',
 		),
 		'description'=>
@@ -62,7 +64,8 @@ $vardefs = array(
 		 	'comment'=>'Description of the sale',
             'rows' => 6,
             'cols' => 80,
-		),
+            'duplicate_on_record_copy' => 'always',
+         ),
 		 'lead_source' =>
 		  array (
 		    'name' => 'lead_source',
@@ -70,7 +73,8 @@ $vardefs = array(
 		    'type' => 'enum',
 		    'options' => 'lead_source_dom',
 		    'len' => '50',
-		    'comment' => 'Source of the sale',
+            'duplicate_on_record_copy' => 'always',
+            'comment' => 'Source of the sale',
 		  ),
 		    'amount' =>
 		  array (
@@ -81,7 +85,8 @@ $vardefs = array(
 		    'comment' => 'Unconverted amount of the sale',
 		    'duplicate_merge'=>'disabled',
 		    'required' => true,
-		  ),
+            'duplicate_on_record_copy' => 'always',
+          ),
 		  'amount_usdollar' =>
 		  array (
 		    'name' => 'amount_usdollar',
@@ -91,7 +96,8 @@ $vardefs = array(
 		    'dbType' => 'double',
 		    'disable_num_format' => true,
 		    'audited'=>true,
-		    'comment' => 'Formatted amount of the sale'
+            'duplicate_on_record_copy' => 'always',
+            'comment' => 'Formatted amount of the sale'
 		  ),
           'currency_id' =>
           array (
@@ -102,6 +108,7 @@ $vardefs = array(
             'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),
             'reportable'=>false,
             'default'=>'-99',
+            'duplicate_on_record_copy' => 'always',
             'comment' => 'Currency used for display purposes'
           ),
           'currency_name'=>
@@ -117,7 +124,8 @@ $vardefs = array(
                 'source' => 'non-db',
                 'function'=>array('name'=>'getCurrencyNameDropDown', 'returns'=>'html'),
                 'studio' => 'false',
-            ),
+                'duplicate_on_record_copy' => 'always',
+               ),
            'currency_symbol'=>
                array(
                 'name'=>'currency_symbol',
@@ -130,7 +138,8 @@ $vardefs = array(
                 'module'=>'Currencies',
                 'source' => 'non-db',
                 'function'=>array('name'=>'getCurrencySymbolDropDown', 'returns'=>'html'),
-            ),
+                'duplicate_on_record_copy' => 'always',
+               ),
 		   'date_closed' =>
 		  array (
 		    'name' => 'date_closed',
@@ -141,7 +150,8 @@ $vardefs = array(
 		    'comment' => 'Expected or actual date the sale will close',
 		    'enable_range_search' => true,
 		    'options' => 'date_range_search_dom',
-		  ),
+            'duplicate_on_record_copy' => 'always',
+          ),
 		  'next_step' =>
 		  array (
 		    'name' => 'next_step',
@@ -149,7 +159,8 @@ $vardefs = array(
 		    'type' => 'varchar',
 		    'len' => '100',
 		    'comment' => 'The next step in the sales process',
-		    //BEGIN SUGARCRM flav=pro ONLY
+            'duplicate_on_record_copy' => 'always',
+            //BEGIN SUGARCRM flav=pro ONLY
 		    'merge_filter' => 'enabled',
 		    //END SUGARCRM flav=pro ONLY
 		  ),
@@ -164,7 +175,8 @@ $vardefs = array(
 		    'comment' => 'Indication of progression towards closure',
 			'required'=>true,
             'importable' => 'required',
-		    //BEGIN SUGARCRM flav=pro ONLY
+            'duplicate_on_record_copy' => 'always',
+            //BEGIN SUGARCRM flav=pro ONLY
 		    'merge_filter' => 'enabled',
 		    //END SUGARCRM flav=pro ONLY
 		  ),
@@ -177,9 +189,10 @@ $vardefs = array(
 		    'audited'=>true,
 		    'comment' => 'The probability of closure',
 		    'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
-		    //BEGIN SUGARCRM flav=pro ONLY
+            'duplicate_on_record_copy' => 'always',
+            //BEGIN SUGARCRM flav=pro ONLY
 		    'merge_filter' => 'enabled',
-		    //END SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav=pro ONLY
 		  )
 	)
 );

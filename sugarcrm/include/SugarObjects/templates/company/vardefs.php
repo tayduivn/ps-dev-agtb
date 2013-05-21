@@ -34,6 +34,7 @@ $vardefs= array (
     'audited' => true,
 	'required'=>true,
     'importable' => 'required',
+    'duplicate_on_record_copy' => 'always',
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
                             //property value is case insensitive.
   ),
@@ -43,6 +44,7 @@ $vardefs= array (
         'vname' => 'LBL_LINKEDIN',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The linkedin name of the company'
     ),
     'facebook' =>
@@ -51,6 +53,7 @@ $vardefs= array (
         'vname' => 'LBL_FACEBOOK',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The facebook name of the company'
     ),
     'twitter' =>
@@ -59,6 +62,7 @@ $vardefs= array (
         'vname' => 'LBL_TWITTER',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The twitter name of the company'
     ),
     'googleplus' =>
@@ -67,6 +71,7 @@ $vardefs= array (
         'vname' => 'LBL_GOOGLEPLUS',
         'type' => 'varchar',
         'len' => '100',
+        'duplicate_on_record_copy' => 'always',
         'comment' => 'The Google Plus name of the company'
     ),
    strtolower($object_name).'_type' => 
@@ -76,6 +81,7 @@ $vardefs= array (
     'type' => 'enum',
     'options' => strtolower($object_name).'_type_dom',
     'len'=>50,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The Company is of this type',
   ),  
 'industry' => 
@@ -85,6 +91,7 @@ $vardefs= array (
     'type' => 'enum',
     'options' => 'industry_dom',
     'len'=>50,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The company belongs in this industry',
     'merge_filter' => 'enabled',
   ),
@@ -94,6 +101,7 @@ $vardefs= array (
     'vname' => 'LBL_ANNUAL_REVENUE',
     'type' => 'varchar',
     'len' => 100,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'Annual revenue for this company',
     'merge_filter' => 'enabled',
   ),
@@ -106,6 +114,7 @@ $vardefs= array (
     'len' => 100,
     'unified_search' => true,
     'full_text_search' => array('boost' => 1),
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The fax phone number of this company',
   ), 
   
@@ -118,6 +127,7 @@ $vardefs= array (
     'comment' => 'The street address used for billing address',
     'group'=>'billing_address',
     'merge_filter' => 'enabled',
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_street_2' => 
   array (
@@ -126,6 +136,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => '150',
     'source'=>'non-db',
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_street_3' => 
   array (
@@ -134,6 +145,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => '150',
     'source'=>'non-db',
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_street_4' => 
   array (
@@ -142,6 +154,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => '150',
     'source'=>'non-db',
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_city' => 
   array (
@@ -152,6 +165,7 @@ $vardefs= array (
     'comment' => 'The city used for billing address',
     'group'=>'billing_address',
     'merge_filter' => 'enabled',
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_state' => 
   array (
@@ -162,6 +176,7 @@ $vardefs= array (
     'group'=>'billing_address',
     'comment' => 'The state used for billing address',
     'merge_filter' => 'enabled',
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_postalcode' => 
   array (
@@ -172,7 +187,7 @@ $vardefs= array (
     'group'=>'billing_address',
     'comment' => 'The postal code used for billing address',
     'merge_filter' => 'enabled',
-    
+    'duplicate_on_record_copy' => 'always',
   ),
   'billing_address_country' => 
   array (
@@ -182,6 +197,7 @@ $vardefs= array (
     'group'=>'billing_address',
     'comment' => 'The country used for the billing address',
     'merge_filter' => 'enabled',
+    'duplicate_on_record_copy' => 'always',
   ),
    'rating' => 
   array (
@@ -189,6 +205,7 @@ $vardefs= array (
     'vname' => 'LBL_RATING',
     'type' => 'varchar',
     'len' => 100,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'An arbitrary rating for this company for use in comparisons with others',
   ),
     'phone_office' => 
@@ -201,6 +218,7 @@ $vardefs= array (
     'audited'=>true,         
     'unified_search' => true,  
     'full_text_search' => array('boost' => 1),
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The office phone number',
     'merge_filter' => 'enabled',
   ),
@@ -214,6 +232,7 @@ $vardefs= array (
     'len' => 100,
     'unified_search' => true,
     'full_text_search' => array('boost' => 1),
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'An alternate phone number',
     'merge_filter' => 'enabled',
   ),
@@ -224,6 +243,7 @@ $vardefs= array (
     'type' => 'url',
     'dbType' => 'varchar',
     'len' => 255,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'URL of website for the company',
   ),
    'ownership' => 
@@ -232,6 +252,7 @@ $vardefs= array (
     'vname' => 'LBL_OWNERSHIP',
     'type' => 'varchar',
     'len' => 100,
+    'duplicate_on_record_copy' => 'always',
     'comment' => '',
   ),
    'employees' => 
@@ -240,6 +261,7 @@ $vardefs= array (
     'vname' => 'LBL_EMPLOYEES',
     'type' => 'varchar',
     'len' => 10,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'Number of employees, varchar to accomodate for both number (100) or range (50-100)',
   ),
   'ticker_symbol' => 
@@ -248,6 +270,7 @@ $vardefs= array (
     'vname' => 'LBL_TICKER_SYMBOL',
     'type' => 'varchar',
     'len' => 10,
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The stock trading (ticker) symbol for the company',
     'merge_filter' => 'enabled',
   ),
@@ -258,6 +281,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => 150,
     'group'=>'shipping_address',
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The street address used for for shipping purposes',
     'merge_filter' => 'enabled',
   ),
@@ -267,6 +291,7 @@ $vardefs= array (
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET_2',
     'type' => 'varchar',
     'len' => 150,
+    'duplicate_on_record_copy' => 'always',
     'source'=>'non-db',
   ),
   'shipping_address_street_3' => 
@@ -275,6 +300,7 @@ $vardefs= array (
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET_3',
     'type' => 'varchar',
     'len' => 150,
+    'duplicate_on_record_copy' => 'always',
     'source'=>'non-db',
   ),
   'shipping_address_street_4' => 
@@ -283,6 +309,7 @@ $vardefs= array (
     'vname' => 'LBL_SHIPPING_ADDRESS_STREET_4',
     'type' => 'varchar',
     'len' => 150,
+    'duplicate_on_record_copy' => 'always',
     'source'=>'non-db',
   ),    
   'shipping_address_city' => 
@@ -292,6 +319,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => 100,
     'group'=>'shipping_address',
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The city used for the shipping address',
     'merge_filter' => 'enabled',
   ),
@@ -302,6 +330,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => 100,
     'group'=>'shipping_address',
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The state used for the shipping address',
     'merge_filter' => 'enabled',
   ),
@@ -312,6 +341,7 @@ $vardefs= array (
     'type' => 'varchar',
     'len' => 20,
     'group'=>'shipping_address',
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The zip code used for the shipping address',
     'merge_filter' => 'enabled',
   ),
@@ -321,6 +351,7 @@ $vardefs= array (
     'vname' => 'LBL_SHIPPING_ADDRESS_COUNTRY',
     'type' => 'varchar',
     'group'=>'shipping_address',
+    'duplicate_on_record_copy' => 'always',
     'comment' => 'The country used for the shipping address',
     'merge_filter' => 'enabled',
   ),
@@ -338,6 +369,7 @@ $vardefs= array (
 	'source'	=> 'non-db',
     'studio' => array('editField' => true, 'searchview' => false),
     'full_text_search' => array('boost' => 3, 'index' => 'not_analyzed'), //bug 54567
+    'duplicate_on_record_copy' => 'always',
 ), 
   
   'email_addresses_primary' => 
@@ -348,7 +380,7 @@ $vardefs= array (
     'source' => 'non-db',
     'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
     'duplicate_merge' => 'disabled',
-  ),  
+  ),
   
   'email_addresses' =>
     array (
