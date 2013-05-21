@@ -289,6 +289,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
+
         if (is_array($addedOpts) && !empty($addedOpts)) {
             // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff
             foreach ($addedOpts as $opt => $val) {

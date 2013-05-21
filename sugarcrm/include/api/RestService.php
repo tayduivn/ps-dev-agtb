@@ -25,7 +25,6 @@ require_once('include/api/ServiceDictionaryRest.php');
 require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 require_once('include/api/RestResponse.php');
 require_once('include/api/RestRequest.php');
-require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RestService extends ServiceBase
 {
@@ -190,18 +189,19 @@ class RestService extends ServiceBase
             $pathVars = $this->request->getPathVars($route);
 
             $getVars = array();
-            if ( !empty($_GET)) {
+            if (!empty($_GET)) {
                 // This has some get arguments, let's parse those in
                 $getVars = $_GET;
-                if ( !empty($route['jsonParams']) ) {
-                    foreach ( $route['jsonParams'] as $fieldName ) {
-                        if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
-                             &&  isset($_GET[$fieldName]{0})
-                             && ( $_GET[$fieldName]{0} == '{'
-                                   || $_GET[$fieldName]{0} == '[' )) {
+                if (!empty($route['jsonParams'])) {
+                    foreach ($route['jsonParams'] as $fieldName) {
+                        if (isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
+                            && isset($_GET[$fieldName]{0})
+                            && ($_GET[$fieldName]{0} == '{'
+                                || $_GET[$fieldName]{0} == '[')
+                        ) {
                             // This may be JSON data
-                            $jsonData = @json_decode($_GET[$fieldName],true,32);
-                            if ( $jsonData == null ) {
+                            $jsonData = @json_decode($_GET[$fieldName], true, 32);
+                            if ($jsonData == null) {
                                 // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
                                 continue;
                             }
@@ -213,27 +213,29 @@ class RestService extends ServiceBase
             }
 
             $postVars = array();
-            if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            if (isset($route['rawPostContents']) && $route['rawPostContents']) {
                 // This route wants the raw post contents
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
-            } else if ( !empty($_POST) ) {
-                // They have normal post arguments
-                $postVars = $_POST;
             } else {
-                $postContents = null;
-                if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
-                    $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+                if (!empty($_POST)) {
+                    // They have normal post arguments
+                    $postVars = $_POST;
                 } else {
-                    $postContents = file_get_contents('php://input');
-                }
-                if ( !empty($postContents) ) {
-                    // This looks like the post contents are JSON
-                    // Note: If we want to support rest based XML, we will need to change this
-                    $postVars = @json_decode($postContents,true,32);
-                    if ( !is_array($postVars) ) {
-                        // FIXME: Handle improperly encoded JSON
-                        $postVars = array();
+                    $postContents = null;
+                    if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
+                        $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+                    } else {
+                        $postContents = file_get_contents('php://input');
+                    }
+                    if (!empty($postContents)) {
+                        // This looks like the post contents are JSON
+                        // Note: If we want to support rest based XML, we will need to change this
+                        $postVars = @json_decode($postContents, true, 32);
+                        if (!is_array($postVars)) {
+                            // FIXME: Handle improperly encoded JSON
+                            $postVars = array();
+                        }
                     }
                 }
             }
@@ -685,10 +687,10 @@ class RestService extends ServiceBase
 
         return $this;
     }
-
+    
     /**
      * Gets the full collection of arguments from the request
-     *
+     * 
      * @param  array $route The route description for this request
      * @return array
      */
@@ -702,14 +704,14 @@ class RestService extends ServiceBase
             // This has some get arguments, let's parse those in
             $getVars = $_GET;
             if ( !empty($route['jsonParams']) ) {
-                foreach ($route['jsonParams'] as $fieldName) {
+                foreach ( $route['jsonParams'] as $fieldName ) {
                     if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
                          &&  isset($_GET[$fieldName]{0})
                          && ( $_GET[$fieldName]{0} == '{'
                                || $_GET[$fieldName]{0} == '[' )) {
                         // This may be JSON data
                         $jsonData = @json_decode($_GET[$fieldName],true,32);
-                        if ($jsonData == null) {
+                        if ( $jsonData == null ) {
                             // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
                             continue;
                         }
@@ -725,7 +727,7 @@ class RestService extends ServiceBase
             // This route wants the raw post contents
             // We just ignore it here, the function itself has to know how to deal with the raw post contents
             // this will mostly be used for binary file uploads.
-        } elseif ( !empty($_POST) ) {
+        } else if ( !empty($_POST) ) {
             // They have normal post arguments
             $postVars = $_POST;
         } else {
@@ -745,10 +747,11 @@ class RestService extends ServiceBase
                 }
             }
         }
-
+        
         // I know this looks a little weird, overriding post vars with get vars, but
         // in the case of REST, get vars are fairly uncommon and pretty explicit, where
         // the posted document is probably the output of a generated form.
         return array_merge($postVars,$getVars,$pathVars);
     }
 }
+

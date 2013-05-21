@@ -22,11 +22,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/api/SugarApi.php';
-require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi
 {
+    /**
+     * @return array
+     */
     public function registerApiRest()
     {
         return array(
@@ -38,7 +40,6 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
-                'keepSession' => true,
             ),
             'getAllMetadataPost' => array(
                 'reqType' => 'POST',
@@ -48,7 +49,6 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system, filtered by the array of hashes sent to the server',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
-                'keepSession' => true,
             ),
             'getAllMetadataHashes' => array(
                 'reqType' => 'GET',
@@ -202,10 +202,6 @@ class MetadataApi extends SugarApi
         );
         $perModuleChunks = array('modules');
 
-        // BR-26 Set the metadata hash into the session so it can be inspected when
-        // changed.
-        $this->getMetadataManager()->setSessionHash($data['_hash']);
-
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
@@ -250,7 +246,7 @@ class MetadataApi extends SugarApi
 
         if ( empty($data) ) {
             // since this is a public metadata call pass true to the meta data manager to only get public/
-            $mm = $this->getMetadataManager( TRUE );
+            $mm = $this->getMetadataManager( true );
 
             // Start collecting data
             $data = array();
@@ -265,7 +261,7 @@ class MetadataApi extends SugarApi
             $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);
             $data["_hash"] = md5(serialize($data));
 
-            $this->putMetadataCache($data, $this->platforms[0], TRUE);
+            $this->putMetadataCache($data, $this->platforms[0], true);
 
         }
         if (empty($hash) || $hash != $data['_hash']) {
@@ -356,7 +352,9 @@ class MetadataApi extends SugarApi
                             $controller = trim(trim($controller), ",;");
                             $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
 
-                            if ( !isset($platControllers[$platform]) ) { $platControllers[$platform] = array(); }
+                            if ( !isset($platControllers[$platform]) ) {
+                                $platControllers[$platform] = array();
+                            }
                             $platControllers[$platform][] = "\"$name\": {\"controller\": ".$controller." }";
 
                         }

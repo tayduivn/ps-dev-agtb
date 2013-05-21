@@ -20,8 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/SugarOAuth2/SugarOAuth2Server.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 
 class OAuth2Api extends SugarApi
 {
@@ -73,17 +72,6 @@ class OAuth2Api extends SugarApi
             // if we're here, the login was OK
             if (!empty($GLOBALS['current_user'])) {
                 $GLOBALS['current_user']->call_custom_logic('after_login');
-
-                // This is a login auth so set the metadata hash cache value to either a
-                // false or the value of the metadata hash for this platform.
-                // 
-                // Since other types of authentication exists (SSO for example)
-                // the logic here will be to set the session hash for all but
-                // refresh_token type requests.
-                if (isset($args['grant_type']) && $args['grant_type'] != 'refresh_token') {
-                    $mm = new MetaDataManager($GLOBALS['current_user'], $platform);
-                    $mm->setSessionHashFromCache($platform);
-                }
             }
         } catch (OAuth2ServerException $e) {
             // failed to get token - something went wrong - list as failed login
@@ -92,7 +80,7 @@ class OAuth2Api extends SugarApi
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             throw $e;
         }
-
+        
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
         return ob_get_clean();
     }
