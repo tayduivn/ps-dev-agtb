@@ -163,7 +163,7 @@
     },
 
     /**
-     * Any changes to the recipient field should be reflected in the model
+     * Synchronize recipient field value with the model and setup tooltips for email pills
      */
     bindDomChange: function() {
         var self = this;
@@ -172,12 +172,26 @@
                 var value = $(this).select2('data');
                 self.model.set(self.name, self.unformat(value), {silent: true});
             })
+            .on("change", function() {
+                self.$('.select2-search-choice').each(function() {
+                    $(this).tooltip({
+                        container: 'body',
+                        title: $(this).data('select2Data').email
+                    });
+                });
+            })
             .on("opening", function(event) {
                 event.preventDefault();
             });
     },
 
+    /**
+     * Destroy all select2 and tooltip plugins
+     */
     unbindDom: function() {
+        this.$('.select2-search-choice').each(function() {
+            $(this).tooltip('destroy');
+        });
         this.getFieldElement().select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
     },
