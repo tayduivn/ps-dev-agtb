@@ -124,7 +124,8 @@ class ForecastWorksheet extends SugarBean
             'date_entered',
             'deleted',
             'team_id',
-            'team_set_id'
+            'team_set_id',
+            'sales_status'
         );
 
         // load the account

@@ -25,6 +25,8 @@ $mod_strings = array (
     'LNK_FORECAST_LIST' => 'View Forecast History',
     'LBL_FORECAST_HISTORY' => 'Forecasts: History',
     'LBL_FORECAST_HISTORY_TITLE' => 'History',
+    'LBL_ACCOUNT_NAME' => 'Account Name:',
+    'LBL_SALES_STATUS' => 'Status',
 
     //var defs
     'LBL_TIMEPERIOD_NAME' => 'Time Period',

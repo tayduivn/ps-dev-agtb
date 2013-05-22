@@ -70,6 +70,14 @@ $dictionary['ForecastWorksheet'] = array(
             'audited' => false,
             'studio' => false
         ),
+        'sales_status' => array(
+            'name' => 'sales_status',
+            'vname' => 'LBL_SALES_STATUS',
+            'type' => 'enum',
+            'options' => 'sales_status_dom',
+            'len' => '255',
+            'audited' => true,
+        ),
         'likely_case' =>
         array(
             'name' => 'likely_case',
