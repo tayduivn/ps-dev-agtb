@@ -256,5 +256,9 @@ $mod_strings = array (
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Contacts',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your contacts',
     'LBL_TWITTER' => 'Twitter ID',
+
+    //Document title
+    'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
+    'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
 )
 ?>

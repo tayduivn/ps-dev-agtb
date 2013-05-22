@@ -183,4 +183,8 @@ $mod_strings = array (
   'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   'LBL_EXPORT_EMAIL2'=>'Other Email Address',
   'LBL_RECORD_SAVED_SUCCESS' => 'Record {{first_name}} {{last_name}} was saved.',
+
+    //Document title
+    'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
+    'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
 );
