@@ -59,11 +59,15 @@
 
         if (!_.isEmpty(massCollection)) {
             // get rid of any old event listeners on the mass collection
-            massCollection.off("add remove", null, this);
+            massCollection.off(null, null, this);
 
             // update the field value as recipients are added to or removed from the mass collection
             massCollection.on("add remove", function(model, collection) {
                 this.model.set("compose_addressbook_selected_recipients", collection);
+            }, this);
+
+            massCollection.on("reset", function() {
+                this.model.get("compose_addressbook_selected_recipients").reset();
             }, this);
 
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the

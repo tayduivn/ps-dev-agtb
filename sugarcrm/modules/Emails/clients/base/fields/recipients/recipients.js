@@ -43,8 +43,11 @@
             this._replaceRecipients(this.format(recipients));
 
             if (recipients instanceof Backbone.Collection) {
-                recipients.off("add remove", null, this);
+                recipients.off(null, null, this);
                 recipients.on("add remove", function(model, collection) {
+                    this._replaceRecipients(this.format(collection));
+                }, this);
+                recipients.on("reset", function(collection) {
                     this._replaceRecipients(this.format(collection));
                 }, this);
             }
@@ -57,7 +60,7 @@
     unbindData: function() {
         var value = this.model.get(this.name);
         if (value instanceof Backbone.Collection) {
-            value.off("add remove", null, this);
+            value.off(null, null, this);
         }
 
         app.view.Field.prototype.unbindData.call(this);
