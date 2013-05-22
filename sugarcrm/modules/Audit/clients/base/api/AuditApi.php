@@ -27,9 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-require_once('clients/base/api/ModuleApi.php');
-require_once('modules/Audit/Audit.php');
+require_once 'clients/base/api/ModuleApi.php';
+require_once 'modules/Audit/Audit.php';
 
 class AuditApi extends ModuleApi
 {
@@ -47,20 +46,21 @@ class AuditApi extends ModuleApi
         );
     }
 
-    public function viewChangeLog($api, $args) {
-        global $focus, $current_user; 
-        
+    public function viewChangeLog($api, $args)
+    {
+        global $focus, $current_user;
+
         $this->requireArgs($args,array('module', 'record'));
-        
+
         $focus = BeanFactory::getBean($args['module'], $args['record']);
 
-        if(!$focus->ACLAccess('view')) {
+        if (!$focus->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('no access to the bean');
         }
- 
+
         $auditBean = BeanFactory::newBean('Audit');
 
         return $auditBean->getAuditLog($focus);
-        
+
     }
 }
