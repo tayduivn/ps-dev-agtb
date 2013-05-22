@@ -76,6 +76,7 @@
             $recipientsField.select2({
                 allowClear: true,
                 multiple: true,
+                width: '100%',
                 query: _.bind(this.loadOptions, this),
                 formatSelection: _.bind(this.formatSelection, this),
                 formatResult:    _.bind(this.formatResult, this)
@@ -94,19 +95,7 @@
      */
     loadOptions: function(query) {
         var data = {
-            results: [{
-                id: '1',
-                name: 'One',
-                email: 'one@email.com'
-            }, {
-                id: '2',
-                name: 'Two',
-                email: 'two@email.com'
-            }, {
-                id: '3',
-                name: 'Three',
-                email: 'three@email.com'
-            }],
+            results: [],
             more: false // there are no more results by default
         };
 
@@ -178,10 +167,14 @@
      */
     bindDomChange: function() {
         var self = this;
-        this.getFieldElement().on("change", function() {
-            var value = $(this).select2('data');
-            self.model.set(self.name, self.unformat(value), {silent: true});
-        });
+        this.getFieldElement()
+            .on("change", function() {
+                var value = $(this).select2('data');
+                self.model.set(self.name, self.unformat(value), {silent: true});
+            })
+            .on("opening", function(event) {
+                event.preventDefault();
+            });
     },
 
     unbindDom: function() {
