@@ -42,7 +42,7 @@ class ReportsViewBuildreportmoduletree extends SugarView
 
         $ACLAllowedModules = getACLAllowedModules();
         $module_array = array();
-        
+
         $module = BeanFactory::getBean($_REQUEST['report_module']);
         $bean_name = $module->object_name;
         $linked_fields = $module->get_linked_fields();
@@ -56,7 +56,7 @@ class ReportsViewBuildreportmoduletree extends SugarView
                 continue;
             }
             $relationship = $module->$field->_relationship;
-            if(empty($beanList[$relationship->lhs_module]) || empty($beanList[$relationship->rhs_module]))
+            if(empty($relationship) || empty($beanList[$relationship->lhs_module]) || empty($beanList[$relationship->rhs_module]))
             {
                 continue;
             }
