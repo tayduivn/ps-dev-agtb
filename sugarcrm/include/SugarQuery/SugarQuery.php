@@ -105,6 +105,12 @@ class SugarQuery
     protected $has_parent;
 
     /**
+     * Bean templates for used tables
+     * @var array
+     */
+    protected $table_beans = array();
+
+    /**
      * Build the select object
      *
      * @param bool $fields
@@ -460,7 +466,9 @@ class SugarQuery
         }
 
         $bean->load_relationship($join);
-
+        if(empty($bean->$join)) {
+            throw new SugarApiExceptionInvalidParameter("Invalid link $join");
+        }
 
         $bean->$join->buildJoinSugarQuery(
             $this,
@@ -488,6 +496,11 @@ class SugarQuery
 
     }
 
+    /**
+     * Set/get parent field for the query
+     * @param array|null $has
+     * @return array
+     */
     public function hasParent($has = null)
     {
         if ($has !== null) {
@@ -495,4 +508,49 @@ class SugarQuery
         }
         return $this->has_parent;
     }
+
+    /**
+     * Get bean that corresponds to this table name
+     *
+     * @param string $table_name
+     *
+     * @return SugarBean
+     */
+    public function getTableBean($table_name)
+    {
+        if (!isset($this->table_beans[$table_name])) {
+            if (empty($this->join[$table_name])) {
+                return null;
+            }
+            $link_name = $this->join[$table_name]->linkName;
+            if (empty($link_name)) {
+                $this->table_beans[$table_name] = null;
+                return null;
+            }
+            //BEGIN SUGARCRM flav=pro ONLY
+            if ($link_name == 'favorites') {
+                // FIXME: special case, should eliminate it
+                $module = 'SugarFavorites';
+            }
+            //END SUGARCRM flav=pro ONLY
+            /* TODO Fix this hack so we don't need to have special cases for these modules */
+            if ($link_name == 'tracker') {
+                $module = 'Trackers';
+            }
+            if (empty($module)) {
+                $this->from->load_relationship($link_name);
+                if (!empty($this->from->$link_name)) {
+                    $module = $this->from->$link_name->getRelatedModuleName();
+                }
+            }
+            if (empty($module)) {
+                $this->table_beans[$table_name] = null;
+                return null;
+            }
+            $bean = BeanFactory::newBean($module);
+            $this->table_beans[$table_name] = $bean;
+        }
+        return $this->table_beans[$table_name];
+    }
+
 }

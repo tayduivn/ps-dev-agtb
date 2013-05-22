@@ -54,11 +54,6 @@ class SugarQuery_Compiler_SQL
     protected $db;
 
     protected $jtcount = 0;
-    /**
-     * Bean templates for used tables
-     * @var array
-     */
-    protected $table_beans = array();
 
     public function __construct($db)
     {
@@ -254,51 +249,6 @@ class SugarQuery_Compiler_SQL
     }
 
     /**
-     * Get bean that corresponds to this table name
-     *
-     * @param string $table_name
-     *
-     * @return SugarBean
-     */
-    protected function getTableBean($table_name)
-    {
-        if (!isset($this->table_beans[$table_name])) {
-            if (empty($this->sugar_query->join[$table_name])) {
-                return null;
-            }
-            $link_name = $this->sugar_query->join[$table_name]->linkName;
-            if (empty($link_name)) {
-                $this->table_beans[$table_name] = null;
-                return null;
-            }
-            //BEGIN SUGARCRM flav=pro ONLY
-            if ($link_name == 'favorites') {
-                // FIXME: special case, should eliminate it
-                $module = 'SugarFavorites';
-            }
-            //END SUGARCRM flav=pro ONLY
-            /* TODO Fix this hack so we don't need to have special cases for these modules */
-            if ($link_name == 'tracker') {
-                $module = 'Trackers';
-            }
-            if (empty($module)) {
-                $this->from_bean->load_relationship($link_name);
-                if (!empty($this->from_bean->$link_name)) {
-                    $module = $this->from_bean->$link_name->getRelatedModuleName(
-                    );
-                }
-            }
-            if (empty($module)) {
-                $this->table_beans[$table_name] = null;
-                return null;
-            }
-            $bean = BeanFactory::newBean($module);
-            $this->table_beans[$table_name] = $bean;
-        }
-        return $this->table_beans[$table_name];
-    }
-
-    /**
      * Bring field name to canonical form of table_name.field_name
      *
      * @param string $field
@@ -321,7 +271,7 @@ class SugarQuery_Compiler_SQL
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
             if ($table_name != $bean->getTableName()) {
-                $bean = $this->getTableBean($table_name);
+                $bean = $this->sugar_query->getTableBean($table_name);
                 if (empty($bean)) {
                     return "{$table_name}.{$field}";
                 }
@@ -346,7 +296,7 @@ class SugarQuery_Compiler_SQL
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
             if ($table_name != $bean->getTableName()) {
-                $bean = $this->getTableBean($table_name);
+                $bean = $this->sugar_query->getTableBean($table_name);
             }
         }
 
@@ -382,7 +332,7 @@ class SugarQuery_Compiler_SQL
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
             if ($table_name != $bean->getTableName()) {
-                $bean = $this->getTableBean($table_name);
+                $bean = $this->sugar_query->getTableBean($table_name);
                 if (empty($bean)) {
                     return array("{$table_name}.{$field}", $alias);
                 }
@@ -769,7 +719,7 @@ class SugarQuery_Compiler_SQL
         if (stristr($field, '.')) {
             list($table, $field) = explode('.', $field);
             if ($table != $bean->getTableName()) {
-                $bean = $this->getTableBean($table);
+                $bean = $this->sugar_query->getTableBean($table);
                 if (empty($bean)) {
                     // quote the value by default
                     return $this->db->quoted($value);

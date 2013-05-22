@@ -449,6 +449,66 @@ class FilterApi extends SugarApi
         return $data;
     }
 
+    /**
+     * Verify that the passed field is correct
+     * @param SugarQuery $q
+     * @param string $field
+     * @return string
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected static function verifyField(SugarQuery $q, $field)
+    {
+        if (strpos($field, '.')) {
+            // It looks like it's a related field that it's searching by
+            list($relatedTable, $field) = explode('.', $field);
+            $q->from->load_relationship($relatedTable);
+            if(empty($bean->$relatedTable)) {
+                throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable");
+            }
+            if($bean->$relatedTable->getType() == "many") {
+                throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
+            }
+
+            $bean = $q->getTableBean($relatedTable);
+            if(empty($bean)) {
+                throw new SugarApiExceptionInvalidParameter("Cannot use condition against $relatedTable - unknown module");
+            }
+
+            $q->join($relatedTable, array('joinType' => 'LEFT'));
+        } else {
+            $bean = $q->from;
+        }
+        $fields = $bean->field_defs;
+
+        if(empty($defs[$field])) {
+            throw new SugarApiExceptionInvalidParameter("Unknown field $field");
+        }
+
+        if(!$this->verifyFieldAccess($bean, $field, 'access')) {
+            throw new SugarApiExceptionInvalidParameter("Access for field $field is not allowed");
+        }
+
+        $field_def = $defs[$field];
+        if(empty($field_def['source']) || $field_def['source'] == 'db' || $field_def['source'] == 'custom_field') {
+            return true;
+        }
+
+        if($field_def['source'] == 'relate') {
+            $relfield = $field_def['rname'];
+            $link = $field_def['link'];
+            return $this->verifyField($q, "$link.$relfield");
+        }
+
+        return true;
+    }
+
+    /**
+     * Add filters to the query
+     * @param array $filterDefs
+     * @param SugarQuery_Builder_Where $where
+     * @param SugarQuery $q
+     * @throws SugarApiExceptionInvalidParameter
+     */
     protected static function addFilters(
         array $filterDefs,
         SugarQuery_Builder_Where $where,
@@ -478,14 +538,7 @@ class FilterApi extends SugarApi
                     self::addTrackerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
-                    if (strpos($field, '.')) {
-                        // It looks like it's a related field that it's searching by
-                        list($relatedTable, $relatedField) = explode(
-                            '.',
-                            $field
-                        );
-                        $q->join($relatedTable, array('joinType' => 'LEFT'));
-                    }
+                    $this->verifyField($q, $field);
 
                     if (!is_array($filter)) {
                         // This is just simple match
