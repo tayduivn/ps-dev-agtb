@@ -107,7 +107,7 @@ $app_list_strings = array (
     'FAQ' => 'FAQ',
     'Newsletters' => 'Newsletters',
     'SugarFeed'=>'Sugar Feed',
-    'KBDocuments' => 'Knowledge Base',
+    'KBDocuments' => 'Knowledge Base Documents',
   	'SugarFavorites'=>'Favorites',
 //BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
@@ -117,6 +117,15 @@ $app_list_strings = array (
     'OAuthTokens' => 'OAuth Tokens',
     'Filters' => 'Filters'
   ),
+
+    'moduleIconList' =>
+    array(
+        'Calls' => 'Cl',
+        'Cases' => 'Cs',
+        'Campaigns' => 'Cm',
+        'Notes' => 'Nt',
+        'Tasks' => 'Ts'
+    ),
 
   'moduleListSingular' =>
   array (
@@ -149,7 +158,7 @@ $app_list_strings = array (
     'Activities' => 'Activity',
     'ActivityStream' => 'Activity Stream',
     'Bugs' => 'Bug',
-    'KBDocuments' => 'KBDocument',
+    'KBDocuments' => 'Knowledge Base Document',
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
