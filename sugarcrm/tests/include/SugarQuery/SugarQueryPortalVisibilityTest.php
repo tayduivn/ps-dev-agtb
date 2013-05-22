@@ -37,29 +37,22 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function setUp()
-    {
-        $this->bean = $this->getMock('SugarBean', array('loadVisibility'));
-        $this->vis = $this->getMock('SupportPortalVisibility', array('addVisibilityFromQuery', 'addVisibilityWhereQuery'), array($this->bean));
-        $this->bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($this->vis));
-        $this->bean->module_dir = 'test';
-    }
-
-    public function tearDown()
-    {
-        unset($this->vis);
-        unset($this->bean);
-        unset($this->query);
-    }
     /**
      * Test we call the proper methods
      */
     public function testVisibilityCall()
     {
+        $bean = $this->getMock('SugarBean', array('loadVisibility'));
+        $vis = $this->getMock('SupportPortalVisibility', array('addVisibilityFromQuery', 'addVisibilityWhereQuery'), array($bean));
+        $bean->expects($this->any())->method('loadVisibility')->will($this->returnValue($vis));
+        $bean->module_dir = 'test';        
         $query = new SugarQuery();
-        $this->vis->expects($this->once())->method('addVisibilityFromQuery')->with($query)->will($this->returnValue($query));
-        $this->vis->expects($this->once())->method('addVisibilityWhereQuery')->with($query)->will($this->returnValue($query));
-        $this->bean->addVisibilityQuery($query);
+        $vis->expects($this->once())->method('addVisibilityFromQuery')->with($query)->will($this->returnValue($query));
+        $vis->expects($this->once())->method('addVisibilityWhereQuery')->with($query)->will($this->returnValue($query));
+        $bean->addVisibilityQuery($query);
+        unset($vis);
+        unset($bean);
+        unset($query);        
     }
 
     public function testQueryReturnWithAccounts()
@@ -78,6 +71,9 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
  AND accounts_pv.id IN ('1','2','3','4')  WHERE contacts.deleted = 0";
         
         $this->assertEquals($queryShouldBe, $query->compileSql(), "The query does not match");
+        unset($_SESSION);
+        unset($contact);
+        unset($query);
     }
 
     public function testQueryReturnWithoutAccounts()
@@ -95,6 +91,9 @@ class SugarQueryPortalVisibilityTest extends Sugar_PHPUnit_Framework_TestCase
         $queryShouldBe = "SELECT  * FROM contacts WHERE contacts.deleted = 0 AND  ( contacts.id = '1' )";
         
         $this->assertEquals($queryShouldBe, $query->compileSql(), "The query does not match");
+        unset($_SESSION);
+        unset($contact);
+        unset($query);        
     }    
 }
 
