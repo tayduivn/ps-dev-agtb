@@ -8,7 +8,7 @@
     plugins: ['dropdown'],
     events: {
         'click .dtoggle': 'toggleDropdown',
-        'click .more': 'showMore',
+        'click .more .icon-chevron-down': 'showMore',
         'mouseleave .more-drop-container' : 'hideMore',
         'click .actionLink' : 'handleMenuEvent',
         "click a[data-route]": "handleRouteEvent"
