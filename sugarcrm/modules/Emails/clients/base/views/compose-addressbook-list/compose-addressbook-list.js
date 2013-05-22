@@ -66,8 +66,8 @@
                 this.model.set("compose_addressbook_selected_recipients", collection);
             }, this);
 
-            massCollection.on("reset", function() {
-                this.model.get("compose_addressbook_selected_recipients").reset();
+            massCollection.on("reset", function(collection) {
+                this.model.set("compose_addressbook_selected_recipients", collection);
             }, this);
 
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the
