@@ -208,10 +208,10 @@
                     if (this.layout.isVisible()) {
                         this.setNavigationMessage(false, '', '');
                         this.cleanUpDirtyModels();
-                        var ctx = this.context.parent || this.context
+                        var ctx = this.context.parent || this.context;
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
 
-                        if (this.selectedUser.isManager && app.metadata.get('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
+                        if (this.selectedUser.isManager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                             this.collection.once('reset', function() {
                                 this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', '');
                             }, this)
@@ -258,7 +258,7 @@
         if (!_.isUndefined(this.dirtyModels)) {
             this.dirtyModels.on('add', function() {
                 if (this.canEdit) {
-                    var ctx = this.context.parent || this.context
+                    var ctx = this.context.parent || this.context;
                     ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, true);
                 }
             }, this);

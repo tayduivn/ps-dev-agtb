@@ -15,6 +15,9 @@
 
 <tfoot>
 <tr>
+    {{#each this.leftColumns}}
+        <td>&nbsp;</td>
+    {{/each}}
     <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
     <td class="tright">{{formatCurrency this.totals.quota}}</td>
     {{#if this.totals.likely_case_display}}
@@ -31,5 +34,8 @@
         <td class="tright">{{formatCurrency this.totals.worst_case}}</td>
         <td class="tright">{{formatCurrency this.totals.worst_case_adjusted}}</td>
     {{/if}}
+    {{#each this.rightColumns}}
+    <td>&nbsp;</td>
+    {{/each}}
 </tr>
 </tfoot>

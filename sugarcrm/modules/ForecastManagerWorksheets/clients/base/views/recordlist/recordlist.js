@@ -294,7 +294,7 @@
                     module: this.module,
                     id: model.id,
                     placeholder: field.getPlaceholder(),
-                    colspan: this._fields.visible.length
+                    colspan: this._fields.visible.length+1          // do the +1 to account for right side Row Actions
                 }));
                 field.render();
             }
