@@ -53,7 +53,7 @@
         this.hasAccess = app.utils.getColumnVisFromKeyMap(this.name, 'forecastsWorksheet');
         // before we try and render, lets see if we can actually render this field
         this.before('render', function() {
-            if(!this.hasAccess) {
+            if (!this.hasAccess) {
                 return false;
             }
 
@@ -63,9 +63,21 @@
             return true;
         }, this);
     },
+    /**
+     * Overwrite this to only place the placeholder if we actually have access to view it
+     *
+     * @returns {*}
+     */
+    getPlaceholder: function() {
+        if(this.hasAccess) {
+            return app.view.Field.prototype.getPlaceholder.call(this);
+        }
+
+        return '';
+    },
 
     bindDataChange: function() {
-        if(!this.hasAccess) {
+        if (!this.hasAccess) {
             return;
         }
 
@@ -81,7 +93,7 @@
         this.collection.on('reset', function() {
             // get the first line
             var model = _.first(this.collection.models)
-            if(!_.isUndefined(model)) {
+            if (!_.isUndefined(model)) {
                 this.last_commit = app.math.round(model.get(this.total_field), 2);
                 this.initial_total = app.math.round(model.get(this.total_field), 2);
             } else {
@@ -90,17 +102,17 @@
                 this.total = 0;
                 this.arrow = '';
             }
-            if(!this.disposed) this.render();
+            if (!this.disposed) this.render();
         }, this);
         this.context.on('forecasts:worksheet:totals', function(totals, type) {
             var field = this.total_field;
-            if(type == "manager") {
+            if (type == "manager") {
                 field += '_adjusted'
             }
             this.total = totals[field];
             this.previous_type = type;
 
-            if(!this.disposed) this.render();
+            if (!this.disposed) this.render();
         }, this);
     }
 })
