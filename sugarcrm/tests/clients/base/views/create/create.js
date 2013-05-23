@@ -556,10 +556,15 @@ describe("Create View", function() {
     });
 
     describe('Save', function() {
+
+        beforeEach(function() {
+            SugarTest.clock.restore();
+        });
+
         it("Should save data when save button is clicked, form data are valid, and no duplicates are found.", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     success(SugarTest.app.data.createBeanCollection(moduleName));
@@ -579,20 +584,20 @@ describe("Create View", function() {
             }, 'Save should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(isValidStub.calledOnce).toBe(true);
+                expect(validateStub.calledOnce).toBe(true);
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
             });
         });
 
         it("Should close drawer once save is complete", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     success(SugarTest.app.data.createBeanCollection(moduleName));
@@ -619,7 +624,7 @@ describe("Create View", function() {
                 expect(drawerCloseStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
                 drawerCloseStub.restore();
             });
@@ -627,11 +632,12 @@ describe("Create View", function() {
 
         it("Should not save data when save button is clicked but form data are invalid", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
                     flag = true;
-                    return false;
+                    callback(true);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                    flag = true;
                     success(SugarTest.app.data.createBeanCollection(moduleName));
                 }),
                 saveModelStub = sinon.stub(view, 'saveModel', function() {
@@ -646,23 +652,23 @@ describe("Create View", function() {
 
             waitsFor(function() {
                 return flag;
-            }, 'isValid should have been called but timeout expired', 1000);
+            }, 'validateModelWaterfall should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(isValidStub.calledOnce).toBe(true);
-                expect(checkForDuplicateStub.called).toBe(false);
-                expect(saveModelStub.called).toBe(false);
+                expect(validateStub.calledOnce).toBeTruthy();
+                expect(checkForDuplicateStub.called).toBeFalsy();
+                expect(saveModelStub.called).toBeFalsy();
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
             });
         });
 
         it("Should not save data when save button is clicked but duplicates are found", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     flag = true;
@@ -692,15 +698,15 @@ describe("Create View", function() {
 
             waitsFor(function() {
                 return flag;
-            }, 'checkForDuplicate should have been called but timeout expired', 1000);
+            }, 'checkForDuplicate should have been called but timeout expired', 2000);
 
             runs(function() {
-                expect(isValidStub.calledOnce).toBe(true);
+                expect(validateStub.calledOnce).toBe(true);
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.called).toBe(false);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
             });
         });
@@ -709,8 +715,8 @@ describe("Create View", function() {
     describe('Ignore Duplicate and Save', function() {
         it("Should save data and not run duplicate check when ignore duplicate and save button is clicked.", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     flag = true;
@@ -758,13 +764,13 @@ describe("Create View", function() {
             }, 'close should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(isValidStub.calledTwice).toBe(true);
+                expect(validateStub.calledTwice).toBe(true);
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.calledOnce).toBe(true);
                 expect(drawerCloseStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
                 drawerCloseStub.restore();
             });
@@ -774,8 +780,8 @@ describe("Create View", function() {
     describe('Save and Create Another', function() {
         it("Should save, clear out the form, but not close the drawer.", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
 
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
@@ -812,7 +818,7 @@ describe("Create View", function() {
                 expect(clearStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
                 drawerCloseStub.restore();
                 clearStub.restore();
@@ -823,8 +829,8 @@ describe("Create View", function() {
     describe('Save and View', function() {
         it("Should save, close the modal, and navigate to the detail view.", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
                     success(SugarTest.app.data.createBeanCollection(moduleName));
@@ -852,7 +858,7 @@ describe("Create View", function() {
                 expect(navigateStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
                 navigateStub.restore();
             });
@@ -862,8 +868,8 @@ describe("Create View", function() {
     describe('Disable Duplicate Check', function() {
         it("Should save data and not run duplicate check when duplicate check is disabled", function() {
             var flag = false,
-                isValidStub = sinon.stub(view.model, 'isValid', function() {
-                    return true;
+                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                    callback(null);
                 }),
                 checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate'),
                 saveModelStub = sinon.stub(view, 'saveModel', function(success) {
@@ -885,13 +891,13 @@ describe("Create View", function() {
             }, 'Drawer should have been closed but timeout expired', 1000);
 
             runs(function() {
-                expect(isValidStub.calledOnce).toBe(true);
+                expect(validateStub.calledOnce).toBe(true);
                 expect(checkForDuplicateStub.called).toBe(false);
                 expect(saveModelStub.calledOnce).toBe(true);
                 expect(drawerCloseStub.calledOnce).toBe(true);
 
                 saveModelStub.restore();
-                isValidStub.restore();
+                validateStub.restore();
                 checkForDuplicateStub.restore();
                 drawerCloseStub.restore();
             });

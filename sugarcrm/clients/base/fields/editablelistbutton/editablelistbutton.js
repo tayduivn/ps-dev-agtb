@@ -52,13 +52,7 @@
     saveModel: function() {
         var fieldsToValidate = this.view.getFields(this.module);
         this.view.clearValidationErrors();
-        var isValid = this.model.isValid(fieldsToValidate);
-        if(_.isUndefined(isValid)){
-            this.model.once("validation:complete", this._validationComplete, this);
-        } else {
-            this._validationComplete(isValid);
-        }
-
+        this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
     cancelEdit: function() {
         this.changed = false;

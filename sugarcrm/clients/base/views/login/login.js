@@ -101,29 +101,33 @@
     login: function() {
         var self = this;
         this.clearValidationErrors();
-        if (this.model.isValid()) {
-            app.$contentEl.hide();
-            var args = {password: this.model.get("password"), username: this.model.get("username")};
+        this.model.doValidate(null,
+            _.bind(function(isValid) {
+                if (isValid) {
+                    app.$contentEl.hide();
+                    var args = {password: this.model.get("password"), username: this.model.get("username")};
 
-            app.alert.show('login', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
-            app.login(args, null, {
-                error: function() {
-                    app.$contentEl.show();
-                    app.logger.debug("login failed!");
-                },
-                success: function() {
-                    app.logger.debug("logged in successfully!");
-                    app.events.on('app:sync:complete', function() {
-                        app.logger.debug("sync in successfully!");
-                        this.refreshAddtionalComponents();
-                        app.$contentEl.show();
-                    }, self);
-                },
-                complete: function() {
-                    app.alert.dismiss('login');
+                    app.alert.show('login', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
+                    app.login(args, null, {
+                        error: function() {
+                            app.$contentEl.show();
+                            app.logger.debug("login failed!");
+                        },
+                        success: function() {
+                            app.logger.debug("logged in successfully!");
+                            app.events.on('app:sync:complete', function() {
+                                app.logger.debug("sync in successfully!");
+                                this.refreshAddtionalComponents();
+                                app.$contentEl.show();
+                            }, self);
+                        },
+                        complete: function() {
+                            app.alert.dismiss('login');
+                        }
+                    });
                 }
-            });
-        }
+            }, self)
+        );
     },
 
     /**

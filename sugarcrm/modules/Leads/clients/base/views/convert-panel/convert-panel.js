@@ -521,24 +521,14 @@
                 model = view.model;
 
             view.clearValidationErrors(view.editableFields);
-            var isValid = model.isValid(view.getFields(view.module));
-            if(_.isUndefined(isValid)){
-                model.once("validation:complete", function(isValid){
-                    if (isValid) {
-                        this.setStatus(this.STATUS_COMPLETE);
-                        callback();
-                    } else {
-                        this.showValidationAlert();
-                    }
-                }, this);
-            } else {
+            model.doValidate(view.getFields(view.module), _.bind(function(isValid) {
                 if (isValid) {
                     this.setStatus(this.STATUS_COMPLETE);
                     callback();
                 } else {
                     this.showValidationAlert();
                 }
-            }
+            }, this));
         }
     },
 
