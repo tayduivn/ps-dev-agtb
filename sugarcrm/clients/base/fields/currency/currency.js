@@ -25,6 +25,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+
+    'events': {
+        'click': 'updateCss'
+    },
     transactionValue: '',
     _currencyField: null,
 
@@ -46,6 +50,7 @@
         if (this.action === 'edit') {
 
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
+            this.$el.find('div.select2-container').css('min-width','8px');
             this.getCurrencyField().render();
             return this;
         }
@@ -127,7 +132,9 @@
 
         return app.currency.unformatAmountLocale(value);
     },
-
+    updateCss: function(){
+      $('div.select2-drop.select2-drop-active').width('auto');
+    },
     /**
      * Get the currency field related to this currency amount.
      *
@@ -142,7 +149,7 @@
         var currencyDef = this.model.fields[this.def.currency_field || 'currency_id'];
         currencyDef.type = 'enum';
         currencyDef.options = app.currency.getCurrenciesSelector(Handlebars.compile('{{symbol}} ({{iso4217}})'));
-        currencyDef.enum_width = 'auto';
+        currencyDef.enum_width = '100%';
         currencyDef.searchBarThreshold = this.def.searchBarThreshold || 7;
 
         this._currencyField = app.view.createField({
