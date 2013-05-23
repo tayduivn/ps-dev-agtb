@@ -15,7 +15,7 @@
                             data-original-title="{{this.attributes.name}}"
                             data-placement="bottom"><span
                             class="label {{this.attributes.typeCss}}">{{this.attributes.typeLabel}}</span>{{this.attributes.name}}</span>
-                        <time class="span3 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
+                        <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
                     </a></li>
                 {{/each}}
                 <li><a class="row-fluid" href="#{{module}}"><span class="span12">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>
