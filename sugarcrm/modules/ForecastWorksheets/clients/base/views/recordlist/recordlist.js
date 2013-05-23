@@ -198,6 +198,12 @@
                     this.filterCollection();
                 }, this);
 
+                // any time a model in the collection is changed, run the filter on it
+                this.collection.on('change', function() {
+                    this.filterCollection();
+                    if (!this.disposed) this.render();
+                }, this);
+
                 this.context.parent.on('change:selectedRanges', function(model, changed) {
                     this.filters = changed;
                     this.filterCollection();
@@ -428,8 +434,7 @@
         } else {
             if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
-                    // we have the same user. show the alert
-                    alert(app.lang.get(this.navigationMessage, 'Forecasts'));
+                    this.showNavigationMessage('rep_to_manager');
                 }
                 this.cleanUpDirtyModels();
                 // we need to hide

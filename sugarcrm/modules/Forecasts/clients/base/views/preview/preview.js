@@ -40,7 +40,7 @@
         }
 
         // Close preview if we are already displaying this model
-        if(this.model && model && (this.model.get("id") == model.get("id") && previewId == this.previewId)) {
+        if(this.originalModel && model && (this.originalModel.get("id") == model.get("id") && previewId == this.previewId)) {
             // Remove the decoration of the highlighted row
             app.events.trigger("list:preview:decorate", false);
             // Close the preview panel

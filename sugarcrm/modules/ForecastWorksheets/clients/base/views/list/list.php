@@ -45,7 +45,9 @@ $viewdefArray['products'] = array(
                     'related_fields' => array(
                         'parent_id',
                         'parent_type',
-                        'parent_deleted'
+                        'parent_deleted',
+                        'account_name',
+                        'account_id',
                     )
                 ),
                 array(
@@ -159,7 +161,12 @@ $viewdefArray['opportunities'] = array(
                         'parent_deleted'
                     )
                 ),
-                'account_name',
+                array(
+                    'name' => 'account_name',
+                    'related_fields' => array(
+                        'account_id'
+                    )
+                ),
                 array(
                     'name' => 'date_closed',
                     'label' => 'LBL_DATE_CLOSED',

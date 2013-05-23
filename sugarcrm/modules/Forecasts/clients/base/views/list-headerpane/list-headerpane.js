@@ -51,7 +51,7 @@
             }
         }, this);
 
-        this.context.on('forecasts:worksheet:needs_commit', function(worksheet_type) {
+        this.context.on('forecasts:worksheet:needs_commit button:commit_button:click', function(worksheet_type) {
             this.getField('commit_button').setDisabled(false);
         }, this);
 

@@ -17,14 +17,14 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['recordlist'] = array(
     'rowactions' => array(
         'css_class' => 'pull-right',
         'actions' => array(
-            array(
+            /*array(
                 'type' => 'rowaction',
                 'css_class' => 'btn disabled',
                 'tooltip' => 'LBL_PREVIEW',
                 'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
                 'acl_action' => 'view',
-            ),
+            ),*/
             array(
                 'type' => 'rowaction',
                 'css_class' => 'btn',

@@ -57,8 +57,8 @@
                     var $el = $(el);
                     if (indexFound === false && $el.data('cid') == field.cid) {
                         indexFound = true;
-                        var nextIndex = (shiftKey === true) ? idx-1 : idx+1;
-                        if(nextIndex === list.length) {
+                        var nextIndex = (shiftKey === true) ? idx - 1 : idx + 1;
+                        if (nextIndex === list.length) {
                             nextIndex = 0;
                         }
                         nextField = list.splice(nextIndex, 1);
@@ -192,12 +192,12 @@
                 var self = this;
                 var el = this.$el.find(this.fieldTag);
                 el.on("change", function() {
-                    var isValid = self.validateField(self, self.unformat(el.val()));
-                    if (isValid == true) {
+                    var value = self.validateField(self, self.unformat(el.val()));
+                    if (value !== false) {
                         // field is valid, save it
                         self.isErrorState = false;
                         self.errorMessage = '';
-                        self.model.set(self.name, self.unformat(el.val()));
+                        self.model.set(self.name, self.unformat(value));
                     } else {
                         // invalid display error
                         var hb = Handlebars.compile("{{str key module context}}"),
@@ -403,11 +403,11 @@
                 // get the field value
                 var elVal = field.$el.find(field.fieldTag).val();
 
-                if(field.type == 'currency') {
+                if (field.type == 'currency') {
                     // for currency we want to make sure the value didn't actually change so get the difference
                     // and multiple it by 100 (2 decimals out), if it's not equal to 0, then it changed.
                     var diff = Math.abs(this.unformat(elVal) - this.unformat(field.value));
-                    return ((Math.round(diff*100)) != 0)
+                    return ((Math.round(diff * 100)) != 0)
                 } else {
                     return !_.isEqual(this.unformat(elVal), this.unformat(field.value));
                 }
@@ -420,7 +420,7 @@
              * @param name
              */
             setMode: function(name) {
-                if(name === "detail") {
+                if (name === "detail") {
                     // remove handlers
                     this.$(this.fieldTag).off("keydown.record" + this.cid);
                     $(document).off("mousedown.record" + this.cid);
@@ -457,15 +457,23 @@
                 if (field.type === 'int') {
                     // check for percentages
                     newValue = this._parsePercentage(newValue);
-                    return this._verifyIntValue(newValue);
+                    if (this._verifyIntValue(newValue)) {
+                        return newValue;
+                    }
                 } else if (field.type === 'currency') {
-                    newValue == this._parsePercentage(newValue);
-                    return this._verifyCurrencyValue(newValue)
+                    newValue = this._parsePercentage(newValue);
+                    if (this._verifyCurrencyValue(newValue)) {
+                        return newValue;
+                    }
                 } else if (field.type === 'date') {
-                    return this._verifyDateString(newValue);
+                    if (this._verifyDateString(newValue)) {
+                        return newValue;
+                    }
+                } else {
+                    return newValue;
                 }
 
-                return true;
+                return false;
             },
 
             /**
