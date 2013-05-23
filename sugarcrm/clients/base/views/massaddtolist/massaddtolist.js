@@ -33,6 +33,13 @@
     extendsFrom: 'MassupdateView',
     addToListFieldName: 'prospect_lists',
 
+    initialize: function(options) {
+        var additionalEvents = {};
+        additionalEvents['click .btn[name=create_button]'] = 'createAndSelectNewList';
+        this.events = _.extend({}, this.events, additionalEvents);
+        app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'initialize', args:[options]});
+    },
+
     /**
      * Listen for just the massaddtolist event from the list view
      */
@@ -90,5 +97,31 @@
             this.model.get(this.addToListFieldName + '_id')
         ];
         return attributes;
+    },
+
+    /**
+     * Create a new target list and select it in the list
+     */
+    createAndSelectNewList: function() {
+        app.drawer.open({
+            layout: 'create-nodupecheck',
+            context: {
+                create: true,
+                module: 'ProspectLists'
+            }
+        }, _.bind(this.selectNewlyCreatedList, this));
+    },
+
+    /**
+     * Callback for create new target list - sets relate field with newly created list
+     * @param context
+     * @param model newly created target list model
+     */
+    selectNewlyCreatedList: function(context, model) {
+        var relateField = this.getField('prospect_lists_name');
+        if (relateField) {
+            model.value = model.get('name');
+            relateField.setValue(model);
+        }
     }
 })
