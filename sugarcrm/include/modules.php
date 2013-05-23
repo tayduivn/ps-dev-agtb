@@ -602,7 +602,6 @@ $bwcModules = array(
     //END SUGARCRM flav=pro ONLY
     'ProjectTask',
     //BEGIN SUGARCRM flav=pro ONLY
-    'ProspectLists',
     'Quotes',
     'QueryBuilder',
     //END SUGARCRM flav=pro ONLY
