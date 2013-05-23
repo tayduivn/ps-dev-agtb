@@ -238,7 +238,11 @@
      */
     _replaceRecipients: function(recipients) {
         if (!_.isArray(recipients)) {
-            recipients = [recipients];
+            if (_.isEmpty(recipients)) {
+                recipients = []
+            } else {
+                recipients = [recipients];
+            }
         }
 
         _.each(recipients, function(recipient, index) {

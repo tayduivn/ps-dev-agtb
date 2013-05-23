@@ -113,40 +113,67 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("prepopulate", function () {
-        var populateRelatedStub, contextTriggerStub;
+        var populateRelatedStub, modelSetStub, flag;
 
         beforeEach(function () {
-            populateRelatedStub = sinon.stub(view, 'populateRelated');
-            contextTriggerStub = sinon.stub(view.context, 'trigger');
+            flag = false;
+            populateRelatedStub = sinon.stub(view, 'populateRelated', function() {
+                flag = true;
+            });
+            modelSetStub = sinon.stub(view.model, 'set', function() {
+                flag = true;
+            });
         });
 
         afterEach(function () {
             populateRelatedStub.restore();
-            contextTriggerStub.restore();
+            modelSetStub.restore();
         });
 
         it("Should trigger recipient add on context if to_addresses, cc_addresses, or bcc_addresses value is passed in.", function() {
-            view.prepopulate({
-                to_addresses: [{email: "to@foo.com"}, {email: "too@foo.com"}],
-                cc_addresses: [{email: "cc@foo.com"}],
-                bcc_addresses: [{email: "bcc@foo.com"}]
+            runs(function() {
+                view.prepopulate({
+                    to_addresses: [{email: "to@foo.com"}, {email: "too@foo.com"}],
+                    cc_addresses: [{email: "cc@foo.com"}],
+                    bcc_addresses: [{email: "bcc@foo.com"}]
+                });
             });
-            expect(contextTriggerStub.callCount).toBe(3); // once for each recipient type passed in
-        });
 
-        it("Should not trigger recipient add on context if no recipients are passed in.", function() {
-            view.prepopulate({});
-            expect(contextTriggerStub.callCount).toBe(0);
+            waitsFor(function() {
+                return flag;
+            }, 'model.set() should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(modelSetStub.callCount).toBe(3); // once for each recipient type passed in
+            });
         });
 
         it("should call populateRelated if related value passed", function () {
-            view.prepopulate({related: {id: '123'}});
-            expect(populateRelatedStub.callCount).toBe(1);
+            runs(function() {
+                view.prepopulate({related: {id: '123'}});
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'populateRelated() should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(populateRelatedStub.callCount).toBe(1);
+            });
         });
 
         it("should set other values if passed", function () {
-            view.prepopulate({foo: 'bar'});
-            expect(view.model.get('foo')).toEqual('bar');
+            runs(function() {
+                view.prepopulate({foo: 'bar'});
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'model.set() should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(modelSetStub.calledOnce).toBe(true);
+            });
         });
     });
 

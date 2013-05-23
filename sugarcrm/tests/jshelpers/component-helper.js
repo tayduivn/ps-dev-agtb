@@ -27,8 +27,12 @@
         });
     };
 
-    test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {
-        test.loadComponent(client, "field", type);
+    test.createField = function(client, name, type, viewName, fieldDef, module, model, context, loadFromModule) {
+        if (loadFromModule) {
+            test.loadComponent(client, "field", type, module);
+        } else {
+            test.loadComponent(client, "field", type);
+        }
 
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type, events: (fieldDef) ? fieldDef.events : {} };
@@ -112,6 +116,7 @@
             type = type + 's';
             if (this.isInitialized()) {
                 if (module) {
+                    type = (type === 'fields') ? 'fieldTemplates' : type;
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].templates[templateName] = template;
                 } else {
@@ -151,6 +156,7 @@
 
         set: function() {
             if (this.isInitialized()) {
+                this._data._hash = true; //force ignore cache
                 _.each(this._data.modules, function(module) {
                     module._patched = false;
                 });
