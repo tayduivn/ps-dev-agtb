@@ -71,6 +71,9 @@ class SugarPHPMailer extends PHPMailerProxy
         // cn: gmail fix
         $this->protocol = ($this->oe->mail_smtpssl == 1) ? "ssl://" : $this->protocol;
 
+        // allow for empty messages to go out
+        $this->AllowEmpty = true;
+
         //BEGIN SUGARCRM flav=int ONLY
         $this->SMTPDebug	= false;
         //END SUGARCRM flav=int ONLY
@@ -331,17 +334,4 @@ eoq;
 		}
 		return $connection;
 	} // fn
-
-    /*
-     * overloads PHPMailer::PreSend() to allow for empty messages to go out.
-     */
-    public function PreSend() {
-        //check to see if message body is empty
-        if(empty($this->Body)){
-            //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
-            $this->Body = " ";
-        }
-        return parent::PreSend();
-    }
-
 } // end class definition

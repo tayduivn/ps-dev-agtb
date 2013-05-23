@@ -426,9 +426,6 @@ class SmtpMailer extends BaseMailer
             $mailer->Body = $textBody; // the plain-text part is the primary message body
         } else {
             // you should never actually send an HTML email without a plain-text part, but we'll allow it (for now)
-            // PHPMailer will choke when all message parts are empty, so give it a blank space to allow an "empty" body to be sent
-            //TODO: does the new PHPMailer still allow for this?
-            $mailer->Body = " ";
         }
     }
 

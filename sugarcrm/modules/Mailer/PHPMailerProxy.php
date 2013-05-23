@@ -40,6 +40,9 @@ class PHPMailerProxy extends PHPMailer
     {
         // use PHPMailer with exceptions
         parent::__construct(true);
+
+        // allow an "empty" body to be sent
+        $this->AllowEmpty = true;
     }
 
     public function SmtpConnect($options = array())
