@@ -30,8 +30,7 @@ table.dataTable {
     }
   }
 
-//  TABLE HEADER
-
+  //  TABLE HEADER
   & > thead {
     th {
       line-height: 26px !important;
@@ -58,7 +57,6 @@ table.dataTable {
         overflow-x: visible;
         padding-left: 15px;
         padding-right: 0;
-        width: 30px;
       }
 
       /*
@@ -124,114 +122,71 @@ table.dataTable {
     }
   }
 
-//  TABLE BODY
-& > tbody {
-  & > tr {
-    //from tables.less?
-    &:last-child {
-      td {
-        border-bottom-size: 2px;
+  //  TABLE BODY
+  & > tbody {
+    & > tr {
+      //from tables.less?
+      &:last-child {
+        td {
+          border-bottom-size: 2px;
+        }
       }
-    }
-    & > td {
-      white-space: nowrap;
-      word-break: break-word;
-      position: relative;
-      vertical-align: middle;
-      text-overflow: ellipsis;
-      max-width: 100px;
-
-      border-top: 1px solid darken(@grayLighter, 5%);
-      border-bottom: 1px solid darken(@grayLighter, 5%);
-      background-color: @white;
-      .rtl(@direction,ltr);
-
-      &> *:not(.overflow-visible) {
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-        display: inline-block;
+      & > td {
         white-space: nowrap;
         word-break: break-word;
         position: relative;
         vertical-align: middle;
-      }
-      &> .forecastsWorksheetManager:hover {
-        overflow: hidden;
-      }
-      &.td-inline-edit {
-        overflow: visible;
-        span {
-          overflow: visible;
+        text-overflow: ellipsis;
+        max-width: 100px;
+        border-top: 1px solid darken(@grayLighter, 5%);
+        border-bottom: 1px solid darken(@grayLighter, 5%);
+        background-color: @white;
+        .rtl(@direction,ltr);
+        &> *:not(.overflow-visible) {
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          display: inline-block;
+          white-space: nowrap;
+          word-break: break-word;
+          position: relative;
+          vertical-align: middle;
         }
-      }
-      &:first-child {
-        overflow-x: visible;
-        padding-left: 15px;
-        padding-right: 0;
-        width: 30px;
-        span {
-          overflow: visible;
+        &:first-child {
+          overflow-x: visible;
+          padding-left: 15px;
+          padding-right: 0;
+          span {
+            overflow: visible;
+          }
         }
-      }
-      &:last-child {
-        max-width: 60px;
-        min-width: 60px;
-        padding: 0 8px 0 5px;
-        width: 60px;
-        //vertical-align: middle;
-        overflow-x: visible;
-        border-right: 0;
-      }
-      //for forecasts row extend info cell (single td so override :first-child,:last-child)
-      &.details {
-        padding: 0px;
-        width: auto;
-        max-width: inherit;
-        .extend {
-          background-color: @grayLight;
-          margin: -1px -1px -1px 0;
-          display: block;
-          .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.2);");
-          .icon-arrow-down:before {
-            color: @red;
-          }
-          .icon-arrow-up:before {
-            color: @green;
-          }
-          article {
-            color: @grayDark;
-            date {
-              color: @gray;
+        &:last-child {
+          max-width: 60px;
+          min-width: 60px;
+          padding: 0 8px 0 5px;
+          width: 60px;
+          //vertical-align: middle;
+          overflow-x: visible;
+          border-right: 0;
+        }
+        .full-name.list {
+          &:hover {
+            color: @linkColorHover;
+            cursor: pointer;
+            &> .list {
+              text-decoration: underline;
+              a {
+                color: @linkColorHover;
+              }
             }
           }
-          article:first-child {
-            .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.2);");
+          .ellipsis_inline {
+            display: inline !important;
           }
-          article:nth-child(even), article:nth-child(odd) {
-            border-top: 1px solid @grayLighter;
-            border-bottom-color: @gray;
-          }
-        }
-      }
-      .full-name.list {
-        &:hover {
-          color: @linkColorHover;
-          cursor: pointer;
-          &> .list {
-            text-decoration: underline;
-            a {
-              color: @linkColorHover;
-            }
-          }
-        }
-        .ellipsis_inline {
-          display: inline !important;
         }
       }
     }
   }
-}
   /* ---------
   TABLE FOOTER */
   & > tfoot {
@@ -259,6 +214,9 @@ table.dataTable {
         &:last-child {
           z-index: 2;
         }
+        .rowaction {
+            .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important;");
+        }
         .icon-eye-open {
           color: @grayDark;
         }
@@ -273,15 +231,6 @@ table.dataTable {
         }
       }
     }
-    //forecasts
-/*    div.sugareditable {
-      td {
-        overflow: visible;
-        &> *:not(.overflow-visible) {
-          overflow: visible;
-        }
-      }
-    }*/
     &.tr-inline-edit {
       &> td {
         &> span {
@@ -350,8 +299,17 @@ table.dataTable {
         }
       }
     }
+    //forecasts
+    &.single span.detail:hover,
+    &.single span.list:hover {
+      overflow: visible;
+      .edit-icon {
+        position: absolute;
+        left: -14px;
+        top: 2px;
+      }
+    }
   }
-
   /* ---------
   TABLE HEADER CELL (specific)*/
   th {
@@ -392,7 +350,6 @@ table.dataTable {
   /* ---------
   TABLE CELL (specific)*/
   td {
-
     .actions {
       display:inline-block;
       white-space: nowrap;
@@ -485,7 +442,6 @@ table.dataTable {
     color: @orange;
   }
 }
-
 
 /**
  * The flex list allows you to add left actions and right actions to the traditional list view.
@@ -582,6 +538,38 @@ table.dataTable {
           position: absolute;
           right: 0;
           .box-shadow(~"-2px 0 1px 0 rgba(0,0,0,.1);");
+        }
+      }
+
+      & > tbody > tr[name$="_commit_history"] > td:first-child {
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        box-sizing: border-box;
+        background-color: @grayLight;
+        position: relative;
+        .icon-arrow-down:before {
+          color: @red;
+        }
+        .icon-arrow-up:before {
+          color: @green;
+        }
+        span.list {
+          color: @grayDark;
+          padding: 10px 20px;
+          width: 100%;
+          box-sizing: border-box;
+          .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.4);");
+          .relativetime {
+            color: @gray;
+          }
+        }
+      }
+
+      & > tfoot > tr > td {
+        &:nth-last-child(2) {
+          padding-right: 75px;
         }
       }
     }
