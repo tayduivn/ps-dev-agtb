@@ -368,6 +368,11 @@ class SugarMockLogger
 		$this->_messages[] = strtoupper($method) . ': ' . $message[0];
 	}
 
+    public function getMessages()
+    {
+        return $this->_messages;
+    }
+
 	public function getLastMessage()
 	{
 		return end($this->_messages);
