@@ -2,12 +2,13 @@
     extendsFrom: 'ListView',
     events: {
         'click .show_extra' : 'showMore',
-        'click .preview' : 'previewRecord'
+        'click .preview' : 'togglePreview'
     },
     MAX_RECORDS: 5, // the number of records we can merge, by fiat
     mergeFields: [], // list of fields to generate the metadata on the fly
     rowFields: {},
     primaryRecord: {},
+    recordName: '',
     isPreviewOpen: false,
     initialize: function(options) {
         var meta = app.metadata.getView(options.module, 'record'),
@@ -35,7 +36,6 @@
             _.findWhere(records,{id: options.context.get("primaryRecord").id}) :
             records[0];
         records = [primary].concat(_.without(records, primary));
-        this.setPrimaryRecord(primary);
         
         // these are the fields we'll need to pull our records
         this.mergeFields = _.chain(meta.panels)
@@ -48,7 +48,6 @@
         // and only retrieve the records specified
         ids = (_.pluck(records,'id'));
         if (mergeCollection) {
-            mergeCollection.fields = this.mergeFields; // to make sure we pull all fields we need.
             mergeCollection.filterDef = [{ "id": { "$in" : ids}}];
             mergeCollection.comparator = function (model) {
                 return _.indexOf(ids,model.get('id'));
@@ -56,6 +55,7 @@
         }
 
         app.view.View.prototype.initialize.call(this, options);
+
         this.action = 'list';
         this.layout.on('mergeduplicates:save:fire', this.save, this);
     },
@@ -89,6 +89,15 @@
         });
     },
     /**
+     * Override the standard view's get field names.
+     * @override
+     * @param module
+     * @returns {Array} array of field names.
+     */
+    getFieldNames: function(module) {
+        return _.pluck(this.mergeFields,'name');
+    },
+    /**
      * Create a two panel viewdews metadata (visible, hidden) given list of fields
      * and the collection
      * @param {Array} fields the list of fields for the module
@@ -105,6 +114,7 @@
         // 3. if a field is "different" among all alternatives (i.e. there exists two alternatives such
         //    that the field value is not equal), it is placed in a visible panel.
         _.each(fields, function(field, index){
+            // internal helper - see if the field is the same among all alternatives.
             function isSimilar(field, primary, alternatives) {
                 return _.every(alternatives, function(alt) {
                     return (alt.get(field.name) == primary.get(field.name));
@@ -147,24 +157,8 @@
                 }
             ]
         };
-    },    
-    /**
-     * Display a Preview for the primary record
-     */
-    previewRecord: function(togglePreview) {
-        if(_.isUndefined(togglePreview) || togglePreview) {
-            if(this.isPreviewOpen) {
-                app.events.trigger("preview:close");
-                this.isPreviewOpen = false;
-                return;
-            }
-        }
-        var previewModel = this.primaryRecord;
-        var previewModels = [previewModel];
-        var previewCollection = app.data.createBeanCollection(previewModel.get('_module') || previewModel.module, previewModels);
-        app.events.trigger("preview:render", previewModel, previewCollection, false);
-        this.isPreviewOpen = true;
     },
+
     /**
      * utility method for determining if a field is mergable from its fielddef.
      * @param fieldDef
@@ -264,6 +258,7 @@
                     .value();
         });
     },
+
     /**
      * utility method for taking a fieldlist with possible nested fields,
      * and returning a flat array of fields
@@ -297,6 +292,30 @@
         }
         return fields;
     },
+
+    /**
+     * Toggles a Preview for the primary record
+     */
+    togglePreview: function() {
+        if(this.isPreviewOpen) {
+            app.events.trigger("preview:close");
+            this.isPreviewOpen = false;
+        }
+        else {
+            this.updatePreviewRecord(this.primaryRecord);
+            this.isPreviewOpen = true;
+        }
+    },
+    /**
+     * Create the preview panel for the model in question
+     * @param model
+     */
+    updatePreviewRecord: function(model) {
+        var module = model.module || model.get('_module');
+        var previewCollection = app.data.createBeanCollection(module, [model]);
+        app.events.trigger("preview:render", model, previewCollection, false);
+    },
+
     showMore: function(evt) {
         var btn = this.$("a.show_extra"),
             newHtml = (btn.text().trim() == "More") ?
@@ -306,9 +325,23 @@
         btn.html(newHtml);
         this.$(".col .extra").toggleClass('hide');
     },
+    /**
+     * Update the view's title
+     * @param title
+     */
+    updatePrimaryTitle: function(title) {
+        this.recordName = title;
+        this.$('span.record-name').text(title);
+    },
     _render:function () {
         this.meta = this.generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
-        app.view.views.ListView.prototype._render.call(this);
+
+        app.view.invokeParent(this, {
+            type: 'view',
+            name: 'list',
+            method: '_render'
+        });
+
         delete this.rowFields;
         this.rowFields = {};
         _.each(this.fields, function(field) {
@@ -324,6 +357,7 @@
         this.setSortable();
         this.setDraggable();
     },
+
     setSortable: function() {
         this.$(".fluid-div").sortable({
             items: ".col",
@@ -331,6 +365,7 @@
         });
         this.$(".fluid-div").disableSelection();
     },
+
     setDraggable: function() {
         var self = this,
             dragMe = _.bind(this.setDraggable,this); // avoid losing our context in the recursion
@@ -355,10 +390,10 @@
 
                 self.setPrimaryEdit(dropped_to.data("recordid"));
                 _.delay(dragMe, 500);
-
             }
         });
     },
+
     /**
      * Do what we need to do when the primary record is set
      * @param {String} id the record representing the new primary model
@@ -366,11 +401,10 @@
     setPrimaryEdit: function(id) {
         // make sure we get the model in the collection, with all fields in it.
         var primary_record = this.collection.get(id),
-            old_primary_record = this.context.get("primaryRecord");
+            old_primary_record = this.primaryRecord;
 
         if(primary_record) {
             this.setPrimaryRecord(primary_record);
-            this.context.set("primaryRecord", primary_record);
             this.toggleFields(this.rowFields[primary_record.id], true);
             //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
         }
@@ -380,22 +414,49 @@
             this.toggleFields(this.rowFields[old_primary_record.id], false);
         }
     },
+
     /**
      * Set primary record
      * @param {Model} model primary model
      */
     setPrimaryRecord: function(model) {
         var self = this;
-        this.primaryRecord = model;  
-        this.primaryRecord.on("change", function(){
-            var newRecordName = model.get('name') || "";
-            if (self.recordName && newRecordName != self.recordName) {
-                self.$('span.record-name').text(newRecordName);
-            }
-            self.recordName = newRecordName;
-            app.events.trigger('preview:close');
-            this.previewRecord(false);
+        if (this.primaryRecord === model) {
+            return;
+        }
+
+        // turn off events on the old primary record if applicable
+        if (_.isFunction(this.primaryRecord,'off')) {
+         this.primaryRecord.off('change',null,this);
+         this.primaryRecord.off('change:name',null,this);
+        }
+
+        // get the new primary record wired up
+        this.primaryRecord = model;
+        this.updatePrimaryTitle(this.primaryRecord.get('name'));
+        if (this.isPreviewOpen) {
+            this.updatePreviewRecord(this.primaryRecord);
+        }
+
+        this.primaryRecord.on('change:name', function(model, value, options) {
+            this.updatePrimaryTitle(value);
         }, this);
-        this.recordName = this.primaryRecord.get('name') || '';
+
+        this.primaryRecord.on('change', function(model){
+            if (this.isPreviewOpen) {
+                app.events.trigger('preview:close'); // either this or set a previewId on the model
+                this.updatePreviewRecord(this.primaryRecord);
+            }
+        }, this);
+    },
+
+    /**
+     * custom bindDataChange
+     */
+    bindDataChange: function() {
+        this.collection.on('reset', function (coll) {
+            this.setPrimaryRecord(coll.at(0));
+            this.render();
+        }, this);
     }
 })

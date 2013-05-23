@@ -7,7 +7,12 @@
     },
 
     initialize: function(options) {
-        app.view.views.HeaderpaneView.prototype.initialize.call(this, options);
+        app.view.invokeParent(this, {
+            type: 'view',
+            name: 'headerpane',
+            method: 'initialize',
+            args: [options]
+        });
         var records = options.context.get("selectedDuplicates");
         this.title = app.lang.get('LBL_MERGING_RECORDS',this.module,{ mergeCount: records.length});
     },
