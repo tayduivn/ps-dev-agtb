@@ -1,0 +1,7 @@
+<div class="datapoint pull-left">
+    {{this.label}}<br>
+    <h2 id="{{this.name}}">{{formatCurrency this.total}}{{#if this.arrow}}&nbsp;<span class="icon-sm committed_arrow{{this.arrow}}"></span>{{/if}}</h2>
+    {{#if this.last_commit}}
+    <br><span class="previous_{{this.name}}">{{formatCurrency this.last_commit}}</span>
+    {{/if}}
+</div>

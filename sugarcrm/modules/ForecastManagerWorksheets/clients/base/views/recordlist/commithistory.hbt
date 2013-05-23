@@ -1,0 +1,3 @@
+<tr name="{{module}}_{{id}}_commit_history">
+    <td colspan="{{colspan}}">{{placeholder}}</td>
+</tr>

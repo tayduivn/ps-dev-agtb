@@ -38,6 +38,11 @@ class SideBarLayout
         $this->containers[$section]->set("span", $span);
     }
 
+    public function setSectionType($section, $type)
+    {
+        $this->containers[$section]->set("type", $type);
+    }
+
     public function getLayout()
     {
         foreach ($this->containers as $container) {

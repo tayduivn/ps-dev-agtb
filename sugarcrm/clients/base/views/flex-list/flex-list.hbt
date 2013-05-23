@@ -25,7 +25,7 @@
         </th>
         {{/each}}
         {{#each ../_fields.visible}}
-            <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
+            <th {{#if this.width}}width="{{this.width}}" {{/if}}class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
                 <span>
                     {{str label ../../module}}
@@ -70,7 +70,7 @@
         </td>
         {{/each}}
         {{#each ../../_fields.visible}}
-            <td>
+            <td{{#if this.align}} class="{{this.align}}"{{/if}}>
               {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}

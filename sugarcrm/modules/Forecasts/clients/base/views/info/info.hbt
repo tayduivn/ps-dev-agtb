@@ -1,0 +1,30 @@
+<div class="row-fluid topline">
+    <div class="span4">
+        {{#if this.meta.timeperiod}}
+            {{#each this.meta.timeperiod}}
+                <label for="date_filter" class="control-label">{{str this.label "Forecasts"}}</label>
+
+                <div class="controls">
+                    {{field ../this model=../this.model}}
+                </div>
+            {{/each}}
+        {{/if}}
+        {{#if this.meta.last_commit}}
+            {{#each this.meta.last_commit}}
+                {{field ../this model=../this.model}}
+            {{/each}}
+        {{/if}}
+    </div>
+    <div class="span8 datapoints">
+        <div class="pull-right">
+            {{#each this.meta.datapoints}}
+                {{field ../this model=../this.model}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+{{#if this.meta.commitlog}}
+    {{#each this.meta.commitlog}}
+        {{field ../this model=../this.model}}
+    {{/each}}
+{{/if}}

@@ -29,5 +29,5 @@
 <a class="btn{{#if def.primary}} btn-primary{{/if}}"
    href="{{#if full_route}}#{{full_route}}{{else}}{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}{{else}}javascript:void(0);{{/if}}{{/if}}"
    name="{{name}}">
-{{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{label}}</a>
+{{#if def.icon}}<i class="{{def.icon}}"></i> {{/if}}{{label}}</a>
 

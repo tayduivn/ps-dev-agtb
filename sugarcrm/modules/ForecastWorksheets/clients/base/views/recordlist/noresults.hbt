@@ -1,0 +1,4 @@
+<tr>
+    <td class="tcenter" colspan="{{this._fields.visible.length}}">{{str "LBL_LISTVIEW_NO_RECORDS"}}</td>
+    <td>&nbsp;</td>
+</tr>

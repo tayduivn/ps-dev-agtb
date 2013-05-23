@@ -1,182 +1,251 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
+/**
+ * Forecast Records View
+ *
+ * Events
+ *
+ * forecasts:worksheet:committed
+ *  on: this.context
+ *  by: commitForecast
+ *  when: after a successful Forecast Commit
+ */
 ({
     /**
-     * Layout that places views in columns with each view in a column
-     * @class View.Layouts.ForecastsLayout
-     * @alias SUGAR.App.layout.ForecastsLayout
-     * @extends View.Layout
+     * The options from the initialize call
      */
-
-    /**
-     * Stores the initial data models
-     * todo: use this to populate models that we already have data for; currently only holds filters, chartoptions, & user
-     *
-     */
-    initDataModel: {},
-
-    /**
-     * this is used to defer the render until the forecasts initialization returns with the data
-     */
-    deferredRender: '',
-
-    /**
-     * This is used to hold the path for the forecasts specific JS
-     */
-    forecastsJavascript: "",
+    initOptions: undefined,
 
     initialize: function(options) {
-        var url = app.api.buildURL("Forecasts/init");
+        // the parent is not called here so we make sure that nothing else renders until after we init the
+        // the forecast module
+        this.initOptions = options;
+        this.syncInitData();
+    },
 
-        // we need this to be set here so anytime this gets initialized, it will work.
-        this.deferredRender = new $.Deferred();
-        app.api.call('GET', url, null, {
-            success: _.bind(function(data) {
+    // overwrite load data, we will call this later via the prototype
+    loadData: function() {
+    },
 
-                // Add Forecasts-specific stuff to the app.user object
-                app.user.set(data.initData.userData);
-
-                if(data.initData.forecasts_setup === 0) {
-                    window.location.hash = "#Forecasts/layout/config";
-                } else {
-                    this.initForecastsModule(data, options);
+    bindDataChange: function() {
+        // we need this here to track when the selectedTimeperiod changes and then also move it up to the context
+        // so the recordlists can listen for it.
+        if (!_.isUndefined(this.model)) {
+            this.collection.on('reset', function() {
+                // get the first model and set the last commit date
+                var lastCommit = _.first(this.collection.models);
+                var commitDate = undefined;
+                if (lastCommit instanceof Backbone.Model && lastCommit.has('date_modified')) {
+                    commitDate = lastCommit.get('date_modified');
                 }
-            }, this)
-        });
-    },
+                this.context.set({'currentForecastCommitDate': commitDate});
+            }, this);
+            // since the selected user change on the context, update the model
+            this.context.on('change:selectedUser', function(model, changed) {
+                var update = {
+                    'selectedUserId': changed.id,
+                    'forecastType': app.utils.getForecastType(changed.isManager, changed.showOpps)
+                }
+                this.model.set(update);
+            }, this);
+            // since the selected timeperiod changes on the model, update the timeperiod
+            this.model.on('change:selectedTimePeriod', function(model, changed) {
+                this.context.set('selectedTimePeriod', changed);
+            }, this);
+            // if the model changes, run a fetch
+            this.model.on('change', function() {
+                this.collection.fetch();
+            }, this);
 
-    // overload the loadData method as we don't need anything to load here.
-    loadData : function() {
-        // do nothing here
-    },
-
-    initForecastsModule: function(forecastData, options) {
-        // set the forecasts specific JS.
-        $("#content").append($('<script src="' + forecastData.forecastsJavascript + '"></script>'));
-
-        // get default selections for filter and range
-        app.defaultSelections = forecastData.defaultSelections;
-        app.initData = forecastData.initData;
-
-        var defaultSelections = app.defaultSelections;
-
-        // Set initial selected data on the context
-        options.context.set({
-            selectedTimePeriod: defaultSelections.timeperiod_id,
-            selectedCategory: defaultSelections.ranges,
-            selectedGroupBy: defaultSelections.group_by,
-            selectedDataSet: defaultSelections.dataset,
-
-            currentForecastCommitDate: '',
-
-            /**
-             * Initially set to the currently logged-in user, selectedUser is different from currentUser
-             * because selectedUser is used by other components and is changeable by most components
-             * (e.g. selecting a different user via the hierarchy tree or clicking in the worksheet)
-             */
-            selectedUser: app.user.attributes,
-
-            /**
-             * boolean to reload the active worksheet
-             */
-            reloadWorksheetFlag: false,
-
-            /**
-             * The active worksheet
-             */
-            currentWorksheet: "",
-
-            /**
-             * used across Forecasts to contain sales rep worksheet totals
-             */
-            updatedTotals: {},
-
-            /**
-             * todo-sfa keep track of changes to modal.js and when they have proper events being passed
-             * we can do away with this
-             *
-             * set by forecastsConfigTabbedButtons.js when the saved button is clicked so that it's callback
-             * can check this variable to know which button was clicked
-             */
-            saveClicked: false
-        });
-
-        // grab a copy of the init data for forecasts to use
-        this.initDataModel = app.initData;
-
-        // then get rid of the data from app
-        app.initData = null;
-
-        app.view.Layout.prototype.initialize.call(this, options);
-
-        this.deferredRender.resolve();
+            // listen on the context for a commit trigger
+            this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
+                this.commitForecast(user, worksheet_type, forecast_totals);
+            }, this);
+        }
     },
 
     /**
-     * Add a view (or layout) to this layout.
-     * @param {View.Layout/View.View} comp Component to add
+     * Get the Forecast Init Data from the server
+     * @param options
      */
-    _placeComponent: function(comp) {
-        var compName = comp.name || comp.meta.name,
-            divName = ".view-" + compName;
+    syncInitData: function(options) {
+        var callbacks,
+            url;
 
-        // Certain views in forecasts are controlled by other views
-        // If there is a sub-view (eg: a view creates another view and manually renders it in)
-        // then we can set placeInLayout => false and we create all the models and such
-        // from the rest of metadata, but we just dont place it into the html of the layout
-        // as another view will be handling that
-        if(_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
-            _.has(comp.meta, 'placeInLayout') && comp.meta.placeInLayout == false) {
-            return;
-        }
+        options = options || {};
+        // custom success handler
+        options.success = _.bind(function(model, data, options) {
+            // Add Forecasts-specific stuff to the app.user object
+            app.user.set(data.initData.userData);
+            if (data.initData.forecasts_setup === 0) {
+                window.location.hash = "#Forecasts/layout/config";
+            } else {
+                this.initForecastsModule(data, options);
+            }
+        }, this);
 
-        if(!this.$el.children()[0]) {
-            this.$el.addClass("complex-layout");
-        }
+        // since we have not initialized the view yet, pull the model from the initOptions.context
+        var model = this.initOptions.context.get('model');
+        callbacks = app.data.getSyncCallbacks('read', model, options);
+        this.trigger("data:sync:start", 'read', model, options);
 
-        //add the components to the div
-        if(compName && this.$el.find(divName)[0]) {
-            this.$el.find(divName).append(comp.$el);
-        } else {
-            this.$el.append(comp.$el);
-        }
+        url = app.api.buildURL("Forecasts/init", null, null, options.params);
+        app.api.call("read", url, null, callbacks);
     },
 
     /**
-     * Override render so we can init the alerts for the page to use.
+     * Process the Forecast Data
      *
-     * @return {*}
+     * @param data
+     * @param options
+     */
+    initForecastsModule: function(data, options) {
+        var ctx = this.initOptions.context;
+        // we watch for the first selectedUser change to actually init the Forecast Module case then we know we have
+        // a proper selected user
+        ctx.once('change:selectedUser', this._onceInitSelectedUser, this);
+
+        // set items on the context from the initData payload
+        ctx.set({'currentForecastCommitDate': undefined});
+        ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
+        ctx.set({'selectedRanges': data.defaultSelections.ranges}, {silent: true});
+        ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
+
+        // set the selected user to the context
+        app.utils.getSelectedUsersReportees(app.user.toJSON(), ctx);
+    },
+
+    /**
+     * Method that is ran when the selectedUser is set for the first time.  This actually kicks off
+     * the init of the record view by calling the prototype initialize for the layout component
+     *
+     * @param model
+     * @param change
      * @private
      */
-    _render: function() {
-        $.when(this.deferredRender).done(_.bind(function() {
-            app.view.Layout.prototype._render.call(this);
-            return this;
-        }, this));
-    }
+    _onceInitSelectedUser: function(model, change) {
+        // init the recordlist view
+        app.view.Layout.prototype.initialize.call(this, this.initOptions);
 
+        // set the selected user and forecast type on the model
+        this.model.set('selectedUserId', change.id, {silent: true});
+        this.model.set('forecastType', app.utils.getForecastType(change.isManager, change.showOpps));
+        // bind the collection sync to our custom sync
+        this.collection.sync = _.bind(this.sync, this);
+
+        // load the data
+        app.view.Layout.prototype.loadData.call(this);
+        // bind the data change
+        this.bindDataChange();
+        // render everything
+        if (!this.disposed) this.render();
+    },
+
+    /**
+     * Custom sync method
+     *
+     * @param method
+     * @param model
+     * @param options
+     */
+    sync: function(method, model, options) {
+        var callbacks,
+            url;
+
+        options = options || {};
+
+        options.params = options.params || {};
+
+        var args_filter = [],
+            filter = null;
+        if (this.model.has('selectedTimePeriod')) {
+            args_filter.push({"timeperiod_id": this.model.get('selectedTimePeriod')});
+        }
+        if (this.model.has('selectedUserId')) {
+            args_filter.push({"user_id": this.model.get('selectedUserId')});
+            args_filter.push({"forecast_type": this.model.get('forecastType')});
+        }
+
+        if (!_.isEmpty(args_filter)) {
+            filter = {"filter": args_filter};
+        }
+
+        options.params.order_by = 'date_entered:DESC'
+        options = app.data.parseOptionsForSync(method, model, options);
+
+        // custom success handler
+        options.success = _.bind(function(model, data, options) {
+            this.collection.reset(data);
+        }, this);
+
+        callbacks = app.data.getSyncCallbacks(method, model, options);
+        this.trigger("data:sync:start", method, model, options);
+
+        url = app.api.buildURL("Forecasts/filter", null, null, options.params);
+        app.api.call("create", url, filter, callbacks);
+    },
+
+    /**
+     * Commit A Forecast
+     *
+     * @triggers forecasts:worksheet:committed
+     * @param user
+     * @param worksheet_type
+     * @param forecast_totals
+     */
+    commitForecast: function(user, worksheet_type, forecast_totals) {
+        var forecast = new this.collection.model(),
+            forecastType = app.utils.getForecastType(user.isManager, user.showOpps),
+            forecastData = {},
+            totalsProperty = 'case',
+            likelyProperty = 'amount';
+
+        if (forecastType == 'Rollup') {
+            totalsProperty = 'adjusted';
+            likelyProperty = 'likely_adjusted';
+        }
+
+        forecastData.best_case = forecast_totals['best_' + totalsProperty];
+        forecastData.likely_case = forecast_totals[likelyProperty];
+        forecastData.worst_case = forecast_totals['worst_' + totalsProperty];
+
+        // we need a commit_type so we know what to do on the back end.
+        forecastData.commit_type = worksheet_type;
+        forecastData.timeperiod_id = forecast_totals.timeperiod_id || this.model.get('selectedTimePeriod');
+        forecastData.forecast_type = forecastType;
+        forecastData.amount = forecast_totals.amount || forecastData.likely_case;
+        forecastData.opp_count = forecast_totals.included_opp_count;
+        forecastData.closed_amount = forecast_totals.closed_amount;
+        forecastData.closed_count = forecast_totals.closed_count;
+        forecastData.pipeline_amount = forecast_totals.pipeline_amount || 0;
+        forecastData.pipeline_opp_count = forecast_totals.pipeline_opp_count || 0;
+
+        forecast.save(forecastData, { success: _.bind(function() {
+            // we need to make sure we are not disposed, this handles any errors that could come from the router and window
+            // alert events
+            if (!this.disposed) {
+                // Call sync again so commitLog has the full collection
+                // method gets overridden and options just needs an
+                this.collection.fetch();
+                this.context.trigger("forecasts:worksheet:committed", worksheet_type, forecastData);
+                app.alert.show('success', {
+                    level: 'success',
+                    autoClose: true,
+                    title: app.lang.get("LBL_FORECASTS_WIZARD_SUCCESS_TITLE", "Forecasts") + ":",
+                    messages: [app.lang.get("LBL_FORECASTS_WORKSHEET_COMMIT_SUCCESS", "Forecasts")]
+                });
+            }
+        }, this), silent: true, alerts: { 'success': false }});
+    }
 })

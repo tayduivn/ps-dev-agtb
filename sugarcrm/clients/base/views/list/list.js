@@ -68,6 +68,8 @@
 
         options.meta.action = 'list';
 
+        options = this.parseFieldMetadata(options)
+
         app.view.View.prototype.initialize.call(this, options);
 
         this.fallbackFieldTemplate = 'list-header';
@@ -77,6 +79,44 @@
         // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
+    },
+
+    /**
+     * Parse the metadata to make sure that the follow attributes conform to specific standards
+     *  - Align: valid options are left, center and right
+     *  - Width: any percentage below 100 is valid
+     *
+     * @param options
+     * @returns {*}
+     */
+    parseFieldMetadata: function(options) {
+        // standardize the align and width param in the defs if they exist
+        _.each(options.meta.panels, function(panel, panelIdx) {
+            _.each(panel.fields, function(field, fieldIdx) {
+                if (!_.isUndefined(field.align)) {
+                    var alignClass = '';
+                    if (_.contains(['left', 'center', 'right'], field.align)) {
+                        alignClass = 't' + field.align;
+                    }
+                    options.meta.panels[panelIdx].fields[fieldIdx].align = alignClass;
+                }
+
+                if (!_.isUndefined(field.width)) {
+                    // make sure it's a percentage
+                    var parts = field.width.toString().match(/^(\d{0,3})\%$/);
+                    var widthValue = '';
+                    if(parts) {
+                        if(parseInt(parts[1]) < 100) {
+                            widthValue = parts[0];
+                        }
+                    }
+
+                    options.meta.panels[panelIdx].fields[fieldIdx].width = widthValue;
+                }
+            }, this);
+        }, this);
+
+        return options;
     },
 
     /**

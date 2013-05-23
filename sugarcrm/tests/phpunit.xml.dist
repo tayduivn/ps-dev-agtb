@@ -128,7 +128,9 @@
         <testsuite name="Sugar SFA Test Suite">
             <directory>./modules/Contracts/</directory>
             <directory>./modules/Currencies/</directory>
+            <directory>./modules/ForecastManagerWorksheets/</directory>
             <directory>./modules/Forecasts/</directory>
+            <directory>./modules/ForecastWorksheets/</directory>
             <directory>./modules/Opportunities/</directory>
             <directory>./modules/ProductTemplates/</directory>
             <directory>./modules/Products/</directory>

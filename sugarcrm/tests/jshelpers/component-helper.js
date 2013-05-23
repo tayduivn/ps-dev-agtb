@@ -7,7 +7,7 @@
         SugarTest.loadFile(path, name, "js", function(data) {
             try {
                 data = eval("[" + data + "][0]");
-            } catch (e) {
+            } catch(e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
             test.addComponent(client, type, name, data, module);
@@ -27,12 +27,22 @@
         });
     };
 
-    test.createField = function(client, name, type, viewName, fieldDef, module, model, context) {
-        test.loadComponent(client, "field", type);
+    test.createField = function(client, name, type, viewName, fieldDef, module, model, context, loadFromModule) {
+        if (loadFromModule) {
+            test.loadComponent(client, "field", type, module);
+        } else {
+            test.loadComponent(client, "field", type);
+        }
 
         var view = new app.view.View({ name: viewName, context: context });
         var def = { name: name, type: type, events: (fieldDef) ? fieldDef.events : {} };
-        var context = context || app.context.getContext();
+        if (!context) {
+            context = app.context.getContext();
+            context.set({
+                module: module
+            });
+            context.prepare();
+        }
 
         model = model || new Backbone.Model();
 
@@ -91,10 +101,10 @@
         }
 
         return app.view.createLayout(_.extend({
-            name : layoutName,
-            context : context,
-            module : module,
-            meta : meta
+            name: layoutName,
+            context: context,
+            module: module,
+            meta: meta
         }, params));
     };
 

@@ -19,61 +19,34 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecasts_layout_records", function(){
+describe("Forecasts.Layout.Records", function() {
 
-    var app, layout, stubs;
+    var app, layout, stubs = [], apiCallStub, moduleName = 'Forecasts';
 
     beforeEach(function() {
-        var options = {
-            context: new Backbone.Model(),
-            meta: {
-                type: 'records',
-                components: {}
-            }
-        };
-        app = SugarTest.app;
-        var recordsController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/records", "records", "js", function(d) {
-            return eval(d);
+        app = SUGAR.App;
+        SugarTest.testMetadata.init();
+        SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
         });
 
-        stubs = [];
-        app.viewModule = "Forecasts";
-        app.initData = {};
-        app.defaultSelections = {
-            timeperiod_id: {},
-            group_by: {},
-            dataset: {},
-            selectedUser: {}
-        };
+        SugarTest.testMetadata.set();
 
-        stubs.push(sinon.stub(app.metadata, "getLayout", function(){
-            return {
-                forecasts: {
-                    meta: {
-                        components: {}
-                    }
-                },
-                componentsMeta: {}
-            };
-        }));
-        stubs.push(sinon.stub(app.metadata, "getModule", function(){
-            return {
-                config : {
-                    hello : 'world'
-                }
-            };
-        }));
-        stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function () {}));
+        app.data.reset();
+        app.data.declareModel(moduleName, SugarTest.app.metadata.getModule(moduleName));
 
-        stubs.push(sinon.stub(app.api, "call"));
+        app.user.set({'id': 'test_userid', full_name: 'Selected User'});
 
-        layout = SugarTest.createComponent('Layout', {
-            name: "records",
-            module: "Forecasts",
-            context: options.context,
-            meta : options.meta,
-            controller: recordsController
+        apiCallStub = sinon.stub(app.api, 'call', function() {
         });
+        stubs.push(sinon.stub(app.api, 'buildURL', function() {
+        }));
+        stubs.push(sinon.stub(app.data, 'getSyncCallbacks', function() {
+        }));
+
+        layout = SugarTest.createLayout('base', moduleName, 'records', null, null, true);
     });
 
     afterEach(function() {
@@ -81,80 +54,148 @@ describe("forecasts_layout_records", function(){
         _.each(stubs, function(stub) {
             stub.restore();
         });
+        apiCallStub.restore();
         layout = '';
     });
 
-    describe("_placeComponent function", function() {
-        it("should place a view in the correct div in the DOM if that div exists", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    name:name,
-                    $el: $(testEl)
-                };
-            layout.$el = $('<div class="outer"><div class="view-' + name + '"></div></div>');
-            layout._placeComponent(testComp);
-            expect(testComp.$el.parent().html()).toEqual(testEl);
+    it('should have initOptions set', function() {
+        expect(_.isUndefined(layout.initOptions)).toBeFalsy();
+    });
+
+    it('should have called all stubs', function() {
+        _.each(stubs, function(stub) {
+            expect(stub).toHaveBeenCalled();
+        });
+    });
+
+    describe('initForecastsModule', function() {
+        var initData = {}, getSelectedUsersReporteesStub, ctxOnceStub;
+        beforeEach(function() {
+            getSelectedUsersReporteesStub = sinon.stub(app.utils, 'getSelectedUsersReportees', function() {
+            });
+            ctxOnceStub = sinon.stub(layout.initOptions.context, 'once', function() {
+            });
+            initData = {
+                "initData": {
+                    "userData": {"isManager": false, "showOpps": false, "first_name": "Max", "last_name": "Jensen"},
+                    "forecasts_setup": 1
+                },
+                "defaultSelections": {
+                    "timeperiod_id": {"id": "test_tp_id", "label": "Q2 (04\/01\/2013 - 06\/30\/2013)"},
+                    "ranges": ["include"],
+                    "group_by": "forecast",
+                    "dataset": "likely"}
+            };
         });
 
-        it("should place a layout in the correct div in the DOM if the layout has a name and the div exists", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    meta: {
-                        name:name
-                    },
-                    $el: $(testEl)
-                };
-
-            layout.$el = $('<div class="outer"><div class="view-' + name + '"></div></div>');
-            layout._placeComponent(testComp);
-            expect(testComp.$el.parent().children().last()[0]).toEqual(testComp.$el[0]);
+        afterEach(function() {
+            initData = {};
+            getSelectedUsersReporteesStub.restore();
+            ctxOnceStub.restore();
         });
 
-        it("should append a view to the end of the sidecar DOM hierarchy if the div does not exist", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    name:name,
-                    $el: $(testEl)
-                };
+        it('should set default values on the initOptions Context', function() {
+            layout.initForecastsModule(initData, {});
 
-            layout.$el = $('<div class="outer"></div>');
-            layout._placeComponent(testComp);
-            expect(layout.$el.children().last()[0]).toEqual(testComp.$el[0]);
+            expect(layout.initOptions.context.get('currentForecastCommitDate')).toEqual(undefined);
+            expect(layout.initOptions.context.get('selectedTimePeriod')).toEqual(initData.defaultSelections.timeperiod_id.id);
+            expect(layout.initOptions.context.get('selectedRanges')).toEqual(initData.defaultSelections.ranges);
+
+            expect(getSelectedUsersReporteesStub).toHaveBeenCalled();
         });
 
-        it ("should append a layout to the end of the sidecar DOM hierarchy if the div does not exist", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    meta: {
-                        name:name
-                    },
-                    $el: $(testEl)
-                };
+        it('should set a once trigger on initOptions.context', function() {
+            layout.initForecastsModule(initData, {});
+            expect(ctxOnceStub).toHaveBeenCalled();
+        })
+    });
 
-            layout.$el = $('<div class="outer"></div>');
-            layout._placeComponent(testComp);
-            expect(layout.$el.children().last()[0]).toEqual(testComp.$el[0]);
+    describe('_onceInitSelectedUser', function() {
+        var renderStub, changedOptions = {};
+        beforeEach(function() {
+            changedOptions = {
+                id: 'test_id',
+                isManager: false,
+                showOpps: false
+            };
+            renderStub = sinon.stub(layout, 'render', function() {
+            });
         });
 
-        it("should not place components that have placeInLayout set to false in their view metadata", function() {
-            var name = "testComp",
-                testEl = '<div id="test">' + name + '</div>',
-                testComp = {
-                    meta: {
-                        name:name,
-                        placeInLayout: false
-                    },
-                    $el: $(testEl)
-                };
+        afterEach(function() {
+            changedOptions = {};
+            renderStub.restore();
+        });
 
-            layout.$el = $('<div class="outer"></div>');
-            layout._placeComponent(testComp);
-            // component should not be placed so html() should be an empty string
-            expect(layout.$el.html()).toBe('');
+        describe('layout.render', function() {
+            it('should be called', function() {
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(renderStub).toHaveBeenCalled();
+            });
+
+            it('should not be called when disposed', function() {
+                layout.disposed = true;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(renderStub).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('model should have correct forecast type', function() {
+            it('when sales rep', function() {
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.model.get('forecastType')).toEqual('Direct');
+            });
+            it('when manager viewing rep worksheet', function() {
+                changedOptions.isManager = true;
+                changedOptions.showOpps = true;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.model.get('forecastType')).toEqual('Direct');
+            });
+            it('when manager viewing manager worksheet', function() {
+                changedOptions.isManager = true;
+                changedOptions.showOpps = false;
+                layout._onceInitSelectedUser(layout.initOptions.context.model, changedOptions);
+                expect(layout.model.get('forecastType')).toEqual('Rollup');
+            });
+        });
+    });
+
+    describe('sync', function() {
+        var filters = undefined;
+        beforeEach(function() {
+            apiCallStub.restore();
+            apiCallStub = sinon.stub(app.api, 'call', function(method, url, payload, callback) {
+                filters = payload;
+            });
+            layout._onceInitSelectedUser(layout.initOptions.context.model, {
+                id: 'test_id',
+                isManager: false,
+                showOpps: false
+            });
+        });
+
+        afterEach(function() {
+            apiCallStub.restore();
+            apiCallStub = sinon.stub(app.api, 'call', function() {
+            });
+        });
+
+        it('should have user_id and forecast_type defined in the filters', function() {
+            layout.sync('read', layout.collection, {});
+            expect(_.isObject(filters)).toBeTruthy();
+            expect(_.isUndefined(filters['filter'][0])).toBeFalsy();
+            expect(filters['filter'][0]['user_id']).toEqual(layout.model.get('selectedUserId'));
+            expect(_.isUndefined(filters['filter'][1])).toBeFalsy();
+            expect(filters['filter'][1]['forecast_type']).toEqual(layout.model.get('forecastType'));
+        });
+
+        it('should have timeperiod_id defined in the filters', function(){
+            layout.model.unset('selectedUserId');
+            layout.model.set('selectedTimePeriod', 'jasmin_test');
+            layout.sync('read', layout.collection, {});
+            expect(_.isObject(filters)).toBeTruthy();
+            expect(_.isUndefined(filters['filter'][0])).toBeFalsy();
+            expect(filters['filter'][0]['timeperiod_id']).toEqual(layout.model.get('selectedTimePeriod'));
         });
     });
 });

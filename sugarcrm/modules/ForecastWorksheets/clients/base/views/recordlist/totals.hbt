@@ -1,0 +1,45 @@
+<tfoot>
+<tr id="forecastsWorksheetTotalsIncludedTotals">
+    {{#each this.leftColumns}}
+        <td>&nbsp;</td>
+    {{/each}}
+    <th colspan='5' class="tright">{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
+
+    {{#if this.totals.likely_case_display}}
+        <th class="tright">{{formatCurrency this.totals.likely_case}}</th>
+    {{/if}}
+
+    {{#if this.totals.best_case_display}}
+        <th class="tright">{{formatCurrency this.totals.best_case}}</th>
+    {{/if}}
+
+    {{#if this.totals.worst_case_display}}
+        <th class="tright">{{formatCurrency this.totals.worst_case}}</th>
+    {{/if}}
+    {{#each this.rightColumns}}
+    <td>&nbsp;</td>
+    {{/each}}
+</tr>
+
+<tr id="forecastsWorksheetTotalsOverallTotals">
+    {{#each this.leftColumns}}
+        <td>&nbsp;</td>
+    {{/each}}
+    <th colspan='5' class="tright">{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
+
+    {{#if this.totals.likely_case_display}}
+        <th class="tright">{{formatCurrency this.totals.overall_likely_case}}</th>
+    {{/if}}
+
+    {{#if this.totals.best_case_display}}
+        <th class="tright">{{formatCurrency this.totals.overall_best_case}}</th>
+    {{/if}}
+
+    {{#if this.totals.worst_case_display}}
+        <th class="tright">{{formatCurrency this.totals.overall_worst_case}}</th>
+    {{/if}}
+    {{#each this.rightColumns}}
+    <td>&nbsp;</td>
+    {{/each}}
+</tr>
+</tfoot>

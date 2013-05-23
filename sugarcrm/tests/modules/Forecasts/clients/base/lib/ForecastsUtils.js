@@ -25,8 +25,10 @@ describe("forecasts_lib_forecastsUtils", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) {
-            return eval(d);
+        SugarTest.loadFile("../include/javascript/sugar7", "utils", "js", function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
         });
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) {
             return eval(d);
@@ -364,21 +366,24 @@ describe("forecasts_lib_forecastsUtils", function() {
             attrStr = 'likely_case';
         });
 
-        it("should return an array of three args", function() {
+        it("should return an object", function() {
             var testArgs = app.utils.gatherLangArgsByParams(dir, arrow, diff, model, attrStr);
-            expect(testArgs.length).toEqual(3);
+            expect(_.isObject(testArgs)).toBeTruthy();
+            expect(testArgs.from).toEqual('$1,000.00');
+            expect(testArgs.to).toEqual('$250.00');
+            expect(testArgs.direction.toString()).toContain('icon-arrow-up font-green');
         });
     });
 
     describe("Should return a span for the arrow dependent on direction passed", function() {
         it("should return a span indicating an arrow up", function() {
             arrowText = app.utils.getArrowDirectionSpan("LBL_UP");
-            expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-up font-green"></span>');
+            expect(arrowText).toEqual('&nbsp;<i class="icon-arrow-up font-green"></i>');
         });
 
         it("should return a span indicating an arrow down", function() {
             arrowText = app.utils.getArrowDirectionSpan("LBL_DOWN");
-            expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-down font-red"></span>');
+            expect(arrowText).toEqual('&nbsp;<i class="icon-arrow-down font-red"></i>');
         });
 
         it("should return a span indicating no change", function() {

@@ -44,7 +44,7 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
     public function process()
     {
         // fetch the data from the filter end point
-        $file = 'modules/Forecasts/clients/base/api/ForecastManagerWorksheetsFilterApi.php';
+        $file = 'modules/ForecastManagerWorksheets/clients/base/api/ForecastManagerWorksheetsFilterApi.php';
         $klass = 'ForecastManagerWorksheetsFilterApi';
         SugarAutoLoader::requireWithCustom('include/api/RestService.php');
         SugarAutoLoader::requireWithCustom($file);

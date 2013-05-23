@@ -12,6 +12,92 @@ if(!_.has(fixtures.metadata, 'modules')) {
 if(!_.has(fixtures.metadata.modules, 'Forecasts')) {
     fixtures.metadata.modules.Forecasts = {};
 }
+if(!_.has(fixtures.metadata.modules, 'ForecastWorksheets')) {
+    fixtures.metadata.modules.ForecastWorksheets = {
+        '_hash': '12345678910asdgae',
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                name: {
+                    audited: true,
+                    dbType: "varchar",
+                    full_text_search: {boost: 3},
+                    len: 255,
+                    link: true,
+                    merge_filter: "selected",
+                    name: "name",
+                    type: "name",
+                    unified_search: true,
+                    vname: "LBL_SUBJECT"
+                },
+                "best_case": {
+                    "name": "best_case",
+                    "type": "currency"
+                },
+                "worst_case": {
+                    "name": "worst_case",
+                    "type": "currency"
+                },
+                "likely_case": {
+                    "name": "likely_case",
+                    "type": "currency"
+                }
+            }
+    };
+}
+if(!_.has(fixtures.metadata.modules, 'ForecastManagerWorksheets')) {
+    fixtures.metadata.modules.ForecastManagerWorksheets = {
+        '_hash': '123456asdfaasdgae',
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                name: {
+                    audited: true,
+                    dbType: "varchar",
+                    full_text_search: {boost: 3},
+                    len: 255,
+                    link: true,
+                    merge_filter: "selected",
+                    name: "name",
+                    type: "name",
+                    unified_search: true,
+                    vname: "LBL_SUBJECT"
+                },
+                "quota": {
+                    "name": "quota",
+                    "type": "currency"
+                },
+                "best_case": {
+                    "name": "best_case",
+                    "type": "currency"
+                },
+                "worst_case": {
+                    "name": "worst_case",
+                    "type": "currency"
+                },
+                "likely_case": {
+                    "name": "likely_case",
+                    "type": "currency"
+                },
+                "best_case_adjusted": {
+                    "name": "best_case_adjusted",
+                    "type": "currency"
+                },
+                "worst_case_adjusted": {
+                    "name": "worst_case_adjusted",
+                    "type": "currency"
+                },
+                "likely_case_adjusted": {
+                    "name": "likely_case_adjusted",
+                    "type": "currency"
+                }
+            }
+    };
+}
 
 // Add config metadata
 fixtures.metadata.modules.Forecasts.config = {
