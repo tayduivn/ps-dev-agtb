@@ -25,6 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Emails/MailRecord.php');
+require_once('modules/Emails/RecipientLookup.php');
 
 class MailApi extends ModuleApi
 {
@@ -43,7 +44,6 @@ class MailApi extends ModuleApi
         "status"        => "",
     );
 
-    public function __construct() {}
 
     public function registerApiRest()
     {
@@ -88,6 +88,17 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Create Mail Item',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#createMail',
             ),
+
+            'recipientLookup' => array(
+                'reqType' => 'POST',
+                'path' => array('Mail', 'recipient', 'lookup'),
+                'pathVars' => array(''),
+                'method' => 'recipientLookup',
+                'shortHelp' => 'Lookup Recipient Info',
+                'longHelp' => 'include/api/html/modules/Emails/MailApi.html#recipientLookup',
+            ),
+
+
         );
 
         return $api;
@@ -184,6 +195,31 @@ class MailApi extends ModuleApi
             $email           = $result["EMAIL"];
             $xmail           = clone $email;
             $result["EMAIL"] = $xmail->toArray();
+        }
+
+        return $result;
+    }
+
+    /**
+     * This endpoint accepts an array of one or more recipients and tries to resolve
+     * unsupplied arguments.  RecipientLookup.php contains the Lookup and Resolution Rules
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function recipientLookup($api, $args)
+    {
+        $recipients = $args;
+        unset($recipients['__sugar_url']);
+
+        $recipientLookup = new RecipientLookup();
+
+        $result = array();
+        foreach ($recipients AS $recipient) {
+
+            $result[] = $recipientLookup->lookup($recipient);
+
         }
 
         return $result;
