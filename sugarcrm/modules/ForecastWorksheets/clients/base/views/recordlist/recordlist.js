@@ -393,6 +393,7 @@
 
             // figure out if any of the row actions need to be disabled
             this.setRowActionButtonStates();
+            this.adjustCurrencyColumnWidths();
         } else {
             if (this.layout.isVisible()) {
                 this.layout.hide();
@@ -859,5 +860,36 @@
                 app.events.trigger("preview:close");
             }, this);
         }
+    },
+
+    /**
+     * set dynamic widths on currency columns showing original currency
+     */
+    adjustCurrencyColumnWidths: function() {
+        // empty collection, don't worry about this
+        if (this.collection.length == 0) {
+            return;
+        }
+
+        _.each(this._fields.visible, function(field) {
+            // only adjust the currency fields
+            if (field.type === 'currency') {
+                var converted = this.$el.find('span[data-name^="' + field.name + '"] .converted'),
+                    original = this.$el.find('span[data-name^="' + field.name + '"] label.original'),
+                    widths = converted.map(function() {
+                        return $(this).width();
+                    }).get(),
+                    labelWidths = original.map(function() {
+                        return $(this).width();
+                    }).get();
+
+                converted.width(_.max(widths));
+                original.width(_.max(labelWidths));
+
+                var parentTds = this.$el.find('span[data-name^="' + field.name + '"]'),
+                    parentWidth = _.max(parentTds.map(function() { return $(this).outerWidth(); }).get());
+                this.$el.find('th[data-fieldname^="' + field.name + '"]').width(parentWidth+20);
+            }
+        }, this);
     }
 })

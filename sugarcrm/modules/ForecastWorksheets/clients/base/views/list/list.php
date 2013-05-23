@@ -97,7 +97,6 @@ $viewdefArray['products'] = array(
                     ),
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%'
                 ),
                 array(
                     'name' => 'best_case',
@@ -113,7 +112,6 @@ $viewdefArray['products'] = array(
                     ),
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%'
                 ),
                 array(
                     'name' => 'worst_case',
@@ -130,7 +128,6 @@ $viewdefArray['products'] = array(
                     ),
                     'align' => 'right',
                     'click_to_edit' => true,
-                    'width' => '22%'
                 ),
             ),
         ),

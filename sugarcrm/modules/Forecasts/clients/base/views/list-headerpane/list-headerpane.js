@@ -21,6 +21,8 @@
 
         this.on('render', function() {
             this.getField('save_draft_button').setDisabled();
+            // this is a hacky way to add the class but it needs to be done for proper spacing
+            this.getField('save_draft_button').$el.addClass('btn-group');
             this.getField('commit_button').setDisabled();
         }, this);
     },
