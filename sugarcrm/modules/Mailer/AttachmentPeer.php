@@ -42,7 +42,7 @@ class AttachmentPeer
     public static function attachmentFromSugarBean(SugarBean $bean) {
         $filePath = null;
         $fileName = null;
-        $mimeType = "application/octet-stream";
+        $mimeType = "";
 
         if ($bean instanceof Document) {
             if (empty($bean->id)) {

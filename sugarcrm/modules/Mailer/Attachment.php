@@ -43,7 +43,7 @@ class Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
+    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = "") {
         $this->setPath($path);
         $this->setName($name);
         $this->setMimeType($mimeType);
@@ -115,7 +115,7 @@ class Attachment
      * @access public
      * @param string $mimeType
      */
-    public function setMimeType($mimeType = "application/octet-stream") {
+    public function setMimeType($mimeType = "") {
         $this->mimeType = $mimeType;
     }
 
