@@ -1,6 +1,10 @@
 {{#eq model.attributes.activity_type "post"}}
-<a href="#Users/{{model.attributes.created_by}}" class="pull-left avatar avatar42" rel="tooltip" data-title="{{model.attributes.created_by_name}}">
-    <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}} avatar">
+<a href="#Users/{{model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar avatar42" rel="tooltip" data-title="{{model.attributes.created_by_name}}">
+    {{#if model.attributes.picture_url}}
+        <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}}">
+    {{else}}
+        <i class="icon-user icon-3x" alt="{{model.attributes.created_by_name}}"></i>
+    {{/if}}
 </a>
 {{else}}
 <div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
@@ -25,8 +29,12 @@
     {{#each model.attributes.comments.models}}
     {{#with attributes}}
     <li>
-        <a href="#Users/{{created_by}}" class="pull-left avatar">
-            <img src="{{picture_url}}" alt="{{created_by_name}} avatar">
+         <a href="#Users/{{created_by}}" id="avatar-comment-{{id}}" class="pull-left avatar">
+        {{#if picture_url}}
+            <img src="{{picture_url}}" alt="{{created_by_name}}">
+        {{else}}
+            <i class="icon-user icon-2X"></i>
+        {{/if}}
         </a>
         <p>
             <span class="tagged">{{{str "TPL_COMMENT" "Activities" data}}}</span>

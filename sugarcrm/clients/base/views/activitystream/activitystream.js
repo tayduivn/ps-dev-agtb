@@ -17,6 +17,9 @@
     tagName: "li",
     className: "activitystream-posts-comments-container",
     plugins: ['timeago', 'file_dragoff', 'taggable'],
+    cacheNamePrefix: "user:avatars:",
+    cacheNameExpire: ":expiry",
+    expiryTime: 36000000,   //1 hour in milliseconds
 
     initialize: function(options) {
         this.opts = {params: {}};
@@ -241,23 +244,89 @@
         }
     },
 
-    processAvatars: function() {
-        var comments = this.model.get("comments");
+    /**
+     * Sets the profile picture for activities based on the created by user.
+     */
+    processAvatars: function () {
+        var comments = this.model.get('comments'),
+            postPictureUrl;
 
-        if(this.model.get("activity_type") === "post" && !this.model.get("picture_url")) {
-            var picture = (this.model.get("picture")) ? app.api.buildFileURL({
-                module: "Users",
-                id: this.model.get("created_by"),
-                field: "picture"
-            }) : app.config.siteUrl + "/styleguide/assets/img/profile.png";
-            this.model.set("picture_url", picture);
+        if (this.model.get('activity_type') === 'post' && !this.model.get('picture_url')) {
+            postPictureUrl = this.getAvatarUrlForUser(this.model, 'post');
+            this.model.set('picture_url', postPictureUrl);
         }
 
-        if(comments) {
-            _.each(comments.models, function(commentsModel) {
-                commentsModel.set("picture_url" , app.config.siteUrl + "/styleguide/assets/img/profile.png");
+        if (comments) {
+            comments.each(function (comment) {
+                var commentPictureUrl = this.getAvatarUrlForUser(comment, 'comment');
+                comment.set('picture_url', commentPictureUrl);
+            }, this);
+        }
+    },
+
+    /**
+     * Builds and returns the url for the user's profile picture based on fetching from cache
+     * @param model
+     * @param activityType
+     * @returns string
+     */
+    getAvatarUrlForUser: function (model, activityType){
+        var createdBy = model.get('created_by'),
+            isCached, pictureUrl;
+
+        isCached = this.fetchAndCacheAvatar(model, activityType);
+
+        pictureUrl = isCached ? app.api.buildFileURL({
+            module: 'Users',
+            id: createdBy,
+            field: 'picture'
+        }) : '';
+
+        return pictureUrl;
+    },
+
+    /**
+     * Retrieves a user and caches the results of whether the user has a profile picture.
+     * Replaces the default icon of the comment box with an image tag of the profile picture.
+     * @param model
+     * @param activityType
+     * @returns {boolean}
+     */
+    fetchAndCacheAvatar: function (model, activityType) {
+        var self = this,
+            createdBy = model.get('created_by'),
+            cached = app.cache.get(this.cacheNamePrefix + createdBy),
+            cachedTTL = app.cache.get(this.cacheNamePrefix + createdBy + self.expiryTime),
+            isCached = true;
+
+        if ((_.isUndefined(cached) || cachedTTL < $.now())) {
+            var user = app.data.createBean('Users', {id: createdBy});
+            user.fetch({
+                fields: ["picture"],
+                success: function () {
+                    app.cache.set(self.cacheNamePrefix + createdBy, !_.isEmpty(user.get('picture')));
+                    app.cache.set(self.cacheNamePrefix + createdBy + self.cacheNameExpire, $.now() + self.expiryTime);
+
+                    var pictureUrl = app.api.buildFileURL({
+                        module: 'Users',
+                        id: createdBy,
+                        field: 'picture'
+                    });
+
+                   //Replace the activity image with the users profile picture
+                   self.$('#avatar-' + activityType + '-' + model.get('id')).html("<img src='" + pictureUrl + "' alt='" + model.get('created_by_name') + "'>");
+
+                },
+                error: function () {
+                    app.cache.set(self.cacheNamePrefix + createdBy, false);
+                    app.cache.set(self.cacheNamePrefix + createdBy + self.cacheNameExpire, $.now() + self.expiryTime);
+                }
             });
+
+            isCached = false;
         }
+
+        return isCached;
     },
 
     toggleReplyBar: function() {
