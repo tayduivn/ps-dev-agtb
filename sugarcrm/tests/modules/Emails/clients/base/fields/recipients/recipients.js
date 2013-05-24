@@ -4,7 +4,7 @@ describe("Emails.fields.recipients", function() {
         context,
         model,
         dataProvider,
-        origTooltip;
+        tooltipStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -12,20 +12,19 @@ describe("Emails.fields.recipients", function() {
         SugarTest.loadHandlebarsTemplate("recipients", "field", "base", "edit", "Emails");
         SugarTest.testMetadata.set();
 
-        origTooltip = $.fn.tooltip;
-        $.fn.tooltip = function(){};
-
         context = app.context.getContext({
             module: "Emails"
         });
         context.prepare();
         model = context.get('model');
         field = SugarTest.createField("base", "recipients", "recipients", "edit", undefined, context.get('module'), model, context, true);
+
+        tooltipStub = sinon.stub(field, '_initializeTooltips');
     });
 
     afterEach(function() {
         field.dispose();
-        $.fn.tooltip = origTooltip;
+        tooltipStub.restore();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();

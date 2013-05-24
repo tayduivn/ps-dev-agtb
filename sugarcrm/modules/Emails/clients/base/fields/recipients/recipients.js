@@ -32,6 +32,8 @@
 
     fieldTag: 'input.select2',
 
+    tooltips: [], //initialized tooltips
+
     /**
      * Sets up event handlers for syncing between the model and the recipients field.
      *
@@ -175,13 +177,9 @@
                 var value = $(this).select2('data');
                 self.model.set(self.name, self.unformat(value), {silent: true});
             })
-            .on("change", function() {
-                self.$('.select2-search-choice').each(function() {
-                    $(this).tooltip({
-                        container: 'body',
-                        title: $(this).data('select2Data').email
-                    });
-                });
+            .on("change", function(event) {
+                self._destroyTooltips();
+                self._initializeTooltips();
             })
             .on("opening", function(event) {
                 event.preventDefault();
@@ -192,9 +190,7 @@
      * Destroy all select2 and tooltip plugins
      */
     unbindDom: function() {
-        this.$('.select2-search-choice').each(function() {
-            $(this).tooltip('destroy');
-        });
+        this._destroyTooltips();
         this.getFieldElement().select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
     },
@@ -286,6 +282,32 @@
      */
     getFieldElement: function() {
         return this.$(this.fieldTag);
+    },
+
+    /**
+     * Tooltip should show when hovering over the recipient pill
+     * @private
+     */
+    _initializeTooltips: function() {
+        var self = this;
+        this.$('.select2-search-choice').each(function() {
+            $(this).tooltip({
+                container: 'body',
+                title: $(this).data('select2Data').email
+            });
+            self.tooltips.push($(this).data('tooltip'));
+        });
+    },
+
+    /**
+     * Destroy all tooltips
+     * @private
+     */
+    _destroyTooltips: function() {
+        _.each(this.tooltips, function(tooltip) {
+            tooltip.destroy();
+        });
+        this.tooltips = [];
     },
 
     /**
