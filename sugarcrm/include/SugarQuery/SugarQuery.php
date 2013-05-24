@@ -518,6 +518,10 @@ class SugarQuery
      */
     public function getTableBean($table_name)
     {
+        if(substr($table_name, -5) == '_cstm') {
+            // if we've got _cstm name, it's the same bean as non-custom one
+            $table_name = substr($table_name, 0, -5);
+        }
         if (!isset($this->table_beans[$table_name])) {
             if (empty($this->join[$table_name])) {
                 return null;
