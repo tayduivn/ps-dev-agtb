@@ -29,7 +29,7 @@
 <div id="{$source_id}_add_tables" class="sources_table_div">
 {foreach from=$display_data key=module item=data}
 
-<table border="0">
+<table border="0" width="100%">
 <tr>
 <td colspan="2"><span><font size="3">{sugar_translate label=$module}</font></span></td></tr>
 <tr>
@@ -38,7 +38,7 @@
 </tr>
 </table>
 
-<table border="0" name="{$module}" id="{$module}" class="mapping_table">
+<table border="0" name="{$module}" id="{$module}" class="mapping_table" width="100%">
 <tr>
 <td colspan="2">
 {foreach from=$data.field_keys key=field_id item=field}
