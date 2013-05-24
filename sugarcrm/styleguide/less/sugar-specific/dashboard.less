@@ -177,6 +177,14 @@
   }
   #dashlets {
     clear: both;
+    &>li:last-child {
+      //padding-right: 5px;
+    }
+    .well-invisible {
+      .empty {
+        margin: 0 0 0 5px;
+      }
+    }
     [class*="span"] {
       margin-left: 0;
       //2%
@@ -201,7 +209,7 @@
     .span2{width:16.66666%;}
     .span1{width:8.33333%;}
     .widget-container {
-      padding: 1%;
+      padding: 5px;
     }
   }
   &.edit {
@@ -210,7 +218,18 @@
         padding-top: 20px;
       }
     }
-  }  
+  }
+  #dashlets {
+    & > li {
+      padding-top: 5px;
+      &:first-child {
+        padding-left: 5px;
+      }
+      &:last-child {
+        padding-right: 5px;
+      }
+    }
+  }
 
   .ui-sortable .ui-sortable-placeholder {
     height: auto !important;
