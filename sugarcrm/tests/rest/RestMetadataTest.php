@@ -44,7 +44,6 @@ class RestMetadataTest extends RestTestBase {
      */
     public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
-
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
 
@@ -94,13 +93,13 @@ class RestMetadataTest extends RestTestBase {
 
         $this->assertArrayHasKey('en_us',$restReply['reply']['labels']);
         $fileLoc = ltrim($GLOBALS['sugar_config']['site_url'],$restReply['reply']['labels']['en_us']);
-        $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']),true);
+        $en_us = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'] .'/'. $restReply['reply']['labels']['en_us']),true);
         $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // Current user is logged in & submit language
         $restReply = $this->_restCall('metadata');
         $this->assertArrayHasKey('en_us',$restReply['reply']['labels']);
-        $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']),true);
+        $en_us = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'].'/'.$restReply['reply']['labels']['en_us']),true);
         $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // TODO add test for user pref when that field gets added

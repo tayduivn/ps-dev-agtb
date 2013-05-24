@@ -188,7 +188,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         
         // Get the app strings from the label url
         $this->assertNotEmpty($reply['reply']['labels']['en_us'], "Label metadata entry is missing");
-        $contents = json_decode(file_get_contents($reply['reply']['labels']['en_us']), true);
+        $contents = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $reply['reply']['labels']['en_us']), true);
         $this->assertNotEmpty($contents['mod_strings']['Accounts'][$vname], "The label value for the custom field label was not found");
         $this->assertEquals($_REQUEST['labelValue'], $contents['mod_strings']['Accounts'][$vname], "The custom field label change did not reflect in the metadata response");
         

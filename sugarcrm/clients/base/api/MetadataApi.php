@@ -744,7 +744,7 @@ class MetadataApi extends SugarApi
     {
         // This is here so we can override it and have the cache files upload to a CDN
         // and return the CDN locations later.
-        return $GLOBALS['sugar_config']['site_url'].'/'.$cacheFile;
+        return $cacheFile;
     }
 
     /**
