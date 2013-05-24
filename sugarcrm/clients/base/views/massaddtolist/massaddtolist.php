@@ -30,9 +30,17 @@ $viewdefs['base']['view']['massaddtolist'] = array(
     'type' => 'edit',
     'buttons' => array(
         array(
+            'name' => 'create_button',
+            'type' => 'button',
+            'label' => 'LBL_CREATE_NEW_TARGET_LIST',
+            'acl_action' => 'create',
+            'acl_module' => 'ProspectLists',
+            'css_class' => 'btn-link btn-invisible',
+        ),
+        array(
             'name' => 'update_button',
             'type' => 'button',
-            'label' => 'Update',
+            'label' => 'LBL_UPDATE',
             'acl_action' => 'edit',
             'acl_module' => 'ProspectLists',
             'css_class' => 'btn-primary',

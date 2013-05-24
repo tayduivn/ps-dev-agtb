@@ -2548,6 +2548,7 @@ $app_strings = array (
     'LBL_CREATED_USER'=>'Created by User',
     'LBL_CREATED_ID' => 'Created By Id',
     'LBL_CREATED' => 'Created by',
+    'LBL_CREATE_NEW_TARGET_LIST' => 'Create new target list',
     'LBL_CURRENT_USER_FILTER' => 'My Items:',
     'LBL_CURRENCY'=>'Currency:',
     'LBL_DOCUMENTS'=>'Documents',
