@@ -168,7 +168,7 @@ class EmailFormatter
             $fileLocation = $localPrefix . $filename;
 
             if (file_exists($fileLocation)) {
-                $mimeType = null;
+                $mimeType = "";
 
                 if ($object) {
                     $mimeType  = "application/octet-stream";

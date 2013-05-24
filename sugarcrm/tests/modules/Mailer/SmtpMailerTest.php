@@ -21,22 +21,24 @@
 
 require_once "modules/Mailer/SmtpMailer.php";
 
+/**
+ * @group email
+ * @group mailer
+ */
 class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp() {
-        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+    public function setUp()
+    {
+        SugarTestHelper::setUp("current_user");
     }
 
-    public function tearDown() {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS["current_user"]);
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
     }
     
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testGetMailTransmissionProtocol_ReturnsSmtp() {
+    public function testGetMailTransmissionProtocol_ReturnsSmtp()
+    {
         $mailer   = new SmtpMailer(new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]));
         $expected = SmtpMailer::MailTransmissionProtocol;
         $actual   = $mailer->getMailTransmissionProtocol();
@@ -47,11 +49,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testClearRecipients_ClearToAndBccButNotCc() {
+    public function testClearRecipients_ClearToAndBccButNotCc()
+    {
         $mockMailer = self::getMock(
             "SmtpMailer",
             array(
@@ -74,18 +73,11 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->clearRecipients(true, false, true);
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException() {
-        $mockPhpMailer = self::getMock(
-            "PHPMailer",
-            array("SmtpConnect"),
-            array(true) // use PHPMailer with exceptions
-        );
+    public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException()
+    {
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("SmtpConnect"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("SmtpConnect")
             ->will(self::throwException(new phpmailerException()));
 
@@ -104,7 +96,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
@@ -128,11 +120,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_PHPMailerSetFromThrowsException_TransferHeadersThrowsMailerException() {
+    public function testSend_PHPMailerSetFromThrowsException_TransferHeadersThrowsMailerException()
+    {
         $packagedEmailHeaders = array(
             EmailHeaders::From => array(
                 "foo@bar.com",
@@ -145,13 +134,9 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("packageHeaders")
             ->will(self::returnValue($packagedEmailHeaders));
 
-        $mockPhpMailer = self::getMock(
-            "PHPMailer",
-            array("SetFrom"),
-            array(true) // use PHPMailer with exceptions
-        );
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("SetFrom"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("SetFrom")
             ->will(self::throwException(new phpmailerException()));
 
@@ -172,7 +157,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
@@ -197,11 +182,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_PHPMailerAddReplyToReturnsFalse_TransferHeadersThrowsMailerException() {
+    public function testSend_PHPMailerAddReplyToReturnsFalse_TransferHeadersThrowsMailerException()
+    {
         $packagedEmailHeaders = array(
             EmailHeaders::ReplyTo => array(
                 "foo@bar.com",
@@ -214,13 +196,9 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("packageHeaders")
             ->will(self::returnValue($packagedEmailHeaders));
 
-        $mockPhpMailer = self::getMock(
-            "PHPMailer",
-            array("AddReplyTo"),
-            array(true) // use PHPMailer with exceptions
-        );
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("AddReplyTo"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("AddReplyTo")
             ->will(self::returnValue(false));
 
@@ -241,7 +219,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
@@ -266,11 +244,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException() {
+    public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException()
+    {
         $mockLocale = self::getMock("Localization", array("translateCharset"));
         $mockLocale->expects(self::any())
             ->method("translateCharset")
@@ -279,13 +254,9 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailer = self::getMock(
-            "PHPMailer",
-            array("AddAttachment"),
-            array(true) // use PHPMailer with exceptions
-        );
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("AddAttachment"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("AddAttachment")
             ->will(self::throwException(new phpmailerException()));
 
@@ -307,7 +278,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
@@ -331,11 +302,8 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_PHPMailerAddEmbeddedImageReturnsFalse_TransferAttachmentsThrowsMailerException() {
+    public function testSend_PHPMailerAddEmbeddedImageReturnsFalse_TransferAttachmentsThrowsMailerException()
+    {
         $mockLocale = self::getMock("Localization", array("translateCharset"));
         $mockLocale->expects(self::any())
             ->method("translateCharset")
@@ -344,13 +312,9 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailer = self::getMock(
-            "PHPMailer",
-            array("AddEmbeddedImage"),
-            array(true) // use PHPMailer with exceptions
-        );
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("AddEmbeddedImage"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("AddEmbeddedImage")
             ->will(self::returnValue(false));
 
@@ -372,7 +336,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
@@ -396,14 +360,11 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_PhpMailerSendThrowsException_SendCatchesItAndThrowsMailerException() {
-        $mockPhpMailer = self::getMock("PHPMailer", array("Send"));
+    public function testSend_PHPMailerSendThrowsException_SendCatchesItAndThrowsMailerException()
+    {
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("Send"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("Send")
             ->will(self::throwException(new phpmailerException()));
 
@@ -423,7 +384,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
@@ -453,14 +414,11 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->send();
     }
 
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testSend_AllMethodCallsAreSuccessful_NoExceptionsThrown() {
-        $mockPhpMailer = self::getMock("PHPMailer", array("Send"));
+    public function testSend_AllMethodCallsAreSuccessful_NoExceptionsThrown()
+    {
+        $mockPhpMailerProxy = self::getMock("PHPMailerProxy", array("Send"));
 
-        $mockPhpMailer->expects(self::once())
+        $mockPhpMailerProxy->expects(self::once())
             ->method("Send")
             ->will(self::returnValue(true));
 
@@ -480,7 +438,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")
-            ->will(self::returnValue($mockPhpMailer));
+            ->will(self::returnValue($mockPhpMailerProxy));
 
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")

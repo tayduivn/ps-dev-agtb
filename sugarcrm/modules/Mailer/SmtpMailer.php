@@ -1,5 +1,7 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -21,14 +23,24 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "lib/phpmailer/class.phpmailer.php"; // needs the PHPMailer library
-require_once "lib/phpmailer/class.smtp.php";      // required to establish the SMTP connection prior to PHPMailer's
-                                                  // send for error handling purposes
-require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
+/* Internal Module Imports */
 
-// external imports
-require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php"; // needs to take on an
-                                                                                      // OutboundSmtpEmailConfiguration
+/**
+ * Needs a proxy to the PHPMailer library.
+ */
+require_once "PHPMailerProxy.php";
+
+/**
+ * Requires BaseMailer in order to extend it.
+ */
+require_once "BaseMailer.php";
+
+/* External Imports */
+
+/**
+ * Needs to take on an OutboundSmtpEmailConfiguration.
+ */
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
@@ -38,8 +50,12 @@ require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.
  */
 class SmtpMailer extends BaseMailer
 {
-    // constants
-    const MailTransmissionProtocol = "smtp"; // only use SMTP to send email with PHPMailer
+    /* Constants */
+
+    /**
+     * Only use SMTP to send email with PHPMailer.
+     */
+    const MailTransmissionProtocol = "smtp";
 
     /**
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
@@ -47,19 +63,24 @@ class SmtpMailer extends BaseMailer
      * @access public
      * @throws MailerException
      */
-    public function send() {
+    public function send()
+    {
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
         try {
-
-            $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
-                                                    // attempting to send with it
-            $this->connectToHost($mailer);          // connect to the SMTP server
-            $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
-            $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
-            $this->transferBody($mailer);           // transfer the message to PHPMailer
-            $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
-        } catch(MailerException $me) {
+            // transfer the configurations to set up the PHPMailer object before attempting to send with it
+            $this->transferConfigurations($mailer);
+            // connect to the SMTP server
+            $this->connectToHost($mailer);
+            // transfer the email headers to PHPMailer
+            $this->transferHeaders($mailer);
+            // transfer the recipients to PHPMailer
+            $this->transferRecipients($mailer);
+            // transfer the message to PHPMailer
+            $this->transferBody($mailer);
+            // transfer the attachments to PHPMailer
+            $this->transferAttachments($mailer);
+        } catch (MailerException $me) {
             $GLOBALS["log"]->error($me->getLogMessage());
             $GLOBALS["log"]->info($me->getTraceMessage());
             $GLOBALS["log"]->info(print_r($this->config->toArray(),true));
@@ -72,15 +93,14 @@ class SmtpMailer extends BaseMailer
 
             /*--- Debug Only ----------------------------------------------------*/
             $message = "MAIL SENT:\n";
-            $message .= "--- Mail Config ---\n".print_r($this->config->toArray(),true);
+            $message .= "--- Mail Config ---\n" . print_r($this->config->toArray(), true);
             $headers = array(
-                "Subject"  => $this->headers->getSubject(),
-                "From"     => $this->headers->getFrom()
+                "Subject" => $this->headers->getSubject(),
+                "From"    => $this->headers->getFrom(),
             );
-            $message .= "--- Mail Headers ---\n".print_r($headers,true);
+            $message .= "--- Mail Headers ---\n" . print_r($headers, true);
             $GLOBALS["log"]->debug($message);
             /*--- Debug Only ----------------------------------------------------*/
-
         } catch (Exception $e) {
             // eat the phpmailerException but use it's message to provide context for the failure
             $me = new MailerException($e->getMessage(), MailerException::FailedToSend);
@@ -97,8 +117,9 @@ class SmtpMailer extends BaseMailer
      * @access protected
      * @return PHPMailer
      */
-    protected function generateMailer() {
-        return new PHPMailer(true); // use PHPMailer with exceptions
+    protected function generateMailer()
+    {
+        return new PHPMailerProxy;
     }
 
     /**
@@ -107,7 +128,8 @@ class SmtpMailer extends BaseMailer
      * @access protected
      * @param PHPMailer $mailer
      */
-    protected function transferConfigurations(PHPMailer &$mailer) {
+    protected function transferConfigurations(PHPMailer &$mailer)
+    {
         // explicitly set the language even though PHPMailer will do it on its own
         // this call could fail (only if English is not used), but it should be safe to ignore it
         $mailer->SetLanguage();
@@ -125,7 +147,7 @@ class SmtpMailer extends BaseMailer
         $mailer->SMTPSecure = $this->config->getSecurityProtocol();
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
-        $mailer->Password   = from_html($this->config->getPassword());  // perform HTML character translations
+        $mailer->Password   = from_html($this->config->getPassword()); // perform HTML character translations
     }
 
     /**
@@ -137,12 +159,13 @@ class SmtpMailer extends BaseMailer
      * @param PHPMailer $mailer
      * @throws MailerException
      */
-    protected function connectToHost(PHPMailer &$mailer) {
+    protected function connectToHost(PHPMailer &$mailer)
+    {
         try {
             // have PHPMailer attempt to connect to the SMTP server
             $mailer->SmtpConnect();
         } catch (Exception $e) {
-            //@todo need to tell the class what error messages to use, so the following is for reference only
+            //TODO: need to tell the class what error messages to use, so the following is for reference only
 //            global $app_strings;
 //            if(isset($this->oe) && $this->oe->type == "system") {
 //                $this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
@@ -164,7 +187,8 @@ class SmtpMailer extends BaseMailer
      * @throws MailerException
      * @throws phpmailerException
      */
-    protected function transferHeaders(PHPMailer &$mailer) {
+    protected function transferHeaders(PHPMailer &$mailer)
+    {
         // will throw an exception if an error occurs; will let it bubble up
         $headers = $this->headers->packageHeaders();
 
@@ -255,8 +279,8 @@ class SmtpMailer extends BaseMailer
                     break;
                 default:
                     // it's not known, so it must be a custom header; add it to PHPMailer's custom headers array
-                    //@todo any need for charset translations for from_html on the value?
-                    $mailer->AddCustomHeader("{$key}:{$value}");
+                    //TODO: any need for charset translations for from_html on the value?
+                    $mailer->AddCustomHeader($key, $value);
                     break;
             }
         }
@@ -268,7 +292,8 @@ class SmtpMailer extends BaseMailer
      * @access protected
      * @param PHPMailer $mailer
      */
-    protected function transferRecipients(PHPMailer &$mailer) {
+    protected function transferRecipients(PHPMailer &$mailer)
+    {
         // clear the recipients from PHPMailer; only necessary if the PHPMailer object can be re-used, but there is
         // no harm in doing it anyway
         $mailer->ClearAllRecipients();
@@ -278,12 +303,12 @@ class SmtpMailer extends BaseMailer
         $cc  = $this->recipients->getCc();
         $bcc = $this->recipients->getBcc();
 
-        //@todo should you be able to initiate a send without any To recipients?
+        //TODO: should you be able to initiate a send without any To recipients?
         foreach ($to as $recipient) {
             $recipient->decode();
 
             // perform MIME character set translations on the recipient's name
-            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            //TODO: why translateCharsetMIME here but translateCharset on other headers?
             $name = $this->config->getLocale()->translateCharsetMIME(
                 $recipient->getName(),
                 "UTF-8",
@@ -302,7 +327,7 @@ class SmtpMailer extends BaseMailer
             $recipient->decode();
 
             // perform MIME character set translations on the recipient's name
-            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            //TODO: why translateCharsetMIME here but translateCharset on other headers?
             $name = $this->config->getLocale()->translateCharsetMIME(
                 $recipient->getName(),
                 "UTF-8",
@@ -321,7 +346,7 @@ class SmtpMailer extends BaseMailer
             $recipient->decode();
 
             // perform MIME character set translations on the recipient's name
-            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            //TODO: why translateCharsetMIME here but translateCharset on other headers?
             $name = $this->config->getLocale()->translateCharsetMIME(
                 $recipient->getName(),
                 "UTF-8",
@@ -343,7 +368,8 @@ class SmtpMailer extends BaseMailer
      * @access protected
      * @param PHPMailer $mailer
      */
-    protected function transferBody(PHPMailer &$mailer) {
+    protected function transferBody(PHPMailer &$mailer)
+    {
         // just to be safe, let's clear the bodies from PHPMailer
         $mailer->Body    = "";
         $mailer->AltBody = "";
@@ -400,8 +426,6 @@ class SmtpMailer extends BaseMailer
             $mailer->Body = $textBody; // the plain-text part is the primary message body
         } else {
             // you should never actually send an HTML email without a plain-text part, but we'll allow it (for now)
-            $mailer->Body = " "; // PHPMailer will choke when all message parts are empty, so give it a blank space
-                                 // to allow an "empty" body to be sent
         }
     }
 
@@ -412,7 +436,8 @@ class SmtpMailer extends BaseMailer
      * @param PHPMailer $mailer
      * @throws MailerException
      */
-    protected function transferAttachments(PHPMailer &$mailer) {
+    protected function transferAttachments(PHPMailer &$mailer)
+    {
         // clear the attachments from PHPMailer; only necessary if the PHPMailer object can be re-used, but there is
         // no harm in doing it anyway
         $mailer->ClearAttachments();
@@ -479,7 +504,8 @@ class SmtpMailer extends BaseMailer
      * @param string $body required The plain-text body that is to be translated.
      * @return string The translated body.
      */
-    protected function prepareTextBody($body) {
+    protected function prepareTextBody($body)
+    {
         $body = $this->formatter->formatTextBody($body);
 
         // perform character set and HTML character translations on the plain-text body
@@ -496,7 +522,8 @@ class SmtpMailer extends BaseMailer
      * @param string $body required The HTML body that is to be translated.
      * @return string The compliant and translated body.
      */
-    protected function prepareHtmlBody($body) {
+    protected function prepareHtmlBody($body)
+    {
         $formatted = $this->formatter->formatHtmlBody($body);
         $body      = $formatted["body"];
         $images    = $formatted["images"];
@@ -525,7 +552,8 @@ class SmtpMailer extends BaseMailer
      * @param string $body required The HTML body to test for compliance and modify, if necessary.
      * @return string The compliant HTML body.
      */
-    protected function forceRfcComplianceOnHtmlBody($body) {
+    protected function forceRfcComplianceOnHtmlBody($body)
+    {
         if (strpos($body, "<html") === false) {
             $subject   = $this->headers->getSubject(); // used for the document title
             $charset   = $this->config->getCharset();  // used for the document charset

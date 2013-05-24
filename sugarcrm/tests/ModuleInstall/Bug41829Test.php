@@ -54,7 +54,8 @@ class Bug41829Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->module_installer->uninstall_dcactions();
 
-        $this->assertTrue(in_array('DEBUG: Uninstalling DCActions ...'  . str_replace('<basepath>', $this->module_installer->base_dir,  $this->module_installer->installdefs['dcaction'][0]['from']), $GLOBALS['log']->messages));
+        $messages = $GLOBALS['log']->getMessages();
+        $this->assertTrue(in_array('DEBUG: Uninstalling DCActions ...'  . str_replace('<basepath>', $this->module_installer->base_dir,  $this->module_installer->installdefs['dcaction'][0]['from']), $messages));
     }
 
 
