@@ -39,6 +39,7 @@ $dictionary['Product'] = array(
             'len' => '255',
             'source' => 'non-db',
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
+            'auto_populate' => true,
             'populate_list' => array(
                 'category_id' => 'category_id',
                 'category_name' => 'category_name',
@@ -710,6 +711,7 @@ $dictionary['Product'] = array(
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
             'comment' => 'The opportunity name associated with the opportunity_id',
+            'auto_populate' => true,
             'populate_list' => array(
                 'account_id' => 'account_id',
                 'account_name' => 'account_name'

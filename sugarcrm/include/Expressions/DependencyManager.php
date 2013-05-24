@@ -284,24 +284,25 @@ class DependencyManager
     {
         global $currentModule;
 
-        if (empty($module))
+        if (empty($module)) {
             $module = $currentModule;
+        }
 
         $deps = array();
         if (isset($viewdef['templateMeta']) && !empty($viewdef['templateMeta']['panelDependencies'])) {
-            foreach (($viewdef['templateMeta']['panelDependencies']) as $id => $expr)
-            {
-                $deps[] = self::getPanelDependency(strtoupper($id), $expr);
+            foreach (($viewdef['templateMeta']['panelDependencies']) as $id => $expr) {
+                $deps[] = static::getPanelDependency(strtoupper($id), $expr);
             }
         }
-        if ($view == "RecordView" || $view == "EditView" || strpos($view, "QuickCreate") !== false) {
-            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit', $view));
+
+        $type = 'view';
+
+        if ($view == "RecordView" || $view == "EditView" || $view == "CreateView" ||
+            $view == "Create-actionsView" || strpos($view, "QuickCreate") !== false) {
+            $type = 'edit';
         }
-        else
-        {
-            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'view', $view));
-        }
-        return $deps;
+
+        return array_merge($deps, static::getModuleDependenciesForAction($module, $type, $view));
     }
 
     /**
