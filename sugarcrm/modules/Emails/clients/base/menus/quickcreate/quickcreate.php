@@ -27,9 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$module_name = 'Opportunities';
-$viewdefs[$module_name]['base']['menu']['createaction'] = array(
-    'layout' => 'create',
-    'label' => 'LNK_NEW_OPPORTUNITY',
+$module_name = 'Emails';
+$viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
+    'layout' => 'compose',
+    'label' => 'LBL_COMPOSE_MODULE_NAME_SINGULAR',
     'visible' => true
 );

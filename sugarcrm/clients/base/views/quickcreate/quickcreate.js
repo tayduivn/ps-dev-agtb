@@ -52,7 +52,7 @@
     },
 
     /**
-     * Retrieve the createactions metadata from each module in the list
+     * Retrieve the quickcreate metadata from each module in the list
      * Uses the visible flag on the metadata to determine if admin has elected to hide the module from the list
      *
      * @param {Array} moduleList
@@ -62,11 +62,11 @@
         var meta, menuItem, returnList = [];
         _.each(moduleList, function(module) {
             meta = app.metadata.getModule(module);
-            if (meta && meta.menu && meta.menu.createaction) {
-                menuItem = meta.menu.createaction.meta;
+            if (meta && meta.menu && meta.menu.quickcreate) {
+                menuItem = meta.menu.quickcreate.meta;
                 if (_.isUndefined(menuItem.visible) || menuItem.visible === true) {
                     menuItem.module = module;
-                    menuItem.type = menuItem.type || 'createaction';
+                    menuItem.type = menuItem.type || 'quickcreate';
                     //TODO: refactor sidecar field hbt helper so it can accept the module name directly
                     menuItem.model = app.data.createBean(module);
                     returnList.push(menuItem);
