@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once("include/nusoap/nusoap.php");
+require_once("vendors/nusoap//nusoap.php");
 
 class Portal {
     var $soapClientProxy;
@@ -84,7 +84,7 @@ class Portal {
         $err = $this->soapClient->getError();
         if($err) {
         	if(empty($GLOBALS['log'])) {
-        	   require_once ('log4php/LoggerManager.php');
+        	   require_once ('vendors/log4php/LoggerManager.php');
         	   $GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
         	} //if
             $GLOBALS['log']->fatal('There was a problem connecting to the SugarCRM Server. The SugarCRM server is not responding.');

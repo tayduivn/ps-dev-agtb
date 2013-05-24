@@ -45,7 +45,7 @@ class SugarpdfSmarty extends Sugarpdf{
     protected $ss;
     /**
      * These 5 variables are use for the writeHTML method.
-     * @see include/tcpdf/tcpdf.php writeHTML()
+     * @see vendors/tcpdf/tcpdf.php writeHTML()
      */
     protected $smartyLn = true;
     protected $smartyFill = false;

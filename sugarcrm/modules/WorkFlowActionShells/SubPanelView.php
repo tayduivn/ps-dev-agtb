@@ -61,7 +61,7 @@ $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 $button .= "<input type='hidden' name='return_id' value='".$focus->id."'>\n";
 $button .= "<input type='hidden' name='action'>\n";
 
-require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
 $button .= smarty_function_sugar_action_menu(array(
     'id' => 'ACLRoles_EditView_action_menu',
     'buttons' => $buttons,

@@ -100,7 +100,7 @@ EOD
             <input title="{$app_strings['LBL_DELETE_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="check_deletable_EmailTemplate();" type="button" name="button" value="{$app_strings['LBL_DELETE_BUTTON_LABEL']}">
 EOD
 );
-require_once('include/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'detail_header_action_menu',
     'buttons' => $buttons,

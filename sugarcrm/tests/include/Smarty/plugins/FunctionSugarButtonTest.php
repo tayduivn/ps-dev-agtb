@@ -22,8 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/Smarty/plugins/function.sugar_button.php';
-require_once 'include/Smarty/plugins/function.sugar_menu.php';
+require_once 'vendors/Smarty/plugins/function.sugar_button.php';
+require_once 'vendors/Smarty/plugins/function.sugar_menu.php';
 require_once 'include/SugarHtml/SugarHtml.php';
 require_once 'include/Sugar_Smarty.php';
 

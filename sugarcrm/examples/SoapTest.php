@@ -43,7 +43,7 @@ if(isset($_REQUEST['offset'])){
 	$offset = $_REQUEST['offset'] + 20;
 	echo $offset;
 }
-require_once('include/nusoap/nusoap.php');  //must also have the nusoap code on the ClientSide.
+require_once('vendors/nusoap//nusoap.php');  //must also have the nusoap code on the ClientSide.
 $soapclient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php');  //define the SOAP Client an
 
 echo '<b>LOGIN:</b><BR>';

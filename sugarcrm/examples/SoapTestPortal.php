@@ -45,7 +45,7 @@ EOQ;
 
 if(!empty($portal_name)){
 $portal_password = md5($portal_password);
-require_once('../include/nusoap/nusoap.php');  //must also have the nusoap code on the ClientSide.
+require_once('../vendors/nusoap//nusoap.php');  //must also have the nusoap code on the ClientSide.
 $soapclient = new nusoapclient('http://localhost/sugarcrm/soap.php');  //define the SOAP Client an
 //application_name is the client application connecting to sugar CRM for example mambo
 echo '<b>LOGIN:</b><BR>';

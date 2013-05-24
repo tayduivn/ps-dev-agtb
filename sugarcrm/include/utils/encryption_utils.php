@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Pear/Crypt_Blowfish/Blowfish.php');
+require_once('vendors/Pear/Crypt_Blowfish/Blowfish.php');
 
 function sugarEncode($key, $data){
 	return base64_encode($data);

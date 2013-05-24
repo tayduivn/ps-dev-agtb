@@ -209,7 +209,7 @@ if ($sync_module_index > -1) {
 	echo str_repeat(' ', 256);
 
 	flush();
-	require_once ('include/nusoap/nusoap.php'); //must also have the nusoap code on the ClientSide.
+	require_once ('vendors/nusoap//nusoap.php'); //must also have the nusoap code on the ClientSide.
 	$soapclient = new nusoapclient($soap_server); //define the SOAP Client an
 	$soapclient->response_timeout = 360;
 	if (empty ($_SESSION['sync_start_time'])) {

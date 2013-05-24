@@ -3,8 +3,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-require_once("include/ytree/Tree.php");
-require_once("include/ytree/ExtNode.php");
+require_once("vendors/ytree/Tree.php");
+require_once("vendors/ytree/ExtNode.php");
 require_once("include/SugarFolders/SugarFolders.php");
 
 /**
@@ -1094,7 +1094,7 @@ eoq;
 		global $app_strings;
 
 		$tree = new Tree("frameFolders");
-		$tree->tree_style= 'include/ytree/TreeView/css/check/tree.css';
+		$tree->tree_style= 'vendors/ytree/TreeView/css/check/tree.css';
 
 		$nodes = array();
 		$ie = BeanFactory::getBean('InboundEmail');

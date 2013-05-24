@@ -40,11 +40,12 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     // PARAM prefixed properties: array of these property/values will be passed
 // to the function as parameter.
 
-require_once ('include/JSON.php');
-require_once ('include/upload_file.php');
-require_once ('include/ytree/Tree.php');
-require_once ('include/ytree/Node.php');
-require_once ('modules/KBTags/TreeData.php');
+require_once('include/JSON.php');
+require_once('include/entryPoint.php');
+require_once('include/upload_file.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
+require_once('modules/KBTags/TreeData.php');
 
 $json = getJSONobj();
 $tagArticleIds = $json->decode(html_entity_decode($_REQUEST['tagAndArticleIds']));
@@ -113,3 +114,4 @@ if (!empty($response)) {
     // return the parameters
 }
 sugar_cleanup(true);
+

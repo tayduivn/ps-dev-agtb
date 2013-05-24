@@ -25,8 +25,8 @@
 
 require_once('ModuleInstall/PackageManager/PackageManager.php');
 
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
 require_once('ModuleInstall/PackageManager/ListViewPackages.php');
 
 class PackageManagerDisplay{
@@ -77,7 +77,7 @@ class PackageManagerDisplay{
         $tree = null;
         //if($isAlive){
             $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
-            $tree->tree_style= 'include/ytree/TreeView/css/check/tree.css';
+            $tree->tree_style= 'vendors/ytree/TreeView/css/check/tree.css';
             $ss->assign('TREEHEADER',$tree->generate_header());
         //}
         //$form2 .= PackageManagerDisplay::buildLoginPanel($mod_strings);
@@ -201,7 +201,7 @@ class PackageManagerDisplay{
         	//return false;
         }
         $tree = PackageManagerDisplay::buildTreeView('treeview', $isAlive);
-        $tree->tree_style= 'include/ytree/TreeView/css/check/tree.css';
+        $tree->tree_style= 'vendors/ytree/TreeView/css/check/tree.css';
         $ss->assign('TREEHEADER',$tree->generate_header());
 		$ss->assign('module_load', 'false');
 		$ss->assign('MODULE_SELECTOR', PackageManagerDisplay::buildGridOutput($tree, $mod_strings, $isAlive, $show_login));

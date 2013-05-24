@@ -82,7 +82,7 @@ $read_only_override = array(
 );
 global $soapclient, $soap_server;
 $soap_server = $sugar_config['sync_site_url'] . '/soap.php';
-require_once('include/nusoap/nusoap.php');  //must also have the nusoap code on the ClientSide.
+require_once('vendors/nusoap//nusoap.php');  //must also have the nusoap code on the ClientSide.
 $soapclient = new nusoapclient($soap_server);  //define the SOAP Client an			
 $soapclient->response_timeout = 360;
 if(!isset($_SESSION['soap_server_available'])){

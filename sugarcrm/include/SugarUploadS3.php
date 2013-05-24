@@ -19,8 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *to the License for the specific language governing these rights and limitations under the License.
 *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
-require_once 'Zend/Service/Amazon/S3.php';
-require_once 'Zend/Service/Amazon/S3/Stream.php';
+require_once 'vendors/Zend/Service/Amazon/S3.php';
+require_once 'vendors/Zend/Service/Amazon/S3/Stream.php';
 
 /**
  * S3 uploads driver

@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once 'include/Smarty/plugins/function.sugar_link.php';
+require_once 'vendors/Smarty/plugins/function.sugar_link.php';
 require_once 'include/Sugar_Smarty.php';
 
 class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase

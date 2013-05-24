@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 require_once('include/TimeDate.php');
 
 abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase

@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 
 /**

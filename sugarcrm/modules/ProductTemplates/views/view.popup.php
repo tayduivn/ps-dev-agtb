@@ -29,8 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 require_once('include/MVC/View/views/view.popup.php');
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+require_once('vendors/ytree/Tree.php');
+require_once('vendors/ytree/Node.php');
 require_once('modules/ProductTemplates/TreeData.php');
 
 class ProductTemplatesViewPopup extends ViewPopup {

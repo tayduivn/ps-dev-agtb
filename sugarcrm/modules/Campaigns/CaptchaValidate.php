@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  /**Check captcha validation here.
  *
  */
-require_once('include/recaptcha/recaptchalib.php');
+require_once('vendors/reCaptcha/recaptchalib.php');
 
 $admin = Administration::getSettings('captcha');
 if($admin->settings['captcha_on']=='1' && !empty($admin->settings['captcha_private_key'])){

@@ -25,7 +25,7 @@
  
 require_once('modules/Teams/Team.php');
 require_once('modules/Teams/TeamSet.php');
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 require_once('SugarTestUserUtilities.php');
 require_once('tests/SugarTestContactUtilities.php');
 

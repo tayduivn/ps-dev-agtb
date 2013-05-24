@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/nusoap/nusoap.php');
+require_once('vendors/nusoap//nusoap.php');
 require_once('ModuleInstall/PackageManager/PackageManagerDownloader.php');
 
 define("HTTPS_URL", "https://depot.sugarcrm.com/depot/SugarDepotSoap.php");
