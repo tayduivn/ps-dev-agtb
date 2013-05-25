@@ -50,20 +50,18 @@
      * @param values
      */
     prepopulate: function(values) {
-        _.each(values, function(value, fieldName) {
-            switch(fieldName) {
-                case 'to_addresses':
-                case 'cc_addresses':
-                case 'bcc_addresses':
-                    this.context.trigger("recipients:" + fieldName + ":add", value);
-                    break;
-                case 'related':
-                    this.populateRelated(value);
-                    break;
-                default:
-                    this.model.set(fieldName, value);
-            }
-        }, this);
+        var self = this;
+        _.defer(function() {
+            _.each(values, function(value, fieldName) {
+                switch(fieldName) {
+                    case 'related':
+                        self.populateRelated(value);
+                        break;
+                    default:
+                        self.model.set(fieldName, value);
+                }
+            });
+        });
     },
 
     /**

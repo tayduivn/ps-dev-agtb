@@ -44,7 +44,7 @@ $viewdefs["Emails"]["base"]["view"]["compose-addressbook-recipientscontainer"] =
                     "type"                => "recipients",
                     "label"               => "LBL_SELECTED_RECIPIENTS",
                     "css_class_container" => "controls-one btn-fit",
-                    "hide_address_book"   => true,
+                    'readonly'            => true,
                     "span"                => 12,
                 ),
             ),

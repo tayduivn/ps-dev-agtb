@@ -59,25 +59,15 @@
 
         if (!_.isEmpty(massCollection)) {
             // get rid of any old event listeners on the mass collection
-            massCollection.off("add", null, this);
-            massCollection.off("remove", null, this);
-            massCollection.off("reset", null, this);
+            massCollection.off(null, null, this);
 
-            // add the new event listeners
-            massCollection.on("add", function(model) {
-                if (model.id) {
-                    this.context.trigger("recipients:compose_addressbook_selected_recipients:add", model);
-                }
+            // update the field value as recipients are added to or removed from the mass collection
+            massCollection.on("add remove", function(model, collection) {
+                this.model.set("compose_addressbook_selected_recipients", collection);
             }, this);
 
-            massCollection.on("remove", function(model) {
-                if (model.id) {
-                    this.context.trigger("recipients:compose_addressbook_selected_recipients:remove", model);
-                }
-            }, this);
-
-            massCollection.on("reset", function() {
-                this.context.trigger("recipients:compose_addressbook_selected_recipients:replace");
+            massCollection.on("reset", function(collection) {
+                this.model.set("compose_addressbook_selected_recipients", collection);
             }, this);
 
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the

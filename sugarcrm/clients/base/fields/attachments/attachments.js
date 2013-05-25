@@ -103,7 +103,9 @@
     bindDomChange: function() {
         this.$node = this.$(this.fieldSelector);
         this.$node.on("change", _.bind(this.handleChange, this));
-        this.$node.on("open", function() {return false;});
+        this.$node.on("opening", function(event) {
+            event.preventDefault();
+        });
     },
 
     /**

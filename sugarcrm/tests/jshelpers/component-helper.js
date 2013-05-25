@@ -122,6 +122,7 @@
             type = type + 's';
             if (this.isInitialized()) {
                 if (module) {
+                    type = (type === 'fields') ? 'fieldTemplates' : type;
                     this._initModuleStructure(module, type, name);
                     this._data.modules[module][type][name].templates[templateName] = template;
                 } else {
@@ -161,6 +162,7 @@
 
         set: function() {
             if (this.isInitialized()) {
+                this._data._hash = true; //force ignore cache
                 _.each(this._data.modules, function(module) {
                     module._patched = false;
                 });

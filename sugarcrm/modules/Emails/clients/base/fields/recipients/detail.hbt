@@ -26,6 +26,5 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<input type="hidden" name="{{name}}" class="select2{{#if def.css_class}} {{def.css_class}}{{/if}}"/>
-<a class="btn" href="javascript:void(0);" data-name="{{name}}"><i class="{{#if def.icon}}{{def.icon}}{{else}}icon-book{{/if}}"></i></a>
+<input type="hidden" name="{{name}}" readonly="readonly" class="select2{{#if def.css_class}} {{def.css_class}}{{/if}}"/>
 <p class="help-block"></p>
