@@ -36,7 +36,7 @@ class SugarTestTeamUtilities
         self::removeAllCreatedAnonymousTeams();
     }
 
-    public static function createAnonymousTeam($id = '') 
+    public static function createAnonymousTeam($id = '', array $attributes = array())
     {
         $team = BeanFactory::getBean('Teams');
         $team->name = 'Test Team - ' . mt_rand();
@@ -45,6 +45,11 @@ class SugarTestTeamUtilities
             $team->new_with_id = true;
             $team->id = $id;
         }
+
+        foreach ($attributes as $attribute => $value) {
+            $team->{$attribute} = $value;
+        }
+
         $team->save();
         self::$_createdTeams[] = $team;
         return $team;
