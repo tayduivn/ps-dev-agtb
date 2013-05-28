@@ -3846,6 +3846,7 @@ $app_strings = array (
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
+    'LBL_CURRENT_PASSWORD'				=> 'Current Password',
     'LBL_SET_NEW_PASSWORD'              => 'Enter Password',
     'LBL_NEW_PASSWORD1'                 => 'New Password',
     'LBL_NEW_PASSWORD2'                 => 'Confirm Password',
