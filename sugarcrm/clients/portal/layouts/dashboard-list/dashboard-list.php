@@ -1,7 +1,8 @@
-{{!
+<?php
+ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +16,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,13 +26,11 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="headerpane">
-    <h1><a class="module-title" href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
-    <div class="btn-toolbar pull-right dropdown">
-        {{#if context.attributes.isCreateEnabled}}
-        <a href="#{{buildRoute context model "create" route.options}}" title="{{str "LNK_CREATE" module}}" class="btn btn-primary">{{str "LNK_CREATE" module}}</a>
-        {{/if}}
-        <a title="{{str "LBL_HIDE" module}}" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>
-    </div>
-</div>
+
+$listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "dashboard-list"));
+$listLayout->push(array('view' => 'dashboard-list-top'));
+$listLayout->push(array('view' => 'filter'));
+$listLayout->push(array("view" => "list"));
+$listLayout->push(array('view' => 'list-bottom'));
+$listLayout->set("css_class", "thumbnail");
+$viewdefs['portal']['layout']['dashboard-list'] = $listLayout->getLayout();

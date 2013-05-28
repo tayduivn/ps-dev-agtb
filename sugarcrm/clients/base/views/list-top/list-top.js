@@ -57,7 +57,6 @@
         } else {
             e.preventDefault();
 
-            console.log("Show Relate");
             this.$('.relate-bar').slideToggle('fast');
         }
     },
