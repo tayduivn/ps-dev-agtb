@@ -72,7 +72,7 @@ describe("Base.Field.Parent", function() {
         var actual_id = field.model.get('parent_id'),
             actual_name = field.model.get('parent_name'),
             actual_module = field.model.get('parent_type'),
-            _relatedModuleSpy = sinon.spy(field, "_getRelateModule");
+            _relatedModuleSpy = sinon.spy(field, "getSearchModule"),
             _relateIdSpy = sinon.spy(field, "_getRelateId");
 
         field.format();

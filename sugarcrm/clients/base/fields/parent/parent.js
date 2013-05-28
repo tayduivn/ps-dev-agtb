@@ -32,7 +32,6 @@
             } else {
                 this.$(this.typeFieldTag).attr("disabled", false);
             }
-            this.$(this.typeFieldTag).trigger("liszt:updated");
         } else if(this.tplName === 'disabled'){
             this.$(this.typeFieldTag).attr("disabled", "disabled").select2();
         }
@@ -42,23 +41,31 @@
     _buildRoute: function() {
         var module, idName;
         if (!this.value || this.value !== this.hiddenValue) {
-            module = this._getRelateModule();
+            module = this.getSearchModule();
             idName = this._getRelateId();
             app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'buildRoute', args: [module, idName]});
         }
-    },
-    _getRelateModule: function() {
-        return this.model.get("parent_type");
     },
     _getRelateId: function() {
         return this.model.get("parent_id");
     },
     format: function(value) {
-        this.def.module = this.model.get('parent_type');
+        this.def.module = this.getSearchModule();
+        var moduleString = app.lang.getAppListStrings('moduleListSingular'),
+            module;
+        if(this.getSearchModule()) {
+            if (!moduleString[this.getSearchModule()]) {
+                app.logger.error("Module '" + this.getSearchModule() + "' doesn't have singular translation.");
+                // graceful fallback
+                module = this.getSearchModule();
+            } else {
+                module = moduleString[this.getSearchModule()];
+            }
+        }
 
         this.context.set("record_label", {
             field: this.name,
-            label: (this.tplName === 'detail') ? this.def.module : app.lang.get(this.def.label, this.module)
+            label: (this.tplName === 'detail') ? module : app.lang.get(this.def.label, this.module)
         });
         this._buildRoute();
 
