@@ -126,7 +126,7 @@
             this.context.parent.off(null, null, this);
         }
         app.routing.offBefore(null, null, this);
-        $(window).off("beforeUnload");
+        $(window).off("beforeunload." + this.worksheetType);
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
 
@@ -219,7 +219,7 @@
 
                         if (this.selectedUser.isManager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                             this.collection.once('reset', function() {
-                                this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', '');
+                                this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', 'LBL_WORKSHEET_COMMIT_ALERT');
                             }, this)
                         }
                         this.refreshData();
@@ -248,7 +248,7 @@
                     this.processNavigationMessageReturn(ret);
                 }, {}, this);
 
-                $(window).bind("beforeunload", _.bind(function() {
+                $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
                     var ret = this.showNavigationMessage('window');
                     if (_.isString(ret)) {
                         return ret;
@@ -436,6 +436,8 @@
             if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
                     this.showNavigationMessage('rep_to_manager');
+                } else if (this.displayNavigationMessage) {
+                    this.showNavigationMessage('user_switch');
                 }
                 this.cleanUpDirtyModels();
                 // we need to hide
@@ -887,8 +889,10 @@
                 original.width(_.max(labelWidths));
 
                 var parentTds = this.$el.find('span[data-name^="' + field.name + '"]'),
-                    parentWidth = _.max(parentTds.map(function() { return $(this).outerWidth(); }).get());
-                this.$el.find('th[data-fieldname^="' + field.name + '"]').width(parentWidth+20);
+                    parentWidth = _.max(parentTds.map(function() {
+                        return $(this).outerWidth();
+                    }).get());
+                this.$el.find('th[data-fieldname^="' + field.name + '"]').width(parentWidth + 20);
             }
         }, this);
     }
