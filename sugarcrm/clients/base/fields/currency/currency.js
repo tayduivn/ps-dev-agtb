@@ -112,7 +112,7 @@
         var currencyId = this.model.get(this.def.currency_field || 'currency_id');
 
         if (this.def.convertToBase) {
-            value = app.currency.convertWithRate(value, baseRate);
+            value = app.currency.convertWithRate(value, baseRate) || 0;
             currencyId = app.currency.getBaseCurrencyId();
         }
         return app.currency.formatAmountLocale(value, currencyId);
