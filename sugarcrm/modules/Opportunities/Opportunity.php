@@ -30,6 +30,8 @@ class Opportunity extends SugarBean
 
     const STATUS_NEW = 'New';
     const STATUS_IN_PROGRESS = 'In Progress';
+    const STATUS_CLOSED_WON = 'Closed Won';
+    const STATUS_CLOSED_LOST = 'Closed Lost';
 
     public $field_name_map;
     // Stored fields
@@ -461,14 +463,16 @@ class Opportunity extends SugarBean
             }
         }
 
-        //if the id is set (previously saved bean) and sales_status is still New, update to inprogress
-        if(isset($this->id) && !$this->new_with_id && $this->sales_status == Opportunity::STATUS_NEW) {
+        //BEGIN SUGARCRM flav=ent ONLY
+        //if the id is set (previously saved bean) and sales_status is still New, update to in progress
+        if (isset($this->id) && !$this->new_with_id && $this->sales_status == Opportunity::STATUS_NEW) {
             $this->sales_status = Opportunity::STATUS_IN_PROGRESS;
         }
+        //END SUGARCRM flav=ent ONLY
 
         SugarAutoLoader::requireWithCustom('modules/Opportunities/SaveOverload.php');
         perform_save($this);
-       
+
         return parent::save($check_notify);
     }
 

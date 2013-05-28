@@ -652,7 +652,7 @@ class Product extends SugarBean
         if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
             $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
         }
-        $this->handleOppSalesStatus();
+        $this->setOpportunitySalesStatus();
         //END SUGARCRM flav=ent ONLY
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
@@ -751,6 +751,82 @@ class Product extends SugarBean
         return $id;
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Handle setting the opportunity status
+     *
+     * This currently uses Dependency Injection for the Opportunity and Administration beans since we can't
+     * Override BeanFactory::getBean()  once that is done we can remove the dependency Injection. When called
+     * you should not pass and Opportunity and Administration bean in.
+     *
+     * @param Opportunity $opp
+     * @param Administration $admin
+     */
+    protected function setOpportunitySalesStatus(Opportunity $opp = null, Administration $admin = null)
+    {
+        if (is_null($admin)) {
+            // if $admin is not passed in then load it up
+            $admin = BeanFactory::getBean('Administration');
+        }
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if ($settings['is_setup'] != 1) {
+            // forecasts is not setup, just ignore this
+            return;
+        }
+
+
+        if (is_null($opp)) {
+            // if $opp is not set, load it up
+            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
+        }
+        // get the closed won and closed lost values
+        $closed_won = $settings['sales_stage_won'];
+        $closed_lost = $settings['sales_stage_lost'];
+
+        $won_products = count(
+            $opp->get_linked_beans(
+                'products',
+                'Products',
+                array(),
+                0,
+                -1,
+                0,
+                'sales_stage in ("' . join('","', $closed_won) . '")'
+            )
+        );
+
+        $lost_products = count(
+            $opp->get_linked_beans(
+                'products',
+                'Products',
+                array(),
+                0,
+                -1,
+                0,
+                'sales_stage in ("' . join('","', $closed_lost) . '")'
+            )
+        );
+
+        $total_products = count($opp->get_linked_beans('products', 'Products'));
+
+        if ($total_products > ($won_products + $lost_products) || $total_products === 0) {
+            // still in progress
+            $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            $opp->save();
+        } else {
+            // they are equal so if the total lost == total products then it's closed lost,
+            // otherwise it's always closed won
+            if ($lost_products == $total_products) {
+                $opp->sales_status = Opportunity::STATUS_CLOSED_LOST;
+            } else {
+                $opp->sales_status = Opportunity::STATUS_CLOSED_WON;
+            }
+            $opp->save();
+        }
+    }
+    //END SUGARCRM flav=ent ONLY
+
     /**
      * Override the current SugarBean functionality to make sure that when this method is called that it will also
      * take care of any draft worksheets by rolling-up the data
@@ -772,14 +848,17 @@ class Product extends SugarBean
     }
     
     /**
-     * Utility to load/save a related Opp when things are deleted/reassigned so calcuated fields
+     * Utility to load/save a related Opp when things are deleted/reassigned so calculated fields
      * in Opportunities update with new totals.
      */
     protected function resaveOppForRecalc($oppId)
     {
-    	if (!empty($oppId)) {
+        if (!empty($oppId)) {
+            /* @var $opp Opportunity */
             $opp = BeanFactory::getBean('Opportunities', $oppId);
-            $opp->save();
+
+            // save the opp via the opp status
+            $this->setOpportunitySalesStatus($opp);
         }
     }
 
@@ -870,70 +949,6 @@ class Product extends SugarBean
         return false;
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * helper function to update the opportunity sales status based on parameters
-     * @param $opportunity
-     * @param $opportunitySalesStatusToCheck
-     * @param $productSalesStatusToCheck
-     * @param $opportunitySalesStatusToUse
-     * @param $checkAllPLI
-     */
-    protected function changeOppSalesStatus(Opportunity $opportunity, $opportunitySalesStatusToCheck, $productSalesStatusToCheck, $opportunitySalesStatusToUse, $checkAllPLI)
-    {
-        if ($opportunity->sales_status != $opportunitySalesStatusToCheck && $opportunity->sales_status != $opportunitySalesStatusToUse) {
-            $salesStatusLineItems = $opportunity->products->query(array(
-                                               'where'=>array(
-                                                   // query adds the prefix so we don't need contact.id
-                                                   'lhs_field'=>'sales_status',
-                                                   'operator'=>'=',
-                                                   'rhs_value'=>$this->db->quote($productSalesStatusToCheck),
-                                                   ),
-                                                'deleted'=>'0'));
-            $requiredRowCount = 1;
-            if ($checkAllPLI) {
-                $requiredRowCount = count($opportunity->products->rows);
-            }
-            //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
-            if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
-                $opportunity->sales_status = $opportunitySalesStatusToUse;
-                $opportunity->save();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Code to make sure that the Sales Status field of the associated opportunity
-     */
-    protected function handleOppSalesStatus()
-    {
-        if (!empty($this->opportunity_id)) {
-            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-            $products = $opp->get_linked_beans('products', 'Products');
-            if (count($products) > 0) {
-                //opp currently isn't in status new, but a PLI gets added as status new, so this is assuming it's not just a new opp and new PLI
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false)) {
-                    return;
-                }
-                //opp currently isn't in progress, but a PLI gets added as in progress
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,false)) {
-                    return;
-                }
-                //opp currently isn't Won, but all PLIs are closed won
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,true)) {
-                    return;
-                }
-                //opp currently isn't Lost, but all PLIs are closed lost
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,true)) {
-                    return;
-                }
-            }
-        }
-    }
-    //END SUGARCRM flav=ent ONLY
-    
     /**
      * Handle the mapping of the fields from the product template to the product
      */
