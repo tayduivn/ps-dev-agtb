@@ -177,7 +177,8 @@ $mod_strings = array (
     'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
-	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Revenue Line Items',
+	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
+    'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
 );
 
 
