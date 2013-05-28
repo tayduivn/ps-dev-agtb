@@ -72,7 +72,31 @@
             this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
                 this.commitForecast(user, worksheet_type, forecast_totals);
             }, this);
+
+            this.context.on('button:settings_button:click', function() {
+                this.openConfigDrawer();
+            }, this);
         }
+    },
+
+    /**
+     * Opens the Forecasts Config drawer
+     */
+    openConfigDrawer: function() {
+        // open a drawer for the config layout, pass in our current config
+        // in drawer is used in case user navigates to the config from Admin
+        // and it isnt in a drawer, it redirects different if they save/cancel
+        app.drawer.open({
+            layout: 'config',
+            context: {
+                inDrawer: true
+            }
+        }, _.bind(function(hasChanged, data) {
+            if(hasChanged && this.context) {
+                // Now that we've reset the metadata with any new changes, let other models know
+                this.context.trigger('forecasts:metadata:changed', data);
+            }
+        },this));
     },
 
     /**
@@ -89,7 +113,8 @@
             // Add Forecasts-specific stuff to the app.user object
             app.user.set(data.initData.userData);
             if (data.initData.forecasts_setup === 0) {
-                window.location.hash = "#Forecasts/layout/config";
+                // Immediately open the config drawer so user can set up config
+                this.openConfigDrawer();
             } else {
                 this.initForecastsModule(data, options);
             }
@@ -117,9 +142,12 @@
         ctx.once('change:selectedUser', this._onceInitSelectedUser, this);
 
         // set items on the context from the initData payload
-        ctx.set({'currentForecastCommitDate': undefined});
-        ctx.set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
-        ctx.set({'selectedRanges': data.defaultSelections.ranges}, {silent: true});
+        ctx.set({
+            currentForecastCommitDate: undefined,
+            selectedTimePeriod: data.defaultSelections.timeperiod_id.id,
+            selectedRanges: data.defaultSelections.ranges
+        }, {silent: true});
+
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});
 
         // set the selected user to the context

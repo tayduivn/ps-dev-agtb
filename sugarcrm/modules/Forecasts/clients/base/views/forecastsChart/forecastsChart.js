@@ -123,7 +123,7 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_');
+        this.chartDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.config);
         this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
@@ -365,7 +365,7 @@
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
         params.chartId = chartId;
-        params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
+        params.type = this.context.config.get('forecast_by');
 
         chart = new loadSugarChart(chartId, this.buildChartUrl(params), css, chartConfig, params, _.bind(function(chart){
             this.chart = chart;

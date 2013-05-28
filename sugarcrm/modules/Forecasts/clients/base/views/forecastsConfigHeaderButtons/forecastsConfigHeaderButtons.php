@@ -13,8 +13,29 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array('view' => 'forecastsConfigHeaderButtons'));
-$layout->push('main', array('layout' => 'config-main'));
-$layout->push('side', array('view' => 'forecastsHowto'));
-$viewdefs['Forecasts']['base']['layout']['config'] = $layout->getLayout();
+$viewdefs['Forecasts']['base']['view']['forecastsConfigHeaderButtons'] = array(
+    'buttons' => array(
+        array(
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+        ),
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
+            'primary' => true,
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+            ),
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
+);

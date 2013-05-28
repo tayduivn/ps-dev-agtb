@@ -1,0 +1,105 @@
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
+
+({
+    collapseDivId: 'forecast-config-accordion',
+
+    timeperiodsTitle: '',
+    timeperiodsText: '',
+    scenariosTitle: '',
+    scenariosText: '',
+    rangesTitle: '',
+    rangesText: '',
+    forecastByTitle: '',
+    forecastByText: '',
+    wkstColumnsTitle: '',
+    wkstColumnsText: '',
+
+    selectedPanel: '',
+
+    events: {
+        'click .accordion-toggle': 'onAccordionToggleClicked'
+    },
+
+    initialize: function(options) {
+        app.view.Layout.prototype.initialize.call(this, options);
+        var appLang = app.lang;
+
+        this.timeperiodsTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');
+        this.timeperiodsText = appLang.get('LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS', 'Forecasts');
+        this.scenariosTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_SCENARIOS', 'Forecasts');
+        this.scenariosText = appLang.get('LBL_FORECASTS_CONFIG_HELP_SCENARIOS', 'Forecasts');
+        this.rangesTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_RANGES', 'Forecasts');
+        this.rangesText = appLang.get('LBL_FORECASTS_CONFIG_HELP_RANGES', 'Forecasts');
+        this.forecastByTitle = appLang.get('LBL_FORECASTS_CONFIG_HOWTO_TITLE_FORECAST_BY', 'Forecasts');
+        this.forecastByText = appLang.get('LBL_FORECASTS_CONFIG_HELP_FORECAST_BY', 'Forecasts');
+        this.wkstColumnsTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS', 'Forecasts');
+        this.wkstColumnsText = appLang.get('LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS', 'Forecasts');
+    },
+
+    _render: function () {
+        app.view.Layout.prototype._render.call(this);
+
+        //This is because backbone injects a wrapper element.
+        this.$el.addClass('accordion');
+        this.$el.attr('id', this.collapseDivId);
+
+        //apply the accordion to this layout
+        this.$('.collapse').collapse({toggle:false, parent:'#' + this.collapseDivId});
+        this.selectPanel('forecastBy');
+    },
+
+    selectPanel: function(pName) {
+        this.selectedPanel = pName;
+        // convert selectedPanel name to the way the div ids are
+        var panelName = pName.slice(0,1).toUpperCase() + pName.slice(1, pName.length);
+        this.$el.find('#collapse' + panelName).collapse('show');
+        // manually trigger the accordion to toggle but dont pass event so it uses the selectedPanel name
+        this.onAccordionToggleClicked();
+    },
+
+    onAccordionToggleClicked: function(evt) {
+        var helpId = (evt) ? $(evt.currentTarget).data('help-id') : this.selectedPanel,
+            data = {};
+
+        switch(helpId) {
+            case 'timeperiods':
+                data.title = this.timeperiodsTitle;
+                data.text = this.timeperiodsText;
+                break;
+
+            case 'scenarios':
+                data.title = this.scenariosTitle;
+                data.text = this.scenariosText;
+                break;
+
+            case 'ranges':
+                data.title = this.rangesTitle;
+                data.text = this.rangesText;
+                break;
+
+            case 'forecastBy':
+                data.title = this.forecastByTitle;
+                data.text = this.forecastByText;
+                break;
+
+            case 'wkstColumns':
+                data.title = this.wkstColumnsTitle;
+                data.text = this.wkstColumnsText;
+                break;
+
+        }
+
+        this.context.set({howtoData: data});
+    }
+})

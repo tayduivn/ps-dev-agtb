@@ -329,13 +329,7 @@ $mod_strings = array (
     'LBL_FORECAST_SETTINGS' => 'Settings',
 
     // config panels strings
-    // splash screens
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setup',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setup!',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'This wizard will guide you through the step-by-step setup of the Forecasts module. Default values are provided for each section, so you\'ll be on your way in no time!',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_3' => 'You can also do manual setup by clicking ',
-    'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
-    'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
     // Panel and BreadCrumb Labels
     'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT' => 'Worksheet Layout',
@@ -343,6 +337,24 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_BREADCRUMB_SCENARIOS' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
+
+    // New Admin UI
+    'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS' => 'Forecast Settings',
+    'LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS' => 'Time Period',
+    'LBL_FORECASTS_CONFIG_TITLE_RANGES' => 'Forecast Ranges',
+    'LBL_FORECASTS_CONFIG_TITLE_SCENARIOS' => 'Scenarios',
+    'LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS' => 'Worksheet Columns',
+    'LBL_FORECASTS_CONFIG_TITLE_FORECAST_BY' => 'View Forecast Worksheet By',
+
+    'LBL_FORECASTS_CONFIG_HOWTO_TITLE_FORECAST_BY' => 'Forecast By',
+
+    'LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS' => 'Fiscal year start date:',
+
+    'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Configure the time period that will be used in the Forecasts module. You need to choose the start date of your fiscal year and the time period that you want to forecast over. Then the date range for the time periods will be automatically calculated based on your selections.<br><br>The Sub-Period is the base for the Forecast worksheet. Both time period and sub-period may be used for Reports.<br><br>The number of time periods will determine the number of visible sub-periods in the Forecasts module. The sales representative and manager are able to view and edit the forecasting numbers in visible sub-periods.',
+    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to categorize the opportunities. You can choose the number of categories and determine the ranges of the probabilities for the categories. The opportunities with certain probabilities will default be default to the corresponding category by default, but the user can modify them later. Only the opportunities in the "Included" category will be reported to managers',
+    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to fill out for their forecasts of each opportunity. Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'I am a placeholder for Worksheet Columns how-to text!',
+    'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY' => 'I am a placeholder for Forecast By how-to text!',
 
     // timeperiod config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).

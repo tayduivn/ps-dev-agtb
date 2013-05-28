@@ -1,29 +1,16 @@
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 ({
     /**
      * used to hold the label string from metadata to get rendered in the template.
@@ -66,6 +53,26 @@
     disableRanges: false,
 
     /**
+     * Holds the selected ranges ('Two Ranges', 'Three Ranges') section to add to the accordion toggle
+     */
+    titleSelectedRange: '',
+
+    /**
+     * Holds the selected range values ('70% - 100%') to add to the accordion toggle
+     */
+    titleSelectedValues: '',
+
+    /**
+     * Holds the view's title name
+     */
+    titleViewNameTitle: '',
+
+    /**
+     * Holds the collapsible toggle title template
+     */
+    toggleTitleTpl: {},
+
+    /**
      * Adds event listener to elements
      */
     events: {
@@ -74,7 +81,8 @@
         'click .addCustomRange': 'addCustomRange',
         'click .removeCustomRange': 'removeCustomRange',
         'keyup input[type=text]': 'updateCustomRangeLabel',
-        'change input[type=checkbox]': 'updateCustomRangeIncludeInTotal'
+        'change input[type=checkbox]': 'updateCustomRangeIncludeInTotal',
+        'click .resetLink': 'onResetLinkClicked'
     },
 
     /**
@@ -84,6 +92,8 @@
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+
+        this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_RANGES', 'Forecasts');
 
         this.label = _.first(this.meta.panels).label;
 
@@ -101,26 +111,98 @@
 
         // Set this model equal to the latest config metadata
         this.model.set(app.metadata.getModule('Forecasts', 'config'));
+        this.updateTitleValues(this.model);
 
         // set the values for forecast_ranges_field and buckets_dom_field from the model, so it can be set to selected properly when rendered
         this.forecast_ranges_field.value = this.model.get('forecast_ranges');
         this.buckets_dom_field.value = this.model.get('buckets_dom');
+        this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
+    },
 
-        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
-            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+    /**
+     * Handles when reset to defaults link has been clicked
+     * @param evt click event
+     */
+    onResetLinkClicked: function(evt) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+
+        /**
+         * todo implement resetting to defaults
+         */
+        console.log('reset link clicked for Ranges');
+    },
+
+    bindDataChange: function() {
+        if(this.model) {
+            this.model.on('change', function(model) {
+                this.updateTitleValues(model);
+            }, this);
         }
+    },
+
+    /**
+     * Load the values for the title in case the model hasnt changed when config loads
+     * @param model
+     */
+    updateTitleValues: function(model) {
+        // on a fresh install with no demo data,
+        // this.model has the values and the param model is undefined
+        if(_.isUndefined(model)) {
+            model = this.model;
+        }
+
+        var forecastRanges = model.get('forecast_ranges'),
+            rangeObjs = model.get(forecastRanges + '_ranges'),
+            tmpObj = {},
+            str = '';
+
+        // Get the keys into an object
+        _.each(rangeObjs, function(vals) {
+            tmpObj[vals.min] = vals.max;
+        });
+
+        _.each(tmpObj, function(max,min) {
+            str += min + "% - " + max + "%, ";
+        });
+
+        str = str.slice(0, str.length - 2);
+
+        this.titleSelectedValues = str;
+
+        this.titleSelectedRange = app.lang.getAppListStrings('forecasts_config_ranges_options_dom')[forecastRanges];
+        if(_.isFunction(this.toggleTitleTpl)) {
+            this.updateTitle();
+        }
+    },
+
+    /**
+     * Updates the accordion toggle title
+     */
+    updateTitle: function() {
+        var tplVars = {
+            title: this.titleViewNameTitle,
+            message: this.titleSelectedRange,
+            selectedValues: this.titleSelectedValues,
+            viewName: 'forecastsConfigRanges'
+        };
+
+        this.$el.find('#rangesTitle').html(this.toggleTitleTpl(tplVars));
     },
 
     _render: function() {
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts ranges setup should be disabled
-        this.disableRanges = app.metadata.getModule('Forecasts', 'config').has_commits;
-        this.selection = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
+        this.disableRanges = this.model.get('has_commits');
+        this.selection = this.model.get('forecast_ranges');
 
         app.view.View.prototype._render.call(this);
 
-        this._addForecastRangesSelectionHandler();
+        // add accordion-group class to wrapper $el div
+        this.$el.addClass('accordion-group');
 
+        this._addForecastRangesSelectionHandler();
+        this.updateTitle();
         return this;
     },
 
@@ -348,7 +430,7 @@
         var customType = key,
             customIndex = 0,
             isExclude = false,
-            // placeholder to insert custom range
+        // placeholder to insert custom range
             currentPlh = showElement,
             rangeField,
             model = new Backbone.Model(),

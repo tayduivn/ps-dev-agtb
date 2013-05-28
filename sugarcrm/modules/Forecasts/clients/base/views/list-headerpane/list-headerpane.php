@@ -40,29 +40,32 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                 array(
                     'name' => 'commit_button',
                     'type' => 'button',
+                    'label' => 'LBL_QC_COMMIT_BUTTON',
                     'events' => array(
                         'click' => 'function(e){
                             this.view.context.trigger("button:commit_button:click");
                         }'
                     ),
-                    'label' => 'LBL_QC_COMMIT_BUTTON',
                     'css_class' => 'btn-primary',
                     'icon' => 'icon-upload',
                     'acl_action' => 'current_user',
                     'primary' => true
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:export_button:click',
                     'name' => 'export_button',
+                    'type' => 'rowaction',
                     'label' => 'LBL_EXPORT_CSV',
-
+                    'event' => 'button:export_button:click',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:settings_button:click',
                     'name' => 'settings_button',
+                    'type' => 'rowaction',
                     'label' => 'LBL_FORECAST_SETTINGS',
+                    'events' => array(
+                        'click' => 'function(e){
+                            this.view.context.trigger("button:settings_button:click");
+                        }'
+                    ),
                     'acl_action' => 'admin'
                 ),
                 array(
