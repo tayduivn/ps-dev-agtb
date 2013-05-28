@@ -1,0 +1,38 @@
+.notification-list {
+	.btn.dropdown-toggle {
+		.border-radius(3px);
+		text-align: center;
+		min-width: 20px;
+		line-height: 19px;
+		.box-shadow(none);
+		margin-left: 4px;
+		margin-right: 4px;
+		&:active {
+			background: none;
+		}
+	}
+	.dropdown-menu {
+		width: 400px;
+		ul {
+			li {
+				a {
+					text-indent: inherit;
+					padding-top: 10px;
+					padding-bottom: 0;
+					.label {
+						min-width: 50px;
+						text-align: center;
+						margin-right: 10px;
+					}
+					time {
+						font-size: @fontSizeSmall;
+						color: lighten(@gray,25%);
+						text-align: right;
+						padding-right: 14px;
+						padding-top: 1px;
+					}
+				}
+			}
+		}
+	}
+}
