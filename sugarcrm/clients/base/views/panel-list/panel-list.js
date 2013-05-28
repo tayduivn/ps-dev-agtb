@@ -33,7 +33,7 @@
         });
     },
 
-    toggleList: function(e) {
-        this.$el[e ? 'show' : 'hide']();
+    toggleList: function(show) {
+        this.$el[show ? 'show' : 'hide']();
     }
 })

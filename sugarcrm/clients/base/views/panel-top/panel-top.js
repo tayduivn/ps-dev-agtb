@@ -1,7 +1,7 @@
 ({
     className: "subpanel-header",
     events: {
-        "click": "hidePanel",
+        "click": "togglePanel",
         "click a[name=create_button]": "openCreateDrawer",
         "click a[name=select_button]": "openSelectDrawer"
     },
@@ -13,15 +13,17 @@
         this.parentModule = this.context.parent.get("module");
     },
 
-    hidePanel: function(e) {
+    togglePanel: function(e) {
         // Make sure we aren't toggling the panel when the user clicks on a dropdown action.
         var toggleSubpanel = !$(e.target).parents("span.actions").length;
-
         if (toggleSubpanel) {
-            var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
-
-            this.layout.trigger("hide", !currentlyVisible);
+            this._toggleSubpanel();
         }
+    },
+
+    _toggleSubpanel: function() {
+        var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
+        this.layout.trigger("hide", !currentlyVisible);
     },
 
     openSelectDrawer: function() {
