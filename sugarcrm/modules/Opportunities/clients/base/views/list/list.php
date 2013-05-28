@@ -62,7 +62,6 @@ $fields = array(
         'label' => 'LBL_LIST_SALES_STAGE',
         'default' => true,
     ),
-    'sales_status',
     array(
         'name' => 'amount',
         'type' => 'currency',
