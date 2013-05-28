@@ -115,7 +115,7 @@
 
     _dispose: function () {
         if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.render);
+            nv.utils.windowUnResize(this.chart.update);
         }
         app.view.View.prototype._dispose.call(this);
     }

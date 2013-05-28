@@ -1,6 +1,8 @@
 ({
     plugins: ['Dashlet'],
-    className:'cases-summary-wrapper',
+    className: 'cases-summary-wrapper',
+    chart: {},
+    total: 0,
 
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
@@ -12,64 +14,81 @@
         }
     },
 
-    _render: function() {
-        var self = this;
-        if (!self.chartData) return;
+    _render: function () {
+        var self = this,
+            chart;
+
         app.view.View.prototype._render.call(this);
 
-        var chart = nv.models.pieChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.value })
-                .margin({top:10,right:10,bottom:15,left:10})
-                .showLabels(true)
-                .showTitle(false)
-                .showLegend(false)
-                .donutRatio(0.4)
-                .donutLabelsOutside(true)
-                .hole(self.totalCases)
-                .colorData('class')
-                .tooltipContent( function(key, x, y, e, graph) {
-                    return '<p><b>' + key +' '+  parseInt(y) +'</b></p>'
-                }).donut(true)
-            ;
-        d3.select('#casesSummaryPie svg')
+        if (this.viewName === "config" || self.total === 0) {
+            return;
+        }
+
+        chart = nv.models.pieChart()
+            .x(function(d) { return d.key; })
+            .y(function(d) { return d.value; })
+            .margin({top:10, right:10, bottom:15, left:10})
+            .donut(true)
+            .donutLabelsOutside(true)
+            .donutRatio(0.4)
+            .hole(self.totalCases)
+            .showTitle(false)
+            .showLegend(false)
+            .colorData('class')
+            .tooltipContent( function(key, x, y, e, graph) {
+                return '<p><b>' + key +' '+  parseInt(y, 10) +'</b></p>';
+            });
+
+        d3.select('svg#' + this.cid)
             .datum(self.chartData)
             .transition().duration(500)
             .call(chart);
 
-        nv.utils.windowResize(function(){chart.update();});
+        self.chart = chart;
+        nv.utils.windowResize(self.chart.update);
+    },
+
+    /* Process data loaded from REST endpoint so that d3 chart can consume
+     * and set general chart properties
+     */
+    evaluateResult: function (data) {
+        var self = this;
+
+        self.chartCollection = data;
+        self.closedCases = self.chartCollection.where({status:'Closed'});
+        self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Rejected'}));
+        self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Duplicate'}));
+        self.openCases = self.chartCollection.models.length - self.closedCases.length;
+        self.chartData = {
+            'data': [
+            ]
+        };
+        self.chartData.data.push({
+            key: 'Closed Cases',
+            class: 'nv-fill-green',
+            value: self.closedCases.length
+        });
+        self.chartData.data.push({
+            key: 'Open Cases',
+            class: 'nv-fill-red',
+            value: self.openCases
+        });
+
+        self.total = self.openCases + self.closedCases.length;
     },
 
     loadData: function (options) {
-        var self = this;
-        var oppID = this.model.get('account_id');
+        var self = this,
+            oppID = this.model.get('account_id'),
+            accountBean;
         if (oppID) {
-            var accountBean = app.data.createBean('Accounts', {id: oppID});
+            accountBean = app.data.createBean('Accounts', {id: oppID});
         }
         var relatedCollection = app.data.createRelatedCollection(accountBean || this.model,'cases');
         relatedCollection.fetch({
-            relate:true,
+            relate: true,
             success: function(resultCollection) {
-                self.chartCollection = resultCollection;
-                self.closedCases = self.chartCollection.where({status:'Closed'});
-                self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Rejected'}));
-                self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Duplicate'}));
-                self.openCases = self.chartCollection.models.length - self.closedCases.length;
-                self.chartData = {
-                    'data': [
-                    ]
-                };
-                self.chartData.data.push({
-                    key: 'Closed Cases',
-                    class: 'nv-fill-green',
-                    value: self.closedCases.length
-                });
-                self.chartData.data.push({
-                    key: 'Open Cases',
-                    class: 'nv-fill-red',
-                    value: self.openCases
-                });
-                self.totalCases = self.chartCollection.models.length;
+                self.evaluateResult(resultCollection);
                 self.processCases();
                 self.render();
                 self.addFavs();
@@ -111,7 +130,7 @@
             'Closed':'label-success',
             'Duplicate':'label-success'
         };
-        if (!this.chartCollection || this.chartCollection.models.length == 0) return;
+        if (!this.chartCollection || this.chartCollection.models.length === 0) return;
         this.tabData = [];
 
         var stati = _.uniq(this.chartCollection.pluck('status'));
@@ -133,7 +152,9 @@
     _dispose: function() {
         this.favFields = null;
         this.model.off("change", this.loadData, this);
+        if (!_.isEmpty(this.chart)) {
+            nv.utils.windowUnResize(this.chart.update);
+        }
         app.view.View.prototype._dispose.call(this);
     }
-
 })
