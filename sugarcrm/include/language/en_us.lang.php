@@ -2377,6 +2377,9 @@ $app_strings = array (
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
+    'LBL_TEAM_ADD' => 'Add Team',
+    'LBL_TEAM_REMOVE' => 'Remove Team',
+    'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
     //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY

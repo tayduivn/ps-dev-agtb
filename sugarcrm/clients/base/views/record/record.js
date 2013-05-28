@@ -9,7 +9,9 @@
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'mouseenter [rel="tooltip"]': 'onShowRecordViewTooltip',
+        'mouseleave [rel="tooltip"]': 'onHideRecordViewTooltip'
     },
     // button fields defined in view definition
     buttons: null,
@@ -521,5 +523,23 @@
                 lastTabIndex = gridResults.lastTabIndex;
             }
         }, this);
+    },
+    /**
+     * Creates tooltips for all controls on the record view and shows them
+     * @param e event
+     */
+    onShowRecordViewTooltip: function(e) {
+        if (_.isFunction(this.$(e.currentTarget).tooltip) ) {
+            this.$(e.currentTarget).tooltip({}).tooltip('show');
+        }
+    },
+    /**
+     * Hides tooltips for all controls on the record view and destroy them
+     * @param e event
+     */
+    onHideRecordViewTooltip: function(e) {
+        if (_.isFunction(this.$(e.currentTarget).tooltip) ) {
+            this.$(e.currentTarget).tooltip('destroy');
+        }
     }
 })
