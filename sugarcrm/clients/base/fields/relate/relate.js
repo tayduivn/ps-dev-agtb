@@ -175,21 +175,51 @@
         if (_.isEmpty(newData)) {
             return;
         }
-        var message = app.lang.get(self.def.populate_confirm || 'NTC_OVERWRITE_POPULATED_DATA_CONFIRM',
-            this.getSearchModule()) + '<br/><br/>';
+
+        // if this.def.auto_populate is true set new data and doesn't show alert message
+        if (!_.isUndefined(this.def.auto_populate) && this.def.auto_populate == true) {
+            this.model.set(newData);
+            return;
+        }
+
+        // load template key for confirmation message from defs or use default
+        var messageTplKey = app.lang.get(this.def.populate_confirm_label || 'TPL_OVERWRITE_POPULATED_DATA_CONFIRM'),
+            messageTpl = Handlebars.compile(app.lang.get(messageTplKey, this.getSearchModule())),
+            fieldMessageTpl = Handlebars.compile(app.lang.get('TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD', this.getSearchModule())),
+            messages = [],
+            alert_view = null;
+
         _.each(newData, function (value, field) {
             var def = this.model.fields[field];
-            message += app.lang.get(def.label || def.vname || field, this.module) + ': ' + value + '<br/>';
+            messages.push(fieldMessageTpl({
+                before: this.model.get(field),
+                after: value,
+                field_label: app.lang.get(def.label || def.vname || field, this.module)
+            }));
         }, this);
-        message += '<br/>';
 
         app.alert.show('overwrite_confirmation', {
             level: 'confirmation',
-            messages: message,
+            messages: messageTpl({values: messages.join(', ')}) + '<br><br>',
             onConfirm: function () {
                 self.model.set(newData);
             }
         });
+
+        // bind events to show/hide tooltip
+        alert_view = app.alert.get('overwrite_confirmation');
+        if (alert_view) {
+            alert_view.$('[rel="tooltip"]').on('mouseenter', function (e) {
+                if (_.isFunction($(this).tooltip)) {
+                    $(this).tooltip({placement: "bottom"}).tooltip("show");
+                }
+            });
+            alert_view.$('[rel="tooltip"]').on('mouseleave', function (e) {
+                if (_.isFunction($(this).tooltip)) {
+                    $(this).tooltip("hide");
+                }
+            })
+        }
     },
     /**
      * {@inheritdoc}

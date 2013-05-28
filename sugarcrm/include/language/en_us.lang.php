@@ -1957,8 +1957,7 @@ $app_strings = array (
     'LBL_ROUTING_TO'                        => 'to',
     'LBL_ROUTING_TO_ADDRESS'                => 'to address',
     'LBL_ROUTING_WITH_TEMPLATE'             => 'with template',
-  'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
-  'NTC_OVERWRITE_POPULATED_DATA_CONFIRM' => 'This record currently contains the following related values. To overwrite these values with the following values that you selected, click "Confirm". To keep the current values, click "Cancel".',
+    'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM'   => 'This record currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
     'LBL_DROP_HERE' => '[Drop Here]',
     'LBL_EMAIL_ACCOUNTS_EDIT'               => 'Edit',
     'LBL_EMAIL_ACCOUNTS_GMAIL_DEFAULTS'     => 'Prefill Gmail&#153; Defaults',
@@ -3927,6 +3926,9 @@ $app_strings = array (
 
     //opportunity chart
     'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
+    'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'Selected record currently contains the following related values: {{{values}}}. Click "Confirm" to copy these values to this record. Click "Cancel" to retain the current values.',
+    'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_CONTACTS_ACCOUNTS' => 'Selected Account has related values: {{{values}}}. Click "Confirm" to copy these values to the Contact. Click "Cancel" to retain the current values.',
+    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
 
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No data found.',
