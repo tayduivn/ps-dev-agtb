@@ -3666,6 +3666,7 @@ $app_strings = array (
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_NO_ACCESS' => '(No Access)',
+    'LBL_NO_FIELD_ACCESS' => 'No access',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Link Existing Record',
     'LBL_CHOOSE_LINK' => 'Choose Link Type',
