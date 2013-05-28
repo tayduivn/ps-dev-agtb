@@ -1,4 +1,10 @@
 ({
+    /**
+     * Header section for Subpanel layouts
+     *
+     * @class View.SubpanelHeaderView
+     * @alias SUGAR.App.view.views.SubpanelHeaderView
+     */
     className: "subpanel-header",
     events: {
         "click": "togglePanel",
@@ -6,6 +12,10 @@
         "click a[name=select_button]": "openSelectDrawer"
     },
 
+    /**
+     * @override
+     * @param opts
+     */
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
         // This is in place to get the lang strings from the right module. See
@@ -13,6 +23,11 @@
         this.parentModule = this.context.parent.get("module");
     },
 
+
+    /**
+    * Event handler that closes the subpanel layout when the SubpanelHeader is clicked
+    * @param e DOM event
+    */
     togglePanel: function(e) {
         // Make sure we aren't toggling the panel when the user clicks on a dropdown action.
         var toggleSubpanel = !$(e.target).parents("span.actions").length;
@@ -26,6 +41,10 @@
         this.layout.trigger("hide", !currentlyVisible);
     },
 
+    /**
+     * Event handler for the select button that opens a link selection dialog in a drawer for linking
+     * an existing record
+     */
     openSelectDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             linkModule = this.context.get("module"),
@@ -101,6 +120,10 @@
 
         return model;
     },
+
+    /**
+     * Event handler for the create button that opens a create dialog in a drawer for linking a new record.
+     */
     openCreateDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             link = this.context.get("link"),
@@ -125,6 +148,9 @@
         });
     },
 
+    /**
+     * @override
+     */
     bindDataChange: function() {
         if (this.collection) {
             this.listenTo(this.collection, 'reset', this.render);
