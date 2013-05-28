@@ -423,5 +423,5 @@ $mod_strings = array (
 
     // pipline opportunities dashlet
     'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',
-    'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/layout/config">Please click here to configure Forecasting</a>.'
+    'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/config">Please click here to configure Forecasting</a>.'
 );
