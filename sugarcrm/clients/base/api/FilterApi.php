@@ -485,7 +485,7 @@ class FilterApi extends SugarApi
         }
 
         if(!$this->verifyFieldAccess($bean, $field, 'access')) {
-            throw new SugarApiExceptionInvalidParameter("Access for field $field is not allowed");
+            throw new SugarApiExceptionNotAuthorized("Access for field $field is not allowed");
         }
 
         $field_def = $defs[$field];
