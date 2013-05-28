@@ -246,7 +246,7 @@ To squash all commits into the first one, remove the word "pick" before the seco
 
 ## Reporting a Security Issue
 
-If you found a security issue in SugarCRM, please don't use the bug tracker. All security issues must be sent to **security [at] sugarcrm.com** instead. Emails sent to this address are forwarded to the SugarCRM core-team private mailing-list.
+If you found a security issue in SugarCRM, please don't use the bug tracker. All security issues must be sent to **secure [at] sugarcrm.com** instead. Emails sent to this address are forwarded to the SugarCRM core-team private mailing-list.
 
 For each report, we first try to confirm the vulnerability. When it is confirmed, the core-team works on a solution following these steps:
 
