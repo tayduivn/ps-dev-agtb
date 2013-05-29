@@ -30,34 +30,51 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 // PRO/CORP only fields
-$fields =array(
+$fields = array(
     array(
-        'name' => 'account_name',
-        'readonly' => true
+        'name' => 'product_template_name',
+        'required' => true,
     ),
-    'sales_status',
     array(
         'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
         'span' => 6,
         'readonly' => true
     ),
-    'product_template_name',
-    array(
-        'name' => 'category_name',
-        'type' => 'productCategoriesRelate',
-        'label' => 'LBL_CATEGORY',
-        'readonly' => true
-    ),
+    'account_name',
+    'status',
     'quantity',
+    array(
+        'name' => 'cost_price',
+        'type' => 'currency',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    array(
+        'name' => 'list_price',
+        'type' => 'currency',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
     array(
         'name' => 'discount_price',
         'type' => 'currency',
-        'readonly' => true,
         'related_fields' => array(
             'discount_price',
             'currency_id',
             'base_rate',
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -73,55 +90,57 @@ $fields =array(
         'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
-    )
+    ),
+    array(
+        'name' => 'discount_rate_percent',
+        'readonly' => true,
+    ),
 );
 
-$hiddenFields = array(
-    'next_step',
-    'product_type',
-    'lead_source',
-    'campaign_name',
-    'assigned_user_name',
+$fieldsHidden = array(
+    'serial_number',
+    'contact_name',
+    'asset_number',
+    'date_purchased',
     array(
-        'type' => 'teamset',
-        'name' => 'team_name',
+        'name' => 'book_value',
+        'type' => 'currency',
+        'related_fields' => array(
+            'book_value',
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
     ),
+    'date_support_starts',
+    'book_value_date',
+    'date_support_expires',
+    'website',
+    'tax_class',
+    'manufacturer_name',
+    'weight',
+    'mft_part_num',
+    array(
+        'name' => 'category_name',
+        'type' => 'productCategoriesRelate',
+        'label' => 'LBL_CATEGORY',
+        'readonly' => true
+    ),
+    'vendor_part_num',
+    'product_type',
     array(
         'name' => 'description',
-        'span' => 12
+        'span' => 12,
     ),
-    array(
-        'name' => 'list_price',
-        'readonly' => true,
-        'type' => 'currency',
-        'related_fields' => array(
-            'list_price',
-            'currency_id',
-            'base_rate',
-        ),
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
-    'tax_class',
-    array(
-        'name' => 'cost_price',
-        'readonly' => true,
-        'type' => 'currency',
-        'related_fields' => array(
-            'cost_price',
-            'currency_id',
-            'base_rate',
-        ),
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
-    array(
-        'name' => 'quote_name',
-        'label' => 'LBL_ASSOCIATED_QUOTE',
-        'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
-        'readonly' => true,
-        'bwcLink' => true
-    ),
+    'support_name',
+    'support_contact',
+    'support_description',
+    'support_term',
+    'date_entered',
+    'date_modified',
 );
 //END SUGARCRM flav=pro && flav!=ent ONLY
 
@@ -134,14 +153,14 @@ $fields = array(
     ),
     array(
         'name' => 'account_name',
-        'readonly' => true
+        'readonly' => true,
     ),
     'sales_stage',
     'probability',
     'sales_status',
     array(
         'name' => 'date_closed',
-        'required' => true
+        'required' => true,
     ),
     array(
         'name' => 'commit_stage',
@@ -163,12 +182,13 @@ $fields = array(
     array(
         'name' => 'discount_price',
         'type' => 'currency',
-        'readonly' => true,
         'related_fields' => array(
             'discount_price',
             'currency_id',
             'base_rate',
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -195,6 +215,8 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -207,23 +229,22 @@ $fields = array(
             'currency_id',
             'base_rate',
         ),
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    )
-);
-
-$hiddenFields = array(
-    array(
-        'name' => 'worst_case',
-        'type' => 'currency',
-        'related_fields' => array(
-            'worst_case',
-            'currency_id',
-            'base_rate',
-        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    array(
+        'name' => 'quote_name',
+        'label' => 'LBL_ASSOCIATED_QUOTE',
+        'related_fields' => array('quote_id'),
+        // this is a hack to get the quote_id field loaded
+        'readonly' => true,
+        'bwcLink' => true,
+    ),
+);
+
+$fieldsHidden = array(
     array(
         'name' => 'best_case',
         'type' => 'currency',
@@ -232,6 +253,21 @@ $hiddenFields = array(
             'currency_id',
             'base_rate',
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    array(
+        'name' => 'worst_case',
+        'type' => 'currency',
+        'related_fields' => array(
+            'worst_case',
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -240,13 +276,10 @@ $hiddenFields = array(
     'lead_source',
     'campaign_name',
     'assigned_user_name',
-    array(
-        'type' => 'teamset',
-        'name' => 'team_name',
-    ),
+    'team_name',
     array(
         'name' => 'description',
-        'span' => 12
+        'span' => 12,
     ),
     array(
         'name' => 'list_price',
@@ -257,6 +290,8 @@ $hiddenFields = array(
             'currency_id',
             'base_rate',
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
@@ -270,15 +305,10 @@ $hiddenFields = array(
             'currency_id',
             'base_rate',
         ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
-    ),
-    array(
-        'name' => 'quote_name',
-        'label' => 'LBL_ASSOCIATED_QUOTE',
-        'related_fields' => array('quote_id'),  // this is a hack to get the quote_id field loaded
-        'readonly' => true,
-        'bwcLink' => true
     ),
 );
 //END SUGARCRM flav=ent ONLY
@@ -354,7 +384,7 @@ $viewdefs['Products']['base']['view']['create'] = array(
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
-            'fields' => $hiddenFields
+            'fields' => $fieldsHidden
         )
     ),
 );

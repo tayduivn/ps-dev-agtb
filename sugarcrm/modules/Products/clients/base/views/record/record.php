@@ -18,23 +18,39 @@
 // PRO/CORP only fields
 $fields = array(
     array(
-        'name' => 'account_name',
-        'readonly' => true,
+        'name' => 'product_template_name',
+        'required' => true,
     ),
-    'sales_status',
     array(
         'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
         'span' => 6,
         'readonly' => true
     ),
-    'product_template_name',
-    array(
-        'name' => 'category_name',
-        'type' => 'productCategoriesRelate',
-        'label' => 'LBL_CATEGORY',
-        'readonly' => true
-    ),
+    'account_name',
+    'status',
     'quantity',
+    array(
+        'name' => 'cost_price',
+        'type' => 'currency',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    array(
+        'name' => 'list_price',
+        'type' => 'currency',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
     array(
         'name' => 'discount_price',
         'type' => 'currency',
@@ -61,51 +77,58 @@ $fields = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    array(
+        'name' => 'discount_rate_percent',
+        'readonly' => true,
+    ),
 );
 
 $fieldsHidden = array(
-    'next_step',
+    'serial_number',
+    'contact_name',
+    'asset_number',
+    'date_purchased',
+    array(
+        'name' => 'book_value',
+        'type' => 'currency',
+        'related_fields' => array(
+            'book_value',
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    'date_support_starts',
+    'book_value_date',
+    'date_support_expires',
+    'website',
+    'tax_class',
+    'manufacturer_name',
+    'weight',
+    'mft_part_num',
+    array(
+        'name' => 'category_name',
+        'type' => 'productCategoriesRelate',
+        'label' => 'LBL_CATEGORY',
+        'readonly' => true
+    ),
+    'vendor_part_num',
     'product_type',
-    'lead_source',
-    'campaign_name',
-    'assigned_user_name',
-    'team_name',
     array(
         'name' => 'description',
         'span' => 12,
     ),
-    array(
-        'name' => 'list_price',
-        'readonly' => true,
-        'type' => 'currency',
-        'related_fields' => array(
-            'list_price',
-            'currency_id',
-            'base_rate',
-        ),
-        'convertToBase' => true,
-        'showTransactionalAmount' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
-    'tax_class',
-    array(
-        'name' => 'cost_price',
-        'readonly' => true,
-        'type' => 'currency',
-        'related_fields' => array(
-            'cost_price',
-            'currency_id',
-            'base_rate',
-        ),
-        'convertToBase' => true,
-        'showTransactionalAmount' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
+    'support_name',
+    'support_contact',
+    'support_description',
+    'support_term',
+    'date_entered',
+    'date_modified',
 );
 //END SUGARCRM flav=pro && flav!=ent ONLY
-
 
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields
