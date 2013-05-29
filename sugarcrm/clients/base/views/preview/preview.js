@@ -157,7 +157,7 @@
         if (model) {
             // Get the corresponding detail view meta for said module.
             // this.meta needs to be set before this.getFieldNames is executed.
-            this.meta = app.metadata.getView(model.module, 'record') || {};
+            this.meta = _.extend({}, app.metadata.getView(model.module, 'record'), app.metadata.getView(model.module, 'preview'));
             this.meta = this._previewifyMetadata(this.meta);
         }
 
