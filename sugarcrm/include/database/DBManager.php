@@ -1052,7 +1052,7 @@ protected function checkQuery($sql, $object_name = false)
 					}
 				}
 				if ($found) {
-					$sql .=	 "/*MISSNAMED INDEX IN DATABASE - $name - $ex_name */\n";
+					$sql .=	 "/*MISNAMED INDEX IN DATABASE - $name - $ex_name */\n";
 					$rename = $this->renameIndexDefs($ex_value, $value, $tablename);
 					if($execute) {
 						$this->query($rename, true, "Cannot rename index");

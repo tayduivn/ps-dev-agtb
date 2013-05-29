@@ -19,17 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: install_utils.php,v 1.38 2006/03/22 20:21:03 chris Exp
- * $Description: TODO: To be written. Portions created by SugarCRM are Copyright
- * (C) SugarCRM, Inc. All Rights Reserved. Contributor(s):
- * ______________________________________..
- * *******************************************************************************/
-
 require_once('include/utils/zip_utils.php');
-
 require_once('include/upload_file.php');
-
 
 ////////////////
 ////  GLOBAL utility
@@ -860,7 +851,7 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
-    include('ModuleInstall/ModuleInstaller.php');
+    require_once 'ModuleInstall/ModuleInstaller.php';
     //BEGIN SUGARCRM flav=ent ONLY
     ModuleInstaller::handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
@@ -876,93 +867,42 @@ function handleSugarConfig() {
  */
 function handlePortalConfig()
 {
-    if (!isset($sugar_config)) {
-        global $sugar_config;
-    }
-
-    $portalConfig = array(
-        'appId' => 'SupportPortal',
-        'appStatus' => 'offline',
-        'env' => 'dev',
-        'platform' => 'portal',
-        'additionalComponents' => array(
-            'header' => array(
-                'target' => '#header',
-                'layout' => 'header'
-            ),
-            'footer' => array(
-                'target' => '#footer',
-                'layout' => 'footer'
-            ),
-            'drawer' => array(
-                'target' => '#drawers',
-                'layout' => 'drawer'
-            ),
-        ),
-        'alertsEl'=> '#alert',
-        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
-        'siteUrl' => $sugar_config['site_url'],
-        'unsecureRoutes' => array('signup', 'error'),
-        'loadCss' => 'url',
-        'clientID' => 'support_portal',
-        'maxSearchQueryResult'=>'5'
-    );
-    $configString = json_encode($portalConfig);
-    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
-
+    require_once 'ModuleInstall/ModuleInstaller.php';
+    return ModuleInstaller::handlePortalConfig();
 }
 //END SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-function handleSidecarConfig() {
-
-    global $sugar_config;
-
-    $sidecarConfig = array(
-        'appId' => 'SugarCRM',
-        'env' => 'dev',
-        'platform' => 'base',
-        'additionalComponents' => array(
-            'alert' => array(
-                'target' => '#alerts'
-            )
-        ),
-        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-        'siteUrl' => $sugar_config['site_url'],
-        'loadCss' => false,
-        'unsecureRoutes' => array('login', 'error'),
-        'clientID' => 'sugar',
-        'authStore'  => 'sugarAuthStore',
-        'keyValueStore' => 'sugarAuthStore'
-    );
-    sugar_file_put_contents('config.js', '(function(app) {app.augment("config", ' . json_encode($sidecarConfig) . ', false);})(SUGAR.App);');
+function handleSidecarConfig()
+{
+    require_once 'ModuleInstall/ModuleInstaller.php';
+    return ModuleInstaller::handleBaseConfig();
 }
 //END SUGARCRM flav=pro ONLY
 
 /**
- * (re)write the .htaccess file to prevent browser access to the log file
+ * Set up proper .htaccess content
  */
-function handleHtaccess(){
-global $mod_strings, $sugar_config;
-$ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
-$htaccess_file   = ".htaccess";
-$contents = '';
+function getHtaccessData($htaccess_file)
+{
+    global $sugar_config;
+    $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
+    $contents = '';
 
-// Adding RewriteBase path for vhost and alias configurations
-$basePath = parse_url($sugar_config['site_url'], PHP_URL_PATH);
-if(empty($basePath)) $basePath = '/';
+    // Adding RewriteBase path for vhost and alias configurations
+    $basePath = parse_url($sugar_config['site_url'], PHP_URL_PATH);
+    if(empty($basePath)) $basePath = '/';
 
-$restrict_str = <<<EOQ
+    $restrict_str = <<<EOQ
 
 # BEGIN SUGARCRM RESTRICTIONS
 
 EOQ;
-if (ini_get('suhosin.perdir') !== false && strpos(ini_get('suhosin.perdir'), 'e') !== false)
-{
-    $restrict_str .= "php_value suhosin.executor.include.whitelist upload\n";
-}
-$restrict_str .= <<<EOQ
+    if (ini_get('suhosin.perdir') !== false && strpos(ini_get('suhosin.perdir'), 'e') !== false)
+    {
+        $restrict_str .= "php_value suhosin.executor.include.whitelist upload\n";
+    }
+    $restrict_str .= <<<EOQ
 RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
@@ -984,10 +924,6 @@ RedirectMatch 403 {$ignoreCase}/+files\.md5$
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
 //END SUGARCRM flav=ent ONLY
 </IfModule>
-# END SUGARCRM RESTRICTIONS
-EOQ;
-
-$cache_headers = <<<EOQ
 
 <FilesMatch "\.(jpg|png|gif|js|css|ico)$">
         <IfModule mod_headers.c>
@@ -1004,24 +940,36 @@ $cache_headers = <<<EOQ
         ExpiresByType image/jpg "access plus 1 month"
         ExpiresByType image/png "access plus 1 month"
 </IfModule>
+# END SUGARCRM RESTRICTIONS
 
 EOQ;
-    if(file_exists($htaccess_file)){
-        $fp = fopen($htaccess_file, 'r');
-        $skip = false;
-        while($line = fgets($fp)){
+        if(file_exists($htaccess_file)){
+            $fp = fopen($htaccess_file, 'r');
+            $skip = false;
+            while($line = fgets($fp)){
 
-            if(preg_match("/\s*#\s*BEGIN\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = true;
-            if(!$skip)$contents .= $line;
-            if(preg_match("/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = false;
+                if(preg_match("/\s*#\s*BEGIN\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = true;
+                if(!$skip)$contents .= $line;
+                if(preg_match("/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i", $line))$skip = false;
+            }
         }
-    }
-    $status =  file_put_contents($htaccess_file, $contents . $restrict_str . $cache_headers);
-    if( !$status ) {
-        echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
-        echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
-        echo $restrict_str;
-    }
+
+        return $contents . $restrict_str;
+}
+
+/**
+ * (re)write the .htaccess file to set up proper protections and redirections
+ */
+function handleHtaccess()
+{
+    global $mod_strings;
+    $htaccess_file   = ".htaccess";
+    $status =  file_put_contents(".htaccess", getHtaccessData($htaccess_file));
+        if( !$status ) {
+            echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_1']}<span class=stop>{$htaccess_file}</span> {$mod_strings['ERR_PERFORM_HTACCESS_2']}</p>\n";
+            echo "<p>{$mod_strings['ERR_PERFORM_HTACCESS_3']}</p>\n";
+            echo $restrict_str;
+        }
 
     return $status;
 }

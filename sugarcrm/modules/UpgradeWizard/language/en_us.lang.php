@@ -1,38 +1,17 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: en_us.lang.php 58178 2010-09-15 00:30:38Z kjing $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
-
 $mod_strings = array(
 	'DESC_MODULES_INSTALLED'					=> 'The following modules have been installed:',
 	'DESC_MODULES_QUEUED'						=> 'The following modules are ready to be installed:',
@@ -49,7 +28,7 @@ $mod_strings = array(
 	'ERR_UW_FLAVOR_2'							=> 'Upgrade Flavor: ',
 	'ERR_UW_FLAVOR'								=> 'SugarCRM System Flavor: ',
 	'ERR_UW_LOG_FILE_UNWRITABLE'				=> './upgradeWizard.log could not be created/written to.  Please fix permissions on your SugarCRM directory.',
-	'ERR_UW_MBSTRING_FUNC_OVERLOAD'				=> 'mbstring.func_overload set to a value higher than 1.  Please change this in your php.ini and restart the web server.',
+    'ERR_UW_MBSTRING_FUNC_OVERLOAD'				=> 'mbstring.func_overload set to a value higher than 1.  Please change this in your php.ini and restart the web server.',
 	'ERR_UW_MYSQL_VERSION'						=> 'SugarCRM requires MySQL version 4.1.2 or newer.  Found: ',
 	'ERR_UW_OCI8_VERSION'				        => 'Your version of Oracle is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported Oracle Versions. Current version: ',
 	'ERR_UW_NO_FILE_UPLOADED'					=> 'Please specify a file and try again!',
@@ -60,10 +39,10 @@ $mod_strings = array(
 	'ERR_UW_NOT_VALID_UPLOAD'					=> 'Not valid upload.',
 	'ERR_UW_NO_CREATE_TMP_DIR'					=> 'Could not create the temp directory. Check file permissions.',
 	'ERR_UW_ONLY_PATCHES'						=> 'You can only upload patches on this page.',
-	'ERR_UW_PREFLIGHT_ERRORS'					=> 'Errors Found During Preflight Check',
+    'ERR_UW_PREFLIGHT_ERRORS'					=> 'Errors Found During Preflight Check',
 	'ERR_UW_UPLOAD_ERR'							=> 'There was an error uploading the file, please try again!<br>\n',
 	'ERR_UW_VERSION'							=> 'SugarCRM System Version: ',
-	'ERR_UW_WRONG_TYPE'							=> 'This page is not for running ',
+    'ERR_UW_WRONG_TYPE'							=> 'This page is not for running ',
 	'ERR_UW_PHP_FILE_ERRORS'					=> array(
 													1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
 													2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
@@ -74,7 +53,15 @@ $mod_strings = array(
 													7 => 'Failed to write file to disk.',
 													8 => 'File upload stopped by extension.',
 ),
-	'LBL_BUTTON_BACK'							=> '< Back',
+
+    'ERROR_HT_NO_WRITE'                         => 'Cannot write to the file: %s',
+    'ERROR_MANIFEST_TYPE'                       => 'Manifest file must specify the package type.',
+    'ERROR_PACKAGE_TYPE'                        => 'Manifest file specifies an unrecognized package type: %s',
+    'ERROR_VERSION_INCOMPATIBLE'                => 'The upgrade package is not compatible with this version of Sugar: %s',
+    'ERROR_FLAVOR_INCOMPATIBLE'                 => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: %s',
+
+
+    'LBL_BUTTON_BACK'							=> '< Back',
 	'LBL_BUTTON_CANCEL'							=> 'Cancel',
 	'LBL_BUTTON_DELETE'							=> 'Delete Package',
 	'LBL_BUTTON_DONE'							=> 'Done',
@@ -234,11 +221,6 @@ $mod_strings = array(
 	'LBL_UW_CUSTOMIZED_OR_UPGRADED_MODULES'     => 'Upgraded/Customized Modules',
 	'LBL_UW_FOLLOWING_MODULES_CUSTOMIZED'       => 'The following modules are detected as customized and preserved',
 	'LBL_UW_FOLLOWING_MODULES_UPGRADED'         => 'The following modules are detected as Studio-customized and have been upgraded',
-	//BEGIN SUGARCRM flav=com  && dep=os ONLY
-
-	'LBL_UW_SUGAR_COMMUNITY_EDITION_LICENSE'    => 'The Sugar Community Edition 5.0 uses GNU Affero General Public License version 3. This upgrade will convert your existing license to the new license displayed below.',
-
-	//END SUGARCRM flav=com  && dep=os ONLY
 
 	'LBL_START_UPGRADE_IN_PROGRESS'             => 'Start in progress',
 	'LBL_SYSTEM_CHECKS_IN_PROGRESS'             => 'System Check in Progress',
@@ -292,8 +274,6 @@ $mod_strings = array(
     'LBL_UW_CONFIRM_LAYOUT_RESULTS' => 'Confirm Layout Results',
     'LBL_UW_CONFIRM_LAYOUT_RESULTS_DESC' => 'The following layouts were merged successfully:',
 	'LBL_SELECT_FILE' => 'Select File:',
-    'ERROR_VERSION_INCOMPATIBLE' => 'The uploaded file is not compatible with this version of Sugar: ',
-    'ERROR_FLAVOR_INCOMPATIBLE'  => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: ',
 	'LBL_LANGPACKS' => 'Language Packs' /*for 508 compliance fix*/,
 	'LBL_MODULELOADER' => 'Module Loader' /*for 508 compliance fix*/,
 	'LBL_PATCHUPGRADES' => 'Patch Upgrades' /*for 508 compliance fix*/,
@@ -301,4 +281,5 @@ $mod_strings = array(
 	'LBL_WORKFLOW' => 'Workflow' /*for 508 compliance fix*/,
 	'LBL_UPGRADE' => 'Upgrade' /*for 508 compliance fix*/,
 	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
+    'LBL_GLOBAL_TEAM_DESC'                      => 'Globally Visible',
 );
