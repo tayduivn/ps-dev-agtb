@@ -704,6 +704,22 @@
                                                                                         value="{$settings.ldap_group_attr}">
                                                                             </td>
                                                                         </tr>
+                                                                        <tr>
+                                                                            <td scope="row" valign='top'
+                                                                                nowrap>{$MOD.LBL_LDAP_GROUP_ATTR_REQ_DN} {sugar_help text=$MOD.LBL_LDAP_GROUP_ATTR_REQ_DN_DESC}</td>
+                                                                            <td align="left" valign='top'>
+                                                                                {if !empty($settings.ldap_group_attr_req_dn)}
+                                                                                    {assign var='ldap_group_attr_req_dn' value='CHECKED'}
+                                                                                {else}
+                                                                                    {assign var='ldap_group_attr_req_dn' value='none'}
+                                                                                {/if}
+                                                                                <input
+                                                                                        name="ldap_group_attr_req_dn"
+                                                                                        class="checkbox"
+                                                                                        type="checkbox"
+                                                                                        {$ldap_group_attr_req_dn}>
+                                                                            </td>
+                                                                        </tr>
                                                                     </table>
 																 <br>
 																</span>
