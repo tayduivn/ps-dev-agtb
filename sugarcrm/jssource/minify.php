@@ -87,6 +87,7 @@ if(isset($_REQUEST['root_directory'])){
         chdir($from);
         require_once('include/utils.php');
         require_once('include/utils/file_utils.php');
+        require_once('include/utils/autoloader.php');
         require_once('include/utils/sugar_file_utils.php');
     }
     if(!function_exists('sugar_cached')) {
@@ -161,6 +162,11 @@ if(isset($_REQUEST['root_directory'])){
         $minifyUtils->BackUpAndCompressScriptFiles($from, '', true, true);
         $minifyUtils->ConcatenateFiles($from,true);
     }
+
+    //Using the autoloader will create the file_map file. We do not want to preserve this file if we ran from the command line.
+    $fileMap = sugar_cached(SugarAutoLoader::CACHE_FILE);
+    if (file_exists($fileMap))
+        unlink($fileMap);
 }
 
 ?>
