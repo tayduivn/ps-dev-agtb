@@ -1,89 +1,31 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-// $Id: UpgradeAccess.php 53116 2009-12-10 01:24:37Z mitani $
-
+require_once 'install/install_utils.php';
 global $mod_strings;
 global $sugar_config;
 
 $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
 $htaccess_file   = getcwd() . "/.htaccess";
-$contents = '';
+$contents = getHtaccessData($htaccess_file);
 
-// Adding RewriteBase path for vhost and alias configurations
-$basePath = parse_url($sugar_config['site_url'], PHP_URL_PATH);
-if(empty($basePath)) $basePath = '/';
-
-$restrict_str = <<<EOQ
-# BEGIN SUGARCRM RESTRICTIONS
-RedirectMatch 403 {$ignoreCase}.*\.log$
-RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
-RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
-RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
-RedirectMatch 403 {$ignoreCase}/+upload/
-RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
-RedirectMatch 403 {$ignoreCase}/+files\.md5\$
-<IfModule mod_rewrite.c>
-    Options +FollowSymLinks
-    RewriteEngine On
-    RewriteBase {$basePath}
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
-//BEGIN SUGARCRM flav=ent ONLY
-    RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
-//END SUGARCRM flav=ent ONLY
-    RewriteRule ^cache/api/metadata/lang_(.._..)_(.*)_public\.json$ api/rest.php/v10/lang/public/$1?platform=$2 [L,QSA]
-    RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)\.json$ api/rest.php/v10/lang/$1?platform=$2 [L,QSA]
-</IfModule>
-# END SUGARCRM RESTRICTIONS
-EOQ;
-
-if(file_exists($htaccess_file)){
-    $fp = fopen($htaccess_file, 'r');
-    $skip = false;
-    while($line = fgets($fp)){
-    	if(preg_match('/\s*#\s*BEGIN\s*SUGARCRM\s*RESTRICTIONS/i', $line)) {
-            $skip = true;
-        }
-
-        if(!$skip) {
-            $contents .= $line;
-        }
-
-        if(preg_match('/\s*#\s*END\s*SUGARCRM\s*RESTRICTIONS/i', $line)) {
-            $skip = false;
-        }
-    }
-}
-if(substr($contents, -1) != "\n") {
-    $restrict_str = "\n".$restrict_str;
-}
-
-$status =  file_put_contents($htaccess_file, $contents . $restrict_str);
+$status =  file_put_contents($htaccess_file, $contents);
 if( !$status ){
     echo '<p>' . $mod_strings['LBL_HT_NO_WRITE'] . "<span class=stop>{$htaccess_file}</span></p>\n";
     echo '<p>' . $mod_strings['LBL_HT_NO_WRITE_2'] . "</p>\n";
-    echo "{$redirect_str}\n";
+    echo "{$contents}\n";
 }
 
 
