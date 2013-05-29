@@ -144,6 +144,7 @@ class InboundEmail extends SugarBean {
 	var $keyForUsersDefaultIEAccount = 'defaultIEAccount';
 	// prefix to use when importing inlinge images in emails
 	public $imagePrefix;
+	protected $module_key = 'InboundEmail';
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -189,7 +190,6 @@ class InboundEmail extends SugarBean {
 		$ret = parent::retrieve($id,$encode,$deleted);
 		// if I-E bean exist
 		if (!is_null($ret)) {
-		    $this->email_password = blowfishDecode(blowfishGetKey('InboundEmail'), $this->email_password);
 		    $this->retrieveMailBoxFolders();
 		}
 		return $ret;
@@ -208,9 +208,6 @@ class InboundEmail extends SugarBean {
 		//_ppd($raw);
 		$raw = $this->filterMailBoxFromRaw(explode(",", $this->mailbox), $raw);
 		$this->mailbox = implode(",", $raw);
-		if(!empty($this->email_password)) {
-		    $this->email_password = blowfishEncode(blowfishGetKey('InboundEmail'), $this->email_password);
-		}
 		$ret = parent::save($check_notify);
 		return $ret;
 	}
@@ -2202,9 +2199,7 @@ class InboundEmail extends SugarBean {
 	function repairAccount() {
 
 		for($i=0; $i<3; $i++) {
-			if($i != 0) { // decode is performed on retrieve already
-				$this->email_password = blowfishDecode(blowfishGetKey('InboundEmail'), $this->email_password);
-			}
+			$this->email_password = $this->email_password; // decode password
 
 			if($this->connectMailserver() == 'true') {
 				$this->save(); // save decoded password (is encoded on save())
@@ -3645,7 +3640,7 @@ class InboundEmail extends SugarBean {
 				}
 			}
 		}
-		
+
 	   return $result;
 
     }

@@ -311,9 +311,16 @@ class SugarBean
 
     /**
      * Blowfish encryption key
+     * Blowfish encryption keys
+     * @var array
+     */
+    static protected $field_key = array();
+
+    /**
+     * Encryption key ID for module
      * @var string
      */
-    static protected $field_key;
+    protected $module_key = 'encrypt_field';
 
     /**
      * Beans corresponding to various links on the bean
@@ -332,6 +339,32 @@ class SugarBean
     {
         return new $beanName();
     }
+
+    /**
+     * Encrypted fields storage
+     * @var array
+     */
+    protected $encfields = array();
+    /**
+     * Plaintext storage for encrypted fields
+     * @var array
+     */
+    protected $encfield_plain = array();
+    /**
+     * Bean required fields
+     * @var array
+     */
+    public $required_fields = array();
+    /**
+     * Logic hook tracking
+     * @var array
+     */
+    public $logicHookDepth = array();
+    /**
+     * Store relationship fields
+     * @var array
+     */
+    public $rel_fields_before_value = array();
 
     /**
      * This method has been moved into the __construct() method to follow php standards
@@ -2541,7 +2574,8 @@ class SugarBean
 							}
 						}
 					} elseif($type == 'encrypt' && empty($disable_date_format)){
-						$this->$field = $this->decrypt_after_retrieve($this->$field);
+					    $this->encfields[$field] = $this->$field;
+					    unset($this->$field); // unset it so when it is accessed the data comes through __get
 					}
 				}
 			}
@@ -6233,10 +6267,10 @@ class SugarBean
 
     protected function getEncryptKey()
     {
-        if(empty(self::$field_key)) {
-            self::$field_key = blowfishGetKey('encrypt_field');
+        if(empty(self::$field_key[$this->module_key])) {
+            self::$field_key[$this->module_key] = blowfishGetKey($this->module_key);
         }
-        return self::$field_key;
+        return self::$field_key[$this->module_key];
     }
 
 /**
@@ -6255,7 +6289,7 @@ class SugarBean
  * @param STRING value - an encrypted and base 64 encoded string.
  * @return string
  */
-    function decrypt_after_retrieve($value)
+    public function decrypt_after_retrieve($value)
     {
         if(empty($value)) return $value; // no need to decrypt empty
         require_once("include/utils/encryption_utils.php");
@@ -6656,5 +6690,31 @@ class SugarBean
        return $this->related_beans[$link];
     }
 
+	/**
+	 * __isset handler to work with encrypted fields
+	 * @param string $varname
+	 * @return boolean
+	 */
+	public function __isset($varname)
+	{
+	    if(isset($this->encfields[$varname])) {
+	        return true;
+	    }
+	    return false;
+	}
 
+	/**
+	 * __get handler to work with encrypted fields
+	 * @param string $varname
+	 * @return mixed
+	 */
+	public function &__get($varname)
+	{
+	    if(isset($this->encfields[$varname])) {
+	        $this->$varname = $this->decrypt_after_retrieve($this->encfields[$varname]);
+	        return $this->$varname;
+	    }
+	    $var = null;
+	    return $var;
+	}
 }
