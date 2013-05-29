@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MassUpdate.php');
 require_once('include/SugarQueue/SugarJobQueue.php');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
-require_once('include/api/SugarApi.php');
+require_once('include/api/RestService.php');
 require_once('clients/base/api/FilterApi.php');
 
 /**
@@ -165,6 +165,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
                     // call filter api to get the ids then create a job queue for each chunk
                     $filterApi = new FilterApi();
                     $api = new RestService();
+                    $api->user = $GLOBALS['current_user'];
                     $nextOffset = 0;
                     $filterArgs = array('module'=>$data['module'], 'fields'=>'id');
                     if (isset($data['filter'])) {
