@@ -9,7 +9,6 @@ describe("Plugins.ErrorDecoration", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'field', 'base');
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "panels": [{

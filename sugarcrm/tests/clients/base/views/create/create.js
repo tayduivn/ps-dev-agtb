@@ -9,7 +9,6 @@ describe("Create View", function() {
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('rowaction', 'field', 'base', 'detail');
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');

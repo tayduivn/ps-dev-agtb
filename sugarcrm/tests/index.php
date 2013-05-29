@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/taggable.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/GridBuilder.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-disable-sort.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/editable.js"></script>
 
     <!-- customized beans -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/lib/bean.js"></script>
