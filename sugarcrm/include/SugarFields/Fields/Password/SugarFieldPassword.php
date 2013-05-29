@@ -20,5 +20,19 @@ class SugarFieldPassword extends SugarFieldBase
         
         return $value;
     }
+
+   /**
+     * This function will blank out any password field
+     * 
+     * @param array $data
+     * @param SugarBean $bean
+     * @param array $args
+     * @param string $fieldName
+     * @param array $properties
+     */
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
+    {
+        $data[$fieldName] = '';
+    }    
 }
 ?>

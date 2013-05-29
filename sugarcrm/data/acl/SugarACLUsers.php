@@ -127,9 +127,6 @@ class SugarACLUsers extends SugarACLStrategy
         }
 
         if(!empty($this->view_checks[$view])) {
-            if($view == 'field' && ($context['field'] == 'password' || $context['field'] == 'user_hash') ) {
-                return false;
-            }
             if( $view == 'field'
                 && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')
                 && !empty($this->no_edit_fields[$context['field']])) {
@@ -189,7 +186,7 @@ class SugarACLUsers extends SugarACLStrategy
                 $result[$key] = true;
                 // everything else should go through checks
             } else {
-                if($action == 'field' && ($field == 'user_hash' || $field == 'password')) {
+                if($action == 'field' && ($field == 'user_hash' || $field == 'password') && !$myself) {
                     $result[$key] = false;
                 } elseif(!$myself && !empty($this->no_access_fields[$field])) {
                     $result[$key] = false;
@@ -233,7 +230,7 @@ class SugarACLUsers extends SugarACLStrategy
             if($is_admin === true) {
                 $result[$key] = SugarACL::ACL_READ_WRITE;
             } else {
-                if($field == 'user_hash' || $field == 'password') {
+                if(($field == 'user_hash' || $field == 'password') && !$myself) {
                     $result[$key] = SugarACL::ACL_NO_ACCESS;
                 } elseif(!empty($this->no_edit_fields[$field])) {
                     $result[$key] = SugarACL::ACL_READ_ONLY;
