@@ -35,12 +35,12 @@
                         {{#if hide}}
                             <div class="extra hide">
                             {{#each fields}}
-                                <div class="merge-row {{oddEven}}">{{field ../../../../this model=../../../this template="list"}}</div>
+                                <div class="merge-row {{oddEven}}"><label>{{field ../../../../this model=../../../this}}</label></div>
                             {{/each}}
                             </div>
                         {{else}}
                             {{#each fields}}
-                                <div class="merge-row {{oddEven}}">{{field ../../../../this model=../../../this template="list"}}</div>
+                                <div class="merge-row {{oddEven}}"><label>{{field ../../../../this model=../../../this}}</label></div>
                             {{/each}}
                         {{/if}}
                     {{/each}}

@@ -26,6 +26,7 @@
                 autoClose: true
             });
             app.drawer.close(false);
+            return;
         }
 
         // standardize primary record from list of records,
@@ -53,7 +54,6 @@
                 return _.indexOf(ids,model.get('id'));
             }
         }
-
         app.view.View.prototype.initialize.call(this, options);
 
         this.action = 'list';
@@ -170,54 +170,24 @@
             'date_entered','date_modified','modified_user_id','created_by','deleted'
             ],
             // these attribute combos will be allowed to merge
-            validArrayAttributes = [{
-                type: 'datetimecombo',
-                source: 'db'
-            }, {
-                type: 'datetime',
-                source: 'db'
-            }, {
-                type: 'varchar',
-                source:'db'
-            }, {
-                type: 'enum',
-                source: 'db'
-            }, {
-                type: 'multienum',
-                source: 'db'
-            }, {
-                type: 'text',
-                source: 'db'
-            }, {
-                type: 'date',
-                source: 'db'
-            }, {
-                type: 'time',
-                source: 'db'
-            }, {
-                type: 'int',
-                source: 'db'
-            }, {
-                type: 'long',
-                source: 'db'
-            }, {
-                type: 'double',
-                source: 'db'
-            }, {
-                type: 'float',
-                source: 'db'
-            }, {
-                type: 'short',
-                source: 'db'
-            }, {
-                dbType: 'varchar',
-                source: 'db'
-            }, {
-                dbType: 'double',
-                source: 'db'
-            }, {
-                type: 'relate'
-            }];
+            validArrayAttributes = [
+                { type: 'datetimecombo', source: 'db' },
+                { type: 'datetime', source: 'db' },
+                { type: 'varchar', source:'db' },
+                { type: 'enum', source: 'db' },
+                { type: 'multienum', source: 'db' },
+                { type: 'text', source: 'db' },
+                { type: 'date', source: 'db' },
+                { type: 'time', source: 'db' },
+                { type: 'int', source: 'db' },
+                { type: 'long', source: 'db' },
+                { type: 'double', source: 'db' },
+                { type: 'float', source: 'db' },
+                { type: 'short', source: 'db' },
+                { dbType: 'varchar', source: 'db' },
+                { dbType: 'double', source: 'db' },
+                { type: 'relate' }
+            ];
 
         // need a field def to play.
         if (!fieldDef) {
@@ -263,7 +233,6 @@
      * utility method for taking a fieldlist with possible nested fields,
      * and returning a flat array of fields
      *
-     * coming soon - type filtering
      * @param {Array} defs - unprocessed list of fields from metadata
      * @return {Array} fields - flat list of fields
      */
@@ -332,6 +301,17 @@
     updatePrimaryTitle: function(title) {
         this.recordName = title;
         this.$('span.record-name').text(title);
+    },
+    /**
+     * Determine the best title to use for this record
+     * Either the 'name' field, or
+     * @param model
+     * @private
+     * @return string record's title.
+     */
+    _getRecordTitle: function(model) {
+            return (model.get('name') ||
+                (model.get('first_name') + ' ' + model.get('last_name')) || '').trim();
     },
     _render:function () {
         this.meta = this.generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
@@ -420,7 +400,6 @@
      * @param {Model} model primary model
      */
     setPrimaryRecord: function(model) {
-        var self = this;
         if (this.primaryRecord === model) {
             return;
         }
@@ -428,24 +407,20 @@
         // turn off events on the old primary record if applicable
         if (_.isFunction(this.primaryRecord,'off')) {
          this.primaryRecord.off('change',null,this);
-         this.primaryRecord.off('change:name',null,this);
         }
 
         // get the new primary record wired up
         this.primaryRecord = model;
-        this.updatePrimaryTitle(this.primaryRecord.get('name'));
+        this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
         if (this.isPreviewOpen) {
             this.updatePreviewRecord(this.primaryRecord);
         }
 
-        this.primaryRecord.on('change:name', function(model, value, options) {
-            this.updatePrimaryTitle(value);
-        }, this);
-
         this.primaryRecord.on('change', function(model){
             if (this.isPreviewOpen) {
                 app.events.trigger('preview:close'); // either this or set a previewId on the model
-                this.updatePreviewRecord(this.primaryRecord);
+                this.updatePrimaryTitle(this._getRecordTitle(model));
+                this.updatePreviewRecord(model);
             }
         }, this);
     },
@@ -455,7 +430,9 @@
      */
     bindDataChange: function() {
         this.collection.on('reset', function (coll) {
-            this.setPrimaryRecord(coll.at(0));
+            if (coll.length) {
+                this.setPrimaryRecord(coll.at(0));
+            }
             this.render();
         }, this);
     }
