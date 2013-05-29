@@ -43,6 +43,12 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             'css_class' => 'btn-invisible btn-link',
         ),
         array(
+            'name' => 'create_button',
+            'type' => 'button',
+            'label' => 'LBL_CREATE_BUTTON_LABEL',
+            'acl_action' => 'create',
+        ),
+        array(
             'name' => 'sidebar_toggle',
             'type' => 'sidebartoggle',
         ),
