@@ -129,7 +129,7 @@ require_once('include/utils/autoloader.php');
 SugarAutoLoader::init();
 //check to see if custom utils exist and load them too
 // not doing it in utils since autoloader is not loaded there yet
-foreach(SugarAutoLoader::existing('include/custom_utils.php', SugarAutoLoader::loadExtension('utils')) as $file) {
+foreach(SugarAutoLoader::existing('include/custom_utils.php', 'custom/include/custom_utils.php', SugarAutoLoader::loadExtension('utils')) as $file) {
 	require_once $file;
 }
 
