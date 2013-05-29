@@ -367,6 +367,12 @@ class SugarBean
     public $rel_fields_before_value = array();
 
     /**
+     * Store Email Address Data
+     * @var array
+     */
+    public $emailData = array();
+
+    /**
      * This method has been moved into the __construct() method to follow php standards
      *
      * Please start using __construct() as this method will be removed in a future version
