@@ -2425,7 +2425,7 @@ private function dir_file_count($path){
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
-            'serverUrl' => '/rest/v10',
+            'serverUrl' => 'rest/v10',
             'siteUrl' => '',
             'unsecureRoutes' => array('login', 'error'),
             'loadCss' => false,

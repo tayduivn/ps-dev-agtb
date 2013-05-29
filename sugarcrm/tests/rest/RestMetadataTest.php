@@ -44,6 +44,7 @@ class RestMetadataTest extends RestTestBase {
      */
     public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
+
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
 
