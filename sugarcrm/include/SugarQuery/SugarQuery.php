@@ -481,11 +481,9 @@ class SugarQuery
 
         if ($joined->hasCustomFields()) {
             $table_cstm = $joined->get_custom_table_name();
-            // TODO: CLEAN THIS UP TO USE A JOIN OBJECT, IT WOULD BE NICER
-            if (!empty($table_cstm)) {
-                $sql = "LEFT JOIN {$table_cstm} ON {$table_cstm}.id_c = {$alias}.id";
-                $this->joinRaw($sql);
-            }
+            $alias_cstm = "{$alias}_cstm";
+            $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
+                ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
         }
 
     }

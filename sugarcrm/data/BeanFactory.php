@@ -34,6 +34,11 @@ class BeanFactory {
     protected static $touched = array();
     protected static $flipBeans;
     public static $hits = 0;
+    /**
+     * Bean class overrides
+     * @var array
+     */
+    public static $bean_classes = array();
 
     /**
      * Returns a SugarBean object by id. The Last 10 loaded beans are cached in memory to prevent multiple retrieves per request.
@@ -184,6 +189,9 @@ class BeanFactory {
      */
     public static function getBeanName($module)
     {
+        if(!empty(self::$bean_classes[$module])) {
+            return self::$bean_classes[$module];
+        }
         global $beanList;
         if (empty($beanList[$module]))  {
             return false;
@@ -279,6 +287,23 @@ class BeanFactory {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Override module's class with custom class
+     *
+     * For use mainly in unit tests
+     *
+     * @param string $module
+     * @param string $klass
+     */
+    public static function setBeanClass($module, $klass = null)
+    {
+        if(empty($klass)) {
+            unset(self::$bean_classes[$module]);
+        } else {
+            self::$bean_classes[$module] = $klass;
+        }
     }
 }
 
