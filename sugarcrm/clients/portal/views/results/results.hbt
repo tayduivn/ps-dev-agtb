@@ -30,7 +30,7 @@
         <div class="block filtered tabbable tabs-left">
             <ul class="nav nav-tabs results">
                 {{#each collection.models}}
-                <li class="search">
+                <li class="search" data-id="{{id}}">
                     <span class="label label-{{attributes._module}}">{{str "LBL_MODULE_NAME_SINGULAR" attributes._module}}</span>
                     <p><a href="#{{attributes._module}}/{{id}}">{{attributes.name}}</a></p>
                     <div class="actions">

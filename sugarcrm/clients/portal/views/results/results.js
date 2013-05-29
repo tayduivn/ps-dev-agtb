@@ -26,12 +26,16 @@
  ********************************************************************************/
 ({
     extendsFrom:'ResultsView',
-    toggledClosed: false,
+    sidebarClosed: false,
     closeSidebar: function () {
-        if (!this.toggledClosed) {
+        if (!this.sidebarClosed) {
             app.controller.context.trigger('toggleSidebar');
-            this.toggledClosed = true;
+            this.sidebarClosed = true;
         }
+    },
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this._addPreviewEvents();
     },
     _render: function() {
         var self = this;
@@ -48,30 +52,46 @@
             }
         });
     },
+    _addPreviewEvents: function() {
+        app.events.on("list:preview:decorate", this.decorateRow, this);
+        this.collection.on("reset", function() {
+            //When fetching more records, we need to update the preview collection
+            app.events.trigger("preview:collection:change", this.collection);
+            if (this._previewed) {
+                this.decorateRow(this._previewed);
+            }
+        }, this);
+    },
     setHeaderpaneTitle: function(overrideMessage) {
         // Once the sidebartoggle rendered we close the sidebar so the arrows are updated SP-719. Note we don't
         // start listening for following event until we set title (since that will cause toggle render again!)
-        app.controller.context.on("sidebartoggle:rendered", this.closeSidebar, this);
+        app.controller.context.on("sidebarRendered", this.closeSidebar, this);
         // Actually sets the title on the headerpane
         this.context.trigger("headerpane:title", overrideMessage ||
             app.utils.formatString(app.lang.get('LBL_PORTAL_SEARCH_RESULTS_TITLE'),{'query' : this.lastQuery}));
     },
+    // Highlights current result row. Also, executed when preview view fires an
+    // preview:decorate event (e.g. user clicks previous/next arrows on side preview)
+    decorateRow: function(model) {
+        this._previewed = model;
+        this.$("li.search").removeClass("on");
+        if (model) {
+            this.$("li.search[data-id=" + model.get("id") + "]").addClass("on");
+        }
+    },
     // Loads the right side preview view when clicking icon for a particular search result.
     loadPreview: function(e) {
         var searchRow, selectedResultId, model;
-        if (this.toggledClosed) {
+        if (this.sidebarClosed) {
             app.controller.context.trigger('toggleSidebar');
-            this.toggledClosed = false;
+            this.sidebarClosed = false;
         }
-        // Get the currently selected search result
-        searchRow = this.$(e.currentTarget).closest('li');
-        // Remove previous 'on' class on lists and apply to clicked
-        $(searchRow).parent().find('li').removeClass('on');
-        $(searchRow).addClass("on");
+        searchRow = this.$(e.currentTarget).closest('li.search');
         // Grab search result model corresponding to preview icon clicked
-        selectedResultId = $(searchRow).find('p a').attr('href').split('/')[1];
+        selectedResultId = $(searchRow).data("id");
         model = this.collection.get(selectedResultId);
+        this.decorateRow(model);
         // This will result in result's data being displayed on preview
-        app.events.trigger("preview:render", model);
+        app.events.trigger("preview:render", model, this.collection, false);
     }
 })

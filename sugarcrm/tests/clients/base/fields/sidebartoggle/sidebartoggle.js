@@ -25,10 +25,10 @@ describe("Sidebar Toggle", function () {
         app.view.reset();
         delete Handlebars.templates;
     });
-    it("should broadcast sidebartoggle:rendered event on _render", function() {
+    it("should broadcast sidebarRendered event on _render", function() {
         var contextOn = sinonSandbox.stub(app.controller.context, 'trigger');
         field._render();
-        expect(contextOn).toHaveBeenCalledWith('sidebartoggle:rendered');
+        expect(contextOn).toHaveBeenCalledWith('sidebarRendered');
     });
     it("should listen for toggleSidebarArrows event", function() {
         var updateArrowsStub = sinonSandbox.stub(field, 'updateArrows');
@@ -36,10 +36,10 @@ describe("Sidebar Toggle", function () {
         app.controller.context.trigger('toggleSidebarArrows');
         expect(updateArrowsStub).toHaveBeenCalled();
     });
-    it("should listen for openSidebar event", function() {
+    it("should listen for openSidebarArrows event", function() {
         var sidebarArrowsOpenStub = sinonSandbox.stub(field, 'sidebarArrowsOpen');
         field.bindDataChange();
-        app.controller.context.trigger('sidebarArrowsOpen');
+        app.controller.context.trigger('openSidebarArrows');
         expect(sidebarArrowsOpenStub).toHaveBeenCalled();
     });
     it("should toggle and fire toggleSidebar event when user clicks toggle arrows", function() {

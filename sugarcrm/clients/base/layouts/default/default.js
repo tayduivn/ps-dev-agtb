@@ -16,7 +16,7 @@
         this.$('.main-pane').addClass('span8');
         this.$('.main-pane').removeClass('span12');
         this.$('.side').show();
-        app.controller.context.trigger("sidebarArrowsOpen");
+        app.controller.context.trigger("openSidebarArrows");
     },
     processDef: function() {
         this.$(".main-pane").addClass("span" + this.meta.components[0]["layout"].span);

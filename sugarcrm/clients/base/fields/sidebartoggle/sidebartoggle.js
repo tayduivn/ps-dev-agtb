@@ -7,12 +7,12 @@
     _render: function() {
         app.view.Field.prototype._render.call(this);
         // Broadcast when we've fully rendered sidebar toggle
-        app.controller.context.trigger("sidebartoggle:rendered");
+        app.controller.context.trigger("sidebarRendered");
     },
     bindDataChange:function () {
         // These corresponding to the toggleSide & openSide events in default layout
         app.controller.context.on("toggleSidebarArrows", this.updateArrows, this);
-        app.controller.context.on("sidebarArrowsOpen", this.sidebarArrowsOpen, this);
+        app.controller.context.on("openSidebarArrows", this.sidebarArrowsOpen, this);
     },
     updateArrows: function() {
         var chevron = this.$('.drawerTrig i'),
@@ -41,5 +41,9 @@
     // If toggled from a user clicking on anchor simply trigger toggleSidebar
     toggle: function() {
         this.context.trigger('toggleSidebar');
+    },
+    _dispose: function () {
+        app.view.invokeParent(this, {type: 'field', name: 'button', method: '_dispose'});
+        app.controller.context.off(null, null, this);//remove all events for context `this`
     }
 })
