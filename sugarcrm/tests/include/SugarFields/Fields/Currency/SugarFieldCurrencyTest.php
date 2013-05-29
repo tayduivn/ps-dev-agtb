@@ -25,7 +25,7 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    static $currency;
+    static $currency, $currency2;
 
     /**
      *
@@ -37,6 +37,7 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         self::$currency = SugarTestCurrencyUtilities::createCurrency('foo', 'f', 'f', .5);
+        self::$currency2 = SugarTestCurrencyUtilities::createCurrency('Singapore', '$', 'SGD', 1.246171, 'currency-sgd');
     }
 
     /**
@@ -80,6 +81,32 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
         $value = $field->exportSanitize($obj->amount, $vardef, $obj, array('currency_id'=>self::$currency->id));
         $this->assertEquals($expectedValue, $value);
+
+
+    }
+
+    /**
+     *
+     * @group export
+     * @group currency
+     * @access public
+     */
+    public function testExportSanitizeConvertToBase()
+    {
+        global $sugar_config;
+        $obj = BeanFactory::getBean('Opportunities');
+        $obj->amount = '1000';
+        $obj->base_rate = self::$currency2->conversion_rate;
+        $obj->currency_id = self::$currency2->id;
+
+        //Test conversion to base_rate
+        $field = SugarFieldHandler::getSugarField('currency');
+        $vardef['convertToBase'] = true;
+        $convertedValue = '802.46';
+        $expectedValue = SugarCurrency::formatAmountUserLocale($convertedValue, $obj->currency_id);
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+        $this->assertEquals($expectedValue, $value);
+
     }
 
 }
