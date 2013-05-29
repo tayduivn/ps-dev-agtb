@@ -54,7 +54,6 @@
         /**
          * todo implement resetting to defaults
          */
-        console.log('reset link clicked for Timeperiods');
     },
 
     bindDataChange: function() {

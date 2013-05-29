@@ -130,7 +130,6 @@
         /**
          * todo implement resetting to defaults
          */
-        console.log('reset link clicked for Ranges');
     },
 
     bindDataChange: function() {
