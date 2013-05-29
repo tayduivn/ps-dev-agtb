@@ -27,20 +27,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'clients/base/api/ModuleApi.php';
+require_once 'modules/Audit/Audit.php';
 
-require_once('clients/base/api/ListApi.php');
-require_once('modules/Audit/Audit.php');
-require_once('data/BeanFactory.php');
-
-class AuditApi extends ListApi
+class AuditApi extends ModuleApi
 {
     public function registerApiRest()
     {
         return array(
             'view_change_log' => array(
                 'reqType' => 'GET',
-                'path' => array('Audit'),
-                'pathVars' => array(''),
+                'path' => array('<module>','?', 'audit'),
+                'pathVars' => array('module','record','audit'),
                 'method' => 'viewChangeLog',
                 'shortHelp' => 'View change log in record view',
                 'longHelp' => 'include/api/help/audit_get_help.html',
@@ -48,23 +46,21 @@ class AuditApi extends ListApi
         );
     }
 
-    public function viewChangeLog($api, $args) {
-        global $focus, $current_user; 
-        
+    public function viewChangeLog($api, $args)
+    {
+        global $focus, $current_user;
+
         $this->requireArgs($args,array('module', 'record'));
-        
-        if(!isset($_REQUEST['record'])) {
-            // Required by Audit::get_audit_list()
-            $_REQUEST['record'] = $args['record'];
-        }
-        
-        $focus = BeanFactory::newBean($args['module']);
-                
-        if(!$focus->ACLAccess('view')) {
+
+        $focus = BeanFactory::getBean($args['module'], $args['record']);
+
+        if (!$focus->ACLAccess('view')) {
             throw new SugarApiExceptionNotAuthorized('no access to the bean');
         }
-        
-        $records = Audit::get_audit_list();        
-        return array('next_offset'=>-1,'records'=>$records);
+
+        $auditBean = BeanFactory::newBean('Audit');
+
+        return $auditBean->getAuditLog($focus);
+
     }
 }
