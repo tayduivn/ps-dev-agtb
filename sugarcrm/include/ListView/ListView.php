@@ -499,7 +499,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         if(isset($button_contents[0])) {
             // this is for inline buttons on listviews
             // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
-            require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
+            require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
             $tempid = create_guid();
             $button_contents[0] = "<div style='display: inline' id='$tempid'>".$button_contents[0]."</div>";
             $action_button = smarty_function_sugar_action_menu(array(
@@ -1328,7 +1328,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                     "<a  name='selectall' id='button_select_all' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$total});' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$total_label}&#x29;&#x200E;</a>",
                     "<a name='deselect' id='button_deselect' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.clear_all(document.MassUpdate, \"mass[]\", false);' href='#'>{$app_strings['LBL_LISTVIEW_NONE']}</a>",
                 );
-                require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
+                require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
                 $select_link = smarty_function_sugar_action_menu(array(
                     'class' => 'clickMenu selectmenu',
                     'id' => 'selectLink',
@@ -1621,7 +1621,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 
                 if($aItem->ACLAccess('Delete')) {
                     $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$this->local_app_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
-                    require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
+                    require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
                     $fields['DELETE_BUTTON'] = smarty_function_sugar_action_menu(array(
                         'id' => $aItem->module_dir.'_'.$fields['ID'].'_create_button',
                         'buttons' => array($delete),

@@ -25,7 +25,7 @@ require_once('soap/SoapHelperFunctions.php');
 
 require_once('include/entryPoint.php');
 
-require_once('vendors/nusoap//nusoap.php');
+require_once('vendor/nusoap//nusoap.php');
 
 
 
@@ -85,7 +85,7 @@ echo '<br>';
 }
 
 
-require_once('vendors/nusoap//nusoap.php');  //must also have the nusoap code on the ClientSide.
+require_once('vendor/nusoap//nusoap.php');  //must also have the nusoap code on the ClientSide.
 $soapclient = new nusoapclient($sugar_soap_path);  //define the SOAP Client an
 
 //ignore notices

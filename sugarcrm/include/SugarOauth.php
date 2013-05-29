@@ -20,7 +20,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-    require_once 'vendors/Zend/Oauth/Consumer.php';
+    require_once 'vendor/Zend/Oauth/Consumer.php';
     // use ZF oauth
     /**
      * Sugar Oauth consumer

@@ -1883,7 +1883,7 @@ function _ppd($mixed)
 function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="debug") {
 	// BEGIN SUGARCRM INT ONLY
 	if(!isset($GLOBALS['log']) || empty($GLOBALS['log'])) {
-		require_once ('vendors/log4php/LoggerManager.php');
+		require_once ('vendor/log4php/LoggerManager.php');
 		$GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
 	}
 

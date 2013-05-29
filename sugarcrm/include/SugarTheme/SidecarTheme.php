@@ -34,7 +34,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('vendors/lessphp/lessc.inc.php');
+require_once('vendor/lessphp/lessc.inc.php');
 require_once('include/api/SugarApiException.php');
 
 /**

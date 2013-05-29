@@ -81,7 +81,7 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
 $ListView->initNewXTemplate( 'modules/Manufacturers/ListView.html',$mod_strings);
 $ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
 
-require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'manufacturer_create_button',
     'buttons' => array($button),

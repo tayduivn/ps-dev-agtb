@@ -20,9 +20,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('vendors/oauth2-php/lib/IOAuth2Storage.php');
-require_once('vendors/oauth2-php/lib/IOAuth2GrantUser.php');
-require_once('vendors/oauth2-php/lib/IOAuth2RefreshTokens.php');
+require_once('vendor/oauth2-php/lib/IOAuth2Storage.php');
+require_once('vendor/oauth2-php/lib/IOAuth2GrantUser.php');
+require_once('vendor/oauth2-php/lib/IOAuth2RefreshTokens.php');
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Administration/SessionManager.php');

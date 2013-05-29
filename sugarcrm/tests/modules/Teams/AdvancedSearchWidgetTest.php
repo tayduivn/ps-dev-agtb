@@ -25,7 +25,7 @@
  
 require_once('modules/Teams/Team.php');
 require_once('modules/Teams/TeamSet.php');
-require_once('vendors/nusoap//nusoap.php');
+require_once('vendor/nusoap//nusoap.php');
 
 class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
 {

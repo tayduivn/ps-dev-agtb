@@ -51,8 +51,8 @@ global $urlPrefix;
 global $currentModule;
 
 //include tree view classes.
-require_once('vendors/ytree/Tree.php');
-require_once('vendors/ytree/Node.php');
+require_once('vendor/ytree/Tree.php');
+require_once('vendor/ytree/Node.php');
 
 require_once('modules/ProductCategories/TreeData.php');
 

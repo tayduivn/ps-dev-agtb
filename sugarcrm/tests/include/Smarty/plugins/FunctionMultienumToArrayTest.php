@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once('vendors/Smarty/plugins/function.multienum_to_array.php');
+require_once('vendor/Smarty/plugins/function.multienum_to_array.php');
 require_once 'include/Sugar_Smarty.php';
 
 class FunctionMultienumToArrayTest extends Sugar_PHPUnit_Framework_TestCase

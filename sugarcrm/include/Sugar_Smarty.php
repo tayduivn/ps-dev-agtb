@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('vendors/Smarty/Smarty.class.php');
+require_once('vendor/Smarty/Smarty.class.php');
 
 if(!defined('SUGAR_SMARTY_DIR'))
 {
@@ -55,11 +55,11 @@ class Sugar_Smarty extends Smarty
 
         if(empty(self::$_plugins_dir)) {
             self::$_plugins_dir = array();
-            if(SugarAutoLoader::fileExists('custom/vendors/Smarty/plugins'))
+            if(SugarAutoLoader::fileExists('custom/vendor/Smarty/plugins'))
             {
-                self::$_plugins_dir[] = 'custom/vendors/Smarty/plugins';
+                self::$_plugins_dir[] = 'custom/vendor/Smarty/plugins';
             }
-            self::$_plugins_dir[] = 'vendors/Smarty/plugins';
+            self::$_plugins_dir[] = 'vendor/Smarty/plugins';
         }
         $this->plugins_dir = self::$_plugins_dir;
 

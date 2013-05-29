@@ -22,10 +22,10 @@
 
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebDocument.php');
-require_once('vendors/Zend/Gdata/Docs.php');
-require_once('vendors/Zend/Gdata/Docs/Query.php');
-require_once('vendors/Zend/Gdata/ClientLogin.php');
-require_once('vendors/Zend/Gdata/Contacts.php');
+require_once('vendor/Zend/Gdata/Docs.php');
+require_once('vendor/Zend/Gdata/Docs/Query.php');
+require_once('vendor/Zend/Gdata/ClientLogin.php');
+require_once('vendor/Zend/Gdata/Contacts.php');
 /**
  * ExtAPIGoogle
  * 

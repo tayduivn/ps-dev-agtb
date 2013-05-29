@@ -31,7 +31,7 @@
  * offset and limit support to the get_relationships call is one such approach.
  */
 
-require_once('vendors/nusoap//nusoap.php');
+require_once('vendor/nusoap//nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 
 class Bug50780Test extends SOAPTestCase

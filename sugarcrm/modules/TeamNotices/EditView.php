@@ -65,7 +65,7 @@ $buttons = array(
     '<input id="btn_teamnotices_cancel" title="' . $app_strings['LBL_CANCEL_BUTTON_TITLE']. '" accessKey="'. $app_strings['LBL_CANCEL_BUTTON_KEY'] . '" onclick="this.form.action.value=\'index\';" class="button" type="submit" name="button" value="'.$app_strings['LBL_CANCEL_BUTTON_LABEL'].'">'
 );
 
-require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'teamnotices_editview_buttons',
     'buttons' => $buttons,
