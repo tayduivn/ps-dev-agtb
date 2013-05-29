@@ -71,8 +71,8 @@
             .tooltips(true)
             .showLegend(true)
             .bubbleClick(function (e) {
-                self.chart.dispatch.tooltipHide(e);
-                app.router.navigate(app.router.buildRoute('Products', e.point.id), {trigger: true});
+				self.chart.dispatch.tooltipHide(e);
+                app.router.navigate(app.router.buildRoute('RevenueLineItems', e.point.id), {trigger: true});
             })
             .colorData('class', {step:2})
             .groupBy(function (d) {
@@ -172,7 +172,7 @@
 
         var _local = _.extend({'filter': _filter}, this.params);
 
-        var url = app.api.buildURL('Products', null, null, _local, this.params);
+        var url = app.api.buildURL('RevenueLineItems', null, null, _local, this.params);
 
         app.api.call('read', url, null, {
             success: function (data) {
