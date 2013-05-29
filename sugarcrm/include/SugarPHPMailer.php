@@ -25,6 +25,7 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 /**
  * Sugar mailer
  * @api
+ * @deprecated 7.0.0    Use the Mailer module instead.
  */
 class SugarPHPMailer extends PHPMailerProxy
 {
