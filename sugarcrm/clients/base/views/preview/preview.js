@@ -176,7 +176,17 @@
 
         this.previewId = previewId;
     },
-
+    bindUpdates: function(sourceModel) {
+        var self = this;
+        this.sourceModel = sourceModel;
+        this.listenTo(this.sourceModel, 'sync', function() {
+            self.model.fetch({
+                //Show alerts for this request
+                showAlerts: true,
+                fields: self.getFieldNames(self.model.module)
+            });
+        });
+    },
     /**
      * Renders the preview dialog with the data from the current model and collection
      * @param model Model for the object to preview
@@ -188,6 +198,7 @@
         }
 
         if (model) {
+            this.bindUpdates(model);
             this.model = app.data.createBean(model.module, model.toJSON());
 
             app.view.View.prototype._render.call(this);
@@ -267,6 +278,7 @@
                 this.switchPreview(data, currIndex, currID, currModule);
             } else {
                 this.model = app.data.createBean(currModule);
+                this.bindUpdates(this.collection.models[currIndex]);
                 this.model.set("id", this.collection.models[currIndex].get("id"));
                 this.model.fetch({
                     //Show alerts for this request

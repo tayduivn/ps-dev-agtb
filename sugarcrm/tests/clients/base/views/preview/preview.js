@@ -81,6 +81,20 @@ describe("Preview View", function() {
         });
 
     });
+    it("should bind our fetch to source models fetch", function(){
+            var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+            var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+            var dummyFetchSpy = sinon.stub(dummyModel, 'fetch', function(){});
+            preview.model = dummyModel;
+            preview.bindUpdates(dummySourceModel);
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("PUT", /.*\/rest\/v10\/Cases\/testid.*/,
+            [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
+            dummySourceModel.save();
+
+            SugarTest.server.respond();
+            expect(dummyFetchSpy).toHaveBeenCalled();
+    });
     describe("renderPreview", function(){
         it("should trigger 'preview:open' and 'list:preview:decorate' events", function(){
             var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
