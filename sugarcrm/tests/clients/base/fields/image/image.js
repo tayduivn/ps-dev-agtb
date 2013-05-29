@@ -8,8 +8,10 @@ describe("image field", function() {
         SugarTest.loadHandlebarsTemplate('image', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('image', 'field', 'base', 'detail');
         SugarTest.testMetadata.set();
-        field = SugarTest.createField("base","test_image_upload", "image", "detail", {});
-        model = field.model;
+        SugarTest.app.data.declareModels();
+
+        model = app.data.createBean('Contacts');
+        field = SugarTest.createField("base", "test_image_upload", "image", "detail", { required: true }, "Contacts", model);
     });
 
     afterEach(function() {
@@ -27,17 +29,17 @@ describe("image field", function() {
             expect(field.width).toEqual(50);
             expect(field.height).toEqual(50);
 
-            field = SugarTest.createField("base","test_image_search", "image", "detail", {width: "120"});
+            field = SugarTest.createField("base", "test_image_search", "image", "detail", {width: "120"}, "Contacts", model);
             field.render();
             expect(field.width).toEqual(120);
             expect(field.height).toEqual(120);
 
-            field = SugarTest.createField("base","test_image_search", "image", "detail", {height: "160"});
+            field = SugarTest.createField("base", "test_image_search", "image", "detail", {height: "160"}, "Contacts", model);
             field.render();
             expect(field.width).toEqual(160);
             expect(field.height).toEqual(160);
 
-            field = SugarTest.createField("base","test_image_search", "image", "detail", {width: "180", height: 100});
+            field = SugarTest.createField("base", "test_image_search", "image", "detail", {width: "180", height: 100}, "Contacts", model);
             field.render();
             expect(field.width).toEqual(180);
             expect(field.height).toEqual(100);
@@ -51,14 +53,14 @@ describe("image field", function() {
             expect(field.$(".image_field").height()).toEqual(100);
 
             //Must add 18 for the edit button on edit views !
-            field = SugarTest.createField("base","test_image_upload", "image", "edit", {});
+            field = SugarTest.createField("base", "test_image_upload", "image", "edit", {}, "Contacts", model);
             field.render();
             field.$('.image_btn').css({height: '15px'});
             field.resizeHeight(200);
-            expect(field.$(".icon-plus").css('lineHeight')).toEqual(200-15 + 'px');
+            expect(field.$(".icon-plus").css('lineHeight')).toEqual(200 - 15 + 'px');
             field.$('.image_btn').css({height: '12px'});
             field.resizeHeight(100);
-            expect(field.$(".icon-plus").css('lineHeight')).toEqual(100-12 + 'px');
+            expect(field.$(".icon-plus").css('lineHeight')).toEqual(100 - 12 + 'px');
         });
 
         it("should resize width", function() {
@@ -105,8 +107,9 @@ describe("image field", function() {
 
         it("should trigger change with a param for the record view", function() {
             var triggerSpy = sinon.spy(model, "trigger");
-            field.model.uploadFile = function () {};
-            var uploadFileStub = sinon.stub(field.model,"uploadFile", function(fieldName, $files, callbacks, options) {
+            field.model.uploadFile = function() {
+            };
+            var uploadFileStub = sinon.stub(field.model, "uploadFile", function(fieldName, $files, callbacks, options) {
                 // Force production code's success hook to fire passing our fake meta
                 callbacks.success({
                     test_image_upload: {
@@ -130,7 +133,9 @@ describe("image field", function() {
         });
 
         it("make an api call to delete the image", function() {
-            var confirmStub = sinon.stub(window, "confirm", function() { return true });
+            var confirmStub = sinon.stub(window, "confirm", function() {
+                return true
+            });
             var deleteStub = sinon.stub(app.api, "call");
             var renderSpy = sinon.spy(field, "render");
             $("<a></a>").addClass("delete").appendTo(field.$el);
@@ -145,7 +150,7 @@ describe("image field", function() {
             expect(renderSpy).toHaveBeenCalled();
             deleteStub.restore();
             renderSpy.restore();
-            confirmStub.restore()
+            confirmStub.restore();
         });
 
         it("should not render on input change because we cannot set value of an input type file", function() {
@@ -155,6 +160,19 @@ describe("image field", function() {
             field.$("input").val("test");
             expect(renderSpy).not.toHaveBeenCalled();
             renderSpy.restore();
+        });
+    });
+
+    describe("image validation", function() {
+
+        it("should return an error if field is required but no image is selected", function() {
+            $('<input>').attr('type', 'file').appendTo(field.$el);
+            var callback = sinon.stub();
+            field._doValidateImageField(null, {}, callback);
+
+            expect(callback).toHaveBeenCalled();
+            expect(callback.lastCall.args[2][field.name]).toBeDefined();
+            expect(callback.lastCall.args[2][field.name].required).toBeTruthy();
         });
     });
 });
