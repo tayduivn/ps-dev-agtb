@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 /**
  * Required to establish the SMTP connection prior to PHPMailer's send for error handling purposes.
  */
-require_once "lib/phpmailer/class.smtp.php";
+require_once "vendors/PHPMailer/class.smtp.php";
 
 class SMTPProxy extends SMTP
 {

@@ -58,8 +58,8 @@ class SugarPHPMailer extends PHPMailerProxy
         $this->oe = new OutboundEmail();
         $this->oe->getUserMailerSettings($current_user);
 
-        $this->SetLanguage('en', 'modules/Mailer/lib/phpmailer/language/');
-        $this->PluginDir	= 'modules/Mailer/lib/phpmailer/';
+        $this->SetLanguage('en', 'vendors/PHPMailer/language/');
+        $this->PluginDir	= 'vendors/PHPMailer/';
         $this->Mailer	 	= 'smtp';
 
         // cn: i18n
