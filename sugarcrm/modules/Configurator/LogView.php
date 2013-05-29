@@ -54,7 +54,7 @@ echo <<<EOQ
 <input type='button' onclick='document.logview.doaction.value="mark";document.logview.submit()' name='mark' value='{$mod_strings['LBL_MARK_POINT']}'>
 <input type='submit' name='display' value='{$mod_strings['LBL_REFRESH_FROM_MARK']}'>
 <input type='button' onclick='document.logview.doaction.value="next";document.logview.submit()' name='next' value='{$mod_strings['LBL_NEXT_']}'>
-<br>
+<br><br>
 {$mod_strings['LBL_SEARCH']} <input type='text' name='filter' value='$filter'>&nbsp;{$mod_strings['LBL_REG_EXP']} <input type='checkbox' name='reg_ex' $reg_ex>
 <br>
 {$mod_strings['LBL_IGNORE_SELF']} <input type='checkbox' name='ignore_self' $ignore_self>
@@ -126,7 +126,7 @@ if (!empty ($_REQUEST['display'])) {
 		$pos = $_SESSION['log_file_size'] - $cur_size;
 	}
 	if($_SESSION['log_file_size'] == $cur_size){
-		echo $mod_strings['LBL_LOG_NOT_CHANGED'].'<br>';
+		echo '<br>'.$mod_strings['LBL_LOG_NOT_CHANGED'].'<br>';
 	}else{
 		$fp = sugar_fopen($logFile, 'r');
 		fseek($fp, $pos , SEEK_END);
