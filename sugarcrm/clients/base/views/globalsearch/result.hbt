@@ -30,7 +30,7 @@
     {{#each data.records}}
     <li>
         <a href="{{link}}">
-            <strong>{{str "LBL_MODULE_NAME" module}}</strong> {{name}}{{#if field_name}}, <strong>{{field_name}}</strong> {{{field_value}}}{{/if}}
+            <span class="label label-module-sm label-{{str "LBL_MODULE_NAME" module}}" rel="tooltip" data-title="{{str "LBL_MODULE_NAME" module}}">{{moduleIconLabel module}}</span> {{{name}}}{{#if field_name}}, {{field_name}}: {{{field_value}}}{{/if}}
         </a>
     </li>
     {{/each}}

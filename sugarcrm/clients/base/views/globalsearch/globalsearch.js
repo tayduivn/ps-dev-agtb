@@ -165,6 +165,8 @@
                             if (key !== 'name') { // found in a related field
                                formattedRecord.field_name = app.lang.get(val.label, val.module);
                                formattedRecord.field_value = val.text;
+                            } else { // if it is a name that is found, we need to replace the name with the highlighted text
+                                formattedRecord.name = val.text;
                             }
                         });
                     }

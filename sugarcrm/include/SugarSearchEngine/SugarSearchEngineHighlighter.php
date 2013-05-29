@@ -30,8 +30,8 @@ class SugarSearchEngineHighlighter
 {
     protected $_module;
 
-    public static $preTag = '<span class="highlight">';
-    public static $postTag = '</span>';
+    public static $preTag = '<strong>';
+    public static $postTag = '</strong>';
     public static $fragmentSize = 20;
     public static $fragmentNumber = 2;
 
