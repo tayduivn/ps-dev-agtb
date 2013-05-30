@@ -144,7 +144,7 @@
                 // If we're inside a drawer and Forecasts is setup
                 if(this.context.get('inDrawer')) {
                     // build an object based on the metadata structure
-                    var updatedhMetadata = {
+                    var updatedMetadata = {
                         modules: {
                             Forecasts: {
                                 config: model.toJSON()
@@ -153,7 +153,7 @@
                     };
 
                     // set Forecasts config to new metadata set in config
-                    app.metadata.set(updatedhMetadata);
+                    app.metadata.set(updatedMetadata);
 
                     // close the drawer and return to Forecasts
                     app.drawer.close(true, model.toJSON());
