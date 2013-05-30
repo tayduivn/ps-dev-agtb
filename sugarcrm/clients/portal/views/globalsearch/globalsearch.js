@@ -10,8 +10,9 @@
             menuTemplate = app.template.getView(this.name + '.result');
 
         this.$('.search-query').searchahead({
+            context: self,
             request: function(term) {
-                self.fireSearchRequest.call(self, term, this);
+                self.fireSearchRequest(term);
             },
             compiler: menuTemplate,
             throttleMillis: (app.config.requiredElapsed || 500),
@@ -24,14 +25,14 @@
                 self.debounceFunction();
             },
             onEnterFn: function(hrefOrTerm, isHref) {
-                if(isHref) {  
+                if(isHref) {
                    window.location = hrefOrTerm;
                 } else {
                     // It's the term only (user didn't select from drop down
                     // so this is essentially the term typed
                     var term = $.trim(self.$('.search-query').attr('value'));
                     if (!_.isEmpty(term)) {
-                        self.fireSearchRequest.call(self, term, this);
+                        self.fireSearchRequest(term, this);
                     }
                 }
             }
@@ -41,29 +42,29 @@
             return false;
         });
     },
+    /**
+     * Populates search modules from displayable modules, taking acls and globalSearchEnabled in to account
+     */
     populateModules: function() {
         if (this.disposed) {
             return;
         }
-        this.searchModules = [];
-        /**
-         * Unlike sugar7, today, portal doesn't use ftsEnabled but instead visible modules.
-         */
         var modules = app.metadata.getModules() || {};
         var moduleNames = app.metadata.getModuleNames(true); // visible
-        _.each(modules, function(meta, module) {
-            if (_.contains(moduleNames, module) && app.acl.hasAccess('view', module)) {
-                this.searchModules.push(module);
-            }
-        }, this);
+        this.searchModules = this.populateSearchableModules({
+            modules: modules,
+            moduleNames: moduleNames,
+            acl: app.acl,
+            // Unlike sugar7, today, portal doesn't use ftsEnabled but instead any visible modules that
+            // are also globalSearchEnabled (e.g. Home should have not be global search enabled)
+            checkFtsEnabled: false,
+            checkGlobalSearchEnabled: true
+        });
         this.render();
     },
-    /**
-     * Callback for the searchahead plugin .. note that
-     * 'this' points to the plugin (not the header view!)
-     */
-    fireSearchRequest: function (term, plugin) {
-        var searchModuleNames = this._getSearchModuleNames(),
+    fireSearchRequest: function (term) {
+        var self = this,
+            searchModuleNames = this._getSearchModuleNames(),
             maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 5,
             params = {
                 q: term,
@@ -71,11 +72,13 @@
                 module_list: searchModuleNames.join(","),
                 max_num: maxNum
             };
+
+
         app.api.search(params, {
             success:function(data) {
                 var formattedRecords = [],
-                    modList = app.metadata.getModuleNames(true,"create");
-
+                    modList = app.metadata.getModuleNames(true,"create"),
+                    moduleIntersection = _.intersection(modList, self.searchModules);
                 _.each(data.records, function(record) {
                     if (!record.id) {
                         return; // Elastic Search may return records without id and record names.
@@ -99,7 +102,7 @@
                     }
                     formattedRecords.push(formattedRecord);
                 });
-                plugin.provide({module_list: modList, next_offset: data.next_offset, records: formattedRecords});
+                self.$('.search-query').searchahead('provide', {module_list: moduleIntersection, next_offset: data.next_offset, records: formattedRecords});
             },
             error:function(error) {
                 app.error.handleHttpError(error, plugin);

@@ -10,9 +10,9 @@ describe("Global Search", function() {
         SugarTest.testMetadata.set();
         getModulesStub = sinon.stub(SugarTest.app.metadata, 'getModules', function() {
             return {
-                Accounts: {ftsEnabled:true},
-                Contacts: {ftsEnabled:true},
-                ftsDisabled: {ftsEnabled:false},
+                Accounts: {ftsEnabled:true, globalSearchEnabled: true},
+                Contacts: {ftsEnabled:true, globalSearchEnabled: true},
+                ftsDisabled: {ftsEnabled:false, globalSearchEnabled: true},
                 ftsNotSet: {},
                 NoAccess: {ftsEnabled: true}
             }
@@ -50,7 +50,31 @@ describe("Global Search", function() {
         expect(modules).not.toContain('ftsNotSet');
         expect(modules).not.toContain('NoAccess');
     });
-
+    it("Should only show global search enabled modules", function() {
+        var actual,
+            acl = {hasAccess:function() {}},
+            moduleNames = ['Bugs','Cases','KBDocuments','Home'],
+            modules = {
+                Bugs: {globalSearchEnabled:true},
+                Cases: {globalSearchEnabled:true},
+                KBDocuments: {globalSearchEnabled:true},
+                Home: {globalSearchEnabled: false}
+            },
+            hasAccessStub = sinon.stub(acl, 'hasAccess', function(action, module) {
+                return true;
+            });
+        actual = view.populateSearchableModules({
+            modules: modules,
+            moduleNames: moduleNames,
+            acl: acl,
+            checkFtsEnabled: false,
+            checkGlobalSearchEnabled: true
+        });
+        expect(_.contains(actual, 'Bugs')).toBeTruthy();
+        expect(_.contains(actual, 'Cases')).toBeTruthy();
+        expect(_.contains(actual, 'KBDocuments')).toBeTruthy();
+        expect(_.contains(actual, 'Home')).toBeFalsy();
+    });
     it("Should check 'Search all' and uncheck other modules by default", function() {
         var checkedModules = _.map(view.$('input:checkbox:checked[data-module]'), function(elem) {
             return $(elem).data('module');
