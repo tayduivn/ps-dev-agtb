@@ -4266,6 +4266,7 @@ $app_strings = array (
 
     'LBL_DASHLET_SAVED_REPORTS_CHART' => 'Saved Reports Chart Dashlet',
     'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
+    'LBL_QUESTION_MARK' => '?',
 
     //SFA
     'LBL_BEST' => 'Best',
