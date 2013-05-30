@@ -2961,9 +2961,15 @@ function formatNumber(n, num_grp_sep, dec_sep, round, precision) {
   // round
   if(typeof round != 'undefined') {
     if(round > 0 && n.length > 1) { // round to decimal
-      n[1] = parseFloat('0.' + n[1]);
-      n[1] = Math.round(n[1] * Math.pow(10, round)) / Math.pow(10, round);
-      n[1] = n[1].toString().split('.')[1];
+        n[1] = parseFloat('0.' + n[1]);
+        n[1] = Math.round(n[1] * Math.pow(10, round)) / Math.pow(10, round);
+        if (n[1] >= 1) {
+            n[0] = n[0].indexOf('-') < 0 ? parseInt(n[0]) + parseInt(n[1]) : parseInt(n[0]) - parseInt(n[1]);
+            n[0] = n[0].toString();
+            n[1] = '';
+        } else {
+            n[1] = n[1].toString().split('.')[1];
+        }
     }
     if(round <= 0) { // round to whole number
         n[0] = Math.round(parseInt(n[0],10) * Math.pow(10, round)) / Math.pow(10, round);
