@@ -1,5 +1,5 @@
 describe("Base.View.SelectionList", function () {
-    var view, layout, app, moduleName, viewDef;
+    var view, layout, app, moduleName;
     beforeEach(function () {
         moduleName = 'Accounts';
         app = SugarTest.app;
@@ -82,14 +82,14 @@ describe("Base.View.SelectionList", function () {
         delete app.drawer;
     });
 
-    it("Should release the selection_model listender once it is selected", function() {
+    it("Should release the selection_model listener once it is selected", function() {
         var model = new Backbone.Model({
             id: "1234",
             name: "bob"
         }), model2 = new Backbone.Model({
             id: "0987",
             name: "blah"
-        });;
+        });
 
         app.drawer = {
             close: function(attributes) {
@@ -109,4 +109,21 @@ describe("Base.View.SelectionList", function () {
         drawerStub.restore();
         delete app.drawer;
     });
+
+    it('should remove all links except rowactions', function(){
+        var htmlBefore = '<a href="javascript:void(0)">unwrapped</a><a href="" class="rowaction">wrapped</a>',
+            htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
+
+        view.$el = $('<div>' + htmlBefore + '</div>');
+        view.render();
+        expect(view.$el.html()).toEqual(htmlAfter);
+    });
+
+    it('should add preview row action', function(){
+        var hasPreview = _.some(view.rightColumns, function(column) {
+            return (column.event === "list:preview:fire");
+        });
+        expect(hasPreview).toBe(true);
+    });
+
 });

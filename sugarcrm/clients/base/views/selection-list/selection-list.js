@@ -17,9 +17,11 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
+    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'list-remove-links'],
+
     initialize: function (options) {
         options.meta = options.meta || {};
-        options.meta.selection = { type: 'single', label: ' ' };
+        options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
         this.context.on("change:selection_model", this._selectModel, this);
     },
@@ -39,5 +41,16 @@
             this.context.off("change:selection_model", null, this);
             app.drawer.close(attributes);
         }
+    },
+
+    addActions: function() {
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
+        this.rightColumns.push({
+            type: 'rowaction',
+            css_class: 'btn',
+            tooltip: 'LBL_PREVIEW',
+            event: 'list:preview:fire',
+            icon: 'icon-eye-open'
+        });
     }
 })

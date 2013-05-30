@@ -31,7 +31,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['list-disable-sort'],
+    plugins: ['list-disable-sort', 'list-remove-links'],
     collectionSync: null,
 
     initialize: function(options) {
@@ -44,7 +44,6 @@
                 field.sortable = false;
             });
         });
-        this.on("render", this._removeLinks, this);
 
         this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
 
@@ -66,10 +65,6 @@
     _renderHtml: function() {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
         this.$('table.table-striped').addClass('duplicates highlight');
-    },
-
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
     },
 
     sync: function(method, model, options) {
