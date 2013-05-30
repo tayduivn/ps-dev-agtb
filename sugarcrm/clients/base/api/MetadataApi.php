@@ -203,7 +203,7 @@ class MetadataApi extends SugarApi
         // BR-26 Set the metadata hash into the session so it can be inspected when
         // changed.
         $this->getMetadataManager()->setSessionHash($data['_hash']);
-        
+
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
@@ -441,12 +441,12 @@ class MetadataApi extends SugarApi
 
     /*
      * Filters the results for Public and Private Metadata
-     * @param array $args            the Arguments from the Rest Request
-     * @param array $data            the data to be filtered
-     * @param bool  $onlyHash        check to return only hashes
-     * @param array $baseChunks      the chunks we want filtered
+     * @param array $args the Arguments from the Rest Request
+     * @param array $data the data to be filtered
+     * @param bool  $onlyHash check to return only hashes
+     * @param array $baseChunks the chunks we want filtered
      * @param array $perModuleChunks the module chunks we want filtered
-     * @param array $moduleFilter    the specific modules we want
+     * @param array $moduleFilter the specific modules we want
      */
 
     protected function filterResults($args, $data, $onlyHash = false, $baseChunks = array(), $perModuleChunks = array(), $moduleFilter = array())
@@ -554,7 +554,7 @@ class MetadataApi extends SugarApi
      * Fills in additional app list strings data as needed by the client
      *
      * @param  array $public Public app list strings
-     * @param  array $main   Core app list strings
+     * @param  array $main Core app list strings
      * @return array
      */
     protected function fillInAppListStrings(Array $public, Array $main)
@@ -667,7 +667,7 @@ class MetadataApi extends SugarApi
     /**
      * Given a platform and language, returns the language JSON contents.
      * @param ServiceBase $api
-     * @param array       $args
+     * @param array $args
      */
     public function getLanguage(ServiceBase $api, array $args, $public = false)
     {

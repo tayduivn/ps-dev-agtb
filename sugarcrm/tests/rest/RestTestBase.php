@@ -59,9 +59,9 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE 'UNIT%'");
         $GLOBALS['db']->commit();
-        
+
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestHelper::tearDown();        
+        SugarTestHelper::tearDown();
     }
 
     protected function _cleanUpRecords()
@@ -70,7 +70,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Accounts clean up
         if (count($this->accounts)) {
             $accountIds = array();
-            foreach ( $this->accounts as $account ) {
+            foreach ($this->accounts as $account) {
                 $accountIds[] = $account->id;
             }
             $accountIds = "('".implode("','",$accountIds)."')";
@@ -83,7 +83,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Opportunities clean up
         if (count($this->opps)) {
             $oppIds = array();
-            foreach ( $this->opps as $opp ) {
+            foreach ($this->opps as $opp) {
                 $oppIds[] = $opp->id;
             }
             $oppIds = "('".implode("','",$oppIds)."')";
@@ -98,7 +98,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Contacts cleanup
         if (count($this->contacts)) {
             $contactIds = array();
-            foreach ( $this->contacts as $contact ) {
+            foreach ($this->contacts as $contact) {
                 $contactIds[] = $contact->id;
             }
             $contactIds = "('".implode("','",$contactIds)."')";
@@ -113,7 +113,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Cases cleanup
         if (count($this->cases)) {
             $caseIds = array();
-            foreach ( $this->cases as $aCase ) {
+            foreach ($this->cases as $aCase) {
                 $caseIds[] = $aCase->id;
             }
             $caseIds = "('".implode("','",$caseIds)."')";
@@ -128,7 +128,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Bugs cleanup
         if (count($this->bugs)) {
             $bugIds = array();
-            foreach( $this->bugs AS $bug ) {
+            foreach ($this->bugs AS $bug) {
                 $bugIds[] = $bug->id;
             }
             $bugIds = "('" . implode( "','", $bugIds) . "')";
@@ -141,7 +141,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Notes cleanup
         if (count($this->notes)) {
             $noteIds = array();
-            foreach ( $this->notes as $note ) {
+            foreach ($this->notes as $note) {
                 $noteIds[] = $note->id;
             }
             $noteIds = "('".implode("','",$noteIds)."')";
@@ -155,7 +155,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // KBDocs cleanup
         if (count($this->kbdocs)) {
             $kbdocIds = array();
-            foreach ( $this->kbdocs as $kbdoc ) {
+            foreach ($this->kbdocs as $kbdoc) {
                 $kbdocIds[] = $kbdoc->id;
             }
             $kbdocIds = "('".implode("','",$kbdocIds)."')";
@@ -174,7 +174,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             // Let's assume test users have a password the same as their username
             $password = $this->_user->user_name;
         }
-        
+
         // Save the platform for reauth
         $this->_platform = $platform;
 
@@ -197,7 +197,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
     }
-    
+
     protected function _restReauth()
     {
         if ($this->refreshToken) {
@@ -208,7 +208,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 'client_secret' => '',
                 'platform' => $this->_platform,
             );
-            
+
             // Prevents _restCall from automatically logging in
             $this->authToken = 'LOGGING_IN';
             $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -232,13 +232,13 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             $addedOpts,
             $addedHeaders
         );
-        
+
         // Since this is going in to a new DB connection, we have to commit anything we have
         // lying around in an open transaction.
         $GLOBALS['db']->commit();
 
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
-        
+
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
@@ -251,11 +251,11 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 $requestMethodSet = true;
             }
             // For Mothership, uploads need special hack because of stream support
-            if(is_array($postBody)) {
-                foreach($postBody as $k => $v) {
+            if (is_array($postBody)) {
+                foreach ($postBody as $k => $v) {
                     // Since there are some tests with empty values in POST, let's
                     // make sure there is a value to get the 1st char of
-                    if(!empty($v) && $v[0] == '@') {
+                    if (!empty($v) && $v[0] == '@') {
                         $name = substr($v, 1);
                         $postBody[$k] = "@".UploadFile::realpath($name);
                     }
@@ -289,7 +289,6 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-
         if (is_array($addedOpts) && !empty($addedOpts)) {
             // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff
             foreach ($addedOpts as $opt => $val) {
@@ -299,8 +298,8 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
         $httpReply = curl_exec($ch);
         $httpInfo = curl_getinfo($ch);
-        
-        // Handle reauth if need be. This will be called mostly for metadata cache 
+
+        // Handle reauth if need be. This will be called mostly for metadata cache
         // clears since that now forces an immediate invalidation of sessions
         if (isset($httpInfo['http_code']) && $httpInfo['http_code'] == 401) {
             if (
@@ -308,21 +307,22 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 isset($httpReply['error_message']) && $httpReply['error_message'] == 'The access token has been invalidated.'
             ) {
                 $this->_restReauth();
+
                 return $this->_restCall($funcArgs[0], $funcArgs[1], $funcArgs[2], $funcArgs[3], $funcArgs[4]);
             }
         }
-        
+
         $httpError = $httpReply === false ? curl_error($ch) : null;
         $GLOBALS['db']->commit();
-        
+
         // Handle the headers from the reply
         $headerLen = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $httpHeaders = substr($httpReply, 0, $headerLen);
         $httpHeaders = $this->_parseHeaderString($httpHeaders);
-        
+
         // Get just the body for parsing the reply
         $httpReply = substr($httpReply, $headerLen);
-        
+
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError, 'headers' => $httpHeaders);
     }
 
@@ -331,12 +331,13 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
      * the _restCall method to warrant it's own setup. It is also added to the
      * base class because more than one unit test is using it now.
      *
-     * @param string $urlPart The endpoint to hit in the api
-     * @param array  $args Arguments to pass to this call (filename and type)
-     * @param bool   $passInQueryString Whether to add the filename to the querystring
+     * @param  string $urlPart           The endpoint to hit in the api
+     * @param  array  $args              Arguments to pass to this call (filename and type)
+     * @param  bool   $passInQueryString Whether to add the filename to the querystring
      * @return array
      */
-    protected function _restCallFilePut($urlPart, $args, $passInQueryString = true) {
+    protected function _restCallFilePut($urlPart, $args, $passInQueryString = true)
+    {
         // Set this to capture our own errors, which is needed in case of non-200
         // response codes from the file_get_contents call
         PHPUnit_Framework_Error_Warning::$enabled = FALSE;
@@ -419,10 +420,10 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
     protected function _clearMetadataCache()
     {
         MetaDataFiles::clearModuleClientCache();
-        
+
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
         if ( is_array($metadataFiles) ) {
-            foreach ( $metadataFiles as $metadataFile ) {
+            foreach ($metadataFiles as $metadataFile) {
                 @unlink($metadataFile);
             }
         }
@@ -430,11 +431,12 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Parses response headers from a curl request. Acts similar to get_headers()
-     * 
-     * @param string $header
+     *
+     * @param  string $header
      * @return array
      */
-    protected function _parseHeaderString($header) {
+    protected function _parseHeaderString($header)
+    {
         $lines = explode("\n", rtrim($header));
         $headers = array();
         foreach ($lines as $line) {
@@ -445,18 +447,19 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 $headers[$parts[0]] = $parts[1];
             }
         }
-        
+
         return $headers;
     }
 
     /**
      * Asserts that the response included the expected HTTP status code.
      *
-     * @param array $response
-     * @param int   $expectedCode
+     * @param  array $response
+     * @param  int   $expectedCode
      * @return void
      */
-    protected function assertHttpStatus($response, $expectedCode = 200) {
+    protected function assertHttpStatus($response, $expectedCode = 200)
+    {
         $httpStatus = $response["info"]["http_code"];
         $this->assertEquals($expectedCode, $httpStatus, "Unexpected HTTP Status: {$httpStatus}\n");
     }
