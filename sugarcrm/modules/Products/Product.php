@@ -648,7 +648,7 @@ class Product extends SugarBean
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
-        $this->saveProductWorksheet();
+        
         if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
             $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
         }
@@ -837,10 +837,10 @@ class Product extends SugarBean
     {
         $oppId = $this->opportunity_id;
         parent::mark_deleted($id);
-
-        $this->saveProductWorksheet();
-
+           
         //BEGIN SUGARCRM flav=ent ONLY
+        // this only happens when ent is built out
+
         //save to trigger related field recalculations for deleted item
         $this->resaveOppForRecalc($oppId);
         //END SUGARCRM flav=ent ONLY
@@ -903,28 +903,6 @@ class Product extends SugarBean
                 $this->probability = $prob_arr[$this->sales_stage];
             }
         }
-    }
-
-    /**
-     * Save the updated product to the worksheet, this will create one if one does not exist
-     * this will also update one if a draft version exists
-     *
-     * @return bool         True if the worksheet was saved/updated, false otherwise
-     */
-    protected function saveProductWorksheet()
-    {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        if ($settings['is_setup']) {
-            // save the a draft of each product
-            /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
-            $worksheet->saveRelatedProduct($this);
-            return true;
-        }
-
-        return false;
     }
 
     /**
