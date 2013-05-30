@@ -41,23 +41,15 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 
 	protected $meeting_id = null;
 
-	public static function setUpBeforeClass(){
-		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
-
-	public static function tearDownAfterClass(){
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        	unset($GLOBALS['current_user']);
-    	}
-
-	public function setUp(){
+	public function setUp()
+	{
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
         $this->time_date = new TimeDate();
 		$_REQUEST['module'] = 'Calendar';
 		$_REQUEST['year'] = '2012';
 		$_REQUEST['month'] = '01';
 		$_REQUEST['day'] = '02';
-		SugarTestHelper::setUp('ACLStatic');
 	}
 
 	public function tearDown(){
