@@ -32,33 +32,68 @@ describe("Emails.fields.recipients", function() {
     });
 
     describe("format", function() {
-        it("Should convert a collection of recipient models to an array of recipient objects.", function() {
-            var recipients = new Backbone.Collection([
-                    {id: '123', email: "will@example.com", name: "Will Westin"},
-                    {email: "jim@example.com", name: "Jim Brennan"},
-                    {email: "sally@example.com"}
+        dataProvider = [
+            {
+                message:    "Should return an array of one recipient when the parameter is a Backbone model.",
+                recipients: new Backbone.Model({email: "will@example.com", name: "Will Westin"}),
+                expected:   1
+            },
+            {
+                message:    "Should return an array of one recipient when the parameter is a standard object.",
+                recipients: {email: "will@example.com", name: "Will Westin"},
+                expected:   1
+            },
+            {
+                message:    "Should return an array of one recipient when the parameter is a Backbone collection containing one model.",
+                recipients: new Backbone.Collection([{email: "will@example.com", name: "Will Westin"}]),
+                expected:   1
+            },
+            {
+                message:    "Should return an array of three recipients when the parameter is a Backbone collection containing three models.",
+                recipients: new Backbone.Collection([
+                    {email: "will@example.com", name: "Will Westin"},
+                    {email: "sarah@example.com", name: "Sarah Smith"},
+                    {email: "sally@example.com", name: "Sally Bronsen"}
                 ]),
-                actual = field.format(recipients);
+                expected:   3
+            },
+            {
+                message:    "Should return an array of three recipients when the parameter is an array containing three objects.",
+                recipients: [
+                    {email: "will@example.com", name: "Will Westin"},
+                    {email: "sarah@example.com", name: "Sarah Smith"},
+                    {email: "sally@example.com", name: "Sally Bronsen"}
+                ],
+                expected:   3
+            },
+            {
+                message:    "Should return an array of three recipients when the parameter is an array containing three Backbone models.",
+                recipients: [
+                    new Backbone.Model({email: "will@example.com", name: "Will Westin"}),
+                    new Backbone.Model({email: "sarah@example.com", name: "Sarah Smith"}),
+                    new Backbone.Model({email: "sally@example.com", name: "Sally Bronsen"})
+                ],
+                expected:   3
+            },
+            {
+                message:    "Should return an array of zero recipients when the recipient doesn't have an email address.",
+                recipients: {id: "abcd", name: "Will Westin"},
+                expected:   0
+            }
+        ];
 
-            expect(Array.isArray(actual)).toBe(true);
-            expect(actual.length).toBe(3);
+        _.each(dataProvider, function(data) {
+            it(data.message, function() {
+                var actual = field.format(data.recipients);
 
-            expect(actual[0].id).toBe(recipients.models[0].get('id'));
-            expect(actual[0].email).toBe(recipients.models[0].get('email'));
-            expect(actual[0].name).toBe(recipients.models[0].get('name'));
-
-            expect(actual[1].id).toBe(recipients.models[1].get('email'));
-            expect(actual[1].email).toBe(recipients.models[1].get('email'));
-            expect(actual[1].name).toBe(recipients.models[1].get('name'));
-
-            expect(actual[2].id).toBe(recipients.models[2].get('email'));
-            expect(actual[2].email).toBe(recipients.models[2].get('email'));
-            expect(actual[2].name).toBe(undefined);
-        });
+                expect(Array.isArray(actual)).toBe(true);
+                expect(actual.length).toBe(data.expected);
+            });
+        }, this);
     });
 
     describe("unformat", function() {
-        it("Should convert an array of recipient object to a collection of recipient models.", function() {
+        it("Should convert an array of recipient objects to a collection of recipient models.", function() {
             var recipients = [{
                     id: '123',
                     email: "will@example.com",
@@ -70,7 +105,7 @@ describe("Emails.fields.recipients", function() {
                 actual = field.unformat(recipients);
 
             expect(actual instanceof Backbone.Collection).toBe(true);
-            expect(actual.length).toBe(2);
+            expect(actual.length).toBe(recipients.length);
         });
     });
 
@@ -134,40 +169,36 @@ describe("Emails.fields.recipients", function() {
     });
 
     describe("Adding recipients to field", function() {
-        it("Should have 3 recipients when 1 recipient is added to a field that already has 2 recipients", function() {
-            var existingRecipients = new Backbone.Collection([
-                    {id: "sarah@example.com", email: "sarah@example.com", name: "Sarah Smith"},
-                    {id: "tom@example.com", email: "tom@example.com", name: "Max Jensen"}
-                ]),
-                newRecipients = [
-                    {email: "foo@example.com", name: "Foo Bar"}
-                ],
-                actual;
+        dataProvider = [
+            {
+                message:    "Should have three recipients when one recipient is added to a field that already has two recipients.",
+                recipients: {email: "foo@example.com", name: "Foo Bar"},
+                expected:   1
+            },
+            {
+                message:    "Should not add any recipients when the recipient added already exists in the field.",
+                recipients: {email: "sarah@example.com", name: "Sarah Smith"},
+                expected:   0
+            }
+        ];
 
-            field.render();
-            field.model.set("recipients", existingRecipients);
-            field._addressbookDrawerCallback(newRecipients);
+        _.each(dataProvider, function(data) {
+            it(data.message, function() {
+                var existingRecipients = new Backbone.Collection([
+                        {id: "sarah@example.com", email: "sarah@example.com", name: "Sarah Smith"},
+                        {id: "tom@example.com", email: "tom@example.com", name: "Max Jensen"}
+                    ]),
+                    actual,
+                    expected;
 
-            actual = field.getFieldElement().select2('data');
-            expect(actual.length).toEqual(3);
-        });
+                field.render();
+                field.model.set("recipients", existingRecipients);
+                field._addRecipients(data.recipients);
 
-        it("Should not add any recipients when the recipient added already exists in the field.", function() {
-            var existingRecipients = new Backbone.Collection([
-                    {id: "sarah@example.com", email: "sarah@example.com", name: "Sarah Smith"},
-                    {id: "tom@example.com", email: "tom@example.com", name: "Max Jensen"}
-                ]),
-                newRecipients = [
-                    {email: "sarah@example.com", name: "Sarah Smith"}
-                ],
-                actual;
-
-            field.render();
-            field.model.set("recipients", existingRecipients);
-            field._addressbookDrawerCallback(newRecipients);
-
-            actual = field.getFieldElement().select2('data');
-            expect(actual.length).toEqual(2);
+                expected = data.expected + existingRecipients.length; // the number of recipients expected after addition
+                actual   = field.getFieldElement().select2('data');
+                expect(actual.length).toBe(expected);
+            });
         });
     });
 
@@ -221,19 +252,9 @@ describe("Emails.fields.recipients", function() {
                 expected: expected
             },
             {
-                message:  "Should return an object with all properties when the bean has the id, module, email, and first_name attributes.",
-                bean:     {id: expected.id, module: expected.module, first_name: "Will", email1: expected.email},
-                expected: {id: expected.id, module: expected.module, name: "Will", email: expected.email}
-            },
-            {
-                message:  "Should return an object with all properties when the bean has the id, module, email, and last_name attributes.",
-                bean:     {id: expected.id, module: expected.module, last_name: "Westin", email1: expected.email},
-                expected: {id: expected.id, module: expected.module, name: "Westin", email: expected.email}
-            },
-            {
-                message:  "Should return an object with all properties when the bean has the id, module, email, first_name, and last_name attributes.",
-                bean:     {id: expected.id, module: expected.module, first_name: "Will", last_name: "Westin", email1: expected.email},
-                expected: expected
+                message:  "Should return an object with all properties except name when the bean has the id, module, and email attributes.",
+                bean:     {id: expected.id, module: expected.module, full_name: "", email1: expected.email},
+                expected: {id: expected.id, module: expected.module, email: expected.email}
             }
         ];
 
@@ -291,120 +312,80 @@ describe("Emails.fields.recipients", function() {
     });
 
     describe("_translateRecipient", function() {
-        var parameter,
-            expected;
-
-        function init() {
-            expected = {
-                id:     "abcd",
-                module: "Contacts",
-                name:   "Will Westin",
-                email:  "will@example.com"
-            };
-        }
-
-        beforeEach(function() {
-            init();
-        });
-
-        it("Should return an empty object when the parameter is a Backbone model without a possible value for the id attribute.", function() {
-            parameter = new Backbone.Model({
-                module: "Contacts",
-                name:   "Will Westin"
-            });
-
-            var actual = field._translateRecipient(parameter);
-            expect(_.isEmpty(actual)).toBe(true);
-        });
-
-        it("Should return an object when the parameter is a Backbone model with an id attribute.", function() {
-            parameter = new Backbone.Model({
-                id:     "abcd",
-                module: "Contacts",
-                name:   "Will Westin"
-            });
-
-            var actual = field._translateRecipient(parameter);
-            expect(_.isEmpty(actual)).toBe(false);
-            expect(actual.id).toBe(parameter.get('id'));
-            expect(actual.module).toBe(parameter.get('module'));
-            expect(actual.name).toBe(parameter.get('name'));
-        });
-
-        it("Should return an object when the parameter is a Backbone model with an email attribute, but no id attribute.", function() {
-            parameter   = new Backbone.Model({
-                module: "Contacts",
-                name:   "Will Westin",
-                email:  "will@example.com"
-            });
-
-            var actual = field._translateRecipient(parameter);
-            expect(_.isEmpty(actual)).toBe(false);
-            expect(actual.id).toBe(parameter.get('email'));
-            expect(actual.module).toBe(parameter.get('module'));
-            expect(actual.name).toBe(parameter.get('name'));
-            expect(actual.email).toBe(parameter.get('email'));
-        });
-
-        it("Should prioritize the parameter's properties when the parameter is an object with the id, module, name, email, and bean properties.", function() {
-            parameter = {
-                bean: new Backbone.Model({
-                    id: "efgh",
-                    module: "Leads",
-                    name: "Sarah Smith",
-                    email1: "sarah@example.com"
+        dataProvider = [
+            {
+                message:   "Should return an empty object when the recipient has no possible value for the id attribute.",
+                recipient: {module: "Contacts", name: "Will Westin"},
+                expected:  {}
+            },
+            {
+                message:   "Should return an object when the recipient is a Backbone model with an id attribute.",
+                recipient: new Backbone.Model({id: "abcd", module: "Contacts", name: "Will Westin"}),
+                expected:  {id: "abcd", module: "Contacts", name: "Will Westin"}
+            },
+            {
+                message:   "Should return an object when the recipient is a Backbone model with an email attribute, but no id attribute.",
+                recipient: new Backbone.Model({module: "Contacts", name: "Will Westin", email: "will@example.com"}),
+                expected:  {id: "will@example.com", module: "Contacts", name: "Will Westin", email: "will@example.com"}
+            },
+            {
+                message:   "Should return an object when the recipient is a Backbone model with the email1 or email attribute.",
+                recipient: new Backbone.Model({
+                    id: "abcd",
+                    module: "Contacts",
+                    name: "Will Westin",
+                    email: "will@example.com"
                 }),
-                id:     "abcd",
-                module: "Contacts",
-                name:   "Will Westin",
-                email:  "will@example.com"
+                expected:  {id: "abcd", module: "Contacts", name: "Will Westin", email: "will@example.com"}
+            },
+            {
+                message:   "Should prioritize the recipient's properties when the parameter is an object with the id, module, name, email, and bean properties.",
+                recipient: {
+                    id: "abcd",
+                    module: "Contacts",
+                    name: "Will Westin",
+                    email: "will@example.com",
+                    bean: new Backbone.Model({
+                        id: "efgh",
+                        module: "Leads",
+                        name: "Sarah Smith",
+                        email1: "sarah@example.com"})
+                },
+                expected:  {id: "abcd", module: "Contacts", name: "Will Westin", email: "will@example.com"}
+            },
+            {
+                message:   "Should fall back to the bean's attributes when the recipient is an object with the bean property and without the id, module, name, and email properties.",
+                recipient: {
+                    bean: new Backbone.Model({
+                        id: "efgh",
+                        module: "Leads",
+                        name: "Sarah Smith",
+                        email1: "sarah@example.com"
+                    })
+                },
+                expected:  {id: "efgh", module: "Leads", name: "Sarah Smith", email: "sarah@example.com"}
+            },
+            {
+                message:   "Should get name and email from the recipient's properties and id and module from the bean's attributes when the parameter is an object with the name, email, and bean properties.",
+                recipient: {
+                    name:  "Will Westin",
+                    email: "will@example.com",
+                    bean: new Backbone.Model({
+                        id: "efgh",
+                        module: "Leads",
+                        name: "Sarah Smith",
+                        email1: "sarah@example.com"
+                    })
+                },
+                expected:  {id: "efgh", module: "Leads", name: "Will Westin", email: "will@example.com"}
             }
+        ];
 
-            var actual = field._translateRecipient(parameter);
-            expect(_.isEmpty(actual)).toBe(false);
-            expect(actual.id).toBe(parameter.id);
-            expect(actual.module).toBe(parameter.module);
-            expect(actual.name).toBe(parameter.name);
-            expect(actual.email).toBe(parameter.email);
-        });
-
-        it("Should fall back to the bean's attributes when the parameter is an object with the bean property and without the id, module, name, and email properties.", function() {
-            parameter = {
-                bean: new Backbone.Model({
-                    id: "efgh",
-                    module: "Leads",
-                    name: "Sarah Smith",
-                    email1: "sarah@example.com"
-                })
-            }
-
-            var actual = field._translateRecipient(parameter);
-            expect(_.isEmpty(actual)).toBe(false);
-            expect(actual.id).toBe(parameter.bean.get('id'));
-            expect(actual.module).toBe(parameter.bean.get('module'));
-            expect(actual.name).toBe(parameter.bean.get('name'));
-            expect(actual.email).toBe(parameter.bean.get('email1'));
-        });
-
-        it("Should get name and email from the parameter's properties and id and module from the bean's attributes when the parameter is an object with the name, email, and bean properties.", function() {
-            parameter = {
-                bean: new Backbone.Model({
-                    id: "efgh",
-                    module: "Leads",
-                    name: "Sarah Smith",
-                    email1: "sarah@example.com"
-                }),
-                name:   "Will Westin",
-                email:  "will@example.com"
-            }
-
-            var actual = field._translateRecipient(parameter);
-            expect(_.isEmpty(actual)).toBe(false);
-            expect(actual.id).toBe(parameter.bean.get('id'));
-            expect(actual.module).toBe(parameter.bean.get('module'));
-            expect(actual.name).toBe(parameter.name);
-            expect(actual.email).toBe(parameter.email);
-        });
+        _.each(dataProvider, function(data) {
+            it(data.message, function() {
+                var actual = field._translateRecipient(data.recipient);
+                expect(actual).toEqual(data.expected);
+            });
+        }, this);
     });
-
 });
