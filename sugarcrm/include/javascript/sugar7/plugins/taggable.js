@@ -25,15 +25,12 @@
             },
 
             _getTerm: function(leader, text) {
+                var word;
                 if (!leader) {
                     // If there are no leaders, don't do anything.
                     return;
-                } else if (text.indexOf(leader) === 0) {
-                    word = _.last(text.split(leader));
                 } else {
-                    // Prevent email addresses from being caught, even though emails
-                    // can have spaces in them according to the RFCs (3696/5322/6351).
-                    word = _.last(text.split(' ' + leader));
+                    word = _.last(text.split(leader));
                 }
 
                 if (word.length > 2) {

@@ -89,6 +89,11 @@ describe("Activity Stream Omnibar", function() {
                 var ret = view._getTerm("@", "@foo");
                 expect(ret).toBe("foo");
             });
+
+            it("does not expect a space before subsequent terms (MAR-765)", function() {
+                var ret = view._getTerm("@", "foo@example.com@sally");
+                expect(ret).toBe("sally");
+            });
         });
 
         describe("_getLeader", function() {
