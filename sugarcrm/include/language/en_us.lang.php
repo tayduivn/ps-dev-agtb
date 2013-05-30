@@ -148,6 +148,7 @@ $app_list_strings = array (
     'Quotes' => 'Quote',
     'Products' => 'Quoted Line Item',
     'ProductCategories' => 'Product Category',
+    'RevenueLineItems' => 'Revenue Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -4877,8 +4878,8 @@ $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
 $app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] = array(
-    'products' => 'Revenue Line Items',
-    'opportunities' => 'Opportunities',
+    'RevenueLineItems' => 'Revenue Line Items',
+    'Opportunities' => 'Opportunities',
 );
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (

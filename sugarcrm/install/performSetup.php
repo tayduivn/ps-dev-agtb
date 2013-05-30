@@ -610,7 +610,7 @@ FP;
     if ($_SESSION['demoData'] != 'no') {
         $enabled_tabs[] = 'KBDocuments';
         $enabled_tabs[] = 'Bugs';
-        $enabled_tabs[] = 'Products';
+        $enabled_tabs[] = 'RevenueLineItems';
     }
     //END SUGARCRM flav=ent ONLY
 

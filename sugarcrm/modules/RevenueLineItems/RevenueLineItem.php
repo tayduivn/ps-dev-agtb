@@ -113,7 +113,7 @@ class RevenueLineItem extends SugarBean
     public $contracts;
     public $product_index;
 
-    public $table_name = "revenuelineitems";
+    public $table_name = "revenue_line_items";
     public $rel_manufacturers = "manufacturers";
     public $rel_types = "product_types";
     public $rel_products = "product_product";
@@ -212,19 +212,19 @@ class RevenueLineItem extends SugarBean
             $parentbean,
             $singleSelect
         );
-        $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = revenuelineitems.contact_id";
+        $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = revenue_line_items.contact_id";
 
         //If return_array is set to true, return as an Array
         if ($return_array) {
             //Add clause to remove opportunity related products
             $ret_array['where'] = $ret_array['where'] .
-                " AND (revenuelineitems.opportunity_id is not null OR revenuelineitems.opportunity_id <> '')";
+                " AND (revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '')";
             return $ret_array;
         }
 
         return str_replace(
-            'where revenuelineitems.deleted=0',
-            "where revenuelineitems.deleted=0 AND (revenuelineitems.opportunity_id is not null OR revenuelineitems.opportunity_id <> '')",
+            'where revenue_line_items.deleted=0',
+            "where revenue_line_items.deleted=0 AND (revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '')",
             $ret_array
         );
     }
@@ -642,7 +642,7 @@ class RevenueLineItem extends SugarBean
         $id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=ent ONLY
         // this only happens when ent is built out
-        //$this->saveProductWorksheet();
+        $this->saveProductWorksheet();
         if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
             $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
         }

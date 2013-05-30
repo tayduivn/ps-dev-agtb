@@ -49,7 +49,7 @@ class SugarTestForecastUtilities
     public static function setUpForecastConfig(array $additional_config = array())
     {
         SugarTestConfigUtilities::setConfig('Forecasts', 'is_setup', 1);
-        SugarTestConfigUtilities::setConfig('Forecasts', 'forecast_by', 'products');
+        SugarTestConfigUtilities::setConfig('Forecasts', 'forecast_by', 'RevenueLineItems');
         SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_likely', 1);
         SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_best', 1);
         SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_worst', 0);

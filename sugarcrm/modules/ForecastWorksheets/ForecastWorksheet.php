@@ -55,7 +55,7 @@ class ForecastWorksheet extends SugarBean
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
         $bean->probability = $this->probability;
         $bean->best_case = $this->best_case;
-        if ($bean instanceof Product) {
+        if ($bean instanceof RevenueLineItem) {
             $bean->likely_case = $this->likely_case;
             $bean->date_closed = $this->date_closed;
         } else {
@@ -159,17 +159,17 @@ class ForecastWorksheet extends SugarBean
     public function saveOpportunityProducts(Opportunity $opp, $isCommit = false)
     {
         // remove the relationship if it exists as it could cause errors with the cached beans in the BeanFactory
-        if (isset($opp->products)) {
-            unset($opp->products);
+        if (isset($opp->revenuelineitems)) {
+            unset($opp->revenuelineitems);
         }
         // now save all related products to the opportunity
         // commit every product associated with the Opportunity
-        $products = $opp->get_linked_beans('products', 'Products');
+        $revenuelineitems = $opp->get_linked_beans('revenuelineitems', 'RevenueLineItems');
         /* @var $product Product */
-        foreach ($products as $product) {
+        foreach ($revenuelineitems as $revenuelineitem) {
             /* @var $product_wkst ForecastWorksheet */
             $product_wkst = BeanFactory::getBean('ForecastWorksheets');
-            $product_wkst->saveRelatedProduct($product, $isCommit);
+            $product_wkst->saveRelatedProduct($revenuelineitem, $isCommit);
             unset($product_wkst); // clear the cache
         }
     }
@@ -205,17 +205,17 @@ class ForecastWorksheet extends SugarBean
     }
 
     /**
-     * Save a snapshot of a Product to the ForecastWorksheet Table
+     * Save a snapshot of a Revenue Line Item (Product) to the ForecastWorksheet Table
      *
-     * @param Product $product          The Product to commit
-     * @param bool $isCommit            Are we committing a product for the forecast
+     * @param RevenueLineItem $rli          The RLI to commit
+     * @param bool $isCommit                    Are we committing a product for the forecast
      */
-    public function saveRelatedProduct(Product $product, $isCommit = false)
+    public function saveRelatedProduct(RevenueLineItem $rli, $isCommit = false)
     {
         $this->retrieve_by_string_fields(
             array(
-                'parent_type' => 'Products',
-                'parent_id' => $product->id,
+                'parent_type' => 'RevenueLineItems',
+                'parent_id' => $rli->id,
                 'draft' => ($isCommit === false) ? 1 : 0,
                 'deleted' => 0,
             ),
@@ -246,19 +246,19 @@ class ForecastWorksheet extends SugarBean
         );
 
         // load the account
-        if (empty($product->account_name) && !empty($product->account_id)) {
-            $product->account_name = $this->getAccountName($product->account_id);
+        if (empty($rli->account_name) && !empty($rli->account_id)) {
+            $rli->account_name = $this->getAccountName($rli->account_id);
         }
 
-        $this->copyValues($fields, $product);
+        $this->copyValues($fields, $rli);
 
         // set the parent types
-        $this->parent_type = 'Products';
-        $this->parent_id = $product->id;
+        $this->parent_type = 'RevenueLineItems';
+        $this->parent_id = $rli->id;
         $this->draft = ($isCommit === false) ? 1 : 0;
 
         //if this migrated, we need to delete the committed row
-        $this->removeMigratedRow($product);
+        $this->removeMigratedRow($rli);
 
         $this->save(false);
     }
@@ -359,7 +359,7 @@ class ForecastWorksheet extends SugarBean
             return false;
         }
 
-        $type = ucfirst(strtolower($settings['forecast_by']));
+        $type = $settings['forecast_by'];
 
         $sq = new SugarQuery();
         // we want the deleted records
@@ -409,7 +409,7 @@ class ForecastWorksheet extends SugarBean
                 $worksheet->saveOpportunityProducts($obj, true);
                 //END SUGARCRM flav=ent ONLY
 
-            } elseif ($forecast_by == 'Products') {
+            } elseif ($forecast_by == 'RevenueLineItems') {
                 $worksheet->saveRelatedProduct($obj, true);
             }
         }
@@ -456,7 +456,7 @@ class ForecastWorksheet extends SugarBean
         // Products
         // reassign only products that have related opportunity - products created from opportunity::save()
         // other products will be reassigned if module Product is selected by user
-        $_object = BeanFactory::getBean('Products');
+        $_object = BeanFactory::getBean('RevenueLineItems');
         $_query = "update {$_object->table_name} set " .
             "assigned_user_id = '{$toUserId}', " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
@@ -575,8 +575,6 @@ class ForecastWorksheet extends SugarBean
             // timeperiod not found
             return false;
         }
-
-        $forecast_by = ucfirst(strtolower($forecast_by));
 
         // setup the return array
         $return = array(

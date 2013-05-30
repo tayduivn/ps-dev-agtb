@@ -22,7 +22,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['RevenueLineItem'] = array(
-    'table' => 'revenuelineitems',
+    'table' => 'revenue_line_items',
     'audited' => true,
     'comment' => 'The user (not Admin)) view of a Product definition; an instance of a product',
     'fields' => array(
@@ -854,7 +854,7 @@ $dictionary['RevenueLineItem'] = array(
     'relationships' => array(
         'revenuelineitem_notes' => array(
             'lhs_module' => 'RevenueLineItems',
-            'lhs_table' => 'revenuelineitems',
+            'lhs_table' => 'revenue_line_items',
             'lhs_key' => 'id',
             'rhs_module' => 'Notes',
             'rhs_table' => 'notes',
@@ -868,7 +868,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'opportunities',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
             'relationship_type' => 'one-to-one'
         ),
@@ -877,7 +877,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'accounts',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'account_id',
             'relationship_type' => 'one-to-many'
         ),
@@ -886,7 +886,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'product_categories',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'category_id',
             'relationship_type' => 'one-to-many'
         ),
@@ -895,7 +895,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'product_templates',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'product_template_id',
             'relationship_type' => 'one-to-many'
         ),
@@ -904,7 +904,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'product_types',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'type_id',
             'relationship_type' => 'one-to-many'
         ),
@@ -913,7 +913,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'users',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'modified_user_id',
             'relationship_type' => 'one-to-many'
         ),
@@ -922,7 +922,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'users',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'assigned_user_id',
             'relationship_type' => 'one-to-many'
         ),
@@ -931,7 +931,7 @@ $dictionary['RevenueLineItem'] = array(
             'lhs_table' => 'users',
             'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'created_by',
             'relationship_type' => 'one-to-many'
         ),

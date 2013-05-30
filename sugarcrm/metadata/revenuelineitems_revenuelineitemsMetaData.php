@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 $dictionary['revenuelineitems_revenuelineitems'] = array (
-	'table' => 'revenuelineitems_revenuelineitems',
+	'table' => 'revenue_line_items__revenue_line_items',
 	'fields' => array (
        array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
       , array ('name' => 'date_modified','type' => 'datetime')
@@ -36,8 +36,8 @@ $dictionary['revenuelineitems_revenuelineitems'] = array (
 	),
 
  	'relationships' => array (
-		'revenuelineitems_revenuelineitems' => array('lhs_module'=> 'RevenueLineItems', 'lhs_table'=> 'revenuelineitems', 'lhs_key' => 'id',
-		'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenuelineitems', 'rhs_key' => 'id',
+		'revenuelineitems_revenuelineitems' => array('lhs_module'=> 'RevenueLineItems', 'lhs_table'=> 'revenue_line_items', 'lhs_key' => 'id',
+		'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenue_line_items', 'rhs_key' => 'id',
 		'relationship_type'=>'many-to-many',
 		'join_table'=> 'revenuelineitems_revenuelineitems', 'join_key_lhs'=>'parent_id', 'join_key_rhs'=>'child_id','reverse'=>'1'))
 );
