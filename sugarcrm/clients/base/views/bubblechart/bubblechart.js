@@ -71,6 +71,7 @@
             .tooltips(true)
             .showLegend(true)
             .bubbleClick(function (e) {
+                self.chart.dispatch.tooltipHide(e);
                 app.router.navigate(app.router.buildRoute('Products', e.point.id), {trigger: true});
             })
             .colorData('class', {step:2})
