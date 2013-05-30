@@ -3,7 +3,7 @@
   position: relative;
   border-bottom: 1px solid darken(@grayLighter,5%);
   //this is the container
-  .control-group.datefilter {
+  .controls {
     float: left;
     .control-label {
       margin-bottom: 0;
@@ -82,17 +82,21 @@
     float: right;
     text-align: right;
     .rtlFloat(@direction,left);
+      div.pull-right .info:last-child .datapoint {
+          border-right: 0px;
+          padding-right: 0px;
+      }
   }
   .datapoint {
-    float: left;
-    margin-top: 10px;
-    min-width: 120px;
-    .rtlFloat(@direction,right);
+      float: left;
+      padding-top: 10px;
+      padding-bottom: 14px;
+      padding-right: 20px;
+      min-width: 120px;
+      .rtlFloat(@direction,right);
+      border-right: 1px solid darken(@grayLighter,5%);
   }
-  .datapoint:last-child {
-    padding-right: 15px;
-    .rtlPadding(@direction,0px 0px 0px 20px);
-  }
+
   .datapoint1 {
     float: right;
     margin-top: 10px;
@@ -104,7 +108,11 @@
     margin-top: 10px;
     min-width: 120px;
   }
-
+    .relativetime {
+        color: lighten(@gray, 20%); !important;
+        position: relative;
+        top: -2px;
+    }
   .log {
     position: absolute;
     overflow: hidden;
@@ -153,17 +161,6 @@
     padding-left: 13px;
     margin-right: 10px;
   }
-
-  .extend {
-    background-color: darken(@gray, 10%);
-    background-color: darken(@gray, 15%) e("\9");
-    background-image: none;
-    color: @grayLighter !important;
-    text-shadow: 0 1px 1px rgba(0,0,0,.75);
-    outline: 0;
-    .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
-  }
-
   .row-fluid {
     margin: 0;
     padding: 0;
@@ -174,18 +171,50 @@
     float: left;
     margin-right: 8px;
   }
+.span4 {
+    margin-left: 2% !important;
+    width: 29.914893614%;
+    padding: 10px 10px 0 0;
+}
+.span8{
+    width: 63.957447%;
+    margin-right: 2%;
+}
+}
+
+.topline,
+.info .results.extend {
   .icon-arrow-down:before {
     color: @red;
   }
-
   .icon-arrow-up:before {
     color: @green;
   }
-  //nutmeg
-  div.results {
-    max-height: 118px;
-    overflow-y: scroll;
-  }
+}
+
+.info .results.extend {
+  max-height: 118px;
+  overflow-y: scroll;
+  background-color: darken(@gray, 10%);
+  background-color: darken(@gray, 15%) e("\9");
+  background-image: none;
+  color: @grayLighter !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.75);
+  outline: 0;
+  .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
+  position: relative;
+  margin: 0 0 0 0;
+  padding: 0;
+}
+
+.span4 {
+    margin-left: 2% !important;
+    width: 29.914893614%;
+    padding: 10px 10px 0 0;
+}
+.span8{
+    width: 63.957447%;
+    margin-right: 2%;
 }
 
 .topline-timeperiod-dropdown {
@@ -216,11 +245,6 @@
   }
 }
 
-.results {
-  position: relative;
-  margin: 0 0 0 0;
-  padding: 0;
-}
 .data2 {
   font-size: 12px;
 }
