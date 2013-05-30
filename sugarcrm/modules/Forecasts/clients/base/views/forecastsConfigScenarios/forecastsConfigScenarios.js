@@ -64,6 +64,11 @@
         'click .resetLink': 'onResetLinkClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     *
+     * @param {Object} options
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -98,7 +103,8 @@
 
     /**
      * Handles when reset to defaults link has been clicked
-     * @param evt click event
+     *
+     * @param {jQuery.Event} evt click event
      */
     onResetLinkClicked: function(evt) {
         evt.preventDefault();
@@ -109,6 +115,9 @@
          */
     },
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         if(this.model) {
             this.model.on('change:scenarios', function(model) {
@@ -147,6 +156,9 @@
         this.$el.find('#scenariosTitle').html(this.toggleTitleTpl(tplVars));
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         app.view.View.prototype._render.call(this);
 
@@ -196,6 +208,11 @@
         this.optionsSelect2.on('change', _.bind(this.handleScenarioModelChange, this));
     },
 
+    /**
+     * Event handler for the select2 dropdown changing selected items
+     *
+     * @param {jQuery.Event} evt select2 change event
+     */
     handleScenarioModelChange: function(evt) {
         var changedEnabled = [],
             changedDisabled = [],
@@ -226,15 +243,16 @@
     /**
      * Formats pill selections
      *
-     * @param item selected item
+     * @param {Object} item selected item
      */
     formatCustomSelection: function(item) {
         return '<span class="select2-choice-type"> </span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>';
     },
 
     /**
-     * override dispose function to remove custom listener off the window
-     * @private
+     * {@inheritdoc}
+     *
+     * override dispose function to remove custom listener off select2 instance
      */
     _dispose: function() {
         // remove event listener from select2

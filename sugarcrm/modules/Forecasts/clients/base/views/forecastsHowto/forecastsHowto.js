@@ -14,6 +14,9 @@
 ({
     howtoData: {},
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         this.context.on('change:howtoData', function(ctx, howtoData) {
             this.howtoData = howtoData;
@@ -21,6 +24,9 @@
         }, this);
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         // manually render this template with just the howtoData
         this.$el.html(this.template(this.howtoData))

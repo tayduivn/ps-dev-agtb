@@ -16,13 +16,17 @@
         'click .resetLink': 'onResetLinkClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
     },
 
     /**
      * Handles when reset to defaults link has been clicked
-     * @param evt click event
+     *
+     * @param {jQuery.Event} evt click event
      */
     onResetLinkClicked: function(evt) {
         evt.preventDefault();
@@ -34,8 +38,11 @@
     },
 
     /**
-     * Overriding _renderField because we need to set up the multiselect fields to work properly
-     * @param field
+     * {@inheritdocs}
+     *
+     * Sets up the multiselect fields to work properly
+     *
+     * @param {View.Field} field
      * @private
      */
     _renderField: function(field) {
@@ -51,7 +58,8 @@
 
     /**
      * Sets up the save event and handler for the variables dropdown fields in the config settings.
-     * @param field the dropdown multi-select field
+     *
+     * @param {View.Field} field the dropdown multi-select field
      * @return {*}
      * @private
      */

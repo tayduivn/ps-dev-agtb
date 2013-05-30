@@ -31,6 +31,9 @@
         'click .accordion-toggle': 'onAccordionToggleClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
         var appLang = app.lang;
@@ -47,6 +50,9 @@
         this.wkstColumnsText = appLang.get('LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS', 'Forecasts');
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function () {
         app.view.Layout.prototype._render.call(this);
 
@@ -59,6 +65,13 @@
         this.selectPanel('forecastBy');
     },
 
+    /**
+     * Used to select a specific panel by name
+     * Correct names can be found in the specific view's hbt
+     * Specifically found in the id attribute of '.accordion-heading a'
+     *
+     * @param {String} pName
+     */
     selectPanel: function(pName) {
         this.selectedPanel = pName;
         // convert selectedPanel name to the way the div ids are
@@ -68,6 +81,11 @@
         this.onAccordionToggleClicked();
     },
 
+    /**
+     * Event handler for 'click .accordion-toggle' event
+     *
+     * @param {jQuery.Event|undefined} evt
+     */
     onAccordionToggleClicked: function(evt) {
         var helpId = (evt) ? $(evt.currentTarget).data('help-id') : this.selectedPanel,
             data = {};

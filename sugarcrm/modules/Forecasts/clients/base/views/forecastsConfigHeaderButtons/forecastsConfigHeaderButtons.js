@@ -17,6 +17,9 @@
         'click a[name="save_button"]': 'onButtonClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -112,7 +115,8 @@
 
     /**
      * Button click handler for cancel and save buttons
-     * @param evt jQuery.Event click
+     *
+     * @param {jQuery.Event} evt click
      */
     onButtonClicked: function(evt) {
         // since the next line is so long, passing it to a variable

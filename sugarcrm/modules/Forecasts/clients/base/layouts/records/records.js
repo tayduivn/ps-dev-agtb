@@ -27,6 +27,12 @@
      */
     initOptions: undefined,
 
+    /**
+     * Overrides the Layout.initialize function and does not call the parent so we can defer initialization
+     * until _onceInitSelectedUser is called
+     *
+     * @override
+     */
     initialize: function(options) {
         // the parent is not called here so we make sure that nothing else renders until after we init the
         // the forecast module
@@ -34,10 +40,17 @@
         this.syncInitData();
     },
 
-    // overwrite load data, we will call this later via the prototype
+    /**
+     * Overrides loadData to defer it running until we call it in _onceInitSelectedUser
+     *
+     * @override
+     */
     loadData: function() {
     },
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         // we need this here to track when the selectedTimeperiod changes and then also move it up to the context
         // so the recordlists can listen for it.
@@ -101,7 +114,8 @@
 
     /**
      * Get the Forecast Init Data from the server
-     * @param options
+     *
+     * @param {Object} options
      */
     syncInitData: function(options) {
         var callbacks,
@@ -132,8 +146,8 @@
     /**
      * Process the Forecast Data
      *
-     * @param data
-     * @param options
+     * @param {Object} data contains the data passed back from Forecasts/init endpoint
+     * @param {Object} options
      */
     initForecastsModule: function(data, options) {
         var ctx = this.initOptions.context;
@@ -155,11 +169,12 @@
     },
 
     /**
-     * Method that is ran when the selectedUser is set for the first time.  This actually kicks off
-     * the init of the record view by calling the prototype initialize for the layout component
+     * Event handler for change:selectedUser
+     * Triggered once when the user is set for the first time.  After setting user it calls
+     * the init of the records layout
      *
-     * @param model
-     * @param change
+     * @param {Backbone.Model} model the model from the change event
+     * @param {String} change the updated selectedUser value from the change event
      * @private
      */
     _onceInitSelectedUser: function(model, change) {
@@ -181,11 +196,11 @@
     },
 
     /**
-     * Custom sync method
+     * Custom sync method used by this.collection
      *
-     * @param method
-     * @param model
-     * @param options
+     * @param {String} method
+     * @param {Backbone.Model} model
+     * @param {Object} options
      */
     sync: function(method, model, options) {
         var callbacks,
@@ -228,9 +243,9 @@
      * Commit A Forecast
      *
      * @triggers forecasts:worksheet:committed
-     * @param user
-     * @param worksheet_type
-     * @param forecast_totals
+     * @param {Object} user
+     * @param {String} worksheet_type
+     * @param {Object} forecast_totals
      */
     commitForecast: function(user, worksheet_type, forecast_totals) {
         var forecast = new this.collection.model(),

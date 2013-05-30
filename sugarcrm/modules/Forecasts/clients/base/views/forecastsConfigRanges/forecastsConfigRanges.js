@@ -86,9 +86,9 @@
     },
 
     /**
-     * Initializes the view, and then initializes up the parameters for the field metadata holder parameters that get
-     * used to render the fields in the view, since they are not rendered in a standard way.
-     * @param options
+     * {@inheritdoc}
+     *
+     * @param {Object} options
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -120,8 +120,9 @@
     },
 
     /**
-     * Handles when reset to defaults link has been clicked
-     * @param evt click event
+     * Handles when reset to defaults link has been clicked for this view
+     *
+     * @param {jQuery.Event} evt click event
      */
     onResetLinkClicked: function(evt) {
         evt.preventDefault();
@@ -132,6 +133,9 @@
          */
     },
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         if(this.model) {
             this.model.on('change', function(model) {
@@ -141,8 +145,9 @@
     },
 
     /**
-     * Load the values for the title in case the model hasnt changed when config loads
-     * @param model
+     * Load the values for the title in case the model hasn't changed when config loads
+     *
+     * @param {Backbone.Model} model
      */
     updateTitleValues: function(model) {
         // on a fresh install with no demo data,
@@ -189,6 +194,9 @@
         this.$el.find('#rangesTitle').html(this.toggleTitleTpl(tplVars));
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts ranges setup should be disabled
@@ -206,8 +214,10 @@
     },
 
     /**
-     * Adds the selection event handler on the forecast ranges radio which sets on the model the value of the bucket selection, the
-     * correct dropdown list based on that selection, as well as opens up the element to show the range setting sliders
+     * Adds the selection event handler on the forecast ranges radio which sets the value of the bucket selection
+     * on the model, the correct dropdown list based on that selection, as well as opens up the element to
+     * show the range setting sliders
+     *
      * @private
      */
     _addForecastRangesSelectionHandler: function() {
@@ -228,13 +238,17 @@
         }, this);
     },
 
+    /**
+     * Handles when the radio buttons change
+     *
+     * @param {jQuery.Event} event
+     */
     selectionHandler: function(event) {
         var view = event.data.view,
             oldValue,
             bucket_dom,
             hideElement,
-            showElement,
-            ranges_options;
+            showElement;
 
         // get the value of the previous selection so that we can hide that element
         oldValue = view.selection;
@@ -267,10 +281,10 @@
     },
 
     /**
-     * selection handler for standard ranges (two and three ranges)
+     * Selection handler for standard ranges (two and three ranges)
      *
-     * @param element
-     * @param showElement
+     * @param {Object} element HTML element for the radio button that was clicked
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
      * @private
      */
     _selectionHandler: function(element, showElement) {
@@ -333,9 +347,10 @@
     },
 
     /**
-     * selection handler for custom ranges
-     * @param element
-     * @param showElement
+     * Selection handler for custom ranges
+     *
+     * @param {Object} element HTML element for the radio button that was clicked
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
      * @private
      */
     _customSelectionHandler: function(element, showElement) {
@@ -392,9 +407,10 @@
     },
 
     /**
-     * render layout for custom ranges, add placeholders for different types of ranges
-     * @param showElement
-     * @param category
+     * Render layout for custom ranges, add placeholders for different types of ranges
+     *
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
+     * @param {String} category type for the ranges 'show_binary' etc.
      * @private
      */
     _renderCustomRangesLayout : function(showElement, category)
@@ -417,11 +433,12 @@
     },
 
     /**
-     * create new custom range field and render it in showElement
-     * @param key
-     * @param label
-     * @param showElement
-     * @param category
+     * Creates a new custom range field and renders it in showElement
+     *
+     * @param {String} key
+     * @param {String} label
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
+     * @param {String} category type for the ranges 'show_binary' etc.
      * @private
      * @return View.field new created field
      */
@@ -528,9 +545,10 @@
     },
 
     /**
-     * return index of last custom range or 0
-     * @param category
-     * @param customType
+     * Returns the index of the last custom range or 0
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
+     * @param {String} customType
      * @return {Number}
      * @private
      */
@@ -552,10 +570,11 @@
     },
 
     /**
-     * return object of last created custom range
-     * if there isn't range return upside/include for custom type and exclude for custom_without_probability type
-     * @param category
-     * @param customType
+     * Returns the last created custom range object, if no range object, return upside/include
+     * for custom type and exclude for custom_without_probability type
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
+     * @param {String} customType
      * @return {*}
      * @private
      */
@@ -586,10 +605,11 @@
     },
 
     /**
-     * add new custom cange field and render it in specific placeholder
-     * @param event
+     * Adds a new custom range field and renders it in specific placeholder
+     *
+     * @param {jQuery.Event} event click
      */
-    addCustomRange : function(event) {
+    addCustomRange: function(event) {
         var view = this,
             category = $(event.handleObj.selector).data('category') || null,
             customType = $(event.handleObj.selector).data('type') || null,
@@ -678,8 +698,9 @@
     },
 
     /**
-     * remove custom range from model and view
-     * @param event
+     * Removes a custom range from the model and view
+     *
+     * @param {jQuery.Event} event click
      * @return void
      */
     removeCustomRange : function(event) {
@@ -762,8 +783,9 @@
     },
 
     /**
-     * change label for custom range in model
-     * @param event
+     * Change a label for a custom range in the model
+     *
+     * @param {jQuery.Event} event keyup
      */
     updateCustomRangeLabel : function(event) {
         var view = this,
@@ -783,8 +805,9 @@
     },
 
     /**
-     * validate labels for custom ranges, if it is invalid add error style for input
-     * @param category
+     * Validate labels for custom ranges, if it is invalid add error style for input
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
      */
     validateCustomRangeLabels: function(category) {
         _.each(this.model.get(category + '_options'), function(item, key) {
@@ -798,8 +821,9 @@
     },
 
     /**
-     * change in_included_total value for custom range in model
-     * @param event
+     * Change in_included_total value for custom range in model
+     *
+     * @param {Backbone.Event} event change
      */
     updateCustomRangeIncludeInTotal : function(event) {
         var view = this,
@@ -822,11 +846,12 @@
     },
 
     /**
-     * updates the setting in the model for the specific range types.
-     * This gets triggered when the range after the user changes a range slider
-     * @param category - the selected category: `show_buckets` or `show_binary`
-     * @param range - the range being set, i. e. `include`, `exclude` or `upside` for `show_buckets` category
-     * @param value - the value being set
+     * Updates the setting in the model for the specific range types.
+     * This gets triggered when the range slider after the user changes a range
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
+     * @param {String} range - the range being set, i. e. `include`, `exclude` or `upside` for `show_buckets` category
+     * @param {Number} value - the value being set
      */
     updateRangeSettings: function(category, range, value) {
         var catRange = category + '_ranges',
@@ -843,8 +868,9 @@
 
     /**
      * Graphically connects the sliders to the one below, so that they move in unison when changed, based on category.
-     * @param ranges - the forecasts category that was selected, i. e. 'show_binary' or 'show_buckets'
-     * @param sliders - an object containing the sliders that have been set up in the page.  This is created in the
+     *
+     * @param {String} ranges - the forecasts category that was selected, i. e. 'show_binary' or 'show_buckets'
+     * @param {Object} sliders - an object containing the sliders that have been set up in the page.  This is created in the
      * selection handler when the user selects a category type.
      */
     connectSliders: function(ranges, sliders) {
@@ -929,9 +955,10 @@
 
     /**
      * Provides a way for the last of the slider fields in the view, to set the value for the exclude range.
-     * @param value the range value of the slider
-     * @param ranges the selected config range
-     * @param slider the slider
+     *
+     * @param {Object} value the range value of the slider
+     * @param {String} ranges the selected config range
+     * @param {Object} slider the slider
      */
     setExcludeValueForLastSlider: function(value, ranges, slider) {
         var excludeRange = {

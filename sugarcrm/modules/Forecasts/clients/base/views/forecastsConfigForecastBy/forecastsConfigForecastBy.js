@@ -36,6 +36,9 @@
         'click .resetLink': 'onResetLinkClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -45,8 +48,9 @@
     },
 
     /**
-     * Handles when reset to defaults link has been clicked
-     * @param evt click event
+     * Handles when reset to defaults link has been clicked for this view
+     *
+     * @param {jQuery.Event} evt click event
      */
     onResetLinkClicked: function(evt) {
         evt.preventDefault();
@@ -57,6 +61,9 @@
          */
     },
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         if(this.model) {
             this.model.on('change:forecast_by', function() {
@@ -79,6 +86,9 @@
         this.$el.find('#forecastByTitle').html(this.toggleTitleTpl(tplVars));
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         app.view.View.prototype._render.call(this);
 

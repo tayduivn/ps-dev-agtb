@@ -31,6 +31,9 @@
         'click .resetLink': 'onResetLinkClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -44,7 +47,8 @@
 
     /**
      * Handles when reset to defaults link has been clicked
-     * @param evt click event
+     *
+     * @param {jQuery.Event} evt click event
      */
     onResetLinkClicked: function(evt) {
         evt.preventDefault();
@@ -73,6 +77,9 @@
         this.$el.find('#wkstColumnsTitle').html(this.toggleTitleTpl(tplVars));
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         app.view.View.prototype._render.call(this);
 

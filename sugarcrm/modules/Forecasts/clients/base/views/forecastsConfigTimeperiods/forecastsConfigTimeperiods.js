@@ -36,6 +36,9 @@
         'click .resetLink': 'onResetLinkClicked'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');
@@ -45,7 +48,8 @@
 
     /**
      * Handles when reset to defaults link has been clicked
-     * @param evt click event
+     *
+     * @param {jQuery.Event} evt click event
      */
     onResetLinkClicked: function(evt) {
         evt.preventDefault();
@@ -56,6 +60,9 @@
          */
     },
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         if(this.model) {
             this.model.on('change', function(model) {
@@ -91,8 +98,11 @@
     },
 
     /**
-     * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
-     * @param field
+     * {@inheritdocs}
+     *
+     * Sets up a binding to the start month dropdown to populate the day drop down on change
+     *
+     * @param {View.Field} field
      * @private
      */
     _renderField: function(field) {
@@ -111,6 +121,9 @@
 
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         app.view.View.prototype._render.call(this);
 
@@ -121,7 +134,8 @@
 
     /**
      * Sets up the fields with the handlers needed to properly get and set their values for the timeperiods config view.
-     * @param field the field to be setup for this config view.
+     *
+     * @param {View.Field} field the field to be setup for this config view.
      * @return {*} field that has been properly setup and augmented to function for this config view.
      * @private
      */
@@ -139,7 +153,8 @@
 
     /**
      * Sets up the timeperiod_shown_forward and timeperiod_shown_backward dropdowns to set the model and values properly
-     * @param field The field being set up.
+     *
+     * @param {View.Field} field The field being set up.
      * @return {*} The configured field.
      * @private
      */
@@ -161,8 +176,9 @@
     ,
     /**
      * Sets up the change event on the timeperiod_interval drop down to maintain the interval selection
-     * and push in the default selction for the leaf period
-     * @param field the dropdown interval field
+     * and push in the default selection for the leaf period
+     *
+     * @param {View.Field} field the dropdown interval field
      * @return {*}
      * @private
      */
@@ -190,7 +206,7 @@
             this.model.set(this.name, selected_interval);
             this.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
         }
-        return field;
 
+        return field;
     }
 })
