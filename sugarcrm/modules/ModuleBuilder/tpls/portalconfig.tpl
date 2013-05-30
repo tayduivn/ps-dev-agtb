@@ -66,14 +66,6 @@
         </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_DETAIL_NUMBER}:<span class="required">*</span>
-            </td>
-            <td colspan='1' nowrap>
-                <input class='portalProperty portalField' id='fieldsToDisplay' name='fieldsToDisplay' value='{$fieldsToDisplay}' size=4>
-            </td>
-        </tr>
-        <tr>
-            <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:
             </td>
             <td colspan='1' nowrap class="defaultUser">
@@ -120,7 +112,6 @@
         width: '50%'
     });
     addToValidateRange(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
-    addToValidateRange(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal},1,100);
     $('#gobutton').click(function(event){
         var $field, fields, props, i, key, val;
         fields = $('.portalField');
