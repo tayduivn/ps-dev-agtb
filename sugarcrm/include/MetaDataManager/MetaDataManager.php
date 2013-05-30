@@ -216,6 +216,7 @@ class MetaDataManager {
         $data['isBwcEnabled'] = in_array($moduleName, $GLOBALS['bwcModules']);
 
         $seed = BeanFactory::newBean($moduleName);
+        $data['globalSearchEnabled'] = $this->getGlobalSearchEnabled($seed, $vardefs, $this->platforms[0]);
 
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($seed)) {
@@ -227,6 +228,38 @@ class MetaDataManager {
         $data["_hash"] = md5(serialize($data));
 
         return $data;
+    }
+
+    /**
+     * Helper to determine if vardef for module has global search enabled or not.
+     * @param  array $seed the new bean created from module name passed to BeanFactory::newBean
+     * @param  array $vardefs The vardefs
+     * @param  string $platform The platform
+     * @return boolean indicating whether or not global search is enabled
+     */
+    public function getGlobalSearchEnabled($seed, $vardefs, $platform = null)
+    {
+        if (empty($platform)) {
+            $platform = $this->platforms[0];
+        }
+        // Is the argument set for this module
+        if (isset($vardefs['globalSearchEnabled'])) {
+            // Is it an array of platforms or a simple boolean
+            if (is_array($vardefs['globalSearchEnabled'])) {
+                // if the platform is set use that value; otherwise check if set in 'base'; lastly, fallback to true
+                if (isset($vardefs['globalSearchEnabled'][$platform])) {
+                    return $vardefs['globalSearchEnabled'][$platform];
+                } else {
+                    // Check if global search enabled set on the base platform. If so, and not set for platform at all, we've decided that we should fall back to base's value
+                    return isset($vardefs['globalSearchEnabled']['base']) ? $vardefs['globalSearchEnabled']['base'] : true;
+                }
+            } else {
+                // If a simple boolean we return that as it defines whether search enabled globally across all platforms
+                return $vardefs['globalSearchEnabled'];
+            }
+        }
+        // If globalSearchEnabled property not set, we check if valid bean (all "real" beans are, by default, global search enabled)
+        return !empty($seed);
     }
 
     /**
