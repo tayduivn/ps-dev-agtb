@@ -564,6 +564,14 @@ class ACLAction  extends SugarBean
     }
 
     /**
+     * @deprecated
+     */
+    public function clearSessionCache()
+    {
+        $this->clearACLCache();
+    }
+
+    /**
     * function clearSessionCache()
     * clears the session variable storing the cache information for acls
     *
@@ -602,5 +610,16 @@ class ACLAction  extends SugarBean
             self::$acls[$user_id] = self::loadFromCache($user_id, 'acls');
         }
         return !empty(self::$acls[$user_id][$module]);
+    }
+
+    /**
+     * Directly set ACL data. Useful mostly for unit tests.
+     * @param string $user_id
+     * @param string $module
+     * @param array $data
+     */
+    public static function setACLData($user_id, $module, $data)
+    {
+        self::$acls[$user_id][$module] = $data;
     }
 }

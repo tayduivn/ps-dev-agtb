@@ -38,9 +38,9 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 	 * @var TimeDate
 	 */
 	protected $time_date;
-	
+
 	protected $meeting_id = null;
-    
+
 	public static function setUpBeforeClass(){
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
@@ -57,6 +57,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$_REQUEST['year'] = '2012';
 		$_REQUEST['month'] = '01';
 		$_REQUEST['day'] = '02';
+		SugarTestHelper::setUp('ACLStatic');
 	}
 
 	public function tearDown(){
@@ -64,7 +65,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		unset($_REQUEST['year']);
 		unset($_REQUEST['month']);
 		unset($_REQUEST['day']);
-		
+
 		if(isset($this->meeting_id)){
 			$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
 			$GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting_id}'");
@@ -74,16 +75,16 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 	}
 
 	public function testCalendarDate(){
-		$cal = new Calendar('week');	
+		$cal = new Calendar('week');
 		$this->assertEquals('2012',$cal->date_time->year);
 	}
-	
+
 	public function testCalendarAddActivity(){
 		$cal = new Calendar('week');
 		$cal->add_activities($GLOBALS['current_user']);
-		$count1 = count($cal->acts_arr[$GLOBALS['current_user']->id]);		
+		$count1 = count($cal->acts_arr[$GLOBALS['current_user']->id]);
 		$cal->acts_arr = array();
-				
+
 		$this->meeting_id = uniqid();
 
         $db = $GLOBALS['db'];
@@ -97,13 +98,13 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
                                                 $db->quoted($this->meeting_id).", ".
                                                 $db->quoted($GLOBALS['current_user']->id).")");
 
-		$cal->add_activities($GLOBALS['current_user']);	
+		$cal->add_activities($GLOBALS['current_user']);
 		$count2 = count($cal->acts_arr[$GLOBALS['current_user']->id]);
-		
+
 		$this->assertEquals($count1 + 1, $count2, "Count of records should be one more after meeting added");
 	}
-	
-	public function testCalendarLoadActivities(){        
+
+	public function testCalendarLoadActivities(){
 		$cal = new Calendar('month');
 		$cal->add_activities($GLOBALS['current_user']);
 		$format = $GLOBALS['current_user']->getUserDateTimePreferences();
@@ -111,12 +112,12 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$meeting->meeting_id = uniqid();
 		$meeting->date_start = $this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['date'].' '.$format['time']);
 		$meeting->name = "test";
-		$cal->acts_arr = array();		
+		$cal->acts_arr = array();
 		$cal->acts_arr[$GLOBALS['current_user']->id] = array();
-		$cal->acts_arr[$GLOBALS['current_user']->id][] = new CalendarActivity($meeting);	
+		$cal->acts_arr[$GLOBALS['current_user']->id][] = new CalendarActivity($meeting);
 		$cal->load_activities();
-			
-		$this->assertEquals($cal->items[0]['time_start'],$this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['time']),"Time should remain the same after load_activities");		
+
+		$this->assertEquals($cal->items[0]['time_start'],$this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['time']),"Time should remain the same after load_activities");
 	}
 
 	public function testHandleOffset(){
@@ -131,8 +132,8 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$date1 = $this->time_date->handle_offset($gmt_default_date_start, $GLOBALS['timedate']->get_date_time_format());
 		$date2 = $this->time_date->asUser($this->time_date->getNow());
 		$this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
-	}	
-	
+	}
+
 
 
 }

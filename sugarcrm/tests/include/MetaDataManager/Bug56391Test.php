@@ -35,6 +35,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         $this->accounts = array();
         SugarACL::$acls = array();
+        SugarTestHelper::setUp('ACLStatic');
     }
 
     public function tearDown()
@@ -147,7 +148,6 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // set current user as an admin
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
-        unset($_SESSION['ACL']);
         $mm = new MetaDataManager($GLOBALS['current_user']);
         // because the user is not an admin the user should only have view and list access
 
@@ -188,11 +188,10 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'export'));
         SugarTestACLUtilities::setupUser($role);
-
+        SugarTestHelper::clearACLCache();
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach ($modules AS $module) {
-            unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             // not checking fields right now
@@ -232,6 +231,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', -99);
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
         foreach ($modules AS $module) {
@@ -263,6 +263,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             'access', 'view', 'list', 'edit', 'delete', 'export'), array('edit', 'delete'));
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Unit Test ' . create_guid();
@@ -305,6 +306,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             'access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
@@ -338,6 +340,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         $account = BeanFactory::newBean('Accounts');
         $account->new_with_id = true;
@@ -379,7 +382,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
             'access', 'view', 'list', 'edit', 'export', 'create'), array('edit','create'));
 
         SugarTestACLUtilities::setupUser($role);
-
+        SugarTestHelper::clearACLCache();
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
         $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
@@ -414,6 +417,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::createField($role->id, 'Acconts', 'name', ACL_READ_OWNER_WRITE);
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
 
@@ -450,6 +454,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'name', 60);
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         $mm = new MetaDataManager($GLOBALS['current_user']);
 

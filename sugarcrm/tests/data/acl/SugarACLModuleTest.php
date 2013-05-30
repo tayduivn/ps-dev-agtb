@@ -41,7 +41,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $this->getAclAction()->clearSessionCache();
+        $this->getAclAction()->clearACLCache();
         $GLOBALS['current_user']->clearAdminForAllModules();
     }
 
@@ -49,7 +49,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
     {
         static $aclAction;
         if ( !isset($aclAction) ) {
-            $aclAction = new ACLAction();
+            $aclAction = BeanFactory::getBean('ACLActions');
         }
         return $aclAction;
     }
@@ -119,10 +119,10 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             $this->assertFalse($canDelete,"Only admins should be able to delete.");
         }
-        
+
         // Second, is admin, not module admin specifically
         $GLOBALS['current_user']->is_admin = 1;
-        $this->getAclAction()->clearSessionCache();
+        $this->getAclAction()->clearACLCache();
         $canView = $testBean->ACLAccess('view');
         if ( $view == 'any' || $view == 'admin' ) {
             $this->assertTrue($canView,"I am a system admin and I should be able to view.");
@@ -147,7 +147,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         // Third, not system admin, but module admin
         $GLOBALS['current_user']->is_admin = 0;
         $GLOBALS['current_user']->setAdminForModule($acl_module);
-        $this->getAclAction()->clearSessionCache();
+        $this->getAclAction()->clearACLCache();
 
         $canView = $testBean->ACLAccess('view');
         if ( $view == 'any' || $view == 'admin' ) {
