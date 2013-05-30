@@ -155,30 +155,32 @@
     signup: function() {
         var self = this;
 
-        this.clearValidationErrors();
-        if (self.model.isValid()) {
-            app.$contentEl.hide();
-            app.alert.show('signup', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
+        self.clearValidationErrors();
+        self.model.doValidate(null, function(isValid) {
+            if (isValid) {
+                app.$contentEl.hide();
+                app.alert.show('signup', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SIGNUP_PROCESS'), autoClose: false});
 
-            var payload = self._prepareRequestPayload();
-            app.api.signup(payload, null,
-                {
-                    success: function() {
-                        // Flags to know when to render the success
-                        self._showSignupSuccess = true;
+                var payload = self._prepareRequestPayload();
+                app.api.signup(payload, null,
+                    {
+                        success: function() {
+                            // Flags to know when to render the success
+                            self._showSignupSuccess = true;
 
-                        // Replace buttons by a unique Back button
-                        self.options.meta.buttons = self._backButton;
-                        if (!self.disposed) {
-                            self.render();
+                            // Replace buttons by a unique Back button
+                            self.options.meta.buttons = self._backButton;
+                            if (!self.disposed) {
+                                self.render();
+                            }
+                        },
+                        complete: function() {
+                            app.alert.dismiss('signup');
+                            app.$contentEl.show();
                         }
-                    },
-                    complete: function() {
-                        app.alert.dismiss('signup');
-                        app.$contentEl.show();
-                    }
-                });
-        }
+                    });
+            }
+        }, self);
     },
 
     /**

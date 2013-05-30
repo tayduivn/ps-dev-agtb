@@ -246,12 +246,7 @@
 
     saveClicked: function () {
         this.clearValidationErrors();
-        var isValid = this.model.isValid(this.getFields(this.module));
-        if(_.isUndefined(isValid)){
-            this.model.once("validation:complete", this.validationComplete, this);
-        } else {
-            this.validationComplete(isValid);
-        }
+        this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
 
     cancelClicked: function () {

@@ -16,6 +16,7 @@ describe("ConvertLeadLayout", function() {
         SugarTest.addComponent('base', 'layout', 'dupecheck', createMockDupeView());
         SugarTest.addComponent('base', 'view', 'create', createMockRecordView());
         SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
 
 
         SugarTest.testMetadata.addViewDefinition('create', {
@@ -168,7 +169,7 @@ describe("ConvertLeadLayout", function() {
             ]
         };
         var layout = SugarTest.createLayout('base', 'Leads', 'convert-main', meta, null, true);
-        leadModel = new Backbone.Model();
+        leadModel = app.data.createBean('Leads');
         sinon.stub(leadModel, 'fetch', function(callbacks) {
             callbacks.success(leadModel);
         });
@@ -295,7 +296,6 @@ describe("ConvertLeadLayout", function() {
         });
 
         afterEach(function() {
-            mockValidationResult = true;
             delete layout;
         });
 
@@ -306,18 +306,45 @@ describe("ConvertLeadLayout", function() {
         });
 
         it("clicking on the account panel header with success validation on contact panel moves activate status to account panel", function() {
-            expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
-            $accountHeader.click();
-            expect($contactHeader.hasClass('active')).toBeFalsy(); //not active after
-            expect($accountHeader.hasClass('active')).toBeTruthy(); //active after
+            var flag, model, stub;
+            model = layout.getComponent('create').model;
+            stub = sinon.stub(model, 'doValidate', function(fields, callback) {
+                flag = true;
+                callback(true);
+            });
+            runs(function() {
+                expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
+                $accountHeader.click();
+            });
+            waitsFor(function() {
+                return flag;
+            }, 'doValidate should have been called but timeout expired', 1000);
+            runs(function() {
+                expect($contactHeader.hasClass('active')).toBeFalsy(); //not active after
+                expect($accountHeader.hasClass('active')).toBeTruthy(); //active after
+                stub.restore();
+            });
         });
 
         it("clicking on the account panel header with validation error on contact panel keeps active status on contact panel", function() {
-            mockValidationResult = false;
-            expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
-            $accountHeader.click();
-            expect($contactHeader.hasClass('active')).toBeTruthy(); //still active after
-            expect($accountHeader.hasClass('active')).toBeFalsy(); //not active after
+            var flag, model, stub;
+            model = layout.getComponent('create').model;
+            stub = sinon.stub(model, 'doValidate', function(fields, callback) {
+                flag = true;
+                callback(false);
+            });
+            runs(function() {
+                expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
+                $accountHeader.click();
+            });
+            waitsFor(function() {
+                return flag;
+            }, 'doValidate should have been called but timeout expired', 1000);
+            runs(function() {
+                expect($contactHeader.hasClass('active')).toBeTruthy(); //still active after
+                expect($accountHeader.hasClass('active')).toBeFalsy(); //not active after
+                stub.restore();
+            });
         });
 
         it("completing contact panel and account panel ready for validation activates opportunity panel", function() {
@@ -436,36 +463,87 @@ describe("ConvertLeadLayout", function() {
 
 
         it("clicking on finish after completing all panels bundles up models from each panel and calls the API", function() {
+            var model, stubs = [],
+                flags = [false,false,false];
             var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}';
+            runs(function() {
+                model = layout._components[4].model;
+                stubs[0] = sinon.stub(model, 'doValidate', function(fields, callback) {
+                    flags[0] = true;
+                    callback(true);
+                });
+                layout._components[1].$('.header').click(); //click Account to complete Contact
+                layout._components[1].$('.header').find('.show-record').click();
+            });
+            waitsFor(function() {
+                return flags[0];
+            }, 'doValidate should have been called but timeout expired', 1000);
+            runs(function() {
+                stubs[0].restore();
+                model = layout._components[6].model;
+                stubs[1] = sinon.stub(model, 'doValidate', function(fields, callback) {
+                    flags[1] = true;
+                    callback(true);
+                });
+                model = layout._components[8].model;
+                stubs[2] = sinon.stub(model, 'doValidate', function(fields, callback) {
+                    flags[2] = true;
+                    callback(true);
+                });
+                layout._components[2].$('.header').click(); //click Opportunity to complete Account
+                layout.initiateFinish(); //click finish to complete Opportunity
+            });
+            waitsFor(function() {
+                return flags[1] && flags[2];
+            }, 'doValidate should have been called but timeout expired', 1000);
+            runs(function() {
+                expect(apiCallStub.lastCall.args[0]).toEqual('create');
+                expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
 
-            layout._components[1].$('.header').click(); //click Account to complete Contact
-            layout._components[1].$('.header').find('.show-record').click();
-            layout._components[2].$('.header').click(); //click Opportunity to complete Account
-            layout.initiateFinish(); //click finish to complete Opportunity
+                actualConvertModel = apiCallStub.lastCall.args[2];
 
-
-            expect(apiCallStub.lastCall.args[0]).toEqual('create');
-            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
-
-            actualConvertModel = apiCallStub.lastCall.args[2];
-
-            expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-
+                expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
+                stubs[1].restore();
+                stubs[2].restore();
+            });
         });
 
         it("clicking on finish when optional panels have not been completed should not pass the optional model to API", function() {
+            var model, stubs = [],
+                flags = [false, false];
             var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"}}}';
+            runs(function() {
+                model = layout._components[4].model;
+                stubs[0] = sinon.stub(model, 'doValidate', function(fields, callback) {
+                    flags[0] = true;
+                    callback(true);
+                });
+                layout._components[1].$('.header').click(); //click Account to complete Contact
+                layout._components[1].$('.header').find('.show-record').click();
+            });
+            waitsFor(function() {
+                return flags[0];
+            }, 'doValidate should have been called but timeout expired', 1000);
+            runs(function() {
+                model = layout._components[6].model;
+                stubs[0].restore();
+                stubs[1] = sinon.stub(model, 'doValidate', function(fields, callback) {
+                    flags[1] = true;
+                    callback(true);
+                });
+                layout.initiateFinish(); //click finish to complete Opportunity
+            });
+            waitsFor(function() {
+                return flags[1];
+            }, 'doValidate should have been called but timeout expired', 1000);
+            runs(function() {
+                expect(apiCallStub.lastCall.args[0]).toEqual('create');
+                expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
 
-            layout._components[1].$('.header').click(); //click Account to complete Contact
-            layout._components[1].$('.header').find('.show-record').click();
-            layout.initiateFinish(); //click finish to complete Account
-
-            expect(apiCallStub.lastCall.args[0]).toEqual('create');
-            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
-
-            actualConvertModel = apiCallStub.lastCall.args[2];
-            expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-
+                actualConvertModel = apiCallStub.lastCall.args[2];
+                expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
+                stubs[1].restore();
+            });
         });
     });
 
@@ -586,18 +664,9 @@ describe("ConvertLeadLayout", function() {
         };
     };
 
-    var mockValidationResult = true;
     var createMockRecordView = function() {
         return {
-            'render': function() {
-                _.extend(this.model,
-                    {
-                        'isValid': function() {
-                            return mockValidationResult;
-                        }
-                    }
-                );
-            },
+            'render': function() {},
 
             clearValidationErrors: function() {}
         };

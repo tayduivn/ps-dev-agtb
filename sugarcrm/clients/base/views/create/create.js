@@ -198,15 +198,10 @@
      * Check to see if all fields are valid
      * @param callback
      */
-    validateModelWaterfall: function (callback) {
-        var isValid = this.model.isValid(this.getFields(this.module));
-        if (_.isUndefined(isValid)){
-            this.model.once("validation:complete", function(isValid){
-                callback(!isValid);
-            });
-        } else {
+    validateModelWaterfall: function(callback) {
+        this.model.doValidate(this.getFields(this.module), function(isValid) {
             callback(!isValid);
-        }
+        });
     },
 
     /**

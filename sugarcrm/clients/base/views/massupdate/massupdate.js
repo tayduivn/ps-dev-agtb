@@ -259,58 +259,60 @@
             attributes = this.getAttributes(),
             self = this;
 
-        var validate = this.checkValidationError();
+        this.once('massupdate:validation:complete', function(validate) {
+            var errors = validate.errors,
+                emptyValues = validate.emptyValues,
+                confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES');
 
-        var errors = validate.errors,
-            emptyValues = validate.emptyValues,
-            confirmMessage = app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_VALUES');
+            this.$(".fieldPlaceHolder .error").removeClass("error");
+            this.$(".fieldPlaceHolder .help-block").hide();
 
-        this.$(".fieldPlaceHolder .error").removeClass("error");
-        this.$(".fieldPlaceHolder .help-block").hide();
+            if(_.isEmpty(errors)) {
+                confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
+                if(massUpdate) {
+                    var fetchMassupdate = function() {
 
-        if(_.isEmpty(errors)) {
-            confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
-            if(massUpdate) {
-                var fetchMassupdate = function() {
-
-                    massUpdate.fetch({
-                        //Show alerts for this request
-                        showAlerts: true,
-                        attributes: attributes,
-                        error: function() {
-                            app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
-                        },
-                        success: function(data, response) {
-                            self.hide();
-                            if(response.status == 'done') {
-                                app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
-                                //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
-                                //TODO: Need trigger for fetching new record list
-                                self.layout.collection.fetch({
-                                    //Don't show alerts for this request
-                                    showAlerts: false,
-                                    // Boolean coercion.
-                                    relate: !!self.layout.collection.link
-                                });
-                            } else if(response.status == 'queued') {
-                                app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                        massUpdate.fetch({
+                            //Show alerts for this request
+                            showAlerts: true,
+                            attributes: attributes,
+                            error: function() {
+                                app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                            },
+                            success: function(data, response) {
+                                self.hide();
+                                if(response.status == 'done') {
+                                    app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
+                                    //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
+                                    //TODO: Need trigger for fetching new record list
+                                    self.layout.collection.fetch({
+                                        //Don't show alerts for this request
+                                        showAlerts: false,
+                                        // Boolean coercion.
+                                        relate: !!self.layout.collection.link
+                                    });
+                                } else if(response.status == 'queued') {
+                                    app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                                }
                             }
-                        }
-                    });
-                };
-                if(emptyValues.length == 0) {
-                    fetchMassupdate.call(this);
-                } else {
-                    app.alert.show('empty_confirmation', {
-                        level: 'confirmation',
-                        messages: confirmMessage,
-                        onConfirm: fetchMassupdate
-                    });
+                        });
+                    };
+                    if(emptyValues.length == 0) {
+                        fetchMassupdate.call(this);
+                    } else {
+                        app.alert.show('empty_confirmation', {
+                            level: 'confirmation',
+                            messages: confirmMessage,
+                            onConfirm: fetchMassupdate
+                        });
+                    }
                 }
+            } else {
+                this.handleValidationError(errors);
             }
-        } else {
-            this.handleValidationError(errors);
-        }
+        }, this);
+
+        this.checkValidationError();
     },
 
     /**
@@ -321,31 +323,49 @@
     },
 
     checkValidationError: function() {
-        var emptyValues = [],
+        var self = this,
+            emptyValues = [],
             errors = {},
             validator = {},
-            fields = _.initial(this.fieldValues).concat(this.defaultOption);
-        _.each(fields , function(field) {
-            if(field.name) {
+            fields = _.initial(this.fieldValues).concat(this.defaultOption),
+            i = 0;
+
+        var fieldsToValidate = _.filter(fields, function(f) {
+            return f.name;
+        });
+
+        if (_.size(fieldsToValidate)) {
+            _.each(fieldsToValidate, function(field) {
+                i++;
                 validator = {};
                 validator[field.name] = field;
                 field.required = (_.isBoolean(field.required) && field.required) || (field.required && field.required == 'true') || false;
-                errors = _.extend(this.model._doValidate(validator), errors);
+
                 var value = this.model.get(field.name);
-                if(!value) {
+                if (!value) {
                     emptyValues.push(app.lang.get(field.label, this.model.module));
                     this.model.set(field.name, '', {silent: true});
-                    if(field.id_name) {
+                    if (field.id_name) {
                         this.model.set(field.id_name, '', {silent: true});
                     }
                 }
-            }
-        }, this);
+                this.model._doValidate(validator, errors, function(didItFail, fields, errors, callback) {
+                    if (i === _.size(fieldsToValidate)) {
+                        self.trigger('massupdate:validation:complete', {
+                            errors: errors,
+                            emptyValues: emptyValues
+                        });
+                    }
+                });
+            }, this);
+        } else {
+            this.trigger('massupdate:validation:complete', {
+                errors: errors,
+                emptyValues: emptyValues
+            });
+        }
 
-        return {
-            errors: errors,
-            emptyValues: emptyValues
-        };
+        return;
     },
     handleValidationError: function(errors) {
         var self = this;
