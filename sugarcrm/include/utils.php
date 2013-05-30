@@ -144,7 +144,7 @@ function make_sugar_config(&$sugar_config)
     'import_max_records_total_limit' => '',
 	'languages' => empty($languages) ? array('en_us' => 'English (US)') : $languages,
 	'list_max_entries_per_page' => empty($list_max_entries_per_page) ? 20 : $list_max_entries_per_page,
-	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 10 : $list_max_entries_per_subpanel,
+	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 5 : $list_max_entries_per_subpanel,
 	'lock_default_user_name' => empty($lock_default_user_name) ? false : $lock_default_user_name,
 	'log_memory_usage' => empty($log_memory_usage) ? false : $log_memory_usage,
     'name_formats' => empty($nameFormats) ? array(
@@ -329,7 +329,7 @@ function get_sugar_config_defaults() {
 	'languages' => array('en_us' => 'English (US)'),
 	'large_scale_test' => false,
 	'list_max_entries_per_page' => 20,
-	'list_max_entries_per_subpanel' => 10,
+	'list_max_entries_per_subpanel' => 5,
 	//BEGIN SUGARCRM flav=pro ONLY
 	'wl_list_max_entries_per_page' => 10,
 	'wl_list_max_entries_per_subpanel' => 3,
