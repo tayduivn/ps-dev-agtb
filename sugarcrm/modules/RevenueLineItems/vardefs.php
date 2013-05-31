@@ -800,6 +800,13 @@ $dictionary['RevenueLineItem'] = array(
             'bean_name' => 'ProductType',
             'source' => 'non-db',
         ),
+        'products' =>  array(
+            'name' => 'products',
+            'type' => 'link',
+            'relationship' => 'products_revenuelineitems',
+            'vname' => 'LBL_PRODUCTS',
+            'source' => 'non-db',
+        ),
         'contact_link' =>  array(
             'name' => 'contact_link',
             'type' => 'link',
