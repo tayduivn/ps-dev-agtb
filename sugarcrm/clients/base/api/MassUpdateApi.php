@@ -63,11 +63,6 @@ class MassUpdateApi extends SugarApi {
     }
 
     /**
-     * The max number of mass update records will be processed synchronously.
-     */
-    const MAX_MASS_UPDATE = 100;
-
-    /**
      * @var bool to indicate whether this is a request to delete records
      */
     protected $delete = false;
@@ -141,30 +136,13 @@ class MassUpdateApi extends SugarApi {
         }
 
         // convert params to the format expected by downstream classes
-        $uidCount = isset($mu_params['uid']) ? count($mu_params['uid']) : 0;
         $this->convertParams($mu_params);
 
-        global $sugar_config;
-        $asyncThreshold = isset($sugar_config['max_mass_update']) ? $sugar_config['max_mass_update'] : self::MAX_MASS_UPDATE;
-        if (!empty($mu_params['entire']) || ($uidCount>$asyncThreshold))
-        {
-            // create a job queue consumer for this
-            $massUpdateJob = new SugarJobMassUpdate();
-            $this->jobId = $massUpdateJob->createJobQueueConsumer($mu_params);
+        // create a job queue consumer for this
+        $massUpdateJob = new SugarJobMassUpdate();
+        $this->jobId = $massUpdateJob->createJobQueueConsumer($mu_params);
 
-            return array('status'=>'queued', 'jobId'=>$this->jobId);
-        }
-
-        SugarJobMassUpdate::preProcess($mu_params);
-
-        require_once("include/MassUpdate.php");
-        $mass = new MassUpdate();
-        $mass->setSugarBean($bean);
-
-        // action
-        $mass->handleMassUpdate(false, true);
-
-        return array('status'=>'done');
+        return array('status'=>'queued', 'jobId'=>$this->jobId);
     }
 
     /**
