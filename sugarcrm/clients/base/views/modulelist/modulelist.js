@@ -23,7 +23,7 @@
             var currentFragment = Backbone.history.getFragment();
 
             if (("#" + currentFragment) === route) {
-                Backbone.history.loadUrl(currentFragment);
+                app.router.refresh();
             } else {
                 app.router.navigate(route, {trigger: true});
             }
