@@ -1,6 +1,6 @@
 (function(test) {
     var app = SUGAR.App;
-    test.loadComponent = function(client, type, name, module) {
+    test.loadComponent = function(client, type, name, module, platform) {
         var path = "/clients/" + client + "/" + type + "s/" + name;
         path = (module) ? "../modules/" + module + path : ".." + path;
 
@@ -10,12 +10,12 @@
             } catch(e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            test.addComponent(client, type, name, data, module);
+            test.addComponent(client, type, name, data, module, platform);
         });
     };
 
-    test.addComponent = function(client, type, name, data, module) {
-        app.view.declareComponent(type, name, module, data, true);
+    test.addComponent = function(client, type, name, data, module, platform) {
+        app.view.declareComponent(type, name, module, data, true, platform);
     };
 
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
@@ -59,13 +59,13 @@
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent) {
+    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent, platform) {
         if (_.isUndefined(loadComponent) || loadComponent)
         {
             if (loadFromModule) {
-                test.loadComponent(client, "view", viewName, module);
+                test.loadComponent(client, "view", viewName, module, platform);
             } else {
-                test.loadComponent(client, "view", viewName);
+                test.loadComponent(client, "view", viewName, null, platform);
             }
         }
         if (!context) {
@@ -81,7 +81,8 @@
             context : context,
             module : module,
             meta : meta,
-            layout: layout
+            layout: layout,
+            platform: platform
         });
     };
 

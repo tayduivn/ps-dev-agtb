@@ -28,8 +28,7 @@
     events: {
         'click #tour': 'systemTour',
         'click #print': 'print',
-        'click #top': 'top',
-        'click #languageList .dropdown-menu a' : 'setLanguage'
+        'click #top': 'top'
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
@@ -231,19 +230,5 @@
     },
     top: function() {
         scroll(0,0);
-    },
-    setLanguage: function(e) {
-        app.lang.hasChanged = true;
-        var $li = this.$(e.currentTarget),
-            langKey = $li.data("lang-key");
-        app.alert.show('language', {level: 'warning', title: app.lang.getAppString('LBL_LOADING_LANGUAGE'), autoclose: false});
-        app.lang.setLanguage(langKey, function() {
-            app.alert.dismiss('language');
-            if(!app.api.isAuthenticated()){
-                // Trigger sync:complete to force a rerender
-                app.events.trigger("app:sync:complete");
-            }
-        });
-
     }
 })
