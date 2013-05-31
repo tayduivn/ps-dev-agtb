@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,24 +21,44 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/SugarFields/Fields/Password/SugarFieldPassword.php');
 require_once('modules/Import/ImportFieldSanitize.php');
 
 class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	/**
-	 * @ticket 40304
-	 */
-	public function testImportSanitize()
-	{
-	    $fieldObj = new SugarFieldPassword('Password');
-	    
-	    $settings = new ImportFieldSanitize();
-	    
+    /**
+     * @ticket 40304
+     */
+    public function testImportSanitize()
+    {
+        $fieldObj = new SugarFieldPassword('Password');
+
+        $settings = new ImportFieldSanitize();
+
         $this->assertEquals(
             md5('test value'),
             $fieldObj->importSanitize('test value',array(),null,$settings)
             );
+    }
+
+    public function testApiFormatField()
+    {
+        $fieldObj = new SugarFieldPassword('Password');
+
+        $data = array(
+            'id' => 'awesome',
+            'user_hash' => 'this-is-my-password',
+            );
+
+        $bean = BeanFactory::getBean('Users');
+        $args = array();
+        $fieldName = 'user_hash';
+        $properties = array();
+
+        $fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties);
+
+        $this->assertEquals('', $data['user_hash']);
+        $this->assertEquals('awesome', $data['id']);
     }
 }
