@@ -1083,10 +1083,10 @@ class MysqlManager extends DBManager
    	{
    		$ctype = $this->getColumnType($type);
    		if($ctype == "datetime") {
-   			return $this->convert($this->quoted("0000-00-00 00:00:00"), "datetime");
+   			return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
    		}
    		if($ctype == "date") {
-   			return $this->convert($this->quoted("0000-00-00"), "date");
+   			return $this->convert($this->quoted("1970-01-01"), "date");
    		}
    		if($ctype == "time") {
    			return $this->convert($this->quoted("00:00:00"), "time");
@@ -1477,4 +1477,21 @@ class MysqlManager extends DBManager
       	return 'UUID()';
     }
 
+
+	/**
+	* Check if the value is empty value for this type
+	* @param mixed $val Value
+	* @param string $type Type (one of vardef types)
+	* @return bool true if the value if empty
+	*/
+	protected function _emptyValue($val, $type)
+	{
+		if($type == 'date' && $val == $this->quoted('0000-00-00')) {
+			return true;
+		} elseif($type == 'datetime' && $val == $this->quoted('0000-00-00 00:00:00')) {
+			return true;
+		}
+		
+		return parent::_emptyValue($val, $type);
+	}
 }

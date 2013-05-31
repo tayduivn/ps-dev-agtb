@@ -48,7 +48,7 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->markTestSkipped('Only applies to MySQL');
         }
 
-        $this->_db = new MysqlManager();
+        $this->_db = new MysqlManagerTestMock();
     }
 
     public function testQuote()
@@ -213,6 +213,47 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
              $result);
     }
 
+    public function providerEmptyValues()
+    {
+        $returnArray = array(
+            array(
+                array("'1970-01-01'", 'date'), true,
+                ),
+            array(
+                array("'1970-01-01 00:00:00'", 'datetime'), true,
+                ),
+            array(
+                array("'0000-00-00 00:00:00'", 'datetime'), true,
+                ),
+            array(
+                array("'0000-00-00'", 'date'), true,
+                ),
+            array(
+                array("'2013-01-01'", 'date'), false,
+                ),
+            array(
+                array("'2013-01-01 09:04:32'", 'datetime'), false,
+                ),
+            array(
+                array("'00:00:00'", 'time'), true,
+                ),
+            array(
+                array("'12:32:30'", 'time'), false,
+                ),
+            );
+
+        return $returnArray;
+    }
+
+
+    /**
+     * @ticket BR-238
+     * @dataProvider providerEmptyValues
+     */
+    public function testEmptyValues($parameters, $result)
+    {
+        $this->assertEquals($result, $this->_db->_emptyValue($parameters[0], $parameters[1]));
+    }
 
     /**
      * This is the data provider for testSupports
@@ -230,5 +271,12 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSupports($feature, $expectedSupport) {
         $this->assertEquals($expectedSupport, $this->_db->supports($feature));
+    }
+}
+
+class MysqlManagerTestMock extends MysqlManager
+{
+    public function _emptyValue($val, $type) {
+        return parent::_emptyValue($val, $type);
     }
 }
