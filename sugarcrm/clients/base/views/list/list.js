@@ -257,6 +257,20 @@
         self.orderBy.direction = orderMap[collection.orderBy.direction];
         self.orderBy.columnName = fieldName;
 
+        options = self.getSortOptions(collection);
+
+        // refetch the collection
+        self.context.resetLoadFlag(false);
+        self.context.set('skipFetch', false);
+        self.context.loadData(options);
+    },
+    /**
+     * Gets options for fetch call for list sorting
+     * @param collection
+     * @returns {Object}
+     */
+    getSortOptions: function(collection) {
+        var self = this, options = {};
         // Treat as a "sorted search" if the filter is toggled open
         options = self.filterOpened ? self.getSearchOptions() : {};
 
@@ -266,15 +280,19 @@
         // If injected context with a limit (dashboard) then fetch only that
         // amount. Also, add true will make it append to already loaded records.
         options.limit = self.limit || null;
-        options.success = function () {
+        options.success = function (collection, response, options) {
             self.layout.trigger("list:sort:fire", collection, self);
-            if(!self.disposed) self.render();
+            // reset the collection with what we fetched to trigger rerender
+            if(!self.disposed) collection.reset(response);
         };
 
-        // refetch the collection
-        self.context.resetLoadFlag(false);
-        self.context.set('skipFetch', false);
-        self.context.loadData(options);
+        // if we have a bunch of models already fetch at least that many
+        if (collection.offset) {
+            options.limit = collection.offset;
+            options.offset = 0;
+        }
+
+        return options;
     },
     getSearchOptions:function () {
         var collection, options, previousTerms, term = '';

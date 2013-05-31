@@ -50,7 +50,7 @@ describe("Base.View.List", function () {
                             {
                                 'name': 'test4',
                                 'align': 'invalid'
-                            },
+                            }
                         ]
                     },
                     {
@@ -91,7 +91,7 @@ describe("Base.View.List", function () {
                             {
                                 'name': 'test4',
                                 'align': ''
-                            },
+                            }
                         ]
                     },
                     {
@@ -112,5 +112,17 @@ describe("Base.View.List", function () {
                     }
                 ]);
         });
+    });
+    it('should set the limit correctly if sorting and offset is already set', function() {
+        var options1 = view.getSortOptions(view.collection);
+        var offset = 5;
+        expect(options1.offset).toBeUndefined();
+
+        view.collection.offset = offset;
+
+        var options2 = view.getSortOptions(view.collection);
+        expect(options2.limit).toEqual(offset);
+        expect(options2.offset).toEqual(0);
+
     });
 });
