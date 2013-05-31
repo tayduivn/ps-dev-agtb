@@ -231,7 +231,7 @@ $fieldsHidden = array(
 //END SUGARCRM flav=ent ONLY
 
 $viewdefs['Opportunities']['base']['view']['create-actions'] = array(
-    'type' => 'record',
+    'type'    => 'record',
     'buttons' => array(
         array(
             'name'      => 'cancel_button',
