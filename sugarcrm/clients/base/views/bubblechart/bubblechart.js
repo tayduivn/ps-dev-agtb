@@ -86,6 +86,8 @@
             this.updateChart();
         }, this);
         this.settings.on('change:filter_duration', this.changeFilter, this);
+
+        nv.utils.windowResize(this.chart.render);
     },
 
     /**
@@ -96,16 +98,19 @@
         if (this.meta.config) {
             return;
         }
-        var self = this;
         //clear existing chart
+        if (!_.isEmpty(this.chart)) {
+            nv.utils.windowUnResize(this.chart.render);
+        }
+
         d3.select('svg#' + this.cid).select('.nvd3').remove();
 
         d3.select('svg#' + this.cid)
-            .datum(self.dataset)
+            .datum(this.dataset)
             .transition().duration(500)
-            .call(self.chart);
+            .call(this.chart);
 
-        nv.utils.windowResize(self.chart.render);
+        nv.utils.windowResize(this.chart.render);
     },
 
     /**

@@ -9,22 +9,19 @@
     },
 
     bindDataChange: function(){
-        if(!this.meta.config) {
+        if (!this.meta.config) {
             this.model.on("change", this.loadData, this);
         }
     },
 
     _render: function () {
-        var self = this,
-            chart;
-
         app.view.View.prototype._render.call(this);
 
-        if (this.viewName === "config" || self.total === 0) {
+        if (this.viewName === "config" || this.total === 0) {
             return;
         }
 
-        chart = nv.models.pieChart()
+        this.chart = nv.models.pieChart()
             .x(function(d) { return d.key; })
             .y(function(d) { return d.value; })
             .margin({top:10, right:10, bottom:15, left:10})
@@ -40,41 +37,38 @@
             });
 
         d3.select('svg#' + this.cid)
-            .datum(self.chartData)
+            .datum(this.chartData)
             .transition().duration(500)
-            .call(chart);
+            .call(this.chart);
 
-        self.chart = chart;
-        nv.utils.windowResize(self.chart.update);
+        nv.utils.windowResize(this.chart.update);
     },
 
     /* Process data loaded from REST endpoint so that d3 chart can consume
      * and set general chart properties
      */
     evaluateResult: function (data) {
-        var self = this;
-
-        self.chartCollection = data;
-        self.closedCases = self.chartCollection.where({status:'Closed'});
-        self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Rejected'}));
-        self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Duplicate'}));
-        self.openCases = self.chartCollection.models.length - self.closedCases.length;
-        self.chartData = {
+        this.chartCollection = data;
+        this.closedCases = this.chartCollection.where({status:'Closed'});
+        this.closedCases = this.closedCases.concat(this.chartCollection.where({status:'Rejected'}));
+        this.closedCases = this.closedCases.concat(this.chartCollection.where({status:'Duplicate'}));
+        this.openCases = this.chartCollection.models.length - this.closedCases.length;
+        this.chartData = {
             'data': [
             ]
         };
-        self.chartData.data.push({
+        this.chartData.data.push({
             key: 'Closed Cases',
             class: 'nv-fill-green',
-            value: self.closedCases.length
+            value: this.closedCases.length
         });
-        self.chartData.data.push({
+        this.chartData.data.push({
             key: 'Open Cases',
             class: 'nv-fill-red',
-            value: self.openCases
+            value: this.openCases
         });
 
-        self.total = self.openCases + self.closedCases.length;
+        this.total = this.openCases + this.closedCases.length;
     },
 
     loadData: function (options) {
@@ -84,7 +78,7 @@
         if (oppID) {
             accountBean = app.data.createBean('Accounts', {id: oppID});
         }
-        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model,'cases');
+        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model, 'cases');
         relatedCollection.fetch({
             relate: true,
             success: function(resultCollection) {
@@ -101,8 +95,8 @@
         var self = this;
         this.favFields = [];
         //loop over chartCollection
-        _.each(self.tabData, function(tabGroup) {
-            if(tabGroup.models && tabGroup.models.length >0) {
+        _.each(this.tabData, function(tabGroup) {
+            if (tabGroup.models && tabGroup.models.length >0) {
                 _.each(tabGroup.models, function(model){
                     var field = app.view.createField({
                             def: {
