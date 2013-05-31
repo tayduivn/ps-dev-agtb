@@ -28,7 +28,7 @@
 *}
 
 <!DOCTYPE HTML>
-<html>
+<html class="no-js">
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
         <title>SugarCRM</title>
@@ -38,6 +38,7 @@
         <!--[if lt IE 10]>
         <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
         <![endif]-->
+        <script language="javascript" src="include/javascript/modernizr.js"></script>
     </head>
     <body>
         <div id="sugarcrm">
