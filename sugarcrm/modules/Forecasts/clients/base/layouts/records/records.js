@@ -37,7 +37,57 @@
         // the parent is not called here so we make sure that nothing else renders until after we init the
         // the forecast module
         this.initOptions = options;
-        this.syncInitData();
+
+        // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
+        if(!this.checkSalesWonLost()) {
+            // codeblock this sucka
+            this.codeBlockForecasts();
+        } else {
+            // correct config exists, continue with syncInitData
+            this.syncInitData();
+        }
+    },
+
+    /**
+     * Makes sure that Sales Stage Won/Lost values from the database Forecasts config settings
+     * exist in the sales_stage_dom
+     *
+     * @returns {boolean}
+     */
+    checkSalesWonLost: function() {
+        var cfg = app.metadata.getModule('Forecasts', 'config'),
+            salesWonVals = cfg.sales_stage_won,
+            salesLostVals = cfg.sales_stage_lost,
+            salesWonLostVals = cfg.sales_stage_won.concat(cfg.sales_stage_lost),
+            domVals = app.lang.getAppListStrings('sales_stage_dom'),
+            forecastsOK = true;
+
+        if(salesWonVals.length == 0 || salesLostVals.length == 0 || _.isEmpty(domVals)) {
+            forecastsOK = false;
+        } else {
+            forecastsOK = _.every(salesWonLostVals, function(val) {
+                return (val != '' && _.has(domVals, val));
+            }, this);
+        }
+
+        return forecastsOK;
+    },
+
+    /**
+     * Blocks forecasts from continuing to load
+     */
+    codeBlockForecasts: function() {
+        var alert = app.alert.show('error_missing_stages', {
+            level: 'error',
+            autoClose: false,
+            title: app.lang.get('LBL_FORECASTS_MISSING_STAGE_TITLE', "Forecasts") + ":",
+            messages: [app.lang.get('LBL_FORECASTS_MISSING_SALES_STAGE_VALUES', "Forecasts")]
+        });
+
+        alert.getCloseSelector().on('click', function() {
+            alert.getCloseSelector().off();
+            app.router.navigate('#Home', {trigger: true});
+        });
     },
 
     /**
