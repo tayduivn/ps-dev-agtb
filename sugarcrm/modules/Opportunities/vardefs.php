@@ -473,7 +473,7 @@ $dictionary['Opportunity'] = array(
             'name' => 'revenuelineitems',
             'type' => 'link',
             'vname' => 'LBL_PRODUCTS',
-            'relationship' => 'opportunities_revenuelineitems',
+            'relationship' => 'revenuelineitems_opportunities',
             'source' => 'non-db',
         ),
 //END SUGARCRM flav=pro ONLY
@@ -618,7 +618,7 @@ $dictionary['Opportunity'] = array(
         'opportunities_revenuelineitems' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
-            'lhs_key' => 'id',
+            'lhs_key' => 'id',  
             'rhs_module' => 'RevenueLineItems',
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
