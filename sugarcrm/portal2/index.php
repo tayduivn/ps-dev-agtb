@@ -68,13 +68,10 @@ ensureCache($minifyUtils, $rootDir);
     <body>
         <div id="sidecar">
             <div id="portal">
-                <div id="alert" class="alert-top">
-
+                <div id="alerts" class="alert-top">
                 </div>
                 <div id="header">
-
                 </div>
-
                 <div id="content">
                     <div class="alert-top">
                         <div class="alert alert-process">
