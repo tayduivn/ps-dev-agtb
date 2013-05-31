@@ -282,7 +282,11 @@ for($i = 0; $i < $number_companies; $i++) {
 	$call->duration_hours='0';
 	$call->duration_minutes='30';
 	$call->account_id =$account->id;
-	$call->status='Planned';
+    if (key($app_list_strings['call_status_dom']) === null) {
+        reset($app_list_strings['call_status_dom']);
+    }
+    $call->status = current($app_list_strings['call_status_dom']);
+    next($app_list_strings['call_status_dom']);
 //BEGIN SUGARCRM flav=pro ONLY
 	$call->team_id = $account->team_id;
 	$call->team_set_id = $account->team_set_id;
@@ -435,7 +439,11 @@ for($i=0; $i<1000; $i++)
 	$email->from_addr = $assignedUser->emailAddress->getPrimaryAddress($assignedUser);
 	$email->from_addr_name = $email->from_addr;
 	$email->to_addrs_names = $email->to_addrs;
-	$email->type = 'out';
+    if (key($sugar_demodata['email_seed_data_types']) === null) {
+        reset($sugar_demodata['email_seed_data_types']);
+    }
+    $email->type = current($sugar_demodata['email_seed_data_types']);
+    next($sugar_demodata['email_seed_data_types']);
 	$email->save();
 	$email->load_relationship('contacts');
 	$email->contacts->add($contact);
