@@ -83,6 +83,7 @@ $fields = array(
     'date_closed',
     'commit_stage',
     'product_template_name',
+    'category_name',
     'quantity',
     array(
         'name' => 'likely_case',
@@ -120,7 +121,6 @@ $fields = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
-    'sales_status',
     'assigned_user_name'
 );
 //END SUGARCRM flav=ent ONLY
