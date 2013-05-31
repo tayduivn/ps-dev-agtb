@@ -15,9 +15,9 @@
 }}
 
 <div class="accordion-heading">
-    <a id='timeperiodTitle' class="accordion-toggle" data-help-id="timeperiods" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#collapseTimeperiods"></a>
+    <a id='forecastsConfigTimeperiodsTitle' class="accordion-toggle" data-help-id="forecastsConfigTimeperiods" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigTimeperiodsCollapse"></a>
 </div>
-<div id="collapseTimeperiods" class="accordion-body collapse">
+<div id="forecastsConfigTimeperiodsCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
         {{#each meta.panels}}
             <p>{{str "LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC" "Forecasts"}}</p>

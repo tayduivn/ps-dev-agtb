@@ -15,9 +15,9 @@
 }}
 
 <div class="accordion-heading">
-    <a id='scenariosTitle' class="accordion-toggle" data-help-id="scenarios" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#collapseScenarios"></a>
+    <a id='forecastsConfigScenariosTitle' class="accordion-toggle" data-help-id="forecastsConfigScenarios" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigScenariosCollapse"></a>
 </div>
-<div id="collapseScenarios" class="accordion-body collapse">
+<div id="forecastsConfigScenariosCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
         <p>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS" "Forecasts"}}</p>
         <p><em>{{str "LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO" "Forecasts"}}</em></p>

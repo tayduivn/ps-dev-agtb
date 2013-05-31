@@ -17,9 +17,12 @@ $viewdefs['Forecasts']['base']['layout']['config-main'] = array(
     'type' => 'config-main',
     'name' => 'config-main',
     'components' => array(
+        // todo-sfa - forecastBy will be revisited in a future release
+        // BEGIN SUGARCRM flav=int ONLY
         array(
             'view' => 'forecastsConfigForecastBy',
         ),
+        // END SUGARCRM flav=int ONLY
         array(
             'view' => 'forecastsConfigTimeperiods',
         ),

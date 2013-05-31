@@ -153,7 +153,7 @@
             viewName: 'forecastsConfigScenarios'
         };
 
-        this.$el.find('#scenariosTitle').html(this.toggleTitleTpl(tplVars));
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
     },
 
     /**

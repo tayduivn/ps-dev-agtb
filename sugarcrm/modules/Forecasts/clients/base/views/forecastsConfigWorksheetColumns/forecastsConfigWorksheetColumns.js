@@ -74,7 +74,7 @@
             viewName: 'forecastsConfigWorksheetColumns'
         };
 
-        this.$el.find('#wkstColumnsTitle').html(this.toggleTitleTpl(tplVars));
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
     },
 
     /**

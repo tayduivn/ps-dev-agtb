@@ -338,7 +338,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
-    // New Admin UI
+    // Admin UI
     'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS' => 'Forecast Settings',
     'LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS' => 'Time Period',
     'LBL_FORECASTS_CONFIG_TITLE_RANGES' => 'Forecast Ranges',
@@ -350,10 +350,10 @@ $mod_strings = array (
 
     'LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS' => 'Fiscal year start date:',
 
-    'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Configure the time period that will be used in the Forecasts module. You need to choose the start date of your fiscal year and the time period that you want to forecast over. Then the date range for the time periods will be automatically calculated based on your selections.<br><br>The Sub-Period is the base for the Forecast worksheet. Both time period and sub-period may be used for Reports.<br><br>The number of time periods will determine the number of visible sub-periods in the Forecasts module. The sales representative and manager are able to view and edit the forecasting numbers in visible sub-periods.',
-    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to categorize the opportunities. You can choose the number of categories and determine the ranges of the probabilities for the categories. The opportunities with certain probabilities will default be default to the corresponding category by default, but the user can modify them later. Only the opportunities in the "Included" category will be reported to managers',
-    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to fill out for their forecasts of each opportunity. Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
-    'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'I am a placeholder for Worksheet Columns how-to text!',
+    'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Conﬁgure the time period that will be used in the Forecasts module.<br><br>Start by choosing the Start Date of your ﬁscal year. Then choose the type of  time period that you want to forecast over. The date range for the time periods will be automatically calculated based on your selections. The Sub Time Period is the base for the Forecast worksheet.<br><br>The viewable future and past time periods will determine the number of visible sub-periods in the Forecasts module. The users are able to view and edit the forecasting numbers in the visible  sub-periods.',
+    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to tag the opportunities (for example which opportunities should be included or excluded from the forecasting numbers). You can choose the number of categories and determine the ranges of the probabilities for the categories. The opportunities with certain probabilities will default  to the corresponding category. After the initial tag, the user can manually modify the value. Only the opportunities in the "Included" category will be reported to managers as committed.',
+    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to ﬁll out for their forecasts of each opportunity. Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'Select which columns you would like to view in the Forecast module. The list of fields will combine the worksheet and allow the user to choose how to configure its view.',
     'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY' => 'I am a placeholder for Forecast By how-to text!',
 
     // timeperiod config

@@ -15,9 +15,9 @@
 }}
 
 <div class="accordion-heading">
-    <a id='rangesTitle' class="accordion-toggle" data-help-id="ranges" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#collapseRanges"></a>
+    <a id='forecastsConfigRangesTitle' class="accordion-toggle" data-help-id="forecastsConfigRanges" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigRangesCollapse"></a>
 </div>
-<div id="collapseRanges" class="accordion-body collapse">
+<div id="forecastsConfigRangesCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
         <!--TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).-->
         <p><em>{{str "LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE" "Forecasts"}}</em></p>

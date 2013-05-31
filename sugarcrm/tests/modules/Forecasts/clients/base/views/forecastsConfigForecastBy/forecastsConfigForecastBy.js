@@ -1,3 +1,5 @@
+// todo-sfa - this will be revisited in a future release
+// BEGIN SUGARCRM flav=int ONLY
 /*********************************************************************************
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -82,3 +84,4 @@ describe("forecasts_view_forecastsConfigForecastBy", function() {
         });
     });
 });
+// END SUGARCRM flav=int ONLY

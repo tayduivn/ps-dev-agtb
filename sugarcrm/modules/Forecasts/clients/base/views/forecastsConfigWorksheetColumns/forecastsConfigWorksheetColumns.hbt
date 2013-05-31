@@ -15,9 +15,9 @@
 }}
 
 <div class="accordion-heading">
-    <a id='wkstColumnsTitle' class="accordion-toggle" data-help-id="wkstColumns" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#collapseWkstColumns"></a>
+    <a id='forecastsConfigWorksheetColumnsTitle' class="accordion-toggle" data-help-id="forecastsConfigWorksheetColumns" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigWorksheetColumnsCollapse"></a>
 </div>
-<div id="collapseWkstColumns" class="accordion-body collapse">
+<div id="forecastsConfigWorksheetColumnsCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
         Worksheet Columns stuff!
         {{! WORKSHEET LAYOUT STUFF GOES HERE }}

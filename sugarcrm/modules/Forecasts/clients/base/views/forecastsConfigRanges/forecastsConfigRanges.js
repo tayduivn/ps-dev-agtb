@@ -191,7 +191,7 @@
             viewName: 'forecastsConfigRanges'
         };
 
-        this.$el.find('#rangesTitle').html(this.toggleTitleTpl(tplVars));
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
     },
 
     /**

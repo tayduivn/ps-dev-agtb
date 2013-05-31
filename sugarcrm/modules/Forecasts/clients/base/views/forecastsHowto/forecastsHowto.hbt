@@ -16,5 +16,5 @@
 
 <div class="howto">
     <h3 id="howtoTitle">{{title}}</h3>
-    <p id="howtoText">{{text}}</p>
+    <p id="howtoText">{{{text}}}</p>
 </div>

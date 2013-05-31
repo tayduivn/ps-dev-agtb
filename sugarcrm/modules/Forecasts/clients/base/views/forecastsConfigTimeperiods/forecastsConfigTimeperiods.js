@@ -94,7 +94,7 @@
             viewName: 'forecastsConfigTimeperiods'
         };
 
-        this.$el.find('#timeperiodTitle').html(this.toggleTitleTpl(tplVars));
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
     },
 
     /**

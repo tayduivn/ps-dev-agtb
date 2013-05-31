@@ -83,7 +83,7 @@
             viewName: 'forecastsConfigForecastBy'
         };
 
-        this.$el.find('#forecastByTitle').html(this.toggleTitleTpl(tplVars));
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
     },
 
     /**

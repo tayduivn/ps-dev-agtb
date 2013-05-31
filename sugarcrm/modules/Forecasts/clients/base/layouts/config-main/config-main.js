@@ -62,56 +62,43 @@
 
         //apply the accordion to this layout
         this.$('.collapse').collapse({toggle:false, parent:'#' + this.collapseDivId});
-        this.selectPanel('forecastBy');
+        // select the first panel in metadata
+        this.selectPanel(_.first(this.meta.components).view);
     },
 
-    /**
-     * Used to select a specific panel by name
-     * Correct names can be found in the specific view's hbt
-     * Specifically found in the id attribute of '.accordion-heading a'
-     *
-     * @param {String} pName
-     */
     selectPanel: function(pName) {
         this.selectedPanel = pName;
-        // convert selectedPanel name to the way the div ids are
-        var panelName = pName.slice(0,1).toUpperCase() + pName.slice(1, pName.length);
-        this.$el.find('#collapse' + panelName).collapse('show');
+        this.$el.find('#' + panelName + 'Collapse').collapse('show');
         // manually trigger the accordion to toggle but dont pass event so it uses the selectedPanel name
         this.onAccordionToggleClicked();
     },
 
-    /**
-     * Event handler for 'click .accordion-toggle' event
-     *
-     * @param {jQuery.Event|undefined} evt
-     */
     onAccordionToggleClicked: function(evt) {
         var helpId = (evt) ? $(evt.currentTarget).data('help-id') : this.selectedPanel,
             data = {};
 
         switch(helpId) {
-            case 'timeperiods':
+            case 'forecastsConfigTimeperiods':
                 data.title = this.timeperiodsTitle;
                 data.text = this.timeperiodsText;
                 break;
 
-            case 'scenarios':
+            case 'forecastsConfigScenarios':
                 data.title = this.scenariosTitle;
                 data.text = this.scenariosText;
                 break;
 
-            case 'ranges':
+            case 'forecastsConfigRanges':
                 data.title = this.rangesTitle;
                 data.text = this.rangesText;
                 break;
 
-            case 'forecastBy':
+            case 'forecastsConfigForecastBy':
                 data.title = this.forecastByTitle;
                 data.text = this.forecastByText;
                 break;
 
-            case 'wkstColumns':
+            case 'forecastsConfigWorksheetColumns':
                 data.title = this.wkstColumnsTitle;
                 data.text = this.wkstColumnsText;
                 break;

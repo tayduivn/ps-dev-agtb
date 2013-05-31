@@ -15,9 +15,9 @@
 }}
 
 <div class="accordion-heading">
-    <a id='forecastByTitle' class="accordion-toggle" data-help-id="forecastBy" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#collapseForecastBy"></a>
+    <a id='forecastsConfigForecastByTitle' class="accordion-toggle" data-help-id="forecastsConfigForecastBy" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigForecastByCollapse"></a>
 </div>
-<div id="collapseForecastBy" class="accordion-body collapse">
+<div id="forecastsConfigForecastByCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
         {{#each meta.panels}}
             {{#each fields}}
