@@ -146,7 +146,7 @@
             // getting the fresh model with correct config settings passed in as the param
             success: _.bind(function(model) {
                 // If we're inside a drawer and Forecasts is setup
-                if(this.context.get('inDrawer')) {
+                if(this.context && this.context.get('inDrawer')) {
                     // build an object based on the metadata structure
                     var updatedMetadata = {
                         modules: {
