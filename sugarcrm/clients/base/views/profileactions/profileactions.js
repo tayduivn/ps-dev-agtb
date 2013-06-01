@@ -24,10 +24,8 @@
         this.showAdmin = app.acl.hasAccess('admin', 'Administration');
         app.view.View.prototype._renderHtml.call(this);
     },
-
     setCurrentUserData: function() {
         this.fullName = app.user.get("full_name");
-        this.extAccts = app.acl.hasAccess("read", "EAPM") ? app.lang.getAppListStrings("moduleList")["EAPM"] : "";
         this.userName = app.user.get("user_name");
 
         var picture = app.user.get("picture");
