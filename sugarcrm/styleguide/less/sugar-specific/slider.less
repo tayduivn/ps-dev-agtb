@@ -4,15 +4,12 @@
     width: 46px;
 
 }
-
 .noUiSlider {
     #gradient > .vertical(@grayLight,@gray);
     border-color:@gray;
     width: 300px;
     border-width: 1px 0px 1px 0px;
-
     .ticks {
-        position: absolute;
         width: 0px;
         border-left: 1px solid #ccc;
         position: absolute;
@@ -71,10 +68,7 @@
 
     color:#fff;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+    .user-select(none);
 }
 
 .noUi-handle > div:before{
@@ -92,9 +86,6 @@
     .border-radius(0px 9px);
     border: 1px solid #aaaaaa;
     .box-shadow(0 0 1px rgba(0,0,0,0.3)inset);
-
-
-
 /*-webkit-mask-image :
     -webkit-gradient(linear, left top, right bottom,
         from(#000000),
@@ -104,7 +95,6 @@
 */
 }
 .noUi-handle > div:after {
-
     font-family : HelveticaNeue,Helvetica, Arial;
     font-weight: 400;
     font-size : 12px;
