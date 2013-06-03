@@ -85,6 +85,13 @@ $ cd Mango
 $ git remote add upstream git://github.com/sugarcrm/Mango.git
 ```
 
+* Grab the sidecar and styleguide submodules.
+
+```bash
+$ git submodule init
+$ git submodule update
+```
+
 See [GitHub using pull requests][GitHub using pull requests] for more information.
 
 #### Check that the current Tests pass
