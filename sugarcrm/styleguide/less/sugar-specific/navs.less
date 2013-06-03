@@ -2,7 +2,7 @@
 //full width tabs in interactions block
 .tabs-full {
   .nav-tabs {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     border: none;
     > li {
       margin: 0;
@@ -12,7 +12,7 @@
         background-color: @tableBackgroundAccent;
         border: 1px solid darken(@tableBackgroundAccent,5%);
         font-size: 11px;
-        margin:0;
+        margin: 0;
         .border-radius(0);
         &:hover {
           background: @dropdownLinkBackgroundHover;
@@ -141,7 +141,7 @@
 }
 //twitter bootstrap override
 .tabs-right > .nav-tabs > li > a {
-  min-width: none;
+  min-width: 0;
 }
 .tabs-right > .nav-tabs > li > a:hover {
   border-color: @grayLight @grayLight @grayLight @grayLight;

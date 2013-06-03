@@ -7,7 +7,7 @@
 
 .select2-container {
   .select2-single-with-drop div b {
-    background-position: 0px 0px;
+    background-position: 0 0;
     background: none;
   }
   &.select2-dropdown-open {
@@ -51,7 +51,7 @@
       border-color: rgba(82, 168, 236, 0.8);
       outline: 0;
       outline: thin dotted 9;
-      .box-shadow(~"0 0px 4px 2px rgba(0, 0, 0, .075), 0 0px 8px 3px rgba(82, 168, 236, .6)");
+      .box-shadow(~"0 0 4px 2px rgba(0, 0, 0, .075), 0 0 8px 3px rgba(82, 168, 236, .6)");
       .border-radius(11px);
       background-color: rgba(82, 168, 236, 0.4);
     }
@@ -135,6 +135,13 @@
       }
     }
   }
+  &.select2-container-multi.select2-choices-pills-close.search-filter .select2-search-choice {
+    margin: 2px 0 4px 4px;
+    div {
+      background: none;
+      padding: 2px 0 2px 0;
+    }
+  }
   .select2-select-legend {
     .icon-plus {
       margin-top: 3px;
@@ -157,7 +164,7 @@
       .border-radius(0);
       top: 0;
       b {
-        background-position: 0px 0px;
+        background-position: 0 0;
       }
     }
     span {

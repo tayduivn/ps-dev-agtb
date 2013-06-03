@@ -21,7 +21,7 @@
     #gradient > .vertical(lighten(@navbarBackground, 20%), lighten(@navbarBackgroundHighlight, 20%));
     border: 1px solid #111;
     .border-radius(2px);
-    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0px rgba(255,255,255,.15)");
+    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15)");
 
     // Placeholder text gets special styles; can't be bundled together though for some reason
     .placeholder(@grayDarker);
@@ -43,7 +43,7 @@
     box-shadow: none;
   }
   .search-query {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     min-height: 1px;
     padding: 4px 9px;
     .border-radius(2px);
@@ -210,7 +210,7 @@
       right: 31px;
       top: 1px;
       height: 24px;
-      .border-radii(0px,0px,3px,3px);
+      .border-radii(0,0,3px,3px);
       &:hover {
         border-color: transparent;
       }
@@ -305,7 +305,7 @@
           border-right-color: darken(@white, 75%);
           border-left-color: lighten(@black, 20%);
           div.btn-group:not(.open) {
-            //.box-shadow(~"inset 0px -10px 15px rgba(255,255,255,.3)");
+            //.box-shadow(~"inset 0 -10px 15px rgba(255,255,255,.3)");
             background-color: rgba(0,0,0,0.21);
             #gradient > .vertical(@black, lighten(@black,26%));
             border-left-color: lighten(@black,15%);
@@ -445,9 +445,9 @@
 
     .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link {
       padding-bottom: 6px;
-      .border-radius(0px) !important;
-      border-left:0;
-      border-right:0;
+      .border-radius(~"0 !important");
+      border-left: 0;
+      border-right: 0;
       padding-left: 8px;
       outline: none !important;
     }
