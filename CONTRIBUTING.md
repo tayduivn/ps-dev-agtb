@@ -100,6 +100,10 @@ Now that SugarCRM is installed, check that all unit tests pass on your environme
 * Make sure you have added the necessary tests for your changes.
 * Run _all_ the tests to assure nothing else was accidentally broken.
 
+#### Build the codebase
+
+See https://github.com/sugarcrm/Mango/wiki/SugarCRM-Build-System for more details
+
 ### Step 2: Work on your Patch
 
 #### Choose the right Branch
