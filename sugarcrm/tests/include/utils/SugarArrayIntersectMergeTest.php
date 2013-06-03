@@ -100,19 +100,48 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDaysOfTheWeek()
     {
-        $foo = array(
+        $gimp = array(
             'days_of_the_week' => array('mon','tues','weds','thurs','fri','sat','sun'),
         );
-        $bar = array(
-            'days_of_the_week' => array('1','2','3','4','5','6','7'),
+        $dom = array(
+            'days_of_the_week' => array('1','2','3','4'),
         );
         
         $expected = array(
-            'days_of_the_week' => array('mon','tues','weds','thurs','fri','sat','sun'),
+            'days_of_the_week' => array('1','2','3','4','fri','sat','sun'),
         );
-        $this->assertEquals(sugarArrayIntersectMerge($foo, $bar), $expected);
+        $this->assertEquals(sugarArrayIntersectMerge($gimp, $dom), $expected);
         // insure that internal functions can't duplicate behavior
-        $this->assertNotEquals(array_merge($foo, $bar), $expected);
-        $this->assertNotEquals(array_merge_recursive($foo, $bar), $expected);
+        $this->assertNotEquals(array_merge($gimp, $dom), $expected);
+        $this->assertNotEquals(array_merge_recursive($gimp, $dom), $expected);
     }    
+
+    public function testDuration()
+    {
+        $gimp = array(
+            'duration' => array(
+                '86400' => '1 day',
+                '172800' => '2 days',
+                '259200' => '3 days',
+            ),
+        );
+        $dom = array(
+            'duration' => array(
+                '86400' => '1 day translated',
+                '259200' => '3 days translated',
+                '123456' => '25 years translated',
+            ),
+        );
+        $expected = array(
+            'duration' => array(
+                '86400' => '1 day translated',
+                '172800' => '2 days',
+                '259200' => '3 days translated',
+            ),
+        );
+        $this->assertEquals(sugarArrayIntersectMerge($gimp, $dom), $expected);
+        // insure that internal functions can't duplicate behavior
+        $this->assertNotEquals(array_merge($gimp, $dom), $expected);
+        $this->assertNotEquals(array_merge_recursive($gimp, $dom), $expected);
+    }
 }
