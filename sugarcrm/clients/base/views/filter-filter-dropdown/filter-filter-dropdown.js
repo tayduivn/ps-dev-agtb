@@ -1,10 +1,21 @@
 ({
+    /**
+     * View for the filter dropdown.
+     * Part of BaseFilterLayout
+     *
+     * @class BaseFilterFilterDropdown
+     * @extends View
+     */
     tagName: "span",
 
     events: {
         "click .choice-filter": "handleEditFilter"
     },
 
+    /**
+     * @override
+     * @param {Object} opts
+     */
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
 
@@ -13,6 +24,10 @@
         this.layout.on("filter:render:filter", this._renderHtml, this);
     },
 
+    /**
+     * @override
+     * @private
+     */
     _renderHtml: function() {
         var self = this;
         app.view.View.prototype._renderHtml.call(this);
@@ -54,7 +69,7 @@
 
     /**
      * Handler for when the custom filter dropdown value changes.
-     * @param  {string} id      The GUID of the filter to apply.
+     * @param  {String} id      The GUID of the filter to apply.
      */
     handleChange: function(id) {
         var filter = this.layout.filters.get(id) || this.layout.emptyFilter;
@@ -77,6 +92,11 @@
         this.filterNode.select2("val", id);
     },
 
+    /**
+     * Get the dropdown labels for the filter
+     * @param {Object} el
+     * @param {Function} callback
+     */
     initSelection: function(el, callback) {
         var data,
             model,
@@ -99,6 +119,11 @@
         }
     },
 
+    /**
+     * Update the text for the selected filter and returns template
+     * @param {Object} item
+     * @returns {string}
+     */
     formatSelection: function(item) {
         var filterLabel = app.lang.get("LBL_FILTER"),
             selectionLabel = filterLabel;
@@ -112,6 +137,11 @@
         return '<span class="select2-choice-type">' + selectionLabel +'</span>';
     },
 
+    /**
+     * Returns template
+     * @param {Object} option
+     * @returns {String}
+     */
     formatResult: function (option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
         return '<div><span class="select2-match"></span>'+ option.text +'</div>';
@@ -138,10 +168,9 @@
 
     /**
      * Translates the selection text's labels
-     * @param isAllRecords
-     * @param label
-     * @returns {*}
-     * @private
+     * @param {Boolean} isAllRecords
+     * @param {String} label
+     * @returns {String}
      */
     getTranslatedSelectionText: function(isAllRecords, label) {
         var translatedText, moduleName;
@@ -156,6 +185,9 @@
         return translatedText;
     },
 
+    /**
+     * @override
+     */
     unbind: function() {
         this.filterNode.select2('destroy');
         app.view.View.prototype.unbind.call(this);
