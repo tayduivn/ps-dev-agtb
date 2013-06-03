@@ -1,4 +1,12 @@
 ({
+    /**
+     * Form for creating a filter
+     * Part of BaseFilterpanelLayout layout
+     *
+     * @class BaseFilterRowsView
+     * @extends View
+     */
+
     events: {
         'click a.addme': 'addRow',
         'click a.removeme': 'removeRow',
@@ -10,6 +18,10 @@
 
     filterFields: [],
 
+    /**
+     * @override
+     * @param {Object} opts
+     */
     initialize: function(opts) {
         // Remove the next line later:
         this.isSaved = false;
@@ -53,6 +65,11 @@
         this.listenTo(this.layout, "filter:create:delete", this.deleteFilter);
     },
 
+    /**
+     * Get filterable fields from the module metadata
+     * @param {String} moduleName
+     * @returns {Object}
+     */
     getFilterableFields: function(moduleName) {
         var moduleMeta = app.metadata.getModule(moduleName),
             fieldMeta = moduleMeta.fields,
@@ -76,6 +93,11 @@
         return fields;
     },
 
+    /**
+     * Add a row
+     * @param {Event} e
+     * @returns {Object}
+     */
     addRow: function(e) {
         var $row,
             tpl = app.template.get("filter-rows.filter-row-partial");
@@ -120,6 +142,10 @@
         return $row;
     },
 
+    /**
+     * Remove a row
+     * @param {Event} e
+     */
     removeRow: function(e) {
         var $row = this.$(e.currentTarget).parents('article.filter-body'),
             $rows = this.$('article.filter-body'),
@@ -137,6 +163,10 @@
         }
     },
 
+    /**
+     * Validate rows
+     * @param {Array} $rows
+     */
     validateRows: function($rows) {
         $rows = $rows ? $rows : this.$('article.filter-body');
         this.layout.trigger("filter:create:rowsValid", true);
@@ -148,6 +178,9 @@
         }, this);
     },
 
+    /**
+     * Rerender the view with selected filter
+     */
     populateFilter: function() {
         var self = this,
             filterDef = this.layout.editingFilter.get("filter_definition");
@@ -160,6 +193,10 @@
         });
     },
 
+    /**
+     * Populate filter edition row
+     * @param {Object} rowObj
+     */
     populateRow: function(rowObj) {
         var $row = this.addRow();
         _.each(rowObj, function(value, key) {
@@ -189,12 +226,20 @@
         }, this);
     },
 
+    /**
+     * Disable the Save button while input is empty
+     * @param e
+     */
     editName: function(e) {
         if(this.$(e.currentTarget).find('input').val() === '') {
             this.$(".save_button").addClass("disabled");
         }
     },
 
+    /**
+     * Fired when a user selects a field to filter by
+     * @param {Event} e
+     */
     chooseField: function(e) {
         var $el = this.$(e.currentTarget),
             $row = $el.parents('.filter-body'),
@@ -253,6 +298,10 @@
         this._renderField(field);
     },
 
+    /**
+     * Fired when a user selects an operator to filter by
+     * @param {Event} e
+     */
     chooseOperator: function(e) {
         var $el = this.$(e.currentTarget),
             $row = $el.parents('.filter-body'),
@@ -336,6 +385,10 @@
         })($row), this);
     },
 
+    /**
+     * Build filter definition
+     * @returns {Array}
+     */
     buildFilterDef: function() {
         var $rows = this.$('article.filter-body'),
             filter = [];
@@ -353,6 +406,11 @@
         return filter;
     },
 
+    /**
+     * Build filter definition for one row
+     * @param {Object} $row
+     * @returns {Object}
+     */
     buildRowFilterDef: function($row) {
         var data = $row.data(),
             name = data['name'],
@@ -388,6 +446,10 @@
         }
     },
 
+    /**
+     * Save the filter
+     * @param {String} name
+     */
     saveFilter: function(name) {
         var self = this,
             obj = {
@@ -412,6 +474,9 @@
         this.layout.trigger('filter:create:close');
     },
 
+    /**
+     * Delete the filter
+     */
     deleteFilter: function() {
         var self = this,
             name = this.layout.editingFilter.get('name');

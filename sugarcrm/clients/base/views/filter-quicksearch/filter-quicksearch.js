@@ -1,4 +1,12 @@
 ({
+    /**
+     * View for doing a quick search.
+     * Part of BaseFilterLayout
+     *
+     * @class BaseFilterQuicksearchView
+     * @extends View
+     */
+
     tagName: 'input',
 
     className: 'search-name',
@@ -12,6 +20,10 @@
         "paste": "throttledSearch"
     },
 
+    /**
+     * @override
+     * @param {Object} opts
+     */
     initialize: function(opts) {
         // We cannot set the placeholder in the attributes hash, as we may not
         // have SUGAR.App when the constructor is called. We can't add it to the
@@ -22,6 +34,10 @@
         this.layout.on("filter:clear:quicksearch", this.clearInput, this);
     },
 
+    /**
+     * Fire quick search
+     * @param {Event} e
+     */
     throttledSearch: _.debounce(function(e) {
         var newSearch = this.$el.val();
         if(this.currentSearch !== newSearch) {
@@ -30,6 +46,9 @@
         }
     }, 400),
 
+    /**
+     * Clear input
+     */
     clearInput: function() {
         this.$el.val("").toggleClass('hide', this.layout.showingActivities);
         this.currentSearch = "";

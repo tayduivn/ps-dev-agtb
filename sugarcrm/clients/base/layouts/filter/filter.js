@@ -1,6 +1,17 @@
 ({
+    /**
+     * Layout for filtering a collection.
+     * Composed of a module dropdown(optional), a filter dropdown and an input
+     *
+     * @class BaseFilterLayout
+     * @extends Layout
+     */
     className: 'filter-view search',
 
+    /**
+     * @override
+     * @param {Object} opts
+     */
     initialize: function(opts) {
         var filterLayout = app.view._getController({type:'layout',name:'filter'});
         filterLayout.loadedModules = filterLayout.loadedModules || {};
@@ -137,6 +148,14 @@
         }, this);
     },
 
+    /**
+     * Look for the relevant contexts. It can be
+     * - the activity stream context
+     * - the list view context on records layout
+     * - the selection list view context on records layout
+     * - the contexts of the subpanels on record layout
+     * @returns {Array} array of contexts
+     */
     getRelevantContextList: function() {
         var contextList = [], context;
         if (this.showingActivities) {
@@ -162,6 +181,13 @@
         return contextList;
     },
 
+    /**
+     * Builds the filter definition based on preselected filter and module quick search fields
+     * @param {Object} origfilterDef
+     * @param {String} searchTerm
+     * @param {Context} context
+     * @returns {Array} array containing filter def
+     */
     getFilterDef: function(origfilterDef, searchTerm, context) {
         var searchFilter,
             filterDef = app.utils.deepCopy(origfilterDef),
@@ -203,6 +229,11 @@
         return [filterDef];
     },
 
+    /**
+     * Reset the filter to the previous state
+     * @param {String} moduleName
+     * @param {String} linkName
+     */
     initializeFilterState: function(moduleName, linkName) {
         var self = this,
             callback = function(data) {
@@ -222,7 +253,7 @@
 
     /**
      * Gets previously used filters for a given module from the endpoint.
-     * @param  {string}   moduleName
+     * @param  {String}   moduleName
      * @param  {Function} callback
      */
     getPreviouslyUsedFilter: function(moduleName, callback) {
@@ -244,8 +275,8 @@
 
     /**
      * Retrieves the appropriate list of filters from the server.
-     * @param  {string} moduleName
-     * @param  {string} defaultId
+     * @param  {String} moduleName
+     * @param  {String} defaultId
      */
     getFilters: function(moduleName, defaultId) {
         var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
@@ -306,13 +337,17 @@
         }
     },
 
+    /**
+     * Utility function to know if the create filter panel is opened.
+     * @returns {Boolean} true if opened
+     */
     createPanelIsOpen: function() {
         return !this.layout.$(".filter-options").is(":hidden");
     },
 
     /**
      * Determines whether a user can create a filter for the current module.
-     * @return {[type]} [description]
+     * @return {Boolean} true if creatable
      */
     canCreateFilter: function() {
         // Check for create in meta and make sure that we're only showing one
@@ -336,6 +371,11 @@
         return creatable;
     },
 
+    /**
+     * Get filters metadata from module metadata for a module
+     * @param {String} moduleName
+     * @returns {Object} filters metadata
+     */
     getModuleFilterMeta: function(moduleName) {
         var meta;
         if (moduleName !== 'all_modules') {
@@ -348,6 +388,11 @@
         return meta;
     },
 
+    /**
+     * Get list of quick search fields from filters metadata.
+     * @param {String} moduleName
+     * @returns {Array} array of field names
+     */
     getModuleQuickSearchFields: function(moduleName) {
         var meta = this.getModuleFilterMeta(moduleName),
             fields,
@@ -365,6 +410,10 @@
         return fields;
     },
 
+    /**
+     * @override
+     * @private
+     */
     _render: function() {
         if (app.acl.hasAccess(this.aclToCheck, this.module)) {
             app.view.Layout.prototype._render.call(this);
@@ -372,6 +421,9 @@
         }
     },
 
+    /**
+     * @override
+     */
     unbind: function() {
         this.filters.off();
         this.filters = null;
