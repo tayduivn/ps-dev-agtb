@@ -462,10 +462,10 @@ class FilterApi extends SugarApi
             // It looks like it's a related field that it's searching by
             list($relatedTable, $field) = explode('.', $field);
             $q->from->load_relationship($relatedTable);
-            if(empty($bean->$relatedTable)) {
+            if(empty($q->from->$relatedTable)) {
                 throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable");
             }
-            if($bean->$relatedTable->getType() == "many") {
+            if($q->from->$relatedTable->getType() == "many") {
                 throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
             }
 
@@ -478,13 +478,13 @@ class FilterApi extends SugarApi
         } else {
             $bean = $q->from;
         }
-        $fields = $bean->field_defs;
+        $defs = $bean->field_defs;
 
         if(empty($defs[$field])) {
             throw new SugarApiExceptionInvalidParameter("Unknown field $field");
         }
 
-        if(!$this->verifyFieldAccess($bean, $field, 'access')) {
+        if(!$bean->ACLFieldAccess($field)) {
             throw new SugarApiExceptionNotAuthorized("Access for field $field is not allowed");
         }
 
@@ -496,7 +496,7 @@ class FilterApi extends SugarApi
         if($field_def['source'] == 'relate') {
             $relfield = $field_def['rname'];
             $link = $field_def['link'];
-            return $this->verifyField($q, "$link.$relfield");
+            return self::verifyField($q, "$link.$relfield");
         }
 
         return true;
@@ -538,7 +538,7 @@ class FilterApi extends SugarApi
                     self::addTrackerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
-                    $this->verifyField($q, $field);
+                    self::verifyField($q, $field);
 
                     if (!is_array($filter)) {
                         // This is just simple match
