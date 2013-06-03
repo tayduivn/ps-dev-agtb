@@ -2,13 +2,14 @@
 -------------------------------------------------- */
 footer {
   .border-radius(0);
+  bottom: 0;
   border: none;
   background: @grayLighter;
   width: 100%;
   min-height: 44px;
   border-top: 1px solid darken(@grayLighter,10%);
   padding: 0;
-  height: inherit;
+  height: 44px;
   position: fixed;
   z-index: @zindexFixedNavbar;
   .row-fluid {
@@ -31,7 +32,7 @@ footer {
     color: @gray;
   }
   .btn-toolbar.pull-right {
-    margin: 8px 25px 0 0;
+    margin: 8px 8px 0 0;
     height: 20px;
     .rtlFloat(@direction,left);
     .rtlMargin(@direction,8px 0 0 0);
