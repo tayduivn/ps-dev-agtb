@@ -40,10 +40,6 @@
     }
   }
   .btn-group .dropdown-toggle {
-    /*
-    padding-left: 8px;
-    padding-right: 8px;
-    */
     box-shadow: none;
   }
   .search-query {
@@ -93,12 +89,6 @@
   }
 }
 
-//from nutmeg
-/*.navbar .nav > li > a.btn {
-  padding: 4px 8px;
-  margin-top: 8px;
-}*/
-
 .navbar {
   color: #58595B;
   .navbar-inner {
@@ -132,7 +122,6 @@
     font-size: 14px;
   }
   a:hover .icon-favorite {
-    color:@yellow_favorite !important;
   }
   // fix red message button position
   .dropdown .btn {
@@ -191,15 +180,6 @@
     }
   }
 
-  //from nutmeg
-  /*.advanced {
-    right: 2px;
-    top: -2px;
-    .dropdown-menu {
-      right: 35px;
-    }
-  }*/
-
   .advanced {
     position: absolute;
     right: 0;
@@ -207,7 +187,6 @@
     .btn {
       line-height: 17px;
       height: 17px;
-      //margin-top: 1px;
     }
     //fix advanced drop down position
     .dropdown-menu {
@@ -396,7 +375,6 @@
 
       // Secondary (floated right) nav in topbar
       &.pull-right { // xxx
-        //margin-left: 10px;
         &> li {
           border-left: 1px solid darken(@white, 75%) !important;
           border-right-color: transparent !important;
@@ -442,13 +420,6 @@
           }
         }
       }
-
-
-
-
-
-
-
     }
 
     // Dropdown toggle caret
@@ -456,25 +427,14 @@
     .open.dropdown .caret {
       border-top-color: @white;
     }
+
     // Active nav items
-
-
     .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link,
     .active > a,
     .active > a:hover {
       text-decoration: none;
-      /*
-      border-bottom: 4px solid darken(@red,15%);
-      */
-      text-shadow: none;
       color: @navbarLinkColorActive;
-      //color: contrast(@NavigationBar, @black, @white, 43%);
-
-//      background-color: lighten(@NavigationBar,5%) !important;
-//      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
       text-shadow: 0 -1px 0 rgb(0,0,0);
-      //color: @navbarLinkColorActive;
-      //background-color: @navbarLinkBackgroundActive;
     }
 
     .active > a,
@@ -490,12 +450,6 @@
       border-right:0;
       padding-left: 8px;
       outline: none !important;
-      /*
-      &.dtoggle {
-        padding-left: 6px;
-        padding-right: 6px;
-      }
-      */
     }
   }
   .avatar {
