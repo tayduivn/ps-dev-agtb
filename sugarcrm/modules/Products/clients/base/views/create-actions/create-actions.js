@@ -69,7 +69,7 @@
             if (!app.metadata.getModule("Forecasts", "config").is_setup) {
                 panel.fields = _.filter(panel.fields, function(field) {
                     // also remove the spacer so the look stays the same
-                    return (field.name != "commit_stage" && field.name != "spacer");
+                    return (field.name != "commit_stage" && field.name != "cs_spacer");
                 })
             } else {
                 _.each(panel.fields, function(field) {
