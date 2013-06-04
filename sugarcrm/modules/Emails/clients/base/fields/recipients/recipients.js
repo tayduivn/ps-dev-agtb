@@ -37,22 +37,11 @@
     /**
      * Sets up event handlers for syncing between the model and the recipients field.
      *
-     * Recipients should be either a collection or an array of objects defined by
-     * _addRecipients() method.
+     * @see RecipientsField::format() For the acceptable formats for recipients.
      */
     bindDataChange: function() {
         this.model.on("change:" + this.name, function(model, recipients) {
-            this._replaceRecipients(this.format(recipients));
-
-            if (recipients instanceof Backbone.Collection) {
-                recipients.off(null, null, this);
-                recipients.on("add remove", function(model, collection) {
-                    this._replaceRecipients(this.format(collection));
-                }, this);
-                recipients.on("reset", function(collection) {
-                    this._replaceRecipients(this.format(collection));
-                }, this);
-            }
+            this._replaceRecipients(recipients);
         }, this);
     },
 
@@ -96,7 +85,7 @@
     /**
      * Placeholder for fetching additional recipients from the server
      *
-     * @param query
+     * @param {Object} query Possible attributes can be found in select2's documentation.
      */
     loadOptions: function(query) {
         var data = {
@@ -110,7 +99,7 @@
     /**
      * Formats a recipient object for displaying selected recipients.
      *
-     * @param recipient
+     * @param {Object} recipient
      * @return {String}
      */
     formatSelection: function(recipient) {
@@ -120,7 +109,7 @@
     /**
      * Formats a recipient object for displaying items in the recipient options list.
      *
-     * @param recipient
+     * @param {Object} recipient
      * @return {String}
      */
     formatResult: function(recipient) {
@@ -128,23 +117,47 @@
     },
 
     /**
-     * Translates a collection into an array of objects that select2 understands.
+     * Translates a set of recipients into an array of objects that select2 understands.
      *
-     * @param data {Collection}
+     * @param {*} data A Backbone collection, a single Backbone model or standard JavaScript object, or an array of
+     *                 Backbone models or standard JavaScript objects.
      * @returns {Array}
+     * @see RecipientsField::_translateRecipient() For the acceptable/expected attributes to be found on each recipient.
      */
     format: function(data) {
-        var results = [];
+        var translatedRecipients = [];
 
+        // the lowest common denominator of potential inputs is an array of objects
+        // force the parameter to be an array of either objects or Backbone models so that we're always dealing with
+        // one data-structure type
         if (data instanceof Backbone.Collection) {
-            data.each(function(model) {
-                results.push(this._translateRecipient(model));
-            }, this);
+            // get the raw array of models
+            data = data.models;
+        } else if (data instanceof Backbone.Model || (_.isObject(data) && !_.isArray(data))) {
+            // wrap the single model in an array so the code below behaves the same whether it's a model or a collection
+            data = [data];
         } else {
-            results = data;
+            // it's most likely, and hopefully, an array of objects like:
+            // [
+            //     {email:"foo@bar.com", name:"Foo Bar"},
+            //     {email:"foo@bar.com", name:""},
+            //     {email:"foo@bar.com", name:""}
+            // ]
+            // nothing to do but let the rest of the method iterate over the recipients
         }
 
-        return results;
+        if (_.isArray(data)) {
+            _.each(data, function(recipient) {
+                var translatedRecipient = this._translateRecipient(recipient);
+
+                // only add the recipient if there is an email address
+                if (!_.isEmpty(translatedRecipient.email)) {
+                    translatedRecipients.push(translatedRecipient);
+                }
+            }, this);
+        }
+
+        return translatedRecipients;
     },
 
     /**
@@ -154,17 +167,7 @@
      * @returns {Collection}
      */
     unformat: function(data) {
-        var results = new Backbone.Collection();
-
-        _.each(data, function(recipient) {
-            if (recipient.bean) {
-                results.add(recipient.bean);
-            } else {
-                results.add(new Backbone.Model(recipient));
-            }
-        });
-
-        return results;
+        return new Backbone.Collection(data);
     },
 
     /**
@@ -196,28 +199,21 @@
     },
 
     /**
-     * Adds the specified array of recipients to the field.  It can be either a single object
-     * or an array of objects.  For example,
+     * Adds the new recipients to the existing recipients.
      *
-     * { id: '1', email: 'one@email.com', name: 'One', module: 'Contacts', bean: {Bean} }
-     *
-     * @param newRecipients
+     * @param recipients
+     * @see RecipientsField::format() For the acceptable formats for recipients.
      * @private
      */
-    _addRecipients: function(newRecipients) {
-        var existingRecipients = this.format(this.model.get(this.name)) || [],
+    _addRecipients: function(recipients) {
+        var existingRecipients = this.format(this.model.get(this.name)), // get the existing recipients in array format
+            newRecipients      = this.format(recipients), // force the new recipients to array format
             filteredRecipients = [];
 
-        if (_.isObject(newRecipients) && !_.isArray(newRecipients)) {
-            newRecipients = [newRecipients];
-        }
-
         _.each(newRecipients, function(recipient) {
-            var translatedRecipient = this._translateRecipient(recipient);
-
             // only add recipients whose id's are not found among the existing recipients
-            if (_.where(existingRecipients, {id: translatedRecipient.id}).length === 0) {
-                filteredRecipients.push(translatedRecipient);
+            if (_.where(existingRecipients, {id: recipient.id}).length === 0) {
+                filteredRecipients.push(recipient);
             }
         }, this);
 
@@ -230,55 +226,38 @@
      * Replaces the current recipients with the new recipients
      *
      * @param recipients
+     * @see RecipientsField::format() For the acceptable formats for recipients.
      * @private
      */
     _replaceRecipients: function(recipients) {
-        if (!_.isArray(recipients)) {
-            if (_.isEmpty(recipients)) {
-                recipients = []
-            } else {
-                recipients = [recipients];
-            }
-        }
-
-        _.each(recipients, function(recipient, index) {
-            recipients[index] = this._translateRecipient(recipient);
-        }, this);
+        var newRecipients = this.format(recipients);
 
         this.getFieldElement()
-            .select2('data', recipients)
+            .select2('data', newRecipients)
             .trigger('change');
     },
 
     /**
-     * Recipient fields can be defined in metadata to include an icon button for opening an address book. When
-     * configured to include this button, clicking the button will trigger an event to open the address book, which
-     * calls this method to do the dirty work.
+     * When in edit mode, the field includes an icon button for opening an address book. Clicking the button will
+     * trigger an event to open the address book, which calls this method to do the dirty work. The selected recipients
+     * are added to this field upon closing the address book.
      *
      * @private
      */
     _showAddressBook: function() {
-        app.drawer.open(
-            {
+        app.drawer.open({
                 layout:  "compose-addressbook",
                 context: {
-                    module:   "Emails",
-                    mixed:    true
+                    module: "Emails",
+                    mixed:  true
                 }
-            },
-            _.bind(this._addressbookDrawerCallback, this)
-        );
-    },
-
-    _addressbookDrawerCallback: function(recipients) {
-        this._addRecipients(this.format(recipients));
+            }, _.bind(this._addRecipients, this));
     },
 
     /**
      * Gets the recipients DOM field
      *
      * @returns {Object} DOM Element
-     * @private
      */
     getFieldElement: function() {
         return this.$(this.fieldTag);
@@ -311,9 +290,9 @@
     },
 
     /**
-     * Transpose data from a Backbone model into a standard Javascript object with the data required by the field.
+     * Transpose data from a Backbone model into a standard JavaScript object with the data required by the field.
      *
-     * @param bean
+     * @param {Backbone.Model} bean
      * @returns {Object}
      * @private
      */
@@ -340,33 +319,34 @@
             delete model.email;
         }
 
-        if (_.isEmpty(model.name)) {
-            var name      = [],
-                firstName = bean.get("first_name"),
-                lastName  = bean.get("last_name");
-
-            if (!_.isEmpty(firstName)) {
-                name.push(firstName);
-            }
-
-            if (!_.isEmpty(lastName)) {
-                name.push(lastName);
-            }
-
-            if (name.length > 0) {
-                model.name = name.join(" ");
-            } else {
-                delete model.name;
-            }
+        if (_.isEmpty(model.name) || !_.isString(model.name)) {
+            delete model.name;
         }
 
         return model;
     },
 
     /**
-     * Translate a recipient to an object that the recipients field can understand.
+     * Translate a recipient to an object that the field can understand.
      *
-     * @param recipient
+     * @param {*} recipient A Backbone model or standard JavaScript object. If it's a standard object, it may be
+     *                      structured like:
+     *
+     *                          {
+     *                              id: "abcd",
+     *                              module: "Contacts",
+     *                              email: "foo@bar.com",
+     *                              name: "Foo Bar",
+     *                              bean: Backbone.Model
+     *                          }
+     *
+     *                      All attributes are optional. However, if the email attribute is not present, then primary
+     *                      email address should exist on the bean. Without an email address that can be resolved, the
+     *                      recipient is considered to be invalid. The bean attribute must be a Backbone model and it
+     *                      likely will be a Bean. Data found in the bean is considered to be secondary to the first-
+     *                      class attributes found on the object. The bean is a mechanism for collecting additional
+     *                      information about the recipient that may not have been explicitly set when the recipient
+     *                      was passed in.
      * @returns {Object}
      * @private
      */
@@ -416,11 +396,6 @@
             if (!_.isEmpty(name)) {
                 // only set the name if it's actually available
                 translatedRecipient.name = name;
-            }
-
-            if (!_.isEmpty(bean)) {
-                // only set the name if it's actually available
-                translatedRecipient.bean = (recipient instanceof Backbone.Model) ? recipient : recipient.bean;
             }
         }
 

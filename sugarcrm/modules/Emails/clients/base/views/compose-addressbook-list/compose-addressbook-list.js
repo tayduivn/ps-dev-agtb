@@ -74,7 +74,7 @@
             // corresponding rows are pre-selected
             var recipients = this.model.get("compose_addressbook_selected_recipients");
 
-            if (!_.isEmpty(recipients) && recipients.length > 0) {
+            if (recipients instanceof Backbone.Collection) {
                 /**
                  * The following loop will fail to pre-select recipients who don't have a true GUID for an ID because
                  * ActionMenu only looks to match IDs. If a recipient's ID is actually his/her email address, then this
