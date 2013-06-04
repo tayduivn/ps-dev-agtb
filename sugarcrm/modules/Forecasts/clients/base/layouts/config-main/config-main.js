@@ -66,13 +66,25 @@
         this.selectPanel(_.first(this.meta.components).view);
     },
 
-    selectPanel: function(pName) {
-        this.selectedPanel = pName;
+    /**
+     * Used to select a specific panel by name
+     * Correct names can be found in the specific view's hbt
+     * Specifically found in the id attribute of '.accordion-heading a'
+     *
+     * @param {String} pName
+     */
+    selectPanel: function(panelName) {
+        this.selectedPanel = panelName;
         this.$el.find('#' + panelName + 'Collapse').collapse('show');
         // manually trigger the accordion to toggle but dont pass event so it uses the selectedPanel name
         this.onAccordionToggleClicked();
     },
 
+    /**
+     * Event handler for 'click .accordion-toggle' event
+     *
+     * @param {jQuery.Event|undefined} evt
+     */
     onAccordionToggleClicked: function(evt) {
         var helpId = (evt) ? $(evt.currentTarget).data('help-id') : this.selectedPanel,
             data = {};
