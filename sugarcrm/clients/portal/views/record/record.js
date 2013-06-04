@@ -1,19 +1,15 @@
 ({
     extendsFrom: 'RecordView',
-    // Starts off false so on page load (first time bindDataChange gets called) we close sidebar
-    toggledClosed: false,
+    sidebarClosed: false,
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', platform: 'base', args:[options]});
-        var self = this;
-    },
-    bindDataChange:function () {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'bindDataChange', platform: 'base'});
-        this.on('render', this.closeSidebar);
+        // Once the sidebartoggle is rendered we close the sidebar so the arrows are updated SP-719
+        app.controller.context.on("sidebarRendered", this.closeSidebar, this);
     },
     closeSidebar: function () {
-        if (!this.toggledClosed) {
+        if (!this.sidebarClosed) {
             app.controller.context.trigger('toggleSidebar');
-            this.toggledClosed = true;
+            this.sidebarClosed = true;
         }
     }
 })

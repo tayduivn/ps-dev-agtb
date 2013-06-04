@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,15 +27,5 @@
  ********************************************************************************/
 
 $viewdefs['portal']['layout']['dashboard'] = array(
-    'components' => array(
-//        0 => array(
-//            'layout' => "list"
-//        ),
-//        1 => array(
-//            'layout' => 'list',
-//            'context' => array(
-//                'module' => 'Bugs',
-//            )
-//        )
-    ),
+    'components' => array(),
 );

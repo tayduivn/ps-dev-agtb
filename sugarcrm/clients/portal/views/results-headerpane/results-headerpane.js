@@ -1,4 +1,3 @@
-{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -15,7 +14,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ''Powered by SugarCRM'' logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,16 +24,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="headerpane">
-    <h1><span class="module-title"><a href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></span></h1>
-    <div class="btn-toolbar pull-right dropdown">
-        {{#if context.attributes.isCreateEnabled}}
-        <a href="#{{buildRoute context model 'create' route.options}}" title='{{str "LNK_CREATE" module}}' class="btn btn-primary">{{str "LNK_CREATE" module}}</a>
-        {{/if}}
-        <a href="javascript: void(0);" class="btn btn-primary search"><i class="icon-search icon-2x"></i></a>
-        {{#unless context.attributes.removeSidebarToggle}}
-        <a title="{{str "LBL_HIDE" module}}" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>
-        {{/unless}}
-    </div>
-</div>
+({
+    extendsFrom: 'BaseHeaderpaneView'
+})

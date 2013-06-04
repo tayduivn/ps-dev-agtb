@@ -25,12 +25,8 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-$layout = MetaDataManager::getLayout("GenericLayout");
-$layout->push(array("view" => "subnav"));
 $sidebarLayout = MetaDataManager::getLayout('SideBarLayout');
+$sidebarLayout->push('main', array('view' => 'results-headerpane'));
 $sidebarLayout->push('main', array('view' => 'results'));
-$sidebarLayout->push('side', array('view' => 'preview'));
-$layout->push(array("layout" => $sidebarLayout->getLayout(true)));
-$layout->push('preview', array('layout' => 'preview'));
-$viewdefs['portal']['layout']['search'] = $layout->getLayout();
+$sidebarLayout->push('preview', array('layout' => 'preview'));
+$viewdefs['portal']['layout']['search'] = $sidebarLayout->getLayout();
