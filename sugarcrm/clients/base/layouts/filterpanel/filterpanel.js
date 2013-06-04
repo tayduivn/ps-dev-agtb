@@ -12,12 +12,23 @@
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
-    // Static definition of available toggles
-    availableToggles: {
-        "activitystream": {icon: "icon-th-list", label: "LBL_ACTIVITY_STREAM"},
-        "subpanel": {icon: "icon-table", label: "LBL_DATA_VIEW"},
-        "list": {icon: "icon-table", label: "LBL_LISTVIEW"}
-    },
+    // Static definition of available toggles, they are displayed in order listed here when shown
+    availableToggles: [
+        {
+            name: "subpanel",
+            icon: "icon-table",
+            label: "LBL_DATA_VIEW"},
+        {
+            name: "list",
+            icon: "icon-table",
+            label: "LBL_LISTVIEW"
+        },
+        {
+            name: "activitystream",
+            icon: "icon-th-list",
+            label: "LBL_ACTIVITY_STREAM"
+        }
+    ],
 
     // This is set to the filter that's currently being edited.
     editingFilter: null,
@@ -69,7 +80,9 @@
     processToggles: function() {
         // Enable toggles
         this.toggles = [];
+        var temp = {};
 
+        //Go through components and figure out which toggles we should add
         _.each(this.options.meta.components, function(component) {
             var toggle;
             if(component.view) {
@@ -77,11 +90,21 @@
             } else if(component.layout) {
                 toggle = (_.isString(component.layout)) ? component.layout : component.layout.name;
             }
-
-            if (toggle && this.availableToggles[toggle]) {
-                this.toggles.push({toggle: toggle, title: this.availableToggles[toggle].label, 'class': this.availableToggles[toggle].icon });
+            var availableToggle = _.find(this.availableToggles, function(curr){
+                return curr.name === toggle;
+            });
+            if (toggle && availableToggle) {
+                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon };
             }
         }, this);
+
+        // Sort the toggles by the order in the availableToggles list
+        for(var i = 0; i < this.availableToggles.length; i++){
+            var curr = this.availableToggles[i];
+            if(temp[curr.name]){
+                this.toggles.push(temp[curr.name]);
+            }
+        }
     },
 
     /**
@@ -100,7 +123,10 @@
         } else {
             // If we recognize the view, prevent it from rendering until it's
             // requested explicitly by the user.
-            if (this.availableToggles[component.name]) {
+            var toggleAvailable = _.isObject(_.find(this.availableToggles, function(curr){
+                return curr.name === component.name;
+            }));
+            if (toggleAvailable) {
                 this.toggleComponents.push(component);
                 this.componentsList[component.name] = component;
                 this._components.splice(this._components.indexOf(component), 1);
