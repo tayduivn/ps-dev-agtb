@@ -1007,4 +1007,19 @@ class RevenueLineItem extends SugarBean
 
         return $array_assign;
     }
+    
+    /**
+     * Converts (copies) RLI to Products (QuotedLineItem)
+     * @return object Product
+     */
+    public function convertToQuotedLineItem()
+    {
+        $product = BeanFactory::getBean('Products');
+        foreach($this->getFieldDefinitions() as $field) {
+            if ($field['name'] != 'id') {
+                $product->$field['name'] = $this->$field['name'];
+            }
+        }
+        return $product;
+    }
 }

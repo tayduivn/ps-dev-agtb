@@ -43,13 +43,17 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
     public function convertToQuote(ServiceBase $api, array $args)
     {
         // load up the Product
-        /* @var $product Product */
-        $product = BeanFactory::getBean('RevenueLineItems', $args['record']);
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems', $args['record']);
 
-        if (empty($product->id)) {
-            // throw a 404 (Not Found) if the product is not found
+        if (empty($rli->id)) {
+            // throw a 404 (Not Found) if the rli is not found
             throw new SugarApiExceptionNotFound();
         }
+
+        /* @var $product Product */
+        $product = $rli->convertToQuotedLineItem();
+        $product->save();
 
         // lets create a new bundle
         /* @var $product_bundle ProductBundle */
@@ -132,8 +136,11 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
 
         # Set the quote_id on the product so we know it's linked
         $product->quote_id = $quote->id;
+        $rli->quote_id = $quote->id;
         $product->status = Product::STATUS_QUOTED;
+        $rli->status = RevenueLineItem::STATUS_QUOTED;
         $product->save();
+        $rli->save();
 
         return array('id' => $quote->id, 'name' => $quote->name);
 

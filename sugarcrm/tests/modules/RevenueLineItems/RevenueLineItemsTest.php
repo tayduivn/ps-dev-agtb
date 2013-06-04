@@ -616,8 +616,17 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $product->save();
         $this->assertEquals('new', $product->product_type);
     }
+    /**
+     * @group revenuelineitems
+     */
+    public function testConvertToQuotedLineItem()
+    {
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->sales_stage = 'Test';
+        $product = $rli->convertToQuotedLineItem();
 
-
+        $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
+    }
 }
 
 class MockRevenueLineItem extends RevenueLineItem
