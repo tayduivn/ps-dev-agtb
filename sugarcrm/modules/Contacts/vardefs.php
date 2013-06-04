@@ -691,6 +691,15 @@ $dictionary['Contact'] = array(
             'rhs_key' => 'contact_id',
             'relationship_type' => 'one-to-many',
         ),
+        'contact_revenuelineitems' => array(
+            'lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'RevenueLineItems',
+            'rhs_table' => 'revenue_line_items',
+            'rhs_key' => 'contact_id',
+            'relationship_type' => 'one-to-many',
+        ),
         //END SUGARCRM flav=pro ONLY
         'contact_campaign_log' => array(
             'lhs_module' => 'Contacts',
