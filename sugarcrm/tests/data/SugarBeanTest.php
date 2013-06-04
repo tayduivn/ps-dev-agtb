@@ -207,7 +207,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test that currency/decimal from db is a string value
-     * @dataProvider testCurrencyFieldStringValueProvider
+     * @dataProvider provideCurrencyFieldStringValues
      * @group sugarbean
      * @group currency
      */
@@ -226,7 +226,7 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame($expected, $mock->testDecimal);
     }
 
-    public function testCurrencyFieldStringValueProvider()
+    public function provideCurrencyFieldStringValues()
     {
         return array(
             array('decimal', '500.01', '500.01'),
