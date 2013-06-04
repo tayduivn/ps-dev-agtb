@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -28,9 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$module_name = 'Cases';
-$viewdefs[$module_name]['portal']['menu']['createaction'] = array(
+$module_name = 'Notes';
+$viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
-    'label' => 'LNK_NEW_CASE',
+    'label' => 'LNK_NEW_NOTE',
     'visible' => true
 );

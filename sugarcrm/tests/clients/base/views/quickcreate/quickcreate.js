@@ -1,5 +1,5 @@
-describe("Create Actions Dropdown", function() {
-    var viewName = 'createactions',
+describe("Quick Create Dropdown", function() {
+    var viewName = 'quickcreate',
         app, view, isAuthenticatedStub, getModuleNamesStub, getStringsStub, getModuleStub, testModules, testMeta;
 
     beforeEach(function() {
@@ -32,17 +32,17 @@ describe("Create Actions Dropdown", function() {
             }
         });
         testMeta = {
-            Accounts: buildCreateActionMeta('Accounts', true),
-            Contacts: buildCreateActionMeta('Contacts', true),
-            Opportunities: buildCreateActionMeta('Opportunities', true)
+            Accounts: buildQuickCreateMeta('Accounts', true),
+            Contacts: buildQuickCreateMeta('Contacts', true),
+            Opportunities: buildQuickCreateMeta('Opportunities', true)
         };
         getModuleStub = sinon.stub(SugarTest.app.metadata, 'getModule', function(module) {
             return testMeta[module];
         });
     });
 
-    var buildCreateActionMeta = function(module, visible) {
-        return {menu:{createaction:{meta:{module:module,visible:visible}}}};
+    var buildQuickCreateMeta = function(module, visible) {
+        return {menu:{quickcreate:{meta:{module:module,visible:visible}}}};
     };
 
     afterEach(function() {
@@ -71,7 +71,7 @@ describe("Create Actions Dropdown", function() {
 
     it("Should build create actions even if visible meta attribute not specified", function() {
         var expectedModules = ['Accounts', 'Contacts', 'Opportunities'];
-        delete testMeta.Accounts.menu.createaction.meta.visible;
+        delete testMeta.Accounts.menu.quickcreate.meta.visible;
         view.render();
 
         _.each(expectedModules, function(module) {
@@ -79,7 +79,7 @@ describe("Create Actions Dropdown", function() {
         });
     });
 
-    it("Should not build modules that don't have createaction meta", function() {
+    it("Should not build modules that don't have quickcreate meta", function() {
         var expectedModules = ['Accounts', 'Contacts', 'Opportunities'];
         testModules['Foo'] = {visible:true, acl:'create'};
         view.render();
@@ -114,7 +114,7 @@ describe("Create Actions Dropdown", function() {
 
     it("Should not build create actions that are hidden", function() {
         var expectedModules = ['Accounts', 'Opportunities'];
-        testMeta.Contacts.menu.createaction.meta.visible = false;
+        testMeta.Contacts.menu.quickcreate.meta.visible = false;
         view.render();
 
         _.each(expectedModules, function(module) {

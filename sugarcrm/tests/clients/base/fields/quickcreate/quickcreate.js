@@ -1,10 +1,10 @@
-describe("Base.Field.CreateAction", function() {
+describe("Base.Field.QuickCreate", function() {
     var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount;
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadComponent('base', 'field', 'createaction');
-        field = SugarTest.createField("base","createaction", "createaction", "createactions");
+        SugarTest.loadComponent('base', 'field', 'quickcreate');
+        field = SugarTest.createField("base","quickcreate", "quickcreate", "quickcreate");
         alertConfirm = false;
         mockDrawerCount = 0;
 

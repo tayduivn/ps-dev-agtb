@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'CreateactionField',
+    extendsFrom: 'QuickcreateField',
 
     initialize: function(options) {
         // determine if the app should send email according to the has_outbound_email_config user preference
@@ -34,6 +34,6 @@
             options.def.href = "mailto:"; // use the user's default mail client instead of email compose view
         }
 
-        app.view.invokeParent(this, {type: 'field', name: 'createaction', method: 'initialize', args:[options]});
+        app.view.invokeParent(this, {type: 'field', name: 'quickcreate', method: 'initialize', args:[options]});
     }
 })

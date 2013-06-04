@@ -27,9 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$module_name = 'Tasks';
-$viewdefs[$module_name]['base']['menu']['createaction'] = array(
+$module_name = 'Accounts';
+$viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
-    'label' => 'LNK_NEW_TASK',
+    'label' => 'LNK_NEW_ACCOUNT',
     'visible' => true
 );
