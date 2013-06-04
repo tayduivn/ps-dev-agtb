@@ -467,9 +467,13 @@ class FilterApi extends SugarApi
             if(empty($q->from->$relatedTable)) {
                 throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable for field $field");
             }
-//             if($q->from->$relatedTable->getType() == "many") {
-//                 throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
-//             }
+
+            if($q->from->$relatedTable->getType() == "many") {
+                // FIXME: we have a problem here: we should allow 'many' links for related to match against parent object
+                // but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
+                // but we should figure out how to find if 'many' is permittable or not.
+                // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
+            }
 
             $q->join($relatedTable, array('joinType' => 'LEFT'));
 

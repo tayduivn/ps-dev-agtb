@@ -517,6 +517,7 @@ class SugarQuery_Compiler_SQL
     /**
      * Create a from statement
      *
+     * @param SugarBean|array $bean
      * @return string
      */
     protected function compileFrom($bean)
