@@ -7,19 +7,53 @@
 
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
-        var self = this;
-        this.context.on("follow:value:toggle", function(model) {
-            if(self.model === model) {
-                self.render();
-            }
-        }, this);
+        this.format();
     },
+    bindDataChange: function() {
+        if (this.model) {
+            this.model.on("change:following", this.resetLabel, this);
+        }
+    },
+    /**
+     * Set current label and value since the follow button relates to the following
+     *
+     * @param value
+     */
+    format: function(value) {
 
+        value = this.model.get("following");
+
+        //For record view, the label should be diffent from other views
+        //It also needs to have mouseover handlers for updating text
+        if(this.tplName === "detail") {
+            var label = value ? "LBL_FOLLOWING" : "LBL_FOLLOW";
+            this.label = app.lang.get(label, this.module);
+        } else {
+            var label = value ? "LBL_UNFOLLOW" : "LBL_FOLLOW";
+            this.label = app.lang.get(label, this.module);
+        }
+        return value;
+    },
+    /**
+     * Reset label and triggers "show" handler to update parent controller dom
+     */
+    resetLabel: function() {
+        this.render();
+        //It should trigger the handler "show" to update parent controller
+        //i.e. actiondropdown
+        this.trigger("show");
+    },
+    unbindDom: function() {
+        this.$("[data-hover=true]").off();
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'unbindDom'});
+    },
     _render: function() {
-        var mouseoverText, mouseoverClass, oldText, self = this;
+        var mouseoverText, mouseoverClass, self = this;
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
 
-        this.$(".label").off();
+        if(this.tplName !== "detail") {
+            return;
+        }
 
         if (this.model.get("following")) {
             mouseoverText = app.lang.get("LBL_UNFOLLOW");
@@ -29,15 +63,18 @@
             mouseoverClass = "label-success";
         }
 
-        this.$(".label").on("mouseover", function() {
-            oldText = $(this).text();
+        this.$("[data-hover=true]").on("mouseover", function() {
             $(this).text(mouseoverText).attr("class", "label").addClass(mouseoverClass);
         }).on("mouseout", function() {
             var kls = self.model.get("following") ? "label-success" : "";
-            $(this).text(oldText).attr("class", "label").addClass(kls);
+            $(this).text(self.label).attr("class", "label").addClass(kls);
         });
     },
-
+    /**
+     * Call REST API for subscribe and unsubscribe
+     *
+     * @param Window.Event
+     */
     toggleFollowing: function(e) {
         var isFollowing = this.model.get("following");
 
@@ -61,16 +98,10 @@
 
             app.api.call(method, url, null, {
                 success: function() {
-                    self.model.set("following", value);
-                    if (self.collection) {
-                        var realModel = self.collection.get(self.model.id);
-                        if (realModel) {
-                            realModel.set("following", value);
-                            self.context.trigger("follow:value:toggle", realModel);
-                        }
-                    } else {
-                        self.render();
+                    if(self.disposed) {
+                        return;
                     }
+                    self.model.set("following", value);
                 }
             });
         }
