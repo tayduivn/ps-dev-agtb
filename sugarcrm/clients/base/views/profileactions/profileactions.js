@@ -30,12 +30,28 @@
         this.extAccts = app.acl.hasAccess("read", "EAPM") ? app.lang.getAppListStrings("moduleList")["EAPM"] : "";
         this.userName = app.user.get("user_name");
 
-        var picture = app.user.get("picture");
+        var meta,
+            picture = app.user.get("picture");
+
         this.pictureUrl = picture ? app.api.buildFileURL({
             module: "Users",
             id: app.user.get("id"),
             field: "picture"
         }) : '';
+
+        meta = app.metadata.getModule('Users') || {};
+        if (meta.isBwcEnabled) {
+            this.profileUrl = '#' + app.bwc.buildRoute('Users', app.user.get("id"), 'EditView');
+        } else {
+            this.profileUrl = '#' + app.router.buildRoute('Users', app.user.get("id"));
+        }
+
+        meta = app.metadata.getModule('Employees') || {};
+        if (meta.isBwcEnabled) {
+            this.employeesUrl = '#' + app.bwc.buildRoute('Employees');
+        } else {
+            this.employeesUrl = '#' + app.router.buildRoute('Employees');
+        }
 
         this.render();
     },

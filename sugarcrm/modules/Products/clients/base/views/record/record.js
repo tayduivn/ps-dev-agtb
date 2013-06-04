@@ -32,13 +32,13 @@
         //reinitialize array on each init
         this.currencyFields = [];
         this._setupCommitStageField(options.meta.panels);
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
 
         //pull the fields in the panels that are editable currency fields
         _.each(options.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
+                _.each(panel.fields, function(field) {
                     //if the field is currency and not the known calculated field, add to the array
-                    if(field.type == 'currency') {
+                    if (field.type == 'currency') {
                         this.currencyFields.push(field.name);
                     }
                 }, this);
@@ -50,7 +50,7 @@
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
 
         // if the model has a quote_id and it's not empty, disable the convert_to_quote_button
-        if(this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
+        if (this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
             && !_.isUndefined(this.buttons['convert_to_quote_button'])) {
             this.buttons['convert_to_quote_button'].setDisabled(true);
         }
@@ -59,10 +59,10 @@
     /**
      * Bind to model to make it so that it will re-render once it has loaded.
      */
-    bindDataChange : function() {
+    bindDataChange: function() {
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'bindDataChange'});
         this.model.on('change:base_rate', function() {
-            _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")),500,true);
+            _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")), 500, true);
         }, this);
     },
 
@@ -78,46 +78,46 @@
      */
     convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
         //this ends up getting called on init without an old currency id, so just return in that case
-        if(_.isUndefined(oldCurrencyId)) {
+        if (_.isUndefined(oldCurrencyId)) {
             return;
         }
 
         //run through the editable currency fields and convert the amounts to the new currency
         _.each(this.currencyFields, function(currencyField) {
-           //convert the currency and set the model silenty, then force the change to trigger.  Otherwise, a 0 value won't
-           //trigger the change event, because 0 will convert to 0, but we need the change event for the currency symbol to update
-           if(currencyField != 'total_amount') {
+            //convert the currency and set the model silenty, then force the change to trigger.  Otherwise, a 0 value won't
+            //trigger the change event, because 0 will convert to 0, but we need the change event for the currency symbol to update
+            if (currencyField != 'total_amount') {
                 this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
-           }
-           this.model.trigger("change:"+currencyField);
+            }
+            this.model.trigger("change:" + currencyField);
         }, this);
     },
 
     convertToQuote: function(e) {
         var alert = app.alert.show('info_quote', {
-                        level: 'info',
-                        autoClose: false,
-                        closeable: false,
-                        title: app.lang.get("LBL_CONVERT_TO_QUOTE_INFO", this.module) + ":",
-                        messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_INFO_MESSAGE", this.module)]
-                    });
+            level: 'info',
+            autoClose: false,
+            closeable: false,
+            title: app.lang.get("LBL_CONVERT_TO_QUOTE_INFO", this.module) + ":",
+            messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_INFO_MESSAGE", this.module)]
+        });
         // remove the close since we don't want this to be closable
         alert.$el.find('a.close').remove();
 
         var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id });
         var callbacks = {
-            'success' : _.bind(function(resp, status, xhr) {
+            'success': _.bind(function(resp, status, xhr) {
                 app.alert.dismiss('info_quote');
-                window.location.hash="#bwc/index.php?module=Quotes&action=EditView&record=" + resp.id;
+                window.location.hash = "#bwc/index.php?module=Quotes&action=EditView&record=" + resp.id;
             }, this),
-            'error' : _.bind(function(resp, status, xhr) {
+            'error': _.bind(function(resp, status, xhr) {
                 app.alert.dismiss('info_quote');
                 app.alert.show('error_xhr', {
-                        level: 'error',
-                        autoClose: true,
-                        title: app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR", this.module) + ":",
-                        messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE", this.module)]
-                    });
+                    level: 'error',
+                    autoClose: true,
+                    title: app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR", this.module) + ":",
+                    messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE", this.module)]
+                });
             }, this)
         };
         app.api.call("create", url, null, callbacks);
@@ -131,10 +131,10 @@
      */
     _setupCommitStageField: function(panels) {
         _.each(panels, function(panel) {
-            if(!app.metadata.getModule("Forecasts", "config").is_setup) {
-                panel.fields = _.filter(panel.fields, function (field) {
+            if (!app.metadata.getModule("Forecasts", "config").is_setup) {
+                panel.fields = _.filter(panel.fields, function(field) {
                     // also remove the spacer so the look stays the same
-                    return (field.name != "commit_stage" && field.name != "spacer");
+                    return (field.name != "commit_stage" && field.name != "cs_spacer");
                 })
             } else {
                 _.each(panel.fields, function(field) {

@@ -1,5 +1,0 @@
-{{#if hasAccess}}
-    <input type="hidden" name="{{../name}}" class="select2 inherit-width" value="{{../value}}" data-id="{{getFieldValue ../this.model ../this.def.id_name}}">
-{{else}}
-    {{../value}}
-{{/if}}

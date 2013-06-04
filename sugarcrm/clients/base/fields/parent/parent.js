@@ -28,12 +28,12 @@
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
-                this.$(this.typeFieldTag).attr("disabled", "disabled");
+                this.$(this.typeFieldTag).select2("disable");
             } else {
-                this.$(this.typeFieldTag).attr("disabled", false);
+                this.$(this.typeFieldTag).select2("enable");
             }
         } else if(this.tplName === 'disabled'){
-            this.$(this.typeFieldTag).attr("disabled", "disabled").select2();
+            this.$(this.typeFieldTag).select2('disable');
         }
         return result;
     },
@@ -73,9 +73,9 @@
     },
     checkAcl: function(action, module) {
         if(app.acl.hasAccess(action, module) === false) {
-            this.$(this.fieldTag).attr("disabled", "disabled");
+            this.$(this.typeFieldTag).select2("disable");
         } else {
-            this.$(this.fieldTag).attr("disabled", false);
+            this.$(this.typeFieldTag).select2("enable");
         }
     },
     setValue: function(model) {

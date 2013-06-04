@@ -5,7 +5,7 @@ $viewdefs['portal']['layout']['header'] = array(
             'view' => 'modulelist',
         ),
         array(
-            'view' => 'createactions',
+            'view' => 'quickcreate',
         ),
         array(
             'view' => 'profileactions',

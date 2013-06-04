@@ -39,7 +39,9 @@
         this.$('input').on("keydown.record", {field: this}, callback);
     },
     focus: function () {
-        this.$(this.fieldTag).select2('open');
+        if(this.action !== 'disabled') {
+            this.$(this.fieldTag).select2('open');
+        }
     },
     /**
      * Renders relate field
@@ -120,7 +122,26 @@
                     self.setValue(attributes);
                 });
         } else if (this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").select2();
+            this.$(this.fieldTag).select2({
+                width: '100%',
+                initSelection: function (el, callback) {
+                    var $el = $(el),
+                        id = $el.data('id'),
+                        text = $el.val();
+                    callback({id: id, text: text});
+                },
+                formatInputTooShort: function () {
+                    return '';
+                },
+                formatSearching: function () {
+                    return app.lang.get("LBL_LOADING", self.module);
+                },
+                placeholder: this.getPlaceHolder(),
+                allowClear: self.allow_single_deselect,
+                minimumInputLength: self.minChars,
+                query: _.bind(this.search, this)
+            });
+            this.$(this.fieldTag).select2('disable');
         }
         return result;
     },

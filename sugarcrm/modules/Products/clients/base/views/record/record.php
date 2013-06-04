@@ -143,26 +143,29 @@ $fields = array(
     ),
     'sales_stage',
     'probability',
-    'sales_status',
     array(
         'name' => 'date_closed',
         'required' => true,
+    ),
+    array(
+        'name' => 'dc_spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
+        'span' => 6,
+        'readonly' => true
     ),
     array(
         'name' => 'commit_stage',
         'span' => 6
     ),
     array(
-        'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
+        'name' => 'cs_spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
         'span' => 6,
         'readonly' => true
     ),
     'product_template_name',
     array(
         'name' => 'category_name',
-        'type' => 'productCategoriesRelate',
+        'type' => 'relate',
         'label' => 'LBL_CATEGORY',
-        'readonly' => true
     ),
     'quantity',
     array(

@@ -60,6 +60,8 @@ class DocumentRevision extends SugarBean {
 	var $module_dir = 'DocumentRevisions';
 	var $new_schema = true;
 	var $latest_revision_id;
+
+    public $name;
 	
 	/*var $column_fields = Array("id"
 		,"document_id"
@@ -158,13 +160,14 @@ class DocumentRevision extends SugarBean {
         if ( empty($this->id) && empty($this->document_id) && isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id']) ) {
             $this->document_id = $_REQUEST['return_id'];
         }
-		
+
 		//find the document name and current version.
 		$query = "SELECT document_name, revision, document_revision_id FROM documents, document_revisions where documents.id = '".$this->db->quote($this->document_id)."' AND document_revisions.id = documents.document_revision_id";
 		$result = $this->db->query($query,true,"Error fetching document details...:");
 		$row = $this->db->fetchByAssoc($result);
 		if ($row != null) {
 			$this->document_name = $row['document_name'];
+            $this->name = $this->document_name;
             $this->document_name = '<a href="index.php?module=Documents&action=DetailView&record='.$this->document_id.'">'.$row['document_name'].'</a>';
 			$this->latest_revision = $row['revision'];	
 			$this->latest_revision_id = $row['document_revision_id'];

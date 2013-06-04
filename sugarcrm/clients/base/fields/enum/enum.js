@@ -59,7 +59,9 @@
                 this.model.set(this.name, val);
             }
         } else if(this.tplName === 'disabled') {
-            this.$(this.fieldTag).attr("disabled", "disabled").select2();
+            var select2Options = this.getSelect2Options(optionsKeys);
+            this.$(this.fieldTag).select2(select2Options);
+            this.$(this.fieldTag).select2('disable');
         } else if(_.isEmpty(optionsKeys)){
             // Set loading message in place of empty DIV while options are loaded via API
             this.$el.html(app.lang.get("LBL_LOADING"));
@@ -67,7 +69,9 @@
         return this;
     },
     focus: function () {
-        this.$(this.fieldTag).select2('open');
+        if(this.action !== 'disabled') {
+            this.$(this.fieldTag).select2('open');
+        }
     },
     /**
      * Load the options for this field and pass them to callback function.  May be asynchronous.

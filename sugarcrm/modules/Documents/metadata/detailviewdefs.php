@@ -111,7 +111,10 @@ $viewdefs['Documents']['DetailView'] = array(
       array (
         array (
           0 => 'last_rev_created_name',
-          1 => 'last_rev_create_date',
+          1 => array(
+              'name' => 'last_rev_create_date',
+              'type' => 'date'
+          ),
         ),
       ),
     )

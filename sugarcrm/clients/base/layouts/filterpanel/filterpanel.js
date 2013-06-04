@@ -1,10 +1,18 @@
 ({
+    /**
+     * Layout for tabbing between filterable components.
+     * Mostly to toggle between Activity Stream and list views
+     *
+     * @class BaseFilterpanelLayout
+     * @extends Layout
+     */
     events: {
         "click .toggle-actions button": "toggleView",
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
+    // Static definition of available toggles
     availableToggles: {
         "activitystream": {icon: "icon-th-list", label: "LBL_ACTIVITY_STREAM"},
         "subpanel": {icon: "icon-table", label: "LBL_DATA_VIEW"},
@@ -14,6 +22,10 @@
     // This is set to the filter that's currently being edited.
     editingFilter: null,
 
+    /**
+     * @override
+     * @param {Object} opts
+     */
     initialize: function(opts) {
         this.toggleComponents = [];
         this.componentsList = {};
@@ -44,10 +56,16 @@
         this.showComponent(this.options.meta['default'], true);
     },
 
+    /**
+     * Not necessary and needs to be refactored...
+     */
     processMeta: function() {
         this.tabs = this.options.meta.tabs;
     },
 
+    /**
+     * Get components from the metadata and declare toggles
+     */
     processToggles: function() {
         // Enable toggles
         this.toggles = [];
@@ -66,6 +84,12 @@
         }, this);
     },
 
+    /**
+     * @override
+     * @private
+     * @param {Component} component
+     * @param {Object} def
+     */
     _placeComponent: function(component, def) {
         // Specifically target the filter view to render on the toolbar.
         if (def.layout == "filter") {
@@ -93,6 +117,10 @@
         }
     },
 
+    /**
+     * Show a toggle
+     * @param {Event} e
+     */
     toggleView: function(e) {
         var $el = this.$(e.currentTarget);
 
@@ -104,6 +132,11 @@
         }
     },
 
+    /**
+     * Show a component and triggers "filterpanel:change"
+     * @param {String} name
+     * @param {Boolean} silent
+     */
     showComponent: function(name, silent) {
         if (this.componentsList[name]) {
             this.componentsList[name].render();
@@ -122,6 +155,10 @@
         this.trigger('filterpanel:change', name, silent);
     },
 
+    /**
+     * @override
+     * @private
+     */
     _dispose: function() {
         _.each(this.componentsList, function(component) {
             if (component) {
@@ -134,10 +171,18 @@
         app.view.Layout.prototype._dispose.call(this);
     },
 
+    /**
+     * Not necessary and needs to be refactored...
+     * @returns {Context}
+     */
     getActivityContext: function() {
         return this.activityContext;
     },
 
+    /**
+     * Show bootstrap tooltip
+     * @param {Event} e
+     */
     showTooltip: function(e) {
         var $el = this.$(e.currentTarget);
         //Hotfix for the top left checkall (actionmenu) tooltip
@@ -148,6 +193,10 @@
         }
     },
 
+    /**
+     * Hide bootstrap tooltip
+     * @param {Event} e
+     */
     hideTooltip: function(e) {
         this.$(e.currentTarget).tooltip('hide');
     }
