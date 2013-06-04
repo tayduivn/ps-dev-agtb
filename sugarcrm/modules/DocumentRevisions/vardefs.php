@@ -31,7 +31,12 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'required'=>true,
     'reportable'=>false,
   ),
-
+    'name' => array(
+        'name' => 'name',
+        'vname' => 'LBL_NAME',
+        'source' => 'non-db',
+        'type' => 'varchar'
+    ),
  'change_log' =>
   array (
     'name' => 'change_log',

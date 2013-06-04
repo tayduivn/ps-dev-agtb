@@ -84,13 +84,13 @@ $listViewDefs['Documents'] = array(
     'sortable' => false
   ),
 //END SUGARCRM flav=pro ONLY
-  'LAST_REV_CREATE_DATE' => 
+  'LAST_REV_CREATE_DATE' =>
   array (
     'width' => '10%',
     'label' => 'LBL_LIST_LAST_REV_DATE',
     'default' => true,
     'sortable' => false,
-    'related_fields' => 
+    'related_fields' =>
     array (
       0 => 'document_revision_id',
     ),
