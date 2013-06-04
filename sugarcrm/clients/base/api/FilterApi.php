@@ -59,6 +59,7 @@ class FilterApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('<module>', '?', 'link', '?', 'filter'),
                 'pathVars' => array('module', 'record', '', 'link_name', ''),
+                'jsonParams' => array('filter'),
                 'method' => 'filterRelated',
                 'shortHelp' => 'Lists related filtered records.',
                 'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
@@ -461,20 +462,22 @@ class FilterApi extends SugarApi
         if (strpos($field, '.')) {
             // It looks like it's a related field that it's searching by
             list($relatedTable, $field) = explode('.', $field);
+
             $q->from->load_relationship($relatedTable);
             if(empty($q->from->$relatedTable)) {
-                throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable");
+                throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable for field $field");
             }
-            if($q->from->$relatedTable->getType() == "many") {
-                throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
-            }
+//             if($q->from->$relatedTable->getType() == "many") {
+//                 throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
+//             }
+
+            $q->join($relatedTable, array('joinType' => 'LEFT'));
 
             $bean = $q->getTableBean($relatedTable);
             if(empty($bean)) {
                 throw new SugarApiExceptionInvalidParameter("Cannot use condition against $relatedTable - unknown module");
             }
 
-            $q->join($relatedTable, array('joinType' => 'LEFT'));
         } else {
             $bean = $q->from;
         }
@@ -674,13 +677,16 @@ class FilterApi extends SugarApi
         SugarQuery_Builder_Where $where,
         $link
     ) {
-        $sfOptions = array('joinType' => 'LEFT');
+        $sfOptions = array('joinType' => 'LEFT', 'favorites' => true);
         if ($link == '' || $link == '_this') {
+            $link_name = 'favorites';
         } else {
             $q->join($link, array('joinType' => 'LEFT'));
             $sfOptions['joinTo'] = $link;
+            $link_name = "sf_".$link;
         }
-        $fjoin = $q->join("favorites");
+
+        $fjoin = $q->join($link_name, $sfOptions);
 
         $where->notNull($fjoin->joinName() . '.id');
     }

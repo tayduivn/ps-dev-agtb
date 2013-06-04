@@ -230,24 +230,9 @@ class SugarFavorites extends Basic
                 $bean = $sugar_query->from;
                 $alias = $bean->getTableName();
             }
-        }
-        else {
-            $linkName = $sugar_query->join[$joinTo]->linkName;
-
-            require_once('data/Link2.php');
-
-            $bean = $sugar_query->from;
-            if(is_array($bean)) {
-                list($bean, $alias) = $bean;
-            }
-
-            $relationship = $bean->field_name_map[$linkName]['name'];
-
-            $link = new Link2($relationship, $bean);
-
-            $bean = BeanFactory::newBean($link->getRelatedModuleName());
-
+        } else {
             $alias = $joinTo;
+            $bean = $sugar_query->getTableBean($joinTo);
         }
 
         $sfAlias = "sf_" . $bean->getTableName();

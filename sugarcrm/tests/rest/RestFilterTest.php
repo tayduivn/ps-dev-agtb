@@ -100,7 +100,6 @@ class RestFilterTest extends RestTestBase
     {
         $this->markTestIncomplete("Can't filter by multi-value");
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"notes.name":"Test 3 Note"}]').'&fields=id,name');
-        var_dump($reply);
         $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'SimpleJoin: The account name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'SimpleJoin: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['reply']['records']),'SimpleJoin: Returned too many results');
@@ -190,7 +189,6 @@ class RestFilterTest extends RestTestBase
         $fav->save();
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$favorite":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
-        var_dump($reply);
         $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'FavRelated: The name is not set correctly');
         $this->assertEquals(-1,$reply['reply']['next_offset'],'FavRelated: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['reply']['records']),'FavRelated: Returned too many results');
@@ -337,6 +335,7 @@ class RestFilterTest extends RestTestBase
         $oppty_id = $this->opps[0]->id;
         $url = 'Accounts/' . $account_id . '/link/opportunities/filter?filter='.urlencode('[{"name":{"$starts":"TEST 0 Opportunity"}}]');
         $reply = $this->_restCall($url);
+        $this->assertEquals(1, count($reply['reply']['records']));
         $this->assertEquals($oppty_id, $reply['reply']['records'][0]['id']);
     }
 
