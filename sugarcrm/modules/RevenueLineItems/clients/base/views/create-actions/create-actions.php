@@ -1,6 +1,5 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -302,61 +301,44 @@ $fieldsHidden = array(
 );
 //END SUGARCRM flav=ent ONLY
 
-$viewdefs['RevenueLineItems']['base']['view']['record'] = array(
+$viewdefs['RevenueLineItems']['base']['view']['create-actions'] = array(
+    'type' => 'record',
     'buttons' => array(
         array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
         ),
         array(
-            'type' => 'rowaction',
-            'event' => 'button:save_button:click',
-            'name' => 'save_button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn btn-primary',
-            'showOn' => 'edit',
-            'acl_action' => 'edit',
+            'name'    => 'restore_button',
+            'type'    => 'button',
+            'label'   => 'LBL_RESTORE',
+            'css_class' => 'btn-invisible btn-link',
+            'showOn' => 'select',
         ),
         array(
             'type' => 'actiondropdown',
             'name' => 'main_dropdown',
             'primary' => true,
-            'showOn' => 'view',
             'buttons' => array(
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:edit_button:click',
-                    'name' => 'edit_button',
-                    'label' => 'LBL_EDIT_BUTTON_LABEL',
-                    'primary' => true,
-                    'acl_action' => 'edit',
+                    'name' => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
+                    'name' => 'save_view_button',
+                    'label' => 'LBL_SAVE_AND_VIEW',
+                    'showOn' => 'create',
                 ),
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'name' => 'save_create_button',
+                    'label' => 'LBL_SAVE_AND_CREATE_ANOTHER',
+                    'showOn' => 'create',
                 ),
-                //BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:convert_to_quote:click',
-                    'name' => 'convert_to_quote_button',
-                    'label' => 'LBL_CONVERT_TO_QUOTE',
-                    'acl_action' => 'view',
-                ),
-                //END SUGARCRM flav=ent ONLY
             ),
         ),
         array(
@@ -374,11 +356,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
-                array(
-                    'type' => 'follow',
-                    'readonly' => true,
-                ),
-            ),
+            )
         ),
         array(
             'name' => 'panel_body',
@@ -386,7 +364,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
             'labels' => true,
             'labelsOnTop' => true,
             'placeholders' => true,
-            'fields' => $fields,
+            'fields' => $fields
         ),
         array(
             'name' => 'panel_hidden',
@@ -394,7 +372,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
-            'fields' => $fieldsHidden,
-        ),
+            'fields' => $fieldsHidden
+        )
     ),
 );
