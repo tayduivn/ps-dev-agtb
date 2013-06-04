@@ -141,8 +141,8 @@ class MetaDataFiles
      */
     public static $viewDefVars = array(
         MB_EDITVIEW    => 'EditView' ,
-    	MB_DETAILVIEW  => 'DetailView' ,
-    	MB_QUICKCREATE => 'QuickCreate',
+        MB_DETAILVIEW  => 'DetailView' ,
+        MB_QUICKCREATE => 'QuickCreate',
 
         //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
@@ -175,7 +175,7 @@ class MetaDataFiles
 
     /**
      * Listing of module name placeholders in SugarObject templates metadata
-     * 
+     *
      * @var array
      * @static
      */
@@ -190,17 +190,19 @@ class MetaDataFiles
      * @static
      * @return array
      */
-    public static function getNames() {
+    public static function getNames()
+    {
         return self::$names;
     }
 
     /**
      * Gets the file/variable name for a given view
      *
-     * @param string $name The name of the view to get the variable/file name for
+     * @param  string $name The name of the view to get the variable/file name for
      * @return string The name of the file/variable
      */
-    public static function getName($name) {
+    public static function getName($name)
+    {
         return empty(self::$names[$name]) ? null : self::$names[$name];
     }
 
@@ -210,7 +212,8 @@ class MetaDataFiles
      * @static
      * @return array
      */
-    public static function getClients() {
+    public static function getClients()
+    {
         return self::$clients;
     }
 
@@ -219,10 +222,11 @@ class MetaDataFiles
      * clients array.
      *
      * @static
-     * @param string $client The client to get
+     * @param  string $client The client to get
      * @return string
      */
-    public static function getClient($client) {
+    public static function getClient($client)
+    {
         return empty(self::$clients[$client]) ? '' : self::$clients[$client];
     }
 
@@ -230,10 +234,11 @@ class MetaDataFiles
      * Gets a view client for a known view
      *
      * @static
-     * @param string $view The view to get the client for
+     * @param  string $view The view to get the client for
      * @return string
      */
-    public static function getClientByView($view) {
+    public static function getClientByView($view)
+    {
         return empty($view) || empty(self::$clientsByView[$view]) ? '' : self::$clientsByView[$view];
     }
 
@@ -243,7 +248,8 @@ class MetaDataFiles
      * @static
      * @return array
      */
-    public static function getPaths() {
+    public static function getPaths()
+    {
         return self::$paths;
     }
 
@@ -251,10 +257,11 @@ class MetaDataFiles
      * Gets the view type of a client based on the requested view
      *
      * @static
-     * @param string $view The requested view
+     * @param  string $view The requested view
      * @return string
      */
-    public static function getViewClient($view) {
+    public static function getViewClient($view)
+    {
         if (!empty($view)) {
             if (stripos($view, 'portal') !== false) {
                 return 'portal';
@@ -272,19 +279,20 @@ class MetaDataFiles
 
     /**
      * Gets the listing of SugarObject template placeholders
-     * 
+     *
      * @static
      * @return array
      */
-    public static function getModuleNamePlaceholders() {
+    public static function getModuleNamePlaceholders()
+    {
         return self::$moduleNamePlaceholders;
     }
-    
+
     /**
      * helper to give us a parameterized path to create viewdefs for saving to file
-     * @param string | array $path (path of keys to use for array)
-     * @param mixed $data the data to place at that path
-     * @return array the data in the correct path
+     * @param  string | array $path (path of keys to use for array)
+     * @param  mixed          $data the data to place at that path
+     * @return array          the data in the correct path
      */
     public static function mapPathToArray($path, $data)
     {
@@ -293,17 +301,18 @@ class MetaDataFiles
         }
 
         $arr = $data;
-        while($key = array_pop($path)) {
+        while ($key = array_pop($path)) {
             $arr = array($key => $arr);
         }
+
         return $arr;
     }
 
     /**
      * helper to give us a parameterized path find our data from our viewdefs
-     * @param string | array $path (path of keys to use for array)
-     * @param mixed $arr the array to search for the path
-     * @return array| null the data in the correct path or null if a key isn't found.
+     * @param  string | array $path (path of keys to use for array)
+     * @param  mixed          $arr  the array to search for the path
+     * @return array|         null the data in the correct path or null if a key isn't found.
      */
     public static function mapArrayToPath($path, $arr)
     {
@@ -324,6 +333,7 @@ class MetaDataFiles
 
             $out = $out[$key];
         }
+
         return $out;
     }
 
@@ -335,7 +345,8 @@ class MetaDataFiles
      * @static
      * @return array
      */
-    public static function getViewDefVars() {
+    public static function getViewDefVars()
+    {
         return self::$viewDefVars;
     }
 
@@ -348,10 +359,11 @@ class MetaDataFiles
      * filename counterparts
      *
      * @static
-     * @param string $view The name of the view to get the def var for
+     * @param  string $view The name of the view to get the def var for
      * @return string The def variable name
      */
-    public static function getViewDefVar($view) {
+    public static function getViewDefVar($view)
+    {
         // Try the view def var array first
         if (isset(self::$viewDefVars[$view])) {
             return self::$viewDefVars[$view];
@@ -361,8 +373,8 @@ class MetaDataFiles
         return self::getName($view);
     }
 
-    public static function setViewDefVar($view, $defVar) {
-        
+    public static function setViewDefVar($view, $defVar)
+    {
     }
 
     /**
@@ -370,36 +382,37 @@ class MetaDataFiles
      * DeployedMetaDataImplementation instance.
      *
      * @static
-     * @param string $view    The requested view type
-     * @param string $module  The module for this metadata file
-     * @param string $type    The type of metadata file location (custom, working, etc)
-     * @param string $client  The client type for this file
+     * @param  string $view   The requested view type
+     * @param  string $module The module for this metadata file
+     * @param  string $type   The type of metadata file location (custom, working, etc)
+     * @param  string $client The client type for this file
      * @return string
      */
-    public static function getDeployedFileName($view, $module, $type = MB_CUSTOMMETADATALOCATION, $client = '') {
+    public static function getDeployedFileName($view, $module, $type = MB_CUSTOMMETADATALOCATION, $client = '')
+    {
         $type = strtolower($type);
         $paths = self::getPaths();
         $names = self::getNames();
 
         //In a deployed module, we can check for a studio module with file name overrides.
         $sm = StudioModuleFactory::getStudioModule($module);
-        foreach($sm->sources as $file => $def) {
+        foreach ($sm->sources as $file => $def) {
             if (!empty($def['view'])) {
                 $names[$def['view']] = substr($file, 0, strlen($file) - 4);
             }
         }
 
         // BEGIN ASSERTIONS
-		if (!isset($paths[$type])) {
-			sugar_die("MetaDataFiles::getDeployedFileName(): Type $type is not recognized");
-		}
+        if (!isset($paths[$type])) {
+            sugar_die("MetaDataFiles::getDeployedFileName(): Type $type is not recognized");
+        }
 
-		if (!isset($names[$view])) {
+        if (!isset($names[$view])) {
             sugar_die("MetaDataFiles::getDeployedFileName(): View $view is not recognized");
         }
-		// END ASSERTIONS
+        // END ASSERTIONS
 
-		// Construct filename
+        // Construct filename
         if (!empty($client)) {
             $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
         } else {
@@ -414,14 +427,15 @@ class MetaDataFiles
      * UndeployedMetaDataImplementation instance.
      *
      * @static
-     * @param string $view         The requested view
-     * @param string $module       The module for this metadata file
-     * @param string $packageName  The package for this metadata file
-     * @param string $type         The type of metadata file to get (custom, working, etc)
-     * @param string $client       The client type for this file
+     * @param  string $view        The requested view
+     * @param  string $module      The module for this metadata file
+     * @param  string $packageName The package for this metadata file
+     * @param  string $type        The type of metadata file to get (custom, working, etc)
+     * @param  string $client      The client type for this file
      * @return string
      */
-    public static function getUndeployedFileName($view, $module, $packageName, $type = MB_BASEMETADATALOCATION, $client = '') {
+    public static function getUndeployedFileName($view, $module, $packageName, $type = MB_BASEMETADATALOCATION, $client = '')
+    {
         $type = strtolower($type);
 
         // BEGIN ASSERTIONS
@@ -447,6 +461,7 @@ class MetaDataFiles
                 // get the module again, all so we can call this method statically without relying on the module stored in the class variables
                 require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php';
                 $mb = new ModuleBuilder();
+
                 return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/' . $viewPath . $names[$view] . '.php';
         }
     }
@@ -455,19 +470,20 @@ class MetaDataFiles
      * Gets a $deftype metadata file for a given module
      *
      * @static
-     * @param string $module The name of the module to get metadata for
-     * @param string $deftype The def type to get (list, detail, edit, search)
-     * @param string $path The path to the metadata (base path, custom path, working path, history path)
-     * @param string $client The client making this request
-     * @param string $component Layout or view
+     * @param  string      $module    The name of the module to get metadata for
+     * @param  string      $deftype   The def type to get (list, detail, edit, search)
+     * @param  string      $path      The path to the metadata (base path, custom path, working path, history path)
+     * @param  string      $client    The client making this request
+     * @param  string      $component Layout or view
      * @return null|string Null if the request is invalid, path if it is good
      */
-    public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
+    public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW)
+    {
         $filedir = self::getModuleFileDir($module, $path);
         if ($filedir === null) {
             return null;
         }
-        
+
         if ($client) {
             $metadataPath = 'clients/' . $client . '/' . $component . 's/' . $deftype . '/';
         } else {
@@ -475,6 +491,7 @@ class MetaDataFiles
         }
 
         $filename = $filedir . $metadataPath . $deftype . '.php';
+
         return $filename;
     }
 
@@ -482,14 +499,16 @@ class MetaDataFiles
      * Gets a metadata file path for a module from its SugarObject template type
      *
      * @static
-     * @param string $module The name of the module to get metadata for
-     * @param string $deftype The def type to get (list, detail, edit, search)
-     * @param string $client The client making this request
-     * @param string $component Layout or view
+     * @param  string $module    The name of the module to get metadata for
+     * @param  string $deftype   The def type to get (list, detail, edit, search)
+     * @param  string $client    The client making this request
+     * @param  string $component Layout or view
      * @return string
      */
-    public static function getSugarObjectFileName($module, $deftype, $client = '', $component = self::COMPONENTVIEW) {
+    public static function getSugarObjectFileName($module, $deftype, $client = '', $component = self::COMPONENTVIEW)
+    {
         $filename =  self::getSugarObjectFileDir($module, $client, $component) . $deftype . '.php';
+
         return $filename;
     }
 
@@ -497,13 +516,14 @@ class MetaDataFiles
      * Gets a metadata directory for a given module and path (custom, history, etc)
      *
      * @static
-     * @param string $module The name of the module to get metadata for
-     * @param string $path The path to the metadata (base path, custom path, working path, history path)
-     * @param string $client The client making this request
-     * @param string $component Layout or view
+     * @param  string      $module    The name of the module to get metadata for
+     * @param  string      $path      The path to the metadata (base path, custom path, working path, history path)
+     * @param  string      $client    The client making this request
+     * @param  string      $component Layout or view
      * @return null|string Null if the request is invalid, path if it is good
      */
-    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION) {
+    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION)
+    {
         // Simple validation of path
         if (!isset(self::$paths[$path])) {
             return null;
@@ -511,6 +531,7 @@ class MetaDataFiles
 
         // Now get to building
         $dirname = self::$paths[$path] . 'modules/' . $module . '/';
+
         return $dirname;
     }
 
@@ -518,13 +539,14 @@ class MetaDataFiles
      * Gets a metadata directory path for a module from its SugarObject template type
      *
      * @static
-     * @param string $module The name of the module to get metadata for
-     * @param string $client The client making this request
-     * @param string $component Layout or view
+     * @param  string $module    The name of the module to get metadata for
+     * @param  string $client    The client making this request
+     * @param  string $component Layout or view
      * @return string
      */
-    public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW) {
-        require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
+    public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW)
+    {
+        require_once 'modules/ModuleBuilder/Module/StudioModule.php';
         $sm = new StudioModule($module);
 
         $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/';
@@ -542,22 +564,24 @@ class MetaDataFiles
      * replacing variables with correct values based on the module
      *
      * @static
-     * @param SugarBean|string $module Either a been or a string name of a module
-     * @param array $defs The defs associated with this module
-     * @return array Cleaned up metadata
+     * @param  SugarBean|string $module Either a been or a string name of a module
+     * @param  array            $defs   The defs associated with this module
+     * @return array            Cleaned up metadata
      */
-    public static function getModuleMetaDataDefsWithReplacements($module, $defs) {
+    public static function getModuleMetaDataDefsWithReplacements($module, $defs)
+    {
         if (!$module instanceof SugarBean) {
             $module = BeanFactory::getBean($module);
         }
         $replacements = array(
-			"<object_name>"  => $module->object_name,
-			"<_object_name>" => strtolower($module->object_name),
-			"<OBJECT_NAME>"  => strtoupper($module->object_name),
-			"<module_name>"  => $module->module_dir,
-			'<_module_name>' => strtolower($module->module_dir),
-		);
-		return self::recursiveVariableReplace($defs, $replacements);
+            "<object_name>"  => $module->object_name,
+            "<_object_name>" => strtolower($module->object_name),
+            "<OBJECT_NAME>"  => strtoupper($module->object_name),
+            "<module_name>"  => $module->module_dir,
+            '<_module_name>' => strtolower($module->module_dir),
+        );
+
+        return self::recursiveVariableReplace($defs, $replacements);
     }
 
     /**
@@ -565,29 +589,31 @@ class MetaDataFiles
      *
      * @TODO Consider making a MetaDataUtils class and adding this to that class
      * @static
-     * @param array $source The input array to work replacements on
-     * @param array $replacements An array of replacements as $find => $replace pairs
+     * @param  array $source       The input array to work replacements on
+     * @param  array $replacements An array of replacements as $find => $replace pairs
      * @return array $source array with $replacements applied to them
      */
-    public static function recursiveVariableReplace($source, $replacements) {
+    public static function recursiveVariableReplace($source, $replacements)
+    {
         $ret = array();
-		foreach ($source as $key => $val) {
-			if (is_array($val)) {
-	            $newkey = $key;
-                $val = self::recursiveVariableReplace($val, $replacements);
-	            $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
-	            $ret[$newkey] = $val;
-	        } else {
+        foreach ($source as $key => $val) {
+            if (is_array($val)) {
                 $newkey = $key;
-			    $newval = $val;
-                if(is_string($val)) {
+                $val = self::recursiveVariableReplace($val, $replacements);
+                $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
+                $ret[$newkey] = $val;
+            } else {
+                $newkey = $key;
+                $newval = $val;
+                if (is_string($val)) {
                     $newkey = str_replace(array_keys($replacements), $replacements, $newkey);
                     $newval = str_replace(array_keys($replacements), $replacements, $newval);
                 }
                 $ret[$newkey] = $newval;
-			}
+            }
         }
-		return $ret;
+
+        return $ret;
     }
 
     /**
@@ -640,11 +666,11 @@ class MetaDataFiles
         if ( is_string($modules) ) {
             // They just want one module
             $modules = array($modules);
-        } else if ( count($modules) == 0 ) {
+        } elseif ( count($modules) == 0 ) {
             // They want all of the modules, so get them if they are already set
             $modules = empty($GLOBALS['app_list_strings']['moduleList']) ? array() : array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
-        foreach ( $modules as $module ) {
+        foreach ($modules as $module) {
             if ( empty($type) ) {
                 $type = '*';
             }
@@ -673,12 +699,12 @@ class MetaDataFiles
         if ( is_string($modules) ) {
             // They just want one module
             $modules = array($modules);
-        } else if ( count($modules) == 0 ) {
+        } elseif ( count($modules) == 0 ) {
             // They want all of the modules
             $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
-        foreach ( $modules as $module ) {
-            
+        foreach ($modules as $module) {
+
             $fileList = self::getClientFiles($platforms, $type, $module);
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
@@ -712,25 +738,26 @@ class MetaDataFiles
 
             $basePath = sugar_cached('modules/'.$module.'/clients/'.$platforms[0]);
             sugar_mkdir($basePath,null,true);
-            
+
             $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
             sugar_file_put_contents($basePath.'/'.$type.'.php',$output);
         }
     }
 
-    public static function getClientFiles( $platforms, $type, $module = '' ) {
+    public static function getClientFiles( $platforms, $type, $module = '' )
+    {
         $checkPaths = array();
 
         // First, build a list of paths to check
-        if ( $module == '' ) {
-            foreach ( $platforms as $platform ) {
+        if ($module == '') {
+            foreach ($platforms as $platform) {
                 // These are sorted in order of priority.
                 // No templates for the non-module stuff
                 $checkPaths['custom/clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
                 $checkPaths['clients/'.$platform.'/'.$type.'s'] = array('platform'=>$platform,'template'=>false);
             }
         } else {
-            foreach ( $platforms as $platform ) {
+            foreach ($platforms as $platform) {
                 // These are sorted in order of priority.
                 // The template flag is if that file needs to be "built" by the metadata loader so it
                 // is no longer a template file, but a real file.
@@ -749,17 +776,17 @@ class MetaDataFiles
 
         // Second, get a list of files in those directories, sorted by "relevance"
         $fileList = array();
-        foreach ( $checkPaths as $path => $pathInfo ) {
+        foreach ($checkPaths as $path => $pathInfo) {
             // Looks at /modules/Accounts/clients/base/views/*
             // So should pull up "record","list","preview"
             $dirsInPath = SugarAutoLoader::getDirFiles($path,true);
 
-            foreach ( $dirsInPath as $fullSubPath ) {
+            foreach ($dirsInPath as $fullSubPath) {
                 $subPath = basename($fullSubPath);
                 // This should find the files in each view/layout
                 // So it should pull up list.js, list.php, list.hbt
                 $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
-                foreach ( $filesInDir as $fullFile ) {
+                foreach ($filesInDir as $fullFile) {
                     $file = basename($fullFile);
                     $fileIndex = $fullFile;
                     if ( !isset($fileList[$fileIndex]) ) {
@@ -781,9 +808,9 @@ class MetaDataFiles
     {
         $results = array();
 
-        foreach ( $fileList as $fileIndex => $fileInfo ) {
+        foreach ($fileList as $fileIndex => $fileInfo) {
             $extension = substr($fileInfo['path'],-3);
-            switch ( $extension ) {
+            switch ($extension) {
                 case '.js':
                     if ( isset($results[$fileInfo['subPath']]['controller'][$fileInfo['platform']]) ) {
                         continue;
@@ -808,7 +835,7 @@ class MetaDataFiles
                     if ( isset($results[$fileInfo['subPath']]['meta']) ) {
                         continue;
                     }
-                    if ( $fileInfo['template'] ) {
+                    if ($fileInfo['template']) {
                         // This is a template file, not a real one.
                         require $fileInfo['path'];
                         $bean = BeanFactory::getBean($module);
@@ -821,7 +848,7 @@ class MetaDataFiles
                             $GLOBALS['log']->error('Could not generate a metadata file for module '.$module.', platform: '.$fileInfo['platform'].', type: '.$type);
                             continue;
                         }
-                        
+
                         $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
                     } else {
                         require $fileInfo['path'];
@@ -844,6 +871,7 @@ class MetaDataFiles
         }
 
         $results['_hash'] = md5(serialize($results));
+
         return $results;
     }
 }

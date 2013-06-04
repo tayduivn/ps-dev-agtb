@@ -23,11 +23,12 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
-class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
+class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
+{
     /**
-     * Invalid field types for various sidecar clients. Format should be 
+     * Invalid field types for various sidecar clients. Format should be
      * $client => array('type', 'type').
-     * 
+     *
      * @var array
      * @protected
      */
@@ -40,10 +41,10 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
 
     /**
      * List of allowed views for this parser.
-     * 
+     *
      * This is checked in the constructor and will throw an exception if the
      * requested view is not allowed.
-     * 
+     *
      * @var array
      */
     protected $allowedViews = array(
@@ -56,26 +57,27 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
         //END SUGARCRM flav=ent ONLY
     );
 
-
     /*
      * Constructor, builds the parent ListLayoutMetaDataParser then adds the
      * panel data to it
      *
-     * @param string $view           The view type, that is, editview, searchview etc
-     * @param string $moduleName     The name of the module to which this listview belongs
-     * @param string $packageName    If not empty, the name of the package to which this listview belongs
-     * @param string $client         The client making the request for this parser
+     * @param string $view        The view type, that is, editview, searchview etc
+     * @param string $moduleName  The name of the module to which this listview belongs
+     * @param string $packageName If not empty, the name of the package to which this listview belongs
+     * @param string $client      The client making the request for this parser
      */
-    function __construct ($view , $moduleName , $packageName = '', $client = '') {
+    public function __construct ($view , $moduleName , $packageName = '', $client = '')
+    {
         parent::__construct($view, $moduleName, $packageName, $client);
         $this->_paneldefs = $this->implementation->getPanelDefs();
     }
 
     /**
      * Return a list of the default fields for a sidecar listview
-     * @return array    List of default fields as an array
+     * @return array List of default fields as an array
      */
-    function getDefaultFields() {
+    public function getDefaultFields()
+    {
         $defaultFields = array();
         foreach ($this->_paneldefs as $def) {
             if (isset($def['fields'])) {
@@ -109,7 +111,8 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * @access public
      * @return array List of additional fields as an array
      */
-    public function getAdditionalFields() {
+    public function getAdditionalFields()
+    {
         $additionalFields = array();
         foreach ($this->_paneldefs as $def) {
             if (isset($def['fields'])) {
@@ -131,6 +134,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 }
             }
         }
+
         return $additionalFields ;
     }
 
@@ -141,12 +145,12 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * @access public
      * @return array
      */
-    public function getAvailableFields() {
+    public function getAvailableFields()
+    {
         $availableFields = array();
-        
+
         // Select available fields from the field definitions - don't need to worry about checking if ok to include as the Implementation has done that already in its constructor
-        foreach ($this->_fielddefs as $key => $def)
-        {
+        foreach ($this->_fielddefs as $key => $def) {
             if ($this->isValidField($key, $def) && !$this->panelHasField($key)) {
                 $availableFields[$key] = self::_trimFieldDefs($this->_fielddefs[$key]) ;
             }
@@ -171,7 +175,8 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      *
      * @return array
      */
-    public function getOriginalPanelDefs() {
+    public function getOriginalPanelDefs()
+    {
         $defs = $this->getOriginalViewDefs();
         $viewClient = $this->implementation->getViewClient();
         $viewType = empty($viewClient) ? 'base' : $viewClient;
@@ -181,6 +186,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 $defs = $defs[$viewType]['view'][$index]['panels'];
             }
         }
+
         return $defs;
     }
 
@@ -188,12 +194,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * Checks to see if a field name is in any of the panels
      *
      * @access public
-     * @param string $name The name of the field to check
-     * @param array $src The source array to scan
+     * @param  string $name The name of the field to check
+     * @param  array  $src  The source array to scan
      * @return bool
      */
-    public function panelHasField($name, $src = null) {
+    public function panelHasField($name, $src = null)
+    {
         $field = $this->panelGetField($name, $src);
+
         return !empty($field);
     }
 
@@ -202,11 +210,12 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * if it does, returns that field with its position in the panels list
      *
      * @access public
-     * @param string $name The name of the field to check
-     * @param array $src The array to scan for the field
+     * @param  string $name The name of the field to check
+     * @param  array  $src  The array to scan for the field
      * @return array
      */
-    public function panelGetField($name, $src = null) {
+    public function panelGetField($name, $src = null)
+    {
         // If there was a passed source, use that for the panel search
         $panels = $src !== null && is_array($src) ? $src : $this->_paneldefs;
         foreach ($panels as $panelix => $def) {
@@ -221,52 +230,55 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
 
         return array();
     }
-    
+
     /**
      * Sidecar specific method that delegates validity checking to client specific
      * methods if they exists, otherwise passes through to the parent checker
-     * 
-     * @param string $key The field name
-     * @param array $def The field defs for key
+     *
+     * @param  string $key The field name
+     * @param  array  $def The field defs for key
      * @return bool
      */
-    public function isValidField($key, $def) {
+    public function isValidField($key, $def)
+    {
         if (!empty($this->client)) {
             $method = 'isValidField' . ucfirst(strtolower($this->client));
             if (method_exists($this, $method)) {
                 return $this->$method($key, $def);
             }
         }
-        
+
         return parent::isValidField($key, $def);
     }
-    
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Validates portal only fields. Runs the field through a prelimiary check
      * of type before passing the field on to the parent validator.
-     * 
-     * @param string $key The field name to check for
-     * @param array $def The field defs for the key
+     *
+     * @param  string $key The field name to check for
+     * @param  array  $def The field defs for the key
      * @return bool
      */
-    public function isValidFieldPortal($key, $def) {
+    public function isValidFieldPortal($key, $def)
+    {
         if (isset($this->invalidTypes['portal'])) {
             if (!isset($def['type']) || in_array($def['type'], $this->invalidTypes['portal'])) {
                 return false;
             }
-        } 
-        
+        }
+
         return parent::isValidField($key, $def);
     }
     //END SUGARCRM flav=ent ONLY
-    
+
     /**
      * Populates the panel defs, and the view defs, from the request
      *
      * @return void
      */
-    protected function _populateFromRequest() {
+    protected function _populateFromRequest()
+    {
         $GLOBALS['log']->debug(get_class($this) . "->populateFromRequest() - fielddefs = ".print_r($this->_fielddefs, true));
         // Transfer across any reserved fields, that is, any where studio !== true,
         // which are not editable but must be preserved
@@ -274,7 +286,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
         $newPaneldefIndex = 0;
         $newPanelFieldMonitor = array();
 
-    	foreach ($this->_paneldefs as $index => $panel) {
+        foreach ($this->_paneldefs as $index => $panel) {
             if (isset($panel['fields'])) {
                 foreach ($panel['fields'] as $field) {
                     // Build out the massive conditional structure
@@ -303,17 +315,17 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 $fieldname = strtolower($fieldname);
                 //Check if the field was previously on the layout
                 if ($f = $this->panelGetField($fieldname)) {
-                	$newPaneldefs[$newPaneldefIndex] = $f['field'];
-				} else if ($f = $this->panelGetField($fieldname, $this->getOriginalPanelDefs())) { // Check if the original view def contained it
+                    $newPaneldefs[$newPaneldefIndex] = $f['field'];
+                } elseif ($f = $this->panelGetField($fieldname, $this->getOriginalPanelDefs())) { // Check if the original view def contained it
                     $newPaneldefs[$newPaneldefIndex] = $f['field'];
                 } else {
                     // Create a definition from the fielddefs
-	                // if we don't have a valid fieldname then just ignore it and move on...
-					if (!isset($this->_fielddefs[$fieldname])) {
-						continue;
+                    // if we don't have a valid fieldname then just ignore it and move on...
+                    if (!isset($this->_fielddefs[$fieldname])) {
+                        continue;
                     }
 
-	                $def = $this->_trimFieldDefs($this->_fielddefs[$fieldname]);
+                    $def = $this->_trimFieldDefs($this->_fielddefs[$fieldname]);
                     $label = isset($def['label']) ? $def['label'] : '';
                     if (empty($label)) {
                         $label = isset($def['vname']) ? $def['vname'] : $def['name'];
@@ -327,14 +339,14 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                         $panelfield['link'] = true;
                     }
                     // sorting fields of certain types will cause a database engine problems
-	                if (isset($this->_fielddefs[$fieldname]['type']) && isset($this->requestRejectTypes[$this->_fielddefs[$fieldname]['type']])) {
-	                    $panelfield['sortable'] = false;
-	                }
+                    if (isset($this->_fielddefs[$fieldname]['type']) && isset($this->requestRejectTypes[$this->_fielddefs[$fieldname]['type']])) {
+                        $panelfield['sortable'] = false;
+                    }
 
-	                // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
-	                if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'currency') {
-	                    $panelfield['currency_format'] = true;
-	                }
+                    // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
+                    if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'currency') {
+                        $panelfield['currency_format'] = true;
+                    }
 
                     $newPaneldefs[$newPaneldefIndex] = $panelfield;
                 }
@@ -345,7 +357,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                         $width = substr($width, 0, 2);
                     }
 
-					if (!($width < 101 && $width > 0)) {
+                    if (!($width < 101 && $width > 0)) {
                         $width = 10;
                     }
 
@@ -353,7 +365,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                 } elseif (($def = $this->panelGetField($fieldname)) && isset($def['field']['width'])) {
                     $newPaneldefs[$newPaneldefIndex]['width'] = $def['field']['width'];
                 } else {
-                	$newPaneldefs[$newPaneldefIndex]['width'] = "10%";
+                    $newPaneldefs[$newPaneldefIndex]['width'] = "10%";
                 }
 
                 // Set the default flag to make it a default field
@@ -391,11 +403,11 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
 
         $this->_paneldefs[0]['fields'] = $newPaneldefs;
     }
-    
+
     /*
      * Removes a field from the layout
-     * 
-     * @param string $fieldName Name of the field to remove
+     *
+     * @param  string  $fieldName Name of the field to remove
      * @return boolean True if the field was removed; false otherwise
      */
     public function removeField($fieldName)
@@ -405,10 +417,10 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
         if (isset($this->_viewdefs[$this->client]['view'])) {
             // list, edit or detail
             $type = key($this->_viewdefs[$this->client]['view']);
-            
+
             // The current panels, should be the same as $this->_paneldefs
             $panels = $this->_viewdefs[$this->client]['view'][$type]['panels'];
-            
+
             if (!empty($panels) && is_array($panels)) {
                 foreach ($panels as $panelIndex => $def) {
                     if (isset($def['fields']) && is_array($def['fields'])) {
@@ -418,20 +430,20 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
                                 $return = true;
                                 continue;
                             }
-                            
+
                             $newFields[] = $field;
                         }
-                        
+
                         // Reset the panel defs for now
                         $this->_paneldefs[$panelIndex]['fields'] = $newFields;
-                        
+
                         // Now handle the change in the viewdefs for saving
                         $this->_viewdefs[$this->client]['view'][$type]['panels'][$panelIndex]['fields'] = $newFields;
                     }
                 }
             }
         }
-        
+
         return $return;
     }
 
@@ -439,7 +451,8 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      * Clears mobile and portal metadata caches that have been created by the API
      * to allow immediate rendering of changes at the client
      */
-    protected function _clearCaches() {
+    protected function _clearCaches()
+    {
         if ($this->implementation->isDeployed()) {
             MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
             MetaDataManager::clearAPICache(false);

@@ -46,8 +46,8 @@ chdir(dirname(__FILE__) . '/..');
 // this is needed so modules.php properly registers the modules globals, otherwise they
 // end up defined in wrong scope
 global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $bwcModules;
-require_once('include/entryPoint.php');
-require_once('include/utils/layout_utils.php');
+require_once 'include/entryPoint.php';
+require_once 'include/utils/layout_utils.php';
 
 chdir(sugar_root_dir());
 
@@ -58,11 +58,11 @@ $current_language = $sugar_config['default_language'];
 $sugar_config['logger']['level'] = 'fatal';
 
 $GLOBALS['sugar_config']['default_permissions'] = array (
-		'dir_mode' => 02770,
-		'file_mode' => 0777,
-		'chown' => '',
-		'chgrp' => '',
-	);
+        'dir_mode' => 02770,
+        'file_mode' => 0777,
+        'chown' => '',
+        'chgrp' => '',
+    );
 
 $GLOBALS['js_version_key'] = 'testrunner';
 
@@ -75,7 +75,7 @@ $_SESSION['VALIDATION_EXPIRES_IN'] = 'valid';
 $GLOBALS['startTime'] = microtime(true);
 
 // clean out the cache directory
-require_once('modules/Administration/QuickRepairAndRebuild.php');
+require_once 'modules/Administration/QuickRepairAndRebuild.php';
 $repair = new RepairAndClear();
 $repair->module_list = array();
 $repair->show_output = false;
@@ -149,7 +149,7 @@ $GLOBALS['db']->commit();
 
 define('CHECK_FILE_MAPS', false);
 // define our testcase subclass
-if(function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
+if (function_exists("shadow_get_config") && ($sc = shadow_get_config()) != false && !empty($sc['template'])) {
     // shadow is enabled
     define('SHADOW_ENABLED', true);
     define('SHADOW_CHECK', false); // disable for faster tests
@@ -171,6 +171,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         $files = `find $dir -name cache -prune -o -name custom -prune -o -name upload -prune -o -name tests -prune -o -name sugarcrm\\*.log -prune -o -type f -print | sort`;
         $flist = explode("\n", $files);
         sort($flist);
+
         return join("\n", $flist);
     }
 
@@ -178,31 +179,32 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
     {
         $GLOBALS['runningTest'] = $this->getName(false);
         $GLOBALS['runningTestClass'] = get_class($this);
-        if(isset($GLOBALS['log'])) {
+        if (isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
         SugarCache::instance()->flush();
     }
 
-    protected function assertPostConditions() {
-        if(!empty($_REQUEST)) {
-            foreach(array_keys($_REQUEST) as $k) {
-		        unset($_REQUEST[$k]);
-		    }
+    protected function assertPostConditions()
+    {
+        if (!empty($_REQUEST)) {
+            foreach (array_keys($_REQUEST) as $k) {
+                unset($_REQUEST[$k]);
+            }
         }
 
-        if(!empty($_POST)) {
-            foreach(array_keys($_POST) as $k) {
-		        unset($_POST[$k]);
-		    }
+        if (!empty($_POST)) {
+            foreach (array_keys($_POST) as $k) {
+                unset($_POST[$k]);
+            }
         }
 
-        if(!empty($_GET)) {
-            foreach(array_keys($_GET) as $k) {
-		        unset($_GET[$k]);
-		    }
+        if (!empty($_GET)) {
+            foreach (array_keys($_GET) as $k) {
+                unset($_GET[$k]);
+            }
         }
-        if(isset($GLOBALS['log'])) {
+        if (isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
         }
         // reset error handler in case somebody set it
@@ -220,8 +222,8 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         unset($GLOBALS['saving_relationships']);
         unset($GLOBALS['updating_relationships']);
         $GLOBALS['timedate']->clearCache();
-        if(constant('CHECK_FILE_MAPS')) {
-            if(!self::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
+        if (constant('CHECK_FILE_MAPS')) {
+            if (!self::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
                 SugarAutoLoader::buildCache();
             }
         }
@@ -230,30 +232,33 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 
     public static function compareArray($arr1, $arr2, $path = "")
     {
-        if(!is_array($arr2)) {
+        if (!is_array($arr2)) {
             echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in ./{$path} - is file in map but should be directory!\n");
         }
-        foreach($arr2 as $key => $value) {
+        foreach ($arr2 as $key => $value) {
             $keypath = "{$path}$key/";
-            if(in_array($keypath, SugarAutoLoader::$exclude)) {
+            if (in_array($keypath, SugarAutoLoader::$exclude)) {
                 unset($arr1[$key]);
                 continue;
             }
-            if(!isset($arr1[$key])) {
+            if (!isset($arr1[$key])) {
                 echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in {$path}$key - in map but not on disk\n");
+
                 return false;
             }
-            if(is_array($arr1[$key])) {
-                if(!self::compareArray($arr1[$key], $arr2[$key], $keypath)) {
+            if (is_array($arr1[$key])) {
+                if (!self::compareArray($arr1[$key], $arr2[$key], $keypath)) {
                     return false;
                 }
             }
             unset($arr1[$key]);
         }
-        foreach($arr1 as $key => $value) {
+        foreach ($arr1 as $key => $value) {
             echo ("\nERROR[{$GLOBALS['runningTestClass']}:{$GLOBALS['runningTest']}]: Difference in {$path}$key - on disk but not in map!\n");
+
             return false;
         }
+
         return true;
     }
 
@@ -261,11 +266,11 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
     {
         // Prevent the activity stream from creating messages.
         Activity::disable();
-        if(SHADOW_CHECK && empty($this->file_map)) {
-        	$this->file_map = self::getFiles();
+        if (SHADOW_CHECK && empty($this->file_map)) {
+            $this->file_map = self::getFiles();
         }
         parent::runBare();
-        if(SHADOW_CHECK) {
+        if (SHADOW_CHECK) {
             $oldfiles = $this->file_map;
             $this->file_map = self::getFiles();
             $this->assertEquals($oldfiles, $this->file_map);
@@ -284,31 +289,32 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
     {
         $GLOBALS['runningTest'] = $this->getName(false);
         $GLOBALS['runningTestClass'] = get_class($this);
-        if(isset($GLOBALS['log'])) {
+        if (isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
         SugarCache::instance()->flush();
     }
 
-    protected function assertPostConditions() {
-        if(!empty($_REQUEST)) {
-            foreach(array_keys($_REQUEST) as $k) {
-		        unset($_REQUEST[$k]);
-		    }
+    protected function assertPostConditions()
+    {
+        if (!empty($_REQUEST)) {
+            foreach (array_keys($_REQUEST) as $k) {
+                unset($_REQUEST[$k]);
+            }
         }
 
-        if(!empty($_POST)) {
-            foreach(array_keys($_POST) as $k) {
-		        unset($_POST[$k]);
-		    }
+        if (!empty($_POST)) {
+            foreach (array_keys($_POST) as $k) {
+                unset($_POST[$k]);
+            }
         }
 
-        if(!empty($_GET)) {
-            foreach(array_keys($_GET) as $k) {
-		        unset($_GET[$k]);
-		    }
+        if (!empty($_GET)) {
+            foreach (array_keys($_GET) as $k) {
+                unset($_GET[$k]);
+            }
         }
-        if(isset($GLOBALS['log'])) {
+        if (isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
         }
     }
@@ -333,8 +339,8 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
         unset($GLOBALS['saving_relationships']);
         unset($GLOBALS['updating_relationships']);
         $GLOBALS['timedate']->clearCache();
-        if(constant('CHECK_FILE_MAPS')) {
-            if(!Sugar_PHPUnit_Framework_TestCase::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
+        if (constant('CHECK_FILE_MAPS')) {
+            if (!Sugar_PHPUnit_Framework_TestCase::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
                 SugarAutoLoader::buildCache();
             }
         }
@@ -344,14 +350,14 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
     {
         // Prevent the activity stream from creating messages.
         Activity::disable();
-        if(SHADOW_CHECK && empty($this->file_map)) {
-    		$this->file_map = Sugar_PHPUnit_Framework_TestCase::getFiles();
-    	}
-    	parent::runBare();
-    	if(SHADOW_CHECK) {
-    		$newfiles = Sugar_PHPUnit_Framework_TestCase::getFiles();
-    		$this->assertEquals($this->file_map, $newfiles);
-    	}
+        if (SHADOW_CHECK && empty($this->file_map)) {
+            $this->file_map = Sugar_PHPUnit_Framework_TestCase::getFiles();
+        }
+        parent::runBare();
+        if (SHADOW_CHECK) {
+            $newfiles = Sugar_PHPUnit_Framework_TestCase::getFiles();
+            $this->assertEquals($this->file_map, $newfiles);
+        }
     }
 }
 
@@ -359,30 +365,30 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Framework_TestCase
 // the test suite
 class SugarMockLogger
 {
-	private $_messages = array();
+    private $_messages = array();
 
-	public function __call($method, $message)
-	{
-		$this->_messages[] = strtoupper($method) . ': ' . $message[0];
-	}
+    public function __call($method, $message)
+    {
+        $this->_messages[] = strtoupper($method) . ': ' . $message[0];
+    }
 
     public function getMessages()
     {
         return $this->_messages;
     }
 
-	public function getLastMessage()
-	{
-		return end($this->_messages);
-	}
+    public function getLastMessage()
+    {
+        return end($this->_messages);
+    }
 
-	public function getMessageCount()
-	{
-		return count($this->_messages);
-	}
+    public function getMessageCount()
+    {
+        return count($this->_messages);
+    }
 }
 
-require_once('ModuleInstall/ModuleInstaller.php');
+require_once 'ModuleInstall/ModuleInstaller.php';
 
 /**
  * Own exception for SugarTestHelper class
@@ -449,71 +455,59 @@ class SugarTestHelper
      */
     public static function init()
     {
-        if (self::$isInited == true)
-        {
+        if (self::$isInited == true) {
             return true;
         }
 
         // initialization & backup of sugar_config
         self::$initVars['GLOBALS']['sugar_config'] = null;
-        if ($GLOBALS['sugar_config'])
-        {
+        if ($GLOBALS['sugar_config']) {
             self::$initVars['GLOBALS']['sugar_config'] = $GLOBALS['sugar_config'];
         }
-        if (self::$initVars['GLOBALS']['sugar_config'] == false)
-        {
+        if (self::$initVars['GLOBALS']['sugar_config'] == false) {
             global $sugar_config;
-            if (is_file('config.php'))
-            {
-                require_once('config.php');
+            if (is_file('config.php')) {
+                require_once 'config.php';
             }
-            if (is_file('config_override.php'))
-            {
-                require_once('config_override.php');
+            if (is_file('config_override.php')) {
+                require_once 'config_override.php';
             }
             self::$initVars['GLOBALS']['sugar_config'] = $GLOBALS['sugar_config'];
         }
 
         // backup of current_language
         self::$initVars['GLOBALS']['current_language'] = 'en_us';
-        if (isset($sugar_config['current_language']))
-        {
+        if (isset($sugar_config['current_language'])) {
             self::$initVars['GLOBALS']['current_language'] = $sugar_config['current_language'];
         }
-        if (isset($GLOBALS['current_language']))
-        {
+        if (isset($GLOBALS['current_language'])) {
             self::$initVars['GLOBALS']['current_language'] = $GLOBALS['current_language'];
         }
         $GLOBALS['current_language'] = self::$initVars['GLOBALS']['current_language'];
 
         // backup of reload_vardefs
         self::$initVars['GLOBALS']['reload_vardefs'] = null;
-        if (isset($GLOBALS['reload_vardefs']))
-        {
+        if (isset($GLOBALS['reload_vardefs'])) {
             self::$initVars['GLOBALS']['reload_vardefs'] = $GLOBALS['reload_vardefs'];
         }
 
         // backup of locale
         self::$initVars['GLOBALS']['locale'] = null;
-        if (isset($GLOBALS['locale']))
-        {
+        if (isset($GLOBALS['locale'])) {
             self::$initVars['GLOBALS']['locale'] = $GLOBALS['locale'];
         }
-        if (self::$initVars['GLOBALS']['locale'] == false)
-        {
+        if (self::$initVars['GLOBALS']['locale'] == false) {
             self::$initVars['GLOBALS']['locale'] = new Localization();
         }
 
         // backup of service_object
 
-        if (isset($GLOBALS['service_object']))
-        {
+        if (isset($GLOBALS['service_object'])) {
             self::$initVars['GLOBALS']['service_object'] = $GLOBALS['service_object'];
         }
 
-
         //Backup everything that could have been loaded in modules.php
-        include("include/modules.php");
+        include 'include/modules.php';
         foreach(array('moduleList', 'beanList', 'beanFiles', 'modInvisList',
                       'objectList', 'modules_exempt_from_availability_check', 'adminOnlyList'
                      ) as $globVar)
@@ -523,7 +517,7 @@ class SugarTestHelper
         }
 
         //ensure current user exists
-        /*if (!isset($GLOBALS['current_user'])){
+        /*if (!isset($GLOBALS['current_user'])) {
             $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         }*/
         self::$initVars['GLOBALS']['current_user'] = $GLOBALS['current_user'];
@@ -538,14 +532,13 @@ class SugarTestHelper
      * Checking is there helper for variable or not
      *
      * @static
-     * @param string $varName name of global variable of SugarCRM
-     * @return bool is there helper for a variable or not
+     * @param  string                   $varName name of global variable of SugarCRM
+     * @return bool                     is there helper for a variable or not
      * @throws SugarTestHelperException fired when there is no implementation of helper for a variable
      */
     protected static function checkHelper($varName)
     {
-        if (method_exists(__CLASS__, 'setUp_' . $varName) == false)
-        {
+        if (method_exists(__CLASS__, 'setUp_' . $varName) == false) {
             throw new SugarTestHelperException('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
         }
     }
@@ -554,14 +547,15 @@ class SugarTestHelper
      * Entry point for setup of global variable
      *
      * @static
-     * @param string $varName name of global variable of SugarCRM
-     * @param array $params some parameters for helper. For example for $mod_strings or $current_user
-     * @return bool is variable setuped or not
+     * @param  string $varName name of global variable of SugarCRM
+     * @param  array  $params  some parameters for helper. For example for $mod_strings or $current_user
+     * @return bool   is variable setuped or not
      */
     public static function setUp($varName, $params = array())
     {
         self::init();
         self::checkHelper($varName);
+
         return call_user_func(__CLASS__ . '::setUp_' . $varName, $params);
     }
 
@@ -573,27 +567,20 @@ class SugarTestHelper
     public static function tearDown()
     {
         self::init();
-        foreach(self::$registeredVars as $varName => $isCalled)
-        {
-            if ($isCalled)
-            {
+        foreach (self::$registeredVars as $varName => $isCalled) {
+            if ($isCalled) {
                 unset(self::$registeredVars[$varName]);
-                if (method_exists(__CLASS__, 'tearDown_' . $varName))
-                {
+                if (method_exists(__CLASS__, 'tearDown_' . $varName)) {
                     call_user_func(__CLASS__ . '::tearDown_' . $varName, array());
-                }
-                elseif (isset($GLOBALS[$varName]))
-                {
+                } elseif (isset($GLOBALS[$varName])) {
                     unset($GLOBALS[$varName]);
                 }
             }
         }
 
         // Restoring of system variables
-        foreach(self::$initVars as $scope => $vars)
-        {
-            foreach ($vars as $name => $value)
-            {
+        foreach (self::$initVars as $scope => $vars) {
+            foreach ($vars as $name => $value) {
                 $GLOBALS[$scope][$name] = $value;
             }
         }
@@ -604,6 +591,7 @@ class SugarTestHelper
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);
         SugarCache::$isCacheReset = false;
+
         return true;
     }
 
@@ -611,15 +599,16 @@ class SugarTestHelper
      * Registration of $current_user in global scope
      *
      * @static
-     * @param array $params parameters for SugarTestUserUtilities::createAnonymousUser method
-     * @return bool is variable setuped or not
+     * @param  array $params parameters for SugarTestUserUtilities::createAnonymousUser method
+     * @return bool  is variable setuped or not
      */
     protected static function setUp_current_user(array $params, $register = true)
     {
-        if ($register){
+        if ($register) {
             self::$registeredVars['current_user'] = true;
         }
         $GLOBALS['current_user'] = call_user_func_array('SugarTestUserUtilities::createAnonymousUser', $params);
+
         return $GLOBALS['current_user'];
     }
 
@@ -633,6 +622,7 @@ class SugarTestHelper
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+
         return true;
     }
 
@@ -644,11 +634,12 @@ class SugarTestHelper
      */
     protected static function setUp_beanList($params = array(), $register = true)
     {
-        if ($register){
+        if ($register) {
             self::$registeredVars['beanList'] = true;
         }
         global $beanList;
-        require('include/modules.php');
+        require 'include/modules.php';
+
         return true;
     }
 
@@ -660,11 +651,12 @@ class SugarTestHelper
      */
     protected static function setUp_beanFiles($params = array(), $register = true)
     {
-        if ($register){
+        if ($register) {
             self::$registeredVars['beanFiles'] = true;
         }
         global $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
+
         return true;
     }
 
@@ -676,11 +668,12 @@ class SugarTestHelper
      */
     protected static function setUp_moduleList($params = array(), $register = true)
     {
-        if ($register){
+        if ($register) {
             self::$registeredVars['moduleList'] = true;
         }
         global $moduleList;
-        require('include/modules.php');
+        require 'include/modules.php';
+
         return true;
     }
 
@@ -704,14 +697,14 @@ class SugarTestHelper
     protected static function setUp_modListHeader()
     {
         self::$registeredVars['modListHeader'] = true;
-        if (isset($GLOBALS['current_user']) == false)
-        {
+        if (isset($GLOBALS['current_user']) == false) {
             self::setUp_current_user(array(
                 true,
                 1
             ));
         }
         $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
+
         return true;
     }
 
@@ -725,6 +718,7 @@ class SugarTestHelper
     {
         self::$registeredVars['app_strings'] = true;
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+
         return true;
     }
 
@@ -738,6 +732,7 @@ class SugarTestHelper
     {
         self::$registeredVars['app_list_strings'] = true;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+
         return true;
     }
 
@@ -749,10 +744,11 @@ class SugarTestHelper
      */
     protected static function setUp_timedate($params = array(), $register = true)
     {
-        if ($register){
+        if ($register) {
             self::$registeredVars['timedate'] = true;
         }
         $GLOBALS['timedate'] = TimeDate::getInstance();
+
         return true;
     }
 
@@ -765,6 +761,7 @@ class SugarTestHelper
     protected static function tearDown_timedate()
     {
         $GLOBALS['timedate']->clearCache();
+
         return true;
     }
 
@@ -772,13 +769,14 @@ class SugarTestHelper
      * Registration of $mod_strings in global scope
      *
      * @static
-     * @param array $params parameters for return_module_language function
-     * @return bool is variable setuped or not
+     * @param  array $params parameters for return_module_language function
+     * @return bool  is variable setuped or not
      */
     protected static function setUp_mod_strings(array $params)
     {
         self::$registeredVars['mod_strings'] = true;
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $params[0]);
+
         return true;
     }
 
@@ -801,16 +799,16 @@ class SugarTestHelper
         $moduleInstaller->rebuild_tabledictionary();
         require 'modules/TableDictionary.php';
 
-        foreach($GLOBALS['beanList'] as $k => $v)
-        {
+        foreach ($GLOBALS['beanList'] as $k => $v) {
             VardefManager::loadVardef($k, BeanFactory::getObjectName($k));
         }
+
         return true;
     }
 
     const NOFILE_DATA = '__NO_FILE__';
-    static public $oldFiles;
-    static public $oldDirs;
+    public static $oldFiles;
+    public static $oldDirs;
     /**
      * Setup file preserving hooks
      */
@@ -826,31 +824,33 @@ class SugarTestHelper
      */
     public static function saveFile($filename)
     {
-        if(is_array($filename)) {
-            foreach($filename as $file) {
+        if (is_array($filename)) {
+            foreach ($filename as $file) {
                 self::saveFile($file);
             }
+
             return;
         }
         if ( file_exists($filename) ) {
-        	self::$oldFiles[$filename] = file_get_contents($filename);
+            self::$oldFiles[$filename] = file_get_contents($filename);
         } else {
-        	self::$oldFiles[$filename] = self::NOFILE_DATA;
+            self::$oldFiles[$filename] = self::NOFILE_DATA;
         }
     }
 
     public static function ensureDir($dirname)
     {
-        if(is_array($dirname)) {
-            foreach($dirname as $dir) {
+        if (is_array($dirname)) {
+            foreach ($dirname as $dir) {
                 self::ensureDir($dir);
             }
+
             return;
         }
         $parts = explode("/", $dirname);
-        while(!empty($parts)) {
+        while (!empty($parts)) {
             $path = implode("/", $parts);
-            if(!is_dir($path)) {
+            if (!is_dir($path)) {
                 self::$oldDirs[] = $path;
                 SugarAutoLoader::ensureDir($path);
             }
@@ -863,24 +863,24 @@ class SugarTestHelper
      */
     protected static function tearDown_files()
     {
-        foreach ( self::$oldFiles as $filename => $filecontents ) {
-            if(SHADOW_ENABLED) {
-                if(substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
+        foreach (self::$oldFiles as $filename => $filecontents) {
+            if (SHADOW_ENABLED) {
+                if (substr($filename, 0, 7) != 'custom/' && substr($filename, 0, 6) != 'cache/' && $filename != 'config_override.php' && file_exists($filename)) {
                     // Delete shadow files always
                     @SugarAutoLoader::unlink($filename, false);
                     continue;
                 }
             }
-        	if ( $filecontents == self::NOFILE_DATA ) {
-        		if ( file_exists($filename) ) {
-        			SugarAutoLoader::unlink($filename, false);
-        		}
-        	} else {
-        		file_put_contents($filename,$filecontents);
-        		SugarAutoLoader::addToMap($filename, false);
-        	}
+            if ($filecontents == self::NOFILE_DATA) {
+                if ( file_exists($filename) ) {
+                    SugarAutoLoader::unlink($filename, false);
+                }
+            } else {
+                file_put_contents($filename,$filecontents);
+                SugarAutoLoader::addToMap($filename, false);
+            }
         }
-        foreach(self::$oldDirs as $dirname) {
+        foreach (self::$oldDirs as $dirname) {
             rmdir($dirname);
             SugarAutoLoader::delFromMap($dirname, false);
         }
@@ -903,14 +903,13 @@ class SugarTestHelper
      * Cleaning caches and refreshing vardefs
      *
      * @static
-     * @param string $lhs_module left module from relation
-     * @param string $rhs_module right module from relation
-     * @return bool are caches refreshed or not
+     * @param  string $lhs_module left module from relation
+     * @param  string $rhs_module right module from relation
+     * @return bool   are caches refreshed or not
      */
     protected static function setUp_relation(array $params)
     {
-        if (empty($params[0]) || empty($params[1]))
-        {
+        if (empty($params[0]) || empty($params[1])) {
             throw new SugarTestHelperException('setUp("relation") requires two parameters');
         }
         list($lhs_module, $rhs_module) = $params;
@@ -918,8 +917,7 @@ class SugarTestHelper
         self::$cleanModules[] = $lhs_module;
 
         LanguageManager::clearLanguageCache($lhs_module);
-        if ($lhs_module != $rhs_module)
-        {
+        if ($lhs_module != $rhs_module) {
             self::$cleanModules[] = $rhs_module;
             LanguageManager::clearLanguageCache($rhs_module);
         }
@@ -929,8 +927,7 @@ class SugarTestHelper
         VardefManager::$linkFields = array();
         VardefManager::clearVardef();
         VardefManager::refreshVardefs($lhs_module, BeanFactory::getObjectName($lhs_module));
-        if ($lhs_module != $rhs_module)
-        {
+        if ($lhs_module != $rhs_module) {
             VardefManager::refreshVardefs($rhs_module, BeanFactory::getObjectName($rhs_module));
         }
         SugarRelationshipFactory::rebuildCache();
@@ -949,8 +946,7 @@ class SugarTestHelper
         SugarRelationshipFactory::deleteCache();
 
         $modules = array_unique(self::$cleanModules);
-        foreach ($modules as $module)
-        {
+        foreach ($modules as $module) {
             LanguageManager::clearLanguageCache($module);
         }
 
@@ -958,13 +954,13 @@ class SugarTestHelper
 
         VardefManager::$linkFields = array();
         VardefManager::clearVardef();
-        foreach($modules as $module)
-        {
+        foreach ($modules as $module) {
             VardefManager::refreshVardefs($module, BeanFactory::getBeanName($module));
         }
         SugarRelationshipFactory::rebuildCache();
 
         self::$cleanModules = array();
+
         return true;
     }
 
