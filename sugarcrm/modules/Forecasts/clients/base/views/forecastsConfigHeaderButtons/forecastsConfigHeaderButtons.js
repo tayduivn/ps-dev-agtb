@@ -136,17 +136,25 @@
      * Saves the config model
      */
     saveConfig: function() {
+        var firstTime = false;
+
         // Set config settings before saving
         this.context.get('model').set({
             is_setup:true,
             show_forecasts_commit_warnings: true
         });
 
+        // check that first_time flag and unset it
+        if(this.context.get('model').get('first_time') != undefined) {
+            this.context.get('model').unset('first_time');
+            firstTime = true;
+        }
+
         this.context.get('model').save({}, {
             // getting the fresh model with correct config settings passed in as the param
             success: _.bind(function(model) {
-                // If we're inside a drawer and Forecasts is setup
-                if(this.context && this.context.get('inDrawer')) {
+                // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
+                if(this.context && this.context.get('inDrawer') && !firstTime) {
                     // build an object based on the metadata structure
                     var updatedMetadata = {
                         modules: {
@@ -166,7 +174,9 @@
                     // where it might not be a drawer.  NOT SURE, but this handles that scenario
 
                     // only navigate after save api call has returned
-                    app.router.navigate('#Forecasts', {trigger: true});
+                    // have to do it this way because if we're already on #Forecasts it will not reload by setting
+                    window.location = '#Forecasts';
+                    window.location.reload();
                 }
 
             }, this)

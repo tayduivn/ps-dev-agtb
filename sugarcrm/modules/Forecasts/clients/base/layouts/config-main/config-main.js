@@ -48,6 +48,12 @@
         this.forecastByText = appLang.get('LBL_FORECASTS_CONFIG_HELP_FORECAST_BY', 'Forecasts');
         this.wkstColumnsTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS', 'Forecasts');
         this.wkstColumnsText = appLang.get('LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS', 'Forecasts');
+
+        // if this is the first time forecasts is being set up, add the flag to the model
+        // so we can handle routing after save
+        if(this.context.get('model').get('is_setup') == 0) {
+            this.context.get('model').set({first_time: 1});
+        }
     },
 
     /**
