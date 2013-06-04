@@ -47,7 +47,7 @@
 
         app.view.Field.prototype._render.call(this);
 
-        if (this.action === 'edit') {
+        if (this.action === 'edit' || this.action === 'disabled') {
 
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width','8px');
@@ -87,7 +87,7 @@
             value = "";
         }
 
-        if (this.tplName === 'edit') {
+        if (this.tplName === 'edit' || (this.tplName == 'disabled' && this.action == 'disabled')) {
             this.currencySfId = this.getCurrencyField().sfId;
 
             return app.utils.formatNumberLocale(value);
@@ -160,5 +160,12 @@
         });
 
         return this._currencyField;
+    },
+
+    setDisabled: function (disable) {
+        disable = _.isUndefined(disable) ? true : disable;
+        app.view.Field.prototype.setDisabled.call(this, disable);
+
+        this.getCurrencyField().setDisabled(disable);
     }
 })
