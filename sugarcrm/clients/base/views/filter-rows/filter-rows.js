@@ -422,7 +422,7 @@
                 // check each row for a valid filter, add to dynamic filter def
                 var dynamicFilterDef = this.buildFilterDef();
                 // trigger the filtering here.
-                this.layout.trigger('filter:change:quicksearch', null, dynamicFilterDef);
+                this.layout.trigger('filter:apply', null, dynamicFilterDef);
             };
         })($row));
     },

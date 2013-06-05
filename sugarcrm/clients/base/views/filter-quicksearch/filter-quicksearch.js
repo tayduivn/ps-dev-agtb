@@ -42,7 +42,7 @@
         var newSearch = this.$el.val();
         if(this.currentSearch !== newSearch) {
             this.currentSearch = newSearch;
-            this.layout.trigger("filter:change:quicksearch", newSearch);
+            this.layout.trigger("filter:apply", newSearch);
         }
     }, 400),
 
@@ -52,6 +52,6 @@
     clearInput: function() {
         this.$el.val("").toggleClass('hide', this.layout.showingActivities);
         this.currentSearch = "";
-        this.layout.trigger("filter:change:quicksearch");
+        this.layout.trigger("filter:apply");
     }
 })

@@ -18,8 +18,7 @@ describe("Filter Quick Search View", function () {
     });
 
     it('should call clear input on filter:clear:quicksearch', function () {
-        var stub = sinon.stub(view, 'clearInput', function () {
-        });
+        var stub = sinon.stub(view, 'clearInput');
         view.initialize(view.options);
         parentLayout.trigger('filter:clear:quicksearch');
         expect(stub).toHaveBeenCalled();
@@ -27,14 +26,14 @@ describe("Filter Quick Search View", function () {
     it('should trigger quick search change on throttle search', function () {
         var spy = sinon.spy();
         parentLayout.off();
-        parentLayout.on('filter:change:quicksearch', spy);
+        parentLayout.on('filter:apply', spy);
         view.throttledSearch();
         expect(spy).toHaveBeenCalled();
     });
-    it('should trigger filter:change:quicksearch on clearInput', function(){
+    it('should trigger filter:apply on clearInput', function(){
         var spy = sinon.spy();
         parentLayout.off();
-        parentLayout.on('filter:change:quicksearch', spy);
+        parentLayout.on('filter:apply', spy);
         view.clearInput();
         expect(spy).toHaveBeenCalled();
     });
