@@ -1,7 +1,7 @@
 ({
     events: {
         'click .widget-edit': 'editClicked',
-        'click .widget-refresh' : 'refreshClicked',
+        'click .widget-refresh' : 'reload',
         'click .widget-remove' : 'removeClicked',
         'click .minify' : 'toggleMinify'
     },
@@ -21,7 +21,8 @@
         else
             this.$el.html(this.template(this));
 
-        app.view.Layout.prototype._addComponentsFromDef.call(this, components);
+        var context = this.context.parent || this.context;
+        app.view.Layout.prototype._addComponentsFromDef.call(this, components, context, context.get("module"));
     },
     _placeComponent: function(comp, def) {
         if(this.meta.empty) {
@@ -36,6 +37,7 @@
     setDashletMetadata: function(meta) {
         var metadata = this.model.get("metadata"),
             component = this.getCurrentComponent(metadata, this.index);
+
         _.each(meta, function(value, key){
             this[key] = value;
         }, component);
@@ -44,11 +46,13 @@
         this.model.trigger("change:layout");
         if(this.model.mode === 'view') {
             this.model.save(null, {
+                silent: true,
                 //Show alerts for this request
                 showAlerts: true
             });
         }
 
+        this.meta.components[0] = component;
         return component;
     },
     getCurrentComponent: function(metadata, tracekey) {
@@ -62,9 +66,10 @@
     },
     addDashlet: function(meta) {
         var component = this.setDashletMetadata(meta);
+        var def = component.view || component.layout || component;
 
         this.meta.empty = false;
-        this.meta.label = component.name;
+        this.meta.label = def.label || def.name || "";
         //clear previous dashlet
         this._components[0].dispose();
         this.removeComponent(0);
@@ -101,7 +106,11 @@
         this.removeComponent(0);
         this._addComponentsFromDef([
             {
-                view: 'dashlet-cell-empty'
+                view: 'dashlet-cell-empty',
+                context: {
+                    module: 'Home',
+                    skipFetch: true
+                }
             }
         ]);
         this.render();
@@ -112,31 +121,42 @@
     removeClicked: function(evt) {
         this.removeDashlet();
     },
-    refreshClicked: function(evt) {
+    reload: function() {
         var component = _.first(this._components),
             context = component.context,
-            self = this;
+            $el = this.$("[data-action=loading]");
         context._dataFetched = false;
-        this.loadData();
+        $el.removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
+        var self = this,
+            options = {};
+        options.complete = function() {
+            if(self.disposed) {
+                return;
+            }
+            $el.removeClass(self.cssIconRefresh).addClass(self.cssIconDefault);
+        };
+        this.loadData(options);
     },
     editClicked: function(evt) {
-        var component = _.first(this._components),
-            self = this;
+        var self = this,
+            meta = app.utils.deepCopy(this.meta.components[0]),
+            type = meta.layout ? "layout" : "view";
+        if(_.isString(meta[type])) {
+            meta[type] = {name:meta[type], config:true};
+        } else {
+            meta[type].config = true;
+        }
+        meta[type] = _.extend({}, meta[type], meta.context);
+
+        if(meta.context) {
+            meta.context.skipFetch = true;
+            delete meta.context.link;
+        }
+
         app.drawer.open({
             layout: {
                 name: 'dashletconfiguration',
-                components: [
-                    {
-                        view: component.context.get("dashlet").type,
-                        context: {
-                            model: new app.Bean(),
-                            module: component.context.get("module"),
-                            dashlet: _.extend({
-                                viewName: 'config'
-                            },component.context.get("dashlet"))
-                        }
-                    }
-                ]
+                components: [meta]
             },
             context: {
                 model: new app.Bean(),
@@ -144,16 +164,19 @@
             }
         }, function(model) {
             if(!model) return;
-            self.addDashlet({
-                name: model.get("name"),
-                view: model.get("type"),
-                context: {
-                    module: model.get("module") || null,
-                    model: model.get("model") || null,
-                    modelId: model.get("modelId") || null,
-                    dashlet: model.attributes
-                }
-            });
+            var conf = model.toJSON(),
+                dash = {
+                    context: {
+                        module: model.get("module") || (meta.context ? meta.context.module : null),
+                        link: model.get("link") || null
+                    }
+                };
+            delete conf.config;
+            if(_.isEmpty(dash.context.module) && _.isEmpty(dash.context.link)) {
+                delete dash.context;
+            }
+            dash[type] = conf;
+            self.addDashlet(dash);
         });
     },
     toggleMinify: function(evt) {
@@ -166,17 +189,6 @@
         this.$(".minify > i").toggleClass("icon-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
         this.$(".widget-content").toggleClass("hide", collapsed);
-    },
-    loadData: function(options) {
-        this.$(".dropdown-toggle > i").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
-        var self = this;
-        options = options || {};
-        options.complete = function() {
-            self.$(".dropdown-toggle > i")
-                .removeClass(self.cssIconRefresh)
-                .addClass(self.cssIconDefault);
-        };
-        app.view.Layout.prototype.loadData.call(this, options);
     },
     _dispose: function() {
         this.off("render");

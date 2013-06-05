@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet', 'GridBuilder'],
+    plugins: ['Dashlet'],
 
     events: {
         'click .interactions-chart': 'switchChart'
@@ -25,18 +25,15 @@
         this.on("data-changed", function () {
             this.updateChart();
         }, this);
-        this.model.on("change:filter_duration", this.changeFilter, this);
-        if(this.model.parentModel) {
-            this.model.parentModel.on("change", this.loadData, this);
+        this.settings.on("change:filter_duration", this.changeFilter, this);
+    },
+
+    bindDataChange: function(){
+        if(!this.meta.config) {
+            this.model.on("change", this.loadData, this);
         }
     },
 
-    initDashlet: function(view) {
-        if(view === 'config') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
-        }
-    },
     updateChart: function () {
         var self = this;
 
@@ -132,7 +129,7 @@
     loadData: function(options) {
         var self = this,
             params = _.extend({"id": app.controller.context.get("model").id}, this.params),
-            url = app.api.buildURL(this.model.parentModel.module,
+            url = app.api.buildURL(this.model.module,
                                    "interactions",
                                    params);
 
@@ -166,9 +163,6 @@
         this.loadData();
     },
     _dispose: function() {
-        if(this.model.parentModel) {
-            this.model.parentModel.off("change", null, this);
-        }
         this.model.off("change", null, this);
         this.on("data-changed", null, this);
         app.view.View.prototype._dispose.call(this);

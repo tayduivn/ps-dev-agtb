@@ -31,24 +31,6 @@ $viewdefs['base']['view']['bubblechart'] = array(
             ),
         ),
     ),
-    'dashlets' => array(
-        array(
-            'name' => 'LBL_TOP10_OPPORTUNITIES_CHART',
-            'description' => 'LBL_TOP10_OPPORTUNITIES_CHART_DESC',
-            'config' => array(),
-            'preview' => array(),
-            'filter' => array(
-                'module' => array(
-                    'Accounts',
-                    'Contacts',
-                    'Leads',
-                    'Opportunities',
-                    'Home',
-                ),
-                'view' => 'record',
-            ),
-        ),
-    ),
     'panels' => array(
         array(
             'name' => 'panel_body',

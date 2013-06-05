@@ -10,16 +10,15 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Twitter Dashlet',
-            'view' => 'twitter',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Twitter Dashlet',
-                    'type' => 'twitter',
-                    'twitter' => 'sugarcrm',
-                    'limit' => '5',
-                ),
+            'view' => array(
+                'name' => 'twitter',
+                'label' => 'Twitter Dashlet',
+                'twitter' => 'sugarcrm',
+                'limit' => '5',
             ),
+            'context' => array(
+                'module' => 'Home',
+            )
         ),
     )
 );

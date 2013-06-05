@@ -4,7 +4,7 @@
         <a href="javascript:void(0)" data-toggle="widget" class="dashlet_toggle btn btn-invisible minify" rel="tooltip" data-original-title="Collapse" data-placement="top">
             <i class="icon-chevron-up"></i>
         </a>
-        <a data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i class="icon-cog"></i></a>
+        <a data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i data-action="loading" class="icon-cog"></i></a>
         <ul class="dropdown-menu left carettop">
             <div>
                 <li><a class="widget-edit" data-action="edit">{{str "LBL_DASHLET_CONFIG_EDIT"}}</a></li>

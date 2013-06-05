@@ -24,6 +24,6 @@
         this.navigate(id);
     },
     navigate: function(id) {
-        this.model.dashboardLayout.navigateLayout(id);
+        this.view.layout.navigateLayout(id);
     }
 })

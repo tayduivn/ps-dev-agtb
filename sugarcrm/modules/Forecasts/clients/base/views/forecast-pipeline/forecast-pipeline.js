@@ -24,17 +24,14 @@
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
 
-        // since we need the timeperiods from 'Forecasts' set the models module to 'Forecasts'
-        this.model.module = 'Forecasts';
-
         // set the default button state
-        this.model.set({'display_type': 'self'}, {silent: true});
+        this.settings.set({'display_type': 'self'}, {silent: true});
 
         // get the current timeperiod
         if(this.forecastSetup) {
             app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
                 success: _.bind(function(o) {
-                    this.model.set({'selectedTimePeriod': o.id}, {silent: true});
+                    this.settings.set({'selectedTimePeriod': o.id}, {silent: true});
                     this.layout.loadData();
                 }, this),
                 complete: options ? options.complete : null
@@ -43,24 +40,27 @@
     },
 
     handleTypeButtonClick: function(e) {
-        var elm = $(e.currentTarget),
-            displayType = elm.data('type');
-        if (this.model.get('display_type') != displayType) {
-            this.model.set({'display_type': displayType});
+        var $el = $(e.currentTarget),
+            displayType = $el.data('type');
+        if (this.settings.get('display_type') !== displayType) {
+            this.settings.set({'display_type': displayType});
         }
     },
 
     bindDataChange: function() {
-        this.model.on('change', function(model) {
+        this.settings.on('change', function(model) {
             // reload the chart
             this.loadData({});
         }, this);
     },
 
     renderChart: function() {
+        if(this.disposed) {
+            return;
+        }
         var chart, svg;
         // clear out the current chart before a re-render
-        this.$el.find('.nv-chart').html('<svg id="' + this.cid + '"></svg>');
+        this.$("svg#" + this.cid).children().remove();
         chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(false)
@@ -79,7 +79,7 @@
     },
     loadData: function(options) {
 
-        var timePeriod = this.model.get('selectedTimePeriod');
+        var timePeriod = this.settings.get('selectedTimePeriod');
         if (!timePeriod) {
             return;
         }
@@ -90,10 +90,10 @@
 //BEGIN SUGARCRM flav=ent ONLY
         var url_base = 'Products/chart/pipeline';
 //END SUGARCRM flav=ent ONLY
-        if (this.model.has('selectedTimePeriod')) {
+        if (this.settings.has('selectedTimePeriod')) {
             url_base += '/' + timePeriod;
-            if (this.model.has('display_type')) {
-                url_base += '/' + this.model.get('display_type');
+            if (this.settings.has('display_type')) {
+                url_base += '/' + this.settings.get('display_type');
             }
             var url = app.api.buildURL(url_base);
             app.api.call('GET', url, null, {

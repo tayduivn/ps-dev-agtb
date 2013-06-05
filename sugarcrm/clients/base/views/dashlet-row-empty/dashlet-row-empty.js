@@ -7,6 +7,7 @@
     columnOptions: [],
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.model = this.layout.context.get("model");
 
         this.model.on("setMode", this.setMode, this);
         this.originalTemplate = this.template;

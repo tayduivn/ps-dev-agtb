@@ -54,7 +54,7 @@
     },
     createCancelClicked: function(evt) {
         if(this.context.parent) {
-            this.model.dashboardLayout.navigateLayout('list');
+            this.layout.navigateLayout('list');
         } else {
             app.navigate(this.context);
         }
@@ -64,7 +64,7 @@
     },
     addClicked: function(evt) {
         if(this.context.parent) {
-            this.model.dashboardLayout.navigateLayout('create');
+            this.layout.navigateLayout('create');
         } else {
             var route = app.router.buildRoute(this.module, null, 'create');
             app.router.navigate(route, {trigger: true});
@@ -101,7 +101,7 @@
                 success: function() {
                     if(self.context.get("create")) {
                         if(self.context.parent) {
-                            self.model.dashboardLayout.navigateLayout(self.model.id);
+                            self.layout.navigateLayout(self.model.id);
                         } else {
                             app.navigate(self.context, self.model);
                         }
@@ -117,6 +117,7 @@
                 }
             });
         } else {
+            this.model.trigger("setMode", "view");
             this.setButtonStates('view');
             this.toggleEdit(false);
         }
@@ -139,7 +140,7 @@
                 self.model.destroy({
                     success: function() {
                         if(self.context.parent) {
-                            self.model.dashboardLayout.navigateLayout('list');
+                            self.layout.navigateLayout('list');
                         } else {
                             var route = app.router.buildRoute(self.module);
                             app.router.navigate(route, {trigger: true});

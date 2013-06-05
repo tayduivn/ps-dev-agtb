@@ -10,15 +10,10 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Interactions',
-            'view' => 'interactions',
-            'context' => array(
-                'module' => 'Opportunities',
-                'dashlet' => array(
-                    'name' => 'Interactions',
-                    'type' => 'interactions',
-                    'filter_duration' => '7',
-                ),
+            'view' => array(
+                'name' => 'interactions',
+                'label' => 'Interactions',
+                'filter_duration' => '7',
             ),
         ),
     )
@@ -27,20 +22,15 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Attachments',
-            'view' => 'attachments',
+            'view' => array(
+                'name' => 'attachments',
+                'label' => 'Attachments',
+                'limit' => '5',
+                'auto_refresh' => '0',
+            ),
             'context' => array(
                 'module' => 'Notes',
-                'model' => '',
-                'modelId' => '',
-                'dashlet' => array(
-                    'name' => 'Attachments',
-                    'type' => 'attachments',
-                    'module' => 'Notes',
-                    'link' => 'notes',
-                    'display_rows' => '5',
-                    'auto_refresh' => -1,
-                ),
+                'link' => 'notes',
             ),
         ),
     )

@@ -4,10 +4,6 @@
     plugins: ['Dashlet'],
     dragging: false,
 
-    initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-    },
-
     _renderHtml: function() {
         var self = this,
             results = this.results,

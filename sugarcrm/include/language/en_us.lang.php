@@ -1717,6 +1717,15 @@ $app_list_strings = array (
         '300'   => 'Every 5 minutes',
         '600'   => 'Every 10 minutes',
     ),
+    'sugar7_dashlet_auto_refresh_options' =>
+    array (
+        '0'  => 'None',
+        '1' => 'Every 1 Minutes',
+        '5' => 'Every 5 Minutes',
+        '10' => 'Every 10 Minutes',
+        '15' => 'Every 15 Minutes',
+        '30' => 'Every 30 Minutes',
+    ),
   'date_range_search_dom' =>
   array(
     '=' => 'Equals',
