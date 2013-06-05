@@ -32,7 +32,7 @@ if(class_exists("ZipArchive")) {
     require_once 'include/utils/php_zip_utils.php';
     return;
 } else {
-require_once('vendors/pclzip/pclzip.lib.php');
+require_once('vendor/pclzip/pclzip.lib.php');
 if ( isset($GLOBALS['log']) && class_implements($GLOBALS['log'],'LoggerTemplate') ) {
     $GLOBALS['log']->deprecated('Use of PCLZip has been deprecated. Please enable the zip extension in your PHP install ( see http://www.php.net/manual/en/zip.installation.php for more details ).');
 }

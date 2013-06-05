@@ -399,7 +399,7 @@ $xtpl->assign("TEAM_SET_FIELD", $code);
 //$javascript = get_set_focus_js(). $javascript->getScript() . $quicksearch_js;
 $xtpl->assign('JAVASCRIPT', get_set_focus_js(). $javascript->getScript() . $quicksearch_js);
 
-require_once('vendors/Smarty/plugins/function.sugar_help.php');
+require_once('vendor/Smarty/plugins/function.sugar_help.php');
 $tipsStrings = array(
     'LBL_SSL_DESC',
     'LBL_ASSIGN_TO_TEAM_DESC',

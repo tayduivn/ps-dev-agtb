@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once('vendors/nusoap//nusoap.php');
+require_once('vendor/nusoap//nusoap.php');
 
 /**
  * @group bug43196

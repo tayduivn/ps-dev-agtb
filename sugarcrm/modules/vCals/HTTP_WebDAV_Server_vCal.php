@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'modules/Calendar/Calendar.php';
 
-require_once 'vendors/HTTP_WebDAV_Server/Server.php';
+require_once 'vendor/HTTP_WebDAV_Server/Server.php';
 
 
     /**

@@ -24,8 +24,8 @@
  ********************************************************************************/
  
 require_once("include/Sugarpdf/sugarpdf_config.php");
-require_once('vendors/tcpdf/config/lang/eng.php');
-require_once('vendors/tcpdf/tcpdf.php');
+require_once('vendor/tcpdf/config/lang/eng.php');
+require_once('vendor/tcpdf/tcpdf.php');
 /**
  * @ticket 38850
  */

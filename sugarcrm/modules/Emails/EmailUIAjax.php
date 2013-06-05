@@ -9,8 +9,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
   require_once("include/OutboundEmail/OutboundEmail.php");
-  require_once("vendors/ytree/Tree.php");
-  require_once("vendors/ytree/ExtNode.php");
+  require_once("vendor/ytree/Tree.php");
+  require_once("vendor/ytree/ExtNode.php");
 
   $email = BeanFactory::getBean('Emails');
   $email->email2init();

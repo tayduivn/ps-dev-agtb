@@ -113,7 +113,7 @@ EOD
             <input title="{$mod_strings['LBL_SEND_EMAIL']}" id="send_email_button" accessKey="{$app_strings['LBL_DELETE_BUTTON_KEY']}" class="button" onclick="document.getElementById('isDuplicate').parentNode.removeChild(document.getElementById('isDuplicate'));this.form.return_module.value='Emails'; this.form.return_action.value='DetailView'; this.form.action.value='Compose';this.form.module.value='Emails'" type="submit" name="Send Email" value="{$mod_strings['LBL_SEND_EMAIL']}">
 EOD
 );
-require_once('vendors/Smarty/plugins/function.sugar_action_menu.php');
+require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
 $action_button = smarty_function_sugar_action_menu(array(
     'id' => 'detail_header_action_menu',
     'buttons' => $buttons,

@@ -40,7 +40,7 @@ function ConvertDiscClient(){
 
     echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_UPGRADE_CONVERT_DISC_CLIENT_TITLE']), false);
 
-    require_once('vendors/nusoap//nusoap.php');
+    require_once('vendor/nusoap//nusoap.php');
 
     $errors = array();
 

@@ -39,7 +39,7 @@ $mod_strings=return_module_language('','Users');
 ////	RECAPTCHA CHECK ONLY
 
 if(isset($_REQUEST['recaptcha_challenge_field']) && isset($_REQUEST['recaptcha_response_field'])){
-	require_once('vendors/reCaptcha/recaptchalib.php');
+	require_once('vendor/reCaptcha/recaptchalib.php');
 
 	$admin = Administration::getSettings('captcha');
 	if($admin->settings['captcha_on']=='1' && !empty($admin->settings['captcha_private_key'])){

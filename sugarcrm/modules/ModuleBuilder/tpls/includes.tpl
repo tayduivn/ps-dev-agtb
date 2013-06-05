@@ -37,7 +37,7 @@
 </script>
 
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/LayoutEditor.css"}" />
-<link rel="stylesheet" type="text/css" href="{sugar_getjspath file="vendors/ytree/TreeView/css/folders/tree.css"}" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file="vendor/ytree/TreeView/css/folders/tree.css"}" />
 
 <script type="text/javascript" src='{sugar_getjspath file ='modules/ModuleBuilder/javascript/studio2.js'}' ></script>
 <script type="text/javascript" src='{sugar_getjspath file ='modules/ModuleBuilder/javascript/studio2PanelDD.js'}' ></script>

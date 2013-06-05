@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once('vendors/nusoap//nusoap.php');
+require_once('vendor/nusoap//nusoap.php');
 require_once('modules/Cases/Case.php');
 require_once('modules/Accounts/Account.php');
 
