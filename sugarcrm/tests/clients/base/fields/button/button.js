@@ -92,21 +92,61 @@ describe("Base.Field.Button", function() {
 
     });
 
+    it('should not show buttons for BWC modules if allow_bwc is false', function(){
+        var bwcStub = sinon.stub(app.metadata, "getModule", function(){
+            return {isBwcEnabled: true};
+        });
+        var def = {
+            'acl_action' : 'edit',
+            'allow_bwc' : false
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var stubHasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
+        var stubHasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(true);
+
+        var access = field.triggerBefore('render');
+        expect(access).toBeFalsy();
+
+        stubHasAccess.restore();
+        stubHasAccessToModel.restore();
+        bwcStub.restore();
+    });
+
+    it('should show buttons for BWC modules if allow_bwc is true', function(){
+        var bwcStub = sinon.stub(app.metadata, "getModule", function(){
+            return {isBwcEnabled: true};
+        });
+        var def = {
+            'acl_action' : 'edit',
+            'allow_bwc' : true
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var stubHasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
+        var stubHasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(true);
+
+        var access = field.triggerBefore('render');
+        expect(access).toBeTruthy();
+
+        stubHasAccess.restore();
+        stubHasAccessToModel.restore();
+        bwcStub.restore();
+    });
+
     it('should call app.acl.hasAccessToModel if acl_module is not specified', function() {
         var def = {
             'acl_action' : 'edit'
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
-        var stub_hasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
-        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(false);
+        var stubHasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
+        var stubHasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(false);
 
         var access = field.triggerBefore('render');
-        expect(stub_hasAccess).not.toHaveBeenCalled();
-        expect(stub_hasAccessToModel).toHaveBeenCalled();
+        expect(stubHasAccess).not.toHaveBeenCalled();
+        expect(stubHasAccessToModel).toHaveBeenCalled();
         expect(access).toBeFalsy();
 
-        stub_hasAccess.restore();
-        stub_hasAccessToModel.restore();
+        stubHasAccess.restore();
+        stubHasAccessToModel.restore();
     });
 
     it('should call app.acl.hasAccess if acl_module is specified', function() {
@@ -115,20 +155,20 @@ describe("Base.Field.Button", function() {
             'acl_action' : 'edit'
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
-        var stub_hasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
-        var stub_hasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(false);
+        var stubHasAccess = sinon.stub(app.acl, "hasAccess").returns(true);
+        var stubHasAccessToModel = sinon.stub(app.acl, "hasAccessToModel").returns(false);
 
         var access = field.triggerBefore('render');
-        expect(stub_hasAccess).toHaveBeenCalled();
-        expect(stub_hasAccessToModel).not.toHaveBeenCalled();
+        expect(stubHasAccess).toHaveBeenCalled();
+        expect(stubHasAccessToModel).not.toHaveBeenCalled();
         expect(access).toBeTruthy();
 
-        stub_hasAccess.restore();
-        stub_hasAccessToModel.restore();
+        stubHasAccess.restore();
+        stubHasAccessToModel.restore();
 
     });
 
-    it('should update ishidden if show is called and hasAccess returns false', function() {
+    it('should update isHidden if show is called and hasAccess returns false', function() {
         var def = {
             'acl_module' : 'Contacts',
             'acl_action' : 'edit'
@@ -146,7 +186,7 @@ describe("Base.Field.Button", function() {
 
     });
 
-    it("should differenciate string routes from sidecar route object", function() {
+    it("should differentiate string routes from sidecar route object", function() {
         var def = {
             'route' : {
                 'action' : 'edit'

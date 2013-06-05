@@ -797,7 +797,6 @@ include('modules/ModuleBuilder/parsers/parser.portalconfig.php');
 $portalConfig = new ParserModifyPortalConfig();
 $_REQUEST['appStatus'] = 'true';
 $_REQUEST['maxQueryResult'] = '20';
-$_REQUEST['fieldsToDisplay'] = '5';
 $portalConfig->handleSave();
 $GLOBALS['mod_strings']  = $installerStrings;
 //END SUGARCRM flav=ent ONLY

@@ -45,7 +45,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function handleSave()
     {
-        $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'fieldsToDisplay', 'maxSearchQueryResult');
+        $portalFields = array('appStatus', 'defaultUser', 'appName', 'logoURL', 'serverUrl', 'maxQueryResult', 'maxSearchQueryResult');
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
