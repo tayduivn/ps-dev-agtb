@@ -65,4 +65,10 @@ describe("Base.Field.Follow", function() {
         });
 
     });
+
+    it("Should set the model when the 'favorite:active' event is triggered on the context.", function() {
+        field.model.set("following", false);
+        field.context.trigger("favorite:active");
+        expect(field.model.get("following")).toBeTruthy();
+    });
 });

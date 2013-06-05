@@ -13,6 +13,20 @@
         if (this.model) {
             this.model.on("change:following", this.resetLabel, this);
         }
+
+        // when the record is marked as favorite, it is subsequently followed by the current user (on server-side)
+        // need to sync the client-side model, so an event is fired on the context from the favorite field upon success
+        // set following on the model so we don't have to make a server request to get the latest value
+        this.context.on("favorite:active", function() {
+            this.model.set("following", true);
+        }, this);
+    },
+    /**
+     * Removes the field's event handlers from the context.
+     */
+    unbindData: function() {
+        this.context.off(null, null, this);
+        app.view.Field.prototype.unbindData.call(this);
     },
     /**
      * Set current label and value since the follow button relates to the following
