@@ -66,11 +66,14 @@
         app.view.Field.prototype._render.call(this);
 
         var $recipientsField = this.getFieldElement();
+
         if ($recipientsField.length > 0) {
             $recipientsField.select2({
                 allowClear: true,
                 multiple: true,
-                width: '100%',
+                width: 'off',
+                containerCssClass: 'select2-choices-pills-close',
+                containerCss: {'width':'100%'},
                 query: _.bind(this.loadOptions, this),
                 formatSelection: _.bind(this.formatSelection, this),
                 formatResult:    _.bind(this.formatResult, this)
@@ -252,6 +255,17 @@
                     mixed:  true
                 }
             }, _.bind(this._addRecipients, this));
+        );
+    },
+
+    /**
+     * update ul.select2-choices data attribute which prevents underrun of pills by
+     * using a css definition for :before {content:''} set to float right
+     *
+     * @param content {String}
+     */
+    setContentBefore: function(content) {
+        this.$('.select2-choices').attr('data-content-before', content);
     },
 
     /**
