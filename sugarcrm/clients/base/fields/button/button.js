@@ -121,13 +121,21 @@
     bindDataChange: function () {
     },
     /**
-     * Determine if ACLs allow for the button to show
-     * @return {Boolean} true if ACLs allow access, false otherwise
+     * Determine if ACLs or other properties (for example, "allow_bwc") allow for the button to show
+     * @return {Boolean} true if allow access, false otherwise
      */
     hasAccess: function() {
         // buttons use the acl_action and acl_module properties in metadata to denote their action for acls
         var acl_module = this.def.acl_module,
             acl_action = this.def.acl_action;
+        //Need to test BWC status
+        if(_.isBoolean(this.def.allow_bwc) && !this.def.allow_bwc){
+            var isBwc = app.metadata.getModule(acl_module || this.module).isBwcEnabled;
+            if(isBwc){
+                return false; //Action not allowed for BWC module
+            }
+        }
+        // Finally check ACLs
         if (!acl_module) {
             return app.acl.hasAccessToModel(acl_action, this.model, this);
         } else {
