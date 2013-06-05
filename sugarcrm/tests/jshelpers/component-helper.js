@@ -134,6 +134,12 @@
             }
         },
 
+        addModule: function(module, moduleDef) {
+            if (this.isInitialized()) {
+                this._data.modules[module] = moduleDef || {};
+            }
+        },
+
         addViewDefinition: function(name, viewDef, module) {
             this._addDefinition(name, 'views', viewDef, module);
         },
