@@ -380,9 +380,10 @@ class MetaDataConverter
     /**
      * Convert a legacy subpanel path to the new sidecar path
      * @param string $filename the path to a legacy subpanel
+     * @param string client the client
      * @return string the new sidecar subpanel path
      */
-    public function fromLegacySubpanelPath($fileName)
+    public function fromLegacySubpanelPath($fileName, $client = 'base')
     {
         $pathInfo = pathinfo($fileName);
 
@@ -397,15 +398,49 @@ class MetaDataConverter
             );
         }
 
-        $module = $dirParts[1];
-
-        $customDir = '';
-        if ($dirParts[0] == 'custom') {
-            $customDir = 'custom/';
-            $module = $dirParts[2];
-        }
         $newSubpanelName = $this->fromLegacySubpanelName($pathInfo['filename']);
-        return "{$customDir}modules/{$module}/clients/base/views/{$newSubpanelName}/{$newSubpanelName}.php";
+
+        $newPath = str_replace(
+            "metadata/subpanels/{$pathInfo['filename']}.php",
+            "clients/{$client}/views/{$newSubpanelName}/{$newSubpanelName}.php",
+            $fileName
+        );
+
+        return $newPath;
+    }
+
+    /**
+     * Convert a piece of a subpanel layoutdef to the new style
+     * @param array $layoutdef old style layout
+     * @return array new style layout for this piece
+     */
+    public function fromLegacySubpanelLayout(array $layoutdef)
+    {
+        $viewdefs = array(
+            'layout' => 'subpanel',
+        );
+
+        // we aren't upgrading collections
+        if (!empty($layoutdef['collection_list'])) {
+            return $viewdefs;
+        }
+
+        foreach ($layoutdef as $key => $value) {
+            if ($key == 'override_subpanel_name') {
+                $viewdefs['override_subpanel_list_view'] = array(
+                    'view' => $this->fromLegacySubpanelName($value),
+                    'link' => $layoutdef['get_subpanel_data'],
+                );
+            }
+
+            if ($key == 'title_key') {
+                $viewdefs['label'] = $value;
+            } elseif ($key == 'get_subpanel_data') {
+                $viewdefs['context']['link'] = $value;
+            }
+        }
+
+        return $viewdefs;
     }
 
     /**

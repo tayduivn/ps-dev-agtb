@@ -14,6 +14,7 @@
  ********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMenuMetaDataUpgrader.php';
+require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarSubpanelMetaDataUpgrader.php';
 
 /**
  * Handles migration of wireless and portal metadata for pre-6.6 modules into 6.6+
@@ -73,6 +74,7 @@ class SidecarMetaDataUpgrader
             'custom'  => 'custom/',
             'working' => 'custom/working/',
             'history' => 'custom/history/',
+            'ext'     => 'custom/Extension/',
         ),
     );
 
@@ -149,6 +151,7 @@ class SidecarMetaDataUpgrader
         'search'             => 'Search',
         'filter'             => 'Filter',
         'drop'               => 'Drop',
+        'subpanel'           => 'Subpanel',
     );
 
     /**
@@ -176,6 +179,7 @@ class SidecarMetaDataUpgrader
         $this->setBaseFilesToUpgrade();
         $this->setPortalFilesToUpgrade();
         $this->setMobileFilesToUpgrade();
+        $this->setSubpanelFilesToUpgrade();
     }
 
     /**
@@ -233,6 +237,21 @@ class SidecarMetaDataUpgrader
         $metatype = 'wireless';
         $this->setUpgradeFiles($metatype);
 
+        $total = $this->getCustomModuleMetadata($metatype);
+        $this->logUpgradeStatus('Custom module mobile metadata done.');
+        $this->logUpgradeStatus("$total custom module files fetched for conversion");
+    }
+
+    /**
+     * Get Packages Deployed and Undeployed to upgrade
+     * @param string $metatype - Is it portal, wireless, base?
+     * @param string $customPath - Is there a special path to look into
+     * @param bool $subpanels - is it a subpanel
+     * @return int|void
+     */
+    public function getCustomModuleMetadata($metatype = 'base', $customPath = '', $subpanels = false)
+    {
+        $total = 0;
         // Get custom modules. We need both DEPLOYED and UNDEPLOYED
         // Undeployed will be those in packages that are NOT in builds but are
         // also in modules
@@ -277,28 +296,28 @@ class SidecarMetaDataUpgrader
                     $module = $package->key . '_' . $module;
 
                     // Get the metadata directory
-                    $metadatadir = "$appModulePath/metadata/";
+                    $metadatadir = "$appModulePath/metadata/{$customPath}";
 
                     // Get our upgrade files as base files since these are regular metadata
-                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype);
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', null, true, $subpanels);
                     $count += count($files);
                     $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
 
                     // For deployed modules we still need to handle package dir metadata
-                    $metadatadir = "$mbbModulePath/metadata/";
+                    $metadatadir = "$mbbModulePath/metadata/{$customPath}";
 
                     // Get our upgrade files as undeployed base type wireless client
-                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', $packagename, false);
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', $packagename, false, $subpanels);
                     $count += count($files);
                     $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                 } else {
                     // Handle undeployed history metadata
-                    $metadatadir = "$packagePath/metadata/";
+                    $metadatadir = "$packagePath/metadata/{$customPath}";
 
                     // Get our upgrade files
-                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'history', $packagename, false);
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'history', $packagename, false, $subpanels);
                     $count += count($files);
                     $undeployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
@@ -307,8 +326,7 @@ class SidecarMetaDataUpgrader
             $this->logUpgradeStatus("$count upgrade files set for package $packagename: Deployed - $deployedcount, Undeployed - $undeployedcount ...");
             $total += $count;
         }
-        $this->logUpgradeStatus('Custom module mobile metadata done.');
-        $this->logUpgradeStatus("$total custom module files fetched for conversion");
+        return $total;
     }
 
     /**
@@ -382,8 +400,28 @@ class SidecarMetaDataUpgrader
 
         $this->logUpgradeStatus('Finishing the Menu Upgrader.');
 
+        $this->upgradeSubpanels();
+
         // Add the rest of the OOTB module wireless metadata files to the stack
         $this->cleanupLegacyFiles();
+    }
+
+
+    /**
+     * Upgrade the subpanels to the sidecar version
+     */
+    public function upgradeSubpanels()
+    {
+        $sidecarUpgrader = new SidecarSubpanelMetaDataUpgrader($this, array());
+
+        foreach ($GLOBALS['moduleList'] as $module) {
+            $sidecarUpgrader->convertLegacySubpanelLayoutDefsToSidecar($module);
+            // if this is not a BWC module remove the old subpaneldefs layout
+            if(!isModuleBWC($module)) {
+                self::$filesForRemoval[] = "modules/{$module}/metadata/subpaneldefs.php";
+            }
+        }
+
     }
 
 
@@ -523,6 +561,30 @@ class SidecarMetaDataUpgrader
     }
 
     /**
+     * Set the Subpanel Upgrade Files
+     */
+    protected function setSubpanelFilesToUpgrade()
+    {
+        $this->logUpgradeStatus("Getting subpanel upgrade files ...");
+        $paths = $this->legacyFilePaths['base'];
+        // need to add in modules/ for custom modules that are deployed that need subpanels upgraded
+        // and any custom subpanel that may have been tossed in an incorrect directory
+        $paths['base'] = '';
+        foreach ($paths as $type => $path) {
+            $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
+            if (!empty($dirs)) {
+                foreach ($dirs as $dirpath) {
+                    $module = basename($dirpath);
+                    $metadatadir = $dirpath . '/metadata/subpanels/';
+                    $files = $this->getUpgradeableFilesInPath($metadatadir, $module, 'base', $type, null, true, true);
+                    $this->files = array_merge($this->files, $files);
+                }
+            }
+        }
+        $this->getCustomModuleMetadata('base', 'subpanels/', true);
+    }
+
+    /**
      * Gets all sidecar views that need to be upgraded
      *
      * @param $client
@@ -582,9 +644,10 @@ class SidecarMetaDataUpgrader
      * @param string $type    The type (custom, history, working, base)
      * @param string $package The name of the package for this module if custom
      * @param boolean $deployed Marker to determine if a custom module is deployed or not
+     * @param boolean $subpanel Is there subpanel files in this page
      * @return array
      */
-    public function getUpgradeableFilesInPath($path, $module, $client, $type = 'base', $package = null, $deployed = true)
+    public function getUpgradeableFilesInPath($path, $module, $client, $type = 'base', $package = null, $deployed = true, $subpanel = false)
     {
         $this->logUpgradeStatus("Scanning $path for module $module client $client type $type");
         $return = array();
@@ -595,7 +658,7 @@ class SidecarMetaDataUpgrader
             // And if we have any, match them against what we are looking for
             if (!empty($files)) {
                 foreach ($files as $file) {
-                    if (($data = $this->getUpgradeFileParams($file, $module, $client, $type, $package, $deployed)) !== false) {
+                    if (($data = $this->getUpgradeFileParams($file, $module, $client, $type, $package, $deployed, false, $subpanel)) !== false) {
                         $return[] = $data;
                     }
                 }
@@ -636,12 +699,17 @@ class SidecarMetaDataUpgrader
             return 'search';
         }
 
+        if (strpos($filename, 'For') !== false || strpos($filename, 'default') !== false) {
+            return 'subpanel';
+        }
+
         if (strpos($filename, 'edit') !== false) {
             $viewtype = 'edit';
         }
         if (strpos($filename, 'detail') !== false) {
             $viewtype = 'detail';
         }
+
         if(!empty($viewtype)) {
             // mobile/wireless keep their views
             if($client == 'mobile' || $client == 'wireless') {
@@ -795,9 +863,10 @@ class SidecarMetaDataUpgrader
      * @param string $package
      * @param bool $deployed
      * @param bool $sidecar Is this a sidecar view?
+     * @param bool $subpanels Is this a subpanel view
      * @return array Array of file params if found, false otherwise
      */
-    public function getUpgradeFileParams($file, $module, $client, $type = 'base', $package = null, $deployed = true, $sidecar = false)
+    public function getUpgradeFileParams($file, $module, $client, $type = 'base', $package = null, $deployed = true, $sidecar = false, $subpanels = false)
     {
         $this->logUpgradeStatus("Candidate for upgrade: $file");
         // Timestamp for history files
@@ -814,13 +883,13 @@ class SidecarMetaDataUpgrader
             $type = 'history';
         }
 
-        if(empty($GLOBALS['beanList'][$module]) && $client != 'wireless') {
+        if (empty($GLOBALS['beanList'][$module]) && $client != 'wireless') {
             // if the module is not among active, not upgrading it for now
             $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules not supported");
             return false;
         }
 
-        if($client == 'base' && isModuleBWC($module)) {
+        if ($client == 'base' && isModuleBWC($module) && $subpanels === false) {
             // if the module is in BWC, do not upgrade its views in base client
             $this->logUpgradeStatus("Not upgrading $file: BWC module");
             return false;
@@ -841,7 +910,7 @@ class SidecarMetaDataUpgrader
             $filename = basename($file, '.php');
         }
 
-        if (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client])) {
+        if ($subpanels === true || (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client]))) {
             // Success! We have a full file path. Add this module to the stack
             $this->addUpgradeModule($module);
 
