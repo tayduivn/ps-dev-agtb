@@ -76,7 +76,8 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
         {
             $this->_populateFromRequest() ;
             if (isset ($_REQUEST['subpanel_title']) && isset($_REQUEST['subpanel_title_key'])) {
-	            $selected_lang = (!empty($_REQUEST['selected_lang'])? $_REQUEST['selected_lang']:$_SESSION['authenticated_user_language']);
+                $authenticatedUserLanguage = !empty($_SESSION['authenticated_user_language']) ? $_SESSION['authenticated_user_language'] : false;
+                $selected_lang = !empty($_REQUEST['selected_lang']) ? $_REQUEST['selected_lang'] : $authenticatedUserLanguage;
 		        if(empty($selected_lang)){
 		            $selected_lang = $GLOBALS['sugar_config']['default_language'];
 		        }

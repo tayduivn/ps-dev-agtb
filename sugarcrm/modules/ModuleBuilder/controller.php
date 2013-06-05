@@ -834,6 +834,7 @@ class ModuleBuilderController extends SugarController
                                              $client);
         $parser->handleSave () ;
 
+
         if (!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false") {
             if (strtolower ($parser->_view) == MB_EDITVIEW) {
                 $parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
@@ -867,6 +868,14 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave();
+        // for backwards compatibility we need to parse the subpanel the old way as well
+        // TODO: Remove this when all BWC Modules are converted
+        if($parser instanceof SidecarSubpanelLayoutMetaDataParser) {
+            require_once('modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php');
+            $oldSubpanelParser = new SubpanelMetaDataParser($subpanelName, $_REQUEST ['view_module'], $packageName);
+            $oldSubpanelParser->handleSave();
+            unset($oldSubpanelParser);
+        }
 
     }
 

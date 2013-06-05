@@ -25,11 +25,12 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-define ( 'MB_TEMPLATES', 'include/SugarObjects/templates' ) ;
-define ( 'MB_IMPLEMENTS', 'include/SugarObjects/implements' ) ;
-require_once ('modules/ModuleBuilder/MB/MBVardefs.php') ;
-require_once ('modules/ModuleBuilder/MB/MBRelationship.php') ;
-require_once ('modules/ModuleBuilder/MB/MBLanguage.php') ;
+define('MB_TEMPLATES', 'include/SugarObjects/templates');
+define('MB_IMPLEMENTS', 'include/SugarObjects/implements');
+require_once 'modules/ModuleBuilder/MB/MBVardefs.php';
+require_once 'modules/ModuleBuilder/MB/MBRelationship.php';
+require_once 'modules/ModuleBuilder/MB/MBLanguage.php';
+require_once 'include/MetaDataManager/MetaDataConverter.php';
 
 class MBModule
 {
@@ -833,37 +834,59 @@ class MBModule
 
     }
 
-    function getAvailibleSubpanelDef ($panelName)
+    /**
+     * Return viewdefs for a subpanel by name.
+     *
+     * @param string $subpanelName
+     * @param string $client
+     * @return array
+     */
+    public function getAvailableSubpanelDef($subpanelName, $client = 'base')
     {
-        $filepath = $this->getModuleDir () . "/metadata/subpanels/{$panelName}.php" ;
-        if (file_exists ( $filepath ))
-        {
-            include ($filepath) ;
-            return $subpanel_layout ;
+        if (empty($client)) {
+            throw new \InvalidArgumentException("Client needs to be set");
         }
-        return array ( ) ;
+        $mdc = new MetaDataConverter();
 
+        $subpanelName = $mdc->fromLegacySubpanelName($subpanelName);
+        $dir = $this->getModuleDir() . "/clients/{$client}/views/{$subpanelName}/";
+
+        $filepath = "{$dir}/{$subpanelName}.php";
+        if (file_exists($filepath)) {
+            include $filepath;
+            if (isset($viewdefs) && is_array($viewdefs)) {
+                return $viewdefs;
+            }
+        }
+        return array();
     }
 
-    function saveAvailibleSubpanelDef ($panelName , $layout)
+
+    /**
+     * Saves a viewdef to the correct path
+     *
+     * @param string $subpanelName
+     * @param string $layout
+     * @param string $client
+     */
+    public function saveAvailableSubpanelDef($subpanelName, array $viewdef, $client = 'base')
     {
-        $dir = $this->getModuleDir () . "/metadata/subpanels" ;
-        $filepath = "$dir/{$panelName}.php" ;
-        if (mkdir_recursive ( $dir ))
-        {
-            // preserve any $module_name entry if one exists
-            if (file_exists ( $filepath ))
-            {
-                include ($filepath) ;
-            }
-            $module_name = (isset ( $module_name )) ? $module_name : $this->key_name ;
-            $layout = "<?php\n" . '$module_name=\'' . $module_name . "';\n" . '$subpanel_layout = ' . var_export_helper ( $layout ) . ";" ;
-            $GLOBALS [ 'log' ]->debug ( "About to save this file to $filepath" ) ;
-            $GLOBALS [ 'log' ]->debug ( $layout ) ;
-            $fw = sugar_fopen ( $filepath, 'w' ) ;
-            fwrite ( $fw, $layout ) ;
-            fclose ( $fw ) ;
+        if (empty($client)) {
+            throw new \InvalidArgumentException("Client needs to be set");
         }
+
+        $dir = $this->getSubpanelPathFromName($subpanelName, $client);
+        if (!mkdir($dir, 0755, true)) {
+            throw new \RuntimeException(sprintf("Could not make directory %s for subpanel %s"), $dir, $subpanelName);
+        }
+        $subpanelName = $this->getProperSubpanelName($subpanelName);
+        $filepath = "{$dir}/{$subpanelName}.php";
+        $moduleName = $this->getModuleName();
+
+        $GLOBALS['log']->debug("About to save this file to $filepath");
+        $GLOBALS['log']->debug(print_r($viewdef, true));
+
+        write_array_to_file("viewdefs['{$moduleName}']['{$client}']['view']['{$subpanelName}']", $viewdef, $filepath);
     }
 
     function getLocalSubpanelDef ($panelName)
@@ -919,7 +942,7 @@ class MBModule
         {
 			$parser = ParserFactory::getParser( MB_LISTVIEW , $this->name, $this->package ,  $sub) ;
 			if ($parser->removeField ( $fieldName ) )
-	            $parser->handleSave(false) ; 
+	            $parser->handleSave(false) ;
         }
     }
 
