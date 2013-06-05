@@ -1,0 +1,19 @@
+<div class="btn-toolbar pull-right">
+{{#each meta.buttons}}
+    {{#if type}}
+        {{field ../../this model=../../this.model}}
+    {{else}}
+        {{#if dropdown_buttons}}
+            <a data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i data-action="loading" class="icon-cog"></i></a>
+            <ul class="dropdown-menu left carettop">
+                <div>
+                    {{#each dropdown_buttons}}
+                        <li>{{field ../../../../this model=../../../../this.model}}</li>
+                    {{/each}}
+                </div>
+            </ul>
+        {{/if}}
+    {{/if}}
+{{/each}}
+</div>
+<h4 data-toggle="widget">{{meta.label}}</h4>

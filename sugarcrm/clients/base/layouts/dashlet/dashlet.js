@@ -1,12 +1,4 @@
 ({
-    events: {
-        'click .widget-edit': 'editClicked',
-        'click .widget-refresh' : 'reload',
-        'click .widget-remove' : 'removeClicked',
-        'click .minify' : 'toggleMinify'
-    },
-    cssIconDefault: 'icon-cog',
-    cssIconRefresh: 'icon-refresh icon-spin',
     initialize: function(options) {
         this.index = options.meta.index;
         app.view.Layout.prototype.initialize.call(this, options);
@@ -16,13 +8,51 @@
         this.context.on("dashboard:collapse:fire", this.collapse, this);
     },
     _addComponentsFromDef: function(components) {
-        if(this.meta.empty)
+        if (!(this.meta.preview || this.meta.empty)) {
+            var dashletDef = _.first(components),
+                dashletMeta,
+                toolbar = {};
+            //try to get the dashlet widget metadata
+            if(dashletDef.view) {
+                toolbar = dashletDef.view['custom_toolbar'] || {};
+                dashletMeta = app.metadata.getView(dashletDef.view.module, dashletDef.view.name || dashletDef.view.type);
+            } else if (dashletDef.layout) {
+                toolbar = dashletDef.view['custom_toolbar'] || {};
+                dashletMeta = app.metadata.getLayout(dashletDef.layout.module, dashletDef.layout.name || dashletDef.layout.type);
+            }
+            //determine whether it contains custom_toolbar or not
+            if (_.isEmpty(toolbar) && dashletMeta && dashletMeta['custom_toolbar']) {
+                toolbar = dashletMeta['custom_toolbar'];
+            }
+            if(toolbar !== "no") {
+                components.push({
+                    view: {
+                        type: 'dashlet-toolbar',
+                        label: this.meta.label,
+                        toolbar: toolbar
+                    }
+                });
+            }
+        }
+        if (this.meta.empty) {
             this.$el.html(app.template.empty(this));
-        else
+        } else {
             this.$el.html(this.template(this));
+        }
 
         var context = this.context.parent || this.context;
         app.view.Layout.prototype._addComponentsFromDef.call(this, components, context, context.get("module"));
+    },
+    createComponentFromDef: function(def, context, module) {
+        if (def.view && !_.isUndefined(def.view.toolbar)) {
+            var dashlet = _.first(this._components);
+            context = dashlet.context;
+        }
+        var skipFetch = def.view ? def.view.skipFetch : def.layout.skipFetch;
+        if (def.context && skipFetch !== false) {
+            def.context.skipFetch = true;
+        }
+        return app.view.Layout.prototype.createComponentFromDef.call(this, def, context, module);
     },
     _placeComponent: function(comp, def) {
         if(this.meta.empty) {
@@ -30,8 +60,10 @@
         } else if(this.meta.preview) {
             this.$el.addClass("preview-data");
             this.$(".widget-content:first").append(comp.el);
+        } else if(def.view && !_.isUndefined(def.view.toolbar)) {
+            this.$("[data-dashlet=toolbar]").append(comp.el);
         } else {
-            this.$(".widget-content:first").append(comp.el);
+            this.$("[data-dashlet=widget]").append(comp.el);
         }
     },
     setDashletMetadata: function(meta) {
@@ -51,8 +83,6 @@
                 showAlerts: true
             });
         }
-
-        this.meta.components[0] = component;
         return component;
     },
     getCurrentComponent: function(metadata, tracekey) {
@@ -71,17 +101,19 @@
         this.meta.empty = false;
         this.meta.label = def.label || def.name || "";
         //clear previous dashlet
-        this._components[0].dispose();
-        this.removeComponent(0);
+        _.each(this._components, function(component) {
+            component.layout = null;
+            component.dispose();
+        }, this);
+        this._components = [];
 
         if(component.context) {
             _.extend(component.context, {
                 forceNew: true
             })
         }
-        this._addComponentsFromDef([
-            component
-        ]);
+        this.meta.components = [component];
+        this._addComponentsFromDef(this.meta.components);
         this.loadData();
         this.render();
     },
@@ -102,8 +134,12 @@
             });
         }
         this.meta.empty = true;
-        this._components[0].dispose();
-        this.removeComponent(0);
+        //clear previous dashlet
+        _.each(this._components, function(component) {
+            component.layout = null;
+            component.dispose();
+        }, this);
+        this._components = [];
         this._addComponentsFromDef([
             {
                 view: 'dashlet-cell-empty',
@@ -118,28 +154,15 @@
     addRow: function(columns) {
         this.layout.addRow(columns);
     },
-    removeClicked: function(evt) {
-        this.removeDashlet();
-    },
-    reload: function() {
-        var component = _.first(this._components),
-            context = component.context,
-            $el = this.$("[data-action=loading]");
+    reloadDashlet: function(options) {
+        var component = _.last(this._components),
+            context = component.context;
         context._dataFetched = false;
-        $el.removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);
-        var self = this,
-            options = {};
-        options.complete = function() {
-            if(self.disposed) {
-                return;
-            }
-            $el.removeClass(self.cssIconRefresh).addClass(self.cssIconDefault);
-        };
         this.loadData(options);
     },
-    editClicked: function(evt) {
+    editDashlet: function(evt) {
         var self = this,
-            meta = app.utils.deepCopy(this.meta.components[0]),
+            meta = app.utils.deepCopy(_.first(this.meta.components)),
             type = meta.layout ? "layout" : "view";
         if(_.isString(meta[type])) {
             meta[type] = {name:meta[type], config:true};
@@ -179,16 +202,11 @@
             self.addDashlet(dash);
         });
     },
-    toggleMinify: function(evt) {
-        this.$(".minify > i").toggleClass("icon-chevron-down icon-chevron-up");
-        this.$(".thumbnail").toggleClass("collapsed");
-        this.$(".widget-content").toggleClass("hide");
-    },
     collapse: function(collapsed) {
-        this.$(".minify > i").toggleClass("icon-chevron-down", collapsed);
-        this.$(".minify > i").toggleClass("icon-chevron-up", !collapsed);
+        this.$(".dashlet-toggle > i").toggleClass("icon-chevron-down", collapsed);
+        this.$(".dashlet-toggle > i").toggleClass("icon-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
-        this.$(".widget-content").toggleClass("hide", collapsed);
+        this.$("[data-dashlet=widget]").toggleClass("hide", collapsed);
     },
     _dispose: function() {
         this.off("render");

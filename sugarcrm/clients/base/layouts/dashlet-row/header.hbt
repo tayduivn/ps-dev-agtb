@@ -1,7 +1,7 @@
 <a data-toggle="dropdown" class="btn btn-invisible btn-link hide"><i class="icon-cog"></i></a>
 <ul class="dropdown-menu left carettop">
     <div>
-        <li><a class="remove-row">{{str "LBL_DASHLET_REMOVE"}}</a></li>
+        <li><a class="remove-row">{{str "LBL_DASHLET_REMOVE_LABEL"}}</a></li>
     </div>
 </ul>
 <a class="move btn btn-invisible btn-link hide"><i class="icon-resize-vertical"></i></a>

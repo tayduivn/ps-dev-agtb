@@ -16,6 +16,7 @@
             this.context.get("collection").once("reset", function(){
                 this._dataFetched = true;
             }, this);
+            this.context.on("link:create:clicked", this.openCreateDrawer, this);
         }
     },
     _render : function() {
