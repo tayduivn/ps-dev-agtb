@@ -109,17 +109,6 @@ describe("Emails.fields.recipients", function() {
         });
     });
 
-    describe("setContentBefore", function() {
-        it("Should set the data-content-before attribute of the select2-choices ul delement for the to_address field.", function() {
-            var actual = 'Test string';
-
-            field.render();
-            field.setContentBefore(actual);
-
-            expect(field.$('.select2-choices').attr('data-content-before')).toBe(actual);
-        });
-    });
-
     describe("Setting recipients to field", function() {
         dataProvider = [
             {
