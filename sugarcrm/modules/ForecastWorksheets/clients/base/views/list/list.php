@@ -143,6 +143,16 @@ $viewdefArray['opportunities'] = array(
             'fields' =>
             array(
                 array(
+                    'name' => 'commit_stage',
+                    'type' => 'enum',
+                    'searchBarThreshold' => 7,
+                    'label' => 'LBL_FORECAST',
+                    'sortable' => false,
+                    'default' => true,
+                    'enabled' => true,
+                    'click_to_edit' => true
+                ),
+                array(
                     'name' => 'parent_name',
                     'label' => 'LBL_NAME',
                     'link' => true,
