@@ -65,7 +65,6 @@
         serverTimeout:30,
         maxQueryResult:20,
         maxSearchQueryResult:3,
-        fieldsToDisplay:5,
         platform:"portal",
         defaultModule:"Cases",
         additionalComponents:{
