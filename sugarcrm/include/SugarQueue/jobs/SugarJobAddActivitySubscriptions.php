@@ -1,5 +1,18 @@
 <?php
 
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 class SugarJobAddActivitySubscriptions implements RunnableSchedulerJob
 {
     protected $job;
@@ -19,7 +32,8 @@ class SugarJobAddActivitySubscriptions implements RunnableSchedulerJob
     {
         $data = unserialize($data);
         $act = BeanFactory::retrieveBean('Activities', $data['act_id']);
-        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id']);
+        $ignoreDeleted = ($act->activity_type !== 'deleted'); //retrieve deleted bean if activity was a deletion
+        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id'], array(), $ignoreDeleted);
         $subs = BeanFactory::getBeanName('Subscriptions');
         if (!$act->load_relationship("activities_users")) {
             $this->job->failJob("Could not load the relationship.");
@@ -28,7 +42,7 @@ class SugarJobAddActivitySubscriptions implements RunnableSchedulerJob
         foreach ($data['user_partials'] as $user_partial) {
             $user = BeanFactory::retrieveBean('Users', $user_partial['created_by']);
 
-            if ($user) {
+            if ($user && $bean) {
                 $context = array('user' => $user);
 
                 if ($bean->ACLAccess('view', $context)) {

@@ -62,6 +62,7 @@ class SugarTestActivityUtilities
     public static function removeAllCreatedActivities()
     {
         $activity_ids = self::getCreatedActivityIds();
+        $GLOBALS['db']->query('DELETE FROM activities_users WHERE activity_id IN (\'' . implode("', '", $activity_ids) . '\')');
         $GLOBALS['db']->query('DELETE FROM activities WHERE id IN (\'' . implode("', '", $activity_ids) . '\')');
     }
 
