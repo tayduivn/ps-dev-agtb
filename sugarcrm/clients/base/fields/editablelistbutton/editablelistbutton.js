@@ -38,10 +38,9 @@
             callbacks = {
                 success: function() {
                     self.model.save({}, {
-                        success: function(model) {
-                            self.changed = false;
-                            self.view.toggleRow(model.id, false);
-                        },
+                        success: _.bind(function(model) {
+                            this.getCustomSaveOptions()
+                        }, this),
                         //Show alerts for this request
                         showAlerts: {
                             'process': true,
@@ -50,7 +49,7 @@
                             }
                         }
                     });
-                }
+				}
             };
 
         async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
@@ -60,8 +59,28 @@
                 }
             }, {deleteIfFails: false }, true);
         }, callbacks.success);
-
     },
+    
+    getCustomSaveOptions: function() {
+        return {
+            success: _.bind(function() { 
+                    this.getSaveSuccess();
+                }, this),
+            //Show alerts for this request
+            showAlerts: {
+                'process' : true,
+                'success': {
+                    messages: app.lang.getAppString('LBL_RECORD_SAVED')
+                }
+            }
+        };
+    },
+    
+    getSaveSuccess: function() {
+        this.changed = false;
+        this.view.toggleRow(this.model.id, false);
+    },
+    
     saveModel: function() {
         var fieldsToValidate = this.view.getFields(this.module);
         this.view.clearValidationErrors();

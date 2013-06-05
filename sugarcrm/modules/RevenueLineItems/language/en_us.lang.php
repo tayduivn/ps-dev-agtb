@@ -166,6 +166,7 @@ $mod_strings = array(
     'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE' => 'There was an error converting this Revenue Line Item to a Quote',
 
     'LBL_DISCOUNT_AS_PERCENT' => 'Discount in %',
+    'SAVE_RLI_QUOTE_NOTICE' => 'This item has already been converted to quote. Your changes will not be updated in the corresponding quote.',
 
 );
 

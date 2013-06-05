@@ -45,6 +45,18 @@
             }, this
         );
     },
+    
+    getSaveSuccess: function() {
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'getSaveSuccess', args: []});
+
+        if (!_.isEmpty(this.model.get('quote_id'))) {
+            app.alert.show('save_rli_quote_notice', {
+                level: 'info',
+                messages: app.lang.get('SAVE_RLI_QUOTE_NOTICE', 'RevenueLineItems'),
+                autoClose: true
+            });
+        }
+    },
 
     initButtons: function() {
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
