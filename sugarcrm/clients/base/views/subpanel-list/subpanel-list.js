@@ -2,8 +2,8 @@
     /**
      * Custom RecordlistView used within Subpanel layouts.
      *
-     * @class View.PanelListView
-     * @alias SUGAR.App.view.views.PanelListView
+     * @class View.SubpanelListView
+     * @alias SUGAR.App.view.views.SubpanelListView
      * @extends View.RecordlistView
      */
     extendsFrom: 'RecordlistView',
@@ -21,6 +21,21 @@
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         this.layout.on("hide", this.toggleList, this);
+    },
+
+    /**
+     * When parent recordlist's initialize is invoked (above), this will get called
+     * and populate our the list's meta with the proper view subpanel metadata.
+     * @return {Object} The view metadata for this module's subpanel. Tries in following
+     * order: "subpanel-for-accounts" (parent module), "subpanel-list", "record-list",
+     * than, as last resort, we will return `{}`
+     */
+    _initializeMetadata: function() {
+        return  _.extend({},
+                app.metadata.getView(null, 'subpanel-list', true),
+                app.metadata.getView(this.options.module, 'record-list', true),
+                app.metadata.getView(this.options.module, 'subpanel-list', true)
+            );
     },
 
     /**

@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Products']['base']['view']['panel-list'] = array(
+$viewdefs['base']['view']['subpanel-list'] = array(
     'favorite' => true,
     'selection' => array(
         'type' => 'multi',
@@ -42,18 +42,6 @@ $viewdefs['Products']['base']['view']['panel-list'] = array(
                     }'
                 ),
                 'acl_action' => 'massupdate',
-            ),
-            array(
-                'name' => 'quote_button',
-                'type' => 'button',
-                'label' => 'LBL_CREATE_QUOTE',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massquote:fire");
-                    }'
-                ),
-                'acl_action' => 'massquote',
             ),
             array(
                 'name' => 'delete_button',
@@ -92,6 +80,7 @@ $viewdefs['Products']['base']['view']['panel-list'] = array(
                 'event' => 'list:preview:fire',
                 'icon' => 'icon-eye-open',
                 'acl_action' => 'view',
+                'allow_bwc' => false,
             ),
             array(
                 'type' => 'rowaction',
@@ -100,6 +89,15 @@ $viewdefs['Products']['base']['view']['panel-list'] = array(
                 'label' => 'LBL_EDIT_BUTTON',
                 'event' => 'list:editrow:fire',
                 'acl_action' => 'edit',
+                'allow_bwc' => false,
+            ),
+
+            array(
+                'type' => 'rowaction',
+                'icon' => 'icon-trash',
+                'event' => 'list:unlinkrow:fire',
+                'label' => 'LBL_UNLINK_BUTTON',
+                'acl_action' => 'delete',
             ),
         ),
     ),
