@@ -216,24 +216,24 @@ class SugarTestForecastUtilities
                  * initially created, and thus missing stuff. We need to grab the product that is incomplete and finish
                  * setting it up.
                  */
-                /* @var $product Product */
-                $product = BeanFactory::getBean('Products');
-                $product->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
-                $product->name = $opp->name;
-                $product->best_case = $opp->best_case;
-                $product->likely_case = $opp->amount;
-                $product->worst_case = $opp->worst_case;
-                $product->cost_price = $opp->amount;
-                $product->quantity = 1;
-                $product->currency_id = $opp->currency_id;
-                $product->base_rate = $opp->base_rate;
-                $product->probability = $opp->probability;
-                $product->date_closed = $opp->date_closed;
-                $product->date_closed_timestamp = $opp->date_closed_timestamp;
-                $product->assigned_user_id = $opp->assigned_user_id;
-                $product->opportunity_id = $opp->id;
-                $product->commit_stage = $opp->commit_stage;
-                $product->save();
+                /* @var $rli RevenueLineItem */
+                $rli = BeanFactory::getBean('RevenueLineItems');
+                $rli->retrieve_by_string_fields(array('opportunity_id'=>$opp->id));
+                $rli->name = $opp->name;
+                $rli->best_case = $opp->best_case;
+                $rli->likely_case = $opp->amount;
+                $rli->worst_case = $opp->worst_case;
+                $rli->cost_price = $opp->amount;
+                $rli->quantity = 1;
+                $rli->currency_id = $opp->currency_id;
+                $rli->base_rate = $opp->base_rate;
+                $rli->probability = $opp->probability;
+                $rli->date_closed = $opp->date_closed;
+                $rli->date_closed_timestamp = $opp->date_closed_timestamp;
+                $rli->assigned_user_id = $opp->assigned_user_id;
+                $rli->opportunity_id = $opp->id;
+                $rli->commit_stage = $opp->commit_stage;
+                $rli->save();
 
                 if ($include == 1) {
                     $forecast_likely_total += $opp->amount;
