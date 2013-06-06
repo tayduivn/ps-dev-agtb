@@ -35,6 +35,8 @@ class ActivityQueueManager
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals');
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
+    protected $relationshipDefinitions = null;
+
     /**
      * Logic hook arbiter for activity streams.
      * @param  SugarBean $bean
@@ -265,12 +267,7 @@ class ActivityQueueManager
     /**
      * Helper for processing records which aren't explicitly linked.
      *
-     * THIS IS A BIG, GIANT HACK. IF YOU ARE READING THIS, PLEASE PLEASE MAKE
-     * SURE THAT WE'RE WORKING ON A WAY TO GET RID OF THIS. To get away from
-     * this hack, we need to ensure that Meetings/Calls/Tasks/etc save their
-     * relationships correctly when parent_type/parent_id are set.
-     *
-     * @ticket ABE-430
+     * @ticket ABE-340
      * @param  SugarBean $bean
      */
     protected function processParentAttributes(SugarBean $bean)
@@ -280,13 +277,19 @@ class ActivityQueueManager
             return;
         }
 
+        $relDef = $this->getRelationshipDefinition($bean->parent_type, $bean->module_name);
+        if (!empty($relDef)) {
+            // If a relationship exists for this (bean->parent ~ bean->module), stop.
+            return;
+        }
+
         $old_parent_id = '';
         if (is_array($bean->fetched_row) && isset($bean->fetched_row['parent_id'])) {
             $old_parent_id = $bean->fetched_row['parent_id'];
         }
 
         if ($bean->parent_id !== $old_parent_id) {
-            if (!empty($old_parent_id)) {
+            if (!empty($old_parent_id) && !empty($bean->fetched_row['parent_type']) && !empty($bean->module_name)) {
                 // Create a fake unlink.
                 $args = array(
                     'id' => $old_parent_id,
@@ -405,5 +408,32 @@ class ActivityQueueManager
             $queue = new SugarJobQueue();
             $queue->submitJob($job);
         }
+    }
+
+    /**
+     * Lookup Relationship given LeftSide and RightSide Modules.
+     * @param  $lhsModule
+     * @param  $rhsModule
+     * @return array   contains Relationship Definition if found else Empty
+     */
+    protected function getRelationshipDefinition($lhsModule, $rhsModule)
+    {
+        $result = array();
+
+        if(!empty($lhsModule) && !empty($rhsModule)) {
+            if (empty($this->relationshipDefinitions)) {
+                $relationshipFactory           = SugarRelationshipFactory::getInstance();
+                $this->relationshipDefinitions = $relationshipFactory->getRelationshipDefs();
+            }
+
+            foreach ($this->relationshipDefinitions AS $relName => $relDef) {
+                if (!empty($relDef['lhs_module']) && !empty($relDef['rhs_module']) &&
+                    ($lhsModule == $relDef['lhs_module']) && ($rhsModule == $relDef['rhs_module'])
+                ) {
+                    return $relDef;
+                }
+            }
+        }
+        return $result;
     }
 }
