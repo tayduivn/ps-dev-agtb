@@ -599,6 +599,7 @@ class SubPanelDefinitions
 	var $_visible_tabs_array ;
 	var $panels ;
 	var $layout_defs ;
+	var $platform ;
     static $refreshHiddenSubpanels = false;
 
 	/**
@@ -609,9 +610,10 @@ class SubPanelDefinitions
 	 * @param ARRAY $layout_def_override - if you wish to override the default loaded layout defs you pass them in here.
 	 * @return SubPanelDefinitions
 	 */
-	function SubPanelDefinitions ( $focus , $layout_def_key = '' , $layout_def_override = '' )
+	function SubPanelDefinitions ( $focus , $layout_def_key = '' , $layout_def_override = '' , $platform = null)
 	{
 		$this->_focus = $focus ;
+		$this->platform = $platform;
 		if (! empty ( $layout_def_override ))
 		{
 			$this->layout_defs = $layout_def_override ;
@@ -713,6 +715,10 @@ class SubPanelDefinitions
 	 */
 	function load_subpanel ( $name , $reload = false , $original_only = false )
 	{
+        // mobile doesn't have subpanel def
+        if ($this->platform == 'mobile') {
+            return false;
+        }
 		if (!is_dir('modules/' . $this->layout_defs [ 'subpanel_setup' ][ strtolower ( $name ) ] [ 'module' ]))
 		  return false;
 
@@ -738,8 +744,8 @@ class SubPanelDefinitions
         if (empty ($this->layout_defs) || $reload || (!empty ($layout_def_key) && !isset ($layout_defs [$layout_def_key]))) {
             if (!$original_only) {
                 if (isModuleBWC($this->_focus->module_dir)) {
-                    $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php');
-                    $def_path[] = SugarAutoLoader::loadExtension("layoutdefs", $this->_focus->module_dir);
+                    $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/'.($this->platform == 'mobile' ? 'wireless.' : '').'subpaneldefs.php');
+                    $def_path[] = SugarAutoLoader::loadExtension($this->platform == 'mobile' ? 'wireless_subpanels' : 'layoutdefs', $this->_focus->module_dir);
                 } else {
                     $def_path = array('modules/' . $this->_focus->module_dir . '/clients/base/layouts/subpanels/subpanels.php');
                     $def_path[] = SugarAutoLoader::loadExtension("sidecarsubpanelbaselayout", $this->_focus->module_dir);

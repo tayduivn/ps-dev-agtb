@@ -108,7 +108,7 @@ class MetaDataManager
             $parent_bean = (object) array('module_dir' => $moduleName);
         }
 
-        $spd = new SubPanelDefinitions($parent_bean);
+        $spd = new SubPanelDefinitions($parent_bean, '', '', $this->platforms[0]);
         $layout_defs = $spd->layout_defs;
 
         if (is_array($layout_defs) && isset($layout_defs['subpanel_setup'])) {
