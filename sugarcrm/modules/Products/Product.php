@@ -837,11 +837,10 @@ class Product extends SugarBean
     {
         $oppId = $this->opportunity_id;
         parent::mark_deleted($id);
-           
-        //BEGIN SUGARCRM flav=ent ONLY
-        // this only happens when ent is built out
+
         $this->saveProductWorksheet();
-        
+
+        //BEGIN SUGARCRM flav=ent ONLY
         //save to trigger related field recalculations for deleted item
         $this->resaveOppForRecalc($oppId);
         //END SUGARCRM flav=ent ONLY
@@ -906,7 +905,6 @@ class Product extends SugarBean
         }
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Save the updated product to the worksheet, this will create one if one does not exist
      * this will also update one if a draft version exists
@@ -928,7 +926,6 @@ class Product extends SugarBean
 
         return false;
     }
-    //END SUGARCRM flav=ent ONLY
 
     /**
      * Sets the account_id value for instance given an opportunityId argument of the Opportunity id

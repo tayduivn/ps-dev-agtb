@@ -476,6 +476,51 @@ class Opportunity extends SugarBean
         return parent::save($check_notify);
     }
 
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    /**
+     * Override the current SugarBean functionality to make sure that when this method is called that it will also
+     * take care of any draft worksheets by rolling-up the data
+     *
+     * @param string $id            The ID of the record we want to delete
+     */
+    public function mark_deleted($id)
+    {
+
+        // get the products before we mark it as deleted
+        $products = $this->get_linked_beans('products', 'Products');
+
+        parent::mark_deleted($id);
+
+        $this->saveOpportunityWorksheet();
+
+        foreach($products as $product) {
+            $product->mark_deleted($product->id);
+        }
+    }
+
+    /**
+     * Save the updated product to the worksheet, this will create one if one does not exist
+     * this will also update one if a draft version exists
+     *
+     * @return bool         True if the worksheet was saved/updated, false otherwise
+     */
+    protected function saveOpportunityWorksheet()
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if ($settings['is_setup']) {
+            // save the a draft of each product
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet->saveRelatedOpportunity($this);
+            return true;
+        }
+
+        return false;
+    }
+    //END SUGARCRM flav=pro && flav!=ent ONLY
+
     public function save_relationship_changes($is_update)
     {
         //if account_id was replaced unlink the previous account_id.

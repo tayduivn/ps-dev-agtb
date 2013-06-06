@@ -549,9 +549,9 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group products
-     * @group jontest
      * @ticket SFA-814
      */
     public function testProductMarkDeletedAlsoDeletesWorksheet()
@@ -581,6 +581,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($product, false, true);
         $this->assertEquals(1, $worksheet->deleted);
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * @group products
