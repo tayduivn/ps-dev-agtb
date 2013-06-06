@@ -563,6 +563,8 @@ $dictionary['RevenueLineItem'] = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
+            'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
+            'calculated' => true,
         ),
         'lead_source' => array(
             'name' => 'lead_source',
