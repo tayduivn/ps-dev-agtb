@@ -646,104 +646,87 @@ class RevenueLineItem extends SugarBean
         if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
             $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
         }
-        $this->handleOppSalesStatus();
+        $this->setOpportunitySalesStatus();
         //END SUGARCRM flav=ent ONLY
 
-        // We need to update the associated product bundle and quote totals that might be impacted by this product.
-        if (isset($id)) {
-            $tax_rate = 0.00;
-            $query = "select * from quotes INNER JOIN taxrates on quotes.taxrate_id=taxrates.id where quotes.id='" . $this->quote_id . "' and quotes.deleted=0 and taxrates.deleted=0";
-            $result = $this->db->query($query);
-            if ($row = $this->db->fetchByAssoc($result)) {
-                $tax_rate = $row['value'] / 100;
-                $shipping_usdollar = $row['shipping_usdollar'];
-            }
-            $query = "select product_bundles.id as bundle_id from product_bundle_product" .
-                " INNER JOIN product_bundles on product_bundles.id=product_bundle_product.bundle_id" .
-                " where product_bundle_product.deleted=0 AND product_bundle_product.product_id='" . $id . "' AND product_bundles.deleted=0";
-            $result = $this->db->query($query);
-            if ($row = $this->db->fetchByAssoc($result)) {
-                $bundle_id = $row['bundle_id'];
-                $query = "select shipping_usdollar from product_bundles where id='" . $bundle_id . "' and deleted=0";
-                $result = $this->db->query($query);
-                if ($row = $this->db->fetchByAssoc($result)) {
-                    $shipping_usdollar = $row['shipping_usdollar'];
-                }
-                $query = "select * from product_bundle_product where bundle_id='" . $bundle_id . "' and deleted=0";
-                $result = $this->db->query($query);
-                $new_sub_usdollar = 0.00;
-                $deal_tot_usdollar = 0.00;
-                $deal_tot = 0.00;
-                $new_sub = 0.00;
-                $subtotal_usdollar = 0.00;
-                $tax_usdollar = 0.00;
-                $total_usdollar = 0.00;
-                if ($row = $this->db->fetchByAssoc($result)) {
-                    while ($row != null) {
-                        $product = BeanFactory::getBean('RevenueLineItem');
-                        $product->id = $row['product_id'];
-                        $product->retrieve();
-                        $subtotal_usdollar += $product->discount_usdollar * $product->quantity;
-
-                        if (isset($this->discount_select) && $this->discount_select) {
-                            $deal_tot_usdollar += ($product->discount_amount / 100) * $product->discount_usdollar * $product->quantity;
-                        } else {
-                            $deal_tot_usdollar += $product->discount_amount;
-                        }
-                        $new_sub_usdollar = $subtotal_usdollar - $deal_tot_usdollar;
-                        if ($product->tax_class == 'Taxable') {
-                            $tax_usdollar += ($product->discount_usdollar * $product->quantity) * $tax_rate;
-
-                        }
-                        $row = $this->db->fetchByAssoc($result);
-                    }
-                    $total_usdollar += $new_sub_usdollar + $tax_usdollar + $shipping_usdollar;
-                    $total = $currency->convertFromDollar($total_usdollar);
-                    $subtotal = $currency->convertFromDollar($subtotal_usdollar);
-                    $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-                    $tax = $currency->convertFromDollar($tax_usdollar);
-                    $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
-                    $updateQuery = "update product_bundles set tax=" . $tax . ",tax_usdollar=" . $tax_usdollar . ",total=" . $total . ",deal_tot_usdollar=" . $deal_tot_usdollar . ",deal_tot=" . $deal_tot . ",total_usdollar=" . $total_usdollar .
-                        ",new_sub=" . $new_sub . ",new_sub_usdollar=" . $new_sub_usdollar . ",subtotal=" . $subtotal .
-                        ",subtotal_usdollar=" . $subtotal_usdollar . " where id='" . $bundle_id . "'";
-                    $result = $this->db->query($updateQuery);
-                    //Update the Grand Total for the Quote
-                    $subtotal_usdollar = 0.00;
-                    $tax_usdollar = 0.00;
-                    $total_usdollar = 0.00;
-                    $shipping_usdollar = 0.00;
-                    $new_sub_usdollar = 0.00;
-                    $query = "select sum(product_bundles.total_usdollar) as total_usdollar,sum(product_bundles.subtotal_usdollar) as subtotal_usdollar,sum(product_bundles.new_sub_usdollar) as new_sub_usdollar,sum(product_bundles.deal_tot_usdollar) as deal_tot_usdollar,sum(product_bundles.tax_usdollar) as tax_usdollar," .
-                        "sum(product_bundles.shipping_usdollar) as shipping_usdollar from product_bundle_quote INNER JOIN product_bundles on " .
-                        "product_bundles.id=product_bundle_quote.bundle_id where product_bundle_quote.quote_id='" . $this->quote_id . "' " .
-                        "and product_bundle_quote.deleted=0 and product_bundles.deleted=0";
-                    $result = $this->db->query($query);
-                    if ($row = $this->db->fetchByAssoc($result)) {
-                        /*
-                        while ($row != null) {
-                            $subtotal_usdollar += $row['subtotal_usdollar'];
-                            $tax_usdollar += $row['tax_usdollar'];
-                            $shipping_usdollar += $row['shipping_usdollar'];
-                            $row =  $this->db->fetchByAssoc($result);
-                        }*/
-                        $total_usdollar += $row['new_sub_usdollar'] + $row['tax_usdollar'] + $row['shipping_usdollar'];
-                        $total = $currency->convertFromDollar($total_usdollar);
-                        $subtotal = $currency->convertFromDollar($row['subtotal_usdollar']);
-                        $deal_tot_usdollar = $row['deal_tot_usdollar'];
-                        $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
-                        $new_sub_usdollar = $row['new_sub_usdollar'];
-                        $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-                        $tax = $currency->convertFromDollar($row['tax_usdollar']);
-                        $updateQuery = "update quotes set tax=" . $tax . ",tax_usdollar=" . $tax_usdollar . ",total=" . $total . ",total_usdollar=" . $total_usdollar . ",deal_tot=" . $deal_tot . ",deal_tot_usdollar=" . $deal_tot_usdollar . ",new_sub=" . $new_sub . ",new_sub_usdollar=" . $new_sub_usdollar . ",subtotal=" . $subtotal .
-                            ",subtotal_usdollar=" . $subtotal_usdollar . " where id='" . $this->quote_id . "'";
-                        $result = $this->db->query($updateQuery);
-                    }
-
-                }
-            }
-        }
         return $id;
     }
+    
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Handle setting the opportunity status
+     *
+     * This currently uses Dependency Injection for the Opportunity and Administration beans since we can't
+     * Override BeanFactory::getBean()  once that is done we can remove the dependency Injection. When called
+     * you should not pass and Opportunity and Administration bean in.
+     *
+     * @param Opportunity $opp
+     * @param Administration $admin
+     */
+    protected function setOpportunitySalesStatus(Opportunity $opp = null, Administration $admin = null)
+    {
+        if (is_null($admin)) {
+            // if $admin is not passed in then load it up
+            $admin = BeanFactory::getBean('Administration');
+        }
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if ($settings['is_setup'] != 1) {
+            // forecasts is not setup, just ignore this
+            return;
+        }
+
+
+        if (is_null($opp)) {
+            // if $opp is not set, load it up
+            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
+        }
+        // get the closed won and closed lost values
+        $closed_won = $settings['sales_stage_won'];
+        $closed_lost = $settings['sales_stage_lost'];
+
+        $won_rlis = count(
+            $opp->get_linked_beans(
+                'revenuelineitems',
+                'RevenueLineItems',
+                array(),
+                0,
+                -1,
+                0,
+                'sales_stage in ("' . join('","', $closed_won) . '")'
+            )
+        );
+
+        $lost_rlis = count(
+            $opp->get_linked_beans(
+                'revenuelineitems',
+                'RevenueLineItems',
+                array(),
+                0,
+                -1,
+                0,
+                'sales_stage in ("' . join('","', $closed_lost) . '")'
+            )
+        );
+
+        $total_rlis = count($opp->get_linked_beans('revenuelineitems', 'RevenueLineItems'));
+
+        if ($total_rlis > ($won_rlis + $lost_rlis) || $total_rlis === 0) {
+            // still in progress
+            $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            $opp->save();
+        } else {
+            // they are equal so if the total lost == total rlis then it's closed lost,
+            // otherwise it's always closed won
+            if ($lost_rlis == $total_rlis) {
+                $opp->sales_status = Opportunity::STATUS_CLOSED_LOST;
+            } else {
+                $opp->sales_status = Opportunity::STATUS_CLOSED_WON;
+            }
+            $opp->save();
+        }
+    }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * Override the current SugarBean functionality to make sure that when this method is called that it will also
@@ -766,14 +749,15 @@ class RevenueLineItem extends SugarBean
     }
     
     /**
-     * Utility to load/save a related Opp when things are deleted/reassigned so calcuated fields
+     * Utility to load/save a related Opp when things are deleted/reassigned so calculated fields
      * in Opportunities update with new totals.
      */
     protected function resaveOppForRecalc($oppId)
     {
-    	if (!empty($oppId)) {
+        if (!empty($oppId)) {
             $opp = BeanFactory::getBean('Opportunities', $oppId);
-            $opp->save();
+            // save the opp via the opp status
+            $this->setOpportunitySalesStatus($opp);
         }
     }
 
@@ -864,70 +848,6 @@ class RevenueLineItem extends SugarBean
         return false;
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * helper function to update the opportunity sales status based on parameters
-     * @param $opportunity
-     * @param $opportunitySalesStatusToCheck
-     * @param $productSalesStatusToCheck
-     * @param $opportunitySalesStatusToUse
-     * @param $checkAllPLI
-     */
-    protected function changeOppSalesStatus(Opportunity $opportunity, $opportunitySalesStatusToCheck, $productSalesStatusToCheck, $opportunitySalesStatusToUse, $checkAllPLI)
-    {
-        if ($opportunity->sales_status != $opportunitySalesStatusToCheck && $opportunity->sales_status != $opportunitySalesStatusToUse) {
-            $salesStatusLineItems = $opportunity->products->query(array(
-                                               'where'=>array(
-                                                   // query adds the prefix so we don't need contact.id
-                                                   'lhs_field'=>'sales_status',
-                                                   'operator'=>'=',
-                                                   'rhs_value'=>$this->db->quote($productSalesStatusToCheck),
-                                                   ),
-                                                'deleted'=>'0'));
-            $requiredRowCount = 1;
-            if ($checkAllPLI) {
-                $requiredRowCount = count($opportunity->products->rows);
-            }
-            //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
-            if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
-                $opportunity->sales_status = $opportunitySalesStatusToUse;
-                $opportunity->save();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Code to make sure that the Sales Status field of the associated opportunity
-     */
-    protected function handleOppSalesStatus()
-    {
-        if (!empty($this->opportunity_id)) {
-            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-            $products = $opp->get_linked_beans('products', 'Products');
-            if (count($products) > 0) {
-                //opp currently isn't in status new, but a PLI gets added as status new, so this is assuming it's not just a new opp and new PLI
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false)) {
-                    return;
-                }
-                //opp currently isn't in progress, but a PLI gets added as in progress
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,false)) {
-                    return;
-                }
-                //opp currently isn't Won, but all PLIs are closed won
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,true)) {
-                    return;
-                }
-                //opp currently isn't Lost, but all PLIs are closed lost
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,true)) {
-                    return;
-                }
-            }
-        }
-    }
-    //END SUGARCRM flav=ent ONLY
-    
     /**
      * Handle the mapping of the fields from the product template to the product
      */
