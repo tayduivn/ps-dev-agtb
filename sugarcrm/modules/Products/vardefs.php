@@ -551,14 +551,6 @@ $dictionary['Product'] = array(
             'importable' => 'required',
             'required' => true,
         ),
-        'sales_status' =>  array(
-            'name' => 'sales_status',
-            'vname' => 'LBL_SALES_STATUS',
-            'type' => 'enum',
-            'options' => 'sales_status_with_quote_dom',
-            'len' => '255',
-            'audited' => true,
-        ),
         'probability' =>  array(
             'name' => 'probability',
             'vname' => 'LBL_PROBABILITY',
