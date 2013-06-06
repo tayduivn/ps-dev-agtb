@@ -357,40 +357,41 @@
         }
     },
 
-    handleSave: function () {
+    handleSave: function() {
         var self = this;
         self.inlineEditMode = false;
-        
+
+        var options = {
+            showAlerts: true,
+            success: _.bind(function() {
+                if (this.createMode) {
+                    app.navigate(this.context, this.model);
+                } else if (!this.disposed) {
+                    this.render();
+                }
+            }, this),
+            viewed: true
+        };
+
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
+
         app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function () {
-                    self.model.save({}, self.getCustomSaveOptions());
+                success: function() {
+                    self.model.save({}, options);
                 }
             }, {
                 deleteIfFails: false
             }
         );
 
-        self.$(".record-save-prompt").hide();
+        self.$('.record-save-prompt').hide();
         if (!self.disposed) {
             self.render();
         }
     },
-    
-    getCustomSaveOptions: function() {
-        //Show alerts for this request
-        return {
-            showAlerts: true,
-            success: this.getSaveSuccess,
-            viewed: true
-        };
-    },
-    
-    getSaveSuccess: function() {
-        if (this.createMode) {
-            app.navigate(this.context, this.model);
-        } else if (!this.disposed) {
-            this.render();
-        }
+
+    getCustomSaveOptions: function(options) {
+        return {};
     },
 
     handleCancel: function () {

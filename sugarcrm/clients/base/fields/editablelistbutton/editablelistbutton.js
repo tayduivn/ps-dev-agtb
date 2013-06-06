@@ -33,24 +33,39 @@
             return;
         }
 
-        var self = this,
-            fileFields = [],
-            callbacks = {
-                success: function() {
-                    self.model.save({}, {
-                        success: _.bind(function(model) {
-                            this.getCustomSaveOptions()
-                        }, this),
-                        //Show alerts for this request
-                        showAlerts: {
-                            'process': true,
-                            'success': {
-                                messages: app.lang.get('LBL_RECORD_SAVED', self.module)
-                            }
+		var self = this,
+			fileFields = [],
+			callbacks = {},
+			options = {
+            success: _.bind(function() {
+                this.changed = false;
+                this.view.toggleRow(this.model.id, false);
+            }, this),
+            //Show alerts for this request
+            showAlerts: {
+                'process' : true,
+                'success': {
+                    messages: app.lang.getAppString('LBL_RECORD_SAVED')
+                }
+            }
+        };
+
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
+
+        
+        callbacks = {
+            success: function() {
+                self.model.save({}, options),                        
+			    //Show alerts for this request
+                    showAlerts: {
+                        'process': true,
+                        'success': {
+                            messages: app.lang.get('LBL_RECORD_SAVED', self.module)
                         }
-                    });
-				}
-            };
+                    }
+                });
+			}
+        };
 
         async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
             app.file.checkFileFieldsAndProcessUpload(view, {
@@ -75,12 +90,11 @@
             }
         };
     },
-    
-    getSaveSuccess: function() {
-        this.changed = false;
-        this.view.toggleRow(this.model.id, false);
+
+    getCustomSaveOptions: function(options) {
+        return {};
     },
-    
+
     saveModel: function() {
         var fieldsToValidate = this.view.getFields(this.module);
         this.view.clearValidationErrors();
