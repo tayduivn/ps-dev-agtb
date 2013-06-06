@@ -45,7 +45,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderSetOpportunitySalesStatus
-     * @group products
+     * @group revenuelineitems
      */
     public function testSetOpportunitySalesStatus($won_count, $lost_count, $total_count, $status)
     {
