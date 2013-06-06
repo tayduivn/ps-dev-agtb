@@ -90,7 +90,9 @@ include("metadata/contracts_opportunitiesMetaData.php");
 include("metadata/contracts_contactsMetaData.php");
 include("metadata/contracts_quotesMetaData.php");
 include("metadata/contracts_productsMetaData.php");
+include("metadata/contracts_revenuelineitemsMetaData.php");
 include("metadata/projects_quotesMetaData.php");
+include("metadata/projects_revenuelineitemsMetaData.php");
 include("metadata/kbdocuments_views_ratingsMetaData.php");
 include("metadata/users_holidaysMetaData.php");
 

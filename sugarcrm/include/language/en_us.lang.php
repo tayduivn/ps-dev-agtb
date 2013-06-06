@@ -2739,6 +2739,7 @@ $app_strings = array (
 
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
+    'LBL_REVENUELINEITEMS'=>'Revenue Line Items',
     'LBL_PROJECT_TASKS'=>'Project Tasks',
     'LBL_PROJECTS'=>'Projects',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',

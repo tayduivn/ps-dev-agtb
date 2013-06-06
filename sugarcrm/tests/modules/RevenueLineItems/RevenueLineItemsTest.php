@@ -89,7 +89,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateNewListQuery()
     {
-        $this->markTestIncomplete("Failing on some relationship stuff, needs addressed");
+        $this->markTestIncomplete("Failing on some list query stuff, needs addressed");
         $GLOBALS["log"]->fatal("testCreateNewListQuery1");
         $ret_array = $this->rli->create_new_list_query('', '', array(), array(), 0, '', true);
 

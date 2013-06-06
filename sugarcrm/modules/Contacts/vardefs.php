@@ -348,6 +348,15 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_PRODUCTS_TITLE',
         ),
+        'revenuelineitems' => array(
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'link_file' => 'modules/RevenueLineItems/RLIAccountLink.php',
+            'link_class' => 'RLIAccountLink',
+            'relationship' => 'contact_revenuelineitems',
+            'source' => 'non-db',
+            'vname' => 'LBL_REVENUELINEITEMS_TITLE',
+        ),
         'contracts' => array(
             'name' => 'contracts',
             'type' => 'link',

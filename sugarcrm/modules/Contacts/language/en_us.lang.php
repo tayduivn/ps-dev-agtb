@@ -153,6 +153,7 @@ $mod_strings = array (
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street:',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
     'LBL_PRODUCTS_TITLE'=>'Products',
+    'LBL_REVENUELINEITEMS_TITLE'=>'Revenue Line Items',
     'LBL_RELATED_CONTACTS_TITLE'=>'Related Contacts',
     'LBL_REPORTS_TO_ID'=>'Reports to ID:',
     'LBL_REPORTS_TO' => 'Reports To:',

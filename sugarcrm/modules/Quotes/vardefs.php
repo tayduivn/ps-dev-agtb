@@ -637,6 +637,14 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     	'vname' => 'LBL_PRODUCTS',
     	'source'=>'non-db',
   	),
+    'revenuelineitems' =>
+    array (
+        'name' => 'revenuelineitems',
+        'type' => 'link',
+        'relationship' => 'quote_revenuelineitems',
+        'vname' => 'LBL_REVENUELINEITEMS',
+        'source'=>'non-db',
+    ),
   'shipping_accounts' =>
 	array (
   		'name' => 'shipping_accounts',
@@ -809,7 +817,10 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 
 	,'quote_products' => array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'quote_id',
-							  'relationship_type'=>'one-to-many'),
+							  'relationship_type'=>'one-to-many')
+    ,'quote_revenuelineitems' => array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 'lhs_key' => 'id',
+                              'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenuelineitems', 'rhs_key' => 'quote_id',
+                              'relationship_type'=>'one-to-many'),
         'quotes_assigned_user' =>
         array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
         'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'assigned_user_id',

@@ -295,6 +295,14 @@ $dictionary['Document'] = array('table' => 'documents',
             'source' => 'non-db',
             'vname' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
         ),
+        'revenuelineitems' =>
+        array(
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'relationship' => 'documents_revenuelineitems',
+            'source' => 'non-db',
+            'vname' => 'LBL_REVENUELINEITEMS_SUBPANEL_TITLE',
+        ),
         //END SUGARCRM flav=pro ONLY
         'related_doc_id' =>
         array(
