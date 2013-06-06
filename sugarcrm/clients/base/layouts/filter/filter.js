@@ -191,10 +191,11 @@
     getRelevantContextList: function() {
         var contextList = [], context;
         if (this.showingActivities) {
-            context = this.layout.getActivityContext();
-            if (context) {
-                contextList.push(context);
-            }
+            _.each(this.layout._components, function(component) {
+               if (component.name == 'activitystream') {
+                   contextList.push(component.context);
+               }
+            });
         } else {
             if (this.layoutType === 'records') {
                 if (this.context.parent) {
