@@ -41,6 +41,7 @@
         // if we don't render it.
         this.before("render", function() {
             if (self.hasAccess()) {
+                this._show();
                 return true;
             }
             else {
@@ -53,11 +54,6 @@
         this.full_route = _.isString(this.def.route) ? this.def.route : null;
 
         app.view.Field.prototype._render.call(this);
-        if (this.isHidden) {
-            this.hide();
-        } else {
-            this._show();
-        }
     },
     getFieldElement: function() {
         return this.$(this.fieldTag);
@@ -86,9 +82,14 @@
      * @protected
      */
     _show: function() {
-        var ret = app.view.Field.prototype.show.call(this);
-        if(ret !== false && this.isHidden !== false) {
+        if (this.isHidden !== false) {
+            if (!this.triggerBefore("show")) {
+                return false;
+            }
+
+            this.getFieldElement().removeClass("hide").show();
             this.isHidden = false;
+            this.trigger('show');
         }
     },
     show: function() {
@@ -99,17 +100,26 @@
         }
     },
     hide: function() {
-        var ret = app.view.Field.prototype.hide.call(this);
-        if(ret !== false && this.isHidden !== true) {
+        if (this.isHidden !== true) {
+            if (!this.triggerBefore("hide")) {
+                return false;
+            }
+
+            this.getFieldElement().addClass("hide").hide();
             this.isHidden = true;
+            this.trigger('hide');
         }
     },
     /**
      * Track using the flag that is set on the hide and show from above.
+     *
+     * It should check the visivility by isHidden instead of DOM visibility testing
+     * since actiondropdown renders its dropdown lazy
+     *
      * @returns {boolean}
      */
     isVisible: function() {
-        return !(this.getFieldElement().css('display') === 'none' || this.getFieldElement().hasClass("hide"));
+        return !this.isHidden;
     },
     /**
      * {@inheritdoc}

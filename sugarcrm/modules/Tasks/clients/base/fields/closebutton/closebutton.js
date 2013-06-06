@@ -3,10 +3,10 @@
         'click [name="record-close"]': 'closeClicked',
         'click [name="record-close-new"]': 'closeNewClicked'
     },
-    extendsFrom: 'ButtonField',
+    extendsFrom: 'RowactionField',
     initialize: function (options) {
-        app.view.invokeParent(this, {type: 'field', name: 'button', method:'initialize', args:[options]});
-        this.type = 'button';
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method:'initialize', args:[options]});
+        this.type = 'rowaction';
     },
     closeClicked: function () {
         this._close(false);
@@ -14,12 +14,14 @@
     closeNewClicked: function () {
         this._close(true);
     },
-    _render: function () {
-        if (this.model.get('status') === 'Completed') {
-            this.hide();
-        } else {
-            app.view.invokeParent(this, {type: 'field', name: 'button', method: '_render'});
-        }
+    /**
+     * Override so we can have a custom hasAccess for closed status
+     *
+     * @returns {Boolean} true if it has aclAccess and status is not closed
+     */
+    hasAccess: function() {
+        var acl = app.view.invokeParent(this, {type: 'field', name: 'button', method:'hasAccess'});
+        return acl && this.model.get('status') !== 'Completed';
     },
     _close: function (createNew) {
         var self = this;

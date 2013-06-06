@@ -13,6 +13,7 @@ describe("Tasks CloseButton", function() {
             module: 'Tasks'
         });
         SugarTest.loadComponent('base', 'field', 'button');
+        SugarTest.loadComponent('base', 'field', 'rowaction');
         field = SugarTest.createField("base", 'record-close', "closebutton", "detail", def, 'Tasks', model, context, true);
     });
 
@@ -26,13 +27,21 @@ describe("Tasks CloseButton", function() {
     });
 
     it('should show if not closed', function() {
+        var accessSpy = sinon.stub(field,'hasAccess').returns(true);
         field.model.set('status','Not Started');
+        var actual = field.hasAccess();
+        expect(actual).toBeTruthy();
+
         field._render();
         expect(field.isHidden).toBeFalsy();
+        accessSpy.restore();
     });
     
     it('should not show if closed', function() {
         field.model.set('status', 'Completed');
+        var actual = field.hasAccess();
+        expect(actual).toBeFalsy();
+
         field._render();
         expect(field.isHidden).toBeTruthy();
     });
