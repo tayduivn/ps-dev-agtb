@@ -158,8 +158,6 @@ class MailApi extends ModuleApi
             }
         }
 
-        ob_start();
-
         $mailRecord = $this->initMailRecord($args);
 
         if ($args["status"] == "ready") {
