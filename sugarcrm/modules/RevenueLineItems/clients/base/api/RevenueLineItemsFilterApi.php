@@ -20,7 +20,7 @@ require_once 'clients/base/api/FilterApi.php';
  *
  * RevenueLineItems Module Specific Filter API
  */
-class RevenueLineItemsFilterAPI extends FilterApi
+class RevenueLineItemsFilterApi extends FilterApi
 {
     /**
      * Register the API End Points for Rest

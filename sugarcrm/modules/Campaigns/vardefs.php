@@ -284,7 +284,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
                  'relationship_type'=>'one-to-many'),
         
         'campaign_revenuelineitems' => array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
-                 'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenuelineitems', 'rhs_key' => 'campaign_id',
+                 'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenue_line_items', 'rhs_key' => 'campaign_id',
                  'relationship_type'=>'one-to-many'),
 
 	    'campaign_leads' => array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',

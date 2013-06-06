@@ -819,7 +819,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 							  'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'quote_id',
 							  'relationship_type'=>'one-to-many')
     ,'quote_revenuelineitems' => array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 'lhs_key' => 'id',
-                              'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenuelineitems', 'rhs_key' => 'quote_id',
+                              'rhs_module'=> 'RevenueLineItems', 'rhs_table'=> 'revenue_line_items', 'rhs_key' => 'quote_id',
                               'relationship_type'=>'one-to-many'),
         'quotes_assigned_user' =>
         array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
