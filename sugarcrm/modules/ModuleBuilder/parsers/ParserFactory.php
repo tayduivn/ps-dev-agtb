@@ -29,7 +29,7 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once 'modules/ModuleBuilder/parsers/constants.php' ;
+require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class ParserFactory
 {
@@ -54,6 +54,7 @@ class ParserFactory
         if (substr_compare($view,'view',-4) === 0) {
             $view = substr($view,0,-4);
         }
+
         return $map[$view];
     }
     //END SUGARCRM flav=ent ONLY
@@ -61,42 +62,39 @@ class ParserFactory
     /*
      * Create a new parser
      *
-     * @param string $view          The view, for example EditView or ListView. For search views, use advanced_search or basic_search
-     * @param string $moduleName    Module name
-     * @param string $packageName   Package name. If present implies that we are being called from ModuleBuilder
-     * @param string $client        The view client (e.g. portal, wireless, etc.)
+     * @param  string                 $view        The view, for example EditView or ListView. For search views, use advanced_search or basic_search
+     * @param  string                 $moduleName  Module name
+     * @param  string                 $packageName Package name. If present implies that we are being called from ModuleBuilder
+     * @param  string                 $client      The view client (e.g. portal, wireless, etc.)
      * @return AbstractMetaDataParser
      */
 
     public static function getParser ( $view , $moduleName , $packageName = null , $subpanelName = null, $client = '' )
     {
         $GLOBALS [ 'log' ]->info ( "ParserFactory->getParser($view,$moduleName,$packageName,$subpanelName,$client )" ) ;
-		$sm = null;
+        $sm = null;
         $lView = strtolower ( $view );
-        if ( empty ( $packageName ) || ( $packageName == 'studio' ) )
-        {
+        if ( empty ( $packageName ) || ( $packageName == 'studio' ) ) {
             $packageName = null ;
             //For studio modules, check for view parser overrides
             $parser = self::checkForStudioParserOverride($view, $moduleName, $packageName);
             if ($parser) return $parser;
             $sm = StudioModuleFactory::getStudioModule($moduleName);
             //If we didn't find a specofic parser, see if there is a view to type mapping
-            foreach($sm->sources as $file => $def)
-            {
-                if (!empty($def['view']) && $def['view'] == $view && !empty($def['type']))
-                {
+            foreach ($sm->sources as $file => $def) {
+                if (!empty($def['view']) && $def['view'] == $view && !empty($def['type'])) {
                     $lView = strtolower($def['type']);
                     break;
                 }
             }
         }
 
-        switch ( $lView)
-        {
+        switch ($lView) {
             case MB_EDITVIEW :
             case MB_DETAILVIEW :
             case MB_QUICKCREATE :
-                require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
+                require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
+
                 return new GridLayoutMetaDataParser ( $view, $moduleName, $packageName ) ;
             //BEGIN SUGARCRM flav=pro ONLY
             case MB_WIRELESSEDITVIEW :
@@ -105,34 +103,32 @@ class ParserFactory
             case MB_PORTALDETAILVIEW:
             case MB_PORTALEDITVIEW:
             //END SUGARCRM flav=ent ONLY
-                if (empty($client))
-                {
+                if (empty($client)) {
                     $client = MB_WIRELESS;
                     //BEGIN SUGARCRM flav=ent ONLY
-                    if ($lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW)
-                    {
+                    if ($lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW) {
                         $client = MB_PORTAL;
                     }
                     //END SUGARCRM flav=ent ONLY
                 }
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php';
+
                 return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
             case MB_WIRELESSLISTVIEW:
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALLISTVIEW:
             //END SUGARCRM flav=ent ONLY
                 // Handle client settings if we can
-                if (empty($client))
-                {
+                if (empty($client)) {
                     $client = MB_WIRELESS;
                     //BEGIN SUGARCRM flav=ent ONLY
-                    if ($lView == MB_PORTALLISTVIEW)
-                    {
+                    if ($lView == MB_PORTALLISTVIEW) {
                         $client = MB_PORTAL;
                     }
                     //END SUGARCRM flav=ent ONLY
                 }
-                require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php' ;
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
+
                 return new SidecarListLayoutMetaDataParser($view, $moduleName, $packageName, $client);
             //END SUGARCRM flav=pro ONLY
             case MB_BASICSEARCH :
@@ -141,36 +137,46 @@ class ParserFactory
             case MB_WIRELESSBASICSEARCH :
             case MB_WIRELESSADVANCEDSEARCH :
                 // Make sure we have the right client
-                if ($lView == MB_WIRELESSBASICSEARCH || $lView == MB_WIRELESSADVANCEDSEARCH)
-                {
+                if ($lView == MB_WIRELESSBASICSEARCH || $lView == MB_WIRELESSADVANCEDSEARCH) {
                     $client = MB_WIRELESS;
                 }
             //END SUGARCRM flav=pro ONLY
-                require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php' ;
+                require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
+
                 return new SearchViewMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
             case MB_LISTVIEW :
-                if ($subpanelName == null)
-                {
-                    require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php' ;
-                    return new ListLayoutMetaDataParser ( MB_LISTVIEW, $moduleName, $packageName ) ;
-                } else
-                {
-                    require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php' ;
+                if ($subpanelName == null) {
+                    if (file_exists("modules/$moduleName/clients/base/views/list/list.php")) {
+                        require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
+
+                        return new SidecarListLayoutMetaDataParser (MB_SIDECARLISTVIEW, $moduleName, $packageName, 'base' ) ;
+                    } else {
+                        require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
+
+                        return new ListLayoutMetaDataParser ( MB_LISTVIEW, $moduleName, $packageName ) ;
+                    }
+                } else {
+                    require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
+
                     return new SubpanelMetaDataParser ( $subpanelName, $moduleName, $packageName ) ;
                 }
             case MB_DASHLET :
             case MB_DASHLETSEARCH :
-                require_once 'modules/ModuleBuilder/parsers/views/DashletMetaDataParser.php' ;
+                require_once 'modules/ModuleBuilder/parsers/views/DashletMetaDataParser.php';
+
                 return new DashletMetaDataParser($view, $moduleName, $packageName  );
             case MB_POPUPLIST :
             case MB_POPUPSEARCH :
-                require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php' ;
+                require_once 'modules/ModuleBuilder/parsers/views/PopupMetaDataParser.php';
+
                 return new PopupMetaDataParser($view, $moduleName, $packageName  );
             case MB_LABEL :
-                require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
+                require_once 'modules/ModuleBuilder/parsers/parser.label.php';
+
                 return new ParserLabel ( $moduleName, $packageName ) ;
             case MB_VISIBILITY :
-                require_once 'modules/ModuleBuilder/parsers/parser.visibility.php' ;
+                require_once 'modules/ModuleBuilder/parsers/parser.visibility.php';
+
                 return new ParserVisibility ( $moduleName, $packageName ) ;
             default :
                 $parser = self::checkForParserClass($view, $moduleName, $packageName);
@@ -186,7 +192,7 @@ class ParserFactory
     protected static function checkForParserClass($view, $moduleName, $packageName, $nameOverride = false)
     {
         $prefix = '';
-        if(!is_null ( $packageName )){
+        if (!is_null ( $packageName )) {
             $prefix = empty($packageName) ? 'build' :'modify';
         }
         $fileNames = array(
@@ -195,31 +201,28 @@ class ParserFactory
             "custom/modules/ModuleBuilder/parsers/parser." . strtolower ( $prefix . $view ) . ".php",
             "modules/ModuleBuilder/parsers/parser." . strtolower ( $prefix . $view ) . ".php",
         );
-        foreach($fileNames as $fileName)
-        {
-            if (file_exists ( $fileName ))
-            {
+        foreach ($fileNames as $fileName) {
+            if (file_exists ( $fileName )) {
                 require_once $fileName ;
                 $class = 'Parser' . $prefix . ucfirst ( $view ) ;
-                if (class_exists ( $class ))
-                {
+                if (class_exists ( $class )) {
                     $GLOBALS [ 'log' ]->debug ( 'Using ModuleBuilder Parser ' . $fileName ) ;
                     $parser = new $class ( ) ;
+
                     return $parser ;
                 }
             }
         }
+
         return false;
     }
 
     protected static function checkForStudioParserOverride($view, $moduleName, $packageName)
     {
-        require_once('modules/ModuleBuilder/Module/StudioModuleFactory.php');
+        require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
         $sm = StudioModuleFactory::getStudioModule($moduleName);
-        foreach($sm->sources as $file => $def)
-        {
-            if (!empty($def['view']) && $def['view'] == strtolower($view) && !empty($def['parser']))
-            {
+        foreach ($sm->sources as $file => $def) {
+            if (!empty($def['view']) && $def['view'] == strtolower($view) && !empty($def['parser'])) {
                 $pName = $def['parser'];
                 $path = "modules/ModuleBuilder/parsers/views/{$pName}.php";
                 if (file_exists("custom/$path"))
@@ -234,8 +237,8 @@ class ParserFactory
                     return $parser;
             }
         }
+
         return false;
     }
 
 }
-?>
