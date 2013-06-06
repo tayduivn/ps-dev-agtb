@@ -1,5 +1,10 @@
 ({
     extendsFrom: 'ProfileactionsView',
+    /**
+     * Sets the current user's information like full name, user name, avatar, etc.,
+     * using portal's user module which is currently the Contacts module.
+     * @protected
+     */
     setCurrentUserData: function() {
         this.fullName = app.user.get("full_name");
         this.userName = app.user.get("user_name");

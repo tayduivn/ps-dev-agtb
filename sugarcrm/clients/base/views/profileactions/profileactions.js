@@ -24,6 +24,10 @@
         this.showAdmin = app.acl.hasAccess('admin', 'Administration');
         app.view.View.prototype._renderHtml.call(this);
     },
+    /**
+     * Sets the current user's information like full name, user name, avatar, etc.
+     * @protected
+     */
     setCurrentUserData: function() {
         this.fullName = app.user.get("full_name");
         this.userName = app.user.get("user_name");
