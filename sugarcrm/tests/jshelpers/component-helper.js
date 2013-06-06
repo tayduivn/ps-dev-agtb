@@ -134,9 +134,9 @@
             }
         },
 
-        addModule: function(module, moduleDef) {
+        updateModuleMetadata: function(module, moduleDef) {
             if (this.isInitialized()) {
-                this._data.modules[module] = moduleDef || {};
+                this._data.modules[module] = _.extend((this._data.modules[module] || {}), (moduleDef || {}));
             }
         },
 

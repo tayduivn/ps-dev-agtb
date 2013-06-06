@@ -29,7 +29,7 @@ describe('favorite field', function() {
         app = SugarTest.app;
 
         SugarTest.testMetadata.init();
-        SugarTest.testMetadata.addModule(moduleName, metadata);
+        SugarTest.testMetadata.updateModuleMetadata(moduleName, metadata);
         SugarTest.testMetadata.set();
         app.data.declareModel(moduleName, metadata);
 
@@ -44,6 +44,8 @@ describe('favorite field', function() {
     });
 
     afterEach(function() {
+        field.dispose();
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -65,6 +67,7 @@ describe('favorite field', function() {
         });
 
         metadata.favoritesEnabled = false;
+        SugarTest.testMetadata.updateModuleMetadata(moduleName, metadata);
         app.data.declareModel(moduleName, metadata);
 
         field.model = model;

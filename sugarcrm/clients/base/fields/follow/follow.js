@@ -22,13 +22,6 @@
         }, this);
     },
     /**
-     * Removes the field's event handlers from the context.
-     */
-    unbindData: function() {
-        this.context.off(null, null, this);
-        app.view.Field.prototype.unbindData.call(this);
-    },
-    /**
      * Set current label and value since the follow button relates to the following
      *
      * @param value

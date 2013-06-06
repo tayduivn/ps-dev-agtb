@@ -3,6 +3,8 @@ describe("Base.Field.Follow", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         var model = new Backbone.Model({
@@ -14,6 +16,7 @@ describe("Base.Field.Follow", function() {
 
     afterEach(function() {
         field.dispose();
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
