@@ -83,7 +83,7 @@ class SugarFieldBool extends SugarFieldBase {
             $unformattedField = false;
             return $unformattedField;
         }
-        if ( $formattedField == '0' || $formattedField == 'off' || $formattedField == 'false' || $formattedField == 'no' ) {
+        if ( $formattedField === '0' || $formattedField === 'off' || $formattedField === 'false' || $formattedField === 'no' ) {
             $unformattedField = false;
         } else {
             $unformattedField = true;

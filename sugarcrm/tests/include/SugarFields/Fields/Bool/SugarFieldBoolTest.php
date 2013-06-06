@@ -56,6 +56,10 @@ class SugarFieldBoolTest extends Sugar_PHPUnit_Framework_TestCase
         $this->sf->apiFormatField($data, $this->meeting, array(), 'email_reminder_checked',array());
         $this->assertTrue($data['reminder_checked']);
     }
+    public function testTrueBoolFieldUnformatting() {
+        $result = $this->sf->unformatField(true, array());
+        $this->assertTrue($result);
+    }
     public function testFalseboolFieldFormatting() {
         // make'em false
         $this->meeting->reminder_time = -1;
