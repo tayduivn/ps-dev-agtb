@@ -74,8 +74,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'value' => 'list',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:lead_convert_button:click',
+                    'type' => 'convertbutton',
                     'name' => 'lead_convert_button',
                     'label' => 'LBL_CONVERT_BUTTON_LABEL',
                     'showOn' => 'view',

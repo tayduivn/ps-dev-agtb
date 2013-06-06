@@ -66,7 +66,8 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'default' => true,
                     'sortable' => false,
                     'related_fields' => array(
-                        0 => 'account_id',
+                        'account_id',
+                        'converted',
                     ),
                 ),
                 array (
