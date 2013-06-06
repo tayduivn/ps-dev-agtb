@@ -75,21 +75,6 @@
             }, {deleteIfFails: false }, true);
         }, callbacks.success);
     },
-    
-    getCustomSaveOptions: function() {
-        return {
-            success: _.bind(function() { 
-                    this.getSaveSuccess();
-                }, this),
-            //Show alerts for this request
-            showAlerts: {
-                'process' : true,
-                'success': {
-                    messages: app.lang.getAppString('LBL_RECORD_SAVED')
-                }
-            }
-        };
-    },
 
     getCustomSaveOptions: function(options) {
         return {};
