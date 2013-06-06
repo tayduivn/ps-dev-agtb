@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 /**
  * Needs the PHPMailer library to set up the proxy.
  */
-require_once "vendors/PHPMailer/class.phpmailer.php";
+require_once "vendor/PHPMailer/class.phpmailer.php";
 
 /* Internal Module Imports */
 
