@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['User'] = array(
     'table' => 'users',
+    'favorites' => false,
     'fields' => array(
         'id' => array(
             'name' => 'id',

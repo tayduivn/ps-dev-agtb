@@ -20,11 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$dictionary['KBDocument'] = array('table' => 'kbdocuments',
-								  'unified_search' => true,
-								  'full_text_search' => true,
-               					  'comment' => 'Knowledge Document management and FTS',
-               					  'fields' => array (
+$dictionary['KBDocument'] = array(
+  'table' => 'kbdocuments',
+  'favorites' => false,
+  'unified_search' => true,
+  'full_text_search' => true,
+  'comment' => 'Knowledge Document management and FTS',
+  'fields' => array (
   'id' =>
   array (
     'name' => 'id',

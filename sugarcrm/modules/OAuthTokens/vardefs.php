@@ -20,18 +20,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
-	'comment' => 'OAuth tokens',
-	'audited'=>false,
-	'fields' => array (
-	  'id' =>
-	  array (
-	    'name' => 'id',
-	    'vname' => 'LBL_ID',
-	    'type' => 'id',
-	    'required'=>true,
-	    'reportable'=>true,
-	    'comment' => 'Unique identifier'
-	  ),
+    'favorites' => false,
+    'comment' => 'OAuth tokens',
+    'audited' => false,
+    'fields' => array (
+      'id' =>
+      array (
+        'name' => 'id',
+        'vname' => 'LBL_ID',
+        'type' => 'id',
+        'required' => true,
+        'reportable' => true,
+        'comment' => 'Unique identifier'
+      ),
       'secret' =>
       array (
             'name' => 'secret',
