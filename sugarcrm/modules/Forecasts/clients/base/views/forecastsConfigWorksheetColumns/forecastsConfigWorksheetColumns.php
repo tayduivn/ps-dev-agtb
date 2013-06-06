@@ -1,4 +1,5 @@
-{{!
+<?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,19 +13,4 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-}}
-
-<div class="accordion-heading">
-    <a id='forecastsConfigVariablesTitle' class="accordion-toggle" data-help-id="forecastsConfigVariables" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigVariablesCollapse"></a>
-</div>
-<div id="forecastsConfigVariablesCollapse" class="accordion-body collapse">
-    <div class="accordion-inner">
-        {{#each meta.panels}}
-            <p>{{str "LBL_FORECASTS_CONFIG_VARIABLES_DESC" "Forecasts"}}</p>
-            {{#each fields}}
-                <label for="{{name}}">{{str label "Forecasts"}}</label>
-                {{field ../../this model=../../model}}
-            {{/each}}
-        {{/each}}
-    </div>
-</div>
+$viewdefs['Forecasts']['base']['view']['forecastsConfigWorksheetColumns'] = array();

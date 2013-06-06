@@ -14,17 +14,11 @@
 
 }}
 
-<div class="accordion-heading">
-    <a id='forecastsConfigVariablesTitle' class="accordion-toggle" data-help-id="forecastsConfigVariables" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigVariablesCollapse"></a>
-</div>
-<div id="forecastsConfigVariablesCollapse" class="accordion-body collapse">
-    <div class="accordion-inner">
-        {{#each meta.panels}}
-            <p>{{str "LBL_FORECASTS_CONFIG_VARIABLES_DESC" "Forecasts"}}</p>
-            {{#each fields}}
-                <label for="{{name}}">{{str label "Forecasts"}}</label>
-                {{field ../../this model=../../model}}
-            {{/each}}
+<div class="headerpane">
+    <h1><span class="module-title">{{str 'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS' 'Forecasts'}}</span></h1>
+    <div class="btn-toolbar pull-right dropdown">
+        {{#each meta.buttons}}
+            {{field ../this}}
         {{/each}}
     </div>
 </div>

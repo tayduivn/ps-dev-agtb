@@ -13,30 +13,19 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-$viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
+$viewdefs['Forecasts']['base']['view']['forecastsConfigForecastBy'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT',
             'fields' => array(
                 array(
-                    'name' => 'sales_stage_lost',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE',
-                    'type' => 'enum',
-                    'multi' => true,
-                    'options' => 'sales_stage_dom',
+                    'name' =>'forecast_by',
+                    'type' => 'radioenum',
+                    'label' => '',
+                    'view' => 'edit',
+                    'options' => 'forecasts_config_worksheet_layout_forecast_by_options_dom',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'forecastsFilter',
-                ),
-                array(
-                    'name' => 'sales_stage_won',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE',
-                    'type' => 'enum',
-                    'multi' => true,
-                    'options' => 'sales_stage_dom',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'forecastsFilter',
                 ),
             ),
         ),

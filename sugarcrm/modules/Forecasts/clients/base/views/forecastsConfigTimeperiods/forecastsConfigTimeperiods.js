@@ -1,49 +1,108 @@
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
-/**
- * Events Triggered
- *
- * liszt:updated
- *      on: timperiod_start_day
- *      by: _setUpTimeperiodStartMonthBind()
- */
-({
 
+({
+    /**
+     * Holds the changing date value for the title
+     */
+    titleSelectedValues: '',
+
+    /**
+     * Holds the view's title name
+     */
+    titleViewNameTitle: '',
+
+    /**
+     * Holds the message part of the toggleTitle template
+     */
+    titleMessage: '',
+
+    /**
+     * Holds the collapsible toggle title template
+     */
+    toggleTitleTpl: {},
+
+    events: {
+        'click .resetLink': 'onResetLinkClicked'
+    },
+
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');
+        this.titleMessage = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS', 'Forecasts');
+        this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
+    },
 
-        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
-            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+    /**
+     * Handles when reset to defaults link has been clicked
+     *
+     * @param {jQuery.Event} evt click event
+     */
+    onResetLinkClicked: function(evt) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+
+        /**
+         * todo implement resetting to defaults
+         */
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    bindDataChange: function() {
+        if(this.model) {
+            this.model.on('change', function(model) {
+                // on a fresh install with no demo data,
+                // this.model has the values and the param model is undefined
+                if(_.isUndefined(model)) {
+                    model = this.model;
+                }
+
+                if(model.changed['timeperiod_start_date']) {
+                    var tmpD = new Date(new Date(model.changed['timeperiod_start_date']))
+                    tmpD = new Date(tmpD.getTime() + (tmpD.getTimezoneOffset() * 60000));
+
+                    this.titleSelectedValues = app.date.format(tmpD, app.user.getPreference('datepref'));
+                    this.updateTitle();
+                }
+            }, this);
         }
     },
 
     /**
-     * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
-     * @param field
+     * Updates the accordion toggle title
+     */
+    updateTitle: function() {
+        var tplVars = {
+            title: this.titleViewNameTitle,
+            message: this.titleMessage,
+            selectedValues: this.titleSelectedValues,
+            viewName: 'forecastsConfigTimeperiods'
+        };
+
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
+    },
+
+    /**
+     * {@inheritdocs}
+     *
+     * Sets up a binding to the start month dropdown to populate the day drop down on change
+     *
+     * @param {View.Field} field
      * @private
      */
     _renderField: function(field) {
@@ -63,8 +122,20 @@
     },
 
     /**
+     * {@inheritdoc}
+     */
+    _render: function() {
+        app.view.View.prototype._render.call(this);
+
+        // add accordion-group class to wrapper $el div
+        this.$el.addClass('accordion-group');
+        this.updateTitle();
+    },
+
+    /**
      * Sets up the fields with the handlers needed to properly get and set their values for the timeperiods config view.
-     * @param field the field to be setup for this config view.
+     *
+     * @param {View.Field} field the field to be setup for this config view.
      * @return {*} field that has been properly setup and augmented to function for this config view.
      * @private
      */
@@ -73,10 +144,8 @@
             case "timeperiod_shown_forward":
             case "timeperiod_shown_backward":
                 return this._setUpTimeperiodShowField(field);
-//BEGIN SUGARCRM flav=pro ONLY
             case "timeperiod_interval":
                 return this._setUpTimeperiodIntervalBind(field);
-//END SUGARCRM flav=pro ONLY
             default:
                 return field;
         }
@@ -84,7 +153,8 @@
 
     /**
      * Sets up the timeperiod_shown_forward and timeperiod_shown_backward dropdowns to set the model and values properly
-     * @param field The field being set up.
+     *
+     * @param {View.Field} field The field being set up.
      * @return {*} The configured field.
      * @private
      */
@@ -103,12 +173,12 @@
         return field;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     ,
     /**
      * Sets up the change event on the timeperiod_interval drop down to maintain the interval selection
-     * and push in the default selction for the leaf period
-     * @param field the dropdown interval field
+     * and push in the default selection for the leaf period
+     *
+     * @param {View.Field} field the dropdown interval field
      * @return {*}
      * @private
      */
@@ -136,8 +206,7 @@
             this.model.set(this.name, selected_interval);
             this.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
         }
-        return field;
 
+        return field;
     }
-    //END SUGARCRM flav=pro ONLY
 })

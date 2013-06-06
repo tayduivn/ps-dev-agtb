@@ -15,16 +15,11 @@
 }}
 
 <div class="accordion-heading">
-    <a id='forecastsConfigVariablesTitle' class="accordion-toggle" data-help-id="forecastsConfigVariables" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigVariablesCollapse"></a>
+    <a id='forecastsConfigWorksheetColumnsTitle' class="accordion-toggle" data-help-id="forecastsConfigWorksheetColumns" data-toggle="collapse" data-parent="#forecast-config-accordion" href="#forecastsConfigWorksheetColumnsCollapse"></a>
 </div>
-<div id="forecastsConfigVariablesCollapse" class="accordion-body collapse">
+<div id="forecastsConfigWorksheetColumnsCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
-        {{#each meta.panels}}
-            <p>{{str "LBL_FORECASTS_CONFIG_VARIABLES_DESC" "Forecasts"}}</p>
-            {{#each fields}}
-                <label for="{{name}}">{{str label "Forecasts"}}</label>
-                {{field ../../this model=../../model}}
-            {{/each}}
-        {{/each}}
+        Worksheet Columns stuff!
+        {{! WORKSHEET LAYOUT STUFF GOES HERE }}
     </div>
 </div>

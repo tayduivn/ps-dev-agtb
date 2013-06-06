@@ -13,8 +13,27 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array('view' => 'forecastsConfigHeaderButtons'));
-$layout->push('main', array('layout' => 'config-main'));
-$layout->push('side', array('view' => 'forecastsHowto'));
-$viewdefs['Forecasts']['base']['layout']['config'] = $layout->getLayout();
+$viewdefs['Forecasts']['base']['layout']['config-main'] = array(
+    'type' => 'config-main',
+    'name' => 'config-main',
+    'components' => array(
+        // todo-sfa - forecastBy will be revisited in a future release
+        // BEGIN SUGARCRM flav=int ONLY
+        array(
+            'view' => 'forecastsConfigForecastBy',
+        ),
+        // END SUGARCRM flav=int ONLY
+        array(
+            'view' => 'forecastsConfigTimeperiods',
+        ),
+        array(
+            'view' => 'forecastsConfigRanges',
+        ),
+        array(
+            'view' => 'forecastsConfigWorksheetColumns',
+        ),
+        array(
+            'view' => 'forecastsConfigScenarios',
+        ),
+    ),
+);
