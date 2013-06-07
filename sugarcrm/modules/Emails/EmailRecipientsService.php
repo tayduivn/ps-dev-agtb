@@ -2,6 +2,7 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -25,11 +26,128 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * All Rights Reserved.
  ********************************************************************************/
 
-
 class EmailRecipientsService
 {
-    protected $sugarEmail = null;
-    protected $beanNames = null;
+    protected $sugarEmail,
+              $beanNames;
+
+    public function __construct()
+    {
+        $this->sugarEmail = null;
+        $this->beanNames  = null;
+    }
+
+    /**
+     * Find the total number of recipients, in one or all modules, that match the search term.
+     *
+     * @param string $term
+     * @param string $module
+     * @return int
+     */
+    public function findCount($term = "", $module = "LBL_DROPDOWN_LIST_ALL")
+    {
+        $totalRecords = 0;
+        $inboundEmail = $this->setUpForRelatedEmailQueries();
+        $wheres       = array();
+
+        if (!empty($term)) {
+            $wheres["first_name"]    = $term;
+            $wheres["last_name"]     = $term;
+            $wheres["email_address"] = $term;
+        }
+
+        $relatedEmailQueries = $inboundEmail->email->et->getRelatedEmail($module, $wheres);
+
+        if (!empty($relatedEmailQueries["countQuery"])) {
+            $startTime = microtime(true);
+            $result    = $inboundEmail->db->query($relatedEmailQueries["countQuery"]);
+            $runTime   = microtime(true) - $startTime;
+            $GLOBALS["log"]->debug("EmailRecipientsService::findCount took {$runTime} milliseconds");
+
+            if ($row = $inboundEmail->db->fetchByAssoc($result)) {
+                $totalRecords = (int)$row["c"];
+            }
+        }
+
+        return $totalRecords;
+    }
+
+    /**
+     * Find recipients, in one or all modules, that match the search term.
+     *
+     * @param string $term
+     * @param string $module
+     * @param array  $orderBy
+     * @param int    $limit
+     * @param int    $offset
+     * @return array
+     */
+    public function find($term = "", $module = "LBL_DROPDOWN_LIST_ALL", $orderBy = array(), $limit = 0, $offset = 0)
+    {
+        $records      = array();
+        $inboundEmail = $this->setUpForRelatedEmailQueries();
+        $wheres       = array();
+
+        if (!empty($term)) {
+            $wheres["first_name"]    = $term;
+            $wheres["last_name"]     = $term;
+            $wheres["email_address"] = $term;
+        }
+
+        $relatedEmailQueries = $inboundEmail->email->et->getRelatedEmail($module, $wheres);
+
+        if (!empty($relatedEmailQueries["query"])) {
+            $sql             = $relatedEmailQueries["query"];
+            $sortableColumns = array(
+                // column_from_$args => $args_column_mapped_to_real_database_column
+                "id"    => "id",
+                "email" => "email_address",
+                "name"  => "last_name",
+            );
+            $sort            = array();
+
+            if (empty($orderBy)) {
+                $orderBy["id"] = "DESC";
+            }
+
+            foreach ($orderBy as $column => $direction) {
+                $column = $inboundEmail->db->getValidDBName($column);
+
+                // only allow for sorting on a predetermined set of columns
+                if (array_key_exists($column, $sortableColumns)) {
+                    // the column name must be mapped to another name
+                    $sort[] = "{$sortableColumns[$column]} {$direction}";
+                }
+            }
+
+            if (!empty($sort)) {
+                $sql .= " ORDER BY " . implode(",", $sort);
+            }
+
+            $result    = null;
+            $startTime = microtime(true);
+
+            if ($limit > 0) {
+                $result = $inboundEmail->db->limitQuery($sql, $offset, $limit, true);
+            } else {
+                $result = $inboundEmail->db->query($sql, true);
+            }
+
+            $runTime = microtime(true) - $startTime;
+            $GLOBALS["log"]->debug("EmailRecipientsService::find took {$runTime} milliseconds");
+
+            while($row = $inboundEmail->db->fetchByAssoc($result)) {
+                $records[] = array(
+                    "id"     => $row["id"],
+                    "module" => $row["module"],
+                    "name"   => $GLOBALS["locale"]->getLocaleFormattedName($row["first_name"], $row["last_name"]),
+                    "email"  => $row["email_address"],
+                );
+            }
+        }
+
+        return $records;
+    }
 
     /**
      * This function accepts a recipient that provides one or more of ID, Module, Email, and Name, and tries
@@ -79,11 +197,9 @@ class EmailRecipientsService
         if (!empty($recipient['id']) && !empty($recipient['module'])) {
             // If ID and module are present, then resolve recipient using the supplied ID
             $this->lookupRecipientById($recipient);
-        } elseif (empty($recipient['id'])) {
+        } elseif (empty($recipient['id']) && !empty($recipient['email'])) {
             // If ID is Not Present, then then use the email address to look for matching records in the database.
-            if (!empty($recipient['email'])) {
-                $this->lookupRecipientByEmailAddress($beanId, $recipient);
-            }
+            $this->lookupRecipientByEmailAddress($beanId, $recipient);
         }
 
         if ($recipient['id'] == '' && $beanId != null && !$recipient['resolved']) {
@@ -121,7 +237,7 @@ class EmailRecipientsService
 
     /**
      * This function looks up and resolves recipients that have the specified email address.
-     * Multiple rows are resolved accordi g to the Resolution Rules above.
+     * Multiple rows are resolved according to the Resolution Rules above.
      *
      * @param $recipient
      * @return array
@@ -161,5 +277,25 @@ class EmailRecipientsService
                 }
             }
         }
+    }
+
+    /**
+     * An InboundEmail object must be set up a particular way in order to make the EmailUI::getRelatedEmail calls found
+     * in EmailRecipientsService::findCount and EmailRecipientsService::find. The InboundEmail object is also needed to
+     * complete other logic found in those methods.
+     *
+     * @see EmailRecipientsService::findCount()
+     * @see EmailRecipientsService::find()
+     * @return InboundEmail
+     */
+    protected function setUpForRelatedEmailQueries()
+    {
+        $email = new Email;
+        $email->email2init();
+
+        $inboundEmail        = new InboundEmail;
+        $inboundEmail->email = $email;
+
+        return $inboundEmail;
     }
 }

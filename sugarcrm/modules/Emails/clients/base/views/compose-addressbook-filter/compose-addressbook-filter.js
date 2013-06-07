@@ -120,7 +120,7 @@
     },
 
     /**
-     * Filters the data set by triggering an event that makes a call to the MailRecipient API.
+     * Filters the data set by triggering an event that makes a call to the Mail API.
      */
     filterDataSetAndSearch: function() {
         this.moduleFilterNode.select2("val", this.currentModule);

@@ -36,9 +36,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
+        SugarTestHelper::setUp("current_user");
         OutboundEmailConfigurationTestHelper::setUp();
 
         $this->mailRecord          = new MailRecord();
@@ -49,13 +47,9 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        // this call is in support of the functional test: testSaveAsDraft
-        SugarTestEmailUtilities::removeAllCreatedEmails();
-
         $_REQUEST = array();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestHelper::tearDown();
-
         parent::tearDown();
     }
 
@@ -398,7 +392,6 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSaveAsDraft()
     {
-        OutboundEmailConfigurationTestHelper::setUp();
         $outboundEmailConfiguration = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
             $GLOBALS["current_user"]->id
         );
