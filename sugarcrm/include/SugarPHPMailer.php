@@ -25,6 +25,7 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 /**
  * Sugar mailer
  * @api
+ * @deprecated 7.0.0    Use the Mailer module instead.
  */
 class SugarPHPMailer extends PHPMailerProxy
 {
@@ -58,8 +59,8 @@ class SugarPHPMailer extends PHPMailerProxy
         $this->oe = new OutboundEmail();
         $this->oe->getUserMailerSettings($current_user);
 
-        $this->SetLanguage('en', 'modules/Mailer/lib/phpmailer/language/');
-        $this->PluginDir	= 'modules/Mailer/lib/phpmailer/';
+        $this->SetLanguage('en', 'vendor/PHPMailer/language/');
+        $this->PluginDir	= 'vendor/PHPMailer/';
         $this->Mailer	 	= 'smtp';
 
         // cn: i18n
