@@ -44,12 +44,24 @@ describe("Opportunities.Base.Views.CreateActions", function() {
     });
 
     describe('getCustomSaveOptions', function() {
+        var opts;
+
+        beforeEach(function() {
+            opts = {
+                success: function() {}
+            };
+        });
+
+        afterEach(function() {
+            opts = null;
+        });
+
         it('createdModel should not be undefined', function() {
-            view.getCustomSaveOptions();
+            view.getCustomSaveOptions(opts);
             expect(_.isUndefined(view.createdModel)).toBeFalsy();
         });
         it('listContext should not be undefined', function() {
-            view.getCustomSaveOptions();
+            view.getCustomSaveOptions(opts);
             expect(_.isUndefined(view.listContext)).toBeFalsy();
         });
     });
