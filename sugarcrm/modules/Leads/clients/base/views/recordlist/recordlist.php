@@ -116,10 +116,8 @@ $viewdefs['Leads']['base']['view']['recordlist'] = array(
                 'acl_action' => 'delete',
             ),
             array(
-                'type' => 'rowaction',
+                'type' => 'convertbutton',
                 'name' => 'lead_convert_button',
-                'icon' => 'icon-edit',
-                'event' => 'list:convertrow:fire',
                 'label' => 'LBL_CONVERT_BUTTON_LABEL',
                 'acl_action' => 'edit',
             ),

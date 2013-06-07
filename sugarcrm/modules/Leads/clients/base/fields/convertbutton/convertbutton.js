@@ -25,40 +25,28 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'RecordlistView',
+    extendsFrom: 'RowactionField',
 
-    initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
-        this.context.on('list:convertrow:fire', this.initiateDrawer, this);
+    initialize: function (options) {
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method:'initialize', args:[options]});
+        this.type = 'rowaction';
     },
 
-    /**
-     * Set the save button to show if the model has been edited.
-     */
-    bindDataChange: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
-        this.collection.on('reset', this.setLeadButtonStates, this);
-    },
-
-    /**
-     * Hide any convert row actions for leads that are already converted
-     */
-    setLeadButtonStates: function() {
-        _.each(this.fields, function(field) {
-            if (field.name === 'lead_convert_button' && (field.model.get('converted') === true)) {
-                field.hide();
-            }
-        });
+    _render: function () {
+        if (this.model.get('converted')) {
+            this.hide();
+        } else {
+            app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+        }
     },
 
     /**
      * Event to trigger the convert lead process for the lead
      */
-    initiateDrawer: function(selectedModel) {
+    rowActionSelect: function() {
         var model = app.data.createBean(this.model.module);
-        model.copy(selectedModel);
-        model.set('id', selectedModel.id);
 
+        model.set(app.utils.deepCopy(this.model.attributes));
         app.drawer.open({
             layout : "convert",
             context: {
@@ -67,5 +55,11 @@
                 leadsModel: model
             }
         });
+    },
+
+    bindDataChange: function () {
+        if (this.model) {
+            this.model.on("change", this.render, this);
+        }
     }
 })
