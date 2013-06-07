@@ -7,10 +7,12 @@
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.rc.1.js"></script>
     <script type="text/javascript" src="../sidecar/lib/sugarapi/sugarapi.js"></script>
     <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
+    <script type="text/javascript" src="../include/javascript/modernizr.js"></script>
     <!-- For sugar7 the plan is to generate a sugar.min.js .. in the meantime load each file -->
     <script type="text/javascript" src="../include/javascript/sugar7/field.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/alert.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/bwc.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/utils.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/dropdown.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/error-decoration.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/quicksearchfilter.js"></script>

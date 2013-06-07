@@ -400,6 +400,9 @@
                         context.set("selectedUser", selectedUser);
                     }
 
+                },
+                isTouchDevice: function() {
+                    return Modernizr.touch;
                 }
         });
     });
