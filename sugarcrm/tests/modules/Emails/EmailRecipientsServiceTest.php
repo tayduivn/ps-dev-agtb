@@ -22,17 +22,17 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Emails/RecipientLookup.php');
+require_once('modules/Emails/EmailRecipientsService.php');
 
 
-class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $recipientLookup;
+    private $emailRecipientsService;
 
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
-        $this->recipientLookup = new RecipientLookup();
+        $this->emailRecipientsService = new EmailRecipientsService();
     }
 
     public function tearDown()
@@ -62,7 +62,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient to be Resolved From ID and Module");
     }
@@ -79,7 +79,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient to be Resolved From ID and Module");
     }
@@ -103,7 +103,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $lead->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Lead Recipient to be Resolved From Email Address");
 
         $input = array("module" => 'Contacts', "id" => '', "email" => $email, "name" => '');
@@ -114,7 +114,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Contact Recipient to be Resolved From Email Address");
     }
 
@@ -146,7 +146,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $lead->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertTrue(
             ($expected1 == $actual) || ($expected2 == $actual),
@@ -167,7 +167,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => '',
             "resolved" => false
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient not to Resolve - Module Required with an ID");
     }
@@ -187,7 +187,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Unexpected Recipient to Resolve and Supplied Name not to be Replaced");
     }
 
@@ -216,7 +216,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact2->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient to Resolve to Matching ID and Email");
 
     }
@@ -247,7 +247,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => '',
             "resolved" => false
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient Not to Resolve with unmatching ID");
     }
 
@@ -265,7 +265,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $name,
             "resolved" => false
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Supplied Data to be Returned on Unresolved ID");
     }
 

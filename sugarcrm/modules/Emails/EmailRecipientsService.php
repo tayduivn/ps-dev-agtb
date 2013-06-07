@@ -25,58 +25,43 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * All Rights Reserved.
  ********************************************************************************/
 
-/**
- *  LOOKUP/RESOLUTION RULES
- *
-(1)
-If ID and module are not present, then use the email address to look for matching records in the database.
-If a match is found, then include the record's ID and module in the return value.
-If an email address is associated with more than one record, then return the first record.
 
-(2)
-If ID and module are present, then first validate the existence of the record before including the record's email
-address and name in the return value. If the record does not exist, then set as Unresolved.
-
-(3)
-If an ID is present without a module, then ignore the ID.
-
-(4)
-If an email address and module are present without an ID, then search for records by the email address. Select the
-record with the matching module if one exists and return that record's values.
-Otherwise, set as Unresolved.
-
-(5)
-If an email address and ID are present without a module, then search for records by the email address. Select the
-record with an ID matching the supplied ID if one exists. Otherwise, set as Unresolved.
-
-(6)
-If an email address is present and no module or ID provided, then search for records by the email address.
-Select a record with a matching email_address if one exists. Note that the record selected is unpredictable
-if multiple records exist for the supplied email address.
-
-(5)
-If No ID or Email Address provided, set recipient as unResolved
-
-(6)
-If a match is found, do not overwrite any parameters with data found on the Bean; the data passed in is
-prioritized over the data found on the Bean.
-
-(7)
-If no name is associated with the recipient after matching a record, then include the email address as the name.
- */
-
-
-/**
- * Lookup and Resolve Recipients
- */
-class RecipientLookup
+class EmailRecipientsService
 {
     protected $sugarEmail = null;
     protected $beanNames = null;
 
     /**
-     * This function accepts a Recipient that provides with one or more of: ID,Module,Email,Name and tries
-     * to resolve any of the fields not provided using resolution rules above.
+     * This function accepts a recipient that provides one or more of ID, Module, Email, and Name, and tries
+     * to resolve any of the fields not provided using the following resolution rules.
+     *
+     * (1) If ID and module are not present, then use the email address to look for matching records in the database.
+     * If a match is found, then include the record's ID and module in the return value. If an email address is
+     * associated with more than one record, then return the first record.
+     *
+     * (2) If ID and module are present, then first validate the existence of the record before including the record's
+     * email address and name in the return value. If the record does not exist, then set as unresolved.
+     *
+     * (3) If an ID is present without a module, then ignore the ID.
+     *
+     * (4) If an email address and module are present without an ID, then search for records by the email address.
+     * Select the record with the matching module if one exists and return that record's values. Otherwise, set as
+     * unresolved.
+     *
+     * (5) If an email address and ID are present without a module, then search for records by the email address.
+     * Select the record with an ID matching the supplied ID if one exists. Otherwise, set as unresolved.
+     *
+     * (6) If an email address is present and no module or ID provided, then search for records by the email address.
+     * Select a record with a matching email_address if one exists. Note that the record selected is unpredictable if
+     * multiple records exist for the supplied email address.
+     *
+     * (5) If No ID or Email Address provided, set recipient as unresolved.
+     *
+     * (6) If a match is found, do not overwrite any parameters with data found on the Bean; the data passed in is
+     * prioritized over the data found on the Bean.
+     *
+     * (7) If no name is associated with the recipient after matching a record, then include the email address as the
+     * name.
      *
      * @param $recipient
      * @return array
@@ -177,5 +162,4 @@ class RecipientLookup
             }
         }
     }
-
 }

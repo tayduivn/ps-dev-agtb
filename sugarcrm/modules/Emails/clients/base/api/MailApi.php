@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Emails/MailRecord.php');
-require_once('modules/Emails/RecipientLookup.php');
+require_once('modules/Emails/EmailRecipientsService.php');
 
 class MailApi extends ModuleApi
 {
@@ -43,7 +43,6 @@ class MailApi extends ModuleApi
         "text_body"     => '',
         "status"        => "",
     );
-
 
     public function registerApiRest()
     {
@@ -88,7 +87,6 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Create Mail Item',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#createMail',
             ),
-
             'recipientLookup' => array(
                 'reqType' => 'POST',
                 'path' => array('Mail', 'recipient', 'lookup'),
@@ -97,8 +95,6 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Lookup Recipient Info',
                 'longHelp' => 'include/api/html/modules/Emails/MailApi.html#recipientLookup',
             ),
-
-
         );
 
         return $api;
@@ -199,8 +195,8 @@ class MailApi extends ModuleApi
     }
 
     /**
-     * This endpoint accepts an array of one or more recipients and tries to resolve
-     * unsupplied arguments.  RecipientLookup.php contains the Lookup and Resolution Rules
+     * This endpoint accepts an array of one or more recipients and tries to resolve unsupplied arguments.
+     * EmailRecipientsService::lookup contains the lookup and resolution rules.
      *
      * @param $api
      * @param $args
@@ -211,13 +207,11 @@ class MailApi extends ModuleApi
         $recipients = $args;
         unset($recipients['__sugar_url']);
 
-        $recipientLookup = new RecipientLookup();
+        $emailRecipientsService = new EmailRecipientsService();
 
         $result = array();
         foreach ($recipients AS $recipient) {
-
-            $result[] = $recipientLookup->lookup($recipient);
-
+            $result[] = $emailRecipientsService->lookup($recipient);
         }
 
         return $result;
