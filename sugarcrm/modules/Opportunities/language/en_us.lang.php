@@ -170,6 +170,7 @@ $mod_strings = array(
 
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Revenue Line Items',
+    'TPL_RLI_CREATE' => 'An opportunity must have an associated Revenue Line Item. <a href="javascript:void(0);" id="createRLI">Create a Revenue Line item</a>.',
     //END SUGARCRM flav=ent ONLY
 
     //Dashlet
