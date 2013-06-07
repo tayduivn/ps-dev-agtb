@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * Layout definition for Accounts
@@ -32,32 +32,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 // $Id: layout_defs.php 14538 2006-07-12 00:27:59Z awu $
 
-$layout_defs['Leads'] = array(
-	// list of what Subpanels to show in the DetailView 
+$layout_defs['Documents'] = array(
+	// list of what Subpanels to show in the DetailView
 	'subpanel_setup' => array(
-		'calls' => array(
+		'quotes'=> array(
 			'order' => 10,
-			'module' => 'Calls',
-			'get_subpanel_data' => 'calls',
-			'title_key' => 'LBL_CALLS_SUBPANEL_TITLE',
+			'module' => 'Quotes',
+			'get_subpanel_data' => 'quotes',
+			'title_key' => 'LBL_QUOTES_SUBPANEL_TITLE',
 		),
-		'meetings' => array(
+		'cases'=> array(
 			'order' => 20,
-			'module' => 'Meetings',
-			'get_subpanel_data' => 'meetings',
-			'title_key' => 'LBL_MEETINGS_SUBPANEL_TITLE',		
+			'module' => 'Cases',
+			'get_subpanel_data' => 'cases',
+			'title_key' => 'LBL_CASES_SUBPANEL_TITLE',
 		),
-		'tasks' => array(
+		'contacts'=> array(
 			'order' => 30,
-			'module' => 'Tasks',
-			'get_subpanel_data' => 'tasks',
-			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',		
+			'module' => 'Accounts',
+			'get_subpanel_data' => 'contacts',
+			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',
 		),
-		'notes' => array(
+		'opportunities'=> array(
 			'order' => 40,
-			'module' => 'Notes',
-			'get_subpanel_data' => 'notes',
-			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'module' => 'Opportunities',
+			'get_subpanel_data' => 'opportunities',
+			'title_key' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+		),
+		'accounts'=> array(
+			'order' => 50,
+			'module' => 'Accounts',
+			'get_subpanel_data' => 'accounts',
+			'title_key' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
 		),
 	),
 );

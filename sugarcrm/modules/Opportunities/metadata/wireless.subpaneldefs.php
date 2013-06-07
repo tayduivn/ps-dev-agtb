@@ -53,6 +53,12 @@ $layout_defs['Opportunities'] = array(
 			'get_subpanel_data' => 'tasks',
 			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',		
 		),
+		'notes' => array(
+			'order' => 35,
+			'module' => 'Notes',
+			'get_subpanel_data' => 'notes',
+			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+		),
 		'leads'=> array(
 			'order' => 40,
 			'module' => 'Leads',
@@ -65,6 +71,18 @@ $layout_defs['Opportunities'] = array(
 			'get_subpanel_data' => 'contacts',
 			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',		
 		),
-	),	
+		'quotes'=> array(
+			'order' => 60,
+			'module' => 'Quotes',
+			'get_subpanel_data' => 'quotes',
+			'title_key' => 'LBL_QUOTES_SUBPANEL_TITLE',
+		),
+		'documents'=> array(
+			'order' => 70,
+			'module' => 'Documents',
+			'get_subpanel_data' => 'documents',
+			'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+		),
+	),
 );
 ?>

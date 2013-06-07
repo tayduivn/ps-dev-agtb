@@ -53,18 +53,24 @@ $layout_defs['Cases'] = array(
 			'get_subpanel_data' => 'tasks',
 			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',		
 		),
+		'notes' => array(
+			'order' => 35,
+			'module' => 'Notes',
+			'get_subpanel_data' => 'notes',
+			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+		),
 		'contacts'=> array(
 			'order' => 40,
 			'module' => 'Contacts',
 			'get_subpanel_data' => 'contacts',
 			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',		
 		),
-		'accounts'=> array(
+		'documents'=> array(
 			'order' => 50,
-			'module' => 'Accounts',
-			'get_subpanel_data' => 'accounts',
-			'title_key' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',		
-		),			
+			'module' => 'Documents',
+			'get_subpanel_data' => 'documents',
+			'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+		),
 	),	
 );
 ?>
