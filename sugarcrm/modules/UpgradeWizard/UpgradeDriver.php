@@ -80,7 +80,17 @@ abstract class UpgradeDriver
      */
     public $current_stage;
 
+    /**
+     * Did we already run Sugar init?
+     * @var bool
+     */
     public $sugar_initialized = false;
+
+    /**
+     * Publicly visible error message
+     * @var string
+     */
+    public $error;
 
     /**
      * Launches the next stage
@@ -186,11 +196,15 @@ abstract class UpgradeDriver
     /**
      * Display error
      * @param string $msg
-     * @returns false
+     * @param bool $setError Set public error message to this error?
+     * @return false Always returns false, so you can use this function to error out from other methods
      */
-    public function error($msg)
+    public function error($msg, $setError = false)
     {
         $this->log("ERROR: $msg");
+        if($setError) {
+            $this->error = $msg;
+        }
         $this->fail();
         return false;
     }
@@ -344,14 +358,193 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Preflight check for PHP version
+     */
+    protected function preflightPHP()
+    {
+        if(version_compare(PHP_VERSION, "5.3.0", '<')) {
+            // TODO: translate
+            return $this->error("PHP versions below 5.3.0 are not supported!", true);
+        }
+        return true;
+    }
+
+    /**
+     * Preflight check for PHP version
+     * @return boolean
+     */
+    protected function preflightPHPSettings()
+    {
+        if(ini_get("zend.ze1_compatibility_mode")) {
+            // TODO: translate
+            return $this->error("PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further", true);
+        }
+        if(ini_get('magic_quotes_gpc') || ini_get('magic_quotes_runtime')
+            || (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
+            || (function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
+        ) {
+            return $this->error("Magic quotes are deprecated and not supported in SugarCRM. Please read: http://www.php.net/manual/en/security.magicquotes.php");
+        }
+        return true;
+    }
+
+    /**
+     * Check IIS settings
+     * @return boolean
+     */
+    protected function preflightIIS()
+    {
+        if(empty($_SERVER['SERVER_SOFTWARE'])) {
+            return true;
+        }
+        $server_software = $_SERVER['SERVER_SOFTWARE'];
+        if(strpos($server_software,'Microsoft-IIS') !== false && preg_match_all('/^.*\/(\d+\.?\d*)$/',  $server_software, $out)) {
+            $iis_version = $out[1][0];
+        }
+        if(empty($iis_version)) {
+            return true;
+        }
+        if(version_compare($iis_version, "6.0", '<')) {
+            return $this->error($this->translate('ERR_CHECKSYS_IIS_INVALID_VER')." ".$iis_version);
+        }
+        if(ini_get('fastcgi.logging')) {
+            return $this->error($this->translate('ERR_CHECKSYS_FASTCGI_LOGGING'));
+        }
+        return true;
+    }
+
+    /**
+     * Array or required modules - module => function
+     */
+    protected $requiredModules = array(
+        "XML" => "xml_parser_create",
+        "bcmath" => "bcadd",
+        "zip" => "zip_open",
+        "mbstring" => "mb_strlen",
+    );
+
+    /**
+     * Check PHP modules
+     * @return bool
+     */
+    protected function preflightPHPModules()
+    {
+        foreach($this->requiredModules as $module => $func) {
+            if(!function_exists($func)) {
+                return $this->error("Module $module does not exist (function $func checked)", true);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check that temp directory is writable
+     * @return bool
+     */
+    protected function preflightWriteUnzip()
+    {
+        if(!is_writable($this->context["temp_dir"])) {
+            return $this->error("{$this->context["temp_dir"]} is not writable");
+        }
+        return true;
+    }
+
+    /**
+     * Check that Sugar directory is writable
+     * @return bool
+     */
+    protected function preflightWriteSugar()
+    {
+        if(!is_writable("config.php") || !is_writable("config_override.php")) {
+            return $this->error("Configuration files are not writable!");
+        }
+        return true;
+    }
+
+    /**
+     * Check that custom directory is writable
+     * @return bool
+     */
+    protected function preflightWriteCustom()
+    {
+        if(!is_writable("custom/")) {
+            return $this->error("Custom directory not writable!", true);
+        }
+        $test = uniqid();
+        file_put_contents("custom/upgradetest.$test", $test);
+        $test2 = file_get_contents("custom/upgradetest.$test");
+        @unlink("custom/upgradetest.$test");
+        if($test != $test2) {
+            return $this->error("Custom directory write test failed!", true);
+        }
+        return true;
+    }
+
+    /**
+     * Check that DB settings are fine
+     * @return bool
+     */
+    protected function preflightDB()
+    {
+        $check = $this->db->canInstall();
+        if($check !== true) {
+            $error = array_shift($check);
+            array_unshift($check, $this->translate($error));
+            return $this->error(call_user_func_array('sprintf', $check), true);
+        }
+        return true;
+    }
+
+    /**
+     * List of preflight check functions
+     * @var array
+     */
+    protected $preflightChecks = array(
+        "PHP" => true, // check php version
+        "IIS" => true, // check IIS version
+        "PHPSettings" => true, // check php settings
+        "PHPModules" => true, // check PHP modules
+        "WriteUnzip" => true, // check if zip dir is writeable
+        "WriteSugar" => true, // check if Sugar directory is writable
+        "WriteCustom" => true, // check if Sugar custom directory is writable
+        "DB" => true, // check DB permissions
+    );
+
+    /**
+     * Preflight checks for Sugar upgrade
+     * Uses check list from $preflightChecks
+     *
+     */
+    public function preflight()
+    {
+        foreach($this->preflightChecks as $check => $enabled) {
+            if(!$enabled) continue;
+            $checkfunc = "preflight$check";
+            if(is_callable(array($this, $checkfunc))) {
+                $this->log("Checking preflight: $check");
+                if(!$this->$checkfunc()) {
+                    return $this->error("Preflight check $check failed!");
+                }
+            } else {
+                $this->log("Skipped check $check - no callback");
+            }
+        }
+        return true;
+    }
+
+    /**
      * Verify upgrade package
      * @param string $zip ZIP filename
      * @param string $dir Temp dir to use for zip files
      */
     protected function verify($zip, $dir)
     {
-        // Check the user
         $this->initSugar();
+        // Execute preflight checks
+        if(!$this->preflight()) {
+            return false;
+        }
+        // Check the user
         if(empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->id) || !$GLOBALS['current_user']->isAdmin()) {
             return $this->error("{$this->context['admin']} is not a valid admin user");
         }
@@ -447,6 +640,41 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Translate message string
+     * @param string $msg
+     * @return string
+     */
+    protected function translate($msg)
+    {
+        if(isset($this->mod_strings[$msg])) {
+            return $this->mod_strings[$msg];
+        }
+        return $msg;
+    }
+
+    protected function loadLangFile($langdir, $lang)
+    {
+        $mod_strings = array();
+        $this->log("Loading language $lang from $langdir");
+        $langfile = "$langdir/$lang.lang.php";
+        if(!file_exists($langfile)) {
+            $langfile = "$langdir/en_us.lang.php";
+        }
+        if(!file_exists($langfile)) {
+            $this->log("Failed to find the language file");
+            // fail, can't find file
+            return $mod_strings;
+        }
+        $this->log("Loading language file from $langfile");
+        include $langfile;
+        if(file_exists("custom/$langfile")) {
+            $this->log("Loading custom language file from custom/$langfile");
+            include "custom/$langfile";
+        }
+        return $mod_strings;
+    }
+
+    /**
      * Load language strings
      * @return array
      */
@@ -458,29 +686,29 @@ abstract class UpgradeDriver
             $lang = 'en_us';
         }
         $this->mod_strings = $GLOBALS['mod_strings'] = $mod_strings = array();
-        $langdir = dirname(__FILE__)."/language";
-        if(!empty($this->context['new_source_dir']) && !file_exists($langdir)) {
-            $langdir = $this->context['new_source_dir']."/modules/UpgradeWizard/languages";
+
+        $langdirs[] = dirname(__FILE__)."/language";
+        if(!empty($this->context['new_source_dir'])) {
+            $langdirs[] = $this->context['new_source_dir']."/modules/UpgradeWizard/language";
+            // add install strings if they are available, since some DB routines rely on it
+            $langdirs[] = $this->context['new_source_dir']."/install/language";
+        } elseif(!empty($this->context['source_dir'])) {
+            $langdirs[] = $this->context['source_dir']."/modules/UpgradeWizard/language";
+            $langdirs[] = $this->context['source_dir']."/install/language";
         }
-        if(!empty($this->context['source_dir']) && !file_exists($langdir)) {
-            $langdir = $this->context['source_dir']."/modules/UpgradeWizard/languages";
+
+        foreach($langdirs as $langdir) {
+            if(!file_exists($langdir)) continue;
+
+            $mod_strings = array_merge($mod_strings, $this->loadLangFile($langdir, $lang));
         }
-        if(!file_exists($langdir)) {
+
+        if(empty($mod_strings)) {
             // no language, bad
-            $this->log("Failed to find the language dir");
+            $this->log("ERROR: Failed to find the language files, expect error messages to be broken");
             return array();
         }
-        $langfile = "$langdir/$lang.lang.php";
-        if(!file_exists($langfile)) {
-            $langfile = "$langdir/en_us.lang.php";
-        }
-        if(!file_exists($langfile)) {
-            $this->log("Failed to find the language file");
-            // fail, can't find file
-            return array();
-        }
-        $this->log("Loading language from $langfile");
-        include $langfile;
+
         $this->mod_strings = $GLOBALS['mod_strings'] = $mod_strings;
         return $mod_strings;
     }
@@ -490,7 +718,6 @@ abstract class UpgradeDriver
         // takes a manifest.php manifest array and validates contents
         $this->log('validating manifest.php file');
         $manifest = $this->dataInclude($file, 'manifest');
-        $this->loadStrings();
 
         if(!isset($manifest['type'])) {
         	return $this->mod_strings['ERROR_MANIFEST_TYPE'];
@@ -545,6 +772,7 @@ abstract class UpgradeDriver
 
     /**
      * Fail current stage
+     * @returns false Always returns false, so you can use this function to error out from other methods
      */
     public function fail()
     {
@@ -591,6 +819,7 @@ abstract class UpgradeDriver
         $trackerManager->pause();
         $trackerManager->unsetMonitors();
         $this->sugar_initialized = true;
+        $this->loadStrings();
         $this->log("Done initializig SugarCRM environment");
     }
 
@@ -833,7 +1062,6 @@ abstract class UpgradeDriver
     	if(!empty($this->manifest['copy_files']['from_dir'])) {
     	    $this->context['new_source_dir'] = $this->context['temp_dir']."/".$this->manifest['copy_files']['from_dir'];
     	}
-    	$mod_strings = $this->loadStrings();
     	$scripts = $this->getScripts($this->context['new_source_dir'], $stage);
     	$this->to_version = $this->manifest['version'];
     	if(!empty($this->manifest['flavor'])) {

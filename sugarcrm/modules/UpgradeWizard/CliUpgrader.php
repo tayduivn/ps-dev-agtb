@@ -132,6 +132,9 @@ eoq2;
             if($upgrader->run($stage)) {
                 exit(0);
             } else {
+                if(!empty($upgrader->error)) {
+                    echo "ERROR: {$upgrader->error}";
+                }
                 exit(1);
             }
         } else {
