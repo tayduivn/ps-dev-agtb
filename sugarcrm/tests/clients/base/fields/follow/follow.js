@@ -3,6 +3,8 @@ describe("Base.Field.Follow", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.set();
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
         var model = new Backbone.Model({
@@ -14,6 +16,7 @@ describe("Base.Field.Follow", function() {
 
     afterEach(function() {
         field.dispose();
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -64,5 +67,11 @@ describe("Base.Field.Follow", function() {
             expect(field.label).toBe('LBL_FOLLOW');
         });
 
+    });
+
+    it("Should set the model when the 'favorite:active' event is triggered on the context.", function() {
+        field.model.set("following", false);
+        field.context.trigger("favorite:active");
+        expect(field.model.get("following")).toBeTruthy();
     });
 });

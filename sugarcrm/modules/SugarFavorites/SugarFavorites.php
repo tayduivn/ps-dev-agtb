@@ -166,14 +166,17 @@ class SugarFavorites extends Basic
 	 */
 	public function toggleExistingFavorite($id, $deleted)
 	{
-		global $current_user;
 		$deleted = (int) $deleted;
-		if($deleted != 0 && $deleted != 1) {
+		if ($deleted != 0 && $deleted != 1) {
 			return false;
 		}
 
-		$query = "UPDATE {$this->table_name} SET deleted = {$deleted}, created_by = '{$current_user->id}', modified_user_id = '{$current_user->id}', assigned_user_id = '{$current_user->id}' WHERE id = '{$id}'";
-		$this->db->query($query, true, "Error marking favorites deleted to {$deleted}: ");
+        if ($deleted == 0) {
+            $this->mark_undeleted($id);
+        } else {
+            $this->mark_deleted($id);
+        }
+
 		return true;
 	}
 
@@ -256,5 +259,70 @@ class SugarFavorites extends Basic
                     ->equals("{$sfAlias}.deleted", 0, $this);
 
         return $sfAlias;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Attempt to subscribe the user to the favorited bean after saving.
+     *
+     * @param bool $check_notify
+     * @return String
+     */
+    public function save($check_notify = false)
+    {
+        parent::save($check_notify);
+        $this->subscribeAfterFavorite();
+
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Attempt to subscribe the user to the favorited bean after restoring the SugarFavorite bean.
+     *
+     * @param $id
+     */
+    public function mark_undeleted($id)
+    {
+        parent::mark_undeleted($id);
+        $this->subscribeAfterFavorite();
+    }
+
+    /**
+     * When the current user marks a bean as a favorite, the user is also subscribed to the bean if not already
+     * following the record. Unfavorite-ing a bean results in no change to the subscription (i.e., if the user is
+     * subscribed to the record then the subscription remains; if the user is not subscribed to the record then no new
+     * subscription is added).
+     */
+    protected function subscribeAfterFavorite()
+    {
+        if (!empty($this->id)) {
+            // reload the bean so that we're working with the newest state of the record before taking any other action
+            $this->retrieve($this->id);
+
+            // only subscribe to the associated bean if favorite-ing the record (deleted is 0)
+            if ($this->deleted == 0) {
+                $beanToFollow = BeanFactory::getBean($this->module, $this->record_id, array("strict_retrieve" => true));
+
+                if (!is_null($beanToFollow)) {
+                    // the return value is inconsequential because it doesn't bubble up or factor into any other logic
+                    $this->subscribeUserToRecord($GLOBALS["current_user"], $beanToFollow);
+                }
+            }
+        }
+    }
+
+    /**
+     * Wraps the call to Subscription::subscribeUserToRecord so that we can mock it out in unit tests.
+     *
+     * @param User      $user
+     * @param SugarBean $bean
+     * @return bool|string
+     */
+    protected function subscribeUserToRecord(User $user, SugarBean $bean)
+    {
+        return Subscription::subscribeUserToRecord($user, $bean);
     }
 }

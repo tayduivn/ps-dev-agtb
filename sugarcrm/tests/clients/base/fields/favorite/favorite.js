@@ -28,6 +28,9 @@ describe('favorite field', function() {
 
         app = SugarTest.app;
 
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.updateModuleMetadata(moduleName, metadata);
+        SugarTest.testMetadata.set();
         app.data.declareModel(moduleName, metadata);
 
         model = app.data.createBean(moduleName, {
@@ -41,6 +44,8 @@ describe('favorite field', function() {
     });
 
     afterEach(function() {
+        field.dispose();
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -62,6 +67,7 @@ describe('favorite field', function() {
         });
 
         metadata.favoritesEnabled = false;
+        SugarTest.testMetadata.updateModuleMetadata(moduleName, metadata);
         app.data.declareModel(moduleName, metadata);
 
         field.model = model;
@@ -90,96 +96,135 @@ describe('favorite field', function() {
         loadTemplate.restore();
     });
 
-    it('should favorite an unfavorite record', function() {
+    describe("toggle favorite", function() {
+        var templateFavoriteIsActive   = '<i class="icon-favorite active"></i>',
+            templateFavoriteIsInactive = '<i class="icon-favorite"></i>',
+            loadTemplateStub,
+            isFavStub,
+            favStub;
 
-        sinon.stub(field, '_loadTemplate', function() {
-            this.template = function() {
-                return '<i class="icon-favorite"></i>';
-            };
+        beforeEach(function() {
+            isFavStub = sinon.stub(field.model, 'isFavorite', function() {
+                return this.fav;
+            });
+
+            favStub = sinon.stub(field.model, 'favorite', function() {
+                this.fav = !this.fav;
+                return true;
+            });
         });
 
-        model.fav = false;
-        var isFavStub = sinon.stub(field.model, 'isFavorite', function() {
-            return this.fav;
-        });
-        var favStub = sinon.stub(field.model, 'favorite', function() {
-            this.fav = !this.fav;
-            return true;
+        afterEach(function() {
+            loadTemplateStub.restore();
+            favStub.restore();
+            isFavStub.restore();
         });
 
-        field.model = model;
-        field.render();
+        it('should favorite an unfavorite record', function() {
+            loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
+                this.template = function() {
+                    return templateFavoriteIsInactive;
+                };
+            });
 
-        field.$('.icon-favorite').trigger('click');
-        expect(favStub.calledOnce);
-        expect(isFavStub.calledOnce);
-        // FIXME we need to be able to test the CSS clas change
-        //expect(field.$('.icon-favorite').hasClass('active')).toBeTruthy();
+            model.fav   = false;
+            field.model = model;
+            field.render();
 
-        field._loadTemplate.restore();
-        favStub.restore();
-        isFavStub.restore();
-    });
-
-    it('should unfavorite a favorite record', function() {
-
-        sinon.stub(field, '_loadTemplate', function() {
-            this.template = function() {
-                return '<i class="icon-favorite active"></i>';
-            };
+            field.$('.icon-favorite').trigger('click');
+            expect(favStub.calledOnce);
+            expect(isFavStub.calledOnce);
+            expect(field.$('.icon-favorite').hasClass('active')).toBeTruthy();
         });
 
-        model.fav = true;
-        var isFavStub = sinon.stub(field.model, 'isFavorite', function() {
-            return this.fav;
-        });
-        var favStub = sinon.stub(field.model, 'favorite', function() {
-            this.fav = !this.fav;
-            return true;
-        });
+        it('should unfavorite a favorite record', function() {
+            loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
+                this.template = function() {
+                    return templateFavoriteIsActive;
+                };
+            });
 
-        field.model = model;
-        field.render();
+            model.fav   = true;
+            field.model = model;
+            field.render();
 
-        field.$('.icon-favorite').trigger('click');
-        expect(favStub.calledOnce);
-        expect(isFavStub.calledOnce);
-        // FIXME we need to be able to test the CSS clas change
-        //expect(field.$('.icon-favorite').hasClass('active')).toBeFalsy();
-
-        field._loadTemplate.restore();
-        favStub.restore();
-        isFavStub.restore();
-    });
-
-    it('should log error if unable to favorite or unfavorite record', function() {
-
-        sinon.stub(field, '_loadTemplate', function() {
-            this.template = function() {
-                return '<i class="icon-favorite"></i>';
-            };
+            field.$('.icon-favorite').trigger('click');
+            expect(favStub.calledOnce);
+            expect(isFavStub.calledOnce);
+            expect(field.$('.icon-favorite').hasClass('active')).toBeFalsy();
         });
 
-        var isFavStub = sinon.stub(field.model, 'isFavorite', function() {
-            return false;
+        it('should log error if unable to favorite or unfavorite record', function() {
+            var errorSpy = sinon.spy(app.logger, 'error');
+
+            loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
+                this.template = function() {
+                    return templateFavoriteIsInactive;
+                };
+            });
+
+            isFavStub.restore();
+            isFavStub = sinon.stub(field.model, 'isFavorite', function() {
+                return false;
+            });
+
+            favStub.restore();
+            favStub = sinon.stub(field.model, 'favorite', function() {
+                return false;
+            });
+
+            field.model = model;
+            field.render();
+
+            field.$('.icon-favorite').trigger('click');
+            expect(favStub.calledOnce);
+            expect(isFavStub.calledOnce);
+            expect(errorSpy.calledOnce);
+
+            errorSpy.restore();
         });
-        var favStub = sinon.stub(field.model, 'favorite', function() {
-            return false;
+
+        describe("trigger 'favorite:active' on context", function() {
+            var triggerSpy;
+
+            beforeEach(function() {
+                triggerSpy = sinon.spy(field.context, "trigger");
+            });
+
+            afterEach(function() {
+                triggerSpy.restore();
+            });
+
+            it("Should trigger the favorite:active event on the context when favorite an unfavorite record.", function() {
+                loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
+                    this.template = function() {
+                        return templateFavoriteIsInactive;
+                    };
+                });
+
+                model.fav   = false;
+                field.model = model;
+                field.render();
+
+                field.$(".icon-favorite").trigger("click");
+                expect(triggerSpy.calledWithExactly("favorite:active")).toBeTruthy();
+            });
+
+            it("Should not trigger the favorite:active event on the context when unfavorite a favorite record.", function() {
+                loadTemplateStub = sinon.stub(field, '_loadTemplate', function() {
+                    this.template = function() {
+                        return templateFavoriteIsActive;
+                    };
+                });
+
+                model.fav   = true;
+                field.model = model;
+                field.render();
+
+                field.$(".icon-favorite").trigger("click");
+                expect(triggerSpy.neverCalledWith("favorite:active")).toBeTruthy();
+            });
         });
-        var error = sinon.spy(app.logger, 'error');
-
-        field.model = model;
-        field.render();
-
-        field.$('.icon-favorite').trigger('click');
-        expect(favStub.calledOnce);
-        expect(isFavStub.calledOnce);
-        expect(error.calledOnce);
-
-        field._loadTemplate.restore();
-        favStub.restore();
-        isFavStub.restore();
-        error.restore();
     });
 
     it('should format accordingly with favorite status on bean', function() {
