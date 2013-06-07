@@ -22,6 +22,9 @@
 
 require_once('data/SugarBean.php');
 
+use SugarTestAccountUtilities as AccountHelper;
+use SugarTestUserUtilities as UserHelper;
+
 class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
@@ -306,6 +309,62 @@ class SugarBeanTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals($encrypted_value, $decrypted_value);
     }
 
+    /**
+     * Check if SugarBean::checkUserAccess returns true for a valid case.
+     * @covers SugarBean::checkUserAccess
+     */
+    public function testCheckUserAccess()
+    {
+        $user = UserHelper::createAnonymousUser();
+        $account = AccountHelper::createAccount();
+
+        $bf = $this->getMock('BeanFactory', array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->will($this->returnValue($account));
+
+        $this->assertTrue($account->checkUserAccess($user, get_class($bf)));
+    }
+
+    /**
+     * Check if SugarBean::checkUserAccess returns false without team access.
+     * @covers SugarBean::checkUserAccess
+     */
+    public function testCheckUserAccessWithoutTeamAccess()
+    {
+        $user = UserHelper::createAnonymousUser();
+        $account = AccountHelper::createAccount();
+
+        $bf = $this->getMock('BeanFactory', array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            // BeanFactory returns null when we cannot retrieve the bean.
+            ->will($this->returnValue(null));
+
+        $this->assertFalse($account->checkUserAccess($user, get_class($bf)));
+    }
+
+    /**
+     * Check if SugarBean::checkUserAccess returns false without ACL access.
+     * @covers SugarBean::checkUserAccess
+     */
+    public function testCheckUserAccessWithoutACLAccess()
+    {
+        $user = UserHelper::createAnonymousUser();
+
+        $mockAccount = $this->getMock('Account', array('ACLAccess'));
+        $mockAccount->id = 'foo';
+        $mockAccount->expects($this->once())
+            ->method('ACLAccess')
+            ->will($this->returnValue(false));
+
+        $bf = $this->getMock('BeanFactory', array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->will($this->returnValue($mockAccount));
+
+        $this->assertFalse($mockAccount->checkUserAccess($user, get_class($bf)));
+    }
 }
 
 // Using Mssql here because mysql needs real connection for quoting
