@@ -8,7 +8,6 @@ describe("Plugins.GridBuilder", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, "view", "base");
         SugarTest.loadComponent("base", "field", "base");
-        SugarTest.loadComponent("base", "view", "editable");
         SugarTest.loadComponent("base", "view", viewName);
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();

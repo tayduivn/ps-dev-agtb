@@ -19,7 +19,6 @@ describe("Record View", function () {
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
         SugarTest.loadComponent('base', 'field', 'actiondropdown');
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [

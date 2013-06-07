@@ -1,13 +1,11 @@
-describe("Editable View", function() {
+describe("Editable Plugin", function() {
     var moduleName = 'Accounts',
-        viewName = 'editable',
         sinonSandbox, view, app;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
-        SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels": [{

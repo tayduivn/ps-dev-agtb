@@ -1,5 +1,5 @@
 ({
-    extendsFrom: 'EditableView',
+    extendsFrom: 'RecordView',
     buttons: null,
     editableFields: null,
     events: {
@@ -18,8 +18,7 @@
             options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
             options.template = app.template.getView(options.name);
         }
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
@@ -162,30 +161,5 @@
     },
     toggleEdit: function(isEdit) {
         this.toggleFields(this.editableFields, isEdit);
-    },
-    initButtons: function() {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
-    },
-    registerFieldAsButton: function(buttonName) {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'registerFieldAsButton', args: [buttonName]});
-    },
-    setButtonStates: function(state) {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setButtonStates', args: [state]});
-    },
-    setEditableFields: function() {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setEditableFields'});
-    },
-    _dispose: function() {
-        _.each(this.editableFields, function(field) {
-            field.nextField = null;
-        });
-        this.buttons = null;
-        this.editableFields = null;
-        app.view.invokeParent(this, {type: 'view', name: 'editable', method: '_dispose'});
     }
-
 })
