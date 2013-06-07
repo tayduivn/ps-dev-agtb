@@ -187,14 +187,14 @@
 				{/if}
 				{* //END SUGARCRM flav=pro ONLY *}
 				{if !empty($quickViewLinks)}
-	            {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}{/capture}
+	            {capture assign=linkModule}{$pageData.bean.moduleDir}{/capture}
 	            {capture assign=action}{if $act}{$act}{else}EditView{/if}{/capture}
 				<td width='2%' nowrap>
 	                {if $pageData.rowAccess[$id].edit}
 	                <a title='{$editLinkString}' id="edit-{$rowData.ID}"
 	href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}"
 	{* //BEGIN SUGARCRM flav=pro ONLY *}
-	data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}'
+	data-record='{$rowData.ID}' data-module='{$pageData.bean.moduleDir}'
 	 data-list = 'true' class="quickEdit"
 	{* //END SUGARCRM flav=pro ONLY *}
 	                >
