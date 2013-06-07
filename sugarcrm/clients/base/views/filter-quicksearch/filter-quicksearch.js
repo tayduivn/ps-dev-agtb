@@ -29,7 +29,7 @@
         // have SUGAR.App when the constructor is called. We can't add it to the
         // attributes hash here since Backbone.View._ensureElement() is called
         // before initialize.
-        this.$el.attr('placeholder', app.lang.get('LBL_BASIC_SEARCH') + '…');
+        this.$el.attr('placeholder', app.lang.get('LBL_BASIC_QUICK_SEARCH'));
         app.view.View.prototype.initialize.call(this, opts);
         this.layout.on("filter:clear:quicksearch", this.clearInput, this);
     },

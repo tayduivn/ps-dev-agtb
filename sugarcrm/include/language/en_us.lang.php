@@ -1878,6 +1878,7 @@ $app_strings = array (
   'LBL_EDIT_INLINE' => 'Edit Inline' /*for 508 compliance fix*/,
   'LBL_VIEW_INLINE' => 'View' /*for 508 compliance fix*/,
   'LBL_BASIC_SEARCH' => 'Search' /*for 508 compliance fix*/,
+  'LBL_BASIC_QUICK_SEARCH' => 'Search...' /*for 508 compliance fix*/,
   'LBL_PROJECT_MINUS' => 'Remove' /*for 508 compliance fix*/,
   'LBL_PROJECT_PLUS' => 'Add' /*for 508 compliance fix*/,
   'LBL_Blank' => ' ' /*for 508 compliance fix*/,
