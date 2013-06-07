@@ -91,7 +91,7 @@ class MailApi extends ModuleApi
             ),
             'recipientLookup' => array(
                 'reqType'   => 'POST',
-                'path'      => array('Mail', 'recipient', 'lookup'),
+                'path'      => array('Mail', 'recipients', 'lookup'),
                 'pathVars'  => array(''),
                 'method'    => 'recipientLookup',
                 'shortHelp' => 'Lookup Email Recipient Info',
@@ -99,7 +99,7 @@ class MailApi extends ModuleApi
             ),
             'listRecipients'  => array(
                 'reqType'   => 'GET',
-                'path'      => array('Mail', 'recipient', 'find'),
+                'path'      => array('Mail', 'recipients', 'find'),
                 'pathVars'  => array(''),
                 'method'    => 'findRecipients',
                 'shortHelp' => 'Search For Email Recipients',

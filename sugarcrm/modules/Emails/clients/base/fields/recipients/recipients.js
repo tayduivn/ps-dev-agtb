@@ -69,14 +69,18 @@
 
         if ($recipientsField.length > 0) {
             $recipientsField.select2({
-                allowClear: true,
-                multiple: true,
-                width: 'off',
-                containerCssClass: 'select2-choices-pills-close',
-                containerCss: {'width':'100%'},
-                query: _.bind(this.loadOptions, this),
-                formatSelection: _.bind(this.formatSelection, this),
-                formatResult:    _.bind(this.formatResult, this)
+                allowClear:          true,
+                multiple:            true,
+                width:               'off',
+                containerCssClass:   'select2-choices-pills-close',
+                containerCss:        {'width':'100%'},
+                minimumInputLength:  1,
+                query:               _.bind(function(query) {this.loadOptions(query);}, this),
+                createSearchChoice:  _.bind(this.createOption, this),
+                formatSelection:     _.bind(this.formatSelection, this),
+                formatResult:        _.bind(this.formatResult, this),
+                formatSearching:     _.bind(this.formatSearching, this),
+                formatInputTooShort: _.bind(this.formatInputTooShort, this)
             });
 
             if (!!this.def.disabled) {
@@ -86,22 +90,66 @@
     },
 
     /**
-     * Placeholder for fetching additional recipients from the server
+     * Fetch additional recipients from the server.
      *
+     * @see http://ivaynberg.github.io/select2/#doc-query
      * @param {Object} query Possible attributes can be found in select2's documentation.
      */
-    loadOptions: function(query) {
+    loadOptions: _.debounce(function(query) {
         var data = {
-            results: [],
-            more: false // there are no more results by default
+                results: [],
+                // only show one page of results
+                // if more results are needed, then the address book should be used
+                more: false
+            },
+            options = {},
+            callbacks = {},
+            url;
+
+        // add the search term to the URL params
+        options.q = query.term;
+        // the first 10 results should be enough
+        // if more results are needed, then the address book should be used
+        options.max_num = 10;
+        // build the URL for fetching recipients that match the search term
+        url = app.api.buildURL("Mail", "recipients/find", null, options);
+
+        // create the callbacks
+        callbacks.success = function(result) {
+            // add the recipients that were found via the select2 callback
+            data.results = result.records;
+        };
+        callbacks.error = function() {
+            // don't add any recipients via the select2 callback
+            data.results = [];
+        };
+        callbacks.complete = function() {
+            // execute the select2 callback to add any new recipients
+            query.callback(data);
         };
 
-        query.callback(data);
+        // make the API call
+        app.api.call("read", url, null, callbacks);
+    }, 300),
+
+    /**
+     * Create additional select2 options when loadOptions returns no matches for the search term.
+     *
+     * @see http://ivaynberg.github.io/select2/#documentation
+     * @param {String} term
+     * @param {Array} data The options in the select2 drop-down after the query callback has been executed.
+     * @returns {Object}
+     */
+    createOption: function(term, data) {
+        if (data.length === 0) {
+            return {id: term, email: term};
+        }
     },
 
     /**
      * Formats a recipient object for displaying selected recipients.
      *
+     * @see http://ivaynberg.github.io/select2/#documentation
      * @param {Object} recipient
      * @return {String}
      */
@@ -112,11 +160,34 @@
     /**
      * Formats a recipient object for displaying items in the recipient options list.
      *
+     * @see http://ivaynberg.github.io/select2/#documentation
      * @param {Object} recipient
      * @return {String}
      */
     formatResult: function(recipient) {
         return this.formatSelection(recipient); // do the same as formatSelection by default
+    },
+
+    /**
+     * Returns the localized message indicating that a search is in progress
+     *
+     * @see http://ivaynberg.github.io/select2/#documentation
+     * @returns {String}
+     */
+    formatSearching: function() {
+        return app.lang.get("LBL_LOADING", this.module);
+    },
+
+    /**
+     * Suppresses the message indicating the number of characters remaining before a search will trigger
+     *
+     * @see http://ivaynberg.github.io/select2/#documentation
+     * @param term
+     * @param min
+     * @returns {String}
+     */
+    formatInputTooShort: function(term, min) {
+        return "";
     },
 
     /**
@@ -186,9 +257,6 @@
             .on("change", function(event) {
                 self._destroyTooltips();
                 self._initializeTooltips();
-            })
-            .on("opening", function(event) {
-                event.preventDefault();
             });
     },
 
