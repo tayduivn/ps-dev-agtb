@@ -48,7 +48,6 @@ class CurrentUserPortalApi extends CurrentUserApi {
         $user_data['account_ids'] = $visibility->getAccountIds();
 
         $user_data['full_name'] = $contact->full_name;
-        $user_data['picture'] = $current_user->picture;
         $user_data['portal_name'] = $contact->portal_name;
         if(isset($contact->preferred_language)) {
             $user_data['preferences']['language'] = $contact->preferred_language;
