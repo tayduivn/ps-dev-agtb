@@ -69,6 +69,10 @@ describe("Base.Field.Button", function() {
 
     it("should show and hide functions must trigger hide and show events, and it should change the isHidden property", function() {
 
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
+        SugarTest.testMetadata.set();
+
         var def = {
             'events' : {
                 'click .btn' : 'function() { this.callback = "stuff excuted"; }',
@@ -76,19 +80,27 @@ describe("Base.Field.Button", function() {
             }
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
-        var triggers = sinon.spy(field, 'trigger');
-        field.show();
-        expect(triggers.calledOnce).toBe(true);
-        expect(triggers.calledWithExactly('show')).toBe(true);
-        expect(field.isHidden).toBe(false);
-        triggers.restore();
+        field.render();
 
+        // we need to hide first, since the render() does the show
         var triggers2 = sinon.spy(field, 'trigger');
         field.hide();
         expect(triggers2.calledOnce).toBe(true);
         expect(triggers2.calledWithExactly('hide')).toBe(true);
         expect(field.isHidden).toBe(true);
+        expect(field.isVisible()).toBe(false);
         triggers2.restore();
+
+        // now try and show it
+        var triggers = sinon.spy(field, 'trigger');
+        field.show();
+        expect(triggers.calledOnce).toBe(true);
+        expect(triggers.calledWithExactly('show')).toBe(true);
+        expect(field.isHidden).toBe(false);
+        expect(field.isVisible()).toBe(true);
+        triggers.restore();
+
+        SugarTest.testMetadata.dispose();
 
     });
 

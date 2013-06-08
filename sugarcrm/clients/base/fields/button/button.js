@@ -86,10 +86,9 @@
      * @protected
      */
     _show: function() {
-        app.view.Field.prototype.show.call(this);
-        if(this.isHidden !== false) {
+        var ret = app.view.Field.prototype.show.call(this);
+        if(ret !== false && this.isHidden !== false) {
             this.isHidden = false;
-            this.trigger("show");
         }
     },
     show: function() {
@@ -100,11 +99,17 @@
         }
     },
     hide: function() {
-        app.view.Field.prototype.hide.call(this);
-        if(this.isHidden !== true) {
+        var ret = app.view.Field.prototype.hide.call(this);
+        if(ret !== false && this.isHidden !== true) {
             this.isHidden = true;
-            this.trigger("hide");
         }
+    },
+    /**
+     * Track using the flag that is set on the hide and show from above.
+     * @returns {boolean}
+     */
+    isVisible: function() {
+        return !this.isHidden;
     },
     /**
      * {@inheritdoc}
