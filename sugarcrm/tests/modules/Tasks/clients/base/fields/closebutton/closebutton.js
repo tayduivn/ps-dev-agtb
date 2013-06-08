@@ -13,8 +13,7 @@ describe("Tasks CloseButton", function() {
             module: 'Tasks'
         });
         SugarTest.loadComponent('base', 'field', 'button');
-        field = SugarTest.createField("../modules/Tasks/clients/base", 'record-close', "closebutton", "detail", def, 'Tasks', model, context);
-   
+        field = SugarTest.createField("base", 'record-close', "closebutton", "detail", def, 'Tasks', model, context, true);
     });
 
     afterEach(function() {

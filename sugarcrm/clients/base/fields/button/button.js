@@ -109,7 +109,7 @@
      * @returns {boolean}
      */
     isVisible: function() {
-        return !this.isHidden;
+        return !(this.getFieldElement().css('display') === 'none' || this.getFieldElement().hasClass("hide"));
     },
     /**
      * {@inheritdoc}

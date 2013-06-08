@@ -1,6 +1,6 @@
 (function(test) {
     var app = SUGAR.App;
-    test.loadComponent = function(client, type, name, module, platform) {
+    test.loadComponent = function(client, type, name, module) {
         var path = "/clients/" + client + "/" + type + "s/" + name;
         path = (module) ? "../modules/" + module + path : ".." + path;
 
@@ -10,12 +10,12 @@
             } catch(e) {
                 app.logger.error("Failed to eval view controller for " + name + ": " + e + ":\n" + data);
             }
-            test.addComponent(client, type, name, data, module, platform);
+            test.addComponent(client, type, name, data, module);
         });
     };
 
-    test.addComponent = function(client, type, name, data, module, platform) {
-        app.view.declareComponent(type, name, module, data, true, platform);
+    test.addComponent = function(client, type, name, data, module) {
+        app.view.declareComponent(type, name, module, data, true, client);
     };
 
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
@@ -55,17 +55,19 @@
             def: def,
             view: view,
             context: context,
-            model: model
+            model: model,
+            module:module,
+            platform: client
         });
     };
 
-    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent, platform) {
+    test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent) {
         if (_.isUndefined(loadComponent) || loadComponent)
         {
             if (loadFromModule) {
-                test.loadComponent(client, "view", viewName, module, platform);
+                test.loadComponent(client, "view", viewName, module);
             } else {
-                test.loadComponent(client, "view", viewName, null, platform);
+                test.loadComponent(client, "view", viewName, null);
             }
         }
         if (!context) {
@@ -82,7 +84,7 @@
             module : module,
             meta : meta,
             layout: layout,
-            platform: platform
+            platform: client
         });
     };
 
@@ -105,7 +107,8 @@
             name: layoutName,
             context: context,
             module: module,
-            meta: meta
+            meta: meta,
+            platform: client
         }, params));
     };
 

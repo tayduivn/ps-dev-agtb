@@ -223,7 +223,7 @@
 
         _.each(this.fields, function (field, idx) {
             var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
-            if (field.isHidden) {
+            if (!field.isVisible()) {
                 fieldPlaceholder.toggleClass('hide', true);
                 this.$el.append(fieldPlaceholder);
             } else {

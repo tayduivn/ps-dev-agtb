@@ -14,8 +14,7 @@ describe("Leads ConvertButton", function() {
         });
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
-        field = SugarTest.createField("../modules/Leads/clients/base", 'record-convert', "convertbutton", "detail", def, 'Leads', model, context);
-
+        field = SugarTest.createField("base", 'record-convert', "convertbutton", "detail", def, 'Leads', model, context, true);
     });
 
     afterEach(function() {

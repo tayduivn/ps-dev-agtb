@@ -33,7 +33,6 @@ describe("products_view_recordlist", function() {
         };
 
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
