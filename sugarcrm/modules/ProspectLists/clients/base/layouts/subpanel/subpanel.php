@@ -6,7 +6,6 @@ $subpanels = array(
     'LBL_LEADS_SUBPANEL_TITLE' => 'leads',
     'LBL_USERS_SUBPANEL_TITLE' => 'users',
     'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'accounts',
-    'LBL_CAMPAIGNS_SUBPANEL_TITLE' => 'campaigns',
 );
 $layout = MetaDataManager::getLayout("SubPanelLayout", $subpanels);
 $viewdefs['ProspectLists']['base']['layout']['subpanel'] = $layout->getLayout();
