@@ -192,6 +192,28 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Should have returned the Email object serialized as an array.");
     }
 
+    public function testRecipientLookup_AttemptToResolveTenRecipients_CallsLookupTenTimes()
+    {
+        $expected = 10;
+        $args     = array();
+
+        for ($i = 0; $i < $expected; $i++) {
+            $args[] = array("email" => "recipient{$i}");
+        }
+
+        $emailRecipientsServiceMock = $this->getMock("EmailRecipientsService", array("lookup"));
+        $emailRecipientsServiceMock->expects($this->exactly($expected))
+            ->method("lookup")
+            ->will($this->returnArgument(0));
+
+        $this->mailApi->expects($this->any())
+            ->method("getEmailRecipientsService")
+            ->will($this->returnValue($emailRecipientsServiceMock));
+
+        $actual = $this->mailApi->recipientLookup($this->api, $args);
+        $this->assertEquals($args, $actual, "Should have returned an array matching \$args.");
+    }
+
     public function testFindRecipients_NextOffsetIsLessThanTotalRecords_ReturnsRealNextOffset()
     {
         $args = array(
