@@ -1,6 +1,7 @@
+{{#if total}}
 <div class="tabbable tabs-full {{tabClass}}">
     <ul id="tab" class="nav nav-tabs">
-        <li class="active"><a href="#tab-chart" data-toggle="tab">Summary<br><span class="label count nv-fill00">{{totalCases}}</span></a></li>
+        <li class="active"><a href="#tab-chart" data-toggle="tab">Summary<br><span class="label count nv-fill00">{{total}}</span></a></li>
         {{#each tabData}}
             <li><a href="#tab-{{index}}" data-toggle="tab">{{status}}<br><span class="label count {{cssClass}}">{{models.length}}</span></a></li>
         {{/each}}
@@ -8,7 +9,7 @@
     <div id="myTabContent" class="tab-content">
         <div class="tab-pane active" id="tab-chart">
             <div id="casesSummaryPie" class="nv-chart nv-chart-cases">
-                <svg></svg>
+                <svg id="{{cid}}"></svg>
             </div>
         </div>
         {{#each tabData}}
@@ -22,3 +23,9 @@
         {{/each}}
     </div>
 </div>
+{{/if}}
+{{#eq total 0}}
+<aside>
+    <em>{{str "LBL_NO_OPPORTUNITY_DATA"}}</em>
+</aside>
+{{/eq}}

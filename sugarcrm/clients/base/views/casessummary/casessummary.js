@@ -1,75 +1,88 @@
 ({
     plugins: ['Dashlet'],
-    className:'cases-summary-wrapper',
+    className: 'cases-summary-wrapper',
+    chart: {},
+    total: 0,
 
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
     },
 
     bindDataChange: function(){
-        if(!this.meta.config) {
+        if (!this.meta.config) {
             this.model.on("change", this.loadData, this);
         }
     },
 
-    _render: function() {
-        var self = this;
-        if (!self.chartData) return;
+    _render: function () {
         app.view.View.prototype._render.call(this);
 
-        var chart = nv.models.pieChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.value })
-                .margin({top:10,right:10,bottom:15,left:10})
-                .showLabels(true)
-                .showTitle(false)
-                .showLegend(false)
-                .donutRatio(0.4)
-                .donutLabelsOutside(true)
-                .hole(self.totalCases)
-                .colorData('class')
-                .tooltipContent( function(key, x, y, e, graph) {
-                    return '<p><b>' + key +' '+  parseInt(y) +'</b></p>'
-                }).donut(true)
-            ;
-        d3.select('#casesSummaryPie svg')
-            .datum(self.chartData)
-            .transition().duration(500)
-            .call(chart);
+        if (this.viewName === "config" || this.total === 0) {
+            return;
+        }
 
-        nv.utils.windowResize(function(){chart.update();});
+        this.chart = nv.models.pieChart()
+            .x(function(d) { return d.key; })
+            .y(function(d) { return d.value; })
+            .margin({top:10, right:10, bottom:15, left:10})
+            .donut(true)
+            .donutLabelsOutside(true)
+            .donutRatio(0.4)
+            .hole(self.totalCases)
+            .showTitle(false)
+            .showLegend(false)
+            .colorData('class')
+            .tooltipContent( function(key, x, y, e, graph) {
+                return '<p><b>' + key +' '+  parseInt(y, 10) +'</b></p>';
+            });
+
+        d3.select('svg#' + this.cid)
+            .datum(this.chartData)
+            .transition().duration(500)
+            .call(this.chart);
+
+        nv.utils.windowResize(this.chart.update);
+    },
+
+    /* Process data loaded from REST endpoint so that d3 chart can consume
+     * and set general chart properties
+     */
+    evaluateResult: function (data) {
+        this.chartCollection = data;
+        this.closedCases = this.chartCollection.where({status:'Closed'});
+        this.closedCases = this.closedCases.concat(this.chartCollection.where({status:'Rejected'}));
+        this.closedCases = this.closedCases.concat(this.chartCollection.where({status:'Duplicate'}));
+        this.openCases = this.chartCollection.models.length - this.closedCases.length;
+        this.chartData = {
+            'data': [
+            ]
+        };
+        this.chartData.data.push({
+            key: 'Closed Cases',
+            class: 'nv-fill-green',
+            value: this.closedCases.length
+        });
+        this.chartData.data.push({
+            key: 'Open Cases',
+            class: 'nv-fill-red',
+            value: this.openCases
+        });
+
+        this.total = this.openCases + this.closedCases.length;
     },
 
     loadData: function (options) {
-        var self = this;
-        var oppID = this.model.get('account_id');
+        var self = this,
+            oppID = this.model.get('account_id'),
+            accountBean;
         if (oppID) {
-            var accountBean = app.data.createBean('Accounts', {id: oppID});
+            accountBean = app.data.createBean('Accounts', {id: oppID});
         }
-        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model,'cases');
+        var relatedCollection = app.data.createRelatedCollection(accountBean || this.model, 'cases');
         relatedCollection.fetch({
-            relate:true,
+            relate: true,
             success: function(resultCollection) {
-                self.chartCollection = resultCollection;
-                self.closedCases = self.chartCollection.where({status:'Closed'});
-                self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Rejected'}));
-                self.closedCases = self.closedCases.concat(self.chartCollection.where({status:'Duplicate'}));
-                self.openCases = self.chartCollection.models.length - self.closedCases.length;
-                self.chartData = {
-                    'data': [
-                    ]
-                };
-                self.chartData.data.push({
-                    key: 'Closed Cases',
-                    class: 'nv-fill-green',
-                    value: self.closedCases.length
-                });
-                self.chartData.data.push({
-                    key: 'Open Cases',
-                    class: 'nv-fill-red',
-                    value: self.openCases
-                });
-                self.totalCases = self.chartCollection.models.length;
+                self.evaluateResult(resultCollection);
                 self.processCases();
                 self.render();
                 self.addFavs();
@@ -82,8 +95,8 @@
         var self = this;
         this.favFields = [];
         //loop over chartCollection
-        _.each(self.tabData, function(tabGroup) {
-            if(tabGroup.models && tabGroup.models.length >0) {
+        _.each(this.tabData, function(tabGroup) {
+            if (tabGroup.models && tabGroup.models.length >0) {
                 _.each(tabGroup.models, function(model){
                     var field = app.view.createField({
                             def: {
@@ -111,7 +124,7 @@
             'Closed':'label-success',
             'Duplicate':'label-success'
         };
-        if (!this.chartCollection || this.chartCollection.models.length == 0) return;
+        if (!this.chartCollection || this.chartCollection.models.length === 0) return;
         this.tabData = [];
 
         var stati = _.uniq(this.chartCollection.pluck('status'));
@@ -133,7 +146,9 @@
     _dispose: function() {
         this.favFields = null;
         this.model.off("change", this.loadData, this);
+        if (!_.isEmpty(this.chart)) {
+            nv.utils.windowUnResize(this.chart.update);
+        }
         app.view.View.prototype._dispose.call(this);
     }
-
 })

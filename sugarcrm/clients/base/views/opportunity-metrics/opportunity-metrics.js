@@ -20,16 +20,13 @@
     chart: {},
 
     _renderHtml: function () {
-        var self = this,
-            chart;
-
         app.view.View.prototype._renderHtml.call(this);
 
         if (this.viewName === "config" || _.isEmpty(this.chartCollection)) {
             return;
         }
 
-        chart = nv.models.pieChart()
+        this.chart = nv.models.pieChart()
             .x(function (d) {
                 return d.key;
             })
@@ -49,18 +46,16 @@
         d3.select('svg#' + this.cid)
             .datum(this.chartCollection)
             .transition().duration(500)
-            .call(chart);
+            .call(this.chart);
 
-        self.chart = chart;
-        nv.utils.windowResize(self.chart.update);
+        nv.utils.windowResize(this.chart.update);
     },
 
     /* Process data loaded from REST endpoint so that d3 chart can consume
      * and set general chart properties
      */
     evaluateResult: function (data) {
-        var self = this,
-            total = 0;
+        var total = 0;
 
         _.each(data, function (value, key) {
             // parse currencies and attach the correct delimiters/symbols etc
@@ -74,10 +69,10 @@
             total += value.count;
         });
 
-        self.metricsCollection = data;
+        this.metricsCollection = data;
 
-        self.chartCollection = {
-            data: _.map(self.metricsCollection, function (value, key) {
+        this.chartCollection = {
+            data: _.map(this.metricsCollection, function (value, key) {
                 return {
                     'key': value.stageLabel,
                     'value': value.count,
@@ -115,7 +110,7 @@
 
     _dispose: function () {
         if (!_.isEmpty(this.chart)) {
-            nv.utils.windowUnResize(this.chart.render);
+            nv.utils.windowUnResize(this.chart.update);
         }
         app.view.View.prototype._dispose.call(this);
     }
