@@ -383,7 +383,7 @@ abstract class UpgradeDriver
             || (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
             || (function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
         ) {
-            return $this->error("Magic quotes are deprecated and not supported in SugarCRM. Please read: http://www.php.net/manual/en/security.magicquotes.php");
+            return $this->error("Magic quotes are deprecated and not supported in SugarCRM. Please read: http://www.php.net/manual/en/security.magicquotes.php", true);
         }
         return true;
     }
@@ -405,10 +405,10 @@ abstract class UpgradeDriver
             return true;
         }
         if(version_compare($iis_version, "6.0", '<')) {
-            return $this->error($this->translate('ERR_CHECKSYS_IIS_INVALID_VER')." ".$iis_version);
+            return $this->error($this->translate('ERR_CHECKSYS_IIS_INVALID_VER')." ".$iis_version, true);
         }
         if(ini_get('fastcgi.logging')) {
-            return $this->error($this->translate('ERR_CHECKSYS_FASTCGI_LOGGING'));
+            return $this->error($this->translate('ERR_CHECKSYS_FASTCGI_LOGGING'), true);
         }
         return true;
     }
@@ -444,7 +444,7 @@ abstract class UpgradeDriver
     protected function preflightWriteUnzip()
     {
         if(!is_writable($this->context["temp_dir"])) {
-            return $this->error("{$this->context["temp_dir"]} is not writable");
+            return $this->error("{$this->context["temp_dir"]} is not writable", true);
         }
         return true;
     }
@@ -456,7 +456,7 @@ abstract class UpgradeDriver
     protected function preflightWriteSugar()
     {
         if(!is_writable("config.php") || !is_writable("config_override.php")) {
-            return $this->error("Configuration files are not writable!");
+            return $this->error("Configuration files are not writable!", true);
         }
         return true;
     }
@@ -1161,7 +1161,7 @@ abstract class UpgradeDriver
      * @param string $stage
      * @return boolean|string true if done, false if error, otherwise next step
      */
-    protected function runStep($stage)
+    protected function runStep(&$stage)
     {
         if($stage == 'continue') {
             if(!empty($this->state['stage'])) {

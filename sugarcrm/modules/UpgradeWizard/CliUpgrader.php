@@ -133,7 +133,7 @@ eoq2;
                 exit(0);
             } else {
                 if(!empty($upgrader->error)) {
-                    echo "ERROR: {$upgrader->error}";
+                    echo "ERROR: {$upgrader->error}\n";
                 }
                 exit(1);
             }
