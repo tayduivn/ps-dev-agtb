@@ -2,12 +2,20 @@
     className: "block filtered tabs-left activitystream-layout",
 
     initialize: function(opts) {
-        var self = this;
         this.opts = opts;
         this.renderedActivities = {};
 
         app.view.Layout.prototype.initialize.call(this, opts);
 
+        this.setCollectionOptions();
+        this.exposeDataTransfer();
+    },
+
+    /**
+     * Set endpoint and the success callback for retrieving activities.
+     */
+    setCollectionOptions: function() {
+        var self = this;
         var endpoint = function(method, model, options, callbacks) {
             var real_module = self.context.parent.get('module'),
                 layoutType = self.context.parent.get('layout'),
@@ -31,17 +39,25 @@
         this.context.set("collectionOptions", {
             endpoint: endpoint,
             success: function(collection) {
-                collection.each(_.bind(self.renderPost, self));
+                collection.each(function(model) {
+                    self.renderPost(model);
+                });
             }
         });
+    },
 
-        // Expose the dataTransfer object for drag and drop file uploads.
+    /**
+     * Expose the dataTransfer object for drag and drop file uploads.
+     */
+    exposeDataTransfer: function() {
         jQuery.event.props.push('dataTransfer');
     },
 
     bindDataChange: function() {
         if (this.collection) {
-            this.collection.on('add', this.renderPost, this);
+            this.collection.on('add', function(model) {
+                this.renderPost(model);
+            }, this);
             this.collection.on('reset', function() {
                 _.each(this.renderedActivities, function(view) {
                     view.dispose();
@@ -91,7 +107,7 @@
         this.collection.fetch(options);
     },
 
-    renderPost: function(model) {
+    renderPost: function(model, readonly) {
         var view;
         if(_.has(this.renderedActivities, model.id)) {
             view = this.renderedActivities[model.id];
@@ -101,7 +117,8 @@
                 name: "activitystream",
                 module: this.module,
                 layout: this,
-                model: model
+                model: model,
+                readonly: readonly
             });
             this.addComponent(view);
             this.renderedActivities[model.id] = view;

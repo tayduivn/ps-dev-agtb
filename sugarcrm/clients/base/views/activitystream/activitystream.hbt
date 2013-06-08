@@ -52,20 +52,24 @@
     </li>
     {{/if}}
 {{/if}}
-    <li class="acomment hide">
-        <div class="control-group form-horizontal">
-            <div class="controls controls-two btn-fit">
-                <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true"></div>
-                <input type="submit" class="btn btn-primary reply-btn" value="{{str "LBL_EMAIL_REPLY"}}">
+    {{#unless readonly}}
+        <li class="acomment hide">
+            <div class="control-group form-horizontal">
+                <div class="controls controls-two btn-fit">
+                    <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true"></div>
+                    <input type="submit" class="btn btn-primary reply-btn" value="{{str "LBL_EMAIL_REPLY"}}">
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
+    {{/unless}}
 </ul>
-<div class="actions btn-group">
-    <a class="btn btn-mini comment" rel="tooltip" data-title="Comment" data-original-title="">
-        <i class="icon-comment"></i>
-    </a>
-    <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-original-title="" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
-        <i class="icon-eye-open"></i>
-    </a>
-</div>
+{{#unless readonly}}
+    <div class="actions btn-group">
+        <a class="btn btn-mini comment" rel="tooltip" data-title="Comment">
+            <i class="icon-comment"></i>
+        </a>
+        <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
+            <i class="icon-eye-open"></i>
+        </a>
+    </div>
+{{/unless}}
