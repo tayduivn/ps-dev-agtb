@@ -37,7 +37,6 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         SugarTestHelper::setUp("current_user");
-        OutboundEmailConfigurationTestHelper::setUp();
 
         $this->mailRecord          = new MailRecord();
         $this->mailRecord->subject = "MailRecord subject";
@@ -392,6 +391,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSaveAsDraft()
     {
+        OutboundEmailConfigurationTestHelper::setUp();
         $outboundEmailConfiguration = OutboundEmailConfigurationTestHelper::createSystemOverrideOutboundEmailConfiguration(
             $GLOBALS["current_user"]->id
         );

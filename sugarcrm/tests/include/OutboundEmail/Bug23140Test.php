@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once('include/OutboundEmail/OutboundEmail.php');
+require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /**
  * @ticket 23140
@@ -39,6 +40,7 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         global $current_user, $currentModule ;
 		$this->_user = SugarTestUserUtilities::createAnonymousUser();
 		$current_user = $this->_user;
+        OutboundEmailConfigurationTestHelper::setUp();
 	}
 
     public function tearDown()
@@ -50,6 +52,7 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM outbound_email WHERE id= '{$this->ob->id}'");
         if ($this->userOverideAccont != null)
             $GLOBALS['db']->query("DELETE FROM outbound_email WHERE id= '{$this->userOverideAccont->id}'");
+        OutboundEmailConfigurationTestHelper::tearDown();
     }
 
     function testSystemAccountMailSettingsChangedUserAccessToUsername()
