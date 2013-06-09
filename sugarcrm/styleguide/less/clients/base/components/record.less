@@ -272,13 +272,6 @@
 .record {
   clear: both;
   margin: 20px 20px 10px 5px;
-  .record-cell {
-      div[class*="span"] {
-          .select2-container {
-              margin-top: -5px;
-          }
-      }
-  }
   .form-horizontal {
     .record-cell,
     .normal {
@@ -334,9 +327,6 @@
       text-overflow: ellipsis;
     }
 
-    [class*='address_'] {
-        margin-bottom: 2px;
-    }
     input[type="text"],
     textarea,
     .uneditable-input {
@@ -354,6 +344,12 @@
     .input-append input[type="text"] + .add-on,
     .input-append textarea + .add-on {
       margin-top: -5px;
+    }
+
+    div[class*="span"] {
+      .select2-container {
+        margin-top: -5px;
+      }
     }
 
     .select2-container {
@@ -732,6 +728,9 @@
 
 /* Special treatment for the address fields */
 .record-cell {
+  [class*='address_'] {
+    margin-bottom: 2px;
+  }
   [class*='address_']:not(.edit) {
     display: inline-block;
   }
