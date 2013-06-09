@@ -63,7 +63,7 @@ describe('Base.View.DupeCheckList', function() {
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
         view.$el = $('<div>' + htmlBefore + '</div>');
-        view._removeLinks();
+        view.render();
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 

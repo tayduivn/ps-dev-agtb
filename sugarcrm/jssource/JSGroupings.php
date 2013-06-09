@@ -386,6 +386,7 @@
                     'include/javascript/sugar7/plugins/GridBuilder.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/list-disable-sort.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/editable.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/list-remove-links.js'  => 'include/javascript/sugar_sidecar.min.js',
                     // Support Portal features for Sugar7
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Contacts/clients/base/lib/bean.js' => 'include/javascript/sugar_sidecar.min.js',

@@ -31,15 +31,12 @@
      * @extends View.SelectionListView
      */
     extendsFrom: "SelectionListView",
-    plugins: ['list-disable-sort'],
+    plugins: ['list-disable-sort', 'list-remove-links'],
     _beanCollectionSync: null,
 
     initialize: function(options) {
         _.bindAll(this);
         app.view.invokeParent(this, {type: 'view', name: 'selection-list', method: 'initialize', args: [options]});
-
-        // remove links
-        this.on("render", this._removeLinks);
 
         // treat the DataManager.sync override like a before_sync callback in order to add additional options to the
         // call
@@ -47,17 +44,6 @@
         // override, in order to continue with normal procedures after injecting our options
         this._beanCollectionSync = this.collection.sync;
         this.collection.sync     = this._sync;
-    },
-
-    /**
-     * Remove any surrounding anchor tags from content displayed within the list view; leaving just the text. It is
-     * undesirable to allow users to click links that navigate them away from the page when in the context of a modal
-     * operation, like a drawer.
-     *
-     * @private
-     */
-    _removeLinks: function() {
-        this.$("a:not(.rowaction)").contents().unwrap();
     },
 
     /**

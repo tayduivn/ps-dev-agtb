@@ -65,7 +65,7 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
             htmlAfter = 'unwrapped<a href="" class="rowaction">wrapped</a>';
 
         view.$el = $('<div>' + htmlBefore + '</div>');
-        view._removeLinks();
+        view.render();
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 
