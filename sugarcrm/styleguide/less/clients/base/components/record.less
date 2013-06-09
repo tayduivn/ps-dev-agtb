@@ -243,6 +243,31 @@
   }
 }
 
+//email compose recipient select2
+.record div[data-type="recipients"].controls.btn-fit {
+  margin-bottom: 6px;
+  .btn {
+    top: -1px;
+    right: 9px;
+  }
+}
+.record div[data-name="to_addresses"].controls.btn-fit {
+  .select2-container {
+    .select2-choices:before {
+      content: attr(data-content-before);
+      float: right;
+      font-size: 12px;
+      padding: 2px 1px 2px 14px;
+      width: auto;
+    }
+    .select2-search-field input {
+      padding: 1px 7px;
+      margin-left: 0;
+      position: absolute;
+    }
+  }
+}
+
 //main record edit
 .record {
   clear: both;
