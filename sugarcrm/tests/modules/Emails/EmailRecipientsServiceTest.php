@@ -49,6 +49,26 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
+    public function testIsValidEmailAddress_EmailAddressIsEmpty_ReturnsFalse()
+    {
+        $actual = $this->emailRecipientsService->isValidEmailAddress();
+        $this->assertFalse($actual, "Should have returned false because an empty email address is invalid.");
+    }
+
+    public function testIsValidEmailAddress_EmailAddressIsValid_ReturnsTrue()
+    {
+        $emailAddress = "foo@bar.com";
+        $actual       = $this->emailRecipientsService->isValidEmailAddress($emailAddress);
+        $this->assertTrue($actual, "Should have returned true because {$emailAddress} is valid.");
+    }
+
+    public function testIsValidEmailAddress_EmailAddressIsInvalid_ReturnsFalse()
+    {
+        $emailAddress = "foo";
+        $actual       = $this->emailRecipientsService->isValidEmailAddress($emailAddress);
+        $this->assertFalse($actual, "Should have returned false because {$emailAddress} is invalid.");
+    }
+
     public function testFindCount_SearchAllModulesForTerm_ReturnsTwo()
     {
         $this->createRecipientsAcrossModules();

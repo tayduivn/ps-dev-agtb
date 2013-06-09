@@ -105,6 +105,14 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Search For Email Recipients',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#findRecipients',
             ),
+            'validateEmailAddresses'  => array(
+                'reqType'   => 'POST',
+                'path'      => array('Mail', 'address', 'validate'),
+                'pathVars'  => array(''),
+                'method'    => 'validateEmailAddresses',
+                'shortHelp' => 'Validate One Or More Email Address',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#validateEmailAddresses',
+            ),
         );
 
         return $api;
@@ -228,6 +236,8 @@ class MailApi extends ModuleApi
     }
 
     /**
+     * Finds recipients that match the search term.
+     *
      * Arguments:
      *    q           - search string
      *    module_list -  one of the keys from $modules
@@ -334,6 +344,28 @@ class MailApi extends ModuleApi
         $mailRecord->text_body    = $args["text_body"];
 
         return $mailRecord;
+    }
+
+    /**
+     * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
+     * addresses and the values are booleans indicating whether or not the email address is valid.
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function validateEmailAddresses($api, $args)
+    {
+        unset($args["__sugar_url"]);
+        $validatedEmailAddresses = array();
+        $emailRecipientsService  = $this->getEmailRecipientsService();
+        $emailAddresses          = $args;
+
+        foreach ($emailAddresses as $emailAddress) {
+            $validatedEmailAddresses[$emailAddress] = $emailRecipientsService->isValidEmailAddress($emailAddress);
+        }
+
+        return $validatedEmailAddresses;
     }
 
     protected function getEmailRecipientsService()

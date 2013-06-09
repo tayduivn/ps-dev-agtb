@@ -38,6 +38,26 @@ class EmailRecipientsService
     }
 
     /**
+     * Check if an email address is valid.
+     *
+     * @see PHPMailerProxy::ValidateAddress()
+     * @param string $emailAddress
+     * @return bool
+     */
+    public function isValidEmailAddress($emailAddress = "")
+    {
+        $isValid = false;
+
+        if (!empty($emailAddress)) {
+            // the best regex we have for validating email addresses is in PHPMailer, so let's just use that one
+            require_once "modules/Mailer/PHPMailerProxy.php";
+            $isValid = PHPMailerProxy::ValidateAddress($emailAddress);
+        }
+
+        return $isValid;
+    }
+
+    /**
      * Find the total number of recipients, in one or all modules, that match the search term.
      *
      * @param string $term

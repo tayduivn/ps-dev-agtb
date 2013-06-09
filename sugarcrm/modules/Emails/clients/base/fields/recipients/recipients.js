@@ -246,6 +246,9 @@
 
     /**
      * Synchronize recipient field value with the model and setup tooltips for email pills
+     *
+     * NOTE: In Select2 v3.4.0, the event names are namespaced (prefixed with "select2-"). So it is expected that the
+     * event handlers defined in this method for the Select2 field will break upon upgrading.
      */
     bindDomChange: function() {
         var self = this;
@@ -257,7 +260,42 @@
             .on("change", function(event) {
                 self._destroyTooltips();
                 self._initializeTooltips();
-            });
+            }).
+            on("selected", _.bind(this._handleEventOnSelected, this));
+    },
+
+    /**
+     * Event handler for the Select2 "selected" event.
+     *
+     * NOTE: In Select2 v3.4.0, the event names are namespaced (prefixed with "select2-"). So "selected" event will no
+     * longer exist; it will become the "select2-selecting" event.
+     *
+     * @param event
+     * @returns {boolean}
+     * @private
+     */
+    _handleEventOnSelected: function (event) {
+        // only allow the user to select an option if it is determined to be a valid email address
+        // returning true will select the option; false will prevent the option from being selected
+        var isValidChoice = false;
+
+        // since this event is fired twice, we only want to perform validation on the first event
+        // event.object is not available on the second event
+        if (event.object) {
+            // the id and email address will not match when the email address came from the database and
+            // we are assuming that email addresses stored in the database have already been validated
+            if (event.object.id == event.object.email) {
+                // this option must be a new email address that the application does not recognize
+                // so validate it
+                isValidChoice = this._validateEmailAddress(event.object.email);
+            } else {
+                // the application should recognize the email address, so no need to validate it again
+                // just assume it's a valid choice and we'll deal with the consequences later (server-side)
+                isValidChoice = true;
+            }
+        }
+
+        return isValidChoice;
     },
 
     /**
@@ -481,5 +519,32 @@
         }
 
         return translatedRecipient;
+    },
+
+    /**
+     * Validates an email address on the server.
+     *
+     * @param {String} emailAddress
+     * @returns {boolean}
+     * @private
+     */
+    _validateEmailAddress: function(emailAddress) {
+        var isValid   = false,
+            callbacks = {},
+            options   = {
+                // execute the api call synchronously so that the method doesn't return before the response is known
+                async: false
+            },
+            url       = app.api.buildURL("Mail", "address/validate");
+
+        callbacks.success = function(result) {
+            isValid = result[emailAddress];
+        };
+        callbacks.error = function() {
+            isValid = false;
+        };
+        app.api.call("create", url, [emailAddress], callbacks, options);
+
+        return isValid;
     }
 })

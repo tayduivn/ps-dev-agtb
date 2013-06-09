@@ -95,7 +95,7 @@ describe("Emails.fields.recipients", function() {
 
         it("Should return a new option as an object when data is empty.", function() {
             var data     = [],
-                expected = {id: "foo", email: "foo"},
+                expected = {id: "foo@bar.com", email: "foo@bar.com"},
                 actual   = field.createOption(expected.email, data);
 
             expect(actual).toEqual(expected);
@@ -501,5 +501,95 @@ describe("Emails.fields.recipients", function() {
                 expect(actual).toEqual(data.expected);
             });
         }, this);
+    });
+
+    describe("_handleEventOnSelected", function() {
+        it("Should return false when event.object does not exist.", function() {
+            var event  = {},
+                actual = field._handleEventOnSelected(event);
+            expect(actual).toBeFalsy();
+        });
+
+        it("Should return true when event.object exists and id and email are not equal.", function() {
+            var recipient = {id: "abcd", email: "foo@bar.com"},
+                event     = {object: recipient}
+                actual    = field._handleEventOnSelected(event);
+            expect(actual).toBeTruthy();
+        });
+
+        describe("Validates the email address", function() {
+            var validateEmailAddressStub;
+
+            beforeEach(function() {
+                validateEmailAddressStub = sinon.stub(field, "_validateEmailAddress");
+            });
+
+            afterEach(function() {
+                validateEmailAddressStub.restore();
+            });
+
+            it("Should return true when event.object exists and id and email are equal and the email address is valid.", function() {
+                validateEmailAddressStub.returns(true);
+
+                var recipient = {id: "foo@bar.com", email: "foo@bar.com"},
+                    event     = {object: recipient},
+                    actual    = field._handleEventOnSelected(event);
+                expect(actual).toBeTruthy();
+            });
+
+            it("Should return false when event.object exists and id and email are equal and the email address is invalid.", function() {
+                validateEmailAddressStub.returns(false);
+
+                var recipient = {id: "foo@bar.com", email: "foo@bar.com"},
+                    event     = {object: recipient},
+                    actual    = field._handleEventOnSelected(event);
+                expect(actual).toBeFalsy();
+            });
+        });
+    });
+
+    describe("_validateEmailAddress", function() {
+        var apiCallStub;
+
+        afterEach(function() {
+            apiCallStub.restore();
+        });
+
+        it("Should return false when the api call results in an error.", function() {
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                callbacks.error();
+            })
+
+            var actual = field._validateEmailAddress("foo");
+            expect(actual).toBeFalsy();
+        });
+
+        it("Should return false when the api call is successful and returns false.", function() {
+            var emailAddress = "foo@bar.",
+                actual;
+
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                var result = {};
+                result[emailAddress] = false;
+                callbacks.success(result);
+            });
+
+            actual = field._validateEmailAddress(emailAddress);
+            expect(actual).toBeFalsy();
+        });
+
+        it("Should return true when the api call is successful and returns true.", function() {
+            var emailAddress = "foo@bar.com",
+                actual;
+
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                var result = {};
+                result[emailAddress] = true;
+                callbacks.success(result);
+            });
+
+            actual = field._validateEmailAddress(emailAddress);
+            expect(actual).toBeTruthy();
+        });
     });
 });
