@@ -23,15 +23,15 @@ $dictionary['meetings_contacts'] = array(
 	'table'=> 'meetings_contacts',
 	'fields'=> array(
 		array(	'name'			=> 'id', 
-				'type'			=> 'varchar', 
+				'type'			=> 'id', 
 				'len'			=> '36'
 		),
 		array(	'name'			=> 'meeting_id', 
-				'type'			=> 'varchar', 
+				'type'			=> 'id', 
 				'len'			=> '36',
 		),
 		array(	'name'			=> 'contact_id', 
-				'type'			=> 'varchar', 
+				'type'			=> 'id', 
 				'len'			=> '36',
 		),
 		array(	'name'			=> 'required', 

@@ -402,7 +402,7 @@ $dictionary['User'] = array(
             'name' => 'default_team',
             'vname' => 'LBL_DEFAULT_TEAM',
             'reportable' => false,
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => '36',
             'studio' => array(
                 'listview' => false,
@@ -418,7 +418,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DEFAULT_TEAM',
             'reportable' => false,
         	'source' => 'non-db',
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => '36',
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,

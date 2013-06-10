@@ -160,7 +160,7 @@ $dictionary['Document'] = array('table' => 'documents',
         array(
             'name' => 'document_revision_id',
             'vname' => 'LBL_DOCUMENT_REVISION_ID',
-            'type' => 'varchar',
+            'type' => 'id',
             'len' => '36',
             'reportable' => false,
         ),

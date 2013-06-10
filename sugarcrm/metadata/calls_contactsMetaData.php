@@ -21,9 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['calls_contacts'] = array ( 'table' => 'calls_contacts'
                                   , 'fields' => array (
-       array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
-      , array('name' =>'call_id', 'type' =>'varchar', 'len'=>'36', )
-      , array('name' =>'contact_id', 'type' =>'varchar', 'len'=>'36', )
+       array('name' =>'id', 'type' =>'id', 'len'=>'36')
+      , array('name' =>'call_id', 'type' =>'id', 'len'=>'36', )
+      , array('name' =>'contact_id', 'type' =>'id', 'len'=>'36', )
       , array('name' =>'required', 'type' =>'varchar', 'len'=>'1', 'default'=>'1')
       , array('name' =>'accept_status', 'type' =>'varchar', 'len'=>'25', 'default'=>'none')
       , array ('name' => 'date_modified','type' => 'datetime')
