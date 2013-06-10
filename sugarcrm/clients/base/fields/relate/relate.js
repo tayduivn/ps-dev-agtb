@@ -176,6 +176,14 @@
         this._buildRoute();
         return value;
     },
+    /**
+     * Relate takes care of its unformating
+     * stub this to return the unformated value off the model
+     * @returns {*}
+     */
+    unformat: function() {
+        return this.model.get(this.def.id_name);
+    },
     setValue: function (model) {
         if (!model) {
             return;
