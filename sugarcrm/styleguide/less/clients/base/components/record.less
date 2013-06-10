@@ -588,10 +588,19 @@
         }
       }
     }
-    &[data-name="fieldset_shipping_address"] .address.edit > .edit:nth-last-child(2) > input {
-      .border-bottom-left-radius(3px);
-      .border-bottom-right-radius(3px);
+
+    &[data-name="fieldset_shipping_address"],
+    &[data-name="fieldset_alt_address"],
+    &[data-name="fieldset_altaddress"] {
+      .address.edit > .edit:nth-last-child(2) > input {
+        .border-bottom-left-radius(3px);
+        .border-bottom-right-radius(3px);
+      }
+      .edit label {
+        padding-top: 2px;
+      }
     }
+
     &[data-type="favorite"] {
       display: none;
     }
