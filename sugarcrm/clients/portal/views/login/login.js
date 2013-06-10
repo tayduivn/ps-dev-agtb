@@ -29,7 +29,7 @@
      * Login form view.
      * @class View.Views.LoginView
      * @alias SUGAR.App.view.views.LoginView
-     * @extends View.Views.LoginView
+     * @extends View.View
      */
     events: {
         'click [name=login_button]': 'login',
