@@ -2,13 +2,14 @@
 
 use SugarTestActivityUtilities as ActivityHelper;
 use SugarTestProductUtilities as ProductHelper;
+use SugarTestUserUtilities as UserHelper;
 
 class SugarJobAddActivitySubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
         //set up test data
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = UserHelper::createAnonymousUser();
         $this->user = $GLOBALS['current_user'];
         $this->activity = ActivityHelper::createActivity();
         $this->bean = ProductHelper::createProduct();
@@ -25,7 +26,7 @@ class SugarJobAddActivitySubscriptionsTest extends Sugar_PHPUnit_Framework_TestC
         //clean up test data
         ProductHelper::removeAllCreatedProducts();
         ActivityHelper::removeAllCreatedActivities();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        UserHelper::removeAllCreatedAnonymousUsers();
     }
 
     /**
