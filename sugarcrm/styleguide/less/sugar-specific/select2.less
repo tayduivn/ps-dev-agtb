@@ -5,39 +5,6 @@
   border: 1px solid @inputBorder;
 }
 
-//email compose recipient select2
-.record div[data-type="recipients"].controls.btn-fit {
-  margin-bottom: 6px;
-  .btn {
-    top: -1px;
-    right: 9px;
-  }
-}
-.record div[data-name="to_addresses"].controls.btn-fit {
-  .select2-container {
-    .select2-choices:before {
-      content: attr(data-content-before);
-      float: right;
-      font-size: 12px;
-      padding: 2px 1px 2px 14px;
-      width: auto;
-    }
-    .select2-search-field input {
-      padding: 1px 7px;
-      margin-left: 0 !important;
-      position: absolute;
-    }
-  }
-}
-
-// needed for address book recipients
-.select2-container.select2-container-multi.select2-choices-pills-close.select2-container-disabled .select2-choices {
-  background-color: @white;
-  .select2-search-choice div {
-    padding-right: 6px;
-  }
-}
-
 .select2-container {
   .select2-single-with-drop div b {
     background-position: 0px 0px;
@@ -75,16 +42,11 @@
     padding: 0;
     margin: 3px 0 3px 4px;
     font-size: 12px;
-    background: none !important;
+    background: none;
     border: none;
     .border-radius(0);
     .box-shadow(none);
     line-height: 12px;
-    .select2-search-choice-close {
-      width: 12px;
-      height: 12px;
-      background: none !important;
-    }
     &.select2-search-choice-focus {
       border-color: rgba(82, 168, 236, 0.8);
       outline: 0;
@@ -124,42 +86,53 @@
     }
   }
 
-  &.select2-container-multi.select2-choices-pills-close .select2-search-choice {
-    div {
-      .border-radius(10px);
-      background: @dropdownLinkBackgroundHover;
-      color: @dropdownLinkColorHover;
-      padding: 2px 18px 2px 6px;
+  &.select2-container-multi.select2-choices-pills-close {
+    .select2-search-choice {
+      div {
+        .border-radius(10px);
+        background: @dropdownLinkBackgroundHover;
+        color: @dropdownLinkColorHover;
+        padding: 2px 18px 2px 6px;
+      }
+      a.select2-search-choice-close {
+        top: 2px;
+        right: 3px;
+        width: 12px;
+        height: 12px;
+        left: auto;
+        font-family: FontAwesome;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        color: darken(@dropdownLinkBackgroundHover,10%);
+        background: none;
+      }
+      a.select2-search-choice-close:hover {
+        color: lighten(@dropdownLinkColorHover,10%);
+      }
+      a.select2-search-choice-close::before {
+        content: "\f057";
+      }
     }
-    a.select2-search-choice-close {
-      top: 2px;
-      right: 3px;
-      left: auto;
-      font-family: FontAwesome;
-      font-size: 14px;
-      font-weight: bold;
-      text-decoration: none;
-      color: darken(@dropdownLinkBackgroundHover,10%);
-      background: none;
+    &.attachments .select2-search-choice {
+      div {
+        background: @dropdownLinkBackgroundHover;
+        padding: 2px 18px 2px 6px;
+      }
     }
-    a.select2-search-choice-close:hover {
-      color: lighten(@dropdownLinkColorHover,10%);
+    &.search-filter .select2-search-choice {
+      margin: 2px 0 4px 4px;
+      div {
+        background: none;
+        padding: 2px 0 2px 0px;
+      }
     }
-    a.select2-search-choice-close::before {
-      content: "\f057";
-    }
-  }
-  &.select2-container-multi.select2-choices-pills-close.attachments .select2-search-choice {
-    div {
-      background: @dropdownLinkBackgroundHover;
-      padding: 2px 18px 2px 6px;
-    }
-  }
-  &.select2-container-multi.select2-choices-pills-close.search-filter .select2-search-choice {
-    margin: 2px 0 4px 4px;
-    div {
-      background: none;
-      padding: 2px 0 2px 0px;
+    // needed for address book recipients
+    &.select2-container-disabled .select2-choices {
+      background-color: @white;
+      .select2-search-choice div {
+        padding-right: 6px;
+      }
     }
   }
   .select2-select-legend {
@@ -168,12 +141,12 @@
       line-height: 4px;
     }
   }
-  .select2-default {
-      color: @grayLight !important;
+  .select2-choice.select2-default {
+    color: @grayLight !important; //important needed here to overide select2
   }
   .select2-choice {
     #gradient > .vertical(lighten(@grayLighter, 1%), darken(@grayLighter, 3%));
-    color: lighten(@gray, 20%) !important;
+    color: lighten(@gray, 20%);
     border-color: @inputBorder;
     line-height: 26px;
     height: 26px;
@@ -205,7 +178,7 @@
 .select2-drop-error {
   border-color:@errorText;
   .select2-results {
-/*    li:first-child {
+  /*    li:first-child {
       border-top: none;
       .border-radius(3px 3px 0 0);
     }
@@ -255,10 +228,11 @@
     .border-radius(0 0 3px 3px);
   }
 }
-.select2-no-results, .select2-searching {
-    padding: 0 0 0 8px;
-    color: @grayLight;
-    .border-radius(0);
+.select2-no-results,
+.select2-searching {
+  padding: 0 0 0 8px;
+  color: @grayLight;
+  .border-radius(0);
 }
 
 .select2-drop-above {
@@ -293,12 +267,12 @@
   padding: 3px;
 }
 .currency {
-    .select2-choice span {
-        min-width: 8px;
-    }
+  .select2-choice span {
+    min-width: 8px;
+  }
 }
 .select2-offscreen {
-  position: absolute !important;
+  position: absolute;
   left: -10000px;
   top: -1px;
 }
