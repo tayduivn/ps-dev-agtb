@@ -58,6 +58,11 @@
     totals: {},
 
     /**
+     * Totals Colspan
+     */
+    totals_colspan: 0,
+
+    /**
      * Selected User Storage
      */
     selectedUser: {},
@@ -577,11 +582,13 @@
             }),
             fieldNames = [];
 
+        this.totals_colspan = this._fields.visible.length;
         _.each(fields, function(field) {
             fieldNames.push(field.name);
             this.totals[field.name] = 0;
             this.totals["overall_" + field.name] = 0;
             this.totals[field.name + "_display"] = true;
+            this.totals_colspan--;
         }, this);
 
         // add up all the currency fields

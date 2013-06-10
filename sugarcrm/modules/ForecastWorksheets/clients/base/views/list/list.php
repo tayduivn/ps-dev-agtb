@@ -11,10 +11,8 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$admin = BeanFactory::getBean('Administration');
-
-$viewdefArray = array();
-$viewdefArray['products'] = array(
+//BEGIN SUGARCRM flav = ent ONLY
+$listDefs = array(
     'panels' =>
     array(
         0 =>
@@ -133,8 +131,10 @@ $viewdefArray['products'] = array(
         ),
     ),
 );
+//END SUGARCRM flav = ent ONLY
 
-$viewdefArray['opportunities'] = array(
+//BEGIN SUGARCRM flav = pro && flav != ent ONLY
+$listDefs = array(
     'panels' =>
     array(
         0 =>
@@ -232,21 +232,19 @@ $viewdefArray['opportunities'] = array(
                     'align' => 'right',
                     'click_to_edit' => true,
                     'width' => '22%'
-                ),
-                array(
-                    'name' => 'sales_status',
-                    'label' => 'LBL_STATUS',
-                    'sortable' => true,
-                    'default' => true,
-                    'enabled' => true,
-                    'type' => 'enum',
-                    'options' => 'sales_status_dom',
-                    'click_to_edit' => true
-                ),
+                )
             )
         )
     )
 );
+//END SUGARCRM flav = pro && flav != ent ONLY
 
+
+// TODO this has been commented out due to the setting being hidden in the Admin
+// Note the above arrays need to be fixed as well.
+/*
+$admin = BeanFactory::getBean('Administration');
 $config = $admin->getConfigForModule('Forecasts');
 $viewdefs['ForecastWorksheets']['base']['view']['list'] = $viewdefArray[$config['forecast_by']];
+*/
+$viewdefs['ForecastWorksheets']['base']['view']['list'] = $listDefs;
