@@ -320,6 +320,10 @@
       padding-bottom: 2px;
     }
 
+    .normal > span {
+      display: block;
+    }
+
     .ellipsis_inline {
       display: block !important;
       white-space: nowrap;
@@ -361,6 +365,7 @@
 
     .select2-container {
       z-index: 1;
+      margin: -5px 0 7px -9px;
       .select2-choice {
         color: @gray;
       }
@@ -402,9 +407,6 @@
     }*/
 
     &[data-type="email"] {
-      .normal > span {
-        margin-bottom: 10px;
-      }
       .control-group.email {
         padding-right: 132px;
         position: relative;
@@ -412,7 +414,6 @@
         input[type="text"] {
           min-height: 18px;
           margin-bottom: 6px;
-          //.border-radius(0);
         }
         .input-append.widget {
           margin-bottom: 0;
@@ -482,7 +483,6 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         .select2-container {
-          margin: -5px 0 7px -9px;
           position: absolute;
         }
       }
@@ -500,9 +500,6 @@
     }
 
     &[data-type="parent"] {
-      .select2-container {
-        margin: -5px 0 7px -9px;
-      }
       .span8 .select2-container a {
         margin-right: -14px;
       }
@@ -517,8 +514,8 @@
       }
       .normal .control-group {
         margin-bottom: 4px;
-        .select2-container {
-          margin: 0 0 0 -9px;
+        .btn {
+          top: -5px;
         }
       }
     }
@@ -526,9 +523,6 @@
     &[data-type="date"],
     &[data-type="datetimecombo"],
     &[data-type="fieldset"] {
-      .normal > span {
-        padding: 0 0 10px;
-      }
       .error {
         .input-append.date {
           .error-tooltip.add-on {
@@ -588,7 +582,7 @@
           margin: 0 14px 0 -7px;
         }
         input[type="text"] {
-          border-width: 1px 1px 1px 1px;
+          border-width: 1px;
           padding: 6px;
           .border-radius(3px);
           margin-right: 14px;
@@ -606,7 +600,7 @@
         .border-bottom-right-radius(3px);
       }
       .edit label {
-        padding-top: 2px;
+        padding: 4px 0 2px;
       }
     }
 
