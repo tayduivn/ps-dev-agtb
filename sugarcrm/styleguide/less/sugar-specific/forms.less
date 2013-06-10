@@ -169,7 +169,7 @@ input[type=radio] {
   margin-bottom: 0px;
   .add-on {
     border:none;
-    background:transparent !important;
+    background:transparent;
     margin-left:-26px;
     position:relative;
     font-size: @baseFontSize;
@@ -230,12 +230,10 @@ input[type=radio] {
 
 .welcome {
   position: absolute;
-  //left: 50%;
   width:100%;
 }
 .thumbnail.signup,
 .thumbnail.login {
-  //left: -50%;
   width: 240px;
   margin: 0 auto;
   padding: 20px;
@@ -397,12 +395,9 @@ input[type=radio] {
 
   .controls {
     margin-left: @fluidGridGutterWidth;
-    //margin-left: 0;
     padding: 0;
     > span {
       padding: 0;
-      //padding: 6px 0;
-      //display: inline-block;
     }
     &.btn-fit {
       &.controls-four {
@@ -425,7 +420,6 @@ input[type=radio] {
         position: absolute;
         top: 2px;
         right: 0px;
-        //padding: 5px 8px 3px;
         &.fourth {
           right: 108px;
         }
