@@ -26,7 +26,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecastdetails-record',
-                                'label' => 'Forecast',
+                                'label' => 'LBL_DASHLET_FORECAST_NAME',
                             ),
                             'context' => array(
                                 'module' => 'Forecasts',
@@ -39,7 +39,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecast-pareto',
-                                'label' => 'Forecast Pareto Chart',
+                                'label' => 'LBL_DASHLET_FORECAST_PARETO_CHART_NAME',
                             ),
                             'width' => 12,
                         ),
@@ -68,7 +68,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'attachments',
-                                'label' => 'Attachments',
+                                'label' => 'LBL_DASHLET_ATTACHMENTS_NAME',
                                 'limit' => '5',
                                 'auto_refresh' => '0',
                             ),
@@ -85,6 +85,6 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

@@ -62,7 +62,7 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             "name" => "header",
             "fields" => array(
                 array(
-                    "type" => "base",
+                    "type" => "dashboardtitle",
                     "name" => "name",
                     "placeholder" => "LBL_DASHBOARD_TITLE",
                 ),

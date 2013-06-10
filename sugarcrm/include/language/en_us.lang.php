@@ -3174,6 +3174,7 @@ $app_strings = array (
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
     /* Sugar7 Dashboard */
+    'LBL_DEFAULT_DASHBOARD_TITLE' => 'My Dashboard',
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
     'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',
@@ -3194,6 +3195,15 @@ $app_strings = array (
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
+    'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Cases Summary',
+    'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
+    'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
+    'LBL_DASHLET_ATTACHMENTS_NAME' => 'Attachments',
+    'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
+    'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
+    'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
+    'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
 
@@ -3207,6 +3217,10 @@ $app_strings = array (
     'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
+
+    /* Country Chart Dashlet */
+    'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
+    'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',

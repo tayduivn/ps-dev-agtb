@@ -45,6 +45,6 @@ $viewdefs['Leads']['base']['layout']['record-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

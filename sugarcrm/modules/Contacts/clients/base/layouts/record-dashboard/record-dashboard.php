@@ -13,37 +13,37 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Contacts']['base']['layout']['record-dashboard'] = array (
-  'metadata' => 
-  array (
-    'components' => 
-    array (
-      array (
-        'rows' => 
-        array (
+$viewdefs['Contacts']['base']['layout']['record-dashboard'] = array(
+    'metadata' =>
+    array(
+        'components' =>
+        array(
             array(
+                'rows' =>
                 array(
-                    'view' => array(
-                        'name' => 'planned-activities',
-                        'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                    array(
+                        array(
+                            'view' => array(
+                                'name' => 'planned-activities',
+                                'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                            ),
+                            'width' => 12,
+                        ),
                     ),
-                    'width' => 12,
-                ),
-            ),
-            array(
-                array(
-                    'view' => array(
-                        'name' => 'history',
-                        'label' => 'LBL_HISTORY_DASHLET',
+                    array(
+                        array(
+                            'view' => array(
+                                'name' => 'history',
+                                'label' => 'LBL_HISTORY_DASHLET',
+                            ),
+                            'width' => 12,
+                        ),
                     ),
-                    'width' => 12,
                 ),
+                'width' => 12,
             ),
         ),
-        'width' => 12,
-      ),
     ),
-  ),
-  'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 
