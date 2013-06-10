@@ -1,8 +1,88 @@
 <?php
-$layout = MetaDataManager::getLayout("SideBarLayout");
-$layout->push("main", array("view" => "compose-addressbook-headerpane"));
-$layout->push("main", array("view" => "compose-addressbook-recipientscontainer"));
-$layout->push("main", array("view" => "compose-addressbook-filter"));
-$layout->push("main", array("layout" => "compose-addressbook-list"));
-//$layout->push("side", array());
-$viewdefs["Emails"]["base"]["layout"]["compose-addressbook"] = $layout->getLayout();
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
+$viewdefs['Emails']['base']['layout']['compose-addressbook'] = array(
+    'components' =>
+    array(
+        array(
+            'layout' =>
+            array(
+                'components' =>
+                array(
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'view' => 'compose-addressbook-headerpane',
+                                ),
+                                array(
+                                    'view' => 'compose-addressbook-recipientscontainer',
+                                ),
+                                array(
+                                    'view' => 'compose-addressbook-filter',
+                                ),
+                                array(
+                                    'layout' => 'compose-addressbook-list',
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'main-pane',
+                            'span' => 8,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(),
+                            'type' => 'simple',
+                            'name' => 'side-pane',
+                            'span' => 4,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(),
+                            'type' => 'simple',
+                            'name' => 'dashboard-pane',
+                            'span' => 4,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(),
+                            'type' => 'simple',
+                            'name' => 'preview-pane',
+                            'span' => 8,
+                        ),
+                    ),
+                ),
+                'type' => 'default',
+                'name' => 'sidebar',
+                'span' => 12,
+            ),
+        ),
+    ),
+    'type' => 'simple',
+    'name' => 'base',
+    'span' => 12,
+);
+

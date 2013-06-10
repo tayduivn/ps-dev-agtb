@@ -1,4 +1,18 @@
 <?php
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 /**
  * Convert Lead Metadata Definition
  * This file defines which modules are included in the lead conversion process.
@@ -11,14 +25,16 @@
  *                              if set, this module will be disabled until dependent modules are completed
  *  * fieldMapping (array): how should lead fields be mapped to this module left side is the module and right side is the lead
  */
+
 $viewdefs['Leads']['base']['layout']['convert-main'] = array(
-    'modules' => array(
+    'modules' =>
+    array(
         array(
             'module' => 'Contacts',
             'required' => true,
             'duplicateCheckOnStart' => true,
-            'fieldMapping' => array(
-                //contact field => lead field
+            'fieldMapping' =>
+            array(
                 'salutation' => 'salutation',
                 'first_name' => 'first_name',
                 'last_name' => 'last_name',
@@ -39,20 +55,22 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'campaign_id' => 'campaign_id',
                 'campaign_name' => 'campaign_name',
             ),
-            'hiddenFields' => array (
-                'account_name'
-            )
+            'hiddenFields' =>
+            array(
+                'account_name',
+            ),
         ),
         array(
             'module' => 'Accounts',
             'required' => true,
             'duplicateCheckOnStart' => true,
-            'duplicateCheckRequiredFields' => array(
-                'name'
+            'duplicateCheckRequiredFields' =>
+            array(
+                'name',
             ),
             'contactRelateField' => 'account_name',
-            'fieldMapping' => array(
-                //account field => lead field
+            'fieldMapping' =>
+            array(
                 'name' => 'account_name',
                 'team_name' => 'team_name',
                 'billing_address_street' => 'primary_address_street',
@@ -67,31 +85,36 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'shipping_address_country' => 'primary_address_country',
                 'campaign_id' => 'campaign_id',
                 'campaign_name' => 'campaign_name',
-            )
+            ),
         ),
         array(
-            'module'                => 'Opportunities',
-            'required'              => false,
+            'module' => 'Opportunities',
+            'required' => false,
             'duplicateCheckOnStart' => false,
-            'fieldMapping'          => array(
-                //opportunity field => lead field
-                'name'        => 'opportunity_name',
-                'phone_work'  => 'phone_office',
-                'team_name'     => 'team_name',
+            'fieldMapping' =>
+            array(
+                'name' => 'opportunity_name',
+                'phone_work' => 'phone_office',
+                'team_name' => 'team_name',
                 'campaign_id' => 'campaign_id',
                 'campaign_name' => 'campaign_name',
                 'lead_source' => 'lead_source',
             ),
-            'dependentModules'      => array(
-                'Accounts' => array(
-                    'fieldMapping' => array(
+            'dependentModules' =>
+            array(
+                'Accounts' =>
+                array(
+                    'fieldMapping' =>
+                    array(
                         'account_id' => 'id',
-                    )
-                )
+                    ),
+                ),
             ),
-            'hiddenFields'          => array(
-                'account_name'
-            )
+            'hiddenFields' =>
+            array(
+                'account_name',
+            ),
         ),
-    )
+    ),
 );
+
