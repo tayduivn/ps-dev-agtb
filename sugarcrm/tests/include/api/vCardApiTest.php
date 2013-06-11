@@ -39,6 +39,7 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('ACLStatic');
     }
 
     public function tearDown()
@@ -46,7 +47,6 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
         unset($_FILES);
-        unset($_SESSION['ACL']);
     }
 
     protected function getApi()
@@ -155,9 +155,10 @@ class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
         //Setting access to be denied for import and read
-        $_SESSION['ACL'] = array();
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Contacts']['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Contacts']['module']['import']['aclaccess'] = ACL_ALLOW_DISABLED;
+        $acldata = array();
+        $acldata['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        $acldata['module']['import']['aclaccess'] = ACL_ALLOW_DISABLED;
+        ACLAction::setACLData($GLOBALS['current_user']->id, 'Contacts', $acldata);
         // reset cached ACLs
         SugarACL::$acls = array();
 

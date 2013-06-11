@@ -35,7 +35,7 @@ require_once ("clients/base/api/FileApi.php");
 /**
  * @group ApiTests
  */
-class FileApiTest extends Sugar_PHPUnit_Framework_TestCase 
+class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public $acl = array();
     public $documents;
@@ -43,6 +43,7 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp() {
         SugarTestHelper::setUp("current_user");
+        SugarTestHelper::setUp("ACLStatic");
         // load up the unifiedSearchApi for good times ahead
         $this->fileApi = new FileApi();
         $document = BeanFactory::newBean('Documents');
@@ -50,13 +51,10 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
         $document->save();
         $this->documents[] = $document;
 
-        // save ACLs
-        $this->acl = $_SESSION['ACL'];
-        unset($_SESSION['ACL']);
-        
         // no Account view, delete
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Documents']['module']['view']['aclaccess'] = ACL_ALLOW_NONE;
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Documents']['module']['delete']['aclaccess'] = ACL_ALLOW_NONE;
+        $acldata['module']['view']['aclaccess'] = ACL_ALLOW_NONE;
+        $acldata['module']['delete']['aclaccess'] = ACL_ALLOW_NONE;
+        ACLAction::setACLData($GLOBALS['current_user']->id, 'Documents', $acldata);
     }
 
     public function tearDown() {
@@ -66,17 +64,15 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
             $document->mark_deleted($document->id);
         }
 
-        unset($_SESSION['ACL']);
-        $_SESSION['ACL'] = $this->acl;
         SugarTestHelper::tearDown();
-        parent::tearDown();        
+        parent::tearDown();
     }
 
     public function testSaveFilePost()
     {
         $this->setExpectedException(
           'SugarApiExceptionNotAuthorized'
-        );          
+        );
         $this->fileApi->saveFilePost(new FileApiServiceMockUp(), array('module' => 'Documents', 'record' => $this->documents[0]->id, 'field' => 'filename'));
     }
 
@@ -84,10 +80,10 @@ class FileApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(
           'SugarApiExceptionNotAuthorized'
-        );          
+        );
         $this->fileApi->getFileList(new FileApiServiceMockUp(), array('module' => 'Documents', 'record' => $this->documents[0]->id, 'field' => 'filename'));
     }
-    
+
 }
 
 class FileApiServiceMockUp extends RestService

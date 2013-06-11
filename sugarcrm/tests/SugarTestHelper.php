@@ -887,6 +887,27 @@ class SugarTestHelper
         SugarAutoLoader::saveMap();
     }
 
+    /**
+     *
+     * @var ACLAction
+     */
+    static public $aclAction;
+
+    protected static function setUp_ACLStatic()
+    {
+        self::$aclAction = BeanFactory::getBean('ACLActions');
+    }
+
+    protected static function tearDown_ACLStatic()
+    {
+        self::$aclAction->clearACLCache();
+    }
+
+    public static function clearACLCache()
+    {
+        self::$aclAction->clearACLCache();
+    }
+
 
     /**
      * Reinitialization of $dictionary in global scope because we can't unset that variable
