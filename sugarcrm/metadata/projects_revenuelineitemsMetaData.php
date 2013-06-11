@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 // adding project-to-products relationship
 $dictionary['projects_revenuelineitems'] = array (
-    'table' => 'projects__revenue_line_items',
+    'table' => 'projects_revenue_line_items',
     'fields' => array (
         array('name' => 'id', 'type' => 'varchar', 'len' => '36'),
         array('name' => 'rli_id', 'type' => 'varchar', 'len' => '36'),
@@ -51,4 +51,3 @@ $dictionary['projects_revenuelineitems'] = array (
         ),
     ),
 );
-?>

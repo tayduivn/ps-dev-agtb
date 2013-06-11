@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=pro ONLY
 
 $dictionary['contracts_revenuelineitems'] = array (
-	'table' => 'contracts__revenue_line_items',
+	'table' => 'contracts_revenue_line_items',
 	'fields' => array (
 		array('name' => 'id', 'type' => 'varchar', 'len' => '36'),
 		array('name' => 'rli_id', 'type' => 'varchar', 'len' => '36'),
@@ -59,4 +59,3 @@ $dictionary['contracts_revenuelineitems'] = array (
 		),
 	),
 );
-?>

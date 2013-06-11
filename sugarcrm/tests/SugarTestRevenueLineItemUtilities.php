@@ -86,4 +86,3 @@ class SugarTestRevenueLineItemUtilities
         return $rli_ids;
     }
 }
-?>

@@ -17,7 +17,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
     'audited' => true,
-    'comment' => 'The user (not Admin)) view of a Product definition; an instance of a product',
+    'comment' => 'The user (not Admin)) view of a RevenueLineItem definition; an instance of a roduct used in the worksheets and opportunities',
     'fields' => array(
         'product_template_id' =>  array(
             'name' => 'product_template_id',

@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 $dictionary['revenuelineitems_revenuelineitems'] = array (
-	'table' => 'revenue_line_items__revenue_line_items',
+	'table' => 'revenue_line_items_revenue_line_items',
 	'fields' => array (
        array('name' =>'id', 'type' =>'varchar', 'len'=>'36')
       , array ('name' => 'date_modified','type' => 'datetime')
@@ -41,4 +41,3 @@ $dictionary['revenuelineitems_revenuelineitems'] = array (
 		'relationship_type'=>'many-to-many',
 		'join_table'=> 'revenuelineitems_revenuelineitems', 'join_key_lhs'=>'parent_id', 'join_key_rhs'=>'child_id','reverse'=>'1'))
 );
-?>

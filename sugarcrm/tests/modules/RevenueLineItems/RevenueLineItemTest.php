@@ -14,7 +14,7 @@
  */
 
 
-class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
+class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
 {
     //BEGIN SUGARCRM flav=ent ONLY
     public function dataProviderSetOpportunitySalesStatus()
