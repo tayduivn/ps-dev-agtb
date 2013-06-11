@@ -22,43 +22,84 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarFields/Fields/Password/SugarFieldPassword.php');
-require_once('modules/Import/ImportFieldSanitize.php');
+require_once 'include/SugarFields/Fields/Password/SugarFieldPassword.php';
+require_once 'modules/Import/ImportFieldSanitize.php';
 
 class SugarFieldPasswordTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $fieldObj;
+    protected $contactBean;
+    protected $currentPassword;
+
+    protected function setUp()
+    {
+        $this->fieldObj = new SugarFieldPassword('Password');
+    }
+
+    protected function tearDown()
+    {
+        unset($this->fieldObj);
+    }
+
     /**
      * @ticket 40304
      */
     public function testImportSanitize()
     {
-        $fieldObj = new SugarFieldPassword('Password');
-
         $settings = new ImportFieldSanitize();
 
         $this->assertEquals(
             md5('test value'),
-            $fieldObj->importSanitize('test value',array(),null,$settings)
+            $this->fieldObj->importSanitize('test value',array(),null,$settings)
             );
     }
 
+    /**
+     * Test formatting the apiFormatField method of a Password field
+     */
     public function testApiFormatField()
     {
-        $fieldObj = new SugarFieldPassword('Password');
-
         $data = array(
             'id' => 'awesome',
             'user_hash' => 'this-is-my-password',
-            );
+        );
 
         $bean = BeanFactory::getBean('Users');
         $args = array();
         $fieldName = 'user_hash';
         $properties = array();
-
-        $fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties);
-
+        // no bean password set, so it returns empty string
+        $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties);
         $this->assertEquals('', $data['user_hash']);
         $this->assertEquals('awesome', $data['id']);
+
+        $bean->user_hash = 'this-is-my-password';
+        // bean password set so it returns value_setvalue_setvalue_set
+        $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties);
+        $this->assertEquals(true, $data['user_hash']);
+        $this->assertEquals('awesome', $data['id']);
+    }
+
+    /**
+     * Test the apiSave method of a Password field
+     */
+    public function testApiSave()
+    {
+        $contactBean = BeanFactory::getBean('Contacts');
+        $contactBean->portal_password = User::getPasswordHash('awesome');
+        $currentPassword = $contactBean->portal_password;
+
+        // dataProvider is not working when you need to check class vars
+        // test password not change
+        $this->fieldObj->apiSave($contactBean, array('portal_password' => true), 'portal_password', array());
+        $this->assertEquals($currentPassword, $contactBean->portal_password, "Password should not have changed");
+
+        // test password being unset
+        $this->fieldObj->apiSave($contactBean, array('portal_password' => ''), 'portal_password', array());
+        $this->assertEquals(null, $contactBean->portal_password, "Password should be null");
+
+        // test changing password
+        $this->fieldObj->apiSave($contactBean, array('portal_password' => '1234'), 'portal_password', array());
+        $this->assertTrue(User::checkPassword('1234', $contactBean->portal_password), "The password didn't change");
     }
 }
