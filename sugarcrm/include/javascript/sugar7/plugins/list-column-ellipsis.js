@@ -23,15 +23,15 @@
              * @param {Object} event jquery event object
              */
             toggleColumn: function (event) {
-                var isLastColumnVisible,
-                    column = $(event.currentTarget).data('fieldToggle');
+                var column = $(event.currentTarget).data('fieldToggle');
 
                 // SP-845 (must have atleast one column selected)
                 // User should not be able to deselect if only one column available
-                isLastColumnVisible = this.isLastColumnVisible(column);
-                if (!isLastColumnVisible) {
-                    this._toggleColumn(column);
+                if (this.isLastColumnVisible(column)) {
+                    event.stopPropagation();
+                    return;
                 }
+                this._toggleColumn(column);
                 this.render();
                 this._reopenFieldsDropdown(event);
             },
