@@ -48,6 +48,19 @@
         this.handleCancel();
         this.model.trigger("setMode", "view");
     },
+
+    /**
+     * Compare with last fetched data and return true if model contains changes
+     *
+     * @return true if current model contains unsaved changes
+     * @link {app.plugins.view.editable}
+     */
+    hasUnsavedChanges: function() {
+        if (this.model.isNew()) {
+            return this.model.hasChanged();
+        }
+        return !_.isEmpty(this.model.changedAttributes(this.model._syncedAttributes));
+    },
     saveClicked: function(evt) {
         this.handleSave();
     },
