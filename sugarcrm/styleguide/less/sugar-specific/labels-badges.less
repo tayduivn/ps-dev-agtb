@@ -1,5 +1,4 @@
-.label,
-.badge {
+.label {
   font-weight: 600;
   text-shadow: none;
   color: @white;
@@ -10,16 +9,9 @@
   padding: 1px 4px 2px;
   .border-radius(@baseBorderRadius);
 }
-.badge {
-  padding: 1px 9px 2px;
-  .border-radius(10px);
-}
 a.label,
-a.badge,
 a > .label,
-a > .badge,
-.label a,
-.badge a {
+.label a {
   font-weight: 600;
   text-shadow: none;
   color: @white;
@@ -44,7 +36,7 @@ a > .badge,
   line-height: 11px;
   margin: 0;
   border: none;
-  padding: 2px 0 0 2px; 
+  padding: 2px 0 0 2px;
 }
 .label-module-mini {
   height: 14px;
@@ -60,101 +52,34 @@ a > .badge,
 .dropdown-menu .label-module-mini {
   margin: 0 10px 0 0;
 }
-.label,
-.badge {
-  &-important,
-  &-important[href]     {background-color: @btnDangerBackground;}
-  &-warning,
-  &-warning[href]       {background-color: @orange;}
-  &-pending,
-  &-pending[href]       {background-color: @yellow;}
-  &-success,
-  &-success[href]       {background-color: @btnSuccessBackground;}
-  &-info,
-  &-info[href]          {background-color: @btnInfoBackground;}
-  &-inverse,
-  &-inverse[href]       {background-color: @grayDark;}
-  &-log,
-  &-log[href]           {background-color: darken(@gray,10%);}
+
+.label {
+  &-important {background-color: @btnDangerBackground;}
+  &-warning {background-color: @orange;}
+  &-pending {background-color: @yellow;}
+  &-success {background-color: @btnSuccessBackground;}
+  &-info {background-color: @btnInfoBackground;}
+  &-inverse {background-color: @grayDark;}
+  &-log {background-color: darken(@gray,10%);}
 
 /* Modules */
-  &-Accounts,
-  &-Accounts[href]      {background-color: @green;}
-  &-Bugs,
-  &-Bugs[href]          {background-color: darken(@red,10%);}
-  &-Campaigns,
-  &-Campaigns[href]     {background-color: darken(@blue,20%);}
-  &-Calendar,
-  &-Calendar[href]      {background-color: darken(@blue,10%);}  
-  &-Cases,
-  &-Cases[href]         {background-color: darken(@red,20%);}
-  &-Contacts,
-  &-Contacts[href]      {background-color: darken(@green,10%);}
-  &-Documents,
-  &-Documents[href]     {background-color: darken(@orange,30%);}  
-  &-Emails,
-  &-Emails[href]        {background-color: darken(@blue,35%);}
-  &-Files,
-  &-Files[href]         {background-color: darken(@orange,10%);}  
-  &-Forecasts,
-  &-Forecasts[href]     {background-color: @orange;}  
-  &-KBDocuments,
-  &-KBDocuments[href]   {background-color: darken(@orange,20%);}  
-  &-Leads,
-  &-Leads[href]         {background-color: darken(@green,20%);}
-  &-Meetings,
-  &-Meetings[href]      {background-color: @yellow;}    
-  &-Notes,
-  &-Notes[href]         {background-color: @blue;}
-  &-Opportunities,
-  &-Opportunities[href] {background-color: @purple;}  
-  &-Products,
-  &-Products[href]      {background-color: darken(@purple,10%);}
-  &-Reports,
-  &-Reports[href]       {background-color: darken(@orange,10%);}
-  &-Quotes,
-  &-Quotes[href]        {background-color: darken(@purple,20%);} 
-  &-Users,
-  &-Users[href]         {background-color: @grayDarker;}
-}
-
-.label-module.label, .label-module-sm.label, .label-module-mini.label {
-  &-Accounts,
-  &-Accounts[href]      {.box-shadow(0 2px 0 darken(@green,5%));}
-  &-Bugs,
-  &-Bugs[href]          {.box-shadow(0 2px 0 darken(@red,15%));}
-  &-Campaigns,
-  &-Campaigns[href]     {.box-shadow(0 2px 0 darken(@blue,30%));}
-  &-Calendar,
-  &-Calendar[href]      {.box-shadow(0 2px 0 darken(@blue,15%));}
-  &-Cases,
-  &-Cases[href]         {.box-shadow(0 2px 0 darken(@red,30%));}
-  &-Contacts,
-  &-Contacts[href]      {.box-shadow(0 2px 0 darken(@green,15%));}
-  &-Documents,
-  &-Documents[href]     {.box-shadow(0 2px 0 darken(@orange,35%));}  
-  &-Emails,
-  &-Emails[href]        {.box-shadow(0 2px 0 darken(@blue,40%));}
-  &-Files,
-  &-Files[href]         {.box-shadow(0 2px 0 darken(@orange,15%));}  
-  &-Forecasts,
-  &-Forecasts[href]     {.box-shadow(0 2px 0 darken(@orange,5%));}  
-  &-KBDocuments,
-  &-KBDocuments[href]   {.box-shadow(0 2px 0 darken(@orange,25%));}  
-  &-Leads,
-  &-Leads[href]         {.box-shadow(0 2px 0 darken(@green,25%));} 
-  &-Meetings,
-  &-Meetings[href]      {.box-shadow(0 2px 0 darken(@yellow,5%));}   
-  &-Notes,
-  &-Notes[href]         {.box-shadow(0 2px 0 darken(@blue,10%));}  
-  &-Opportunities,
-  &-Opportunities[href] {.box-shadow(0 2px 0 darken(@purple,5%));}
-  &-Products,
-  &-Products[href]      {.box-shadow(0 2px 0 darken(@purple,15%));}  
-  &-Reports,
-  &-Reports[href]       {.box-shadow(0 2px 0 darken(@orange,15%));}
-  &-Quotes,
-  &-Quotes[href]        {.box-shadow(0 2px 0 darken(@purple,25%));}
-  &-Users,
-  &-Users[href]         {.box-shadow(0 2px 0 darken(@grayDarker,5%));} 
+  &-Accounts {background-color: @green;.box-shadow(0 2px 0 darken(@green,5%));}
+  &-Bugs {background-color: darken(@red,10%);.box-shadow(0 2px 0 darken(@red,15%));}
+  &-Campaigns {background-color: darken(@blue,20%);.box-shadow(0 2px 0 darken(@blue,30%));}
+  &-Calendar {background-color: darken(@blue,10%);.box-shadow(0 2px 0 darken(@blue,15%));}
+  &-Cases {background-color: darken(@red,20%);.box-shadow(0 2px 0 darken(@red,30%));}
+  &-Contacts {background-color: darken(@green,10%);.box-shadow(0 2px 0 darken(@green,15%));}
+  &-Documents {background-color: darken(@orange,30%);.box-shadow(0 2px 0 darken(@orange,35%));}
+  &-Emails {background-color: darken(@blue,35%);.box-shadow(0 2px 0 darken(@blue,40%));}
+  &-Files {background-color: darken(@orange,10%);.box-shadow(0 2px 0 darken(@orange,15%));}
+  &-Forecasts {background-color: @orange;.box-shadow(0 2px 0 darken(@orange,5%));}
+  &-KBDocuments {background-color: darken(@orange,20%);.box-shadow(0 2px 0 darken(@orange,25%));}
+  &-Leads {background-color: darken(@green,20%);.box-shadow(0 2px 0 darken(@green,25%));}
+  &-Meetings {background-color: @yellow;.box-shadow(0 2px 0 darken(@yellow,5%));}
+  &-Notes {background-color: @blue;.box-shadow(0 2px 0 darken(@blue,10%));}
+  &-Opportunities {background-color: @purple;.box-shadow(0 2px 0 darken(@purple,5%));}
+  &-Products {background-color: darken(@purple,10%);.box-shadow(0 2px 0 darken(@purple,15%));}
+  &-Reports {background-color: darken(@orange,10%);.box-shadow(0 2px 0 darken(@orange,15%));}
+  &-Quotes {background-color: darken(@purple,20%);.box-shadow(0 2px 0 darken(@purple,25%));}
+  &-Users {background-color: @grayDarker;.box-shadow(0 2px 0 darken(@grayDarker,5%));}
 }

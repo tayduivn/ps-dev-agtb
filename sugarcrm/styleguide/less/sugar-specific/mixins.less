@@ -87,24 +87,22 @@
     left: @beforeLeftCaretPos;
     right: @beforeRightCaretPos;
   }
-
-    &.bottom-up {
-        &:after {
-            border-top: 6px solid @white;
-            border-bottom: none;
-            top: auto;
-            left: @afterLeftCaretPos;
-            right: @afterRightCaretPos;
-
-        }
-        &:before {
-            border-top: 7px solid @white;
-            border-bottom: none;
-            top: auto;
-            left: @beforeLeftCaretPos;
-            right: @beforeRightCaretPos;
-        }
+  &.bottom-up {
+    &:after {
+      border-top: 6px solid @white;
+      border-bottom: none;
+      top: auto;
+      left: @afterLeftCaretPos;
+      right: @afterRightCaretPos;
     }
+    &:before {
+      border-top: 7px solid @white;
+      border-bottom: none;
+      top: auto;
+      left: @beforeLeftCaretPos;
+      right: @beforeRightCaretPos;
+    }
+  }
 }
 
 // CSS3 PROPERTIES
@@ -124,14 +122,6 @@
   -webkit-border-top-left-radius: @tl-radius;
     -moz-border-radius-topleft: @tl-radius;
       border-top-left-radius: @tl-radius;
-}
-
-.user-select(@value) {
-  -webkit-user-select: @value;
-  -moz-user-select: @value;
-  -ms-user-select: @value;
-  user-select: @value;
-
 }
 
 .outline(@val) {

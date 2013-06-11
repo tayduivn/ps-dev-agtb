@@ -1,7 +1,5 @@
 
 //headerpane record name edit
-//nutmeg
-#contentflex #headerbar,
 //sugar7
 .headerpane {
   min-height: 60px;
@@ -131,7 +129,6 @@
 
   input[type="text"] {
     font-size: @fontSizeHeader;
-    line-height: 26px;
     padding: 4px 6px 4px;
     margin-top: -3px;
     width: 190px;
@@ -173,8 +170,6 @@
     margin: 0;
     white-space: nowrap;
     display: table-cell;
-    vertical-align: top;
-    height: 60px;
     .box-sizing(border-box);
     vertical-align: top;
     height: 60px;
@@ -228,21 +223,6 @@
   }
 }
 
-#contentflex #headerbar {
-  .view-forecastsTitle,
-  .view-forecastsTree,
-  .view-forecastsCommitButtons {
-    vertical-align: top;
-    display: inline-block;
-  }
-  .view-forecastsTitle h1 {
-    padding-top: 18px;
-  }
-  .view-forecastsCommitButtons {
-    float: right;
-  }
-}
-
 //email compose recipient select2
 .record div[data-type="recipients"].controls.btn-fit {
   margin-bottom: 6px;
@@ -283,7 +263,7 @@
       textarea,
       .uneditable-input,
       .select2-container {
-        margin-left: 0px !important;
+        margin-left: 0 !important;
         z-index: 1;
       }
       //for email compose

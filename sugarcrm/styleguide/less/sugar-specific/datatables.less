@@ -36,7 +36,7 @@ table.dataTable {
       line-height: 26px !important;
       min-width: 20px;
       max-width: 100px;
-      margin-top: 0px !important;
+      margin-top: 0 !important;
       font-weight: normal;
       font-size: @fontSizeSmall;
       color: @tableHeader;
@@ -128,7 +128,7 @@ table.dataTable {
       //from tables.less?
       &:last-child {
         td {
-          border-bottom-size: 2px;
+          border-bottom-width: 2px;
         }
       }
       & > td {
@@ -416,7 +416,7 @@ table.dataTable {
     }
   }
   label.original {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     display: inline-block;
     background-color: @grayLight;
     .border-radius(4px);
@@ -427,12 +427,12 @@ table.dataTable {
     margin-left: 16px;
     .rtlMargin(@direction,0 16px 0 0);
   }
-  [class^="icon-favorite"] {
+  .icon-favorite {
     margin-left: 14px;
     vertical-align: middle;
   }
   //nutmeg ?legacy?
-  [class^="icon-star"] {
+  .icon-star {
     margin: 0 16px
   }
   .icon-star {
@@ -634,25 +634,22 @@ table.dataTable th:active {
   outline: none;
 }
 
-
-//?legacy?
+//used in portal
 .dataTables_filter {
   position: relative;
-  margin: -1px 1px 0 0;
   padding: 5px;
   background: @grayLighter;
   border-top: 1px solid darken(@grayLighter, 5%);
   border-bottom: 1px solid darken(@grayLighter, 5%);
   z-index: 1000;
-  input {
-    width: 100%;
-    margin: 0;
-  }
-  //from nutmeg
   margin: 0;
   text-align: center;
   #gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
   .box-shadow(~"inset 0 1px 0 rgba(0,0,0,.2), inset 0 -1px 0 rgba(0,0,0,.1);");
+  input {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .morecol {

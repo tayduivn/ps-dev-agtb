@@ -1,8 +1,8 @@
 // search filter widget
 .form-search-related {
-    .select2-container .select2-choice {
-        padding: 0 0 0 4px;
-    }
+  .select2-container .select2-choice {
+      padding: 0 0 0 4px;
+  }
   // outer wrapper
   .control-group {
     padding: 5px;
@@ -12,10 +12,10 @@
   .filter-view {
     border: 1px solid @inputBorder;
     position: relative;
-    margin-left: 0px;
+    margin-left: 0;
     margin-right: 5px;
     background-color: @white;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     overflow: hidden;
     height: 26px;
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,0.075)");
@@ -208,7 +208,7 @@
   article.filter-header,
   .inset-form-header {
     padding: 9px 10px 7px 10px;
-    .box-shadow(~"inset 0px 4px 8px -4px rgba(0, 0, 0, 0.5)");
+    .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
     border-top: none;
     .pull-right {
       padding: 2px 0;
@@ -216,7 +216,7 @@
     }
   }
   article:last-child {
-    .box-shadow(~"inset 0px -2px 6px -6px rgba(0, 0, 0, 0.5)");
+    .box-shadow(~"inset 0 -2px 6px -6px rgba(0, 0, 0, 0.5)");
   }
 
   // containing divs for create filter
@@ -262,7 +262,7 @@
   .select2-container {
     width: 100%;
     .select2-single-with-drop div b {
-      background-position: 0px 0px;
+      background-position: 0 0;
     }
     .select2-choices {
       padding: 3px 70px 3px 0;
@@ -414,24 +414,5 @@
   &:before,
   &:after {
     display: none;
-  }
-}
-
-//specific to forecasts module
-.view-forecastsFilter {
-  .filter-view {
-    white-space: nowrap;
-    padding-left: 116px;
-    .related-filter {
-      position: absolute;
-      left: 0;
-      .select2-choice {
-        height: 28px;
-        line-height: 28px;
-      }
-    }
-    .search-filter {
-      width: 100%;
-    }
   }
 }

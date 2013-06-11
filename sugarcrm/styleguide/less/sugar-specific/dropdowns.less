@@ -6,7 +6,7 @@
   .rtlRight(@direction,-4px);
   &.left {
     left: auto;
-    right: 0px;
+    right: 0;
     .rtlLeft(@direction,0px);
     .rtlRight(@direction,auto);
   }
@@ -30,12 +30,12 @@
     li {
       margin: 0;
       padding: 0;
-      border: 0px none;
+      border: 0 none;
       &.primary {
         border-top: 1px solid @grayLight;
       }
       label {
-        margin-bottom: 0px;
+        margin-bottom: 0;
       }
     }
   }
@@ -103,7 +103,7 @@
 
   label.radio {
     color: lighten(@gray, 20%);
-    padding-left: 0px;
+    padding-left: 0;
   }
   label.radio.checked {
     color: @gray;
@@ -164,18 +164,5 @@
     left: auto;
     right: 0;
     z-index:1001;
-  }
-}
-
-// Typeahead
-#searchForm .dropdown-menu.typeahead {
-  li, a {
-    padding: 0;
-    margin: 0;
-    .border-radius(0);
-    text-indent: 0;
-  }
-  li > a {
-    padding: 10px;
   }
 }

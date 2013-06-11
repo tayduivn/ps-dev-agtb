@@ -21,7 +21,7 @@
     #gradient > .vertical(lighten(@navbarBackground, 20%), lighten(@navbarBackgroundHighlight, 20%));
     border: 1px solid #111;
     .border-radius(2px);
-    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0px rgba(255,255,255,.15)");
+    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15)");
 
     // Placeholder text gets special styles; can't be bundled together though for some reason
     .placeholder(@grayDarker);
@@ -40,14 +40,10 @@
     }
   }
   .btn-group .dropdown-toggle {
-    /*
-    padding-left: 8px;
-    padding-right: 8px;
-    */
     box-shadow: none;
   }
   .search-query {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     min-height: 1px;
     padding: 4px 9px;
     .border-radius(2px);
@@ -93,12 +89,6 @@
   }
 }
 
-//from nutmeg
-/*.navbar .nav > li > a.btn {
-  padding: 4px 8px;
-  margin-top: 8px;
-}*/
-
 .navbar {
   color: #58595B;
   .navbar-inner {
@@ -132,7 +122,7 @@
     font-size: 14px;
   }
   a:hover .icon-favorite {
-    color:@yellow_favorite !important;
+    color: @yellow_favorite !important;
   }
   // fix red message button position
   .dropdown .btn {
@@ -191,15 +181,6 @@
     }
   }
 
-  //from nutmeg
-  /*.advanced {
-    right: 2px;
-    top: -2px;
-    .dropdown-menu {
-      right: 35px;
-    }
-  }*/
-
   .advanced {
     position: absolute;
     right: 0;
@@ -207,7 +188,6 @@
     .btn {
       line-height: 17px;
       height: 17px;
-      //margin-top: 1px;
     }
     //fix advanced drop down position
     .dropdown-menu {
@@ -230,7 +210,7 @@
       right: 31px;
       top: 1px;
       height: 24px;
-      .border-radii(0px,0px,3px,3px);
+      .border-radii(0,0,3px,3px);
       &:hover {
         border-color: transparent;
       }
@@ -246,7 +226,7 @@
     height: 44px;
     width: 1px;
     margin: 0;
-    overflow: hide;
+    overflow: hidden;
     background-color: #1A1A1A;
     border-left: none;
     border-right: 1px solid #404040;
@@ -261,7 +241,6 @@
     > li {
       > a {
         color: lighten(@black,80%);
-        text-shadow: 0 -1px 1px rgba(0,0,0,.25);
         padding: 12px 8px;
         line-height: 19px;
         text-shadow: 0 -1px 1px rgba(0,0,0,.25);
@@ -326,7 +305,7 @@
           border-right-color: darken(@white, 75%);
           border-left-color: lighten(@black, 20%);
           div.btn-group:not(.open) {
-            //.box-shadow(~"inset 0px -10px 15px rgba(255,255,255,.3)");
+            //.box-shadow(~"inset 0 -10px 15px rgba(255,255,255,.3)");
             background-color: rgba(0,0,0,0.21);
             #gradient > .vertical(@black, lighten(@black,26%));
             border-left-color: lighten(@black,15%);
@@ -396,7 +375,6 @@
 
       // Secondary (floated right) nav in topbar
       &.pull-right { // xxx
-        //margin-left: 10px;
         &> li {
           border-left: 1px solid darken(@white, 75%) !important;
           border-right-color: transparent !important;
@@ -442,13 +420,6 @@
           }
         }
       }
-
-
-
-
-
-
-
     }
 
     // Dropdown toggle caret
@@ -456,25 +427,14 @@
     .open.dropdown .caret {
       border-top-color: @white;
     }
+
     // Active nav items
-
-
     .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link,
     .active > a,
     .active > a:hover {
       text-decoration: none;
-      /*
-      border-bottom: 4px solid darken(@red,15%);
-      */
-      text-shadow: none;
       color: @navbarLinkColorActive;
-      //color: contrast(@NavigationBar, @black, @white, 43%);
-
-//      background-color: lighten(@NavigationBar,5%) !important;
-//      .box-shadow(~"inset 0 -1px 0 rgba(0,0,0,.4)");
       text-shadow: 0 -1px 0 rgb(0,0,0);
-      //color: @navbarLinkColorActive;
-      //background-color: @navbarLinkBackgroundActive;
     }
 
     .active > a,
@@ -485,17 +445,11 @@
 
     .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link {
       padding-bottom: 6px;
-      .border-radius(0px) !important;
-      border-left:0;
-      border-right:0;
+      .border-radius(~"0 !important");
+      border-left: 0;
+      border-right: 0;
       padding-left: 8px;
       outline: none !important;
-      /*
-      &.dtoggle {
-        padding-left: 6px;
-        padding-right: 6px;
-      }
-      */
     }
   }
   .avatar {
@@ -556,49 +510,6 @@
   }
 }
 
-#sActivity .tab-content {
-  padding-bottom: 100px;
-}
-
-#stream tr .actions {
-  position: absolute;
-  bottom: 2px !important;
-  left: 0 !important;
-}
-
-#activity article {
-  position: relative;
-}
-
-#drawer {
-  position: relative;
-}
-#thedrawer {
-  background: @black;
-  position: fixed;
-  z-index: 1020;
-  top: 46px;
-  left: 52px;
-  height: 100%;
-  padding: 20px;
-  #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
-  @shadow: inset 0 -1px 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);
-  .box-shadow(@shadow);
-  h4 {
-    color: @white;
-  }
-}
-
-#riskPreview .progress {
-  position: relative;
-}
-
-#riskPreview .progress,
-#riskPreview .progress .bar  {
-  height: 10px;
-  line-height: 20px;
-  text-align: left;
-}
 .progress .bar b {
   color: @gray;
   position: absolute;
