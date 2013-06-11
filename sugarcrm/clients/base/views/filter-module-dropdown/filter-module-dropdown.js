@@ -76,6 +76,8 @@
             this.layout.trigger("subpanel:change", linkName);
         } else {
             this.layout.trigger("subpanel:change");
+            // Fixes SP-836; esentially, we need to clear subpanel:last:<module> anytime 'All' selected
+            app.cache.cut("subpanels:last:" + this.module);
         }
 
         this.filterNode.select2("val", linkName || linkModuleName);
