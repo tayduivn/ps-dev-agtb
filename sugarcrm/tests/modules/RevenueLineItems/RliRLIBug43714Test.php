@@ -26,7 +26,7 @@
 require_once('include/ListView/ListViewData.php');
 
 
-class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
+class RLIBug43714Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var ListViewData instance
@@ -215,7 +215,7 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
  * @author alex
  *
  */
-class SugarTestProductUtilitiesWithTypes extends SugarTestProductUtilities
+class RLISugarTestProductUtilitiesWithTypes extends SugarTestProductUtilities
 {
 
     /**

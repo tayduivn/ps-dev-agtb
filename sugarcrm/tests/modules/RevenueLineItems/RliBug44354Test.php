@@ -37,7 +37,7 @@
  * @author clee
  *
  */
-class Bug44354Test extends Sugar_PHPUnit_Framework_TestCase
+class RLIBug44354Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
 	public function testCategoryNameFieldVisibility() 

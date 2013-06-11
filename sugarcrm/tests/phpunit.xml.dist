@@ -136,6 +136,7 @@
             <directory>./modules/Opportunities/</directory>
             <directory>./modules/ProductTemplates/</directory>
             <directory>./modules/Products/</directory>
+            <directory>./modules/RevenueLineItems/</directory>
             <directory>./modules/Quotas/</directory>
             <directory>./modules/Quotes/</directory>
             <directory>./modules/TimePeriods/</directory>

@@ -24,7 +24,7 @@
  ********************************************************************************/
 
 
-class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
+class RLIBug44624Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
 	private $_product;
@@ -160,7 +160,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
  * @author alex
  *
  */
-class SugarTestProductUtilitiesWithTypes2 extends SugarTestProductUtilities 
+class RLISugarTestProductUtilitiesWithTypes2 extends SugarTestProductUtilities 
 {
 
 	/**

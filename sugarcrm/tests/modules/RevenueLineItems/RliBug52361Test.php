@@ -40,7 +40,7 @@ require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
  * @author mgusev@sugarcrm.com
  * @ticked 52361
  */
-class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class RLIBug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     /**
      * @var User

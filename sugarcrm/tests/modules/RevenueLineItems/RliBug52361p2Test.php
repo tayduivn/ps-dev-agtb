@@ -36,7 +36,7 @@ require_once 'include/SubPanel/SubPanelDefinitions.php';
  * @author arymarchik@sugarcrm.com
  * @ticked 52361
  */
-class Bug52361p2Test extends Sugar_PHPUnit_Framework_TestCase
+class RLIBug52361p2Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var Quote
