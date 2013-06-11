@@ -96,11 +96,8 @@ class FilterApi extends SugarApi
         return $this->filterList($api, $args);
     }
 
-    protected function parseArguments(
-        ServiceBase $api,
-        array $args,
-        SugarBean $seed = null
-    ) {
+    protected function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
+    {
         $options = array();
 
         // Set up the defaults
@@ -124,24 +121,15 @@ class FilterApi extends SugarApi
             foreach ($orderBys as $order) {
                 $orderSplit = explode(':', $order);
 
-                if (!$seed->ACLFieldAccess(
-                    $orderSplit[0],
-                    'list'
-                ) || !isset($seed->field_defs[$orderSplit[0]])
+                if (!$seed->ACLFieldAccess($orderSplit[0], 'list')
+                    || !isset($seed->field_defs[$orderSplit[0]])
                 ) {
                     throw new SugarApiExceptionNotAuthorized(
-                        sprintf(
-                            'No access to view field: %s in module: %s',
-                            $orderSplit[0],
-                            $args['module']
-                        )
+                        sprintf('No access to view field: %s in module: %s', $orderSplit[0], $args['module'])
                     );
                 }
 
-                if (!isset($orderSplit[1]) || strtolower(
-                    $orderSplit[1]
-                ) == 'desc'
-                ) {
+                if (!isset($orderSplit[1]) || strtolower($orderSplit[1]) == 'desc') {
                     $orderSplit[1] = 'DESC';
                 } else {
                     $orderSplit[1] = 'ASC';
@@ -159,10 +147,7 @@ class FilterApi extends SugarApi
 
 
         //Set the list of fields to be used in the select.
-        $options['select'] = !empty($args['fields']) ? explode(
-            ",",
-            $args['fields']
-        ) : array();
+        $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
 
         //Force id and date_modified into the select
         $options['select'] = array_unique(
@@ -294,6 +279,7 @@ class FilterApi extends SugarApi
         $q->distinct(true);
 
         foreach ($options['order_by'] as $orderBy) {
+            self::verifyField($q, $orderBy[0]);
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
         // Add an extra record to the limit so we can detect if there are more records to be found
@@ -454,7 +440,7 @@ class FilterApi extends SugarApi
      * Verify that the passed field is correct
      * @param SugarQuery $q
      * @param string $field
-     * @return string
+     * @return bool
      * @throws SugarApiExceptionInvalidParameter
      */
     protected static function verifyField(SugarQuery $q, $field)
