@@ -566,14 +566,19 @@ abstract class UpgradeDriver
         }
         if(!defined('sugarEntry')) define('sugarEntry', true);
         $this->log("Initializig SugarCRM environment");
-        global $beanFiles, $beanList, $objectList, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale;
+        global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale, $installing;
+        $installing = true;
         include('include/entryPoint.php');
         $GLOBALS['current_language'] = $this->config['default_language'];
         if(empty($GLOBALS['current_language'])) {
             $GLOBALS['current_language'] = 'en_us';
         }
-        $this->db = $GLOBALS['db'] = DBManagerFactory::getInstance();
         $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
+        $this->db = $GLOBALS['db'] = DBManagerFactory::getInstance();
+        SugarApplication::preLoadLanguages();
+        $timedate = TimeDate::getInstance();
+        $locale = new Localization();
+
         // Load user
         $GLOBALS['current_user'] = new User();
         $user_id = $this->db->getOne("select id from users where user_name = " . $this->db->quoted($this->context['admin']), false);

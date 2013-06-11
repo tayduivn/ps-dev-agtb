@@ -139,6 +139,9 @@ eoq2;
             if($stage != 'continue') {
                 // reset state
                 $upgrader->cleanState();
+            } else {
+                // remove 'continue' from the array
+                array_pop($upgrader->context['argv']);
             }
             while(1) {
                 $res = $upgrader->runStep($stage);

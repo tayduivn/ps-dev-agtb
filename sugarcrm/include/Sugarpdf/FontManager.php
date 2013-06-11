@@ -19,7 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/Sugarpdf/sugarpdf_config.php");
 class FontManager{
     /**
      * Contain all the errors generated during the process of FontManager
@@ -66,6 +65,11 @@ class FontManager{
      * @var String
      */
     var $font_type = "";
+
+    public function __construct()
+    {
+        require_once("include/Sugarpdf/sugarpdf_config.php");
+    }
 
     private function setFontPath(){
         if(file_exists(K_PATH_CUSTOM_FONTS.$this->filename)){
