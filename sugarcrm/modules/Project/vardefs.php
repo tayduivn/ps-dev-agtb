@@ -32,11 +32,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: vardefs.php 56115 2010-04-26 17:08:09Z kjing $
 
 $dictionary['Project'] = array(
-	'table' => 'project',
-	'unified_search' => true,
-	'full_text_search' => true,
-	'unified_search_default_enabled' => false,
-	'comment' => 'Project',
+    'table' => 'project',
+    'favorites' => false,
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => false,
+    'comment' => 'Project',
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',
