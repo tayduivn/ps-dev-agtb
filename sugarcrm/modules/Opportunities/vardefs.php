@@ -472,8 +472,15 @@ $dictionary['Opportunity'] = array(
         'revenuelineitems' => array(
             'name' => 'revenuelineitems',
             'type' => 'link',
-            'vname' => 'LBL_PRODUCTS',
+            'vname' => 'LBL_RLI',
             'relationship' => 'revenuelineitems_opportunities',
+            'source' => 'non-db',
+        ),
+        'products' => array(
+            'name' => 'products',
+            'type' => 'link',
+            'vname' => 'LBL_PRODUCTS',
+            'relationship' => 'opportunities_products',
             'source' => 'non-db',
         ),
 //END SUGARCRM flav=pro ONLY

@@ -32,7 +32,7 @@ $dictionary["documents_revenuelineitems"] = array (
       'rhs_table' => 'revenue_line_items',
       'rhs_key' => 'id',
       'relationship_type' => 'many-to-many',
-      'join_table' => 'documents_products',
+      'join_table' => 'documents_revenuelineitems',
       'join_key_lhs' => 'document_id',
       'join_key_rhs' => 'rli_id',
     ),
