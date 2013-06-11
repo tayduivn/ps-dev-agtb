@@ -61,10 +61,21 @@
             this.$(".filter-options").hide();
         }, this);
 
-        // Needed to initialize this.currentModule.
-        this.trigger('filter:change', this.module);
+        // get the last viewed layout
+        this.toggleViewLastStateKey = app.user.lastState.key('toggle-view', this);
+        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
 
-        this.showComponent(this.options.meta['default'], true);
+        // show the first toggle if the last viewed state isn't set in the metadata
+        if (_.isUndefined(lastViewed) && (this.toggles.length > 0)) {
+            lastViewed = _.first(this.toggles).toggle;
+        }
+
+        // Needed to initialize this.currentModule.
+        this.trigger('filter:change', (lastViewed === "activitystream") ? 'Activities' : this.module);
+
+        // Toggle the appropriate button and layout for initial render
+        this.$('[data-view="' + lastViewed + '"]').button('toggle');
+        this.showComponent(lastViewed, true);
     },
 
     /**
@@ -154,6 +165,7 @@
         if (!$el.hasClass("active")) {
             var data = $el.data();
             this.showComponent(data.view);
+            app.user.lastState.set(this.toggleViewLastStateKey, data.view);
             e.preventDefault();
         }
     },
