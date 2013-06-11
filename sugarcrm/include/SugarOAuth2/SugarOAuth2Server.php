@@ -59,11 +59,11 @@ class SugarOAuth2Server extends OAuth2
 
     protected function createAccessToken($client_id, $user_id, $scope = NULL)
     {
-        $time_limit = $this->getVariable(self::CONFIG_MAX_SESSION);
+        $timeLimit = $this->getVariable(self::CONFIG_MAX_SESSION);
         // If we have session time limit, then:
         // 1. We limit time for initial refresh token to session length
         // 2. We inherit this time limit for subsequent refresh tokens
-        if($time_limit) {
+        if($timeLimit) {
             // enforce session length limits
             if($this->oldRefreshToken) {
                 // inherit expiration from the old token
@@ -71,7 +71,7 @@ class SugarOAuth2Server extends OAuth2
                 $token = $tokenSeed->load($this->oldRefreshToken,'oauth2');
                 $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $token->expire_ts-time());
             } else {
-                $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $time_limit);
+                $this->setVariable(self::CONFIG_REFRESH_LIFETIME, $timeLimit);
             }
         }
         return parent::createAccessToken($client_id, $user_id, $scope);
