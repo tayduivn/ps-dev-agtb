@@ -21,7 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['EmailTemplate'] = array(
     'table' => 'email_templates',
+//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => false,
+//END SUGARCRM flav=pro ONLY
     'comment' => 'Templates used in email processing',
 	'fields' => array(
 		'id' => array(

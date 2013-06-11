@@ -19,8 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
+$dictionary['OAuthToken'] = array(
+    'table' => 'oauth_tokens',
+//BEGIN SUGARCRM flav=pro ONLY
     'favorites' => false,
+//END SUGARCRM flav=pro ONLY
     'comment' => 'OAuth tokens',
     'audited' => false,
     'fields' => array (
