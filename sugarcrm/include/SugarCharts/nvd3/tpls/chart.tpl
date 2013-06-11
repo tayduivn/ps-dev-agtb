@@ -26,30 +26,48 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html {$langHeader}>
-<head>
-<link rel="SHORTCUT ICON" href="{$FAVICON_URL}">
-<meta http-equiv="Content-Type" content="text/html; charset={$APP.LBL_CHARSET}">
-<title>{$SYSTEM_NAME}</title>
-{$SUGAR_CSS}
-{if $AUTHENTICATED}
-<link rel='stylesheet' href='{sugar_getjspath file="vendor/ytree/TreeView/css/folders/tree.css"}'/>
-<link rel='stylesheet' href='{sugar_getjspath file="styleguide/assets/css/nvd3.css"}'/>
-{/if}
-{$SUGAR_JS}
-{literal}
+
+{if !$error}
 <script type="text/javascript">
-<!--
-SUGAR.themes.theme_name      = '{/literal}{$THEME}{literal}';
-SUGAR.themes.hide_image      = '{/literal}{sugar_getimagepath file="hide.gif"}{literal}';
-SUGAR.themes.show_image      = '{/literal}{sugar_getimagepath file="show.gif"}{literal}';
-SUGAR.themes.loading_image      = '{/literal}{sugar_getimagepath file="img_loading.gif"}{literal}';
-if ( YAHOO.env.ua )
-    UA = YAHOO.env.ua;
--->
-
-
+	{literal}
+	SUGAR.util.doWhen(
+		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts)   || (SUGAR.loadChart && typeof loadSugarChart == 'function')  || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChart) != undefined",
+		function(){
+			{/literal}
+			var css = [];
+			var chartConfig = [];
+			{foreach from=$config key=name item=value}
+				chartConfig["{$name}"] = '{$value}';
+			{/foreach}
+			{if $height > 480}
+				chartConfig["scroll"] = true;
+			{/if}
+			loadCustomChartForReports = function(){ldelim}
+				loadSugarChart('{$chartId}', '{$filename}', css, chartConfig);
+			{rdelim};
+			// bug51857: fixed issue on report running in a loop when clicking on hide chart then run report in IE8 only
+			// When hide chart button is clicked, the value of element showHideChartButton is set to $showchart.
+			// Don't need to call the loadCustomChartForReports() function when hiding the chart.
+			{if !isset($showchart)}
+				loadCustomChartForReports();
+			{else}
+			     if ($('#showHideChartButton').attr('value') != '{$showchart}')
+			        loadCustomChartForReports();
+			{/if}
+			{literal}
+		}
+	);
+	{/literal}
 </script>
-{/literal}
-</head>
+<div class="chartContainer">
+	<div id="sb{$chartId}" class="scrollBars">
+    	<div id="d3_{$chartId}" class="nv-chart nv-{$config.chartType}" style="width: {$width}; height: {$height}px;">
+    	</div>
+    </div>
+	<div id="legend{$chartId}" class="legend"></div>
+</div>
+<div class="clear"></div>
+{else}
+
+{$error}
+{/if}
