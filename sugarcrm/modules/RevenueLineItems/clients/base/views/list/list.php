@@ -23,7 +23,10 @@ $fields = array(
         'enabled' => true,
         'default' => true
     ),
-    'account_name',
+    array(
+        'name' => 'account_name',
+        'sortable' => false
+    ),
     'status',
     'quantity',
     array(
@@ -73,17 +76,27 @@ $fields = array(
         'enabled' => true,
         'default' => true
     ),
-    'opportunity_name',
+    array(
+        'name' => 'opportunity_name',
+        'sortable' => false
+    ),
     array(
         'name' => 'account_name',
-        'readonly' => true
+        'readonly' => true,
+        'sortable' => false
     ),
     'sales_stage',
     'probability',
     'date_closed',
     'commit_stage',
-    'product_template_name',
-    'category_name',
+    array(
+        'name' => 'product_template_name',
+        'sortable' => false
+    ),
+    array(
+        'name' => 'category_name',
+        'sortable' => false
+    ),
     'quantity',
     array(
         'name' => 'likely_case',
@@ -121,7 +134,10 @@ $fields = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
-    'assigned_user_name'
+    array(
+        'name' => 'assigned_user_name',
+        'sortable' => false
+    )
 );
 //END SUGARCRM flav=ent ONLY
 
