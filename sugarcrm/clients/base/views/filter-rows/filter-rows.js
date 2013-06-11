@@ -10,8 +10,8 @@
     events: {
         'click a.addme': 'addRow',
         'click a.removeme': 'removeRow',
-        'change .filter-field select': 'chooseField',
-        'change .filter-operator select': 'chooseOperator'
+        'change .filter-field select': 'handleFieldSelected',
+        'change .filter-operator select': 'handleOperatorSelected'
     },
 
     className: 'filter-definition-container',
@@ -23,47 +23,105 @@
      * @param {Object} opts
      */
     initialize: function(opts) {
-        // Remove the next line later:
-        this.isSaved = false;
+        //Load partial
+        this.formRowTemplate = app.template.get("filter-rows.filter-row-partial");
+
         this.filterOperatorMap = app.lang.getAppListStrings("filter_operators_dom");
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.layout.on("filter:change", function(moduleName) {
-            var moduleMeta = app.metadata.getModule(moduleName);
-            if (!moduleMeta) {
-                return;
-            }
-            this.fieldList = this.getFilterableFields(moduleName);
-
-            // This is the Select2 data for the enum field. 1st value must be blank.
-            this.filterFields = {"": ""};
-            this.moduleName = moduleName;
-
-            _.each(this.fieldList, function(value, key) {
-                var text = app.lang.get(value.vname, moduleName);
-                // Check if we support this field type.
-                if (this.filterOperatorMap[value.type] && !_.isUndefined(text)) {
-                    this.filterFields[key] = text;
-                }
-            }, this);
-        }, this);
-
-        this.layout.on("filter:create:open", function(filterModel) {
-            if (!filterModel.get('filter_definition')) {
-                this.render();
-                this.addRow();
-            } else {
-                this.populateFilter();
-            }
-        }, this);
-
-        this.layout.on("filter:create:close", function() {
-            this.render();
-        }, this);
-
+        this.listenTo(this.layout, "filter:change", this.handleFilterChange);
+        this.listenTo(this.layout, "filter:create:open", this.openForm);
+        this.listenTo(this.layout, "filter:create:close", this.render);
         this.listenTo(this.layout, "filter:create:save", this.saveFilter);
         this.listenTo(this.layout, "filter:create:delete", this.deleteFilter);
     },
+
+    /**
+     * Handler for filter:change event
+     * Loads filterable fields for specified module
+     * @param moduleName
+     */
+    handleFilterChange: function(moduleName) {
+        var moduleMeta = app.metadata.getModule(moduleName);
+        if (!moduleMeta) {
+            return;
+        }
+        this.fieldList = this.getFilterableFields(moduleName);
+
+        // This is the Select2 data for the enum field. 1st value must be blank.
+        this.filterFields = {"": ""};
+        this.moduleName = moduleName;
+
+        _.each(this.fieldList, function(value, key) {
+            var text = app.lang.get(value.vname, moduleName);
+            // Check if we support this field type.
+            if (this.filterOperatorMap[value.type] && !_.isUndefined(text)) {
+                this.filterFields[key] = text;
+            }
+        }, this);
+    },
+
+    /**
+     * Handler for filter:create:open event
+     * @param filterModel
+     */
+    openForm: function(filterModel) {
+        if (!filterModel.get('filter_definition')) {
+            this.render();
+            this.addRow();
+        } else {
+            this.populateFilter();
+        }
+    },
+
+    /**
+     * Save the filter
+     * @param {String} name
+     */
+    saveFilter: function(name) {
+        var self = this,
+            obj = {
+                filter_definition: this.buildFilterDef(),
+                name: name,
+                module_name: this.moduleName
+            };
+
+        this.layout.editingFilter.save(obj, {
+            success: function(model) {
+                self.layout.trigger("filter:add", model);
+                self.layout.trigger("filter:create:rowsValid", false);
+            },
+            alerts: {
+                'success': {
+                    title: app.lang.get("LBL_EMAIL_SUCCESS") + ":",
+                    messages: app.lang.get("LBL_FILTER_SAVE") + " " + name
+                }
+            }
+        });
+
+        this.layout.trigger('filter:create:close');
+    },
+
+    /**
+     * Delete the filter
+     */
+    deleteFilter: function() {
+        var self = this,
+            name = this.layout.editingFilter.get('name');
+        this.layout.editingFilter.destroy({
+            success: function(model) {
+                self.layout.trigger("filter:remove", model);
+            },
+            alerts: {
+                'success': {
+                    title: app.lang.get('LBL_EMAIL_SUCCESS') + ':',
+                    message: app.lang.get('LBL_DELETED') + ' ' + name
+                }
+            }
+        });
+        this.layout.trigger('filter:create:close');
+    },
+
 
     /**
      * Get filterable fields from the module metadata
@@ -94,46 +152,59 @@
     },
 
     /**
+     * Utility function to instanciate an enum field
+     *
+     * @param {Model} model
+     * @param {Object} def
+     * @returns {Field}
+     */
+    createField: function(model, def) {
+        if (def.type === 'enum') {
+            def.searchBarThreshold = 9999;
+        }
+        // minimumResultsForSearch set to 9999 to hide the search field,
+        // See: https://github.com/ivaynberg/select2/issues/414
+        var obj = {
+            meta: {
+                view: "edit"
+            },
+            def: def,
+            model: model,
+            context: app.controller.context,
+            viewName: "edit",
+            view: this
+        };
+        var field = app.view.createField(obj);
+        return field;
+    },
+
+    /**
      * Add a row
      * @param {Event} e
      * @returns {Object}
      */
     addRow: function(e) {
-        var $row,
-            tpl = app.template.get("filter-rows.filter-row-partial");
+        var $row, model, field, $fieldValue, $fieldContainer;
 
         if (e) {
             // Triggered by clicking the plus sign. Add the row to that point.
             $row = this.$(e.currentTarget).parents('.filter-body');
-            $row.after(tpl({}));
+            $row.after(this.formRowTemplate());
             $row = $row.next();
         } else {
             // Add the initial row.
-            $row = $(tpl({})).appendTo(this.$el);
+            $row = $(this.formRowTemplate()).appendTo(this.$el);
         }
+        model = app.data.createBean(this.moduleName);
+        field = this.createField(model, {
+            type: 'enum',
+            options: this.filterFields
+        });
 
-        var model = app.data.createBean(this.moduleName);
-        // minimumResultsForSearch set to 9999 to hide the search field,
-        // See: https://github.com/ivaynberg/select2/issues/414
-        var obj = {
-                meta: {
-                    view: "edit"
-                },
-                def: {
-                    type: "enum",
-                    searchBarThreshold: 9999,
-                    options: this.filterFields
-                },
-                model: model,
-                context: app.controller.context,
-                viewName: "edit",
-                view: this
-            },
-            field = app.view.createField(obj),
-            $fieldValue = $row.find('.filter-field'),
-            $fieldContainer = $(field.getPlaceholder().string);
-
+        $fieldValue = $row.find('.filter-field');
+        $fieldContainer = $(field.getPlaceholder().string);
         $fieldContainer.appendTo($fieldValue);
+
         $row.data('nameField', field);
 
         this._renderField(field);
@@ -141,6 +212,7 @@
 
         return $row;
     },
+
 
     /**
      * Remove a row
@@ -182,15 +254,15 @@
      * Rerender the view with selected filter
      */
     populateFilter: function() {
-        var self = this,
-            filterDef = this.layout.editingFilter.get("filter_definition");
+        var filterDef = this.layout.editingFilter.get("filter_definition"),
+            name = this.layout.editingFilter.get("name");
 
         this.render();
-        this.layout.trigger("filter:set:name", this.layout.editingFilter.get("name"));
+        this.layout.trigger("filter:set:name", name);
 
         _.each(filterDef, function(row) {
-            self.populateRow(row);
-        });
+            this.populateRow(row);
+        }, this);
     },
 
     /**
@@ -201,7 +273,7 @@
         var $row = this.addRow();
         _.each(rowObj, function(value, key) {
             if (key === "$or") {
-                keys = _.reduce(value, function(memo, obj) {
+                var keys = _.reduce(value, function(memo, obj) {
                     return memo.concat(_.keys(obj));
                 }, []);
 
@@ -227,43 +299,33 @@
     },
 
     /**
-     * Disable the Save button while input is empty
-     * @param e
-     */
-    editName: function(e) {
-        if(this.$(e.currentTarget).find('input').val() === '') {
-            this.$(".save_button").addClass("disabled");
-        }
-    },
-
-    /**
      * Fired when a user selects a field to filter by
      * @param {Event} e
      */
-    chooseField: function(e) {
+    handleFieldSelected: function(e) {
         var $el = this.$(e.currentTarget),
             $row = $el.parents('.filter-body'),
             $fieldWrapper = $row.find('.filter-operator'),
             data = $row.data(),
             fieldName = $el.val(),
-            fieldOpts = [{'field': 'operatorField', 'value': 'operator'},
-                         {'field': 'valueField', 'value': 'value'}];
-
+            fieldOpts = [
+                {'field': 'operatorField', 'value': 'operator'},
+                {'field': 'valueField', 'value': 'value'}
+            ];
         this._disposeFields($row, fieldOpts);
 
+        data['name'] = fieldName;
         if (!fieldName) {
-            data['name'] = "";
             return;
         }
 
+        // Get operators for this filter type
         var fieldType = this.fieldList[fieldName].type,
             payload = {"": ""},
             types = _.keys(this.filterOperatorMap[fieldType]);
 
         $fieldWrapper.removeClass('hide').empty();
         $row.find('.filter-value').addClass('hide').empty();
-
-        data['name'] = fieldName;
 
         // If the user is editing a filter, clear the operator.
         //$row.find('.field-operator select').select2('val', '');
@@ -272,24 +334,12 @@
             payload[operand] = this.filterOperatorMap[fieldType][operand];
         }, this);
 
+        // Render the operator field
         var model = app.data.createBean(this.moduleName);
-        // minimumResultsForSearch set to 9999 to hide the search field,
-        // See: https://github.com/ivaynberg/select2/issues/414
-        var obj = {
-                meta: {
-                    view: "edit"
-                },
-                def: {
-                    type: "enum",
-                    searchBarThreshold: 9999,
-                    options: payload
-                },
-                model: model,
-                context: app.controller.context,
-                viewName: "edit",
-                view: this
-            },
-            field = app.view.createField(obj),
+        var field = this.createField(model, {
+                type: 'enum',
+                options: payload
+            }),
             $field = $(field.getPlaceholder().string);
 
         $field.appendTo($fieldWrapper);
@@ -302,56 +352,48 @@
      * Fired when a user selects an operator to filter by
      * @param {Event} e
      */
-    chooseOperator: function(e) {
+    handleOperatorSelected: function(e) {
         var $el = this.$(e.currentTarget),
             $row = $el.parents('.filter-body'),
-            $fieldWrapper = $row.find('.filter-value'),
             data = $row.data(),
             operation = $el.val(),
-            fieldOpts = [{'field': 'valueField', 'value': 'value'}];
+            fieldOpts = [
+                {'field': 'valueField', 'value': 'value'}
+            ];
 
         this._disposeFields($row, fieldOpts);
 
+        data['operator'] = operation;
         if (!operation) {
-            data['operator'] = "";
             return;
         }
 
-        data['operator'] = operation;
+        // Patching fields metadata
+        var moduleName = this.moduleName,
+            module = app.metadata.getModule(moduleName),
+            fields = app.metadata._patchFields(moduleName, module, app.utils.deepCopy(this.fieldList));
 
-        var module = this.moduleName,
-            fieldName = $row.find('.filter-field select').val(),
+        // More patch for some field types
+        var fieldName = $row.find('.filter-field select').val(),
             fieldType = this.fieldList[fieldName].type;
-
-        // Patching metadata
-        var fields = app.metadata._patchFields(module, app.metadata.getModule(module), app.utils.deepCopy(this.fieldList));
-
         switch (fieldType) {
-        case 'enum':
-            fields[fieldName].isMultiSelect = true;
-            break;
-        case 'bool':
-            fields[fieldName].type = 'enum';
-            break;
-        case 'int':
-            fields[fieldName].auto_increment = false;
-            break;
+            case 'enum':
+                fields[fieldName].isMultiSelect = true;
+                break;
+            case 'bool':
+                fields[fieldName].type = 'enum';
+                break;
+            case 'int':
+                fields[fieldName].auto_increment = false;
+                break;
         }
 
-        var model = app.data.createBean(module);
+        // Create new model with the value set
+        var model = app.data.createBean(moduleName);
         model.set(fieldName, $row.data('value') || '');
-        var obj = {
-                meta: {
-                    view: "edit"
-                },
-                def: fields[fieldName],
-                model: model,
-                context: app.controller.context,
-                viewName: "edit",
-                view: this
-            };
 
-        var field = app.view.createField(obj),
+        // Render the value field
+        var field = this.createField(model, fields[fieldName]),
             $fieldValue = $row.find('.filter-value'),
             fieldContainer = $(field.getPlaceholder().string);
 
@@ -360,15 +402,15 @@
         data['valueField'] = field;
 
         this._renderField(field);
-
         fieldContainer.find('input, select, textarea').addClass('inherit-width');
 
-        model.on("change", (function($row) {
+        // When the value change a quicksearch should be fired to update the results
+        this.listenTo(model, "change", (function($row) {
             return function() {
                 var field = $row.data("valueField"),
                 // We use _.result here to prevent an undefined method error
                 // in case the val method is not defined on the field.
-                    result = field? (field.unformat(field.value) || _.result(field, 'val')) : '';
+                    result = field ? (field.unformat(field.value) || _.result(field, 'val')) : '';
 
                 if (_.isArray(result)) {
                     // If we are filtering a multi-enum, strip out the blank value that
@@ -382,7 +424,7 @@
                 // trigger the filtering here.
                 this.layout.trigger('filter:change:quicksearch', null, dynamicFilterDef);
             };
-        })($row), this);
+        })($row));
     },
 
     /**
@@ -447,60 +489,12 @@
     },
 
     /**
-     * Save the filter
-     * @param {String} name
-     */
-    saveFilter: function(name) {
-        var self = this,
-            obj = {
-                filter_definition: this.buildFilterDef(),
-                name: name,
-                module_name: this.moduleName
-            };
-
-        this.layout.editingFilter.save(obj, {
-            success: function(model) {
-                self.layout.trigger("filter:add", model);
-                self.layout.trigger("filter:create:rowsValid", false);
-            },
-            alerts: {
-                'success': {
-                    title: app.lang.get("LBL_EMAIL_SUCCESS") + ":",
-                    messages: app.lang.get("LBL_FILTER_SAVE") + " " + name
-                }
-            }
-        });
-
-        this.layout.trigger('filter:create:close');
-    },
-
-    /**
-     * Delete the filter
-     */
-    deleteFilter: function() {
-        var self = this,
-            name = this.layout.editingFilter.get('name');
-        this.layout.editingFilter.destroy({
-            success: function(model) {
-                self.layout.trigger("filter:remove", model);
-            },
-            alerts: {
-                'success': {
-                    title: app.lang.get('LBL_EMAIL_SUCCESS') + ':',
-                    message: app.lang.get('LBL_DELETED') + ' ' + name
-                }
-            }
-        });
-        this.layout.trigger('filter:create:close');
-    },
-
-    /**
      * Internal function that disposes fields stored in the data attribute of the row el.
      * @param  {jQuery el} $row The row which fields are to be disposed.
      * @param  {array} opts An array of objects, corresponding with the data obj of the row.
      * Example: opts = [{'field': 'nameField', 'value': 'name'},
-                        {'field': 'operatorField', 'value': 'operator'},
-                        {'field': 'valueField', 'value': 'value'}]
+     {'field': 'operatorField', 'value': 'operator'},
+     {'field': 'valueField', 'value': 'value'}]
      */
     _disposeFields: function($row, opts) {
         var data = $row.data(), trigger = false, model;
