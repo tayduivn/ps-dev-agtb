@@ -143,7 +143,7 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_CATEGORY',
             'type' => 'id',
             'group' => 'category_name',
-            'required' => true,
+            'required' => false,
             'reportable' => true,
             'comment' => 'Product category'
         ),
@@ -161,7 +161,7 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
-            'required' => true,
+            'required' => false,
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
         ),
         'name' =>  array(
