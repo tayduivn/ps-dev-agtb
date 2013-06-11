@@ -2,6 +2,11 @@
     fieldSelector: '.htmleditable', //iframe or textarea selector
     _htmleditor: null, // TinyMCE html editor
     _isDirty: false,
+    // When the model already has the value being set, there is no need to trigger the "SetContent" event, which calls
+    // our callback to save the content to the model. But we don't want to short-circuit events in TinyMCE's workflow,
+    // so the following flag can be toggled to false to indicate that we don't need to save the content to the model
+    // inside of the callback.
+    _saveOnSetContent: true,
 
     /**
      * Render an editor for edit view or an iframe for others
@@ -32,6 +37,7 @@
     bindDataChange: function() {
         this.model.on('change:' + this.name, function(model, value) {
             if (this._isEditView()) {
+                this._saveOnSetContent = false; // the model already has the value being set, so don't set it again
                 this.setEditorContent(value);
             } else {
                 this.setViewContent(value)
@@ -150,15 +156,16 @@
                 self._htmleditor.onDeactivate.add(function(ed){
                     self._saveEditor();
                 });
-
-            };
-            // Preserve custom onchange_callback if it exists, add onchange_callback function needed for widget to work properly
-            var __superOnchange_callback__ = config.onchange_callback;
-            config.onchange_callback = function(ed){
-                if(_.isFunction(__superOnchange_callback__)){
-                    __superOnchange_callback__.call(this);
-                }
-                self._isDirty = true; //Changes have been made, mark widget as dirty so we don't lose them
+                self._htmleditor.onSetContent.add(function(ed) {
+                    if (self._saveOnSetContent) {
+                        self._saveEditor(true);
+                    }
+                    self._saveOnSetContent = true; // flip it back so that we're sure we save the next time
+                });
+                self._htmleditor.onChange.add(function(ed, l) {
+                    // Changes have been made, mark widget as dirty so we don't lose them
+                    self._isDirty = true;
+                });
             };
 
             $('.htmleditable').tinymce(config);
@@ -166,7 +173,7 @@
     },
 
     /**
-     * Save the TinyMCE editor
+     * Save the TinyMCE editor's contents to the model
      * @private
      */
     _saveEditor: function(force){
