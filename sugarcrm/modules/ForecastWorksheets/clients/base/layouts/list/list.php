@@ -1,4 +1,5 @@
 <?php
+
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,9 +13,19 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$layout = MetaDataManager::getLayout("GenericLayout");
-$listLayout = MetaDataManager::getLayout("GenericLayout", array("name" => "list"));
-$listLayout->push(array("view" => "filter"));
-$listLayout->push(array("view" => "recordlist", "primary" => true));
-$layout->push($listLayout->getLayout(true));
-$viewdefs['ForecastWorksheets']['base']['layout']['list'] = $listLayout->getLayout();
+$viewdefs['ForecastWorksheets']['base']['layout']['list'] = array(
+    'components' =>
+    array(
+        array(
+            'view' => 'filter',
+        ),
+        array(
+            'view' => 'recordlist',
+            'primary' => true,
+        ),
+    ),
+    'type' => 'simple',
+    'name' => 'list',
+    'span' => 12,
+);
+
