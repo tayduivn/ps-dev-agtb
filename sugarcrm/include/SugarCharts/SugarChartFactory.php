@@ -10,6 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+
 /**
  * Chart factory
  * @api
@@ -24,33 +25,27 @@ class SugarChartFactory
      * @param string $module optional, name of module extension for chart engine (see JitReports or SugarFlashReports)
      * @return object ChartEngine instance
      */
-	public static function getInstance(
-        $chartEngine = '',
-        $module = ''
-        )
+    public static function getInstance($chartEngine = '', $module = '')
     {
         global $sugar_config;
-		$defaultEngine = "Jit";
+        $defaultEngine = "nvd3";
         //fall back to the default Js Engine if config is not defined
-        if(empty($sugar_config['chartEngine'])){
-        	$sugar_config['chartEngine'] = $defaultEngine;
+        if (empty($sugar_config['chartEngine'])) {
+            $sugar_config['chartEngine'] = $defaultEngine;
         }
 
-        if(empty($chartEngine)){
-        	$chartEngine = $sugar_config['chartEngine'];
+        if (empty($chartEngine)) {
+            $chartEngine = $sugar_config['chartEngine'];
         }
 
-        if(!SugarAutoLoader::requireWithCustom("include/SugarCharts/{$chartEngine}/{$chartEngine}{$module}.php")) {
-          $GLOBALS['log']->debug("using default engine include/SugarCharts/{$defaultEngine}/{$defaultEngine}{$module}.php");
-          require_once("include/SugarCharts/{$defaultEngine}/{$defaultEngine}{$module}.php");
-          $chartEngine = $defaultEngine;
+        if (!SugarAutoLoader::requireWithCustom("include/SugarCharts/{$chartEngine}/{$chartEngine}{$module}.php")) {
+            $GLOBALS['log']->debug("using default engine include/SugarCharts/{$defaultEngine}/{$defaultEngine}{$module}.php");
+            require_once("include/SugarCharts/{$defaultEngine}/{$defaultEngine}{$module}.php");
+            $chartEngine = $defaultEngine;
         }
 
         $className = $chartEngine.$module;
         return new $className();
 
     }
-
 }
-
-?>

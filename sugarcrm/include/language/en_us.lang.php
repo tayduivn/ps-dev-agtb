@@ -4829,6 +4829,7 @@ $app_strings = array (
     'LBL_CHART_LEGEND_OPEN' => 'Show legend',
     'LBL_CHART_CONTROLS_CLOSE' => 'Hide controls',
     'LBL_CHART_CONTROLS_OPEN' => 'Show controls',
+    'LBL_CHART_UNDEFINED' => 'Undefined',
 
     // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',

@@ -13,15 +13,15 @@
 
 <script>
 SUGAR.util.doWhen(
-	"SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts",
-	function(){ldelim}
-		var customChart = true;
-		var chartConfig = [];
-		var css = [];
-		{foreach from=$config key=name item=value}
-			chartConfig["{$name}"] = '{$value}';
-		{/foreach}
-    	SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartId}', '{$filename}', css, chartConfig, activePage);
-	{rdelim}
+    "SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts",
+    function(){ldelim}
+        var customChart = true;
+        var chartConfig = [];
+        var css = [];
+        {foreach from=$config key=name item=value}
+            chartConfig["{$name}"] = '{$value}';
+        {/foreach}
+        SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartId}', '{$filename}', css, chartConfig, activePage);
+    {rdelim}
 );
 </script>
