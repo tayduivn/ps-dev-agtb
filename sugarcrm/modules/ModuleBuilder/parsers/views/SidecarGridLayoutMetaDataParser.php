@@ -192,10 +192,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected function _addInternalCell($field) {
         // Handle formatting of combination data field defs
         if (is_array($field)) {
-            if (isset($def['name'])) {
-                $return = $def['name'];
+            if (isset($field['name'])) {
+                $return = $field['name'];
             } else {
-                $return = isset($def['type']) ? $def['name'] : $this->FILLER;
+                $return = isset($field['type']) ? $field['type'] : $this->FILLER;
             }
         } else {
             $return = $field;
@@ -372,6 +372,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // $panels[label for panel] = fields of panel in rows,cols format
 
         $internalPanels = array();
+        
+        // Counter that tells the loop if we are in the first element of the panels
+        // array, since that would be where panel_header lives
+        $ix = 0;
         foreach ($panels as $n => $panel) {
             $pLabel = !empty($panel['label']) ? $panel['label'] : $n;
             $panelColumns = !empty($panel['columns']) ? $panel['columns'] : 2;
@@ -392,7 +396,13 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 if (is_array($field) && !empty($field['span'])) {
                     $colspan = floor($field['span']/$this->maxSpan*$panelColumns);
                 } else {
-                    $colspan = 1;
+                    // Simple aesthetics... make the name field a full span but 
+                    // only if this is the header panel
+                    if ($ix == 0 && $field == 'name') {
+                        $colspan = $panelColumns;
+                    } else {
+                        $colspan = 1;
+                    }
                 }
                 $colsTaken = 0;
 
@@ -416,16 +426,17 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 if (empty($field)) {
                     $fieldToInsert = $this->FILLER;
                 } elseif(is_array($field)) {
-                    if (isset($field['type']) && $field['type'] == 'fieldset') {
-                        if (isset($field['fields'])) {
-                            foreach ($field['fields'] as $fsfield) {
-                                $row[] = $this->_addInternalCell($fsfield);
-                            }
-                            continue;
+                    // Handle special fields like fieldset
+                    if (isset($field['type'])) {
+                        if ($field['type'] == 'fieldset' && isset($field['fields'])) {
+                            $fieldToInsert = $field['name'];
+                        } elseif (!empty($field['readonly'])) {
+                            // This handles non-field fields like favorite and follow
+                            $fieldToInsert = $field['type'];
                         }
-                    } 
-                    
-                    $fieldToInsert = empty($field['name']) ? $this->FILLER : $field['name'];
+                    } else {
+                        $fieldToInsert = empty($field['name']) ? $this->FILLER : $field['name'];
+                    }
                 } else {
                     $fieldToInsert = $field;
                 }
@@ -442,6 +453,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $internalFieldRows[] = $row;
             }
             $internalPanels[$pLabel] = $internalFieldRows;
+            $ix++;
         }
 
         return $internalPanels;
@@ -551,5 +563,43 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
             MetaDataManager::clearAPICache(false);
         }
+    }
+    
+    /**
+     * Removes a field from the available field array
+     * 
+     * @param  array $availableFields The available fields array
+     * @param  string $field The field name to remove
+     */
+    protected function unsetAvailableField(&$availableFields, $field)
+    {
+        if (is_string($field)) {
+            unset($availableFields[$field]);
+        } elseif (is_array($field)) {
+            if (isset($field['name'])) {
+                unset($availableFields[$field['name']]);
+            }
+        }
+    }
+    
+    /**
+     * Gets valid field defs for a field name
+     * 
+     * @param  string $fieldname The fieldname to get the defs for
+     * @return array
+     */
+    protected function getViewDefFromFieldname($fieldname)
+    {
+        if (is_array($fieldname)) {
+            if (isset($fieldname['name']) || isset($fieldname['type'])) {
+                return $this->getViewDefFromFieldname(isset($fieldname['name']) ? $fieldname['name'] : $fieldname['type']);
+            }
+            
+            // This indicates an empty or non field field that is not in the 
+            // right format. This should be handled by the code that calls this.
+            return false;
+        }
+        
+        return parent::getViewDefFromFieldname($fieldname);
     }
 }

@@ -173,18 +173,12 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             {
                 foreach ( $row as $colID => $fieldname )
                 {
-                	if (isset ($this->_fielddefs [ $fieldname ]))
-					{
-						$viewdefs [ $panelID ] [ $rowID ] [ $colID ] = self::_trimFieldDefs( $this->_fielddefs [ $fieldname ] ) ;
-					} 
-					else if (isset($this->_originalViewDef [ $fieldname ]) && is_array($this->_originalViewDef [ $fieldname ]))
-					{
-						$viewdefs [ $panelID ] [ $rowID ] [ $colID ] = self::_trimFieldDefs( $this->_originalViewDef [ $fieldname ] ) ;
-					} 
-					else 
-					{
-						$viewdefs [ $panelID ] [ $rowID ] [ $colID ] = array("name" => $fieldname, "label" => $fieldname);
-					}
+                    // Gets viewdefs from a fieldname value if there is one
+                    if (($defs = $this->getViewDefFromFieldname($fieldname)) === false) {
+                        continue;
+                    }
+                    
+                    $viewdefs[$panelID][$rowID][$colID] = $defs;
                 }
             }
         }
@@ -279,7 +273,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 {
                     foreach ( $row as $field )
                     {
-                    	unset ( $availableFields [ $field ] ) ;
+                        // Remove this field from the available fields array
+                    	$this->unsetAvailableField($availableFields, $field);
                     }
                 }
             }
@@ -1005,6 +1000,32 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     protected function isValidField($key, $def) {
         return GridLayoutMetaDataParser::validField ( $def, $this->_view );
     }
+    
+    /**
+     * Removes a field from the available field array
+     * 
+     * @param  array $availableFields The available fields array
+     * @param  string $field The field name to remove
+     */
+    protected function unsetAvailableField(&$availableFields, $field)
+    {
+        unset($availableFields[$field]);
+    }
+    
+    /**
+     * Gets valid field defs for a field name
+     * 
+     * @param  string $fieldname The fieldname to get the defs for
+     * @return array
+     */
+    protected function getViewDefFromFieldname($fieldname)
+    {
+        if (isset($this->_fielddefs[$fieldname])) {
+            return self::_trimFieldDefs($this->_fielddefs[$fieldname]);
+        } else if (isset($this->_originalViewDef[$fieldname]) && is_array($this->_originalViewDef[$fieldname])) {
+            return self::_trimFieldDefs($this->_originalViewDef[$fieldname]);
+        } else {
+            return array("name" => $fieldname, "label" => $fieldname);
+        }
+    }
 }
-
-?>

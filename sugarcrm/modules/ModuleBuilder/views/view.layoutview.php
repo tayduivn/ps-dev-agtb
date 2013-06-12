@@ -219,10 +219,12 @@ class ViewLayoutView extends SugarView
             $smarty->assign ( 'view_package', $this->package ) ;
         }
 
+        // Layout labels for the breadcrumb
         $labels = array (
         			MB_EDITVIEW => 'LBL_EDITVIEW' ,
         			MB_DETAILVIEW => 'LBL_DETAILVIEW' ,
         			MB_QUICKCREATE => 'LBL_QUICKCREATE',
+                    MB_RECORDVIEW => 'LBL_RECORDVIEW',
         			//BEGIN SUGARCRM flav=pro ONLY
         			MB_WIRELESSEDITVIEW => 'LBL_WIRELESSEDITVIEW' ,
         			MB_WIRELESSDETAILVIEW => 'LBL_WIRELESSDETAILVIEW' ,
