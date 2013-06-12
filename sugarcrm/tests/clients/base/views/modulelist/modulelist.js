@@ -251,24 +251,24 @@ describe("Module List", function() {
 
     describe("handle data route events", function() {
         var view,
-            loadUrlStub,
+            refreshStub,
             navigateStub,
             oRouter;
 
         beforeEach(function() {
             // Workaround because router not defined yet
             oRouter              = SugarTest.app.router;
-            SugarTest.app.router = {navigate: function() {}};
+            SugarTest.app.router = {navigate: function() {}, refresh: function() {}};
 
             view         = SugarTest.createView("base", moduleName, "modulelist", null, null);
-            loadUrlStub  = sinon.stub(Backbone.history, "loadUrl");
+            refreshStub = sinon.stub(SugarTest.app.router, "refresh");
             navigateStub = sinon.stub(SugarTest.app.router, "navigate");
         });
 
         afterEach(function() {
             SugarTest.app.router = oRouter;
             view.dispose();
-            loadUrlStub.restore();
+            refreshStub.restore();
             navigateStub.restore();
         });
 
@@ -278,7 +278,7 @@ describe("Module List", function() {
             view.$el.append(link);
             link.click();
 
-            expect(loadUrlStub).not.toHaveBeenCalled();
+            expect(refreshStub).not.toHaveBeenCalled();
             expect(navigateStub).not.toHaveBeenCalled();
         });
 
@@ -291,10 +291,11 @@ describe("Module List", function() {
             view.$el.append(link);
             link.click();
 
-            expect(loadUrlStub).toHaveBeenCalled();
+            expect(refreshStub).toHaveBeenCalled();
             expect(navigateStub).not.toHaveBeenCalled();
 
             getFragmentStub.restore();
+            refreshStub.restore();
         });
 
         it("should call navigate when data-route is a new route", function() {
@@ -306,7 +307,7 @@ describe("Module List", function() {
             view.$el.append(link);
             link.click();
 
-            expect(loadUrlStub).not.toHaveBeenCalled();
+            expect(refreshStub).not.toHaveBeenCalled();
             expect(navigateStub).toHaveBeenCalled();
 
             getFragmentStub.restore();
