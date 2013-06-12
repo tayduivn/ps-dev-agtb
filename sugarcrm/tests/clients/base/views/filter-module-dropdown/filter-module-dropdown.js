@@ -12,6 +12,8 @@ describe("BaseFilterModuleDropdownView", function () {
     });
 
     afterEach(function () {
+        view.dispose();
+        layout.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -69,7 +71,7 @@ describe("BaseFilterModuleDropdownView", function () {
         });
     });
 
-    describe('filterList', function() {
+    xdescribe('filterList', function() {
 
         it('gets module list for Activity Stream', function() {
             var expected, filterList;
@@ -106,7 +108,7 @@ describe("BaseFilterModuleDropdownView", function () {
         });
     });
 
-    describe('pullSubpanelRelationships', function() {
+    xdescribe('pullSubpanelRelationships', function() {
 
         it('should return subpanels metadata', function() {
             var metadataStub = sinon.stub(app.utils, 'getSubpanelList', function(module) {
@@ -118,7 +120,7 @@ describe("BaseFilterModuleDropdownView", function () {
         });
     });
 
-    describe('select2 options', function() {
+    xdescribe('select2 options', function() {
 
         it('should initSelection for selected module', function() {
             var $input = $('<input type="text">').val('all_modules'),

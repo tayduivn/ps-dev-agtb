@@ -8,6 +8,8 @@ beforeEach(function(){
         SugarTest.clock = sinon.useFakeTimers();
     }
 
+    SugarTest.components = [];
+
     //Mock throttle and debounce to prevent the need to actually wait.
     //(underscore throttle uses dates to enforce waits outside of the normal setTimeout function
     _.each(underscoreDelayFunctions, function(func){
@@ -31,6 +33,11 @@ beforeEach(function(){
 });
 
 afterEach(function() {
+    _.each(SugarTest.components, function(component) {
+        component.dispose();
+    });
+    SugarTest.components = null;
+    
     delete Handlebars.helpers.moduleIconLabel;
 
     SugarTest.clock.restore();

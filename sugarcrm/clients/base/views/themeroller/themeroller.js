@@ -67,7 +67,10 @@
     loadTheme: function() {
         this.themeApi('read', {}, function(data) {
             this.lessVars = data;
-            if(!this.disposed) this.render();
+            if (this.disposed) {
+                return;
+            }
+            this.render();
             this.previewTheme();
         });
     },

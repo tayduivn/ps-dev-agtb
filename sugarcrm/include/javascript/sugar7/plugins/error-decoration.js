@@ -42,6 +42,9 @@
                     }, fields);
                 }
                 _.defer(function() {
+                    if (this.disposed) {
+                        return;
+                    }
                     this.$('.error').removeClass('error');
                     this.$('.error-tooltip').remove();
                 }, this);
