@@ -40,24 +40,28 @@ $layout_defs['Contacts'] = array(
 			'module' => 'Calls',
 			'get_subpanel_data' => 'calls',
 			'title_key' => 'LBL_CALLS_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'meetings' => array(
 			'order' => 20,
 			'module' => 'Meetings',
 			'get_subpanel_data' => 'meetings',
 			'title_key' => 'LBL_MEETINGS_SUBPANEL_TITLE',		
+			'canLink' => false,
 		),
 		'tasks' => array(
 			'order' => 30,
 			'module' => 'Tasks',
 			'get_subpanel_data' => 'tasks',
 			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',		
+			'canLink' => false,
 		),
 		'notes' => array(
 			'order' => 35,
 			'module' => 'Notes',
 			'get_subpanel_data' => 'notes',
 			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'direct_reports'=> array(
 			'order' => 50,

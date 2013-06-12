@@ -40,6 +40,7 @@ $layout_defs['Tasks'] = array(
 			'module' => 'Notes',
 			'get_subpanel_data' => 'notes',
 			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 	),
 );

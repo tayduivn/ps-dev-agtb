@@ -38,6 +38,7 @@ $layout_defs['Meetings'] = array(
 			'module' => 'Notes',
 			'get_subpanel_data' => 'notes',
 			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'contacts'=> array(
 			'order' => 10,
