@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,8 +21,9 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/Emails/Email.php');
+require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /**
  * Test cases for Bug 30591
@@ -30,24 +31,24 @@ require_once('modules/Emails/Email.php');
 class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	private $email;
-	
+
 	public function setUp()
 	{
 	    global $current_user;
-		
+
 	    $current_user = BeanFactory::getBean("Users");
         $current_user->getSystemUser();
 	    $this->email = new Email();
 	    $this->email->email2init();
 	}
-	
+
 	public function tearDown()
 	{
 		unset($this->email);
 		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
 	}
-	
+
 	public function testSafeAttachmentName ()
 	{
 		$extArray[] = '0.py';
@@ -73,7 +74,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 			}
 		}
 	}
-	
+
 	public function testEmail2ParseAddresses()
 	{
 		$emailDisplayName[] = '';
@@ -88,7 +89,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 				$emailString[] = $emailDisplayName[$j].$emailAddress[$j];
 			else
 				$emailString[] = $emailDisplayName[$j].'<'.$emailAddress[$j].'>';
-			
+
 		}
 		$emailAddressString = implode(', ', $emailString);
 		$result = $this->email->email2ParseAddresses($emailAddressString);
@@ -100,7 +101,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 			$this->asserteQuals($onlyEmailResult[$v], $emailAddress[$v]);
 		}
 	}
-	
+
 	public function testDecodeDuringSend()
 	{
 		$testString = 'Replace sugarLessThan and sugarGreaterThan with &lt; and &gt;';
@@ -129,6 +130,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmailSend_Success()
     {
+        OutboundEmailConfigurationTestHelper::setUp();
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
         $mockMailer = new MockMailer($config);
 
@@ -198,7 +200,7 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($to->getName(),  $actual_cc[0]->getName(),  "CC Name Incorrect");
 
         $this->assertEquals(true,$mockMailer->wasSent());
-
+        OutboundEmailConfigurationTestHelper::tearDown();
     }
 
     /**

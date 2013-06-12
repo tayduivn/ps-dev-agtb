@@ -36,7 +36,7 @@
         callbacks = app.data.getSyncCallbacks(method, model, options);
         this.trigger("data:sync:start", method, model, options);
 
-        url = app.api.buildURL("MailRecipient", null, null, options.params);
+        url = app.api.buildURL("Mail", "recipients/find", null, options.params);
         app.api.call("read", url, null, callbacks);
     },
 

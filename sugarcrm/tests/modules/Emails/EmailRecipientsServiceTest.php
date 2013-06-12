@@ -22,17 +22,21 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Emails/RecipientLookup.php');
+require_once('modules/Emails/EmailRecipientsService.php');
 
 
-class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
+/**
+ * @group functional
+ * @group email
+ */
+class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $recipientLookup;
+    private $emailRecipientsService;
 
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
-        $this->recipientLookup = new RecipientLookup();
+        $this->emailRecipientsService = new EmailRecipientsService;
     }
 
     public function tearDown()
@@ -45,7 +49,110 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testLookupRecipient_SetAllProperties_RecipientResolved()
+    public function testIsValidEmailAddress_EmailAddressIsEmpty_ReturnsFalse()
+    {
+        $actual = $this->emailRecipientsService->isValidEmailAddress();
+        $this->assertFalse($actual, "Should have returned false because an empty email address is invalid.");
+    }
+
+    public function testIsValidEmailAddress_EmailAddressIsValid_ReturnsTrue()
+    {
+        $emailAddress = "foo@bar.com";
+        $actual       = $this->emailRecipientsService->isValidEmailAddress($emailAddress);
+        $this->assertTrue($actual, "Should have returned true because {$emailAddress} is valid.");
+    }
+
+    public function testIsValidEmailAddress_EmailAddressIsInvalid_ReturnsFalse()
+    {
+        $emailAddress = "foo";
+        $actual       = $this->emailRecipientsService->isValidEmailAddress($emailAddress);
+        $this->assertFalse($actual, "Should have returned false because {$emailAddress} is invalid.");
+    }
+
+    public function testFindCount_SearchAllModulesForTerm_ReturnsTwo()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "sam_";
+        $expected = 2;
+        $actual   = $this->emailRecipientsService->findCount($term);
+        $this->assertEquals($expected, $actual, "Should have found {$expected} recipients who matched {$term}.");
+    }
+
+    public function testFindCount_SearchContactsForTerm_ReturnsOne()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "jiminy_";
+        $module   = "contacts";
+        $expected = 1;
+        $actual   = $this->emailRecipientsService->findCount($term, $module);
+        $this->assertEquals($expected, $actual, "Should have found {$expected} {$module} who matched {$term}.");
+    }
+
+    public function testFind_SearchAllModulesForTerm_ReturnsTwo()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "sam_";
+        $expected = 2;
+        $actual   = count($this->emailRecipientsService->find($term));
+        $this->assertEquals($expected, $actual, "Should have found {$expected} recipients who matched {$term}.");
+    }
+
+    public function testFind_SearchContactsForTerm_ReturnsOne()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "jiminy_";
+        $module   = "contacts";
+        $expected = 1;
+        $actual   = count($this->emailRecipientsService->find($term, $module));
+        $this->assertEquals($expected, $actual, "Should have found {$expected} {$module} who matched {$term}.");
+    }
+
+    public function testFind_SearchContactsForTermWithLimit_ReturnsOne()
+    {
+        $this->createRecipientsAcrossModules();
+        $term     = "sam_";
+        $module   = "contacts";
+        $orderBy  = array();
+        $expected = 1;
+        $actual   = count($this->emailRecipientsService->find($term, $module, $orderBy, $expected));
+        $this->assertEquals($expected, $actual, "Should have found {$expected} {$module} who matched {$term}.");
+    }
+
+    public function testFind_SearchAccountsForTermAndOrderByEmailAsc_ReturnsSortedMatchingAccounts()
+    {
+        $this->createRecipientsAcrossModules();
+        $term        = "account.";
+        $module      = "accounts";
+        $orderBy     = array("email" => "ASC");
+        $limit       = 3;
+        $recipients  = $this->emailRecipientsService->find($term, $module, $orderBy, $limit);
+
+        $expected = "account.my@yahoo.com";
+        $actual   = $recipients[0]["email"];
+        $this->assertEquals(
+            $expected,
+            $actual,
+            "Should have sorted the recipients such that the recipient with the email address '{$expected}' was first."
+        );
+
+        $expected = "account.that@yahoo.com";
+        $actual   = $recipients[1]["email"];
+        $this->assertEquals(
+            $expected,
+            $actual,
+            "Should have sorted the recipients such that the recipient with the email address '{$expected}' was second."
+        );
+
+        $expected = "account.this@yahoo.com";
+        $actual   = $recipients[2]["email"];
+        $this->assertEquals(
+            $expected,
+            $actual,
+            "Should have sorted the recipients such that the recipient with the email address '{$expected}' was third."
+        );
+    }
+
+    public function testLookup_SetAllProperties_RecipientResolved()
     {
         $contact = SugarTestContactUtilities::createContact();
 
@@ -62,12 +169,12 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient to be Resolved From ID and Module");
     }
 
-    public function testLookupRecipient_SetIdAndModule_RecipientResolved()
+    public function testLookup_SetIdAndModule_RecipientResolved()
     {
         $contact = SugarTestContactUtilities::createContact();
 
@@ -79,12 +186,12 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient to be Resolved From ID and Module");
     }
 
-    public function testLookupRecipient_SetEmailAndModuleOnly_RecipientResolvesToModuleExpected()
+    public function testLookup_SetEmailAndModuleOnly_RecipientResolvesToModuleExpected()
     {
         $email = "unit_test_" . create_guid() . "@yahoo.com";
         $contact = SugarTestContactUtilities::createContact();
@@ -103,7 +210,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $lead->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Lead Recipient to be Resolved From Email Address");
 
         $input = array("module" => 'Contacts', "id" => '', "email" => $email, "name" => '');
@@ -114,12 +221,11 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Contact Recipient to be Resolved From Email Address");
     }
 
-
-    public function testLookupRecipient_SetMultiplePotentialMatchesOnEmail_UnpredictableMatchingRecipientResolvedToFirstMatchFound()
+    public function testLookup_SetMultiplePotentialMatchesOnEmail_UnpredictableMatchingRecipientResolvedToFirstMatchFound()
     {
         $email = "unit_test_" . create_guid() . "@yahoo.com";
 
@@ -146,7 +252,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $lead->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertTrue(
             ($expected1 == $actual) || ($expected2 == $actual),
@@ -154,8 +260,7 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-
-    public function testLookupRecipient_SetInvalidContactId_RecipientNotFoundAndBadIdReturned()
+    public function testLookup_SetInvalidContactId_RecipientNotFoundAndBadIdReturned()
     {
         $invalid_contact_id = create_guid();
 
@@ -167,12 +272,12 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => '',
             "resolved" => false
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient not to Resolve - Module Required with an ID");
     }
 
-    public function testLookupRecipient_SetContactIdAndModuleAndUnmatchingName_RecipientResolvedAndInputPreserved()
+    public function testLookup_SetContactIdAndModuleAndUnmatchingName_RecipientResolvedAndInputPreserved()
     {
         $name = "George Jetson";
         $email = "unit_test_" . create_guid() . "@yahoo.com";
@@ -187,11 +292,11 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Unexpected Recipient to Resolve and Supplied Name not to be Replaced");
     }
 
-    public function testLookupRecipient_SetContactIdAndEmail_IdAndEmailFound_RecipientResolved()
+    public function testLookup_SetContactIdAndEmail_IdAndEmailFound_RecipientResolved()
     {
         $email = "unit_test_" . create_guid() . "@yahoo.com";
         $contact1 = SugarTestContactUtilities::createContact();
@@ -216,13 +321,12 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $contact2->name,
             "resolved" => true
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient to Resolve to Matching ID and Email");
 
     }
 
-
-    public function testLookupRecipient_SetEmailAndIDOnly_EmailFoundButNotID_RecipientNotResolved()
+    public function testLookup_SetEmailAndIDOnly_EmailFoundButNotID_RecipientNotResolved()
     {
         $email = "unit_test_" . create_guid() . "@yahoo.com";
         $contact1 = SugarTestContactUtilities::createContact();
@@ -247,12 +351,11 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => '',
             "resolved" => false
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient Not to Resolve with unmatching ID");
     }
 
-
-    public function testLookupRecipient_IDProvided_NoModule_EmailNotFound_IgnoreIDButReturnIt_Unresolved()
+    public function testLookup_IDProvided_NoModule_EmailNotFound_IgnoreIDButReturnIt_Unresolved()
     {
         $email = "unit_test_" . create_guid() . "@yahoo.com";
         $name = "George Jetson";
@@ -265,8 +368,80 @@ class RecipientLookupTest extends Sugar_PHPUnit_Framework_TestCase
             "name" => $name,
             "resolved" => false
         );
-        $actual = $this->recipientLookup->lookup($input);
+        $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Supplied Data to be Returned on Unresolved ID");
     }
 
+    protected function createRecipientsAcrossModules()
+    {
+        $recipients = array(
+            array(
+                "type"  => "accounts",
+                "name"  => "This Account",
+                "email" => "account.this@yahoo.com",
+            ),
+            array(
+                "type"  => "accounts",
+                "name"  => "My Account",
+                "email" => "account.my@yahoo.com",
+            ),
+            array(
+                "type"  => "accounts",
+                "name"  => "That Account",
+                "email" => "account.that@yahoo.com",
+            ),
+            array(
+                "type"       => "contacts",
+                "first_name" => "John",
+                "last_name"  => "Doe",
+                "email"      => "john_doe@yahoo.com",
+            ),
+            array(
+                "type"       => "contacts",
+                "first_name" => "Sam",
+                "last_name"  => "The Sham",
+                "email"      => "sam_the_sham@yahoo.com",
+            ),
+            array(
+                "type"       => "contacts",
+                "first_name" => "Jiminy",
+                "last_name"  => "Crickett",
+                "email"      => "jiminy_crickett@gmail.com",
+            ),
+            array(
+                "type"       => "leads",
+                "first_name" => "Davey",
+                "last_name"  => "Crockett",
+                "email"      => "davey_crockett@alamo.com",
+            ),
+            array(
+                "type"       => "leads",
+                "first_name" => "Jim",
+                "last_name"  => "Bowie",
+                "email"      => "jim_bowie@alamo.com",
+            ),
+            array(
+                "type"       => "leads",
+                "first_name" => "Sam",
+                "last_name"  => "Houston",
+                "email"      => "sam_houston@alamo.com",
+            ),
+        );
+
+        foreach ($recipients as $recipient) {
+            switch ($recipient["type"]) {
+                case "accounts":
+                    SugarTestAccountUtilities::createAccount(null, $recipient);
+                    break;
+                case "contacts":
+                    SugarTestContactUtilities::createContact(null, $recipient);
+                    break;
+                case "leads":
+                    SugarTestLeadUtilities::createLead(null, $recipient);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
