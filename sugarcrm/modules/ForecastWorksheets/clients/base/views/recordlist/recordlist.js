@@ -380,7 +380,7 @@
                 this.layout.show();
             }
 
-            if (this.collection.length == 0) {
+            if (this.filteredCollection.length == 0) {
                 var tpl = app.template.getView('recordlist.noresults', this.module);
                 this.$el.find('tbody').html(tpl(this));
             }
