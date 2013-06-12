@@ -78,11 +78,20 @@ class RestService extends ServiceBase {
     }
 
     /**
+     * Get response object
+     * @return RestResponse
+     */
+    public function getResponse()
+    {
+        return new RestResponse($_SERVER);
+    }
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute()
     {
-        $this->response = new RestResponse($_SERVER);
+        $this->response = $this->getResponse();
         try {
             $this->request = $this->getRequest();
             $this->request_headers = $this->request->request_headers;
