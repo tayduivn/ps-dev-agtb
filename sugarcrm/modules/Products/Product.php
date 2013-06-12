@@ -646,14 +646,6 @@ class Product extends SugarBean
         $this->mapFieldsFromOpportunity();
 
         $id = parent::save($check_notify);
-        //BEGIN SUGARCRM flav=ent ONLY
-        // this only happens when ent is built out
-        
-        if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
-            $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
-        }
-        $this->setOpportunitySalesStatus();
-        //END SUGARCRM flav=ent ONLY
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
@@ -750,117 +742,6 @@ class Product extends SugarBean
         }
         return $id;
     }
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * Handle setting the opportunity status
-     *
-     * This currently uses Dependency Injection for the Opportunity and Administration beans since we can't
-     * Override BeanFactory::getBean()  once that is done we can remove the dependency Injection. When called
-     * you should not pass and Opportunity and Administration bean in.
-     *
-     * @param Opportunity $opp
-     * @param Administration $admin
-     */
-    protected function setOpportunitySalesStatus(Opportunity $opp = null, Administration $admin = null)
-    {
-        if (is_null($admin)) {
-            // if $admin is not passed in then load it up
-            $admin = BeanFactory::getBean('Administration');
-        }
-        $settings = $admin->getConfigForModule('Forecasts');
-
-        if ($settings['is_setup'] != 1) {
-            // forecasts is not setup, just ignore this
-            return;
-        }
-
-
-        if (is_null($opp)) {
-            // if $opp is not set, load it up
-            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-        }
-        // get the closed won and closed lost values
-        $closed_won = $settings['sales_stage_won'];
-        $closed_lost = $settings['sales_stage_lost'];
-
-        $won_products = count(
-            $opp->get_linked_beans(
-                'products',
-                'Products',
-                array(),
-                0,
-                -1,
-                0,
-                'sales_stage in ("' . join('","', $closed_won) . '")'
-            )
-        );
-
-        $lost_products = count(
-            $opp->get_linked_beans(
-                'products',
-                'Products',
-                array(),
-                0,
-                -1,
-                0,
-                'sales_stage in ("' . join('","', $closed_lost) . '")'
-            )
-        );
-
-        $total_products = count($opp->get_linked_beans('products', 'Products'));
-
-        if ($total_products > ($won_products + $lost_products) || $total_products === 0) {
-            // still in progress
-            $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
-            $opp->save();
-        } else {
-            // they are equal so if the total lost == total products then it's closed lost,
-            // otherwise it's always closed won
-            if ($lost_products == $total_products) {
-                $opp->sales_status = Opportunity::STATUS_CLOSED_LOST;
-            } else {
-                $opp->sales_status = Opportunity::STATUS_CLOSED_WON;
-            }
-            $opp->save();
-        }
-    }
-    //END SUGARCRM flav=ent ONLY
-
-    /**
-     * Override the current SugarBean functionality to make sure that when this method is called that it will also
-     * take care of any draft worksheets by rolling-up the data
-     *
-     * @param string $id            The ID of the record we want to delete
-     */
-    public function mark_deleted($id)
-    {
-        $oppId = $this->opportunity_id;
-        parent::mark_deleted($id);
-           
-        //BEGIN SUGARCRM flav=ent ONLY
-        // this only happens when ent is built out
-
-        //save to trigger related field recalculations for deleted item
-        $this->resaveOppForRecalc($oppId);
-        //END SUGARCRM flav=ent ONLY
-    }
-    
-    /**
-     * Utility to load/save a related Opp when things are deleted/reassigned so calculated fields
-     * in Opportunities update with new totals.
-     */
-    protected function resaveOppForRecalc($oppId)
-    {
-        if (!empty($oppId)) {
-            /* @var $opp Opportunity */
-            $opp = BeanFactory::getBean('Opportunities', $oppId);
-
-            // save the opp via the opp status
-            $this->setOpportunitySalesStatus($opp);
-        }
-    }
-
 
     /*
      * map fields if opportunity id is set
