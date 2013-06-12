@@ -135,20 +135,7 @@
             return;
         }
 
-        var disable = ["Quotes",
-            "ProductCategories",
-            "Meetings",
-            "Reports",
-            "KBDocuments",
-            "Users",
-            "Administration",
-            "ProspectLists",
-            "Calls",
-            "Employees",
-            "Emails",
-            "EmailTemplates"];
-        // HACK FOR SUGARCON 2013. This should be removed afterwards.
-        if (_.contains(disable, model.module)) {
+        if (app.metadata.getModule(model.module).isBwcEnabled) {
             app.events.trigger('preview:close');
             app.alert.show('preview_bwc_error', {level:'error', messages: app.lang.getAppString('LBL_PREVIEW_BWC_ERROR'), autoClose: true});
             return;
