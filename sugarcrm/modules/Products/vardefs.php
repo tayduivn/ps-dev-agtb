@@ -140,7 +140,6 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_CATEGORY',
             'type' => 'id',
             'group' => 'category_name',
-            'required' => true,
             'reportable' => true,
             'comment' => 'Product category'
         ),
@@ -158,7 +157,6 @@ $dictionary['Product'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
-            'required' => true,
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
         ),
         'name' =>  array(
