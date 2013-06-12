@@ -27,6 +27,11 @@ class SugarApiException extends Exception
     public $messageLabel = 'EXCEPTION_UNKNOWN_EXCEPTION';
     public $msgArgs = null;
     protected $moduleName = null;
+    /**
+     * Extra data attached to the exception
+     * @var array
+     */
+    public $extraData = array();
 
     /**
      * @param string $messageLabel optional Label for error message.  Used to load the appropriate translated message.
@@ -125,6 +130,18 @@ class SugarApiException extends Exception
             $this->message = string_format($message,$msgArgs);
         }
 
+    }
+
+    /**
+     * Set exception extra data
+     * @param string $key
+     * @param mixed $data
+     * @return SugarApiException
+     */
+    public function setExtraData($key, $data)
+    {
+        $this->extraData[$key] = $data;
+        return $this;
     }
 
 }

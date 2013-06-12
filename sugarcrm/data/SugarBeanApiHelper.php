@@ -228,6 +228,10 @@ class SugarBeanApiHelper
      */
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array() )
     {
+        if(!empty($bean->id) && !empty($options['optimistic_lock'])) {
+            $this->checkOptimisticLocking($bean, $options['optimistic_lock']);
+        }
+
         $sfh = new SugarFieldHandler();
 
         $context = array();
@@ -264,5 +268,42 @@ class SugarBeanApiHelper
         }
 
         return true;
+    }
+
+    /**
+     * Check optimistic lock on a bean against $timestamp
+     * @param SugarBean $bean
+     * @param string $timestamp ISO-formatted timestamp
+     * @return bool
+     * @throws SugarApiExceptionEditConflict
+     */
+    protected function checkOptimisticLocking($bean, $timestamp)
+    {
+        if(empty($timestamp)) {
+            // no TS - no conflict
+            return true;
+        }
+        if(empty($bean->id) || empty($bean->date_modified)) {
+            // bean is either empty or new, no conflict
+            return true;
+        }
+        $timedate = TimeDate::getInstance();
+        $ts_client = $timedate->fromIso($timestamp);
+        if(empty($ts_client)) {
+            // timestamp is incomprehensible, defaulting to no conflict
+            return true;
+        }
+        $ts_server = $timedate->fromDb($bean->date_modified);
+        if(empty($ts_server)) {
+            $ts_server = $timedate->fromUser($bean->date_modified);
+        }
+        if(empty($ts_server)) {
+            // Bean timestamp is incomprehensible, defaulting to no conflict
+            return true;
+        }
+        if($ts_server->ts != $ts_client->ts) {
+            // OOPS, edited after client TS, conflict!
+            throw new SugarApiExceptionEditConflict("Edit conflict - client TS is {$timedate->asIso($ts_client)}, server TS is {$timedate->asIso($ts_server)}");
+        }
     }
 }

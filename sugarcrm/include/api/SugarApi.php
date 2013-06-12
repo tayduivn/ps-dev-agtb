@@ -163,9 +163,22 @@ abstract class SugarApi {
      * @param $args array The arguments array passed in from the API
      * @return id Bean id
      */
-    protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
+    protected function updateBean(SugarBean $bean, ServiceBase $api, $args) {
 
-        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
+        $options = array();
+        if(!empty($args['_headers']['X_TIMESTAMP'])) {
+            $options['optimistic_lock'] = $args['_headers']['X_TIMESTAMP'];
+        }
+        try {
+            $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args, $options);
+        } catch(SugarApiExceptionEditConflict $conflict) {
+            $api->action = 'view';
+            $data = $this->formatBean($api, $args, $bean);
+            // put current state of the record on the exception
+            $conflict->setExtraData("record", $data);
+            throw $conflict;
+        }
+
         if ( $errors !== true ) {
             // There were validation errors.
             throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');

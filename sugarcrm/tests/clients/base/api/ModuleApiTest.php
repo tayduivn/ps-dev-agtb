@@ -26,107 +26,208 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
 require_once ("clients/base/api/ModuleApi.php");
 require_once ("tests/SugarTestRestUtilities.php");
+
 /**
  * @group ApiTests
  */
-class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase {
-
-    public $accounts;
+class ModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    public $accounts, $account_ids;
     public $roles;
     public $moduleApi;
     public $serviceMock;
 
-    public function setUp() {
-        SugarTestHelper::setUp("current_user");        
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("current_user");
+    }
+
+    public function setUp()
+    {
         // load up the unifiedSearchApi for good times ahead
         $this->moduleApi = new ModuleApi();
         $account = BeanFactory::newBean('Accounts');
         $account->name = "ModulaApiTest setUp Account";
+        $account->assigned_user_id = $GLOBALS['current_user']->id;
         $account->save();
         $this->accounts[] = $account;
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
     }
 
-    public function tearDown() {
-        $GLOBALS['current_user']->is_admin = 1;        
+    public function tearDown()
+    {
         // delete the bunch of accounts crated
-        foreach($this->accounts AS $account) {
-            $account->mark_deleted($account->id);
-        }
-        unset($_SESSION['ACL']);
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'");
+        SugarACL::resetACLs();
+        parent::tearDown();
+    }
+
+    public static function tearDownAfterClass()
+    {
         SugarTestHelper::tearDown();
-        parent::tearDown();        
     }
 
     // test set favorite
-    public function testSetFavorite() {
-        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
-        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
+    public function testSetFavorite()
+    {
+        $result = $this->moduleApi->setFavorite($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
+        $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
     }
     // test remove favorite
-    public function testRemoveFavorite() {
-        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
-        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
+    public function testRemoveFavorite()
+    {
+        $result = $this->moduleApi->setFavorite($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
+        $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
 
-        $result = $this->moduleApi->unsetFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
-        $this->assertFalse((bool) $result['my_favorite'], "Was not set to false");
+        $result = $this->moduleApi->unsetFavorite($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
+        $this->assertFalse((bool)$result['my_favorite'], "Was not set to false");
     }
     // test set favorite of deleted record
-    public function testSetFavoriteDeleted() {
+    public function testSetFavoriteDeleted()
+    {
         $this->accounts[0]->mark_deleted($this->accounts[0]->id);
-        $this->setExpectedException(
-          'SugarApiExceptionNotFound', "Could not find record: {$this->accounts[0]->id} in module: Accounts"
-        );
-        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
-        
+        $this->setExpectedException('SugarApiExceptionNotFound',
+            "Could not find record: {$this->accounts[0]->id} in module: Accounts");
+        $result = $this->moduleApi->setFavorite($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
     }
     // test remove favorite of deleted record
-    public function testRemoveFavoriteDeleted() {
-        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
-        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
+    public function testRemoveFavoriteDeleted()
+    {
+        $result = $this->moduleApi->setFavorite($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
+        $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
 
         $this->accounts[0]->deleted = 1;
         $this->accounts[0]->save();
-        $this->setExpectedException(
-          'SugarApiExceptionNotFound', "Could not find record: {$this->accounts[0]->id} in module: Accounts"
-        );
+        $this->setExpectedException('SugarApiExceptionNotFound',
+            "Could not find record: {$this->accounts[0]->id} in module: Accounts");
 
-        $result = $this->moduleApi->setFavorite($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id));
+        $result = $this->moduleApi->setFavorite($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id));
     }
     // test set my_favorite on bean
-    public function testSetFavoriteOnBean() {
-        $result = $this->moduleApi->updateRecord($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
-        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
+    public function testSetFavoriteOnBean()
+    {
+        $result = $this->moduleApi->updateRecord($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id, "my_favorite" => true));
+        $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
     }
     // test remove my_favorite on bean
-    public function testRemoveFavoriteOnBean() {
-        $result = $this->moduleApi->updateRecord($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => true));
-        $this->assertTrue((bool) $result['my_favorite'], "Was not set to true");
+    public function testRemoveFavoriteOnBean()
+    {
+        $result = $this->moduleApi->updateRecord($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id, "my_favorite" => true));
+        $this->assertTrue((bool)$result['my_favorite'], "Was not set to true");
 
-        $result = $this->moduleApi->updateRecord($this->serviceMock, array('module' => 'Accounts','record' => $this->accounts[0]->id, "my_favorite" => false));
-        $this->assertFalse((bool) $result['my_favorite'], "Was not set to False");        
+        $result = $this->moduleApi->updateRecord($this->serviceMock,
+            array('module' => 'Accounts', 'record' => $this->accounts[0]->id,
+                "my_favorite" => false));
+        $this->assertFalse((bool)$result['my_favorite'], "Was not set to False");
     }
 
-    public function testViewNoneCreate() {
-        $this->markTestIncomplete('Migrate to new unit tests');
+    public function testCreate()
+    {
+        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'Test Account', 'assigned_user_id' => $GLOBALS['current_user']->id));
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey("id", $result);
+        $this->assertEquals("Test Account", $result['name']);
+
+        $account = BeanFactory::newBean('Accounts');
+        $account->retrieve($result['id']);
+        $this->assertAttributeNotEmpty('id',$account);
+        $this->assertEquals("Test Account", $account->name);
+    }
+
+    public function testUpdate()
+    {
+        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'Test Account', 'assigned_user_id' => $GLOBALS['current_user']->id));
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey("id", $result);
+        $id = $result['id'];
+
+        $result = $this->moduleApi->updateRecord($this->serviceMock,
+                array('module' => 'Accounts', 'record' => $id, 'name' => 'Changed Account'));
+        $this->assertArrayHasKey("id", $result);
+        $this->assertEquals($id, $result['id']);
+
+        $account = BeanFactory::newBean('Accounts');
+        $account->retrieve($result['id']);
+        $this->assertAttributeNotEmpty('id',$account);
+        $this->assertEquals("Changed Account", $account->name);
+    }
+
+    public function testUpdateNonConflict()
+    {
+        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'Test Account',
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+        ));
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey("id", $result);
+        $id = $result['id'];
+        $timedate = TimeDate::getInstance();
+        $dm = $timedate->fromIso($result['date_modified']);
+
+        $result = $this->moduleApi->updateRecord($this->serviceMock,
+                array('module' => 'Accounts', 'record' => $id, 'name' => 'Changed Account',
+                        '_headers' => array('X_TIMESTAMP' => $timedate->asIso($dm)),
+                ));
+        $this->assertArrayHasKey("id", $result);
+        $this->assertEquals($id, $result['id']);
+    }
+
+    /**
+     * @expectedException SugarApiExceptionEditConflict
+     */
+    public function testUpdateConflict()
+    {
+        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'Test Account',
+                'assigned_user_id' => $GLOBALS['current_user']->id,
+        ));
+        $this->assertNotEmpty($result);
+        $this->assertArrayHasKey("id", $result);
+        $id = $result['id'];
+        $timedate = TimeDate::getInstance();
+        // change modified data to not match the record
+        $dm = $timedate->fromIso($result['date_modified'])->get("-1 minute");
+
+        try {
+            $result = $this->moduleApi->updateRecord($this->serviceMock,
+                    array('module' => 'Accounts', 'record' => $id, 'name' => 'Changed Account',
+                            '_headers' => array('X_TIMESTAMP' => $timedate->asIso($dm)),
+                    ));
+        } catch(SugarApiExceptionEditConflict $e) {
+            $this->assertNotEmpty($e->extraData);
+            $this->arrayHasKey("record", $e->extraData);
+            $this->assertEquals('Test Account', $e->extraData['record']['name']);
+            throw $e;
+        }
+    }
+
+    public function testViewNoneCreate()
+    {
         // setup ACL
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Accounts']['module']['view']['aclaccess'] = -99;
+        $rejectacl = $this->getMock('SugarACLStatic');
+        $rejectacl->expects($this->any())->method('checkAccess')->will($this->returnCallback(function($module, $view, $context) {
+                if($module == 'Accounts' && $view == 'view') {
+                    return false;
+                }
+                return true;
+            }
+        ));
+        SugarACL::setACL('Accounts', array($rejectacl));
         // create a record
-        $result = $this->moduleApi->createRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','name' => 'Test Account'));
+        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'Test Account', 'assigned_user_id' => $GLOBALS['current_user']->id));
         // verify only id returns
         $this->assertNotEmpty($result);
-        $this->assertEquals(count($result), 1);
-        // delete the record
-        $result = $this->moduleApi->deleteRecord(new ModuleApiServiceMockUp, array('module' => 'Accounts','record'=>$result['id']));
+        $this->assertArrayHasKey("id", $result);
+        $this->assertArrayNotHasKey("name", $result);
     }
-
-}
-
-class ModuleApiServiceMockUp extends RestService
-{
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
 }
