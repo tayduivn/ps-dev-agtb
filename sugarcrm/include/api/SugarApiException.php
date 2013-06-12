@@ -27,6 +27,7 @@ class SugarApiException extends Exception
     public $messageLabel = 'EXCEPTION_UNKNOWN_EXCEPTION';
     public $msgArgs = null;
     protected $moduleName = null;
+    
     /**
      * Extra data attached to the exception
      * @var array
