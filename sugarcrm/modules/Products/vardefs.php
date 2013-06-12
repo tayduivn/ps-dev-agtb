@@ -24,6 +24,22 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'comment' => 'Associated Revenue Line Item that served as the source.'
         ),
+        'revenuelineitem_name' =>  array(
+            'name' => 'revenuelineitem_name',
+            'rname' => 'name',
+            'id_name' => 'revenuelineitem_id',
+            'vname' => 'LBL_REVENUELINEITEM_NAME',
+            'join_name' => 'revenuelineitems',
+            'type' => 'relate',
+            'link' => 'revenuelineitems',
+            'table' => 'revenue_line_items',
+            'isnull' => 'true',
+            'module' => 'RevenueLineItems',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'source' => 'non-db',
+            'studio' => false
+            ),
         'product_template_id' =>  array(
             'name' => 'product_template_id',
             'type' => 'id',
@@ -964,7 +980,7 @@ $dictionary['Product'] = array(
             'lhs_table' => 'products',
             'lhs_key' => 'revenuelineitem_id',
             'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenuelineitem',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
         ),
