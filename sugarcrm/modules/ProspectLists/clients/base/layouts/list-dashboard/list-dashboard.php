@@ -1,30 +1,53 @@
 <?php
-$layout = MetaDataManager::getLayout(
-    'DashboardLayout',
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
+$viewdefs['ProspectLists']['base']['layout']['list-dashboard'] = array(
+    'metadata' =>
     array(
-        'columns' => 1,
-        'name' => 'My Dashboard',
-    )
-);
-$layout->push(
-    0,
-    array(
+        'components' =>
         array(
-            'view' => array(
-                'name' => 'dashablelist',
-                'label' => 'My Accounts',
-                'display_columns' => array(
-                    'name',
-                    'billing_address_country',
-                    'billing_address_city',
+            array(
+                'rows' =>
+                array(
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'dashablelist',
+                                'label' => 'My Accounts',
+                                'display_columns' =>
+                                array(
+                                    'name',
+                                    'billing_address_country',
+                                    'billing_address_city',
+                                ),
+                                'my_items' => '1',
+                                'display_rows' => 5,
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Accounts',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
                 ),
-                'my_items' => '1',
-                'display_rows' => 5,
-            ),
-            'context' => array(
-                'module' => 'Accounts',
+                'width' => 12,
             ),
         ),
-    )
+    ),
+    'name' => 'My Dashboard',
 );
-$viewdefs['ProspectLists']['base']['layout']['list-dashboard'] = $layout->getLayout();
+
