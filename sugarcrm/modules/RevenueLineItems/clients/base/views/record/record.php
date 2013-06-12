@@ -289,6 +289,8 @@ $fieldsHidden = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    'date_entered',
+    'date_modified'
 );
 //END SUGARCRM flav=ent ONLY
 
