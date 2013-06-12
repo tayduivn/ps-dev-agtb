@@ -18,6 +18,16 @@
         app.view.declareComponent(type, name, module, data, true, client);
     };
 
+    test.loadPlugin = function(name, subdir) {
+        subdir = subdir ? '/' + subdir : '';
+        var path = "../include/javascript/sugar7/plugins" + subdir;
+        SugarTest.loadFile(path, name, "js", function(d) {
+            app.events.off('app:init');
+            eval(d);
+            app.events.trigger('app:init');
+        });
+    }
+
     test.loadHandlebarsTemplate = function(name, type, client, template, module) {
         var templateName = template || name;
         var path = "/clients/" + client + "/" + type + "s/" + name;
