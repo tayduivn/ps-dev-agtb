@@ -1,12 +1,25 @@
-<ul class="nav pull-right megamenu">
-    <li class="dropdown" id="notificationList">
-        <div class="btn-group">
-            <a data-toggle="dropdown" id="notificationDrop" href="javascript:void(0);" role="button" class="btn btn-danger dropdown-toggle dtoggle">0</a>
-            <div class="dropdown-menu scroll pull-right">
-                <ul role="menu">
-                    <li><a href="">Sample Notification</a></li>
-                </ul>
-            </div>
+<li class="dropdown notification-list">
+    <div class="btn-group">
+        <button class="btn {{#if this.collection.length}}btn-danger{{else}}btn-inverse{{/if}} dropdown-toggle dtoggle"
+                data-toggle="dropdown"
+                data-action="open">
+            {{{this.collection.length}}
+            {{#if this.collection.next_offset}}{{#notEq this.collection.next_offset "-1"}}+{{/notEq}}{{/if}}
+        </button>
+        <div class="dropdown-menu scroll pull-right">
+            <ul role="menu">
+                {{#each this.collection.models}}
+                    <li><a class="row-fluid"
+                           href="#{{modelRoute this "detail"}}"><span
+                            class="span8 ellipsis_inline"
+                            data-original-title="{{this.attributes.name}}"
+                            data-placement="bottom"><span
+                            class="label {{this.attributes.typeCss}}">{{this.attributes.typeLabel}}</span>{{this.attributes.name}}</span>
+                        <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
+                    </a></li>
+                {{/each}}
+                <li><a class="row-fluid" href="#{{module}}"><span class="span12">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>
+            </ul>
         </div>
-    </li>
-</ul>
+    </div>
+</li>
