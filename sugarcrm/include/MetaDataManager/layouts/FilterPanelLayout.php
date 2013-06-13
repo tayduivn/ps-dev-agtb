@@ -12,17 +12,20 @@ class FilterPanelLayout
     protected $count = 0;
 
     protected $availableToggles = array(
-        'activitystream' => array(
-            'icon' => 'icon-th-list',
-            'label' => 'LBL_ACTIVITY_STREAM',
-        ),
-        'subpanel' => array(
+        array(
+            'name' => 'subpanel',
             'icon' => 'icon-table',
             'label' => 'LBL_DATA_VIEW',
         ),
-        'list' => array(
+        array(
+            'name' => 'list',
             'icon' => 'icon-table',
             'label' => 'LBL_LISTVIEW',
+        ),
+        array(
+            'name' => 'activitystream',
+            'icon' => 'icon-th-list',
+            'label' => 'LBL_ACTIVITY_STREAM',
         ),
     );
 

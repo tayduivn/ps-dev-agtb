@@ -16,7 +16,7 @@
      * @override
      * @param {Object} opts
      */
-    initialize: function(opts) {
+    initialize: function (opts) {
         this.toggleComponents = [];
         this.componentsList = {};
         this.processToggles();
@@ -29,22 +29,39 @@
     /**
      * Get components from the metadata and declare toggles
      */
-    processToggles: function() {
+    processToggles: function () {
         // Enable toggles
         this.toggles = [];
+        var temp = {};
 
-        _.each(this.options.meta.components, function(component) {
+        //Go through components and figure out which toggles we should add
+        _.each(this.options.meta.components, function (component) {
             var toggle;
-            if(component.view) {
+            if (component.view) {
                 toggle = component.view;
-            } else if(component.layout) {
+            } else if (component.layout) {
                 toggle = (_.isString(component.layout)) ? component.layout : component.layout.name;
             }
 
-            if (toggle && this.options.meta.availableToggles[toggle]) {
-                this.toggles.push({toggle: toggle, title: this.options.meta.availableToggles[toggle].label, 'class': this.options.meta.availableToggles[toggle].icon });
+
+            var availableToggle = _.find(this.options.meta.availableToggles, function (curr) {
+                return curr.name === toggle;
+            }, this);
+            if (toggle && availableToggle) {
+                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon };
             }
         }, this);
+
+        if (this.options.meta.availableToggles) {
+            // Sort the toggles by the order in the availableToggles list
+            for (var i = 0; i < this.options.meta.availableToggles.length; i++) {
+                var curr = this.options.meta.availableToggles[i];
+                if (temp[curr.name]) {
+                    this.toggles.push(temp[curr.name]);
+                }
+            }
+        }
+
     },
 
     /**
@@ -53,19 +70,22 @@
      * @param {Component} component
      * @param {Object} def
      */
-    _placeComponent: function(component, def) {
+    _placeComponent: function (component, def) {
 
         if (def && def.targetEl) {
             if (def.position == 'prepend') {
                 this.$(def.targetEl).prepend(component.el);
                 return;
-            } else  {
+            } else {
                 this.$(def.targetEl).append(component.el);
             }
         } else {
             // If we recognize the view, prevent it from rendering until it's
             // requested explicitly by the user.
-            if (this.options.meta.availableToggles[component.name]) {
+            var toggleAvailable = _.isObject(_.find(this.options.meta.availableToggles, function (curr) {
+                return curr.name === component.name;
+            }));
+            if (toggleAvailable) {
                 this.toggleComponents.push(component);
                 this.componentsList[component.name] = component;
                 this._components.splice(this._components.indexOf(component), 1);
@@ -82,7 +102,7 @@
      * Show a toggle
      * @param {Event} e
      */
-    toggleView: function(e) {
+    toggleView: function (e) {
         var $el = this.$(e.currentTarget);
 
         // Only toggle if we click on an inactive button.
@@ -98,7 +118,7 @@
      * @param {String} name
      * @param {Boolean} silent
      */
-    showComponent: function(name, silent) {
+    showComponent: function (name, silent) {
         if (!name) return;
         if (this.componentsList[name]) {
             this.componentsList[name].render();
@@ -107,7 +127,7 @@
             this.componentsList[name] = null;
         }
 
-        _.each(this.toggleComponents, function(comp) {
+        _.each(this.toggleComponents, function (comp) {
             if (comp.name == name) {
                 comp.show();
             } else {
@@ -121,8 +141,8 @@
      * @override
      * @private
      */
-    _dispose: function() {
-        _.each(this.componentsList, function(component) {
+    _dispose: function () {
+        _.each(this.componentsList, function (component) {
             if (component) {
                 component.dispose();
             }
@@ -136,7 +156,7 @@
      * Show bootstrap tooltip
      * @param {Event} e
      */
-    showTooltip: function(e) {
+    showTooltip: function (e) {
         var $el = this.$(e.currentTarget);
         //Hotfix for the top left checkall (actionmenu) tooltip
         if ($el.hasClass('checkall')) {
@@ -150,7 +170,7 @@
      * Hide bootstrap tooltip
      * @param {Event} e
      */
-    hideTooltip: function(e) {
+    hideTooltip: function (e) {
         this.$(e.currentTarget).tooltip('hide');
     }
 })

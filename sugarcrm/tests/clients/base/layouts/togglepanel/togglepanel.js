@@ -18,15 +18,15 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("Base.Layout.Togglepanel", function(){
+describe("Base.Layout.Togglepanel", function () {
 
     var app, layout;
 
-    beforeEach(function() {
+    beforeEach(function () {
         app = SugarTest.app;
     });
 
-    afterEach(function() {
+    afterEach(function () {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -35,78 +35,90 @@ describe("Base.Layout.Togglepanel", function(){
         layout = null;
     });
 
-    describe("Toggle Panel", function() {
+    describe("Toggle Panel", function () {
 
-        beforeEach(function() {
+        beforeEach(function () {
             var meta = {
             }
             layout = SugarTest.createLayout("base", "Accounts", "togglepanel", meta);
         });
 
-        it("should initialize", function() {
-            var showSpy = sinon.stub(layout,'showComponent', function(){});
-            var processToggleSpy = sinon.stub(layout,'processToggles',function(){});
+        it("should initialize", function () {
+            var showSpy = sinon.stub(layout, 'showComponent', function () {
+            });
+            var processToggleSpy = sinon.stub(layout, 'processToggles', function () {
+            });
             layout.initialize(layout.options);
             expect(layout.toggleComponents).toEqual([]);
             expect(layout.componentsList).toEqual({});
             expect(showSpy).toHaveBeenCalled;
             expect(processToggleSpy).toHaveBeenCalled();
         });
-        it("should process toggles", function(){
-           var meta = {
-               'availableToggles': {
-                    'test1':{
-                        'label':'test1',
-                        'icon' :'icon1'
+        it("should process toggles", function () {
+            var meta = {
+                'availableToggles': [
+                    {
+                        'name': 'test1',
+                        'label': 'test1',
+                        'icon': 'icon1'
                     },
-                   'test2':{
-                       'label':'test2',
-                       'icon' :'icon2'
-                   },
-                   'test3':{
-                       'label':'test3',
-                       'icon' :'icon3'
-                   }
-               },
-               'components': {
-                   'c1' : {
-                     'view':'test1'
-                   },
-                   'c2' : {
-                       'layout':'test2'
-                   },
-                   'c3' : {
-                       'layout':{
-                           'name':'test3'
-                       }
-                   }
-               }
-           }
+                    {
+                        'name': 'test2',
+                        'label': 'test2',
+                        'icon': 'icon2'
+                    },
+                    {
+                        'name': 'test3',
+                        'label': 'test3',
+                        'icon': 'icon3'
+                    }
+                ],
+                'components': {
+                    'c1': {
+                        'view': 'test1'
+                    },
+                    'c2': {
+                        'layout': 'test2'
+                    },
+                    'c3': {
+                        'layout': {
+                            'name': 'test3'
+                        }
+                    }
+                }
+            }
             layout.options.meta = meta;
             layout.processToggles();
             expect(layout.toggles).toEqual([
                 {
-                    class:'icon1',
+                    class: 'icon1',
                     title: 'test1',
-                    toggle:'test1'
+                    toggle: 'test1'
                 },
                 {
-                    class:'icon2',
+                    class: 'icon2',
                     title: 'test2',
-                    toggle:'test2'
+                    toggle: 'test2'
                 },
                 {
-                    class:'icon3',
+                    class: 'icon3',
                     title: 'test3',
-                    toggle:'test3'
+                    toggle: 'test3'
                 }
             ]);
         });
-        it('should place toggle components and add them to the togglable component lists', function(){
+        it('should place toggle components and add them to the togglable component lists', function () {
             var mockComponent = new Backbone.View();
-            mockComponent.name = 'test';
-            mockComponent.dispose = function(){};
-            layout.options.meta.availableToggles = {'test':'test'};
+            mockComponent.name = 'test1';
+            mockComponent.dispose = function () {
+            };
+            layout.options.meta.availableToggles = [
+                {
+                    'name': 'test1',
+                    'label': 'test1',
+                    'icon': 'icon1'
+                }
+            ];
             layout._placeComponent(mockComponent);
 
             expect(layout.toggleComponents).toEqual([mockComponent]);
