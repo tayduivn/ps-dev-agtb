@@ -130,6 +130,7 @@ eoq2;
         global $argv;
         $upgrader = new static(static::parseArgs($argv));
         $upgrader->verifyArguments($argv);
+        $upgrader->init();
         if(isset($upgrader->context['stage'])) {
             $stage = $upgrader->context['stage'];
         } else {

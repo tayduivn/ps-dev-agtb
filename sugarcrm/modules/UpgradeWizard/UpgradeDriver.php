@@ -93,6 +93,12 @@ abstract class UpgradeDriver
     public $error;
 
     /**
+     * Was upgrader initialized?
+     * @var bool
+     */
+    public $initialized;
+
+    /**
      * Launches the next stage
      * @param string $stage
      */
@@ -185,12 +191,20 @@ abstract class UpgradeDriver
     public function __construct($context)
     {
         $this->context = $context;
-        chdir($context['source_dir']);
+    }
+
+    /**
+     * Separate init function - to be able to verify args before init
+     */
+    public function init()
+    {
+        chdir($this->context['source_dir']);
         $this->loadConfig();
     	$this->context['temp_dir'] = $this->cacheDir("upgrades/temp");
         $this->ensureDir($this->context['temp_dir']);
         $this->context['state_file'] = $this->cacheDir('upgrades/').self::STATE_FILE;
         $this->loadState();
+        $this->initialized = true;
     }
 
     /**
@@ -519,6 +533,10 @@ abstract class UpgradeDriver
         return true;
     }
 
+    /**
+     * Check if Sugar files are accessible
+     * @return bool
+     */
     protected function preflightSugarFiles()
     {
         if(!is_readable("config.php")) {
@@ -530,6 +548,7 @@ abstract class UpgradeDriver
         if(empty($this->config)) {
             return $this->error('Failed to read Sugar configs.', true);
         }
+        return true;
     }
 
     /**
@@ -581,12 +600,12 @@ abstract class UpgradeDriver
     protected function verify($zip, $dir)
     {
         // Execute preflight checks before Sugar
-        if(!$this->preflight($this->preflightBeforeInit)) {
+        if(!$this->preflight($this->preflightChecksBeforeInit)) {
             return false;
         }
         $this->initSugar();
         // Execute preflight checks after Sugar
-        if(!$this->preflight($this->preflightAfterInit)) {
+        if(!$this->preflight($this->preflightChecksAfterInit)) {
             return false;
         }
         // Check the user
@@ -1251,11 +1270,7 @@ abstract class UpgradeDriver
     public function run($stage)
     {
         ini_set('memory_limit',-1);
-        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
-            ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
-        } else {
-            ini_set('error_reporting', E_ALL & ~E_STRICT);
-        }
+        ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
         $this->log("Stage $stage staring");
         try {
             $this->current_stage = $stage;
