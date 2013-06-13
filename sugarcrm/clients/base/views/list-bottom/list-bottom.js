@@ -44,7 +44,7 @@
         app.view.View.prototype.initialize.call(this, opts);
 
         this.showMoreLabel = app.lang.get(this.options.meta.showMoreLabel, this.module, {
-            module: app.lang.get('LBL_MODULE_NAME', this.module)
+            module: app.lang.get('LBL_MODULE_NAME', this.module).toLowerCase()
         });
 
         this.layout.on("hide", this.toggleVisibility, this);
