@@ -306,5 +306,15 @@ $mod_strings = array (
 	'LBL_HEAD_TAGS' => 'Tags',
 	'LBL_REMOVE' => 'Remove' /*for 508 compliance fix*/,
 	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    // Portal Tour Content
+    'LBL_PORTAL_TOUR_RECORDS_INTRO' => 'The Knowledge Base module is for working with published articles.  Use the arrows below to go through a quick tour.',
+    'LBL_PORTAL_TOUR_RECORDS_PAGE' => 'This page shows the list of published articles.',
+    'LBL_PORTAL_TOUR_RECORDS_FILTER' => 'You can filter down the list of articles by providing a search term.',
+    'LBL_PORTAL_TOUR_RECORDS_FILTER_EXAMPLE' => 'For example, you might use this to find an article on a particular topic of interest.',
+    'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to the Knowledge Base at any time.',
+    //END SUGARCRM flav=ent ONLY
+
 );
 ?>

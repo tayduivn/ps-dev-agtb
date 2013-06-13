@@ -117,5 +117,17 @@ $mod_strings = array (
     //Dashlet
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Assigned Bugs',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Bugs assigned to you',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    //Tour content
+    'LBL_PORTAL_TOUR_RECORDS_INTRO' => 'The Bugs module is for viewing and reporting bugs.  Use the arrows below to go through a quick tour.',
+    'LBL_PORTAL_TOUR_RECORDS_PAGE' => 'This page shows the list of existing published Bugs.',
+    'LBL_PORTAL_TOUR_RECORDS_FILTER' => 'You can filter down the list of Bugs by providing a search term.',
+    'LBL_PORTAL_TOUR_RECORDS_FILTER_EXAMPLE' => 'For example, you might use this to find a bug that has been previously reported.',
+    'LBL_PORTAL_TOUR_RECORDS_CREATE' => 'If you have found a new Bug you would like to report, you can click here to report a new Bug.',
+    'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to this view at any time.',
+    //END SUGARCRM flav=ent ONLY
+
+
   );
 ?>
