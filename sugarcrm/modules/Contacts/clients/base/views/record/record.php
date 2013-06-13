@@ -15,6 +15,76 @@
  */
 
 $viewdefs['Contacts']['base']['view']['record'] = array(
+    'buttons' => array(
+        array(
+            'type' => 'button',
+            'name' => 'cancel_button',
+            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'btn-invisible btn-link',
+            'showOn' => 'edit',
+        ),
+        array(
+            'type' => 'rowaction',
+            'event' => 'button:save_button:click',
+            'name' => 'save_button',
+            'label' => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'btn btn-primary',
+            'showOn' => 'edit',
+            'acl_action' => 'edit',
+        ),
+        array(
+            'type' => 'actiondropdown',
+            'name' => 'main_dropdown',
+            'primary' => true,
+            'showOn' => 'view',
+            'buttons' => array(
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:edit_button:click',
+                    'name' => 'edit_button',
+                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'linkbutton',
+                    'name' => 'link_create',
+                    'label' => 'LBL_CREATE_RELATED_RECORD',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'linkbutton',
+                    'name' => 'link_exist',
+                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'acl_action' => 'create',
+                ),
+                array(
+                    'type' => 'manage-subscription',
+                    'name' => 'manage_subscription_button',
+                    'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
+                    'showOn' => 'view',
+                    'value' => 'edit',
+                ),
+            ),
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
+        ),
+    ),
     'panels' => array(
         array(
             'name' => 'panel_header',

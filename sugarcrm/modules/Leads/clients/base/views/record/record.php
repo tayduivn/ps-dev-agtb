@@ -48,6 +48,18 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'value' => 'edit',
                 ),
                 array(
+                    'type' => 'linkbutton',
+                    'name' => 'link_create',
+                    'label' => 'LBL_CREATE_RELATED_RECORD',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'linkbutton',
+                    'name' => 'link_exist',
+                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'acl_action' => 'edit',
+                ),
+                array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
@@ -80,39 +92,13 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'showOn' => 'view',
                     'value' => 'edit',
                 ),
-                //TODO: Commented out for SugarCon.  Will add back once actions are ready
-                /* array(
-                     'type'  => 'rowaction',
-                     'event' => 'button:create_related_button:click',
-                     'name'  => 'create_related_button',
-                     'label' => 'LBL_CREATE_RELATED_RECORD',
-                     'value' => 'create',
-                 ),
-                 array(
-                     'type'  => 'rowaction',
-                     'event' => 'button:link_related_button:click',
-                     'name'  => 'link_related_button',
-                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                     'value' => 'edit',
-                 ),*/
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:manage_subscriptions:click',
-                    'name' => 'convert_button',
+                    'type' => 'manage-subscription',
+                    'name' => 'manage_subscription_button',
                     'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
                     'showOn' => 'view',
                     'value' => 'edit',
                 ),
-                //TODO: Commented out for SugarCon.  Will add back once actions are ready
-                /*
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:change_log_button:click',
-                    'name' => 'change_log_button',
-                    'label' => 'LNK_VIEW_CHANGE_LOG',
-                    'value' => 'view',
-                ),
-                */
             ),
         ),
         array(
