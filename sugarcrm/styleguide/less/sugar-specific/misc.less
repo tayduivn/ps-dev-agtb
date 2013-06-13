@@ -203,12 +203,31 @@ hr.soften {
   }
 }
 
-.record-cell[data-name="title"] {
-    position: absolute !important;
-    top: 20px;
-    left: 114px;
+.record-cell[data-name="title"], .record-cell[data-name="account_name"]  {
     font-size: 12px !important;
 }
+
+.record-cell[data-name="date_modified_by"] {
+    position: absolute !important;
+    right: 0;
+    bottom: -28px;
+    text-align: right;
+}    
+.record .record-cell[data-name="date_modified_by"][data-type="date"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="datetimecombo"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="fieldset"] .normal > span,  .record .record-cell[data-name="date_modified_by"] .record-label {
+        display: inline !important;
+    }
+    .record .record-cell[data-name="date_modified_by"] .normal {
+        font-size: @fontSizeSmall;
+        color: @grayLight;
+        display: inline !important;
+    }
+
+.main-pane .dashboard {
+    .border-radius(0);
+    .box-shadow(none);
+}
+
+.record {position: relative;}
 
 .btn.btn-invisible.addEventBtn, .gdocNew {
     position:absolute;
@@ -240,6 +259,7 @@ hr.soften {
     padding: 10px;
     border-bottom: 1px solid darken(@grayLighter, 5%);
     position: relative;
+    list-style: none;
     img.avatar {
         position: absolute;
         top: 10px;
