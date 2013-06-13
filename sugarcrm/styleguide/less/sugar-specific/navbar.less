@@ -90,17 +90,17 @@
     }
     .dropdownMinWidth();
     margin-top: 0;
-    top: 50px;
+    top: 33px;
     /*right: -8px;*/
     left: auto;
-    .border-radius(4px);
+    .border-radius(0,2px,0,2px);
     &:before {
       border-bottom-color: rgba(0,0,0,.2);
     }
     li a {
       display: block;
-      padding: 6px 8px 8px;
-      text-indent: 32px;
+      padding: 0;
+      text-indent: 0;
       position: relative;
     }
     li,
@@ -153,7 +153,7 @@
       right: 31px;
       top: 1px;
       height: 24px;
-      .border-radii(0,0,3px,3px);
+      .border-radius(0px,0px,3px,3px);
       &:hover {
         border-color: transparent;
       }
@@ -236,7 +236,7 @@
             &> ul {
               background: @white;
               border: 1px solid rgba(0,0,0,.2);;
-              .border-radius(2px);
+              .border-radius(0,2px,0,2px);
               max-height: 330px;
               overflow-y: auto;
               overflow-x: hidden;
