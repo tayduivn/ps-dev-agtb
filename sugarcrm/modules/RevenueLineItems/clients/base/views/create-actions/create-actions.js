@@ -70,13 +70,13 @@
                 panel.fields = _.filter(panel.fields, function(field) {
                     // also remove the spacer so the look stays the same
                     return (field.name != "commit_stage" && field.name != "cs_spacer");
-                })
+                });
             } else {
                 _.each(panel.fields, function(field) {
                     if (field.name == "commit_stage") {
                         field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
                     }
-                })
+                });
             }
         });
     }

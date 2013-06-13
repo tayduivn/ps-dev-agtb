@@ -1,26 +1,16 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 // Product is used to store customer information.
 class RevenueLineItem extends SugarBean
@@ -155,11 +145,14 @@ class RevenueLineItem extends SugarBean
      * @see __construct
      * @deprecated
      */
-    public function Product()
+    public function RevenueLineItem()
     {
         $this->__construct();
     }
-
+    
+    /**
+     * Default Constructor
+     */
     public function __construct()
     {
 
@@ -173,7 +166,9 @@ class RevenueLineItem extends SugarBean
 
     }
 
-
+    /**
+     * Get summary text
+     */
     public function get_summary_text()
     {
         return "$this->name";
@@ -184,6 +179,17 @@ class RevenueLineItem extends SugarBean
      * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
      * All Rights Reserved.
      * Contributor(s): ______________________________________..
+     * @param string order_by
+     * @param string where
+     * @param array filter
+     * @param array params
+     * @param int show_deleted
+     * @param string join_type
+     * @param array return_array
+     * @param SugarBean parentbean
+     * @param bool singleSelect
+     * 
+     * @return array Array of query parts
      */
     public function create_new_list_query(
         $order_by,
@@ -229,7 +235,15 @@ class RevenueLineItem extends SugarBean
         );
     }
 
-
+    /**
+     * Creates an export query
+     * 
+     * @param string order_by
+     * @param string where
+     * @param string relate_link_join
+     * 
+     * @return string query
+     */
     public function create_export_query(&$order_by, &$where, $relate_link_join = '')
     {
         $custom_join = $this->custom_fields->getJOIN(true, true, $where);
@@ -262,12 +276,17 @@ class RevenueLineItem extends SugarBean
         return $query;
     }
 
-
+    /**
+     * Fills in additional list fields 
+     */
     public function fill_in_additional_list_fields()
     {
         $this->fill_in_additional_detail_fields();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
@@ -449,9 +468,7 @@ class RevenueLineItem extends SugarBean
     public function get_list_view_data()
     {
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
-        $product_mod_strings = return_module_language($current_language,"Products");
-        //require_once('modules/Products/config.php');
-        //$this->format_all_fields();
+        $product_mod_strings = return_module_language($current_language,"RevenueLineItems");
 
         if ($this->date_purchased == '0000-00-00') {
             $the_date_purchased = '';
@@ -561,6 +578,9 @@ class RevenueLineItem extends SugarBean
         return $the_where;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function save($check_notify = false)
     {
 
@@ -631,7 +651,7 @@ class RevenueLineItem extends SugarBean
             }
         }
 
-        if($this->probability == '') {
+        if ($this->probability == '') {
             $this->mapProbabilityFromSalesStage();
         }
         
@@ -762,12 +782,12 @@ class RevenueLineItem extends SugarBean
     }
 
 
-    /*
+    /**
      * map fields if opportunity id is set
      */
     protected function mapFieldsFromOpportunity()
     {
-        if(!empty($this->opportunity_id) && empty($this->product_type)) {
+        if (!empty($this->opportunity_id) && empty($this->product_type)) {
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
             $this->product_type = $opp->opportunity_type;
         }
@@ -871,7 +891,9 @@ class RevenueLineItem extends SugarBean
             $this->weight = $pt->weight;
         }
     }
-
+    /**
+     * {@inheritdoc}
+     */
     public function bean_implements($interface)
     {
         switch ($interface) {
@@ -881,6 +903,9 @@ class RevenueLineItem extends SugarBean
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function listviewACLHelper()
     {
         $array_assign = parent::listviewACLHelper();

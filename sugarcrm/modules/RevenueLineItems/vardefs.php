@@ -1,7 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -524,7 +521,7 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
             'studio' => false
-        ),        
+        ),
         'next_step' => array(
             'name' => 'next_step',
             'vname' => 'LBL_NEXT_STEP',

@@ -33,9 +33,9 @@
         _.each(this.meta.panels, function (panel) {
             _.each(panel.fields, function (fieldMeta, i) {
                 var addField = true;
-                if(addField) {
-                    if(app.metadata.getModule("Forecasts", "config").is_setup) {
-                        if(fieldMeta.name.indexOf('_case') != -1) {
+                if (addField) {
+                    if (app.metadata.getModule("Forecasts", "config").is_setup) {
+                        if (fieldMeta.name.indexOf('_case') != -1) {
                             var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
                             addField = (app.metadata.getModule("Forecasts", "config")[field] == 1);
                         }
