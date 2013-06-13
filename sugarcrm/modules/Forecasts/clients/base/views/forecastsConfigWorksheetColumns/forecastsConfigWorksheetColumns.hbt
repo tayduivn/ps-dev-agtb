@@ -19,7 +19,8 @@
 </div>
 <div id="forecastsConfigWorksheetColumnsCollapse" class="accordion-body collapse">
     <div class="accordion-inner">
-        Worksheet Columns stuff!
-        {{! WORKSHEET LAYOUT STUFF GOES HERE }}
+        <div class="record-cell">
+            <div id="wkstColumnsSelect"></div>
+        </div>
     </div>
 </div>

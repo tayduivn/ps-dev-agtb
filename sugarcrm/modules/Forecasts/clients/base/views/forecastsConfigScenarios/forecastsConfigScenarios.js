@@ -92,7 +92,6 @@
 
             // if this should be selected by default and it is not the undeletable scenario, push it to selectedOptions
             if(this.context.get('model').get(field.name) == 1 && !obj.locked) {
-                //this.selectedScenariosCSV += field.name + ',';
                 // push fields that should be selected to selectedOptions
                 this.selectedOptions.push(obj);
             }

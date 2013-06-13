@@ -27,6 +27,21 @@
      */
     toggleTitleTpl: {},
 
+    /**
+     * Holds the select2 reference to the #wkstColumnSelect element
+     */
+    wkstColumnsSelect2: {},
+
+    /**
+     * Holds the default/selected items
+     */
+    selectedOptions:[],
+
+    /**
+     * Holds all items
+     */
+    allOptions:[],
+
     events: {
         'click .resetLink': 'onResetLinkClicked'
     },
@@ -37,12 +52,30 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        // todo: this is just a placeholder so I dont have to implement some silly logic to remove a colon
-        // todo: when updating this module to make this panel work please remove this lines
-        this.titleSelectedValues = 'Name, Expected Close, Stage, Likel...';
-
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS', 'Forecasts');
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
+
+        var cfgFields = app.metadata.getModule('Forecasts', 'config').worksheet_columns;
+
+        // set up scenarioOptions
+        _.each(options.meta.panels[0].fields, function(field) {
+            var labelModule = (!_.isUndefined(field.label_module)) ? field.label_module : 'Forecasts',
+                obj = {
+                    id: field.name,
+                    text: app.lang.get(field.label, labelModule)
+                },
+                cField = _.find(cfgFields, function(cfgField) {
+                    return cfgField == field.name;
+                }, this);
+
+            this.allOptions.push(obj);
+
+            // If the current field being processed was found in the config fields,
+            if(!_.isUndefined(cField)) {
+                // push field to defaults
+                this.selectedOptions.push(obj);
+            }
+        }, this);
     },
 
     /**
@@ -60,9 +93,35 @@
     },
 
     /**
-     * todo implement the bindDataChange to listen to the model changing when new columns are added or removed
-     * to update the this.titleSelectedValues var and call updateTitle so the collapse toggle title is correct
+     * {@inheritdoc}
      */
+    bindDataChange: function() {
+        if(this.model) {
+            this.model.on('change:columns', function(model) {
+                var arr = [],
+                    cfgFields = this.model.get('worksheet_columns'),
+                    metaFields = this.meta.panels[0].fields;
+
+                _.each(metaFields, function(metaField) {
+                    _.each(cfgFields, function(field) {
+                        if(metaField.name == field) {
+                            var labelModule = (!_.isUndefined(metaField.label_module)) ? metaField.label_module : 'Forecasts';
+                            arr.push(app.lang.get(metaField.label, labelModule));
+                        }
+                    }, this);
+                }, this);
+                this.titleSelectedValues = arr.join(', ');
+
+                // Handle truncating the title string and adding "..."
+                this.titleSelectedValues = this.titleSelectedValues.slice(0,50) + "...";
+
+                this.updateTitle();
+            }, this);
+
+            // trigger the change event to set the title when this gets added
+            this.model.trigger('change:columns', this.model);
+        }
+    },
 
     /**
      * Updates the accordion toggle title
@@ -82,9 +141,47 @@
      */
     _render: function() {
         app.view.View.prototype._render.call(this);
-
         // add accordion-group class to wrapper $el div
         this.$el.addClass('accordion-group');
         this.updateTitle();
+
+        // handle setting up select2 options
+        this.wkstColumnsSelect2 = this.$el.find('#wkstColumnsSelect').select2({
+            data: this.allOptions,
+            multiple: true,
+            containerCssClass: "select2-choices-pills-close",
+            initSelection : _.bind(function (element, callback) {
+                callback(this.selectedOptions);
+            }, this)
+        });
+        this.wkstColumnsSelect2.select2('val', this.selectedOptions);
+
+        this.wkstColumnsSelect2.on('change', _.bind(this.handleColumnModelChange, this));
+    },
+
+    /**
+     * Handles the select2 adding/removing columns
+     *
+     * @param evt change event from the select2 selected values
+     */
+    handleColumnModelChange: function(evt) {
+        var arr = [];
+        _.each($(evt.target).val().split(','), function(field) {
+            arr.push(field);
+        }, this);
+
+        this.model.set('worksheet_columns', arr);
+        this.model.trigger('change:columns', this.model);
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * override dispose function to remove custom listener off select2 instance
+     */
+    _dispose: function() {
+        // remove event listener from select2
+        this.wkstColumnsSelect2.off();
+        app.view.Component.prototype._dispose.call(this);
     }
 })
