@@ -41,8 +41,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
           //END SUGARCRM flav=pro ONLY
           //BEGIN SUGARCRM flav=ent ONLY
           // Bug 54507 - Add wireless and portal to exclude list
-          'portaleditview' => false,
-          'portaldetailview' => false,
+          'portalrecordview' => false,
           'portallistview' => false,
           //END SUGARCRM flav=ent ONLY
     ), // tyoung bug 16442 - don't show in studio fields list
@@ -79,8 +78,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
 	   //END SUGARCRM flav=pro ONLY
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
-       'portaleditview' => false,
-       'portaldetailview' => 'visible',
+       'portalrecordview' => 'visible',
        'portallistview' => 'visible',
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY
@@ -107,8 +105,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
           //END SUGARCRM flav=pro ONLY
           //BEGIN SUGARCRM flav=ent ONLY
           // Bug 54507 - Add wireless and portal to exclude list
-          'portaleditview' => false,
-          'portaldetailview' => false,
+          'portalrecordview' => false,
           'portallistview' => false,
           //END SUGARCRM flav=ent ONLY
       ), // tyoung bug 16442 - don't show in studio fields list
@@ -146,8 +143,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        //END SUGARCRM flav=pro ONLY
        //BEGIN SUGARCRM flav=ent ONLY
        // Bug 54507 - Add portal to exclude from layout list
-       'portaleditview' => false,
-       'portaldetailview' => 'visible',
+       'portalrecordview' => 'visible',
        'portallistview' => 'visible',
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY

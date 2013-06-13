@@ -170,8 +170,7 @@ $dictionary['Contact'] = array(
             'group' => 'portal',
             'comment' => 'Name as it appears in the portal',
             'studio' => array(
-                'portaleditview' => false,
-                'portaldetailview' => false,
+                'portalrecordview' => false,
                 'portallistview' => false,
             ),
         ),
@@ -193,8 +192,7 @@ $dictionary['Contact'] = array(
             'reportable' => false,
             'studio' => array(
                 'listview' => false,
-                'portaleditview' => false,
-                'portaldetailview' => false,
+                'portalrecordview' => false,
                 'portallistview' => false,
             ),
         ),
@@ -209,8 +207,7 @@ $dictionary['Contact'] = array(
             'importable' => 'false',
             'studio' => array(
                 'listview' => false,
-                'portaleditview' => false,
-                'portaldetailview' => false,
+                'portalrecordview' => false,
                 'portallistview' => false,
             ),
         ),

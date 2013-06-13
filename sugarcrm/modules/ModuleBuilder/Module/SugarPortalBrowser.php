@@ -87,13 +87,46 @@ class SugarPortalBrowser
         $views = SugarPortalModule::getViewFiles();
         $viewFiles = array_keys($views);
         foreach ($viewFiles as $file) {
-            if (SugarAutoLoader::fileExists($path . basename($file, '.php') . '/' . $file)) {
+            if (SugarAutoLoader::fileExists($path . basename($file, '.php') . '/' . $file) && $this->isStudioEnabled($module)) {
                 return true;
             }
         }
 
         return false;
     }
-
+    
+    /**
+     * Checks to see if a module is studio enabled for portal.
+     * 
+     * The default expectation is false unless a module is explicitly true or
+     * does not set an expectation.
+     * 
+     * @param string $module The name of the module
+     * @return boolean
+     */
+    protected function isStudioEnabled($module) 
+    {
+        global $dictionary;
+        
+        $bean = BeanFactory::getBean($module);
+        $vardef = $dictionary[$bean->object_name];
+        
+        // No expectation set, means it does not explicitly disallow studio
+        if (!isset($vardef['studio_enabled'])) {
+            return true;
+        }
+        
+        // Explicit setting to true for the module
+        if ($vardef['studio_enabled'] === true) {
+            return true;
+        }
+        
+        // Explicit setting to true for the platform
+        if (is_array($vardef['studio_enabled']) && isset($vardef['studio_enabled']['portal']) && $vardef['studio_enabled']['portal'] === true) {
+            return true;
+        }
+        
+        // Default to false
+        return false;
+    }
 }
-?>

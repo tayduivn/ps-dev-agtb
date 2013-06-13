@@ -36,10 +36,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected $invalidTypes = array(
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
-            // Detail support one set of fields...
-            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency','currency_id'),
-            // Edit supports another
-            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html','currency','currency_id'),
+            // Record supports same fields as detail used to
+            'record' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency','currency_id'),
         ),
         //END SUGARCRM flav=ent ONLY
     );
@@ -152,7 +150,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      */
     public function isValidFieldPortal($key, $def) {
         if (isset($this->invalidTypes['portal'])) {
-            $view = $this->_view == MB_PORTALDETAILVIEW ? 'detail' : 'edit';
+            $view = str_replace(array('portal', 'view'), '', $this->_view);
             
             if (isset($this->invalidTypes['portal'][$view])) {
                 $blacklist = $this->invalidTypes['portal'][$view];
@@ -372,10 +370,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // $panels[label for panel] = fields of panel in rows,cols format
 
         $internalPanels = array();
-        
-        // Counter that tells the loop if we are in the first element of the panels
-        // array, since that would be where panel_header lives
-        $ix = 0;
         foreach ($panels as $n => $panel) {
             $pLabel = !empty($panel['label']) ? $panel['label'] : $n;
             $panelColumns = !empty($panel['columns']) ? $panel['columns'] : 2;
@@ -398,7 +392,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 } else {
                     // Simple aesthetics... make the name field a full span but 
                     // only if this is the header panel
-                    if ($ix == 0 && $field == 'name') {
+                    if (isset($panel['name']) && $panel['name'] == 'panel_header' && $field == 'name') {
                         $colspan = $panelColumns;
                     } else {
                         $colspan = 1;
@@ -453,7 +447,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $internalFieldRows[] = $row;
             }
             $internalPanels[$pLabel] = $internalFieldRows;
-            $ix++;
         }
 
         return $internalPanels;

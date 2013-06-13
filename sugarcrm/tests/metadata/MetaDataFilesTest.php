@@ -32,16 +32,16 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
     public $fileFullPaths = array(
         'Accountsmobilelistviewbase'   => 'modules/Accounts/clients/mobile/views/list/list.php',
         'Accountsmobilelistviewcustom' => 'custom/modules/Accounts/clients/mobile/views/list/list.php',
-        'Bugsportaleditviewworking'    => 'custom/working/modules/Bugs/clients/portal/views/edit/edit.php',
+        'Bugsportalrecordviewworking'    => 'custom/working/modules/Bugs/clients/portal/views/record/record.php',
         'Bugsmobilesearchviewbase'     => 'modules/Bugs/clients/mobile/views/search/search.php',
-        'Casesportaldetailviewhistory' => 'custom/history/modules/Cases/clients/portal/views/detail/detail.php',
+        'Casesportalrecordviewhistory' => 'custom/history/modules/Cases/clients/portal/views/record/record.php',
         'Callsbasesearchviewbase'      => 'modules/Calls/clients/base/views/search/search.php',
     );
 
     public $deployedFileNames = array(
         'Accountslistviewbase' => 'modules/Accounts/metadata/listviewdefs.php',
         'Leadswirelesseditviewcustommobile' => 'custom/modules/Leads/clients/mobile/views/edit/edit.php',
-        'Notesportaldetailviewworkingportal' => 'custom/working/modules/Notes/clients/portal/views/detail/detail.php',
+        'Notesportalrecordviewworkingportal' => 'custom/working/modules/Notes/clients/portal/views/record/record.php',
         'Quotesadvanced_searchhistory' => 'custom/history/modules/Quotes/metadata/searchdefs.php',
         'Meetingsbasic_searchbase'  => 'modules/Meetings/metadata/searchdefs.php',
         'Bugswireless_advanced_searchbasemobile' => 'modules/Bugs/clients/mobile/views/search/search.php',
@@ -50,7 +50,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
     public $undeployedFileNames = array(
         'Accountslistviewbase' => 'custom/modulebuilder/packages/LZWYZ/modules/Accounts/metadata/listviewdefs.php',
         'Leadswirelesseditviewcustommobile' => 'custom/modulebuilder/packages/LZWYZ/modules/Leads/clients/mobile/views/edit/edit.php',
-        'Notesportaldetailviewworkingportal' => 'custom/modulebuilder/packages/LZWYZ/modules/Notes/clients/portal/views/detail/detail.php',
+        'Notesportalrecordviewworkingportal' => 'custom/modulebuilder/packages/LZWYZ/modules/Notes/clients/portal/views/record/record.php',
         'Quotesadvanced_searchhistory' => 'custom/working/modulebuilder/packages/LZWYZ/modules/Quotes/metadata/searchdefs.php',
     );
 
@@ -104,9 +104,9 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array('Accounts', 'list', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
             array('Accounts', 'list', MB_CUSTOMMETADATALOCATION, MB_WIRELESS, 'view'),
-            array('Bugs', 'edit', MB_WORKINGMETADATALOCATION, MB_PORTAL, 'view'),
+            array('Bugs', 'record', MB_WORKINGMETADATALOCATION, MB_PORTAL, 'view'),
             array('Bugs', 'search', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
-            array('Cases', 'detail', MB_HISTORYMETADATALOCATION, MB_PORTAL, 'view'),
+            array('Cases', 'record', MB_HISTORYMETADATALOCATION, MB_PORTAL, 'view'),
             array('Calls', 'search', MB_BASEMETADATALOCATION, 'base', 'view'),
         );
     }
@@ -115,7 +115,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(MB_LISTVIEW, 'Accounts', MB_BASEMETADATALOCATION, ''),
             array(MB_WIRELESSEDITVIEW, 'Leads', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
-            array(MB_PORTALDETAILVIEW, 'Notes', MB_WORKINGMETADATALOCATION, MB_PORTAL),
+            array(MB_PORTALRECORDVIEW, 'Notes', MB_WORKINGMETADATALOCATION, MB_PORTAL),
             array(MB_ADVANCEDSEARCH, 'Quotes', MB_HISTORYMETADATALOCATION, ''),
             array(MB_BASICSEARCH, 'Meetings', MB_BASEMETADATALOCATION, ''),
             array(MB_WIRELESSADVANCEDSEARCH, 'Bugs', MB_BASEMETADATALOCATION, MB_WIRELESS),
@@ -126,7 +126,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         return array(
             array(MB_LISTVIEW, 'Accounts', 'LZWYZ', MB_BASEMETADATALOCATION, ''),
             array(MB_WIRELESSEDITVIEW, 'Leads', 'LZWYZ', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
-            array(MB_PORTALDETAILVIEW, 'Notes', 'LZWYZ', MB_WORKINGMETADATALOCATION, MB_PORTAL),
+            array(MB_PORTALRECORDVIEW, 'Notes', 'LZWYZ', MB_WORKINGMETADATALOCATION, MB_PORTAL),
             array(MB_ADVANCEDSEARCH, 'Quotes', 'LZWYZ', MB_HISTORYMETADATALOCATION, ''),
         );
     }

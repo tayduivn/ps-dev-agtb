@@ -69,8 +69,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
     protected $filesBackedUp = array();
     protected $filesToTest = array(
         'modules/Cases/clients/portal/views/list/list.php',
-        'modules/Cases/clients/portal/views/edit/edit.php',
-        'modules/Cases/clients/portal/views/detail/detail.php',
+        'modules/Cases/clients/portal/views/record/record.php',
     );
     protected $filesToTearDown = array();
     protected $fieldToTest = 'name';

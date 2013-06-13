@@ -20,6 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['Note'] = array(
+    'studio_enabled' => array(
+    //BEGIN SUGARCRM flav=ent ONLY
+        'portal' => false,
+    //END SUGARCRM flav=ent ONLY
+    ),
     //BEGIN SUGARCRM flav=pro ONLY
     'favorites'=>true,
     //END SUGARCRM flav=pro ONLY

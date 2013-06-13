@@ -54,7 +54,7 @@ class Bug58038Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group Bug58038
      */
-    public function testFillerCellsRemainIntactOnDetailLayoutSave()
+    public function testFillerCellsRemainIntactOnRecordLayoutSave()
     {
         // Get the bean so we can get the field defs
         $kbdocs = BeanFactory::getBean($this->_module);
@@ -72,7 +72,7 @@ class Bug58038Test extends Sugar_PHPUnit_Framework_TestCase
         );
         
         // Build the parser
-        $parser = new Bug58038LayoutMetaDataParser(MB_PORTALDETAILVIEW, $this->_module, null, MB_PORTAL);
+        $parser = new Bug58038LayoutMetaDataParser(MB_PORTALRECORDVIEW, $this->_module, null, MB_PORTAL);
         
         // Get the test result data
         $panels = $parser->getLayoutArrayForTesting($testPanels, $kbdocs->field_defs);

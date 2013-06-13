@@ -577,8 +577,7 @@ class StudioModule
     public function getPortalLayoutSources()
     {
         return array(
-            array('type' => MB_PORTALDETAILVIEW),
-            array('type' => MB_PORTALEDITVIEW),
+            array('type' => MB_PORTALRECORDVIEW),
             array('type' => MB_PORTALLISTVIEW),
         );
     }
