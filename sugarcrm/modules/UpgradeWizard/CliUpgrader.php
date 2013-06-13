@@ -61,8 +61,16 @@ eoq2;
             self::argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
+        if(!is_readable("{$this->context['source_dir']}/include/entryPoint.php") || !is_readable("{$this->context['source_dir']}/config.php")) {
+            self::argError("{$this->context['source_dir']} is not a accessible.");
+        }
+
         if(!is_file($this->context['zip'])) { // valid zip?
             self::argError("First argument must be a full path to the patch file: {$argv[1]}.");
+        }
+
+        if(!is_readable($this->context['zip'])) { // valid zip?
+            self::argError("{$argv[1]} is not readable.");
         }
         return true;
     }

@@ -326,8 +326,12 @@ abstract class UpgradeDriver
     protected function loadConfig()
     {
         $sugar_config = array();
+        if(!is_readable($this->context['source_dir']."/config.php")) {
+            $this->error("{$this->context['source_dir']}/config.php can not be loaded!", true);
+            return;
+        }
         include($this->context['source_dir']."/config.php");
-        if(file_exists($this->context['source_dir']."/config_override.php")) {
+        if(is_readable($this->context['source_dir']."/config_override.php")) {
             include($this->context['source_dir']."/config_override.php");
         }
         $GLOBALS['sugar_config'] = $sugar_config;
@@ -358,12 +362,29 @@ abstract class UpgradeDriver
     }
 
     /**
+     * Error reporting with localization, for user reporting.
+     *
+     * Since it requires translation, can not be used by pre-init scripts.
+     * @param string $msg
+     * @param array $args
+     * @return bool
+     */
+    protected function errorPrint($msg, $args = null)
+    {
+        $msg = $this->translate($msg);
+        if(!empty($args)) {
+            array_unshift($args, $msg);
+            $msg = call_user_func_array('sprintf', $args);
+        }
+        return $this->error($msg, true);
+    }
+
+    /**
      * Preflight check for PHP version
      */
     protected function preflightPHP()
     {
         if(version_compare(PHP_VERSION, "5.3.0", '<')) {
-            // TODO: translate
             return $this->error("PHP versions below 5.3.0 are not supported!", true);
         }
         return true;
@@ -376,8 +397,7 @@ abstract class UpgradeDriver
     protected function preflightPHPSettings()
     {
         if(ini_get("zend.ze1_compatibility_mode")) {
-            // TODO: translate
-            return $this->error("PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further", true);
+            return $this->error('PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further.', true);
         }
         if(ini_get('magic_quotes_gpc') || ini_get('magic_quotes_runtime')
             || (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc())
@@ -455,8 +475,12 @@ abstract class UpgradeDriver
      */
     protected function preflightWriteSugar()
     {
-        if(!is_writable("config.php") || !is_writable("config_override.php")) {
-            return $this->error("Configuration files are not writable!", true);
+        if(!is_writable("config.php")) {
+            return $this->error("config.php is not writable!", true);
+        }
+
+        if(!is_writable("config_override.php")) {
+            return $this->error("config_override.php is not writable!", true);
         }
         return true;
     }
@@ -495,29 +519,46 @@ abstract class UpgradeDriver
         return true;
     }
 
+    protected function preflightSugarFiles()
+    {
+        if(!is_readable("config.php")) {
+            return $this->error("Can not read config.php", true);
+        }
+        if(!is_readable("include/entryPoint.php")) {
+            return $this->error("Can not read include/entryPoint.php", true);
+        }
+        if(empty($this->config)) {
+            return $this->error('Failed to read Sugar configs.', true);
+        }
+    }
+
     /**
      * List of preflight check functions
      * @var array
      */
-    protected $preflightChecks = array(
+    protected $preflightChecksBeforeInit = array(
         "PHP" => true, // check php version
-        "IIS" => true, // check IIS version
-        "PHPSettings" => true, // check php settings
-        "PHPModules" => true, // check PHP modules
-        "WriteUnzip" => true, // check if zip dir is writeable
-        "WriteSugar" => true, // check if Sugar directory is writable
-        "WriteCustom" => true, // check if Sugar custom directory is writable
-        "DB" => true, // check DB permissions
+        "SugarFiles" => true, // check if Sugar dirs are accessible
+    );
+
+    protected $preflightChecksAfterInit = array(
+            "IIS" => true, // check IIS version
+            "PHPModules" => true, // check PHP modules
+            "PHPSettings" => true, // check php settings
+            "WriteUnzip" => true, // check if zip dir is writeable
+            "WriteSugar" => true, // check if Sugar directory is writable
+            "WriteCustom" => true, // check if Sugar custom directory is writable
+            "DB" => true, // check DB permissions
     );
 
     /**
      * Preflight checks for Sugar upgrade
-     * Uses check list from $preflightChecks
-     *
+     * TODO: enable preflights to use translated strings.
+     * @param array $checks Checks list
      */
-    public function preflight()
+    public function preflight($checks)
     {
-        foreach($this->preflightChecks as $check => $enabled) {
+        foreach($checks as $check => $enabled) {
             if(!$enabled) continue;
             $checkfunc = "preflight$check";
             if(is_callable(array($this, $checkfunc))) {
@@ -539,9 +580,13 @@ abstract class UpgradeDriver
      */
     protected function verify($zip, $dir)
     {
+        // Execute preflight checks before Sugar
+        if(!$this->preflight($this->preflightBeforeInit)) {
+            return false;
+        }
         $this->initSugar();
-        // Execute preflight checks
-        if(!$this->preflight()) {
+        // Execute preflight checks after Sugar
+        if(!$this->preflight($this->preflightAfterInit)) {
             return false;
         }
         // Check the user
@@ -687,15 +732,15 @@ abstract class UpgradeDriver
         }
         $this->mod_strings = $GLOBALS['mod_strings'] = $mod_strings = array();
 
-        $langdirs[] = dirname(__FILE__)."/language";
         if(!empty($this->context['new_source_dir'])) {
-            $langdirs[] = $this->context['new_source_dir']."/modules/UpgradeWizard/language";
             // add install strings if they are available, since some DB routines rely on it
             $langdirs[] = $this->context['new_source_dir']."/install/language";
+            $langdirs[] = $this->context['new_source_dir']."/modules/UpgradeWizard/language";
         } elseif(!empty($this->context['source_dir'])) {
-            $langdirs[] = $this->context['source_dir']."/modules/UpgradeWizard/language";
             $langdirs[] = $this->context['source_dir']."/install/language";
+            $langdirs[] = $this->context['source_dir']."/modules/UpgradeWizard/language";
         }
+        $langdirs[] = dirname(__FILE__)."/language";
 
         foreach($langdirs as $langdir) {
             if(!file_exists($langdir)) continue;
@@ -1205,7 +1250,6 @@ abstract class UpgradeDriver
      */
     public function run($stage)
     {
-        // TODO: re-run from given state/script
         ini_set('memory_limit',-1);
         if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
             ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_DEPRECATED);
