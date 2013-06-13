@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 describe("PortalContacts.Views.Record", function() {
     var app, view;
 
