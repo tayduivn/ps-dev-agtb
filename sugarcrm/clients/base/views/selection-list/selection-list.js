@@ -19,6 +19,8 @@
     extendsFrom: 'FlexListView',
     plugins: ['ellipsis_inline', 'list-column-ellipsis', 'list-remove-links'],
 
+    displayFirstNColumns: 4,
+
     initialize: function (options) {
         options.meta = options.meta || {};
         options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
@@ -27,6 +29,21 @@
         this.context.on('selection-list:select', this._selectAndCloseImmediately, this);
     },
 
+    /**
+     * Display only the first N number of columns defined by displayFirstNColumns variable.
+     *
+     * @returns {Object}
+     */
+    parseFields: function () {
+        _.each(this.meta.panels, function(panel) {
+            _.each(panel.fields, function(field, index) {
+                panel.fields[index].default = (index < this.displayFirstNColumns);
+            }, this);
+        }, this);
+
+        return app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'parseFields'});
+    },
+    
     /**
      * Selected from list. Close the drawer.
      *
@@ -81,12 +98,14 @@
      */
     addActions: function() {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
-        this.rightColumns.push({
-            type: 'rowaction',
-            css_class: 'btn',
-            tooltip: 'LBL_PREVIEW',
-            event: 'list:preview:fire',
-            icon: 'icon-eye-open'
-        });
+        if (this.meta.showPreview !== false) {
+            this.rightColumns.push({
+                type: 'rowaction',
+                css_class: 'btn',
+                tooltip: 'LBL_PREVIEW',
+                event: 'list:preview:fire',
+                icon: 'icon-eye-open'
+            });
+        }
     }
 })
