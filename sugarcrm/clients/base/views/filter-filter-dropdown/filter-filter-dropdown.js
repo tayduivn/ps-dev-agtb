@@ -23,9 +23,9 @@
         this._select2formatSelectionTemplate = app.template.get("filter-filter-dropdown.selection-partial");
         this._select2formatResultTemplate = app.template.get("filter-filter-dropdown.result-partial");
 
-        this.layout.on("filter:change:filter", this.handleChange, this);
-        this.layout.on("filter:change:module", this.handleModuleChange, this);
-        this.layout.on("filter:render:filter", this._renderHtml, this);
+        this.listenTo(this.layout, "filter:change:filter", this.handleChange);
+        this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
+        this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
     },
 
     /**

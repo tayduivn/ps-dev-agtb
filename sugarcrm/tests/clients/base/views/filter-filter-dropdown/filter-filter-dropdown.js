@@ -159,24 +159,25 @@ describe("BaseFilterFilterDropdownView", function () {
 
         it('should formatSelection for selected module', function() {
             var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.enabled },
-                tplStub = sinon.stub(view, '_select2formatSelectionTemplate', function(val) { return val; }),
                 html;
+
+            //Template replacement
+            view._select2formatSelectionTemplate = function(val) { return val; };
 
             html = view.formatSelection({id: 'test', text: 'TEST'});
 
             expect(html).toEqual(expected);
-            tplStub.restore();
         });
 
         it('should formatResult for selected module', function() {
             var expected = 'TEST',
-                tplStub = sinon.stub(view, '_select2formatResultTemplate', function(val) { return val; }),
                 html;
 
+            //Template replacement
+            view._select2formatResultTemplate = function(val) { return val; };
             html = view.formatResult({id: 'test', text: 'TEST'});
 
             expect(html).toEqual(expected);
-            tplStub.restore();
         });
     });
 });
