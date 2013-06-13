@@ -454,12 +454,12 @@ describe("BaseFilterRowsView", function() {
             expect($row.data('operator')).toBeDefined();
             expect($row.data('valueField')).toBeDefined();
         });
-        it('should trigger filter:change:quicksearch when value change', function() {
+        it('should trigger filter:apply when value change', function() {
             var triggerStub = sinon.stub(view.layout, 'trigger');
             view.handleOperatorSelected({currentTarget: $operatorField});
             $row.data('valueField').model.set('status', 'firesModelChangeEvent');
             expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalledWith('filter:change:quicksearch');
+            expect(triggerStub).toHaveBeenCalledWith('filter:apply');
         });
     });
 

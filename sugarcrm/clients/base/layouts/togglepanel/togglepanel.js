@@ -1,5 +1,4 @@
 ({
-    extendsFrom: 'TogglepanelLayout',
     /**
      * Layout for tabbing between filterable components.
      * Mostly to toggle between Activity Stream and list views
@@ -130,7 +129,6 @@
         });
         this.componentsList = {};
         this.toggleComponents = null;
-        this.activityContext = null;
         app.view.Layout.prototype._dispose.call(this);
     },
 

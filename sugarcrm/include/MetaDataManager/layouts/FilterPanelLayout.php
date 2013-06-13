@@ -51,11 +51,11 @@ class FilterPanelLayout
         $this->layout->push($filterLayout);
         $this->layout->push(array(
                 "view" => "filter-actions",
-                "targetEl" => 'filter-options'
+                "targetEl" => '.filter-options'
             ));
         $this->layout->push(array(
                 "view" => "filter-rows",
-                "targetEl" => 'filter-options'
+                "targetEl" => '.filter-options'
             ));
 
         if (in_array('activitystream', $toggles)) {
