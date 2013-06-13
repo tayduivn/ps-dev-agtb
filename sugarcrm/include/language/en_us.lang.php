@@ -3962,8 +3962,8 @@ $app_strings = array (
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
-    'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment',
-    'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip;',
+    'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment. Type @ to mention a user. Type # to reference a record.',
+    'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
 
