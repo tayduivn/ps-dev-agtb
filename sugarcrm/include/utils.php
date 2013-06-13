@@ -4999,7 +4999,7 @@ function verify_image_file($path, $jpeg = false)
 {
     if (!empty($path)) {
         if (function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
-            $img = imagecreatefromstring(file_get_contents($path));
+            $img = @imagecreatefromstring(file_get_contents($path));
             if (!$img) {
                 return false;
             }
