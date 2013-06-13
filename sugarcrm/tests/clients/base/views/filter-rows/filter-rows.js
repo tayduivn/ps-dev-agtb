@@ -5,7 +5,7 @@ describe("BaseFilterRowsView", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-rows');
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', "Cases", "filter", null, null, null, { layout: new Backbone.View() });
+        layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
         view = SugarTest.createView("base", "Cases", "filter-rows", null, null, null, layout);
         view.layout = layout;
         app = SUGAR.App;

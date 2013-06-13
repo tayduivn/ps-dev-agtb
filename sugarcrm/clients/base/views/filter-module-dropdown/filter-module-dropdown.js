@@ -198,8 +198,10 @@
         if (el.val() === "all_modules") {
             label = (this.layout.layoutType === "record") ? app.lang.get("LBL_TABGROUP_ALL") : app.lang.get("LBL_MODULE_NAME", this.module);
             selection = {id: "all_modules", text: label};
-        } else {
+        } else if (_.findWhere(this.filterList, {id: el.val()})) {
             selection = _.findWhere(this.filterList, {id: el.val()});
+        } else if(this.filterList && this.filterList.length > 0)  {
+            selection = this.filterList[0];
         }
         callback(selection);
     },

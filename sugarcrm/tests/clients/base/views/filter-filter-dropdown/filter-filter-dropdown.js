@@ -5,7 +5,7 @@ describe("BaseFilterFilterDropdownView", function () {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-filter-dropdown');
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', "Cases", "filter", null, null, null, { layout: new Backbone.View() });
+        layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
         view = SugarTest.createView("base", "Cases", "filter-filter-dropdown", null, null, null, layout);
         view.layout = layout;
         app = SUGAR.App;

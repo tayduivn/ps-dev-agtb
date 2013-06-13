@@ -5,7 +5,7 @@ describe("BaseFilterModuleDropdownView", function () {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'filter-module-dropdown');
         SugarTest.testMetadata.set();
-        layout = SugarTest.createLayout('base', "Cases", "filter", null, null, null, { layout: new Backbone.View() });
+        layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
         view = SugarTest.createView("base", "Cases", "filter-module-dropdown", null, null, null, layout);
         view.layout = layout;
         app = SUGAR.App;
@@ -90,18 +90,8 @@ describe("BaseFilterModuleDropdownView", function () {
         });
 
         it('gets module list for Subpanels', function() {
-            var metadataStub = sinon.stub(app.metadata, 'getModule', function(module) {
-                return {
-                    layouts: {
-                        subpanel: {
-                            meta: {
-                                subpanelList: {
-                                    'LBL_CONTACTS_SUBPANEL_TITLE' : 'contacts'
-                                }
-                            }
-                        }
-                    }
-                };
+            var metadataStub = sinon.stub(app.utils, 'getSubpanelList', function(module) {
+                return {"LBL_CONTACTS_SUBPANEL_TITLE":'contacts'};
             });
             var dataStub = sinon.stub(app.data, 'getRelatedModule', function(module, link) {
                 return 'Contacts';
@@ -119,18 +109,8 @@ describe("BaseFilterModuleDropdownView", function () {
     describe('pullSubpanelRelationships', function() {
 
         it('should return subpanels metadata', function() {
-            var metadataStub = sinon.stub(app.metadata, 'getModule', function(module) {
-                return {
-                    layouts: {
-                        subpanel: {
-                            meta: {
-                                subpanelList: {
-                                    'LBL_CONTACTS_SUBPANEL_TITLE' : 'contacts'
-                                }
-                            }
-                        }
-                    }
-                };
+            var metadataStub = sinon.stub(app.utils, 'getSubpanelList', function(module) {
+                return {"LBL_CONTACTS_SUBPANEL_TITLE":'contacts'};
             });
             var subpanels = view.pullSubpanelRelationships();
             expect(subpanels).toEqual({'LBL_CONTACTS_SUBPANEL_TITLE' : 'contacts'});

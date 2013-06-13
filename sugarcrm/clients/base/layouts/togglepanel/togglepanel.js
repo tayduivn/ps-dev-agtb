@@ -22,8 +22,18 @@
         this.processToggles();
 
         app.view.Layout.prototype.initialize.call(this, opts);
+        // get the last viewed layout
+        this.toggleViewLastStateKey = app.user.lastState.key('toggle-view', this);
+        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
 
-        this.showComponent(this.options.meta['default'], true);
+        // show the first toggle if the last viewed state isn't set in the metadata
+        if (_.isUndefined(lastViewed) && (this.toggles.length > 0)) {
+            lastViewed = _.first(this.toggles).toggle;
+        }
+
+        this.showComponent(lastViewed, true);
+        // Toggle the appropriate button and layout for initial render
+        this.$('[data-view="' + lastViewed + '"]').button('toggle');
     },
 
     /**
@@ -71,7 +81,6 @@
      * @param {Object} def
      */
     _placeComponent: function (component, def) {
-
         if (def && def.targetEl) {
             if (def.position == 'prepend') {
                 this.$(def.targetEl).prepend(component.el);
@@ -109,6 +118,7 @@
         if (!$el.hasClass("active")) {
             var data = $el.data();
             this.showComponent(data.view);
+            app.user.lastState.set(this.toggleViewLastStateKey, data.view);
             e.preventDefault();
         }
     },

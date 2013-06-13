@@ -36,13 +36,23 @@ describe("Base.Layout.Togglepanel", function () {
     });
 
     describe("Toggle Panel", function () {
-
+        var oLastState;
         beforeEach(function () {
             var meta = {
             }
+            oLastState = app.user.lastState;
+            app.user.lastState = {
+                key: function(){},
+              get: function(){},
+                set: function(){},
+                register: function(){}
+            };
+            var stub = sinon.stub(app.user.lastState);
             layout = SugarTest.createLayout("base", "Accounts", "togglepanel", meta);
         });
-
+        afterEach(function () {
+            app.user.lastState = oLastState;
+        });
         it("should initialize", function () {
             var showSpy = sinon.stub(layout, 'showComponent', function () {
             });

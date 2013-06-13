@@ -5,7 +5,7 @@
                 <div class="toggle-actions actions">
                     <div class="btn-group" data-toggle="buttons-radio">
                         {{#each toggles}}
-                            <button type="button" class="btn {{#eq ../options.meta.default toggle}}active{{/eq}}" data-view="{{toggle}}" data-mode="view" rel="tooltip" title="{{str title}}" data-original-title="{{toggle}}"><i class="{{class}}"></i></button>
+                            <button type="button" class="btn" data-view="{{toggle}}" data-mode="view" rel="tooltip" title="{{str title}}" data-original-title="{{toggle}}"><i class="{{class}}"></i></button>
                         {{/each}}
                     </div>
                 </div>

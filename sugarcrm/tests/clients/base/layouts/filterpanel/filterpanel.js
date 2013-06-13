@@ -36,11 +36,20 @@ describe("Base.Layout.Filterpanel", function(){
     });
 
     describe("Filter Panel", function() {
-
+        var oLastState;
         beforeEach(function() {
+            oLastState = app.user.lastState;
+            app.user.lastState = {
+                key: function(){},
+                get: function(){},
+                set: function(){},
+                register: function(){}
+            };
             layout = SugarTest.createLayout("base", "Accounts", "filterpanel");
         });
-
+        afterEach(function () {
+            app.user.lastState = oLastState;
+        });
         it("should initialize", function() {
             var spy = sinon.spy();
             layout.off();

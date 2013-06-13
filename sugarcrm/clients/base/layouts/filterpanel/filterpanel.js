@@ -24,9 +24,9 @@
             this.$(".filter-options").hide();
         }, this);
 
-
+        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
         app.view.invokeParent(this, {type: 'layout', name: 'togglepanel', method: 'initialize', args: [opts]});
         // Needed to initialize this.currentModule.
-        this.trigger('filter:change', this.module);
+        this.trigger('filter:change', (lastViewed === "activitystream") ? 'Activities' : this.module);
     }
 })
