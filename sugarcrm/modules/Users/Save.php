@@ -30,6 +30,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'modules/MySettings/TabController.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'include/api/SugarApi.php';
+require_once 'clients/base/api/CurrentUserApi.php';
 
 $display_tabs_def = isset($_REQUEST['display_tabs_def']) ? html_entity_decode($_REQUEST['display_tabs_def']) : '';
 $hide_tabs_def = isset($_REQUEST['hide_tabs_def']) ? html_entity_decode($_REQUEST['hide_tabs_def']): '';
@@ -61,8 +63,8 @@ $focus->incrementETag("mainMenuETag");
 $forCurrentUser = $_POST['record'] == $current_user->id;
 
 // [BR-200] Set the reauth forcing array of fields now for comparison later
-$mm = new MetaDataManager($current_user);
-$reauthFields = array_keys($mm->getUserPrefsToCache());
+$userApi = new CurrentUserApi;
+$reauthFields = array_keys($userApi->getUserPrefsToCache());
 $currentReauthPrefs = array();
 foreach ($reauthFields as $field) {
     $currentReauthPrefs[$field] = $focus->getPreference($field);
@@ -374,6 +376,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 
         // [BR-200] Force reauth so user pref metadata is refreshed
         if ($forCurrentUser && $refreshMetadata) {
+            $mm = new MetaDataManager($current_user);
             $mm->setUserMetadataHasChanged($focus);
         }
 

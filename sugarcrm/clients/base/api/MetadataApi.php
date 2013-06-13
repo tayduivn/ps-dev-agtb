@@ -38,6 +38,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
+                'keepSession' => true,
             ),
             'getAllMetadataPost' => array(
                 'reqType' => 'POST',
@@ -47,6 +48,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system, filtered by the array of hashes sent to the server',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
+                'keepSession' => true,
             ),
             'getAllMetadataHashes' => array(
                 'reqType' => 'GET',

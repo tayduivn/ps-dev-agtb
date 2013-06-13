@@ -171,9 +171,7 @@ class RestService extends ServiceBase
                         // done in a specific way to allow clients to understand
                         // that this revocation of the grant is because of a change
                         // in metadata.
-                        $e = new SugarApiExceptionNeedLogin('The access token has been invalidated.');
-                        $e->errorLabel = 'invalid_grant';
-                        throw $e;
+                        throw new SugarApiExceptionInvalidToken('The access token has been invalidated.');
                     }
                 }
             }

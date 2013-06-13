@@ -789,7 +789,9 @@ class MetaDataManager
     /**
      * Gets the current session metadata hash if it exists
      *
-     * @return string
+     * @return string Returns the session metadata hash if it is set, otherwise
+     *                returns null. This could also return false if the hash was
+     *                set after login but before the metadata cache was built.
      */
     public function getSessionHash()
     {
@@ -829,11 +831,12 @@ class MetaDataManager
             // See if there is a hash cache. If there is, see if the hash cache
             // for this platform matches what's in the session, ensuring that the
             // session value isn't false (the default value when setting from
-            // cache)
-            $hashCache = sugar_cached("api/metadata/hashes.php");
-            if (file_exists($hashCache)) {
-                include $hashCache;
-
+            // cache).
+            // 
+            // Include the file, and if the $hashes var didn't exist then we can
+            // assume that the file was not there. This is per Stas.
+            @include sugar_cached("api/metadata/hashes.php");
+            if (isset($hashes)) {
                 // Valid is either a platform hash that matches the session hash
                 // OR no platform hash and no session hash
                 $platformHash = empty($hashes['meta_hash_' . $platform]) ? null : $hashes['meta_hash_' . $platform];
@@ -841,10 +844,11 @@ class MetaDataManager
                 return ($platformHash && $sessionHash && $platformHash == $sessionHash) ||
                        (!$platformHash && !$sessionHash);
             } else {
-                // We have a session var but no cache file. That means the either
+                // We have a session var but no cache file. That means that either
                 // A) the cache file has been nuked, or B) the cache file never
-                // existed. Case B happens if the session var is false, which is
-                // a valid session hash value to prevent logouts.
+                // existed. Case B happens if the session var is false, which it
+                // is set to when a client first logs in but there is no metadata
+                // cache file to get a hash from. 
                 return $sessionHash === false;
             }
         }
@@ -864,12 +868,11 @@ class MetaDataManager
     public function setSessionHashFromCache($platform)
     {
         $hash = false;
-        $hashCache = sugar_cached("api/metadata/hashes.php");
-        if (file_exists($hashCache)) {
-            include $hashCache;
-            if (!empty($hashes['meta_hash_' . $platform])) {
-                $hash = $hashes['meta_hash_' . $platform];
-            }
+        
+        // Include with error suppression is faster than file_exists then include.
+        @include sugar_cached("api/metadata/hashes.php");
+        if (!empty($hashes['meta_hash_' . $platform])) {
+            $hash = $hashes['meta_hash_' . $platform];
         }
 
         $this->setSessionHash($hash);
@@ -914,42 +917,5 @@ class MetaDataManager
         if ($this->hasUserMetadataChanged($user)) {
             @unlink(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
         }
-    }
-
-    /**
-     * Gets the list of fields that should trigger a user metadata change reauth
-     *
-     * @return array
-     */
-    public function getUserPrefsToCache()
-    {
-        return $this->userPrefsToCache;
-    }
-
-    /**
-     * Accessor to allow mapping a user pref field name to a metadata property
-     * name.
-     *
-     * @param string $prefName     The name of the user preference
-     * @param string $metadataName The name of the metadata property that maps to this field
-     */
-    public function addUserPrefToCache($prefName, $metadataName = '')
-    {
-        if (empty($metadataName)) {
-            $metadataName = $prefName;
-        }
-
-        $this->userPrefsToCache[$prefName] = $metadataName;
-    }
-
-    /**
-     * Accessor to delete a user preference from the metadata change reauth
-     * collection
-     *
-     * @param string $prefName The name of the user preference
-     */
-    public function delUserPrefToCache($prefName)
-    {
-        unset($this->userPrefsToCache[$prefName]);
     }
 }

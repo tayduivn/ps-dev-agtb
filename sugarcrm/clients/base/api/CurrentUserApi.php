@@ -18,6 +18,26 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class CurrentUserApi extends SugarApi
 {
+    /**
+     * Hash of user preference indexes and their corresponding metadata index 
+     * name. This is used in both the user pref setting in this class and in 
+     * user preference setting in BWC mode. The list of preference indexes will
+     * be used by the BWC implementation to determine whether the state of the 
+     * user has changed so as to notify clients that they need to rerequest user
+     * data.
+     * 
+     * @var array
+     */
+    protected $userPrefMeta = array(
+        'timezone' => 'timezone',
+        'datef' => 'datepref',
+        'timef' => 'timepref',
+        'currency' => 'currency',
+        'signature_default' => 'signature_default',
+        'signature_prepend' => 'signature_prepend',
+        'email_link_type' => 'email_link_type',
+    );
+    
     public function registerApiRest()
     {
         return array(
@@ -107,7 +127,7 @@ class CurrentUserApi extends SugarApi
             ),
         );
     }
-
+    
     /**
      * Retrieves the current user info
      *
@@ -321,6 +341,98 @@ class CurrentUserApi extends SugarApi
 
         return null;
     }
+    
+    /**
+     * Gets the list of fields that should trigger a user metadata change reauth
+     *
+     * @return array
+     */
+    public function getUserPrefsToCache()
+    {
+        return $this->userPrefMeta;
+    }
+
+    
+    protected function getUserPref($user, $pref, $metaName) 
+    {
+        $method = 'getUserPref' . ucfirst($pref);
+        if (method_exists($this, $method)) {
+            return $this->$method($user);
+        }
+        
+        return array($metaName => $user->getPreference($pref));
+    }
+    
+    protected function getUserPrefTimezone($user)
+    {
+        $val = $user->getPreference('timezone');
+        if (!$val) {
+            $val = 'GMT';
+        }
+        
+        return array('timezone' => $val);
+    }
+    
+    protected function getUserPrefCurrency($user)
+    {
+        global $locale;
+        
+        $currency = BeanFactory::getBean('Currencies');
+        $currency_id = $user->getPreference('currency');
+        $currency->retrieve($currency_id);
+        $return['currency_id'] = $currency->id;
+        $return['currency_name'] = $currency->name;
+        $return['currency_symbol'] = $currency->symbol;
+        $return['currency_iso'] = $currency->iso4217;
+        $return['currency_rate'] = $currency->conversion_rate;
+        
+        // user number formatting prefs
+        $return['decimal_precision'] = $locale->getPrecision();
+        $return['decimal_separator'] = $locale->getDecimalSeparator();
+        $return['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
+        
+        return $return;
+    }
+    
+    protected function getUserPrefSignature_default($user) 
+    {
+        // email signature preferences
+        return array('signature_default' => $user->getDefaultSignature());
+    }
+    
+    protected function getUserPrefSignature_prepend($user)
+    {
+        return array('signature_prepend' => $user->getPreference('signature_prepend') ? 'true' : 'false');
+    }
+    
+    protected function getUserPrefEmail_link_type($user)
+    {
+        $useSugarEmailClient = ($user->getEmailClientPreference() === 'sugar');
+
+        if ($useSugarEmailClient && !OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($user)) {
+            // even though the user's preference is to use the sugar email client, the user does not have a valid
+            // outbound email configuration, so email must be sent from the user's email client
+            $useSugarEmailClient = false;
+        }
+
+        return array('use_sugar_email_client' => ($useSugarEmailClient) ? 'true' : 'false');
+    }
+    
+    protected function getUserPrefLanguage($user)
+    {
+        // use their current auth language if it exists
+        if (!empty($_SESSION['authenticated_user_language'])) {
+            $language = $_SESSION['authenticated_user_language'];
+        } elseif (!empty($user->preferred_language)) {
+            // if current auth language doesn't exist get their preferred lang from the user obj
+            $language = $user->preferred_language;
+        } else {
+            // if nothing exists, get the sugar_config default language
+            $language = $GLOBALS['sugar_config']['default_language'];
+        }
+        
+        return array('language' => $language);
+    }
 
     /**
      * Gets the basic user data that all users that are logged in will need. Client
@@ -331,66 +443,21 @@ class CurrentUserApi extends SugarApi
     protected function getBasicUserInfo()
     {
         global $current_user;
-        global $locale;
-
-        $user_data = array(
-            'preferences' => array(
-                'timezone' => $current_user->getPreference('timezone'),
-                'datepref' => $current_user->getPreference('datef'),
-                'timepref' => $current_user->getPreference('timef'),
-            ),
-        );
-
-        // FIXME getPreference is already calling the system defaults but not for timezone
-        if (!isset($user_data['preferences']['timezone'])) {
-            $user_data['preferences']['timezone'] = 'GMT';
+        
+        $user_data['preferences'] = array();
+        foreach ($this->userPrefMeta as $pref => $metaName) {
+            // Twitterate this, since long lines are the devil
+            $val = $this->getUserPref($current_user, $pref, $metaName);
+            $user_data['preferences'] = array_merge($user_data['preferences'], $val);
         }
-
-        // user currency prefs
-        $currency = BeanFactory::getBean('Currencies');
-        $currency_id = $current_user->getPreference('currency');
-        $currency->retrieve($currency_id);
-        $user_data['preferences']['currency_id'] = $currency->id;
-        $user_data['preferences']['currency_name'] = $currency->name;
-        $user_data['preferences']['currency_symbol'] = $currency->symbol;
-        $user_data['preferences']['currency_iso'] = $currency->iso4217;
-        $user_data['preferences']['currency_rate'] = $currency->conversion_rate;
-        // user number formatting prefs
-        $user_data['preferences']['decimal_precision'] = $locale->getPrecision();
-        $user_data['preferences']['decimal_separator'] = $locale->getDecimalSeparator();
-        $user_data['preferences']['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
+        
+        // Handle language on its own for now
+        $lang = $this->getUserPrefLanguage($current_user);
+        $user_data['preferences'] = array_merge($user_data['preferences'], $lang);
+        
+        // Set the user module list
         $user_data['module_list'] = $this->getModuleList();
-
-        // use their current auth language if it exists
-        if (!empty($_SESSION['authenticated_user_language'])) {
-            $language = $_SESSION['authenticated_user_language'];
-        }
-        // if current auth language doesn't exist get their preferred lang from the user obj
-        elseif (!empty($current_user->preferred_language)) {
-            $language = $current_user->preferred_language;
-        }
-        // if nothing exists, get the sugar_config default language
-        else {
-            $language = $GLOBALS['sugar_config']['default_language'];
-        }
-
-        $user_data['preferences']['language'] = $language;
-
-        // email signature preferences
-        $user_data['preferences']['signature_default'] = $current_user->getDefaultSignature();
-        $user_data['preferences']['signature_prepend'] = $current_user->getPreference('signature_prepend') ? 'true' : 'false';
-
-        // email client preference
-        $useSugarEmailClient = ($current_user->getEmailClientPreference() === 'sugar');
-
-        if ($useSugarEmailClient && !OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user)) {
-            // even though the user's preference is to use the sugar email client, the user does not have a valid
-            // outbound email configuration, so email must be sent from the user's email client
-            $useSugarEmailClient = false;
-        }
-
-        $user_data['preferences']['use_sugar_email_client'] = ($useSugarEmailClient) ? 'true' : 'false';
-
+        
         return $user_data;
     }
 

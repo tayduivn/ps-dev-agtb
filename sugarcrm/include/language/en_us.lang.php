@@ -2468,6 +2468,7 @@ $app_strings = array (
     'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
     'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
     'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_INVALID_TOKEN'           => 'Your authentication token is invalid.',
     'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
     'EXCEPTION_INACTIVE_PORTAL_USER'    => 'You cannot access Portal because your portal account is inactive. Please contact customer support if you need access.',
     'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',

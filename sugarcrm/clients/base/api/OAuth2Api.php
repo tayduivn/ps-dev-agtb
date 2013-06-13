@@ -76,7 +76,11 @@ class OAuth2Api extends SugarApi
 
                 // This is a login auth so set the metadata hash cache value to either a
                 // false or the value of the metadata hash for this platform.
-                if (isset($args['grant_type']) && $args['grant_type'] == 'password') {
+                // 
+                // Since other types of authentication exists (SSO for example)
+                // the logic here will be to set the session hash for all but
+                // refresh_token type requests.
+                if (isset($args['grant_type']) && $args['grant_type'] != 'refresh_token') {
                     $mm = new MetaDataManager($GLOBALS['current_user'], $platform);
                     $mm->setSessionHashFromCache($platform);
                 }

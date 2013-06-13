@@ -192,7 +192,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
         $reply = $this->_restCall('oauth2/token',json_encode($args));
         if ( empty($reply['reply']['access_token']) ) {
-            throw new Exception("Rest authentication failed, message looked like: ".$reply['replyRaw']);
+            self::fail("Rest authentication failed, message looked like: ".$reply['replyRaw']);
         }
         $this->authToken = $reply['reply']['access_token'];
         $this->refreshToken = $reply['reply']['refresh_token'];
@@ -213,12 +213,12 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             $this->authToken = 'LOGGING_IN';
             $reply = $this->_restCall('oauth2/token',json_encode($args));
             if (empty($reply['reply']['access_token'])) {
-                throw new Exception("Rest re-authentication failed, message looked like: ".$reply['replyRaw']);
+                self::fail("Rest re-authentication failed, message looked like: ".$reply['replyRaw']);
             }
             $this->authToken = $reply['reply']['access_token'];
             $this->refreshToken = $reply['reply']['refresh_token'];
         } else {
-            throw new Exception("Attempt to reauth without a refresh token");
+            self::fail("Attempt to reauth without a refresh token");
         }
     }
 
@@ -303,7 +303,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // clears since that now forces an immediate invalidation of sessions
         if (isset($httpInfo['http_code']) && $httpInfo['http_code'] == 401) {
             if (
-                isset($httpReply['error']) && $httpReply['error'] == 'invalid_grant' &&
+                isset($httpReply['error']) && $httpReply['error'] == 'invalid_token' &&
                 isset($httpReply['error_message']) && $httpReply['error_message'] == 'The access token has been invalidated.'
             ) {
                 $this->_restReauth();
