@@ -210,7 +210,7 @@ $admin_group_header[]= array('LBL_BUG_TITLE','',false,$admin_option_defs, 'LBL_B
 //Forecasting
 
 $admin_option_defs=array();
-$admin_option_defs['Forecasts']['forecast_setup']= array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE','LBL_MANAGE_FORECASTS', 'javascript:parent.SUGAR.App.router.navigate("Forecasts/layout/config", {trigger: true});');
+$admin_option_defs['Forecasts']['forecast_setup']= array('ForecastReports','LBL_MANAGE_FORECASTS_TITLE','LBL_MANAGE_FORECASTS', 'javascript:parent.SUGAR.App.router.navigate("Forecasts/config", {trigger: true});');
 $admin_group_header[]= array('LBL_FORECAST_TITLE','',false,$admin_option_defs, 'LBL_FORECAST_DESC');
 
 
@@ -266,14 +266,13 @@ foreach ($admin_group_header as $key=>$values) {
                 if(!in_array('Campaigns', $access)&& isset($values[3]['Campaigns'])){
                     unset($values[3]['Campaigns']);
                 }
-
                 //END SUGARCRM PRO ONLY
-                //////////////////
 
-                // Special case for Forecasts admin links where user has Developer role so they
-                // can see the Administration Forecasts link, but they have to actually be an admin
-                // to access Forecasts config in Forecasts module
-                if($mod_key == 'Forecasts' && !$current_user->isAdmin() && isset($values[3]['Forecasts'])) {
+                // Unless a user is a system admin, or module admin, they cannot see Forecasts config links
+                if($mod_val == 'Forecasts'
+                    && !($current_user->isAdmin() || $current_user->isAdminForModule('Forecasts'))
+                    && isset($values[3]['Forecasts']))
+                {
                     unset($admin_group_header[$key][3][$mod_val]);
                 }
 
