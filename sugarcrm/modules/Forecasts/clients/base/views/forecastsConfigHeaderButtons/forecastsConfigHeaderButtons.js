@@ -155,17 +155,8 @@
             success: _.bind(function(model) {
                 // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
                 if(this.context && this.context.get('inDrawer') && !firstTime) {
-                    // build an object based on the metadata structure
-                    var updatedMetadata = {
-                        modules: {
-                            Forecasts: {
-                                config: model.toJSON()
-                            }
-                        }
-                    };
-
                     // set Forecasts config to new metadata set in config
-                    app.metadata.set(updatedMetadata);
+                    app.metadata.getModule('Forecasts').config = model.toJSON();
 
                     // close the drawer and return to Forecasts
                     app.drawer.close(true, model.toJSON());
