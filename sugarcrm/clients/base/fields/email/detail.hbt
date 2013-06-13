@@ -29,7 +29,7 @@
 {{#each value}}
 <div class="control-group email">
     <span class="ellipsis_inline" data-original-title="{{email_address}} {{flagLabel}}" data-placement="bottom">
-        {{#if hasAnchor}}<a {{#if ../../sendEmailFromApp}}class="composeEmail" {{/if}}href="{{#if ../../sendEmailFromApp}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>{{else}}<del>{{email_address}}</del>{{/if}} <small>{{flagLabel}}</small>
+        {{#if hasAnchor}}<a {{#if ../../useSugarEmailClient}}class="composeEmail" {{/if}}href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>{{else}}<del>{{email_address}}</del>{{/if}} <small>{{flagLabel}}</small>
     </span>
 </div>
 {{/each}}

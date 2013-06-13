@@ -160,7 +160,7 @@ class User extends Person {
 	{
 	    $signatures = $this->getSignaturesArray();
 
-	    return isset($signatures[$id]) ? $signatures[$id] : FALSE;
+	    return isset($signatures[$id]) ? $signatures[$id] : false;
 	}
 
 	function getSignaturesArray() {
@@ -1037,7 +1037,7 @@ EOQ;
 	 */
 	function verify_data($ieVerified=true) {
 		global $mod_strings, $current_user;
-		$verified = TRUE;
+		$verified = true;
 
 		if (!empty ($this->id)) {
 			// Make sure the user doesn't report to themselves.
@@ -1065,7 +1065,7 @@ EOQ;
 
 			if ($reports_to_self == 1) {
 				$this->error_string .= $mod_strings['ERR_REPORT_LOOP'];
-				$verified = FALSE;
+				$verified = false;
 			}
 		}
 
@@ -1076,7 +1076,7 @@ EOQ;
 
 		if (!empty($dup_users)) {
 			$this->error_string .= $mod_strings['ERR_USER_NAME_EXISTS_1'].$this->user_name.$mod_strings['ERR_USER_NAME_EXISTS_2'];
-			$verified = FALSE;
+			$verified = false;
 		}
 
 		if (is_admin($current_user)) {
@@ -1085,7 +1085,7 @@ EOQ;
 			if (($remaining_admins <= 1) && ($this->is_admin != '1') && ($this->id == $current_user->id)) {
 				$GLOBALS['log']->debug("Number of remaining administrator accounts: {$remaining_admins}");
 				$this->error_string .= $mod_strings['ERR_LAST_ADMIN_1'].$this->user_name.$mod_strings['ERR_LAST_ADMIN_2'];
-				$verified = FALSE;
+				$verified = false;
 			}
 		}
 		///////////////////////////////////////////////////////////////////////
@@ -1168,7 +1168,7 @@ EOQ;
 	}
 
 
-	function get_my_teams($return_obj = FALSE) {
+	function get_my_teams($return_obj = false) {
 		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2, rel.implicit_assign FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
 		$result = $this->db->query($query, false, "Error retrieving user ID: ");
 		$out = Array ();
@@ -1225,8 +1225,8 @@ EOQ;
 
     public static function getAllUsers()
     {
-        $active_users = get_user_array(FALSE);
-        $inactive_users = get_user_array(FALSE, "Inactive");
+        $active_users = get_user_array(false);
+        $inactive_users = get_user_array(false, "Inactive");
         $result = $active_users + $inactive_users;
         asort($result);
         return $result;
@@ -1432,6 +1432,30 @@ EOQ;
         return $ret;
     }
 
+    /**
+     * Get the string representing the user's preferred email client.
+     *
+     * @return string
+     */
+    public function getEmailClientPreference()
+    {
+        if (!isset($GLOBALS['sugar_config']['email_default_client'])) {
+            $this->setDefaultsInConfig();
+        }
+
+        $clientPref = $this->getPreference('email_link_type');
+        $client     = (!empty($clientPref)) ? $clientPref : $GLOBALS['sugar_config']['email_default_client'];
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // check for presence of a mobile device, if so use its email client
+        if (isset($_SESSION['isMobile'])){
+            $client = 'other';
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        return $client;
+    }
+
 	/**
 	 * returns opening <a href=xxxx for a contact, account, etc
 	 * cascades from User set preference to System-wide default
@@ -1446,25 +1470,7 @@ EOQ;
 	 */
 	function getEmailLink2($emailAddress, &$focus, $contact_id='', $ret_module='', $ret_action='DetailView', $ret_id='', $class='') {
 		$emailLink = '';
-		global $sugar_config;
-
-		if(!isset($sugar_config['email_default_client'])) {
-			$this->setDefaultsInConfig();
-		}
-
-		$userPref = $this->getPreference('email_link_type');
-		$defaultPref = $sugar_config['email_default_client'];
-		if($userPref != '') {
-			$client = $userPref;
-		} else {
-			$client = $defaultPref;
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		// check for presence of a mobile device, if so use it's email client
-		if(isset($_SESSION['isMobile'])){
-			$client = 'other';
-		}
-		//END SUGARCRM flav=pro ONLY
+        $client    = $this->getEmailClientPreference();
 
 		if($client == 'sugar') {
 			$email = '';
@@ -1529,25 +1535,7 @@ EOQ;
 	 */
 	function getEmailLink($attribute, &$focus, $contact_id='', $ret_module='', $ret_action='DetailView', $ret_id='', $class='') {
 	    $emailLink = '';
-		global $sugar_config;
-
-		if(!isset($sugar_config['email_default_client'])) {
-			$this->setDefaultsInConfig();
-		}
-
-		$userPref = $this->getPreference('email_link_type');
-		$defaultPref = $sugar_config['email_default_client'];
-		if($userPref != '') {
-			$client = $userPref;
-		} else {
-			$client = $defaultPref;
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		// check for presence of a mobile device, if so use it's email client
-		if(isset($_SESSION['isMobile'])){
-			$client = 'other';
-		}
-		//END SUGARCRM flav=pro ONLY
+        $client    = $this->getEmailClientPreference();
 
 		if($client == 'sugar') {
 			$email = '';
