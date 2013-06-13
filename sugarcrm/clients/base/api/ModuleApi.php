@@ -166,6 +166,16 @@ class ModuleApi extends SugarApi {
             throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);
         }
 
+        if (!empty($args['id'])) {
+            // Check if record already exists
+            if (BeanFactory::getBean($args['module'],$args['id'], array('strict_retrieve'=>true))) {
+                throw new SugarApiExceptionInvalidParameter('Record already exists: '.$args['id'].' in module: '.$args['module']);
+            }
+
+            // Don't create a new id if passed in
+            $bean->new_with_id = true;
+        }
+
         $id = $this->updateBean($bean, $api, $args);
 
         $args['record'] = $id;
