@@ -284,6 +284,17 @@ describe("ForecastWorksheets.View.RecordList", function() {
             expect(ctxStub).toHaveBeenCalled();
         });
 
+        it('should trigger when date is undefined and has rows', function() {
+            view.checkForDraftRows(undefined);
+            expect(ctxStub).toHaveBeenCalled();
+        });
+
+        it('should not trigger event when date is undefined and collection is empty', function() {
+            view.collection.reset();
+            view.checkForDraftRows(undefined);
+            expect(ctxStub).not.toHaveBeenCalled();
+        });
+
     });
 
     describe('updateSelectedUser', function() {
