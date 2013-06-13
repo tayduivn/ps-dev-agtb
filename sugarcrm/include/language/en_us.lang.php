@@ -3617,6 +3617,7 @@ $app_strings = array (
     'LBL_MERGE'  => 'Merge',
     'LBL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
     'ERR_MERGE_INVALID_NUMBER_RECORDS' => 'Invalid number of records passed.',
+    'ERR_MERGE_NO_ACCESS' => 'You have no access to perform this action',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',

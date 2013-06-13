@@ -1,13 +1,34 @@
 ({
     'events' : {
-        'click input.copy' : 'copy'
+        'click input[data-action=copy]' : 'copy'
     },
+
+    /**
+     * Copies value from current model to primary record
+     */
     copy: function() {
-        var primary_record = this.view.primaryRecord;
-        if (!primary_record) {
+        var primaryRecord = this.context.get('primaryRecord');
+        if (_.isUndefined(primaryRecord) || _.isUndefined(primaryRecord.id)) {
             return;
         }
-        primary_record.set(this.name, this.model.get(this.name));
+        if (!_.isUndefined(this.def.id_name)) {
+            primaryRecord.set(this.def.id_name, this.model.get(this.def.id_name));
+        }
+        primaryRecord.set(this.name, this.model.get(this.name));
     },
-    bindDomChange: function() {}
+
+    /**
+     * {@inheritdoc}
+     */
+    bindDomChange: function() {},
+
+    /**
+     * {@inheritdoc}
+     */
+    handleValidationError: function (errors) {},
+
+    /**
+     * {@inheritdoc}
+     */
+    clearErrorDecoration: function() {}
 })

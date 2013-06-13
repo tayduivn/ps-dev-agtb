@@ -1,1 +1,1 @@
-<input type="radio" name="{{name}}" class="copy">
+<input type="radio" name="dup_copy_{{name}}" class="copy" data-action="copy" />

@@ -256,7 +256,11 @@
                 });
         }
     },
-    mergeDuplicates: function(evt) {
+
+    /**
+     * Call view for merging
+     */
+    mergeDuplicates: function() {
         this.hide();
         var mergeCollection = this.context.get("mass_collection");
         if (mergeCollection) {

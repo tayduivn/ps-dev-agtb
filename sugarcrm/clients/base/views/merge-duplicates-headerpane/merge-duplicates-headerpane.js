@@ -6,6 +6,10 @@
         'click a[name=save_button]': 'save'
     },
 
+    /**
+     *
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.invokeParent(this, {
             type: 'view',
@@ -14,7 +18,7 @@
             args: [options]
         });
         var records = options.context.get("selectedDuplicates");
-        this.title = app.lang.get('LBL_MERGING_RECORDS',this.module,{ mergeCount: records.length});
+        this.title = app.lang.get('LBL_MERGING_RECORDS', this.module, {mergeCount: records.length});
     },
     
     /**

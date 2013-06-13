@@ -1,32 +1,41 @@
 ({
+    plugins: ['editable', 'error-decoration'],
     extendsFrom: 'ListView',
     events: {
-        'click .show_extra' : 'showMore',
-        'click .preview' : 'togglePreview'
+        'click a[data-action=more]' : 'showMore',
+        'click a[data-mode=preview]' : 'togglePreview'
     },
     MAX_RECORDS: 5, // the number of records we can merge, by fiat
     mergeFields: [], // list of fields to generate the metadata on the fly
     rowFields: {},
     primaryRecord: {},
-    recordName: '',
+    filterDef: [],
+    toggled: false,
     isPreviewOpen: false,
+
+    /**
+     *
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         var meta = app.metadata.getView(options.module, 'record'),
             fieldDefs = app.metadata.getModule(options.module).fields,
             mergeCollection = options.context.get('collection'),
-            records = options.context.get("selectedDuplicates"),
+            records = this.checkAccessToModels(options.context.get("selectedDuplicates")),
             primary,
             ids;
 
         // bomb out if we don't have between 2 and MAX_RECORDS
         if (!records.length || records.length < 2 || records.length > this.MAX_RECORDS) {
+            var msg = app.lang.get(records.length === options.context.get("selectedDuplicates") ?
+                'ERR_MERGE_INVALID_NUMBER_RECORDS' : 'ERR_MERGE_NO_ACCESS', options.module);
             app.alert.show('invalid-record-count',{
                 level: 'error',
-                messages: app.lang.get('ERR_MERGE_INVALID_NUMBER_RECORDS',options.module),
+                messages: msg,
                 autoClose: true
             });
             app.drawer.close(false);
-            return;
+            return false;
         }
 
         // standardize primary record from list of records,
@@ -34,54 +43,90 @@
         // this is useful primarily to know which record will be the primary
         // in the collection to be pulled later. We do not use the input models
         primary = (options.context.has("primaryRecord")) ?
-            _.findWhere(records,{id: options.context.get("primaryRecord").id}) :
-            records[0];
+            _.findWhere(records, {id: options.context.get("primaryRecord").id}) :
+            _.first(records);
         records = [primary].concat(_.without(records, primary));
-        
+
         // these are the fields we'll need to pull our records
         this.mergeFields = _.chain(meta.panels)
-            .map(function(panel) {return this.flattenFieldsets(panel.fields); }, this)
+            .map(function(panel) {return this.flattenFieldsets(panel.fields);}, this)
             .flatten()
-            .filter(function(field) { return field.name && this.validMergeField(fieldDefs[field.name]); }, this)
+            .filter(function(field) {return field.name && this.validMergeField(fieldDefs[field.name]);}, this)
             .value();
 
         // enforce the order of the ids so that primaryRecord always appears first
         // and only retrieve the records specified
-        ids = (_.pluck(records,'id'));
+        ids = (_.pluck(records, 'id'));
         if (mergeCollection) {
-            mergeCollection.filterDef = [{ "id": { "$in" : ids}}];
+            this.filterDef = mergeCollection.filterDef;
+            mergeCollection.filterDef = mergeCollection.filterDef || [];
+            mergeCollection.filterDef.push({ "id": { "$in" : ids}});
             mergeCollection.comparator = function (model) {
-                return _.indexOf(ids,model.get('id'));
+                return _.indexOf(ids, model.get('id'));
             }
         }
         app.view.View.prototype.initialize.call(this, options);
-
+        this.setPrimaryRecord(primary);
         this.action = 'list';
         this.layout.on('mergeduplicates:save:fire', this.save, this);
     },
+
+    /**
+     *
+     * @param {Array} models Models to check access for merge.
+     * @return {Array} Model with access
+     */
+    checkAccessToModels: function(models) {
+        var result = [];
+        _.each(models, function(model) {
+            if ( app.acl.hasAccessToModel('edit', model) &&
+                app.acl.hasAccessToModel('list', model) &&
+                app.acl.hasAccessToModel('delete', model)
+            ) {
+                result.push(model);
+            }
+        }, this);
+        return result;
+    },
+
     /**
      * Save primary and delete other records
-     */    
+     */
     save: function() {
         var self = this,
-            alternativeModels = this.collection.clone().remove(this.primaryRecord),
-            alternativeModelNames = alternativeModels.pluck('name');
-        app.alert.show('merge_confirmation', {
-            level: 'confirmation',
-            messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM') + " "+ alternativeModelNames.join(", ") + ". "+ app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
-            onConfirm: function () {
-                self.primaryRecord.save({}, {
-                    success: function() {
-                        alternativeModels.each(function (model) {
-                            model.destroy();
-                        }); 
-                        app.drawer.close(true);
-                    },
-                    error: function () {
-                        app.alert.show('server-error', {
-                            level: 'error',
-                            messages: app.lang.get('ERR_AJAX_LOAD_FAILURE'),
-                            autoClose: false
+            alternativeModels = _.without(this.collection.models, this.primaryRecord),
+            alternativeModelNames = [];
+        _.each(alternativeModels, function(model) {
+            alternativeModelNames.push(model.get('name'));
+        });
+        this.clearValidationErrors(this.getFieldNames());
+        this.primaryRecord.doValidate(this.getFieldNames(), function(isValid) {
+            if (isValid) {
+                app.alert.show('merge_confirmation', {
+                    level: 'confirmation',
+                    messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM')
+                        + " " + alternativeModelNames.join(", ") + ". "+ app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
+                    onConfirm: function () {
+                        self.primaryRecord.save({}, {
+                            success: function() {
+                                _.each(alternativeModels, function (model) {
+                                    self.collection.remove(model);
+                                    model.destroy();
+                                }, self);
+                                // We need to wait untill all models removed from server
+                                _.defer(function() {
+                                    app.drawer.close(true);
+                                }, self);
+                            },
+                            error: function () {
+                                app.alert.show('server-error', {
+                                    level: 'error',
+                                    messages: app.lang.get('ERR_AJAX_LOAD_FAILURE'),
+                                    autoClose: false
+                                });
+                            },
+                            showAlerts: true,
+                            viewed: true
                         });
                     }
                 });
@@ -91,11 +136,19 @@
     /**
      * Override the standard view's get field names.
      * @override
-     * @param module
      * @returns {Array} array of field names.
      */
-    getFieldNames: function(module) {
-        return _.pluck(this.mergeFields,'name');
+    getFieldNames: function() {
+        var fields = [],
+            fieldDefs = app.metadata.getModule(this.module).fields;
+        _.each(this.mergeFields, function(field) {
+            var def = fieldDefs[field.name];
+            if (!_.isUndefined(def.id_name) && !_.isUndefined((fieldDefs[def.id_name].name))) {
+                fields.push(fieldDefs[def.id_name].name);
+            }
+            fields.push(fieldDefs[def.name].name);
+        }, this);
+        return fields;
     },
     /**
      * Create a two panel viewdews metadata (visible, hidden) given list of fields
@@ -113,11 +166,11 @@
         // 2. if a field is "similar" among all alternatives, it is placed in a hidden panel
         // 3. if a field is "different" among all alternatives (i.e. there exists two alternatives such
         //    that the field value is not equal), it is placed in a visible panel.
-        _.each(fields, function(field, index){
+        _.each(fields, function(field) {
             // internal helper - see if the field is the same among all alternatives.
             function isSimilar(field, primary, alternatives) {
                 return _.every(alternatives, function(alt) {
-                    return (alt.get(field.name) == primary.get(field.name));
+                    return (alt.get(field.name) === primary.get(field.name));
                 });
             }
 
@@ -136,11 +189,11 @@
             var alternatives = collection.without(primaryRecord);
 
             if(isSimilar(field, primaryRecord, alternatives)) {
-                fieldMeta.oddEven = (hiddenFields.length + 1)%2 ? 'odd' : 'even';
+                fieldMeta.oddEven = (hiddenFields.length + 1) % 2 ? 'odd' : 'even';
                 hiddenFields.push(fieldMeta);
             }
             else {
-                fieldMeta.oddEven = (visibleFields.length + 1)%2 ? 'odd' : 'even';
+                fieldMeta.oddEven = (visibleFields.length + 1) % 2 ? 'odd' : 'even';
                 visibleFields.push(fieldMeta);
             }
         }, this);
@@ -194,7 +247,7 @@
             return false;
         }
 
-        if(_.contains(fieldNameBlacklist, fieldDef.name)) {
+        if (_.contains(fieldNameBlacklist, fieldDef.name)) {
             return false;
         }
 
@@ -237,16 +290,31 @@
      * @return {Array} fields - flat list of fields
      */
     flattenFieldsets: function(defs) {
-        var fields,
-           fieldsets,
-           fieldsetFilter = function(field) {
+        var fieldsetFilter = function(field) {
                 return field.type && field.type === 'fieldset' && _.isArray(field.fields);
-           };
-
-        fields = _.reject(defs, fieldsetFilter);
-        fieldsets = _.filter(defs, fieldsetFilter);
+            },
+            fields = _.reject(defs, fieldsetFilter),
+            fieldsets = _.filter(defs, fieldsetFilter),
+            sort = _.chain(defs).pluck('name').value() || [],
+            sortTemp = [];
 
         while (fieldsets.length) {
+            //collect fields' names from fieldset
+            var fieldsNames = _.chain(fieldsets)
+                .pluck('fields')
+                .flatten()
+                .pluck('name')
+                .value();
+            sortTemp = [];
+            // create new sort sequence
+            _.each(sort, function(value) {
+                if (value === _.first(fieldsets).name) {
+                    sortTemp = sortTemp.concat(fieldsNames);
+                } else {
+                    sortTemp = sortTemp.concat(value);
+                }
+            }, this);
+            sort = sortTemp;
             // fieldsets need to be broken into component fields
             fieldsets = _.chain(fieldsets)
                 .pluck('fields')
@@ -259,6 +327,20 @@
             // do we have any more fieldsets to squash?
             fieldsets = _.filter(fieldsets, fieldsetFilter);
         }
+        // sorting fields acording to sequence
+        fields = _.sortBy(fields, function(value, index) {
+            var result = index,
+                name = value;
+            if (!_.isUndefined(value.name)) {
+                name = value.name;
+                _.each(sort, function(valueSort, indexSort) {
+                    if (valueSort == name) {
+                        result = indexSort;
+                    }
+                });
+            }
+            return result;
+        });
         return fields;
     },
 
@@ -286,12 +368,9 @@
     },
 
     showMore: function(evt) {
-        var btn = this.$("a.show_extra"),
-            newHtml = (btn.text().trim() == "More") ?
-                'Less <i class="icon-caret-up"></i>' :
-                'More <i class="icon-caret-down"></i>';
-
-        btn.html(newHtml);
+        this.toggled = !this.toggled;
+        this.$(".less").toggleClass("hide");
+        this.$(".more").toggleClass("hide");
         this.$(".col .extra").toggleClass('hide');
     },
     /**
@@ -310,8 +389,8 @@
      * @return string record's title.
      */
     _getRecordTitle: function(model) {
-            return (model.get('name') ||
-                (model.get('first_name') + ' ' + model.get('last_name')) || '').trim();
+        return (model.get('name') ||
+            ((model.get('first_name') || '') + ' ' + (model.get('last_name') || '')) || '').trim();
     },
     _render:function () {
         this.meta = this.generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
@@ -334,42 +413,34 @@
         }, this);
         this.setPrimaryEdit(this.primaryRecord.id);
         this.$('[rel="tooltip"]').tooltip();
-        this.setSortable();
         this.setDraggable();
-    },
-
-    setSortable: function() {
-        this.$(".fluid-div").sortable({
-            items: ".col",
-            axis: "x"
-        });
-        this.$(".fluid-div").disableSelection();
+        if (this.toggled) {
+            this.toggleMoreLess();
+        }
     },
 
     setDraggable: function() {
         var self = this,
-            dragMe = _.bind(this.setDraggable,this); // avoid losing our context in the recursion
-
-        this.$( ".primary-edit-mode .primary-lbl" ).draggable({
-            scroll: true,
-            helper: function( event ) {
-                return $('<div class="primary-lbl static-ui-draggable"> Primary</div>');
+        mergeContainer = this.$('[data-container=merge-container]');
+        mergeContainer.find(".col .primary-lbl").sortable({
+            connectWith: self.$(".col .primary-lbl"),
+            appendTo: mergeContainer,
+            axis: 'x',
+            disableSelection: true,
+            cursor: 'move',
+            placeholder: 'primary-lbl-placeholder-span',
+            start: function(event, ui) {
+                self.$(".col .primary-lbl").addClass('primary-lbl-placeholder');
             },
-            stop: function(e) {
-                var dropped_to = self.$(document.elementFromPoint(e.clientX, e.clientY+24)).closest('.col');
-
+            stop: function(event, ui) {
+                var droppedTo = ui.item.parents('.col');
+                self.$(".col .primary-lbl").removeClass('primary-lbl-placeholder');
                 // short circuit if we didn't land on anything
-                if (!dropped_to.length) {
+                if (droppedTo.length === 0) {
+                    self.$(".col .primary-lbl").sortable('cancel');
                     return;
                 }
-
-                // style cleanup
-                self.$('.col').removeClass('primary-edit-mode');
-                self.$('.col .primary-lbl').removeAttr('style');
-                dropped_to.addClass('primary-edit-mode');
-
-                self.setPrimaryEdit(dropped_to.data("recordid"));
-                _.delay(dragMe, 500);
+                self.setPrimaryEdit(droppedTo.data("recordid"));
             }
         });
     },
@@ -386,12 +457,16 @@
         if(primary_record) {
             this.setPrimaryRecord(primary_record);
             this.toggleFields(this.rowFields[primary_record.id], true);
-            //app.view.views.ListView.prototype.toggleRow.call(this, primary_record.id, true);
         }
 
         // revert old primary record to standard record, unless we dropped on the same record.
-        if(old_primary_record && !(old_primary_record === primary_record)) {
+        if (old_primary_record && old_primary_record !== primary_record) {
             this.toggleFields(this.rowFields[old_primary_record.id], false);
+        }
+
+        if (!_.isUndefined(id)) {
+            this.$('.primary-edit-mode').removeClass('primary-edit-mode');
+            this.$('[data-recordid=' + id + ']').addClass('primary-edit-mode');
         }
     },
 
@@ -405,8 +480,8 @@
         }
 
         // turn off events on the old primary record if applicable
-        if (_.isFunction(this.primaryRecord,'off')) {
-         this.primaryRecord.off('change',null,this);
+        if (this.primaryRecord instanceof Backbone.Model) {
+            this.primaryRecord.off('change error:validation', null, this);
         }
 
         // get the new primary record wired up
@@ -423,17 +498,34 @@
                 this.updatePreviewRecord(model);
             }
         }, this);
+        this.context.set("primaryRecord", this.primaryRecord);
     },
+
 
     /**
      * custom bindDataChange
      */
     bindDataChange: function() {
+        if (!this.collection) {
+            return;
+        }
         this.collection.on('reset', function (coll) {
             if (coll.length) {
                 this.setPrimaryRecord(coll.at(0));
             }
             this.render();
         }, this);
+    },
+
+    _dispose: function() {
+        var mergeCollection = this.context.get('collection');
+        if (this.primaryRecord instanceof Backbone.Model) {
+            this.primaryRecord.off('change', null, this);
+        }
+        this.collection.off('reset', null, this);
+        if (!_.isUndefined(mergeCollection)) {
+            mergeCollection.filterDef = this.filterDef;
+        }
+        app.view.View.prototype._dispose.call(this);
     }
 })

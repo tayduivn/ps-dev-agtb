@@ -1,46 +1,80 @@
+{{!
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+}}
 <div class="record record-merge-interface">
     <h4 class="merge-interface-header">
     <span class="record-name">{{recordName}}</span>
-    <a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="javascript:void(0)" rel="tooltip" data-placement="bottom" data-toggle="proto" data-target="#preview-edit" data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
+    <a class="pull-right btn btn-link btn-invisible preview check-if-collapsed" href="javascript:void(0);"
+     rel="tooltip" data-placement="bottom" data-toggle="proto" data-target="#preview-edit"
+     data-mode="preview" data-original-title="Preview"><i class="icon-eye-open"></i></a>
     </h4>
 
     <div class="merge-interface row-fluid">
         <div class="label-div">
-            <div style="visibility: hidden"> </div>
             <div class="col pull-left">
                 {{#each meta.panels}}
                     {{#if hide}}
                         <div class="extra hide">
                         {{#each fields}}
-                            <div class="merge-row"><label for="">{{str label ../../../module}}</label></div>
+                            <div class="merge-row"><label>{{str label ../../../module}}</label></div>
                         {{/each}}
                         </div>
                     {{else}}
                         {{#each fields}}
-                            <div class="merge-row"><label for="">{{str label ../../../module}}</label></div>
+                            <div class="merge-row"><label>{{str label ../../../module}}</label></div>
                         {{/each}}
                     {{/if}}
                 {{/each}}
-                <aside><a href="javascript:void(0);" class="show_extra">More <i class="icon-caret-down"></i></a></aside>
+                <aside class="show-hide-toggle">
+                    <a href="javascript:void(0);" data-action="more" class="more show_extra">
+                        {{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i>
+                    </a>
+                    <a href="javascript:void(0);" data-action="more" class="less hide show_extra">
+                        {{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i>
+                    </a>
+                </aside>
             </div>
         </div>
 
-        <div class="fluid-div">
+        <div class="fluid-div" data-container="merge-container">
             {{#each collection.models}}
-            <div class="col{{#eq id ../primaryRecord.id}} primary-edit-mode{{/eq}}" data-recordid="{{id}}" >
-                <div class="primary-lbl"> Primary</div>
+            <div class="col" data-recordid="{{id}}" >
+                <div class="primary-lbl">
+                {{#eq id ../primaryRecord.id}}
+                    <span>{{str "LBL_COLLECTION_PRIMARY"}}</span>
+                {{/eq}}
+                </div>
 
                 <div class="box">
                     {{#each ../meta.panels}}
                         {{#if hide}}
                             <div class="extra hide">
                             {{#each fields}}
-                                <div class="merge-row {{oddEven}}"><label>{{field ../../../../this model=../../../this}}</label></div>
+                                <div class="merge-row control-group {{oddEven}}">
+                                    <div class="controls">
+                                        <label>{{field ../../../../this model=../../../this}}</label>
+                                    </div>
+                                </div>
                             {{/each}}
                             </div>
                         {{else}}
                             {{#each fields}}
-                                <div class="merge-row {{oddEven}}"><label>{{field ../../../../this model=../../../this}}</label></div>
+                                <div class="merge-row control-group {{oddEven}}">
+                                    <div class="controls">
+                                        <label>{{field ../../../../this model=../../../this}}</label>
+                                    </div>
+                                </div>
                             {{/each}}
                         {{/if}}
                     {{/each}}
