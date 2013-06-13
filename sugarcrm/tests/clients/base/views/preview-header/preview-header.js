@@ -7,6 +7,11 @@ describe("Preview Header View", function() {
         var context = app.context.getContext();
         view = SugarTest.createView("base","Accounts", "preview-header", null, context);
         view.model = new Backbone.Model();
+        app.drawer = {
+                isActive:function() {
+                    
+                }
+        };
     });
     
     afterEach(function() {
@@ -15,6 +20,7 @@ describe("Preview Header View", function() {
         delete Handlebars.templates;
         view.model = null;
         view = null;
+        delete app.drawer;
     });
 
     it("should trigger preview:close on preview close", function() {
