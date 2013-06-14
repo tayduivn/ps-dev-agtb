@@ -1,8 +1,12 @@
 .select2-search {
   padding: 4px;
 }
-.select2-search input {
+.select2-search input[type="text"] {
   border: 1px solid @inputBorder;
+  &:focus {
+    border-color: none;
+    .box-shadow(none);
+  }
 }
 
 .select2-container {
@@ -175,11 +179,23 @@
       right: 18px;
     }
   }
+  &.select2-container-active .select2-choice {
+    border-color: rgba(82,168,236,.8);
+    outline: 0;
+    outline: thin dotted \9; /* IE6-9 */
+    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
+  }
 }
 
 .select2-drop {
   color: @textColor;
   border-color: @inputBorder;
+  &.select2-drop-active {
+    border-color: rgba(82,168,236,.8);
+    outline: 0;
+    outline: thin dotted \9; /* IE6-9 */
+    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 1px 4px 0px rgba(82,168,236,.6)");
+  }
 }
 
 .select2-drop-error {
