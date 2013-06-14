@@ -63,7 +63,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
 
                             var paretoChart = nv.models.paretoChart()
-                                .margin({top: 0, right: 0, bottom: 20, left: 45})
+                                .margin({top: 0, right: 10, bottom: 20, left: 30})
                                 .showTitle(false)
                                 .tooltips(true)
                                 .tooltipLine(function(key, x, y, e, graph) {
@@ -100,26 +100,6 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 });
 
                             nv.utils.windowResize(paretoChart.update);
-
-                            //this expand to full screen call shouldn't be in the chart def
-                            //don't know where to put it
-                            $('.thumbnail.viz .btn-expand-full').unbind('click').bind('click',
-                                function(e){
-                                    if ( $('.thumbnail.viz').hasClass('expanded') )
-                                    {
-                                        $('.thumbnail.viz').removeClass('expanded');
-                                        $('.thumbnail.viz .chart-container').css({'height':'300px'});
-                                        $('.thumbnail.viz .btn-expand-full span').removeClass('icon-resize-small');
-                                    }
-                                    else
-                                    {
-                                        $('.thumbnail.viz').addClass('expanded');
-                                        $('.thumbnail.viz .chart-container').css({'height':$(window).height()-130});
-                                        $('.thumbnail.viz .btn-expand-full span').addClass('icon-resize-small');
-                                    }
-                                    that.chartObject.update();
-                                }
-                            );
 
                             that.chartObject = paretoChart;
 

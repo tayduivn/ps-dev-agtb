@@ -132,8 +132,6 @@ class ForecastsApi extends SugarApi
         // push in defaultSelections
         $returnInitData["defaultSelections"] = $defaultSelections;
 
-        //$returnInitData["forecastsJavascript"] = getVersionedPath(sugar_cached('include/javascript/sidecar_forecasts.js'));
-
         return $returnInitData;
     }
 

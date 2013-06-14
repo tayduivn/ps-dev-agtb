@@ -1,3 +1,4 @@
+{{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -24,20 +25,19 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*
-(function(app) {
-    var forecastsUtils = {
-
-
-    };
-
-    // play nice with other modules, check if utils already exists
-    if(!_.has(app, 'utils')) {
-        // if not, forecastsUtils should be the utils
-        app.utils = forecastsUtils
-    } else {
-        // if utils already exists, add forecastsUtils to it
-        app.utils = _.extend(app.utils, forecastsUtils);
-    }
-})(SUGAR.App);
-*/
+}}
+<div class="dashlet-options">
+    <div class="row-fluid">
+        <div class="span6 groupByOptions">
+            {{#with dashletConfig.group_by}}
+                {{field ../this model=../this.values}}
+            {{/with}}
+        </div>
+        <div class="span6">
+            {{#with dashletConfig.dataset}}
+                {{field ../this model=../this.values}}
+            {{/with}}
+        </div>
+    </div>
+</div>
+<div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="nv-chart nv-pareto"></div>

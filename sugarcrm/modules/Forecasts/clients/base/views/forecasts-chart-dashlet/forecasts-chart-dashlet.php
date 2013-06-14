@@ -26,4 +26,40 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Forecasts']['base']['view']['forecastsChart'] = array();
+$viewdefs['Forecasts']['base']['view']['forecasts-chart-dashlet'] = array(
+    'dashlets' => array(
+        array(
+            'name' => 'Forecast',
+            'description' => '',
+            'config' => array(
+            ),
+            'preview' => array(
+            ),
+            /*
+            'filter' => array(
+                'module' => array('Forecasts'),
+            )
+            */
+        )
+    ),
+    'group_by' => array(
+        'name' => 'group_by',
+        'label' => 'Group By',
+        'type' => 'enum',
+        'searchBarThreshold' => 5,
+        'default' => true,
+        'enabled' => true,
+        'view' => 'edit',
+        'options' => 'forecasts_chart_options_group'
+    ),
+    'dataset' => array(
+        'name' => 'dataset',
+        'label' => 'Dataset',
+        'type' => 'enum',
+        'searchBarThreshold' => 5,
+        'default' => true,
+        'enabled' => true,
+        'view' => 'edit',
+        'options' => 'forecasts_options_dataset'
+    )
+);
