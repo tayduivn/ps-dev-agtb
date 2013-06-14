@@ -337,6 +337,7 @@
                 showAlerts: false,
                 filter: filter,
                 success:function(){
+                    if (self.disposed) return;
                     filterLayout.loadedModules[moduleName] = true;
                     app.cache.set("filters:" + moduleName, self.filters.toJSON());
                     self.handleFilterRetrieve(moduleName, defaultId);

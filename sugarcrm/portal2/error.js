@@ -127,7 +127,7 @@
     };
 
     /**
-     * 424 Method failure error.
+     * 422 Method failure error.
      */
     app.error.handleMethodFailureError = function(error) {
         backToLogin(true);
