@@ -35,6 +35,8 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         }
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('ACLStatic');
+        SugarTestHelper::setUp('current_user');
         $GLOBALS['beanList']['test'] = 'test';
     }
 
