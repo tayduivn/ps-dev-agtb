@@ -287,6 +287,27 @@
                 },
 
                 /**
+                 * Returns the subpanel list with link module name and corresponding LBL_
+                 *
+                 * @param module
+                 * @return {Object} The subpanel list
+                 */
+                getSubpanelList: function(module) {
+                    var list = {},
+                        subpanels = app.metadata.getModule(module).layouts.subpanels;
+                    if (subpanels && subpanels.meta && subpanels.meta.components) {
+                        _.each(subpanels.meta.components, function(comp) {
+                            if (comp.context && comp.context.link) {
+                                list[comp.label] = comp.context.link;
+                            } else {
+                                app.logger.warning("Subpanel's subpanels.meta.components has component with no context or context.link");
+                            }
+                        });
+                    }
+                    return list;
+                },
+
+                /**
                  * Get the Datasets for the specified app list string that are only present via the specified config key list string combination
                  *
                  * @param app_list_dataset_name {String} variable to pull from app list strings for the datasets needed

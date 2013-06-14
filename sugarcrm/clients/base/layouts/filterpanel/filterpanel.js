@@ -15,7 +15,7 @@
     // Static definition of available toggles, they are displayed in order listed here when shown
     availableToggles: [
         {
-            name: "subpanel",
+            name: "subpanels",
             icon: "icon-table",
             label: "LBL_DATA_VIEW"},
         {

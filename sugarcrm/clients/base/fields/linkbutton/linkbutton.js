@@ -10,9 +10,9 @@
         this.type = 'rowaction';
 
         this.linkModules = [];
-        var subpanel = app.metadata.getLayout(this.module, 'subpanel');
+        var subpanels = app.metadata.getLayout(this.module, 'subpanels');
 
-        _.each(subpanel.components, function (metadata) {
+        _.each(subpanels.components, function (metadata) {
             if (!metadata.context.link) {
                 return;
             }

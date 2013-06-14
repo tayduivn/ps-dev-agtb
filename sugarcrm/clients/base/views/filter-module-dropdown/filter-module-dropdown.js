@@ -128,7 +128,7 @@
         // Subpanels are retrieved from the global module and not the
         // subpanel module, therefore we use this.module instead of
         // this.currentModule.
-        return app.metadata.getModule(this.module).layouts.subpanel ? app.metadata.getModule(this.module).layouts.subpanel.meta.subpanelList : {};
+        return app.utils.getSubpanelList(this.module);
     },
 
     /**

@@ -13,13 +13,77 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$layout = MetaDataManager::getLayout('SideBarLayout');
-$layout->push('main', array(
-    'view' => array(
-        'name' => 'link-headerpane',
-        'action' => 'select'
-    )
-));
-$layout->push('main', array('view' => 'link-moduleselect'));
-$layout->push('side', array('layout' => 'sidebar'));
-$viewdefs['base']['layout']['link-exist'] = $layout->getLayout();
+$viewdefs['base']['layout']['link-exist'] = array(
+    'components' =>
+    array(
+        array(
+            'layout' =>
+            array(
+                'components' =>
+                array(
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'view' =>
+                                    array(
+                                        'name' => 'link-headerpane',
+                                        'action' => 'select',
+                                    ),
+                                ),
+                                array(
+                                    'view' => 'link-moduleselect',
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'main-pane',
+                            'span' => 8,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'layout' => 'sidebar',
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'side-pane',
+                            'span' => 4,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(),
+                            'type' => 'simple',
+                            'name' => 'dashboard-pane',
+                            'span' => 4,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(),
+                            'type' => 'simple',
+                            'name' => 'preview-pane',
+                            'span' => 8,
+                        ),
+                    ),
+                ),
+                'type' => 'default',
+                'name' => 'sidebar',
+                'span' => 12,
+            ),
+        ),
+    ),
+    'type' => 'simple',
+    'name' => 'base',
+    'span' => 12,
+);
