@@ -26,6 +26,13 @@ require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 require_once('include/api/RestResponse.php');
 require_once('include/api/RestRequest.php');
 
+
+/**
+ * X-Header containging the clients metadata hash
+ */
+const HEADER_META_HASH = "X_METADATA_HASH";
+
+
 class RestService extends ServiceBase
 {
     public $user;
@@ -150,27 +157,18 @@ class RestService extends ServiceBase
                     } else {
                         throw $loginException;
                     }
-                } else {
-                    // If we are logged in, but the metadata has changed since
-                    // last login, then we need to invalidate the current login
-                    // and force a reauth so that the new metadata gets picked up.
-                    //
-                    // This session var will be set the first time metadata is
-                    // fetched. When the metadata cache is cleared, it will be
-                    // reset to an empty string.
+                } else if (empty($route['ignoreMetaHash'])){
+                    // If we are logged in, but the meta hash sent doesn't match whats in cache
+                    // return an error to force a resync so that the new metadata gets picked up.
                     $mm = new MetaDataManager($this->user, $this->platform);
-                    if (!$mm->isSessionHashValid($this->platform) || $mm->hasUserMetadataChanged($this->user)) {
-                        // Unset the session hash first
-                        $mm->unsetSessionHash();
-
+                    if (!$mm->isMetadataHashValid($this->request_headers[HEADER_META_HASH], $this->platform)
+                        || $mm->hasUserMetadataChanged($this->user)
+                    ) {
                         // Unset the user hash
                         $mm->unsetUserMetadataHasChanged($this->user);
 
-                        // Mismatch in hashes... invalidate the session. This is
-                        // done in a specific way to allow clients to understand
-                        // that this revocation of the grant is because of a change
-                        // in metadata.
-                        throw new SugarApiExceptionInvalidToken('The access token has been invalidated.');
+                        // Mismatch in hashes... Return error so the cleint will resync its metadata and try again.
+                        throw new SugarApiExceptionInvalidHash();
                     }
                 }
             }

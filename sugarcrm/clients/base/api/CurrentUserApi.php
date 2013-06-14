@@ -48,6 +48,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'retrieveCurrentUser',
                 'shortHelp' => 'Returns current user',
                 'longHelp' => 'include/api/help/me_get_help.html',
+                'ignoreMetaHash' => true,
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -81,6 +82,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferences',
                 'shortHelp' => "Returns all the current user's stored preferences",
                 'longHelp' => 'include/api/help/me_preferences_get_help.html',
+                'ignoreMetaHash' => true,
             ),
 
             'userPreferencesSave' =>  array(

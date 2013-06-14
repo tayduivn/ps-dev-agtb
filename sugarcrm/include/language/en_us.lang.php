@@ -2477,6 +2477,7 @@ $app_strings = array (
     'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
     'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
     'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_METADATA_OUT_OF_DATE'    => 'Your metadata or user hash did not match the server. Please resync your metadata.',
     'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
     'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
     'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',

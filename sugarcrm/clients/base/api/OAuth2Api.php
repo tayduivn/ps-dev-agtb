@@ -80,7 +80,7 @@ class OAuth2Api extends SugarApi
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             throw $e;
         }
-        
+
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
         return ob_get_clean();
     }

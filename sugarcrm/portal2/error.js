@@ -120,9 +120,16 @@
     };
 
     /**
-     * 412 Precondtion failure error.
+     * 412 Header precondition failure error.
      */
-    app.error.handlePreconditionFailureError = function(error) {
+    app.error.handleHeaderPreconditionFailed = function(error) {
+        app.sync();
+    };
+
+    /**
+     * 424 Method failure error.
+     */
+    app.error.handleMethodFailureError = function(error) {
         backToLogin(true);
         // TODO: For finer grained control we could sniff the {error: <code>} in the response text (JSON) for one of:
         // missing_parameter, invalid_parameter, request_failure

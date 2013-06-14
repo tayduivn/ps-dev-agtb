@@ -40,6 +40,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getAllMetadataPost' => array(
                 'reqType' => 'POST',
@@ -49,6 +50,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system, filtered by the array of hashes sent to the server',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getAllMetadataHashes' => array(
                 'reqType' => 'GET',
@@ -57,6 +59,7 @@ class MetadataApi extends SugarApi
                 'method' => 'getAllMetadataHash',
                 'shortHelp' => 'This method will return the hash of all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
+                'ignoreMetaHash' => true,
             ),
             'getPublicMetadata' =>  array(
                 'reqType' => 'GET',
@@ -67,6 +70,7 @@ class MetadataApi extends SugarApi
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noLoginRequired' => true,
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getLanguage' => array(
                 'reqType' => 'GET',
@@ -78,6 +82,7 @@ class MetadataApi extends SugarApi
                 'noLoginRequired' => true,
                 'rawReply' => true,
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getPublicLanguage' => array(
                 'reqType' => 'GET',
@@ -89,6 +94,7 @@ class MetadataApi extends SugarApi
                 'noLoginRequired' => true,
                 'rawReply' => true,
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
         );
     }
