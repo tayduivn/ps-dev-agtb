@@ -57,7 +57,8 @@
             newestModel = new Backbone.Model(_.first(data)),
         // get everything that is left but the first item.
             otherModels = _.last(data, data.length - 1),
-            oldestModel = {};
+            oldestModel = {},
+            displayCommitDate = newestModel.get('date_modified');
 
         // using for because you can't break out of _.each
         for(var i = 0; i < otherModels.length; i++) {
@@ -65,6 +66,7 @@
             // we want the last commit just before the whole forecast was committed
             if (new Date(otherModels[i].date_modified) <= commitDate) {
                 oldestModel = new Backbone.Model(otherModels[i]);
+                displayCommitDate = oldestModel.get('date_modified');
                 break;
             }
         }
@@ -76,7 +78,7 @@
 
         this.$el.html(tpl({
             commit: outputLog.text,
-            commit_date: oldestModel.get('date_modified')
+            commit_date: displayCommitDate
         }));
 
         // kick off the relativetime

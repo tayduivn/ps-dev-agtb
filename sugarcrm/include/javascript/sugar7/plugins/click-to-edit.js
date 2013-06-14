@@ -171,7 +171,11 @@
                             var cteClass = 'clickToEdit';
                             if (this.action === 'edit') {
                                 cteClass += ' active'
+                                this.$el.addClass("active");
+                            } else {
+                                this.$el.removeClass("active")
                             }
+                            this.$el.addClass("isEditable");
                             this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
                         }, this);
                     }
@@ -381,12 +385,15 @@
                     // e.shiftKey: was the shift key pressed
                     // field: the field we are currently on
 
-                    if (field.type !== 'date' && this.fieldValueChanged((field))) {
+                    if (field.type !== 'date' && field.type !== 'enum' && this.fieldValueChanged((field))) {
                         field.$el.find(field.fieldTag).change();
                     }
 
-                    // this even will be listened by the cte-tab plugin on the layout
-                    this.context.trigger('field:editable:tabkey', e, e.shiftKey, field);
+                    // this errors out when tabbing off a change of the commit_stage field, since it auto hides
+                    if (this.context) {
+                        // this even will be listened by the cte-tab plugin on the layout
+                        this.context.trigger('field:editable:tabkey', e, e.shiftKey, field);
+                    }
 
                     if (field.type === 'date') {
                         this.hideDatepicker();

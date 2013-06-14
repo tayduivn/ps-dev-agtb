@@ -203,10 +203,17 @@
                     this.filterCollection();
                 }, this);
 
-                // any time a model in the collection is changed, run the filter on it
-                this.collection.on('change', function() {
-                    this.filterCollection();
-                    if (!this.disposed) this.render();
+                this.collection.on('change', function(model) {
+                    // any time a model in the collection has the commit_stage field changed and the filter is not shown
+                    if(_.contains(_.keys(model.changed), 'commit_stage')    // only when commit_stage changes
+                        && !_.isEmpty(this.filters)  // and we have filters
+                        && _.indexOf(this.filters, model.get('commit_stage')) === -1 // and the commit_stage is not shown
+                       ) {
+                        this.filterCollection();
+                        if (!this.disposed) {
+                            this.render();
+                        }
+                    }
                 }, this);
 
                 this.context.parent.on('change:selectedRanges', function(model, changed) {
