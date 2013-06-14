@@ -48,7 +48,7 @@ $viewdefs['base']['layout']['record'] = array(
                                                 ),
                                             ),
                                             array(
-                                                'layout' => 'subpanel',
+                                                'layout' => 'subpanels',
                                             ),
                                         ),
                                         'type' => 'filterpanel',

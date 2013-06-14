@@ -6,8 +6,8 @@
  */
 class FilterPanelLayout
 {
-    protected $defaultToggles = array("activitystream", "subpanel");
-    protected $initialToggle = "subpanel";
+    protected $defaultToggles = array("activitystream", "subpanels");
+    protected $initialToggle = "subpanels";
     protected $layout;
     protected $count = 0;
 
