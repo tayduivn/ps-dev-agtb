@@ -36,6 +36,13 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array (
         'link' => 'documents',
       ),
     ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
+      'context' => array (
+        'link' => 'quotes',
+      ),
+    ),
   ),
   'type' => 'subpanels',
   'span' => 12,
