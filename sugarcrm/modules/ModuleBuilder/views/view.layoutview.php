@@ -221,15 +221,15 @@ class ViewLayoutView extends SugarView
 
         // Layout labels for the breadcrumb
         $labels = array (
-        			MB_EDITVIEW => 'LBL_EDITVIEW' ,
-        			MB_DETAILVIEW => 'LBL_DETAILVIEW' ,
-        			MB_QUICKCREATE => 'LBL_QUICKCREATE',
-                    MB_RECORDVIEW => 'LBL_RECORDVIEW',
-        			//BEGIN SUGARCRM flav=pro ONLY
-        			MB_WIRELESSEDITVIEW => 'LBL_WIRELESSEDITVIEW' ,
-        			MB_WIRELESSDETAILVIEW => 'LBL_WIRELESSDETAILVIEW' ,
-        			//END SUGARCRM flav=pro ONLY
-        			) ;
+            MB_EDITVIEW => 'LBL_EDITVIEW' ,
+            MB_DETAILVIEW => 'LBL_DETAILVIEW' ,
+            MB_QUICKCREATE => 'LBL_QUICKCREATE',
+            MB_RECORDVIEW => 'LBL_RECORDVIEW',
+            //BEGIN SUGARCRM flav=pro ONLY
+            MB_WIRELESSEDITVIEW => 'LBL_WIRELESSEDITVIEW' ,
+            MB_WIRELESSDETAILVIEW => 'LBL_WIRELESSDETAILVIEW' ,
+            //END SUGARCRM flav=pro ONLY
+        );
 
         $layoutLabel = 'LBL_LAYOUTS' ;
         $layoutView = 'layouts' ;

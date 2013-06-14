@@ -107,6 +107,6 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertFalse($available, 'The system_id field was not excluded');
 
         $available = $grid->isAvailableFieldName('work_log', $fields);
-        $this->assertTrue($available, 'Work Log is showing as not available');
+        $this->assertFalse($available, 'Work Log was not excluded');
     }
 }

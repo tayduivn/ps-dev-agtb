@@ -140,8 +140,8 @@ class MetaDataFiles
      */
     public static $viewDefVars = array(
         MB_EDITVIEW    => 'EditView' ,
-    	MB_DETAILVIEW  => 'DetailView' ,
-    	MB_QUICKCREATE => 'QuickCreate',
+        MB_DETAILVIEW  => 'DetailView' ,
+        MB_QUICKCREATE => 'QuickCreate',
         MB_RECORDVIEW  => array('base', 'view', 'record'),
 
         //BEGIN SUGARCRM flav=pro ONLY

@@ -174,7 +174,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 foreach ( $row as $colID => $fieldname )
                 {
                     // Gets viewdefs from a fieldname value if there is one
-                    if (($defs = $this->getViewDefFromFieldname($fieldname)) === false) {
+                    $defs = $this->getViewDefFromFieldname($fieldname);
+                    if ($defs === false) {
                         continue;
                     }
                     
@@ -274,7 +275,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     foreach ( $row as $field )
                     {
                         // Remove this field from the available fields array
-                    	$this->unsetAvailableField($availableFields, $field);
+                        $this->unsetAvailableField($availableFields, $field);
                     }
                 }
             }
@@ -1004,8 +1005,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     /**
      * Removes a field from the available field array
      * 
-     * @param  array $availableFields The available fields array
-     * @param  string $field The field name to remove
+     * @param array $availableFields The available fields array
+     * @param string $field The field name to remove
      */
     protected function unsetAvailableField(&$availableFields, $field)
     {
@@ -1024,8 +1025,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             return self::_trimFieldDefs($this->_fielddefs[$fieldname]);
         } else if (isset($this->_originalViewDef[$fieldname]) && is_array($this->_originalViewDef[$fieldname])) {
             return self::_trimFieldDefs($this->_originalViewDef[$fieldname]);
-        } else {
-            return array("name" => $fieldname, "label" => $fieldname);
-        }
+        } 
+        
+        return array("name" => $fieldname, "label" => $fieldname);
     }
 }

@@ -68,19 +68,20 @@ class StudioModule
         if ($this->seed) {
             $this->fields = $this->seed->field_defs;
         }
-        $this->setSources();
-        //$GLOBALS['log']->debug ( get_class($this)."->__construct($module): ".print_r($this->fields,true) ) ;
-
-        // Set BWC
+        
+        // Set BWC since this is needed for sources
         $this->bwc = isModuleBWC($module);
+        
+        $this->setSources();
     }
     
+    /**
+     * Sets the viewdef file sources for use in studio
+     */
     protected function setSources()
     {
-        global $bwcModules;
-        
         // Backward Compatible modules need the old way of doing things
-        if (in_array($this->module, $bwcModules)) {
+        if ($this->bwc) {
             // Sources can be used to override the file name mapping for a specific 
             // view or the parser for a view.
             $this->sources = array(
@@ -88,13 +89,13 @@ class StudioModule
                     'name'  => translate('LBL_EDITVIEW'), 
                     'type'  => MB_EDITVIEW, 
                     'image' => 'EditView',
-                    'path'  => "modules/{$this->module}/metadata/editviewdefs.php"
+                    'path'  => "modules/{$this->module}/metadata/editviewdefs.php",
                 ),
                 array(
                     'name'  => translate('LBL_DETAILVIEW'), 
                     'type'  => MB_DETAILVIEW, 
                     'image' => 'DetailView',
-                    'path'  => "modules/{$this->module}/metadata/detailviewdefs.php"
+                    'path'  => "modules/{$this->module}/metadata/detailviewdefs.php",
                 ),
                 array(
                     'name'  => translate('LBL_LISTVIEW'), 
@@ -109,7 +110,7 @@ class StudioModule
                     'name'  => translate('LBL_RECORDVIEW'), 
                     'type'  => MB_RECORDVIEW, 
                     'image' => 'Record',
-                    'path'  => "modules/{$this->module}/clients/base/views/record/record.php"
+                    'path'  => "modules/{$this->module}/clients/base/views/record/record.php",
                 ),
                 array(
                     'name'  => translate('LBL_LISTVIEW'), 
@@ -249,9 +250,10 @@ class StudioModule
         $views = array () ;
         
         foreach ($this->sources as $def) {
+            // Remove path from the defs as it's not needed in the views array
             $path = $def['path'];
+            unset($def['path']);
             if (file_exists($path) || file_exists("custom/$path")) {
-                unset($def['path']);
                 $views[basename($path, '.php')] = $def;
             }
         }

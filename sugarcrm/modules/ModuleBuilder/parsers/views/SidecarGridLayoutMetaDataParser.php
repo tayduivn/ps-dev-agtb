@@ -36,8 +36,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected $invalidTypes = array(
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
-            // Record supports same fields as detail used to
-            'record' => array('parent', 'parent_type', 'iframe', 'encrypt', 'html','currency','currency_id'),
+            // Record supports same fields as edit used to
+            'record' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate', 'html','currency','currency_id'),
         ),
         //END SUGARCRM flav=ent ONLY
     );
@@ -182,24 +182,26 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     }
 
     /**
-     * helper to add a field (name) to the internal formatted row
+     * Helper to add a field (name) to the internal formatted row
      * used in case internal format goes to wanting arrays
      * @param $field
      * @return string value to add
      */
     protected function _addInternalCell($field) {
-        // Handle formatting of combination data field defs
-        if (is_array($field)) {
-            if (isset($field['name'])) {
-                $return = $field['name'];
-            } else {
-                $return = isset($field['type']) ? $field['type'] : $this->FILLER;
-            }
-        } else {
-            $return = $field;
+        // Handle combination data field defs
+        if (!is_array($field)) {
+            return $field;
         }
         
-        return $return;
+        if (isset($field['name'])) {
+            return $field['name'];
+        } 
+        
+        if (isset($field['type'])) {
+            return $field['type'];
+        }
+        
+        return $this->FILLER;
     }
 
 
@@ -224,8 +226,16 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         return ($field == MBConstants::$EMPTY['name']);
     }
 
-    // return an array of cells to be appended to the fieldlist
-    // default span units to 6 or half of a 12 unit space with 2 columns
+    /**
+     * Manipulates the amount of space a field takes up in studio based on colspan
+     * 
+     * Returns an array of cells to be appended to the fieldlist. Default span 
+     * units to 6 or half of a 12 unit space with 2 columns
+     * 
+     * @param string|array $field The field to calculate space for
+     * @param integer $colspan The colspan for the field
+     * @param integer $singleSpanUnit The size of a single field span
+     */
     protected function _addCell($field, $colspan, $singleSpanUnit = 6)
     {
         // for fillers, if we ever have a 'filler' with colspan = n, just sub n 'fillers'
@@ -260,32 +270,30 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
         // reset any span info already in the fields, we're going to figure it out again
         foreach ($this->_originalViewDef as $originalKey => $originalFieldDef ) {
-           if (is_array($originalFieldDef)) {
-               unset($this->_originalViewDef[$originalKey]['span']);
-           }
+            if (is_array($originalFieldDef)) {
+                unset($this->_originalViewDef[$originalKey]['span']);
+            }
         }
 
         foreach ($panels as $pName => $panel) {
             $fields = array();
             // get number of panel columns default to 2
+            $panelColumns = 2;
             if (!empty($this->extraPanelMeta[$pName]['columns'])) {
                 $panelColumns = $this->extraPanelMeta[$pName]['columns'];
-            } else {
-                $panelColumns = 2;
             }
             $singleSpanUnit = $this->maxSpan/$panelColumns;
             foreach ($panel as $row) {
-
-                $maxCols = 2;
                 $offset = 1; // reset
                 $lastField = null; // holder for the field to put in
                 foreach ($row as $cellIndex=>$cell) {
-                    $fieldCount = count($row);
                     // empty => get rid of it, and assign to previous field as colspan
                     if ($this->isEmpty($cell)) {
                         $offset++; // count our columns
                         continue;
                     }
+                    
+                    $fieldCount = count($row);
 
                     // dump out the last field we stored and reset column count
                     // leading empty => should not occur, but assign to next field as colspan
@@ -298,7 +306,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     if ($this->isFiller($cell)) {
                         // 58308 - Adjust displayColumns on the last field if it 
                         // is set and we are an end column
-                        if ($panelColumns - $offset == 1) {
+                        if ($panelColumns - $offset === 1) {
                             $lastRowIndex = count($fields) - 1;
                             if (!is_array($fields[$lastRowIndex])) {
                                 $fields[$lastRowIndex] = array(
@@ -312,7 +320,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                             'span' => $singleSpanUnit,
                         );
 
-                        if ($fieldCount == 1) {
+                        if ($fieldCount === 1) {
                             $lastField = array(
                                 'span' => $this->maxSpan,
                             );
@@ -372,13 +380,16 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         $internalPanels = array();
         foreach ($panels as $n => $panel) {
             $pLabel = !empty($panel['label']) ? $panel['label'] : $n;
-            $panelColumns = !empty($panel['columns']) ? $panel['columns'] : 2;
+            
+            // Get panel column value
+            $panelColumns = 2;
+            if (!empty($panel['columns'])) {
+                $panelColumns = $panel['columns'];
+            }
 
             // panels now have meta at this level so we need to store that
             $panelMeta = $panel;
-            if ($panelMeta['fields']) {
-                unset($panelMeta['fields']);
-            }
+            unset($panelMeta['fields']);
             $this->extraPanelMeta[$pLabel] = $panelMeta;
 
             // going from a list of fields to putting them in rows,cols format.
@@ -470,15 +481,14 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         $out = array();
         foreach ($panels as $panel) {
             foreach($panel['fields'] as $field) {
-                if (is_array($field)){
-                    if (!empty($field['name'])) {
-                        $name = $field['name'];
-                    } else {
-                        $name = '';
-                    }
-                } else  {
+                if (!is_array($field)) {
                     $name = $field;
+                } elseif (!empty($field['name'])) {
+                    $name = $field['name'];
+                } else {
+                    $name = '';
                 }
+                
                 $out[$name] = $field;
             }
         }
@@ -561,17 +571,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
      * Removes a field from the available field array
      * 
-     * @param  array $availableFields The available fields array
-     * @param  string $field The field name to remove
+     * @param array $availableFields The available fields array
+     * @param string $field The field name to remove
      */
     protected function unsetAvailableField(&$availableFields, $field)
     {
         if (is_string($field)) {
             unset($availableFields[$field]);
-        } elseif (is_array($field)) {
-            if (isset($field['name'])) {
-                unset($availableFields[$field['name']]);
-            }
+        } elseif (is_array($field) && isset($field['name'])) {
+            unset($availableFields[$field['name']]);
         }
     }
     
@@ -584,8 +592,14 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected function getViewDefFromFieldname($fieldname)
     {
         if (is_array($fieldname)) {
-            if (isset($fieldname['name']) || isset($fieldname['type'])) {
-                return $this->getViewDefFromFieldname(isset($fieldname['name']) ? $fieldname['name'] : $fieldname['type']);
+            if (isset($fieldname['name'])) {
+                $field = $fieldname['name'];
+            } elseif(isset($fieldname['type'])) {
+                $field = $fieldname['type'];
+            }
+            
+            if (isset($field)) {
+                return $this->getViewDefFromFieldname($field);
             }
             
             // This indicates an empty or non field field that is not in the 
