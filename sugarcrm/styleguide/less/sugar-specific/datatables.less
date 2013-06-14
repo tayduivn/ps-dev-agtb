@@ -169,6 +169,34 @@ table.dataTable {
           overflow-x: visible;
           border-right: 0;
         }
+        &.editableColumn {
+            padding: 0px;
+            min-width: 80px;
+            > span {
+                margin-left: 16px;
+                padding: 8px 8px 8px 0px;
+            }
+            > span.isEditable {
+                padding: 0px;
+                &.active {
+                    margin-left: 2px;
+                }
+            }
+
+              .clickToEdit {
+                  padding: 8px 8px 8px 0px;
+                  &.active {
+                      padding: 0px;
+                  }
+              }
+
+
+        }
+        &.tright.editableColumn {
+            > span {
+                margin-left: 0px;
+            }
+        }
         .full-name.list {
           &:hover {
             color: @linkColorHover;
@@ -306,7 +334,7 @@ table.dataTable {
       .edit-icon {
         position: absolute;
         left: -14px;
-        top: 2px;
+        top: 9px;
       }
     }
   }
@@ -424,7 +452,6 @@ table.dataTable {
   }
   .converted {
     display: inline-block;
-    margin-left: 16px;
     .rtlMargin(@direction,0 16px 0 0);
   }
   .icon-favorite {
@@ -440,6 +467,10 @@ table.dataTable {
   }
   .active .icon-star {
     color: @orange;
+  }
+
+  .help-block {
+      margin-bottom: 0px;
   }
 }
 
@@ -524,6 +555,9 @@ table.dataTable {
       & > tbody > tr > td {
         &:nth-last-child(2) {
           padding-right: 75px;
+            > span.isEditable {
+            margin-left: 16px;
+            }
         }
         &:last-child {
           max-width: 60px;
