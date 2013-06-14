@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -15,7 +16,6 @@
 
 class ProductTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    //BEGIN SUGARCRM flav=ent ONLY
     public function dataProviderSetOpportunitySalesStatus()
     {
         // utility method to to return an array
@@ -123,5 +123,4 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
         // assert the status is what it should be
         $this->assertEquals($oppMock->sales_status, $status);
     }
-    //END SUGARCRM flav=ent ONLY
 }
