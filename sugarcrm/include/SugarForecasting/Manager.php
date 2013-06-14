@@ -60,57 +60,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     }
 
     /**
-     * Save the Manager Worksheet
+     * Save the Manager Worksheet, This method is deprecated and should be done though use of
+     * the ForecastManagerWorksheet bean
      *
+     * @deprecated
      * @return string
-     * @throws SugarApiExceptionNotAuthorized
      */
     public function save()
     {
-        require_once('include/SugarFields/SugarFieldHandler.php');
-        $id = $this->getArg('id');
-        if (empty($id)) {
-            $id = null;
-        }
-        /* @var $seed ForecastManagerWorksheet */
-        $seed = BeanFactory::getBean('ForecastManagerWorksheets', $id);
-        // team name comes in as an array and blows up the cleaner, just ignore it for the worksheet as we don't want
-        // it set from there right now, it's always controlled by the parent row.
-        unset($this->args['team_name']);
-        //$seed->loadFromRow($this->getArgs());
-        $seed->setWorksheetArgs($this->getArgs());
-        $sfh = new SugarFieldHandler();
-
-        foreach ($seed->field_defs as $properties) {
-            $fieldName = $properties['name'];
-
-            if (!isset($args[$fieldName])) {
-                continue;
-            }
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if (!$seed->ACLFieldAccess($fieldName, 'save')) {
-                // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field ' . $fieldName . ' in module: ' . $args['module']);
-            }
-            //END SUGARCRM flav=pro ONLY
-
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-
-            if ($field != null) {
-                $field->save($seed, $args, $fieldName, $properties);
-            }
-        }
-
-        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
-            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
-            MetaDataManager::clearAPICache();
-        }
-
-        $seed->save();
+        return '';
     }
 }
