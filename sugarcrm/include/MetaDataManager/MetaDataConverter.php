@@ -1,5 +1,7 @@
 <?php
- if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -30,11 +32,12 @@
  * Assists in backporting 6.6 Metadata formats to legacy style in order to
  * maintain backward compatibility with old clients consuming the V3 and V4 apis.
  */
-class MetaDataConverter {
+class MetaDataConverter
+{
     /**
      * An instantiated object of MetaDataConverter type
-     * 
-     * @var MetaDataConverter 
+     *
+     * @var MetaDataConverter
      */
     protected static $converter = null;
 
@@ -42,19 +45,23 @@ class MetaDataConverter {
      * Converts edit and detail view defs that contain fieldsets to a compatible
      * defs that does not contain fieldsets. In essence, it splits up any fieldsets
      * and moves them out of their grouping into individual fields within the panel.
-     * 
-     * This method assumes that the defs have already been converted to a legacy 
+     *
+     * This method assumes that the defs have already been converted to a legacy
      * format.
-     * 
+     *
      * @param array $defs
      * @return array
      */
-    public static function fromGridFieldsets(array $defs) {
+    public static function fromGridFieldsets(array $defs)
+    {
         if (isset($defs['panels']) && is_array($defs['panels'])) {
             $newpanels = array();
             $offset = 0;
             foreach ($defs['panels'] as $row) {
-                if (is_array($row[0]) && isset($row[0]['type']) && $row[0]['type'] == 'fieldset' && isset($row[0]['related_fields'])) {
+                if (is_array(
+                        $row[0]
+                    ) && isset($row[0]['type']) && $row[0]['type'] == 'fieldset' && isset($row[0]['related_fields'])
+                ) {
                     // Fieldset.... convert
                     foreach ($row[0]['related_fields'] as $fName) {
                         $newpanels[$offset] = array($fName);
@@ -66,36 +73,37 @@ class MetaDataConverter {
                     $offset++;
                 }
             }
-            
+
             $defs['panels'] = $newpanels;
         }
-        
+
         return $defs;
     }
-    
+
     /**
      * Static entry point, will instantiate an object of itself to run the process.
-     * Will convert $defs to legacy format $viewtype if there is a converter for 
+     * Will convert $defs to legacy format $viewtype if there is a converter for
      * it, otherwise will return the defs as-is with no modification.
-     * 
+     *
      * @static
      * @param string $viewtype One of list|edit|detail
-     * @param array $defs The defs to convert 
+     * @param array $defs The defs to convert
      * @return array Converted defs if there is a converter, else the passed in defs
      */
-    public static function toLegacy($viewtype, $defs) {
+    public static function toLegacy($viewtype, $defs)
+    {
         if (null === self::$converter) {
             self::$converter = new self;
         }
-        
+
         $method = 'toLegacy' . ucfirst(strtolower($viewtype));
         if (method_exists(self::$converter, $method)) {
             return self::$converter->$method($defs);
         }
-        
+
         return $defs;
     }
-    
+
     /**
      * Takes in a 6.6+ version of mobile|portal|sidecar list view metadata and
      * converts it to pre-6.6 format for legacy clients. The formats of the defs
@@ -103,13 +111,14 @@ class MetaDataConverter {
      *  - Take in all defs
      *  - Clip everything but the fields portion of the panels section of the defs
      *  - Modify the fields array to be keyed on UPPERCASE field name
-     * 
+     *
      * @param array $defs Field defs to convert
      * @return array
      */
-    public function toLegacyList(array $defs) {
+    public function toLegacyList(array $defs)
+    {
         $return = array();
-        
+
         // Check our panels first
         if (isset($defs['panels']) && is_array($defs['panels'])) {
             foreach ($defs['panels'] as $panels) {
@@ -127,44 +136,154 @@ class MetaDataConverter {
                 }
             }
         }
-        
-        
+
+
         return $return;
     }
-    
+
+    /**
+     * Takes a Sidecar Subpanel view def and returns a BWC compatibile Subpanel view def
+     *
+     * @param array $oldDefs Field defs to convert
+     * @param string $moduleName, the module we are converting
+     * @return array BWC defs
+     */
+    public function toLegacySubpanelsViewDefs(array $defs, $moduleName)
+    {
+        if (!isset($defs['panels'])) {
+            return array();
+        }
+
+        $oldDefs = array();
+
+        // for BWC, we need to have some top buttons.  Sidecar doesn't have buttons in the def
+        $oldDefs['top_buttons'] = array(
+            array(
+                'widget_class' => 'SubPanelTopCreateButton'
+            ),
+            array(
+                'widget_class' => 'SubPanelTopSelectButton',
+                'popup_module' => $moduleName,
+            ),
+        );
+
+        $oldDefs['list_fields'] = $this->toLegacyList($defs);
+        return $oldDefs;
+    }
+
+    /**
+     * Convert legacy subpanels view defs to sidecar subpanel view defs
+     * @param array $defs
+     * @return array
+     */
+    public function fromLegacySubpanelsViewDefs(array $defs)
+    {
+        if (!isset($defs['list_fields'])) {
+            throw new \RuntimeException("Subpanel is defined without fields");
+        }
+
+        $viewdefs = array('panels' => array());
+
+        $viewdefs['panels'][0]['name'] = 'panel_header';
+        $viewdefs['panels'][0]['label'] = 'LBL_PANEL_1';
+
+        $viewdefs['panels'][0]['fields'] = array();
+
+        foreach ($defs['list_fields'] as $fieldName => $details) {
+            if (isset($details['vname'])) {
+                $details['label'] = $details['vname'];
+            }
+            // disregard buttons
+            if ((isset($details['label']) && stripos($details['label'], 'button') !== false) ||
+                stripos($fieldName, 'button') !== false
+            ) {
+                continue;
+            }
+
+            if (isset($details['usage'])) {
+                continue;
+            }
+
+            if (!isset($details['default'])) {
+                $details['default'] = true;
+            }
+
+            if (!isset($details['enabled'])) {
+                $details['enabled'] = true;
+            }
+
+            $details['name'] = $fieldName;
+            $viewdefs['panels'][0]['fields'][] = $this->fromLegacySubpanelField($details);
+        }
+        return $viewdefs;
+    }
+
+    /**
+     * Convert a single field from the old subpanel fielddef
+     * to the new sidecar def.
+     *
+     * This will return an array that contains any of the following:
+     * label - the field label, will use vname if label doesn't exist
+     * width - the width of the field
+     * type - the field type [varchar, etc]
+     * target module - for link fields the target module
+     * target record key - for link fields the target key for the target_module
+     *
+     * @param array $details
+     * @return array
+     */
+    public function fromLegacySubpanelField(array $fieldDefs)
+    {
+        static $fieldMap = array(
+            'name' => true,
+            'label' => true,
+            'type' => true,
+            'target_module' => true,
+            'target_record_key' => true,
+            'default' => true,
+            'enabled' => true,
+        );
+
+        return array_intersect_key($fieldDefs, $fieldMap);
+    }
+
+
     /**
      * Simple accessor into the grid legacy converter
-     * 
+     *
      * @param array $defs Field defs to convert
      * @return array
      */
-    public function toLegacyEdit(array $defs) {
+    public function toLegacyEdit(array $defs)
+    {
         return $this->toLegacyGrid($defs);
     }
-    
+
     /**
      * Simple accessor into the grid legacy converter
-     * 
+     *
      * @param array $defs Field defs to convert
      * @return array
      */
-    public function toLegacyDetail(array $defs) {
+    public function toLegacyDetail(array $defs)
+    {
         return $this->toLegacyGrid($defs);
     }
-    
+
     /**
      * Takes in a 6.6+ version of mobile|portal|sidecar edit|detail view metadata and
      * converts it to pre-6.6 format for legacy clients.
-     * 
+     *
      * NOTE: This will only work for layouts that have only one field per row. For
      * the 6.6 upgrade that is sufficient since we were only converting portal
      * and mobile viewdefs. As is, this method will NOT convert grid layout view
      * defs that have more than one field per row.
-     * 
+     *
      * @param array $defs
      * @return array
      */
-    protected function toLegacyGrid(array $defs) {
+    protected function toLegacyGrid(array $defs)
+    {
         // Check our panels first
         if (isset($defs['panels']) && is_array($defs['panels'])) {
             // For our new panels
@@ -179,11 +298,57 @@ class MetaDataConverter {
                     }
                 }
             }
-            
+
             unset($defs['panels']);
             $defs['panels'] = $newpanels;
         }
-        
+
         return $defs;
+    }
+
+    /**
+     * Convert a legacy subpanel name to the new sidecar name
+     * Examples:
+     * ForAccounts becomes subpanel-for-accounts
+     * default becomes subpanel-list
+     *
+     * @param string $subpanelName the legacy subpanel
+     * @return string the new subpanel name
+     */
+    public function fromLegacySubpanelName($subpanelName)
+    {
+        $newName = ($subpanelName === 'default') ? 'list' : str_replace('for', 'for-', strtolower($subpanelName));
+        return 'subpanel-' . $newName;
+    }
+
+    /**
+     * Convert a legacy subpanel path to the new sidecar path
+     * @param string $filename the path to a legacy subpanel
+     * @return string the new sidecar subpanel path
+     */
+    public function fromLegacySubpanelPath($fileName)
+    {
+        $pathInfo = pathinfo($fileName);
+
+        $dirParts = explode(DIRECTORY_SEPARATOR, $pathInfo['dirname']);
+
+        if (count($dirParts) < 3) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Directory '%s' is an incorrect path for a subpanel",
+                    $fileName
+                )
+            );
+        }
+
+        $module = $dirParts[1];
+
+        $customDir = '';
+        if ($dirParts[0] == 'custom') {
+            $customDir = 'custom/';
+            $module = $dirParts[2];
+        }
+        $newSubpanelName = $this->fromLegacySubpanelName($pathInfo['filename']);
+        return "{$customDir}modules/{$module}/clients/base/views/{$newSubpanelName}/{$newSubpanelName}.php";
     }
 }

@@ -76,5 +76,51 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($converted['panels'][5][0]), "Conversion failed to convert fieldset at offset 5");
         $this->assertEquals('duration_minutes', $converted['panels'][5][0], "duration_minutes did not convert from a fieldset");
     }
-}
 
+    /**
+     * Test converting subpanels
+     */
+    public function testConvertSubpanels()
+    {
+        static $fieldMap = array(
+            'name' => true,
+            'label' => true,
+            'type' => true,
+            'target_module' => true,
+            'target_record_key' => true,
+        );
+        $converter = new MetaDataConverter();
+        require_once 'include/SubPanel/SubPanelDefinitions.php';
+        $bean = BeanFactory::getBean('Quotes');
+
+        $spDefs = new SubPanelDefinitions($bean);
+        $layout_defs = $spDefs->layout_defs;
+        $this->assertTrue(is_array($layout_defs));
+        $this->assertNotEmpty($layout_defs['subpanel_setup']);
+
+        foreach ($layout_defs['subpanel_setup'] as $name => $subpanel_info) {
+            $aSubPanel = $spDefs->load_subpanel($name, '', $bean);
+            $this->assertInstanceOf('aSubpanel', $aSubPanel);
+
+            // no collections
+            if ($aSubPanel->isCollection()) {
+                continue;
+            }
+            $panel_definition = $converter->fromLegacySubpanelsViewDefs($aSubPanel->panel_definition);
+        }
+
+        $this->assertNotEmpty($panel_definition, "Panel Definition not set");
+        foreach ($panel_definition as $panels) {
+            foreach ($panels as $panel) {
+                $this->assertArrayHasKey('name', $panel, "Panel should have a name field");
+                $this->assertArrayHasKey('label', $panel, "Panel should have a label field");
+                $this->assertArrayHasKey('fields', $panel, "Panels should have fields");
+                foreach ($panel['fields'] as $fieldDef) {
+                    foreach ($fieldDef as $key => $value) {
+                        $this->assertContains($key, $fieldMap);
+                    }
+                }
+            }
+        }
+    }
+}
