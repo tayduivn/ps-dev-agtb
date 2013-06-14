@@ -530,6 +530,24 @@ abstract class UpgradeDriver
             array_unshift($check, $this->translate($error));
             return $this->error(call_user_func_array('sprintf', $check), true);
         }
+        $tablename = "uptest".uniqid();
+        if(!$this->db->query("CREATE TABLE $tablename(a int, b int)")) {
+            $fail = "Table creation";
+        } elseif(!$this->db->query("INSERT INTO $tablename(a,b) VALUES(1,2)")) {
+            $fail = "Insertion";
+        } elseif(!$this->db->query("UPDATE $tablename SET a=2 WHERE a=1")) {
+            $fail = "Update";
+        } elseif(!$this->db->query("DELETE FROM $tablename WHERE a=2")) {
+            $fail = "Deletion";
+        }
+        if($this->db->tableExists($tablename)) {
+            if(!$this->db->query("DROP TABLE $tablename") && empty($fail)) {
+                $fail = "Table deletion";
+            }
+        }
+        if(!empty($fail)) {
+            return $this->error("$fail test failed, please check DB permissions.", true);
+        }
         return true;
     }
 
