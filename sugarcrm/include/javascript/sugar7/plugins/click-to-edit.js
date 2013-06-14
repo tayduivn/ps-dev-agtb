@@ -171,7 +171,11 @@
                             var cteClass = 'clickToEdit';
                             if (this.action === 'edit') {
                                 cteClass += ' active'
+                                this.$el.addClass("active");
+                            } else {
+                                this.$el.removeClass("active")
                             }
+                            this.$el.addClass("isEditable");
                             this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
                         }, this);
                     }
