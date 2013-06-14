@@ -26,55 +26,42 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 -->
-<div class="longHelpTitle">Saves a collection of ForecastManagerWorksheet models</div>
+<div class="longHelpTitle">Assign Quotas to All Reporting Users for a given timeperiod</div>
 <div class="summary">
     <h2>Summary:</h2>
-    This endpoint is used to save the json Data for an array of forecast manager worksheet data array entries
+    This endpoint is used to assign out the quota to the reporting users with out having to commit a forecast.
 </div>
 <div class="params">
-    <h2>Query Parameters:</h2>
+    <h2>Parameters:</h2>
     <table>
         <tr>
             <td><strong>Param</strong></td>
             <td><strong>Description</strong></td>
             <td><strong>Optional</strong></td>
         </tr>
-        <tr><td colspan="3">This endpoint does not accept any parameters.</td></tr>
+        <tr>
+            <td>user_id</td>
+            <td>The Manager's user id for who is assigning out the quota</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>timeperiod_id</td>
+            <td>Which timeperiod are we assigning quota for</td>
+            <td>false</td>
+        </tr>
     </table>
 </div>
 <div class="input">
     <h2>Input Example:</h2>
     <code class="codesample">
-        { "amount" : "190000.000000",
-          "base_rate" : "1",
-          "best_adjusted" : "190000",
-          "best_case" : "75000.000000",
-          "currency_id" : "-99",
-          "current_user" : "seed_sarah_id",
-          "date_modified" : "2013-01-15T10:52:44-05:00",
-          "draft" : 1,
-          "forecast" : 0,
-          "forecast_id" : "d0b15495-dd9a-a827-61b5-50f57bbe53aa",
-          "id" : "seed_max_id",
-          "label" : "Max Jensen",
-          "likely_adjusted" : "190000",
-          "likely_case" : "65000.000000",
-          "name" : "Max Jensen",
-          "quota" : "111000.000000",
-          "quota_id" : "c7f1ca95-4beb-9eec-6b53-50f42b1f5750",
-          "show_opps" : true,
-          "timeperiod_id" : "36f7085a-5889-ea75-84c8-50f42bd1a5ba",
-          "user_id" : "seed_max_id",
-          "version" : "1",
-          "worksheet_id" : "f3e005b5-2244-50e6-36d0-50f42bdaeec4",
-          "worst_adjusted" : "185500.000000",
-          "worst_case" : "60000.000000"
+        { "user_id" : "seed_sarah_id",
+          "timeperiod_id" : "36f7085a-5889-ea75-84c8-50f42bd1a5ba"
         }
     </code>
 </div>
 <div class="output">
     <h2>Output Example:</h2>
     <code class="codesample">
-        null
+        {success: true}
     </code>
 </div>

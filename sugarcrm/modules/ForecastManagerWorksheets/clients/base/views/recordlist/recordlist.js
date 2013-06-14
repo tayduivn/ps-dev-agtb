@@ -215,6 +215,12 @@
                     this.checkForDraftRows(ctx.get('currentForecastCommitDate'));
                 }, this);
 
+                this.collection.on('change:quota', function(model, changed) {
+                    // a quota has changed, trigger an event to toggle the assign quota button
+                    var ctx = this.context.parent || this.context;
+                    ctx.trigger('forecasts:worksheet:quota_changed', this.worksheetType);
+                }, this);
+
                 this.context.parent.on('forecasts:worksheet:committed', function() {
                     if (this.layout.isVisible()) {
                         var ctx = this.context.parent || this.context;
@@ -233,6 +239,19 @@
                             this.setNavigationMessage(false, '', '');
                         }
                     }
+                }, this);
+
+                this.context.parent.on('button:assign_quota:click', function() {
+                    this.context.parent.once('forecasts:worksheet:saved', function() {
+                        // clear out the current navigation message
+                        this.setNavigationMessage(false, '', '');
+                        this.context.parent.trigger('forecasts:assign_quota', this.worksheetType, this.selectedUser, this.selectedTimeperiod);
+                    }, this);
+                    app.alert.show('saving_quota', {
+                        level: 'process',
+                        title: app.lang.get('LBL_ASSIGNING_QUOTA', 'Forecasts')
+                    });
+                    this.saveWorksheet(true, true);
                 }, this);
 
                 app.routing.before('route', function() {
@@ -296,7 +315,7 @@
                     module: this.module,
                     id: model.id,
                     placeholder: field.getPlaceholder(),
-                    colspan: this._fields.visible.length+this.leftColumns.length+this.rightColumns.length  // do the +1 to account for right side Row Actions
+                    colspan: this._fields.visible.length + this.leftColumns.length + this.rightColumns.length  // do the +1 to account for right side Row Actions
                 }));
                 field.render();
             }
@@ -668,7 +687,7 @@
             } else {
                 // we have the name
                 records.sort(_.bind(function(a, b) {
-                    if(this.orderBy.direction == '_asc') {
+                    if (this.orderBy.direction == '_asc') {
                         if (a.name.toString() < b.name.toString()) return 1;
                         if (a.name.toString() > b.name.toString()) return -1;
                     } else {
@@ -822,16 +841,18 @@
      * Call the worksheet save event
      *
      * @triggers forecasts:worksheet:saved
-     * @param isDraft
+     * @param {bool} isDraft
+     * @param {bool} suppressMessage
      * @returns {number}
      */
-    saveWorksheet: function(isDraft) {
+    saveWorksheet: function(isDraft, suppressMessage) {
         // only run the save when the worksheet is visible and it has dirty records
         var saveObj = {
                 totalToSave: 0,
                 saveCount: 0,
                 model: undefined,
                 isDraft: isDraft,
+                suppressMessage: suppressMessage || false,
                 timeperiod: this.dirtyTimeperiod,
                 userId: this.dirtyUser
             },
@@ -859,7 +880,7 @@
 
                 this.cleanUpDirtyModels();
             } else {
-                if (isDraft) {
+                if (isDraft && saveObj.suppressMessage === false) {
                     app.alert.show('success', {
                         level: 'success',
                         autoClose: true,
@@ -889,7 +910,7 @@
             saveObj.saveCount++;
             //if this is the last save, go ahead and trigger the callback;
             if (saveObj.totalToSave === saveObj.saveCount) {
-                if (saveObj.isDraft) {
+                if (saveObj.isDraft && saveObj.suppressMessage === false) {
                     app.alert.show('success', {
                         level: 'success',
                         autoClose: true,

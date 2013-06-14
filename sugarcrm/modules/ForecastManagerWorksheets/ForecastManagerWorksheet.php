@@ -276,10 +276,11 @@ class ForecastManagerWorksheet extends SugarBean
     }
 
     /**
-     * @param ForecastManagerWorksheet $worksheet
+     * @param ForecastManagerWorksheet $worksheet   The Draft Worksheet
+     * @param array $copyMap                        What we want to copy, if left empty it will default to worst, likely and best case fields
      * @return bool
      */
-    protected function rollupDraftToCommittedWorksheet(ForecastManagerWorksheet $worksheet)
+    protected function rollupDraftToCommittedWorksheet(ForecastManagerWorksheet $worksheet, $copyMap = array())
     {
         /* @var $committed_worksheet ForecastManagerWorksheet */
         $committed_worksheet = BeanFactory::getBean($this->module_name);
@@ -297,11 +298,14 @@ class ForecastManagerWorksheet extends SugarBean
             return false;
         }
 
-        $copyMap = array(
-            'likely_case',
-            'best_case',
-            'worst_case',
-        );
+        // if we don't pass in a copy map, just use the default
+        if (empty($copyMap)) {
+            $copyMap = array(
+                'likely_case',
+                'best_case',
+                'worst_case',
+            );
+        }
 
         $this->copyValues($copyMap, $worksheet->toArray(), $committed_worksheet);
 
@@ -338,6 +342,46 @@ class ForecastManagerWorksheet extends SugarBean
                 $bean->$key = $seed[$field];
             }
         }
+    }
+
+    /**
+     * Assign the Quota out to the reporting users for the given user if they are a manager
+     *
+     * @param string $user_id           The User for which we want to look for reportee's for
+     * @param string $timeperiod_id     Which timeperiod
+     * @return bool
+     */
+    public function assignQuota($user_id, $timeperiod_id)
+    {
+        if (User::isManager($user_id) === false) {
+            return false;
+        }
+
+        $sq = new SugarQuery();
+        $sq->select(array('id', 'quota', 'user_id'));
+        $sq->from($this);
+        $sq->where()
+            ->equals('assigned_user_id', $user_id)
+            ->equals('timeperiod_id', $timeperiod_id)
+            ->equals('draft', 1);
+
+        $worksheets = $sq->execute();
+
+        foreach ($worksheets as $worksheet) {
+            $this->commitQuota(
+                $worksheet['quota'],
+                $worksheet['user_id'],
+                $timeperiod_id,
+                ($worksheet['user_id'] == $user_id) ? 'Direct' : 'Rollup'
+            );
+            $this->recalcQuotas($worksheet['user_id'], $timeperiod_id, true);
+
+            /* @var $worksheet_obj ForecastManagerWorksheet */
+            $worksheet_obj = BeanFactory::getBean($this->module_name, $worksheet['id']);
+            $this->rollupDraftToCommittedWorksheet($worksheet_obj, array('quota'));
+        }
+
+        return true;
     }
 
     /**
