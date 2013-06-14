@@ -5662,13 +5662,21 @@ class SugarBean
     {
     }
 
-    function getRelatedFields($module, $id, $fields, $return_array = false){
+    /**
+     * @param string $module
+     * @param string $id
+     * @param array $fields
+     * @param array $return_array
+     */
+    public function getRelatedFields($module, $id, $fields, $return_array = false)
+    {
         if(empty($GLOBALS['beanList'][$module]))return '';
         $object = BeanFactory::getObjectName($module);
 
         VardefManager::loadVardef($module, $object);
         if(empty($GLOBALS['dictionary'][$object]['table']))return '';
         $table = $GLOBALS['dictionary'][$object]['table'];
+        $hasCustomFields = false;
         $query  = 'SELECT id';
         foreach($fields as $field=>$alias){
             if(!empty($GLOBALS['dictionary'][$object]['fields'][$field]['db_concat_fields'])){
@@ -5677,7 +5685,12 @@ class SugarBean
                 (empty($GLOBALS['dictionary'][$object]['fields'][$field]['source']) ||
                 $GLOBALS['dictionary'][$object]['fields'][$field]['source'] != "non-db"))
             {
-                $query .= ' ,' .$table . '.' . $field . ' as ' . $alias;
+                if ('_c' == strtolower(substr($field, -2))) {
+                    $query .= ' ,' . $table . '_cstm.' . $field . ' as ' . $alias;
+                    $hasCustomFields = true;
+                } else {
+                    $query .= ' ,' . $table . '.' . $field . ' as ' . $alias;
+                }
             }
             if(!$return_array)$this->$alias = '';
         }
@@ -5696,7 +5709,11 @@ class SugarBean
             $query .= " , ".	$table . ".created_by owner";
 
         }
-        $query .=  ' FROM ' . $table . ' WHERE deleted=0 AND id=';
+        if ($hasCustomFields) {
+            $query .=  ' FROM ' . $table  . ', ' . $table . '_cstm WHERE deleted=0 AND id=id_c AND id=';
+        } else {
+            $query .=  ' FROM ' . $table  . ' WHERE deleted=0 AND id=';
+        }
         $result = $GLOBALS['db']->query($query . "'$id'" );
         $row = $GLOBALS['db']->fetchByAssoc($result);
         if($return_array){
