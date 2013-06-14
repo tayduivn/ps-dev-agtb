@@ -17,6 +17,46 @@
   }
 }
 
+#forecast-config-accordion {
+  .accordion-heading {
+    padding: 0;
+    background-color: @grayLighter;
+    height: 48px;
+    .accordion-toggle {
+      padding: 14px 16px 16px 20px;
+      color: @gray;
+      .resetLink {
+        color: @linkColor;
+      }
+      .resetLink:hover {
+        text-decoration: underline;
+      }
+    }
+    .accordion-toggle:hover {
+      text-decoration: none;
+    }
+  }
+  .accordion-heading.active {
+    background-color: @white;
+  }
+  .accordion-group {
+    border-bottom: 1px solid #DCDCDC;
+  }
+  .accordion-inner {
+    padding: 12px 20px;
+    background-color: darken(@grayLighter,1%);
+    .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
+  }
+  fieldset {
+    border: 1px dashed #008000;
+    padding: 8px 12px 0;
+    margin-bottom: 16px;
+  }
+  fieldset.disabled {
+    border-color: @grayLight;
+  }
+}
+
 #guages {
   margin: 0 0 10px 0;
   h4 {
