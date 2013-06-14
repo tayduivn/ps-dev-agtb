@@ -49,6 +49,7 @@
 	<tr><td class='mbLBL'><b>{$mod_strings.LBL_PACKAGE}</b></td><td colspan='5'>{$package->name}</td></tr>
 	<tr><td class='mbLBL'><font color="#ff0000"> * </font><b>{$mod_strings.LBL_MODULE_NAME}</b></td><td colspan='5'><input type='text' name='name' value='{$module->name}' size='36' maxlength='36'></td></tr>
 	<tr><td class='mbLBL'><font color="#ff0000"> * </font><b>{$mod_strings.LBL_LABEL}</b></td><td colspan='5'><input type='text' name='label' value='{$module->config.label}' size='36' maxlength='36'></td></tr>
+	<tr><td class='mbLBL'><font color="#ff0000"> * </font><b>{$mod_strings.LBL_SINGULAR_LABEL}</b></td><td colspan='5'><input type='text' name='label_singular' value='{$module->config.label_singular}' size='36' maxlength='36'></td></tr>
 	<tr>
 	<tr>
 	   <td class='mbLBL' width='5%' nowrap>{sugar_translate label='LBL_MB_IMPORTABLE' module='ModuleBuilder'}:</td>
