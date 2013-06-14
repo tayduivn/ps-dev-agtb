@@ -268,7 +268,7 @@ class SugarApiExceptionInvalidParameter extends SugarApiException
  */
 class SugarApiExceptionRequestMethodFailure extends SugarApiException
 {
-    public $httpCode = 422;
+    public $httpCode = 424;
     public $errorLabel = 'request_failure';
     public $messageLabel = 'EXCEPTION_REQUEST_FAILURE';
 }
