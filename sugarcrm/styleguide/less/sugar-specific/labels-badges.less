@@ -56,6 +56,7 @@ a > .label,
   background-color: @grayLight;
   .box-shadow(0 2px 0 @grayLight);
 }
+
 .label {
   &-important {background-color: @btnDangerBackground;}
   &-warning {background-color: @orange;}
@@ -66,26 +67,45 @@ a > .label,
   &-log {background-color: darken(@gray,10%);}
 
 /* Modules */
-  &-Accounts {background-color: @green;.box-shadow(0 2px 0 darken(@green,5%));}
-  &-Bugs {background-color: darken(@red,10%);.box-shadow(0 2px 0 darken(@red,15%));}
-  &-Campaigns {background-color: darken(@blue,20%);.box-shadow(0 2px 0 darken(@blue,30%));}
-  &-Calendar {background-color: darken(@yellow,10%);.box-shadow(0 2px 0 darken(@yellow,15%));}
-  &-Cases {background-color: darken(@red,20%);.box-shadow(0 2px 0 darken(@red,30%));}
-  &-Calls {background-color: darken(@blue,10%);.box-shadow(0 2px 0 darken(@blue,15%));}
-  &-Contacts {background-color: darken(@green,10%);.box-shadow(0 2px 0 darken(@green,15%));}
-  &-Documents {background-color: darken(@orange,30%);.box-shadow(0 2px 0 darken(@orange,35%));}
-  &-Emails {background-color: darken(@blue,35%);.box-shadow(0 2px 0 darken(@blue,40%));}
-  &-Forecasts {background-color: darken(@orange,10%);.box-shadow(0 2px 0 darken(@orange,15%));}
-  &-KBDocuments {background-color: darken(@orange,20%);.box-shadow(0 2px 0 darken(@orange,25%));}
-  &-Leads {background-color: darken(@green,20%);.box-shadow(0 2px 0 darken(@green,25%));}
-  &-Meetings {background-color: @yellow;.box-shadow(0 2px 0 darken(@yellow,5%));}
-  &-Notes {background-color: @blue;.box-shadow(0 2px 0 darken(@blue,10%));}
-  &-Opportunities {background-color: @purple;.box-shadow(0 2px 0 darken(@purple,5%));}
-  &-Products {background-color: darken(@purple,10%);.box-shadow(0 2px 0 darken(@purple,15%));}
-  &-Prospects {background-color: @pink;.box-shadow(0 2px 0 darken(@pink,5%));}
-  &-ProspectLists {background-color: darken(@pink,10%);.box-shadow(0 2px 0 darken(@pink,15%));}
-  &-Reports {background-color: darken(@orange,10%);.box-shadow(0 2px 0 darken(@orange,15%));}
-  &-Quotes {background-color: darken(@purple,20%);.box-shadow(0 2px 0 darken(@purple,25%));}
-  &-Users {background-color: @grayDarker;.box-shadow(0 2px 0 darken(@grayDarker,5%));}
-  &-Tasks {background-color: @orange;.box-shadow(0 2px 0 darken(@orange,5%));}
+  &-Accounts {background-color: @green;}
+  &-Bugs {background-color: darken(@red,10%);}
+  &-Campaigns {background-color: darken(@blue,20%);}
+  &-Calendar {background-color: darken(@blue,10%);}
+  &-Cases {background-color: darken(@red,20%);}
+  &-Contacts {background-color: darken(@green,10%);}
+  &-Documents {background-color: darken(@orange,30%);}
+  &-Emails {background-color: darken(@blue,35%);}
+  &-Files {background-color: darken(@orange,10%);}
+  &-Forecasts {background-color: @orange;}
+  &-KBDocuments {background-color: darken(@orange,20%);}
+  &-Leads {background-color: darken(@green,20%);}
+  &-Meetings {background-color: @yellow;}
+  &-Notes {background-color: @blue;}
+  &-Opportunities {background-color: @purple;}
+  &-Products {background-color: darken(@purple,10%);}
+  &-Reports {background-color: darken(@orange,10%);}
+  &-Quotes {background-color: darken(@purple,20%);}
+  &-Users {background-color: @grayDarker;}
+}
+
+.label-module.label, .label-module-sm.label, .label-module-mini.label {
+  &-Accounts {.box-shadow(0 2px 0 darken(@green,5%));}
+  &-Bugs {.box-shadow(0 2px 0 darken(@red,15%));}
+  &-Campaigns {.box-shadow(0 2px 0 darken(@blue,30%));}
+  &-Calendar {.box-shadow(0 2px 0 darken(@blue,15%));}
+  &-Cases {.box-shadow(0 2px 0 darken(@red,30%));}
+  &-Contacts {.box-shadow(0 2px 0 darken(@green,15%));}
+  &-Documents {.box-shadow(0 2px 0 darken(@orange,35%));}
+  &-Emails {.box-shadow(0 2px 0 darken(@blue,40%));}
+  &-Files {.box-shadow(0 2px 0 darken(@orange,15%));}
+  &-Forecasts {.box-shadow(0 2px 0 darken(@orange,5%));}
+  &-KBDocuments {.box-shadow(0 2px 0 darken(@orange,25%));}
+  &-Leads {.box-shadow(0 2px 0 darken(@green,25%));}
+  &-Meetings {.box-shadow(0 2px 0 darken(@yellow,5%));}
+  &-Notes {.box-shadow(0 2px 0 darken(@blue,10%));}
+  &-Opportunities {.box-shadow(0 2px 0 darken(@purple,5%));}
+  &-Products {.box-shadow(0 2px 0 darken(@purple,15%));}
+  &-Reports {.box-shadow(0 2px 0 darken(@orange,15%));}
+  &-Quotes {.box-shadow(0 2px 0 darken(@purple,25%));}
+  &-Users {.box-shadow(0 2px 0 darken(@grayDarker,5%));}
 }
