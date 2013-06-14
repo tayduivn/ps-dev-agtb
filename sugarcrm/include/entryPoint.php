@@ -68,6 +68,7 @@ $GLOBALS['starttTime'] = microtime(true);
 
 set_include_path(
     dirname(__FILE__) . '/..' . PATH_SEPARATOR .
+    dirname(__FILE__) . '/../vendor' . PATH_SEPARATOR .
     get_include_path()
 );
 
