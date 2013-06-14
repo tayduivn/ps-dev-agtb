@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/api/SugarApi.php';
+require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi
@@ -119,7 +120,20 @@ class MetadataApi extends SugarApi
 
         }
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields', 'labels', 'module_list', 'views', 'layouts','relationships','currencies', 'jssource', 'server_info', 'module_tab_map');
+        $this->typeFilter = array(
+            'modules',
+            'full_module_list',
+            'fields', 'labels', 
+            'module_list', 
+            'views', 
+            'layouts',
+            'relationships',
+            'currencies', 
+            'jssource', 
+            'server_info', 
+            'module_tab_map',
+            'hidden_subpanels',
+        );
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -170,7 +184,20 @@ class MetadataApi extends SugarApi
             }
         }
 
-        $baseChunks = array('fields','labels','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource', 'server_info', 'module_tab_map');
+        $baseChunks = array(
+            'fields',
+            'labels',
+            'module_list', 
+            'views', 
+            'layouts', 
+            'full_module_list',
+            'relationships', 
+            'currencies', 
+            'jssource', 
+            'server_info', 
+            'module_tab_map',
+            'hidden_subpanels',
+        );
         $perModuleChunks = array('modules');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
@@ -370,6 +397,14 @@ class MetadataApi extends SugarApi
         // Start collecting data
         $data = $this->_populateModules(array());
         $mm = $this->getMetadataManager();
+        
+        // BR-29 Handle hidden subpanels - SubPanelDefinitons needs a bean at 
+        // construct time, so hand it an admin bean. This returns a list of 
+        // hidden subpanels in lowercase module name form:
+        // array('accounts', 'bugs', 'contacts');
+        $spd = new SubPanelDefinitions(BeanFactory::getBean('Administration'));
+        $data['hidden_subpanels'] = array_values($spd->get_hidden_subpanels());
+        
         // TODO:
         // Sadly, it's now unclear what our abstraction is here. It should be that this class
         // is just for API stuff and $mm is for any metadata data operations. However, since
