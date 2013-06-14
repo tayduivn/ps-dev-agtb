@@ -82,6 +82,21 @@ $listDefs = array(
                     'width' => '7%'
                 ),
                 array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'default' => true,
+                    'enabled' => true,
+                    'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
+                    'related_fields' => array(
+                        'base_rate',
+                        'currency_id'
+                    ),
+                    'align' => 'right',
+                    'click_to_edit' => true,
+                ),
+                array(
                     'name' => 'likely_case',
                     'label' => 'LBL_LIKELY_CASE',
                     'type' => 'currency',
@@ -100,22 +115,6 @@ $listDefs = array(
                     'name' => 'best_case',
                     'label' => 'LBL_BEST_CASE',
                     'type' => 'currency',
-                    'default' => true,
-                    'enabled' => true,
-                    'convertToBase'=> true,
-                    'showTransactionalAmount'=>true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
-                    'align' => 'right',
-                    'click_to_edit' => true,
-                ),
-                array(
-                    'name' => 'worst_case',
-                    'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE',
-                    'sortable' => true,
                     'default' => true,
                     'enabled' => true,
                     'convertToBase'=> true,
@@ -185,6 +184,22 @@ $listDefs = array(
                     'click_to_edit' => true
                 ),
                 array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'default' => true,
+                    'enabled' => true,
+                    'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
+                    'related_fields' => array(
+                        'base_rate',
+                        'currency_id'
+                    ),
+                    'align' => 'right',
+                    'click_to_edit' => true,
+                    'width' => '22%'
+                ),
+                array(
                     'name' => 'likely_case',
                     'label' => 'LBL_LIKELY_CASE',
                     'type' => 'currency',
@@ -204,23 +219,6 @@ $listDefs = array(
                     'name' => 'best_case',
                     'label' => 'LBL_BEST_CASE',
                     'type' => 'currency',
-                    'default' => true,
-                    'enabled' => true,
-                    'convertToBase'=> true,
-                    'showTransactionalAmount'=>true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
-                    'align' => 'right',
-                    'click_to_edit' => true,
-                    'width' => '22%'
-                ),
-                array(
-                    'name' => 'worst_case',
-                    'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE',
-                    'sortable' => true,
                     'default' => true,
                     'enabled' => true,
                     'convertToBase'=> true,
