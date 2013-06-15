@@ -1,1 +1,1 @@
-<p><a href="{{{url}}}" target="_blank"><h4>{{title}}</h4></a></p>
+<p><a href="{{{url}}}" class="website-link" target="_blank">{{title}}</a></p>

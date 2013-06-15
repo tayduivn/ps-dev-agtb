@@ -35,6 +35,7 @@
              */
             success: function(collection) {
                 collection.each(function(model) {
+                    //TODO: if not data hide block-footer
                     self.renderPost(model, true);
                 });
             }

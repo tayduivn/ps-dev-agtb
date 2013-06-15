@@ -243,6 +243,11 @@
             this.toggleReplyBar();
             this.$(".reply").html(replyVal);
         }
+
+        //TODO: make this be called by an onload on iframe in embedded player
+        this.$('.embed iframe').width(function(){
+            return Math.min($(this).parent('.embed').width(),480);
+        });
     },
 
     /**
