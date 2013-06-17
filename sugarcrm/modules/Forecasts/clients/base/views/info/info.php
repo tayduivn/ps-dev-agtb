@@ -42,6 +42,11 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
     ),
     'datapoints' => array(
         array(
+            'name' => 'worst_case',
+            'label' => 'LBL_INCLUDED_WORST_TOTALS',
+            'type' => 'datapoint'
+        ),
+        array(
             'name' => 'likely_case',
             'label' => 'LBL_INCLUDED_LIKELY_TOTALS',
             'type' => 'datapoint'
@@ -49,11 +54,6 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
         array(
             'name' => 'best_case',
             'label' => 'LBL_INCLUDED_BEST_TOTALS',
-            'type' => 'datapoint'
-        ),
-        array(
-            'name' => 'worst_case',
-            'label' => 'LBL_INCLUDED_WORST_TOTALS',
             'type' => 'datapoint'
         )
     ),
