@@ -237,7 +237,6 @@
      */
     switchPreview: function(data, index, id, module) {
         var self = this,
-            currModule = module || this.model.module,
             currID = id || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
@@ -255,6 +254,8 @@
             // We can increment/decrement
             data.direction === "left" ? currIndex -= 1 : currIndex += 1;
 
+            //  If module not specified we need select module from model in collection by current index.
+            var currModule = module || this.collection.models[currIndex].module;
             var moduleMeta = app.metadata.getModule(currModule);
 
             // Some activity stream items aren't previewable - e.g. no detail views
