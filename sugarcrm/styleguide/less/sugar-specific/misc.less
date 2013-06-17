@@ -1,6 +1,26 @@
 /* Misc
 -------------------------------------------------- */
 
+ul.list {
+    list-style: none;
+    border-bottom: 1px solid @grayLighter;
+    padding: 0;
+    margin: 0;
+    li {
+        list-style: none;
+        border-top: 1px solid @grayLighter;
+        padding: 10px;
+        margin: 0;
+    }
+}
+.dash ul.list {  
+    height: 200px;
+    overflow: auto;
+}
+.dash .thumbnail h4 {
+    font-size: @fontSizeLarge;
+}
+
 .main-pane .vcard2 {
   z-index: 0;
   position: relative;
