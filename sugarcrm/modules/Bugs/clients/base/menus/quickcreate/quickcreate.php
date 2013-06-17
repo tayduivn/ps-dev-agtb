@@ -12,9 +12,10 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$module_name = 'Tasks';
+$module_name = 'Bugs';
 $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
-    'label' => 'LNK_NEW_TASK',
+    'href' => '#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
+    'label' => 'LNK_NEW_BUG',
     'visible' => true
 );
