@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -13,14 +12,9 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Teams']['base']['layout']['records'] = array(
-    'name' => 'bwc',
-    'type' => 'bwc',
-    'components' =>
-    array(
-        array(
-            'view' => 'bwc',
-        ),
-    ),
+$module_name = 'Cases';
+$viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
+    'layout' => 'create',
+    'label' => 'LNK_NEW_CASE',
+    'visible' => true
 );
-

@@ -32,8 +32,13 @@ class SugarJobAddActivitySubscriptions implements RunnableSchedulerJob
     {
         $data = unserialize($data);
         $act = BeanFactory::retrieveBean('Activities', $data['act_id']);
-        $ignoreDeleted = ($act->activity_type !== 'deleted'); //retrieve deleted bean if activity was a deletion
-        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id'], array(), $ignoreDeleted);
+        $ignoreDeleted = true;
+        $beanParams = array();
+        if ($act->activity_type === 'deleted') {
+            $ignoreDeleted = false;
+            $beanParams = array('disable_row_level_security' => true);
+        }
+        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id'], $beanParams, $ignoreDeleted);
         $subs = BeanFactory::getBeanName('Subscriptions');
         if (!$act->load_relationship("activities_users")) {
             $this->job->failJob("Could not load the relationship.");
