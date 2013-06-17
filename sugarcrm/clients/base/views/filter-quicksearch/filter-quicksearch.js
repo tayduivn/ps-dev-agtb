@@ -29,7 +29,7 @@
         // have SUGAR.App when the constructor is called. We can't add it to the
         // attributes hash here since Backbone.View._ensureElement() is called
         // before initialize.
-        this.$el.attr('placeholder', app.lang.get('LBL_BASIC_SEARCH') + '…');
+        this.$el.attr('placeholder', app.lang.get('LBL_BASIC_QUICK_SEARCH'));
         app.view.View.prototype.initialize.call(this, opts);
         this.layout.on("filter:clear:quicksearch", this.clearInput, this);
     },
@@ -42,7 +42,7 @@
         var newSearch = this.$el.val();
         if(this.currentSearch !== newSearch) {
             this.currentSearch = newSearch;
-            this.layout.trigger("filter:change:quicksearch", newSearch);
+            this.layout.trigger("filter:apply", newSearch);
         }
     }, 400),
 
@@ -52,6 +52,6 @@
     clearInput: function() {
         this.$el.val("").toggleClass('hide', this.layout.showingActivities);
         this.currentSearch = "";
-        this.layout.trigger("filter:change:quicksearch");
+        this.layout.trigger("filter:apply");
     }
 })

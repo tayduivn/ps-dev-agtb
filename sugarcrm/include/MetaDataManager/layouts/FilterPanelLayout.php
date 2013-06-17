@@ -11,6 +11,24 @@ class FilterPanelLayout
     protected $layout;
     protected $count = 0;
 
+    protected $availableToggles = array(
+        array(
+            'name' => 'subpanel',
+            'icon' => 'icon-table',
+            'label' => 'LBL_DATA_VIEW',
+        ),
+        array(
+            'name' => 'list',
+            'icon' => 'icon-table',
+            'label' => 'LBL_LISTVIEW',
+        ),
+        array(
+            'name' => 'activitystream',
+            'icon' => 'icon-th-list',
+            'label' => 'LBL_ACTIVITY_STREAM',
+        ),
+    );
+
     /**
      * Constructor for FilterPanel Layout
      * @param array $opts Takes an array of options. Set the 'override' key to
@@ -27,13 +45,21 @@ class FilterPanelLayout
         // Add header view and subpanel layout
         $filterLayout = array(
             'layout' => 'filter',
+            'targetEl' => '.filter',
+            'position' => 'prepend'
         );
         if (isset($opts['layoutName'])) {
             $filterLayout['context']['layoutName'] = $opts['layoutName'];
         }
         $this->layout->push($filterLayout);
-        $this->layout->push(array("view" => "filter-actions"));
-        $this->layout->push(array("view" => "filter-rows"));
+        $this->layout->push(array(
+                "view" => "filter-actions",
+                "targetEl" => '.filter-options'
+            ));
+        $this->layout->push(array(
+                "view" => "filter-rows",
+                "targetEl" => '.filter-options'
+            ));
 
         if (in_array('activitystream', $toggles)) {
             $this->layout->push(
@@ -45,6 +71,7 @@ class FilterPanelLayout
         }
 
         $this->layout->set("toggles", $toggles);
+        $this->layout->set('availableToggles', $this->availableToggles);
     }
 
     /**
