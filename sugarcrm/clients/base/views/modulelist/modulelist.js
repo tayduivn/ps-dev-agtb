@@ -1,3 +1,15 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     favRowTemplate: Handlebars.compile(
       '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{modelRoute this}}" data-route="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
@@ -13,16 +25,35 @@
         'click .actionLink' : 'handleMenuEvent',
         "click a[data-route]": "handleRouteEvent"
     },
+    lastHomePage: {
+        dashboard: 'dashboard',
+        activities: 'activities'
+    },
     handleRouteEvent: function (event) {
         var currentTarget = this.$(event.currentTarget),
-            route         = currentTarget.data("route");
+            route = currentTarget.data("route"),
+            lastClickedKey = app.user.lastState.key('last-clicked', this),
+            lastClicked = app.user.lastState.get(lastClickedKey);
 
         if (route) {
             event.preventDefault();
 
-            var currentFragment = Backbone.history.getFragment();
+            // Go to activities if the user clicked on the cube and activities was last clicked.
+            if (currentTarget.hasClass('cube')) {
+                if (lastClicked === this.lastHomePage.activities) {
+                    route = '#' + this.lastHomePage.activities;
+                }
+            }
 
-            if (("#" + currentFragment) === route) {
+            // Save which was last clicked. Activities or Dashboard?
+            if ((route.indexOf('#Home') === 0) && (lastClicked !== this.lastHomePage.dashboard)) {
+                app.user.lastState.set(lastClickedKey, this.lastHomePage.dashboard);
+            } else if ((route === ('#' + this.lastHomePage.activities)) && (lastClicked !== this.lastHomePage.activities)) {
+                app.user.lastState.set(lastClickedKey, this.lastHomePage.activities);
+            }
+
+            // Navigate to route or refresh the current page
+            if (("#" + Backbone.history.getFragment()) === route) {
                 app.router.refresh();
             } else {
                 app.router.navigate(route, {trigger: true});
