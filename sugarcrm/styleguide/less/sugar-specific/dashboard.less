@@ -259,6 +259,7 @@
     .preview-headerbar {
       border-bottom-color: transparent;
       display: table;
+      margin-top: -3px;
       .btn-toolbar.pull-right {
         margin: 16px 5% 0 0;
         padding-left: 0;
@@ -279,6 +280,9 @@
           input {
             padding-left: 0;
             padding-right: 0;
+            font-size: inherit;
+            margin-top: -3px;
+            margin-left: 5px;
             width: 100%;
             text-indent: 5px;
             margin-top: -2px;
@@ -341,8 +345,11 @@
     }
     .cols {
       .dashlets {
-        width: 90%;
-        margin-left: 5%;
+        width: 97%;
+        margin-left: 1.5%;
+        .rows.well:not(.well-invisible) {
+          margin: -41px -.5% auto;
+        }
       }
     }
     .well {
@@ -351,7 +358,7 @@
         padding-right: 0;
         padding-left: 0;
         .widget-container {
-          padding: 0;
+//          padding: 0;
         }
       }
       [class*="-container"] {
