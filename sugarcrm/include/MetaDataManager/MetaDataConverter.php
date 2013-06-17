@@ -247,6 +247,47 @@ class MetaDataConverter
         return array_intersect_key($fieldDefs, $fieldMap);
     }
 
+    /**
+     * @param array $layoutDefs
+     * @param SugarBean $bean
+     * @return array legacy LayoutDef
+     */
+    public function toLegacySubpanelLayoutDefs(array $layoutDefs, SugarBean $bean)
+    {
+        $return = array();
+
+        foreach ($layoutDefs as $order => $def) {
+            // no link can't move on
+            if (empty($def['context']['link'])) {
+                continue;
+            }
+            $link = new Link2($def['context']['link'], $bean);
+            $linkModule = $link->getRelatedModuleName();
+            // if we don't have a label at least set the module name as the label
+            // similar to configure shortcut bar
+            $label = isset($def['label']) ? $def['label'] : translate($linkModule);
+            $return[$def['context']['link']] = array(
+                'order' => $order,
+                'module' => $linkModule,
+                'subpanel_name' => 'default',
+                'sort_order' => 'asc',
+                'sort_by' => 'id',
+                'title_key' => $label,
+                'get_subpanel_data' => $def['context']['link'],
+                'top_buttons' =>
+                array(
+                    array(
+                        'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                    array(
+                        'widget_class' => 'SubPanelTopSelectButton',
+                        'mode' => 'MultiSelect',
+                    ),
+                ),
+            );
+        }
+        return array('subpanel_setup' => $return);
+    }
 
     /**
      * Simple accessor into the grid legacy converter

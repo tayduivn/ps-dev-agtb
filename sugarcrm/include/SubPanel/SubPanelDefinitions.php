@@ -638,14 +638,13 @@ class SubPanelDefinitions
 		global $modListHeader ;
 		global $modules_exempt_from_availability_check ;
 
-		if (isset ( $this->_visible_tabs_array ))
+        if (isset ( $this->_visible_tabs_array ))
 			return $this->_visible_tabs_array ;
 
 		if (empty($modListHeader))
 		    $modListHeader = query_module_access_list($GLOBALS['current_user']);
 
 		$this->_visible_tabs_array = array ( ) ; // bug 16820 - make sure this is an array for the later ksort
-
 		if (isset ( $this->layout_defs [ 'subpanel_setup' ] )) // bug 17434 - belts-and-braces - check that we have some subpanels first
 		{
 			//retrieve list of hidden subpanels
@@ -660,6 +659,9 @@ class SubPanelDefinitions
 
 			foreach ( $this->layout_defs [ 'subpanel_setup' ] as $key => $values_array )
 			{
+                if(empty($values_array['module'])) {
+                    continue;
+                }
 				//exclude if this subpanel is hidden from admin screens
                 $module = $key;
                 if ( isset($values_array['module']) )
@@ -727,29 +729,39 @@ class SubPanelDefinitions
 	/**
 	 * Load the layout def file and associate the definition with a variable in the file.
 	 */
-	function open_layout_defs ( $reload = false , $layout_def_key = '' , $original_only = false )
-	{
-		$layout_defs [ $this->_focus->module_dir ] = array ( ) ;
-		$layout_defs [ $layout_def_key ] = array ( ) ;
+    function open_layout_defs ( $reload = false , $layout_def_key = '' , $original_only = false )
+    {
+        $layout_defs [ $this->_focus->module_dir ] = array ( ) ;
+        $layout_defs [ $layout_def_key ] = array ( ) ;
 
-		if (empty ( $this->layout_defs ) || $reload || (! empty ( $layout_def_key ) && ! isset ( $layout_defs [ $layout_def_key ] )))
-		{
-		    $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php');
-		    if(!$original_only) {
-		        $def_path[] = SugarAutoLoader::loadExtension("layoutdefs", $this->_focus->module_dir);
-		    }
-		    foreach(SugarAutoLoader::existing($def_path) as $file) {
-		        require $file;
-		    }
+        if (empty ( $this->layout_defs ) || $reload || (! empty ( $layout_def_key ) && ! isset ( $layout_defs [ $layout_def_key ] )))
+        {
+            if(!$original_only) {
+                if(isModuleBWC($this->_focus->module_dir)) {
+                    $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php');
+                    $def_path[] = SugarAutoLoader::loadExtension("layoutdefs", $this->_focus->module_dir);
+                } else {
+                    $def_path = array('modules/' . $this->_focus->module_dir . '/clients/base/layouts/subpanels/subpanels.php');
+                    $def_path[] = SugarAutoLoader::loadExtension("sidecarsubpanelbaselayout", $this->_focus->module_dir);
+                }
+            }
+            foreach(SugarAutoLoader::existing($def_path) as $file) {
+                require $file;
+            }
 
-			if (! empty ( $layout_def_key ))
-				$this->layout_defs = $layout_defs [ $layout_def_key ] ;
-			else
-				$this->layout_defs = $layout_defs [ $this->_focus->module_dir ] ;
+            $layoutDefsKey = !empty($layout_def_key) ? $layout_def_key : $this->_focus->module_dir;
+            // convert sidecar subpanels to the array the SubpanelDefinitions are looking for
+            if(!isModuleBWC($this->_focus->module_dir) && isset($viewdefs)) {
+                require_once('include/MetaDataManager/MetaDataConverter.php');
+                $metaDataConverter = new MetaDataConverter();
+                $convertLayoutDefs = $viewdefs[$this->_focus->module_dir]['base']['layout']['subpanels']['components'];
+                $layout_defs[$this->_focus->module_dir] = $metaDataConverter->toLegacySubpanelLayoutDefs($convertLayoutDefs, $this->_focus);
+            }
 
-		}
+            $this->layout_defs = $layout_defs[$layoutDefsKey];
+        }
 
-	}
+    }
 
 	/**
 	 * Removes a tab from the list of loaded tabs.

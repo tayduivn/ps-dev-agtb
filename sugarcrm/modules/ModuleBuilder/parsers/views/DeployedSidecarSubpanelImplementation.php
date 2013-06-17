@@ -25,16 +25,19 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
     /**
      * The constructor
-     * @param string $subpanelName
-     * @param string $moduleName
-     * @param string $packageName
+     * @param string $linkName
+     * @param string $loadedModule
      * @param string $client
      */
-    public function __construct($subpanelName, $moduleName, $client = 'base')
+    public function __construct($linkName, $loadedModule, $client = 'base')
     {
-        $GLOBALS['log']->debug(get_class($this) . "->__construct($subpanelName , $moduleName)");
+        $GLOBALS['log']->debug(get_class($this) . "->__construct($linkName , $loadedModule)");
         $this->mdc = new MetaDataConverter();
-        $this->_subpanelName = $subpanelName;
+        $this->_subpanelName = $subpanelName = 'For' . $loadedModule;
+        // get the link and the related module name as the module we need the subpanel from
+        $bean = BeanFactory::getBean($loadedModule);
+        $link = new Link2($linkName, $bean);
+        $moduleName = $link->getRelatedModuleName();
         $this->_moduleName = $moduleName;
         $this->bean = BeanFactory::getBean($moduleName);
         $this->setViewClient($client);
@@ -135,6 +138,12 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 throw new Exception(sprintf("Cannot create directory %s", $this->sidecarFile));
             }
         }
+
+        // always set the type to subpanel-list for the client
+        if(strpos($this->sidecarSubpanelName, 'subpanel-for-')) {
+            $this->_viewdefs['type'] = 'subpanel-list';
+        }
+
         write_array_to_file(
             "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']",
             $this->_viewdefs,

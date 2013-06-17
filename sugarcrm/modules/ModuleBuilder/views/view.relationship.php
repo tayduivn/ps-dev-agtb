@@ -63,6 +63,7 @@ class ViewRelationship extends SugarView
 
     public function display()
     {
+
         global $locale;
 
         if (!empty($_REQUEST['relationship_lang'])) {

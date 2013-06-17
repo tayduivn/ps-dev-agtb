@@ -12,7 +12,8 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Campaigns']['base']['view']['subpanel-for-emailmarketing'] = array(
-  'panels' => 
+  'type' => 'subpanel-list',
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',

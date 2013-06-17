@@ -360,6 +360,10 @@ class ModuleInstaller{
 				if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
+                // we have already written out this item elsewhere
+                if(isset($item['do_not_write']) && $item['do_not_write'] === true) {
+                    continue;
+                }
 				$GLOBALS['log']->debug("Installing section $section from $from for " .$item['to_module'] );
                 if($item['to_module'] == 'application') {
                     $path = "custom/Extension/application/Ext/$extname";

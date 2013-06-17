@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Meetings']['base']['view']['subpanel-for-activities'] = array(
+  'type' => 'subpanel-list',
   'panels' =>
   array(
     array(

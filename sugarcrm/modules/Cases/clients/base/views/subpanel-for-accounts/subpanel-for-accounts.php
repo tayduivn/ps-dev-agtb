@@ -12,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Cases']['base']['view']['subpanel-for-accounts'] = array(
-  'panels' =>
+  'type' => 'subpanel-list',
   array(
     array(
       'name' => 'panel_header',

@@ -316,18 +316,18 @@ class MetaDataFiles
     public static function mapArrayToPath($path, $arr)
     {
         if (!is_array($arr)) {
-            return NULL;
+            return null;
         }
 
         if (!is_array($path)) {
-            return (isset($arr[$path]) ? $arr[$path] : NULL);
+            return (isset($arr[$path]) ? $arr[$path] : null);
         }
 
         // traverse the array for our path
         $out = &$arr;
         foreach ($path as $key) {
             if (!isset($out[$key])) {
-                return NULL;
+                return null;
             }
 
             $out = $out[$key];
@@ -559,6 +559,21 @@ class MetaDataFiles
     }
 
     /**
+     * Gets a metadata directory path for a module from the ext framework type
+     *
+     * @static
+     * @param  string $module The name of the module to get metadata for
+     * @param  string $client The client making this request
+     * @param  string $component Layout or view
+     * @return string
+     */
+    public static function getSugarExtensionFileDir($module, $client = '', $component = self::COMPONENTVIEW)
+    {
+        $dirname = "custom/modules/{$module}/Ext/clients/{$client}/{$component}s/";
+        return $dirname;
+    }
+
+    /**
      * Gets SugarObjects type metadata for a module and cleans the defs up by
      * replacing variables with correct values based on the module
      *
@@ -769,6 +784,7 @@ class MetaDataFiles
                 }
                 $checkPaths['custom/'.$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
                 $checkPaths[$baseTemplateDir] = array('platform'=>$platform,'template'=>true);
+                $checkPaths[self::getSugarExtensionFileDir($module, $platform, $type)] = array('platform' => $platform, 'template' => false);
             }
         }
 
@@ -798,7 +814,6 @@ class MetaDataFiles
                 }
             }
         }
-
         return $fileList;
     }
 
@@ -830,7 +845,7 @@ class MetaDataFiles
                     break;
                 case 'php':
                     $viewdefs = array();
-                    if ( isset($results[$fileInfo['subPath']]['meta']) ) {
+                    if ( isset($results[$fileInfo['subPath']]['meta']) && !strstr($fileInfo['path'], '.ext')) {
                         continue;
                     }
                     if ($fileInfo['template']) {
@@ -860,7 +875,13 @@ class MetaDataFiles
                             if ( !isset($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
                                 $GLOBALS['log']->error('No viewdefs for module: '.$module.' viewdefs @ '.$fileInfo['path']);
                             } else {
-                                $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                                if(isset($results[$fileInfo['subPath']]['meta'])) {
+                                    if($fileInfo['subPath'] == 'subpanels') {
+                                        $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], $results[$fileInfo['subPath']]['meta']);
+                                    }
+                                } else {
+                                    $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                                }
                             }
                         }
                         break;
@@ -871,5 +892,32 @@ class MetaDataFiles
         $results['_hash'] = md5(serialize($results));
 
         return $results;
+    }
+
+    /**
+     * @param array $mergeDefs the defs to merge in
+     * @param array $currentDefs the current defs that need the new stuff
+     * @return array updated layoutdefs
+     */
+    public static function mergeSubpanels(array $mergeDefs, array $currentDefs)
+    {
+        $mergeComponents = $mergeDefs['components'];
+        $currentComponents = $currentDefs['components'];
+
+        foreach($mergeComponents as $mergeComponent) {
+            if(isset($mergeComponent['override_subpanel_list_view'])) {
+                $mergeContext = str_replace('subpanel-for-', '', $mergeComponent['override_subpanel_list_view']);
+                foreach($currentComponents as $key => $currentComponent) {
+                    if(!empty($currentComponent['context']['link']) && $currentComponent['context']['link'] == $mergeContext) {
+                        $currentDefs['components'][$key]['override_subpanel_list_view'] = $mergeComponent['override_subpanel_list_view'];
+                        continue;
+                    }
+                }
+            } else {
+                $currentDefs['components'][] = $mergeComponent;
+            }
+        }
+
+        return $currentDefs;
     }
 }

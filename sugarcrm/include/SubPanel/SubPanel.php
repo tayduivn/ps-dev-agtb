@@ -260,54 +260,89 @@ class SubPanel
 	return $ret_tabs;
   }
 
-  //saves overrides for defs
-  function saveSubPanelDefOverride( $panel, $subsection, $override)
-  {
-  		global $layout_defs, $beanList;
+    /**
+     * This method saves a subpanels override defintion
+     *
+     * @param object $panel the subpanel
+     * @param var $subsection
+     * @param string $override the override string
+     */
+    function saveSubPanelDefOverride($panel, $subsection, $override)
+    {
+        global $layout_defs, $beanList;
+        $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/Layoutdefs/";
+        $layoutDefsName = "layout_defs['{$panel->parent_bean->module_dir}']['subpanel_setup']['" . strtolower(
+                $panel->name
+            ) . "']";
+        $layoutDefsExtName = "layoutdefs";
+        $moduleInstallerMethod = "rebuild_layoutdefs";
+        //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
+        $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
+        $overrideName = 'override_subpanel_name';
+        if(!isModuleBWC($panel->parent_bean->module_dir)) {
+            $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
+            $layoutDefsName = "viewdefs['{$panel->parent_bean->module_dir}']['base']['layout']['subpanels']['components'][]";
+            $layoutDefsExtName = "sidecarsubpanelbaselayout";
+            $moduleInstallerMethod = "rebuild_sidecarsubpanelbaselayout";
+            $filename = "subpanel-for-{$panel->name}";
+            $overrideName = 'override_subpanel_list_view';
+        }
 
-  		//save the new subpanel
-  		$name = "subpanel_layout['list_fields']";
 
-  		//bugfix: load looks for moduleName/metadata/subpanels, not moduleName/subpanels
-  		$path = 'custom/modules/'. $panel->_instance_properties['module'] . '/metadata/subpanels';
+        //save the new subpanel
+        $name = "subpanel_layout['list_fields']";
 
-  		//bug# 40171: "Custom subpanels not working as expected"
-  		//each custom subpanel needs to have a unique custom def file
-  		$filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name; //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
-  		$oldName1 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
-  		$oldName2 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['get_subpanel_data'] ;
-  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php")){
-  		  unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php");
-  		}
-  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php")){
-         unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php");
-  		}
-  		$extname = '_override'.$filename;
-  		//end of bug# 40171
+        //bugfix: load looks for moduleName/metadata/subpanels, not moduleName/subpanels
+        $path = 'custom/modules/' . $panel->_instance_properties['module'] . '/metadata/subpanels';
 
-  		mkdir_recursive($path, true);
-  		write_array_to_file( $name, $override,$path.'/' . $filename .'.php');
+        //bug# 40171: "Custom subpanels not working as expected"
+        //each custom subpanel needs to have a unique custom def file
+        $oldName1 = '_override' . $panel->parent_bean->object_name . $panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'];
+        $oldName2 = '_override' . $panel->parent_bean->object_name . $panel->_instance_properties['get_subpanel_data'];
+        if (file_exists(
+            "{$layoutPath}/$oldName1.php"
+        )
+        ) {
+            @unlink("{$layoutPath}/$oldName1.php");
+        }
+        if (file_exists(
+            "{$layoutPath}/$oldName2.php"
+        )
+        ) {
+            @unlink("{$layoutPath}/$oldName2.php");
+        }
+        $extname = '_override' . $filename;
+        //end of bug# 40171
 
-  		//save the override for the layoutdef
+        mkdir_recursive($path, true);
+        write_array_to_file($name, $override, $path . '/' . $filename . '.php');
+
+        //save the override for the layoutdef
         //tyoung 10.12.07 pushed panel->name to lowercase to match case in subpaneldefs.php files -
         //gave error on bad index 'module' as this override key didn't match the key in the subpaneldefs
-  		$name = "layout_defs['".  $panel->parent_bean->module_dir. "']['subpanel_setup']['" .strtolower($panel->name). "']";
+
 //  	$GLOBALS['log']->debug('SubPanel.php->saveSubPanelDefOverride(): '.$name);
-  		$newValue = override_value_to_string($name, 'override_subpanel_name', $filename);
-  		mkdir_recursive('custom/Extension/modules/'. $panel->parent_bean->module_dir . '/Ext/Layoutdefs', true);
-  		$fp = sugar_fopen('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$extname.php", 'w');
-  		fwrite($fp, "<?php\n//auto-generated file DO NOT EDIT\n$newValue\n?>");
-  		fclose($fp);
-  		require_once('ModuleInstall/ModuleInstaller.php');
-  		$moduleInstaller = new ModuleInstaller();
-  		$moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
-  		$moduleInstaller->rebuild_layoutdefs();
-  		SugarAutoLoader::buildCache();
-  		foreach(SugarAutoLoader::existing('modules/'.  $panel->parent_bean->module_dir . '/layout_defs.php',
-  		    SugarAutoLoader::loadExtension("layoutdefs", $panel->parent_bean->module_dir)) as $file) {
-  		    include $file;
-  		}
-  }
+        $newValue = override_value_to_string($layoutDefsName, $overrideName, $filename);
+        mkdir_recursive($layoutPath, true);
+
+        $fp = sugar_fopen(
+            "{$layoutPath}/{$extname}.php",
+            'w'
+        );
+        fwrite($fp, "<?php\n//auto-generated file DO NOT EDIT\n$newValue\n?>");
+        fclose($fp);
+        require_once('ModuleInstall/ModuleInstaller.php');
+        $moduleInstaller = new ModuleInstaller();
+        $moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
+        $moduleInstaller->$moduleInstallerMethod();
+        SugarAutoLoader::buildCache();
+        foreach (SugarAutoLoader::existing(
+                     'modules/' . $panel->parent_bean->module_dir . '/layout_defs.php',
+                     SugarAutoLoader::loadExtension($layoutDefsExtName, $panel->parent_bean->module_dir)
+                 ) as $file) {
+            include $file;
+        }
+    }
 
 	function get_subpanel_setup($module)
 	{
