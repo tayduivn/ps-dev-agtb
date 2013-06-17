@@ -29,8 +29,25 @@ ul.nav.nav-tabs li.activity > p {
         padding: 8px 0 0 10px;
       }
       .btn-toolbar{
-        height: auto;
-        padding: 2px 2px 2px 2px;
+        height: 38px;
+        padding: 5px 5px 0 0;
+        margin: 0;
+        #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
+        border-bottom: 1px solid darken(@grayLighter, 5%);
+      }
+    }
+  }
+  .cols {
+    .thumbnail {
+      padding-bottom: 0;
+      .dataTable {
+        tbody {
+          tr:last-child {
+            td {
+              border-bottom: 0;
+            }
+          }
+        }
       }
     }
   }
@@ -106,6 +123,10 @@ table.dataTable {
       }
     }
   }
+}
+
+.dataTables_filter {
+  .box-shadow(~"none");
 }
 
 .modal-body > .form-horizontal {
