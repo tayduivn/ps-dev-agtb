@@ -1,9 +1,29 @@
 describe("Base.Field.Relate", function () {
 
-    var app, field, oRouter, buildRouteStub;
+    var app, field, oRouter, buildRouteStub, fieldDef;
 
     beforeEach(function () {
         app = SugarTest.app;
+
+        fieldDef = {
+            "name": "account_name",
+            "rname": "name",
+            "id_name": "account_id",
+            "vname": "LBL_ACCOUNT_NAME",
+            "type": "relate",
+            "link": "accounts",
+            "table": "accounts",
+            "join_name": "accounts",
+            "isnull": "true",
+            "module": "Accounts",
+            "dbType": "varchar",
+            "len": 100,
+            "source": "non-db",
+            "unified_search": true,
+            "comment": "The name of the account represented by the account_id field",
+            "required": true,
+            "importable": "required"
+        };
     });
 
     afterEach(function () {
@@ -11,29 +31,11 @@ describe("Base.Field.Relate", function () {
         app.view.reset();
         SugarTest.app.router = oRouter;
         delete Handlebars.templates;
+        fieldDef = null;
     });
 
     describe("SetValue", function () {
         beforeEach(function () {
-            var fieldDef = {
-                "name": "account_name",
-                "rname": "name",
-                "id_name": "account_id",
-                "vname": "LBL_ACCOUNT_NAME",
-                "type": "relate",
-                "link": "accounts",
-                "table": "accounts",
-                "join_name": "accounts",
-                "isnull": "true",
-                "module": "Accounts",
-                "dbType": "varchar",
-                "len": 100,
-                "source": "non-db",
-                "unified_search": true,
-                "comment": "The name of the account represented by the account_id field",
-                "required": true,
-                "importable": "required"
-            };
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';
             field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
@@ -46,6 +48,12 @@ describe("Base.Field.Relate", function () {
             field.setValue({id: expected_id, value: expected_name});
             var actual_id = field.model.get(field.def.id_name),
                 actual_name = field.model.get(field.def.name);
+
+            //Relate takes care of its unformating
+            //unformat is overriden to return the unformated value off the model
+            expect(field.unformat('test')).toEqual(actual_id);
+            expect(field.unformat('test')).toEqual(expected_id);
+
             expect(actual_id).toEqual(expected_id);
             expect(actual_name).toEqual(expected_name);
         });
@@ -135,7 +143,7 @@ describe("Base.Field.Relate", function () {
     describe("Populate related fields", function () {
 
         it("should warn the wrong metadata fields that populates unmatched fields", function () {
-            var metadataStub, loggerStub, fieldDef;
+            var metadataStub, loggerStub;
 
             metadataStub = sinon.stub(app.metadata, 'getModule', function () {
                 return {
@@ -145,28 +153,9 @@ describe("Base.Field.Relate", function () {
                 }
             });
             loggerStub = sinon.stub(app.logger, 'error');
-            fieldDef = {
-                "name": "account_name",
-                "rname": "name",
-                "id_name": "account_id",
-                "vname": "LBL_ACCOUNT_NAME",
-                "type": "relate",
-                "link": "accounts",
-                "table": "accounts",
-                "join_name": "accounts",
-                "isnull": "true",
-                "module": "Accounts",
-                "dbType": "varchar",
-                "len": 100,
-                "source": "non-db",
-                "unified_search": true,
-                "comment": "The name of the account represented by the account_id field",
-                "populate_list": {
-                    "field1": "foo",
-                    "billing_office": "boo"
-                },
-                "required": true,
-                "importable": "required"
+            fieldDef.populate_list = {
+                "field1": "foo",
+                "billing_office": "boo"
             };
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';
@@ -180,27 +169,8 @@ describe("Base.Field.Relate", function () {
         });
 
         it("should populate related variables when the user confirms the changes", function () {
-            var fieldDef = {
-                "name": "account_name",
-                "rname": "name",
-                "id_name": "account_id",
-                "vname": "LBL_ACCOUNT_NAME",
-                "type": "relate",
-                "link": "accounts",
-                "table": "accounts",
-                "join_name": "accounts",
-                "isnull": "true",
-                "module": "Accounts",
-                "dbType": "varchar",
-                "len": 100,
-                "source": "non-db",
-                "unified_search": true,
-                "comment": "The name of the account represented by the account_id field",
-                "populate_list": {
-                    "billing_office": "primary_address_1"
-                },
-                "required": true,
-                "importable": "required"
+            fieldDef.populate_list = {
+                "billing_office": "primary_address_1"
             };
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';
@@ -230,7 +200,6 @@ describe("Base.Field.Relate", function () {
             expect(actual_primary_address_1).toBeUndefined();
             expect(field.model.get("boo")).toBeUndefined();
 
-
             //After the user confirms the dialog
             var confirmStub = sinon.stub(app.alert, 'show', function (msg, param) {
                 param.onConfirm();
@@ -256,28 +225,9 @@ describe("Base.Field.Relate", function () {
             confirmStub.restore();
         });
         it("should not populate related variables which does NOT have acl controls", function () {
-            var fieldDef = {
-                "name": "account_name",
-                "rname": "name",
-                "id_name": "account_id",
-                "vname": "LBL_ACCOUNT_NAME",
-                "type": "relate",
-                "link": "accounts",
-                "table": "accounts",
-                "join_name": "accounts",
-                "isnull": "true",
-                "module": "Accounts",
-                "dbType": "varchar",
-                "len": 100,
-                "source": "non-db",
-                "unified_search": true,
-                "comment": "The name of the account represented by the account_id field",
-                "populate_list": {
-                    "billing_office": "primary_address_1",
-                    "billing_phone": "primary_phone_number"
-                },
-                "required": true,
-                "importable": "required"
+            fieldDef.populate_list = {
+                "billing_office": "primary_address_1",
+                "billing_phone": "primary_phone_number"
             };
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';
@@ -321,6 +271,7 @@ describe("Base.Field.Relate", function () {
             expect(actual_primary_address_1).toBeUndefined();
             expect(field.model.get("boo")).toBeUndefined();
             expect(actual_primary_phone_number).toBe(expected_primary_phone_number);
+
             field.model = null;
             field = null;
             confirmStub.restore();
@@ -331,28 +282,9 @@ describe("Base.Field.Relate", function () {
     describe("alert message", function () {
         var alertShowStub;
         beforeEach(function () {
-            var fieldDef = {
-                "name": "account_name",
-                "rname": "name",
-                "id_name": "account_id",
-                "vname": "LBL_ACCOUNT_NAME",
-                "type": "relate",
-                "link": "accounts",
-                "table": "accounts",
-                "join_name": "accounts",
-                "isnull": "true",
-                "module": "Accounts",
-                "dbType": "varchar",
-                "len": 100,
-                "source": "non-db",
-                "unified_search": true,
-                "comment": "The name of the account represented by the account_id field",
-                "required": true,
-                "importable": "required",
-                "populate_list": {
-                    "populate_field1": "populate_field_dist1",
-                    "populate_field2": "populate_field_dist2"
-                }
+            fieldDef.populate_list = {
+                "populate_field1": "populate_field_dist1",
+                "populate_field2": "populate_field_dist2"
             };
             field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
             field.module = 'Accounts';

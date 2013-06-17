@@ -1816,7 +1816,8 @@ $app_list_strings = array (
             '$equals' => 'is'
         ),
         'relate' => array(
-            '$equals' => 'is'
+            '$equals' => 'is',
+            '$not_equals' => 'is not'
         ),
         'phone' => array(
             '$starts' => 'starts with',

@@ -179,9 +179,10 @@
     /**
      * Relate takes care of its unformating
      * stub this to return the unformated value off the model
-     * @returns {*}
+     * @param {String} value
+     * @returns {String} value off the model
      */
-    unformat: function() {
+    unformat: function(value) {
         return this.model.get(this.def.id_name);
     },
     setValue: function (model) {

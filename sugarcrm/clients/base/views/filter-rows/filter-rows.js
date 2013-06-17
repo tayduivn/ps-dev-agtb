@@ -459,8 +459,9 @@
             operator = data['operator'],
             value = data['value'],
             filter = {};
-        if (this.fieldList[name] && this.fieldList[name]['id_name']) {
-            name = this.fieldList[name]['id_name'];
+
+        if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
+            name = this.fieldList[name].id_name;
         }
         if (value) {
             if (name.indexOf("$") === 0 && value === "true") {
