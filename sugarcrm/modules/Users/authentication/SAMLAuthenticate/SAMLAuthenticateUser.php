@@ -39,17 +39,15 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 
 		if(empty($_POST['SAMLResponse']))return parent::authenticateUser($name, $password);
 
-		$GLOBALS['log']->debug('have saml data.'); // JMH
+		$GLOBALS['log']->debug('have saml data.');
+		$settings = array();
 		// Look for custom versions of settings.php if it exists
         require(SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php'));
-
 
         $samlresponse = new OneLogin_Saml_Response($settings, $_POST['SAMLResponse']);
 
 		if ($samlresponse->isValid()){
 			$GLOBALS['log']->debug('response is valid');
-			$customFields = $this->getAdditionalFieldsToSelect($samlresponse, $settings);
-			$GLOBALS['log']->debug('got this many custom fields:' . count($customFields));
 
             $id = $this->get_user_id($samlresponse, $settings);
             if(!empty($settings->id)) {
@@ -60,16 +58,16 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 
 			//user already exists use this one
 			if ($user->id){
-				$GLOBALS['log']->debug('have db results'); // JMH
+				$GLOBALS['log']->debug('have db results');
 				if($user->status != 'Inactive')
 				{
-					$GLOBALS['log']->debug('have current user'); // JMH
+					$GLOBALS['log']->debug('have current user');
 					$this->updateCustomFields($user, $samlresponse, $settings);
 					return $user->id;
 				}
 				else
 				{
-					$GLOBALS['log']->debug('have inactive user'); // JMH
+					$GLOBALS['log']->debug('have inactive user');
 					return '';
 				}
 			}
@@ -81,10 +79,9 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
                 {
                     return call_user_func($settings->customCreateFunction, $this, $samlresponse->getNameId(), $xpath, $settings);
                 } else {
-                    return $this->createUser($samlresponse->getNameId(), $xpath, $settings);
+                    return $this->createUser($samlresponse->getNameId(), $samlresponse, $settings);
                 }
 			}
-//      comment out the following two lines for testing - John H. (task 9069)
 		}
 		return '';
 	}
@@ -99,76 +96,61 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 	* records, update our records to match the value from the xml.
 	*
 	* @param User $user - user fetched from our db.
-	* @param SamlResponse $samlresponse - saml provider response.
-	* @param SamlSettings $settings - our settings object.
+	* @param OneLogin_Saml_Response $samlresponse - saml provider response.
+	* @param OneLogin_Saml_Settings $settings - our settings object.
 	* @return int - 0 = no action taken, 1 = user record saved, -1 = no update.
 	*
 	* Contributed by Mike Andersen, SugarCRM.
 	**/
-	function updateCustomFields($user, $samlresponse, $settings)
+	function updateCustomFields($user, OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
 	{
 		$customFields = $this->getCustomFields($settings, 'update');
 
-		if (count($customFields) == 0)
+		if (empty($customFields))
 		{
-			$GLOBALS['log']->debug("No custom fields! So returning 0."); // JMH
+			$GLOBALS['log']->debug("No custom fields! So returning 0.");
 			return 0;
 		}
 
-		$GLOBALS['log']->debug("updateCF()... userid={$user->id}"); // JMH
+		$GLOBALS['log']->debug("updateCF()... userid={$user->id}");
 
-		$xmlDoc = $samlresponse->xml;
-		$xpath = new DOMXpath($xmlDoc);
-		$GLOBALS['log']->debug("Created xpath object."); // JMH
-
+		$attrs = $samlresponse->getAttributes();
 		$customFieldUpdated = false;
 
-		foreach ($customFields as $field)
+		foreach ($customFields as $field => $attrfield)
 		{
-			$GLOBALS['log']->debug("Top of fields loop with $field."); // JMH
+			$GLOBALS['log']->debug("Top of fields loop with $field.");
 			if (!property_exists($user, $field))
 			{
-				$GLOBALS['log']->debug("$field is not a user field. \nThe fields are: " . var_export(array_keys(get_object_vars($user)), TRUE)); // JMH
+				$GLOBALS['log']->debug("$field is not a user field.");
 				// custom field not listed in db query results!
 				continue;
 			}
+			if(!isset($attrs[$attrfield])) {
+			    continue;
+			}
+
 			$customFieldValue = $user->$field;
-
-			$xmlNodes = $xpath->query($settings->saml_settings['update'][$field]);
-			if ($xmlNodes === false)
-			{
-				// malformed xpath!
-				$GLOBALS['log']->debug("$field contains bad xpath: " . $settings->saml_settings['update'][$field]); // JMH
-				continue;
-			}
-			$GLOBALS['log']->debug("updateCF(): 3"); // JMH
-			if ($xmlNodes->length == 0)
-			{
-				// no nodes match xpath!
-				$GLOBALS['log']->debug("$field no nodes match this xpath: " . $settings->saml_settings['update'][$field]); // JMH
-				continue;
-			}
-
-			$xmlValue = $xmlNodes->item(0)->nodeValue;
-			$GLOBALS['log']->debug("$field xpath returned $xmlValue"); // JMH
+            $xmlValue = $attrs[$attrfield];
+			$GLOBALS['log']->debug("$field SAML returned $xmlValue");
 
 			if ($customFieldValue != $xmlValue)
 			{
 				// need to update our user record.
 				$customFieldUpdated = true;
 				$user->$field = $xmlValue;
-				$GLOBALS['log']->debug("db is out of date. setting {$field} to {$xmlValue}"); // JMH
+				$GLOBALS['log']->debug("db is out of date. setting {$field} to {$xmlValue}");
 			}
 		}
 
 		if ($customFieldUpdated)
 		{
-			$GLOBALS['log']->debug("updateCustomFields calling user->save() and returning 0"); // JMH
+			$GLOBALS['log']->debug("updateCustomFields calling user->save() and returning 1");
 			$user->save();
 			return 1;
 		}
 
-		$GLOBALS['log']->debug("updateCustomFields found no fields to update. Returning -1"); // JMH
+		$GLOBALS['log']->debug("updateCustomFields found no fields to update. Returning -1");
 		return -1;
 	}
 
@@ -177,17 +159,17 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 	* Determines if there are custom fields to add to our select statement, and
 	* returns a comma prepended, comma-delimited list of those custom fields.
 	*
-	* @param SamlResponse $samlresponse
-	* @param SamlSettings $settings
+	* @param OneLogin_Saml_Response $samlresponse
+	* @param OneLogin_Saml_Settings $settings
 	* @return String $additionalFields = either empty, or ", field1[, field2, fieldn]"
 	*
 	* Contributed by Mike Andersen, SugarCRM.
 	**/
-	function getAdditionalFieldsToSelect($samlresponse, $settings)
+	function getAdditionalFieldsToSelect(OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
 	{
-		if (isset($settings->saml_settings) && isset($settings->saml_settings['update']) && count($settings->saml_settings['update']) > 0)
-        {
-			return ',' . implode(',', $this->getCustomFields($settings, 'update'));
+	    $fields = $this->getCustomFields($settings, 'update');
+	    if(!empty($fields)) {
+			return ',' . implode(',', array_keys($fields));
 		}
 		return '';
 	}
@@ -195,25 +177,21 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 
 	/**
 	* Returns an array of custom field names. These names are the keys in the
-	* 'update' hash in $settings->saml_settings hash.
+	* 'update' hash in $settings->saml2_settings hash.
 	* See modules/Users/authentication/SAMLAuthenticate/settings.php for details.
 	*
-	* @param SamlSettings $settings
+	* @param OneLogin_Saml_Settings $settings
 	* @param String $which - which custom fields: 'check', 'create' or 'update'
 	* @return Array - list of custom field names.
 	*
 	* Contributed by Mike Andersen, SugarCRM.
 	**/
-	function getCustomFields($settings, $which)
+	function getCustomFields(OneLogin_Saml_Settings $settings, $which)
 	{
-		if (IsSet($settings->saml_settings[$which]))
-		{
-			return array_keys($settings->saml_settings[$which]);
-		}
-		else
-		{
-			$empty = array();
-			return $empty;
+		if (isset($settings->saml2_settings[$which])) {
+			return $settings->saml2_settings[$which];
+		} else {
+			return array();
 		}
 	}
 
@@ -224,14 +202,17 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 	 * populates the user with what was set in the SAML Response
 	 *
 	 * @param STRING $name
-	 * @param DOMXpath $xpath
-	 * @param SamlSettings $settings - our settings object.
+	 * @param OneLogin_Saml_Response $samlresponse
+	 * @param OneLogin_Saml_Settings $settings - our settings object.
 	 * @return STRING $id
 	 */
-	function createUser($name, $xpath, $settings)
-  {
-  	$GLOBALS['log']->debug("Called createUser");
-	  $user = BeanFactory::getBean('Users');
+	function createUser($name, OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
+    {
+        if(empty($settings->provisionUsers)) {
+            return '';
+        }
+  	    $GLOBALS['log']->debug("Called createUser");
+	    $user = BeanFactory::getBean('Users');
 		$user->user_name = $name;
 		$user->email1 = $name;
 		$user->last_name = $name;
@@ -244,22 +225,13 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 		// Loop through the create custom fields and update their values in the
 		// user object from the xml SAML response.
 		$customFields = $this->getCustomFields($settings, 'create');
-  	$GLOBALS['log']->debug("number of custom fields: " . count($customFields));
-		foreach ($customFields as $field)
+		$attrs = $samlresponse->getAttributes();
+  	    $GLOBALS['log']->debug("number of custom fields: " . count($customFields));
+		foreach ($customFields as $field => $attrfield)
 		{
-			$GLOBALS['log']->debug("xpath for $field is " . $settings->saml_settings['create'][$field]);
-			$xmlNodes = $xpath->query($settings->saml_settings['create'][$field]);
-			if ($xmlNodes === false)
-			{
-				// malformed xpath!
-				$GLOBALS['log']->debug("Bad xpath: " . $settings->saml_settings['create'][$field]);
-				continue;
-			}
-			if ($xmlNodes->length == 0)
-			{
-				// no nodes match xpath!
-				$GLOBALS['log']->debug("No nodes match this xpath: " . $settings->saml_settings['create'][$field]);
-				continue;
+		    $GLOBALS['log']->debug("xpath for $field is $attrfield");
+			if(empty($attrs[$attrfield])) {
+			    continue;
 			}
 
 			if ($field == 'id')
@@ -267,36 +239,32 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
 				$user->new_with_id = true;
 			}
 
-			$xmlValue = $xmlNodes->item(0)->nodeValue;
-			$GLOBALS['log']->debug("Setting $field to $xmlValue");
-			$user->$field = $xmlValue;
+			$GLOBALS['log']->debug("Setting $field to {$attrs[$attrfield]}");
+			$user->$field = $attrs[$attrfield];
 		}
 
-  	$GLOBALS['log']->debug("finished loop - saving.");
+  	    $GLOBALS['log']->debug("finished loop - saving.");
 		$user->save();
-  	$GLOBALS['log']->debug("New user id is " . $user->id);
+  	    $GLOBALS['log']->debug("New user id is " . $user->id);
 		return $user->id;
 	}
 
     /**
      * Retrieves user ID from SamlResponse according to SamlSettings
      *
-     * @param SamlResponse $samlresponse
-     * @param SamlSettings $settings
+     * @param OneLogin_Saml_Response $samlresponse
+     * @param OneLogin_Saml_Settings $settings
      * @return string
      */
-    protected function get_user_id($samlresponse, $settings)
+    protected function get_user_id(OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
     {
-        if (isset($settings->saml_settings['check']['user_name']))
-        {
-            $xmlDoc = $samlresponse->xml;
-            $xpath = new DOMXpath($xmlDoc);
-            $query = $settings->saml_settings['check']['user_name'];
-            $entries = $xpath->query($query);
-            $name_id = $entries->item(0)->nodeValue;
-        }
-        else
-        {
+        $fields = $this->getCustomFields($settings, 'check');
+        if (isset($fields['user_name'])) {
+            $attrs = $samlresponse->getAttributes();
+            if(isset($attrs[$fields['user_name']])) {
+               return $attrs[$fields['user_name']];
+            }
+        } else {
             $name_id = $samlresponse->getNameId();
         }
 

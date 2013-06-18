@@ -17,5 +17,14 @@ $settings->spReturnUrl = htmlspecialchars($GLOBALS['sugar_config']['site_url']. 
 // Name of this application
 $settings->spIssuer                         = isset($GLOBALS['sugar_config']['SAML_issuer']) ? $GLOBALS['sugar_config']['SAML_issuer'] :"php-saml";
 
-// Tells the IdP to return the email address of the current user
+// Tells the IdP to return the email address of the current user as ID
 $settings->requestedNameIdFormat = OneLogin_Saml_Settings::NAMEID_EMAIL_ADDRESS;
+
+// Should new users be provisioned?
+$settings->provisionUsers = true;
+
+// Available settings:
+// id - way of matching users: user_name, id. If not set, matched by email.
+// saml2_settings['create'] - list in format of field => attribute for creating users
+// saml2_settings['update'] - list in format of field => attribute for updating user data
+// saml2_settings['check']['user_name'] - attribute that specifies where the username is stored in the data
