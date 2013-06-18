@@ -2427,6 +2427,7 @@ private function dir_file_count($path){
             'alertAutoCloseDelay' => 2500,
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
+            'maxQueryResult' => $sugar_config['list_max_entries_per_page'],
             'unsecureRoutes' => array('login', 'error'),
             'loadCss' => false,
             'themeName' => 'default',

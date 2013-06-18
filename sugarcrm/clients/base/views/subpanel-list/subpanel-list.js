@@ -20,13 +20,6 @@
      */
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
-        // Setup max limit on collection's fetch options for this subpanel's context
-        if(app.config.maxSubpanelResult){
-            var options = {
-                limit: app.config.maxSubpanelResult
-            };
-            this.context.set('collectionOptions', options);
-        }
         this.layout.on("hide", this.toggleList, this);
     },
 
