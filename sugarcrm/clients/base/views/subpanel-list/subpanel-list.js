@@ -33,9 +33,7 @@
     /**
      * When parent recordlist's initialize is invoked (above), this will get called
      * and populate our the list's meta with the proper view subpanel metadata.
-     * @return {Object} The view metadata for this module's subpanel. Tries in following
-     * order: "subpanel-for-accounts" (parent module), "subpanel-list", "record-list",
-     * than, as last resort, we will return `{}`
+     * @return {Object} The view metadata for this module's subpanel.
      */
     _initializeMetadata: function() {
         return  _.extend({},
