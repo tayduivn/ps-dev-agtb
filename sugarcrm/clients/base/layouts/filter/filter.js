@@ -204,6 +204,7 @@
                     contextList.push(this.context);
                 }
             } else {
+                //Locate and add subpanel contexts
                 _.each(this.context.children, function(childCtx) {
                     if (childCtx.get('link') && !childCtx.get('hidden')) {
                         contextList.push(childCtx);

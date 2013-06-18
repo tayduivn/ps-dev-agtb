@@ -40,12 +40,29 @@ describe("Subpanel List View", function() {
 
     describe('Subpanel metadata intiialization', function() {
         it('should return most specific subpanel view metadata if found', function() {
-            var contextParentModuleStub = sinonSandbox.stub(view.options.context, "get").returns("Accounts");
+            sinonSandbox.stub(view.options.context, "get").returns("Accounts");
             var expected = {a:1};
             var getViewStub = sinonSandbox.stub(app.metadata, 'getView').returns(expected);
             var actual = view._initializeMetadata();
             expect(actual).toEqual(expected);
             expect(getViewStub).toHaveBeenCalledThrice();
+        });
+    });
+
+    describe('initialize', function() {
+        var oldConfig;
+        beforeEach(function() {
+            oldConfig = app.config.maxSubpanelResult;
+            app.config.maxSubpanelResult = 7;
+        });
+        afterEach(function(){
+            app.config.maxSubpanelResult = oldConfig;
+        });
+        it('set the fetch limit on the context to app.config.maxSubpanelResult', function() {
+            view = SugarTest.createView("base", 'Cases', 'subpanel-list', null, null, null, layout);
+            var opts = view.context.get("collectionOptions");
+            expect(opts).toBeDefined();
+            expect(opts.limit).toEqual(app.config.maxSubpanelResult);
         });
     });
 
