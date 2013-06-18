@@ -34,7 +34,7 @@ class SugarJobAddActivitySubscriptions implements RunnableSchedulerJob
         $act = BeanFactory::retrieveBean('Activities', $data['act_id']);
         $ignoreDeleted = true;
         $beanParams = array();
-        if ($act->activity_type === 'deleted') {
+        if ($act->activity_type === 'delete') {
             $ignoreDeleted = false;
             $beanParams = array('disable_row_level_security' => true);
         }

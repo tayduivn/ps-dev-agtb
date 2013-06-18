@@ -38,7 +38,7 @@ class SugarJobAddActivitySubscriptionsTest extends Sugar_PHPUnit_Framework_TestC
         //simulate deleted bean and associated activity
         BeanFactory::deleteBean($this->bean->module_name, $this->bean->id);
 
-        $this->activity->activity_type = 'deleted';
+        $this->activity->activity_type = 'delete';
         $this->activity->save();
 
         $data = serialize(
