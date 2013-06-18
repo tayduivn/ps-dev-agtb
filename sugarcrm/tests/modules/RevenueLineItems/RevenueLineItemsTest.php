@@ -81,68 +81,6 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($this->revenuelineitem->date_closed);
     }
 
-
-    /**
-     * This is a test to check that the create_new_list_query function returns a where clause to filter
-     * "opportunity_id is null" so that revenuelineitems created for opportunities are not displayed by default
-     *
-     * @group forecasts
-     * @group revenuelineitems
-     */
-    public function testCreateNewListQuery()
-    {   //$this->markTestIncomplete("SFA - This is broken");
-        $ret_array = $this->revenuelineitem->create_new_list_query('', '', array(), array(), 0, '', true);
-        $this->assertContains(
-            "revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> ''",
-            $ret_array['where'],
-            "Did not find revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '' clause"
-        );
-
-        $query = $this->revenuelineitem->create_new_list_query('', '', array(), array(), 0, '', false);
-        $this->assertContains(
-            "revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> ''",
-            $query,
-            "Did not find revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '' clause"
-        );
-    }
-
-
-    /**
-     * This is a test to check that the create_export_query function returns a where clause to filter
-     * "opportunity_id is null" so that revenuelineitems created for opportunities are not displayed by default
-     *
-     * @group forecasts
-     * @group revenuelineitems
-     */
-    public function testCreateExportQuery()
-    {
-        $orderBy = '';
-        $where = '';
-        $query = $this->revenuelineitem->create_export_query($orderBy, $where);
-        $this->assertContains(
-            "revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> ''",
-            $query,
-            "Did not find revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '' clause"
-        );
-    }
-
-    /**
-     * With SFA-585, it cause the LEFT JOIN was getting added twice, and something got fixed in the system
-     * which caused it to be added twice.
-     *
-     * @ticket SFA-585
-     * @group revenuelineitems
-     */
-    public function testCreateNewListQueryOnlyContainsOneLeftJoinToContacts()
-    {
-        $ret_array = $this->revenuelineitem->create_new_list_query('', '', array(), array(), 0, '', true);
-
-        $this->assertEquals(
-            1,
-            substr_count($ret_array['from'], 'LEFT JOIN contacts on contacts.id = revenue_line_items.contact_id')
-        );
-    }
-
     /**
      * @group revenuelineitems
      *
