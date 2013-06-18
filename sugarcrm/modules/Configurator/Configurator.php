@@ -140,25 +140,22 @@ class Configurator {
 		if(isset($this->config['logger']['level']) && $this->logger) $this->logger->setLevel($this->config['logger']['level']);
 	}
 
-    //bug #27947 , if previous $sugar_config['stack_trace_errors'] is true and now we disable it , we should clear all the cache.
-    function clearCache()
-    {
-        global $sugar_config, $sugar_version;
-        $currentConfigArray = $this->readOverride();
-        foreach($currentConfigArray as $key => $val) {
-            if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
-                if (empty($val) ) {
-                    if(!empty($this->previous_sugar_override_config_array['stack_trace_errors']) && $key == 'stack_trace_errors'){
-                        require_once('include/TemplateHandler/TemplateHandler.php');
-                        TemplateHandler::clearAll();
-                        return;
-                    }
-                }
-            }
-        }
-        // Clear System metadata only
-        MetaDataManager::clearAPICache(false);
-    }
+	//bug #27947 , if previous $sugar_config['stack_trace_errors'] is true and now we disable it , we should clear all the cache.
+	function clearCache(){
+		global $sugar_config, $sugar_version;
+		$currentConfigArray = $this->readOverride();
+		foreach($currentConfigArray as $key => $val) {
+			if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
+				if (empty($val) ) {
+					if(!empty($this->previous_sugar_override_config_array['stack_trace_errors']) && $key == 'stack_trace_errors'){
+						require_once('include/TemplateHandler/TemplateHandler.php');
+						TemplateHandler::clearAll();
+						return;
+					}
+				}
+			}
+		}
+	}
 
 	function saveConfig() {
 		$this->saveImages();
