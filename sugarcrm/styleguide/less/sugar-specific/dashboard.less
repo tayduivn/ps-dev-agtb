@@ -71,6 +71,9 @@
                 padding: 0;
               }
             }
+            .swappable-dashlet {
+              display: none;
+            }
             div.widget-content {
               overflow: auto;
               width: 100%;
@@ -128,6 +131,20 @@
               border-color: @white;
               p,
               strong i {
+                color: @white;
+              }
+            }
+            .widget:not(.empty) {
+              opacity: .5;
+              .swappable-dashlet {
+                display: block;
+                position: absolute;
+                width: 100%;
+                font-size: 60px;
+                font-weight: 900;
+                text-align: center;
+                top: 30%;
+                text-shadow: 0px 0px 3px rgb(0,0,0);
                 color: @white;
               }
             }
