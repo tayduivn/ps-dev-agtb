@@ -213,10 +213,10 @@ nv.models.paretoChart = function () {
 
       var titleHeight = 0
         , legendHeight = 0
-        , wideLegend = multibar.stacked() && dataBars.length > 2;
-      //console.log(showLegend);
-      if (showLegend)
-      {
+        , wideLegend = multibar.stacked() && dataBars.length > 2
+        , quotaLegend = {'key':'Quota ($'+ d3.format(',.2s')(quotaValue) +')', 'type':'line', 'color':'#444', 'values':{'series':0,'x':0,'y':0}};
+
+      if (showLegend) {
         // bar series legend
         gEnter.append('g').attr('class', 'nv-legendWrap nv-barLegend');
 
@@ -241,7 +241,7 @@ nv.models.paretoChart = function () {
             .datum(
               data.filter(function (d) {
                 return d.type === 'line';
-              }).concat([{'key': 'Quota ($'+ d3.format(',.2s')(quotaValue) +')', 'type': 'line', 'color': '#444'}])
+              }).concat([quotaLegend])
             )
             .call(lineLegend);
 

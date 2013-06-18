@@ -24,12 +24,11 @@ nv.models.paretoLegend = function () {
       var availableWidth = width - margin.left - margin.right,
           container = d3.select(this);
 
-      if (!data || !data.length || !data.values || !data.values || !data.filter(function (d) { return d.values.length; }).length) {
+      if (!data || !data.length || !data.filter(function (d) { return d.values.length; }).length) {
         return chart;
       } else {
         container.selectAll('g.nv-legend').remove();
       }
-
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
       var wrap = container.selectAll('g.nv-legend').data([data]);
@@ -62,10 +61,10 @@ nv.models.paretoLegend = function () {
       {
         seriesEnter.append('rect')
             .attr('class', function (d,i) {
-              return this.getAttribute('class') || (useClass ? (d.class || 'nv-fill' + (i % 20 > 9 ? '' : '0') + i % 20) : '');
+              return this.getAttribute('class') || classes(d,i);
             })
-            .attr('fill', function (d,i) { return color(d,i); })
-            .attr('stroke', function (d,i) { return color(d,i); })
+            .attr('fill', function (d,i) { return this.getAttribute('fill') || color(d,i); })
+            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
             .attr('stroke-width', 0)
             .attr('width', 10)
             .attr('height', 10)
@@ -80,18 +79,18 @@ nv.models.paretoLegend = function () {
       {
         seriesEnter.append('circle')
             .attr('class', function (d,i) {
-              return this.getAttribute('class') || (useClass ? (d.class || 'nv-fill' + (i % 20 > 9 ? '' : '0') + i % 20) : '');
+              return this.getAttribute('class') || classes(d,i);
             })
-            .attr('fill', function (d,i) { return color(d,i); })
-            .attr('stroke', function (d,i) { return color(d,i); })
+            .attr('fill', function (d,i) { return this.getAttribute('fill') || color(d,i); })
+            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
             .attr('stroke-width', 0)
             .attr('r', 4)
             .attr('transform', 'translate(8,0)');
         seriesEnter.append('line')
             .attr('class', function (d,i) {
-              return this.getAttribute('class') || (useClass ? (d.class || 'nv-stroke' + (i % 10 > 9 ? '' : '0') + i % 10) : '');
+              return this.getAttribute('class') || classes(d,i);
             })
-            .attr('stroke', function (d,i) { return color(d,i); })
+            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
             .attr('stroke-width', 2)
             .attr('x0',0)
             .attr('x1',16)
