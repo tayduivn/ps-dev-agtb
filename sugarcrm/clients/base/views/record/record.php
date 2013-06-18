@@ -76,4 +76,10 @@ $viewdefs['base']['view']['record'] = array(
             'type' => 'sidebartoggle',
         ),
     ),
+    'last_state' => array(
+        'id' => 'record_view',
+        'defaults' => array(
+            'show_more' => 'more'
+        ),
+    ),
 );

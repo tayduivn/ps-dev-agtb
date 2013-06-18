@@ -15,6 +15,13 @@
     // button fields defined in view definition
     buttons: null,
 
+    // "Show More" state per module
+    MORE_LESS_KEY: "more_less", //gets namespaced in initialize function
+    MORE_LESS: {
+        MORE: 'more',
+        LESS: 'less'
+    },
+
     // button states
     STATE: {
         EDIT: 'edit',
@@ -50,6 +57,8 @@
         }
 
         this.noEditFields = [];
+        // properly namespace SHOW_MORE_KEY key
+        this.MORE_LESS_KEY = app.user.lastState.key(this.MORE_LESS_KEY, this);
     },
 
     /**
@@ -119,6 +128,11 @@
             // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
             this.toggleFields(this.editableFields, true);
         }
+        // Restore state of 'Show More' panel by toggling it if 'Show Less' needs to be shown
+        if(app.user.lastState.get(this.MORE_LESS_KEY) === this.MORE_LESS.LESS){
+            this.toggleMoreLess();
+        }
+
     },
 
     setEditableFields: function () {
@@ -191,6 +205,8 @@
         this.$(".less").toggleClass("hide");
         this.$(".more").toggleClass("hide");
         this.$(".panel_hidden").toggleClass("hide");
+        var moreLess = this.$(".less").is(".hide") ? this.MORE_LESS.MORE : this.MORE_LESS.LESS;
+        app.user.lastState.set(this.MORE_LESS_KEY, moreLess);
     },
 
     bindDataChange: function () {
