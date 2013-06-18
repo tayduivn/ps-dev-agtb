@@ -71,9 +71,6 @@
                 padding: 0;
               }
             }
-            .swappable-dashlet {
-              display: none;
-            }
             div.widget-content {
               overflow: auto;
               width: 100%;
@@ -145,7 +142,7 @@
                 text-align: center;
                 top: 30%;
                 text-shadow: 0px 0px 3px rgb(0,0,0);
-                color: @white;
+                color: @white !important;
               }
             }
           }
@@ -370,4 +367,8 @@
       }
     }
   }
+}
+
+.swappable-dashlet.icon-download-alt {
+  display: none;
 }
