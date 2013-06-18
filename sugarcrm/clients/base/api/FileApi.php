@@ -64,6 +64,7 @@ class FileApi extends SugarApi {
                 'pathVars' => array('module', 'record', '', 'field'),
                 'method' => 'getFile',
                 'rawReply' => true,
+                'allowDownloadCookie' => true,
                 'shortHelp' => 'Gets the contents of a single file related to a field for a module record.',
                 'longHelp' => 'include/api/help/module_record_file_field_get_help.html',
             ),

@@ -85,6 +85,13 @@ $dictionary['OAuthToken'] = array(
             'len' => 32,
             'comment' => 'Token verification info',
       ),
+      'download_token' =>
+      array (
+            'name' => 'download_token',
+            'type' => 'varchar',
+            'len' => 36,
+            'comment' => 'A token used to download images and files.',
+      ),
 //      'authdata' =>
 //      array (
 //            'name' => 'verify',

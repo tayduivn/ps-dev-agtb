@@ -26,8 +26,6 @@ require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 require_once('include/api/RestResponse.php');
 require_once('include/api/RestRequest.php');
 
-
-/** @noinspection PhpInconsistentReturnPointsInspection */
 /** @noinspection PhpInconsistentReturnPointsInspection */
 class RestService extends ServiceBase
 {
@@ -35,6 +33,7 @@ class RestService extends ServiceBase
      * X-Header containging the clients metadata hash
      */
     const HEADER_META_HASH = "X_METADATA_HASH";
+    const DOWNLOAD_COOKIE = 'download_token';
 
     public $user;
     /**
@@ -149,6 +148,9 @@ class RestService extends ServiceBase
 
             // Get the request args early for use in current user api
             $argArray = $this->getRequestArgs($route);
+            if ( !$isLoggedIn && !empty($route['allowDownloadCookie']) && isset($_COOKIE[self::DOWNLOAD_COOKIE])) {
+                $isLoggedIn = $this->authenticateUserForDownload($_COOKIE[self::DOWNLOAD_COOKIE]);
+            }
 
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 if (!$isLoggedIn) {
@@ -404,10 +406,9 @@ class RestService extends ServiceBase
     /**
      * Handles authentication of the current user
      *
-     * @return array containing two properties; bool isLoggedIn:
-     *  Was the login successful, Exception|bool exception
-     * @throws SugarApiExceptionRequestTooLarge
-     * @throws SugarApiExceptionNeedLogin
+     * @param string $platform The platform type for this request
+     * @returns bool Was the login successful
+     * @throws SugarApiExceptionRequestTooLarge gets thrown on file uploads if the request failed
      */
     protected function authenticateUser()
     {
@@ -419,13 +420,11 @@ class RestService extends ServiceBase
             try {
                 $oauthServer = SugarOAuth2Server::getOAuth2Server();
                 $oauthServer->verifyAccessToken($token);
+
                 if ( isset($_SESSION['authenticated_user_id']) && $_SESSION['unique_key'] == $GLOBALS['sugar_config']['unique_key']) {
-                    $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
-                    if (!empty($GLOBALS['current_user'])) {
-                        $valid = true;
-                        $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
-                    }
+                    $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'],$oauthServer);
                 }
+
             } catch ( OAuth2AuthenticateException $e ) {
                 // This was failing if users were passing an oauth token up to a public url.
                 $valid = false;
@@ -468,17 +467,6 @@ class RestService extends ServiceBase
             return array('isLoggedIn' => false, 'exception' => $exception);
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
-        SugarApplication::trackLogin();
-        //END SUGARCRM flav=pro ONLY
-
-        // Setup visibility where needed
-        $oauthServer->setupVisibility();
-
-        LogicHook::initialize()->call_custom_logic('', 'after_session_start');
-
-        $this->user = $GLOBALS['current_user'];
-
         return array('isLoggedIn' => true, 'exception' => false);
     }
 
@@ -513,6 +501,58 @@ class RestService extends ServiceBase
         }
 
         return $sessionId;
+    }
+
+    /**
+     * Handles authentication of the current user from the download token
+     *
+     * @param string $token The download autentication token.
+     * @returns bool Was the login successful
+     * @throws SugarApiExceptionNeedLogin
+     */
+    protected function authenticateUserForDownload($token)
+    {
+        $valid = false;
+
+        if (!empty($token)) {
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $tokenData = $oauthServer->verifyDownloadToken($token);
+            
+            $valid = $this->userAfterAuthenticate($tokenData['user_id'],$oauthServer);
+        }
+
+        return $valid;
+    }
+    
+    /**
+     * Sets up a user after successful authentication and session setup
+     *
+     * @returns bool Was the login successful
+     */
+    protected function userAfterAuthenticate($userId,$oauthServer)
+    {
+        $valid = false;
+
+        $GLOBALS['current_user'] = BeanFactory::getBean('Users',$userId);
+        if(!empty($GLOBALS['current_user'])) {
+            $valid = true;
+            $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
+        }
+
+        if ($valid) {
+            //BEGIN SUGARCRM flav=pro ONLY
+            SugarApplication::trackLogin();
+            //END SUGARCRM flav=pro ONLY
+            
+            // Setup visibility where needed
+            $oauthServer->setupVisibility();
+            
+            LogicHook::initialize()->call_custom_logic('', 'after_session_start');
+            
+            $this->user = $GLOBALS['current_user'];
+        }
+
+        return $valid;
     }
 
     /**

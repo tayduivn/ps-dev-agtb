@@ -166,23 +166,23 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     }
 
     // BEGIN METHODS FROM IOAuth2Storage
-	/**
-	 * Make sure that the client credentials is valid.
-	 *
-	 * @param $client_id
-	 * Client identifier to be check with.
-	 * @param $client_secret
-	 * (optional) If a secret is required, check that they've given the right one.
-	 *
-	 * @return
-	 * TRUE if the client credentials are valid, and MUST return FALSE if it isn't.
-	 * @endcode
-	 *
-	 * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-3.1
-	 *
-	 * @ingroup oauth2_section_3
-	 */
-	public function checkClientCredentials($client_id, $client_secret = NULL)
+    /**
+     * Make sure that the client credentials is valid.
+     *
+     * @param $client_id
+     * Client identifier to be check with.
+     * @param $client_secret
+     * (optional) If a secret is required, check that they've given the right one.
+     *
+     * @return
+     * TRUE if the client credentials are valid, and MUST return FALSE if it isn't.
+     * @endcode
+     *
+     * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-3.1
+     *
+     * @ingroup oauth2_section_3
+     */
+    public function checkClientCredentials($client_id, $client_secret = NULL)
     {
         $clientInfo = $this->getClientDetails($client_id);
         if ($clientInfo === false) {
@@ -198,22 +198,22 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
     }
 
-	/**
-	 * Get client details corresponding client_id.
-	 *
-	 * OAuth says we should store request URIs for each registered client.
-	 * Implement this function to grab the stored URI for a given client id.
-	 *
-	 * @param $client_id
-	 * Client identifier to be check with.
-	 *
-	 * @return array
-	 * Client details. Only mandatory item is the "registered redirect URI", and MUST
-	 * return FALSE if the given client does not exist or is invalid.
-	 *
-	 * @ingroup oauth2_section_4
-	 */
-	public function getClientDetails($client_id)
+    /**
+     * Get client details corresponding client_id.
+     *
+     * OAuth says we should store request URIs for each registered client.
+     * Implement this function to grab the stored URI for a given client id.
+     *
+     * @param $client_id
+     * Client identifier to be check with.
+     *
+     * @return array
+     * Client details. Only mandatory item is the "registered redirect URI", and MUST
+     * return FALSE if the given client does not exist or is invalid.
+     *
+     * @ingroup oauth2_section_4
+     */
+    public function getClientDetails($client_id)
     {
         // Get the client bean for this client id
         if ( isset($this->oauthKeyRecord) && $this->oauthKeyRecord->c_key == $client_id ) {
@@ -244,16 +244,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             $clientBean = $newKey;
             $this->oauthKeyRecord = $clientBean;
         }
-
-        // Add platform validation to this return. We have a bean and the bean
-        // client key is either sugar OR the client type matches the named type
-        // of the storage. For now this assumes a one-to-one mapping of oauthkey
-        // client_type to the client type in an oauth2storage class
-        $clientAllowed = $clientBean != null &&
-                         (
-                             $clientBean->client_type == 'user' ||
-                             (($clientType = $this->getPlatformStore()->getClientType()) !== null && $clientBean->client_type == $clientType)
-                         );
+        
+        $clientAllowed = $this->isClientAllowed($clientBean);
+        
         if ($clientAllowed) {
             // Other than redirect_uri, there isn't a lot of docs on what else to return here
             $returnData = array('redirect_uri'=>'',
@@ -269,25 +262,48 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         return false;
     }
 
-	/**
-	 * Look up the supplied oauth_token from storage.
-	 *
-	 * We need to retrieve access token data as we create and verify tokens.
-	 *
-	 * @param $oauth_token
-	 * oauth_token to be check with.
-	 *
-	 * @return
-	 * An associative array as below, and return NULL if the supplied oauth_token
-	 * is invalid:
-	 * - client_id: Stored client identifier.
-	 * - expires: Stored expiration in unix timestamp.
-	 * - scope: (optional) Stored scope values in space-separated string.
-	 *
-	 * @ingroup oauth2_section_7
-	 */
-	public function getAccessToken($oauth_token)
+    /**
+     * Add platform validation to the client data and the current user's platform
+     * @param $clientBean
+     * @param $clientType
+     */
+    public function isClientAllowed($clientBean)
     {
+        // Add platform validation to this return. We have a bean and the bean
+        // client key is either sugar OR the client type matches the named type
+        // of the storage. For now this assumes a one-to-one mapping of oauthkey
+        // client_type to the client type in an oauth2storage class
+        $clientAllowed = $clientBean != null
+            && ($clientBean->client_type == 'user'
+                || (($clientType = $this->getPlatformStore()->getClientType()) !== null 
+                    && $clientBean->client_type == $clientType)
+        );
+
+        return $clientAllowed;
+    }
+
+    /**
+     * Look up the supplied oauth_token from storage.
+     *
+     * We need to retrieve access token data as we create and verify tokens.
+     *
+     * @param $oauth_token
+     * oauth_token to be check with.
+     *
+     * @return
+     * An associative array as below, and return NULL if the supplied oauth_token
+     * is invalid:
+     * - client_id: Stored client identifier.
+     * - expires: Stored expiration in unix timestamp.
+     * - scope: (optional) Stored scope values in space-separated string.
+     *
+     * @ingroup oauth2_section_7
+     */
+    public function getAccessToken($oauth_token)
+    {
+        if (!empty($this->isDownloadToken)) {
+            return $this->getDownloadToken($oauth_token);
+        }
         if(empty($oauth_token) || session_id() !=  $oauth_token){
             if(session_id()) {
                 // Oh, we are in trouble, we have a session and it's the wrong one.
@@ -317,25 +333,71 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         }
     }
 
-	/**
-	 * Store the supplied access token values to storage.
-	 *
-	 * We need to store access token data as we create and verify tokens.
-	 *
-	 * @param $oauth_token
-	 * oauth_token to be stored.
-	 * @param $client_id
-	 * Client identifier to be stored.
-	 * @param $user_id
-	 * User identifier to be stored.
-	 * @param $expires
-	 * Expiration to be stored.
-	 * @param $scope
-	 * (optional) Scopes to be stored in space-separated string.
-	 *
-	 * @ingroup oauth2_section_4
-	 */
-	public function setAccessToken($oauth_token, $client_id, $user_id, $expires, $scope = NULL)
+    /**
+     * Look up the supplied oauth_token from download token storage.
+     *
+     * @param $oauth_token
+     * oauth_token to be check with.
+     *
+     * @return
+     * An associative array as below, and return NULL if the supplied oauth_token
+     * is invalid:
+     * - client_id: Stored client identifier.
+     * - expires: Stored expiration in unix timestamp.
+     * - scope: (optional) Stored scope values in space-separated string.
+     *
+     * @ingroup oauth2_section_7
+     */
+    public function getDownloadToken($oauth_token)
+    {
+        $tokenSeed = BeanFactory::newBean('OAuthTokens');
+        $token = $tokenSeed->retrieve_by_string_fields(array('download_token'=>$oauth_token));
+
+        $clientBean = BeanFactory::retrieveBean('OAuthKeys',$token->consumer);
+
+        if (empty($token->id) || empty($clientBean->id)) {
+            return NULL;
+        }
+
+        $clientAllowed = $this->isClientAllowed($clientBean);
+
+        if ( !$clientAllowed ) {
+            return NULL;
+        }
+
+        if (session_id()) {
+            // The session here could be unrelated to the actual user attached to the
+            // download token, so let's just close it.
+            session_write_close();
+            $_SESSION = array();
+        }
+
+        return array(
+            'client_id'=>$clientBean->c_key,
+            'user_id'=>$token->assigned_user_id,
+            'expires'=>$token->expire_ts,
+        );
+    }
+
+    /**
+     * Store the supplied access token values to storage.
+     *
+     * We need to store access token data as we create and verify tokens.
+     *
+     * @param $oauth_token
+     * oauth_token to be stored.
+     * @param $client_id
+     * Client identifier to be stored.
+     * @param $user_id
+     * User identifier to be stored.
+     * @param $expires
+     * Expiration to be stored.
+     * @param $scope
+     * (optional) Scopes to be stored in space-separated string.
+     *
+     * @ingroup oauth2_section_4
+     */
+    public function setAccessToken($oauth_token, $client_id, $user_id, $expires, $scope = NULL)
     {
         global $sugar_config;
 
@@ -392,25 +454,25 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         throw new SugarApiException('Could not start session because client type was not found');
     }
 
-	/**
-	 * Check restricted grant types of corresponding client identifier.
-	 *
-	 * If you want to restrict clients to certain grant types, override this
-	 * function.
-	 *
-	 * @param $client_id
-	 * Client identifier to be check with.
-	 * @param $grant_type
-	 * Grant type to be check with, would be one of the values contained in
-	 * OAuth2::GRANT_TYPE_REGEXP.
-	 *
-	 * @return
-	 * TRUE if the grant type is supported by this client identifier, and
-	 * FALSE if it isn't.
-	 *
-	 * @ingroup oauth2_section_4
-	 */
-	public function checkRestrictedGrantType($client_id, $grant_type)
+    /**
+     * Check restricted grant types of corresponding client identifier.
+     *
+     * If you want to restrict clients to certain grant types, override this
+     * function.
+     *
+     * @param $client_id
+     * Client identifier to be check with.
+     * @param $grant_type
+     * Grant type to be check with, would be one of the values contained in
+     * OAuth2::GRANT_TYPE_REGEXP.
+     *
+     * @return
+     * TRUE if the grant type is supported by this client identifier, and
+     * FALSE if it isn't.
+     *
+     * @ingroup oauth2_section_4
+     */
+    public function checkRestrictedGrantType($client_id, $grant_type)
     {
         return true;
     }
@@ -419,68 +481,68 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
 
     // BEGIN METHODS FROM IOAuth2GrantUser
-	/**
-	 * Grant access tokens for basic user credentials.
-	 *
-	 * Check the supplied username and password for validity.
-	 *
-	 * You can also use the $client_id param to do any checks required based
-	 * on a client, if you need that.
-	 *
-	 * Required for OAuth2::GRANT_TYPE_USER_CREDENTIALS.
-	 *
-	 * @param $client_id
-	 * Client identifier to be check with.
-	 * @param $username
-	 * Username to be check with.
-	 * @param $password
-	 * Password to be check with.
-	 *
-	 * @return
-	 * TRUE if the username and password are valid, and FALSE if it isn't.
-	 * Moreover, if the username and password are valid, and you want to
-	 * verify the scope of a user's access, return an associative array
-	 * with the scope values as below. We'll check the scope you provide
-	 * against the requested scope before providing an access token:
-	 * @code
-	 * return array(
-	 * 'scope' => <stored scope values (space-separated string)>,
-	 * );
-	 * @endcode
-	 *
-	 * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.3
-	 *
-	 * @ingroup oauth2_section_4
-	 */
-	public function checkUserCredentials($client_id, $username, $password)
+    /**
+     * Grant access tokens for basic user credentials.
+     *
+     * Check the supplied username and password for validity.
+     *
+     * You can also use the $client_id param to do any checks required based
+     * on a client, if you need that.
+     *
+     * Required for OAuth2::GRANT_TYPE_USER_CREDENTIALS.
+     *
+     * @param $client_id
+     * Client identifier to be check with.
+     * @param $username
+     * Username to be check with.
+     * @param $password
+     * Password to be check with.
+     *
+     * @return
+     * TRUE if the username and password are valid, and FALSE if it isn't.
+     * Moreover, if the username and password are valid, and you want to
+     * verify the scope of a user's access, return an associative array
+     * with the scope values as below. We'll check the scope you provide
+     * against the requested scope before providing an access token:
+     * @code
+     * return array(
+     * 'scope' => <stored scope values (space-separated string)>,
+     * );
+     * @endcode
+     *
+     * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-4.3
+     *
+     * @ingroup oauth2_section_4
+     */
+    public function checkUserCredentials($client_id, $username, $password)
     {
         return $this->getPlatformStore()->checkUserCredentials($this, $client_id, $username, $password);
     }
     // END METHODS FROM IOAuth2GrantUser
 
     // BEGIN METHODS FROM IOAuth2RefreshTokens
-	/**
-	 * Grant refresh access tokens.
-	 *
-	 * Retrieve the stored data for the given refresh token.
-	 *
-	 * Required for OAuth2::GRANT_TYPE_REFRESH_TOKEN.
-	 *
-	 * @param $refresh_token
-	 * Refresh token to be check with.
-	 *
-	 * @return
-	 * An associative array as below, and NULL if the refresh_token is
-	 * invalid:
-	 * - client_id: Stored client identifier.
-	 * - expires: Stored expiration unix timestamp.
-	 * - scope: (optional) Stored scope values in space-separated string.
-	 *
-	 * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-6
-	 *
-	 * @ingroup oauth2_section_6
-	 */
-	public function getRefreshToken($refresh_token)
+    /**
+     * Grant refresh access tokens.
+     *
+     * Retrieve the stored data for the given refresh token.
+     *
+     * Required for OAuth2::GRANT_TYPE_REFRESH_TOKEN.
+     *
+     * @param $refresh_token
+     * Refresh token to be check with.
+     *
+     * @return
+     * An associative array as below, and NULL if the refresh_token is
+     * invalid:
+     * - client_id: Stored client identifier.
+     * - expires: Stored expiration unix timestamp.
+     * - scope: (optional) Stored scope values in space-separated string.
+     *
+     * @see http://tools.ietf.org/html/draft-ietf-oauth-v2-20#section-6
+     *
+     * @ingroup oauth2_section_6
+     */
+    public function getRefreshToken($refresh_token)
     {
         $tokenSeed = BeanFactory::newBean('OAuthTokens');
         $token = $tokenSeed->load($refresh_token,'oauth2');
@@ -499,33 +561,34 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             'refresh_token'=>$token->id,
             'client_id'=>$token->consumer_obj->c_key,
             'expires'=>$token->expire_ts,
+            'download_token'=>$token->download_token,
             'user_id'=>$authBean->id,
         );
     }
 
-	/**
-	 * Take the provided refresh token values and store them somewhere.
-	 *
-	 * This function should be the storage counterpart to getRefreshToken().
-	 *
-	 * If storage fails for some reason, we're not currently checking for
-	 * any sort of success/failure, so you should bail out of the script
-	 * and provide a descriptive fail message.
-	 *
-	 * Required for OAuth2::GRANT_TYPE_REFRESH_TOKEN.
-	 *
-	 * @param $refresh_token
-	 * Refresh token to be stored.
-	 * @param $client_id
-	 * Client identifier to be stored.
-	 * @param $expires
-	 * expires to be stored.
-	 * @param $scope
-	 * (optional) Scopes to be stored in space-separated string.
-	 *
-	 * @ingroup oauth2_section_6
-	 */
-	public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = NULL)
+    /**
+     * Take the provided refresh token values and store them somewhere.
+     *
+     * This function should be the storage counterpart to getRefreshToken().
+     *
+     * If storage fails for some reason, we're not currently checking for
+     * any sort of success/failure, so you should bail out of the script
+     * and provide a descriptive fail message.
+     *
+     * Required for OAuth2::GRANT_TYPE_REFRESH_TOKEN.
+     *
+     * @param $refresh_token
+     * Refresh token to be stored.
+     * @param $client_id
+     * Client identifier to be stored.
+     * @param $expires
+     * expires to be stored.
+     * @param $scope
+     * (optional) Scopes to be stored in space-separated string.
+     *
+     * @ingroup oauth2_section_6
+     */
+    public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = NULL)
     {
         $keyInfo = $this->getClientDetails($client_id);
 
@@ -547,28 +610,29 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $token->contact_id = $contact_id;
         $token->expire_ts = $expires;
         $token->setState(OAuthToken::ACCESS);
+        $token->download_token = create_guid();
 
         $token->save();
 
     }
 
-	/**
-	 * Expire a used refresh token.
-	 *
-	 * This is not explicitly required in the spec, but is almost implied.
-	 * After granting a new refresh token, the old one is no longer useful and
-	 * so should be forcibly expired in the data store so it can't be used again.
-	 *
-	 * If storage fails for some reason, we're not currently checking for
-	 * any sort of success/failure, so you should bail out of the script
-	 * and provide a descriptive fail message.
-	 *
-	 * @param $refresh_token
-	 * Refresh token to be expirse.
-	 *
-	 * @ingroup oauth2_section_6
-	 */
-	public function unsetRefreshToken($refresh_token)
+    /**
+     * Expire a used refresh token.
+     *
+     * This is not explicitly required in the spec, but is almost implied.
+     * After granting a new refresh token, the old one is no longer useful and
+     * so should be forcibly expired in the data store so it can't be used again.
+     *
+     * If storage fails for some reason, we're not currently checking for
+     * any sort of success/failure, so you should bail out of the script
+     * and provide a descriptive fail message.
+     *
+     * @param $refresh_token
+     * Refresh token to be expirse.
+     *
+     * @ingroup oauth2_section_6
+     */
+    public function unsetRefreshToken($refresh_token)
     {
         $token = BeanFactory::newBean('OAuthTokens');
         $token->mark_deleted($refresh_token);
@@ -624,3 +688,4 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         return $this->platformStore;
     }
 }
+
