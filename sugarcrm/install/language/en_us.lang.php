@@ -589,11 +589,11 @@ $mod_strings = array(
     'LBL_COLLATION' => 'Collation Settings',
 	'LBL_REQUIRED_SYSTEM_NAME'=>'Provide a System Name for the Sugar instance.',
 	'LBL_PATCH_UPLOAD' => 'Select a patch file from your local computer',
-	'LBL_INCOMPATIBLE_PHP_VERSION' => 'Php version 5 or above is required.',
-	'LBL_MINIMUM_PHP_VERSION' => 'Minimum Php version required is 5.1.0. Recommended Php version is 5.2.x.',
+	'LBL_INCOMPATIBLE_PHP_VERSION' => 'PHP version 5 or above is required.',
+	'LBL_MINIMUM_PHP_VERSION' => 'Minimum PHP version required is 5.3.0.',
 	'LBL_YOUR_PHP_VERSION' => '(Your current php version is ',
-	'LBL_RECOMMENDED_PHP_VERSION' =>' Recommended php version is 5.2.x)',
-	'LBL_BACKWARD_COMPATIBILITY_ON' => 'Php Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further',
+	'LBL_RECOMMENDED_PHP_VERSION' =>' Recommended php version is 5.3.x)',
+	'LBL_BACKWARD_COMPATIBILITY_ON' => 'PHP Backward Compatibility mode is turned on. Set zend.ze1_compatibility_mode to Off for proceeding further',
 
     'advanced_password_new_account_email' => array(
         'subject' => 'New account information',
@@ -622,7 +622,7 @@ Click on the link below to reset your password:
 
 $contact_user_link_guid',
         'name' => 'Forgot Password email',
-        ),        
+        ),
 );
 
 ?>
