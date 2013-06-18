@@ -192,5 +192,56 @@ describe('copy field', function() {
         it('should return null on unformat', function() {
             expect(field.unformat()).toEqual(null);
         });
+
+        describe('hasAccess', function() {
+
+            afterEach(function() {
+                sinon.collection.restore();
+            });
+
+            it('should return true for case: Original value (read) + Target value (edit)', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                    return (action === 'read' || action === 'edit');
+                });
+                expect(field.hasAccess()).toBeTruthy();
+            });
+
+            it('should return false for case: Original value (non-read) + Target value (edit)', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                    return action === 'edit';
+                });
+                expect(field.hasAccess()).toBeFalsy();
+            });
+
+            it('should return false for case: Original value (read) + Target value (non-edit)', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                    return action === 'read';
+                });
+                expect(field.hasAccess()).toBeFalsy();
+            });
+
+            it('should return false for case: Original value (non-read) + Target value (non-edit)', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                    return !(action === 'read' || action === 'edit');
+                });
+                expect(field.hasAccess()).toBeFalsy();
+            });
+
+            it('should return false for case: there is at least one pair of fields with access', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                    return ((action === 'read' && field === 'description') ||
+                        (action === 'edit' && field === 'subject'));
+                });
+                expect(field.hasAccess()).toBeTruthy();
+            });
+
+            it('should return false for case: fields are not mapped one to other', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function(action, model, field) {
+                    return ((action === 'read' && field === 'description') ||
+                        (action === 'edit' && field === 'address_street'));
+                });
+                expect(field.hasAccess()).toBeFalsy();
+            });
+        });
     });
 });
