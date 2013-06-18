@@ -27,26 +27,39 @@
      * @private
      */
     _validationComplete : function(isValid){
-        if(!isValid) return;
+        if (!isValid) return;
         if (!this.changed) {
             this.cancelEdit();
+            return;
         }
-        else {
-            var self = this;
-            this.model.save({}, {
-                success: function(model) {
-                    this.changed = false;
-                    self.view.toggleRow(model.id, false);
-                },
-                //Show alerts for this request
-                showAlerts: {
-                    'process' : true,
-                    'success': {
-                        messages: app.lang.getAppString('LBL_RECORD_SAVED')
-                    }
+
+        var self = this,
+            fileFields = [],
+            callbacks = {
+                success: function() {
+                    self.model.save({}, {
+                        success: function(model) {
+                            self.changed = false;
+                            self.view.toggleRow(model.id, false);
+                        },
+                        //Show alerts for this request
+                        showAlerts: {
+                            'process': true,
+                            'success': {
+                                messages: app.lang.get('LBL_RECORD_SAVED', self.module)
+                            }
+                        }
+                    });
                 }
-            });
-        }
+            };
+
+        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
+            app.file.checkFileFieldsAndProcessUpload(view, {
+                success: function() {
+                    callback.call();
+                }
+            }, {deleteIfFails: false }, true);
+        }, callbacks.success);
 
     },
     saveModel: function() {

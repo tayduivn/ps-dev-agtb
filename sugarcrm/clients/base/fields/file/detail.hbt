@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<ul>
 {{#each value}}
-    <li><a class="file" href="javascript:void(0)" data-url="{{url}}">{{name}}</a></li>
+    <div class="row-fluid file-field">
+        <a class="span12" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+    </div>
 {{/each}}
-</ul>

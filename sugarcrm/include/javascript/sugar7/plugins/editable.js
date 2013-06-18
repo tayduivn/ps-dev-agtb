@@ -80,7 +80,7 @@
                         var $el = field.$(field.fieldTag + ":first");
                         $el.focus().val($el.val());
                     }
-                    if (field.type !== 'image') {
+                    if (field.type !== 'image' && field.type !== 'file') {
                         if (_.isFunction(field.bindKeyDown)) {
                             field.bindKeyDown(this.editableKeyDowned);
                         } else {
