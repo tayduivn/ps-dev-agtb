@@ -33,38 +33,29 @@
             return;
         }
 
-		var self = this,
-			fileFields = [],
-			callbacks = {},
-			options = {
-            success: _.bind(function() {
-                this.changed = false;
-                this.view.toggleRow(this.model.id, false);
-            }, this),
-            //Show alerts for this request
-            showAlerts: {
-                'process' : true,
-                'success': {
-                    messages: app.lang.getAppString('LBL_RECORD_SAVED')
+        var self = this,
+            fileFields = [],
+            callbacks = {},
+            options = {
+                success: _.bind(function() {
+                    this.changed = false;
+                    this.view.toggleRow(this.model.id, false);
+                }, this),
+                //Show alerts for this request
+                showAlerts: {
+                    'process' : true,
+                    'success': {
+                        messages: app.lang.getAppString('LBL_RECORD_SAVED')
+                    }
                 }
-            }
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions(options));
 
-        
         callbacks = {
             success: function() {
-                self.model.save({}, options),                        
-			    //Show alerts for this request
-                    showAlerts: {
-                        'process': true,
-                        'success': {
-                            messages: app.lang.get('LBL_RECORD_SAVED', self.module)
-                        }
-                    }
-                });
-			}
+                self.model.save({}, options);                        
+            }
         };
 
         async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
