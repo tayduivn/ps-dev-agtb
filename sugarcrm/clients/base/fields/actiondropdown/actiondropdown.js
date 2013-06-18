@@ -126,12 +126,7 @@
         _.each(this.fields, function(field, idx){
             var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
                 fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
-            if(!field.isVisible()) {
-                cssClass.push('hide');
-                fieldPlaceholder.toggleClass('hide', true);
-                //Drop hidden field out of the dropdown
-                hiddenEl.appendChild(fieldPlaceholder.get(0));
-            } else {
+            if (field.isVisible() && field.hasAccess()) {
                 cssClass = _.without(cssClass, 'hide');
                 fieldPlaceholder.toggleClass('hide', false);
                 if(index == 0) {
@@ -154,6 +149,11 @@
                     html += '<option value=' + idx + '>' + field.label + '</option>';
                 }
                 index++;
+            } else {
+                cssClass.push('hide');
+                fieldPlaceholder.toggleClass('hide', true);
+                //Drop hidden field out of the dropdown
+                hiddenEl.appendChild(fieldPlaceholder.get(0));
             }
             cssClass = _.unique(cssClass);
             field.def.css_class = cssClass.join(' ');
