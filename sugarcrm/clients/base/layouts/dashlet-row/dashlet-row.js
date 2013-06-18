@@ -55,7 +55,7 @@
             $container = $("<div></div>", {'class': 'rows well well-invisible'})
                 .append(headerTemplate())
                 .append(comp.el),
-            $el = $("<li></li>", {'class': 'row-fluid'}).data('index', function() {
+            $el = $("<li></li>", {'class': 'row-fluid', 'data-sortable': '1'}).data('index', function() {
                 return comp.index + '';
             }).append($container);
 
@@ -150,7 +150,6 @@
             forcePlaceholderSize: true,
             placeholder: "placeholder",
             update: function(event, ui) {
-
                 var sourceIndex = ui.item.first().data('index')(),
                     targetIndex = ui.item.first().next().data('index')();
 
