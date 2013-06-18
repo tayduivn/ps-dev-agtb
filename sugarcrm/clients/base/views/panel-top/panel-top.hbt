@@ -1,4 +1,4 @@
-<div class="label label-module-sm label-{{module}} pull-left">{{moduleIconLabel module}}</div> <h4 class="pull-left">{{str layout.label parentModule}} ({{collection.length}})</h4>
+<div class="label label-module-sm label-{{module}} pull-left">{{moduleIconLabel module}}</div> <h4 class="pull-left">{{str layout.label parentModule}}</h4>
 <div class="subpanel-controls btn-toolbar pull-right">
     {{#each meta.buttons}}
         {{field ../this}}

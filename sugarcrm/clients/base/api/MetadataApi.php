@@ -519,9 +519,14 @@ class MetadataApi extends SugarApi
      */
     protected function getConfigs()
     {
-        $configs = array();
+        global $sugar_config;
 
-        // As of now configs are only for portal
+        // These configs are controlled via System Settings in Administration module
+        $configs = array(
+            'maxQueryResult' => $sugar_config['list_max_entries_per_page'],
+            'maxSubpanelResult' => $sugar_config['list_max_entries_per_subpanel'],
+        );
+
         return $configs;
     }
 

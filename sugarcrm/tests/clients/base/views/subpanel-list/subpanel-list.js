@@ -49,4 +49,21 @@ describe("Subpanel List View", function() {
         });
     });
 
+    describe('initialize', function() {
+        var oldConfig;
+        beforeEach(function() {
+            oldConfig = app.config.maxSubpanelResult;
+            app.config.maxSubpanelResult = 7;
+        });
+        afterEach(function(){
+            app.config.maxSubpanelResult = oldConfig;
+        });
+        it('set the fetch limit on the context to app.config.maxSubpanelResult', function() {
+            view = SugarTest.createView("base", 'Cases', 'panel-list', null, null, null, layout);
+            var opts = view.context.get("collectionOptions");
+            expect(opts).toBeDefined();
+            expect(opts.limit).toEqual(app.config.maxSubpanelResult);
+        });
+    });
+
 });
