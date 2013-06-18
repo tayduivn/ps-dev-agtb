@@ -422,6 +422,30 @@
                     }
 
                 },
+            /**
+             * Makes sure that Sales Stage Won/Lost values from the database Forecasts config settings
+             * exist in the sales_stage_dom
+             *
+             * @returns {Boolean} if forecasts is configured to run ok
+             */
+            checkForecastConfig: function() {
+                var forecastConfigOK = true,
+                    cfg = app.metadata.getModule('Forecasts', 'config'),
+                    salesWonVals = cfg.sales_stage_won,
+                    salesLostVals = cfg.sales_stage_lost,
+                    salesWonLostVals = cfg.sales_stage_won.concat(cfg.sales_stage_lost),
+                    domVals = app.lang.getAppListStrings('sales_stage_dom');
+
+                if(salesWonVals.length == 0 || salesLostVals.length == 0 || _.isEmpty(domVals)) {
+                    forecastConfigOK = false;
+                } else {
+                    forecastConfigOK = _.every(salesWonLostVals, function(val) {
+                        return (val != '' && _.has(domVals, val));
+                    }, this);
+                }
+
+                return forecastConfigOK;
+            },
                 isTouchDevice: function() {
                     return Modernizr.touch;
                 }

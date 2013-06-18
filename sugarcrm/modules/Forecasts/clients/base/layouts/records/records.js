@@ -39,38 +39,13 @@
         this.initOptions = options;
 
         // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
-        if(!this.checkSalesWonLost()) {
-            // codeblock this sucka
-            this.codeBlockForecasts();
-        } else {
+        if(app.utils.checkForecastConfig()) {
             // correct config exists, continue with syncInitData
             this.syncInitData();
-        }
-    },
-
-    /**
-     * Makes sure that Sales Stage Won/Lost values from the database Forecasts config settings
-     * exist in the sales_stage_dom
-     *
-     * @returns {boolean}
-     */
-    checkSalesWonLost: function() {
-        var cfg = app.metadata.getModule('Forecasts', 'config'),
-            salesWonVals = cfg.sales_stage_won,
-            salesLostVals = cfg.sales_stage_lost,
-            salesWonLostVals = cfg.sales_stage_won.concat(cfg.sales_stage_lost),
-            domVals = app.lang.getAppListStrings('sales_stage_dom'),
-            forecastsOK = true;
-
-        if(salesWonVals.length == 0 || salesLostVals.length == 0 || _.isEmpty(domVals)) {
-            forecastsOK = false;
         } else {
-            forecastsOK = _.every(salesWonLostVals, function(val) {
-                return (val != '' && _.has(domVals, val));
-            }, this);
+            // codeblock this sucka
+            this.codeBlockForecasts();
         }
-
-        return forecastsOK;
     },
 
     /**
