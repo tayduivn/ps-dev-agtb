@@ -23,10 +23,11 @@
 	var Datepicker = function(element, options){
 		this.element = $(element);
 		this.rawFormat = options.format||this.element.data('date-format')||'mm/dd/yyyy';
-		this.format = DPGlobal.parseFormat(this.rawFormat);
+        this.appendTo = options.appendTo;
+        this.format = DPGlobal.parseFormat(this.rawFormat);
 		this.possibleChars = DPGlobal.getPossibleDateChars(this.rawFormat);
 		this.picker = $(DPGlobal.template)
-							.appendTo(this.element.is("input")?this.element.parent():this.element)
+                            .appendTo(this.appendTo?this.appendTo:"body")
 							.on({
 								click: $.proxy(this.click, this),
 								mousedown: $.proxy(this.mousedown, this)
@@ -193,13 +194,11 @@
 			this.fill();
 		},
 		place: function(){
-			var offset = {top:0,left:0},
-					target = this.component ? this.component : this.element;
-			if (target.is("input"))
-			{
-				target.parent().css('position','relative');
-				offset = target.position();
-			}
+            var offset = this.component ? this.component.offset() : this.element.offset();
+            if (this.appendTo && this.appendTo != "body") {
+                offset.left = (this.element.offset().left - $(this.appendTo).offset().left) + $(this.appendTo).scrollLeft();
+                offset.top = (this.element.offset().top - $(this.appendTo).offset().top) + $(this.appendTo).scrollTop();
+            }
 			this.picker.css({
 				top: offset.top + this.height,
 				left: offset.left
