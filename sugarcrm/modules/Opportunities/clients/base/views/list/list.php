@@ -46,6 +46,12 @@ $fields = array(
         'label' => 'LBL_LIST_OPPORTUNITY_NAME',
         'enabled' => true,
         'default' => true,
+        //BEGIN SUGARCRM flav=ent ONLY
+        'related_fields' => array(
+            'total_revenue_line_items',
+            'closed_revenue_line_items'
+        )
+        //END SUGARCRM flav=ent ONLY
     ),
     array(
         'name' => 'account_name',
@@ -170,6 +176,12 @@ $fields = array(
         'label' => 'LBL_LIST_OPPORTUNITY_NAME',
         'enabled' => true,
         'default' => true,
+        //BEGIN SUGARCRM flav=ent ONLY
+        'related_fields' => array(
+            'total_revenue_line_items',
+            'closed_revenue_line_items'
+        )
+        //END SUGARCRM flav=ent ONLY
     ),
     array(
         'name' => 'account_name',

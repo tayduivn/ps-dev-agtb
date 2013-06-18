@@ -29,7 +29,6 @@ $fields = array(
         'name' => 'sales_stage',
         'required' => true,
     ),
-
     'probability',
     array(
         'name' => 'amount',
@@ -244,7 +243,15 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                     'readonly'      => true,
                 ),
-                'name',
+                array(
+                    'name' => 'name',
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'related_fields' => array(
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items'
+                    )
+                    //END SUGARCRM flav=ent ONLY
+                ),
                 array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',

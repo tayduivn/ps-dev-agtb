@@ -349,6 +349,26 @@ $dictionary['Opportunity'] = array(
             //END SUGARCRM flav=ent ONLY
         ),
         //END SUGARCRM flav=PRO ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        'total_revenue_line_items' => array(
+            'name' => 'total_revenue_line_items',
+            'vname' => 'LBL_TOTAL_RLIS',
+            'type' => 'int',
+            'formula' => 'count($products)',
+            'calculated' => true,
+            'enforced' => true,
+            'studio' => false,
+        ),
+        'closed_revenue_line_items' => array(
+            'name' => 'closed_revenue_line_items',
+            'vname' => 'LBL_CLOSED_RLIS',
+            'type' => 'int',
+            'formula' => 'countConditional($products,"sales_stage",createList("Closed Won","Closed Lost"))',
+            'calculated' => true,
+            'enforced' => true,
+            'studio' => false,
+        ),
+        //END SUGARCRM flav=ent ONLY
         'accounts' => array(
             'name' => 'accounts',
             'type' => 'link',
