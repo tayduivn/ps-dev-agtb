@@ -1,59 +1,36 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/**********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc.
+ * product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable
+ * at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
- */
+ * Copyright (C) 2004-2013 SugarCRM Inc. All rights reserved.
+ ********************************************************************************/
 
- // $Id: SAMLAuthenticate.php 16292 2006-08-22 20:57:23Z awu $
+require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php';
+require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateExternal.php';
 
 /**
- * This file is used to control the authentication process. 
- * It will call on the user authenticate and controll redirection 
+ * This file is used to control the authentication process.
+ * It will call on the user authenticate and controll redirection
  * based on the users validation
- *
  */
-
-
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php');
-class SAMLAuthenticate extends SugarAuthenticate {
-	var $userAuthenticateClass = 'SAMLAuthenticateUser';
-	var $authenticationDir = 'SAMLAuthenticate';
-	/**
-	 * Constructs SAMLAuthenticate
-	 * This will load the user authentication class
-	 *
-	 * @return SAMLAuthenticate
-	 */
-	function SAMLAuthenticate(){
-		parent::SugarAuthenticate();
-	}
+class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExternal
+{
+    var $userAuthenticateClass = 'SAMLAuthenticateUser';
+    var $authenticationDir = 'SAMLAuthenticate';
 
     /**
      * pre_login
-     * 
+     *
      * Override the pre_login function from SugarAuthenticate so that user is
      * redirected to SAML entry point if other is not specified
      */
@@ -61,8 +38,7 @@ class SAMLAuthenticate extends SugarAuthenticate {
     {
         parent::pre_login();
 
-        if (empty($_REQUEST['no_saml']))
-        {
+        if (empty($_REQUEST['no_saml'])) {
             SugarApplication::redirect('?entryPoint=SAML');
         }
     }
@@ -73,10 +49,22 @@ class SAMLAuthenticate extends SugarAuthenticate {
      * Override default behavior. Redirect user to special "Logged Out" page in
      * order to prevent automatic logging in.
      */
-    public function logout() {
+    public function logout()
+    {
         session_destroy();
         ob_clean();
         header('Location: index.php?module=Users&action=LoggedOut');
         sugar_cleanup(true);
+    }
+
+    /**
+     * Get URL to follow to get logged in
+     */
+    public function getLoginUrl()
+    {
+        $settings = array();
+        require SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php');
+        $authrequest = new OneLogin_Saml_AuthRequest($settings);
+        return $authrequest->getRedirectUrl();
     }
 }

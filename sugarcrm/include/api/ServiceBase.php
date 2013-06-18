@@ -143,4 +143,25 @@ abstract class ServiceBase {
         session_write_close();
         $_SESSION = $session_data;
     }
+
+    /**
+     * Handle the situation where the API needs login
+     * @param Exception $e Exception that caused the login problem, if any
+     * @throws SugarApiExceptionNeedLogin
+     */
+    public function needLogin(Exception $e = null)
+    {
+       if($e) {
+           $message = $e->getMessage();
+       } else {
+           // @TODO Localize exception strings
+           $message = "No valid authentication for user.";
+       }
+       $login_exc = new SugarApiExceptionNeedLogin($message);
+       $auth = AuthenticationController::getInstance();
+       if($auth->isExternal()) {
+           $login_exc->setExtraData("url", $auth->getLoginUrl());
+       }
+       throw $login_exc;
+    }
 }

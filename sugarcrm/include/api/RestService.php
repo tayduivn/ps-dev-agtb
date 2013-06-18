@@ -185,8 +185,7 @@ class RestService extends ServiceBase
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 if (!$isLoggedIn) {
                     if (!$loginException) {
-                        // @TODO Localize exception strings
-                        throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
+                        $this->needLogin();
                     } else {
                         throw $loginException;
                     }
@@ -400,6 +399,9 @@ class RestService extends ServiceBase
             $errorLabel = 'unknown_error';
             $message = $exception->getMessage();
         }
+        if (!empty($exception->extraData)) {
+            $data = $exception->extraData;
+        }
         $this->response->setStatus($httpError);
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
@@ -456,7 +458,7 @@ class RestService extends ServiceBase
             }
         }
 
-        if ($valid === false) {
+        if (!$valid) {
             // In the case of large file uploads that are too big for the request too handle AND
             // the auth token being sent as part of the request body, you will get a no auth error
             // message on uploads. This check is in place specifically for file uploads that are too

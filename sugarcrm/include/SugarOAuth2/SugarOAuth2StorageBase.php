@@ -139,7 +139,7 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
         }
 
         // Is just a regular Sugar User
-        $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
+        $auth = AuthenticationController::getInstance();
         // noHooks since we'll take care of the hooks on API level, to make it more generalized
         $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true, 'noHooks'=>true));
         if ( $loginSuccess && !empty($auth->nextStep) ) {
@@ -152,7 +152,12 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
             $this->userBean = $this->loadUserFromName($username);
             return array('user_id' => $this->userBean->id);
         } else {
-            throw new SugarApiExceptionNeedLogin();
+            if(!empty($_SESSION['login_error'])) {
+                $message = $_SESSION['login_error'];
+            } else {
+                $message = null;
+            }
+            throw new SugarApiExceptionNeedLogin($message);
         }
     }
     // END METHODS FROM IOAuth2GrantUser
@@ -167,6 +172,9 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
      */
     public function loadUserFromName($username)
     {
+		if (!empty($GLOBALS['current_user'])) {
+        	return $GLOBALS['current_user'];
+        } 
         $userBean = BeanFactory::newBean('Users');
         $userBean = $userBean->retrieve_by_string_fields(
             array(
@@ -176,7 +184,7 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
                 'portal_only'=>'0',
                 'is_group'=>'0',
             ));
-        if ( $userBean == null ) {
+        if (empty($userBean)) {
             throw new SugarApiExceptionNeedLogin();
         }
         return $userBean;

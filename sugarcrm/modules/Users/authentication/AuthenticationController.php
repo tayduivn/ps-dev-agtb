@@ -69,8 +69,12 @@ class AuthenticationController
 	 * @param string $type this is the type of authetnication you want to use default is SugarAuthenticate
 	 * @return an instance of the authetnciation controller
 	 */
-	public static function getInstance($type = 'SugarAuthenticate')
+	public static function getInstance($type = null)
 	{
+	    global $sugar_config;
+	    if(empty($type)) {
+	        $type = !empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate';
+	    }
 		if (empty(self::$authcontrollerinstance)) {
 			self::$authcontrollerinstance = new AuthenticationController($type);
 		}
@@ -167,7 +171,7 @@ class AuthenticationController
 	 * This is called on every page hit.
 	 * It returns true if the current session is authenticated or false otherwise
 	 *
-	 * @return booelan
+	 * @return bool
 	 */
 	public function sessionAuthenticate()
 	{
@@ -196,5 +200,26 @@ class AuthenticationController
 		$this->authController->logout();
 		LogicHook::initialize();
 		$GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
+	}
+
+	/**
+	 * Does this controller require external authentication?
+	 * @return boolean
+	 */
+	public function isExternal()
+	{
+	    return $this->authController instanceof SugarAuthenticateExternal;
+	}
+
+	/**
+	 * Get URL for external login
+	 * @return string
+	 */
+	public function getLoginUrl()
+	{
+	    if($this->isExternal()) {
+	        return $this->authController->getLoginUrl();
+	    }
+	    return false;
 	}
 }

@@ -23,6 +23,7 @@
 require_once('vendor/oauth2-php/lib/IOAuth2Storage.php');
 require_once('vendor/oauth2-php/lib/IOAuth2GrantUser.php');
 require_once('vendor/oauth2-php/lib/IOAuth2RefreshTokens.php');
+require_once('vendor/oauth2-php/lib/IOAuth2GrantExtension.php');
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/Administration/SessionManager.php');
@@ -38,7 +39,7 @@ require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
  * This class should only be used by the OAuth2 library and cannot be relied
  * on as a stable API for any other sources.
  */
-class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, SugarOAuth2StorageInterface {
+class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, SugarOAuth2StorageInterface, IOAuth2GrantExtension {
     /**
      * The client platform
      *
@@ -72,7 +73,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
      */
     protected $userType;
 
-    // BEING METHOD FROM SugarOAuth2StorageInterface
+    const SAML_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:saml2-bearer';
+
+    // BEGIN METHOD FROM SugarOAuth2StorageInterface
     /**
      * Get the user type for this user
      *
@@ -700,5 +703,19 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
         return $this->platformStore;
     }
+
+    // BEGIN METHOD FROM IOAuth2GrantExtension
+    public function checkGrantExtension($uri, array $inputData, array $authHeaders)
+	{
+	    if($uri == self::SAML_GRANT_TYPE) {
+            if(empty($inputData['assertion'])) {
+                return false;
+            }
+            $_POST['SAMLResponse'] = base64_decode($inputData['assertion']);
+            return $this->checkUserCredentials('sugar', '', '');
+	    }
+        return false;
+	}
+	// END METHOD FROM IOAuth2GrantExtension
 }
 
