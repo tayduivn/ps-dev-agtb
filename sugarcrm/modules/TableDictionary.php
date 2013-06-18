@@ -126,7 +126,6 @@ include("metadata/documents_bugsMetaData.php");
 //BEGIN SUGARCRM flav=pro ONLY
 include("metadata/documents_productsMetaData.php");
 include("metadata/documents_revenuelineitemsMetaData.php");
-include("metadata/revenuelineitems_revenuelineitemsMetaData.php");
 include("metadata/documents_quotesMetaData.php");
 include("metadata/forecast_treeMetaData.php");
 //END SUGARCRM flav=pro ONLY

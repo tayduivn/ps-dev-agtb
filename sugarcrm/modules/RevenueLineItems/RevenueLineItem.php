@@ -154,27 +154,7 @@ class RevenueLineItem extends SugarBean
         /* @var $currency Currency */
         $currency = BeanFactory::getBean('Currencies', $this->currency_id);
         // RPS - begin - decimals cant be null in sql server
-        if ($this->cost_price == '') {
-            $this->cost_price = '0';
-        }
-        if ($this->discount_price == '') {
-            $this->discount_price = '0';
-        }
-        if ($this->list_price == '') {
-            $this->list_price = '0';
-        }
-        if ($this->weight == '') {
-            $this->weight = '0';
-        }
-        if ($this->book_value == '') {
-            $this->book_value = '0';
-        }
-        if ($this->discount_amount == '') {
-            $this->discount_amount = '0';
-        }
-        if ($this->deal_calc == '') {
-            $this->deal_calc = '0';
-        }
+
         if (empty($this->best_case)) {
             $this->best_case = $this->likely_case;
         }

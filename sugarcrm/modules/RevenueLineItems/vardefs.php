@@ -606,13 +606,6 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
         ),
 //END SUGARCRM flav=pro ONLY
-        'related_revenuelineitem' =>  array(
-            'name' => 'related_revenuelineitem',
-            'type' => 'link',
-            'relationship' => 'revenuelineitems_revenuelineitems',
-            'source' => 'non-db',
-            'vname' => 'LBL_RELATED_PRODUCTS',
-        ),
         'notes' =>  array(
             'name' => 'notes',
             'type' => 'link',
@@ -763,8 +756,6 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'account_link',
             'type' => 'link',
             'relationship' => 'revenuelineitems_accounts',
-            'link_file' => 'modules/RevenueLineItems/RLIAccountLink.php',
-            'link_class' => 'RLIAccountLink',
             'vname' => 'LBL_ACCOUNT',
             'link_type' => 'one',
             'module' => 'Accounts',
@@ -817,8 +808,6 @@ $dictionary['RevenueLineItem'] = array(
             'module' => 'Contacts',
             'bean_name' => 'Contact',
             'source' => 'non-db',
-            'link_file' => 'modules/RevenueLineItems/RLIAccountLink.php',
-            'link_class' => 'RLIAccountLink',
             'duplicate_merge' => 'disabled',
         ), //bug 20184, add contact_link field
         'account_name' =>  array(
