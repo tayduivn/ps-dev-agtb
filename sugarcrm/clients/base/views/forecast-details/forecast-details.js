@@ -54,7 +54,7 @@
     /**
      * Holds if the forecasts config has proper closed won/lost keys
      */
-    forecastsConfigOK: true,
+    forecastsConfigOK: false,
 
     /**
      * events on the view for which to watch
@@ -63,13 +63,17 @@
         'click #forecastsProgressDisplayOptions div.datasetOptions label.radio' : 'changeDisplayOptions'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        if(app.utils.checkForecastConfig()) {
-            // check to make sure that forecast is configured
-            this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
+        // check to make sure that forecast is configured
+        this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
+        this.isForecastSetup = this.forecastConfig.is_setup;
 
+        if(this.isForecastSetup && app.utils.checkForecastConfig()) {
             // set up the model data
             this.resetModel();
 
@@ -79,30 +83,25 @@
             // use the object version of user not a Model
             this.selectedUser = app.user.toJSON();
             this.shouldRollup = this.isManagerView();
-            this.isForecastSetup = this.forecastConfig.is_setup;
+
             this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
-            // handle show/hide forecast settings
-            if(this.forecastConfig.is_setup) {
-                // set up the subtemplate
-                this.subDetailsTpl = app.template.getView('forecast-details.sub-details');
+            // set up the subtemplate
+            this.subDetailsTpl = app.template.getView('forecast-details.sub-details');
 
-                this.detailsDataSet = this.setUpShowDetailsDataSet(this.forecastConfig);
+            this.detailsDataSet = this.setUpShowDetailsDataSet(this.forecastConfig);
 
-                // get the current timeperiod
-                app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
-                    success: _.bind(function(o) {
-                        // Make sure the model is here when we get back and this isn't mid-pageload or anything
-                        if(this.model) {
-                            this.model.set({selectedTimePeriod: o.id}, {silent: true});
-                            this.loadData();
-                        }
-                    }, this),
-                    complete: options ? options.complete : null
-                });
-            }
-        } else {
-            this.forecastsConfigOK = false;
+            // get the current timeperiod
+            app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
+                success: _.bind(function(o) {
+                    // Make sure the model is here when we get back and this isn't mid-pageload or anything
+                    if(this.model) {
+                        this.model.set({selectedTimePeriod: o.id}, {silent: true});
+                        this.loadData();
+                    }
+                }, this),
+                complete: options ? options.complete : null
+            });
         }
     },
 
@@ -165,6 +164,7 @@
 
     /**
      * Builds widget url
+     *
      * @return {*} url to call
      */
     getProjectedURL: function() {
@@ -174,11 +174,13 @@
         return app.api.buildURL(url, 'create', null, {module: this.module});
     },
 
+    /**
+     * {@inheritdoc}
+     */
     bindDataChange: function() {
         var ctx;
         if(this.module == 'Forecasts') {
             ctx = this.context;
-
         } else {
             ctx = this.model;
         }
@@ -200,6 +202,11 @@
 
     },
 
+    /**
+     * Overrides loadData to load from a custom URL
+     *
+     * @override
+     */
     loadData: function(options) {
         if(!_.isEmpty(this.model.get('selectedTimePeriod'))) {
             var url = this.getProjectedURL(),
@@ -226,6 +233,7 @@
 
     /**
      * Success callback function for loadData to call
+     *
      * @param data
      */
     handleNewDataFromServer: function(data) {
@@ -318,7 +326,8 @@
     },
 
     /**
-     * determine if one value is bigger than another then build the language key string to be used
+     * Determine if one value is bigger than another then build the language key string to be used
+     *
      * @param caseStr case string "LIKELY", "BEST", or "WORST"
      * @param stageStr what stage we're looking at: "QUOTA", or "CLOSED"
      * @param caseValue the value of the case
@@ -338,7 +347,7 @@
     },
 
     /**
-     * return the difference of two values and make sure it's a positive value
+     * Return the difference of two values and make sure it's a positive value
      *
      * used as a shortcut function for determine best/likely to closed/quota
      * @param caseValue
@@ -404,7 +413,8 @@
 
     /**
      * Set the new time period
-     * @param timePeriod
+     *
+     * @param {String} timePeriod id in string form
      */
     updateDetailsForSelectedTimePeriod: function (timePeriod) {
         // setting the model will trigger loadData()
@@ -412,8 +422,9 @@
     },
 
     /**
-     * set the new selected user
-     * @param selectedUser
+     * Set the new selected user
+     *
+     * @param {Object} selectedUser
      */
     updateDetailsForSelectedUser: function (selectedUser) {
         // don't directly set model selectedUser so we can handle selectedUser param in case it comes in as
@@ -434,7 +445,9 @@
     },
 
     /**
-     * event handler to update which dataset is used.
+     * Event handler to update which dataset is used.
+     *
+     * @param {jQuery.Event} evt click event
      */
     changeDisplayOptions : function(evt) {
         evt.preventDefault();
@@ -444,8 +457,7 @@
     /**
      * Handle the click event for the optins menu
      *
-     * @param evt
-     * @return {Array}
+     * @param {jQuery.Event} evt click event
      */
     handleOptionChange: function(evt) {
         var $el = $(evt.currentTarget),

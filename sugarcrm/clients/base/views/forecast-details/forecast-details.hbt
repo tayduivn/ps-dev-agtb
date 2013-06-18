@@ -13,8 +13,8 @@
  ********************************************************************************/
 
 }}
-{{#if forecastsConfigOK}}
-    {{#if isForecastSetup}}
+{{#if isForecastSetup}}
+    {{#if forecastsConfigOK}}
         <div class="dashlet-options">
             <div class="row-fluid">
                 <div class="span8">
@@ -42,15 +42,15 @@
         </div>
     {{else}}
         <div class="opportunity-pipeline-wrapper">
-            {{#if isForecastAdmin}}
-                {{{str "LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN" 'Forecasts'}}}
-            {{else}}
-                {{{str "LBL_DASHLET_FORECAST_NOT_SETUP" 'Forecasts'}}}
-            {{/if}}
+            {{{str "LBL_FORECASTS_MISSING_SALES_STAGE_VALUES" 'Forecasts'}}}
         </div>
     {{/if}}
 {{else}}
-    <div class="span4">
-        {{{str "LBL_FORECASTS_MISSING_SALES_STAGE_VALUES" 'Forecasts'}}}
+    <div class="opportunity-pipeline-wrapper">
+        {{#if isForecastAdmin}}
+            {{{str "LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN" 'Forecasts'}}}
+        {{else}}
+            {{{str "LBL_DASHLET_FORECAST_NOT_SETUP" 'Forecasts'}}}
+        {{/if}}
     </div>
 {{/if}}
