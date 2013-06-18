@@ -1,8 +1,6 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
-
 $settings                           = new OneLogin_Saml_Settings();
 
 // when using Service Provider Initiated SSO (starting at index.php), this URL asks the IdP to authenticate the user.
@@ -28,3 +26,4 @@ $settings->provisionUsers = true;
 // saml2_settings['create'] - list in format of field => attribute for creating users
 // saml2_settings['update'] - list in format of field => attribute for updating user data
 // saml2_settings['check']['user_name'] - attribute that specifies where the username is stored in the data
+// customCreateFunction - custom user creation function

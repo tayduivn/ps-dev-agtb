@@ -62,9 +62,15 @@ class SAMLAuthenticate extends SugarAuthenticate implements SugarAuthenticateExt
      */
     public function getLoginUrl()
     {
-        $settings = array();
-        require SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php');
-        $authrequest = new OneLogin_Saml_AuthRequest($settings);
+        $authrequest = new OneLogin_Saml_AuthRequest(self::loadSettings());
         return $authrequest->getRedirectUrl();
+    }
+
+    public static function loadSettings()
+    {
+        $settings = array();
+        require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
+        require SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php');
+        return $settings;
     }
 }

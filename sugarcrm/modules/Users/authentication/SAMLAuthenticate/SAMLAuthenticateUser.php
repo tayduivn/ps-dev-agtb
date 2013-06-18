@@ -1,5 +1,6 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry)
+    die('Not A Valid Entry Point');
 /*********************************************************************************
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -13,262 +14,259 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
+require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
+require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
 
 /**
- * This file is where the user authentication occurs. No redirection should happen in this file.
- *
+ * This file is where the user authentication occurs.
+ * No redirection should happen in this file.
  */
-class SAMLAuthenticateUser extends SugarAuthenticateUser{
-	/**
-	 * Does the actual authentication of the user and returns an id that will be used
-	 * to load the current user (loadUserOnSession)
-	 *
-	 * @param STRING $name
-	 * @param STRING $password
-	 * @return STRING id - used for loading the user
-	 *
-	 * Contributions by Erik Mitchell erikm@logicpd.com
-	 */
-	function authenticateUser($name, $password) {
-		$GLOBALS['log']->debug('authenticating user.'); // JMH
-//        uncomment the line below to test on the server. this is a temporary solution - John H. (task 9069)
-//		$_POST['SAMLResponse'] = "PHNhbWxwOlJlc3BvbnNlIHhtbG5zOnNhbWw9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDphc3NlcnRpb24iIHhtbG5zOnNhbWxwPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6cHJvdG9jb2wiIHhtbG5zOnhzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSIgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgRGVzdGluYXRpb249Imh0dHA6Ly9kZXZzdWdhci5ydHAucmFsZWlnaC5pYm0uY29tL3N1Z2FyLXNhbWwvaW5kZXgucGhwP21vZHVsZT1Vc2VycyZhbXA7YWN0aW9uPUF1dGhlbnRpY2F0ZSIgSUQ9IkZJTVJTUF8xZjUxNjc4Ni0wMTM0LTFmMGQtYWRiZS1iZWE4M2JhM2EyNTEiIEluUmVzcG9uc2VUbz0iXzhmMmFmY2UyNTJiNDVhZGVkNWE4IiBJc3N1ZUluc3RhbnQ9IjIwMTEtMTItMDhUMjA6MTU6NTVaIiBWZXJzaW9uPSIyLjAiPg0KICAgIDxzYW1sOklzc3VlciBGb3JtYXQ9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDpuYW1laWQtZm9ybWF0OmVudGl0eSI+aHR0cHM6Ly9sb25kby5ydHAucmFsZWlnaC5pYm0uY29tOjk0NDMvc3BzL1NBTUxJZHAvc2FtbDIwPC9zYW1sOklzc3Vlcj4NCiAgICA8c2FtbHA6U3RhdHVzPg0KICAgICAgICA8c2FtbHA6U3RhdHVzQ29kZSBWYWx1ZT0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOnN0YXR1czpTdWNjZXNzIj48L3NhbWxwOlN0YXR1c0NvZGU+DQogICAgPC9zYW1scDpTdGF0dXM+DQogICAgPHNhbWw6QXNzZXJ0aW9uIElEPSJBc3NlcnRpb24tdXVpZDFmNTE2NzdkLTAxMzQtMWE2NC05MTA4LWJlYTgzYmEzYTI1MSIgSXNzdWVJbnN0YW50PSIyMDExLTEyLTA4VDIwOjE1OjU1WiIgVmVyc2lvbj0iMi4wIj4NCiAgICAgICAgPHNhbWw6SXNzdWVyIEZvcm1hdD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOm5hbWVpZC1mb3JtYXQ6ZW50aXR5Ij5odHRwczovL2xvbmRvLnJ0cC5yYWxlaWdoLmlibS5jb206OTQ0My9zcHMvU0FNTElkcC9zYW1sMjA8L3NhbWw6SXNzdWVyPg0KICAgICAgICA8ZHM6U2lnbmF0dXJlIHhtbG5zOmRzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjIiBJZD0idXVpZDFmNTE2NzgxLTAxMzQtMWRmYS04ZDAwLWJlYTgzYmEzYTI1MSI+DQogICAgICAgICAgICA8ZHM6U2lnbmVkSW5mbz4NCiAgICAgICAgICAgICAgICA8ZHM6Q2Fub25pY2FsaXphdGlvbk1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMTAveG1sLWV4Yy1jMTRuIyI+PC9kczpDYW5vbmljYWxpemF0aW9uTWV0aG9kPg0KICAgICAgICAgICAgICAgIDxkczpTaWduYXR1cmVNZXRob2QgQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjcnNhLXNoYTEiPjwvZHM6U2lnbmF0dXJlTWV0aG9kPg0KICAgICAgICAgICAgICAgIDxkczpSZWZlcmVuY2UgVVJJPSIjQXNzZXJ0aW9uLXV1aWQxZjUxNjc3ZC0wMTM0LTFhNjQtOTEwOC1iZWE4M2JhM2EyNTEiPg0KICAgICAgICAgICAgICAgICAgICA8ZHM6VHJhbnNmb3Jtcz4NCiAgICAgICAgICAgICAgICAgICAgICAgIDxkczpUcmFuc2Zvcm0gQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLzA5L3htbGRzaWcjZW52ZWxvcGVkLXNpZ25hdHVyZSI+PC9kczpUcmFuc2Zvcm0+DQogICAgICAgICAgICAgICAgICAgICAgICA8ZHM6VHJhbnNmb3JtIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8xMC94bWwtZXhjLWMxNG4jIj4NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8eGMxNG46SW5jbHVzaXZlTmFtZXNwYWNlcyB4bWxuczp4YzE0bj0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8xMC94bWwtZXhjLWMxNG4jIiBQcmVmaXhMaXN0PSJ4cyBzYW1sIHhzaSI+PC94YzE0bjpJbmNsdXNpdmVOYW1lc3BhY2VzPg0KICAgICAgICAgICAgICAgICAgICAgICAgPC9kczpUcmFuc2Zvcm0+DQogICAgICAgICAgICAgICAgICAgIDwvZHM6VHJhbnNmb3Jtcz4NCiAgICAgICAgICAgICAgICAgICAgPGRzOkRpZ2VzdE1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNzaGExIj48L2RzOkRpZ2VzdE1ldGhvZD4NCiAgICAgICAgICAgICAgICAgICAgPGRzOkRpZ2VzdFZhbHVlPkdMV3BGdkYwYkx3UUVMWFpNZ1ozczFKL3pSUT08L2RzOkRpZ2VzdFZhbHVlPg0KICAgICAgICAgICAgICAgIDwvZHM6UmVmZXJlbmNlPg0KICAgICAgICAgICAgPC9kczpTaWduZWRJbmZvPg0KICAgICAgICAgICAgPGRzOlNpZ25hdHVyZVZhbHVlPkRVaEJueU1UUmFYNlUvT2hDZ2lrN08yZ2hDaXl5akNNOWpHTmk5UE1MMXdidWkyMjNyNCtaRW9tOGdodjVpL3pCOU0yVUhCZTNpdVNEYUUyVGxWVm96Y1h3bHJSUUFaTS9lMVZDck9hRFdhWWJURjZKZ05aM1RWekpDVy9helBNa21aenROV2laY2Z4Q3hjODRkYmlCSzlCQzNOdEdVZGlwWlpQb3h4WUlZYz08L2RzOlNpZ25hdHVyZVZhbHVlPg0KICAgICAgICAgICAgPGRzOktleUluZm8+DQogICAgICAgICAgICAgICAgPGRzOlg1MDlEYXRhPg0KICAgICAgICAgICAgICAgICAgICA8ZHM6WDUwOUNlcnRpZmljYXRlPk1JSUMxekNDQWtDZ0F3SUJBZ0lJRWtvd1hvZlF0eWd3RFFZSktvWklodmNOQVFFRkJRQXdnWW94Q3pBSkJnTlZCQVlUQWxWVE1Rd3dDZ1lEVlFRS0V3TkpRazB4RkRBU0JnTlZCQXNUQzJ4dmJtUnZUbTlrWlRBeE1SZ3dGZ1lEVlFRTEV3OXNiMjVrYjA1dlpHVXdNVU5sYkd3eEdUQVhCZ05WQkFzVEVGSnZiM1FnUTJWeWRHbG1hV05oZEdVeElqQWdCZ05WQkFNVEdXeHZibVJ2TG5KMGNDNXlZV3hsYVdkb0xtbGliUzVqYjIwd0hoY05NVEV4TURBMU1UWXpOekF6V2hjTk1USXhNREEwTVRZek56QXpXakJ2TVFzd0NRWURWUVFHRXdKVlV6RU1NQW9HQTFVRUNoTURTVUpOTVJRd0VnWURWUVFMRXd0c2IyNWtiMDV2WkdVd01URVlNQllHQTFVRUN4TVBiRzl1Wkc5T2IyUmxNREZEWld4c01TSXdJQVlEVlFRREV4bHNiMjVrYnk1eWRIQXVjbUZzWldsbmFDNXBZbTB1WTI5dE1JR2ZNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0R05BRENCaVFLQmdRQ1BkcHBnRnRMWXJJdUdwSE1uNXYzZzdRNXRPdHZRZzh4WW9nVjkzdnJBTWhtcUlGWkFqUkFzWXdGc3lyaFQ3UnVxckttaEhtbnEvSUlQcHVWbGhZRjZvZisyTEExZ0VkSGMyb1lBRk5WNUl5cFdRS1JjUWF6RlNHc2FqQktLUExjclNaY20zQVNHYlYySHVNKytNMFZmMWs4Q3hqM1hOb1NIRjJRZnZVUHZmUUlEQVFBQm8yQXdYakJKQmdOVkhSRUVRakJBZ1Q1UWNtOW1hV3hsVlZWSlJEcEJjSEJUY25Zd01TMUNRVk5GTFRJM1ltRmhOMlEzTFRoallUTXROR1F6T1MxaU1qYzNMVEprWm1VNE1tSXpaamxtWXpBUkJnTlZIUTRFQ2dRSVFxUWFNYVlyYmE4d0RRWUpLb1pJaHZjTkFRRUZCUUFEZ1lFQWxJd0FlZnpnRXRLeXBBazJndkhFQnk1Njc1UGtBcU5MT3ZrN2JDRVRsQnVXdTAya0N2bGtSQ09FdFJCanIrbVBHYkRaaHRTZEt3SkFibDhiSXYvYkgzVnpSVHd3ODdYaUZzVzFPbDViL3o0SVBWcmhDVFFPMWVMQ2w2N3kycHd4SmROYWxOQUFXelpERytRSjNFQlp6K3hxUVdKbktRTkVjQjY3K0xBVXNHRT08L2RzOlg1MDlDZXJ0aWZpY2F0ZT4NCiAgICAgICAgICAgICAgICA8L2RzOlg1MDlEYXRhPg0KICAgICAgICAgICAgPC9kczpLZXlJbmZvPg0KICAgICAgICA8L2RzOlNpZ25hdHVyZT4NCiAgICAgICAgPHNhbWw6U3ViamVjdD4NCiAgICAgICAgICAgIDxzYW1sOk5hbWVJRCBGb3JtYXQ9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjEuMTpuYW1laWQtZm9ybWF0OnVuc3BlY2lmaWVkIj5DLUNCVEs4OTc8L3NhbWw6TmFtZUlEPg0KICAgICAgICAgICAgPHNhbWw6U3ViamVjdENvbmZpcm1hdGlvbiBNZXRob2Q9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDpjbTpiZWFyZXIiPg0KICAgICAgICAgICAgICAgIDxzYW1sOlN1YmplY3RDb25maXJtYXRpb25EYXRhIEluUmVzcG9uc2VUbz0iXzhmMmFmY2UyNTJiNDVhZGVkNWE4IiBOb3RPbk9yQWZ0ZXI9IjIwMTEtMTItMDhUMjA6MTY6NTVaIiBSZWNpcGllbnQ9Imh0dHA6Ly9kZXZzdWdhci5ydHAucmFsZWlnaC5pYm0uY29tL3N1Z2FyLXNhbWwvaW5kZXgucGhwP21vZHVsZT1Vc2VycyZhbXA7YWN0aW9uPUF1dGhlbnRpY2F0ZSI+PC9zYW1sOlN1YmplY3RDb25maXJtYXRpb25EYXRhPg0KICAgICAgICAgICAgPC9zYW1sOlN1YmplY3RDb25maXJtYXRpb24+DQogICAgICAgIDwvc2FtbDpTdWJqZWN0Pg0KICAgICAgICA8c2FtbDpDb25kaXRpb25zIE5vdEJlZm9yZT0iMjAxMC0xMi0wOFQyMDoxNDo1NVoiIE5vdE9uT3JBZnRlcj0iMjAxMy0xMi0wOFQyMDoxNjo1NVoiPg0KICAgICAgICAgICAgPHNhbWw6QXVkaWVuY2VSZXN0cmljdGlvbj4NCiAgICAgICAgICAgICAgICA8c2FtbDpBdWRpZW5jZT5waHAtc2FtbDwvc2FtbDpBdWRpZW5jZT4NCiAgICAgICAgICAgIDwvc2FtbDpBdWRpZW5jZVJlc3RyaWN0aW9uPg0KICAgICAgICA8L3NhbWw6Q29uZGl0aW9ucz4NCiAgICAgICAgPHNhbWw6QXV0aG5TdGF0ZW1lbnQgQXV0aG5JbnN0YW50PSIyMDExLTEyLTA4VDIwOjE1OjU1WiIgU2Vzc2lvbkluZGV4PSJ1dWlkMWY0ZTU2MzItMDEzNC0xNjRlLTk1MWItYmVhODNiYTNhMjUxIiBTZXNzaW9uTm90T25PckFmdGVyPSIyMDExLTEyLTA4VDIxOjE1OjU1WiI+DQogICAgICAgICAgICA8c2FtbDpBdXRobkNvbnRleHQ+DQogICAgICAgICAgICAgICAgPHNhbWw6QXV0aG5Db250ZXh0Q2xhc3NSZWY+dXJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOmFjOmNsYXNzZXM6UGFzc3dvcmRQcm90ZWN0ZWRUcmFuc3BvcnQ8L3NhbWw6QXV0aG5Db250ZXh0Q2xhc3NSZWY+DQogICAgICAgICAgICA8L3NhbWw6QXV0aG5Db250ZXh0Pg0KICAgICAgICA8L3NhbWw6QXV0aG5TdGF0ZW1lbnQ+DQogICAgICAgIDxzYW1sOkF0dHJpYnV0ZVN0YXRlbWVudD4NCiAgICAgICAgICAgIDxzYW1sOkF0dHJpYnV0ZSBOYW1lPSJETl9WYWx1ZSIgTmFtZUZvcm1hdD0idXJuOmlibTpuYW1lczpJVEZJTTo1LjE6YWNjZXNzbWFuYWdlciI+DQogICAgICAgICAgICAgICAgPHNhbWw6QXR0cmlidXRlVmFsdWUgeHNpOnR5cGU9InhzOnN0cmluZyI+dWlkPUMtQ0JUSzg5NyxjPXVzLG91PWJsdWVwYWdlcyxvPWlibS5jb208L3NhbWw6QXR0cmlidXRlVmFsdWU+DQogICAgICAgICAgICA8L3NhbWw6QXR0cmlidXRlPg0KICAgICAgICA8L3NhbWw6QXR0cmlidXRlU3RhdGVtZW50Pg0KICAgIDwvc2FtbDpBc3NlcnRpb24+DQo8L3NhbWxwOlJlc3BvbnNlPg==";
+class SAMLAuthenticateUser extends SugarAuthenticateUser
+{
 
+    /**
+     * SAML response object
+     * @var OneLogin_Saml_Response
+     */
+    protected $samlresponse;
 
+    /**
+     * SAML settings
+     * @var OneLogin_Saml_Settings
+     */
+    protected $settings;
 
-		if(empty($_POST['SAMLResponse']))return parent::authenticateUser($name, $password);
+    /**
+     * Does the actual authentication of the user and returns an id that will be
+     * used
+     * to load the current user (loadUserOnSession)
+     *
+     * @param string $name
+     * @param string $password
+     * @return string id - used for loading the user
+     *
+     *         Contributions by Erik Mitchell erikm@logicpd.com
+     */
+    public function authenticateUser($name, $password)
+    {
+        $GLOBALS['log']->debug('authenticating user.');
 
-		$GLOBALS['log']->debug('have saml data.');
-		$settings = array();
-		// Look for custom versions of settings.php if it exists
-        require(SugarAutoLoader::existingCustomOne('modules/Users/authentication/SAMLAuthenticate/settings.php'));
+        if (empty($_POST['SAMLResponse'])) {
+            return parent::authenticateUser($name, $password);
+        }
 
-        $samlresponse = new OneLogin_Saml_Response($settings, $_POST['SAMLResponse']);
+        $GLOBALS['log']->debug('have saml data.');
+        $this->settings = SAMLAuthenticate::loadSettings();
+        $this->samlresponse = new OneLogin_Saml_Response($this->settings, $_POST['SAMLResponse']);
 
-		if ($samlresponse->isValid()){
-			$GLOBALS['log']->debug('response is valid');
+        if ($this->samlresponse->isValid()) {
+            $GLOBALS['log']->debug('response is valid');
 
-            $id = $this->get_user_id($samlresponse, $settings);
-            if(!empty($settings->id)) {
-                $user = $this->fetch_user($id, $settings->id);
+            $this->samlresponse->attributes = $this->samlresponse->getAttributes();
+            $id = $this->get_user_id();
+            if (!empty($this->settings->id)) {
+                $user = $this->fetch_user($id, $this->settings->id);
             } else {
                 $user = $this->fetch_user($id);
             }
 
-			//user already exists use this one
-			if ($user->id){
-				$GLOBALS['log']->debug('have db results');
-				if($user->status != 'Inactive')
-				{
-					$GLOBALS['log']->debug('have current user');
-					$this->updateCustomFields($user, $samlresponse, $settings);
-					return $user->id;
-				}
-				else
-				{
-					$GLOBALS['log']->debug('have inactive user');
-					return '';
-				}
-			}
-			else
-			{
-                $xmlDoc = $samlresponse->document;
-                $xpath = new DOMXpath($xmlDoc);
-                if (isset($settings->customCreateFunction))
-                {
-                    return call_user_func($settings->customCreateFunction, $this, $samlresponse->getNameId(), $xpath, $settings);
+            // user already exists use this one
+            if ($user->id) {
+                $GLOBALS['log']->debug('have db results');
+                if ($user->status != 'Inactive') {
+                    $GLOBALS['log']->debug('have current user');
+                    $this->updateCustomFields($user, $this->samlresponse, $this->settings);
+                    return $user->id;
                 } else {
-                    return $this->createUser($samlresponse->getNameId(), $samlresponse, $settings);
+                    $GLOBALS['log']->debug('have inactive user');
+                    return '';
                 }
-			}
-		}
-		return '';
-	}
+            } else {
+                $xmlDoc = $this->samlresponse->document;
+                $xpath = new DOMXpath($xmlDoc);
+                if (isset($this->settings->customCreateFunction)) {
+                    return call_user_func($this->settings->customCreateFunction, $this,
+                        $this->samlresponse->getNameId(), $xpath, $this->settings, $this->samlresponse);
+                } else {
+                    return $this->createUser($this->samlresponse->getNameId(), $this->samlresponse, $this->settings);
+                }
+            }
+        }
+        return '';
+    }
 
-
-	/**
-	* Updates the custom fields listed in settings->saml_settings['update'] in our
-	* db records with the data from the xml in the saml assertion. Every field
-	* listed in the ['update'] array is a key whose value is a (hopefully) valid
-	* xpath, which in turn can be used to retrive the value of the node specified
-	* by that xpath. If the value of the node does not equal the value in our
-	* records, update our records to match the value from the xml.
-	*
-	* @param User $user - user fetched from our db.
-	* @param OneLogin_Saml_Response $samlresponse - saml provider response.
-	* @param OneLogin_Saml_Settings $settings - our settings object.
-	* @return int - 0 = no action taken, 1 = user record saved, -1 = no update.
-	*
-	* Contributed by Mike Andersen, SugarCRM.
-	**/
-	function updateCustomFields($user, OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
-	{
-		$customFields = $this->getCustomFields($settings, 'update');
-
-		if (empty($customFields))
-		{
-			$GLOBALS['log']->debug("No custom fields! So returning 0.");
-			return 0;
-		}
-
-		$GLOBALS['log']->debug("updateCF()... userid={$user->id}");
-
-		$attrs = $samlresponse->getAttributes();
-		$customFieldUpdated = false;
-
-		foreach ($customFields as $field => $attrfield)
-		{
-			$GLOBALS['log']->debug("Top of fields loop with $field.");
-			if (!property_exists($user, $field))
-			{
-				$GLOBALS['log']->debug("$field is not a user field.");
-				// custom field not listed in db query results!
-				continue;
-			}
-			if(!isset($attrs[$attrfield])) {
-			    continue;
-			}
-
-			$customFieldValue = $user->$field;
-            $xmlValue = $attrs[$attrfield];
-			$GLOBALS['log']->debug("$field SAML returned $xmlValue");
-
-			if ($customFieldValue != $xmlValue)
-			{
-				// need to update our user record.
-				$customFieldUpdated = true;
-				$user->$field = $xmlValue;
-				$GLOBALS['log']->debug("db is out of date. setting {$field} to {$xmlValue}");
-			}
-		}
-
-		if ($customFieldUpdated)
-		{
-			$GLOBALS['log']->debug("updateCustomFields calling user->save() and returning 1");
-			$user->save();
-			return 1;
-		}
-
-		$GLOBALS['log']->debug("updateCustomFields found no fields to update. Returning -1");
-		return -1;
-	}
-
-
-	/**
-	* Determines if there are custom fields to add to our select statement, and
-	* returns a comma prepended, comma-delimited list of those custom fields.
-	*
-	* @param OneLogin_Saml_Response $samlresponse
-	* @param OneLogin_Saml_Settings $settings
-	* @return String $additionalFields = either empty, or ", field1[, field2, fieldn]"
-	*
-	* Contributed by Mike Andersen, SugarCRM.
-	**/
-	function getAdditionalFieldsToSelect(OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
-	{
-	    $fields = $this->getCustomFields($settings, 'update');
-	    if(!empty($fields)) {
-			return ',' . implode(',', array_keys($fields));
-		}
-		return '';
-	}
-
-
-	/**
-	* Returns an array of custom field names. These names are the keys in the
-	* 'update' hash in $settings->saml2_settings hash.
-	* See modules/Users/authentication/SAMLAuthenticate/settings.php for details.
-	*
-	* @param OneLogin_Saml_Settings $settings
-	* @param String $which - which custom fields: 'check', 'create' or 'update'
-	* @return Array - list of custom field names.
-	*
-	* Contributed by Mike Andersen, SugarCRM.
-	**/
-	function getCustomFields(OneLogin_Saml_Settings $settings, $which)
-	{
-		if (isset($settings->saml2_settings[$which])) {
-			return $settings->saml2_settings[$which];
-		} else {
-			return array();
-		}
-	}
-
-
-
-	/**
-	 * Creates a user with the given User Name and returns the id of that new user
-	 * populates the user with what was set in the SAML Response
-	 *
-	 * @param STRING $name
-	 * @param OneLogin_Saml_Response $samlresponse
-	 * @param OneLogin_Saml_Settings $settings - our settings object.
-	 * @return STRING $id
-	 */
-	function createUser($name, OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
+    /**
+     * Updates the custom fields listed in settings->saml_settings['update'] in
+     * our db records with the data from the xml in the saml assertion.
+     * Every field listed in the ['update'] array is a key whose value is an attribute name.
+     * If the value of the node does not equal the value in our
+     * records, update our records to match the value from the assertion.
+     *
+     * @param User $user - user fetched from our db.
+     * @return int - 0 = no action taken, 1 = user record saved, -1 = no update.
+     */
+    protected function updateCustomFields($user)
     {
-        if(empty($settings->provisionUsers)) {
+        $customFields = $this->getCustomFields('update');
+
+        if (empty($customFields)) {
+            $GLOBALS['log']->debug("No custom fields! So returning 0.");
+            return 0;
+        }
+
+        $GLOBALS['log']->debug("updateCF()... userid={$user->id}");
+
+        $attrs = $this->samlresponse->getAttributes();
+        $customFieldUpdated = false;
+
+        foreach ($customFields as $field => $attrfield) {
+            $GLOBALS['log']->debug("Top of fields loop with $field.");
+            if (!property_exists($user, $field)) {
+                $GLOBALS['log']->debug("$field is not a user field.");
+                // custom field not listed in db query results!
+                continue;
+            }
+            if ($this->hasAttribute($attrfield)) {
+                continue;
+            }
+
+            $customFieldValue = $user->$field;
+            $xmlValue = $this->getAttribute($attrfield);
+            $GLOBALS['log']->debug("$field SAML returned $xmlValue");
+
+            if ($customFieldValue != $xmlValue) {
+                // need to update our user record.
+                $customFieldUpdated = true;
+                $user->$field = $xmlValue;
+                $GLOBALS['log']->debug("db is out of date. setting {$field} to {$xmlValue}");
+            }
+        }
+
+        if ($customFieldUpdated) {
+            $GLOBALS['log']->debug("updateCustomFields calling user->save() and returning 1");
+            $user->save();
+            return 1;
+        }
+
+        $GLOBALS['log']->debug("updateCustomFields found no fields to update. Returning -1");
+        return -1;
+    }
+
+    /**
+     * Determines if there are custom fields to add to our select statement, and
+     * returns a comma prepended, comma-delimited list of those custom fields.
+     *
+     * @param OneLogin_Saml_Response $this->samlresponse
+     * @param OneLogin_Saml_Settings $this->settings
+     * @return String $additionalFields = either empty, or ", field1[, field2,
+     *         fieldn]"
+     */
+    protected function getAdditionalFieldsToSelect()
+    {
+        $fields = $this->getCustomFields('update');
+        if (!empty($fields)) {
+            return ',' . implode(',', array_keys($fields));
+        }
+        return '';
+    }
+
+    /**
+     * Returns an array of custom field names.
+     * These names are the keys in the
+     * 'update' hash in $this->settings->saml2_settings hash.
+     * See modules/Users/authentication/SAMLAuthenticate/settings.php for
+     * details.
+     *
+     * @param string $which - which custom fields: 'check', 'create' or 'update'
+     * @return array - list of custom field names.
+     *
+     */
+    protected function getCustomFields($which)
+    {
+        if (isset($this->settings->saml2_settings[$which])) {
+            return $this->settings->saml2_settings[$which];
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Creates a user with the given User Name and returns the id of that new
+     * user
+     * populates the user with what was set in the SAML Response
+     *
+     * @param string $name
+     * @return string $id
+     */
+    protected function createUser($name)
+    {
+        if (empty($this->settings->provisionUsers)) {
             return '';
         }
-  	    $GLOBALS['log']->debug("Called createUser");
-	    $user = BeanFactory::getBean('Users');
-		$user->user_name = $name;
-		$user->email1 = $name;
-		$user->last_name = $name;
-		$user->employee_status = 'Active';
-		$user->status = 'Active';
-		$user->is_admin = 0;
-		$user->external_auth_only = 1;
-		$user->system_generated_password = 0;
+        $GLOBALS['log']->debug("Called createUser");
+        $user = BeanFactory::getBean('Users');
+        $user->user_name = $name;
+        $user->email1 = $name;
+        $user->last_name = $name;
+        $user->employee_status = 'Active';
+        $user->status = 'Active';
+        $user->is_admin = 0;
+        $user->external_auth_only = 1;
+        $user->system_generated_password = 0;
 
-		// Loop through the create custom fields and update their values in the
-		// user object from the xml SAML response.
-		$customFields = $this->getCustomFields($settings, 'create');
-		$attrs = $samlresponse->getAttributes();
-  	    $GLOBALS['log']->debug("number of custom fields: " . count($customFields));
-		foreach ($customFields as $field => $attrfield)
-		{
-		    $GLOBALS['log']->debug("xpath for $field is $attrfield");
-			if(empty($attrs[$attrfield])) {
-			    continue;
-			}
+        // Loop through the create custom fields and update their values in the
+        // user object from the xml SAML response.
+        $customFields = $this->getCustomFields('create');
+        $GLOBALS['log']->debug("number of custom fields: " . count($customFields));
+        foreach ($customFields as $field => $attrfield) {
+            $GLOBALS['log']->debug("xpath for $field is $attrfield");
+            if (!$this->hasAttribute($attrfield)) {
+                continue;
+            }
 
-			if ($field == 'id')
-			{
-				$user->new_with_id = true;
-			}
+            if ($field == 'id') {
+                $user->new_with_id = true;
+            }
 
-			$GLOBALS['log']->debug("Setting $field to {$attrs[$attrfield]}");
-			$user->$field = $attrs[$attrfield];
-		}
+            $value = $this->getAttribute($attrfield);
+            $GLOBALS['log']->debug("Setting $field to $value");
+            $user->$field = $value;
+        }
 
-  	    $GLOBALS['log']->debug("finished loop - saving.");
-		$user->save();
-  	    $GLOBALS['log']->debug("New user id is " . $user->id);
-		return $user->id;
-	}
+        $GLOBALS['log']->debug("finished loop - saving.");
+        $user->save();
+        $GLOBALS['log']->debug("New user id is " . $user->id);
+        return $user->id;
+    }
 
     /**
      * Retrieves user ID from SamlResponse according to SamlSettings
      *
-     * @param OneLogin_Saml_Response $samlresponse
-     * @param OneLogin_Saml_Settings $settings
      * @return string
      */
-    protected function get_user_id(OneLogin_Saml_Response $samlresponse, OneLogin_Saml_Settings $settings)
+    protected function get_user_id()
     {
-        $fields = $this->getCustomFields($settings, 'check');
+        $fields = $this->getCustomFields('check');
         if (isset($fields['user_name'])) {
-            $attrs = $samlresponse->getAttributes();
-            if(isset($attrs[$fields['user_name']])) {
-               return $attrs[$fields['user_name']];
+            if ($this->hasAttribute($fields['user_name'])) {
+                return $this->getAttribute($fields['user_name']);
             }
-        } else {
-            $name_id = $samlresponse->getNameId();
         }
 
-        return $name_id;
+        return $this->samlresponse->getNameId();
+    }
+
+    protected function getAttribute($name)
+    {
+        if(isset($this->samlresponse->attributes[$name])) {
+            return $this->samlresponse->attributes[$name];
+        }
+        return null;
+    }
+
+    protected function hasAttribute($name)
+    {
+        return isset($this->samlresponse->attributes[$name]);
     }
 
     /**
@@ -282,17 +280,14 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
     {
         $user = BeanFactory::getBean('Users');
 
-        if (null !== $field)
-        {
-            switch ($field)
-            {
+        if (null !== $field) {
+            switch ($field) {
                 case 'user_name':
                     // fetch user id by username
-                    $sql = 'select id from users where user_name = '
-                        . $user->db->quoted($id) . ' and deleted = 0';
-                    $data = $user->db->fetchOne($sql);
-                    if (is_array($data)) {
-                        $id = reset($data);
+                    $id = $user->db->getOne(
+                        'select id from users where user_name = ' . $user->db->quoted($id) .
+                             ' and deleted = 0');
+                    if (!empty($id)) {
                         $user->retrieve($id);
                     }
                     break;
@@ -303,9 +298,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
                     // nothing else is implemented
                     break;
             }
-        }
-        else
-        {
+        } else {
             // use email as a default primary key (onelogin.com provides it)
             $user->retrieve_by_email_address($id);
         }
@@ -319,13 +312,14 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser{
      * @param string $name
      * @param string $password
      * @param boolean $fallback - is this authentication a fallback from a failed authentication
-     * @param array $PARAMS
+     * @param array $params
      * @return boolean
      */
-    public function loadUserOnLogin($name, $password, $fallback = false, $PARAMS = array())
+    public function loadUserOnLogin($name, $password, $fallback = false, $params = array())
     {
-        // provide dummy login and password to parent class so that authentication
+        // provide dummy login and password to parent class so that
+        // authentication
         // process could go on
-        return parent::loadUserOnLogin('onelogin', 'onelogin', $fallback, $PARAMS);
+        return parent::loadUserOnLogin('onelogin', 'onelogin', $fallback, $params);
     }
 }
