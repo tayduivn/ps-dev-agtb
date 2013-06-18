@@ -90,7 +90,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
      * @group revenuelineitems
      */
     public function testCreateNewListQuery()
-    {   $this->markTestIncomplete("SFA - This is broken");
+    {   //$this->markTestIncomplete("SFA - This is broken");
         $ret_array = $this->revenuelineitem->create_new_list_query('', '', array(), array(), 0, '', true);
         $this->assertContains(
             "revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> ''",

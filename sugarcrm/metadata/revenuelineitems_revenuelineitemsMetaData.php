@@ -77,8 +77,7 @@ $dictionary['revenuelineitems_revenuelineitems'] = array(
             'relationship_type' => 'many-to-many',
             'join_table' => 'revenuelineitems_revenuelineitems',
             'join_key_lhs' => 'parent_id',
-            'join_key_rhs' => 'child_id',
-            'reverse' => '1'
+            'join_key_rhs' => 'child_id'
         )
     )
 );

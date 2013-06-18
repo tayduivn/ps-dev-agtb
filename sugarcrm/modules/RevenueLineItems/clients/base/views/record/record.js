@@ -43,7 +43,9 @@
         // return extended success function with added alert
         return {
             success: _.bind(function() {
-                origSuccess();
+                if (_.isFunction(origSuccess)) {
+                    origSuccess();
+                }
                 if (!_.isEmpty(this.model.get('quote_id'))) {
                      app.alert.show('save_rli_quote_notice', {
                         level: 'info',

@@ -915,24 +915,6 @@ $dictionary['RevenueLineItem'] = array(
             'rhs_key' => 'modified_user_id',
             'relationship_type' => 'one-to-many'
         ),
-        'revenuelineitems_assigned_user' =>  array(
-            'lhs_module' => 'Users',
-            'lhs_table' => 'users',
-            'lhs_key' => 'id',
-            'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenue_line_items',
-            'rhs_key' => 'assigned_user_id',
-            'relationship_type' => 'one-to-many'
-        ),
-        'revenuelineitems_created_by' =>  array(
-            'lhs_module' => 'Users',
-            'lhs_table' => 'users',
-            'lhs_key' => 'id',
-            'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenue_line_items',
-            'rhs_key' => 'created_by',
-            'relationship_type' => 'one-to-many'
-        ),
     ),
 
     'duplicate_check' => array(

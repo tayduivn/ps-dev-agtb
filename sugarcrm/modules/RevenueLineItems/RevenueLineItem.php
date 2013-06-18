@@ -138,18 +138,7 @@ class RevenueLineItem extends SugarBean
         'support_description',
         'support_contact'
     );
-
-    /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function RevenueLineItem()
-    {
-        $this->__construct();
-    }
-    
+        
     /**
      * Default Constructor
      */
@@ -176,9 +165,6 @@ class RevenueLineItem extends SugarBean
 
 
     /** Returns a list of the associated products
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved.
-     * Contributor(s): ______________________________________..
      * @param string order_by
      * @param string where
      * @param array filter
@@ -214,25 +200,23 @@ class RevenueLineItem extends SugarBean
             $params,
             $show_deleted,
             $join_type,
-            $return_array,
+            true,
             $parentbean,
             $singleSelect
         );
+        
         $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = revenue_line_items.contact_id";
-
+        
+        //Add clause to remove opportunity related products
+        $ret_array['where'] = $ret_array['where'] .
+            " AND (revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '')";
+        
         //If return_array is set to true, return as an Array
         if ($return_array) {
-            //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where'] .
-                " AND (revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '')";
             return $ret_array;
         }
 
-        return str_replace(
-            'where revenue_line_items.deleted=0',
-            "where revenue_line_items.deleted=0 AND (revenue_line_items.opportunity_id is not null OR revenue_line_items.opportunity_id <> '')",
-            $ret_array
-        );
+        return implode(" ", $ret_array);
     }
 
     /**
@@ -470,7 +454,7 @@ class RevenueLineItem extends SugarBean
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
         $product_mod_strings = return_module_language($current_language,"RevenueLineItems");
 
-        if ($this->date_purchased == '0000-00-00') {
+        if ($this->date_purchased == $db->emptyValue('date')) {
             $the_date_purchased = '';
         } else {
             $the_date_purchased = $this->date_purchased;

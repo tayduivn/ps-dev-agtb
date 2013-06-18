@@ -214,25 +214,23 @@ class Product extends SugarBean
             $params,
             $show_deleted,
             $join_type,
-            $return_array,
+            true,
             $parentbean,
             $singleSelect
         );
+        
         $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = products.contact_id";
+        
+        //Add clause to remove opportunity related products
+            $ret_array['where'] = $ret_array['where'] .
+                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
 
         //If return_array is set to true, return as an Array
         if ($return_array) {
-            //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where'] .
-                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
             return $ret_array;
         }
 
-        return str_replace(
-            'where products.deleted=0',
-            "where products.deleted=0 AND (products.opportunity_id is not null OR products.opportunity_id <> '')",
-            $ret_array
-        );
+        return implode(" ", $ret_array);
     }
 
 
