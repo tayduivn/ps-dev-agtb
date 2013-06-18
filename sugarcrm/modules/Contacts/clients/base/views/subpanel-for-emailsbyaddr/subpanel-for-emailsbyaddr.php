@@ -49,6 +49,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-emailsbyaddr'] = array(
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
       ),
     ),

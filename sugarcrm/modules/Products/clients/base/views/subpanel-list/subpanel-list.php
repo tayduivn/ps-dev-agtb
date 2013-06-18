@@ -50,6 +50,7 @@ $viewdefs['Products']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'account_name',
+          'sortable' => false,
         ),
         array(
           'target_record_key' => 'contact_id',
@@ -58,6 +59,7 @@ $viewdefs['Products']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'contact_name',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_DATE_PURCHASED',

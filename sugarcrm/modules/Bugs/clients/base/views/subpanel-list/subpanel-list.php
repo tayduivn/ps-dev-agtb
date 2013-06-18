@@ -12,12 +12,12 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Bugs']['base']['view']['subpanel-list'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'label' => 'LBL_LIST_NUMBER',
@@ -56,6 +56,7 @@ $viewdefs['Bugs']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
       ),
     ),

@@ -47,6 +47,7 @@ $viewdefs['Leads']['base']['view']['subpanel-for-emails'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'email1',
+          'sortable' => false,
         ),
         array(
           'name' => 'lead_source_description',

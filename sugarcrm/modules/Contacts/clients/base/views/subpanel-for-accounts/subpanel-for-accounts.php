@@ -12,11 +12,13 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Contacts']['base']['view']['subpanel-for-accounts'] = array(
-  'panels' => array(
+  'panels' =>
+  array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => array(
+      'fields' =>
+      array(
         array(
           'name' => 'full_name',
           'type' => 'fieldset',
@@ -53,6 +55,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-accounts'] = array(
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'phone_work',

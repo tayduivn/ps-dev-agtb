@@ -12,7 +12,8 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Contacts']['base']['view']['subpanel-for-cases'] = array(
-  'panels' => array(
+  'panels' =>
+  array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
@@ -44,12 +45,14 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-cases'] = array(
           'label' => 'LBL_LIST_ACCOUNT_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'email1',
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'phone_work',
