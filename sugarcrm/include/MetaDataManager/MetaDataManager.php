@@ -419,18 +419,18 @@ class MetaDataManager {
                 // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
                 // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
                 // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
-                if(empty($GLOBALS['dictionary'][$module]['fields'])){
-                    if($bean === false) {
-                        $bean = BeanFactory::newBean($module);
-                    }
+                if($bean === false) {
+                    $bean = BeanFactory::newBean($module);
+                }
+                if(empty($GLOBALS['dictionary'][$bean->object_name]['fields'])){
                     if(empty($bean->acl_fields)) {
                         $fieldsAcl = array();
                     } else {
                         $fieldsAcl = $bean->field_defs;
                     }
                 } else{
-                    $fieldsAcl = $GLOBALS['dictionary'][$module]['fields'];
-                    if(isset($GLOBALS['dictionary'][$module]['acl_fields']) && $GLOBALS['dictionary'][$module]=== false){
+                    $fieldsAcl = $GLOBALS['dictionary'][$bean->object_name]['fields'];
+                    if(isset($GLOBALS['dictionary'][$bean->object_name]['acl_fields']) && $GLOBALS['dictionary'][$bean->object_name]=== false){
                         $fieldsAcl = array();
                     }
                 }

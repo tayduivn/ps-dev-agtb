@@ -14,7 +14,7 @@
 $dictionary['ForecastWorksheet'] = array(
     'table' => 'forecast_worksheets',
     'studio' => false,
-    'acl_fields' => false,
+    'acls' => array('SugarACLForecastWorksheets' => true, 'SugarACLStatic' => true),
     'fields' => array(
         'parent_id' =>
         array(

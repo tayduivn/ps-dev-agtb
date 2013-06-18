@@ -126,6 +126,8 @@
             <directory>./modules/Prospects/</directory>
         </testsuite>
         <testsuite name="Sugar SFA Test Suite">
+            <file>./data/acl/SugarACLForecastManagerWorksheets.php</file>
+            <file>./data/acl/SugarACLForecastWorksheets.php</file>
             <directory>./modules/Contracts/</directory>
             <directory>./modules/Currencies/</directory>
             <directory>./modules/ForecastManagerWorksheets/</directory>

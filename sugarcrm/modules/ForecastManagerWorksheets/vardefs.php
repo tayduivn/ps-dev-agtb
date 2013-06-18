@@ -13,7 +13,6 @@
  */
 $dictionary['ForecastManagerWorksheet'] = array(
     'table' => 'forecast_manager_worksheets',
-    'acl_fields' => false,
     'audited' => true,
     'fields' => array(
         'quota' =>
