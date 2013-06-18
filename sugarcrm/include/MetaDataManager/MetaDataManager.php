@@ -753,81 +753,95 @@ class MetaDataManager
         //END SUGARCRM flav=pro ONLY
         return $data;
     }
+
     /**
-        * Tells the app the user preference metadata has changed.
-        * 
-        * Because Administration and Users are BWC modules, we cannot use SESSIONS
-        * to relay information between requests since a BWC request is a different
-        * HTTP request from an API request. Because of that, this method and all 
-        * methods surrounding the user metadata change notification build a simple
-        * empty file in the api/metadata/ cache directory for use between requests.
-        * 
-        * @param Person $user The user that is changing preferences
-        */
-       public function setUserMetadataHasChanged($user)
-       {
-           sugar_touch(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
-       }
-   
-       /**
-        * Checks the state of changed metadata for a user
-        * 
-        * @param Person $user The user that is changing preferences
-        * @return bool
-        */
-       public function hasUserMetadataChanged($user)
-       {
-           return file_exists(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
-       }
-   
-       /**
-        * Clears the temporary file that is used to indicate that a user has changed
-        * their preferences.
-        * 
-        * @param Person $user The user that is changing preferences
-        */
-       public function unsetUserMetadataHasChanged($user)
-       {
-           //unset($_SESSION['user_metadata_changed']);
-           if ($this->hasUserMetadataChanged($user)) {
-               @unlink(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
-           }
-       }
-   
-       /**
-        * Gets the list of fields that should trigger a user metadata change reauth
-        * 
-        * @return array
-        */
-       public function getUserPrefsToCache()
-       {
-           return $this->userPrefsToCache;
-       }
-   
-       /**
-        * Accessor to allow mapping a user pref field name to a metadata property
-        * name.
-        * 
-        * @param string $prefName The name of the user preference
-        * @param string $metadataName The name of the metadata property that maps to this field
-        */
-       public function addUserPrefToCache($prefName, $metadataName = '')
-       {
-           if (empty($metadataName)) {
-               $metadataName = $prefName;
-           }
-           
-           $this->userPrefsToCache[$prefName] = $metadataName;
-       }
-   
-       /**
-        * Accessor to delete a user preference from the metadata change reauth 
-        * collection
-        * 
-        * @param string $prefName The name of the user preference
-        */
-       public function delUserPrefToCache($prefName)
-       {
-           unset($this->userPrefsToCache[$prefName]);
-       }
+     * Checks the validity of the current session metadata hash value. Since the
+     * only time the session value is set is after a metadata fetch has been made
+     * a non-existent session value is valid. However if there is a session value
+     * then there either has to be a metadata cache of hashes to check against
+     * or the session value has to be false (meaning the session value was set
+     * before the metadata cache was built) in order to pass the validity check.
+     *
+     * @param string   $hash Metadata hash to validate against the cache.
+     * @param  string  $platform The platform to check the metadata hash against
+     *
+     * @return boolean
+     */
+    public function isMetadataHashValid($hash, $platform = null)
+    {
+        // Get the current platform if one wasn't presented
+        if (empty($platform)) {
+            $platform = $this->platforms[0];
+        }
+
+        // Is there a current metadata hash sent in the request (empty string is not a valid hash)
+        if (!empty($hash)) {
+            // See if there is a hash cache. If there is, see if the hash cache
+            // for this platform matches what's in the session, ensuring that the
+            // session value isn't false (the default value when setting from
+            // cache)
+            $hashCache = sugar_cached("api/metadata/hashes.php");
+            if (file_exists($hashCache)) {
+                include $hashCache;
+
+                // Valid is either a platform hash that matches the session hash
+                // OR no platform hash and no session hash
+                $platformHash = empty($hashes['meta_hash_' . $platform]) ? null : $hashes['meta_hash_' . $platform];
+
+                return ($platformHash && $platformHash == $hash);
+            } else {
+                //If the cache file doesn't exist, we have no way to know if the current hash is correct
+                //and most likely the cache file was nuked due to a metadata change so the cleint
+                //needs to hit the metadata api anyhow.
+                return false;
+            }
+        }
+
+        // There is no session var so we say we're good so as not to get stuck in
+        // a continual logout loop
+        return true;
+    }
+
+    /**
+     * Tells the app the user preference metadata has changed.
+     *
+     * Because Administration and Users are BWC modules, we cannot use SESSIONS
+     * to relay information between requests since a BWC request is a different
+     * HTTP request from an API request. Because of that, this method and all
+     * methods surrounding the user metadata change notification build a simple
+     * empty file in the api/metadata/ cache directory for use between requests.
+     *
+     * @param Person $user The user that is changing preferences
+     */
+    public function setUserMetadataHasChanged($user)
+    {
+        sugar_touch(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
+    }
+
+    /**
+     * Checks the state of changed metadata for a user
+     *
+     * @param Person $user The user that is changing preferences
+     *
+     * @return bool
+     */
+    public function hasUserMetadataChanged($user)
+    {
+        return file_exists(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
+    }
+
+    /**
+     * Clears the temporary file that is used to indicate that a user has changed
+     * their preferences.
+     *
+     * @param Person $user The user that is changing preferences
+     */
+    public function unsetUserMetadataHasChanged($user)
+    {
+        //unset($_SESSION['user_metadata_changed']);
+        if ($this->hasUserMetadataChanged($user)) {
+            @unlink(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
+        }
+    }
+
 }

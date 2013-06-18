@@ -27,14 +27,15 @@ require_once('include/api/RestResponse.php');
 require_once('include/api/RestRequest.php');
 
 
-/**
- * X-Header containging the clients metadata hash
- */
-const HEADER_META_HASH = "X_METADATA_HASH";
-
-
+/** @noinspection PhpInconsistentReturnPointsInspection */
+/** @noinspection PhpInconsistentReturnPointsInspection */
 class RestService extends ServiceBase
 {
+    /**
+     * X-Header containging the clients metadata hash
+     */
+    const HEADER_META_HASH = "X_METADATA_HASH";
+
     public $user;
     /**
      * The request headers
@@ -161,7 +162,8 @@ class RestService extends ServiceBase
                     // If we are logged in, but the meta hash sent doesn't match whats in cache
                     // return an error to force a resync so that the new metadata gets picked up.
                     $mm = new MetaDataManager($this->user, $this->platform);
-                    if (!$mm->isMetadataHashValid($this->request_headers[HEADER_META_HASH], $this->platform)
+                    if ((isset($this->request_headers[self::HEADER_META_HASH]) &&
+                        !$mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform))
                         || $mm->hasUserMetadataChanged($this->user)
                     ) {
                         // Unset the user hash
@@ -294,7 +296,7 @@ class RestService extends ServiceBase
     {
         // Empty resources are simply the URI for the current request
         if (empty($resource)) {
-            $siteUrl = SugarConfig::get('site_url');
+            $siteUrl = SugarConfig::getInstance()->get('site_url');
 
             return $siteUrl . (empty($this->request)?$_SERVER['REQUEST_URI']:$this->request->getRequestURI());
         }
@@ -407,8 +409,9 @@ class RestService extends ServiceBase
     /**
      * Handles authentication of the current user
      *
-     * @param string $platform The platform type for this request
-     * @returns bool Was the login successful
+     * @return array containing two properties; bool isLoggedIn:
+     *  Was the login successful, Exception|bool exception
+     * @throws SugarApiExceptionRequestTooLarge
      * @throws SugarApiExceptionNeedLogin
      */
     protected function authenticateUser()
@@ -616,7 +619,7 @@ class RestService extends ServiceBase
             }
 
             // This is for our URI return value
-            $siteUrl = SugarConfig::get('site_url');
+            $siteUrl = SugarConfig::getInstance()->get('site_url');
 
             // Get the file uri bas
             $this->resourceURIBase = $siteUrl . $apiBase;
@@ -626,9 +629,10 @@ class RestService extends ServiceBase
     /**
      * Handles the response
      *
-     * @param array|string $output The output to send
-     * @param array        $route  The route for this request
-     * @param array        $args   The request arguments
+     * @param array $route  The route for this request
+     * @param array  $args   The request arguments
+     *
+     * @return void
      */
     protected function respond($route, $args)
     {

@@ -300,17 +300,9 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $httpReply = curl_exec($ch);
         $httpInfo = curl_getinfo($ch);
 
-        // Handle reauth if need be. This will be called mostly for metadata cache
-        // clears since that now forces an immediate invalidation of sessions
+        // Handle reauth if need be.
         if (isset($httpInfo['http_code']) && $httpInfo['http_code'] == 401) {
-            if (
-                isset($httpReply['error']) && $httpReply['error'] == 'invalid_token' &&
-                isset($httpReply['error_message']) && $httpReply['error_message'] == 'The access token has been invalidated.'
-            ) {
-                $this->_restReauth();
-
-                return $this->_restCall($funcArgs[0], $funcArgs[1], $funcArgs[2], $funcArgs[3], $funcArgs[4]);
-            }
+            $this->_restReauth();
         }
 
         $httpError = $httpReply === false ? curl_error($ch) : null;
