@@ -322,8 +322,8 @@ class Meeting extends SugarBean {
 
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
-        // if there isn't a fetched row its new
-        if ($this->assigned_user_id == $GLOBALS['current_user']->id && empty($this->fetched_row)) {
+        // always set the assigned user if its the current user to accepted
+        if ($this->assigned_user_id == $GLOBALS['current_user']->id) {
             $this->set_accept_status($GLOBALS['current_user'], 'accept');
         }
 
