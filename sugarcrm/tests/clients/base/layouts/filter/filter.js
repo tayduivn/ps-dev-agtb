@@ -448,7 +448,7 @@ describe("Base.Layout.Filter", function () {
             expect(nextCallStub.getCall(0).args).toEqual(expected);
             layout.layoutType = 'record';
             layout.showingActivities = false;
-            expected = ['Accounts',undefined,{'link':'testFilter','filter':'testFilter'}];
+            expected = ['Accounts','testFilter',{'link':'testFilter','filter':'testFilter'}];
             layout.initializeFilterState('Accounts');
             expect(nextCallStub.getCall(1).args).toEqual(expected);
             stubCache.restore();
@@ -640,6 +640,32 @@ describe("Base.Layout.Filter", function () {
             expect(spy).toHaveBeenCalled();
             // restore filters that we destroyed
             layout.filters = oFilters;
+        });
+        it('should cache filters', function(){
+            var expectedKey = 'filters:last:test:test:test';
+            var expectedValue = 'tvalue'
+            var stubCache = sinon.stub(app.cache, 'set');
+            var baseModule ='test', filterModule='test', layoutName='test', value = 'tvalue';
+            layout.setLastFilter(baseModule, filterModule, layoutName, value);
+            expect(stubCache).toHaveBeenCalled();
+            expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+            expect(stubCache.getCall(0).args[1]).toEqual(expectedValue);
+        });
+        it('should get cached filters', function(){
+            var expectedKey = 'filters:last:test:test:test';
+            var stubCache = sinon.stub(app.cache, 'get');
+            var baseModule ='test', filterModule='test', layoutName='test', value = 'tvalue';
+            layout.getLastFilter(baseModule, filterModule, layoutName);
+            expect(stubCache).toHaveBeenCalled();
+            expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
+        });
+        it('should clear cached filters', function(){
+            var expectedKey = 'filters:last:test:test:test';
+            var stubCache = sinon.stub(app.cache, 'cut');
+            var baseModule ='test', filterModule='test', layoutName='test', value = 'tvalue';
+            layout.clearLastFilter(baseModule, filterModule, layoutName);
+            expect(stubCache).toHaveBeenCalled();
+            expect(stubCache.getCall(0).args[0]).toEqual(expectedKey);
         });
     });
 });

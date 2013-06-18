@@ -8,7 +8,7 @@
      * @param {Object} opts
      */
     initialize: function(opts) {
-        this.on("filter:change", function(module, link) {
+        this.on("filterpanel:change:module", function(module, link) {
             this.currentModule = module;
             this.currentLink = link;
         }, this);
@@ -36,6 +36,6 @@
         app.view.invokeParent(this, {type: 'layout', name: 'togglepanel', method: 'initialize', args: [opts]});
         // Needed to initialize this.currentModule.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
-        this.trigger('filter:change', (lastViewed === "activitystream") ? 'Activities' : this.module);
+        this.trigger('filterpanel:change:module', (lastViewed === "activitystream") ? 'Activities' : this.module);
     }
 })

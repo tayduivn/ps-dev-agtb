@@ -97,13 +97,47 @@
         this.layout.trigger('filter:reinitialize');
     },
     /**
-     * handles filter addition
+     * saves last filter to app cache
+     * @param {String} baseModule
+     * @param {String} filterModule
+     * @param {String} layoutName
+     * @param {*} value
+     * @returns {*}
+     */
+    setLastFilter: function(baseModule, filterModule, layoutName, value) {
+     var key = "filters:last:" + baseModule + ":" + filterModule + ":" + layoutName;
+        return app.cache.set(key, value);
+    },
+    /**
+     * gets last filter from cache
+     * @param {String} baseModule
+     * @param {String} filterModule
+     * @param {String} layoutName
+     * @returns {*}
+     */
+    getLastFilter: function(baseModule, filterModule, layoutName) {
+        var key = "filters:last:" + baseModule + ":" + filterModule + ":" + layoutName;
+        return app.cache.get(key);
+    },
+    /**
+     * clears last filter from cache
+     * @param {String} baseModule
+     * @param {String} filterModule
+     * @param {String} layoutName
+     * @returns {*}
+     */
+    clearLastFilter:function(baseModule, filterModule, layoutName) {
+        var key = "filters:last:" + baseModule + ":" + filterModule + ":" + layoutName;
+        return app.cache.cut(key);
+    },
+    /**
+     * handles filter additionF
      * @param model
      */
     addFilter: function(model){
         this.filters.add(model);
         app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
-        app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, model.get("id"));
+        this.setLastFilter(app.controller.context.get('module'), this.layout.currentModule, this.layoutType, model.get("id"));
         this.layout.trigger('filter:reinitialize');
     },
 
@@ -138,7 +172,7 @@
         var link;
 
         if(this.layoutType === 'record' && !this.showingActivities) {
-            module = link = app.cache.get("subpanels:last:" + module) || 'all_modules';
+            module = link = app.cache.get("subpanels:last:" + app.controller.context.get('module')) || 'all_modules';
             if (link !== 'all_modules') {
                 module = app.data.getRelatedModule(this.module, link);
             }
@@ -161,7 +195,7 @@
      */
     handleFilterChange: function(id, preventCache) {
         if (id && id != 'create' && !preventCache) {
-            app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, id);
+            this.setLastFilter(app.controller.context.get('module'), this.layout.currentModule, this.layoutType, id);
         }
         var filter = this.filters.get(id) || this.emptyFilter,
             ctxList = this.getRelevantContextList();
@@ -300,12 +334,14 @@
      */
     initializeFilterState: function(moduleName, linkName) {
         moduleName = moduleName || this.module;
-        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType),
+
+        var lastFilter = this.getLastFilter(app.controller.context.get('module'), moduleName, this.layoutType),
             filterData;
         if (!(this.filters.get(lastFilter)))
             lastFilter = null;
         // TODO: This is temporary. We need to hook this up to the PreviouslyUsed API.
         if (this.layoutType === 'record' && !this.showingActivities) {
+            linkName = app.cache.get("subpanels:last:"+ app.controller.context.get('module')) || linkName;
             filterData = {
                 link: lastFilter || 'all_modules',
                 filter: lastFilter || 'all_records'
@@ -327,8 +363,13 @@
         var module = moduleName || (this.showingActivities ? "Activities" : this.module),
             link = linkName || data.link;
 
-        if (!moduleName && this.layoutType === 'record' && link !== 'all_modules' && !this.showingActivities) {
-            module = app.data.getRelatedModule(module, data.link);
+        if (this.layoutType === 'record' && link !== 'all_modules' && !this.showingActivities) {
+            var moduleMeta = app.metadata.getModule(module);
+            // only switch modules if this link actually exists on the module
+            if (!_.isUndefined(moduleMeta.fields[link])) {
+                module = app.data.getRelatedModule(module, link) || module;
+            }
+
         }
 
         this.trigger('filter:change:module', module, link, true);
@@ -376,7 +417,7 @@
      * @param defaultId
      */
     handleFilterRetrieve: function(moduleName, defaultId) {
-        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
+        var lastFilter = this.getLastFilter(app.controller.context.get('module'), moduleName, this.layoutType);
         var defaultFilterFromMeta,
             possibleFilters = [],
             filterMeta = this.getModuleFilterMeta(moduleName);
@@ -398,10 +439,11 @@
         }
 
         if (lastFilter && !(this.filters.get(lastFilter))){
-            app.cache.cut("filters:last:" + moduleName + ":" + this.layoutType);
+            this.clearLastFilter(app.controller.context.get('module'), moduleName, this.layoutType);
         }
         this.trigger('filter:render:filter');
-        this.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + this.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
+        this.layout.trigger('filterpanel:change:module', moduleName);
+        this.trigger('filter:change:filter', this.getLastFilter(app.controller.context.get('module'), moduleName, this.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
     },
 
     /**
