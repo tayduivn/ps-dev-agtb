@@ -1,10 +1,13 @@
 ({
     plugins: ['dropdown'],
     events: {
-        'click .dropdown-toggle':'toggleDropdown'
+        'click .dropdown-toggle':'toggleDropdown',
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
     toggleDropdown: function(event) {
         var $currentTarget = this.$(event.currentTarget);
+        this.hideTooltip(event);
         this.toggleDropdownHTML($currentTarget);
     },
     initialize: function(options) {
@@ -23,7 +26,24 @@
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
         this.showAdmin = app.acl.hasAccess('admin', 'Administration');
         app.view.View.prototype._renderHtml.call(this);
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'bottom',
+                trigger:'mouseenter'
+            });
+        }
     },
+
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
+    },
+
     /**
      * Sets the current user's information like full name, user name, avatar, etc.
      * @protected
