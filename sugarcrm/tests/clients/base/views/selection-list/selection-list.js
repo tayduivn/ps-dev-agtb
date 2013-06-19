@@ -22,10 +22,10 @@ describe("Base.View.SelectionList", function () {
                             "label":"",
                             "placeholder":"LBL_NAME"
                         },
-                        "phone_work",
-                        "email1",
-                        "phone_office",
-                        "full_name"
+                        { name: "phone_work" },
+                        { name: "email1" },
+                        { name: "phone_office" },
+                        { name: "full_name" }
                     ]
                 }
             ]
@@ -96,6 +96,16 @@ describe("Base.View.SelectionList", function () {
             return (column.event === "list:preview:fire");
         });
         expect(hasPreview).toBe(true);
+    });
+
+    it('should set default to true for the first four fields', function(){
+        _.each(view.meta.panels[0].fields, function(field, index) {
+            if (index < 4) {
+                expect(field.default).toBe(true);
+            } else {
+                expect(field.default).toBe(false);
+            }
+        });
     });
 
 });
