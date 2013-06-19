@@ -35,7 +35,9 @@
         <title>SugarCRM</title>
         <link rel="icon" href="themes/default/images/sugar_icon.ico">
         <!-- CSS -->
-        <link rel="stylesheet" href="{$css_url}"/>
+        {foreach from=$css_url item=url}
+            <link rel="stylesheet" href="{$url}"/>
+        {/foreach}
         <!--[if lt IE 10]>
         <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
         <![endif]-->

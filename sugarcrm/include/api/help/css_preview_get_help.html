@@ -15,9 +15,11 @@
 -->
 <h2>Overview</h2>
 <span class="lead">
-    Runs LessPHP for a platform and a theme and outputs an array of css files. If not found the css files
-    will be compiled.
+    Runs LessPHP for a platform and a theme and outputs the compiled CSS. It only allows to preview the theme because
+    the file is not saved on the server.
 </span>
+
+<h2>Query String Parameters</h2>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -40,6 +42,12 @@
         <td>The theme name - /themes/clients/platform/<strong>***THEMENAME***</strong>/.</td>
         <td>No. (defaults to <em>default</em>)</td>
     </tr>
+    <tr>
+        <td>min</td>
+        <td>Boolean</td>
+        <td>Whether or not to minify the css</td>
+        <td>No. (defaults to <em>false</em>)</td>
+    </tr>
     </tbody>
 </table>
 
@@ -47,7 +55,8 @@
 <pre class="pre-scrollable">
 {
     platform: 'portal',
-    themeName: 'default'
+    themeName: 'default',
+    min: false
 }
 </pre>
 
@@ -57,12 +66,10 @@
 </span>
 
 <h3>Output Example:</h3>
+<strong>Content-type: text/css</strong>
 <pre class="pre-scrollable">
-{
-    url: [
-        'cache/themes/clients/base/default/bootstrap_97c9cf53841dbe471c20d169e3533763.css',
-        'cache/themes/clients/base/default/sugar_14c42516aad866b7f80cc896ce5c5406.css',
-    ]
+.someClass {
+    any-property: any-value;
 }
 </pre>
 
@@ -77,7 +84,7 @@
             v10
         </td>
         <td>
-            Added <code>/&lt;css&gt;</code> GET endpoint.
+            Added <code>/css/preview</code> GET endpoint.
         </td>
     </tr>
 </table>

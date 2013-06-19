@@ -49,6 +49,7 @@ class RestThemeTest extends RestTestBase
 
     /**
      * @group rest
+     * @group Theming
      */
     public function testPreviewCSS()
     {
@@ -58,7 +59,6 @@ class RestThemeTest extends RestTestBase
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
-            'preview' => 1,
         );
 
         $args2 = array(
@@ -66,25 +66,26 @@ class RestThemeTest extends RestTestBase
             'themeName' => $this->themeTest,
             'BorderColor' => '#aaaaaa',
             'NavigationBar' => '#aaaaaa',
-            'PrimaryButtor' => '#aaaaaa',
-            'preview' => 1,
+            'PrimaryButton' => '#aaaaaa',
         );
 
         // TEST= GET bootstrap.css with a set of arguments
-        $restReply1 = $this->_restCall('css'.$this->rawurlencode($args1));
+        $restReply1 = $this->_restCall('css/preview' . $this->rawurlencode($args1));
 
         // TEST if the the response is not empty
         $this->assertNotEmpty($restReply1['replyRaw']);
 
         // TEST= GET bootstrap.css with another set of arguments
-        $restReply2 = $this->_restCall('css'.$this->rawurlencode($args2));
+        $restReply2 = $this->_restCall('css/preview' . $this->rawurlencode($args2));
 
         // TEST the two generated css are different
+        $this->assertInternalType('string', $restReply1['replyRaw']);
         $this->assertNotEquals($restReply1['replyRaw'], $restReply2['replyRaw']);
     }
 
     /**
      * @group rest
+     * @group Theming
      */
     public function testGetCustomThemeVars()
     {
@@ -107,6 +108,7 @@ class RestThemeTest extends RestTestBase
 
     /**
      * @group rest
+     * @group Theming
      */
     public function testUpdateCustomTheme()
     {
@@ -128,11 +130,25 @@ class RestThemeTest extends RestTestBase
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
-        // TEST the boostrap.css file has been created
-        $this->assertTrue(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Created bootstrap file does not exist");
 
-        // TEST the boostrap.css file is not empty
-        $this->assertTrue(filesize(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')) > 0, "Created file has no contents");
+        // TEST the css files have been created
+        $this->assertArrayHasKey('bootstrap', $restReply['reply']);
+        $this->assertArrayHasKey('sugar', $restReply['reply']);
+        $bootstrapFileName = end(explode('/', $restReply['reply']['bootstrap']));
+        $sugarFileName = end(explode('/', $restReply['reply']['sugar']));
+        $bootstrapFile = sugar_cached(
+            'themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/' . $bootstrapFileName
+        );
+        $sugarFile = sugar_cached(
+            'themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/' . $sugarFileName
+        );
+        $this->assertFileExists($bootstrapFile, "Created file (" . $bootstrapFileName . ") does not exist");
+        $this->assertFileExists($sugarFile, "Created file (" . $sugarFileName . ") does not exist");
+
+        // TEST the css files are not empty
+        $this->assertTrue(filesize($bootstrapFile) > 0, "Created file (" . $bootstrapFileName . ") has no contents");
+        $this->assertTrue(filesize($sugarFile) > 0, "Created file (" . $sugarFileName . ") has no contents");
+
         $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
         // TEST we have updated the variables in variables.less
@@ -142,20 +158,23 @@ class RestThemeTest extends RestTestBase
         $this->assertEquals($args['PrimaryButton'], $variables['PrimaryButton']);
 
         // TEST if a config var has been added in the DB
-        $query = $GLOBALS['db']->query("SELECT value FROM config WHERE category = '" . $args['platform'] . "' AND name = 'css'");
+        $query = $GLOBALS['db']->query(
+            "SELECT value FROM config WHERE category = '" . $args['platform'] . "' AND name = 'css'"
+        );
         $row = $GLOBALS['db']->fetchByAssoc($query);
 
         // TEST the config var contains the bootstrap.css url
         $this->assertEquals(
-            // Some databases (*cough* ORACLE *cough*) are backslash escaping this value
+        // Some databases (*cough* ORACLE *cough*) are backslash escaping this value
             stripslashes(html_entity_decode($row['value'])),
-            '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"',
+            stripslashes($restReply['replyRaw']),
             "$row[value] does not match the expected value"
         );
     }
 
     /**
      * @group rest
+     * @group Theming
      */
     public function testResetDefaultTheme()
     {
@@ -171,19 +190,37 @@ class RestThemeTest extends RestTestBase
         $this->_user->save();
         $GLOBALS['db']->commit();
         // TEST= POST theme with reset=true
-        $this->_restCall('theme', json_encode($args));
+        $restReply = $this->_restCall('theme', json_encode($args));
 
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
-        // TEST boostrap.css file has been created
-        $this->assertEquals(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), true, "Bootstrap file was not reset");
 
-        // TEST boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Bootstrap.css is empty");
+        // TEST the css files have been created
+        $this->assertArrayHasKey('bootstrap', $restReply['reply']);
+        $this->assertArrayHasKey('sugar', $restReply['reply']);
+        $bootstrapFileName = end(explode('/', $restReply['reply']['bootstrap']));
+        $sugarFileName = end(explode('/', $restReply['reply']['sugar']));
+        $bootstrapFile = sugar_cached(
+            'themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/' . $bootstrapFileName
+        );
+        $sugarFile = sugar_cached(
+            'themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/' . $sugarFileName
+        );
+        $this->assertFileExists($bootstrapFile, "Created file (" . $bootstrapFileName . ") does not exist");
+        $this->assertFileExists($sugarFile, "Created file (" . $sugarFileName . ") does not exist");
+
+        // TEST the css files are not empty
+        $this->assertTrue(filesize($bootstrapFile) > 0, "Created file (" . $bootstrapFileName . ") has no contents");
+        $this->assertTrue(filesize($sugarFile) > 0, "Created file (" . $sugarFileName . ") has no contents");
 
         // TEST variables.less file is not empty
-        $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'),"Variables.less is not empty");
+        $this->assertNotEmpty(
+            file_get_contents(
+                'custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'
+            ),
+            "Variables.less is not empty"
+        );
 
         // TEST variables.less generated in the custom folder is the same as the default theme
         $defaultTheme = new SidecarTheme($args['platform'], 'default');
@@ -196,8 +233,13 @@ class RestThemeTest extends RestTestBase
         );
     }
 
+    /**
+     * @group rest
+     * @group Theming
+     */
     //Bug58031: baseUrl needs to be different for the Theme Editor preview.
-    public function testBug58031BaseUrlVariable() {
+    public function testBug58031BaseUrlVariable()
+    {
 
         // TEST 1:  for preview, baseUrl is "../../styleguide/assets"
         $args = array(
@@ -206,9 +248,8 @@ class RestThemeTest extends RestTestBase
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
-            'preview' => 1,
         );
-        $restReply = $this->_restCall('css'.$this->rawurlencode($args));
+        $restReply = $this->_restCall('css/preview' . $this->rawurlencode($args));
 
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../styleguide/assets", $restReply['replyRaw']);
@@ -216,50 +257,19 @@ class RestThemeTest extends RestTestBase
 
         // TEST 2:  for deployment, baseUrl is "../../../../../styleguide/assets"
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
-        $variables= $theme->getThemeVariables();
-        $css = $theme->compileBootstrapCss($variables);
+        $variables = $theme->getThemeVariables();
+        $css = $theme->compileCss($variables);
 
+        $css = implode(' ', $css);
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../../../../styleguide/assets", $css);
     }
 
-    
-    /**
-     * @group rest
-     */
-    public function testGetUserPreferredTheme()
+    private function rawurlencode($args)
     {
-        $oldPreferredTheme = null;
-        $preferredTheme = 'MyTestPreferredTheme';
-
-        // Save preferred theme stored in session
-        if (isset($_SESSION['authenticated_user_theme'])) {
-            $oldPreferredTheme = $_SESSION['authenticated_user_theme'];
-        }
-        $_SESSION['authenticated_user_theme'] = $preferredTheme;
-
-        // Create a theme without defining a themeName
-        $theme = new SidecarTheme($this->platformTest, null);
-        $paths = $theme->getPaths();
-
-        // Reset session var
-        unset($_SESSION['authenticated_user_theme']);
-        if ($oldPreferredTheme) {
-            $_SESSION['authenticated_user_theme'] = $oldPreferredTheme;
-        }
-
-        // TEST the class has retrieve the user preferred theme
-        $this->assertEquals(
-            $paths['base'],
-            'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/'
-        );
-    }
-
-
-    private function rawurlencode($args) {
         $getString = '?';
-        foreach ( $args as $k => $v ) {
-            $getString .= $k.'='.rawurlencode($v).'&';
+        foreach ($args as $k => $v) {
+            $getString .= $k . '=' . rawurlencode($v) . '&';
         }
         return $getString;
     }

@@ -37,10 +37,43 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 
         // Clear out the path
         rmdir_recursive($themePaths['cache']);
-        
     }
 
-    public function testGetThemeCacheFile()
+    /**
+     * @group Theming
+     */
+    public function testGetUserPreferredTheme()
+    {
+        $oldPreferredTheme = null;
+        $preferredTheme = 'MyTestPreferredTheme';
+
+        // Save preferred theme stored in session
+        if (isset($_SESSION['authenticated_user_theme'])) {
+            $oldPreferredTheme = $_SESSION['authenticated_user_theme'];
+        }
+        $_SESSION['authenticated_user_theme'] = $preferredTheme;
+
+        // Create a theme without defining a themeName
+        $theme = new SidecarTheme($this->platformTest, null);
+        $paths = $theme->getPaths();
+
+        // Reset session var
+        unset($_SESSION['authenticated_user_theme']);
+        if ($oldPreferredTheme) {
+            $_SESSION['authenticated_user_theme'] = $oldPreferredTheme;
+        }
+
+        // TEST the class has retrieve the user preferred theme
+        $this->assertEquals(
+            $paths['base'],
+            'styleguide/themes/clients/' . $this->platformTest . '/' . $preferredTheme . '/'
+        );
+    }
+
+    /**
+     * @group Theming
+     */
+    public function testRetrieveThemeCacheFile()
     {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $themePaths = $theme->getPaths();
@@ -48,17 +81,20 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         // Clear out the path
         rmdir_recursive($themePaths['cache']);
         sugar_mkdir($themePaths['cache'], null, true);
-        
-        $testEmpty = SugarTestReflection::callProtectedMethod($theme, 'getThemeCacheFile');
-        $this->assertFalse($testEmpty, "Should not have found any file");
-        
-        $testCacheFile = $themePaths['cache'].'theme_unittest.css';
-        file_put_contents($testCacheFile,"This is a unit test CSS file.");
 
-        $testFound = SugarTestReflection::callProtectedMethod($theme, 'getThemeCacheFile');
+        $testEmpty = SugarTestReflection::callProtectedMethod($theme, 'retrieveThemeCacheFile', array('bootstrap'));
+        $this->assertFalse($testEmpty, "Should not have found any file");
+
+        $testCacheFile = $themePaths['cache'] . 'bootstrap_unittest.css';
+        file_put_contents($testCacheFile, "This is a unit test CSS file.");
+
+        $testFound = SugarTestReflection::callProtectedMethod($theme, 'retrieveThemeCacheFile', array('bootstrap'));
         $this->assertEquals($testCacheFile, $testFound, "Should have found the file that was placed.");
     }
 
+    /**
+     * @group Theming
+     */
     public function testDeleteStaleThemeCacheFiles()
     {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
@@ -67,15 +103,15 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         // Clear out the path
         rmdir_recursive($themePaths['cache']);
         sugar_mkdir($themePaths['cache'], null, true);
-        
-        $testCacheFile = $themePaths['cache'].'theme_unittest.css';
-        file_put_contents($testCacheFile,"This is a unit test CSS file.");
 
-        $testBadCacheFile1 = $themePaths['cache'].'theme_badtest1.css';
-        file_put_contents($testBadCacheFile1,"This is a bad unit test CSS file.");
+        $testCacheFile = $themePaths['cache'] . 'theme_unittest.css';
+        file_put_contents($testCacheFile, "This is a unit test CSS file.");
 
-        $testBadCacheFile2 = $themePaths['cache'].'theme_badtest2.css';
-        file_put_contents($testBadCacheFile2,"This is a bad 2 unit test CSS file.");
+        $testBadCacheFile1 = $themePaths['cache'] . 'theme_badtest1.css';
+        file_put_contents($testBadCacheFile1, "This is a bad unit test CSS file.");
+
+        $testBadCacheFile2 = $themePaths['cache'] . 'theme_badtest2.css';
+        file_put_contents($testBadCacheFile2, "This is a bad 2 unit test CSS file.");
 
         $theme->deleteStaleThemeCacheFiles($testCacheFile);
         $this->assertFileExists($testCacheFile, "Should have left the original cache file");
@@ -87,15 +123,18 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 
         $theme->deleteStaleThemeCacheFiles();
         $this->assertFileNotExists($testCacheFile, "Should have removed the original cache file");
-    }    
+    }
 
+    /**
+     * @group Theming
+     */
     public function testGetCSSURL()
     {
         // Create a stub for compileBootstrapCss().
         $stub = $this->getMock('SidecarTheme', array('compileBootstrapCss'));
         $stub->expects($this->any())
-             ->method('compileBootstrapCss')
-             ->will($this->returnValue('.foo {}'));
+            ->method('compileBootstrapCss')
+            ->will($this->returnValue('.foo {}'));
 
         // If our theme doesn't have a variables.less file, it should cache the
         // default file.
@@ -118,13 +157,17 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNull(sugar_cache_retrieve($defaultPaths['hashKey']));
 
         sugar_mkdir($themePaths['custom'], null, true);
-        $url = $theme->getCSSURL();
-        $this->assertFileExists($url);
+        $urls = $theme->getCSSURL();
+        $this->assertArrayHasKey('bootstrap', $urls);
+        $this->assertArrayHasKey('sugar', $urls);
+        foreach ($urls as $url) {
+            $this->assertFileExists($url);
+        }
 
         // The fake theme doesn't have a variables.less, so it should only set a
         // cache key for the default theme.
         $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
-        $this->assertInternalType('string', sugar_cache_retrieve($defaultPaths['hashKey']));
+        $this->assertInternalType('array', sugar_cache_retrieve($defaultPaths['hashKey']));
 
         if (is_dir('custom/themes/clients/' . $this->platformTest . '/' . $this->themeTest)) {
             rmdir_recursive("custom/themes/clients/" . $this->platformTest);
@@ -136,6 +179,9 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         sugar_cache_clear($defaultPaths['hashKey']);
     }
 
+    /**
+     * @group Theming
+     */
     public function testParseFile()
     {
         //Initiate out test theme
@@ -200,4 +246,47 @@ class SidecarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @group Theming
+     */
+    public function testGetCompilerLessFiles()
+    {
+        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $themePaths = $theme->getPaths();
+
+        $testUrls = SugarTestReflection::callProtectedMethod(
+            $theme,
+            'getCompilerLessFiles',
+            array($this->platformTest)
+        );
+        $this->assertTrue(isset($testUrls['bootstrap']));
+        $this->assertTrue(isset($testUrls['sugar']));
+        $this->assertEquals($testUrls['bootstrap'], 'styleguide/less/clients/base/bootstrap.less');
+        $this->assertEquals($testUrls['sugar'], 'styleguide/less/clients/base/sugar.less');
+
+        //Save the file
+        $path = 'styleguide/less/clients/' . $this->platformTest . '/';
+        sugar_mkdir($path, null, true);
+        sugar_file_put_contents($path . 'bootstrap.less', '');
+        sugar_file_put_contents($path . 'sugar.less', '');
+
+        //Make sure
+        $testUrls = SugarTestReflection::callProtectedMethod(
+            $theme,
+            'getCompilerLessFiles',
+            array($this->platformTest)
+        );
+        $this->assertTrue(isset($testUrls['bootstrap']));
+        $this->assertTrue(isset($testUrls['sugar']));
+        $this->assertEquals(
+            $testUrls['bootstrap'],
+            'styleguide/less/clients/' . $this->platformTest . '/bootstrap.less'
+        );
+        $this->assertEquals($testUrls['sugar'], 'styleguide/less/clients/' . $this->platformTest . '/sugar.less');
+
+        // Remove our temporary file
+        if (is_dir($path)) {
+            rmdir_recursive($path);
+        }
+    }
 }
