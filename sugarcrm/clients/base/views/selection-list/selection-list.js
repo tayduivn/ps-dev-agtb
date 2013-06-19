@@ -23,26 +23,62 @@
         options.meta = options.meta || {};
         options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
-        this.context.on("change:selection_model", this._selectModel, this);
+        this.context.on("change:selection_model", this._selectAndClose, this);
+        this.context.on('selection-list:select', this._selectAndCloseImmediately, this);
     },
-    _selectModel: function () {
-        var model = this.context.get("selection_model");
-        if (model) {
-            var attributes = {
-                id: model.id,
-                value: model.get('name')
-            };
-            _.each(model.attributes, function (value, field) {
-                if (app.acl.hasAccessToModel('view', model, field)) {
-                    attributes[field] = attributes[field] || model.get(field);
-                }
-            }, this);
+
+    /**
+     * Selected from list. Close the drawer.
+     *
+     * @param context
+     * @param selectionModel
+     * @private
+     */
+    _selectAndClose: function (context, selectionModel) {
+        if (selectionModel) {
             this.context.unset("selection_model", {silent: true});
-            this.context.off("change:selection_model", null, this);
-            app.drawer.close(attributes);
+            app.drawer.close(this._getModelAttributes(selectionModel));
         }
     },
 
+    /**
+     * Select the given model and close the drawer immediately.
+     *
+     * @param model
+     * @private
+     */
+    _selectAndCloseImmediately: function(model) {
+        if (model) {
+            app.drawer.closeImmediately(this._getModelAttributes(model));
+        }
+    },
+
+    /**
+     * Return attributes given a model with ACL check
+     *
+     * @param model
+     * @returns {Object}
+     * @private
+     */
+    _getModelAttributes: function(model) {
+        var attributes = {
+            id: model.id,
+            value: model.get('name')
+        };
+
+        //only pass attributes if the user has view access
+        _.each(model.attributes, function (value, field) {
+            if (app.acl.hasAccessToModel('view', model, field)) {
+                attributes[field] = attributes[field] || model.get(field);
+            }
+        }, this);
+
+        return attributes;
+    },
+
+    /**
+     * Add Preview button on the actions column on the right.
+     */
     addActions: function() {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
         this.rightColumns.push({

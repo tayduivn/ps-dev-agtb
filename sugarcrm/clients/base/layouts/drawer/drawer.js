@@ -1,3 +1,16 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 ({
     expandTabHtml: '<div class="drawer-tab"><a href="#" class="btn"><i class="icon-chevron-up"></i></a></div>',
     backdropHtml: "<div class='drawer-backdrop'></div>",
@@ -69,6 +82,42 @@
                 self._components.pop().dispose(); //dispose top-most drawer
                 (self.onCloseCallback.pop()).apply(this, args); //execute callback
             });
+        }
+    },
+
+    /**
+     * Close the top-most drawer immediately without transitions.
+     * @param any parameters passed into the close method will be passed to the callback
+     */
+    closeImmediately: function() {
+        if (this._components.length > 0) {
+            var args = Array.prototype.slice.call(arguments, 0),
+                drawers = this._getDrawers(false),
+                drawerHeight = this._determineDrawerHeight();
+
+            //temporarily remove transitions so that the drawer can be closed immediately
+            drawers.$top.removeClass('transition');
+            drawers.$bottom.removeClass('transition');
+            if (drawers.$next) {
+                drawers.$next.removeClass('transition');
+            }
+
+            //move the bottom drawer to the top and the next drawer to be viewed on the bottom.
+            drawers.$bottom.css('top','');
+            if (drawers.$next) {
+                drawers.$next.css('top', this._isMainAppContent(drawers.$next) ? drawerHeight : drawers.$next.offset().top - drawerHeight);
+            }
+
+            this._cleanUpAfterClose(drawers);
+
+            //add back transitions
+            drawers.$bottom.addClass('transition');
+            if (drawers.$next) {
+                drawers.$next.addClass('transition');
+            }
+
+            this._components.pop().dispose(); //dispose top-most drawer
+            (this.onCloseCallback.pop()).apply(this, args); //execute callback
         }
     },
 
@@ -203,15 +252,7 @@
         //once the animation is done, reset to original state and execute callback parameter
         drawers.$bottom.one(transitionEndEvents, _.bind(function() {
             drawers.$bottom.off(transitionEndEvents); //some browsers fire multiple transitionend events
-            this._removeTabAndBackdrop(drawers.$bottom);
-            if (this._isMainAppContent(drawers.$bottom)) {
-                drawers.$bottom.removeClass('drawer transition');
-                $('body').removeClass('noscroll');
-                app.$contentEl.removeClass('noscroll');
-            } else {
-                //refresh drawer position and height for collapsed or resized drawers
-                this._expandDrawer(drawers.$bottom, drawers.$next);
-            }
+            this._cleanUpAfterClose(drawers);
             callback();
         }, this));
 
@@ -220,11 +261,6 @@
         drawers.$bottom.css('top','');
         if (drawers.$next) {
             drawers.$next.css('top', this._isMainAppContent(drawers.$next) ? drawerHeight : drawers.$next.offset().top - drawerHeight);
-        }
-
-        //remove resize handler
-        if (this._components.length === 1) {
-            $(window).off('resize.drawer');
         }
     },
 
@@ -339,6 +375,27 @@
     },
 
     /**
+     * Process clean up after the drawer has been closed.
+     * @private
+     */
+    _cleanUpAfterClose: function(drawers) {
+        this._removeTabAndBackdrop(drawers.$bottom);
+        if (this._isMainAppContent(drawers.$bottom)) {
+            drawers.$bottom.removeClass('drawer transition');
+            $('body').removeClass('noscroll');
+            app.$contentEl.removeClass('noscroll');
+        } else {
+            //refresh drawer position and height for collapsed or resized drawers
+            this._expandDrawer(drawers.$bottom, drawers.$next);
+        }
+
+        //remove resize handler
+        if (this._components.length === 1) {
+            $(window).off('resize.drawer');
+        }
+    },
+
+    /**
      * Expand the drawer
      * @param $top
      * @param $bottom
@@ -412,4 +469,3 @@
         }
     }, 300)
 })
-
