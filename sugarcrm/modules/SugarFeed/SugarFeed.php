@@ -254,10 +254,11 @@ class SugarFeed extends Basic {
         }
         $text = strip_tags(from_html($text));
 		$text = '<b>{this.CREATED_BY}</b> ' . $text;
-		$feed->name = substr($text, 0, 255);
-		if(strlen($text) > 255){
-			$feed->description = substr($text, 255, 510);
-		}
+        $encoding = SugarConfig::getInstance()->get('default_charset', 'UTF-8');
+        $feed->name = mb_substr($text, 0, 255, $encoding);
+        if (mb_strlen($text, $encoding) > 255) {
+            $feed->description = mb_substr($text, 255, 510, $encoding);
+        }
 
 		if ( $record_assigned_user_id === false ) {
 			$feed->assigned_user_id = $GLOBALS['current_user']->id;
