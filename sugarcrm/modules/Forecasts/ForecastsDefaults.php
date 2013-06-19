@@ -147,6 +147,7 @@ class ForecastsDefaults
             'show_forecasts_commit_warnings' => 1,
             // default enabled worksheet columns
             'worksheet_columns' => array(
+                'commit_stage',
                 'name',
                 'account_name',
                 'date_closed',

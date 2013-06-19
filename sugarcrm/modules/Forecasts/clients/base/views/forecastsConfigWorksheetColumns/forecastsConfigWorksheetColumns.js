@@ -42,6 +42,23 @@
      */
     allOptions:[],
 
+    /**
+     * The field object id/label for likely_case
+     */
+    likelyFieldObj: {},
+
+
+    /**
+     * The field object id/label for best_case
+     */
+    bestFieldObj: {},
+
+
+    /**
+     * The field object id/label for worst_case
+     */
+    worstFieldObj: {},
+
     events: {
         'click .resetLink': 'onResetLinkClicked'
     },
@@ -55,14 +72,16 @@
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS', 'Forecasts');
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
 
-        var cfgFields = app.metadata.getModule('Forecasts', 'config').worksheet_columns;
+        var cfgFields = app.metadata.getModule('Forecasts', 'config').worksheet_columns,
+            index = 0;
 
         // set up scenarioOptions
         _.each(options.meta.panels[0].fields, function(field) {
             var labelModule = (!_.isUndefined(field.label_module)) ? field.label_module : 'Forecasts',
                 obj = {
                     id: field.name,
-                    text: app.lang.get(field.label, labelModule)
+                    text: app.lang.get(field.label, labelModule),
+                    index: index
                 },
                 cField = _.find(cfgFields, function(cfgField) {
                     return cfgField == field.name;
@@ -75,6 +94,17 @@
                 // push field to defaults
                 this.selectedOptions.push(obj);
             }
+
+            // save the field objects
+            if(field.name == 'best_case') {
+                this.bestFieldObj = obj;
+            } else if(field.name == 'likely_case') {
+                this.likelyFieldObj = obj;
+            } else if(field.name == 'worst_case') {
+                this.worstFieldObj = obj;
+            }
+
+            index++;
         }, this);
     },
 
@@ -120,7 +150,53 @@
 
             // trigger the change event to set the title when this gets added
             this.model.trigger('change:columns', this.model);
+
+            this.model.on('change:scenarios', function(model) {
+                // check model settings and update select2 options
+                if(this.model.get('show_worksheet_best')) {
+                    this.addOption(this.bestFieldObj);
+                } else {
+                    this.removeOption(this.bestFieldObj);
+                }
+
+                if(this.model.get('show_worksheet_likely')) {
+                    this.addOption(this.likelyFieldObj);
+                } else {
+                    this.removeOption(this.likelyFieldObj);
+                }
+
+                if(this.model.get('show_worksheet_worst')) {
+                    this.addOption(this.worstFieldObj);
+                } else {
+                    this.removeOption(this.worstFieldObj);
+                }
+
+                // force render
+                this._render();
+            }, this);
         }
+    },
+
+    /**
+     * Adds a field object to allOptions & selectedOptions if it is not found in those arrays
+     *
+     * @param {Object} fieldObj
+     */
+    addOption: function(fieldObj) {
+        if(!_.contains(this.allOptions, fieldObj)) {
+            this.allOptions.splice(fieldObj.index, 0, fieldObj);
+            this.selectedOptions.splice(fieldObj.index, 0, fieldObj);
+        }
+    },
+
+    /**
+     * Removes a field object to allOptions & selectedOptions if it is not found in those arrays
+     *
+     * @param {Object} fieldObj
+     */
+    removeOption: function( fieldObj) {
+        this.allOptions = _.without(this.allOptions, fieldObj);
+        this.selectedOptions = _.without(this.selectedOptions, fieldObj);
     },
 
     /**
