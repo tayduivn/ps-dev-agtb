@@ -41,6 +41,14 @@
     .border-bottom-right-radius(3px);
     .rtlBorderRadiusTopLeft(@direction,3px);
     .rtlBorderRadiusBottomLeft(@direction,3px);
+    .caret {
+      opacity: 1;
+    }
+    &.disabled {
+      .caret {
+        opacity: .3;
+      }
+    }
   }
 
   // Reset corners for large buttons
