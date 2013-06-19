@@ -38,8 +38,7 @@
                 </div>
             </div>
         </div>
-        <div class="block thumbnail" id="guages">
-        </div>
+        <div id="guages"></div>
     {{else}}
         <div class="opportunity-pipeline-wrapper">
             {{{str "LBL_FORECASTS_MISSING_SALES_STAGE_VALUES" 'Forecasts'}}}

@@ -179,11 +179,9 @@
      * {@inheritdoc}
      */
     bindDataChange: function() {
-        var ctx;
-        if(this.module == 'Forecasts') {
+        var ctx = this.model;
+        if (this.module == 'Forecasts') {
             ctx = this.context;
-        } else {
-            ctx = this.model;
         }
 
         ctx.on('change:selectedTimePeriod', function(model) {
