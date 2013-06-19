@@ -72,8 +72,9 @@
         // check to make sure that forecast is configured
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
         this.isForecastSetup = this.forecastConfig.is_setup;
+        this.forecastsConfigOK = app.utils.checkForecastConfig();
 
-        if(this.isForecastSetup && app.utils.checkForecastConfig()) {
+        if(this.isForecastSetup && this.forecastsConfigOK) {
             // set up the model data
             this.resetModel();
 
