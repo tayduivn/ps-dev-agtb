@@ -152,8 +152,8 @@
 	   ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_DONE'));
 	   if (o.responseText == "true")
 	   {
-	       window.location.assign('index.php?module=Administration&action=ConfigureShortcutBar');
-	   } 
+           parent.window.location.reload();
+       }
 	   else 
 	   {
 	       YAHOO.SUGAR.MessageBox.show({msg:o.responseText});
