@@ -34,22 +34,44 @@ describe("Forecasts.Layout.Records", function() {
 
         SugarTest.testMetadata.set();
 
+        sinon.stub(app.user, 'getAcls', function () {
+            var acls = {};
+            acls['Forecasts'] = {};
+            return acls;
+        });
+        sinon.stub(app.lang, 'getAppListStrings', function() {
+            return {
+                'Prospecting': 'Prospecting',
+                'Qualification': 'Qualification',
+                'Needs Analysis': 'Needs Analysis',
+                'Value Proposition': 'Value Proposition',
+                'Id. Decision Makers': 'Id. Decision Makers',
+                'Perception Analysis': 'Perception Analysis',
+                'Proposal/Price Quote': 'Proposal/Price Quote',
+                'Negotiation/Review': 'Negotiation/Review',
+                'Closed Won': 'Closed Won',
+                'Closed Lost': 'Closed Lost'
+            };
+        });
         app.data.reset();
         app.data.declareModel(moduleName, SugarTest.app.metadata.getModule(moduleName));
 
         app.user.set({'id': 'test_userid', full_name: 'Selected User'});
 
-        apiCallStub = sinon.stub(app.api, 'call', function() {
-        });
-        stubs.push(sinon.stub(app.api, 'buildURL', function() {
-        }));
-        stubs.push(sinon.stub(app.data, 'getSyncCallbacks', function() {
-        }));
+        apiCallStub = sinon.stub(app.api, 'call', function() {});
+        stubs.push(sinon.stub(app.api, 'buildURL', function() {}));
+        stubs.push(sinon.stub(app.data, 'getSyncCallbacks', function() {}));
 
         layout = SugarTest.createLayout('base', moduleName, 'records', null, null, true);
+        sinon.spy(layout, 'codeBlockForecasts');
+        sinon.stub(layout, 'syncInitData');
     });
 
     afterEach(function() {
+        app.user.getAcls.restore();
+        layout.codeBlockForecasts.restore();
+        layout.syncInitData.restore();
+        app.lang.getAppListStrings.restore()
         // restore the local stubs
         _.each(stubs, function(stub) {
             stub.restore();
@@ -65,6 +87,44 @@ describe("Forecasts.Layout.Records", function() {
     it('should have called all stubs', function() {
         _.each(stubs, function(stub) {
             expect(stub).toHaveBeenCalled();
+        });
+    });
+
+    describe('checkSalesWonLost', function() {
+        beforeEach(function() {
+        });
+
+        afterEach(function() {
+            app.metadata.getModule.restore();
+        });
+
+        it('config set correctly, should continue on to syncInitData', function() {
+            sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    sales_stage_won: ['Closed Won'],
+                    sales_stage_lost: ['Closed Lost']
+                }
+            });
+
+            layout.initialize({});
+
+            expect(layout.syncInitData).toHaveBeenCalled();
+        });
+
+        it('config set incorrectly, should codeblock user', function() {
+            sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    sales_stage_won: [''],
+                    sales_stage_lost: ['Closed Lost']
+                }
+            });
+            sinon.stub(app.lang, 'get', function() {});
+
+            layout.initialize({});
+
+            expect(layout.codeBlockForecasts).toHaveBeenCalled();
+
+            app.lang.get.restore();
         });
     });
 
