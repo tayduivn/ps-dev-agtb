@@ -114,9 +114,10 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testJsonFieldSave()
     {
         $userPrefs = BeanFactory::newBean('UserPreferences');
+        $userPrefs->field_defs['contents']['custom_type'] = 'json';
 
         $submittedData = array(
-            'contents' => 'abcd1234'
+            'contents' => array('abcd' => '1234', 'cdef' => 5678),
         );
 
         $this->beanApiHelper->populateFromApi($userPrefs, $submittedData);
