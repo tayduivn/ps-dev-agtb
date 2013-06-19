@@ -475,6 +475,16 @@ describe("BaseFilterRowsView", function() {
                     name: 'address_street',
                     dbFields: ['primary_address_street', 'alt_address_street'],
                     type: 'text'
+                },
+                assigned_user_id: {
+                    name: 'assigned_user_id',
+                    id_name: 'assigned_user_id',
+                    type: 'id'
+                },
+                assigned_user_name: {
+                    name: 'assigned_user_name',
+                    id_name: 'assigned_user_id',
+                    type: 'relate'
                 }
             };
         });
@@ -525,6 +535,19 @@ describe("BaseFilterRowsView", function() {
             filter = view.buildRowFilterDef($row);
             expected = {
                 $favorite: ''
+            };
+            expect(filter).toEqual(expected);
+        });
+
+        it('should pick id_name for relate fields', function() {
+            $row = $('<div>').data({
+                name: 'assigned_user_name',
+                operator: '$equals',
+                value: 'seed_sarah_id'
+            });
+            filter = view.buildRowFilterDef($row);
+            expected = {
+                assigned_user_id: 'seed_sarah_id'
             };
             expect(filter).toEqual(expected);
         });

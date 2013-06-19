@@ -61,6 +61,7 @@ $viewdefs['Accounts']['base']['filter']['default'] = array(
             'vname' => 'LBL_CURRENT_USER_FILTER',
         ),
         'assigned_user_id' => array(),
+        'assigned_user_name' => array(),
         '$favorite' => array(
             'options' => 'filter_predefined_dom',
             'type' => 'bool',
