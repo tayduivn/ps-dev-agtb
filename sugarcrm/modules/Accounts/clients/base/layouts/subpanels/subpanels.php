@@ -71,6 +71,13 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         'link' => 'quotes',
       ),
     ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
+      'context' => array (
+          'link' => 'campaigns',
+      ),
+    ),
   ),
   'type' => 'subpanels',
   'span' => 12,

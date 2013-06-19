@@ -8,8 +8,8 @@
     className: "subpanel-header",
     events: {
         "click": "togglePanel",
-        "click a[name=create_button]": "createRelatedRecord",
-        "click a[name=select_button]": "openSelectDrawer"
+        "click a[name=create_button]:not('.disabled')": "createRelatedRecord",
+        "click a[name=select_button]:not('.disabled')": "openSelectDrawer"
     },
 
     /**
