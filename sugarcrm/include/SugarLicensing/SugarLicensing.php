@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarLicensing
 {
 
-    protected $_server = "http://authenticate.sugarcrm.com";
+    protected $_server = "https://authenticate.sugarcrm.com";
 
     /**
      * @var resource
