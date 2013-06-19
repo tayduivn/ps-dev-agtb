@@ -25,35 +25,35 @@ require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
 class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
     /**
      * The user type for this client
-     * 
+     *
      * @var string
      */
     protected $userType = 'support_portal';
 
     /**
      * The client type that this client is associated with
-     * 
+     *
      * @var string
      */
     protected $clientType = 'support_portal';
-    
+
     /**
      * The Portal API user used as a stand-in user for all portal logins
-     * 
+     *
      * @var User
      */
     protected $portalApiUser;
-    
+
     /**
      * The Contact record for the portal login
-     * 
+     *
      * @var Contact
      */
     protected $contactBean;
 
     /**
      * Gets a user bean. Also sets the contact id for this portal user.
-     * 
+     *
      * @return User
      */
     public function getUserBean($user_id) {
@@ -61,7 +61,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         if ( $userBean == null ) {
             return false;
         }
-        
+
         if ( isset($this->contactBean) && $this->contactBean->id == $user_id ) {
             if (!isset($this->userBean)) {
                 $this->userBean = $userBean;
@@ -78,13 +78,13 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             if ( empty($contactBean->id) ) {
                 return false;
             }
-            
+
             $this->contactBean = $contactBean;
             if (!isset($this->userBean)) {
                 $this->userBean = $userBean;
             }
         }
-        
+
         return $userBean;
     }
 
@@ -95,7 +95,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
     public function canStartSession() {
         return !empty($this->contactBean) && !empty($this->userBean);
     }
-    
+
     /**
      * Fills in any added session data needed by this client type
      */
@@ -135,14 +135,14 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         } else if ( empty($authBean->portal_name) ) {
             $authBean = null;
         }
-        
+
         return $authBean;
     }
-    
+
     /**
      * Gets contact and user ids for a user id. Most commonly different for clients
      * like portal
-     * 
+     *
      * @param string $client_id The client id for this check
      * @return array An array of contact_id and user_id
      */
@@ -152,16 +152,16 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         if ( $portalApiUser == null ) {
             return $return;
         }
-        
+
         $return['contact_id'] = $user_id;
         $return['user_id'] = $portalApiUser->id;
-        
+
         return $return;
     }
-    
+
     /**
      * Sets up necessary visibility for a client. Not all clients will set this
-     * 
+     *
      * @return void
      */
     public function setupVisibility() {
@@ -180,14 +180,14 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         SugarBean::setDefaultVisibility($default_visibility);
         $GLOBALS['log']->debug("Added SupportPortalVisibility to session.");
     }
-    
+
     /**
      * This method locates the portal API user for the specified client_id
      * Currently there is no way to associate a specific user with a specific client_id, so that parameter is ignored for now
      * @param $client_id string The client identifier of the portal account, should be used to identifiy different portal types
      * @return User Returs the user bean of the portal user that it found.
      */
-    protected function findPortalApiUser() 
+    protected function findPortalApiUser()
     {
         if (isset($this->portalApiUser)) {
             return $this->portalApiUser;
@@ -206,7 +206,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             return null;
         }
     }
-    
+
     /**
    	 * Grant access tokens for basic user credentials.
    	 *
@@ -240,12 +240,16 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
    	 *
    	 * @ingroup oauth2_section_4
    	 */
-   	public function checkUserCredentials(IOAuth2GrantUser $storage, $client_id, $username, $password) {
+   	public function checkUserCredentials(IOAuth2GrantUser $storage, $client_id, $username, $password)
+   	{
+   	    if(empty($username)) {
+   	        return false;
+   	    }
         $clientInfo = $storage->getClientDetails($client_id);
         if ( $clientInfo === false ) {
             return false;
         }
-        
+
         $portalApiUser = $this->findPortalApiUser($client_id);
         if ( $portalApiUser == null ) {
            // Can't login as a portal user if there is no API user
@@ -256,7 +260,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
         if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
            $contact = null;
         }
-        
+
         if ( !empty($contact) ) {
             //BEGIN SUGARCRM flav=pro ONLY
             $sessionManager = new SessionManager();
@@ -266,12 +270,12 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
                 throw new SugarApiExceptionNeedLogin('too_many_concurrent_connections',array('Too many concurrent sessions'));
             }
             //END SUGARCRM flav=pro ONLY
-            
+
             $this->contactBean = $contact;
             if (empty($this->userBean)) {
                 $this->userBean = $portalApiUser;
             }
-            
+
             return array('user_id'=>$contact->id);
         } else {
             throw new SugarApiExceptionNeedLogin();

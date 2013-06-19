@@ -21,9 +21,10 @@ $settings->requestedNameIdFormat = OneLogin_Saml_Settings::NAMEID_EMAIL_ADDRESS;
 // Should new users be provisioned?
 $settings->provisionUsers = true;
 
-// Available settings:
+// Available settings other than above:
 // id - way of matching users: user_name, id. If not set, matched by email.
 // saml2_settings['create'] - list in format of field => attribute for creating users
 // saml2_settings['update'] - list in format of field => attribute for updating user data
 // saml2_settings['check']['user_name'] - attribute that specifies where the username is stored in the data
+// useXML - use XML instead of attribute names in saml2_settings
 // customCreateFunction - custom user creation function

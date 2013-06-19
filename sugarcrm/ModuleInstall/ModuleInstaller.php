@@ -2448,11 +2448,15 @@ private function dir_file_count($path){
             'themeName' => 'default',
             'clientID' => 'sugar'
         );
+        $auth = AuthenticationController::getInstance();
+        if($auth->isExternal()) {
+            $sidecarConfig['externalLogin'] = true;
+        }
         return $sidecarConfig;
     }
 
     /**
-     * Convert config array to JS config for Sidecar 
+     * Convert config array to JS config for Sidecar
      */
     public static function getJSConfig($config)
     {

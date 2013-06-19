@@ -39,8 +39,8 @@ class Bug50936Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	public function setUp()
     {
         $GLOBALS['app'] = new SugarApplication();
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    	$this->sugar_config_old = $GLOBALS['sugar_config'];
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('files');
     	$_REQUEST['user_name'] = 'foo';
     	$_REQUEST['user_password'] = 'bar';
     	$_SESSION['authenticated_user_id'] = true;
@@ -56,15 +56,14 @@ class Bug50936Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
 $contents = <<<EOQ
 <?php
-        require('modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml.php');
-        require(get_custom_file_if_exists('modules/Users/authentication/SAMLAuthenticate/settings.php'));
+    require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
+    require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
 
-        \$authrequest = new SamlAuthRequest(\$settings);
-        \$url = \$authrequest->create();
-        echo \$url;
+    \$authrequest = new OneLogin_Saml_AuthRequest(SAMLAuthenticate::loadSettings());
+    echo \$authrequest->getRedirectUrl();
 EOQ;
-
-        file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/index.php', $contents);
+        SugarTestHelper::saveFile('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
+        SugarAutoLoader::put('custom/modules/Users/authentication/SAMLAuthenticate/index.php', $contents);
 
 $contents = <<<EOQ
 <?php
@@ -87,35 +86,14 @@ $contents = <<<EOQ
 
         ?>
 EOQ;
-
-        if(file_exists('custom/modules/Users/authentication/SAMLAuthenticate/settings.php')) {
-           $this->customContents = file_get_contents('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
-        }
-
-        file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents);
-        SugarAutoLoader::addToMap('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', false);
+        SugarTestHelper::saveFile('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
+        SugarAutoLoader::put('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents, false);
 	}
 
 	public function tearDown()
 	{
-        //If we had a custom settings.php file already, just restore it
-        if(!empty($this->customContents))
-        {
-            file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $this->customContents);
-        } else {
-            unlink('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
-            SugarAutoLoader::delFromMap('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
-        }
+	    SugarTestHelper::tearDown();
 
-        //Remove the test index.php file
-        if(file_exists('custom/modules/Users/authentication/SAMLAuthenticate/index.php'))
-        {
-            unlink('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
-            SugarAutoLoader::delFromMap('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
-        }
-
-	    unset($GLOBALS['current_user']);
-	    $GLOBALS['sugar_config'] = $this->sugar_config_old;
 	    unset($_REQUEST['login_module']);
         unset($_REQUEST['login_action']);
         unset($_REQUEST['login_record']);
@@ -134,4 +112,3 @@ EOQ;
 
 
 }
-?>

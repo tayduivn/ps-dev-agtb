@@ -16,6 +16,7 @@ if (!defined('sugarEntry') || !sugarEntry)
 
 require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
 require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
+require_once 'modules/Users/authentication/SAMLAuthenticate/saml.php';
 
 /**
  * This file is where the user authentication occurs.
@@ -28,13 +29,19 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
      * SAML response object
      * @var OneLogin_Saml_Response
      */
-    protected $samlresponse;
+    public $samlresponse;
 
     /**
      * SAML settings
      * @var OneLogin_Saml_Settings
      */
-    protected $settings;
+    public $settings;
+
+    /**
+     * XPath for assertion XML
+     * @var DOMXpath
+     */
+    protected $xpath = null;
 
     /**
      * Does the actual authentication of the user and returns an id that will be
@@ -63,6 +70,10 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
             $GLOBALS['log']->debug('response is valid');
 
             $this->samlresponse->attributes = $this->samlresponse->getAttributes();
+            if(!empty($this->settings->useXML)) {
+                $this->xpath = new DOMXpath($this->samlresponse->document);
+            }
+
             $id = $this->get_user_id();
             if (!empty($this->settings->id)) {
                 $user = $this->fetch_user($id, $this->settings->id);
@@ -82,13 +93,12 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
                     return '';
                 }
             } else {
-                $xmlDoc = $this->samlresponse->document;
-                $xpath = new DOMXpath($xmlDoc);
+                $xpath = new DOMXpath($this->samlresponse->document);
                 if (isset($this->settings->customCreateFunction)) {
                     return call_user_func($this->settings->customCreateFunction, $this,
-                        $this->samlresponse->getNameId(), $xpath, $this->settings, $this->samlresponse);
+                        $this->samlresponse->getNameId(), $xpath, $this->settings);
                 } else {
-                    return $this->createUser($this->samlresponse->getNameId(), $this->samlresponse, $this->settings);
+                    return $this->createUser($this->samlresponse->getNameId());
                 }
             }
         }
@@ -256,16 +266,45 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
         return $this->samlresponse->getNameId();
     }
 
+    /**
+     * Get value of the assertion attribute
+     * @param string $name
+     * @return null|string
+     */
     protected function getAttribute($name)
     {
+        if($this->xpath) {
+            $xmlNodes = $this->xpath->query($name);
+            if ($xmlNodes === false)
+            {
+                // malformed xpath!
+                $GLOBALS['log']->debug("Bad xpath: $name");
+                return null;
+            }
+            if ($xmlNodes->length == 0)
+            {
+                // no nodes match xpath!
+                $GLOBALS['log']->debug("No nodes match this xpath: $name");
+                return null;
+            }
+            return $xmlNodes->item(0)->nodeValue;
+        }
         if(isset($this->samlresponse->attributes[$name])) {
             return $this->samlresponse->attributes[$name];
         }
         return null;
     }
 
+    /**
+     * Check if assertion attribute exists
+     * @param string $name
+     */
     protected function hasAttribute($name)
     {
+        if($this->xpath) {
+            $res = $this->getAttribute($name);
+            return !is_null($res);
+        }
         return isset($this->samlresponse->attributes[$name]);
     }
 
