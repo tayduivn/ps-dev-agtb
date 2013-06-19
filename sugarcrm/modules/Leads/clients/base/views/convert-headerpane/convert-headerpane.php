@@ -37,11 +37,15 @@ $viewdefs['Leads']['base']['view']['convert-headerpane'] = array(
             'css_class' => 'btn btn-invisible btn-link cancel',
         ),
         array(
-            'name'    => 'lead_convert_finish_button',
+            'name'    => 'save_button',
             'type'    => 'button',
-            'label'   => 'LBL_FINISH_BUTTON_LABEL',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
             'css_class' => 'btn-primary disabled',
             'acl_action' => 'edit',
+        ),
+        array(
+            'name' => 'sidebar_toggle',
+            'type' => 'sidebartoggle',
         ),
     ),
 );

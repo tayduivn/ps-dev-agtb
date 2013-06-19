@@ -1,19 +1,20 @@
 ({
-    events:{
-        'click .header.enabled': 'handlePanelHeaderClick',
-        'click [name=lead_convert_finish_button].enabled': 'initiateFinish'
-    },
-
     initialize:function (options) {
-        _.bindAll(this);
+        this.convertPanels = {};
+        this.associatedModels = {};
+        this.dependentModules = {};
+
         app.view.Layout.prototype.initialize.call(this, options);
 
         //create and place all the accordion panels
         this.initializePanels(this.meta.modules);
 
         //listen for panel status updates
-        this.context.on("lead:convert:panel:update", this.handlePanelUpdate);
-        this.context.on("lead:convert:finish", this.initiateFinish);
+        this.context.on('lead:convert-panel:complete', this.handlePanelComplete, this);
+        this.context.on('lead:convert-panel:reset', this.handlePanelReset, this);
+
+        //listen for Save button click in headerpane
+        this.context.on('lead:convert:save', this.handleSave, this);
     },
 
     /**
@@ -27,23 +28,27 @@
 
         _.each(modulesMetadata, function (moduleMeta) {
             moduleMeta.moduleNumber = moduleNumber++;
-            var view = app.view.createView({
+            var view = app.view.createLayout({
                 context: this.context,
                 name: 'convert-panel',
                 layout: this,
-                meta: moduleMeta
+                meta: moduleMeta,
+                type: 'convert-panel'
             });
 
             //This is because backbone injects a wrapper element.
-            view.$el.addClass('accordion-group filter_el step_1_container');
+            view.$el.addClass('accordion-group');
             view.$el.data('module', moduleMeta.module);
 
             this.addComponent(view);
+            this.convertPanels[moduleMeta.module] = view;
+            if (moduleMeta.dependentModules) {
+                this.dependentModules[moduleMeta.module] = moduleMeta.dependentModules;
+            }
         }, this);
     },
 
     _render: function () {
-        var firstModule, leadsModel;
         app.view.Layout.prototype._render.call(this);
 
         //This is because backbone injects a wrapper element.
@@ -52,135 +57,48 @@
 
         //apply the accordion to this layout
         this.$(".collapse").collapse({toggle:false, parent:'#convert-accordion'});
+        this.$(".collapse").on('shown hidden', _.bind(this.handlePanelCollapseEvent, this));
 
         //copy lead data down to each module when we get the lead data
-        leadsModel = this.context.get('leadsModel');
-        leadsModel.fetch({
+        this.context.get('leadsModel').fetch({
             success: _.bind(function(model) {
                 this.context.trigger("lead:convert:populate", model);
             }, this)
         });
-
-        //show first panel
-        firstModule = _.first(this.meta.modules).module;
-        this.setStep(firstModule);
-        this.context.trigger('lead:convert:' + firstModule + ':show');
-
-        this.checkRequired();
     },
 
     /**
-     * When user clicks on the panel headers, kick off validation
-     * for the currently open panel
-     *
+     * Catch collapse shown/hidden events and notify the panels via the context
      * @param event
      */
-    handlePanelHeaderClick: function(event) {
-        var panelHeader = this.$(event.target).closest('.header'),
-            nextModule = panelHeader.attr('data-module');
-
-        this.initiateShow(nextModule);
-    },
-
-    /**
-     * Kick off validation for the currently open panel
-     * This will prevent the next panel from opening and display errors if validation fails
-     *
-     * @param nextModule
-     */
-    initiateShow: function(nextModule) {
-        var self = this,
-            currentModule = this.getStep(),
-            callback = function() {
-                self.context.trigger('lead:convert:' + currentModule + ':hide');
-                self.context.trigger('lead:convert:' + nextModule + ':show');
-                self.setStep(nextModule);
-            };
-
-        if (nextModule != this.getStep()) {
-            this.context.trigger('lead:convert:' + currentModule + ':validate', callback);
+    handlePanelCollapseEvent: function(event) {
+        //only respond to the events directly on the collapse (was getting events from tooltip propagated up
+        if (event.target !== event.currentTarget) {
+            return;
         }
+        var module = $(event.currentTarget).data('module');
+        this.context.trigger('lead:convert:' + module + ':' + event.type);
     },
 
     /**
-     * Checks if each module's dependencies are met and enables the panel if they are.
-     * Dependencies are defined in the convert-main.php
+     * When a panel is complete, add the model to the associatedModels array and notify any dependent modules
+     * @param module that was completed
+     * @param model
      */
-    checkDependentModules: function() {
-        var modulesMeta = this.meta.modules,
-            isEnabled = false;
-
-        _.each(modulesMeta, function (moduleMeta) {
-            if(!_.isUndefined(moduleMeta.dependentModules)) {
-                if (this.isDependentModulesComplete(moduleMeta)) {
-                    isEnabled = true;
-                }
-                this.context.trigger("lead:convert:" + moduleMeta.module + ":enable", isEnabled);
-            }
-        }, this);
+    handlePanelComplete: function(module, model) {
+        this.associatedModels[module] = model;
+        this.handlePanelUpdate();
+        this.context.trigger('lead:convert:'+module+':complete', module, model);
     },
 
     /**
-     * Checks if a given module's dependencies are met
-     *
-     * @param moduleMeta
-     * @return boolean
+     * When a panel is reset, remove the model from the associatedModels array and notify any dependent modules
+     * @param module
      */
-    isDependentModulesComplete: function(moduleMeta) {
-        var isDirtyOrComplete,
-            self = this;
-
-        isDirtyOrComplete =  _.all(moduleMeta.dependentModules, function(module, moduleName, list) {
-            var convertPanel,
-                meta = self._getModuleMeta(moduleName);
-
-            if (!meta.required) {
-                return true;
-            }
-
-            convertPanel = self._getPanelByModuleName(moduleName);
-            if (!convertPanel.isDirtyOrComplete()) {
-                return false;
-            }
-            return true;
-        });
-
-        return isDirtyOrComplete;
-    },
-
-    /**
-     * Checks if all required modules have been completed
-     * Enables the finish button if all are complete
-     */
-    checkRequired: function() {
-        var showFinish,
-            self = this;
-
-        showFinish = _.all(this.meta.modules, function(module){
-            if (_.isBoolean(module.required) && module.required) {
-                var convertPanel = self._getPanelByModuleName(module.module);
-                if (!convertPanel.isDirtyOrComplete()) {
-                    return false;
-                }
-            }
-            return true;
-        });
-
-        if (showFinish) {
-            this.toggleFinishButton(true);
-        } else {
-            this.toggleFinishButton(false);
-        }
-    },
-
-    /**
-     * Enable/disable the Finish button on the page
-     *
-     * @param enable true to enable, false to disable
-     */
-    toggleFinishButton: function(enable) {
-        $('[name=lead_convert_finish_button]').toggleClass('enabled', enable);
-        $('[name=lead_convert_finish_button]').toggleClass('disabled', !enable);
+    handlePanelReset: function(module) {
+        delete this.associatedModels[module];
+        this.handlePanelUpdate();
+        this.context.trigger('lead:convert:'+module+':reset', module);
     },
 
     /**
@@ -192,77 +110,52 @@
         this.checkRequired();
     },
 
-    setStep: function(nextModule) {
-        this.context.currentStep = nextModule;
-    },
-
-    getStep: function() {
-        return this.context.currentStep;
+    /**
+     * Check if each module's dependencies are met and enable the panel if they are.
+     * Dependencies are defined in the convert-main.php
+     */
+    checkDependentModules: function() {
+        _.each(this.dependentModules, function (dependencies, dependentModuleName) {
+            var isEnabled = _.all(dependencies, function(module, moduleName) {
+                return (this.associatedModels[moduleName]);
+            }, this);
+            this.context.trigger("lead:convert:" + dependentModuleName + ":enable", isEnabled);
+        }, this);
     },
 
     /**
-     * Helper for getting a module's convert lead metadata
-     * @param nextModule
-     * @private
+     * Checks if all required modules have been completed
+     * Enables the Save button if all are complete
      */
-    _getModuleMeta: function(nextModule) {
-       return _.find(this.meta.modules, function(moduleMeta){
-            return moduleMeta.module === nextModule;
-        })
-    },
-
-    /**
-     * Helper for getting a sub-panel component from the layout's component array by module name
-     * @param moduleName
-     * @return {*} convert-panel view for given module name
-     * @private
-     */
-    _getPanelByModuleName: function(moduleName) {
-        return _.find(this._components, function(component) {
-            return ((component.name === 'convert-panel') && (component.meta.module === moduleName));
-        })
-    },
-
-    /**
-     * When finish button is clicked, need to kick off validation for current module
-     */
-    initiateFinish: function() {
-        var currentModule = this.getStep();
-        //run validation - set force=true to make sure required panels are completed
-        this.context.trigger('lead:convert:' + currentModule + ':validate', this.processConvert, true);
-    },
-
-    /**
-     * Save the convert model and process the response
-     */
-    processConvert:function () {
-        var leadsModel,
-            convertModel,
-            models = {},
-            myURL;
-
-        this.toggleFinishButton(false);
-        app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
-
-        //create parent convert model to hold all sub-models
-        leadsModel = this.context.get('leadsModel');
-
-        //grab the associated model for each module
-        _.each(this.meta.modules, function (moduleMeta) {
-            var convertPanel = this._getPanelByModuleName(moduleMeta.module),
-                associatedModel = convertPanel.getAssociatedModel();
-            if (!_.isEmpty(associatedModel)) {
-                models[moduleMeta.module] = associatedModel;
+    checkRequired: function() {
+        var showSave = _.all(this.meta.modules, function(module){
+            if (module.required) {
+                if (!this.associatedModels[module.module]) {
+                    return false;
+                }
             }
+            return true;
         }, this);
 
-        convertModel = new Backbone.Model(_.extend({}, {'modules' : models}));
+        this.context.trigger('lead:convert-save:toggle', showSave);
+    },
 
-        myURL = app.api.buildURL('Leads', 'convert', {id:leadsModel.id});
+    /**
+     * When save button is clicked, call the Lead Convert API
+     */
+    handleSave: function() {
+        var convertModel, myURL;
 
+        //disable the save button to prevent double click
+        this.context.trigger('lead:convert-save:toggle', false);
+
+        app.alert.show('processing_convert', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
+
+        convertModel = new Backbone.Model(_.extend({}, {'modules' : this.associatedModels}));
+        myURL = app.api.buildURL('Leads', 'convert', {id: this.context.get('leadsModel').id});
         app.api.call('create', myURL, convertModel, {
-            success: this.uploadAssociatedRecordFiles,
-            error: this.convertError
+            success: _.bind(this.uploadAssociatedRecordFiles, this),
+            error: _.bind(this.convertError, this)
         });
     },
 
@@ -273,7 +166,9 @@
      * @param convertResults
      */
     uploadAssociatedRecordFiles: function(convertResults) {
-        var modulesToProcess = this.meta.modules.length,
+        if (this.disposed) return;
+
+        var modulesToProcess = _.keys(this.associatedModels).length,
             failureCount = 0;
 
         var completeFn = _.bind(function() {
@@ -287,20 +182,16 @@
             }
         }, this);
 
-        _.each(this.meta.modules, function(moduleMeta) {
-            var convertPanel = this._getPanelByModuleName(moduleMeta.module),
-                associatedModel = convertPanel.getAssociatedModel(),
-                moduleResult;
-
-            moduleResult = _.find(convertResults.modules, function(module) {
-                return (moduleMeta.module === module._module);
+        _.each(this.associatedModels, function(associatedModel, associatedModule) {
+            var moduleResult = _.find(convertResults.modules, function(result) {
+                return (associatedModule === result._module);
             }, this);
 
-            //if associatedModel has no id, then it came from recordView on convertPanel and may need file uploads
+            //if associatedModel has no id, then it came from createView on convertPanel and may need file uploads
             if (moduleResult && _.isEmpty(associatedModel.get('id'))) {
                 associatedModel.set('id', moduleResult.id);
                 app.file.checkFileFieldsAndProcessUpload(
-                    convertPanel.recordView,
+                    this.convertPanels[associatedModule].createView,
                     {
                         success: function() { completeFn(); },
                         error: function() { failureCount++; completeFn(); }
@@ -308,11 +199,11 @@
                     {deleteIfFails:false},
                     false
                 );
-            //no files to upload because an existing record was selected for this module, just run complete
+
             } else {
+                //no files to upload because an existing record was selected for this module, just run complete
                 completeFn();
             }
-
         }, this);
     },
 
@@ -337,7 +228,7 @@
         this.convertComplete('error', 'LBL_CONVERTLEAD_ERROR', false);
 
         if (!this.disposed) {
-            this.toggleFinishButton(true);
+            this.context.trigger('lead:convert-save:toggle', true);
         }
     },
 
@@ -359,5 +250,14 @@
             app.drawer.close();
             app.navigate(this.context, leadsModel, 'record');
         }
+    },
+
+    /**
+     * Clean up the jquery events that were added
+     * @private
+     */
+    _dispose: function() {
+        this.$(".collapse").off();
+        app.view.Layout.prototype._dispose.call(this);
     }
 })
