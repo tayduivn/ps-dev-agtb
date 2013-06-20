@@ -30,17 +30,6 @@ class OAuth2Api extends SugarApi
                 'noLoginRequired' => true,
                 'keepSession' => true,
             ),
-            'saml' => array(
-                'reqType' => 'POST',
-                'path' => array('oauth2','saml'),
-                'pathVars' => array('',''),
-                'method' => 'tokenSAML',
-                'shortHelp' => 'OAuth2 token request for SAML.',
-                'longHelp' => 'include/api/help/oauth2_saml_post_help.html',
-                'rawReply' => true, // The OAuth server sets specific headers and outputs in the exact format requested by the spec, so we don't want to go around messing with it.
-                'noLoginRequired' => true,
-                'keepSession' => true,
-            ),
             'oauth_logout' => array(
                 'reqType' => 'POST',
                 'path' => array('oauth2','logout'),

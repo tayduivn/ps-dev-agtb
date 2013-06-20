@@ -83,7 +83,12 @@
         <script language="javascript" src="include/javascript/sugar7/hbt-helpers.js"></script>
         <script language="javascript">
             var App;
-
+			{/literal}{if $accessToken}
+			SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$accessToken}");
+			{if $refreshToken}
+			SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$refreshToken}");
+			{/if}
+			{/if}{literal}
             App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){

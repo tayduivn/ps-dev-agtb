@@ -739,8 +739,7 @@ class OAuth2 {
 		$token = $this->createAccessToken($client[0], $user_id, $stored['scope']);
 
 		// Send response
-		$this->sendJsonHeaders();
-		return json_encode($token);
+		return $token;
 	}
 
 	/**

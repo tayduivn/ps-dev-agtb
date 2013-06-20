@@ -703,7 +703,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
             if(empty($inputData['assertion'])) {
                 return false;
             }
-            $_POST['SAMLResponse'] = base64_decode($inputData['assertion']);
+            $_POST['SAMLResponse'] = $inputData['assertion'];
             return $this->checkUserCredentials('sugar', '', '');
 	    }
         return false;

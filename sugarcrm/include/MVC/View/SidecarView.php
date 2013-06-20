@@ -14,6 +14,7 @@
 
 require_once('include/MVC/View/SugarView.php');
 require_once('include/SugarTheme/SidecarTheme.php');
+require_once 'ModuleInstall/ModuleInstaller.php';
 
 class SidecarView extends SugarView
 {
@@ -27,6 +28,12 @@ class SidecarView extends SugarView
     }
 
     /**
+     * Authorization token to integrate into the view
+     * @var array
+     */
+    protected $authorization;
+
+    /**
      * This method checks to see if the configuration file exists and, if not, creates one by default
      *
      */
@@ -36,10 +43,10 @@ class SidecarView extends SugarView
 
         //Rebuild config file if it doesn't exist
         if(!file_exists($this->configFile)) {
-           require_once('install/install_utils.php');
-           handleSidecarConfig();
+           ModuleInstaller::handleBaseConfig();
         }
         $this->ss->assign("configFile", $this->configFile);
+        $config = ModuleInstaller::getBaseConfig();
 
         require_once("jssource/minify_utils.php");
         $minifyUtils = new SugarMinifyUtils();
@@ -67,6 +74,13 @@ class SidecarView extends SugarView
             include("include/Expressions/updatecache.php");
         }
         $this->ss->assign("SLFunctionsPath", $slFunctionsPath);
+        if(!empty($this->authorization)) {
+            $this->ss->assign('appPrefix', $config['env'].":".$config['appId'].":");
+            $this->ss->assign('accessToken', $this->authorization['access_token']);
+            if(!empty($this->authorization['refresh_token'])) {
+                $this->ss->assign('refreshToken',  $this->authorization['refresh_token']);
+            }
+        }
     }
 
     /**
@@ -75,7 +89,7 @@ class SidecarView extends SugarView
      */
     public function display()
     {
-        $this->ss->display(get_custom_file_if_exists('include/MVC/View/tpls/sidecar.tpl'));
+        $this->ss->display(SugarAutoLoader::existingCustomOne('include/MVC/View/tpls/sidecar.tpl'));
     }
 
     /**
