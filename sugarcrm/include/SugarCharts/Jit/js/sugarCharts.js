@@ -94,9 +94,10 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 .datum( SUGAR.charts.translateDataToD3(json,params) )
                                 .transition().duration(500)
                                 .call(paretoChart)
-                                .selectAll('.nv-y.nv-axis text')
+                                .selectAll('.nv-y.nv-axis .tick')
+                                .select('text')
                                 .text(function(d) {
-                                    return App.user.get('preferences').currency_symbol + d3.format(",.2s")(d);
+                                    return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
                                 });
 
                             nv.utils.windowResize(paretoChart.update);
