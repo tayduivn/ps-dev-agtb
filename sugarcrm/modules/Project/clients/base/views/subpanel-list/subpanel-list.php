@@ -12,18 +12,19 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Project']['base']['view']['subpanel-list'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
           'name' => 'name',
+          'link' => true,
         ),
         array(
           'target_record_key' => 'assigned_user_id',

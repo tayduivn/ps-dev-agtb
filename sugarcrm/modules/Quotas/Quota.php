@@ -88,7 +88,7 @@ class Quota extends SugarBean
      * @param $where
      * @param $show_deleted
      */
-    public function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = NULL, $singleSelect = false, $retrieve_created_by = true)
+    public function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false, $retrieve_created_by = true)
     {
         global $current_user;
 
@@ -167,7 +167,7 @@ class Quota extends SugarBean
     }
 
 
-    public function save($check_notify = FALSE)
+    public function save($check_notify = false)
     {
         if (empty($this->currency_id)) {
             // use user preferences for currency
@@ -229,12 +229,12 @@ class Quota extends SugarBean
         $row = Array();
         $row = $this->db->fetchByAssoc($result);
 
-        if ($row != NULL) {
+        if ($row != null) {
             $user_full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
             return $user_full_name;
         }
 
-        return NULL;
+        return null;
     }
 
 
@@ -254,7 +254,7 @@ class Quota extends SugarBean
         $result = $this->db->query($qry, true, 'Error retrieving timeperiods: ');
 
         $options = '';
-        if ($id == NULL) // timeperiods is not defined, print "Select Time Period..."
+        if ($id == null) // timeperiods is not defined, print "Select Time Period..."
         {
             $options .= '<option value="?action=index&module=Quotas" SELECTED>'
                 . $mod_strings['LBL_SELECT_TIME_PERIOD']
@@ -306,7 +306,7 @@ class Quota extends SugarBean
      *
      * @return array
      */
-    public function getCurrentUserQuota($timeperiod_id, $user = NULL)
+    public function getCurrentUserQuota($timeperiod_id, $user = null)
     {
 
         if (empty($user)) {
@@ -355,10 +355,10 @@ class Quota extends SugarBean
      * @param $formatted - boolean to test if output should be formatted
      * @param $id        - to pass in an user_id in case it is necessary
      */
-    public function getGroupQuota($timeperiod_id, $formatted = true, $id = NULL)
+    public function getGroupQuota($timeperiod_id, $formatted = true, $id = null)
     {
         global $current_user;
-        if ($id == NULL) {
+        if ($id == null) {
             $id = $current_user->id;
         }
 
@@ -395,7 +395,7 @@ class Quota extends SugarBean
      *
      * @return array [currency_id => int, amount => number, formatted_amount => String]
      */
-    public function getRollupQuota($timeperiod_id, $user_id = NULL, $should_rollup = FALSE)
+    public function getRollupQuota($timeperiod_id, $user_id = null, $should_rollup = false)
     {
         global $current_user;
         $rollup_filter = "AND quotas.quota_type = 'Direct' ";
@@ -525,7 +525,7 @@ class Quota extends SugarBean
     $data = $this->getUserManagedSelectData($timeperiod_id);
     $options = '';
 
-    if ($id == NULL) {
+    if ($id == null) {
      $options .= '<option value="?action=index&module=Quotas" SELECTED>'
               . $mod_strings['LBL_SELECT_USER']
               . '</option>' ;
@@ -541,7 +541,7 @@ class Quota extends SugarBean
                   . $locale->getLocaleFormattedName($row['first_name'], $row['last_name'])
                   . '</option>';
      } else {
-         if ($row['quota_id'] == NULL){
+         if ($row['quota_id'] == null){
              $options .= '<option value="?edit=true&action=index&module=Quotas&record=new'
                   . '&user_id=' . $row['user_id']
                   . '&timeperiod_id=' . $timeperiod_id
@@ -640,7 +640,6 @@ class Quota extends SugarBean
             return false;
         }
     }
-
 }
 
 /**

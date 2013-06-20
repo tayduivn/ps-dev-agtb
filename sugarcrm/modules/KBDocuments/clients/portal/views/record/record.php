@@ -41,10 +41,6 @@ $viewdefs['KBDocuments']['portal']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array (
-                    'name' => 'name',
-                    'span' => 12,
-                ),
-                array (
                     'name' => 'body',
                     'span' => 12,
                 ),

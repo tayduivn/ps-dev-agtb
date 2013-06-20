@@ -31,7 +31,8 @@
 
         // Can't use getRelevantContextList here, because the context may not
         // have all the children we need.
-        if (this.layoutType === 'records' && this.module !== 'Home') {
+        if (this.layoutType === 'records') {
+            // filters will handle data fetching so we skip the standard data fetch
             this.context.set('skipFetch', true);
         } else {
             if(this.context.parent) {
@@ -45,40 +46,12 @@
             }, this);
         }
 
-        this.layout.on('filter:change:quicksearch', function(query, def) {
-            this.trigger('filter:change:quicksearch', query, def);
-        }, this);
-
-        this.on('filter:change:quicksearch', function(query, dynamicFilterDef) {
-            var self = this,
-                ctxList = this.getRelevantContextList();
-
-            _.each(ctxList, function(ctx) {
-                var ctxCollection = ctx.get('collection'),
-                    origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
-                    filterDef = self.getFilterDef(origFilterDef, query, ctx),
-                    options = {
-                        //Show alerts for this request
-                        showAlerts: true,
-                        success: function() {
-                            // Close the preview pane to ensure that the preview
-                            // collection is in sync with the list collection.
-                            app.events.trigger('preview:close');
-                    }};
-
-                ctxCollection.filterDef = filterDef;
-                ctxCollection.origFilterDef = origFilterDef;
-
-                options = _.extend(options, ctx.get('collectionOptions'));
-
-                ctx.resetLoadFlag(false);
-                ctx.set('skipFetch', false);
-                ctx.loadData(options);
-            });
-        }, this);
+        /**
+         * bind events
+         */
+        this.on('filter:apply', this.applyFilter, this);
 
         this.on('filter:create:close', function() {
-
             this.layout.editingFilter = null;
             this.layout.trigger('filter:create:close');
         }, this);
@@ -94,58 +67,117 @@
 
         this.on('filter:get', this.initializeFilterState, this);
 
-        this.on('filter:change:filter', function(id, preventCache) {
-            if (id && id != 'create' && !preventCache) {
-                app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, id);
-            }
-            var filter = this.filters.get(id) || this.emptyFilter,
-                ctxList = this.getRelevantContextList();
+        this.on('filter:change:filter', this.handleFilterChange, this);
 
-
-            _.each(ctxList, function(ctx) {
-                ctx.get('collection').origFilterDef = filter.get('filter_definition');
-            });
-            this.trigger('filter:clear:quicksearch');
+        this.layout.on('filter:apply', function(query, def) {
+            this.trigger('filter:apply', query, def);
         }, this);
 
-        this.layout.on('filterpanel:change', function(name, silent) {
-            this.showingActivities = name === 'activitystream';
-            var module = this.showingActivities ? "Activities" : this.module;
-            var link;
 
-            if(this.layoutType === 'record' && !this.showingActivities) {
-                module = link = app.cache.get("subpanels:last:" + module) || 'all_modules';
-                if (link !== 'all_modules') {
-                    module = app.data.getRelatedModule(this.module, link);
-                }
-            } else {
-                link = null;
-            }
-            if (!silent) {
-                this.trigger("filter:render:module");
-                this.trigger("filter:change:module", module, link);
-            }
-        }, this);
+        this.layout.on('filterpanel:change', this.handleFilterPanelChange, this);
 
         //When a filter is saved, update the cache and set the filter to be the currently used filter
-        this.layout.on('filter:add', function(model){
-            this.filters.add(model);
-            app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
-            app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, model.get("id"));
-            this.layout.trigger('filter:reinitialize');
-        }, this);
+        this.layout.on('filter:add', this.addFilter, this);
 
         // When a filter is deleted, update the cache and set the default filter
         // to be the currently used filter.
-        this.layout.on('filter:remove', function(model){
-            this.filters.remove(model);
-            app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
-            this.layout.trigger('filter:reinitialize');
-        }, this);
+        this.layout.on('filter:remove', this.removeFilter, this);
 
         this.layout.on('filter:reinitialize', function() {
             this.initializeFilterState(this.layout.currentModule, this.layout.currentLink);
         }, this);
+    },
+    /**
+     * handles filter removal
+     * @param model
+     */
+    removeFilter: function(model){
+        this.filters.remove(model);
+        app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
+        this.layout.trigger('filter:reinitialize');
+    },
+    /**
+     * handles filter addition
+     * @param model
+     */
+    addFilter: function(model){
+        this.filters.add(model);
+        app.cache.set("filters:" + this.layout.currentModule, this.filters.toJSON());
+        app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, model.get("id"));
+        this.layout.trigger('filter:reinitialize');
+    },
+    /**
+     * handles filter panel changes between actvity and subpanels
+     * @param name
+     * @param silent
+     */
+    handleFilterPanelChange: function(name, silent) {
+        this.showingActivities = name === 'activitystream';
+        var module = this.showingActivities ? "Activities" : this.module;
+        var link;
+
+        if(this.layoutType === 'record' && !this.showingActivities) {
+            module = link = app.cache.get("subpanels:last:" + module) || 'all_modules';
+            if (link !== 'all_modules') {
+                module = app.data.getRelatedModule(this.module, link);
+            }
+        } else {
+            link = null;
+        }
+        if (!silent) {
+            this.trigger("filter:render:module");
+            this.trigger("filter:change:module", module, link);
+        }
+    },
+    /**
+     * handles filter change
+     * @param id
+     * @param preventCache
+     */
+    handleFilterChange: function(id, preventCache) {
+        if (id && id != 'create' && !preventCache) {
+            app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, id);
+        }
+        var filter = this.filters.get(id) || this.emptyFilter,
+            ctxList = this.getRelevantContextList();
+
+
+        _.each(ctxList, function(ctx) {
+            ctx.get('collection').origFilterDef = filter.get('filter_definition');
+        });
+        this.trigger('filter:clear:quicksearch');
+    },
+    /**
+     * Applies filter on current contexts
+     * @param {String} query search string
+     * @param {Object} dynamicFilterDef(optional)
+     */
+    applyFilter: function(query, dynamicFilterDef) {
+        var self = this,
+            ctxList = this.getRelevantContextList();
+
+        _.each(ctxList, function(ctx) {
+            var ctxCollection = ctx.get('collection'),
+                origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
+                filterDef = self.buildFilterDef(origFilterDef, query, ctx),
+                options = {
+                    //Show alerts for this request
+                    showAlerts: true,
+                    success: function() {
+                        // Close the preview pane to ensure that the preview
+                        // collection is in sync with the list collection.
+                        app.events.trigger('preview:close');
+                    }};
+
+            ctxCollection.filterDef = filterDef;
+            ctxCollection.origFilterDef = origFilterDef;
+
+            options = _.extend(options, ctx.get('collectionOptions'));
+
+            ctx.resetLoadFlag(false);
+            ctx.set('skipFetch', false);
+            ctx.loadData(options);
+        });
     },
 
     /**
@@ -159,18 +191,20 @@
     getRelevantContextList: function() {
         var contextList = [], context;
         if (this.showingActivities) {
-            context = this.layout.getActivityContext();
-            if (context) {
-                contextList.push(context);
-            }
+            _.each(this.layout._components, function(component) {
+               if (component.name == 'activitystream') {
+                   contextList.push(component.context);
+               }
+            });
         } else {
-            if (this.layoutType === 'records' && this.module !== "Home") {
+            if (this.layoutType === 'records') {
                 if (this.context.parent) {
                     contextList.push(this.context.parent);
                 } else {
                     contextList.push(this.context);
                 }
             } else {
+                //Locate and add subpanel contexts
                 _.each(this.context.children, function(childCtx) {
                     if (childCtx.get('link') && !childCtx.get('hidden')) {
                         contextList.push(childCtx);
@@ -188,7 +222,7 @@
      * @param {Context} context
      * @returns {Array} array containing filter def
      */
-    getFilterDef: function(origfilterDef, searchTerm, context) {
+    buildFilterDef: function(origfilterDef, searchTerm, context) {
         var searchFilter,
             filterDef = app.utils.deepCopy(origfilterDef),
             moduleQuickSearchFields = this.getModuleQuickSearchFields(context.get('module'));
@@ -235,42 +269,40 @@
      * @param {String} linkName
      */
     initializeFilterState: function(moduleName, linkName) {
-        var self = this,
-            callback = function(data) {
-                var module = moduleName || (self.showingActivities? "Activities" : self.module),
-                    link = linkName || data.link;
-
-                if (!moduleName && self.layoutType === 'record' && link !== 'all_modules' && !self.showingActivities) {
-                    module = app.data.getRelatedModule(module, data.link);
-                }
-
-                self.trigger('filter:change:module', module, link, true);
-                self.getFilters(module, data.filter);
-            };
-
-        this.getPreviouslyUsedFilter(moduleName || this.module, callback);
-    },
-
-    /**
-     * Gets previously used filters for a given module from the endpoint.
-     * @param  {String}   moduleName
-     * @param  {Function} callback
-     */
-    getPreviouslyUsedFilter: function(moduleName, callback) {
-        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
+        moduleName = moduleName || this.module;
+        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType),
+            filterData;
         if (!(this.filters.get(lastFilter)))
             lastFilter = null;
         // TODO: This is temporary. We need to hook this up to the PreviouslyUsed API.
         if (this.layoutType === 'record' && !this.showingActivities) {
-            callback({
+            filterData = {
                 link: lastFilter || 'all_modules',
                 filter: lastFilter || 'all_records'
-            });
+            };
         } else {
-            callback({
+            filterData = {
                 filter: lastFilter || null
-            });
+            };
         }
+        this.applyPreviousFilter(moduleName, linkName, filterData);
+    },
+    /**
+     * applies previous filter
+     * @param {String} moduleName
+     * @param {String} linkName
+     * @param {Object} data
+     */
+    applyPreviousFilter: function (moduleName, linkName, data) {
+        var module = moduleName || (this.showingActivities ? "Activities" : this.module),
+            link = linkName || data.link;
+
+        if (!moduleName && this.layoutType === 'record' && link !== 'all_modules' && !this.showingActivities) {
+            module = app.data.getRelatedModule(module, data.link);
+        }
+
+        this.trigger('filter:change:module', module, link, true);
+        this.getFilters(module, data.filter);
     },
 
     /**
@@ -279,38 +311,10 @@
      * @param  {String} defaultId
      */
     getFilters: function(moduleName, defaultId) {
-        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
         var filter = [
             {'created_by': app.user.id},
             {'module_name': moduleName}
-        ], self = this,
-            callback = function() {
-                var defaultFilterFromMeta,
-                    possibleFilters = [],
-                    filterMeta = self.getModuleFilterMeta(moduleName);
-
-                if (filterMeta) {
-                    _.each(filterMeta, function(value) {
-                        if (_.isObject(value)) {
-                            if (_.isObject(value.meta.filters)) {
-                                self.filters.add(value.meta.filters);
-                            }
-                            if (value.meta.default_filter) {
-                                defaultFilterFromMeta = value.meta.default_filter;
-                            }
-                        }
-                    });
-
-                    possibleFilters = [defaultId, defaultFilterFromMeta, 'all_records'];
-                    possibleFilters = _.filter(possibleFilters, self.filters.get, self.filters);
-                }
-
-                if (lastFilter && !(self.filters.get(lastFilter))){
-                    app.cache.cut("filters:last:" + moduleName + ":" + self.layoutType);
-                }
-                self.trigger('filter:render:filter');
-                self.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + self.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
-            };
+        ], self = this;
         // TODO: Add filtering on subpanel vs. non-subpanel filters here.
         var filterLayout = app.view._getController({type:'layout',name:'filter'});
         if (filterLayout.loadedModules[moduleName] && !_.isEmpty(app.cache.get("filters:" + moduleName)))
@@ -320,7 +324,7 @@
             _.each(filters, function(f){
                 self.filters.add(app.data.createBean("Filters", f));
             });
-            callback();
+            self.handleFilterRetrieve(moduleName, defaultId);
         }
         else {
             this.filters.fetch({
@@ -329,12 +333,44 @@
                 filter: filter,
                 success:function(){
                     filterLayout.loadedModules[moduleName] = true;
-                    // app.view.layouts.FilterLayout.loadedModules[moduleName] = true;
                     app.cache.set("filters:" + moduleName, self.filters.toJSON());
-                    callback();
+                    self.handleFilterRetrieve(moduleName, defaultId);
                 }
             });
         }
+    },
+    /**
+     * handles return from filter retrieve per module
+     * @param moduleName
+     * @param defaultId
+     */
+    handleFilterRetrieve: function(moduleName, defaultId) {
+        var lastFilter = app.cache.get("filters:last:" + moduleName + ":" + this.layoutType);
+        var defaultFilterFromMeta,
+            possibleFilters = [],
+            filterMeta = this.getModuleFilterMeta(moduleName);
+
+        if (filterMeta) {
+            _.each(filterMeta, function(value) {
+                if (_.isObject(value)) {
+                    if (_.isObject(value.meta.filters)) {
+                        this.filters.add(value.meta.filters);
+                    }
+                    if (value.meta.default_filter) {
+                        defaultFilterFromMeta = value.meta.default_filter;
+                    }
+                }
+            }, this);
+
+            possibleFilters = [defaultId, defaultFilterFromMeta, 'all_records'];
+            possibleFilters = _.filter(possibleFilters, this.filters.get, this.filters);
+        }
+
+        if (lastFilter && !(this.filters.get(lastFilter))){
+            app.cache.cut("filters:last:" + moduleName + ":" + this.layoutType);
+        }
+        this.trigger('filter:render:filter');
+        this.trigger('filter:change:filter', app.cache.get("filters:last:" + moduleName + ":" + this.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
     },
 
     /**
@@ -355,7 +391,6 @@
         var contexts = this.getRelevantContextList(),
             creatable = app.acl.hasAccess("create", "Filters"),
             meta;
-
         // Short circuit if we don't have the ACLs to create Filter beans.
         if (creatable && contexts.length === 1) {
             meta = app.metadata.getModule(contexts[0].get("module"));

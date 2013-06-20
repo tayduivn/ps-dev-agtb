@@ -12,30 +12,19 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Documents']['base']['view']['subpanel-list'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
-        array(
-          'label' => 'LBL_OBJECT_IMAGE',
-          'enabled' => true,
-          'default' => true,
-          'name' => 'object_image',
-        ),
         array(
           'name' => 'document_name',
           'label' => 'LBL_LIST_DOCUMENT_NAME',
           'enabled' => true,
           'default' => true,
-        ),
-        array(
-          'name' => 'filename',
-          'label' => 'LBL_LIST_FILENAME',
-          'enabled' => true,
-          'default' => true,
+          'link' => true,
         ),
         array(
           'name' => 'category_id',
@@ -60,16 +49,6 @@ $viewdefs['Documents']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_ACTIVE_DATE',
           'enabled' => true,
           'default' => true,
-        ),
-        array(
-          'enabled' => true,
-          'default' => true,
-          'name' => 'get_latest',
-        ),
-        array(
-          'enabled' => true,
-          'default' => true,
-          'name' => 'load_signed',
         ),
       ),
     ),

@@ -86,10 +86,10 @@ class ForecastsDefaults
             'has_commits' => 0,
             // indicates how data is displayed in the worksheet
             //BEGIN SUGARCRM flav=ent ONLY
-            'forecast_by' => 'products', // options: 'products' or 'opportunities'
+            'forecast_by' => 'RevenueLineItems', // options: 'RevenueLineItems' or 'Opportunities'
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'forecast_by' => 'opportunities', // options: 'products' or 'opportunities'
+            'forecast_by' => 'Opportunities', // options: 'RevenueLineItems' or 'Opportunities'
             //END SUGARCRM flav=pro && flav!=ent ONLY
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'

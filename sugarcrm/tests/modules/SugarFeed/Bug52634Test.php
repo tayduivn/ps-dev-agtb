@@ -70,6 +70,7 @@ class Bug52634Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSugarFeedsDashletGroupByWorksWithRole()
     {
+        $this->markTestSkipped('Skipping as this is not needed for Sugar7. Should be removed on SC-1312');
         //initialize the sugarfeed dashlet and prepare the request
         $_REQUEST['module']='Home';
         $dashlet = new SugarFeedDashlet('sumID');

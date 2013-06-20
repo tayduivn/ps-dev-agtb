@@ -231,7 +231,7 @@ class RestResponse extends Zend_Http_Response
      * @param string $etag ETag to use for this content.
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag = null)
+    public function generateETagHeader($etag = null, $cache_age=0)
     {
         if(is_null($etag)) {
             if($this->type != self::RAW) {
@@ -239,16 +239,22 @@ class RestResponse extends Zend_Http_Response
             }
             $etag = md5($this->body);
         }
+
+        //Override cache control to ensure the etag is respected by the browser
+        $this->setHeader('Cache-Control', "max-age={$cache_age}, private");
+        $this->setHeader('Expires', "");
+        $this->setHeader('Pragma', "");
+
         if(isset($this->server_data["HTTP_IF_NONE_MATCH"]) && $etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
-		    // Same data, clean it up and return 304
-		    $this->body = '';
-            $this->headers = array();
+            // Same data, clean it up and return 304
+            $this->body = '';
             $this->code = 304;
             $this->type = self::RAW;
             return true;
-    	}
-    	$this->setHeader('ETag', $etag);
-    	return false;
+        }
+
+        $this->setHeader('ETag', $etag);
+        return false;
     }
 
     /**

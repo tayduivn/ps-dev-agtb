@@ -12,18 +12,19 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Opportunities']['base']['view']['subpanel-for-emails'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'name' => 'name',
           'label' => 'LBL_LIST_OPPORTUNITY_NAME',
           'enabled' => true,
           'default' => true,
+          'link' => true,
         ),
         array(
           'target_record_key' => 'account_id',

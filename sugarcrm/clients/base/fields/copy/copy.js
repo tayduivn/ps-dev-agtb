@@ -27,6 +27,11 @@
         if (_.isUndefined(this.def.sync)) {
             this.def.sync = true;
         }
+
+        this.before('render', function() {
+            this.setDisabled(!this.hasAccess());
+            return true;
+        }, this);
     },
 
     /**
@@ -110,7 +115,9 @@
             this._initialValues[to] = this.model.get(to);
         }
 
-        this.model.set(to, this.model.get(from));
+        if (app.acl.hasAccessToModel('edit', this.model, to)) {
+            this.model.set(to, this.model.get(from));
+        }
     },
 
     /**
@@ -219,5 +226,18 @@
             }, this);
             this.sync(inSync);
         }
+    },
+
+    /**
+     * Determine if ACLs allow for the copy to show
+     * ACL check should return true if there is access to read target and edit
+     * source for at least to one mapped field
+     * @return {Boolean}
+     */
+    hasAccess: function() {
+        return _.some(this.def.mapping || [], function(toField, fromField) {
+            return app.acl.hasAccessToModel('read', this.model, fromField) &&
+                app.acl.hasAccessToModel('edit', this.model, toField);
+        }, this);
     }
 })

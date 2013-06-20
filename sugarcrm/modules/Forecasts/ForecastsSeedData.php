@@ -50,8 +50,6 @@ class ForecastsSeedData
 
         $forecast_by = $settings['forecast_by'];
 
-        $forecast_by = ucfirst(strtolower($forecast_by));
-
         foreach ($timeperiods as $timeperiod_id => $timeperiod) {
 
             foreach ($commit_order as $commit_type_array) {

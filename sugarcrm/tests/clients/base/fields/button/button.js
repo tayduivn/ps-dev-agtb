@@ -193,9 +193,34 @@ describe("Base.Field.Button", function() {
         field.show();
 
         expect(field.isHidden).toBeTruthy();
+        expect(field.isVisible()).toBeFalsy();
 
         accessStub.restore();
 
+    });
+
+    it('should update visibility once it triggers rendering', function() {
+        var def = {
+            'acl_module' : 'Contacts',
+            'acl_action' : 'edit'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var accessStub = sinon.stub(field,'hasAccess', function(){
+            return true;
+        })
+        field.render();
+        expect(field.isVisible()).toBe(true);
+        accessStub.restore();
+
+        accessStub = sinon.stub(field,'hasAccess', function(){
+            return false;
+        })
+        var renderStub = sinon.stub(field, "_render");
+        field.render();
+        expect(field.isVisible()).toBe(false);
+        expect(renderStub).not.toHaveBeenCalled();
+        renderStub.restore();
+        accessStub.restore();
     });
 
     it("should differentiate string routes from sidecar route object", function() {
@@ -214,5 +239,26 @@ describe("Base.Field.Button", function() {
         field = SugarTest.createField("base","button", "button", "edit", def);
         field.render();
         expect(field.full_route).toEqual('custom/route');
+    });
+
+    it("should test hasAccess control before it is rendered", function() {
+        field = SugarTest.createField("base","button", "button", "edit");
+        var hasAccessStub = sinon.stub(field, 'hasAccess');
+        field.triggerBefore("render");
+        expect(hasAccessStub).toHaveBeenCalled();
+        hasAccessStub.restore();
+    });
+
+    it("should update visibility simultaneously once it triggers show and hide", function() {
+        field = SugarTest.createField("base","button", "button", "edit");
+        field.on("hide", function() {
+            expect(this.isVisible()).toBe(false);
+        }, field);
+        field.on("show", function() {
+            expect(this.isVisible()).toBe(true);
+        }, field);
+        field.show();
+        field.hide();
+        field.off();
     });
 });

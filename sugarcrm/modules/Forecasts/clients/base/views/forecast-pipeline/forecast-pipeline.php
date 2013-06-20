@@ -16,7 +16,7 @@ $viewdefs['Forecasts']['base']['view']['forecast-pipeline'] = array(
                     'Home',
                     'Accounts',
                     'Opportunities',
-                    'Products'
+                    'RevenueLineItems'
                 ),
                 'view' => array(
                     'record',

@@ -670,6 +670,39 @@ describe("Record View", function () {
         });
     });
 
+    describe('Set and restore last state', function(){
+        describe('more_less toggle', function(){
+            it("should set state when more/less is toggled", function(){
+                var setStateStub = sinon.stub(SugarTest.app.user.lastState, "set", $.noop());
+                view.toggleMoreLess();
+                expect(setStateStub.calledOnce).toBe(true);
+                view.toggleMoreLess();
+                expect(setStateStub.calledTwice).toBe(true);
+                setStateStub.restore();
+            });
+            it("should toggleMoreLess during render when last state is 'less'", function(){
+                var getState = "less";
+                var getStateStub = sinon.stub(SugarTest.app.user.lastState, "get", function(){
+                    return getState;
+                });
+                var toggleMoreLessStub = sinon.stub(view, 'toggleMoreLess', $.noop());
+                view.render();
+                expect(getStateStub.calledOnce).toBe(true);
+                expect(toggleMoreLessStub.calledOnce).toBe(true);
+                toggleMoreLessStub.reset();
+                getStateStub.reset();
+
+                getState = "more";
+                view.render();
+                expect(getStateStub.calledOnce).toBe(true);
+                expect(toggleMoreLessStub.called).toBe(false);
+
+                toggleMoreLessStub.restore();
+                getStateStub.restore();
+            });
+        });
+    });
+
     describe('Set Button States', function () {
         it('should show buttons where the showOn states match', function() {
             // we need our buttons to be initialized before we can test them

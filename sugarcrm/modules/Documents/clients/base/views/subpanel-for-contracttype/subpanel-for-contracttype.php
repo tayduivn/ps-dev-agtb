@@ -12,18 +12,19 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Documents']['base']['view']['subpanel-for-contracttype'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'name' => 'document_name',
           'label' => 'LBL_LIST_DOCUMENT_NAME',
           'enabled' => true,
           'default' => true,
+          'link' => true,
         ),
         array(
           'name' => 'is_template',

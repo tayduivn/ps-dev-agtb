@@ -3,9 +3,9 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array (
   'components' => array (
     array (
       'layout' => 'subpanel',
-      'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+      'label' => 'LBL_RLI_SUBPANEL_TITLE',
       'context' => array (
-        'link' => 'products',
+        'link' => 'revenuelineitems',
       ),
     ),
     array (
@@ -34,6 +34,13 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array (
       'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'documents',
+      ),
+    ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
+      'context' => array (
+        'link' => 'quotes',
       ),
     ),
   ),

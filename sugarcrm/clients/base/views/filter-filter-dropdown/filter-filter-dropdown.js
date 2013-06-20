@@ -19,9 +19,13 @@
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.layout.on("filter:change:filter", this.handleChange, this);
-        this.layout.on("filter:change:module", this.handleModuleChange, this);
-        this.layout.on("filter:render:filter", this._renderHtml, this);
+        //Load partials
+        this._select2formatSelectionTemplate = app.template.get("filter-filter-dropdown.selection-partial");
+        this._select2formatResultTemplate = app.template.get("filter-filter-dropdown.result-partial");
+
+        this.listenTo(this.layout, "filter:change:filter", this.handleChange);
+        this.listenTo(this.layout, "filter:change:module", this.handleModuleChange);
+        this.listenTo(this.layout, "filter:render:filter", this._renderHtml);
     },
 
     /**
@@ -29,30 +33,50 @@
      * @private
      */
     _renderHtml: function() {
-        var self = this;
         app.view.View.prototype._renderHtml.call(this);
-        this.filterNode = this.$(".search-filter");
-        this.filterList = [];
 
-        this.layout.filters.each(function(model){
+        this.filterList = this.getFilterList();
+
+        this._renderDropdown(this.filterList);
+    },
+
+    /**
+     * Get the list of filters to fill the dropdown
+     * @returns {Array}
+     */
+    getFilterList: function() {
+        var filters = [];
+        this.layout.filters.each(function(model) {
             var isAllRecords = model.id !== "all_records" ? false : true;
-            this.filterList.push({id:model.id, text: this.getTranslatedSelectionText(isAllRecords, model.get("name"))});
+            filters.push({id: model.id, text: this.getTranslatedSelectionText(isAllRecords, model.get("name"))});
         }, this);
 
-        if(this.layout.canCreateFilter()) {
-            this.filterList.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
+        if (this.layout.canCreateFilter()) {
+            filters.push({id: "create", text: app.lang.get("LBL_FILTER_CREATE_NEW")});
         }
+        return filters;
+    },
+
+    /**
+     * Render select2 dropdown
+     * @private
+     */
+    _renderDropdown: function(data) {
+        var self = this;
+        this.filterNode = this.$(".search-filter");
 
         this.filterNode.select2({
-            data: this.filterList,
+            data: data,
             multiple: false,
             minimumResultsForSearch: 7,
             formatSelection: _.bind(this.formatSelection, this),
             formatResult: _.bind(this.formatResult, this),
-            dropdownCss: {width:'auto'},
+            dropdownCss: {width: 'auto'},
             dropdownCssClass: 'search-filter-dropdown',
             initSelection: _.bind(this.initSelection, this),
-            escapeMarkup: function(m) { return m; },
+            escapeMarkup: function(m) {
+                return m;
+            },
             width: 'off'
         });
 
@@ -61,10 +85,17 @@
         }
 
         this.filterNode.off("change");
-        this.filterNode.on("change", function(e) {
-            var val = e.val;
-            self.layout.trigger("filter:change:filter", val);
-        });
+        this.filterNode.on("change",
+            /**
+             * Called when the user selects a filter in the dropdown
+             * Triggers filter:change:filter on filter layout
+             *
+             * @param {Event} e
+             */
+            function(e) {
+                self.layout.trigger("filter:change:filter", e.val);
+            }
+        );
     },
 
     /**
@@ -125,16 +156,15 @@
      * @returns {string}
      */
     formatSelection: function(item) {
-        var filterLabel = app.lang.get("LBL_FILTER"),
-            selectionLabel = filterLabel;
+        var ctx = {};
 
         // Update the text for the selected filter.
         this.$('.choice-filter').html(item.text);
 
-        if(this.enabled) {
-            selectionLabel += '<i class="icon-caret-down"></i>';
-        }
-        return '<span class="select2-choice-type">' + selectionLabel +'</span>';
+        ctx.label = app.lang.get("LBL_FILTER");
+        ctx.enabled = this.enabled;
+
+        return this._select2formatSelectionTemplate(ctx);
     },
 
     /**
@@ -142,9 +172,9 @@
      * @param {Object} option
      * @returns {String}
      */
-    formatResult: function (option) {
+    formatResult: function(option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
-        return '<div><span class="select2-match"></span>'+ option.text +'</div>';
+        return this._select2formatResultTemplate(option.text);
     },
 
     /**
@@ -187,9 +217,10 @@
 
     /**
      * @override
+     * @private
      */
-    unbind: function() {
+    _dispose: function() {
         this.filterNode.select2('destroy');
-        app.view.View.prototype.unbind.call(this);
+        app.view.View.prototype._dispose.call(this);
     }
 })

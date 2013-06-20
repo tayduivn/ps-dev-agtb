@@ -383,6 +383,14 @@ $dictionary['Project'] = array(
             'source'=>'non-db',
             'vname'=>'LBL_PRODUCTS',
         ),
+        'revenuelineitems' =>
+            array (
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'relationship' => 'projects_revenuelineitems',
+            'source'=>'non-db',
+            'vname'=>'LBL_REVENUELINEITEMS',
+        ),
         //BEGIN SUGARCRM flav=pro ONLY
 		'user_resources' =>
   			array (

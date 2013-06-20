@@ -72,7 +72,7 @@
      * Open a new Drawer with the RLI Create Form
      */
     openRLICreate: function() {
-        var model = this.createLinkModel(this.createdModel || this.model, 'products');
+        var model = this.createLinkModel(this.createdModel || this.model, 'revenuelineitems');
 
         app.drawer.open({
             layout: 'create-actions',

@@ -68,7 +68,7 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestForecastUtilities::setUpForecastConfig(array(
-                'forecast_by' => 'opportunities'
+                'forecast_by' => 'Opportunities'
             ));
     }
 

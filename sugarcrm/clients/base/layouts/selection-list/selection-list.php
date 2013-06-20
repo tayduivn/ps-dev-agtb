@@ -26,18 +26,26 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                 ),
                                 array(
                                     'layout' => array(
+                                        'type' => 'filterpanel',
+                                        'span' => 12,
+                                        'availableToggles' => array(
+                                        ),
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'targetEl' => '.filter',
+                                                'position' => 'prepend',
                                                 'context' => array(
                                                     'layoutName' => 'records',
                                                 ),
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
+                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
+                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'selection-list',
@@ -46,8 +54,6 @@ $viewdefs['base']['layout']['selection-list'] = array(
                                                 'view' => 'list-bottom',
                                             ),
                                         ),
-                                        'type' => 'filterpanel',
-                                        'span' => 12,
                                     ),
                                 ),
                             ),
