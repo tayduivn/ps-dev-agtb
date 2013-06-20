@@ -91,13 +91,10 @@ $viewdefs['base']['view']['subpanel-list'] = array(
                 'acl_action' => 'edit',
                 'allow_bwc' => false,
             ),
-
             array(
-                'type' => 'rowaction',
+                'type' => 'unlink-action',
                 'icon' => 'icon-trash',
-                'event' => 'list:unlinkrow:fire',
                 'label' => 'LBL_UNLINK_BUTTON',
-                'acl_action' => 'delete',
             ),
         ),
     ),
