@@ -29,52 +29,27 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Home']['portal']['view']['tutorial'] = array(
-    'dashboard' => array(
-        'version' =>1,
-        'intro' => 'LBL_PORTAL_TOUR_RECORDS_INTRO',
+$viewdefs['portal']['view']['tutorial'] = array(
+    'record' => array(
+        'version' => 1,
         'content' => array(
             array(
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_PAGE',
-            ),
-            array(
-                'name' => '.routeLink.[data-route="#Cases"]',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_CASES',
+                'text' => 'LBL_PORTAL_TOUR_RECORD_DETAILS',
                 'full' => true,
             ),
             array(
-                'name' => '.routeLink.[data-route="#KBDocuments"]',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_KB',
+                'name' => '.block h4',
+                'text' => 'LBL_PORTAL_TOUR_RECORD_NOTES',
                 'full' => true,
             ),
             array(
-                'name' => '.routeLink.[data-route="#Bugs"]',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_BUGS',
+                'name' => 'a.addNote',
+                'text' => 'LBL_PORTAL_TOUR_RECORD_ADD_NOTE',
                 'full' => true,
             ),
             array(
-                'name' => 'input.search-query',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_GLOBAL_SEARCH',
-                'full' => true,
-            ),
-            array(
-                'name' => 'li#userActions',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_USER',
-                'full' => true,
-            ),
-            array(
-                'name' => 'li#createList',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_QUICK_CREATE',
-                'full' => true,
-            ),
-            array(
-                'name' => '.dataTables_filter',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_SEARCH',
-                'full' => true,
-            ),
-            array(
-                'name' => '[href=#Home]',
-                'text' => 'LBL_PORTAL_TOUR_RECORDS_RETURN',
+                'name' => 'i.icon-eye-open',
+                'text' => 'LBL_PORTAL_TOUR_RECORD_VIEW_NOTE',
                 'full' => true,
             ),
         )
