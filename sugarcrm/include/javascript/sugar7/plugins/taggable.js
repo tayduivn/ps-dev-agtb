@@ -51,7 +51,9 @@
                     text = el.text(),
                     leader = this._getLeader(text),
                     list,
-                    word;
+                    word,
+                    searchParams,
+                    parentModel;
 
                 el.parent().find('ul.typeahead.activitystream-tag-dropdown').remove();
 
@@ -93,7 +95,8 @@
                                     module: el.get('_module'),
                                     id: el.get('id'),
                                     name: el.get('name'),
-                                    htmlName: htmlName
+                                    htmlName: htmlName,
+                                    noAccess: (el.get('has_access') === false) //only if false, undefined does not mean no access
                                 },
                                 i = $(this._tplTagList(data)).data(data);
 
@@ -127,18 +130,26 @@
                 if (word) {
                     ul.html(defaultItem).appendTo(el.parent()).show();
 
+                    searchParams = {q: word, limit: 8};
                     switch (leader) {
                         case '#':
-                            app.api.search({q: word, limit: 8}, {success: function(response) {
+                            app.api.search(searchParams, {success: function(response) {
                                 var coll = app.data.createMixedBeanCollection(response.records);
                                 callback.call(self, coll);
                             }});
                             break;
                         case '@':
+                            searchParams.module_list = "Users";
+                            parentModel = this._getParentModel('record', this.context);
+                            if (parentModel) {
+                                searchParams.has_access_module = parentModel.get('_module');
+                                searchParams.has_access_record = parentModel.get('id');
+                            }
+
                             // We cannot use the filter API here as we need to
                             // support users typing in full names, which are not
                             // stored in the database as fields.
-                            app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
+                            app.api.search(searchParams, {success: function(response) {
                                 var coll = app.data.createBeanCollection("Users", response.records);
                                 callback.call(self, coll);
                             }});
@@ -146,6 +157,26 @@
                     }
                 }
             }, 250),
+
+            /**
+             * Traverse up the context hierarchy and look for given layout, retrieve the model from the layout's context
+             *
+             * @param layoutName to look for up the context hierarchy
+             * @param context start of context hierarchy
+             * @returns {*}
+             * @private
+             */
+            _getParentModel: function(layoutName, context) {
+                if (context) {
+                    if (context.get('layout') === layoutName) {
+                        return context.get('model');
+                    } else {
+                        return this._getParentModel(layoutName, context.parent);
+                    }
+                } else {
+                    return null;
+                }
+            },
 
             getEntities: function(event) {
                 var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown"),
@@ -309,7 +340,7 @@
                 component._tplTag = Handlebars.templates['p.taggable.tag'];
 
                 if (!_.has(Handlebars.templates, "p.taggable.taglist")) {
-                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module-mini label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}</a></li>';
+                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module-mini label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}{{#if noAccess}}<div class="pull-right">({{str "LBL_NO_ACCESS_LOWER"}})</div>{{/if}}</a></li>';
                     Handlebars.templates['p.taggable.taglist'] = Handlebars.compile(tplTagList);
                 }
                 component._tplTagList = Handlebars.templates['p.taggable.taglist'];
