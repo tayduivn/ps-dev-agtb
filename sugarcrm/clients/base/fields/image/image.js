@@ -27,7 +27,7 @@
 ({
     config: {
         //Default background image to show if no image has been uploaded
-        profile: app.config.siteUrl + "/styleguide/assets/img/profile.png"
+        profile: app.utils.buildUrl("styleguide/assets/img/profile.png")
     },
     events: {
         "click .delete": "delete",
