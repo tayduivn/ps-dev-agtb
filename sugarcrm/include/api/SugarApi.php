@@ -61,6 +61,7 @@ abstract class SugarApi {
 
         $options = array();
         $options['action'] = $api->action;
+        $options['args'] = $args;
 
         $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList, $options);
 
