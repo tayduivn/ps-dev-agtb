@@ -48,7 +48,6 @@
         }, this);
 
         if (!_.isEmpty(invalidItems)) {
-
             var messages = [app.lang.get("LBL_CONVERT_INVALID_RLI", this.module)],
                 messageTpl = app.template.getView('massupdate.invalid_link', this.module);;
 

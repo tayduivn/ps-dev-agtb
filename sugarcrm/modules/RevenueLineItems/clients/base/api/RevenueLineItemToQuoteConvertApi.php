@@ -35,7 +35,7 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
                 'pathVars' => array('module', 'action'),
                 'method' => 'multiConvertToQuote',
                 'shortHelp' => 'Convert a Revenue Line Item Into A Quote Record',
-                'longHelp' => 'modules/Products/clients/base/api/help/convert_to_quote.html',
+                'longHelp' => 'modules/RevenueLineItems/clients/base/api/help/multi_convert_to_quote.html',
             )
         );
     }
@@ -93,8 +93,6 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
         );
 
         return array('id' => $quote->id, 'name' => $quote->name);
-
-
     }
 
     /**
