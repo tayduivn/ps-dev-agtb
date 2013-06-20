@@ -64,7 +64,7 @@ describe("Emails.Field.Sender", function() {
         var populateValues = sinon.spy(field, "populateValues");
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
+        SugarTest.server.respondWith("GET", /.*rest\/v10\/OutboundEmailConfiguration\/list.*/,
             [200, {"Content-Type": "application/json"}, ""]);
 
         field.options.viewName = "edit";
@@ -79,7 +79,7 @@ describe("Emails.Field.Sender", function() {
         var populateValues = sinon.spy(field, "populateValues");
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
+        SugarTest.server.respondWith("GET", /.*rest\/v10\/OutboundEmailConfiguration\/list.*/,
             [200, {"Content-Type": "application/json"}, ""]);
 
         field.options.viewName = "foo";
@@ -97,7 +97,7 @@ describe("Emails.Field.Sender", function() {
             ];
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*\/rest\/v10\/OutboundEmailConfiguration\/list.*/,
+        SugarTest.server.respondWith("GET", /.*rest\/v10\/OutboundEmailConfiguration\/list.*/,
             [200, {"Content-Type": "application/json"},
             JSON.stringify(results)]);
 

@@ -264,7 +264,7 @@ describe("Filter View", function() {
                     spy = sinon.spy(app.events, "trigger");
 
                 SugarTest.seedFakeServer();
-                SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Filters\/Cases\/used"), [
+                SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Filters\/Cases\/used"), [
                     200,
                     {"Content-Type": "application/json"},
                     JSON.stringify(filters)
@@ -281,7 +281,7 @@ describe("Filter View", function() {
                     spy = sinon.spy(app.events, "trigger");
 
                 SugarTest.seedFakeServer();
-                SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Filters\/Cases\/used"), [
+                SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Filters\/Cases\/used"), [
                     200,
                     {"Content-Type": "application/json"},
                     JSON.stringify(filters)

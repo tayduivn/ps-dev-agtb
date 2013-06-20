@@ -516,7 +516,7 @@ describe("Emails.Views.Compose", function() {
                 };
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Signatures\/" + id + ".*"), [
+            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Signatures\/" + id + ".*"), [
                 200,
                 {"Content-Type": "application/json"},
                 JSON.stringify(results)
@@ -535,7 +535,7 @@ describe("Emails.Views.Compose", function() {
                 results   = [];
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Signatures\/" + id + ".*"), [
+            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Signatures\/" + id + ".*"), [
                 200,
                 {"Content-Type": "application/json"},
                 JSON.stringify(results)
@@ -554,7 +554,7 @@ describe("Emails.Views.Compose", function() {
                 //alertStub = sinon.stub(app.alert);
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", new RegExp(".*\/rest\/v10\/Signatures\/" + id + ".*"), [404, {}, ""]);
+            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Signatures\/" + id + ".*"), [404, {}, ""]);
 
             view._lastSelectedSignature = null;
             view._updateEditorWithSignature(signature);
