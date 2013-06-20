@@ -313,4 +313,79 @@ describe("Module List", function() {
             getFragmentStub.restore();
         });
     });
+
+    describe("Clicking on the Cube or Home", function() {
+        var view,
+            oRouter,
+            navigateStub,
+            getFragmentStub,
+            lastStateGetStub,
+            lastStateSetStub,
+            lastState = 'dashboard';
+
+        beforeEach(function() {
+            // Workaround because router not defined yet
+            oRouter              = SugarTest.app.router;
+            SugarTest.app.router = {navigate: function() {}};
+
+            view = SugarTest.createView("base", moduleName, "modulelist", null, null);
+
+            navigateStub = sinon.stub(SugarTest.app.router, "navigate");
+            getFragmentStub = sinon.stub(Backbone.history, 'getFragment');
+            lastStateGetStub = sinon.stub(SugarTest.app.user.lastState, 'get', function() {
+                return lastState;
+            });
+            lastStateSetStub = sinon.stub(SugarTest.app.user.lastState, 'set', function(key, value) {
+                lastState = value;
+            });
+        });
+
+        afterEach(function() {
+            SugarTest.app.router = oRouter;
+            view.dispose();
+            navigateStub.restore();
+            getFragmentStub.restore();
+            lastStateGetStub.restore();
+            lastStateSetStub.restore();
+            lastState = 'dashboard';
+        });
+
+        it("should navigate to the dashboard by default", function() {
+            var cube = $('<a class="cube" href="#Home" data-route="#Home">Cube</a>');
+
+            view.$el.append(cube);
+            cube.click();
+
+            expect(navigateStub.withArgs('#Home').calledOnce).toBe(true);
+            expect(lastStateSetStub.called).toBe(false);
+        });
+
+        it("should navigate to the activities if activities was last clicked", function() {
+            var cube = $('<a class="cube" href="#Home" data-route="#Home">Cube</a>');
+            var activities = $('<a href="#activities" data-route="#activities">Activities</a>');
+
+            view.$el.append(activities);
+            view.$el.append(cube);
+            activities.click();
+            cube.click();
+
+            expect(navigateStub.firstCall.calledWith('#activities')).toBe(true);
+            expect(navigateStub.secondCall.calledWith('#activities')).toBe(true);
+            expect(lastStateSetStub.withArgs(undefined, 'activities').calledOnce).toBe(true);
+        });
+
+        it("should navigate to the dashboard if dashboard was last clicked ", function() {
+            var cube = $('<a class="cube" href="#Home" data-route="#Home">Cube</a>');
+            var dashboard = $('<a href="#Home/123" data-route="#Home/123">My Dashboard</a>');
+
+            view.$el.append(dashboard);
+            view.$el.append(cube);
+            dashboard.click();
+            cube.click();
+
+            expect(navigateStub.firstCall.calledWith('#Home/123')).toBe(true);
+            expect(navigateStub.secondCall.calledWith('#Home')).toBe(true);
+            expect(lastStateSetStub.called).toBe(false);
+        });
+    });
 });

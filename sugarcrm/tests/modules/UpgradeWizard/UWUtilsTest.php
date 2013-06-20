@@ -44,7 +44,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         //Set is_setup to 0 for testing purposes
         $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
         $admin->saveSetting('Forecasts', 'forecast_ranges', 'show_binary', 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', 'opportunities', 'base');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'Opportunities', 'base');
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 1");
 
@@ -56,7 +56,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
         $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', 'products', 'base');
+        $admin->saveSetting('Forecasts', 'forecast_by', 'RevenueLineItems', 'base');
         
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 0");

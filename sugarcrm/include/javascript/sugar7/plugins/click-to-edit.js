@@ -153,7 +153,11 @@
                     var ctx = this.context.parent || this.context;
                     var selectedUser = ctx.get('selectedUser') || app.user.toJSON();
                     this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id);
-                    // only if sales stage is won/lost can edit
+                    // lets make sure we can actually write to the field
+                    this._canEdit = (this._canEdit &&
+                                        app.acl.hasAccess('write', this.module, app.user.get('id'), this.name));
+
+                    // only they have write access to the field and if sales stage is won/lost can edit
                     if (this._canEdit && this.model.has('sales_stage')) {
                         var salesStage = this.model.get('sales_stage'),
                             disableIfSalesStageIs = _.union(

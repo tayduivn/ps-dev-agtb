@@ -116,6 +116,7 @@ class Product extends SugarBean
     public $related_product_id;
     public $contracts;
     public $product_index;
+    public $revenuelineitem_id;
 
     public $table_name = "products";
     public $rel_manufacturers = "manufacturers";
@@ -133,7 +134,7 @@ class Product extends SugarBean
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
-    public $relationship_fields = array('related_product_id' => 'related_products', 'opportunity_id' => 'opportunities');
+    public $relationship_fields = array('related_product_id' => 'related_products');
 
 
     // This is the list of fields that are copied over from product template.
@@ -214,25 +215,23 @@ class Product extends SugarBean
             $params,
             $show_deleted,
             $join_type,
-            $return_array,
+            true,
             $parentbean,
             $singleSelect
         );
+        
         $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = products.contact_id";
+        
+        //Add clause to remove opportunity related products
+            $ret_array['where'] = $ret_array['where'] .
+                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
 
         //If return_array is set to true, return as an Array
         if ($return_array) {
-            //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where'] .
-                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
             return $ret_array;
         }
 
-        return str_replace(
-            'where products.deleted=0',
-            "where products.deleted=0 AND (products.opportunity_id is not null OR products.opportunity_id <> '')",
-            $ret_array
-        );
+        return implode(" ", $ret_array);
     }
 
 
@@ -637,23 +636,12 @@ class Product extends SugarBean
             }
         }
 
-        if($this->probability == '') {
-            $this->mapProbabilityFromSalesStage();
-        }
         
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
 
         $id = parent::save($check_notify);
-        //BEGIN SUGARCRM flav=ent ONLY
-        // this only happens when ent is built out
-        $this->saveProductWorksheet();
-        if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
-            $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
-        }
-        $this->setOpportunitySalesStatus();
-        //END SUGARCRM flav=ent ONLY
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
@@ -751,117 +739,6 @@ class Product extends SugarBean
         return $id;
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * Handle setting the opportunity status
-     *
-     * This currently uses Dependency Injection for the Opportunity and Administration beans since we can't
-     * Override BeanFactory::getBean()  once that is done we can remove the dependency Injection. When called
-     * you should not pass and Opportunity and Administration bean in.
-     *
-     * @param Opportunity $opp
-     * @param Administration $admin
-     */
-    protected function setOpportunitySalesStatus(Opportunity $opp = null, Administration $admin = null)
-    {
-        if (is_null($admin)) {
-            // if $admin is not passed in then load it up
-            $admin = BeanFactory::getBean('Administration');
-        }
-        $settings = $admin->getConfigForModule('Forecasts');
-
-        if ($settings['is_setup'] != 1) {
-            // forecasts is not setup, just ignore this
-            return;
-        }
-
-
-        if (is_null($opp)) {
-            // if $opp is not set, load it up
-            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-        }
-        // get the closed won and closed lost values
-        $closed_won = $settings['sales_stage_won'];
-        $closed_lost = $settings['sales_stage_lost'];
-
-        $won_products = count(
-            $opp->get_linked_beans(
-                'products',
-                'Products',
-                array(),
-                0,
-                -1,
-                0,
-                'sales_stage in ("' . join('","', $closed_won) . '")'
-            )
-        );
-
-        $lost_products = count(
-            $opp->get_linked_beans(
-                'products',
-                'Products',
-                array(),
-                0,
-                -1,
-                0,
-                'sales_stage in ("' . join('","', $closed_lost) . '")'
-            )
-        );
-
-        $total_products = count($opp->get_linked_beans('products', 'Products'));
-
-        if ($total_products > ($won_products + $lost_products) || $total_products === 0) {
-            // still in progress
-            $opp->sales_status = Opportunity::STATUS_IN_PROGRESS;
-            $opp->save();
-        } else {
-            // they are equal so if the total lost == total products then it's closed lost,
-            // otherwise it's always closed won
-            if ($lost_products == $total_products) {
-                $opp->sales_status = Opportunity::STATUS_CLOSED_LOST;
-            } else {
-                $opp->sales_status = Opportunity::STATUS_CLOSED_WON;
-            }
-            $opp->save();
-        }
-    }
-    //END SUGARCRM flav=ent ONLY
-
-    /**
-     * Override the current SugarBean functionality to make sure that when this method is called that it will also
-     * take care of any draft worksheets by rolling-up the data
-     *
-     * @param string $id            The ID of the record we want to delete
-     */
-    public function mark_deleted($id)
-    {
-        $oppId = $this->opportunity_id;
-        parent::mark_deleted($id);
-
-        $this->saveProductWorksheet();
-
-        //BEGIN SUGARCRM flav=ent ONLY
-        //save to trigger related field recalculations for deleted item
-        $this->resaveOppForRecalc($oppId);
-        //END SUGARCRM flav=ent ONLY
-    }
-    
-    /**
-     * Utility to load/save a related Opp when things are deleted/reassigned so calculated fields
-     * in Opportunities update with new totals.
-     */
-    protected function resaveOppForRecalc($oppId)
-    {
-        if (!empty($oppId)) {
-            /* @var $opp Opportunity */
-            $opp = BeanFactory::getBean('Opportunities', $oppId);
-
-            // save the opp via the opp status
-            $this->setOpportunitySalesStatus($opp);
-        }
-    }
-
-
     /*
      * map fields if opportunity id is set
      */
@@ -889,42 +766,6 @@ class Product extends SugarBean
             $date_close_datetime = $timedate->fromDbDate($date_close_db);
             $this->date_closed_timestamp = $date_close_datetime->getTimestamp();
         }
-    }
-
-    /**
-     * Handling mapping the probability from the sales stage.
-     */
-    protected function mapProbabilityFromSalesStage()
-    {
-        global $app_list_strings;
-        if (!empty($this->sales_stage)) {
-            $prob_arr = $app_list_strings['sales_probability_dom'];
-            if (isset($prob_arr[$this->sales_stage])) {
-                $this->probability = $prob_arr[$this->sales_stage];
-            }
-        }
-    }
-
-    /**
-     * Save the updated product to the worksheet, this will create one if one does not exist
-     * this will also update one if a draft version exists
-     *
-     * @return bool         True if the worksheet was saved/updated, false otherwise
-     */
-    protected function saveProductWorksheet()
-    {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        if ($settings['is_setup']) {
-            // save the a draft of each product
-            /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
-            $worksheet->saveRelatedProduct($this);
-            return true;
-        }
-
-        return false;
     }
 
     /**

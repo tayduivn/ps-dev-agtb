@@ -25,11 +25,60 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fieldTag : "file",
+    fieldTag: 'input[type=file]',
     events: {
-        "click a.file": "startDownload"
+        'click [data-action=download]': 'startDownload',
+        'click [data-action=delete]': 'deleteFile'
     },
-    fileUrl: "",
+    fileUrl: '',
+    /**
+     * Handler for delete file control
+     *
+     * Calls api to remove attached file from the model and
+     * clear value and shows input[type=file] to upload new file
+     * @param {Event} e
+     */
+    deleteFile: function(e) {
+        var self = this;
+        app.alert.show('delete_file_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_FILE_DELETE_CONFIRM', self.module),
+            onConfirm: function() {
+                var data = {
+                        module: self.module,
+                        id: self.model.id,
+                        field: self.name
+                    },
+                    callbacks = {
+                        success: function() {
+                            self.model.set(self.name, '');
+                            self.model.save({}, {
+                                //Show alerts for this request
+                                showAlerts: {
+                                    'process': true,
+                                    'success': {
+                                        messages: app.lang.get('LBL_FILE_DELETED', self.module)
+                                    }
+                                },
+                                fields: [self.name]
+                            });
+                            if (self.disposed) {
+                                return;
+                            }
+                            // Because delete button is enabled in edit mode only and
+                            // bindDataChange is overrided to prevent rendering field
+                            // in edit mode call render method manually
+                            self.render();
+                        },
+                        error: function(data) {
+                            // refresh token if it has expired
+                            app.error.handleHttpError(data, {});
+                        }
+                    };
+                app.api.file('delete', data, null, callbacks, {htmlJsonFormat: false});
+            }
+        });
+    },
     _render: function() {
         // This array will contain objects accessible in the view
         this.model = this.model || this.view.model;
@@ -63,30 +112,45 @@
                     })};
             attachments.push(fileObj);
         }
-        return attachments;
+        return (this.tplName === "list") ? _.first(attachments) : attachments;
     },
     startDownload: function(e) {
-        var self = this;
-        // Starting a download.
-        // First, we do an ajax call to the `ping` API. This is supposed to check if the token hasn't expired before we
-        // append it to the uri of the file. Thus the token will be valid anytime we append it to the url and start the
-        // download.
-        App.api.call('read', App.api.buildURL('ping'), {}, {
-                success: function(data) {
-                   // Second, start the download with the "iframe" hack
-                   var uri = self.$(e.currentTarget).data("url") + "?oauth_token=" + app.api.getOAuthToken();
-                   self.$el.prepend('<iframe class="hide" src="' + uri + '"></iframe>');
-                },
-                error: function(data) {
-                    // refresh token if it has expired
-                    app.error.handleHttpError(data, {});
-                }}
-        );
+        var uri = self.$(e.currentTarget).data('url') +
+            '?oauth_token=' +
+            app.api.getOAuthToken();
+
+        App.api.fileDownload(uri, {
+            error: function(data) {
+                // refresh token if it has expired
+                app.error.handleHttpError(data, {});
+            }
+        }, {iframe: this.$el});
     },
+    /**
+     * {@inheritdoc}
+     *
+     * Override standard method because we cannot set a value of a type `file` input
+     * prevent rendering input[type=file] if it's in edit mode
+     */
     bindDataChange: function() {
-        if (this.view.name != "edit" && this.view.fallbackFieldTemplate != "edit") {
-            //Keep empty because you cannot set a value of a type `file` input
-            app.view.Field.prototype.bindDataChange.call(this);
+        if (!this.model) {
+            return;
         }
+        this.model.on('change:' + this.name, function() {
+            if (_.isUndefined(this.options.viewName) || this.options.viewName !== 'edit') {
+                this.render();
+            }
+        }, this);
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * Because input file uses full local path to file as value,
+     * value can contains directory names.
+     * Unformat value to have file name only in it.
+     */
+    unformat: function (value) {
+        return value.split('/').pop().split('\\').pop();
     }
 })

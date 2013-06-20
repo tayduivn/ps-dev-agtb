@@ -155,6 +155,17 @@
             success: _.bind(function(model) {
                 // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
                 if(this.context && this.context.get('inDrawer') && !firstTime) {
+                    // build an object based on the metadata structure
+                    var updatedMetadata = {
+                        modules: {
+                            Forecasts: {
+                                config: model.toJSON()
+                            }
+                        }
+                    };
+
+                    this.showSavedConfirmation();
+
                     // set Forecasts config to new metadata set in config
                     app.metadata.getModule('Forecasts').config = model.toJSON();
 
@@ -166,12 +177,34 @@
 
                     // only navigate after save api call has returned
                     // have to do it this way because if we're already on #Forecasts it will not reload by setting
-                    window.location = '#Forecasts';
-                    window.location.reload();
+
+                    this.showSavedConfirmation(function() {
+                            window.location = '#Forecasts';
+                            window.location.reload();
+                    });
                 }
 
             }, this)
         });
+    },
+
+    /**
+     * show the saved confirmation alert
+     * @param {Object|Undefined} onClose the function fired upon closing.
+     */
+    showSavedConfirmation: function(onClose) {
+        onClose = onClose || function() {};
+        var alert = app.alert.show('forecasts_config_success', {
+            level: 'success',
+            title: app.lang.get('LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS', 'Forecasts') + ':',
+            messages: app.lang.get('LBL_FORECASTS_CONFIG_SETTINGS_SAVED', 'Forecasts'),
+            autoClose: true,
+            onAutoClose: _.bind(function() {
+                alert.getCloseSelector().off();
+                onClose();
+            })
+        });
+        alert.getCloseSelector().on('click', onClose);
     },
 
     /**

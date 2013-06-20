@@ -302,7 +302,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 
         // Set the platform store
         $this->setPlatformStore();
-        
+
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
         } else if ( !empty($_SESSION['authenticated_user_id']) ) {
@@ -546,6 +546,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         $token->assigned_user_id = $user_id;
         $token->contact_id = $contact_id;
         $token->expire_ts = $expires;
+        $token->setState(OAuthToken::ACCESS);
 
         $token->save();
 

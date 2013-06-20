@@ -58,9 +58,9 @@ class OpportunityHooks
     public static function deleteOpportunityRevenueLineItems(Opportunity $bean, $event, $args)
     {
         if (static::isForecastSetup()) {
-            $products = $bean->get_linked_beans('products', 'Products');
-            foreach ($products as $product) {
-                $product->mark_deleted($product->id);
+            $rlis = $bean->get_linked_beans('revenuelineitems', 'RevenueLineItems');
+            foreach ($rlis as $rli) {
+                $rli->mark_deleted($rli->id);
             }
         }
     }

@@ -76,7 +76,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         SugarTestForecastUtilities::setUpForecastConfig(array(
                 'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
                 'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
-                'forecast_by' => 'opportunities'
+                'forecast_by' => 'Opportunities'
             ));
 
         

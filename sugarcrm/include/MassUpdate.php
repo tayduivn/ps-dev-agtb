@@ -47,6 +47,15 @@ class MassUpdate
 	 */
 	var $where_clauses = '';
 
+    /**
+     * Constructor for Mass Update
+     */
+    public function __construct() {
+        //TODO: Creation of Activities are turned off for mass update.
+        //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
+        $GLOBALS['ACTIVITY_FROM_MASS_UPDATE'] = true;
+    }
+
 	/**
 	  * set the sugar bean to its internal member
 	  * @param sugar bean reference
@@ -337,14 +346,14 @@ eoq;
 						   $old_reports_to_id = empty($newbean->reports_to_id) ? 'null' : $newbean->reports_to_id;
 						}
 
-						$check_notify = FALSE;
+						$check_notify = false;
 
 						if (isset( $this->sugarbean->assigned_user_id)) {
 							$old_assigned_user_id = $this->sugarbean->assigned_user_id;
 							if (!empty($_POST['assigned_user_id'])
 							&& ($old_assigned_user_id != $_POST['assigned_user_id'])
 							&& ($_POST['assigned_user_id'] != $current_user->id)) {
-								$check_notify = TRUE;
+								$check_notify = true;
 							}
 						}
 

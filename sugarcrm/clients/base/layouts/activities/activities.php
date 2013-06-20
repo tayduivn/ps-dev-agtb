@@ -26,15 +26,21 @@ $viewdefs['base']['layout']['activities'] = array(
                                 ),
                                 array(
                                     'layout' => array(
+                                        'type' => 'filterpanel',
+                                        'span' => 12,
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'targetEl' => '.filter',
+                                                'position' => 'prepend'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
+                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
+                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'layout' => 'activitystream',
@@ -43,8 +49,6 @@ $viewdefs['base']['layout']['activities'] = array(
                                                 ),
                                             ),
                                         ),
-                                        'type' => 'filterpanel',
-                                        'span' => 12,
                                     ),
                                 ),
                             ),

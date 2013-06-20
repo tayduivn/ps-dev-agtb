@@ -26,15 +26,39 @@ $viewdefs['base']['layout']['records'] = array(
                                 ),
                                 array(
                                     'layout' => array(
+                                        'type' => 'filterpanel',
+                                        'span' => 12,
+                                        'last_state' => array(
+                                            'id' => 'list-filterpanel',
+                                            'defaults' => array(
+                                                'toggle-view' => 'list',
+                                            ),
+                                        ),
+                                        'availableToggles' => array(
+                                            array(
+                                                'name' => 'list',
+                                                'icon' => 'icon-table',
+                                                'label' => 'LBL_LISTVIEW',
+                                            ),
+                                            array(
+                                                'name' => 'activitystream',
+                                                'icon' => 'icon-th-list',
+                                                'label' => 'LBL_ACTIVITY_STREAM',
+                                            ),
+                                        ),
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',
+                                                'targetEl' => '.filter',
+                                                'position' => 'prepend'
                                             ),
                                             array(
                                                 'view' => 'filter-actions',
+                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'view' => 'filter-rows',
+                                                "targetEl" => '.filter-options'
                                             ),
                                             array(
                                                 'layout' => 'activitystream',
@@ -44,14 +68,6 @@ $viewdefs['base']['layout']['records'] = array(
                                             ),
                                             array(
                                                 'layout' => 'list',
-                                            ),
-                                        ),
-                                        'type' => 'filterpanel',
-                                        'span' => 12,
-                                        'last_state' => array(
-                                            'id' => 'list-filterpanel',
-                                            'defaults' => array(
-                                                'toggle-view' => 'list',
                                             ),
                                         ),
                                     ),

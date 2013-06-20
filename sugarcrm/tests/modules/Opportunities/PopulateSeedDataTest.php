@@ -144,7 +144,7 @@ function testPopulateSeedData()
         }
     }
 
-    $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $products, $users);
+    $this->createdOpportunities = OpportunitiesSeedData::populateSeedData($total, $app_list_strings, $accounts, $users);
     $this->assertEquals(200, count($this->createdOpportunities));
 
 }

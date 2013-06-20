@@ -86,6 +86,23 @@
             },
 
             /**
+             * Defines fallback rules for ACL checking.
+             */
+            viewFallbackMap: {
+                'edit': 'detail',
+                'detail': 'noaccess'
+            },
+            /**
+             * {@inheritdoc}
+             */
+            _getFallbackTemplate: function(viewName) {
+                if (viewName === 'noaccess') {
+                    return viewName;
+                }
+                return (this.isDisabled() && viewName === 'disabled') ? 'edit' :
+                    (this.view.fallbackFieldTemplate || 'detail');
+            },
+            /**
              * Override _render to redecorate fields if field is on error state
              * and to add view action CSS class.
              */
@@ -184,6 +201,11 @@
              * @override
              */
             setDisabled: function (disable) {
+
+                if (!this._checkAccessToAction('disabled')) {
+                    return;
+                }
+
                 disable = _.isUndefined(disable) ? true : disable;
 
                 // remove the stale disabled CSS class (this.action === 'disabled')

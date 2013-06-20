@@ -1,0 +1,35 @@
+<div class="longHelpTitle">Convert a Revenue Line Item to a quote.</div>
+<div class="summary">
+    <h2>Summary:</h2>
+     This endpoint is used to convert a single RevenueLineItem to a quote
+</div>
+<div class="params">
+    <h2>Query Parameters:</h2>
+    <table>
+        <tr>
+            <td><strong>Param</strong></td>
+            <td><strong>Description</strong></td>
+            <td><strong>Optional</strong></td>
+        </tr>
+        <tr>
+            <td>record</td>
+            <td>Which Revenue Line Item to convert</td>
+            <td>false</td>
+        </tr>
+    </table>
+</div>
+<div class="input">
+    <h2>Valid Urls:</h2>
+    <ul>
+        <li>/rest/v10/RevenueLineItems/:record/quote/</li>
+    </ul>
+</div>
+<div class="output">
+    <h2>Output Example:</h2>
+    <code class="codesample">
+        {
+            id:"123-456-789-0",
+            name:"My Test Quote"
+        }
+    </code>
+</div>

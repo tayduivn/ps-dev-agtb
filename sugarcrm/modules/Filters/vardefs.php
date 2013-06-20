@@ -81,7 +81,6 @@ $dictionary['Filters'] = array(
 'acls' => array('SugarACLFilters' => true),
 
 	'optimistic_locking'=>true,
-		'unified_search'=>true,
 	);
 if (!class_exists('VardefManager')){
         require_once('include/SugarObjects/VardefManager.php');

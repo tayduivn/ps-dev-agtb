@@ -233,5 +233,40 @@ describe("Preview View", function() {
             }, this);
             aclModelStub.restore();
         });
+
+        it("Should find previous and next actual module when collection has models with different modules.", function() {
+            var models = [];
+
+            models.push(app.data.createBean("Cases", {"id":"testid_1", "module": "Cases"}));
+            models.push(app.data.createBean("Cases", {"id":"testid_2", "module": "Cases"}));
+            models.push(app.data.createBean("Accounts", {"id":"testid_3", "module": "Accounts"}));
+
+            preview.model.set(models[1].toJSON());
+            preview.collection.reset(models);
+            preview.showPreviousNextBtnGroup();
+
+            expect(preview.layout.previous).toBeDefined();
+            expect(preview.layout.next).toBeDefined();
+            expect(preview.layout.previous.module).toEqual(models[0].module);
+            expect(preview.layout.next.module).toEqual(models[2].module);
+
+            var currIndex = _.indexOf(preview.collection.models, models[1]);
+            var currModule = preview.collection.at(currIndex).module;
+
+            expect(currModule).toBeDefined();
+            expect(currModule).toEqual(models[1].module);
+
+            currIndex += 1;
+            currModule = preview.collection.at(currIndex).module;
+
+            expect(currModule).toBeDefined();
+            expect(currModule).toEqual(models[2].module);
+
+            currIndex -= 2;
+            currModule = preview.collection.at(currIndex).module;
+
+            expect(currModule).toBeDefined();
+            expect(currModule).toEqual(models[0].module);
+        });
     });
 });

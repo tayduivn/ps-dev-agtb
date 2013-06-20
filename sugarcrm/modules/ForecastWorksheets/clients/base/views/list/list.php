@@ -184,6 +184,29 @@ $listDefs = array(
                     'click_to_edit' => true
                 ),
                 array(
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_SALES_STAGE',
+                    'type' => 'enum',
+                    'options' => 'sales_stage_dom',
+                    'searchBarThreshold' => 7,
+                    'sortable' => false,
+                    'default' => true,
+                    'enabled' => true,
+                    'click_to_edit' => true
+                ),
+                array(
+                    'name' => 'probability',
+                    'label' => 'LBL_OW_PROBABILITY',
+                    'type' => 'int',
+                    'default' => true,
+                    'enabled' => true,
+                    'maxValue' => 100,
+                    'minValue' => 0,
+                    'click_to_edit' => true,
+                    'align' => 'right',
+                    'width' => '7%'
+                ),
+                array(
                     'name' => 'worst_case',
                     'type' => 'currency',
                     'label' => 'LBL_WORST_CASE',

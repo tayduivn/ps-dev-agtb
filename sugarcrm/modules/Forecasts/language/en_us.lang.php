@@ -335,6 +335,9 @@ $mod_strings = array (
     // config panels strings
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setup',
 
+    'LBL_FORECASTS_MISSING_STAGE_TITLE' => 'Forecasts Configuration Error:',
+    'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES' => 'The Forecasts module has been improperly configured and is no longer available. Sales Stage Won and Sales Stage Lost must contain at least one value found in Sales Stage. Please contact your Administrator.',
+
     // Panel and BreadCrumb Labels
     'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT' => 'Worksheet Layout',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES' => 'Ranges',
@@ -359,6 +362,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to ﬁll out for their forecasts of each opportunity. Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
     'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'Select which columns you would like to view in the Forecast module. The list of fields will combine the worksheet and allow the user to choose how to configure its view.',
     'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY' => 'I am a placeholder for Forecast By how-to text!',
+    'LBL_FORECASTS_CONFIG_SETTINGS_SAVED' => 'Forecast config settings have been saved.',
 
     // timeperiod config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).

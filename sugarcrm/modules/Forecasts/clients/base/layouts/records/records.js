@@ -37,7 +37,32 @@
         // the parent is not called here so we make sure that nothing else renders until after we init the
         // the forecast module
         this.initOptions = options;
-        this.syncInitData();
+
+        // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
+        if(app.utils.checkForecastConfig()) {
+            // correct config exists, continue with syncInitData
+            this.syncInitData();
+        } else {
+            // codeblock this sucka
+            this.codeBlockForecasts();
+        }
+    },
+
+    /**
+     * Blocks forecasts from continuing to load
+     */
+    codeBlockForecasts: function() {
+        var alert = app.alert.show('error_missing_stages', {
+            level: 'error',
+            autoClose: false,
+            title: app.lang.get('LBL_FORECASTS_MISSING_STAGE_TITLE', "Forecasts") + ":",
+            messages: [app.lang.get('LBL_FORECASTS_MISSING_SALES_STAGE_VALUES', "Forecasts")]
+        });
+
+        alert.getCloseSelector().on('click', function() {
+            alert.getCloseSelector().off();
+            app.router.navigate('#Home', {trigger: true});
+        });
     },
 
     /**

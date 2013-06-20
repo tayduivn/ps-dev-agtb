@@ -91,6 +91,10 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
             'module' => 'Opportunities',
             'required' => false,
             'duplicateCheckOnStart' => false,
+            'duplicateCheckRequiredFields' =>
+            array(
+                'account_id',
+            ),
             'fieldMapping' =>
             array(
                 'name' => 'opportunity_name',

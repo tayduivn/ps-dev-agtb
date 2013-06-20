@@ -1,0 +1,5 @@
+{{#if complete}}
+    {{str 'LBL_CONVERT_ASSOCIATED_MODULE' labelModule moduleInfo}}: {{associatedName}}
+{{else}}
+    {{#if create}}{{str 'LBL_CONVERT_CREATE_NEW' labelModule moduleInfo}}{{else}}{{moduleInfo.moduleName}}{{/if}}{{#unless required}} {{str 'LBL_CONVERT_PANEL_OPTIONAL' labelModule}}{{/unless}}:
+{{/if}}

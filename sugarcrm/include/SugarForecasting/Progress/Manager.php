@@ -154,8 +154,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $arrayLen = 0;
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
-        $tableName = $settings['forecast_by'];
-        $amountColumn = $tableName == 'products' ? 'likely_case' : 'amount';
+        
+        $tableName = strtolower($settings['forecast_by']);
+        $tableName = $tableName == 'revenuelineitems' ? 'revenue_line_items' : $tableName;
+        $amountColumn = $tableName == 'revenue_line_items' ? 'likely_case' : 'amount';
 
         //Note: this will all change in sugar7 to the filter API
         //set up outer part of the query
