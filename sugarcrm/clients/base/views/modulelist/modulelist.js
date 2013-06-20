@@ -1,3 +1,15 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     favRowTemplate: Handlebars.compile(
       '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{modelRoute this}}" data-route="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
@@ -13,17 +25,36 @@
         'click .actionLink' : 'handleMenuEvent',
         "click a[data-route]": "handleRouteEvent"
     },
+    lastHomePage: {
+        dashboard: 'dashboard',
+        activities: 'activities'
+    },
     handleRouteEvent: function (event) {
         var currentTarget = this.$(event.currentTarget),
-            route         = currentTarget.data("route");
+            route = currentTarget.data("route"),
+            lastClickedKey = app.user.lastState.key('last-clicked', this),
+            lastClicked = app.user.lastState.get(lastClickedKey);
 
         if (route) {
             event.preventDefault();
 
-            var currentFragment = Backbone.history.getFragment();
+            // Go to activities if the user clicked on the cube and activities was last clicked.
+            if (currentTarget.hasClass('cube')) {
+                if (lastClicked === this.lastHomePage.activities) {
+                    route = '#' + this.lastHomePage.activities;
+                }
+            }
 
-            if (("#" + currentFragment) === route) {
-                Backbone.history.loadUrl(currentFragment);
+            // Save which was last clicked. Activities or Dashboard?
+            if ((route.indexOf('#Home') === 0) && (lastClicked !== this.lastHomePage.dashboard)) {
+                app.user.lastState.set(lastClickedKey, this.lastHomePage.dashboard);
+            } else if ((route === ('#' + this.lastHomePage.activities)) && (lastClicked !== this.lastHomePage.activities)) {
+                app.user.lastState.set(lastClickedKey, this.lastHomePage.activities);
+            }
+
+            // Navigate to route or refresh the current page
+            if (("#" + Backbone.history.getFragment()) === route) {
+                app.router.refresh();
             } else {
                 app.router.navigate(route, {trigger: true});
             }
@@ -453,8 +484,10 @@
              * @param module
              */
             set:function (module) {
-                var $modules, $module, $next;
-                var updateNav = true;
+                var $modules, $module, $next,
+                    updateNav = true,
+                    // Name of the module this module is mapped to, if it exists
+                    mapped;
                 if (app.controller && app.controller.layout && app.controller.layout.meta && !_.isUndefined(app.controller.layout.meta.updateNav)) {
                     updateNav = app.controller.layout.meta.updateNav;
                 }
@@ -463,19 +496,29 @@
 
                     $modules = this._moduleList.$('#module_list');
                     $module = $modules.find("[data-module='" + module + "']");
-                    // this module doesn't have a menu so create it and add it
-                    if ($module.length < 1 && updateNav) {
-                        var moduleList = {};
-                        moduleList[module] = app.metadata.getFullModuleList()[module];
+                    // If this module doesn't have a menu see if there is a tab mapping
+                    if ($module.length < 1) {
+                        mapped = app.metadata.getTabMappedModule(module);
 
-                        var meta = this._moduleList.completeMenuMeta(moduleList);
-                        if (!_.isUndefined(meta[0])) {
-                            meta[0].menuIndex = -1;
-                            var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
-                            this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
-                            $module = $modules.find("[data-module='" + module + "']");
+                        // If the mapped module is different from the module, get
+                        // the mapped module element if it exists
+                        if (mapped != module) {
+                            $module = $modules.find("[data-module='" + mapped + "']");
+                        } else if (updateNav) {
+                            // create the menu and add it
+                            var moduleList = {};
+                            moduleList[module] = app.metadata.getFullModuleList()[module];
+
+                            var meta = this._moduleList.completeMenuMeta(moduleList);
+                            if (!_.isUndefined(meta[0])) {
+                                meta[0].menuIndex = -1;
+                                var singleMenuTemplate = app.template.get(this._moduleList.name + '.singlemenuPartial');
+                                this._moduleList.$el.find('.dropdown.more').before(singleMenuTemplate(meta[0]));
+                                $module = $modules.find("[data-module='" + module + "']");
+                            }
                         }
                     }
+
                     $module.addClass(this._class);
 
                     // remember which module is supposed to be next to the active module so that

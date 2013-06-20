@@ -70,7 +70,7 @@ class UndeployedSubpanelImplementation extends AbstractMetaDataImplementation im
                 $this->_mergeFielddefs($this->_fielddefs, $subpanel_layout['list_fields']);
         }
 
-        $subpanel_layout = $this->module->getAvailibleSubpanelDef ( $this->_subpanelName ) ;
+        $subpanel_layout = $this->module->getAvailableSubpanelDef ( $this->_subpanelName ) ;
         $this->_viewdefs = & $subpanel_layout [ 'list_fields' ] ;
         $this->_mergeFielddefs($this->_fielddefs, $this->_viewdefs);
         
@@ -94,7 +94,7 @@ class UndeployedSubpanelImplementation extends AbstractMetaDataImplementation im
      */
     function deploy ($defs)
     {
-        $outputDefs = $this->module->getAvailibleSubpanelDef ( $this->_subpanelName ) ;
+        $outputDefs = $this->module->getAvailableSubpanelDef ( $this->_subpanelName ) ;
         // first sort out the historical record...
         // copy the definition to a temporary file then let the history object add it
         write_array_to_file ( self::HISTORYVARIABLENAME, $outputDefs, $this->historyPathname, 'w', '' ) ;
@@ -104,7 +104,7 @@ class UndeployedSubpanelImplementation extends AbstractMetaDataImplementation im
 
         $outputDefs [ 'list_fields' ] = $defs ;
         $this->_viewdefs = $defs ;
-        $this->module->saveAvailibleSubpanelDef ( $this->_subpanelName, $outputDefs ) ;
+        $this->module->saveAvailableSubpanelDef ( $this->_subpanelName, $outputDefs ) ;
 
     }
 

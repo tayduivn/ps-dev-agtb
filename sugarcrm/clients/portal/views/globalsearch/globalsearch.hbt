@@ -1,0 +1,12 @@
+<div id="searchForm">
+    <form class="navbar-search pull-right">
+        <input type="text" class="search-query span2" placeholder="{{str "LBL_SEARCH"}}" data-provide="typeahead" data-items="5">
+        <div class="advanced">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a class="btn btn-inverse" href="javascript:void(0);"><i class="icon icon-search"></i></a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

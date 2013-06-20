@@ -195,6 +195,9 @@ class SessionManager extends SugarBean {
      */
     function getNumPortalUsers(){
         $admin = Administration::getSettings('license');
+        if (!isset($admin->settings['license_num_portal_users'])) {
+            return 0;
+        }
         return $admin->settings['license_num_portal_users'];
     }
 

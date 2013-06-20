@@ -3,7 +3,7 @@
  * The contents of this file are subject to
  * *******************************************************************************/
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
-require_once('vendors/Smarty/plugins/function.sugar_replace_vars.php');
+require_once('vendor/Smarty/plugins/function.sugar_replace_vars.php');
 
 class SugarFieldLink extends SugarFieldBase {
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {

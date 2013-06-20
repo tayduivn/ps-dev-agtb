@@ -28,12 +28,15 @@
 class MBLanguage{
 		var $iTemplates = array();
 		var $templates = array();
-		function MBLanguage( $name, $path, $label, $key_name){
-			$this->path = $path;
-			$this->name = $name;
-			$this->key_name = $key_name;
-			$this->label = $label;
-		}
+
+    public function __construct($name, $path, $label, $key_name, $label_singular)
+    {
+        $this->path = $path;
+        $this->name = $name;
+        $this->key_name = $key_name;
+        $this->label = $label;
+        $this->label_singular = $label_singular;
+    }
 		
 		function load(){
 			$this->generateModStrings();
@@ -149,6 +152,7 @@ class MBLanguage{
                 'LBL_LIST_FORM_TITLE'=>$this->label . " " . $mod_strings['LBL_LIST'],
                 'LBL_MODULE_NAME'=>$this->label,
                 'LBL_MODULE_TITLE'=>$this->label,
+                'LBL_MODULE_NAME_SINGULAR' => $this->label_singular,
                 'LBL_HOMEPAGE_TITLE'=>$mod_strings['LBL_HOMEPAGE_PREFIX'] . " " . $this->label,
                 //FOR GENERIC MENU
                 'LNK_NEW_RECORD'=>$mod_strings['LBL_CREATE'] ." ". $this->label,

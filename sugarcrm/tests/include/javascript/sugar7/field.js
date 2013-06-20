@@ -122,4 +122,11 @@ describe('Sugar7 field extensions', function () {
             });
         });
     });
+
+    describe('Test _getFallbackTemplate method', function () {
+        it('should return noaccess as name if viewName is noaccess', function() {
+            field = SugarTest.createField('base', 'text', 'base', 'list', {});
+            expect(field._getFallbackTemplate('noaccess')).toEqual('noaccess');
+        });
+    });
 });

@@ -1,13 +1,15 @@
 describe("sugar7.extensions.bwc", function() {
-    var app, module, id, action;
+    var app, module, id, action, sinonSandbox;
 
     beforeEach(function() {
+        sinonSandbox = sinon.sandbox.create();
         app = SugarTest.app;
         module = "Foo";
         action = "EditView";
         id = '12345';
     });
     afterEach(function() {
+        sinonSandbox.restore();
         module = null;
         action = null;
         id = null;
@@ -52,5 +54,45 @@ describe("sugar7.extensions.bwc", function() {
         expected = "bwc/index.php?module=" + module + "&action=index";
         actual = app.bwc.buildRoute(module, null, 'DetailView');
         expect(actual).toEqual(expected);
+    });
+
+    describe('_createRelatedRecordUrlParams', function() {
+        var parentModel, relateFieldStub;
+
+        beforeEach(function() {
+            parentModel = new Backbone.Model({
+                id: '101-model-id',
+                name: 'parent product name',
+                account_id: 'abc-111-2222',
+                account_name: 'parent account name',
+                assigned_user_name: 'admin'
+            }),
+            relateFieldStub = sinonSandbox.stub(app.data, 'getRelateFields', function() {
+                return [{
+                    name: 'product_template_name',
+                    rname: 'name',
+                    id_name: 'product_template_id',
+                    populate_list: {
+                        account_id: 'account_id',
+                        account_name: 'account_name',
+                        assigned_user_name: 'user_name'
+                    }
+                }];
+            });
+        });
+
+        afterEach(function() {
+            parentModel = null;
+        });
+
+        it('should populate related fields in URL when creating a new BWC record', function() {
+            var params = app.bwc._createRelatedRecordUrlParams(parentModel, "test");
+            expect(params['product_template_id']).toBe(parentModel.get('id'));
+            expect(params['product_template_name']).toBe(parentModel.get('name'));
+            expect(params['account_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_name']).toBe(parentModel.get('account_name'));
+            expect(params['user_name']).toBe(parentModel.get('assigned_user_name'));
+        });
+
     });
 });

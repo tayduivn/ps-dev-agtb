@@ -298,6 +298,14 @@ $dictionary['Note'] = array(
     'source'=>'non-db',
     'vname'=>'LBL_PRODUCTS',
   ),
+  'revenuelineitems' =>
+  array (
+    'name' => 'revenuelineitems',
+    'type' => 'link',
+    'relationship' => 'revenuelineitem_notes',
+    'source'=>'non-db',
+    'vname'=>'LBL_REVENUELINEITEMS',
+  ),
   'quotes' =>
   array (
     'name' => 'quotes',

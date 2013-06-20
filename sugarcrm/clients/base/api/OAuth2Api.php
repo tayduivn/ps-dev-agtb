@@ -34,6 +34,7 @@ class OAuth2Api extends SugarApi {
                 'longHelp' => 'include/api/help/oauth2_token_post_help.html',
                 'rawReply' => true, // The OAuth server sets specific headers and outputs in the exact format requested by the spec, so we don't want to go around messing with it.
                 'noLoginRequired' => true,
+                'keepSession' => true,
             ),
             'oauth_logout' => array(
                 'reqType' => 'POST',
@@ -42,6 +43,7 @@ class OAuth2Api extends SugarApi {
                 'method' => 'logout',
                 'shortHelp' => 'OAuth2 logout.',
                 'longHelp' => 'include/api/help/oauth2_logout_post_help.html',
+                'keepSession' => true,
             ),
             'oauth_bwc_login' => array(
                 'reqType' => 'POST',
@@ -50,6 +52,7 @@ class OAuth2Api extends SugarApi {
                 'method' => 'bwcLogin',
                 'shortHelp' => 'Bwc login for bwc modules. Internal usage only.',
                 'longHelp' => 'include/api/help/oauth2_bwc_login_post_help.html',
+                'keepSession' => true,
             ),
         );
     }

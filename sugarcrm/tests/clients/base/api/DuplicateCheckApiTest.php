@@ -113,6 +113,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('ACLStatic');
 
         $this->copyOfLeadsDuplicateCheckVarDef = $GLOBALS["dictionary"]["Lead"]["duplicate_check"];
         $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = $this->mockLeadsDuplicateCheckVarDef;
@@ -149,7 +150,7 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = $this->copyOfLeadsDuplicateCheckVarDef;
-
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
@@ -244,15 +245,13 @@ class DuplicateCheckApiTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "Leads"
         );
         //Setting access to be denied for read
-        $_SESSION['ACL'] = array();
-        $_SESSION['ACL'][$GLOBALS['current_user']->id][$args['module']]['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        $acldata['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        ACLAction::setACLData($GLOBALS['current_user']->id, $args['module'], $acldata);
         // reset cached ACLs
         SugarACL::$acls = array();
 
         $this->setExpectedException('SugarApiExceptionNotAuthorized');
         $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
-
-        unset($_SESSION['ACL']);
     }
 
     public function testCheckForDuplicates_InvalidParameter()

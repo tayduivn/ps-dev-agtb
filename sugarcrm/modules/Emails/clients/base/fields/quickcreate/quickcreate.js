@@ -28,9 +28,9 @@
     extendsFrom: 'QuickcreateField',
 
     initialize: function(options) {
-        // determine if the app should send email according to the has_outbound_email_config user preference
-        var hasOutboundEmailConfig = app.user.getPreference("has_outbound_email_config");
-        if (hasOutboundEmailConfig !== "true") {
+        // determine if the app should send email according to the use_sugar_email_client user preference
+        var useSugarEmailClient = app.user.getPreference("use_sugar_email_client");
+        if (useSugarEmailClient !== "true") {
             options.def.href = "mailto:"; // use the user's default mail client instead of email compose view
         }
 

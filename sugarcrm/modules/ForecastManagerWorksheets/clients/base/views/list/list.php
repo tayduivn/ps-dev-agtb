@@ -59,6 +59,35 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'click_to_edit' => true,
                 ),
                 array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'sortable' => true,
+                    'default' => true,
+                    'enabled' => true,
+                    'convertToBase' => true,
+                    'related_fields' => array(
+                        'base_rate',
+                        'currency_id'
+                    ),
+                    'align' => 'right'
+                ),
+                array(
+                    'name' => 'worst_case_adjusted',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE_VALUE',
+                    'sortable' => true,
+                    'default' => true,
+                    'enabled' => true,
+                    'convertToBase' => true,
+                    'related_fields' => array(
+                        'base_rate',
+                        'currency_id'
+                    ),
+                    'align' => 'right',
+                    'click_to_edit' => true,
+                ),
+                array(
                     'name' => 'likely_case',
                     'type' => 'currency',
                     'label' => 'LBL_LIKELY_CASE',
@@ -105,35 +134,6 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'name' => 'best_case_adjusted',
                     'type' => 'currency',
                     'label' => 'LBL_BEST_CASE_VALUE',
-                    'sortable' => true,
-                    'default' => true,
-                    'enabled' => true,
-                    'convertToBase' => true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
-                    'align' => 'right',
-                    'click_to_edit' => true,
-                ),
-                array(
-                    'name' => 'worst_case',
-                    'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE',
-                    'sortable' => true,
-                    'default' => true,
-                    'enabled' => true,
-                    'convertToBase' => true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
-                    'align' => 'right'
-                ),
-                array(
-                    'name' => 'worst_case_adjusted',
-                    'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE_VALUE',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,

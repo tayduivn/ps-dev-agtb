@@ -1,0 +1,17 @@
+<div class="search-filter">
+    <form class="form-search-related">
+        <div class="control-group">
+            <div class="filter controls controls-two btn-group-fit">
+                <div class="toggle-actions actions">
+                    <div class="btn-group" data-toggle="buttons-radio">
+                        {{#each toggles}}
+                            <button type="button" class="btn {{#eq ../options.meta.default toggle}}active{{/eq}}" data-view="{{toggle}}" data-mode="view" rel="tooltip" title="{{str title}}" data-original-title="{{toggle}}"><i class="{{class}}"></i></button>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="main-content">
+</div>

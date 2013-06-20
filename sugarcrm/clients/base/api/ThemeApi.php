@@ -1,5 +1,5 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('vendors/lessphp/lessc.inc.php');
+require_once('vendor/lessphp/lessc.inc.php');
 require_once('include/SugarTheme/SidecarTheme.php');
 
 class ThemeApi extends SugarApi
@@ -36,14 +36,24 @@ class ThemeApi extends SugarApi
     public function registerApiRest()
     {
         return array(
-            'previewCSS' => array(
+            'getCSSURL' => array(
                 'reqType' => 'GET',
                 'path' => array('css'),
                 'pathVars' => array(''),
-                'method' => 'previewCSS',
-                'shortHelp' => 'Generate the bootstrap.css file',
+                'method' => 'getCSSURLs',
+                'shortHelp' => 'Get (or generate) the css file for a platform and a theme',
                 'longHelp' => 'include/api/help/css_get_help.html',
                 'noLoginRequired' => true,
+            ),
+            'previewCSS' => array(
+                'reqType' => 'GET',
+                'path' => array('css', 'preview'),
+                'pathVars' => array('', ''),
+                'method' => 'previewCSS',
+                'shortHelp' => 'Compile the css for a platform and a theme just as a preview',
+                'longHelp' => 'include/api/help/css_preview_get_help.html',
+                'noLoginRequired' => true,
+                'rawReply' => true
             ),
             'getCustomThemeVars' => array(
                 'reqType' => 'GET',
@@ -65,6 +75,18 @@ class ThemeApi extends SugarApi
         );
     }
 
+    public function getCSSURLs($api, $args)
+    {
+        // Validating arguments
+        $platform = isset($args['platform']) ? $args['platform'] : 'base';
+        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
+
+        $theme = new SidecarTheme($platform, $themeName);
+        // Otherwise we just return the CSS Url so the application can load the CSS file.
+        // getCSSURL method takes of generating bootstrap.css if it doesn't exist in cache.
+        return array("url" => array_values($theme->getCSSURL()));
+    }
+
     /**
      * Generate bootstrap.css
      * @param $api
@@ -82,20 +104,15 @@ class ThemeApi extends SugarApi
 
         // If `preview` is defined, it means that the call was made by the Theme Editor in Studio so we want to return
         // plain text/css
-        if (isset($args['preview'])) {
-            $variables = $theme->getThemeVariables();
-            $variables = array_merge($variables, $args);
-            $variables['baseUrl'] = '"../../styleguide/assets"';
-            $css = $theme->compileBootstrapCss($variables, $minify);
+        $variables = $theme->getThemeVariables();
+        $variables = array_merge($variables, $args);
+        $variables['baseUrl'] = '"../../styleguide/assets"';
+        $cssBlocks = $theme->compileCss($variables, $minify);
 
-            header('Content-type: text/css');
-            exit($css);
-        } else {
-            // Otherwise we just return the CSS Url so the application can load the CSS file.
-            // getCSSURL method takes of generating bootstrap.css if it doesn't exist in cache.
-            return array("url" => $theme->getCSSURL());
-        }
-
+        header('Content-type: text/css');
+        $plaintext = implode('', array_values($cssBlocks));
+        echo $plaintext;
+        return;
     }
 
     /**
@@ -126,7 +143,7 @@ class ThemeApi extends SugarApi
      */
     public function updateCustomTheme($api, $args)
     {
-        if(!is_admin($GLOBALS['current_user'])) {
+        if (!is_admin($GLOBALS['current_user'])) {
             throw new SugarApiExceptionNotAuthorized();
         }
 
@@ -147,7 +164,7 @@ class ThemeApi extends SugarApi
         } else {
             // else
             // Override the custom variables.less with the given vars
-            $variables = array_diff_key($args, array('platform' => 0, 'themeName' => 0, 'reset' => 0 ));
+            $variables = array_diff_key($args, array('platform' => 0, 'themeName' => 0, 'reset' => 0));
             $theme->overrideThemeVariables($variables);
         }
 
@@ -155,10 +172,13 @@ class ThemeApi extends SugarApi
         $theme->compileTheme(true);
 
         // saves the bootstrap.css URL in the portal settings
-        $url = $GLOBALS['sugar_config']['site_url'] . '/' . $theme->getCSSURL();
-        $GLOBALS ['system_config']->saveSetting($args['platform'], 'css', json_encode($url));
+        $urls = $theme->getCSSURL();
+        foreach ($urls as $key => $url) {
+            $urls[$key] = $GLOBALS['sugar_config']['site_url'] . '/' . $url;
+        }
+        $GLOBALS ['system_config']->saveSetting($args['platform'], 'css', json_encode($urls));
 
-        return $url;
+        return $urls;
     }
 
 }

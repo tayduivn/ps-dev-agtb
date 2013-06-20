@@ -127,6 +127,16 @@
                 route: ":module/layout/:view"
             },
             {
+                name: 'config',
+                route: ':module/config',
+                callback: function(module) {
+                    app.controller.loadView({
+                        module: module,
+                        layout: 'config'
+                    });
+                }
+            },
+            {
                 name: "record",
                 route: ":module/:id"
             },
@@ -177,7 +187,7 @@
 
         if(_.isEmpty(metadata) || metadata.isBwcEnabled) {
             //For BWC module, current document title will be replaced with BWC title
-            title = $('#bwc-frame').get(0).contentWindow.document.title;
+            title = $('#bwc-frame').get(0) ? $('#bwc-frame').get(0).contentWindow.document.title : getTitle();
         } else {
             title = getTitle();
             if(!_.isEmpty(context.get("model"))) {

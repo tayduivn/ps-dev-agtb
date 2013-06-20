@@ -415,9 +415,10 @@ installerHook('post_setHiddenSubpanels');
 
 //END SUGARCRM flav=pro ONLY
 
+// FIXME: Skipping as this is not needed for Sugar7. Should be removed on SC-1312
 // Enable Sugar Feeds and add all feeds by default
-installLog("Enable SugarFeeds");
-enableSugarFeeds();
+//installLog("Enable SugarFeeds");
+//enableSugarFeeds();
 
 //BEGIN SUGARCRM flav=pro ONLY
 // Create the user that will be used by Snip
@@ -609,7 +610,7 @@ FP;
     if ($_SESSION['demoData'] != 'no') {
         $enabled_tabs[] = 'KBDocuments';
         $enabled_tabs[] = 'Bugs';
-        $enabled_tabs[] = 'Products';
+        $enabled_tabs[] = 'RevenueLineItems';
     }
     //END SUGARCRM flav=ent ONLY
 

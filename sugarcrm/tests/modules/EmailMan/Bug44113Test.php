@@ -24,6 +24,7 @@
 
 require_once('modules/Configurator/Configurator.php');
 require_once('modules/EmailMan/EmailMan.php');
+require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /***
  * Test cases for Bug 44113
@@ -39,6 +40,8 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->is_admin = '1';
+
+        OutboundEmailConfigurationTestHelper::setUp();
 
         require("config.php");
 
@@ -70,6 +73,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->cfg);
         unset($this->emailMan);
         unset($this->email_xss);
+        OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
     }
 

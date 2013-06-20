@@ -142,6 +142,9 @@ class RestService extends ServiceBase {
             } else {
                 $this->loadGuestEnvironment();
             }
+            if(empty($route['keepSession'])) {
+                $this->releaseSession();
+            }
 
             // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
             $pathVars = $this->request->getPathVars($route);

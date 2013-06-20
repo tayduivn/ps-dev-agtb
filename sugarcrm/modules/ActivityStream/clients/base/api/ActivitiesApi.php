@@ -161,7 +161,6 @@ class ActivitiesApi extends FilterApi
         }
         $response['next_offset'] = $nextOffset;
         $response['args'] = $args;
-        $response['sequel'] = $query->compileSql();
         return $response;
     }
 

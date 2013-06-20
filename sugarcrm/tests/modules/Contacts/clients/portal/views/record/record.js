@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 describe("PortalContacts.Views.Record", function() {
     var app, view;
 
@@ -5,9 +6,7 @@ describe("PortalContacts.Views.Record", function() {
         app = SugarTest.app;
         SugarTest.seedMetadata(true);
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
-        SugarTest.loadComponent('base', 'view', 'record', 'Contacts');
         SugarTest.loadComponent('portal', 'view', 'record', 'Contacts');
         SugarTest.testMetadata.set();
         view = SugarTest.createView('portal', 'Contacts', 'record', null, null, true, null, true, 'portal');

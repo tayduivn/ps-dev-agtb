@@ -57,7 +57,7 @@ class SugarDropDownValueExpression extends StringExpression {
 		    var params = this.getParameters();
 		    var list = params[0].evaluate();
 		    var key = params[1].evaluate();
-            var arr = SUGAR.language.get('app_list_strings', list);
+            var arr = this.context.getAppListStrings(list);
             if (arr == "undefined") return "";
             for (var i in arr) {
                 if (typeof i == "string" && i == key)

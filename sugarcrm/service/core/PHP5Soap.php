@@ -19,7 +19,7 @@
  ********************************************************************************/
 <?php
 require('service/core/SugarSoapService.php');
-require('vendors/nusoap//nusoap.php');
+require('vendor/nusoap//nusoap.php');
 
 abstract class PHP5Soap extends SugarSoapService{
 	private $nusoap_server = null;

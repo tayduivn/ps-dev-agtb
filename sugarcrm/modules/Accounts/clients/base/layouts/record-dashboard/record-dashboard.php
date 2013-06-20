@@ -10,14 +10,9 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Opportunitity Metrics',
-            'view' => 'opportunity-metrics',
-            'context' => array(
-                'module' => 'Accounts',
-                'dashlet' => array(
-                    'name' => 'Opportunitity Metrics',
-                    'type' => 'opportunity-metrics',
-                ),
+            'view' => array(
+                'name' => 'opportunity-metrics',
+                'label' => 'Opportunitity Metrics',
             ),
         ),
     )
@@ -26,13 +21,9 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Cases Summary',
-            'view' => 'casessummary',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Cases Summary',
-                    'type' => 'casessummary',
-                ),
+            'view' => array(
+                'name' => 'casessummary',
+                'label' => 'Cases Summary',
             ),
         ),
     )
@@ -41,14 +32,9 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'News Feed',
-            'view' => 'news',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'News Feed',
-                    'type' => 'news',
-                    'limit' => '5'
-                ),
+            'view' => array(
+                'name' => 'news',
+                'label' => 'News Feed',
             ),
         ),
     )
@@ -57,14 +43,10 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Interactions',
-            'view' => 'interactions',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Interactions',
-                    'type' => 'interactions',
-                    'filter_duration' => '7',
-                ),
+            'view' => array(
+                'name' => 'interactions',
+                'label' => 'Interactions',
+                'filter_duration' => '7',
             ),
         ),
     )

@@ -141,6 +141,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 ),
                 'priority',
                 'account_name',
+                'portal_viewable',
                 array(
                     'name' => 'resolution',
                     'nl2br' => true,

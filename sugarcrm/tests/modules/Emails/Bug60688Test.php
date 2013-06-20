@@ -71,6 +71,7 @@ class Bug60688Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testEmptyEmailLinkForDisabledAccess()
     {
+        $this->markTestIncomplete('Skipping as this is not needed for Sugar7. Should be removed on SC-1312');
         $aclField = new ACLField();
         // Primary email address for Contact module
         $aclField->setAccessControl($this->contact->module_name, $this->role->id, 'email1', ACL_OWNER_READ_WRITE);
@@ -97,6 +98,7 @@ class Bug60688Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAlternativeEmailLinkWhenPrimaryDisabled()
     {
+        $this->markTestIncomplete('Skipping as this is not needed for Sugar7. Should be removed on SC-1312');
         $aclField = new ACLField();
         // Primary email address for Contact module
         $aclField->setAccessControl($this->contact->module_name, $this->role->id, 'email1', ACL_OWNER_READ_WRITE);

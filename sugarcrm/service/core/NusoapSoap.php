@@ -21,7 +21,7 @@
  *
  ********************************************************************************/
 require('service/core/SugarSoapService.php');
-require('vendors/nusoap//nusoap.php');
+require('vendor/nusoap//nusoap.php');
 
 /**
  * This is an abstract class for the soap implementation for using NUSOAP. This class is responsible for making

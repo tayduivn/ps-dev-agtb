@@ -27,13 +27,40 @@
 ({
     config: {
         //Default background image to show if no image has been uploaded
-        profile: app.config.siteUrl + "/styleguide/assets/img/profile.png"
+        profile: app.utils.buildUrl("styleguide/assets/img/profile.png")
     },
     events: {
-        "click .delete" : "delete",
-
+        "click .delete": "delete",
         "change input[type=file]": "selectImage"
     },
+
+    /**
+     * @override
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+
+        if (!this.model.hasImageRequiredValidator) {
+            this.model.hasImageRequiredValidator = true;
+            this.model.addValidationTask('image_required', _.bind(this._doValidateImageField, this));
+        }
+    },
+
+    /**
+     * @override
+     * @private
+     */
+    _dispose: function() {
+        //Remove specific validation task from the model
+        this.model.hasImageRequiredValidator = false;
+        this.model._validationTasks = _.omit(this.model._validationTasks, 'image_required');
+        app.view.Field.prototype._dispose.call(this);
+    },
+
+    /**
+     * @override
+     * @private
+     */
     _render: function() {
         this.model.fileField = this.name;
         app.view.Field.prototype._render.call(this);
@@ -54,22 +81,42 @@
         this.$('img').addClass('hide').on('load', $.proxy(this.resizeWidget, this));
         return this;
     },
-    format: function(value){
+
+    /**
+     * @override
+     * @param value
+     * @returns value
+     */
+    format: function(value) {
         if (value) {
             value = this.buildUrl() + "&_hash=" + value;
         }
         return value;
     },
+
+    /**
+     * @override
+     */
     bindDataChange: function() {
         //Keep empty for edit because you cannot set a value of an input type `file`
         var viewType = this.view.name || this.options.viewName;
-        if (viewType !== "edit" && viewType !== "create" && this.view.action !== "edit") {
+        var ignoreViewType = ["edit", "create", "create-actions"];
+        if (_.indexOf(ignoreViewType, viewType) < 0 && this.view.action !== "edit") {
             app.view.Field.prototype.bindDataChange.call(this);
         }
     },
+
+    /**
+     * @override
+     */
     bindDomChange: function() {
         //Override default behavior
     },
+
+    /**
+     * This is the custom implementation of bindDomChange. Here we upload the image to give a preview to the user.
+     * @param e
+     */
     selectImage: function(e) {
         var self = this,
             $input = self.$('input[type=file]');
@@ -82,39 +129,43 @@
 
         // Upload a temporary file for preview
         self.model.uploadFile(
-             self.name,
-             $input,
-             {
-                 field: self.name,
-                 //Callbacks
-                 success: function(rsp) {
-                     //read the guid
-                     var fileId = (rsp[self.name]) ? rsp[self.name]['guid'] : null;
-                     var url = app.api.buildFileURL({
-                                   module: self.module,
-                                   id: 'temp',
-                                   field: self.name,
-                                   fileId: fileId
-                               });
-                      // show image
-                      var image = $('<img>').addClass('hide').attr('src', url).on('load', $.proxy(self.resizeWidget, self));
-                      self.$('.image_preview').html(image);
+            self.name,
+            $input,
+            {
+                field: self.name,
+                //Callbacks
+                success: function(rsp) {
+                    //read the guid
+                    var fileId = (rsp[self.name]) ? rsp[self.name]['guid'] : null;
+                    var url = app.api.buildFileURL({
+                        module: self.module,
+                        id: 'temp',
+                        field: self.name,
+                        fileId: fileId
+                    });
+                    // show image
+                    var image = $('<img>').addClass('hide').attr('src', url).on('load', $.proxy(self.resizeWidget, self));
+                    self.$('.image_preview').html(image);
 
-                     //Trigger a change event with param "image" so the view can detect that the dom changed.
-                     self.model.trigger("change", "image");
-                 },
-                 error: function(error) {
-                     var fieldError = {},
-                         errors = {};
-                     fieldError[error.responseText] = {};
-                     errors[self.name] = fieldError;
-                     self.model.trigger('error:validation:' + this.field, fieldError);
-                     self.model.trigger('error:validation', errors);
-                 }
-              },
-             { temp: true }); //for File API to understand we upload a temporary file
+                    //Trigger a change event with param "image" so the view can detect that the dom changed.
+                    self.model.trigger("change", "image");
+                },
+                error: function(error) {
+                    var fieldError = {},
+                        errors = {};
+                    fieldError[error.responseText] = {};
+                    errors[self.name] = fieldError;
+                    self.model.trigger('error:validation:' + this.field, fieldError);
+                    self.model.trigger('error:validation', errors);
+                }
+            },
+            { temp: true }); //for File API to understand we upload a temporary file
     },
 
+    /**
+     * Calls when deleting the image or canceling the preview
+     * @param e
+     */
     'delete': function(e) {
         var self = this;
         //If we are previewing a file and want to cancel
@@ -125,13 +176,13 @@
         } else {
             var confirmMessage = app.lang.get('LBL_IMAGE_DELETE_CONFIRM', self.module);
             if (confirm(confirmMessage)) {
-            //Otherwise delete the image
+                //Otherwise delete the image
                 app.api.call('delete', self.buildUrl({htmlJsonFormat: false}), {}, {
                         success: function() {
                             //Need to fire the change event twice so model.previous(self.name) is also changed.
                             self.model.unset(self.name);
                             self.model.set(self.name, null);
-                            if(!self.disposed) self.render();
+                            if (!self.disposed) self.render();
                         },
                         error: function(data) {
                             // refresh token if it has expired
@@ -141,23 +192,26 @@
             }
         }
     },
+
     /**
      * Build URI for File API
+     * @param options
      */
     buildUrl: function(options) {
         return app.api.buildFileURL({
-                    module: this.module,
-                    id: this.model.id,
-                    field: this.name
-                }, options);
+            module: this.module,
+            id: this.model.id,
+            field: this.name
+        }, options);
     },
+
     /**
      * Resize widget based on field defs and image size
      */
     resizeWidget: function() {
         var image = this.$('.image_preview img, .image_detail img');
 
-        if  (!image[0]) return;
+        if (!image[0]) return;
 
         var isDefHeight = !_.isUndefined(this.def.height) && this.def.height > 0,
             isDefWidth = !_.isUndefined(this.def.width) && this.def.width > 0;
@@ -172,8 +226,8 @@
 
         if (!isDefHeight && !isDefWidth)
             image.css({
-                'height' : this.height,
-                'width' : this.width
+                'height': this.height,
+                'width': this.width
             });
 
         //now resize widget
@@ -192,10 +246,18 @@
         var icon = this.preview === true ? 'remove' : 'trash';
         image.closest('label, a').after('<span class="image_btn delete icon-' + icon + ' " />');
     },
+
+    /**
+     * Utility function to append px to an integer
+     *
+     * @param size
+     * @returns {string}
+     */
     formatPX: function(size) {
         size = parseInt(size, 10);
         return size + 'px';
     },
+
     /**
      * Resize the elements carefully to render a pretty input[type=file]
      * @param height (in pixels)
@@ -213,14 +275,15 @@
             previewHeight -= edit_btn_height ? edit_btn_height : 0;
             previewHeight = this.formatPX(previewHeight);
 
-            $image_field.find('.icon-plus').css({lineHeight:previewHeight});
+            $image_field.find('.icon-plus').css({lineHeight: previewHeight});
         }
 
 
         var totalHeight = this.formatPX(height);
-        $image_field.css({'height':totalHeight, minHeight:totalHeight, lineHeight:totalHeight});
-        $image_field.find('label').css({lineHeight:totalHeight});
+        $image_field.css({'height': totalHeight, minHeight: totalHeight, lineHeight: totalHeight});
+        $image_field.find('label').css({lineHeight: totalHeight});
     },
+
     /**
      * Resize the elements carefully to render a pretty input[type=file]
      * @param width (in pixels)
@@ -231,21 +294,44 @@
             isInHeaderpane = $(this.el).closest('.headerpane').length > 0,
             isInRowFluid = $(this.el).closest('.row-fluid').closest('.record').length > 0;
 
-        if(isInHeaderpane || !isInRowFluid) {
+        if (isInHeaderpane || !isInRowFluid) {
             //Need to fix width
-            $image_field.css({'width':width});
+            $image_field.css({'width': width});
         } else {
             //Width will be the biggest possible
-            $image_field.css({'maxWidth':width});
+            $image_field.css({'maxWidth': width});
         }
     },
+
+    /****
+     * Custom requiredValidator for image field because we need to check if the input inside the view is empty or not.
+     *
+     + @param {Object} fields Hash of field definitions to validate.
+     + @param {Object} errors Error validation errors
+     + @param {Function} callback Async.js waterfall callback
+     */
+    _doValidateImageField: function(fields, errors, callback) {
+        var $input = this.$('input[type=file]');
+        if (this.def.required && (_.isEmpty($input) || _.isEmpty($input.val()))) {
+            errors[this.name] = errors[this.name] || {};
+            errors[this.name].required = true;
+        }
+        callback(null, fields, errors);
+    },
+
     /**
      * Handles errors message
+     *
+     * @override
      * @param errors
      */
     handleValidationError: function(errors) {
         var errorMessages = [],
             $tooltip;
+
+        if (this.action === 'detail') {
+            this.setMode('edit');
+        }
 
         //Change the preview of the image widget
         this.$('.image_preview').html('<i class="icon-remove"></i>');
@@ -255,16 +341,20 @@
         this.$el.closest('.record-cell').addClass("error");
         this.$el.addClass('input-append error');
 
-        _.each(errors, function (errorContext, errorName) {
+        _.each(errors, function(errorContext, errorName) {
             errorMessages.push(app.error.getErrorString(errorName, errorContext));
         });
         this.$('.image_field').append(this.exclamationMarkTemplate(errorMessages));
         $tooltip = this.$('.error-tooltip');
         if (_.isFunction($tooltip.tooltip)) {
-            var tooltipOpts = { container:'body', placement:'top', trigger: 'click' };
+            var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
             $tooltip.tooltip(tooltipOpts);
         }
     },
+
+    /**
+     * @override
+     */
     clearErrorDecoration: function() {
         //Remove the current icon
         this.$('.delete').remove();

@@ -28,6 +28,7 @@ class SugarFeedTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function testEncodeUrls()
 	{
+        $this->markTestSkipped('Skipping as this is not needed for Sugar7. Should be removed on SC-1312');
 		$message = "This test contains a url here http://www.sugarcrm.com and not here amazon.com";
         $text = SugarFeed::parseMessage($message);
         $this->assertContains("<a href='http://www.sugarcrm.com' target='_blank'>http://www.sugarcrm.com</a>",$text, "Url encoded incorrectly");
@@ -36,6 +37,7 @@ class SugarFeedTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetUrls()
 	{
+        $this->markTestSkipped('Skipping as this is not needed for Sugar7. Should be removed on SC-1312');
 		$message = "This test contains a url here http://www.sugarcrm.com and not here http://amazon.com";
         $result = getUrls($message);
         $this->assertContains('http://www.sugarcrm.com', $result,' Could not find first url.');

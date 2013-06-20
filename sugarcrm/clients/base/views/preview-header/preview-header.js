@@ -44,7 +44,7 @@
 
     triggerClose: function() {
         app.events.trigger("list:preview:decorate", null, this);
-        app.events.trigger("preview:close:fire");
+        app.events.trigger("preview:close");
     }
 
 })

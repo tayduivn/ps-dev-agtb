@@ -93,34 +93,34 @@ function perform_save($focus)
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
         //We create a related product entry for any new opportunity so that we may forecast on products
         // create an empty product module
-        /* @var $product Product */
-        $product = BeanFactory::getBean('Products');
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems');
         
         //We still need to update the associated product with changes
         if ($focus->new_with_id == false) {
-            $product->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
+            $rli->retrieve_by_string_fields(array('opportunity_id' => $focus->id));
         }
         
-        //If $product is set then we need to copy values into it from the opportunity
-        if (isset($product)) {
-            $product->name = $focus->name;
-            $product->best_case = $focus->best_case;
-            $product->likely_case = $focus->amount;
-            $product->worst_case = $focus->worst_case;
-            $product->cost_price = $focus->amount;
-            $product->quantity = 1;
-            $product->currency_id = $focus->currency_id;
-            $product->base_rate = $focus->base_rate;
-            $product->probability = $focus->probability;
-            $product->date_closed = $focus->date_closed;
-            $product->date_closed_timestamp = $focus->date_closed_timestamp;
-            $product->assigned_user_id = $focus->assigned_user_id;
-            $product->opportunity_id = $focus->id;
-            $product->account_id = $focus->account_id;
-            $product->commit_stage = $focus->commit_stage;
-            $product->sales_stage = $focus->sales_stage;
-            $product->deleted = $focus->deleted;
-            $product->save();
+        //If $rli is set then we need to copy values into it from the opportunity
+        if (isset($rli)) {
+            $rli->name = $focus->name;
+            $rli->best_case = $focus->best_case;
+            $rli->likely_case = $focus->amount;
+            $rli->worst_case = $focus->worst_case;
+            $rli->cost_price = $focus->amount;
+            $rli->quantity = 1;
+            $rli->currency_id = $focus->currency_id;
+            $rli->base_rate = $focus->base_rate;
+            $rli->probability = $focus->probability;
+            $rli->date_closed = $focus->date_closed;
+            $rli->date_closed_timestamp = $focus->date_closed_timestamp;
+            $rli->assigned_user_id = $focus->assigned_user_id;
+            $rli->opportunity_id = $focus->id;
+            $rli->account_id = $focus->account_id;
+            $rli->commit_stage = $focus->commit_stage;
+            $rli->sales_stage = $focus->sales_stage;
+            $rli->deleted = $focus->deleted;
+            $rli->save();
         }
 //END SUGARCRM flav=pro && flav!=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY

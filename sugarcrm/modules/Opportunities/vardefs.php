@@ -146,7 +146,7 @@ $dictionary['Opportunity'] = array(
             'enable_range_search' => true,
             //BEGIN SUGARCRM flav=ent ONLY
             'calculated' => true,
-            'formula' => 'rollupCurrencySum($products, "likely_case")',
+            'formula' => 'rollupCurrencySum($revenuelineitems, "likely_case")',
             'enforced' => true,
             //END SUGARCRM flav=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0)
@@ -233,7 +233,7 @@ $dictionary['Opportunity'] = array(
             'options' => 'date_range_search_dom',
             //BEGIN SUGARCRM flav=ent ONLY
             'calculated' => true,
-            'formula' => 'maxRelatedDate($products, "date_closed")',
+            'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
             'enforced' => true
             //END SUGARCRM flav=ent ONLY
         ),
@@ -244,7 +244,7 @@ $dictionary['Opportunity'] = array(
             'studio' => false,
             //BEGIN SUGARCRM flav=ent ONLY
             'calculated' => true,
-            'formula' => 'rollupMax($products, "date_closed_timestamp")',
+            'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")',
             'enforced' => true
             //END SUGARCRM flav=ent ONLY
         ),
@@ -275,6 +275,9 @@ $dictionary['Opportunity'] = array(
             'options' => 'sales_status_dom',
             'len' => '255',
             'audited' => true,
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'studio' => false,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
         ),
         'probability' => array(
             'name' => 'probability',
@@ -285,6 +288,8 @@ $dictionary['Opportunity'] = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
+            'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
+            'calculated' => true,
         ),
         //BEGIN SUGARCRM flav=PRO ONLY
         'best_case' => array(
@@ -295,7 +300,7 @@ $dictionary['Opportunity'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             //BEGIN SUGARCRM flav=ent ONLY
-            'formula' => 'rollupCurrencySum($products, "best_case")',
+            'formula' => 'rollupCurrencySum($revenuelineitems, "best_case")',
             'calculated' => true,
             'enforced' => true,
             //END SUGARCRM flav=ent ONLY
@@ -309,7 +314,7 @@ $dictionary['Opportunity'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             //BEGIN SUGARCRM flav=ent ONLY
-            'formula' => 'rollupCurrencySum($products, "worst_case")',
+            'formula' => 'rollupCurrencySum($revenuelineitems, "worst_case")',
             'calculated' => true,
             'enforced' => true,
             //END SUGARCRM flav=ent ONLY
@@ -464,6 +469,13 @@ $dictionary['Opportunity'] = array(
             //'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
             'source' => 'non-db',
         ),
+        'revenuelineitems' => array(
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'vname' => 'LBL_RLI',
+            'relationship' => 'revenuelineitems_opportunities',
+            'source' => 'non-db',
+        ),
         'products' => array(
             'name' => 'products',
             'type' => 'link',
@@ -610,12 +622,12 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many'
         ),
         //BEGIN SUGARCRM flav=pro ONLY
-        'opportunities_products' => array(
+        'opportunities_revenuelineitems' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Products',
-            'rhs_table' => 'products',
+            'lhs_key' => 'id',  
+            'rhs_module' => 'RevenueLineItems',
+            'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
             'relationship_type' => 'one-to-many'
         ),

@@ -135,6 +135,7 @@ class RestClearMetadataCacheTest extends RestTestBase
      */
     public function testCustomFieldChangesClearMetadataCache()
     {
+        $this->markTestIncomplete('Migrate this to Soap UI.');
         MetaDataManager::clearAPICache();
         // Start by calling the metadata api to set the cache and get the first result
         $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
@@ -185,10 +186,10 @@ class RestClearMetadataCacheTest extends RestTestBase
         $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['vname'], "The created custom field label id was not found in the metadata response");
         // Set the label for use in the next test
         $vname = $reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['vname'];
-        
+
         // Get the app strings from the label url
         $this->assertNotEmpty($reply['reply']['labels']['en_us'], "Label metadata entry is missing");
-        $contents = json_decode(file_get_contents($reply['reply']['labels']['en_us']), true);
+        $contents = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $reply['reply']['labels']['en_us']), true);
         $this->assertNotEmpty($contents['mod_strings']['Accounts'][$vname], "The label value for the custom field label was not found");
         $this->assertEquals($_REQUEST['labelValue'], $contents['mod_strings']['Accounts'][$vname], "The custom field label change did not reflect in the metadata response");
         
@@ -250,7 +251,8 @@ class RestClearMetadataCacheTest extends RestTestBase
      * @group rest
      */
     public function testDropdownListChangesClearMetadataCache()
-    {        
+    {
+        $this->markTestIncomplete('Migrate this to Soap UI.');
         // Create a dropdown
         $_REQUEST = $this->_requestMock->ddlFieldRequestVars;
         $parser = new ParserDropDown();

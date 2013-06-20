@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
  
-//require_once('vendors/XTemplate/xtpl.php');
+//require_once('vendor/XTemplate/xtpl.php');
 
 
 require_once('modules/Forecasts/Common.php');
@@ -30,8 +30,8 @@ require_once('modules/Forecasts/Common.php');
 require_once ('modules/Forecasts/ForecastUtils.php');
 
 //include tree view classes.
-require_once('vendors/ytree/Tree.php');
-require_once('vendors/ytree/Node.php');
+require_once('vendor/ytree/Tree.php');
+require_once('vendor/ytree/Node.php');
 require_once('modules/Forecasts/TreeData.php');
 global $app_strings;
 global $app_list_strings;

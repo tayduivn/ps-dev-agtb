@@ -23,6 +23,14 @@
     originalModel: undefined,
 
     /**
+     * {@inheritDoc}
+     */
+    closePreview: function() {
+        this.originalModel = undefined;
+        app.view.invokeParent(this, {type: 'view', name: 'preview', method: 'closePreview'});
+    },
+
+    /**
      * Override _renderPreview to pull in the parent_type and parent_id when we are running a fetch
      *
      * @param model

@@ -117,14 +117,19 @@
      *
      * This will match all hrefs that contain "module=" on it and if the module
      * isn't blacked listed, then rewrite into sidecar url.
+     * Since iFrame needs full URL to sidecar urls (to provide copy paste urls,
+     * open in new tab/window, etc.) this will check what is the base url to
+     * apply to that path.
      *
-     * @see Bwc::_blackList() for the list of modules not sidecar ready.
+     * @see include/modules.php for the list ($bwcModules) of modules not
+     * sidecar ready.
      *
      * @param {Window} frame the contentWindow of the frame to rewrite links on.
      * @private
      */
     _rewriteLinksForSidecar: function (frame) {
-        var self = this;
+        var self = this,
+            baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
 
         frame.$('a[href*="module="]').each(function (i, elem) {
             var $elem = $(elem),
@@ -139,7 +144,7 @@
             }
 
             var sidecarUrl = self.convertToSidecarUrl(href);
-            $elem.attr('href', app.config.siteUrl + '/#' + sidecarUrl);
+            $elem.attr('href', baseUrl + '#' + sidecarUrl);
             $elem.data('sidecarProcessed', true);
 
             if ($elem.attr('target') === '_blank') {
@@ -169,13 +174,14 @@
      * @private
      */
     _rewriteNewWindowLinks: function (frame) {
+        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
 
         frame.$('a[target="_blank"]').not('[href^="http"]').each(function (i, elem) {
             var $elem = $(elem);
             if ($elem.data('sidecarProcessed')) {
                 return;
             }
-            $elem.attr('href', app.config.siteUrl + '/#bwc/' + $elem.attr('href'));
+            $elem.attr('href', baseUrl + '#bwc/' + $elem.attr('href'));
         });
     }
 })

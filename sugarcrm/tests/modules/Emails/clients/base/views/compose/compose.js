@@ -6,7 +6,6 @@ describe("Emails.Views.Compose", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
         SugarTest.loadComponent('base', 'view', 'compose', 'Emails');

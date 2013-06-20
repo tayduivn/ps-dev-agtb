@@ -44,7 +44,7 @@
         app.view.View.prototype.initialize.call(this, opts);
 
         this.showMoreLabel = app.lang.get(this.options.meta.showMoreLabel, this.module, {
-            module: app.lang.get('LBL_MODULE_NAME', this.module)
+            module: app.lang.get('LBL_MODULE_NAME', this.module).toLowerCase()
         });
 
         this.layout.on("hide", this.toggleVisibility, this);
@@ -56,7 +56,9 @@
     _renderHtml: function() {
         // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
-        this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+        if(this.context.get('limit')){
+            this.limit = this.context.get('limit');
+        }
 
         app.view.View.prototype._renderHtml.call(this);
 
@@ -103,7 +105,11 @@
                 });
             }
         };
-        options.limit = this.limit;
+        if(this.limit){
+            options.limit = this.limit;
+        }
+        // Override default collection options if they exist
+        options = _.extend({}, this.context.get('collectionOptions'), options);
         this.collection.paginate(options);
     },
     getSearchOptions: function() {

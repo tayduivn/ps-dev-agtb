@@ -135,20 +135,7 @@
             return;
         }
 
-        var disable = ["Quotes",
-            "ProductCategories",
-            "Meetings",
-            "Reports",
-            "KBDocuments",
-            "Users",
-            "Administration",
-            "ProspectLists",
-            "Calls",
-            "Employees",
-            "Emails",
-            "EmailTemplates"];
-        // HACK FOR SUGARCON 2013. This should be removed afterwards.
-        if (_.contains(disable, model.module)) {
+        if (app.metadata.getModule(model.module).isBwcEnabled) {
             app.events.trigger('preview:close');
             app.alert.show('preview_bwc_error', {level:'error', messages: app.lang.getAppString('LBL_PREVIEW_BWC_ERROR'), autoClose: true});
             return;
@@ -250,7 +237,6 @@
      */
     switchPreview: function(data, index, id, module) {
         var self = this,
-            currModule = module || this.model.module,
             currID = id || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
@@ -268,6 +254,8 @@
             // We can increment/decrement
             data.direction === "left" ? currIndex -= 1 : currIndex += 1;
 
+            //  If module not specified we need select module from model in collection by current index.
+            var currModule = module || this.collection.models[currIndex].module;
             var moduleMeta = app.metadata.getModule(currModule);
 
             // Some activity stream items aren't previewable - e.g. no detail views

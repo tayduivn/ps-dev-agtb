@@ -1,5 +1,5 @@
 {{#eq card "summary"}}
-<p><a href="{{{url}}}"><h4>{{title}}</h4> ({{site}})</a></p>
+<p><a href="{{{url}}}" target="_blank"><h4>{{title}}</h4> ({{site}})</a></p>
 {{#if image}}
     <img src="{{{image}}}" />
 {{/if}}

@@ -470,4 +470,3 @@ class DependencyManager
         return true;
     }
 }
-?>

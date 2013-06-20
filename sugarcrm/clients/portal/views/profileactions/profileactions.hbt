@@ -2,7 +2,13 @@
     <li class="dropdown" id="userActions">
         <div class="btn-group">
             <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle">
-                <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar"><b class="caret"></b></a>
+                {{#if pictureUrl}}
+                    <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">
+                {{else}}
+                    <i class="icon-user icon-3X"></i>
+                {{/if}}
+                <b class="caret"></b>
+            </a>
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
                     <li><a href="#profile">{{str "LBL_PROFILE"}}</a></li>

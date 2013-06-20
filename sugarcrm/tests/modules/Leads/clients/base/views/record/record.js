@@ -4,7 +4,6 @@ describe("Leads.Views.Record", function() {
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.set();
         view = SugarTest.createView('base', 'Leads', 'record', null, null, true);

@@ -7,6 +7,7 @@
      * @extends View
      */
 
+    //Override default Backbone tagName
     tagName: "span",
 
     /**
@@ -16,8 +17,36 @@
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.layout.on("filter:change:module", this.handleChange, this);
-        this.layout.on("filter:render:module", this._render, this);
+        //Load partials
+        this._select2formatSelectionTemplate = app.template.get("filter-module-dropdown.selection-partial");
+        this._select2formatResultTemplate = app.template.get("filter-module-dropdown.result-partial");
+
+        this.listenTo(this.layout, "filter:change:module", this.handleChange);
+        this.listenTo(this.layout, "filter:render:module", this._render);
+    },
+
+    /**
+     * Trigger events when a change happens
+     * @param {String} linkModuleName
+     * @param {String} linkName
+     * @param {Boolean} silent
+     */
+    handleChange: function(linkModuleName, linkName, silent) {
+        if (linkName === "all_modules") {
+            //Trigger subpanel change
+            this.layout.trigger("subpanel:change");
+        } else {
+            //Trigger closing the Create Filter form
+            this.layout.trigger("filter:create:close");
+            //Trigger subpanel change
+            this.layout.trigger("subpanel:change", linkName);
+        }
+
+        this.filterNode.select2("val", linkName || linkModuleName);
+        if (!silent) {
+            this.layout.layout.trigger("filter:change", linkModuleName, linkName);
+            this.layout.trigger("filter:get", linkModuleName, linkName);
+        }
     },
 
     /**
@@ -25,37 +54,55 @@
      * @private
      */
     _render: function() {
-        var self = this;
         app.view.View.prototype._render.call(this);
-        this.filterNode = this.$(".related-filter");
-        this.filterList = [];
 
         if (this.layout.showingActivities) {
-            this.getModuleListForActivities();
+            this.filterList = this.getModuleListForActivities();
+        } else if (this.layout.layoutType === "record") {
+            this.filterList = this.getModuleListForSubpanels();
         } else {
-            this[(this.layout.layoutType === "record")? "getModuleListForSubpanels" : "getModuleListForRecords"]();
+            this.filterList = this.getModuleListForRecords();
         }
 
+        this._renderDropdown(this.filterList);
+    },
+
+    /**
+     * Render select2 dropdown
+     * @private
+     */
+    _renderDropdown: function(data) {
+        var self = this;
+
+        this.filterNode = this.$(".related-filter");
+
         this.filterNode.select2({
-            data: this.filterList,
+            data: data,
             multiple: false,
             minimumResultsForSearch: 7,
             formatSelection: _.bind(this.formatSelection, this),
             formatResult: _.bind(this.formatResult, this),
-            dropdownCss: {width:'auto'},
+            dropdownCss: {width: 'auto'},
             dropdownCssClass: 'search-related-dropdown',
             initSelection: _.bind(this.initSelection, this),
-            escapeMarkup: function(m) { return m; },
+            escapeMarkup: function(m) {
+                return m;
+            },
             width: 'off'
         });
 
         // Disable the module filter dropdown.
-        if(this.layout.layoutType !== "record" || this.layout.showingActivities) {
+        if (this.layout.layoutType !== "record" || this.layout.showingActivities) {
             this.filterNode.select2("disable");
         }
 
         this.filterNode.off("change");
         this.filterNode.on("change", function(e) {
+            /**
+             * Called when the user selects a module in the dropdown
+             * Triggers filter:change:module on filter layout
+             * @param {Event} e
+             */
             var linkModule = e.val;
             if (self.layout.layoutType === "record" && linkModule !== "all_modules") {
                 linkModule = app.data.getRelatedModule(self.module, linkModule);
@@ -76,6 +123,8 @@
             this.layout.trigger("subpanel:change", linkName);
         } else {
             this.layout.trigger("subpanel:change");
+            // Fixes SP-836; esentially, we need to clear subpanel:last:<module> anytime 'All' selected
+            app.cache.cut("subpanels:last:" + this.module);
         }
 
         this.filterNode.select2("val", linkName || linkModuleName);
@@ -90,15 +139,17 @@
      * Populate the module dropdown by reading the subpanel relationships
      */
     getModuleListForSubpanels: function() {
-        this.filterList.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
+        var filters = [];
+        filters.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
 
         var subpanels = this.pullSubpanelRelationships();
-        _.each(subpanels, function(value, key){
+        _.each(subpanels, function(value, key) {
             var module = app.data.getRelatedModule(this.module, value);
             if (app.acl.hasAccess("list", module)) {
-                this.filterList.push({id:value, text:app.lang.get(key, this.module)});
+                filters.push({id: value, text: app.lang.get(key, this.module)});
             }
         }, this);
+        return filters;
     },
 
     /**
@@ -106,7 +157,9 @@
      * Populate the module dropdown with a single item
      */
     getModuleListForRecords: function() {
-        this.filterList.push({id: this.module, text: app.lang.get('LBL_MODULE_NAME', this.module)});
+        var filters = [];
+        filters.push({id: this.module, text: app.lang.get('LBL_MODULE_NAME', this.module)});
+        return filters;
     },
 
     /**
@@ -114,8 +167,14 @@
      * Populate the module dropdown with a single item
      */
     getModuleListForActivities: function() {
-        var text = (this.module == "Activities") ? app.lang.get("LBL_TABGROUP_ALL") : app.lang.get('LBL_MODULE_NAME', this.module);
-        this.filterList.push({id: 'Activities', text: text});
+        var filters = [], label;
+        if (this.module == "Activities") {
+            label = app.lang.get("LBL_TABGROUP_ALL");
+        } else {
+            label = app.lang.get('LBL_MODULE_NAME', this.module);
+        }
+        filters.push({id: 'Activities', text: label});
+        return filters;
     },
 
     /**
@@ -126,7 +185,7 @@
         // Subpanels are retrieved from the global module and not the
         // subpanel module, therefore we use this.module instead of
         // this.currentModule.
-        return app.metadata.getModule(this.module).layouts.subpanel ? app.metadata.getModule(this.module).layouts.subpanel.meta.subpanelList : {};
+        return app.utils.getSubpanelList(this.module);
     },
 
     /**
@@ -135,14 +194,16 @@
      * @param {Function} callback
      */
     initSelection: function(el, callback) {
-        var obj, data;
-        if (el.val() !== "all_modules") {
-            obj = _.findWhere(this.filterList, {id: el.val()});
-            data = {id: obj.id, text: obj.text};
-        } else {
-            data = {id: "all_modules", text: (this.layout.layoutType === "record")? app.lang.get("LBL_TABGROUP_ALL") : this.module};
+        var selection, label;
+        if (el.val() === "all_modules") {
+            label = (this.layout.layoutType === "record") ? app.lang.get("LBL_TABGROUP_ALL") : app.lang.get("LBL_MODULE_NAME", this.module);
+            selection = {id: "all_modules", text: label};
+        } else if (_.findWhere(this.filterList, {id: el.val()})) {
+            selection = _.findWhere(this.filterList, {id: el.val()});
+        } else if(this.filterList && this.filterList.length > 0)  {
+            selection = this.filterList[0];
         }
-        callback(data);
+        callback(selection);
     },
 
     /**
@@ -152,15 +213,19 @@
      * @returns {string}
      */
     formatSelection: function(item) {
-        var selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
-
-        if(this.layout.layoutType !== "record" || this.layout.showingActivities) {
-            selectionLabel = app.lang.get("LBL_MODULE");
-        }
+        var selectionLabel;
 
         // Update the text for the selected module.
         this.$('.choice-related').html(item.text);
-        return '<span class="select2-choice-type">' + selectionLabel + '</span>';
+
+        if (this.layout.layoutType !== "record" || this.layout.showingActivities) {
+            selectionLabel = app.lang.get("LBL_MODULE");
+        } else {
+            selectionLabel = app.lang.get("LBL_RELATED") + '<i class="icon-caret-down"></i>';
+        }
+
+
+        return this._select2formatSelectionTemplate(selectionLabel);
     },
 
     /**
@@ -168,9 +233,9 @@
      * @param {Object} option
      * @returns {string}
      */
-    formatResult: function (option) {
+    formatResult: function(option) {
         // TODO: Determine whether active filters should be highlighted in bold in this menu.
-        return '<div><span class="select2-match"></span>'+ app.lang.get(option.text, "Filters") +'</div>';
+        return this._select2formatResultTemplate(option.text);
     },
 
     /**

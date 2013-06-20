@@ -26,7 +26,6 @@
  ********************************************************************************/
 ({
     className: 'list-view',
-    extendsFrom: 'EditableView',
     plugins: ['ellipsis_inline'],
 
     /**

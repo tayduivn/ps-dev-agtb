@@ -58,6 +58,11 @@
     totals: {},
 
     /**
+     * Totals Colspan
+     */
+    totals_colspan: 0,
+
+    /**
      * Selected User Storage
      */
     selectedUser: {},
@@ -126,7 +131,7 @@
             this.context.parent.off(null, null, this);
         }
         app.routing.offBefore(null, null, this);
-        $(window).off("beforeUnload");
+        $(window).off("beforeunload." + this.worksheetType);
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
 
@@ -198,10 +203,17 @@
                     this.filterCollection();
                 }, this);
 
-                // any time a model in the collection is changed, run the filter on it
-                this.collection.on('change', function() {
-                    this.filterCollection();
-                    if (!this.disposed) this.render();
+                this.collection.on('change', function(model) {
+                    // any time a model in the collection has the commit_stage field changed and the filter is not shown
+                    if(_.contains(_.keys(model.changed), 'commit_stage')    // only when commit_stage changes
+                        && !_.isEmpty(this.filters)  // and we have filters
+                        && _.indexOf(this.filters, model.get('commit_stage')) === -1 // and the commit_stage is not shown
+                       ) {
+                        this.filterCollection();
+                        if (!this.disposed) {
+                            this.render();
+                        }
+                    }
                 }, this);
 
                 this.context.parent.on('change:selectedRanges', function(model, changed) {
@@ -219,7 +231,7 @@
 
                         if (this.selectedUser.isManager && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
                             this.collection.once('reset', function() {
-                                this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', '');
+                                this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_ALERT', 'LBL_WORKSHEET_COMMIT_ALERT');
                             }, this)
                         }
                         this.refreshData();
@@ -248,7 +260,7 @@
                     this.processNavigationMessageReturn(ret);
                 }, {}, this);
 
-                $(window).bind("beforeunload", _.bind(function() {
+                $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
                     var ret = this.showNavigationMessage('window');
                     if (_.isString(ret)) {
                         return ret;
@@ -380,7 +392,7 @@
                 this.layout.show();
             }
 
-            if (this.collection.length == 0) {
+            if (this.filteredCollection.length == 0) {
                 var tpl = app.template.getView('recordlist.noresults', this.module);
                 this.$el.find('tbody').html(tpl(this));
             }
@@ -436,6 +448,8 @@
             if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
                     this.showNavigationMessage('rep_to_manager');
+                } else if (this.displayNavigationMessage) {
+                    this.showNavigationMessage('user_switch');
                 }
                 this.cleanUpDirtyModels();
                 // we need to hide
@@ -577,11 +591,13 @@
             }),
             fieldNames = [];
 
+        this.totals_colspan = this._fields.visible.length;
         _.each(fields, function(field) {
             fieldNames.push(field.name);
             this.totals[field.name] = 0;
             this.totals["overall_" + field.name] = 0;
             this.totals[field.name + "_display"] = true;
+            this.totals_colspan--;
         }, this);
 
         // add up all the currency fields
@@ -887,8 +903,10 @@
                 original.width(_.max(labelWidths));
 
                 var parentTds = this.$el.find('span[data-name^="' + field.name + '"]'),
-                    parentWidth = _.max(parentTds.map(function() { return $(this).outerWidth(); }).get());
-                this.$el.find('th[data-fieldname^="' + field.name + '"]').width(parentWidth+20);
+                    parentWidth = _.max(parentTds.map(function() {
+                        return $(this).outerWidth();
+                    }).get());
+                this.$el.find('th[data-fieldname^="' + field.name + '"]').width(parentWidth + 20);
             }
         }, this);
     }

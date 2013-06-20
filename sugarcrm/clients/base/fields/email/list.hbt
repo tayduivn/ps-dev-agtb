@@ -30,7 +30,7 @@
 {{#eq primary_address "1"}}
 {{#if ../hasAnchor}}
     <div class="ellipsis_inline" data-original-title="{{../email_address}}" data-placement="bottom">
-        <a {{#if ../../../sendEmailFromApp}}class="composeEmail" {{/if}}href="{{#if ../../../sendEmailFromApp}}javascript:void(0);{{else}}mailto:{{../../email_address}}{{/if}}">{{../email_address}}</a>
+        <a {{#if ../../../useSugarEmailClient}}class="composeEmail" {{/if}}href="{{#if ../../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{../../email_address}}{{/if}}">{{../email_address}}</a>
     </div>
 {{else}}
     <del>{{../email_address}}</del>

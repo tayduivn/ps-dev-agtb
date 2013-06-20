@@ -190,9 +190,31 @@ describe("forecasts_view_forecastsConfigRanges", function() {
         });
 
         it("should have a handler to do the necessary actions when a bucket type is selected", function() {
+            SugarTest.testMetadata.init();
+            SugarTest.loadHandlebarsTemplate('forecastsConfigHelpers', 'view', 'base', 'toggleTitle', 'Forecasts');
+            SugarTest.testMetadata.set();
+            view.$el = {
+                addClass: function() {},
+                find: function() {
+                    return {
+                        children: function() {
+                            return [];
+                        },
+                        toggleClass: function() {
+                        },
+                        html: function() {}
+                    }
+                }
+            };
+            view.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
+
             view._render();
             expect(testStub).toHaveBeenCalled();
             expect(addHandlerStub).toHaveBeenCalled();
+
+            app.cache.cutAll();
+            app.view.reset();
+            delete Handlebars.templates;
         });
 
     });

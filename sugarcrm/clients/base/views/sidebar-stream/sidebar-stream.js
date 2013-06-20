@@ -15,7 +15,7 @@
                     module: "Users",
                     id: model.get("created_by"),
                     field: "picture"
-                }) : app.config.siteUrl + "styleguide/assets/img/profile.png";
+                }) : app.utils.buildUrl("styleguide/assets/img/profile.png");
 
             model.set("created_by_picture_url", picture);
         });

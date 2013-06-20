@@ -23,6 +23,7 @@
 
     initialize: function(options) {
         this.opts = {params: {}};
+        this.readonly = !!options.readonly;
 
         app.view.View.prototype.initialize.call(this, options);
 

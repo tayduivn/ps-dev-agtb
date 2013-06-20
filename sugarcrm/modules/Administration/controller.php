@@ -47,6 +47,9 @@ class AdministrationController extends SugarController
             $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
             SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
         }
+        
+        // BR-29 When changing module tabs the megamenu is not updated on the client
+        MetaDataManager::clearAPICache();
 
         header("Location: index.php?module=Administration&action=ConfigureTabs");
     }

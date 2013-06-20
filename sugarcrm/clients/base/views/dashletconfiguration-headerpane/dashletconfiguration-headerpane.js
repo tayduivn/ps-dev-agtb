@@ -39,7 +39,7 @@
     },
 
     _renderHtml: function() {
-        this.model = this.context.get("model");
+        this.model = this.layout.context.get("model");
         app.view.View.prototype._renderHtml.call(this);
     }
 })

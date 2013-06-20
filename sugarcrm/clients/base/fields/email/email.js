@@ -26,7 +26,7 @@
  ********************************************************************************/
 ({
     extendsFrom: 'ListeditableField',
-    sendEmailFromApp: false,
+    useSugarEmailClient: false,
     events: {
         'change .existingAddress': 'updateExistingAddress',
         'click  .btn-edit':        'toggleExistingAddressProperty',
@@ -38,16 +38,15 @@
     initialize: function(options) {
         options     = options || {};
         options.def = options.def || {};
-        
+
         if (_.isUndefined(options.def.link)) {
             options.def.link = true;
         }
-        
+
         app.view.Field.prototype.initialize.call(this, options);
 
-        // determine if the app should send email according to the has_outbound_email_config user preference
-        var hasOutboundEmailConfig = app.user.getPreference("has_outbound_email_config");
-        this.sendEmailFromApp      = (hasOutboundEmailConfig === "true");
+        // determine if the app should send email according to the use_sugar_email_client user preference
+        this.useSugarEmailClient = (app.user.getPreference("use_sugar_email_client") === "true");
     },
     /**
      * Event handlers

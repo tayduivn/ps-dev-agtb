@@ -1,4 +1,4 @@
-<p><a href="{{{url}}}"><h4>{{title}}</h4> ({{site_name}})</a></p>
+<p><a href="{{{url}}}" target="_blank"><h4>{{title}}</h4> ({{site_name}})</a></p>
 <p>{{description}}</p>
 {{#if video}}
     <iframe src="{{{video}}}" {{#if videoWidth}}width="{{videoWidth}}"{{/if}} {{#if videoHeight}}height="{{videoHeight}}"{{/if}} />

@@ -15,8 +15,8 @@
 <div class="dashlet-options">
     <div class="row-fluid">
         <div class="span8">
-            {{#each meta.filter_duration}}
-                {{field ../this model=../this.model template="edit"}}
+            {{#each dashletConfig.filter_duration}}
+                {{field ../this model=../this.settings template="edit"}}
             {{/each}}
         </div>
         <div class="span4">

@@ -8,6 +8,7 @@ describe("Base.Layout.DupeCheck", function() {
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
+        SugarTest.loadComponent("base", "view", "selection-list");
         SugarTest.loadComponent("base", "view", "dupecheck-list");
         SugarTest.loadComponent("base", "view", "dupecheck-header");
         SugarTest.testMetadata.addViewDefinition('list', {

@@ -39,7 +39,7 @@ class RestMetadataMobileLanguageTest extends RestTestBase {
         $output = array();
 
         foreach($labels AS $lang => $location) {
-            $lang_file = json_decode(file_get_contents($location));
+            $lang_file = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $location));
             $this->assertNotEmpty($lang_file, "Language File is empty");
         }
 

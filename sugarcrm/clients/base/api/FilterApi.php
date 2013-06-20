@@ -291,7 +291,6 @@ class FilterApi extends SugarApi
         }
         $q->select($fields);
         $q->distinct(true);
-        $q->where()->equals("deleted", 0);
 
         foreach ($options['order_by'] as $orderBy) {
             $q->orderBy($orderBy[0], $orderBy[1]);

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -11,65 +12,102 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$layout = MetaDataManager::getLayout('SideBarLayout');
 
-$layout->push('main', array('view' => 'list-headerpane'));
-
-$layout->push('main', array('view' => 'info'));
-
-$layout->push('main', array('layout' => 'list', 'context' => array('module' => 'ForecastManagerWorksheets')));
-$layout->push('main', array('layout' => 'list', 'context' => array('module' => 'ForecastWorksheets')));
-
-$layout->push('side', array('layout' => 'list-sidebar'));
-$layout->push('dashboard', array('layout' => 'dashboard', 'context' => array(
-    'forceNew' => true,
-    'module' => 'Forecasts',
-)));
-$layout->push('preview', array('layout' => 'preview'));
-
-$viewdefs['Forecasts']['base']['layout']['records'] = $layout->getLayout();
-$viewdefs['Forecasts']['base']['layout']['records']['type'] = 'records';
-
-/*
 $viewdefs['Forecasts']['base']['layout']['records'] = array(
-    'type' => 'records',
-    'components' => array(
+    'components' =>
+    array(
         array(
-            'view' => 'forecastsTree',
-        ),
-        array(
-            'view' => 'forecastsTitle',
-        ),
-        array(
-            'layout' => 'info'
-        ),
-        array(
-            'view' => 'forecastsChart',
-        ),
-        array(
-            'view' => 'forecastsProgress',
-        ),
-        array(
-            'view' => 'forecastsWorksheet'
-        ),
-        array(
-            'view' => 'forecastsWorksheetTotals'
-        ),
-        array(
-            'view' => 'forecastsWorksheetManager',
-        ),
-        array(
-            'view' => 'forecastsWorksheetManagerTotals'
-        ),
-        array(
-            'view' => 'forecastsCommitButtons',
-        ),
-        array(
-            'layout' => array(
-                'name' => 'inspector',
-                'type' => 'ForecastsInspector',
+            'layout' =>
+            array(
+                'components' =>
+                array(
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'view' => 'list-headerpane',
+                                ),
+                                array(
+                                    'view' => 'info',
+                                ),
+                                array(
+                                    'layout' => 'list',
+                                    'context' =>
+                                    array(
+                                        'module' => 'ForecastManagerWorksheets',
+                                    ),
+                                ),
+                                array(
+                                    'layout' => 'list',
+                                    'context' =>
+                                    array(
+                                        'module' => 'ForecastWorksheets',
+                                    ),
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'main-pane',
+                            'span' => 8,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'layout' => 'list-sidebar',
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'side-pane',
+                            'span' => 4,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'layout' => 'dashboard',
+                                    'context' =>
+                                    array(
+                                        'forceNew' => true,
+                                        'module' => 'Forecasts',
+                                    ),
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'dashboard-pane',
+                            'span' => 4,
+                        ),
+                    ),
+                    array(
+                        'layout' =>
+                        array(
+                            'components' =>
+                            array(
+                                array(
+                                    'layout' => 'preview',
+                                ),
+                            ),
+                            'type' => 'simple',
+                            'name' => 'preview-pane',
+                            'span' => 8,
+                        ),
+                    ),
+                ),
+                'type' => 'default',
+                'name' => 'sidebar',
+                'span' => 12,
             ),
-        )
+        ),
     ),
+    'type' => 'records',
+    'name' => 'base',
+    'span' => 12,
 );
-*/
+

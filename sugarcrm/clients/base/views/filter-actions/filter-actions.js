@@ -15,6 +15,9 @@
 
     tagName: "article",
     className: "filter-header",
+    /**
+     * row disabled state
+     */
     rowState: false,
 
     /**

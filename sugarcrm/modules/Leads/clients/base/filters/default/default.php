@@ -67,6 +67,7 @@ $viewdefs['Leads']['base']['filter']['default'] = array(
         'date_entered' => array(),
         'date_modified' => array(),
         'assigned_user_id' => array(),
+        'assigned_user_name' => array(),
         '$owner' => array(
             'options' => 'filter_predefined_dom',
             'type' => 'bool',

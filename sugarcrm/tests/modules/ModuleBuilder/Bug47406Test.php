@@ -28,15 +28,15 @@
 
 
 require_once("modules/ModuleBuilder/MB/MBVardefs.php");
-if (file_exists("custom/vendors/Smarty/plugins/function.sugar_currency_format.php"))
+if (file_exists("custom/vendor/Smarty/plugins/function.sugar_currency_format.php"))
 {
-	require_once("custom/vendors/Smarty/plugins/function.sugar_currency_format.php");
+	require_once("custom/vendor/Smarty/plugins/function.sugar_currency_format.php");
 }
 else
 {
-	require_once("vendors/Smarty/plugins/function.sugar_currency_format.php");
+	require_once("vendor/Smarty/plugins/function.sugar_currency_format.php");
 }
-require_once("vendors/Smarty/Smarty.class.php");
+require_once("vendor/Smarty/Smarty.class.php");
 
 class Bug47406Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -37,7 +37,8 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contracts',
     'Quotes' => 'Quotes',
-    'Products' => 'Revenue Line Items',
+    'Products' => 'Quoted Line Items',
+    'RevenueLineItems' => 'Revenue Line Items',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
@@ -145,8 +146,9 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Quoted Line Item',
     'ProductCategories' => 'Product Category',
+    'RevenueLineItems' => 'Revenue Line Item',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -609,7 +611,7 @@ $app_list_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'ProductTemplates' => 'Product Catalog',
     'Quotes' => 'Quote',
-    'Products' => 'Revenue Line Item',
+    'Products' => 'Quoted Line Item',
     'Contracts' => 'Contract',
     //END SUGARCRM flav=pro ONLY
     'Emails' => 'Email',
@@ -844,7 +846,8 @@ $app_list_strings = array (
     'Outlook Plugin' => 'Outlook Plugin',
     //BEGIN SUGARCRM flav=pro ONLY
     'Product Catalog' => 'Product Catalog',
-    'Products' => 'Revenue Line Items',
+    'Products' => 'Quoted Line Items',
+    'RevenueLineItems' => 'Revenue Line Items',
     //END SUGARCRM flav=pro ONLY
     'Projects' => 'Projects',
     'Quotes' => 'Quotes',
@@ -1717,6 +1720,15 @@ $app_list_strings = array (
         '300'   => 'Every 5 minutes',
         '600'   => 'Every 10 minutes',
     ),
+    'sugar7_dashlet_auto_refresh_options' =>
+    array (
+        '0'  => 'None',
+        '1' => 'Every 1 Minutes',
+        '5' => 'Every 5 Minutes',
+        '10' => 'Every 10 Minutes',
+        '15' => 'Every 15 Minutes',
+        '30' => 'Every 30 Minutes',
+    ),
   'date_range_search_dom' =>
   array(
     '=' => 'Equals',
@@ -1806,6 +1818,10 @@ $app_list_strings = array (
         'bool' => array(
             '$equals' => 'is'
         ),
+        'relate' => array(
+            '$equals' => 'is',
+            '$not_equals' => 'is not'
+        ),
         'phone' => array(
             '$starts' => 'starts with',
             '$equals' => 'is'
@@ -1869,6 +1885,7 @@ $app_strings = array (
   'LBL_EDIT_INLINE' => 'Edit Inline' /*for 508 compliance fix*/,
   'LBL_VIEW_INLINE' => 'View' /*for 508 compliance fix*/,
   'LBL_BASIC_SEARCH' => 'Search' /*for 508 compliance fix*/,
+  'LBL_BASIC_QUICK_SEARCH' => 'Search...' /*for 508 compliance fix*/,
   'LBL_PROJECT_MINUS' => 'Remove' /*for 508 compliance fix*/,
   'LBL_PROJECT_PLUS' => 'Add' /*for 508 compliance fix*/,
   'LBL_Blank' => ' ' /*for 508 compliance fix*/,
@@ -2376,7 +2393,7 @@ $app_strings = array (
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
-    'LBL_TEAM_ADD' => 'Add Team',
+    'LBL_TEAM_ADD' => 'Add&nbsp;Team',
     'LBL_TEAM_REMOVE' => 'Remove Team',
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
     //END SUGARCRM flav=pro ONLY
@@ -2726,6 +2743,7 @@ $app_strings = array (
 
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
+    'LBL_REVENUELINEITEMS'=>'Revenue Line Items',
     'LBL_PROJECT_TASKS'=>'Project Tasks',
     'LBL_PROJECTS'=>'Projects',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
@@ -3551,6 +3569,8 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
     'LBL_IMAGE_DELETE_CONFIRM' => 'Are you sure you want to delete this image?',
+    'LBL_FILE_DELETE_CONFIRM' => "Are you sure you want to delete this file? This cannot be undone.",
+    'LBL_FILE_DELETED' => 'File was successfully deleted',
 
     //theme roller
     'LBL_RESET' => 'Reset',
@@ -3600,7 +3620,7 @@ $app_strings = array (
     'LBL_TOUR_SEARCH' => 'Select one or more modules and search',
     'LBL_TOUR_AVATAR' => 'Get more details about the application or Logout',
     'LBL_TOUR_ADD' => 'Create a record from here',
-    'LBL_TOUR_TOUR' => 'Access Tours at any time',
+    'LBL_TOUR_TOUR' => 'Access Tour at any time',
     'LBL_TOUR_LIST_INT_TOGGLE' => 'Click to close or open the intelligence pane',
     'LBL_TOUR_LIST_ACTIVTYSTREAMLIST_TOGGLE' => 'Choose to see activities or list of records',
     'LBL_TOUR_LIST_FILTER1' => 'Filter bar enables search for this module',
@@ -3657,6 +3677,7 @@ $app_strings = array (
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_NO_ACCESS' => '(No Access)',
+    'LBL_NO_FIELD_ACCESS' => 'No access',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Link Existing Record',
     'LBL_CHOOSE_LINK' => 'Choose Link Type',
@@ -3836,6 +3857,9 @@ $app_strings = array (
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
+    'LBL_SET_NEW_PASSWORD'              => 'Enter Password',
+    'LBL_NEW_PASSWORD1'                 => 'New Password',
+    'LBL_NEW_PASSWORD2'                 => 'Confirm Password',
     'ERR_ENTER_CONFIRMATION_PASSWORD'	=> 'Please enter your password confirmation.',
     'ERR_ENTER_NEW_PASSWORD'			=> 'Please enter your new password.',
     'ERR_ENTER_OLD_PASSWORD'			=> 'Please enter your current password.',
@@ -3953,8 +3977,8 @@ $app_strings = array (
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
-    'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment',
-    'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip;',
+    'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment. Type @ to mention a user. Type # to reference a record.',
+    'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
 
@@ -4859,8 +4883,8 @@ $app_list_strings['forecasts_timeperiod_options_dom'] = array(
     'Quarter' => 'Quarterly (Monthly sub-periods)',
 );
 $app_list_strings['forecasts_config_worksheet_layout_forecast_by_options_dom'] = array(
-    'products' => 'Revenue Line Items',
-    'opportunities' => 'Opportunities',
+    'RevenueLineItems' => 'Revenue Line Items',
+    'Opportunities' => 'Opportunities',
 );
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (
@@ -4868,3 +4892,11 @@ $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'no' => 'No',
 );
 //END SUGARCRM flav=pro ONLY
+
+$app_list_strings['notifications_type_list'] = array(
+    'alert' => 'Alert',
+    'information' => 'Info',
+    'other' => 'Other',
+    'success' => 'Success',
+    'warning' => 'Warning',
+);

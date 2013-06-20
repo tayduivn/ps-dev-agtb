@@ -63,16 +63,19 @@ class BeanFactory {
     		$params = array('encode' => $params);
     	}
 
-    	// Pull values from $params array
-    	if(defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
-    	    // In API mode, we can cache all beans
-    	    $encode = false;
-    	    $can_cache = true;
-    	} else {
-    	    // In GUI mode, we will cache only encoded beans
-    	    $encode = isset($params['encode']) ? $params['encode'] : true;
-    	    $can_cache = $encode;
-    	}
+        // Pull values from $params array
+        if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
+            // In API mode, we can cache all beans unless specifically told not
+            // to retrieve a cached version.
+            $encode = false;
+            $can_cache = isset($params['use_cache']) ? $params['use_cache'] : true;
+        } else {
+            // In GUI mode, we will cache only encoded beans unless specifically
+            // told not to retrieve a cached version.
+            $encode = isset($params['encode']) ? $params['encode'] : true;
+            $can_cache = isset($params['use_cache']) ? $params['use_cache'] && $encode : $encode;
+        }
+
     	$deleted = isset($params['deleted']) ? $params['deleted'] : $deleted;
 
         if (!isset(self::$loadedBeans[$module])) {

@@ -25,6 +25,8 @@
     },
 
     _render: function () {
+        var toAddressesField;
+
         app.view.invokeParent(this, {type: 'view', name: 'record', method: '_render'});
         if (this.createMode) {
             this.setTitle(app.lang.get('LBL_COMPOSEEMAIL', this.module));
@@ -41,6 +43,13 @@
             if (this.model.isNew()) {
                 this._updateEditorWithSignature(this._lastSelectedSignature);
             }
+        }
+
+        toAddressesField = this.getField('to_addresses');
+        if (toAddressesField) {
+            toAddressesField.on('render', _.bind(function(){
+                this.setRecipientContentBefore();
+            }, this));
         }
     },
 
@@ -159,9 +168,23 @@
 
         field.$el.closest('.row-fluid.panel_body').removeClass('hide');
 
+        this.setRecipientContentBefore();
+
         //check to see if both fields are hidden then hide the whole thing
-        if(this.$('.cc-option').hasClass('hide') && this.$('.bcc-option').hasClass('hide')){
+        if (this.$('.cc-option').hasClass('hide') && this.$('.bcc-option').hasClass('hide')){
             this.$('.compose-sender-options').addClass('hide');
+        }
+    },
+
+    /**
+     * Creates virtual block on to_address select2 ul to wrap pills
+     *
+     * @param fieldName name of the field to hide
+     */
+    setRecipientContentBefore: function() {
+        var toAddressesField = this.getField('to_addresses');
+        if (toAddressesField) {
+            toAddressesField.setContentBefore(this.$('.compose-sender-options a').not('.hide').text());
         }
     },
 
@@ -419,7 +442,7 @@
             this._updateEditorWithSignature(this._lastSelectedSignature);
         }
     },
-    
+
     /**
      * Inserts attachments associated with the template by triggering an "add" event for each attachment to add to the
      * attachments field.

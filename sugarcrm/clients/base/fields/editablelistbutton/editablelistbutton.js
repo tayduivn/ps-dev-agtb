@@ -27,17 +27,20 @@
      * @private
      */
     _validationComplete : function(isValid){
-        if(!isValid) return;
+        if (!isValid) return;
         if (!this.changed) {
             this.cancelEdit();
+            return;
         }
-        else {
-            var self = this;
-            this.model.save({}, {
-                success: function(model) {
+
+        var self = this,
+            fileFields = [],
+            callbacks = {},
+            options = {
+                success: _.bind(function() {
                     this.changed = false;
-                    self.view.toggleRow(model.id, false);
-                },
+                    this.view.toggleRow(this.model.id, false);
+                }, this),
                 //Show alerts for this request
                 showAlerts: {
                     'process' : true,
@@ -45,10 +48,29 @@
                         messages: app.lang.getAppString('LBL_RECORD_SAVED')
                     }
                 }
-            });
-        }
+        };
 
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
+
+        callbacks = {
+            success: function() {
+                self.model.save({}, options);                        
+            }
+        };
+
+        async.forEachSeries(this.view.rowFields[this.model.id], function(view, callback) {
+            app.file.checkFileFieldsAndProcessUpload(view, {
+                success: function() {
+                    callback.call();
+                }
+            }, {deleteIfFails: false }, true);
+        }, callbacks.success);
     },
+
+    getCustomSaveOptions: function(options) {
+        return {};
+    },
+
     saveModel: function() {
         var fieldsToValidate = this.view.getFields(this.module);
         this.view.clearValidationErrors();

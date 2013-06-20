@@ -1,5 +1,8 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
 /*
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -32,155 +35,134 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=ent ONLY
 $modListHeader = array();
 
-
-
-
-//require_once('modules/Reports/ReportBug.php');
-//require_once('modules/Reports/ReportOpportunity.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
-require_once("include/phpmailer/class.phpmailer.php");
-
-$report_schedule = new ReportSchedule();
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 global $sugar_config;
-$language = $sugar_config['default_language'];
 
+$language         = $sugar_config['default_language'];
 $app_list_strings = return_app_list_strings_language($language);
-$app_strings = return_application_language($language);
-// retrieve the user
+$app_strings      = return_application_language($language);
 
-//Process Enterprise Schedule reports via CSV
-$reports_to_email_ent = $report_schedule->get_ent_reports_to_email("", "ent");
+$reportSchedule = new ReportSchedule();
 
-global $report_modules,$modListHeader;
-global $locale;
+// Process Enterprise Schedule reports via CSV
+$reportsToEmailEnt = $reportSchedule->get_ent_reports_to_email("", "ent");
 
-foreach($reports_to_email_ent as $schedule_id => $schedule_info)
-{
-	$user = new User();
-	$user->retrieve($schedule_info['user_id']);
-	$current_user =$user;
-	$modListHeader = query_module_access_list($current_user);
-	$report_modules = getAllowedReportModules($modListHeader);
+global $report_modules,
+       $modListHeader,
+       $locale;
 
-	if(empty($user->email1))
-	{
-		if(empty($user->email2)){
-			$address = '';
-		} else {
-			$address = $user->email2;
-		}
-	} else {
-		$address = $user->email1;
-	}
-	$name = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
+    $user = new User();
+    $user->retrieve($scheduleInfo['user_id']);
 
-//Aquire the enterprise report to be sent				
-	$report_object = new ReportMaker();			
-	$report_object->retrieve($schedule_info['report_id']);			
-	$mod_strings = return_module_language($language, 'Reports');
+    $current_user   = $user; // should this be the global $current_user? global $current_user isn't referenced
+    $modListHeader  = query_module_access_list($current_user);
+    $report_modules = getAllowedReportModules($modListHeader);
 
+    // Acquire the enterprise report to be sent
+    $reportMaker = new ReportMaker();
+    $reportMaker->retrieve($scheduleInfo['report_id']);
+    $mod_strings = return_module_language($language, 'Reports');
 
-//Process data sets into CSV files
+    // Process data sets into CSV files
 
-	//loop through data sets;
-	$data_set_array = $report_object->get_data_sets();
-	$temp_file_array = array();
-	foreach($data_set_array as $key =>$data_set_object){
+    // loop through data sets;
+    $dataSets  = $reportMaker->get_data_sets();
+    $tempFiles = array();
 
-		$csv_output = $data_set_object->export_csv();
+    foreach ($dataSets as $key => $dataSet) {
+        $csv           = $dataSet->export_csv();
+        $filenamestamp = "{$dataSet->name}_{$user->user_name}_" . date(translate("LBL_CSV_TIMESTAMP", "Reports"), time());
+        $filename      = str_replace(" ", "_", "{$reportMaker->name}{$filenamestamp}.csv");
+        $fp            = sugar_fopen(sugar_cached("csv/") . $filename, "w");
+        fwrite($fp, $csv);
+        fclose($fp);
 
-		$filenamestamp = '';
-		$filenamestamp .= $data_set_object->name.'_'.$user->user_name;
-		$filenamestamp .= '_'.date(translate('LBL_CSV_TIMESTAMP', 'Reports'), time());
+        $tempFiles[$filename] = $filename;
+    }
 
-		$filename = str_replace(' ', '_', $report_object->name. $filenamestamp.  ".csv");
-		$fp = sugar_fopen(sugar_cached('csv/').$filename,'w');
-		fwrite($fp, $csv_output);
-		fclose($fp);
+    // get the recipient data...
 
-		$temp_file_array[$filename] = $filename;
+    // first get all email addresses known for this recipient
+    $recipientEmailAddresses = array($user->email1, $user->email2);
+    $recipientEmailAddresses = array_filter($recipientEmailAddresses);
 
-	}
+    // then retrieve first non-empty email address
+    $recipientEmailAddress = array_shift($recipientEmailAddresses);
 
-	$mail = new PHPMailer();
-	$OBCharset = $locale->getPrecedentPreference('default_email_charset');
-	$mail->AddAddress($address, $locale->translateCharsetMIME(trim($name), 'UTF-8', $OBCharset));
+    // get the recipient name that accompanies the email address
+    $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
 
-	$admin = new Administration();
-	$admin->retrieveSettings();
+    try {
+        $mailer = MailerFactory::getMailerForUser($current_user);
 
-	if ($admin->settings['mail_sendtype'] == "SMTP")
-	{
-		$mail->Mailer = "smtp";
-		$mail->Host = $admin->settings['mail_smtpserver'];
-		$mail->Port = $admin->settings['mail_smtpport'];
+        // set the subject of the email
+        $subject = empty($reportMaker->name) ? "Report" : $reportMaker->name;
+        $mailer->setSubject($subject);
 
-		if ($admin->settings['mail_smtpauth_req'])
-		{
-			$mail->SMTPAuth = TRUE;
-			$mail->Username = $admin->settings['mail_smtpuser'];
-			$mail->Password = $admin->settings['mail_smtppass'];
-		}
-		if ($admin->settings['mail_smtpssl'] == 1) {
-                $mail->SMTPSecure = 'ssl';
-    	}
-    	else if ($admin->settings['mail_smtpssl'] == 2) {
-                $mail->SMTPSecure = 'tls';
-    	}
-	}
+        // add the recipient
+        $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
+        // add the attachments
+        $tempCount = 0;
 
-	$mail->From = $admin->settings['notify_fromaddress'];
-	$mail->FromName = empty($admin->settings['notify_fromname']) ?
-							' ' : $admin->settings['notify_fromname'];
-	$mail->Subject = empty($report_object->name) ? 'Report' : $report_object->name;
+        foreach ($tempFiles as $filename) {
+            $filePath       = sugar_cached("csv/") . $filename;
+            $attachmentName = "{$subject}_{$tempCount}.csv";
+            $attachment     = new Attachment($filePath, $attachmentName, Encoding::Base64, "application/csv");
+            $mailer->addAttachment($attachment);
+            $tempCount++;
+        }
 
-	$temp_count = 0;
-	foreach($temp_file_array as $filename){
-		$file_path = sugar_cached('csv/').$filename;
-		$attachment_name = $mail->Subject . '_'.$temp_count.'.csv';
-		$mail->AddAttachment($file_path, $attachment_name, 'base64', 'application/csv');
-		$temp_count ++;
-	//end foreach loop
-	}
+        // set the body of the email
+        $body = $mod_strings["LBL_HELLO"];
 
-	$body = $mod_strings['LBL_HELLO'];
-	if($name != '') {
-		$body .= " $name";
-	}
-	$body .= ",\n\n";
-	$body .= 	$mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO']. $report_object->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
-				 . $report_object->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
-	$mail->Body = $body;
+        if ($recipientName != "") {
+            $body .= " {$recipientName}";
+        }
 
-	if($address == '')
-	{
-		$GLOBALS['log']->info("No email address for $name");
-	}
-	else
-	{
-		if($mail->Send())
-		{
-			$report_schedule->update_next_run_time($schedule_info['id'],
-										$schedule_info['next_run'],
-										$schedule_info['time_interval']);
-		}
-		else
-		{
-			$GLOBALS['log']->error("Mail error: $mail->ErrorInfo");
-		}
-	}
+        $body .= ",\n\n" .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
+                 $reportMaker->date_entered .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"] .
+                 $reportMaker->name .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
-	//need unlink for loop
-	foreach($temp_file_array as $filename){
-		//only un rem if we need to remove cvs and we can't just stream it
-		$file_path = sugar_cached('csv/').$filename;
-		unlink($file_path);
-	//end foreach temp_file_array
-	}
+        // the compared strings will be the same if strip_tags had no affect
+        // if the compared strings are equal, then it's a text-only message
+        $textOnly = (strcmp($body, strip_tags($body)) == 0);
+
+        if ($textOnly) {
+            $mailer->setTextBody($body);
+        } else {
+            $textBody = strip_tags(br2nl($body)); // need to create the plain-text part
+            $mailer->setTextBody($textBody);
+            $mailer->setHtmlBody($body);
+        }
+
+        $mailer->send();
+
+        $reportSchedule->update_next_run_time($scheduleInfo["id"],
+                                              $scheduleInfo["next_run"],
+                                              $scheduleInfo["time_interval"]);
+    } catch (MailerException $me) {
+        switch ($me->getCode()) {
+            case MailerException::InvalidEmailAddress:
+                $GLOBALS["log"]->info("No email address for {$recipientName}");
+                break;
+            default:
+                $GLOBALS["log"]->fatal("Mail error: " . $me->getMessage());
+                break;
+        }
+    }
+
+    // need unlink for loop
+    foreach ($tempFiles as $filename) {
+        //only un rem if we need to remove cvs and we can't just stream it
+        $filePath = sugar_cached('csv/') . $filename;
+        unlink($filePath);
+    }
 }
-
-
-?>

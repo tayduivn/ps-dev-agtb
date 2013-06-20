@@ -9,7 +9,7 @@ describe("Emails.fields.compose-actionbar", function() {
         SugarTest.loadComponent('base', 'field', 'actiondropdown');
         SugarTest.testMetadata.set();
 
-        field = SugarTest.createField("../modules/Emails/clients/base", "compose-actionbar", "compose-actionbar", "edit");
+        field = SugarTest.createField("base", "compose-actionbar", "compose-actionbar", "edit", null, "Emails", null, null, true);
     });
 
     afterEach(function() {

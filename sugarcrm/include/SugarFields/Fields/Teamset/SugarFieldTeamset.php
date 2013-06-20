@@ -29,7 +29,7 @@
  * getSearchViewSmarty methods are called from the cached .tpl files that are generated 
  * via the MVC/Metadata framework.  The cached .tpl files include Smarty code rendered from
  * the include/SugarFields/Fields/SugarFieldTeamset/Teamset.tpl file which in turn
- * calls this file.  When the plugin function is run (see vendors/Smarty/plugins/function.sugarvar_teamset.php), 
+ * calls this file.  When the plugin function is run (see vendor/Smarty/plugins/function.sugarvar_teamset.php), 
  * it will call SugarFieldTeamset's render method.  From there, the corresponding method is invoked.
  * 
  * For the MassUpdate section, there is no cached .tpl file created so the contents are rendered without
