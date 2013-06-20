@@ -84,10 +84,11 @@
         <script language="javascript">
             var App;
 			{/literal}{if $accessToken}
-			SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$accessToken}");
+			SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$accessToken}")
 			{if $refreshToken}
-			SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$refreshToken}");
+			SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$refreshToken}")
 			{/if}
+			window.location = SUGAR.App.config.siteUrl+"/"+window.location.hash
 			{/if}{literal}
             App = SUGAR.App.init({
                 el: "#sidecar",

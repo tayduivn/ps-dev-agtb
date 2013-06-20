@@ -39,6 +39,10 @@ class UsersViewAuthenticate extends ViewSidecar
 
     public function preDisplay()
     {
+        if(session_id()) {
+            // kill old session
+            session_destroy();
+        }
         SugarAutoLoader::load('custom/include/RestService.php');
         $restServiceClass = SugarAutoLoader::customClass('RestService');
         $service = new $restServiceClass();

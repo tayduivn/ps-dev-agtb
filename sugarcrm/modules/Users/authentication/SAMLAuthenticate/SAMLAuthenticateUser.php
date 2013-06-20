@@ -85,7 +85,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
                 $GLOBALS['log']->debug('have db results');
                 if ($user->status != 'Inactive') {
                     $GLOBALS['log']->debug('have current user');
-                    $this->updateCustomFields($user, $this->samlresponse, $this->settings);
+                    $this->updateCustomFields($user);
                     return $user->id;
                 } else {
                     $GLOBALS['log']->debug('have inactive user');
@@ -135,7 +135,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
                 // custom field not listed in db query results!
                 continue;
             }
-            if ($this->hasAttribute($attrfield)) {
+            if (!$this->hasAttribute($attrfield)) {
                 continue;
             }
 
@@ -289,7 +289,7 @@ class SAMLAuthenticateUser extends SugarAuthenticateUser
             return $xmlNodes->item(0)->nodeValue;
         }
         if(isset($this->samlresponse->attributes[$name])) {
-            return $this->samlresponse->attributes[$name];
+            return $this->samlresponse->attributes[$name][0];
         }
         return null;
     }
