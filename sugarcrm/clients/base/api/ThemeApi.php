@@ -28,8 +28,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('vendor/lessphp/lessc.inc.php');
-require_once('include/SugarTheme/SidecarTheme.php');
+require_once 'vendor/lessphp/lessc.inc.php';
+require_once 'include/SugarTheme/SidecarTheme.php';
 
 class ThemeApi extends SugarApi
 {
@@ -41,7 +41,7 @@ class ThemeApi extends SugarApi
                 'path' => array('css'),
                 'pathVars' => array(''),
                 'method' => 'getCSSURLs',
-                'shortHelp' => 'Get (or generate) the css file for a platform and a theme',
+                'shortHelp' => 'Get (or generate) the css files for a platform and a theme',
                 'longHelp' => 'include/api/help/css_get_help.html',
                 'noLoginRequired' => true,
             ),
@@ -75,7 +75,15 @@ class ThemeApi extends SugarApi
         );
     }
 
-    public function getCSSURLs($api, $args)
+    /**
+     * Get (or generate) the css files for a platform and a theme
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     *
+     * @return array Locations of CSS Files
+     */
+    public function getCSSURLs(ServiceBase $api, array $args)
     {
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
@@ -88,60 +96,68 @@ class ThemeApi extends SugarApi
     }
 
     /**
-     * Generate bootstrap.css
-     * @param $api
-     * @param $args
-     * @return plain text/css or css file url
+     * Compile the css for a platform and a theme just as a preview
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     *
+     * @return string Plaintext css
      */
-    public function previewCSS($api, $args)
+    public function previewCSS(ServiceBase $api, array $args)
     {
+        // If `preview` is defined, it means that the call was made by the Theme Editor in Studio so we want to return
+        // plain text/css
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
         $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
         $minify = isset($args['min']) ? true : false;
 
         $theme = new SidecarTheme($platform, $themeName);
-
-        // If `preview` is defined, it means that the call was made by the Theme Editor in Studio so we want to return
-        // plain text/css
-        $variables = $theme->getThemeVariables();
-        $variables = array_merge($variables, $args);
-        $variables['baseUrl'] = '"../../styleguide/assets"';
-        $cssBlocks = $theme->compileCss($variables, $minify);
+        $theme->loadVariables();
+        $theme->setVariables($args);
+        $theme->setVariable('baseUrl', '"../../styleguide/assets"');
 
         header('Content-type: text/css');
-        $plaintext = implode('', array_values($cssBlocks));
-        echo $plaintext;
+        echo $theme->previewCss($minify);
         return;
     }
 
     /**
-     * Parses variables.less and returns a collection of objects {"name": varName, "value": value}
-     * @param $api
-     * @param $args
-     * @return array
+     * Get the customizable variables of a custom theme
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     *
+     * @return array Collection of objects {"name": varName, "value": value}
      */
-    public function getCustomThemeVars($api, $args)
+    public function getCustomThemeVars(ServiceBase $api, array $args)
     {
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
         $themeName = isset($args['themeName']) ? $args['themeName'] : null;
 
+        $output = array();
         $theme = new SidecarTheme($platform, $themeName);
-        $paths = $theme->getPaths();
-        $variables = $theme->getThemeVariables(true);
-
-        return $variables;
+        $variablesByType = $theme->getThemeVariables();
+        foreach ($variablesByType as $type => $variables) {
+            foreach ($variables as $lessVar => $lessValue) {
+                $output[$type][] = array('name' => $lessVar, 'value' => $lessValue);
+            }
+        }
+        return $output;
     }
 
     /**
      * Updates variables.less with the values given in the request.
-     * @param $api
-     * @param $args
-     * @return mixed|string
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     *
+     * @return array Locations of CSS files
+     * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionMissingParameter
      */
-    public function updateCustomTheme($api, $args)
+    public function updateCustomTheme(ServiceBase $api, array $args)
     {
         if (!is_admin($GLOBALS['current_user'])) {
             throw new SugarApiExceptionNotAuthorized();
@@ -158,18 +174,16 @@ class ThemeApi extends SugarApi
         $theme = new SidecarTheme($platform, $themeName);
 
         // if reset=true is passed
-        if (isset($args['reset']) && $args['reset'] == true) {
-            $theme->resetDefault();
-
+        if (!empty($args['reset'])) {
+            $theme->saveThemeVariables($args['reset']);
         } else {
             // else
+            $theme->loadVariables();
             // Override the custom variables.less with the given vars
             $variables = array_diff_key($args, array('platform' => 0, 'themeName' => 0, 'reset' => 0));
-            $theme->overrideThemeVariables($variables);
+            $theme->setVariables($variables);
+            $theme->saveThemeVariables();
         }
-
-        // Write the bootstrap.css file
-        $theme->compileTheme(true);
 
         // saves the bootstrap.css URL in the portal settings
         $urls = $theme->getCSSURL();

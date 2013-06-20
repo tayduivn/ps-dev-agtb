@@ -34,8 +34,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('vendor/lessphp/lessc.inc.php');
-require_once('include/api/SugarApiException.php');
+require_once 'vendor/lessphp/lessc.inc.php';
+require_once 'include/api/SugarApiException.php';
 
 /**
  * Class that provides tools for working with a theme.
@@ -43,160 +43,303 @@ require_once('include/api/SugarApiException.php');
  */
 class SidecarTheme
 {
+    /**
+     * @var string Client Name
+     */
     private $myClient;
+
+    /**
+     * @var string Theme Name
+     */
     private $myTheme;
+
+    /**
+     * @var array A set of useful paths
+     */
     private $paths;
-    private $bootstrapCssName = 'bootstrap.css';
 
-    private $lessCompilerNames = array('bootstrap', 'sugar');
+    /**
+     * @var array Less variables of the theme
+     */
+    private $variables = array();
 
-    function __construct($client = 'base', $themeName = null)
+    /**
+     * @var array Less files to compile
+     */
+    public $lessFilesToCompile = array('bootstrap', 'sugar');
+
+
+    /**
+     * @var lessc dependency
+     */
+    protected $compiler;
+
+    /**
+     * Constructor
+     *
+     * @param string $client Client Name
+     * @param string $themeName Theme Name
+     */
+    public function __construct($client = 'base', $themeName = '')
     {
-        $this->myClient = $client;
-
         // Get user theme if the themeName isn't defined
-        if (!$themeName || $themeName == '') {
+        if (empty($themeName)) {
             $themeName = $this->getUserTheme();
         }
+
+        $this->myClient = $client;
         $this->myTheme = $themeName;
         $this->paths = $this->makePaths($client, $themeName);
+        $this->compiler = new lessc;
     }
 
     /**
-     * Get the user preferred theme
-     * @return string themeName
-     */
-    private function getUserTheme() {
-        if(isset($_COOKIE['sugar_user_theme']) && $_COOKIE['sugar_user_theme'] != '') {
-            return $_COOKIE['sugar_user_theme'];
-        }
-        else if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')	{
-            return $_SESSION['authenticated_user_theme'];
-        }
-        else {
-            global $sugar_config;
-            return $sugar_config['default_theme'];
-        }
-    }
-
-    /**
-     * Checks the filesystem for a generated css file
-     * This is useful on systems without a php memory cache
-     * or if the memory cache is filled
+     * Retrieve CSS files from cache for this theme
+     * Compile missing files if the theme has metadata definition
+     * Compile default theme otherwise
      *
-     * @param string $key Less compiler name
-     * @return string Css cache filename
-     */
-    protected function retrieveThemeCacheFile($key)
-    {
-        $files = glob($this->getCssLocation($key, '*'));
-        if (isset($files[0])) {
-            // Looks like we found something
-            return $files[0];
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Deletes old CSS cache files, skipping the one we want to keep
-     *
-     * @param string $currCacheFile The full path of the current cache file
-     */
-    public function deleteStaleThemeCacheFiles($currCacheFile = '')
-    {
-        $files = glob($this->paths['cache'].'*.css');
-        if ( !is_array($files) ) {
-            return;
-        }
-        foreach ( $files as $fileName ) {
-            if ( $fileName != $currCacheFile ) {
-                unlink($fileName);
-            }
-        }
-    }
-
-    /**
-     * Returns the css URLs of a theme
-     * If not found in the cached folder, will generate them from /themes/ and /custom/themes/
-     *
-     * @return array of css file locations to include
+     * @return array Locations of CSS files for this theme
      */
     public function getCSSURL()
     {
-        $urls = array();
-        $hashKey = $this->paths['hashKey'];
+        $filesInCache = $this->retrieveCssFilesInCache();
 
-        //First check if the hash is cached so we don't have to load the metadata manually to calculate it
-        $hashArray = sugar_cache_retrieve($hashKey);
-        $hashArray = is_array($hashArray)? $hashArray : array();
-        foreach ($this->lessCompilerNames as $compilerName) {
-            if (!isset($hashArray[$compilerName])) $hashArray[$compilerName] = '';
-            $hashArray[$compilerName] =  '';
+        //If we found css files in cache we can return css urls
+        if (count($filesInCache) === count($this->lessFilesToCompile)) {
+            return $this->returnFileLocations($filesInCache);
+        }
+        //Since we did not find css files in cache we have to compile the theme.
+        //First check if the theme has metadata, otherwise compile the default theme instead
+        if ($this->myTheme !== 'default' && !$this->isDefined()) {
+            $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
+            return $clientDefaultTheme->getCSSURL();
         }
 
-        //Now we expect 2 hash. 1 for twitter bootstrap css 1 for Sugar css
-        foreach($hashArray as $key => $hash) {
-
-            $file = $this->getCssLocation($key, $hash);
-
-            // Check if same version exists on the system
-            if (empty($hash) || !file_exists($file)) {
-                //The hash may be inexistant or out-of-date
-
-                //Look for new version
-                $file = $this->retrieveThemeCacheFile($key);
-
-                //We found a new version!
-                if (!empty($file)) {
-                    // Let's store the theme's hash into the cache so we can grab it next time
-                    $hashArray[$key] = $this->getHashFromFileName($key, $file);
-                    sugar_cache_put($hashKey, $key);
-
-                //We have to recompile the theme
-                } else {
-                    // We compile expected theme by if we found variables.less in the file system (in /custom/themes or /themes)
-                    $customThemeVars = $this->paths['custom'] . 'variables.less';
-                    $baseThemeVars = $this->paths['base'] . 'variables.less';
-                    if ($this->myTheme === 'default' || SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars)) {
-                        $hashArray = $this->compileTheme();
-                        foreach($hashArray as $subkey => $h) {
-                            $urls[$subkey] =  $this->getCssLocation($subkey, $hashArray[$subkey]);
-                        }
-                    } else {
-                        // Otherwise we grab the default theme
-                        $clientDefaultTheme = new SidecarTheme($this->myClient, 'default');
-                        $urls = $clientDefaultTheme->getCSSURL();
-                    }
-                    //Once here we have all the css locations so we can bypass the loop
-                    break;
-                }
-            }
-            $urls[$key] = $file;
+        //Arrived here we are going to compile missing css files
+        $missingFiles = array_diff($this->lessFilesToCompile, array_keys($filesInCache));
+        foreach ($missingFiles as $lessFile) {
+            $filesInCache[$lessFile] = $this->compileFile($lessFile);
         }
-        return $urls;
+
+        return $this->returnFileLocations($filesInCache);
     }
 
     /**
-     * Returns a hash of 3 locations
-     *  - the path of the base theme
-     *  - the path of the customized theme
-     *  - the path of the cached theme
+     * Compile all the css files and save the file hashes
      *
-     * @param string $client
-     * @param string $themeName
-     * @return array Paths related to this client and theme
+     * @param bool $min True to minify the CSS
+     *
+     * @return array Generated file hashes
      */
-    private function makePaths($client, $themeName)
+    public function compileTheme($min = true)
     {
-        return array(
-            'base'   => 'styleguide/themes/clients/' . $client . '/' . $themeName . '/',
-            'custom' => 'custom/themes/clients/' . $client . '/' . $themeName . '/',
-            'cache'  =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/'),
-            'css'    =>  sugar_cached('themes/clients/' . $client . '/' . $themeName . '/' . $this->bootstrapCssName),
-            'hashKey' => 'theme:'. $client . ':' . $themeName . ':' . $this->bootstrapCssName,
-            'clients' => 'styleguide/less/clients/'
+        $files = array();
+        foreach ($this->lessFilesToCompile as $lessFile) {
+            $files[$lessFile] = $this->compileFile($lessFile, $min);
+        }
+
+        //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons
+        sugar_cache_put($this->paths['hashKey'], $files);
+        return $files;
+    }
+
+    /**
+     * Compile all the css files but don't save
+     *
+     * @param bool $min True to minify the CSS, false otherwise
+     *
+     * @return string Plaintext CSS
+     * @throws SugarApiExceptionError
+     */
+    public function previewCss($min = true)
+    {
+        try {
+            $css = array();
+            foreach ($this->lessFilesToCompile as $lessFile) {
+                $css[$lessFile] = $this->compileFile($lessFile, $min, false);
+            }
+            return implode('', array_values($css));
+        } catch (exception $e) {
+            throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Compile a less file and save the output css file
+     *
+     * @param string $lessFile Name of Less file to compile
+     * @param bool $min True to minify the CSS
+     * @param bool $writeFile True to write the file on the file system
+     *
+     * @return mixed Plaintext CSS if writeFile is false, a hash otherwise
+     * @throws SugarApiExceptionError
+     */
+    public function compileFile($lessFile, $min = true, $writeFile = true)
+    {
+        try {
+            //Load and set variables
+            $this->loadVariables();
+            if (!isset($this->variables['baseUrl'])) {
+                //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
+                //              to   /styleguide/assets/
+                $this->setVariable('baseUrl', '"../../../../../styleguide/assets"');
+            }
+            $this->compiler->setVariables($this->loadVariables());
+
+            if ($min) {
+                $this->compiler->setFormatter('compressed');
+            }
+            $css = $this->compiler->compileFile($this->getLessFileLocation($lessFile));
+
+            //If preview return css;
+            if (!$writeFile) {
+                return $css;
+            }
+            //Otherwise write file and return hash
+            $hash = md5($css);
+            // Write bootstrap.css on the file system
+            sugar_mkdir($this->paths['cache'], null, true);
+            sugar_file_put_contents($this->getCssFileLocation($lessFile, $hash), $css);
+            return $hash;
+        } catch (exception $e) {
+            throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Determines if the theme exists
+     *
+     * @return bool True if able to retrieve theme definition file in the file system.
+     */
+    public function isDefined()
+    {
+        // We compile expected theme by if we found variables.less in the file system (in /custom/themes or /themes)
+        $customThemeVars = $this->paths['custom'] . 'variables.less';
+        $baseThemeVars = $this->paths['base'] . 'variables.less';
+        return SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars);
+    }
+
+    /**
+     * Parse the variables.less metadata files of the theme
+     *
+     * @return string Array of categorized variables
+     */
+    public function getThemeVariables()
+    {
+        $desiredTheme = $this->paths;
+        $clientDefault = $this->makePaths($this->myClient, 'default');
+        $baseDefault = $this->makePaths('base', 'default');
+
+        // Crazy override from :
+        // - the base/default base theme
+        // - the base/default custom theme
+        // - the client/default base theme
+        // - the client/default custom theme
+        // - the client/themeName base theme
+        // - the client/themeName custom theme
+        $variables = $this->parseFile($baseDefault['base'] . 'variables.less');
+
+        $files = array(
+            $baseDefault['custom'],
+            $clientDefault['base'],
+            $clientDefault['custom'],
+            $desiredTheme['base'],
+            $desiredTheme['custom']
         );
+
+        foreach ($files as $file) {
+            $file .= 'variables.less';
+            if (file_exists($file)) {
+                $variables = sugarArrayMerge($variables, $this->parseFile($file));
+            }
+        }
+        return $variables;
+    }
+
+    /**
+     * Write the theme metadata file. This method actually does:
+     * - Read contents of base/default theme metadata file
+     * - Override variables (if $resetBaseDefaultTheme is false)
+     * - Save the file as the theme metadata file.
+     *
+     * @param bool $reset True if you want to reset the theme to the base default theme
+     */
+    public function saveThemeVariables($reset = false)
+    {
+        // take the contents from /themes/clients/base/default/variables.less
+        $baseDefaultTheme = new SidecarTheme('base', 'default');
+        $baseDefaultThemePaths = $baseDefaultTheme->getPaths();
+        $contents = file_get_contents($baseDefaultThemePaths['base'] . 'variables.less');
+
+        if ($reset) {
+            //In case of reset we just need to delete the theme files.
+            if (is_dir($this->paths['cache'])) {
+                rmdir_recursive($this->paths['cache']);
+            }
+            if (is_dir($this->paths['custom'])) {
+                rmdir_recursive($this->paths['custom']);
+            }
+        } else {
+            //override the base variables with variables passed in arguments
+            foreach ($this->variables as $lessVar => $lessValue) {
+                // override the variables
+                $lessValue = html_entity_decode($lessValue);
+                $contents = preg_replace("/@$lessVar:(.*);/", "@$lessVar: $lessValue;", $contents);
+            }
+            $contents = str_replace('\n', '', $contents);
+
+            // save the theme variables in /themes/clients/$client/$themeName/variables.less
+            sugar_mkdir($this->paths['custom'], null, true);
+            sugar_file_put_contents($this->paths['custom'] . 'variables.less', $contents);
+        }
+    }
+
+    /**
+     * Load the less variables of the theme. By default it prevents from parsing the metadata files twice.
+     *
+     * @param bool $force True if you want to force reloading the theme variables
+     *
+     * @return array Variables
+     */
+    public function loadVariables($force = false)
+    {
+        if (!empty($this->variables) && !$force) {
+            return $this->variables;
+        }
+        foreach ($this->getThemeVariables() as $variables) {
+            foreach ($variables as $lessVar => $lessValue) {
+                $this->setVariable($lessVar, $lessValue);
+            }
+        }
+        return $this->variables;
+    }
+
+    /**
+     * Setter for private variables
+     *
+     * @param string $variable Variable name
+     * @param string $value Variable value
+     *
+     * @throws InvalidArgumentException
+     */
+    public function setVariable($variable, $value)
+    {
+        if (empty($value) || !is_string($value)) {
+            throw new \InvalidArgumentException('Invalid Less variable: ' . $variable);
+        }
+        $this->variables[$variable] = $value;
+    }
+
+    /**
+     * Setter for private variables
+     *
+     * @param array $variables Array of variables
+     */
+    public function setVariables(array $variables)
+    {
+        foreach ($variables as $var => $value) {
+            $this->setVariable($var, $value);
+        }
     }
 
     /**
@@ -209,215 +352,138 @@ class SidecarTheme
     }
 
     /**
-     * Parse the variables.less definition of the theme
+     * Get the user preferred theme
      *
-     * @param bool $split False to have a flat array
-     * @return string plain text css
+     * @return string themeName
      */
-    public function getThemeVariables($split = false) {
-        $desiredTheme = $this->paths;
-        $clientDefault = $this->makePaths($this->myClient, 'default');
-        $baseDefault = $this->makePaths('base', 'default');
-
-        // Crazy override from :
-        // - the base/default base theme
-        // - the base/default custom theme
-        // - the client/default base theme
-        // - the client/default custom theme
-        // - the client/themeName base theme
-        // - the client/themeName custom theme
-        $variables = $this->parseFile($baseDefault['base'], $split);
-        $variables = array_merge($variables, $this->parseFile($baseDefault['custom'], $split));
-        $variables = array_merge($variables, $this->parseFile($clientDefault['base'], $split));
-        $variables = array_merge($variables, $this->parseFile($clientDefault['custom'], $split));
-        $variables = array_merge($variables, $this->parseFile($desiredTheme['base'], $split));
-        $variables = array_merge($variables, $this->parseFile($desiredTheme['custom'], $split));
-
-        return $variables;
-    }
-
-    /**
-     * Compile Less files and write /cache/themes/clients/$client/$themeName/bootstrap.css
-     *
-     * @param bool $min True to minify the css
-     * @return array of hashes of generated files
-     */
-    public function compileTheme($min = true)
+    private function getUserTheme()
     {
-        // Get the theme definition
-        $variables = $this->getThemeVariables();
-        // Generate bootstrap.css
-        $myCss = $this->compileCss($variables, $min);
-
-        // Write bootstrap.css on the file system
-        sugar_mkdir($this->paths['cache'], null, true);
-
-        // Delete old css cache files
-        $this->deleteStaleThemeCacheFiles();
-
-        $hashes = array();
-        foreach ($myCss as $key => $css) {
-            $hashes[$key] = md5($css);
-            $cacheFileName = $this->getCssLocation($key, $hashes[$key]);
-            sugar_file_put_contents($cacheFileName, $css);
+        if (!empty($_COOKIE['sugar_user_theme'])) {
+            return $_COOKIE['sugar_user_theme'];
+        } elseif (!empty($_SESSION['authenticated_user_theme'])) {
+            return $_SESSION['authenticated_user_theme'];
+        } else {
+            global $sugar_config;
+            return $sugar_config['default_theme'];
         }
-
-        //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons
-        sugar_cache_put($this->paths['hashKey'], $hashes);
-
-        return $hashes;
     }
 
     /**
-     * Compiles the bootstrap.less file with custom variables
+     * Builds the paths attribute
+     * 'base' : the path of the base theme
+     * 'custom' : the path of the customized theme
+     * 'cache' : the path of the cached theme
+     * 'clients' : the clients path of less files to compile
+     * 'hashKey' the theme hash key
      *
-     * @param array $variables to be given to lessphp compiler
-     * @param bool $min minify or not the CSS
-     * @return plain text CSS
+     * @param string $client Client Name
+     * @param string $themeName Theme Name
+     *
+     * @return array Paths related to this client and theme
      */
-    public function compileCss($variables, $min = true)
+    private function makePaths($client, $themeName)
     {
-        $urls = $this->getCompilerLessFiles();
-
-        $less = new lessc;
-        if ($min === true) {
-            $less->setFormatter('compressed');
-        }
-        //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
-        //              to   /styleguide/assets/
-        if (!isset($variables['baseUrl'])) {
-            $variables['baseUrl'] = '"../../../../../styleguide/assets"';
-        }
-
-        $less->setVariables($variables);
-
-        try {
-            $css = array();
-            foreach ($urls as $key => $url) {
-                $css[$key] = $less->compileFile($url);
-            }
-            return $css;
-
-        } catch (exception $e) {
-            throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
-        }
+        return array(
+            'base' => 'styleguide/themes/clients/' . $client . '/' . $themeName . '/',
+            'custom' => 'custom/themes/clients/' . $client . '/' . $themeName . '/',
+            'cache' => sugar_cached('themes/clients/' . $client . '/' . $themeName . '/'),
+            'clients' => 'styleguide/less/clients/',
+            'hashKey' => 'theme:' . $client . ':' . $themeName,
+        );
     }
 
     /**
-     * Does a preg_match_all on a variables.less file and returns an array with varname/value
+     * Does a preg_match_all on a less file to retrieve a type of less variables
      *
-     * @param string $regex
-     * @param string $input contents of variables.less
-     * @param bool $formatAsCollection if true, returns an array of objects, if false, returns a hash
-     * @return array of variables matching the regex
+     * @param string $pattern Pattern to search
+     * @param string $input Input string
+     *
+     * @return array Variables found
      */
-    public function parseLessVars($regex, $input, $formatAsCollection = false)
+    private function parseLessVars($pattern, $input)
     {
         $output = array();
-        preg_match_all($regex, $input, $match, PREG_PATTERN_ORDER);
+        preg_match_all($pattern, $input, $match, PREG_PATTERN_ORDER);
         foreach ($match[1] as $key => $lessVar) {
-            if ($formatAsCollection) {
-                $output[] = array('name' => $lessVar, 'value' => $match[3][$key]);
-            } else {
-                $output[$lessVar] = $match[3][$key];
-            }
-        }
-        return $output;
-    }
-
-
-    /**
-     * Parses a less file and returns the array of variables
-     * @param string $path
-     * @param bool $split Set to true if you want to split with hex/rgba/rel/bg
-     * @return array of variables found
-     */
-    public function parseFile($path, $split = false) {
-
-        $file = $path . 'variables.less';
-
-        $output = array();
-        $variablesLess = file_exists($file) ? file_get_contents($file) : null;
-
-        if ($variablesLess) {
-            if (!$split) {
-                // Parses the mixins defs     @varName:      mixinName;
-                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess));
-                // Parses the hex colors     @varName:      #aaaaaa;
-                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess));
-                // Parses the rgba colors     @varName:      rgba(0,0,0,0);
-                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess));
-                // Parses the related colors     @varName:      @relatedVar;
-                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+):(\s+)(@.*?);/", $variablesLess));
-                // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
-                $output = array_merge($output, $this->parseLessVars("/@([^:|@]+Path):(\s+)(\".*?\");/", $variablesLess));
-            } else {
-                // Parses the mixins defs     @varName:      mixinName;
-                $output['mixins'] = $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $variablesLess, true);
-                // Parses the hex colors     @varName:      #aaaaaa;
-                $output['hex'] = $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $variablesLess, true);
-                // Parses the rgba colors     @varName:      rgba(0,0,0,0);
-                $output['rgba'] = $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $variablesLess, true);
-                // Parses the related colors     @varName:      @relatedVar;
-                $output['rel'] = $this->parseLessVars("/@([^:|@]+):(\s+)(@.*?);/", $variablesLess, true);
-                // Parses the backgrounds     @varNamePath:      "./path/to/img.jpg";
-                $output['bg'] = $this->parseLessVars("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $variablesLess, true);
-            }
+            $output[$lessVar] = $match[3][$key];
         }
         return $output;
     }
 
     /**
-     * Override variables.less with the base/default one + the variales passed in arguments
-     * @param array $variables
-     */
-    public function overrideThemeVariables($variables) {
-        // /themes/clients/base/default
-        $baseDefaultTheme = new SidecarTheme('base', 'default');
-        $baseDefaultThemePaths = $baseDefaultTheme->getPaths();
-
-        // /themes/clients/$client/$themeName
-        $baseTheme = $this->paths['base'] . 'variables.less';
-        $customTheme = $this->paths['custom'] . 'variables.less';
-
-        $contents = file_get_contents($baseDefaultThemePaths['base'] . 'variables.less');
-
-        foreach ($variables as $lessVar => $lessValue) {
-            // override the variables
-            $lessValue = html_entity_decode($lessValue);
-            $contents = preg_replace("/@$lessVar:(.*);/", "@$lessVar: $lessValue;", $contents);
-        }
-        $contents = str_replace('\n', '', $contents);
-
-        // overwrite the theme
-        sugar_mkdir($this->paths['custom'], null, true);
-        sugar_file_put_contents($customTheme, $contents);
-    }
-
-    /**
-     * Reset the base/default theme.
-     */
-    public function resetDefault() {
-        $baseDefault = $this->makePaths('base', 'default');
-        $variables = $this->parseFile($baseDefault['base']);
-        $this->overrideThemeVariables($variables);
-    }
-
-    /**
-     * Get the compiler less file from client folder or base folder
+     * Parse a less file to retrieve all types of less variables
+     * - 'mixins' defs         @varName:      mixinName;
+     * - 'hex' colors          @varName:      #aaaaaa;
+     * - 'rgba' colors         @varName:      rgba(0,0,0,0);
+     * - 'rel' related colors  @varName:      @relatedVar;
+     * - 'bg'  backgrounds     @varNamePath:  "./path/to/img.jpg";
      *
-     * @return array of less files to compile
+     * @param string $file The file to parse
+     *
+     * @return array Variables found by type
      */
-    private function getCompilerLessFiles() {
-        $urls = array();
+    private function parseFile($file)
+    {
+        $contents = file_get_contents($file);
+        $output = array();
+        $output['mixins'] = $this->parseLessVars("/@([^:|@]+):(\s+)([^\#|@|\(|\"]*?);/", $contents);
+        $output['hex'] = $this->parseLessVars("/@([^:|@]+):(\s+)(\#.*?);/", $contents);
+        $output['rgba'] = $this->parseLessVars("/@([^:|@]+):(\s+)(rgba\(.*?\));/", $contents);
+        $output['rel'] = $this->parseLessVars("/@([^:|@]+):(\s+)(@.*?);/", $contents);
+        $output['bg'] = $this->parseLessVars("/@([^:|@]+Path):(\s+)\"(.*?)\";/", $contents);
+        return $output;
+    }
 
-        foreach ($this->lessCompilerNames as $grouping) {
-            $file = $this->paths['clients'] . $this->myClient . '/' . $grouping . '.less';
-            $baseFile = $this->paths['clients'] . 'base' . '/' . $grouping . '.less';
-            $urls[$grouping] = file_exists($file) ? $file : $baseFile;
+    /**
+     * Retrieve CSS files in cache. This method actually does:
+     * - Get file hashes from the cache.
+     * - If file hashes are found verify that the file exists.
+     * - If file hashes are not found try to retrieve some css files from the file system
+     *
+     * @return array Css files found in cache
+     */
+    private function retrieveCssFilesInCache()
+    {
+        $filesInCache = array();
+
+        //First check if the file hashes are cached so we don't have to load the metadata manually to calculate it
+        $hashKey = $this->paths['hashKey'];
+        $hashArray = sugar_cache_retrieve($hashKey);
+
+        if (is_array($hashArray) && count($hashArray) === count($this->lessFilesToCompile)) {
+            foreach ($hashArray as $lessFile => $hash) {
+                $file = $this->getCssFileLocation($lessFile, $hash);
+                if (file_exists($file)) {
+                    $filesInCache[$lessFile] = $hash;
+                }
+            }
+        } else {
+            /**
+             * Checks the filesystem for a generated css file
+             * This is useful on systems without a php memory cache
+             * or if the memory cache is filled
+             */
+            $files = glob($this->paths['cache'] . '*.css', GLOB_NOSORT);
+            foreach ($files as $file) {
+                $nameParts = explode('_', pathinfo($file, PATHINFO_FILENAME));
+                $filesInCache[$nameParts[0]] = $nameParts[1];
+            }
         }
+        return $filesInCache;
+    }
 
-        return $urls;
+    /**
+     * Get the location of a compiler less file
+     *
+     * @param string $lessFile
+     *
+     * @return string of less files to compile
+     */
+    private function getLessFileLocation($lessFile)
+    {
+        $file = $this->paths['clients'] . $this->myClient . '/' . $lessFile . '.less';
+        $baseFile = $this->paths['clients'] . 'base' . '/' . $lessFile . '.less';
+        return file_exists($file) ? $file : $baseFile;
     }
 
     /**
@@ -425,21 +491,28 @@ class SidecarTheme
      *
      * @param string $compilerName
      * @param string $hash
+     *
      * @return string file location
      */
-    private function getCssLocation($compilerName, $hash) {
-        return $this->paths['cache'] . $compilerName .'_' . $hash . ".css";
+    private function getCssFileLocation($compilerName, $hash)
+    {
+        return $this->paths['cache'] . $compilerName . '_' . $hash . ".css";
     }
 
     /**
-     * Retrieves the hash from the file name
+     * Save file hashes and format response
      *
-     * @param string $compilerName
-     * @param string $fileName
-     * @return string hash
+     * @param array $filesArray File hashes
+     *
+     * @return array Array of css file locations
      */
-    function getHashFromFileName($compilerName, $fileName) {
-        $hash = str_replace("{$compilerName}_", '', pathinfo($fileName, PATHINFO_FILENAME));
-        return $hash;
+    private function returnFileLocations(array $filesArray)
+    {
+        $urls = array();
+        sugar_cache_put($this->paths['hashKey'], $filesArray);
+        foreach ($this->lessFilesToCompile as $lessFile) {
+            $urls[$lessFile] = $this->getCssFileLocation($lessFile, $filesArray[$lessFile]);
+        }
+        return $urls;
     }
 }

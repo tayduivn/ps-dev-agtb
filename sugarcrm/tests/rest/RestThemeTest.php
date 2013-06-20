@@ -22,9 +22,9 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
-require_once('include/api/SugarApi.php');
-require_once('clients/base/api/ThemeApi.php');
+require_once 'tests/rest/RestTestBase.php';
+require_once 'include/api/SugarApi.php';
+require_once 'clients/base/api/ThemeApi.php';
 
 class RestThemeTest extends RestTestBase
 {
@@ -34,15 +34,14 @@ class RestThemeTest extends RestTestBase
 
     public function tearDown()
     {
-        $GLOBALS['db']->query("DELETE FROM config WHERE category = '" . $this->platformTest . "' AND name = 'css'");
-
-        if (is_dir('custom/themes/clients/' . $this->platformTest . '/' . $this->themeTest)) {
-            //exec("rm -rf custom/themes/clients/" . $this->platformTest);
-            rmdir_recursive("custom/themes/clients/" . $this->platformTest);
+        // Clear out the test folders
+        $customDir = 'custom/themes/clients/' . $this->platformTest;
+        if (is_dir($customDir)) {
+            rmdir_recursive($customDir);
         }
-        if (is_dir('cache/themes/clients/' . $this->platformTest . '/' . $this->themeTest)) {
-            //exec("rm -rf custom/themes/clients/" . $this->platformTest);
-            rmdir_recursive("cache/themes/clients/" . $this->platformTest);
+        $cacheDir = 'cache/themes/clients/' . $this->platformTest;
+        if (is_dir($cacheDir)) {
+            rmdir_recursive($cacheDir);
         }
         parent::tearDown();
     }
@@ -96,14 +95,6 @@ class RestThemeTest extends RestTestBase
         $this->assertEquals(array('name' => 'BorderColor', 'value' => '#E61718'), $restReply['reply']['hex'][0]);
         $this->assertEquals(array('name' => 'NavigationBar', 'value' => '#000000'), $restReply['reply']['hex'][1]);
         $this->assertEquals(array('name' => 'PrimaryButton', 'value' => '#177EE5'), $restReply['reply']['hex'][2]);
-
-        /*
-        $this->assertEquals($restReply['reply']['hex'], array(
-            0 => array('name' => 'BorderColor', 'value' => '#E61718'),
-            1 => array('name' => 'NavigationBar', 'value' => '#000000'),
-            2 => array('name' => 'PrimaryButton', 'value' => '#177EE5'),
-        ));
-        */
     }
 
     /**
@@ -152,7 +143,7 @@ class RestThemeTest extends RestTestBase
         $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
         // TEST we have updated the variables in variables.less
-        $variables = $thisTheme->getThemeVariables();
+        $variables = $thisTheme->loadVariables();
         $this->assertEquals($args['BorderColor'], $variables['BorderColor']);
         $this->assertEquals($args['NavigationBar'], $variables['NavigationBar']);
         $this->assertEquals($args['PrimaryButton'], $variables['PrimaryButton']);
@@ -182,6 +173,9 @@ class RestThemeTest extends RestTestBase
         $args = array(
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
+            'BorderColor' => '#ABCDEF',
+            'NavigationBar' => '#ABCDEF',
+            'PrimaryButton' => '#ABCDEF',
             'reset' => 'true',
         );
 
@@ -189,38 +183,13 @@ class RestThemeTest extends RestTestBase
         $this->_user->is_admin = 1;
         $this->_user->save();
         $GLOBALS['db']->commit();
+
         // TEST= POST theme with reset=true
-        $restReply = $this->_restCall('theme', json_encode($args));
+        $this->_restCall('theme', json_encode($args));
 
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
-
-        // TEST the css files have been created
-        $this->assertArrayHasKey('bootstrap', $restReply['reply']);
-        $this->assertArrayHasKey('sugar', $restReply['reply']);
-        $bootstrapFileName = end(explode('/', $restReply['reply']['bootstrap']));
-        $sugarFileName = end(explode('/', $restReply['reply']['sugar']));
-        $bootstrapFile = sugar_cached(
-            'themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/' . $bootstrapFileName
-        );
-        $sugarFile = sugar_cached(
-            'themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/' . $sugarFileName
-        );
-        $this->assertFileExists($bootstrapFile, "Created file (" . $bootstrapFileName . ") does not exist");
-        $this->assertFileExists($sugarFile, "Created file (" . $sugarFileName . ") does not exist");
-
-        // TEST the css files are not empty
-        $this->assertTrue(filesize($bootstrapFile) > 0, "Created file (" . $bootstrapFileName . ") has no contents");
-        $this->assertTrue(filesize($sugarFile) > 0, "Created file (" . $sugarFileName . ") has no contents");
-
-        // TEST variables.less file is not empty
-        $this->assertNotEmpty(
-            file_get_contents(
-                'custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'
-            ),
-            "Variables.less is not empty"
-        );
 
         // TEST variables.less generated in the custom folder is the same as the default theme
         $defaultTheme = new SidecarTheme($args['platform'], 'default');
@@ -228,8 +197,8 @@ class RestThemeTest extends RestTestBase
 
         // TEST they contain the same variables
         $this->assertEquals(
-            $defaultTheme->getThemeVariables(),
-            $thisTheme->getThemeVariables()
+            $defaultTheme->loadVariables(),
+            $thisTheme->loadVariables()
         );
     }
 
@@ -257,10 +226,7 @@ class RestThemeTest extends RestTestBase
 
         // TEST 2:  for deployment, baseUrl is "../../../../../styleguide/assets"
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
-        $variables = $theme->getThemeVariables();
-        $css = $theme->compileCss($variables);
-
-        $css = implode(' ', $css);
+        $css = $theme->previewCss();
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../../../../styleguide/assets", $css);
     }
