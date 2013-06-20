@@ -85,11 +85,11 @@ var link_defs_<?php echo $module_name; ?> = new Object();
     {
 		$module->load_relationship($linked_field['name']);
 		$field = $linked_field['name'];
-		if(empty($module->$field) || (isset($linked_field['reportable']) &&
-	           $linked_field['reportable'] == false))
-	    {
-	       continue;
-	    }
+		if(empty($module->$field)
+		   || (isset($linked_field['reportable']) && $linked_field['reportable'] == false)
+		   || empty($linked_field['relationship'])) {
+			continue;
+		}
 		if(empty($relationships[$linked_field['relationship']]))
 		{
 			$relationships[$linked_field['relationship']] = $module->$field->relationship;
