@@ -357,36 +357,41 @@
         }
     },
 
-    handleSave: function () {
+    handleSave: function() {
         var self = this;
         self.inlineEditMode = false;
 
-        var finalSuccess = function () {
-
-            if (self.createMode) {
-                app.navigate(self.context, self.model);
-            } else if (!self.disposed) {
-                self.render();
-            }
+        var options = {
+            showAlerts: true,
+            success: _.bind(function() {
+                if (this.createMode) {
+                    app.navigate(this.context, this.model);
+                } else if (!this.disposed) {
+                    this.render();
+                }
+            }, this),
+            viewed: true
         };
+
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
+
         app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function () {
-                    self.model.save({}, {
-                        //Show alerts for this request
-                        showAlerts: true,
-                        success: finalSuccess,
-                        viewed: true
-                    });
+                success: function() {
+                    self.model.save({}, options);
                 }
             }, {
                 deleteIfFails: false
             }
         );
 
-        self.$(".record-save-prompt").hide();
+        self.$('.record-save-prompt').hide();
         if (!self.disposed) {
             self.render();
         }
+    },
+
+    getCustomSaveOptions: function(options) {
+        return {};
     },
 
     handleCancel: function () {

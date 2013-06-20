@@ -31,7 +31,9 @@ describe("products_view_recordlist", function() {
                 }]
             }
         };
-
+        
+        app.metadata.getModule("Forecasts", "config").is_setup = 1;
+        
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
@@ -40,14 +42,19 @@ describe("products_view_recordlist", function() {
 
         SugarTest.seedMetadata(true);
     });
+    afterEach(function() {
+        app.metadata.getModule("Forecasts", "config").is_setup = null;
+        app.metadata.getModule("Forecasts", "config").show_worksheet_best = null;
+        app = null;
+    });
 
-    it("should not contain best_case field", function() {
+    it("should not contain best_case field", function() {        
         app.metadata.getModule("Forecasts", "config").show_worksheet_best = 0;
         view = SugarTest.createView('base', 'Products', 'recordlist', options.meta, null, true);
         expect(view._fields.visible.length).toEqual(3);
         _.each(view._fields.visible, function(field) {
             expect(field.name).not.toEqual('best_case');
-        })
+        });
     });
 
     it("should not contain commit_stage field", function() {
@@ -56,6 +63,6 @@ describe("products_view_recordlist", function() {
         expect(view._fields.visible.length).toEqual(3);
         _.each(view._fields.visible, function(field) {
             expect(field.name).not.toEqual('commit_stage');
-        })
+        });
     });
 });

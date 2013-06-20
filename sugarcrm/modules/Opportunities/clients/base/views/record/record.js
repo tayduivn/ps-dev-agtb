@@ -21,7 +21,7 @@
      */
     initialize: function(options) {
         this.once('init', function() {
-            var rlis = this.model.getRelatedCollection('products');
+            var rlis = this.model.getRelatedCollection('revenuelineitems');
             rlis.once('reset', function(collection) {
                 if(collection.length === 0) {
                     this.showRLIWarningMessage(this.model.module);

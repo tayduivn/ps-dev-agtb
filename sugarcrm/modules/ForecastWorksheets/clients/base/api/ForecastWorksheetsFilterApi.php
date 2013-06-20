@@ -219,7 +219,7 @@ class ForecastWorksheetsFilterApi extends FilterApi
      * @throws SugarApiExceptionNotAuthorized
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id, $parent_type = 'opportunities')
+    protected function createFilter(ServiceBase $api, $user_id, $timeperiod_id, $parent_type = 'Opportunities')
     {
         $filter = array();
 
@@ -283,39 +283,8 @@ class ForecastWorksheetsFilterApi extends FilterApi
         }
 
         // we only want to view parent_types of 'Opportunities' here
-        array_push($filter, array('parent_type' => $this->getParentType($parent_type)));
+        array_push($filter, array('parent_type' => $parent_type));
 
         return $filter;
     }
-
-    /**
-     * Utility Method to find the proper ParentType for the filter
-     *
-     * @param string $param         The Type from the ajax request
-     * @return string
-     */
-    protected function getParentType($param)
-    {
-        // make sure that type is a module name
-        if (is_string($param)) {
-            switch (strtolower($param)) {
-                case 'lineitem':
-                case 'lineitems':
-                case 'product':
-                case 'products':
-                    $param = 'Products';
-                    break;
-                case 'opportunity':
-                case 'opportunities':
-                default:
-                    $param = 'Opportunities';
-
-            }
-        } else {
-            $param = 'Opportunities';
-        }
-
-        return $param;
-    }
-
 }

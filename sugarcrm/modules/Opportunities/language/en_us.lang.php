@@ -132,7 +132,8 @@ $mod_strings = array(
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_CONTRACTS' => 'Contracts',
     'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
-    'LBL_PRODUCTS' => 'Revenue Line Items',
+    'LBL_PRODUCTS' => 'Quoted Line Items',
+    'LBL_RLI' => 'Revenue Line Items',
     'LNK_OPPORTUNITY_REPORTS' => 'View Opportunity Reports',
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     'LBL_TEAM_ID' => 'Team ID',
@@ -153,8 +154,9 @@ $mod_strings = array(
     //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Revenue Line Items',
     'TPL_RLI_CREATE' => 'An opportunity must have an associated Revenue Line Item. <a href="javascript:void(0);" id="createRLI">Create a Revenue Line item</a>.',
+    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
+    'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
     //END SUGARCRM flav=ent ONLY
 
     //Dashlet

@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
+//FILE SUGARCRM flav=pro ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -14,8 +14,9 @@
  */
 
 
-class ProductTest extends Sugar_PHPUnit_Framework_TestCase
+class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    //BEGIN SUGARCRM flav=ent ONLY
     public function dataProviderSetOpportunitySalesStatus()
     {
         // utility method to to return an array
@@ -45,7 +46,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderSetOpportunitySalesStatus
-     * @group products
+     * @group revenuelineitems
      */
     public function testSetOpportunitySalesStatus($won_count, $lost_count, $total_count, $status)
     {
@@ -73,8 +74,8 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
         // the final param, it what gets returned  this is used below
         $map = array(
             array(
-                'products',
-                'Products',
+                'revenuelineitems',
+                'RevenueLineItems',
                 array(),
                 0,
                 -1,
@@ -83,8 +84,8 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
                 $won_count
             ),
             array(
-                'products',
-                'Products',
+                'revenuelineitems',
+                'RevenueLineItems',
                 array(),
                 0,
                 -1,
@@ -93,8 +94,8 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
                 $lost_count
             ),
             array(
-                'products',
-                'Products',
+                'revenuelineitems',
+                'RevenueLineItems',
                 array(),
                 0,
                 -1,
@@ -115,12 +116,27 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('save');
 
         // get the product module
-        $product = $this->getMock('Product', array('save'));
+        $rli = $this->getMock('RevenueLineItem', array('save'));
 
         // call the method we wnat to test and pass in out two mock bean with Dependency Injection
-        SugarTestReflection::callProtectedMethod($product, 'setOpportunitySalesStatus', array($oppMock, $admMock));
+        SugarTestReflection::callProtectedMethod($rli, 'setOpportunitySalesStatus', array($oppMock, $admMock));
 
         // assert the status is what it should be
         $this->assertEquals($oppMock->sales_status, $status);
     }
+    //END SUGARCRM flav=ent ONLY
+    
+    /**
+     * @group revenuelineitems
+     */
+    public function testConvertToQuotedLineItem()
+    {
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->sales_stage = 'Test';
+        $product = $rli->convertToQuotedLineItem();
+
+        $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
+    }
 }
+
+

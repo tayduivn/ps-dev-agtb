@@ -70,6 +70,14 @@ $dictionary['Contract'] = array(
 			'link_type' => 'one',
 			'source' => 'non-db',
 		),
+        'revenuelineitems' => array (
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'vname' => 'LBL_REVENUELINEITEMS',
+            'relationship' => 'contracts_revenuelineitems',
+            'link_type' => 'one',
+            'source' => 'non-db',
+        ),
 		'opportunities' => array (
 			'name' => 'opportunities',
 			'type' => 'link',
