@@ -17,7 +17,7 @@ describe("forecast-details", function() {
     beforeEach(function() {
         app = SugarTest.app;
         app.user.setPreference('decimal_precision', 2);
-        view = SugarTest.loadFile("../clients/base/views/forecast-details", "forecast-details", "js", function(d) {return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecast-details", "forecast-details", "js", function(d) {return eval(d); });
     });
 
     afterEach(function() {

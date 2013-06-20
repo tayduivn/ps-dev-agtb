@@ -52,6 +52,11 @@
     forecastConfig: {},
 
     /**
+     * If timeperiod dropdown should be shown (not in Forecasts)
+     */
+    showTimeperiod: true,
+
+    /**
      * Holds if the forecasts config has proper closed won/lost keys
      */
     forecastsConfigOK: false,
@@ -88,7 +93,7 @@
             this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
             // set up the subtemplate
-            this.subDetailsTpl = app.template.getView('forecast-details.sub-details');
+            this.subDetailsTpl = app.template.getView('forecast-details.sub-details', 'Forecasts');
 
             this.detailsDataSet = this.setUpShowDetailsDataSet(this.forecastConfig);
 
@@ -172,33 +177,35 @@
         var method = this.shouldRollup ? "progressManager" : "progressRep",
             url = 'Forecasts/' + this.model.get('selectedTimePeriod') + '/' + method + '/' + this.selectedUser.id;
 
-        return app.api.buildURL(url, 'create', null, {module: this.module});
+        return app.api.buildURL(url, 'create');
     },
 
     /**
      * {@inheritdoc}
      */
     bindDataChange: function() {
-        var ctx = this.model;
-        if (this.module == 'Forecasts') {
-            ctx = this.context;
+        var ctx = this.model,
+            module = this.dashModel.get('dashboard_module');
+        if (module == 'Forecasts') {
+            ctx = this.context.parent;
+            this.showTimeperiod = false;
         }
 
         ctx.on('change:selectedTimePeriod', function(model) {
-            if(this.module == 'Forecasts') {
+            if(module == 'Forecasts') {
                 this.updateDetailsForSelectedTimePeriod(model.get('selectedTimePeriod'));
             }
             // reload widget data when the selectedTimePeriod changes
             this.loadData({});
         }, this);
+
         ctx.on('change:selectedUser', function(model) {
-            if(this.module == 'Forecasts') {
+            if(module == 'Forecasts') {
                 this.updateDetailsForSelectedUser(model.get('selectedUser'));
             }
             // reload widget data when the selectedUser changes
             this.loadData({});
         }, this);
-
     },
 
     /**
@@ -240,8 +247,8 @@
                 quota_amount : data.quota_amount,
                 quota_amount_str: app.currency.formatAmountLocale(data.quota_amount)
             },
-        // object that holds data for shouldRollup case or !shouldRollup
-        // then gets merged back into dataObj after the if/else
+            // object that holds data for shouldRollup case or !shouldRollup
+            // then gets merged back into dataObj after the if/else
             specificCaseModel = {};
 
         if(this.shouldRollup) {
