@@ -303,7 +303,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $batchedDocs = array();
             $x = 0;
             foreach ($docs as $singleDoc) {
-                if ($x != 0 && $x % self::MAX_BULK_THRESHOLD == 0) {
+                if ($x != 0 && $x % $this->max_bulk_doc_threshold == 0) {
                     $index->addDocuments($batchedDocs);
                     $batchedDocs = array();
                 } else {

@@ -48,30 +48,31 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      */
     protected $SSEngine;
 
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_THRESHOLD = 5000;
-
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_QUERY_THRESHOLD = 15000;
-
-    /**
-     * The max number of beans we delete at a time
-     */
-    const MAX_BULK_DELETE_THRESHOLD = 3000;
-
-    /**
-     * Number of time to postpone a job by so it's not executed twice during the same request.
-     */
-    const POSTPONE_JOB_TIME = 20;
 
     /**
      * The name of the queue table
      */
     const QUEUE_TABLE = 'fts_queue';
+
+    /**
+     * @var The max number of beans we process before starting to bulk insert so we dont hit memory issues.
+     */
+    protected $max_bulk_threshold = 5000;
+
+    /**
+     * @var The max number of beans we process before starting to bulk insert so we dont hit memory issues.
+     */
+    protected $max_bulk_query_threshold = 15000;
+
+    /**
+     * @var The max number of beans we delete at a time
+     */
+    protected $max_bulk_delete_threshold = 3000;
+
+    /**
+     * @var Number of time to postpone a job by so it's not executed twice during the same request.
+     */
+    protected $postpone_job_time = 20;
 
     /**
      * @var DBManager
@@ -96,6 +97,11 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $this->db = DBManagerFactory::getInstance('fts');
 
         $this->table_name = self::QUEUE_TABLE;
+
+        $this->max_bulk_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_threshold', $this->max_bulk_threshold);
+        $this->max_bulk_query_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_query_threshold', $this->max_bulk_query_threshold);
+        $this->max_bulk_delete_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_delete_threshold', $this->max_bulk_delete_threshold);
+        $this->postpone_job_time = SugarConfig::getInstance()->get('search_engine.postpone_job_time', $this->postpone_job_time);
     }
 
     /**
@@ -118,11 +124,11 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
             'team_id' => true,
             'team_set_id' => true,
         );
-        
+
         // add fts enabled fields to the filter
         $addEmailJoin = false;
         foreach ($fieldDefs as $value) {
-            
+
             // filter email1 field and toggle flag for lv query
             if ($value['name'] == 'email1') {
                 $addEmailJoin = true;
@@ -133,18 +139,18 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
 
         // generate list view query based on selected fields
         $ftsQuery = $bean->create_new_list_query(
-            "",         // order_by 
-            "",         // where 
-            $fieldsFilter, 
-            array(),    // params 
-            0,            // show_deleted 
-            "",         // join_type 
+            "",         // order_by
+            "",         // where
+            $fieldsFilter,
+            array(),    // params
+            0,            // show_deleted
+            "",         // join_type
             true,       // return_array
-            null,       // parent_bean 
+            null,       // parent_bean
             true,       // single_select
             $addEmailJoin
         );
-        
+
         // add join for queue table
         $ftsQuery['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
 
@@ -177,7 +183,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         {
             $deleteIDs[] = $beanID;
             $count++;
-            if($count != 0 && $count % self::MAX_BULK_DELETE_THRESHOLD == 0)
+            if($count != 0 && $count % $this->max_bulk_delete_threshold == 0)
             {
                 $this->setBeanIDsProcessed($deleteIDs);
                 $deleteIDs = array();

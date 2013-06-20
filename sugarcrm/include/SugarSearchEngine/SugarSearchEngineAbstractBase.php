@@ -35,9 +35,9 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     protected $_documents = array();
 
     /**
-     * The max number of documents to bulk insert at a time
+     * @var The max number of documents to bulk insert at a time
      */
-    const MAX_BULK_THRESHOLD = 100;
+    protected $max_bulk_doc_threshold = 100;
 
     /**
      * Logger to use to report problems
@@ -47,7 +47,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
     public function __construct()
     {
-
+        $this->max_bulk_doc_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_doc_threshold', $this->max_bulk_doc_threshold);
         $this->logger = $GLOBALS['log'];
     }
     /**

@@ -96,7 +96,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 
         $GLOBALS['log']->info("SugarSyncIndexer will use db to index records");
         $sql = $this->generateFTSQuery($module, $fieldDefinitions);
-        $result = $this->db->limitQuery($sql,0, self::MAX_BULK_QUERY_THRESHOLD, true, "Unable to retrieve records from FTS queue");
+        $result = $this->db->limitQuery($sql,0, $this->max_bulk_query_threshold, true, "Unable to retrieve records from FTS queue");
 
         while ($row = $this->db->fetchByAssoc($result, FALSE) )
         {
@@ -112,7 +112,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
                 $count++;
             }
 
-            if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
+            if($count != 0 && $count % $this->max_bulk_threshold == 0)
             {
                 $ok = $this->SSEngine->bulkInsert($docs);
                 if ($ok) {
@@ -204,7 +204,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
         {
             // server is down, postpone the job
             $GLOBALS['log']->fatal('FTS Server is down, postponing the job.');
-            $this->schedulerJob->postponeJob('FTS down', self::POSTPONE_JOB_TIME);
+            $this->schedulerJob->postponeJob('FTS down', $this->postpone_job_time);
             return true;
         }
 
@@ -216,7 +216,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             $count = $this->indexRecords($module, $fieldDefinitions);
             if ($count == -1) {
                 $GLOBALS['log']->fatal('FTS failed to index records, postponing job for next cron');
-                $this->schedulerJob->postponeJob('FTS failed to index', self::POSTPONE_JOB_TIME);
+                $this->schedulerJob->postponeJob('FTS failed to index', $this->postpone_job_time);
                 return true;
             }
         }
@@ -239,7 +239,7 @@ class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
             {
                 // Mark the job that as pending so we can be invoked later.
                 $GLOBALS['log']->info('FTS Sync Indexing partially done, postponing job for next cron');
-                $this->schedulerJob->postponeJob('FTS indexing from queue not completed', self::POSTPONE_JOB_TIME);
+                $this->schedulerJob->postponeJob('FTS indexing from queue not completed', $this->postpone_job_time);
             }
         }
 
