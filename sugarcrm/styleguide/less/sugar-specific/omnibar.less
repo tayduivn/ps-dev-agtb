@@ -1,34 +1,23 @@
 .omnibar {
-  padding: 10px 0 10px 20px;
-  margin: 0;
+  padding: 10px 20px;
   border-bottom: 1px solid darken(@grayLighter, 5%);
-  &.row {
-    margin: 0;
+  .inputwrapper {
+    position: relative;
+    margin-left: 60px;
   }
   .sayit  {
-    padding: 6px 8px; position: relative; z-index: 1;
+    padding: 6px 8px;
     border: dashed 1px @grayLight;
-    min-height: 30px !important;
-    margin: 0;
+    min-height: 20px;
     color: @gray;
-  }
-  .sayit:focused  {
-    border: solid 1px @grayLight;
-    color: @gray;
+    &:focus {
+      border-style: solid;
+    }
   }
   .inputactions {
     background: @grayLighter;
+    height: 30px;
     padding: 8px;
-    margin: 0;
-    z-index: 0;
-    position: relative;
     .border-radius(0 0 3px 3px);
-  }
-  .inputactions a i {
-    color: @gray;
-    padding: 8px;
-    font-size: 18px;
-    line-height: 8px;
-    margin: 0 8px;
   }
 }
