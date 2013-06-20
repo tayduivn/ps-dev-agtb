@@ -141,15 +141,23 @@
      * Set up the commit_stage field based on forecast settings - if forecasts is set up, adds the correct dropdown
      * elements, if forecasts is not set up, it removes the field.
      * @param array panels
-     * @private
+     * @protected
      */
     _setupCommitStageField: function(panels) {
         _.each(panels, function(panel) {
             if (!app.metadata.getModule("Forecasts", "config").is_setup) {
-                panel.fields = _.filter(panel.fields, function(field) {
-                    // also remove the spacer so the look stays the same
-                    return (field.name != "commit_stage" && field.name != "cs_spacer");
-                });
+                // use _.every so we can break out after we found the commit_stage field
+                _.every(panel.fields, function(field, index) {
+                    if (field.name == 'commit_stage') {
+                        panel.fields[index] = {
+                            'name': 'spacer',
+                            'span': 6,
+                            'readonly': true
+                        };
+                        return false;
+                    }
+                    return true;
+                }, this);
             } else {
                 _.each(panel.fields, function(field) {
                     if (field.name == "commit_stage") {
