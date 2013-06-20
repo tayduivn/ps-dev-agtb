@@ -857,7 +857,12 @@ $dictionary['RevenueLineItem'] = array(
             'rhs_module' => 'RevenueLineItems',
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
-            'relationship_type' => 'one-to-one'
+            //BEGIN SUGARCRM flav=pro && flav != ent ONLY
+            'relationship_type' => 'one-to-one',
+            //END SUGARCRM  flav=pro && flav != ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            'relationship_type' => 'one-to-many',
+            //END SUGARCRM flav=ent ONLY
         ),
         'revenuelineitems_accounts' =>  array(
             'lhs_module' => 'Accounts',

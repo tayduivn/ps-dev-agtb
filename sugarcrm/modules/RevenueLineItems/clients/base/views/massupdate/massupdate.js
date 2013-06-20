@@ -50,7 +50,7 @@
         if (!_.isEmpty(invalidItems)) {
 
             var messages = [app.lang.get("LBL_CONVERT_INVALID_RLI", this.module)],
-                messageTpl = Handlebars.compile(app.lang.get('TPL_CONVERT_INVALID_RLI', this.module));
+                messageTpl = app.template.getView('massupdate.invalid_link', this.module);;
 
             _.each(invalidItems, function(item) {
                 messages.push(messageTpl(item.attributes));
