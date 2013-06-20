@@ -61,7 +61,7 @@ class DownloadFile {
      * @param string $type Field type (image/file)
      * @param array $info Array containing the file details.
      */
-    public function outputFile($type, $info) {
+    public function outputFile($type, array $info) {
         header("Pragma: public");
         header("Cache-Control: maxage=1, post-check=0, pre-check=0");
 
@@ -312,7 +312,7 @@ class DownloadFileApi extends DownloadFile
      * - content-type - content type for the file
      *
      */
-    public function outputFile($type, $info)
+    public function outputFile($type, array $info)
     {
         if(empty($info['path'])) {
             throw new SugarApiException('No file name supplied');
