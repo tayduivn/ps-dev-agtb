@@ -84,3 +84,163 @@ var mark_gibson_Q1 = {
         "goalmarkervalue": ["360000.00", "227500.00"],
     }]
 };
+
+var forecast_data_Q1 = {
+  "properties": [
+    {
+      "gauge_target_list": "Array",
+      "title": " for Q2 (04/01/2013 - 06/30/2013)",
+      "subtitle": "",
+      "type": "bar chart",
+      "legend": "on",
+      "labels": "value",
+      "print": "on",
+      "thousands": "",
+      "goal_marker_type": [
+        "group",
+        "pareto"
+      ],
+      "goal_marker_color": [
+        "#000000",
+        "#7D12B2"
+      ],
+      "goal_marker_label": [
+        "Quota",
+        "Likely Case"
+      ],
+      "label_name": "Sales Stage",
+      "value_name": "Likely Case"
+    }
+  ],
+  "color": [
+    "#468c2b",
+    "#8c2b2b",
+    "#2b5d8c",
+    "#cd5200",
+    "#e6bf00",
+    "#7f3acd",
+    "#00a9b8",
+    "#572323",
+    "#004d00",
+    "#000087",
+    "#e48d30",
+    "#9fba09",
+    "#560066",
+    "#009f92",
+    "#b36262",
+    "#38795c",
+    "#3D3D99",
+    "#99623d",
+    "#998a3d",
+    "#994e78",
+    "#3d6899",
+    "#CC0000",
+    "#00CC00",
+    "#0000CC",
+    "#cc5200",
+    "#ccaa00",
+    "#6600cc",
+    "#005fcc"
+  ],
+  "label": [
+    "Closed Won",
+    "Negotiation/Review",
+    "Closed Lost",
+    "Id. Decision Makers"
+  ],
+  "values": [
+    {
+      "label": "April 2013",
+      "gvalue": 0,
+      "gvaluelabel": "$0.00",
+      "values": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "valuelabels": [
+        "$0.00",
+        "$0.00",
+        "$0.00",
+        "$0.00"
+      ],
+      "links": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "goalmarkervalue": [
+        "172154.27",
+        "0.00"
+      ],
+      "goalmarkervaluelabel": [
+        "$172154.27",
+        "$0.00"
+      ]
+    },
+    {
+      "label": "May 2013",
+      "gvalue": 0,
+      "gvaluelabel": "$0.00",
+      "values": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "valuelabels": [
+        "$0.00",
+        "$0.00",
+        "$0.00",
+        "$0.00"
+      ],
+      "links": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "goalmarkervalue": [
+        "172154.27",
+        "0.00"
+      ],
+      "goalmarkervaluelabel": [
+        "$172154.27",
+        "$0.00"
+      ]
+    },
+    {
+      "label": "June 2013",
+      "gvalue": 122967.33,
+      "gvaluelabel": "$122967.33",
+      "values": [
+        48695,
+        36900,
+        15459,
+        21913.33
+      ],
+      "valuelabels": [
+        "$48695.00",
+        "$36900.00",
+        "$15459.00",
+        "$21913.33"
+      ],
+      "links": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "goalmarkervalue": [
+        "172154.27",
+        "122967.33"
+      ],
+      "goalmarkervaluelabel": [
+        "$172154.27",
+        "$122967.33"
+      ]
+    }
+  ]
+};
