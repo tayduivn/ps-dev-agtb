@@ -8,7 +8,7 @@
     className: "subpanel-header",
     events: {
         "click": "togglePanel",
-        "click a[name=create_button]": "openCreateDrawer",
+        "click a[name=create_button]": "createRelatedRecord",
         "click a[name=select_button]": "openSelectDrawer"
     },
 
@@ -122,13 +122,35 @@
     },
 
     /**
-     * Event handler for the create button that opens a create dialog in a drawer for linking a new record.
+     * Event handler for the create button that launches UI for creating a related record for this subpanel
+     * For sidecar modules, this means a drawer is opened with the create dialog inside.
+     * For BWC modules, this means we trigger a create route to enter BWC mode
+     */
+    createRelatedRecord: function() {
+        var moduleMeta = app.metadata.getModule(this.module);
+        if(moduleMeta && moduleMeta.isBwcEnabled){
+            this.routeToBwcCreate();
+        } else {
+            this.openCreateDrawer();
+        }
+    },
+
+    /**
+     * Route to Create Related record UI for a BWC module
+     */
+    routeToBwcCreate: function() {
+        var parentModel = this.context.parent.get("model");
+        var link = this.context.get("link");
+        app.bwc.createRelatedRecord(this.module, parentModel, link);
+    },
+
+    /**
+     * For sidecar modules, we create new records by launching a create drawer UI
      */
     openCreateDrawer: function() {
         var parentModel = this.context.parent.get("model"),
             link = this.context.get("link"),
             model = this.createLinkModel(parentModel, link);
-
         var self = this;
         app.drawer.open({
             layout: 'create-actions',
