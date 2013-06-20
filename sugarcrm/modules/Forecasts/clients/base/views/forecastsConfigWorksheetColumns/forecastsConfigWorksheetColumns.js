@@ -135,7 +135,7 @@
                 _.each(metaFields, function(metaField) {
                     _.each(cfgFields, function(field) {
                         if(metaField.name == field) {
-                            var labelModule = field.label_module || 'Forecasts';
+                            var labelModule = metaField.label_module || 'Forecasts';
                             arr.push(app.lang.get(metaField.label, labelModule));
                         }
                     }, this);

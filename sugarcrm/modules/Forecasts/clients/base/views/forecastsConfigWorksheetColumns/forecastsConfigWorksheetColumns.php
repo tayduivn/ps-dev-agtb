@@ -108,7 +108,8 @@ $fields = array(
     ),
     array(
         'name' => 'name',
-        'label' => 'LBL_REVENUE_LINE_ITEM_NAME',
+        'label' => 'LBL_LIST_NAME',
+        'label_module' => 'Products'
     ),
     array(
         'name' => 'opportunity_name',
@@ -179,9 +180,8 @@ $fields = array(
         'label_module' => 'Products'
     ),
     array(
-        'name' => 'product_template_name',
-        'label' => 'LBL_PRODUCT_TEMPLATE',
-        'label_module' => 'Products'
+        'name' => 'category_name',
+        'label' => 'LBL_CATEGORY',
     ),
     array(
         'name' => 'total_amount',
