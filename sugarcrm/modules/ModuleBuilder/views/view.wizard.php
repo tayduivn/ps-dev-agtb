@@ -346,17 +346,11 @@ class ModuleBuilderViewWizard extends SugarView
 
     public function generateMBViewButtons()
     {
-        $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_EDITVIEW' ] ] =
+        $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_RECORDVIEW' ] ] =
           array (
-              'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_EDITVIEW."&view_module={$this->editModule}&view_package={$this->package}" ,
-              'imageTitle' => 'EditView',
-              'help'=>'viewBtnEditView'
-          ) ;
-        $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_DETAILVIEW' ] ] =
-          array (
-              'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_DETAILVIEW."&view_module={$this->editModule}&view_package={$this->package}" ,
-              'imageTitle' => 'DetailView',
-              'help'=>'viewBtnListView'
+              'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_RECORDVIEW."&view_module={$this->editModule}&view_package={$this->package}" ,
+              'imageTitle' => 'Record',
+              'help'=>'viewBtnRecordView'
           ) ;
         $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_LISTVIEW' ] ] =
           array (
