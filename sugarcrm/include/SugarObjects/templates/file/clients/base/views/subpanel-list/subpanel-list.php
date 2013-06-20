@@ -21,11 +21,6 @@ $viewdefs[$module_name]['base']['view']['subpanel-list'] = array(
       'fields' => 
       array(
         array(
-          'enabled' => true,
-          'default' => true,
-          'name' => 'object_image',
-        ),
-        array(
           'name' => 'document_name',
           'label' => 'LBL_LIST_DOCUMENT_NAME',
           'enabled' => true,

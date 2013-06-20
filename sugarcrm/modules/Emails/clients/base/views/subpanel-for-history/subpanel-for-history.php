@@ -12,18 +12,13 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Emails']['base']['view']['subpanel-for-history'] = array(
-  'panels' => 
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
-        array(
-          'enabled' => true,
-          'default' => true,
-          'name' => 'object_image',
-        ),
         array(
           'label' => 'LBL_LIST_SUBJECT',
           'enabled' => true,
