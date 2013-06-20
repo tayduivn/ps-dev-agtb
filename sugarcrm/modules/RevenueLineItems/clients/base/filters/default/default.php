@@ -15,22 +15,41 @@ $viewdefs['RevenueLineItems']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'contact_name_related' => array(
+        'opportunity_name_related' => array(
             'dbFields' => array(
-                'contact_link.first_name',
-                'contact_link.last_name',
+                'opportunities.name',
             ),
             'type' => 'text',
-            'vname' => 'LBL_CONTACT_NAME',
+            'vname' => 'LBL_OPPORTUNITY_NAME',
         ),
-        'status' => array(),
-        'type_id' => array(),
-        'category_id' => array(),
-        'manufacturer_id' => array(),
-        'mft_part_num' => array(),
-        'vendor_part_num' => array(),
-        'tax_class'=> array(),
-        'support_term'=> array(),
+        'account_name_related' => array(
+            'dbFields' => array(
+                'account_link.name',
+            ),
+            'type' => 'text',
+            'vname' => 'LBL_ACCOUNT_NAME',
+        ),
+        'sales_stage' => array(),
+        'probability' => array(),
+        'date_closed' => array(),
+        'commit_stage' => array(),
+        'product_template_name_related' => array(
+            'dbFields' => array(
+                'revenuelineitem_templates_link.name'
+            ),
+            'type' => 'text',
+            'vname' => 'LBL_PRODUCT'
+        ),
+        'category_name_related' => array(
+            'dbFields' => array(
+                'revenuelineitem_categories_link.name'
+            ),
+            'type' => 'text',
+            'vname' => 'LBL_CATEGORY_NAME'
+        ),
+        'worst_case' => array(),
+        'likely_case' => array(),
+        'best_case' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
         '$favorite' => array(
