@@ -290,8 +290,7 @@ class SugarBeanApiHelper
         $timedate = TimeDate::getInstance();
         $ts_client = $timedate->fromIso($timestamp);
         if(empty($ts_client)) {
-            // timestamp is incomprehensible, defaulting to no conflict
-            return true;
+            throw new SugarApiExceptionInvalidParameter("Bad timestamp $timestamp");
         }
         $ts_server = $timedate->fromDb($bean->date_modified);
         if(empty($ts_server)) {
