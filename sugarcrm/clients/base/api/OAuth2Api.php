@@ -105,19 +105,7 @@ class OAuth2Api extends SugarApi
         return $authData;
     }
 
-    public function tokenSAML($api, $args)
-    {
-        $args['grant_type'] = 'urn:ietf:params:oauth:grant-type:saml2-bearer';
-        $args['client_id'] = 'sugar';
-        $args['client_secret'] = '';
-        if(!empty($args['SAMLResponse'])) {
-            $args['assertion'] = base64_encode($args['SAMLResponse']);
-        }
-        // TODO: return appropriate login/JS page
-        return $this->token($api, $args);
-    }
-
-    public function logout($api, $args)
+    public function logout($api, $args) 
     {
         $oauth2Server = $this->getOAuth2Server($args);
         if(!empty($api->user)) {
