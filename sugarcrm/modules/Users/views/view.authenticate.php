@@ -18,24 +18,13 @@ require_once "include/api/RestService.php";
 require_once 'clients/base/api/OAuth2Api.php';
 require_once 'include/SugarOAuth2/SugarOAuth2Server.php';
 
-class UsersViewAuthenticate extends ViewSidecar
+class UsersViewAuthenticate extends SidecarView
 {
-
     /**
-     * Constructor
-     *
-     * @see SidecarView::SidecarView()
+     * Do we need only data for parent window or the whole Sidecar?
+     * @var bool
      */
-    public function __construct($bean = null, $view_object_map = array())
-    {
-        $this->options['show_title'] = false;
-        $this->options['show_header'] = false;
-        $this->options['show_footer'] = false;
-        $this->options['show_javascript'] = false;
-        $this->options['show_subpanels'] = false;
-        $this->options['show_search'] = false;
-        parent::__construct($bean, $view_object_map);
-    }
+    protected $dataOnly = false;
 
     public function preDisplay()
     {
@@ -65,6 +54,18 @@ class UsersViewAuthenticate extends ViewSidecar
         } catch (Exception $e) {
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
         }
+        if(!empty($_REQUEST['dataOnly'])) {
+            $this->dataOnly = true;
+        }
         parent::preDisplay();
+    }
+
+    public function display()
+    {
+        if($this->dataOnly) {
+            $this->ss->display(SugarAutoLoader::existingCustomOne('modules/Users/tpls/AuthenticateParent.tpl'));
+        } else {
+            parent::display();
+        }
     }
 }

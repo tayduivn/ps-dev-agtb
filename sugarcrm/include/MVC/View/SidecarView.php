@@ -76,10 +76,7 @@ class SidecarView extends SugarView
         $this->ss->assign("SLFunctionsPath", $slFunctionsPath);
         if(!empty($this->authorization)) {
             $this->ss->assign('appPrefix', $config['env'].":".$config['appId'].":");
-            $this->ss->assign('accessToken', $this->authorization['access_token']);
-            if(!empty($this->authorization['refresh_token'])) {
-                $this->ss->assign('refreshToken',  $this->authorization['refresh_token']);
-            }
+            $this->ss->assign('authorization', $this->authorization);
         }
     }
 

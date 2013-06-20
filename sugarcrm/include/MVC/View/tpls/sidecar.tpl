@@ -83,10 +83,10 @@
         <script language="javascript" src="include/javascript/sugar7/hbt-helpers.js"></script>
         <script language="javascript">
             var App;
-			{/literal}{if $accessToken}
-			SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$accessToken}")
-			{if $refreshToken}
-			SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$refreshToken}")
+			{/literal}{if $authorization}
+			SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$authorization.access_token}")
+			{if $authorization.refresh_token}
+			SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}")
 			{/if}
 			window.location = SUGAR.App.config.siteUrl+"/"+window.location.hash
 			{/if}{literal}
