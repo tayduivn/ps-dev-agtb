@@ -33,8 +33,8 @@
      * Change to the spinning icon to indicate that loading process is triggered
      */
     refreshClicked: function() {
-        var $el = this.$("[data-action=loading]");
-        var self = this,
+        var $el = this.$("[data-action=loading]"),
+            self = this,
             options = {};
         if($el.length > 0) {
             $el.removeClass(this.cssIconDefault).addClass(this.cssIconRefresh);

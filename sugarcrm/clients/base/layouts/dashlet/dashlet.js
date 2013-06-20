@@ -18,7 +18,12 @@
         if (!(this.meta.preview || this.meta.empty)) {
             var dashletDef = _.first(components),
                 dashletMeta,
-                toolbar = {};
+                toolbar = {},
+                pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/,
+                label = this.meta.label;
+            if(pattern.test(this.meta.label)) {
+                label = app.lang.get(label, dashletDef.view ? dashletDef.view.module : dashletDef.layout.module);
+            }
             //try to get the dashlet widget metadata
             if(dashletDef.view) {
                 toolbar = dashletDef.view['custom_toolbar'] || {};
@@ -35,7 +40,7 @@
                 components.push({
                     view: {
                         type: 'dashlet-toolbar',
-                        label: this.meta.label,
+                        label: label,
                         toolbar: toolbar
                     }
                 });
@@ -317,7 +322,7 @@
      * @param {String} (edit|drag|view)
      */
     setMode: function(type) {
-        if(!this._invisible) {
+        if (!this._invisible) {
             return;
         }
         if (type === 'edit' || type === 'drag') {
