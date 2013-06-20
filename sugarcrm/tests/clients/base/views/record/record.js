@@ -19,7 +19,6 @@ describe("Record View", function () {
         SugarTest.loadComponent('base', 'field', 'rowaction');
         SugarTest.loadComponent('base', 'field', 'fieldset');
         SugarTest.loadComponent('base', 'field', 'actiondropdown');
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
             "buttons": [
@@ -668,6 +667,39 @@ describe("Record View", function () {
             view.getField('name').$el.closest('.record-cell').find('a.record-edit-link').click();
 
             expect(view.$('.record-label[data-name=name]').css('display')).not.toBe('none');
+        });
+    });
+
+    describe('Set and restore last state', function(){
+        describe('more_less toggle', function(){
+            it("should set state when more/less is toggled", function(){
+                var setStateStub = sinon.stub(SugarTest.app.user.lastState, "set", $.noop());
+                view.toggleMoreLess();
+                expect(setStateStub.calledOnce).toBe(true);
+                view.toggleMoreLess();
+                expect(setStateStub.calledTwice).toBe(true);
+                setStateStub.restore();
+            });
+            it("should toggleMoreLess during render when last state is 'less'", function(){
+                var getState = "less";
+                var getStateStub = sinon.stub(SugarTest.app.user.lastState, "get", function(){
+                    return getState;
+                });
+                var toggleMoreLessStub = sinon.stub(view, 'toggleMoreLess', $.noop());
+                view.render();
+                expect(getStateStub.calledOnce).toBe(true);
+                expect(toggleMoreLessStub.calledOnce).toBe(true);
+                toggleMoreLessStub.reset();
+                getStateStub.reset();
+
+                getState = "more";
+                view.render();
+                expect(getStateStub.calledOnce).toBe(true);
+                expect(toggleMoreLessStub.called).toBe(false);
+
+                toggleMoreLessStub.restore();
+                getStateStub.restore();
+            });
         });
     });
 

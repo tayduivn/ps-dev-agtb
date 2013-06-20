@@ -64,7 +64,8 @@ $mod_strings = array (
   'LBL_CURRENT_USER_NO_QUOTA' => 'You have not been assigned a quota for this time period.',
   'LBL_USER_ID' => 'User ID',
 	'LBL_EDITLAYOUT' => 'EditLayout' /*for 508 compliance fix*/,
+
+    'LBL_QUOTA_TYPE' => 'Type',
+    'LBL_AMOUNT_BASE_CURRENCY' => 'Base Currency Amount',
+    'LBL_CREATED_BY' => 'Created By'
 );
-
-
-?>

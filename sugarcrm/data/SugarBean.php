@@ -1623,6 +1623,10 @@ class SugarBean
      */
     function setupCustomFields($module_name, $clean_load=true)
     {
+        if (empty($module_name)) {
+            // No need to load every single dynamic field here
+            return;
+        }
         $this->custom_fields = new DynamicField($module_name);
         $this->custom_fields->setup($this);
 
@@ -6694,6 +6698,35 @@ class SugarBean
            }
        }
        return $this->related_beans[$link];
+    }
+
+    /**
+     * Determines a user's access to the current bean, taking both team security
+     * and ACLs into consideration.
+     * @param  User $user
+     * @param  string $bf Do not use. Used for testing only.
+     * @return bool       True if $user has access, false otherwise.
+     */
+    public function checkUserAccess(User $user = null, $bf = 'BeanFactory')
+    {
+        $userHasAccess = false;
+        if (is_null($user)) {
+            $user = $GLOBALS['current_user'];
+        }
+
+        $save_user = $GLOBALS['current_user'];
+        $GLOBALS['current_user'] = $user;
+
+        if (!empty($this->id)) {
+            $newBean = $bf::retrieveBean($this->module_name, $this->id, array('use_cache' => false));
+            if (!empty($newBean)) {
+                $context = array('user' => $user);
+                $userHasAccess = $this->ACLAccess('view', $context);
+            }
+        }
+
+        $GLOBALS['current_user'] = $save_user;
+        return $userHasAccess;
     }
 
 	/**

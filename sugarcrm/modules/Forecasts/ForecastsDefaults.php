@@ -86,10 +86,10 @@ class ForecastsDefaults
             'has_commits' => 0,
             // indicates how data is displayed in the worksheet
             //BEGIN SUGARCRM flav=ent ONLY
-            'forecast_by' => 'products', // options: 'products' or 'opportunities'
+            'forecast_by' => 'RevenueLineItems', // options: 'RevenueLineItems' or 'Opportunities'
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'forecast_by' => 'opportunities', // options: 'products' or 'opportunities'
+            'forecast_by' => 'Opportunities', // options: 'RevenueLineItems' or 'Opportunities'
             //END SUGARCRM flav=pro && flav!=ent ONLY
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
@@ -100,9 +100,9 @@ class ForecastsDefaults
             // the starting point for each fiscal year, this is also used as the starting point to dynamically build the timeperiods
             'timeperiod_start_date' => date("Y") . '-01-01',
             // number of timeperiods forward from the current that are displayed
-            'timeperiod_shown_forward' => 2,
+            'timeperiod_shown_forward' => '2',
             // number of timeperiods in the past from the current that are displayed
-            'timeperiod_shown_backward' => 2,
+            'timeperiod_shown_backward' => '2',
             // used to indicate the available option for grouping opportunities
             'forecast_ranges' => 'show_binary', // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use

@@ -7,11 +7,13 @@ $viewdefs['Home']['base']['view']['webpage'] = array(
             'description' => 'Web Page',
             'config' => array(
                 'url' => 'http://www.sugarcrm.com',
+                'module' => 'Home',
             ),
             'preview' => array(
                 'title' => 'Web Page',
                 'url' => 'www.sugarcrm.com',
                 'limit' => '3',
+                'module' => 'Home',
             ),
         ),
     ),

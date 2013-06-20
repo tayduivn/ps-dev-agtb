@@ -21,12 +21,20 @@
                         empty: true,
                         components: [
                             {
-                                view: 'dashlet-cell-empty'
+                                view: 'dashlet-cell-empty',
+                                context:{
+                                    module:'Home',
+                                    create:true
+                                }
                             }
                         ]
                     }
                 }, component);
             } else {
+                var def = component.view || component.layout;
+                if (!_.isObject(def)) {
+                    def = component;
+                }
                 if(component.context) {
                     _.extend(component.context, {
                         forceNew: true
@@ -36,7 +44,7 @@
                     layout: {
                         type: 'dashlet',
                         index: this.index + '' + index,
-                        label: component.name,
+                        label: def.label || def.name || "",
                         components: [
                             component
                         ]

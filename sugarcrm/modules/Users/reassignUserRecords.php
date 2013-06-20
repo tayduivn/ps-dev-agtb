@@ -298,7 +298,7 @@ else if(!isset($_GET['execute'])){
 	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_TWO']}\n";
 	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
 	echo "</ul>\n";
-	require_once('vendors/Smarty/plugins/function.sugar_help.php');
+	require_once('vendor/Smarty/plugins/function.sugar_help.php');
 	$sugar_smarty = new Sugar_Smarty();
         $help_img = smarty_function_sugar_help(array("text"=>$mod_strings['LBL_REASS_VERBOSE_HELP']),$sugar_smarty);
 	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";

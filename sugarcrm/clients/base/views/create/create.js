@@ -287,8 +287,10 @@
      * during save
      *
      * Override to return set of custom options
+     *
+     * @param {Object} options The current set of options that is going to be used.  This is hand for extending
      */
-    getCustomSaveOptions: function () {
+    getCustomSaveOptions: function (options) {
         return {};
     },
 
@@ -323,7 +325,7 @@
             }
         };
 
-        options = _.extend({}, options, self.getCustomSaveOptions());
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
         self.model.save(null, options);
     },
 

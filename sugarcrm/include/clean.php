@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'vendors/HTMLPurifier/HTMLPurifier.standalone.php';
+require_once 'vendor/HTMLPurifier/HTMLPurifier.standalone.php';
 
 /**
  * cid: scheme implementation

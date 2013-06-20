@@ -3,7 +3,7 @@
     {{#each this.leftColumns}}
         <td>&nbsp;</td>
     {{/each}}
-    <td colspan='5' class="tright">{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</td>
+    <td colspan='{{totals_colspan}}' class="tright">{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</td>
 
     {{#if this.totals.likely_case_display}}
         <td class="tright">{{formatCurrency this.totals.likely_case}}</td>
@@ -25,7 +25,7 @@
     {{#each this.leftColumns}}
         <td>&nbsp;</td>
     {{/each}}
-    <td colspan='5' class="tright">{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</td>
+    <td colspan='{{totals_colspan}}' class="tright">{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</td>
 
     {{#if this.totals.likely_case_display}}
         <td class="tright">{{formatCurrency this.totals.overall_likely_case}}</td>

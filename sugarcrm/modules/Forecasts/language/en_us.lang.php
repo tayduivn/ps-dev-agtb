@@ -333,13 +333,10 @@ $mod_strings = array (
     'LBL_FORECAST_SETTINGS' => 'Settings',
 
     // config panels strings
-    // splash screens
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setup',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the Forecasts Setup!',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'This wizard will guide you through the step-by-step setup of the Forecasts module. Default values are provided for each section, so you\'ll be on your way in no time!',
-    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_3' => 'You can also do manual setup by clicking ',
-    'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
-    'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
+
+    'LBL_FORECASTS_MISSING_STAGE_TITLE' => 'Forecasts Configuration Error:',
+    'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES' => 'The Forecasts module has been improperly configured and is no longer available. Sales Stage Won and Sales Stage Lost must contain at least one value found in Sales Stage. Please contact your Administrator.',
 
     // Panel and BreadCrumb Labels
     'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT' => 'Worksheet Layout',
@@ -347,6 +344,25 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_BREADCRUMB_SCENARIOS' => 'Scenarios',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
+
+    // Admin UI
+    'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS' => 'Forecast Settings',
+    'LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS' => 'Time Period',
+    'LBL_FORECASTS_CONFIG_TITLE_RANGES' => 'Forecast Ranges',
+    'LBL_FORECASTS_CONFIG_TITLE_SCENARIOS' => 'Scenarios',
+    'LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS' => 'Worksheet Columns',
+    'LBL_FORECASTS_CONFIG_TITLE_FORECAST_BY' => 'View Forecast Worksheet By',
+
+    'LBL_FORECASTS_CONFIG_HOWTO_TITLE_FORECAST_BY' => 'Forecast By',
+
+    'LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS' => 'Fiscal year start date:',
+
+    'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Conﬁgure the time period that will be used in the Forecasts module.<br><br>Start by choosing the Start Date of your ﬁscal year. Then choose the type of  time period that you want to forecast over. The date range for the time periods will be automatically calculated based on your selections. The Sub Time Period is the base for the Forecast worksheet.<br><br>The viewable future and past time periods will determine the number of visible sub-periods in the Forecasts module. The users are able to view and edit the forecasting numbers in the visible  sub-periods.',
+    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to tag the opportunities (for example which opportunities should be included or excluded from the forecasting numbers). You can choose the number of categories and determine the ranges of the probabilities for the categories. The opportunities with certain probabilities will default  to the corresponding category. After the initial tag, the user can manually modify the value. Only the opportunities in the "Included" category will be reported to managers as committed.',
+    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to ﬁll out for their forecasts of each opportunity. Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'Select which columns you would like to view in the Forecast module. The list of fields will combine the worksheet and allow the user to choose how to configure its view.',
+    'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY' => 'I am a placeholder for Forecast By how-to text!',
+    'LBL_FORECASTS_CONFIG_SETTINGS_SAVED' => 'Forecast config settings have been saved.',
 
     // timeperiod config
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
@@ -411,5 +427,5 @@ $mod_strings = array (
 
     // pipline opportunities dashlet
     'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',
-    'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/layout/config">Please click here to configure Forecasting</a>.'
+    'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/config">Please click here to configure Forecasting</a>.'
 );

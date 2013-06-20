@@ -11,8 +11,8 @@ class SugarUpgradeRunSQL extends UpgradeScript
 
     public function run()
     {
-        $vfrom = $this->implodeVersion($this->from_version);
-        $vto = $this->implodeVersion($this->to_version);
+        $vfrom = $this->implodeVersion($this->from_version, 2);
+        $vto = $this->implodeVersion($this->to_version, 2);
         $this->log("Looking for SQL scripts from $vfrom/{$this->from_flavor} to $vto/{$this->to_flavor}");
         if ($vfrom == $vto) {
             if ($this->from_flavor == $this->to_flavor) {
@@ -35,28 +35,20 @@ class SugarUpgradeRunSQL extends UpgradeScript
     protected function parseAndExecuteSqlFile($sqlScript)
     {
         // TODO: resume support?
-        $contents = file_get_contents($sqlScript);
+        $contents = file($sqlScript);
         $anyScriptChanges = $contents;
         $resumeAfterFound = false;
-        if (rewind($fp)) {
-            $completeLine = '';
-            $count = 0;
-            while ($line = fgets($fp)) {
-                if (strpos($line, '--') === false) {
-                    $completeLine .= " " . trim($line);
-                    if (strpos($line, ';') !== false) {
-                        $query = str_replace(';', '', $completeLine);
-                        // if resume from query is not null then find out
-                        // from where
-                        // it should start executing the query.
-
-                        if ($query != null) {
-                            $this->db->query($query);
-                        }
-                        $completeLine = '';
-                    }
+        foreach($contents as $line) {
+            if (strpos($line, '--') === false) {
+               $completeLine .= " " . trim($line);
+               if (strpos($line, ';') !== false) {
+                   $query = str_replace(';', '', $completeLine);
+                   if ($query != null) {
+                       $this->db->query($query);
+                   }
+                   $completeLine = '';
                 }
-            } // while
-        }
+            }
+        } // foreach
     }
 }

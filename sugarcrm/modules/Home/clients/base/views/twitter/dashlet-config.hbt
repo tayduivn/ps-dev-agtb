@@ -1,9 +1,9 @@
 <div class="record">
-    {{#each meta.config.fields}}
+    {{#each dashletConfig.config.fields}}
         <div class="row-fluid panel_body">
             <div class="record-cell">
                 <div class="record-label">{{str label}}</div>
-                {{field ../this model=../this.model template=../this.action}}
+                {{field ../this model=../this.settings template=../this.action}}
             </div>
         </div>
     {{/each}}

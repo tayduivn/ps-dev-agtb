@@ -280,6 +280,9 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         //Disable fire on load for now as we no longer have edit vs detail views and
         //this is just costing us performance.
         //this.view.model.once("change", SUGAR.forms.Trigger.fire, dep.trigger);
+    },
+    getAppListStrings : function(list) {
+        return SUGAR.App.lang.getAppListStrings(list);
     }
 });
 

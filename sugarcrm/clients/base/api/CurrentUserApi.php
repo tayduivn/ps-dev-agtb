@@ -376,13 +376,20 @@ class CurrentUserApi extends SugarApi
 
         $user_data['preferences']['language'] = $language;
 
-        // email preferences
+        // email signature preferences
         $user_data['preferences']['signature_default'] = $current_user->getDefaultSignature();
         $user_data['preferences']['signature_prepend'] = $current_user->getPreference('signature_prepend') ? 'true' : 'false';
 
-        // outbound email configuration preferences
-        $hasValidOutboundEmailConfiguration = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user);
-        $user_data['preferences']['has_outbound_email_config'] = $hasValidOutboundEmailConfiguration ? 'true' : 'false';
+        // email client preference
+        $useSugarEmailClient = ($current_user->getEmailClientPreference() === 'sugar');
+
+        if ($useSugarEmailClient && !OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user)) {
+            // even though the user's preference is to use the sugar email client, the user does not have a valid
+            // outbound email configuration, so email must be sent from the user's email client
+            $useSugarEmailClient = false;
+        }
+
+        $user_data['preferences']['use_sugar_email_client'] = ($useSugarEmailClient) ? 'true' : 'false';
 
         return $user_data;
     }

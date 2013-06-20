@@ -71,7 +71,6 @@
     },
 
     _metadata : {
-        _hash: '',
         "modules": {
             "Error": {
                 "views": {

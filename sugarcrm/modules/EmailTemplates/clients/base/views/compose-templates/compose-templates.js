@@ -31,7 +31,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['list-disable-sort'],
+    plugins: ['list-disable-sort', 'list-remove-links'],
 
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args: [options]});
@@ -41,16 +41,10 @@
             });
         });
 
-        this.on("render", this._removeLinks, this);
-
         //set the filter on the collection
         if(!_.isEmpty(this.meta.filterDef)) {
             this.collection.filterDef = this.meta.filterDef;
         }
-    },
-
-    _removeLinks: function() {
-        this.$('a:not(.rowaction)').contents().unwrap();
     },
 
     addActions: function() {

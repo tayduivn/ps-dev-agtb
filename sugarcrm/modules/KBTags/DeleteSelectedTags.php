@@ -33,8 +33,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/JSON.php');
 require_once('include/upload_file.php');
-require_once('vendors/ytree/Tree.php');
-require_once('vendors/ytree/Node.php');
+require_once('vendor/ytree/Tree.php');
+require_once('vendor/ytree/Node.php');
 require_once('modules/KBTags/TreeData.php');
 
 $tagHasArticle = '';

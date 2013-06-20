@@ -32,11 +32,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: vardefs.php 56115 2010-04-26 17:08:09Z kjing $
 
 $dictionary['Project'] = array(
-	'table' => 'project',
-	'unified_search' => true,
-	'full_text_search' => true,
-	'unified_search_default_enabled' => false,
-	'comment' => 'Project',
+    'table' => 'project',
+//BEGIN SUGARCRM flav=pro ONLY
+    'favorites' => false,
+//END SUGARCRM flav=pro ONLY
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => false,
+    'comment' => 'Project',
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',
@@ -379,6 +382,14 @@ $dictionary['Project'] = array(
             'side' => 'right',
             'source'=>'non-db',
             'vname'=>'LBL_PRODUCTS',
+        ),
+        'revenuelineitems' =>
+            array (
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'relationship' => 'projects_revenuelineitems',
+            'source'=>'non-db',
+            'vname'=>'LBL_REVENUELINEITEMS',
         ),
         //BEGIN SUGARCRM flav=pro ONLY
 		'user_resources' =>

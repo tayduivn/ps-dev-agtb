@@ -132,6 +132,22 @@
             show: _.bind(this.showDatepicker, this),
             hide: _.bind(this.hideDatepicker, this)
         });
+
+        $('.main-pane.span8').on('scroll', _.bind(function() {
+            this.$('.datepicker').datepicker('place');
+        }, this));
+        $('.flex-list-view-content').on('scroll', _.bind(function() {
+            this.$('.datepicker').datepicker('place');
+        }, this));
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    _dispose: function() {
+        $('.main-pane.span8').off();
+        $('.flex-list-view-content').off();
+        app.view.Field.prototype._dispose.call(this);
     },
     /**
      * Hook for when datepicker plugin shown.

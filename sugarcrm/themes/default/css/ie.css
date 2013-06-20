@@ -1,2 +1,9 @@
+.row-fluid .main-pane.span8 {
+  width: 67.75%;
+}
 
-
+@media (max-width: 768px) {
+  .row-fluid .span8.main-pane {
+    width: 100%;
+  }
+}

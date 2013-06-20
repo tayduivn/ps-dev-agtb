@@ -1,8 +1,7 @@
 ({
     inlineEditMode: false,
     createMode: false,
-    extendsFrom: 'EditableView',
-    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder'],
+    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable'],
     enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
@@ -15,6 +14,13 @@
     },
     // button fields defined in view definition
     buttons: null,
+
+    // "Show More" state per module
+    MORE_LESS_KEY: "more_less", //gets namespaced in initialize function
+    MORE_LESS: {
+        MORE: 'more',
+        LESS: 'less'
+    },
 
     // button states
     STATE: {
@@ -31,7 +37,7 @@
     initialize: function (options) {
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
-        app.view.invokeParent(this, {type: 'view', name: 'editable', method: 'initialize', args: [options]});
+        app.view.View.prototype.initialize.call(this, options);
         this.buttons = {};
         this.createMode = this.context.get("create") ? true : false;
 
@@ -42,6 +48,7 @@
         this.context.on("change:record_label", this.setLabel, this);
         this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
+        this.on("editable:keydown", this.handleKeyDown, this);
 
         this.delegateButtonEvents();
 
@@ -50,6 +57,8 @@
         }
 
         this.noEditFields = [];
+        // properly namespace SHOW_MORE_KEY key
+        this.MORE_LESS_KEY = app.user.lastState.key(this.MORE_LESS_KEY, this);
     },
 
     /**
@@ -119,6 +128,11 @@
             // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
             this.toggleFields(this.editableFields, true);
         }
+        // Restore state of 'Show More' panel by toggling it if 'Show Less' needs to be shown
+        if(app.user.lastState.get(this.MORE_LESS_KEY) === this.MORE_LESS.LESS){
+            this.toggleMoreLess();
+        }
+
     },
 
     setEditableFields: function () {
@@ -133,6 +147,7 @@
             }
             if (previousField) {
                 previousField.nextField = field;
+                field.prevField = previousField;
             } else {
                 firstField = field;
             }
@@ -141,6 +156,7 @@
         }, this);
         if (previousField) {
             previousField.nextField = firstField;
+            firstField.prevField = previousField;
         }
     },
     initButtons: function () {
@@ -189,6 +205,8 @@
         this.$(".less").toggleClass("hide");
         this.$(".more").toggleClass("hide");
         this.$(".panel_hidden").toggleClass("hide");
+        var moreLess = this.$(".less").is(".hide") ? this.MORE_LESS.MORE : this.MORE_LESS.LESS;
+        app.user.lastState.set(this.MORE_LESS_KEY, moreLess);
     },
 
     bindDataChange: function () {
@@ -300,6 +318,7 @@
         // Add your own field type handling for focus / editing here.
         switch (field.type) {
             case "image":
+            case "file":
                 var self = this;
                 app.file.checkFileFieldsAndProcessUpload(self, {
                         success: function () {
@@ -338,36 +357,41 @@
         }
     },
 
-    handleSave: function () {
+    handleSave: function() {
         var self = this;
         self.inlineEditMode = false;
 
-        var finalSuccess = function () {
-
-            if (self.createMode) {
-                app.navigate(self.context, self.model);
-            } else if (!self.disposed) {
-                self.render();
-            }
+        var options = {
+            showAlerts: true,
+            success: _.bind(function() {
+                if (this.createMode) {
+                    app.navigate(this.context, this.model);
+                } else if (!this.disposed) {
+                    this.render();
+                }
+            }, this),
+            viewed: true
         };
+
+        options = _.extend({}, options, self.getCustomSaveOptions(options));
+
         app.file.checkFileFieldsAndProcessUpload(self, {
-                success: function () {
-                    self.model.save({}, {
-                        //Show alerts for this request
-                        showAlerts: true,
-                        success: finalSuccess,
-                        viewed: true
-                    });
+                success: function() {
+                    self.model.save({}, options);
                 }
             }, {
                 deleteIfFails: false
             }
         );
 
-        self.$(".record-save-prompt").hide();
+        self.$('.record-save-prompt').hide();
         if (!self.disposed) {
             self.render();
         }
+    },
+
+    getCustomSaveOptions: function(options) {
+        return {};
     },
 
     handleCancel: function () {
@@ -403,32 +427,29 @@
     },
 
     handleKeyDown: function (e, field) {
-        app.view.invokeParent(this, {type: 'view', name: 'editable', method: 'handleKeyDown', args: [e, field]});
         if (e.which === 9) { // If tab
             e.preventDefault();
-            // field isnt done being focused yet so focus some more
-            if (_.isFunction(field.focus) && field.focus()) {
-                return true;
-            } else {
-                field.$(field.fieldTag).trigger("change");
-                if (field.nextField) {
-                    if (field.nextField.$el.closest('.panel_hidden').hasClass('hide')) {
-                        this.toggleMoreLess();
-                    }
-                    this.toggleField(field, false);
-                    this.toggleField(field.nextField, true);
-                    // the field we need to toggle until we reach one that's not
-                    if (field.isDisabled() && field.nextField) {
-                        var curField = field;
-                        while (curField.isDisabled) {
-                            if (curField.nextField) {
-                                this.toggleField(curField.nextField, true);
-                                curField = curField.nextField;
-                            } else {
-                                break;
-                            }
+            field.$(field.fieldTag).trigger("change");
+            var direction = e.shiftKey ? 'prevField' : 'nextField',
+                nextField = field[direction];
 
+            if (nextField) {
+                if (nextField.$el.closest('.panel_hidden').hasClass('hide')) {
+                    this.toggleMoreLess();
+                }
+                this.toggleField(field, false);
+                this.toggleField(nextField, true);
+                // the field we need to toggle until we reach one that's not
+                if (field.isDisabled() && nextField) {
+                    var curField = field;
+                    while (curField.isDisabled) {
+                        if (curField[direction]) {
+                            this.toggleField(curField[direction], true);
+                            curField = curField[direction];
+                        } else {
+                            break;
                         }
+
                     }
                 }
             }
@@ -468,10 +489,12 @@
     _dispose: function () {
         _.each(this.editableFields, function(field) {
             field.nextField = null;
+            field.prevField = null;
         });
         this.buttons = null;
         this.editableFields = null;
-        app.view.invokeParent(this, {type: 'view', name: 'editable', method: '_dispose'});
+        this.off("editable:keydown", this.handleKeyDown, this);
+        app.view.View.prototype._dispose.call(this);
     },
 
     _buildGridsFromPanelsMetadata: function(panels) {

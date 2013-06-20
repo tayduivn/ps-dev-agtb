@@ -36,8 +36,11 @@ $bootstrap_css = $theme->getCSSURL();
 
     <head>
         <title>SugarCRM Auto Generated API Help</title>
-        <link rel="stylesheet" href="../../<?php echo $bootstrap_css ?>">
-
+        <?php
+        foreach($bootstrap_css as $css) {
+            echo '<link rel="stylesheet" href="../../' . $css . '">';
+        }
+        ?>
         <style>
 
             body {

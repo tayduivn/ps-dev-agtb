@@ -44,6 +44,8 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp("current_user");
+        SugarTestHelper::setUp('ACLStatic');
+
         // create a bunch of accounts
         for ($x=0; $x<10; $x++) {
             $acc = BeanFactory::newBean('Accounts');
@@ -87,7 +89,7 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         SugarTestACLUtilities::setupUser($role);
-
+        SugarTestHelper::clearACLCache();
         // test I can retreive accounts
         $args = array('module_list' => 'Accounts',);
         $list = $this->unifiedSearchApi->globalSearch($this->serviceMock, $args);
@@ -101,6 +103,7 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
         $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), array('Accounts', ), array('access', 'view', 'list', ));
 
         SugarTestACLUtilities::setupUser($role);
+        SugarTestHelper::clearACLCache();
 
         // test I can retrieve accounts
         $args = array('module_list' => 'Accounts',);

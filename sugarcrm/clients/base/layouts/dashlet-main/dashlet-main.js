@@ -1,5 +1,6 @@
 ({
     tagName: "ul",
+    className: "dashlets row-fluid",
     bindDataChange: function() {
         if(this.model) {
             this.model.on("change:metadata", this.setMetadata, this);
@@ -19,7 +20,7 @@
             component.dispose();
         }, this);
         this._components = [];
-        this.$("#dashlets").remove();
+        this.$el.children().remove();
 
         var components = app.utils.deepCopy(this.model.get("metadata")).components;
         _.each(components, function(component, index) {
@@ -43,12 +44,6 @@
             $el.get(index).className = $el.get(index).className.replace(/span\d+\s*/, '');
             $($el.get(index)).addClass("span" + component.width);
         }, this);
-    },
-    _placeComponent: function(comp, def) {
-        this.$el.attr({
-            id : 'dashlets',
-            'class': 'row-fluid'
-        }).append(comp.el);
     },
     applyDragAndDrop: function() {
         var self = this;
@@ -144,6 +139,7 @@
 
     },
     _dispose: function() {
+        this.$('.widget').draggable('destroy');
         this.$('.widget-container').droppable('destroy');
         app.view.Layout.prototype._dispose.call(this);
     }

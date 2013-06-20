@@ -31,10 +31,13 @@
 <html class="no-js">
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
         <title>SugarCRM</title>
         <link rel="icon" href="themes/default/images/sugar_icon.ico">
         <!-- CSS -->
-        <link rel="stylesheet" href="{$css_url}"/>
+        {foreach from=$css_url item=url}
+            <link rel="stylesheet" href="{$url}"/>
+        {/foreach}
         <!--[if lt IE 10]>
         <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
         <![endif]-->

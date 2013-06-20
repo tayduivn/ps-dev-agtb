@@ -31,6 +31,109 @@ describe("Emails.fields.recipients", function() {
         delete Handlebars.templates;
     });
 
+    describe("loadOptions", function() {
+        var query,
+            apiCallStub;
+
+        beforeEach(function() {
+            jasmine.Clock.useMock();
+            query = {callback: sinon.stub()};
+        });
+
+        afterEach(function() {
+            delete query;
+            apiCallStub.restore();
+        });
+
+        it("Should call the query callback with one record when the api call is successful and returns one record.", function() {
+            var records = [{email: "will@example.com", name: "Will Westin"}];
+
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                callbacks.success({records: records});
+                callbacks.complete();
+            });
+
+            field.loadOptions(query);
+            jasmine.Clock.tick(301);
+
+            var actual = query.callback.lastCall.args[0].results.length;
+            expect(actual).toBe(records.length);
+        });
+
+        it("Should call the query callback with no records when the api call results in an error.", function() {
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                callbacks.error();
+                callbacks.complete();
+            });
+
+            field.loadOptions(query);
+            jasmine.Clock.tick(301);
+
+            var actual = query.callback.lastCall.args[0].results.length;
+            expect(actual).toBe(0);
+        });
+
+        it("Should make a call to the Mail API with the recipients/find path.", function() {
+            apiCallStub = sinon.stub(app.api, "call");
+
+            field.loadOptions(query);
+            jasmine.Clock.tick(301);
+
+            var expected = /.*\/Mail\/recipients\/find/,
+                actual   = apiCallStub.lastCall.args[1];
+            expect(actual).toMatch(expected);
+        });
+    });
+
+    describe("createOption", function() {
+        it("Should return undefined when data is not empty.", function() {
+            var data   = [{id: "foo", email: "foo@bar.com"}],
+                actual = field.createOption("foo", data);
+
+            expect(actual).toBeUndefined();
+        });
+
+        it("Should return a new option as an object when data is empty.", function() {
+            var data     = [],
+                expected = {id: "foo@bar.com", email: "foo@bar.com"},
+                actual   = field.createOption(expected.email, data);
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe("formatSelection", function() {
+        it("Should return the recipient's name when it exists.", function() {
+            var recipient = {email: "will@example.com", name: "Will Westin"},
+                actual    = field.formatSelection(recipient);
+
+            expect(actual).toEqual(recipient.name);
+        });
+
+        it("Should return the recipient's email address when name doesn't exist.", function() {
+            var recipient = {email: "will@example.com"},
+                actual    = field.formatSelection(recipient);
+
+            expect(actual).toEqual(recipient.email);
+        });
+    });
+
+    describe("formatResult", function() {
+        it("Should return the recipient's name when it exists.", function() {
+            var recipient = {email: "will@example.com", name: "Will Westin"},
+                actual    = field.formatResult(recipient);
+
+            expect(actual).toEqual(recipient.name);
+        });
+
+        it("Should return the recipient's email address when name doesn't exist.", function() {
+            var recipient = {email: "will@example.com"},
+                actual    = field.formatResult(recipient);
+
+            expect(actual).toEqual(recipient.email);
+        });
+    });
+
     describe("format", function() {
         dataProvider = [
             {
@@ -106,6 +209,17 @@ describe("Emails.fields.recipients", function() {
 
             expect(actual instanceof Backbone.Collection).toBe(true);
             expect(actual.length).toBe(recipients.length);
+        });
+    });
+
+    describe("setContentBefore", function() {
+        it("Should set the data-content-before attribute of the select2-choices ul delement for the to_address field.", function() {
+            var actual = 'Test string';
+
+            field.render();
+            field.setContentBefore(actual);
+
+            expect(field.$('.select2-choices').attr('data-content-before')).toBe(actual);
         });
     });
 
@@ -387,5 +501,95 @@ describe("Emails.fields.recipients", function() {
                 expect(actual).toEqual(data.expected);
             });
         }, this);
+    });
+
+    describe("_handleEventOnSelected", function() {
+        it("Should return false when event.object does not exist.", function() {
+            var event  = {},
+                actual = field._handleEventOnSelected(event);
+            expect(actual).toBeFalsy();
+        });
+
+        it("Should return true when event.object exists and id and email are not equal.", function() {
+            var recipient = {id: "abcd", email: "foo@bar.com"},
+                event     = {object: recipient}
+                actual    = field._handleEventOnSelected(event);
+            expect(actual).toBeTruthy();
+        });
+
+        describe("Validates the email address", function() {
+            var validateEmailAddressStub;
+
+            beforeEach(function() {
+                validateEmailAddressStub = sinon.stub(field, "_validateEmailAddress");
+            });
+
+            afterEach(function() {
+                validateEmailAddressStub.restore();
+            });
+
+            it("Should return true when event.object exists and id and email are equal and the email address is valid.", function() {
+                validateEmailAddressStub.returns(true);
+
+                var recipient = {id: "foo@bar.com", email: "foo@bar.com"},
+                    event     = {object: recipient},
+                    actual    = field._handleEventOnSelected(event);
+                expect(actual).toBeTruthy();
+            });
+
+            it("Should return false when event.object exists and id and email are equal and the email address is invalid.", function() {
+                validateEmailAddressStub.returns(false);
+
+                var recipient = {id: "foo@bar.com", email: "foo@bar.com"},
+                    event     = {object: recipient},
+                    actual    = field._handleEventOnSelected(event);
+                expect(actual).toBeFalsy();
+            });
+        });
+    });
+
+    describe("_validateEmailAddress", function() {
+        var apiCallStub;
+
+        afterEach(function() {
+            apiCallStub.restore();
+        });
+
+        it("Should return false when the api call results in an error.", function() {
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                callbacks.error();
+            })
+
+            var actual = field._validateEmailAddress("foo");
+            expect(actual).toBeFalsy();
+        });
+
+        it("Should return false when the api call is successful and returns false.", function() {
+            var emailAddress = "foo@bar.",
+                actual;
+
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                var result = {};
+                result[emailAddress] = false;
+                callbacks.success(result);
+            });
+
+            actual = field._validateEmailAddress(emailAddress);
+            expect(actual).toBeFalsy();
+        });
+
+        it("Should return true when the api call is successful and returns true.", function() {
+            var emailAddress = "foo@bar.com",
+                actual;
+
+            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+                var result = {};
+                result[emailAddress] = true;
+                callbacks.success(result);
+            });
+
+            actual = field._validateEmailAddress(emailAddress);
+            expect(actual).toBeTruthy();
+        });
     });
 });

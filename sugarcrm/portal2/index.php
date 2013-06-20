@@ -48,6 +48,13 @@ ensureCache($minifyUtils, $rootDir);
         <? else: ?>
             <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
         <? endif; ?>
+        
+        <!-- CSS -->
+        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
+
+        <!-- App Scripts -->
         <script src='../cache/include/javascript/sugar_sidecar.min.js'></script>
         <script language="javascript" src="../include/javascript/sugar7/bwc.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/utils.js"></script>
@@ -55,15 +62,12 @@ ensureCache($minifyUtils, $rootDir);
         <script language="javascript" src="../include/javascript/sugar7/hacks.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/alert.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/hbt-helpers.js"></script>
-
+        <script language="javascript" src="../include/javascript/modernizr.js"></script>
+        
         <!-- Portal specific JS -->
         <script src='portal.js'></script>
         <script src='config.js'></script>
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="sidecar">

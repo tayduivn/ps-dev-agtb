@@ -1,674 +1,226 @@
-describe("ConvertLeadLayout", function() {
-    var app, leadModel;
+describe("Leads.Base.Layout.ConvertMain", function() {
+    var app, layout, contextTriggerStub;
 
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.testMetadata.init();
-        SugarTest.loadHandlebarsTemplate('headerpane', 'view', 'base');
-        SugarTest.loadHandlebarsTemplate('convert-panel', 'view', 'base', null, 'Leads');
-
-        SugarTest.loadComponent('base', 'layout', 'convert-main', 'Leads');
-
-        SugarTest.loadComponent('base', 'view', 'convert-panel', 'Leads');
-        SugarTest.loadComponent('base', 'view', 'convert-results', 'Leads');
-        SugarTest.loadComponent('base', 'view', 'alert');
-
-        SugarTest.addComponent('base', 'layout', 'dupecheck', createMockDupeView());
-        SugarTest.addComponent('base', 'view', 'create', createMockRecordView());
         SugarTest.testMetadata.set();
         SugarTest.app.data.declareModels();
 
-
-        SugarTest.testMetadata.addViewDefinition('create', {
-            "panels":[
+        layout = SugarTest.createLayout('base', 'Leads', 'convert-main', {
+            modules: [
                 {
-                    "name":"panel_header",
-                    "placeholders":true,
-                    "header":true,
-                    "labels":false,
-                    "fields":[
-                        {
-                            "name":"first_name",
-                            "label":"",
-                            "placeholder":"LBL_NAME"
-                        },
-                        {
-                            "name":"last_name",
-                            "label":"",
-                            "placeholder":"LBL_NAME"
+                    module: 'Foo',
+                    required: true
+                },
+                {
+                    module: 'Bar',
+                    required: true
+                },
+                {
+                    module: 'Baz',
+                    required: false,
+                    dependentModules: {
+                        'Foo': {
+                            'fieldMapping': {
+                                'foo_id': 'id'
+                            }
                         }
-                    ]
-                }, {
-                    "name":"panel_body",
-                    "columns":2,
-                    "labels":false,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
-                        "phone_work",
-                        "email1",
-                        "full_name"
-                    ]
+                    }
                 }
             ]
-        }, 'Contacts');
+        }, null, true);
 
-        SugarTest.testMetadata.addViewDefinition('create', {
-            "panels":[
-                {
-                    "name":"panel_header",
-                    "placeholders":true,
-                    "header":true,
-                    "labels":false,
-                    "fields":[
-                            "name",
-                            "email"
-                    ]
-                }, {
-                    "name":"panel_body",
-                    "columns":2,
-                    "labels":false,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
-                        'account_type',
-                        'industry',
-                        'annual_revenue'
-                    ]
-                }
-            ]
-        }, 'Accounts');
-
-        SugarTest.testMetadata.addViewDefinition('create', {
-            "panels":[
-                {
-                    "name":"panel_header",
-                    "placeholders":true,
-                    "header":true,
-                    "labels":false,
-                    "fields":[
-                        {
-                            "name":"first_name",
-                            "label":"",
-                            "placeholder":"LBL_NAME"
-                        },
-                        {
-                            "name":"last_name",
-                            "label":"",
-                            "placeholder":"LBL_NAME"
-                        }
-                    ]
-                }, {
-                    "name":"panel_body",
-                    "columns":2,
-                    "labels":false,
-                    "labelsOnTop":true,
-                    "placeholders":true,
-                    "fields":[
-                        "phone_work",
-                        "email1",
-                        "full_name"
-                    ]
-                }
-            ]
-        }, 'Opportunities');
-
-        //Injecting the dupecheck property into the modules
-        var modules = app.metadata.getModules();
-         _.each(modules, function(module){
-            module.dupCheckEnabled = true;
-        });
-
-        app.metadata.set(modules);
-
+        contextTriggerStub = sinon.stub(layout.context, 'trigger');
     });
 
     afterEach(function() {
+        contextTriggerStub.restore();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
         SugarTest.testMetadata.dispose();
-        delete leadModel;
     });
 
-    var initializeLayout = function() {
-        var meta = {
-            'modules': [
-                {
-                    'module': 'Contacts',
-                    'required': true,
-                    'fieldMapping': {
-                        'first_name': 'first_name',
-                        'last_name': 'last_name'
-                    }
-                },
-                {
-                    'module': 'Accounts',
-                    'duplicateCheckOnStart': true,
-                    'required': true,
-                    'fieldMapping': {
-                        'name': 'account_name'
-                    }
-                },
-                {
-                    'module':'Opportunities',
-                    'duplicateCheckOnStart':false,
-                    'required':false,
-                    'fieldMapping':{
-                        'name':'opportunity_name'
-                    },
-                    "dependentModules":{
-                        "Accounts":{
-                            "fieldMapping":{
-                                "id":"account_id"
-                            }
-                        },
-                        "Contacts":{}
-                    }
-                }
-            ]
+    it("should create three convert-panel components based on the module metadata", function() {
+        expect(_.keys(layout.convertPanels)).toEqual(['Foo', 'Bar', 'Baz']);
+    });
+
+    it("should pull out the dependencies based on the module metadata", function() {
+        expect(layout.dependentModules['Foo']).toBeUndefined();
+        expect(layout.dependentModules['Bar']).toBeUndefined();
+        expect(layout.dependentModules['Baz']).not.toBeUndefined();
+    });
+
+    it("should retrieve the lead data from api and push model to the context for panel to use", function() {
+        var mockModel = new Backbone.Model({id:'123'}),
+            fetchStub = sinon.stub(mockModel, 'fetch', function(options) {
+                options.success(mockModel);
+            });
+        layout.context.set('leadsModel', mockModel);
+        layout.render();
+        expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:populate', mockModel]);
+        fetchStub.restore();
+    });
+
+    it("should ignore hidden/shown events that are propagated to the panel body not directly on it", function () {
+        var mockPropagatedEvent = {
+            target: '<tooltip></tooltip>',
+            currentTarget: '<panelBody></panelBody>'
         };
-        var layout = SugarTest.createLayout('base', 'Leads', 'convert-main', meta, null, true);
-        leadModel = app.data.createBean('Leads');
-        sinon.stub(leadModel, 'fetch', function(callbacks) {
-            callbacks.success(leadModel);
-        });
-        layout.context.set("leadsModel", leadModel);
-
-        return layout;
-    };
-
-    describe('Initialize', function() {
-        var layout;
-
-        beforeEach(function() {
-            layout = initializeLayout();
-        });
-
-        afterEach(function() {
-            delete layout;
-        });
-
-        it("should have 3 components on the layout", function() {
-            expect(layout._components.length).toEqual(3);
-        })
-
-        it("components on the layout should be convert-panels with module metadata", function() {
-            var i = 0;
-
-            _.each(layout._components, function(component) {
-                expect(component.name).toEqual('convert-panel');
-                expect(component.meta.module).toEqual(layout.meta.modules[i++].module);
-            });
-        });
+        layout.handlePanelCollapseEvent(mockPropagatedEvent);
+        expect(contextTriggerStub.callCount).toEqual(0);
     });
 
-    describe('Render', function() {
-        var layout;
-
-        beforeEach(function() {
-            layout = initializeLayout();
-        });
-
-        afterEach(function() {
-            mockDupesToFind = 2;
-            delete layout;
-        });
-
-        it("components on the layout each have a duplicate view and create/record view", function() {
-            layout.render();
-
-            expect(layout._components.length).toEqual(9);
-            var panels = _.first(layout._components, 3);
-            _.each(panels, function(component) {
-                expect(component.duplicateView).toBeDefined();
-                expect(component.recordView).toBeDefined();
-            });
-        });
-
-        it("first component is active, other two are not", function() {
-            layout.render();
-            expect(layout._components[0].$('.header').hasClass('active')).toBeTruthy();
-            expect(layout._components[1].$('.header').hasClass('active')).toBeFalsy();
-            expect(layout._components[2].$('.header').hasClass('active')).toBeFalsy();
-        });
-
-        it("first two components enabled, last is not because of dependency", function() {
-            layout.render();
-            expect(layout._components[0].$('.header').hasClass('enabled')).toBeTruthy();
-            expect(layout._components[1].$('.header').hasClass('enabled')).toBeTruthy();
-
-            expect(layout._components[2].$('.header').hasClass('enabled')).toBeFalsy();
-            expect(layout._components[2].$('.header').hasClass('disabled')).toBeTruthy();
-        });
-
-        it("finish button is disabled", function() {
-            var finishButtonEnabled = true;
-            var stub = sinon.stub(layout, 'toggleFinishButton', function(enable) {
-                finishButtonEnabled = enable;
-            });
-            layout.render();
-            expect(finishButtonEnabled).toBeFalsy();
-            stub.restore();
-        });
-
-        it("create views are prepopulated with lead data", function() {
-            var last_name = 'mylastname',
-                account_name = 'myaccname',
-                opportunity_name = 'myoppname'
-
-            leadModel.set('last_name', last_name);
-            leadModel.set('account_name', account_name);
-            leadModel.set('opportunity_name', opportunity_name);
-            layout.render();
-            expect(layout._components[0].recordView.model.get("last_name")).toEqual(last_name);
-            expect(layout._components[1].recordView.model.get("name")).toEqual(account_name);
-            expect(layout._components[2].recordView.model.get("name")).toEqual(opportunity_name);
-        });
-
-        it("correct subviews are active", function() {
-            layout.render();
-
-            //Contact should have record view active (dupe check not defined, defaults to false)
-            expect(layout._components[0].currentState.activeView).toEqual(layout._components[0].RECORD_VIEW);
-            //Account should have duplicate view active (dupe check set to true)
-            expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].DUPLICATE_VIEW);
-            //Opportunity should have record view active (dupe check set to false)
-            expect(layout._components[2].currentState.activeView).toEqual(layout._components[2].RECORD_VIEW);
-        });
-
-        it("dupe view is skipped if no dupes found", function() {
-            mockDupesToFind = 0;
-            layout.render();
-            expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].RECORD_VIEW);
-        });
+    it("should pass along hidden/shown events to the context if event is fired directly on the panel body", function () {
+        var mockTargetHtml = '<div data-module="Foo"></div>';
+        var mockEvent = {
+            type: 'shown',
+            target: mockTargetHtml,
+            currentTarget: mockTargetHtml
+        };
+        layout.handlePanelCollapseEvent(mockEvent);
+        expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:Foo:shown']);
     });
 
-    describe('Switching Panels', function() {
-        var layout, $contactHeader, $accountHeader, $opportunityHeader;
-
-        beforeEach(function() {
-            layout = initializeLayout();
-            layout.render();
-            $contactHeader = layout._components[0].$('.header');
-            $accountHeader = layout._components[1].$('.header');
-            $opportunityHeader = layout._components[2].$('.header');
-        });
-
-        afterEach(function() {
-            delete layout;
-        });
-
-        it("clicking on the opportunity panel header does nothing (disabled until first two are complete)", function() {
-            expect($opportunityHeader.hasClass('disabled')).toBeTruthy(); //disabled before
-            $opportunityHeader.click();
-            expect($opportunityHeader.hasClass('disabled')).toBeTruthy(); //disabled after
-        });
-
-        it("clicking on the account panel header with success validation on contact panel moves activate status to account panel", function() {
-            var flag, model, stub;
-            model = layout.getComponent('create').model;
-            stub = sinon.stub(model, 'doValidate', function(fields, callback) {
-                flag = true;
-                callback(true);
-            });
-            runs(function() {
-                expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
-                $accountHeader.click();
-            });
-            waitsFor(function() {
-                return flag;
-            }, 'doValidate should have been called but timeout expired', 1000);
-            runs(function() {
-                expect($contactHeader.hasClass('active')).toBeFalsy(); //not active after
-                expect($accountHeader.hasClass('active')).toBeTruthy(); //active after
-                stub.restore();
-            });
-        });
-
-        it("clicking on the account panel header with validation error on contact panel keeps active status on contact panel", function() {
-            var flag, model, stub;
-            model = layout.getComponent('create').model;
-            stub = sinon.stub(model, 'doValidate', function(fields, callback) {
-                flag = true;
-                callback(false);
-            });
-            runs(function() {
-                expect($accountHeader.hasClass('active')).toBeFalsy(); //not active before
-                $accountHeader.click();
-            });
-            waitsFor(function() {
-                return flag;
-            }, 'doValidate should have been called but timeout expired', 1000);
-            runs(function() {
-                expect($contactHeader.hasClass('active')).toBeTruthy(); //still active after
-                expect($accountHeader.hasClass('active')).toBeFalsy(); //not active after
-                stub.restore();
-            });
-        });
-
-        it("completing contact panel and account panel ready for validation activates opportunity panel", function() {
-            $accountHeader.click(); //complete contact panel by navigating to account
-            $accountHeader.find('.show-record').click(); //switching to record mode puts panel in dirty state, ready for validation
-            expect($opportunityHeader.hasClass('enabled')).toBeTruthy(); //now opportunity is enabled
-        });
-
-        it("completing required panels enables finish button", function() {
-            var finishButtonEnabled = false;
-            var stub = sinon.stub(layout, 'toggleFinishButton', function(enable) {
-                finishButtonEnabled = enable;
-            });
-            $accountHeader.click(); //complete contact panel by navigating to account
-            $accountHeader.find('.show-record').click(); //switching to record mode puts panel in dirty state, ready for validation
-            $opportunityHeader.click(); //complete account panel by navigating to opportunity
-            expect(finishButtonEnabled).toBeTruthy();
-            stub.restore();
-        });
+    it("should add/remove model from associated model array when panel is complete/reset", function () {
+        var mockModel = {id:'123'};
+        expect(layout.associatedModels['Foo']).toBeUndefined();
+        layout.handlePanelComplete('Foo', mockModel);
+        expect(layout.associatedModels['Foo']).toEqual(mockModel);
+        layout.handlePanelReset('Foo');
+        expect(layout.associatedModels['Foo']).toBeUndefined();
     });
 
-    describe("triggerDuplicateCheck", function () {
-        var layout, dupeCheckTriggerStub, accountPanel;
-
-        beforeEach(function() {
-            layout = initializeLayout();
-            layout.render();
-            accountPanel = layout._components[1];
-            dupeCheckTriggerStub = sinon.stub(accountPanel.duplicateView.context, 'trigger');
-        });
-
-        afterEach(function() {
-            dupeCheckTriggerStub.restore();
-            delete accountPanel;
-            delete layout;
-        });
-
-        it("should kick off the duplicate check if it is enabled and all required dupe check fields are on the model", function () {
-            accountPanel.enableDuplicateCheck = true;
-            accountPanel.meta.duplicateCheckRequiredFields = ['name'];
-            accountPanel.recordView.model.set('name', 'Foo');
-            accountPanel.triggerDuplicateCheck()
-            expect(dupeCheckTriggerStub.callCount).toBe(1);
-        });
-
-        it("should not kick off the duplicate check if it is enabled and a required dupe check field is missing", function () {
-            accountPanel.enableDuplicateCheck = true;
-            accountPanel.meta.duplicateCheckRequiredFields = ['name'];
-            accountPanel.recordView.model.unset('name');
-            accountPanel.triggerDuplicateCheck()
-            expect(dupeCheckTriggerStub.callCount).toBe(0);
-        });
-
-        it("should kick off the duplicate check if it is enabled and no required fields are specified in the metadata", function () {
-            accountPanel.enableDuplicateCheck = true;
-            accountPanel.meta.duplicateCheckRequiredFields = [];
-            accountPanel.triggerDuplicateCheck()
-            expect(dupeCheckTriggerStub.callCount).toBe(1);
-        });
-
-        it("should not kick off the duplicate check if dupe check is disabled for the module", function () {
-            accountPanel.enableDuplicateCheck = false;
-            accountPanel.triggerDuplicateCheck()
-            expect(dupeCheckTriggerStub.callCount).toBe(0);
-        });
+    it("should enable dependent panels when dependencies are met", function () {
+        layout.associatedModels['Foo'] = {id:'123'};
+        layout.checkDependentModules();
+        expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:Baz:enable', true]);
     });
 
-    describe('Switching SubViews', function() {
-        var layout;
-
-        beforeEach(function() {
-            layout = initializeLayout();
-            layout.render();
-        });
-
-        afterEach(function() {
-            delete layout;
-        });
-
-        it("clicking on ignore duplicates switches to create/record view and back", function() {
-            layout._components[1].$('.header').click(); //go to account panel
-            expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].DUPLICATE_VIEW);
-            layout._components[1].$('.show-record').click();
-            expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].RECORD_VIEW);
-            layout._components[1].$('.show-duplicate').click();
-            expect(layout._components[1].currentState.activeView).toEqual(layout._components[1].DUPLICATE_VIEW);
-        });
+    it("should disable dependent panels when dependencies are not met", function () {
+        delete layout.associatedModels['Foo'];
+        layout.checkDependentModules();
+        expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert:Baz:enable', false]);
     });
 
-    describe('Finishing Convert Lead', function() {
-        var layout,
-            showAlertStub,
-            last_name = 'mylastname',
-            account_name = 'myaccname',
-            opportunity_name = 'myoppname',
-            actualConvertModel,
-            apiCallStub;
-
-        beforeEach(function() {
-            actualConvertModel = {};
-            layout = initializeLayout();
-            leadModel.set('last_name', last_name);
-            leadModel.set('account_name', account_name);
-            leadModel.set('opportunity_name', opportunity_name);
-            layout.render();
-            showAlertStub = sinon.stub(SugarTest.app.alert, 'show', $.noop());
-
-            apiCallStub = sinon.stub(app.api, 'call');
-        });
-
-        afterEach(function() {
-            apiCallStub.restore();
-            showAlertStub.restore();
-            delete layout;
-        });
-
-
-        it("clicking on finish after completing all panels bundles up models from each panel and calls the API", function() {
-            var model, stubs = [],
-                flags = [false,false,false];
-            var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"},"Opportunities":{"name":"'+opportunity_name+'"}}}';
-            runs(function() {
-                model = layout._components[4].model;
-                stubs[0] = sinon.stub(model, 'doValidate', function(fields, callback) {
-                    flags[0] = true;
-                    callback(true);
-                });
-                layout._components[1].$('.header').click(); //click Account to complete Contact
-                layout._components[1].$('.header').find('.show-record').click();
-            });
-            waitsFor(function() {
-                return flags[0];
-            }, 'doValidate should have been called but timeout expired', 1000);
-            runs(function() {
-                stubs[0].restore();
-                model = layout._components[6].model;
-                stubs[1] = sinon.stub(model, 'doValidate', function(fields, callback) {
-                    flags[1] = true;
-                    callback(true);
-                });
-                model = layout._components[8].model;
-                stubs[2] = sinon.stub(model, 'doValidate', function(fields, callback) {
-                    flags[2] = true;
-                    callback(true);
-                });
-                layout._components[2].$('.header').click(); //click Opportunity to complete Account
-                layout.initiateFinish(); //click finish to complete Opportunity
-            });
-            waitsFor(function() {
-                return flags[1] && flags[2];
-            }, 'doValidate should have been called but timeout expired', 1000);
-            runs(function() {
-                expect(apiCallStub.lastCall.args[0]).toEqual('create');
-                expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
-
-                actualConvertModel = apiCallStub.lastCall.args[2];
-
-                expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-                stubs[1].restore();
-                stubs[2].restore();
-            });
-        });
-
-        it("clicking on finish when optional panels have not been completed should not pass the optional model to API", function() {
-            var model, stubs = [],
-                flags = [false, false];
-            var expectedConvertModel = '{"modules":{"Contacts":{"last_name":"'+last_name+'"},"Accounts":{"name":"'+account_name+'"}}}';
-            runs(function() {
-                model = layout._components[4].model;
-                stubs[0] = sinon.stub(model, 'doValidate', function(fields, callback) {
-                    flags[0] = true;
-                    callback(true);
-                });
-                layout._components[1].$('.header').click(); //click Account to complete Contact
-                layout._components[1].$('.header').find('.show-record').click();
-            });
-            waitsFor(function() {
-                return flags[0];
-            }, 'doValidate should have been called but timeout expired', 1000);
-            runs(function() {
-                model = layout._components[6].model;
-                stubs[0].restore();
-                stubs[1] = sinon.stub(model, 'doValidate', function(fields, callback) {
-                    flags[1] = true;
-                    callback(true);
-                });
-                layout.initiateFinish(); //click finish to complete Opportunity
-            });
-            waitsFor(function() {
-                return flags[1];
-            }, 'doValidate should have been called but timeout expired', 1000);
-            runs(function() {
-                expect(apiCallStub.lastCall.args[0]).toEqual('create');
-                expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Leads\/convert/);
-
-                actualConvertModel = apiCallStub.lastCall.args[2];
-                expect(JSON.stringify(actualConvertModel)).toEqual(expectedConvertModel);
-                stubs[1].restore();
-            });
-        });
+    it("should enable save button when all required modules have been complete", function () {
+        layout.associatedModels['Foo'] = {id:'123'};
+        layout.associatedModels['Bar'] = {id:'456'};
+        layout.checkRequired();
+        expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert-save:toggle', true]);
     });
 
-    describe("uploadAssociatedRecordFiles", function () {
-        var layout, convertCompleteStub, uploadFileFieldStub, getPanelStub, isUploadSuccess, uploadSuccessCount, uploadErrorCount;
+    it("should enable save button when all required modules have been complete", function () {
+        delete layout.associatedModels['Foo'];
+        layout.associatedModels['Bar'] = {id:'456'};
+        layout.checkRequired();
+        expect(contextTriggerStub.lastCall.args).toEqual(['lead:convert-save:toggle', false]);
+    });
+
+    describe("Convert Save", function () {
+        var ajaxSpy, convertCompleteStub, leadConvertPattern, mockLeadConvertResponse;
 
         beforeEach(function () {
-            layout = initializeLayout();
-            layout.meta.modules = [
-                {module:'Foo'},
-                {module:'Bar'}
-            ];
+            ajaxSpy = sinon.spy($, 'ajax')
             convertCompleteStub = sinon.stub(layout, 'convertComplete');
-            uploadSuccessCount = 0;
-            uploadErrorCount = 0;
-            uploadFileFieldStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function (view, callbacks, options, showAlert) {
-                if (isUploadSuccess) {
-                    uploadSuccessCount++;
-                    callbacks.success();
-                } else {
-                    uploadErrorCount++;
-                    callbacks.error();
-                }
+
+            SugarTest.seedFakeServer();
+            leadConvertPattern = /.*\/rest\/v10\/Leads\/lead123\/convert.*/;
+            mockLeadConvertResponse = [200, { "Content-Type": "application/json"}, JSON.stringify({})];
+
+            layout.context.set('leadsModel', new Backbone.Model({id:'lead123'}));
+        });
+
+        afterEach(function () {
+            ajaxSpy.restore();
+            convertCompleteStub.restore();
+        });
+
+        it("should call lead convert api with associated models and call to upload files", function () {
+            var uploadFilesStub = sinon.stub(layout, 'uploadAssociatedRecordFiles');
+
+            layout.associatedModels = {
+                Foo: {id:123},
+                Bar: {id:456},
+                Baz: {id:789}
+            };
+            SugarTest.server.respondWith("POST", leadConvertPattern, mockLeadConvertResponse);
+            layout.handleSave();
+            SugarTest.server.respond();
+            expect(ajaxSpy.lastCall.args[0].data).toEqual('{"modules":{"Foo":{"id":123},"Bar":{"id":456},"Baz":{"id":789}}}');
+            expect(uploadFilesStub.callCount).toEqual(1);
+            uploadFilesStub.restore();
+        });
+
+        it("should disable the save button while saving and re-enable if there is an error", function () {
+            mockLeadConvertResponse[0] = 500;
+            SugarTest.server.respondWith("POST", leadConvertPattern, mockLeadConvertResponse);
+            layout.handleSave();
+            SugarTest.server.respond();
+            expect(contextTriggerStub.calledWith('lead:convert-save:toggle', false)).toBe(true);
+            expect(contextTriggerStub.calledWith('lead:convert-save:toggle', true)).toBe(true);
+            expect(convertCompleteStub.calledWith('error')).toBe(true);
+        });
+    });
+
+    describe("Upload Associated Record Files", function () {
+        var convertCompleteStub, checkAndProcessUploadStub, checkAndProcessUploadCallbacks, mockLeadConvertResponse;
+
+        beforeEach(function () {
+            convertCompleteStub = sinon.stub(layout, 'convertComplete');
+
+            checkAndProcessUploadCallbacks = {};
+            checkAndProcessUploadStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function(view, options) {
+                checkAndProcessUploadCallbacks = options;
             });
-            getPanelStub = sinon.stub(layout, '_getPanelByModuleName', function (moduleName) {
-                var view = new Backbone.View();
-                view.getAssociatedModel = function() {
-                    return new Backbone.Model();
-                };
-                view.recordView = new Backbone.View();
-                return view;
-            });
+
+            mockLeadConvertResponse = {
+                modules: [
+                    {_module: 'Foo', id: '123'},
+                    {_module: 'Bar', id: '456'},
+                    {_module: 'Baz', id: '789'}
+                ]
+            };
         });
 
         afterEach(function () {
             convertCompleteStub.restore();
-            uploadFileFieldStub.restore();
-            getPanelStub.restore();
-            delete layout;
+            checkAndProcessUploadStub.restore();
         });
 
-        it("should successfully call upload twice and convertSuccess once", function () {
-            var convertResults = {
-                modules: [
-                    {_module: 'Foo', id: '123'},
-                    {_module: 'Bar', id: '456'}
-                ]
+        it("should check for upload files on each module where we are creating a record (no id passed)", function() {
+            layout.associatedModels = {
+                Foo: new Backbone.Model({name:'foo'}),
+                Bar: new Backbone.Model({name:'bar'}),
+                Baz: new Backbone.Model({id:'789'})
             };
-            isUploadSuccess = true;
-            layout.uploadAssociatedRecordFiles(convertResults);
-            expect(uploadSuccessCount).toBe(2);
-            expect(uploadErrorCount).toBe(0);
-            expect(convertCompleteStub.callCount).toBe(1);
-            expect(convertCompleteStub.lastCall.args[0]).toEqual('success');
+            layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
+            expect(checkAndProcessUploadStub.callCount).toEqual(2);
         });
 
-        it("should successfully call upload once if only one module data was returned and convertSuccess once", function () {
-            var convertResults = {
-                modules: [
-                    {_module: 'Bar', id: '456'}
-                ]
+        it("should throw a convert success if all calls succeed", function() {
+            layout.associatedModels = {
+                Foo: new Backbone.Model({name:'foo'}),
+                Bar: new Backbone.Model({name:'bar'}),
+                Baz: new Backbone.Model({id:'789'})
             };
-            isUploadSuccess = true;
-            layout.uploadAssociatedRecordFiles(convertResults);
-            expect(uploadSuccessCount).toBe(1);
-            expect(uploadErrorCount).toBe(0);
-            expect(convertCompleteStub.callCount).toBe(1);
-            expect(convertCompleteStub.lastCall.args[0]).toEqual('success');
+            layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
+            checkAndProcessUploadCallbacks.success();
+            checkAndProcessUploadCallbacks.success();
+            expect(convertCompleteStub.calledWith('success')).toBe(true);
         });
 
-        it("should only call convertSuccess if no convert results returned", function () {
-            var convertResults = {
-                modules: []
+        it("should throw a convert warning if any calls fail", function() {
+            layout.associatedModels = {
+                Foo: new Backbone.Model({name:'foo'}),
+                Bar: new Backbone.Model({name:'bar'}),
+                Baz: new Backbone.Model({id:'789'})
             };
-            isUploadSuccess = true;
-            layout.uploadAssociatedRecordFiles(convertResults);
-            expect(uploadSuccessCount).toBe(0);
-            expect(uploadErrorCount).toBe(0);
-            expect(convertCompleteStub.callCount).toBe(1);
-            expect(convertCompleteStub.lastCall.args[0]).toEqual('success');
-        });
-
-        it("should call convertWarning if there was an error during upload", function () {
-            var convertResults = {
-                modules: [
-                    {_module: 'Foo', id: '123'},
-                    {_module: 'Bar', id: '456'}
-                ]
-            };
-            isUploadSuccess = false;
-            layout.uploadAssociatedRecordFiles(convertResults);
-            expect(uploadSuccessCount).toBe(0);
-            expect(uploadErrorCount).toBe(2);
-            expect(convertCompleteStub.callCount).toBe(1);
-            expect(convertCompleteStub.lastCall.args[0]).toEqual('warning');
+            layout.uploadAssociatedRecordFiles(mockLeadConvertResponse);
+            checkAndProcessUploadCallbacks.success();
+            checkAndProcessUploadCallbacks.error();
+            expect(convertCompleteStub.calledWith('warning')).toBe(true);
         });
     });
-
-    var mockDupesToFind = 2;
-    var mockDupes = [
-        {'id': '123', 'name': 'abc'},
-        {'id': '456', 'name': 'def'}
-    ];
-
-    var createMockDupeView = function() {
-        return {
-            'initialize': function(options) {
-                var self = this;
-                app.view.Layout.prototype.initialize.call(this, options);
-                this.context.on("dupecheck:fetch:fire", function(){
-                    var mockDupesFound = [];
-                    for (i = 0; i < mockDupesToFind; i++) {
-                        mockDupesFound.push(mockDupes[i]);
-                    }
-                    self.collection.reset(mockDupesFound);
-                });
-            }
-        };
-    };
-
-    var createMockRecordView = function() {
-        return {
-            'render': function() {},
-
-            clearValidationErrors: function() {}
-        };
-    };
 });

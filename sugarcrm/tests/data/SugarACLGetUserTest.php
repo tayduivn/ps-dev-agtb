@@ -20,6 +20,7 @@ class SugarACLGetUserTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         }
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('ACLStatic');
         $GLOBALS['beanList']['test'] = 'test';
         SugarTestHelper::setUp("current_user");
     }
@@ -30,8 +31,6 @@ class SugarACLGetUserTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         parent::tearDown();
         SugarACL::$acls = array();
         unset($GLOBALS['dictionary'][$this->bean->object_name]);
-        // clean cache so our experiments do not stay
-        unset($_SESSION['ACL']);
     }
 
     public function getTestMock()
@@ -70,10 +69,9 @@ class SugarACLGetUserTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function testAccessDenied()
     {
-        // load actions
-        ACLAction::getUserActions($GLOBALS['current_user']->id, false, 'Accounts', 'module');
         // override module access
-        $_SESSION['ACL'][$GLOBALS['current_user']->id]['Accounts']['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        $acldata['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
+        ACLAction::setACLData($GLOBALS['current_user']->id, 'Accounts', $acldata);
         $access = SugarACL::getUserAccess("Accounts");
         foreach(SugarACL::$all_access as $action => $value) {
             $this->assertFalse($access[$action], "Action $action should be set to false");

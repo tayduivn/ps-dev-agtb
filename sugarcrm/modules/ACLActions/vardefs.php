@@ -22,8 +22,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-$dictionary['ACLAction'] = array('table' => 'acl_actions', 'comment' => 'Determine the allowable actions available to users'
-                               ,'fields' => array (
+$dictionary['ACLAction'] = array(
+  'table' => 'acl_actions',
+//BEGIN SUGARCRM flav=pro ONLY
+  'favorites' => false,
+//END SUGARCRM flav=pro ONLY
+  'comment' => 'Determine the allowable actions available to users',
+  'fields' => array (
   'id' =>
   array (
     'name' => 'id',

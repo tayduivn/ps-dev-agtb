@@ -274,5 +274,101 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $reps = User::getReporteeReps($manager->id);
         $this->assertEquals("2", count($reps), "Rep count did not match");
     }
+
+    public function datProviderForTestGetEmailClientPreference()
+    {
+        return array(
+            array("sugar", "foo", "sugar"),
+            array("", "foo", "foo"),
+        );
+    }
+
+    /**
+     * @dataProvider datProviderForTestGetEmailClientPreference
+     */
+    public function testGetEmailClientPreference($emailLinkType, $emailDefaultClient, $expected)
+    {
+        $oc = $this->backUpConfig("email_default_client"); // original client
+        $op = $this->_user->getPreference("email_link_type"); // original preference
+        $os = $this->backUpSession("isMobile"); // original session
+
+        $GLOBALS['sugar_config']['email_default_client'] = $emailDefaultClient;
+        $this->_user->setPreference("email_link_type", $emailLinkType);
+        unset($_SESSION["isMobile"]);
+
+        $actual = $this->_user->getEmailClientPreference();
+        $this->assertEquals($expected, $actual);
+
+        $this->restoreConfig("email_default_client", $oc);
+        $this->_user->setPreference("email_link_type", $op);
+        $this->restoreSession("isMobile", $os);
+    }
+
+    public function testGetEmailClientPreference_SessionIsMobile()
+    {
+        $oc = $this->backUpConfig("email_default_client"); // original client
+        $op = $this->_user->getPreference("email_link_type"); // original preference
+        $os = $this->backUpSession("isMobile"); // original session
+
+        $GLOBALS['sugar_config']['email_default_client'] = "sugar";
+        $this->_user->setPreference("email_link_type", "sugar");
+        $_SESSION["isMobile"] = true;
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $expected = "other";
+        $actual   = $this->_user->getEmailClientPreference();
+        $this->assertEquals($expected, $actual, "Should have returned {$expected} when the session is mobile and PRO+");
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=com ONLY
+        $expected = "sugar";
+        $actual   = $this->_user->getEmailClientPreference();
+        $this->assertEquals($expected, $actual, "Should have returned {$expected} when the session is mobile and CE only");
+        //END SUGARCRM flav=com ONLY
+
+        $this->restoreConfig("email_default_client", $oc);
+        $this->_user->setPreference("email_link_type", $op);
+        $this->restoreSession("isMobile", $os);
+    }
+
+    private function backUpConfig($name)
+    {
+        $config = null;
+
+        if (isset($GLOBALS['sugar_config'][$name])) {
+            $config = $GLOBALS['sugar_config'][$name];
+        }
+
+        return $config;
+    }
+
+    private function restoreConfig($name, $value = null)
+    {
+        if (!is_null($value)) {
+            $GLOBALS['sugar_config'][$name] = $value;
+        } else {
+            unset($GLOBALS['sugar_config'][$name]);
+        }
+    }
+
+    private function backUpSession($name)
+    {
+        $session = null;
+
+        if (isset($_SESSION[$name])) {
+            $session = $_SESSION[$name];
+        }
+
+        return $session;
+    }
+
+    private function restoreSession($name, $value = null)
+    {
+        if (!is_null($value)) {
+            $_SESSION[$name] = $value;
+        } else {
+            unset($_SESSION[$name]);
+        }
+    }
 }
 

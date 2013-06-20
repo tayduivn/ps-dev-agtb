@@ -45,7 +45,7 @@
     <input type="text" class="newEmail input-append" placeholder="{{str "LBL_EMAIL_ADD"}}">
     <div class="btn-toolbar prevent-mousedown">
        <div class="btn-group">
-          <a href="javascript:void(0)" class="btn addEmail" rel="tooltip" data-original-title="{{str "LBL_EMAIL_ADD"}}"><i class="icon-plus"></i></a>
+          <a href="javascript:void(0)" class="btn addEmail" rel="tooltip" data-original-title="{{str "LBL_EMAIL_ADD"}}" data-placement="top"><i class="icon-plus"></i></a>
        </div>
     </div>
 </div>

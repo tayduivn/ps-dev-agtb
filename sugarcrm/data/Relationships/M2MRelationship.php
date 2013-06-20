@@ -522,7 +522,7 @@ class M2MRelationship extends SugarRelationship
             $targetTable_alias = strtolower($options['myAlias']);
         }
 
-        $joinTable_alias = $targetTable . '_link';
+        $joinTable_alias = $targetTable_alias . '_link';
 
         $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type))
                     ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")

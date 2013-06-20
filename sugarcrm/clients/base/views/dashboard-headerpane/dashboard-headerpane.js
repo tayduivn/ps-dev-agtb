@@ -1,5 +1,5 @@
 ({
-    extendsFrom: 'EditableView',
+    extendsFrom: 'RecordView',
     buttons: null,
     editableFields: null,
     events: {
@@ -18,8 +18,7 @@
             options.meta = app.metadata.getView(options.context.parent.get("module"), options.name);
             options.template = app.template.getView(options.name);
         }
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
         this.model.on("change change:layout change:metadata", function() {
             if (this.inlineEditMode) {
                 this.changed = true;
@@ -54,7 +53,7 @@
     },
     createCancelClicked: function(evt) {
         if(this.context.parent) {
-            this.model.dashboardLayout.navigateLayout('list');
+            this.layout.navigateLayout('list');
         } else {
             app.navigate(this.context);
         }
@@ -64,7 +63,7 @@
     },
     addClicked: function(evt) {
         if(this.context.parent) {
-            this.model.dashboardLayout.navigateLayout('create');
+            this.layout.navigateLayout('create');
         } else {
             var route = app.router.buildRoute(this.module, null, 'create');
             app.router.navigate(route, {trigger: true});
@@ -101,7 +100,7 @@
                 success: function() {
                     if(self.context.get("create")) {
                         if(self.context.parent) {
-                            self.model.dashboardLayout.navigateLayout(self.model.id);
+                            self.layout.navigateLayout(self.model.id);
                         } else {
                             app.navigate(self.context, self.model);
                         }
@@ -117,6 +116,7 @@
                 }
             });
         } else {
+            this.model.trigger("setMode", "view");
             this.setButtonStates('view');
             this.toggleEdit(false);
         }
@@ -139,7 +139,7 @@
                 self.model.destroy({
                     success: function() {
                         if(self.context.parent) {
-                            self.model.dashboardLayout.navigateLayout('list');
+                            self.layout.navigateLayout('list');
                         } else {
                             var route = app.router.buildRoute(self.module);
                             app.router.navigate(route, {trigger: true});
@@ -161,30 +161,5 @@
     },
     toggleEdit: function(isEdit) {
         this.toggleFields(this.editableFields, isEdit);
-    },
-    initButtons: function() {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
-    },
-    registerFieldAsButton: function(buttonName) {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'registerFieldAsButton', args: [buttonName]});
-    },
-    setButtonStates: function(state) {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setButtonStates', args: [state]});
-    },
-    setEditableFields: function() {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'setEditableFields'});
-    },
-    _dispose: function() {
-        _.each(this.editableFields, function(field) {
-            field.nextField = null;
-        });
-        this.buttons = null;
-        this.editableFields = null;
-        app.view.invokeParent(this, {type: 'view', name: 'editable', method: '_dispose'});
     }
-
 })

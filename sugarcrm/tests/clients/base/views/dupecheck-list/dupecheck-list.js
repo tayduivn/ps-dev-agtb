@@ -9,6 +9,7 @@ describe('Base.View.DupeCheckList', function() {
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
+        SugarTest.loadComponent('base', 'view', 'selection-list');
         SugarTest.loadComponent('base', 'view', 'dupecheck-list');
         SugarTest.testMetadata.init();
         listMeta = {
@@ -63,7 +64,7 @@ describe('Base.View.DupeCheckList', function() {
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
         view.$el = $('<div>' + htmlBefore + '</div>');
-        view._removeLinks();
+        view.render();
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 

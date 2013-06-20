@@ -24,7 +24,6 @@
 
 class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private static $isSetup;
 
     public static function setUpBeforeClass()
     {
@@ -33,10 +32,12 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        self::$isSetup = $settings['is_setup'];
-        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
+
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+                'forecast_by' => 'opportunities'
+                //END SUGARCRM flav=pro && flav!=ent ONLY
+            ));
     }
 
     public function tearDown()
@@ -51,8 +52,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
     }
 
@@ -64,6 +64,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
+     * @group opportunities
      */
     public function testCaseFieldEqualsAmountWhenCaseFieldEmpty($case)
     {
@@ -75,6 +76,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
+     * @group opportunities
      */
     public function testCaseFieldEqualsZeroWhenCaseFieldSetToZero($case)
     {
@@ -88,6 +90,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
      * @group forecasts
+     * @group opportunities
      */
     public function testOpportunitySaveSelectProperTimePeriod()
     {
@@ -112,6 +115,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test checks to see if we the opportunity is still included on the time period on the first day of the span
      * @group forecasts
+     * @group opportunities
      */
     public function testOpportunitySaveFirstDayOfTimePeriod()
     {
@@ -137,6 +141,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      * This test checks to ensure that opportunities created with a date_closed value have a date_closed_timestamp
      * value that correctly falls within range of the timeperiod for that period.
      * @group forecasts
+     * @group opportunities
      */
     public function testOpportunitySaveLastDayOfTimePeriod()
     {
@@ -160,9 +165,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     //END SUGARCRM flav=pro ONLY
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate of currency_id
      * @group forecasts
+     * @group opportunities
      */
     public function testCurrencyRate()
     {
@@ -184,9 +190,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    /*
+    /**
      * Test that base currency exchange rates from EUR are working properly.
      * @group forecasts
+     * @group opportunities
      */
     public function testBaseCurrencyAmounts()
     {
@@ -214,6 +221,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      * This method tests that a product record is created for new opportunity and that the necessary opportunity
      * field values are mapped to the product record
      * @group forecasts
+     * @group opportunities
      */
     public function testProductEntryWasCreated()
     {
@@ -231,10 +239,9 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
 
-    /*
+    /**
      * This method tests that subsequent changes to an opportunity will also update the associated product's data
      * @group forecasts
-     * @group opportunities
      * @group opportunities
      * @bug 56433
      */
@@ -259,9 +266,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
-    /*
+    /**
      * This method tests that best/worst cases will be set to opp amount when sales stage is changed to Closed Won
      * @group forecasts
+     * @group opportunities
      */
     public function testCaseFieldsEqualsAmountWhenSalesStageEqualsClosedWon()
     {
@@ -278,6 +286,56 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($opp->best_case, $opp->amount);
         $this->assertEquals($opp->worst_case, $opp->amount);
+    }
+    //END SUGARCRM flav=pro ONLY
+    
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    /**
+     * @group opportunities
+     * @group forecasts
+     */
+    public function testMarkDeleteDeletesForecastWorksheet()
+    {
+        SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($opp);
+
+        // assert that worksheet is not deleted
+        $this->assertEquals(0, $worksheet->deleted);
+
+        $opp->mark_deleted($opp->id);
+
+        $this->assertEquals(1, $opp->deleted);
+
+        // fetch the worksheet again
+        unset($worksheet);
+        $worksheet = SugarTestWorksheetUtilities::loadWorksheetForBean($opp, false, true);
+        $this->assertEquals(1, $worksheet->deleted);
+    }
+
+    public function testMarkDeleteDeletesRelatedProducts()
+    {
+        SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->date_closed = '2013-01-01';
+        $opp->save();
+
+        $products = $opp->get_linked_beans('products', 'Products');
+
+        $opp->mark_deleted($opp->id);
+        $this->assertEquals(1, $opp->deleted);
+
+        foreach($products as $product) {
+            $p = BeanFactory::getBean($product->module_name);
+            $p->retrieve($product->id, true, false);
+
+            $this->assertEquals(1, $p->deleted);
+        }
     }
     //END SUGARCRM flav=pro && flav!=ent ONLY
 }

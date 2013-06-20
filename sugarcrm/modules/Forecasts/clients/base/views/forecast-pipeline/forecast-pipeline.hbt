@@ -1,0 +1,28 @@
+{{#if forecastSetup}}
+<div class="dashlet-options">
+    <div class="row-fluid">
+      <div class="span8">{{#each dashletConfig.timeperiod}}
+                {{field ../this model=../this.settings template="edit"}}
+            {{/each}}</div>
+      <div class="span4">
+        <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+          <button class="btn active" rel="tooltip" data-type="self" data-original-title="My Pipeline" data-placement="top"><i class="icon-user"></i></button>
+          <button class="btn" rel="tooltip" data-type="team" data-original-title="My Teams Pipeline" data-placement="top"><i class="icon-group"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="opportunity-pipeline-wrapper">
+    <div class="nv-chart nv-chart-funnel">
+        <svg id="{{cid}}"></svg>
+    </div>
+</div>
+{{else}}
+<div class="opportunity-pipeline-wrapper">
+    {{#if forecastAdmin}}
+        {{{str "LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN" this.model.module this.context}}}
+    {{else}}
+        {{{str "LBL_DASHLET_FORECAST_NOT_SETUP" this.model.module this.context}}}
+    {{/if}}
+</div>
+{{/if}}

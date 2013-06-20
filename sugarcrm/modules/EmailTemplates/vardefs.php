@@ -20,7 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['EmailTemplate'] = array(
-	'table' => 'email_templates', 'comment' => 'Templates used in email processing',
+    'table' => 'email_templates',
+//BEGIN SUGARCRM flav=pro ONLY
+    'favorites' => false,
+//END SUGARCRM flav=pro ONLY
+    'comment' => 'Templates used in email processing',
 	'fields' => array(
 		'id' => array(
 			'name' => 'id',

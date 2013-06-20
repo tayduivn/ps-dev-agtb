@@ -116,6 +116,7 @@ class Product extends SugarBean
     public $related_product_id;
     public $contracts;
     public $product_index;
+    public $revenuelineitem_id;
 
     public $table_name = "products";
     public $rel_manufacturers = "manufacturers";
@@ -133,7 +134,7 @@ class Product extends SugarBean
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
-    public $relationship_fields = array('related_product_id' => 'related_products', 'opportunity_id' => 'opportunities');
+    public $relationship_fields = array('related_product_id' => 'related_products');
 
 
     // This is the list of fields that are copied over from product template.
@@ -214,25 +215,23 @@ class Product extends SugarBean
             $params,
             $show_deleted,
             $join_type,
-            $return_array,
+            true,
             $parentbean,
             $singleSelect
         );
+        
         $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = products.contact_id";
+        
+        //Add clause to remove opportunity related products
+            $ret_array['where'] = $ret_array['where'] .
+                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
 
         //If return_array is set to true, return as an Array
         if ($return_array) {
-            //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where'] .
-                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
             return $ret_array;
         }
 
-        return str_replace(
-            'where products.deleted=0',
-            "where products.deleted=0 AND (products.opportunity_id is not null OR products.opportunity_id <> '')",
-            $ret_array
-        );
+        return implode(" ", $ret_array);
     }
 
 
@@ -637,23 +636,12 @@ class Product extends SugarBean
             }
         }
 
-        if($this->probability == '') {
-            $this->mapProbabilityFromSalesStage();
-        }
         
         $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
 
         $id = parent::save($check_notify);
-        //BEGIN SUGARCRM flav=ent ONLY
-        // this only happens when ent is built out
-        $this->saveProductWorksheet();
-        if ($this->fetched_row != false && $this->opportunity_id != $this->fetched_row["opportunity_id"]) {
-            $this->resaveOppForRecalc($this->fetched_row["opportunity_id"]);
-        }
-        $this->handleOppSalesStatus();
-        //END SUGARCRM flav=ent ONLY
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
         if (isset($id)) {
@@ -751,39 +739,6 @@ class Product extends SugarBean
         return $id;
     }
 
-    /**
-     * Override the current SugarBean functionality to make sure that when this method is called that it will also
-     * take care of any draft worksheets by rolling-up the data
-     *
-     * @param string $id            The ID of the record we want to delete
-     */
-    public function mark_deleted($id)
-    {
-        $oppId = $this->opportunity_id;
-        parent::mark_deleted($id);
-           
-        //BEGIN SUGARCRM flav=ent ONLY
-        // this only happens when ent is built out
-        $this->saveProductWorksheet();
-        
-        //save to trigger related field recalculations for deleted item
-        $this->resaveOppForRecalc($oppId);
-        //END SUGARCRM flav=ent ONLY
-    }
-    
-    /**
-     * Utility to load/save a related Opp when things are deleted/reassigned so calcuated fields
-     * in Opportunities update with new totals.
-     */
-    protected function resaveOppForRecalc($oppId)
-    {
-    	if (!empty($oppId)) {
-            $opp = BeanFactory::getBean('Opportunities', $oppId);
-            $opp->save();
-        }
-    }
-
-
     /*
      * map fields if opportunity id is set
      */
@@ -814,44 +769,6 @@ class Product extends SugarBean
     }
 
     /**
-     * Handling mapping the probability from the sales stage.
-     */
-    protected function mapProbabilityFromSalesStage()
-    {
-        global $app_list_strings;
-        if (!empty($this->sales_stage)) {
-            $prob_arr = $app_list_strings['sales_probability_dom'];
-            if (isset($prob_arr[$this->sales_stage])) {
-                $this->probability = $prob_arr[$this->sales_stage];
-            }
-        }
-    }
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * Save the updated product to the worksheet, this will create one if one does not exist
-     * this will also update one if a draft version exists
-     *
-     * @return bool         True if the worksheet was saved/updated, false otherwise
-     */
-    protected function saveProductWorksheet()
-    {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        if ($settings['is_setup']) {
-            // save the a draft of each product
-            /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
-            $worksheet->saveRelatedProduct($this);
-            return true;
-        }
-
-        return false;
-    }
-    //END SUGARCRM flav=ent ONLY
-
-    /**
      * Sets the account_id value for instance given an opportunityId argument of the Opportunity id
      *
      * @param $opportunityId String value of the Opportunity id
@@ -870,70 +787,6 @@ class Product extends SugarBean
         return false;
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * helper function to update the opportunity sales status based on parameters
-     * @param $opportunity
-     * @param $opportunitySalesStatusToCheck
-     * @param $productSalesStatusToCheck
-     * @param $opportunitySalesStatusToUse
-     * @param $checkAllPLI
-     */
-    protected function changeOppSalesStatus(Opportunity $opportunity, $opportunitySalesStatusToCheck, $productSalesStatusToCheck, $opportunitySalesStatusToUse, $checkAllPLI)
-    {
-        if ($opportunity->sales_status != $opportunitySalesStatusToCheck && $opportunity->sales_status != $opportunitySalesStatusToUse) {
-            $salesStatusLineItems = $opportunity->products->query(array(
-                                               'where'=>array(
-                                                   // query adds the prefix so we don't need contact.id
-                                                   'lhs_field'=>'sales_status',
-                                                   'operator'=>'=',
-                                                   'rhs_value'=>$this->db->quote($productSalesStatusToCheck),
-                                                   ),
-                                                'deleted'=>'0'));
-            $requiredRowCount = 1;
-            if ($checkAllPLI) {
-                $requiredRowCount = count($opportunity->products->rows);
-            }
-            //if productLineItems found with passed Sales Status and the Opp sales status is not that current sales status
-            if (count($salesStatusLineItems['rows']) >= $requiredRowCount) {
-                $opportunity->sales_status = $opportunitySalesStatusToUse;
-                $opportunity->save();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Code to make sure that the Sales Status field of the associated opportunity
-     */
-    protected function handleOppSalesStatus()
-    {
-        if (!empty($this->opportunity_id)) {
-            $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
-            $products = $opp->get_linked_beans('products', 'Products');
-            if (count($products) > 0) {
-                //opp currently isn't in status new, but a PLI gets added as status new, so this is assuming it's not just a new opp and new PLI
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_NEW,Opportunity::STATUS_NEW,Opportunity::STATUS_IN_PROGRESS,false)) {
-                    return;
-                }
-                //opp currently isn't in progress, but a PLI gets added as in progress
-                if ($this->changeOppSalesStatus($opp,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,Opportunity::STATUS_IN_PROGRESS,false)) {
-                    return;
-                }
-                //opp currently isn't Won, but all PLIs are closed won
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,Opportunity::STAGE_CLOSED_WON,true)) {
-                    return;
-                }
-                //opp currently isn't Lost, but all PLIs are closed lost
-                if ($this->changeOppSalesStatus($opp,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,Opportunity::STAGE_CLOSED_LOST,true)) {
-                    return;
-                }
-            }
-        }
-    }
-    //END SUGARCRM flav=ent ONLY
-    
     /**
      * Handle the mapping of the fields from the product template to the product
      */

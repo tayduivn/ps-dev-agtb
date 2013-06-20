@@ -31,7 +31,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration'],
+    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable'],
 
     rowFields: {},
 
@@ -43,9 +43,14 @@
 
     initialize: function(options) {
         //Grab the record list of fields to display from the base metadata
-        var recordListMeta = app.metadata.getView(null, 'recordlist') || {};
+        var recordListMeta = this._initializeMetadata();
         options.meta = _.extend({}, recordListMeta, options.meta || {});
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+    },
+
+    // Allows sub-views to override and use different view metadata if desired
+    _initializeMetadata: function() {
+        return app.metadata.getView(null, 'recordlist') || {};
     },
 
     addActions:function () {

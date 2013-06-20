@@ -11,7 +11,7 @@ describe("Base.View.Massupdate", function() {
             return fixtures.metadata.modules.Contacts;
         });
         layout = SugarTest.createLayout('base', 'Cases', 'list');
-        view = SugarTest.createView("base", "Contacts", "massupdate", null, null, null, layout);
+        view = SugarTest.createView("base", "Contacts", "massupdate", {}, null, null, layout);
         stub.restore();
         view.model = new Backbone.Model();
     });

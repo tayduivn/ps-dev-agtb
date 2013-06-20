@@ -61,8 +61,16 @@ eoq2;
             self::argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
+        if(!is_readable("{$this->context['source_dir']}/include/entryPoint.php") || !is_readable("{$this->context['source_dir']}/config.php")) {
+            self::argError("{$this->context['source_dir']} is not a accessible.");
+        }
+
         if(!is_file($this->context['zip'])) { // valid zip?
             self::argError("First argument must be a full path to the patch file: {$argv[1]}.");
+        }
+
+        if(!is_readable($this->context['zip'])) { // valid zip?
+            self::argError("{$argv[1]} is not readable.");
         }
         return true;
     }
@@ -122,6 +130,7 @@ eoq2;
         global $argv;
         $upgrader = new static(static::parseArgs($argv));
         $upgrader->verifyArguments($argv);
+        $upgrader->init();
         if(isset($upgrader->context['stage'])) {
             $stage = $upgrader->context['stage'];
         } else {
@@ -132,6 +141,9 @@ eoq2;
             if($upgrader->run($stage)) {
                 exit(0);
             } else {
+                if(!empty($upgrader->error)) {
+                    echo "ERROR: {$upgrader->error}\n";
+                }
                 exit(1);
             }
         } else {
@@ -139,6 +151,9 @@ eoq2;
             if($stage != 'continue') {
                 // reset state
                 $upgrader->cleanState();
+            } else {
+                // remove 'continue' from the array
+                array_pop($upgrader->context['argv']);
             }
             while(1) {
                 $res = $upgrader->runStep($stage);

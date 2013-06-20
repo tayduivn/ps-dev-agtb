@@ -16,6 +16,28 @@ $dictionary['Product'] = array(
     'audited' => true,
     'comment' => 'The user (not Admin)) view of a Product definition; an instance of a product',
     'fields' => array(
+        'revenuelineitem_id' =>  array(
+            'name' => 'revenuelineitem_id',
+            'type' => 'id',
+            'vname' => 'LBL_REVENUELINEITEM_ID',
+            'required' => false,
+            'reportable' => false,
+            'comment' => 'Associated Revenue Line Item that served as the source.'
+        ),
+        'revenuelineitem_name' =>  array(
+            'name' => 'revenuelineitem_name',
+            'rname' => 'name',
+            'id_name' => 'revenuelineitem_id',
+            'vname' => 'LBL_REVENUELINEITEM_NAME',
+            'type' => 'relate',
+            'link' => 'revenuelineitems',
+            'isnull' => 'true',
+            'module' => 'RevenueLineItems',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'source' => 'non-db',
+            'studio' => false
+            ),
         'product_template_id' =>  array(
             'name' => 'product_template_id',
             'type' => 'id',
@@ -140,7 +162,6 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_CATEGORY',
             'type' => 'id',
             'group' => 'category_name',
-            'required' => true,
             'reportable' => true,
             'comment' => 'Product category'
         ),
@@ -158,7 +179,6 @@ $dictionary['Product'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
-            'required' => true,
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
         ),
         'name' =>  array(
@@ -470,6 +490,13 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
         ),
 //BEGIN SUGARCRM flav=pro ONLY
+        'revenuelineitems' =>  array(
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'relationship' => 'products_revenuelineitems',
+            'vname' => 'LBL_REVENUELINEITEM',
+            'source' => 'non-db',
+        ),
         'best_case' =>  array(
             'name' => 'best_case',
             'vname' => 'LBL_BEST_CASE',
@@ -551,14 +578,6 @@ $dictionary['Product'] = array(
             'importable' => 'required',
             'required' => true,
         ),
-        'sales_status' =>  array(
-            'name' => 'sales_status',
-            'vname' => 'LBL_SALES_STATUS',
-            'type' => 'enum',
-            'options' => 'sales_status_with_quote_dom',
-            'len' => '255',
-            'audited' => true,
-        ),
         'probability' =>  array(
             'name' => 'probability',
             'vname' => 'LBL_PROBABILITY',
@@ -568,6 +587,8 @@ $dictionary['Product'] = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
+            'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
+            'calculated' => true,
         ),
         'lead_source' => array(
             'name' => 'lead_source',
@@ -690,7 +711,7 @@ $dictionary['Product'] = array(
         'opportunity_link' =>  array(
             'name' => 'opportunity_link',
             'type' => 'link',
-            'relationship' => 'products_opportunities',
+            'relationship' => 'opportunities_products',
             'vname' => 'LBL_OPPORTUNITY',
             'link_type' => 'one',
             'module' => 'Opportunities',
@@ -870,7 +891,7 @@ $dictionary['Product'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Products'
         ),
-        'products_opportunities' =>  array(
+        'opportunities_products' =>  array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
             'lhs_key' => 'id',
@@ -950,6 +971,15 @@ $dictionary['Product'] = array(
             'rhs_module' => 'Worksheet',
             'rhs_table' => 'worksheet',
             'rhs_key' => 'related_id',
+            'relationship_type' => 'one-to-many'
+        ),
+        'products_revenuelineitems' =>  array(
+            'lhs_module' => 'Products',
+            'lhs_table' => 'products',
+            'lhs_key' => 'revenuelineitem_id',
+            'rhs_module' => 'RevenueLineItems',
+            'rhs_table' => 'revenue_line_items',
+            'rhs_key' => 'id',
             'relationship_type' => 'one-to-many'
         ),
         //END SUGARCRM flav=pro ONLY

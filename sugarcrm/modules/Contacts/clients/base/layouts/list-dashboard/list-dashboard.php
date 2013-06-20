@@ -10,21 +10,18 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'My Accounts',
-            'view' => 'dashablelist',
+            'view' => array(
+                'name' => 'dashablelist',
+                'label' => 'My Accounts',
+                'display_columns' => array(
+                    'name',
+                    'billing_address_country',
+                    'billing_address_city',
+                ),
+                'my_items' => '1',
+            ),
             'context' => array(
                 'module' => 'Accounts',
-                'dashlet' => array(
-                    'name' => 'My Accounts',
-                    'type' => 'dashablelist',
-                    'module' => 'Accounts',
-                    'display_columns' => array(
-                        'name',
-                        'billing_address_country',
-                        'billing_address_city',
-                    ),
-                    'my_items' => '1',
-                ),
             ),
         ),
     )

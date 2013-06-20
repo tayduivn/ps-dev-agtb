@@ -50,6 +50,9 @@
         'click #forecastsChartDisplayOptions div.groupByOptions label.radio' : 'changeGroupByOptions'
     },
 
+    /**
+     * {@inheritdoc}
+     */
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -58,7 +61,9 @@
     },
 
     /**
-     * event handler to update which dataset is used.
+     * Event handler for the datasetOptions label.radio
+     *
+     * @param {jQuery.Event} evt
      */
     changeDisplayOptions : function(evt) {
         evt.preventDefault();
@@ -66,7 +71,9 @@
     },
 
     /**
-     * Handle any group by changes
+     * Event handler for the groupByOptions label.radio
+     *
+     * @param {jQuery.Event} evt
      */
     changeGroupByOptions: function(evt) {
         evt.preventDefault();
@@ -74,9 +81,9 @@
     },
 
     /**
-     * Handle the click event for the optins menu
+     * Handles the click event for the options menu
      *
-     * @param evt
+     * @param {jQuery.Event} evt
      * @return {Array}
      */
     handleOptionChange: function(evt) {
@@ -95,9 +102,9 @@
     },
 
     /**
-     * find all the checkedOptions in a give option class
+     * Finds all the checkedOptions in a given div class
      *
-     * @param {string} divClass
+     * @param {String} divClass the classname of the div to gather checked options
      * @return {Array}
      */
     getCheckedOptions : function(divClass) {
@@ -115,7 +122,7 @@
     },
 
     /**
-     * Override the _rerderHtml function
+     * {@inheritdoc}
      *
      * @protected
      */
@@ -148,12 +155,18 @@
         this.handleRenderOptions(values);
     },
 
+    /**
+     * {@inheritdoc}
+     */
     _render : function() {
         app.view.View.prototype._render.call(this);
 
         this.toggleRepOptionsVisibility();
     },
 
+    /**
+     * Called after _render
+     */
     toggleRepOptionsVisibility : function() {
         if(this.values.get('display_manager') === true) {
             this.$el.find('div.groupByOptions').hide();
@@ -163,6 +176,8 @@
     },
 
     /**
+     * {@inheritdoc}
+     *
      * Clean up any left over bound data to our context
      */
     unbindData : function() {
@@ -173,7 +188,7 @@
     },
 
     /**
-     * Listen to changes in values in the context
+     * {@inheritdoc}
      */
     bindDataChange:function () {
         //This is fired when anything in the worksheets is saved.  We want to wait until this happens
@@ -235,7 +250,8 @@
     /**
      * Handle putting the options into the values array that is used to keep track of what changes
      * so we only render when something changes.
-     * @param options
+     *
+     * @param {Object} options
      */
     handleRenderOptions:function (options) {
         this.values.set(options);
@@ -251,7 +267,6 @@
     /**
      * Render the chart for the first time
      *
-     * @return {Object}
      * @private
      */
     _initializeChart:function () {
@@ -375,7 +390,8 @@
 
     /**
      * Accepts params object and builds the proper endpoint url for charts
-     * @param params {Object} contains a lot of chart options and settings
+     *
+     * @param {Object} params contains a lot of chart options and settings
      * @return {String} has the proper structure for the chart url
      */
     buildChartUrl: function(params) {

@@ -27,6 +27,7 @@
  ********************************************************************************/
 require_once 'include/api/SugarApi.php';
 require_once 'clients/base/api/CurrentUserApi.php';
+require_once "tests/modules/OutboundEmailConfiguration/OutboundEmailConfigurationTestHelper.php";
 
 /**
  * @group ApiTests
@@ -38,12 +39,14 @@ class CurrentUserApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp("current_user");
+        OutboundEmailConfigurationTestHelper::setUp();
         // load up the unifiedSearchApi for good times ahead
         $this->currentUserApiMock = new CurrentUserApiMock();
     }
 
     public function tearDown()
     {
+        OutboundEmailConfigurationTestHelper::tearDown();
         SugarTestHelper::tearDown();
         parent::tearDown();
     }

@@ -34,9 +34,7 @@ class SugarUpgradeProductRemoveFiles extends UpgradeScript
                 'modules/Products/clients/base/views/forecastInspector/forecastInspector.php'
             );
 
-            foreach ($files as $file) {
-                $this->state['files_to_delete'][] = $file;
-            }
+            $this->fileToDelete($files);
         }
     }
 }

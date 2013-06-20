@@ -69,6 +69,10 @@ describe("Base.Field.Button", function() {
 
     it("should show and hide functions must trigger hide and show events, and it should change the isHidden property", function() {
 
+        SugarTest.testMetadata.init();
+        SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
+        SugarTest.testMetadata.set();
+
         var def = {
             'events' : {
                 'click .btn' : 'function() { this.callback = "stuff excuted"; }',
@@ -76,19 +80,27 @@ describe("Base.Field.Button", function() {
             }
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
-        var triggers = sinon.spy(field, 'trigger');
-        field.show();
-        expect(triggers.calledOnce).toBe(true);
-        expect(triggers.calledWithExactly('show')).toBe(true);
-        expect(field.isHidden).toBe(false);
-        triggers.restore();
+        field.render();
 
+        // we need to hide first, since the render() does the show
         var triggers2 = sinon.spy(field, 'trigger');
         field.hide();
         expect(triggers2.calledOnce).toBe(true);
         expect(triggers2.calledWithExactly('hide')).toBe(true);
         expect(field.isHidden).toBe(true);
+        expect(field.isVisible()).toBe(false);
         triggers2.restore();
+
+        // now try and show it
+        var triggers = sinon.spy(field, 'trigger');
+        field.show();
+        expect(triggers.calledOnce).toBe(true);
+        expect(triggers.calledWithExactly('show')).toBe(true);
+        expect(field.isHidden).toBe(false);
+        expect(field.isVisible()).toBe(true);
+        triggers.restore();
+
+        SugarTest.testMetadata.dispose();
 
     });
 
@@ -181,9 +193,34 @@ describe("Base.Field.Button", function() {
         field.show();
 
         expect(field.isHidden).toBeTruthy();
+        expect(field.isVisible()).toBeFalsy();
 
         accessStub.restore();
 
+    });
+
+    it('should update visibility once it triggers rendering', function() {
+        var def = {
+            'acl_module' : 'Contacts',
+            'acl_action' : 'edit'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        var accessStub = sinon.stub(field,'hasAccess', function(){
+            return true;
+        })
+        field.render();
+        expect(field.isVisible()).toBe(true);
+        accessStub.restore();
+
+        accessStub = sinon.stub(field,'hasAccess', function(){
+            return false;
+        })
+        var renderStub = sinon.stub(field, "_render");
+        field.render();
+        expect(field.isVisible()).toBe(false);
+        expect(renderStub).not.toHaveBeenCalled();
+        renderStub.restore();
+        accessStub.restore();
     });
 
     it("should differentiate string routes from sidecar route object", function() {
@@ -202,5 +239,26 @@ describe("Base.Field.Button", function() {
         field = SugarTest.createField("base","button", "button", "edit", def);
         field.render();
         expect(field.full_route).toEqual('custom/route');
+    });
+
+    it("should test hasAccess control before it is rendered", function() {
+        field = SugarTest.createField("base","button", "button", "edit");
+        var hasAccessStub = sinon.stub(field, 'hasAccess');
+        field.triggerBefore("render");
+        expect(hasAccessStub).toHaveBeenCalled();
+        hasAccessStub.restore();
+    });
+
+    it("should update visibility simultaneously once it triggers show and hide", function() {
+        field = SugarTest.createField("base","button", "button", "edit");
+        field.on("hide", function() {
+            expect(this.isVisible()).toBe(false);
+        }, field);
+        field.on("show", function() {
+            expect(this.isVisible()).toBe(true);
+        }, field);
+        field.show();
+        field.hide();
+        field.off();
     });
 });

@@ -4,10 +4,6 @@
     plugins: ['Dashlet'],
     dragging: false,
 
-    initialize: function(options) {
-        app.view.View.prototype.initialize.call(this, options);
-    },
-
     _renderHtml: function() {
         var self = this,
             results = this.results,
@@ -85,12 +81,11 @@
 
         svg.call(zoom);
 
-
-        d3.json(app.config.siteUrl + '/styleguide/assets/js/nvd3/data/cldr_fr.json', function (labels) {
+        $.getJSON(app.utils.buildUrl('styleguide/assets/js/nvd3/data/cldr_en.json'), function(labels) {
             country_label = labels;
         });
 
-        d3.json(app.config.siteUrl + '/styleguide/assets/js/nvd3/data/ne_110m_admin_0_countries.json', function (world) {
+        $.getJSON(app.utils.buildUrl('styleguide/assets/js/nvd3/data/ne_110m_admin_0_countries.json'), function(world) {
             world_map = topojson.feature(world, world.objects.countries).features;
             loadChart(world_map, 'countries');
             if (autoSpin) {
@@ -98,7 +93,7 @@
             }
         });
 
-        d3.json(app.config.siteUrl + '/styleguide/assets/js/nvd3/data/us-states.json', function (country) {
+        $.getJSON(app.utils.buildUrl('styleguide/assets/js/nvd3/data/us-states.json'), function(country) {
             country_map['USA'] = country.features;
         });
 

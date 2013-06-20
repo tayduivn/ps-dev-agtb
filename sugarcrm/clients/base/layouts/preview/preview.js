@@ -7,10 +7,6 @@
         app.events.on("preview:open", this.showPreviewPanel, this);
         app.events.on("preview:close", this.hidePreviewPanel, this);
     },
-    renderHtml: function() {
-        app.view.Layout.prototype.renderHtml.call(this);
-        this.$el.addClass("preview-pane");
-    },
 
     /**
      * Show the preview panel, if it is part of the active drawer

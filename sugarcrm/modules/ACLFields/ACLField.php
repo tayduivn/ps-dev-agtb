@@ -37,7 +37,13 @@ class ACLField  extends ACLAction
     //END SUGARCRM flav=pro ONLY
 
     /**
-     * This is a depreciated method, please start using __construct() as this method will be removed in a future version
+     * Cache of the ACL fields
+     * @var array
+     */
+    public static $acl_fields = array();
+
+    /**
+     * This is a deprecated method, please start using __construct() as this method will be removed in a future version
      *
      * @see __construct
      * @deprecated
@@ -45,13 +51,6 @@ class ACLField  extends ACLAction
     public function ACLField()
     {
         $this->__construct();
-    }
-
-    public function __construct(){
-        parent::__construct();
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->disable_row_level_security =true;
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -167,44 +166,52 @@ class ACLField  extends ACLAction
     /**
      * Load user ACLs from the DB
      * @internal
-     * @param string $category
+     * @param string $category Module name
      * @param string $object
      * @param string $user_id
      * @param bool $refresh
      */
-    static function loadUserFields($category,$object, $user_id, $refresh=false){
-        if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))
+    static function loadUserFields($module_name,$object, $user_id, $refresh=false){
+        if(empty($user_id)) {
+            return array();
+        }
+        if(!$refresh && isset(self::$acl_fields[$user_id][$module_name]))
         {
-            return $_SESSION['ACL'][$user_id][$category]['fields'];
+            return self::$acl_fields[$user_id][$module_name];
         }
 
-        if(empty($_SESSION['ACL'][$user_id])) {
-            // load actions to prevent cache poisoning for ACLAction
-            ACLAction::getUserActions($user_id);
+        // We can not cache per user ID because ACLs are stored per role
+        if(!$refresh) {
+            self::$acl_fields[$user_id] = self::loadFromCache($user_id, 'fields');
+            if(isset(self::$acl_fields[$user_id][$module_name])) {
+                return self::$acl_fields[$user_id][$module_name];
+            }
         }
+
         $query = "SELECT  af.name, af.aclaccess FROM acl_fields af ";
         $query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
                     INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
         $query .=  " WHERE af.deleted = 0 ";
-        $query .= " AND af.category='$category'";
+        $query .= " AND af.category='$module_name'";
 
         $result = $GLOBALS['db']->query($query);
 
-        $allFields = ACLField::getAvailableFields($category, $object);
-        $_SESSION['ACL'][$user_id][$category]['fields'] = array();
-        while($row = $GLOBALS['db']->fetchByAssoc($result)){
-            if($row['aclaccess'] != 0 && (empty($_SESSION['ACL'][$user_id][$category]['fields'][$row['name']]) || $_SESSION['ACL'][$user_id][$category]['fields'][$row['name']] > $row['aclaccess']))
+        $allFields = ACLField::getAvailableFields($module_name, $object);
+        self::$acl_fields[$user_id][$module_name] = array();
+        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            if($row['aclaccess'] != 0 && (empty(self::$acl_fields[$user_id][$module_name][$row['name']]) || self::$acl_fields[$user_id][$module_name][$row['name']] > $row['aclaccess']))
             {
-                $_SESSION['ACL'][$user_id][$category]['fields'][$row['name']] = $row['aclaccess'];
+                self::$acl_fields[$user_id][$module_name][$row['name']] = $row['aclaccess'];
                 if(!empty($allFields[$row['name']])){
-                foreach($allFields[$row['name']]['fields'] as $field=>$label ){
-                        $_SESSION['ACL'][$user_id][$category]['fields'][strtolower($field)] = $row['aclaccess'];
+                    foreach($allFields[$row['name']]['fields'] as $field=>$label ){
+                        self::$acl_fields[$user_id][$module_name][strtolower($field)] = $row['aclaccess'];
                     }
                 }
             }
         }
 
-        return $_SESSION['ACL'][$user_id][$category]['fields'];
+        self::storeToCache($user_id, 'fields', self::$acl_fields[$user_id]);
+        return self::$acl_fields[$user_id][$module_name];
 
     }
 
@@ -294,34 +301,35 @@ class ACLField  extends ACLAction
     * @param boolean $is_owner Boolean value indicating whether or not the field access should also take into account ownership access
     * @return Integer value indicating the ACL field level access
     */
-    static function hasAccess($field, $module,$user_id, $is_owner)
+    static function hasAccess($field, $module, $user_id, $is_owner)
     {
         if(is_null($user_id)) {
-			$user = $GLOBALS['current_user'];
-            $user_id = $GLOBALS['current_user']->id;
+            $user = $GLOBALS['current_user'];
+            $user_id = $user->id;
         } elseif($user_id instanceof User) {
 			$user = $user_id;
 			$user_id = $user->id;
-		}
+		} elseif($user_id == $GLOBALS['current_user']->id) {
+            $user = $GLOBALS['current_user'];
+        }
 
-		// check ACL first since if we have no ACL we don't care if the user is admin
-        if(!isset($_SESSION['ACL'][$user_id][$module]['fields'][$field])){
+        if(!isset(self::$acl_fields[$user_id][$module][$field])){
             return 4;
         }
 
-		if(empty($user)) {
-			$user = BeanFactory::getBean("Users", $user_id);
-		}
+        if(empty($user)) {
+            $user = BeanFactory::getBean("Users", $user_id);
+        }
 
         if (!empty($user) && $user->isAdmin()) {
             return 4;
         }
 
-        $access = $_SESSION['ACL'][$user_id][$module]['fields'][$field];
+        $access = self::$acl_fields[$user_id][$module][$field];
 
-        if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))){
+        if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))) {
             return 4;
-        }elseif($access == ACL_READ_ONLY || $access==ACL_READ_OWNER_WRITE){
+        } elseif($access == ACL_READ_ONLY || $access==ACL_READ_OWNER_WRITE) {
             return 1;
         }
         return 0;
@@ -351,5 +359,25 @@ class ACLField  extends ACLAction
         $acl->role_id = $role_id;
         $acl->save();
 
+    }
+
+    public function clearACLCache()
+    {
+        self::$acl_fields = array();
+        parent::clearACLCache();
+    }
+
+    /**
+     * Check if there are any field ACLs defined in this module for this user
+     * @param string $user_id
+     * @param string $module
+     * @return boolean
+     */
+    public static function hasACLs($user_id, $module)
+    {
+        if(empty(self::$acl_fields[$user_id])) {
+            self::$acl_fields[$user_id] = self::loadFromCache($user_id, 'fields');
+        }
+        return !empty(self::$acl_fields[$user_id][$module]);
     }
 }

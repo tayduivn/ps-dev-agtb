@@ -315,7 +315,7 @@
 
     _renderHtml: function (ctx, options) {
         _.extend(this, this.model.toJSON());
-        this.progressDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_');
+        this.progressDataSet = app.utils.getAppConfigDatasets('forecasts_options_dataset', 'show_worksheet_', this.context.config);
         this.handleRenderOptions();
 
         app.view.View.prototype._renderHtml.call(this, ctx, options);

@@ -1,7 +1,8 @@
 ({
     events: {
         'click .checkall': 'checkAll',
-        'click input[name="check"]': 'check'
+        'click input[name="check"]': 'check',
+        'change [data-toggle=dropdownmenu]' : 'dropdownSelected'
     },
     fields: null, //action button fields
     actionDropDownTag: ".dropdown-toggle",
@@ -31,6 +32,16 @@
             checkbox.attr("checked", !checkbox.is(":checked"));
         }
         this.toggleSelect(checkbox.is(":checked"));
+    },
+    dropdownSelected: function(evt) {
+        var $el = this.$(evt.currentTarget),
+            selectedIndex = $el.val();
+        if(!selectedIndex) {
+            return;
+        }
+        this.fields[selectedIndex].getFieldElement().trigger("click");
+        $el.blur();
+        evt.currentTarget.selectedIndex = 0;
     },
     toggleSelect: function (check) {
         var massCollection = this.context.get('mass_collection');
@@ -123,6 +134,7 @@
             massCollection.on("add", function (model) {
                 if (massCollection.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
+                    self.$(".dropdown-menu-select").removeClass("hide");
                 }
                 if (massCollection.length == self.view.collection.length) {
                     self.$(self.fieldTag).attr("checked", true);
@@ -133,6 +145,7 @@
             massCollection.on("remove reset", function (model) {
                 if (massCollection.length == 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
+                    self.$(".dropdown-menu-select").addClass("hide");
                 }
                 self.$(self.fieldTag).attr("checked", false);
                 self.toggleShowSelectAll();
@@ -182,14 +195,18 @@
                     viewName: self.options.viewName,
                     model: self.model
                 });
-                field.on("render", self.setPlaceholder, self);
+                field.on("show hide", self.setPlaceholder, self);
                 self.fields.push(field);
                 field.parent = self;
                 actionMenu += '<li>' + field.getPlaceholder() + '</li>';
 
             });
             actionMenu += "</ul>";
-            self.actionPlaceHolder = new Handlebars.SafeString(actionMenu);
+            var caret = '';
+            if(app.utils.isTouchDevice()) {
+                caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
+            }
+            self.actionPlaceHolder = new Handlebars.SafeString(caret + actionMenu);
         }
         return app.view.Field.prototype.getPlaceholder.call(this);
     },
@@ -200,15 +217,19 @@
         }
     },
     setPlaceholder: function () {
-        var index = 0;
-        _.each(this.fields, function (field) {
+        var index = 0,
+            selectEl = this.$(".dropdown-menu-select"),
+            html = '<option></option>';
+
+        _.each(this.fields, function (field, idx) {
             var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
-            if (field.isHidden) {
+            if (!field.isVisible()) {
                 fieldPlaceholder.toggleClass('hide', true);
                 this.$el.append(fieldPlaceholder);
             } else {
                 fieldPlaceholder.toggleClass('hide', false);
                 this.$(".dropdown-menu").append($('<li>').append(fieldPlaceholder));
+                html += '<option value=' + idx + '>' + field.label + '</option>';
                 index++;
             }
         }, this);
@@ -224,6 +245,9 @@
                 $(el).remove();
             }
         });
+        if(app.utils.isTouchDevice()) {
+            selectEl.html(html);
+        }
     },
     unbindData: function() {
         var collection = this.context.get('mass_collection');

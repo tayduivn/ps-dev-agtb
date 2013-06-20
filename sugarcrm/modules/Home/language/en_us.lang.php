@@ -271,6 +271,17 @@ $mod_strings = array (
   'LBL_MOST_EMAILS_RECEIVED' => '{{count}} emails received',
   'LBL_MOST_MEETING_HELD' => '{{count}} meetings held',
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    // Portal tour content
+    'LBL_PORTAL_TOUR_RECORDS_INTRO' => 'Welcome to Sugar Portal.  Use the arrows below to go through a quick tour.',
+    'LBL_PORTAL_TOUR_RECORDS_PAGE' => 'The Dashboard shows a summary of everything available to you within Sugar Portal.',
+    'LBL_PORTAL_TOUR_RECORDS_CASES' => 'Click here to look at or submit support issues in the Cases module.',
+    'LBL_PORTAL_TOUR_RECORDS_KB' => 'Click here to read articles published in the Knowledge Base module.',
+    'LBL_PORTAL_TOUR_RECORDS_BUGS' => 'Click here to look at or submit bug reports in the Bugs module.',
+    'LBL_PORTAL_TOUR_RECORDS_SEARCH' => 'Enter a term here to perform a search for records across any of the available modules.',
+    'LBL_PORTAL_TOUR_RECORDS_USER' => 'From the user menu you can access your Profile or logout.',
+    'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to this view at any time.',
+    //END SUGARCRM flav=ent ONLY
 );
 
 

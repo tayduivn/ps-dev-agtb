@@ -1,3 +1,12 @@
+/**
+ * @class BaseDashboardLayout
+ * @extends app.view.Layout
+ *
+ * The outer layout of the dashboard.
+ * This layout contains the header view and wraps the daslet-main layout.
+ * The layouts for each dashboard are stored in the dashboard endpoint (rest/v10/Dashboards/{id})
+ *
+ */
 ({
     toggled: false,
     className: 'row-fluid',
@@ -21,8 +30,7 @@
                 module: 'Home',
                 dashboardModule: module,
                 maxColumns: (module === 'Home') ? 3 : 1,
-                maxRowColumns: (module === 'Home') ? 3 : 2,
-                dashboardLayout: this
+                maxRowColumns: (module === 'Home') ? 3 : 2
             }),
             DashboardCollection = app.BeanCollection.extend({
                 sync: sync,
@@ -44,80 +52,19 @@
         app.view.Layout.prototype.initialize.call(this, options);
         this.model.on("setMode", function (mode) {
             if (mode === "edit" || mode === "create") {
-                this.$("#dashboard").addClass("edit");
+                this.$(".dashboard").addClass("edit");
             } else {
-                this.$("#dashboard").removeClass("edit");
+                this.$(".dashboard").removeClass("edit");
             }
         }, this);
-        this.initDashletPlugin();
         if (module === 'Home') {
-            this.on("render", this.toggleSidebar);
+            this.on("render", this.toggleSidebar, this);
             
             if (context.get("modelId")) {
                 // save it as last visit
                 app.user.setPreference('home-last-visit', context.get("modelId"));
             }
         }
-    },
-    initDashletPlugin: function () {
-        if (app.plugins._get('Dashlet', 'view')) {
-            return;
-        }
-        app.plugins.register('Dashlet', 'view', {
-            onAttach: function () {
-                this.on("init", function () {
-                    this.model.isNotEmpty = true;
-                    if (this.context.parent && this.context.parent.parent) {
-                        this.model.parentModel = this.context.parent.parent.get("model");
-                        this.model.parentCollection = this.context.parent.parent.get("collection");
-                    } else {
-                        this.model.parentModel = this.context.get("model");
-                        this.model.parentCollection = this.context.get("collection");
-                    }
-                    var dashlet_context = this.context.get("dashlet");
-                    var viewName;
-                    if (dashlet_context) {
-                        viewName = dashlet_context.viewName;
-                        delete dashlet_context.viewName;
-                    } else {
-                        dashlet_context = {};
-                    }
-
-                    if (viewName !== "config" && dashlet_context.link) {
-                        this.context.set("parentModel", this.model.parentModel);
-                        this.context.set("parentModule", this.model.parentModel.module);
-                        this.context.set("link", dashlet_context.link);
-                        this.context.set(this.context._prepareRelated(dashlet_context.link, this.model.parentModel.get("id")));
-                        this.collection = this.context.get("collection");
-                    }
-
-                    this.model.set(_.extend({
-                        name: dashlet_context.name,
-                        type: dashlet_context.type
-                    }, dashlet_context));
-                    if (viewName === "config") {
-                        this.createMode = true;
-                        this.action = 'edit';
-                        this.layout.context.set("model", this.context.get("model"));
-                        var templateName = this.name + '.dashlet-config';
-                        this.template = app.template.getView(templateName, this.module) ||
-                            app.template.getView(templateName) ||
-                            app.template.getView('record') ||
-                            this.template;
-                    } else if (viewName === "preview") {
-                        this.layout.context.set("model", this.context.get("model"));
-                        var templateName = this.name + '.dashlet-preview';
-                        this.template = app.template.getView(templateName, this.module) ||
-                            app.template.getView(templateName) ||
-                            this.template;
-                    }
-
-                    if (this.initDashlet && _.isFunction(this.initDashlet)) {
-                        this.initDashlet(viewName);
-                    }
-                });
-            }
-        });
     },
     loadData: function (options, setFields) {
         if (this.context.parent && !this.context.parent._dataFetched) {
@@ -136,8 +83,15 @@
             this.toggled = true;
         }
     },
+
+    /**
+     * Places only components that include the Dashlet plugin and places them in the "main-pane" div of
+     * the dashlet layout.
+     * @param component {app.view.Component}
+     * @private
+     */
     _placeComponent: function (component) {
-        var dashboardEl = this.$("#dashboard"),
+        var dashboardEl = this.$("[data-dashboard]"),
             css = this.context.get("create") ? " edit" : "";
         if (dashboardEl.length == 0) {
             dashboardEl = $("<div></div>").attr({
@@ -145,8 +99,8 @@
             });
             this.$el.append(
                 $("<div></div>").attr({
-                    id: 'dashboard',
-                    'class': 'dashboard main-pane' + css
+                    'class': 'dashboard main-pane' + css,
+                    'data-dashboard': 'true'
                 }).append(
                         dashboardEl
                     )
@@ -160,71 +114,89 @@
         'record': 'record-dashboard',
         'records': 'list-dashboard'
     },
+
+    /**
+     * If current context doesn't contain dashboard model id,
+     * it will trigger set default dashboard to create default metadata
+     */
     bindDataChange: function () {
-        var modelId = this.context.get("modelId"),
-            self = this;
+        var modelId = this.context.get("modelId");
         if (!(modelId && this.context.get("create")) && this.collection) {
-            this.collection.on("reset", function () {
-                if (this.disposed) {
-                    return;
-                }
-
-                if (this.collection.models.length > 0) {
-                    var model = _.first(this.collection.models);
-                    if (this.context.parent) {
-                        //For other modules
-                        this.navigateLayout(model.id);
-                    } else {
-                        if (app.user.getPreference('home-last-visit')) {
-                            model = _.findWhere(this.collection.models, {id: app.user.getPreference('home-last-visit')});
-                        }
-                        app.navigate(this.context, model);
-                    }
-                } else {
-                    var layoutName = this.dashboardLayouts[this.context.parent ? this.context.parent.get("layout") : 'record'],
-                        _initDashboard = app.metadata.getLayout(this.model.dashboardModule, layoutName),
-                        params = {
-                            silent: true,
-                            //Don't show alerts for this request
-                            showAlerts: false
-                        };
-
-                    if (this.context.parent) {
-                        params.success = function (model) {
-                            self.navigateLayout(model.id);
-                        };
-                        params.error = function () {
-                            self.navigateLayout("create");
-                        };
-                    } else {
-                        params.success = function (model) {
-                            app.navigate(self.context, model);
-                        };
-                        params.error = function () {
-                            var route = app.router.buildRoute(self.module, null, 'create');
-                            app.router.navigate(route, {trigger: true});
-                        };
-                    }
-
-                    if (!_.isEmpty(_initDashboard) && !_.isEmpty(_initDashboard.metadata)) {
-                        this.model.set(_initDashboard);
-                        this.model.save({}, params);
-                    } else {
-                        params.error();
-                    }
-                }
-            }, this);
+            this.collection.on("reset", this.setDefaultDashboard, this);
         }
     },
-    navigateLayout: function (id) {
+
+    /**
+     * Build the default dashboard metadata only if dashboards are empty
+     *
+     * Default dashboard metadata are stored in the following layout metadata
+     * listview - list-dashboard
+     * recordview - record-dashboard
+     */
+    setDefaultDashboard: function() {
+        if (this.disposed) {
+            return;
+        }
+        var self = this;
+        if (this.collection.models.length > 0) {
+            var model = _.first(this.collection.models);
+            if (this.context.parent) {
+                //For other modules
+                this.navigateLayout(model.id);
+            } else {
+                if (app.user.getPreference('home-last-visit')) {
+                    model = _.findWhere(this.collection.models, {id: app.user.getPreference('home-last-visit')});
+                }
+                app.navigate(this.context, model);
+            }
+        } else {
+            var layoutName = this.dashboardLayouts[this.context.parent ? this.context.parent.get("layout") : 'record'],
+                _initDashboard = app.metadata.getLayout(this.model.dashboardModule, layoutName),
+                params = {
+                    silent: true,
+                    //Don't show alerts for this request
+                    showAlerts: false
+                };
+
+            if (this.context.parent) {
+                params.success = function (model) {
+                    self.navigateLayout(model.id);
+                };
+                params.error = function () {
+                    self.navigateLayout("create");
+                };
+            } else {
+                params.success = function (model) {
+                    app.navigate(self.context, model);
+                };
+                params.error = function () {
+                    var route = app.router.buildRoute(self.module, null, 'create');
+                    app.router.navigate(route, {trigger: true});
+                };
+            }
+
+            if (!_.isEmpty(_initDashboard) && !_.isEmpty(_initDashboard.metadata)) {
+                this.model.set(_initDashboard, {silent: true});
+                this.model.save({}, params);
+            } else {
+                params.error();
+            }
+        }
+    },
+    /**
+     * For the RHS dashboard, this method loads entire dashboard component
+     *
+     * @param id {String} - dashboard id
+     */
+    navigateLayout:function (id) {
         var layout = this.layout;
         this.dispose();
 
         layout._addComponentsFromDef([
             {
-                layout: {
-                    name: 'dashboard',
-                    components: [
+                layout:{
+                    name:'dashboard',
+                    components:[
                         {
                             view: 'dashboard-headerpane'
                         },
@@ -245,7 +217,10 @@
     },
     unbindData: function() {
         var model, collection;
-
+        this.off("render", this.toggleSidebar, this);
+        if (this.collection) {
+            this.collection.off("reset", this.setDefaultDashboard, this);
+        }
         if (this.context.parent) {
             model = this.context.parent.get("model");
             collection = this.context.parent.get("collection");
@@ -261,11 +236,6 @@
         app.view.Layout.prototype.unbindData.call(this);
     },
     _dispose: function () {
-        if (this.collection) {
-            this.collection.model.prototype.dashboardLayout = null;
-        }
-        this.model.parentModel = null;
-        this.model.parentCollection = null;
         this.dashboardLayouts = null;
         app.view.Layout.prototype._dispose.call(this);
     }

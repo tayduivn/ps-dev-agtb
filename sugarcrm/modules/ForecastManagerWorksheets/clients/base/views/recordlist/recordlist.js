@@ -124,7 +124,7 @@
             this.context.parent.off(null, null, this);
         }
         app.routing.offBefore(null, null, this);
-        $(window).off("beforeUnload");
+        $(window).off("beforeunload." + this.worksheetType);
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
 
@@ -240,10 +240,12 @@
                     this.processNavigationMessageReturn(ret);
                 }, {}, this);
 
-                $(window).bind("beforeunload", _.bind(function() {
-                    var ret = this.showNavigationMessage('window');
-                    if (_.isString(ret)) {
-                        return ret;
+                $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
+                    if(!this.disposed) {
+                        var ret = this.showNavigationMessage('window');
+                        if (_.isString(ret)) {
+                            return ret;
+                        }
                     }
                 }, this));
             }
@@ -518,6 +520,11 @@
             this.refreshData();
         } else {
             if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
+                if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
+                    this.showNavigationMessage('manager_to_rep');
+                } else if (this.displayNavigationMessage) {
+                    this.showNavigationMessage('user_switch');
+                }
                 // viewing managers opp worksheet so hide the manager worksheet
                 this.layout.hide();
             }

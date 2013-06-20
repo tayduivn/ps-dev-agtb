@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Emails/MailRecord.php');
-require_once('modules/Emails/RecipientLookup.php');
+require_once('modules/Emails/EmailRecipientsService.php');
 
 class MailApi extends ModuleApi
 {
@@ -44,11 +44,12 @@ class MailApi extends ModuleApi
         "status"        => "",
     );
 
+    private $emailRecipientsService;
 
     public function registerApiRest()
     {
         $api = array(
-            'listMail'     => array(
+            'listMail'        => array(
                 'reqType'   => 'GET',
                 'path'      => array('Mail'),
                 'pathVars'  => array(''),
@@ -56,7 +57,7 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'List Mail Items',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#listMail',
             ),
-            'retrieveMail' => array(
+            'retrieveMail'    => array(
                 'reqType'   => 'GET',
                 'path'      => array('Mail', '?'),
                 'pathVars'  => array('', 'email_id'),
@@ -64,7 +65,7 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Retrieve Mail Item',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#retrieveMail',
             ),
-            'deleteMail'   => array(
+            'deleteMail'      => array(
                 'reqType'   => 'DELETE',
                 'path'      => array('Mail', '?'),
                 'pathVars'  => array('', 'email_id'),
@@ -72,7 +73,7 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Delete Mail Item',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#deleteMail',
             ),
-            'updateMail'   => array(
+            'updateMail'      => array(
                 'reqType'   => 'PUT',
                 'path'      => array('Mail', '?'),
                 'pathVars'  => array('', 'email_id'),
@@ -80,7 +81,7 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Update Mail Item',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#updateMail',
             ),
-            'createMail'   => array(
+            'createMail'      => array(
                 'reqType'   => 'POST',
                 'path'      => array('Mail'),
                 'pathVars'  => array(''),
@@ -88,17 +89,30 @@ class MailApi extends ModuleApi
                 'shortHelp' => 'Create Mail Item',
                 'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#createMail',
             ),
-
             'recipientLookup' => array(
-                'reqType' => 'POST',
-                'path' => array('Mail', 'recipient', 'lookup'),
-                'pathVars' => array(''),
-                'method' => 'recipientLookup',
-                'shortHelp' => 'Lookup Recipient Info',
-                'longHelp' => 'include/api/html/modules/Emails/MailApi.html#recipientLookup',
+                'reqType'   => 'POST',
+                'path'      => array('Mail', 'recipients', 'lookup'),
+                'pathVars'  => array(''),
+                'method'    => 'recipientLookup',
+                'shortHelp' => 'Lookup Email Recipient Info',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#recipientLookup',
             ),
-
-
+            'listRecipients'  => array(
+                'reqType'   => 'GET',
+                'path'      => array('Mail', 'recipients', 'find'),
+                'pathVars'  => array(''),
+                'method'    => 'findRecipients',
+                'shortHelp' => 'Search For Email Recipients',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#findRecipients',
+            ),
+            'validateEmailAddresses'  => array(
+                'reqType'   => 'POST',
+                'path'      => array('Mail', 'address', 'validate'),
+                'pathVars'  => array(''),
+                'method'    => 'validateEmailAddresses',
+                'shortHelp' => 'Validate One Or More Email Address',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#validateEmailAddresses',
+            ),
         );
 
         return $api;
@@ -158,8 +172,6 @@ class MailApi extends ModuleApi
             }
         }
 
-        ob_start();
-
         $mailRecord = $this->initMailRecord($args);
 
         if ($args["status"] == "ready") {
@@ -201,8 +213,8 @@ class MailApi extends ModuleApi
     }
 
     /**
-     * This endpoint accepts an array of one or more recipients and tries to resolve
-     * unsupplied arguments.  RecipientLookup.php contains the Lookup and Resolution Rules
+     * This endpoint accepts an array of one or more recipients and tries to resolve unsupplied arguments.
+     * EmailRecipientsService::lookup contains the lookup and resolution rules.
      *
      * @param $api
      * @param $args
@@ -213,16 +225,107 @@ class MailApi extends ModuleApi
         $recipients = $args;
         unset($recipients['__sugar_url']);
 
-        $recipientLookup = new RecipientLookup();
+        $emailRecipientsService = $this->getEmailRecipientsService();
 
         $result = array();
-        foreach ($recipients AS $recipient) {
-
-            $result[] = $recipientLookup->lookup($recipient);
-
+        foreach ($recipients as $recipient) {
+            $result[] = $emailRecipientsService->lookup($recipient);
         }
 
         return $result;
+    }
+
+    /**
+     * Finds recipients that match the search term.
+     *
+     * Arguments:
+     *    q           - search string
+     *    module_list -  one of the keys from $modules
+     *    order_by    -  columns to sort by (one or more of $sortableColumns) with direction
+     *                   ex.: name:asc,id:desc (will sort by last_name ASC and then id DESC)
+     *    offset      -  offset of first record to return
+     *    max_num     -  maximum records to return
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function findRecipients($api, $args) {
+        ini_set("max_execution_time", 300);
+        $term    = (isset($args["q"])) ? trim($args["q"]) : "";
+        $offset  = 0;
+        $limit   = (!empty($args["max_num"])) ? (int)$args["max_num"] : 20;
+        $orderBy = array();
+
+        if (!empty($args["offset"])) {
+            if ($args["offset"] === "end") {
+                $offset = "end";
+            } else {
+                $offset = (int)$args["offset"];
+            }
+        }
+
+        $modules = array(
+            "users"     => "users",
+            "accounts"  => "accounts",
+            "contacts"  => "contacts",
+            "leads"     => "leads",
+            "prospects" => "prospects",
+            "all"       => "LBL_DROPDOWN_LIST_ALL",
+        );
+        $module  = $modules["all"];
+
+        if (!empty($args["module_list"])) {
+            $moduleList = strtolower($args["module_list"]);
+
+            if (array_key_exists($moduleList, $modules)) {
+                $module = $modules[$moduleList];
+            }
+        }
+
+        if (!empty($args["order_by"])) {
+            $orderBys = explode(",", $args["order_by"]);
+
+            foreach ($orderBys as $sortBy) {
+                $column    = $sortBy;
+                $direction = "ASC";
+
+                if (strpos($sortBy, ":")) {
+                    // it has a :, it's specifying ASC / DESC
+                    list($column, $direction) = explode(":", $sortBy);
+
+                    if (strtolower($direction) == "desc") {
+                        $direction = "DESC";
+                    } else {
+                        $direction = "ASC";
+                    }
+                }
+
+                // only add column once to the order-by clause
+                if (empty($orderBy[$column])) {
+                    $orderBy[$column] = $direction;
+                }
+            }
+        }
+
+        $records    = array();
+        $nextOffset = -1;
+
+        if ($offset !== "end") {
+            $emailRecipientsService = $this->getEmailRecipientsService();
+            $totalRecords           = $emailRecipientsService->findCount($term, $module);
+            $records                = $emailRecipientsService->find($term, $module, $orderBy, $limit, $offset);
+            $trueOffset             = $offset + $limit;
+
+            if ($trueOffset < $totalRecords) {
+                $nextOffset = $trueOffset;
+            }
+        }
+
+        return array(
+            "next_offset" => $nextOffset,
+            "records"     => $records,
+        );
     }
 
     protected function initMailRecord($args)
@@ -241,5 +344,36 @@ class MailApi extends ModuleApi
         $mailRecord->text_body    = $args["text_body"];
 
         return $mailRecord;
+    }
+
+    /**
+     * Validates email addresses. The return value is an array of key-value pairs where the keys are the email
+     * addresses and the values are booleans indicating whether or not the email address is valid.
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function validateEmailAddresses($api, $args)
+    {
+        unset($args["__sugar_url"]);
+        $validatedEmailAddresses = array();
+        $emailRecipientsService  = $this->getEmailRecipientsService();
+        $emailAddresses          = $args;
+
+        foreach ($emailAddresses as $emailAddress) {
+            $validatedEmailAddresses[$emailAddress] = $emailRecipientsService->isValidEmailAddress($emailAddress);
+        }
+
+        return $validatedEmailAddresses;
+    }
+
+    protected function getEmailRecipientsService()
+    {
+        if (!($this->emailRecipientsService instanceof EmailRecipientsService)) {
+            $this->emailRecipientsService = new EmailRecipientsService;
+        }
+
+        return $this->emailRecipientsService;
     }
 }

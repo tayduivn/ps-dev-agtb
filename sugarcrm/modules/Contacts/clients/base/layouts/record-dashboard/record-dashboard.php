@@ -10,14 +10,10 @@ $layout->push(
     0,
     array(
         array(
-            'name' => 'Interactions',
-            'view' => 'interactions',
-            'context' => array(
-                'dashlet' => array(
-                    'name' => 'Interactions',
-                    'type' => 'interactions',
-                    'filter_duration' => '7',
-                ),
+            'view' => array(
+                'name' => 'interactions',
+                'type' => 'Interactions',
+                'filter_duration' => '7',
             ),
         ),
     )

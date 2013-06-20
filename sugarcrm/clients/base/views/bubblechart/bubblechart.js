@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet', 'GridBuilder'],
+    plugins: ['Dashlet'],
 
     events: {
         'click .toggle-control': 'switchChart'
@@ -51,7 +51,7 @@
 
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
 
-        this.filterAssigned = this.model.get('filter_assigned');
+        this.filterAssigned = this.settings.get('filter_assigned');
 
         this.setDateRange();
 
@@ -72,7 +72,7 @@
             .showLegend(true)
             .bubbleClick(function (e) {
                 self.chart.dispatch.tooltipHide(e);
-                app.router.navigate(app.router.buildRoute('Products', e.point.id), {trigger: true});
+                app.router.navigate(app.router.buildRoute('RevenueLineItems', e.point.id), {trigger: true});
             })
             .colorData('class', {step:2})
             .groupBy(function (d) {
@@ -85,20 +85,9 @@
         this.on('data-changed', function () {
             this.updateChart();
         }, this);
-        this.model.on('change:filter_duration', this.changeFilter, this);
+        this.settings.on('change:filter_duration', this.changeFilter, this);
 
-        if (this.model.parentModel) {
-            this.model.parentModel.on('change', this.loadData, this);
-        }
-    },
-
-    initDashlet: function (view) {
-        this.viewName = view;
-
-        if (view === 'config') {
-            // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            app.view.invokeParent(this, {type: 'view', name: 'record', method: '_buildGridsFromPanelsMetadata', args:[this.meta.panels]});
-        }
+        nv.utils.windowResize(this.chart.render);
     },
 
     /**
@@ -106,19 +95,22 @@
      * and and set reference to chart
      */
     updateChart: function () {
-        if (this.viewName === 'config') {
+        if (this.meta.config) {
             return;
         }
-        var self = this;
         //clear existing chart
+        if (!_.isEmpty(this.chart)) {
+            nv.utils.windowUnResize(this.chart.render);
+        }
+
         d3.select('svg#' + this.cid).select('.nvd3').remove();
 
         d3.select('svg#' + this.cid)
-            .datum(self.dataset)
+            .datum(this.dataset)
             .transition().duration(500)
-            .call(self.chart);
+            .call(this.chart);
 
-        nv.utils.windowResize(self.chart.render);
+        nv.utils.windowResize(this.chart.render);
     },
 
     /**
@@ -180,7 +172,7 @@
 
         var _local = _.extend({'filter': _filter}, this.params);
 
-        var url = app.api.buildURL('Products', null, null, _local, this.params);
+        var url = app.api.buildURL('RevenueLineItems', null, null, _local, this.params);
 
         app.api.call('read', url, null, {
             success: function (data) {
@@ -196,7 +188,7 @@
      */
     setDateRange: function () {
         var now = new Date(),
-            duration = parseInt(this.model.get('filter_duration'), 10),
+            duration = parseInt(this.settings.get('filter_duration'), 10),
             startMonth = Math.floor(now.getMonth() / 3) * 3,
             startDate = new Date(now.getFullYear(), (duration === 12 ? 0 : startMonth + duration), 1),
             endDate = new Date(now.getFullYear(), (duration === 12 ? 12 : startDate.getMonth() + 3), 0);
@@ -226,10 +218,6 @@
     },
 
     _dispose: function () {
-        if (this.model.parentModel) {
-            this.model.parentModel.off('change', null, this);
-        }
-        this.model.off('change', null, this);
         this.on('data-changed', null, this);
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.render);

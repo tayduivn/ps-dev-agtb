@@ -29,7 +29,6 @@
 
     delegateButtonEvents: function() {
         this.context.on('button:convert_button:click', this.convertProspectClicked, this);
-        this.context.on('button:manage_subscriptions:click', this.manageSubscriptionsClicked, this);
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'delegateButtonEvents'});
     },
 
@@ -50,18 +49,5 @@
                 app.router.navigate(app.router.buildRoute('Leads', newModel.id));
             }
         });
-    },
-
-    manageSubscriptionsClicked: function() {
-        var params = [
-            {'name': 'sidecar_return', value: app.router.buildRoute(this.module, this.model.id)},
-            {'name': 'return_module', value: this.module},
-            {'name': 'record', value: this.model.id},
-            {'name': 'action', value: 'Subscriptions'},
-            {'name': 'module', value: 'Campaigns'}
-        ];
-
-        var route = '#bwc/index.php?' + $.param(params);
-        app.router.navigate(route, {trigger: true});
     }
 })

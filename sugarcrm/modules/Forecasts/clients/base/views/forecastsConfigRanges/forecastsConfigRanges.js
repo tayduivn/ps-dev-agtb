@@ -1,29 +1,16 @@
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 ({
     /**
      * used to hold the label string from metadata to get rendered in the template.
@@ -66,6 +53,26 @@
     disableRanges: false,
 
     /**
+     * Holds the selected ranges ('Two Ranges', 'Three Ranges') section to add to the accordion toggle
+     */
+    titleSelectedRange: '',
+
+    /**
+     * Holds the selected range values ('70% - 100%') to add to the accordion toggle
+     */
+    titleSelectedValues: '',
+
+    /**
+     * Holds the view's title name
+     */
+    titleViewNameTitle: '',
+
+    /**
+     * Holds the collapsible toggle title template
+     */
+    toggleTitleTpl: {},
+
+    /**
      * Adds event listener to elements
      */
     events: {
@@ -74,16 +81,19 @@
         'click .addCustomRange': 'addCustomRange',
         'click .removeCustomRange': 'removeCustomRange',
         'keyup input[type=text]': 'updateCustomRangeLabel',
-        'change input[type=checkbox]': 'updateCustomRangeIncludeInTotal'
+        'change input[type=checkbox]': 'updateCustomRangeIncludeInTotal',
+        'click .resetLink': 'onResetLinkClicked'
     },
 
     /**
-     * Initializes the view, and then initializes up the parameters for the field metadata holder parameters that get
-     * used to render the fields in the view, since they are not rendered in a standard way.
-     * @param options
+     * {@inheritdoc}
+     *
+     * @param {Object} options
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+
+        this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_RANGES', 'Forecasts');
 
         this.label = _.first(this.meta.panels).label;
 
@@ -101,32 +111,113 @@
 
         // Set this model equal to the latest config metadata
         this.model.set(app.metadata.getModule('Forecasts', 'config'));
+        this.updateTitleValues(this.model);
 
         // set the values for forecast_ranges_field and buckets_dom_field from the model, so it can be set to selected properly when rendered
         this.forecast_ranges_field.value = this.model.get('forecast_ranges');
         this.buckets_dom_field.value = this.model.get('buckets_dom');
+        this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
+    },
 
-        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
-            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+    /**
+     * Handles when reset to defaults link has been clicked for this view
+     *
+     * @param {jQuery.Event} evt click event
+     */
+    onResetLinkClicked: function(evt) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+
+        /**
+         * todo implement resetting to defaults
+         */
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    bindDataChange: function() {
+        if(this.model) {
+            this.model.on('change', function(model) {
+                this.updateTitleValues(model);
+            }, this);
         }
     },
 
+    /**
+     * Load the values for the title in case the model hasn't changed when config loads
+     *
+     * @param {Backbone.Model} model
+     */
+    updateTitleValues: function(model) {
+        // on a fresh install with no demo data,
+        // this.model has the values and the param model is undefined
+        if(_.isUndefined(model)) {
+            model = this.model;
+        }
+
+        var forecastRanges = model.get('forecast_ranges'),
+            rangeObjs = model.get(forecastRanges + '_ranges'),
+            tmpObj = {},
+            str = '';
+
+        // Get the keys into an object
+        _.each(rangeObjs, function(vals) {
+            tmpObj[vals.min] = vals.max;
+        });
+
+        _.each(tmpObj, function(max,min) {
+            str += min + "% - " + max + "%, ";
+        });
+
+        str = str.slice(0, str.length - 2);
+
+        this.titleSelectedValues = str;
+
+        this.titleSelectedRange = app.lang.getAppListStrings('forecasts_config_ranges_options_dom')[forecastRanges];
+        if(_.isFunction(this.toggleTitleTpl)) {
+            this.updateTitle();
+        }
+    },
+
+    /**
+     * Updates the accordion toggle title
+     */
+    updateTitle: function() {
+        var tplVars = {
+            title: this.titleViewNameTitle,
+            message: this.titleSelectedRange,
+            selectedValues: this.titleSelectedValues,
+            viewName: 'forecastsConfigRanges'
+        };
+
+        this.$el.find('#' + this.name + 'Title').html(this.toggleTitleTpl(tplVars));
+    },
+
+    /**
+     * {@inheritdoc}
+     */
     _render: function() {
         //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts ranges setup should be disabled
-        this.disableRanges = app.metadata.getModule('Forecasts', 'config').has_commits;
-        this.selection = app.metadata.getModule('Forecasts', 'config').forecast_ranges;
+        this.disableRanges = this.model.get('has_commits');
+        this.selection = this.model.get('forecast_ranges');
 
         app.view.View.prototype._render.call(this);
 
-        this._addForecastRangesSelectionHandler();
+        // add accordion-group class to wrapper $el div
+        this.$el.addClass('accordion-group');
 
+        this._addForecastRangesSelectionHandler();
+        this.updateTitle();
         return this;
     },
 
     /**
-     * Adds the selection event handler on the forecast ranges radio which sets on the model the value of the bucket selection, the
-     * correct dropdown list based on that selection, as well as opens up the element to show the range setting sliders
+     * Adds the selection event handler on the forecast ranges radio which sets the value of the bucket selection
+     * on the model, the correct dropdown list based on that selection, as well as opens up the element to
+     * show the range setting sliders
+     *
      * @private
      */
     _addForecastRangesSelectionHandler: function() {
@@ -147,13 +238,17 @@
         }, this);
     },
 
+    /**
+     * Handles when the radio buttons change
+     *
+     * @param {jQuery.Event} event
+     */
     selectionHandler: function(event) {
         var view = event.data.view,
             oldValue,
             bucket_dom,
             hideElement,
-            showElement,
-            ranges_options;
+            showElement;
 
         // get the value of the previous selection so that we can hide that element
         oldValue = view.selection;
@@ -186,10 +281,10 @@
     },
 
     /**
-     * selection handler for standard ranges (two and three ranges)
+     * Selection handler for standard ranges (two and three ranges)
      *
-     * @param element
-     * @param showElement
+     * @param {Object} element HTML element for the radio button that was clicked
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
      * @private
      */
     _selectionHandler: function(element, showElement) {
@@ -252,9 +347,10 @@
     },
 
     /**
-     * selection handler for custom ranges
-     * @param element
-     * @param showElement
+     * Selection handler for custom ranges
+     *
+     * @param {Object} element HTML element for the radio button that was clicked
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
      * @private
      */
     _customSelectionHandler: function(element, showElement) {
@@ -311,9 +407,10 @@
     },
 
     /**
-     * render layout for custom ranges, add placeholders for different types of ranges
-     * @param showElement
-     * @param category
+     * Render layout for custom ranges, add placeholders for different types of ranges
+     *
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
+     * @param {String} category type for the ranges 'show_binary' etc.
      * @private
      */
     _renderCustomRangesLayout : function(showElement, category)
@@ -336,11 +433,12 @@
     },
 
     /**
-     * create new custom range field and render it in showElement
-     * @param key
-     * @param label
-     * @param showElement
-     * @param category
+     * Creates a new custom range field and renders it in showElement
+     *
+     * @param {String} key
+     * @param {String} label
+     * @param {jQuery Object} showElement the jQuery-wrapped html element from selectionHandler
+     * @param {String} category type for the ranges 'show_binary' etc.
      * @private
      * @return View.field new created field
      */
@@ -348,7 +446,7 @@
         var customType = key,
             customIndex = 0,
             isExclude = false,
-            // placeholder to insert custom range
+        // placeholder to insert custom range
             currentPlh = showElement,
             rangeField,
             model = new Backbone.Model(),
@@ -447,9 +545,10 @@
     },
 
     /**
-     * return index of last custom range or 0
-     * @param category
-     * @param customType
+     * Returns the index of the last custom range or 0
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
+     * @param {String} customType
      * @return {Number}
      * @private
      */
@@ -471,10 +570,11 @@
     },
 
     /**
-     * return object of last created custom range
-     * if there isn't range return upside/include for custom type and exclude for custom_without_probability type
-     * @param category
-     * @param customType
+     * Returns the last created custom range object, if no range object, return upside/include
+     * for custom type and exclude for custom_without_probability type
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
+     * @param {String} customType
      * @return {*}
      * @private
      */
@@ -505,10 +605,11 @@
     },
 
     /**
-     * add new custom cange field and render it in specific placeholder
-     * @param event
+     * Adds a new custom range field and renders it in specific placeholder
+     *
+     * @param {jQuery.Event} event click
      */
-    addCustomRange : function(event) {
+    addCustomRange: function(event) {
         var view = this,
             category = $(event.handleObj.selector).data('category') || null,
             customType = $(event.handleObj.selector).data('type') || null,
@@ -597,8 +698,9 @@
     },
 
     /**
-     * remove custom range from model and view
-     * @param event
+     * Removes a custom range from the model and view
+     *
+     * @param {jQuery.Event} event click
      * @return void
      */
     removeCustomRange : function(event) {
@@ -681,8 +783,9 @@
     },
 
     /**
-     * change label for custom range in model
-     * @param event
+     * Change a label for a custom range in the model
+     *
+     * @param {jQuery.Event} event keyup
      */
     updateCustomRangeLabel : function(event) {
         var view = this,
@@ -702,8 +805,9 @@
     },
 
     /**
-     * validate labels for custom ranges, if it is invalid add error style for input
-     * @param category
+     * Validate labels for custom ranges, if it is invalid add error style for input
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
      */
     validateCustomRangeLabels: function(category) {
         _.each(this.model.get(category + '_options'), function(item, key) {
@@ -717,8 +821,9 @@
     },
 
     /**
-     * change in_included_total value for custom range in model
-     * @param event
+     * Change in_included_total value for custom range in model
+     *
+     * @param {Backbone.Event} event change
      */
     updateCustomRangeIncludeInTotal : function(event) {
         var view = this,
@@ -741,11 +846,12 @@
     },
 
     /**
-     * updates the setting in the model for the specific range types.
-     * This gets triggered when the range after the user changes a range slider
-     * @param category - the selected category: `show_buckets` or `show_binary`
-     * @param range - the range being set, i. e. `include`, `exclude` or `upside` for `show_buckets` category
-     * @param value - the value being set
+     * Updates the setting in the model for the specific range types.
+     * This gets triggered when the range slider after the user changes a range
+     *
+     * @param {String} category type for the ranges 'show_binary' etc.
+     * @param {String} range - the range being set, i. e. `include`, `exclude` or `upside` for `show_buckets` category
+     * @param {Number} value - the value being set
      */
     updateRangeSettings: function(category, range, value) {
         var catRange = category + '_ranges',
@@ -762,8 +868,9 @@
 
     /**
      * Graphically connects the sliders to the one below, so that they move in unison when changed, based on category.
-     * @param ranges - the forecasts category that was selected, i. e. 'show_binary' or 'show_buckets'
-     * @param sliders - an object containing the sliders that have been set up in the page.  This is created in the
+     *
+     * @param {String} ranges - the forecasts category that was selected, i. e. 'show_binary' or 'show_buckets'
+     * @param {Object} sliders - an object containing the sliders that have been set up in the page.  This is created in the
      * selection handler when the user selects a category type.
      */
     connectSliders: function(ranges, sliders) {
@@ -848,9 +955,10 @@
 
     /**
      * Provides a way for the last of the slider fields in the view, to set the value for the exclude range.
-     * @param value the range value of the slider
-     * @param ranges the selected config range
-     * @param slider the slider
+     *
+     * @param {Object} value the range value of the slider
+     * @param {String} ranges the selected config range
+     * @param {Object} slider the slider
      */
     setExcludeValueForLastSlider: function(value, ranges, slider) {
         var excludeRange = {

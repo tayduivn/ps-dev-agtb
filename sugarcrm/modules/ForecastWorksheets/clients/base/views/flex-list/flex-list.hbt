@@ -65,12 +65,12 @@
     {{#each ../filteredCollection.models}}
     <tr name="{{module}}_{{attributes.id}}" class="single">
         {{#each ../../leftColumns}}
-        <td>
+        <td >
              {{field ../../../this model=../this template=../../../this.viewName}}
         </td>
         {{/each}}
         {{#each ../../_fields.visible}}
-            <td{{#if this.align}} class="{{this.align}}"{{/if}}>
+            <td class="{{#if this.align}} {{this.align}}{{/if}}{{#if click_to_edit}} editableColumn{{/if}}">
               {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}

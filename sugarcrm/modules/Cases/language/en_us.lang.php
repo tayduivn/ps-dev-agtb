@@ -123,6 +123,17 @@ $mod_strings = array (
 
     // SNIP
 	'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    // Portal Tutorial content
+    'LBL_PORTAL_TOUR_RECORDS_INTRO' => 'The Cases module is for managing support issues that affect your Account.  Use the arrows below to go through a quick tour.',
+    'LBL_PORTAL_TOUR_RECORDS_PAGE' => 'This page shows the list of existing Cases associated with your Account.',
+    'LBL_PORTAL_TOUR_RECORDS_FILTER' => 'You can filter down the list of Cases by providing a search term.',
+    'LBL_PORTAL_TOUR_RECORDS_FILTER_EXAMPLE' => 'For example, you might use this to find an issue that has been previously submitted.',
+    'LBL_PORTAL_TOUR_RECORDS_CREATE' => 'If you have a new support Case you would like to submit, you can click here to submit a new Case.',
+    'LBL_PORTAL_TOUR_RECORDS_RETURN' => 'Clicking here will return you to this view at any time.',
+    //END SUGARCRM flav=ent ONLY
+
 );
 
 ?>

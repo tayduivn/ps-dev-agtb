@@ -1,0 +1,1 @@
+<span class="select2-choice-type">{{{label}}}{{#if enabled}}<i class="icon-caret-down"></i>{{/if}}</span>

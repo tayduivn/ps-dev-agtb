@@ -31,184 +31,185 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class OpportunitiesSeedData {
 
     static private $_ranges;
-/**
- * populateSeedData
- *
- * This is a static function to create Opportunities.
- *
- * @static
- * @param $records Integer value indicating the number of Opportunities to create
- * @param $app_list_strings Array of application language strings
- * @param $accounts Array of Account instances to randomly build data against
- //BEGIN SUGARCRM flav=pro ONLY
- * @param $timeperiods Array of Timeperiods to create timeperiod seed data off of
- * @param $products Array of Product instances to randomly build data against
- * @param $users Array of User instances to randomly build data against
- //END SUGARCRM flav=pro ONLY
- * @return array Array of Opportunities created
- */
-public static function populateSeedData($records, $app_list_strings, $accounts
-//BEGIN SUGARCRM flav=pro ONLY
-    ,$products, $users
-//END SUGARCRM flav=pro ONLY
-)
-{
-    if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
-//BEGIN SUGARCRM flav=pro ONLY
-       || empty($products) || empty($users)
-//END SUGARCRM flav=pro ONLY
-
+    /**
+     * populateSeedData
+     *
+     * This is a static function to create Opportunities.
+     *
+     * @static
+     * @param $records Integer value indicating the number of Opportunities to create
+     * @param $app_list_strings Array of application language strings
+     * @param $accounts Array of Account instances to randomly build data against
+     //BEGIN SUGARCRM flav=pro ONLY
+     * @param $timeperiods Array of Timeperiods to create timeperiod seed data off of
+     * @param $users Array of User instances to randomly build data against
+     //END SUGARCRM flav=pro ONLY
+     * @return array Array of Opportunities created
+     */
+    public static function populateSeedData($records, $app_list_strings, $accounts
+    //BEGIN SUGARCRM flav=pro ONLY
+        , $users
+    //END SUGARCRM flav=pro ONLY
     )
     {
-        return array();
-    }
-
-    $opp_ids = array();
-    $timedate = TimeDate::getInstance();
-
-    // get the additional currencies from the table
-    /* @var $currency Currency */
-    $currency = SugarCurrency::getCurrencyByISO('EUR');
+        if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
+    //BEGIN SUGARCRM flav=pro ONLY
+           || empty($users)
+    //END SUGARCRM flav=pro ONLY
     
-    while($records-- > 0)
-    {
-        $key = array_rand($accounts);
-        $account = $accounts[$key];
-
-        //Create new opportunities
-        /* @var $opp Opportunity */
-        $opp = BeanFactory::getBean('Opportunities');
-        //BEGIN SUGARCRM flav=pro ONLY
-        $opp->team_id = $account->team_id;
-        $opp->team_set_id = $account->team_set_id;
-        //END SUGARCRM flav=pro ONLY
-
-        $opp->assigned_user_id = $account->assigned_user_id;
-        $opp->assigned_user_name = $account->assigned_user_name;
-
-        // figure out which one to use
-        $seed = rand(1, 15);
-        if($seed%5 == 0) {
-            $opp->currency_id = $currency->id;
-            $opp->base_rate = $currency->conversion_rate;
-        } else {
-            // use the base rate
-            $opp->currency_id = '-99';
-            $opp->base_rate = 1;
+        )
+        {
+            return array();
         }
-
-        $opp->name = substr($account->name." - 1000 units", 0, 50);
-        $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
-        $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
-        $opp->sales_status = 'New';
-
-        // If the deal is already done, make the date closed occur in the past.
-        $opp->date_closed = ($opp->sales_stage == Opportunity::STAGE_CLOSED_WON || $opp->sales_stage == Opportunity::STAGE_CLOSED_WON)
-            ? self::createPastDate()
-            : self::createDate();
-        $opp->date_closed_timestamp = $timedate->fromDbDate($opp->date_closed)->getTimestamp();
-        $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
-        $amount = array("10000", "25000", "50000", "75000");
-        $key = array_rand($amount);
-        $opp->amount = $amount[$key];
-        $probability = array("10", "40", "70", "90");
-        $key = array_rand($probability);
-        $opp->probability = $probability[$key];
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        //Setup forecast seed data
-        $opp->best_case = $opp->amount;
-        $opp->worst_case = $opp->amount;
-        $opp->commit_stage = $opp->probability >= 70 ? 'include' : 'exclude';
-
-        $product = BeanFactory::getBean('Products');
-
-        $opp->id = create_guid();
-        $opp->new_with_id = true;
-
-        // we need to save the opp before we create the products
-        $opp->save();
-
-        //END SUGARCRM flav=pro ONLY
-        //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-        $products_to_create = 1;
-        //end SUGARCRM flav=pro && flav!=ent ONLY
-        //BEGIN SUGARCRM flav=ent ONLY
-        $products_to_create = rand(3, 10);
-        //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
-        $products_created = 0;
-
-        $opp_best_case = 0;
-        $opp_worst_case = 0;
-        $opp_amount = 0;
-
-        while($products_created < $products_to_create) {
+    
+        $opp_ids = array();
+        $timedate = TimeDate::getInstance();
+    
+        // get the additional currencies from the table
+        /* @var $currency Currency */
+        $currency = SugarCurrency::getCurrencyByISO('EUR');
+        
+        while($records-- > 0)
+        {
+            $key = array_rand($accounts);
+            $account = $accounts[$key];
+    
+            /* @var $opp Opportunity */
+            $opp = BeanFactory::getBean('Opportunities');
+    
+            /* @var $rli RevenueLineItem */
+            $rli = BeanFactory::getBean('RevenueLineItems');
+            
+             //Create new opportunities
+            //BEGIN SUGARCRM flav=pro ONLY
+            $opp->team_id = $account->team_id;
+            $opp->team_set_id = $account->team_set_id;
+            //END SUGARCRM flav=pro ONLY
+    
+            $opp->assigned_user_id = $account->assigned_user_id;
+            $opp->assigned_user_name = $account->assigned_user_name;
+    
+            // figure out which one to use
+            $seed = rand(1, 15);
+            if($seed%5 == 0) {
+                $opp->currency_id = $currency->id;
+                $opp->base_rate = $currency->conversion_rate;
+            } else {
+                // use the base rate
+                $opp->currency_id = '-99';
+                $opp->base_rate = 1;
+            }
+    
+            $opp->name = substr($account->name." - 1000 units", 0, 50);
+            $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
+            $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
+            $opp->sales_status = 'New';
+    
+            // If the deal is already done, make the date closed occur in the past.
+            $opp->date_closed = ($opp->sales_stage == Opportunity::STAGE_CLOSED_WON || $opp->sales_stage == Opportunity::STAGE_CLOSED_WON)
+                ? self::createPastDate()
+                : self::createDate();
+            $opp->date_closed_timestamp = $timedate->fromDbDate($opp->date_closed)->getTimestamp();
+            $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
+            $amount = array("10000", "25000", "50000", "75000");
+            $key = array_rand($amount);
+            $opp->amount = $amount[$key];
+            $probability = array("10", "40", "70", "90");
+            $key = array_rand($probability);
+            $opp->probability = $probability[$key];
+    
+            //BEGIN SUGARCRM flav=pro ONLY
+            //Setup forecast seed data
+            $opp->best_case = $opp->amount;
+            $opp->worst_case = $opp->amount;
+            $opp->commit_stage = $opp->probability >= 70 ? 'include' : 'exclude';
+    
+            $opp->id = create_guid();
+            $opp->new_with_id = true;
+    
+            // we need to save the opp before we create the rlis
+            $opp->save();
+    
+            //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            $amount = $opp->amount;
-            $rand_best_worst = rand(1000,5000);
+            $rlis_to_create = 1;
             //end SUGARCRM flav=pro && flav!=ent ONLY
             //BEGIN SUGARCRM flav=ent ONLY
-            $amount = rand(10000, 75000);
-            $rand_best_worst = rand(1000, 9000);
+            $rlis_to_create = rand(3, 10);
             //END SUGARCRM flav=ent ONLY
-            /* @var $product Product */
-            $product->name = $opp->name;
-            $product->best_case = $amount+$rand_best_worst;
-            $product->likely_case = $amount;
-            $product->worst_case = $amount-$rand_best_worst;
-            $product->list_price = $amount;
-            $product->discount_price = $amount;
-            $product->cost_price = $amount/2;
-            $product->quantity = rand(1, 10);
-            $product->currency_id = $opp->currency_id;
-            $product->base_rate = $opp->base_rate;
-            $product->probability = $opp->probability;
-            $product->date_closed = $opp->date_closed;
-            $product->date_closed_timestamp = $opp->date_closed_timestamp;
-            $product->assigned_user_id = $opp->assigned_user_id;
-            $product->opportunity_id = $opp->id;
-            $product->account_id = $account->id;
-            $product->commit_stage = $opp->commit_stage;
-            $product->sales_stage = $opp->sales_stage;
-            $product->save();
-
-            $opp_amount += $amount;
-            $opp_best_case += $amount+$rand_best_worst;
-            $opp_worst_case += $amount-$rand_best_worst;
-
-            $products_created++;
+            //BEGIN SUGARCRM flav=pro ONLY
+            $rlis_created = 0;
+    
+            $opp_best_case = 0;
+            $opp_worst_case = 0;
+            $opp_amount = 0;
+    
+            while($rlis_created < $rlis_to_create) {
+                //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+                $amount = $opp->amount;
+                $rand_best_worst = rand(1000,5000);
+                //end SUGARCRM flav=pro && flav!=ent ONLY
+                //BEGIN SUGARCRM flav=ent ONLY
+                $amount = rand(10000, 75000);
+                $rand_best_worst = rand(1000, 9000);
+                //END SUGARCRM flav=ent ONLY
+                
+                $rli->name = $opp->name;
+                $rli->best_case = $amount+$rand_best_worst;
+                $rli->likely_case = $amount;
+                $rli->worst_case = $amount-$rand_best_worst;
+                $rli->list_price = $amount;
+                $rli->discount_price = $amount;
+                $rli->cost_price = $amount/2;
+                $rli->quantity = rand(1, 10);
+                $rli->currency_id = $opp->currency_id;
+                $rli->base_rate = $opp->base_rate;
+                $rli->probability = $opp->probability;
+                $rli->date_closed = $opp->date_closed;
+                $rli->date_closed_timestamp = $opp->date_closed_timestamp;
+                $rli->assigned_user_id = $opp->assigned_user_id;
+                $rli->opportunity_id = $opp->id;
+                $rli->account_id = $account->id;
+                $rli->commit_stage = $opp->commit_stage;
+                $rli->sales_stage = $opp->sales_stage;
+                $rli->save();
+    
+                $opp_amount += $amount;
+                $opp_best_case += $amount+$rand_best_worst;
+                $opp_worst_case += $amount-$rand_best_worst;
+    
+                $rlis_created++;
+            }
+    
+            $opp->amount = $opp_amount;
+            $opp->best_case = $opp_best_case;
+            $opp->worst_case = $opp_worst_case;
+    
+            //END SUGARCRM flav=pro ONLY
+    
+            // set the acccount on the opps, just for saving to the worksheet table
+            $opp->account_id = $account->id;
+            $opp->account_name = $account->name;
+    
+            // save the opp again
+            $opp->save();
+    
+            //BEGIN SUGARCRM flav=pro ONLY
+            // save a draft worksheet for the new forecasts stuff
+            /* @var $worksheet ForecastWorksheet */
+            $worksheet = BeanFactory::getBean('ForecastWorksheets');
+            $worksheet->saveRelatedOpportunity($opp);
+            //BEGIN SUGARCRM flav=ent ONLY
+            $worksheet->saveOpportunityProducts($opp);
+            //END SUGARCRM flav=ent ONLY
+    
+            // Create a linking table entry to assign an account to the opportunity.
+            $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
+            $opp_ids[] = $opp->id;
         }
-
-        $opp->amount = $opp_amount;
-        $opp->best_case = $opp_best_case;
-        $opp->worst_case = $opp_worst_case;
-
-        //END SUGARCRM flav=pro ONLY
-
-        // set the acccount on the opps, just for saving to the worksheet table
-        $opp->account_id = $account->id;
-        $opp->account_name = $account->name;
-
-        // save the opp again
-        $opp->save();
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        // save a draft worksheet for the new forecasts stuff
-        /* @var $worksheet ForecastWorksheet */
-        $worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $worksheet->saveRelatedOpportunity($opp);
-        //BEGIN SUGARCRM flav=ent ONLY
-        $worksheet->saveOpportunityProducts($opp);
-        //END SUGARCRM flav=ent ONLY
-
-        // Create a linking table entry to assign an account to the opportunity.
-        $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
-        $opp_ids[] = $opp->id;
+    
+        return $opp_ids;
     }
-
-    return $opp_ids;
-}
 
     /**
      * @static creates range of probability for the months

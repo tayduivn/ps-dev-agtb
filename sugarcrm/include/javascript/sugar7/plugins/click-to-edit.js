@@ -153,7 +153,11 @@
                     var ctx = this.context.parent || this.context;
                     var selectedUser = ctx.get('selectedUser') || app.user.toJSON();
                     this._canEdit = _.isEqual(app.user.get('id'), selectedUser.id);
-                    // only if sales stage is won/lost can edit
+                    // lets make sure we can actually write to the field
+                    this._canEdit = (this._canEdit &&
+                                        app.acl.hasAccess('write', this.module, app.user.get('id'), this.name));
+
+                    // only they have write access to the field and if sales stage is won/lost can edit
                     if (this._canEdit && this.model.has('sales_stage')) {
                         var salesStage = this.model.get('sales_stage'),
                             disableIfSalesStageIs = _.union(
@@ -171,7 +175,11 @@
                             var cteClass = 'clickToEdit';
                             if (this.action === 'edit') {
                                 cteClass += ' active'
+                                this.$el.addClass("active");
+                            } else {
+                                this.$el.removeClass("active")
                             }
+                            this.$el.addClass("isEditable");
                             this.$el.wrapInner('<div class="' + cteClass + '" data-cid="' + this.cid + '" />');
                         }, this);
                     }
@@ -381,12 +389,15 @@
                     // e.shiftKey: was the shift key pressed
                     // field: the field we are currently on
 
-                    if (field.type !== 'date' && this.fieldValueChanged((field))) {
+                    if (field.type !== 'date' && field.type !== 'enum' && this.fieldValueChanged((field))) {
                         field.$el.find(field.fieldTag).change();
                     }
 
-                    // this even will be listened by the cte-tab plugin on the layout
-                    this.context.trigger('field:editable:tabkey', e, e.shiftKey, field);
+                    // this errors out when tabbing off a change of the commit_stage field, since it auto hides
+                    if (this.context) {
+                        // this even will be listened by the cte-tab plugin on the layout
+                        this.context.trigger('field:editable:tabkey', e, e.shiftKey, field);
+                    }
 
                     if (field.type === 'date') {
                         this.hideDatepicker();

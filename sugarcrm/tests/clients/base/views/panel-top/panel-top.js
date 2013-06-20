@@ -98,4 +98,33 @@ describe("PanelTop View", function() {
             expect(newModel._defaults['user_name']).toBe(parentModel.get('assigned_user_name'));
         });
     });
+
+    describe('createRelatedRecord', function() {
+        var openCreateDrawerStub, bwcEnabledStub, bwcCreateRelated;
+        beforeEach(function() {
+            openCreateDrawerStub = sinonSandbox.stub(view, 'openCreateDrawer', $.noop());
+            bwcCreateRelated = sinonSandbox.stub(app.bwc, 'createRelatedRecord', $.noop());
+        });
+        afterEach(function(){
+            bwcEnabledStub.restore();
+        });
+
+        it('should route to BWC create for related BWC modules', function() {
+            bwcEnabledStub = sinonSandbox.stub(app.metadata, 'getModule', function(){ return {isBwcEnabled: true};});
+            view.createRelatedRecord();
+            expect(bwcEnabledStub.called).toBe(true);
+            expect(openCreateDrawerStub.called).toBe(false);
+            expect(bwcCreateRelated.called).toBe(true); //make sure BWC create is called
+        });
+
+        it('should open create drawer for related sidecar modules', function() {
+            var routeToBwcCreateStub = sinonSandbox.stub(view, 'routeToBwcCreate', $.noop());
+            bwcEnabledStub = sinonSandbox.stub(app.metadata, 'getModule', function(){ return {isBwcEnabled: false};});
+            view.createRelatedRecord();
+            expect(bwcEnabledStub.called).toBe(true);
+            expect(routeToBwcCreateStub.called).toBe(false);
+            expect(openCreateDrawerStub.called).toBe(true);
+        });
+    });
+
 });

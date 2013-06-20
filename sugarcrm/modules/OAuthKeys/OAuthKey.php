@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'vendors/Zend/Oauth/Provider.php';
+require_once 'vendor/Zend/Oauth/Provider.php';
 
 /**
  * OAuth customer key

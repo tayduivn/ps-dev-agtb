@@ -1,13 +1,15 @@
 describe("Country Chart", function() {
-    var app, view, moduleName = 'Cases', viewName = 'countrychart';
+    var app, view, moduleName = 'Cases', viewName = 'countrychart', layout;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'layout', 'dashboard');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
         app = SugarTest.app;
-        view = SugarTest.createView("base", moduleName, viewName, null, null);
+        layout = SugarTest.createLayout("base", moduleName, "dashboard");
+        view = SugarTest.createView("base", moduleName, viewName, null, null, null, layout);
     });
 
     afterEach(function() {

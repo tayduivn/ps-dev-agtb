@@ -881,6 +881,9 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
         }
 
         return AH.getRelatedField(link, ftype, field);
+    },
+    getAppListStrings : function(list) {
+        return SUGAR.language.get('app_list_strings', list);
     }
 });
 

@@ -10,7 +10,6 @@ describe("Drawer Layout", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
-        SugarTest.loadComponent('base', 'view', 'editable');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
@@ -157,6 +156,91 @@ describe("Drawer Layout", function() {
 
             expect(spy.calledWith('foo')).toBe(true);
             expect(drawer.onCloseCallback.length).toBe(0);
+        });
+    });
+
+    describe('Close immediately', function() {
+        it('Should remove drawers every time it is called', function() {
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+                callback();
+            });
+
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+            drawer.open({
+                layout: {
+                    "name": "bar",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+
+            expect(components.length).toBe(2);
+            expect(components[components.length-1].name).toBe('bar');
+
+            drawer.closeImmediately();
+
+            expect(components.length).toBe(1);
+            expect(components[components.length-1].name).toBe('foo');
+
+            drawer.closeImmediately();
+
+            expect(components.length).toBe(0);
+        });
+
+        it('Should call the onClose callback function', function() {
+            var spy = sinon.spy();
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+                callback();
+            });
+
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            }, spy);
+
+            expect(drawer.onCloseCallback.length).toBe(1);
+
+            drawer.closeImmediately('foo');
+
+            expect(spy.calledWith('foo')).toBe(true);
+            expect(drawer.onCloseCallback.length).toBe(0);
+        });
+
+        it('Should still have transition class on the drawer afterwards', function() {
+            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+                callback();
+            });
+
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+            drawer.open({
+                layout: {
+                    "name": "bar",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+
+            drawer.closeImmediately('foo');
+
+            expect(drawer._getDrawers(false).$top.hasClass('transition')).toBe(true);
         });
     });
 
