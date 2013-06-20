@@ -2473,6 +2473,8 @@ $app_strings = array (
     'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
     'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
     'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
+    'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
+    'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',
 
 
     //BEGIN SUGARCRM flav=pro ONLY

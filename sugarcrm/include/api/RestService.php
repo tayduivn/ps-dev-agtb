@@ -78,11 +78,26 @@ class RestService extends ServiceBase {
     }
 
     /**
+     * Headers that have special meaning for API and should be imported into args
+     * @var array
+     */
+    public $special_headers = array("X_TIMESTAMP");
+
+    /**
+     * Get response object
+     * @return RestResponse
+     */
+    public function getResponse()
+    {
+        return new RestResponse($_SERVER);
+    }
+
+    /**
      * This function executes the current request and outputs the response directly.
      */
     public function execute()
     {
-        $this->response = new RestResponse($_SERVER);
+        $this->response = $this->getResponse();
         try {
             $this->request = $this->getRequest();
             $this->request_headers = $this->request->request_headers;
@@ -203,6 +218,16 @@ class RestService extends ServiceBase {
             // the posted document is probably the output of a generated form.
             $argArray = array_merge($postVars,$getVars,$pathVars);
 
+            $headers = array();
+            foreach ($this->special_headers as $header) {
+                if(isset($this->request_headers[$header])) {
+                    $headers[$header] = $this->request_headers[$header];
+                }
+            }
+            if(!empty($headers)) {
+                $argArray['_headers'] = $headers;
+            }
+
             $this->request->setArgs($argArray)->setRoute($route);
             $GLOBALS['logic_hook']->call_custom_logic('', 'before_api_call', array("api" => $this, "request" => $this->request));
             // Get it back in case hook changed it
@@ -321,6 +346,9 @@ class RestService extends ServiceBase {
             $errorLabel = 'unknown_error';
             $message = $exception->getMessage();
         }
+        if(!empty($exception->extraData)) {
+            $data = $exception->extraData;
+        }
         $this->response->setStatus($httpError);
 
         $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
@@ -344,6 +372,9 @@ class RestService extends ServiceBase {
         );
         if( !empty($message) ) {
             $replyData['error_message'] = $message;
+        }
+        if(!empty($data)) {
+            $replyData = array_merge($replyData, $data);
         }
         $this->response->setContent($replyData);
     }

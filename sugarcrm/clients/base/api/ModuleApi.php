@@ -73,7 +73,7 @@ class ModuleApi extends SugarApi {
                 'method' => 'unsetFavorite',
                 'shortHelp' => 'This method unsets a record of the specified type as a favorite',
                 'longHelp' => 'include/api/help/module_record_favorite_delete_help.html',
-            ),            
+            ),
             'unfavorite' => array(
                 'reqType' => 'PUT',
                 'path' => array('<module>','?', 'unfavorite'),
@@ -95,8 +95,8 @@ class ModuleApi extends SugarApi {
 
     /**
      * This method returns the dropdown options of a given field
-     * @param array $api 
-     * @param array $args 
+     * @param array $api
+     * @param array $args
      * @return array
      */
     public function getEnumValues($api, $args) {
@@ -112,7 +112,7 @@ class ModuleApi extends SugarApi {
 
         $value = null;
         $cache_age = 0;
-    
+
         if(isset($vardef['function'])) {
             if ( isset($vardef['function']['returns']) && $vardef['function']['returns'] == 'html' ) {
                 throw new SugarApiExceptionError('html dropdowns are not supported');
@@ -150,7 +150,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args,array('module'));
 
         $bean = BeanFactory::newBean($args['module']);
-        
+
         // TODO: When the create ACL goes in to effect, add it here.
         if (!$bean->ACLAccess('save')) {
             // No create access so we construct an error message and throw the exception
@@ -196,7 +196,7 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'view');
-        
+
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
 

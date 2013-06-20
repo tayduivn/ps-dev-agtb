@@ -116,8 +116,7 @@ class SugarTestACLUtilities
 
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
-        unset($_SESSION['ACL']);
-
+        BeanFactory::getBean('ACLFields')->clearACLCache();
         foreach (self::$_modules AS $module) {
             ACLField::loadUserFields($module, $module, $GLOBALS['current_user']->id, true );
         }
@@ -135,6 +134,6 @@ class SugarTestACLUtilities
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
-        unset($_SESSION['ACL']);
+        BeanFactory::getBean('ACLFields')->clearACLCache();
     }
 }
