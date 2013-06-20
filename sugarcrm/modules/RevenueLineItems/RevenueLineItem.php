@@ -502,6 +502,8 @@ class RevenueLineItem extends SugarBean
     public function convertToQuotedLineItem()
     {
         $product = BeanFactory::getBean('Products');
+        $product->id = create_guid();
+        $product->new_with_id = true;
         foreach ($this->getFieldDefinitions() as $field) {
             if ($field['name'] != 'id') {
                 $product->$field['name'] = $this->$field['name'];

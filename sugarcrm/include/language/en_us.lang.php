@@ -2687,6 +2687,7 @@ $app_strings = array (
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_CREATE_QUOTE' => 'Create a Quote',
+    'LBL_GENERATE_QUOTE' => 'Generate Quote',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
