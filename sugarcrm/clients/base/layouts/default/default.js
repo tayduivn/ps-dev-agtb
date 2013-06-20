@@ -7,14 +7,12 @@
         this.context.on("openSidebar", this.openSide, this);
     },
     toggleSide: function() {
-        console.log(this);
         this.$('.main-pane').not("#dashboard").toggleClass('span12');
         this.$('.main-pane').not("#dashboard").toggleClass('span8');
         this.$('.side').toggle();
         app.controller.context.trigger("toggleSidebarArrows");
     },
     openSide: function() {
-        console.log('openside');
         this.$('.main-pane').not("#dashboard").addClass('span8');
         this.$('.main-pane').not("#dashboard").removeClass('span12');
         this.$('.side').show();
