@@ -1866,6 +1866,8 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_FAVORITE' => 'Favorite', // Record view header panel element
+  'LBL_FOLLOW' => 'Follow', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_TOUR_NEXT' => 'Next',
   'LBL_TOUR_SKIP' => 'Skip',
