@@ -4,8 +4,8 @@
             events: {
                 'keyup .taggable': 'getEntities',
                 'blur .taggable': 'hideTypeahead',
-                'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
-                'click ul.typeahead.activitystream-tag-dropdown li': 'addTag'
+                'mouseover ul.activitystream-tag-dropdown li': 'switchActiveTypeahead',
+                'click ul.activitystream-tag-dropdown li': 'addTag'
             },
 
             _possibleLeaders: ['@', '#'],
@@ -55,7 +55,7 @@
                     searchParams,
                     parentModel;
 
-                el.parent().find('ul.typeahead.activitystream-tag-dropdown').remove();
+                el.parent().find('ul.activitystream-tag-dropdown').remove();
 
                 word = this._getTerm(leader, text);
 
@@ -111,21 +111,16 @@
                         var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
                         ul.append(i);
                         self._taggingTimeout = setTimeout(function() {
-                            self.$("ul.typeahead.activitystream-tag-dropdown").remove();
+                            self.$("ul.activitystream-tag-dropdown").remove();
                         }, 1500);
                     }
 
                     ulParent.append(ul);
                 };
 
-                var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
+                var ul = $("<ul/>").addClass('dropdown-menu activitystream-tag-dropdown');
                 var blankItem = this._tplTagList({});
                 var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
-
-                ul.css({
-                    top: el.position().top + el.height(),
-                    left: el.position().left
-                });
 
                 if (word) {
                     ul.html(defaultItem).appendTo(el.parent()).show();
@@ -179,7 +174,7 @@
             },
 
             getEntities: function(event) {
-                var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown"),
+                var dropdown = this.$("ul.activitystream-tag-dropdown"),
                     currentTarget = this.$(event.currentTarget);
                 // Coerce integer to a boolean.
                 var dropdownOpen = !!(dropdown.length);
@@ -228,12 +223,12 @@
             hideTypeahead: function() {
                 var self = this;
                 setTimeout(function() {
-                    self.$("ul.typeahead.activitystream-tag-dropdown").remove();
+                    self.$("ul.activitystream-tag-dropdown").remove();
                 }, 150);
             },
 
             switchActiveTypeahead: function(event) {
-                this.$("ul.typeahead.activitystream-tag-dropdown .active").removeClass('active');
+                this.$("ul.activitystream-tag-dropdown .active").removeClass('active');
                 this.$(event.currentTarget).addClass('active');
             },
 

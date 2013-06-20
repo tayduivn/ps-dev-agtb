@@ -1,11 +1,13 @@
 <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
-{{#if picture_url}}
-    <img src="{{picture_url}}" alt="{{full_name}}">
-{{else}}
-    <i class="icon-user icon-3x"></i>
-{{/if}}
+    {{#if picture_url}}
+        <img src="{{picture_url}}" alt="{{full_name}}">
+    {{else}}
+        <i class="icon-user icon-3x"></i>
+    {{/if}}
 </a>
-<div contenteditable="true" class="span10 offset2 sayit attachable taggable" data-placeholder="{{str "LBL_ACTIVITYSTREAM_POST_PLACEHOLDER"}}" />
-<div class="inputactions span10">
-    <input type="submit" class="pull-right btn btn-primary addPost" value="Submit" />
+<div class="inputwrapper">
+    <div contenteditable="true" class="sayit attachable taggable" data-placeholder="{{str "LBL_ACTIVITYSTREAM_POST_PLACEHOLDER"}}" />
+    <div class="inputactions">
+        <button class="pull-right btn btn-primary addPost">{{str 'LBL_SUBMIT_BUTTON_LABEL'}}</button>
+    </div>
 </div>
