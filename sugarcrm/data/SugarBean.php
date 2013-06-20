@@ -1623,6 +1623,10 @@ class SugarBean
      */
     function setupCustomFields($module_name, $clean_load=true)
     {
+        if (empty($module_name)) {
+            // No need to load every single dynamic field here
+            return;
+        }
         $this->custom_fields = new DynamicField($module_name);
         $this->custom_fields->setup($this);
 
