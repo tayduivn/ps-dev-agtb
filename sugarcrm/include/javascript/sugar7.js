@@ -37,6 +37,17 @@
                 }
             },
             {
+                name: "about",
+                route: "about",
+                callback: function() {
+                    app.controller.loadView({
+                        layout: "about",
+                        module: 'Home',
+                        skipFetch: true
+                    });
+                }
+            },
+            {
                 name: "activities",
                 route: "activities",
                 callback: function(){
@@ -98,8 +109,8 @@
             {
                 name: "create",
                 route: ":module/create",
-                callback: function(module){
-                    if(module === "Home") {
+                callback: function(module) {
+                    if (module === "Home") {
                         app.controller.loadView({
                             module: module,
                             layout: "record"
@@ -110,7 +121,7 @@
 
                     var previousModule = app.controller.context.get("module"),
                         previousLayout = app.controller.context.get("layout");
-                    if(!(previousModule === module && previousLayout === "records")) {
+                    if (!(previousModule === module && previousLayout === "records")) {
                         app.controller.loadView({
                             module: module,
                             layout: "records"
@@ -118,13 +129,13 @@
                     }
 
                     app.drawer.open({
-                        layout:'create-actions',
-                        context:{
-                            create:true
+                        layout: 'create-actions',
+                        context: {
+                            create: true
                         }
-                    }, _.bind(function (context, model) {
+                    }, _.bind(function(context, model) {
                         var module = context.get("module") || model.module,
-                            route  = app.router.buildRoute(module);
+                            route = app.router.buildRoute(module);
 
                         app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
                     }, this));
@@ -133,15 +144,15 @@
             {
                 name: "vcardImport",
                 route: ":module/vcard-import",
-                callback: function(module){
+                callback: function(module) {
                     app.controller.loadView({
                         module: module,
                         layout: "records"
                     });
 
                     app.drawer.open({
-                        layout:'vcard-import'
-                    }, _.bind(function () {
+                        layout: 'vcard-import'
+                    }, _.bind(function() {
                         //if drawer is closed (cancel), just put the URL back to default view for module
                         var route = app.router.buildRoute(module);
                         app.router.navigate(route, {replace: true});
@@ -190,8 +201,8 @@
     //template language string for each page
     //i.e. records for listview, record for recordview
     var titles = {
-            'records' : 'TPL_BROWSER_SUGAR7_RECORDS_TITLE',
-            'record' : 'TPL_BROWSER_SUGAR7_RECORD_TITLE'
+            'records': 'TPL_BROWSER_SUGAR7_RECORDS_TITLE',
+            'record': 'TPL_BROWSER_SUGAR7_RECORD_TITLE'
         },
         getTitle = function(model) {
             var context = app.controller.context,
@@ -219,21 +230,21 @@
             metadata = app.metadata.getModule(module),
             title;
 
-        if(prevModel) {
+        if (prevModel) {
             //if previous model is existed, clean out setTitle listener
             prevModel.off("change", setTitle);
         }
 
-        if(_.isEmpty(metadata) || metadata.isBwcEnabled) {
+        if (_.isEmpty(metadata) || metadata.isBwcEnabled) {
             //For BWC module, current document title will be replaced with BWC title
             title = $('#bwc-frame').get(0) ? $('#bwc-frame').get(0).contentWindow.document.title : getTitle();
         } else {
             title = getTitle();
-            if(!_.isEmpty(context.get("model"))) {
+            if (!_.isEmpty(context.get("model"))) {
                 //for record view, the title should be updated once model is fetched
                 var currModel = context.get("model");
                 currModel.on("change", setTitle, this);
-                app.controller.layout.once("dispose", function(){
+                app.controller.layout.once("dispose", function() {
                     currModel.off("change", setTitle);
                 });
                 prevModel = currModel;

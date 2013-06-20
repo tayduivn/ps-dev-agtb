@@ -92,7 +92,6 @@ $mod_strings = array (
   'LBL_CHANGE_LAYOUT' => 'Change Layout',
   'LBL_RENAME_PAGE' => 'Rename Page',
   'LBL_CLOSE_DASHLETS' => 'Close',
-  'LBL_CLOSE_SITEMAP' => 'Close',
   'LBL_OPTIONS' => 'Options',
   // dashlet search fields
   'LBL_TODAY'=>'Today',

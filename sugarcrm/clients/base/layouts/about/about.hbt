@@ -1,0 +1,112 @@
+<div id="styleguide">
+    <div class="headerpane">
+        <h1>
+
+            <span class="module-title">About {{this.server_info.product_name}}, {{str 'LBL_VERSION' 'Home'}} {{this.server_info.version}} ({{str 'LBL_BUILD' 'Home'}} {{ this.server_info.build}}{{#if this.server_info.custom_version}} - {{this.server_info.custom_version}}{{/if}})</span>
+        </h1>
+    </div>    
+    <div class="container-fluid dash">
+        <div class="row-fluid">
+            <div class="span12">
+                <p>
+                    Copyright {{{str 'LBL_SUGAR_COPYRIGHT_SUB'}}}
+                </p>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span4">
+                <h4>Resources</h4>
+                <ul class="list">
+                    <li><a href="http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions?utm_source=App&utm_medium=about&utm_content={{this.server_info.version}}&utm_campaign={{this.server_info.product_name}}">Documentation</a></li>
+                    <li><a href="http://support.sugarcrm.com/04_Find_Answers/03_Developers?utm_source=App&utm_medium=about&utm_content={{this.server_info.version}}&utm_campaign={{this.server_info.product_name}}">Developers</a></li>
+                    <li><a href="http://www.sugarcrm.com/company-overview?utm_source=App&utm_medium=about&utm_content={{this.server_info.version}}&utm_campaign={{this.server_info.product_name}}">SugarCRM Company Information</a></li>
+                </ul>
+            </div>
+            <div class="span4">
+                <h4>{{str 'LBL_SOURCE_CODE' 'Home'}}</h4>
+                <ul class="list" style='height:auto'>
+                    <li><b><a href="http://www.sugarcrm.com">Sugar</a></b>  (version {{this.server_info.version}})<br>Sales force automation application.</li>
+
+                    <li><b><a href="http://sourceforge.net/projects/xtpl">XTemplate</a></b>  <br>A template engine for PHP.</li>
+                    <li><b><a href="http://sourceforge.net/projects/nusoap/">NuSOAP</a></b>  <br>A set of PHP classes that allow developers to create and consume web services.</li>
+                    <li><b><a href="http://www.dynarch.com/mishoo/calendar.epl">JS Calendar</a></b>  <br>A calendar for entering dates.</li>
+                    <li><b><a href="http://ros.co.nz/pdf/">PHP PDF</a></b>  <br>A library for creating PDF documents.</li>
+                    <li><b><a href="http://pear.php.net/package/HTTP_WebDAV_Server">HTTP_WebDAV_Server</a></b>  <br>A WebDAV Server Implementation in PHP.</li>
+                    <li><b><a href="http://www.phpconcept.net/pclzip/">PclZip</a></b>  <br>library offers compression and extraction functions for Zip formatted archives.</li>
+                    <li><b><a href="http://www.smarty.net/">Smarty</a></b>  <br>A template engine for PHP.</li>
+                    <li><b><a href="http://developer.yahoo.net/yui/">Yahoo! User Interface Library</a></b>  <br>The UI Library Utilities facilitate the implementation of rich client-side features.</li>
+                    <li><b><a href="https://github.com/tedivm/JShrink/">JShrink</a></b>  <br>A Javascript minifier written in PHP.</li>
+                      <li><b><a href="https://github.com/PHPMailer/PHPMailer">PHPMailer</a></b>  <br>A full featured email transfer class for PHP.</li>
+                      <li><b><a href="http://pear.php.net/package/Crypt_Blowfish/">Crypt_Blowfish</a></b>  <br>Allows for quick two-way blowfish encryption without requiring the MCrypt PHP extension.</li>
+                      <li><b><a href="http://pear.php.net/package/XML_HTMLSax3/">XML_HTMLSax3</a></b>  <br>A SAX parser for HTML and other badly formed XML documents.</li>
+                      <li><b><a href="http://www.jackslocum.com/blog/">Yahoo! UI Extensions Library</a></b>  <br>Extensions to the Yahoo! User Interface Library.</li>
+                      <li><b><a href="http://blog.deconcept.com/swfobject/">SWFObject</a></b>  <br>Javascript Flash Player detection and embed script.</li>
+                      <li><b><a href="http://wiki.moxiecode.com/index.php/TinyMCE:Index">TinyMCE</a></b>  <br>A WYSIWYG editor control for web browsers that enables the user to edit HTML contents.</li>
+                      <li><b><a href="http://www.tcpdf.org/">TCPDF</a></b>  <br>A PHP class for generating PDF documents.</li>
+                      <li><b><a href="http://recaptcha.net/">reCAPTCHA</a></b>  <br>A free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.</li>
+                      <li><b><a href="http://code.google.com/p/cssmin/">CssMin</a></b>  <br>A css parser and minifier.</li>
+                      <li><b><a href="https://github.com/onelogin/php-saml">PHP-SAML</a></b>  <br>A simple SAML toolkit for PHP.</li>
+                      <li><b><a href="http://cubiq.org/iscroll">iScroll</a></b>  <br>The overflow:scroll for mobile webkit.  Native scrolling inside a fixed width/height element.</li>
+                      <li><b><a href="http://thejit.org/">JavaScript InfoVis Toolkit</a></b>  <br>The JavaScript InfoVis Toolkit provides tools for creating Interactive Data Visualizations for the Web.</li>
+                      <li><b><a href="http://flashcanvas.net/">FlashCanvas</a></b>  <br>FlashCanvas is a JavaScript library which adds the HTML5 Canvas support to Internet Explorer. It renders shapes and images via Flash drawing API. It supports almost all Canvas APIs and, in many cases, runs faster than other similar libraries which use VML or Silverlight.</li>
+                      <li><b><a href="http://framework.zend.com/">Zend Framework</a></b>  <br>An open source, object oriented web application framework for PHP5.</li>
+                      <li><b><a href="http://code.google.com/p/parsecsv-for-php/">parseCSV</a></b>  <br>CSV data parser for PHP.</li>
+                      <li><b><a href="http://phpjs.org/">php.js</a></b>  <br>Use PHP functions in JavaScript.</li>
+                      <li><b><a href="http://code.google.com/p/php-sql-parser/">PHP SQL Parser.</a></b></li>
+                      <li><b><a href="http://htmlpurifier.org/">HTML Purifier</a></b>  <br>A standards-compliant HTML filtering library.</li>
+                      <li><b><a href="http://www.codeplex.com/PHPExcel">PHPExcel</a></b>  <br>A pure PHP library for reading and writing spreadsheet files.</li>
+                      <li><b><a href="http://jquery.com/">jQuery</a></b>  <br>jQuery is a fast and concise JavaScript Library that simplifies HTML document traversing, event handling, animating, and Ajax interactions for rapid web development.</li>
+                      <li><b><a href="https://github.com/danielstocks/jQuery-Placeholder">jQuery-Placeholder</a></b>  <br>A plugin that enables HTML5 placeholder support for legacy browsers.</li>
+                      <li><b><a href="https://github.com/jquery/jquery-ui">jQuery UI</a></b>  <br>The official jQuery user interface library.</li>
+                      <li><b><a href="http://leafo.net/lessphp/">lessphp</a></b>  <br>A compiler for LESS written in PHP.</li>
+                      <li><b><a href="http://backbonejs.org/">Backbone.js</a></b>  <br>A MVC framework for Javascript-heavy applications.</li>
+                      <li><b><a href="http://handlebarsjs.com/">Handlebars</a></b>  <br>A templating engine to build semantic templates effectively.</li>
+                      <li><b><a href="http://pivotal.github.com/jasmine/">Jasmine</a></b>  <br>A behavior-driven development framework for testing JavaScript code.</li>
+                      <li><b><a href="http://cmlenz.github.com/jquery-iframe-transport/">jquery.iframe-transport.js</a></b>  <br>A jQuery Ajax transport plugin that supports file uploads through a hidden iframe.</li>
+                      <li><b><a href="http://sinonjs.org/">sinon.js</a></b> <br>Standalone test spies, stubs and mocks for JavaScript.</li>
+                      <li><b><a href="http://rezitech.github.com/stash/">Stash</a></b> <br>A library for JavaScript that makes using offline storage easy.</li>
+                      <li><b><a href="http://twitter.github.com/bootstrap/">Twitterbootstrap</a></b> <br>HTML, CSS, and JS toolkit from Twitter.</li>
+                      <li><b><a href="https://github.com/caolan/async/">Async</a></b> <br>Async utilities for node and the browser.</li>
+                      <li><b><a href="https://github.com/rmm5t/jquery-timeago">jquery timeago</a></b> <br>A jQuery plugin that makes it easy to support automatically updating fuzzy timestamps.</li>
+                      <li><b><a href="https://github.com/facebook/xhprof">XHProf</a></b> <br>A function-level hierarchical profiler for PHP.</li>  
+                  
+                </ul>
+
+            </div>
+            <div class="span4">
+                <h4>Language Packs</h4>
+                <ul class="list" style='height:auto'>
+                    <li><b>Albanian</b><br>Provided by <a href="http://www.unixitech.com">Unixitech Solutions</a></li>
+                    <li><b>Bulgarian</b><br>Provided by <a href="http://www.creasoft.biz">CreaSoft Ltd</a></li>
+                    <li><b>Catalan</b><br>Provided by <a href="http://redk.net">REDK Ingenieria del Software, SL</a></li>
+                    <li><b>Chinese</b><br>Provided by <a href="http://www.srforce.com">SR Force</a></li>
+                    <li><b>Czech</b><br>Provided by <a href="http://extendit.cz">ExtendIT</a></li>
+                    <li><b>Danish</b><br>Provided by <a href="http://www.bellcom.dk">Bellcom</a></li>
+                    <li><b>Dutch</b><br>Provided by <a href="http://www.brixcrm.nl">BrixCRM</a></li>
+                    <li><b>English UK</b><br>Provided by <a href="http://www.providentcrm.com">Provident CRM</a></li>
+                    <li><b>French</b><br>Provided by <a href="http://www.synolia.com">Synolia</a></li>
+                    <li><b>German</b><br>Provided by <a href="http://www.kinamu.com">Kinamu</a></li>
+                    <li><b>Greek</b><br>Provided by <a href="http://www.qualisys.gr">Qualisys</a></li>
+                    <li><b>Hebrew</b><br>Provided by <a href="http://www.cyta.co.il">Menahem Lurie Consultancy and IT Management</a></li>
+                    <li><b>Hungarian</b><br>Provided by <a href="http://www.infoteka.hu">Infoteka</a></li>
+                    <li><b>Italian</b><br>Provided by <a href="http://www.opensymbol.it">OpenSymbol</a></li>
+                    <li><b>Japanese</b><br>Provided by <a href="http://www.osscrm.com">OSSCRM</a></li>
+                    <li><b>Korean</b><br>Provided by <a href="http://www.bhea.co.in">Bhea Knowledge Technologies Ltd</a></li>
+                    <li><b>Latvian</b><br>Provided by <a href="http://www.exigenservices.com">Exigen Services</a></li>
+                    <li><b>Lithuanian</b><br>Provided by <a href="http://www.optimuscrm.lt">OptimusCRM</a></li>
+                    <li><b>Norwegian</b><br>Provided by <a href="http://www.redpill-linpro.se">Redpill Linpro</a></li>
+                    <li><b>Polish</b><br>Provided by <a href="http://www.evolpe.pl">eVolpe</a></li>
+                    <li><b>Portuguese</b><br>Provided by <a href="http://www.dri.pt">DRI</a></li>
+                    <li><b>Portuguese Brazilian</b><br>Provided by <a href="http://www.lampadaglobal.com">Lampada Global</a></li>
+                    <li><b>Romanian</b><br>Provided by <a href="http://www.mycroft-system.com">Mycroft System</a></li>
+                    <li><b>Russian</b><br>Provided by <a href="http://www.richlodesolutions.com">Richlode Solutions</a></li>
+                    <li><b>Serbian</b><br>Provided by <a href="http://pstech.rs"> PS Tech</a></li>
+                    <li><b>Slovak</b><br>Provided by <a href="http://www.openit.sk">Open IT</a></li>
+                    <li><b>Spanish</b><br>Provided by <a href="http://www.redk.net">RedK</a></li>
+                    <li><b>Swedish</b><br>Provided by <a href="http://www.redpill-linpro.com">Redpill Linpro</a></li>
+                    <li><b>Turkish</b><br>Provided by <a href="http://ultima.com.tr">Ultima</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

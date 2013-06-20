@@ -2632,7 +2632,6 @@ $app_strings = array (
     'LBL_CAMPAIGNLOG' => 'CampaignLog',
     'LBL_CAMPAIGN_CONTACT'=>'Campaigns',
     'LBL_CAMPAIGN_ID'=>'campaign_id',
-    'LBL_SITEMAP'=>'Sitemap',
     'LBL_THEME'=>'Theme:',
     'LBL_THEME_PICKER'=>'Page Style',
     'LBL_THEME_PICKER_IE6COMPAT_CHECK' => 'Warning: Internet Explorer 6 is not supported for the selected theme. Click OK to select it anyways or Cancel to select a different theme.',
