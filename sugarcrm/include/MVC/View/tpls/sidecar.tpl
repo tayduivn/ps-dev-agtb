@@ -35,9 +35,7 @@
         <title>SugarCRM</title>
         <link rel="icon" href="themes/default/images/sugar_icon.ico">
         <!-- CSS -->
-        {foreach from=$css_url item=url}
-            <link rel="stylesheet" href="{$url}"/>
-        {/foreach}
+        <link rel="stylesheet" href="{$css_url}"/>
         <!--[if lt IE 10]>
         <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
         <![endif]-->
@@ -83,7 +81,10 @@
         <script language="javascript" src="include/javascript/sugar7/hbt-helpers.js"></script>
         <script language="javascript">
             var App;
-
+			{/literal}{if $accessToken}
+			SUGAR.App.cache.set("AuthAccessToken", "{$accessToken}");
+			SUGAR.App.cache.set("AuthRefreshToken", "{$refreshToken}");
+			{/if}{literal}
             App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){

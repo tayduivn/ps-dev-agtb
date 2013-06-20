@@ -82,6 +82,7 @@ class Zend_Http_Response
         415 => 'Unsupported Media Type',
         416 => 'Requested Range Not Satisfiable',
         417 => 'Expectation Failed',
+        422 => 'Unprocessable Entity',
 
         // Server Error 5xx
         500 => 'Internal Server Error',
@@ -165,7 +166,7 @@ class Zend_Http_Response
                     require_once 'vendor/Zend/Http/Exception.php';
                     throw new Zend_Http_Exception("'{$value}' is not a valid HTTP header");
                 }
-                
+
                 $name  = trim($header[0]);
                 $value = trim($header[1]);
             }

@@ -298,6 +298,24 @@ class RestService extends ServiceBase
             $apiMethod = $route['method'];
 
             $this->response->setContent($apiClass->$apiMethod($this,$argArray));
+
+            if(!empty($GLOBALS['sugar_config']['maintenanceMode']) && !empty($GLOBALS['current_user']->id)) {
+                // if we're in maintenance and we're not admin - bail!
+                if(!$GLOBALS['current_user']->isAdmin()) {
+                    if(session_id()) {
+                        session_destroy();
+                    }
+                    if($GLOBALS['sugar_config']['maintenanceMode'] === true) {
+                        $url = 'maintenance.php';
+                    } else {
+                        $url = $GLOBALS['sugar_config']['maintenanceMode'];
+                    }
+                    $e = new SugarApiExceptionMaintenance();
+                    $e->setExtraData("url", $url);
+                    throw $e;
+                }
+            }
+
             $this->respond($route, $argArray);
         } catch ( Exception $e ) {
             $this->handleException($e);

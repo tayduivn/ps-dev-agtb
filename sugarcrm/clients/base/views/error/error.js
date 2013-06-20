@@ -61,10 +61,16 @@
                 message: 'ERR_HTTP_500_TEXT'
             };
         } else {
+        	error = this.context.get('error');
+        	if(error.status && error.errorThrown) {
+        		title = 'HTTP: '+error.status+' '+error.errorThrown
+        	} else {
+        		title = null
+        	}
             attributes = {
-                title: 'ERR_HTTP_DEFAULT_TITLE',
-                type: 'ERR_HTTP_DEFAULT_TYPE',
-                message: 'ERR_HTTP_DEFAULT_TEXT'
+                title: title || 'ERR_HTTP_DEFAULT_TITLE',
+                type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
+                message: error.message || 'ERR_HTTP_DEFAULT_TEXT'
             };
         }
         return attributes;

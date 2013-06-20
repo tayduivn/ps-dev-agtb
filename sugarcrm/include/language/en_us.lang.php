@@ -2470,7 +2470,7 @@ $app_strings = array (
     'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
     'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',
     'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
-
+    'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
