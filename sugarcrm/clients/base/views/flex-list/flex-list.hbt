@@ -51,7 +51,7 @@
             {{else}}
             <th data-fieldname="{{name}}">
                 <span>
-                    {{field ../../../this template="list-header"}}
+                    {{field ../../this template="list-header"}}
                 </span>
             </th>
             {{/if}}
