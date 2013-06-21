@@ -49,7 +49,7 @@ describe("Editable Plugin", function() {
         expect(randomField.tplName).toBe(view.action);
     });
 
-    it("Should switch back to the previous mode when it triggers editableHandleMouseDown", function() {
+    it("Should switch back to the previous mode when it triggers fieldClose", function() {
         view.render();
         view.model.set({
             name: 'Name',
@@ -66,7 +66,7 @@ describe("Editable Plugin", function() {
 
         view.toggleField(randomField, true);
         expect(randomField.tplName).toBe('edit');
-        view.editableHandleMouseDown({target: null}, randomField);
+        view.fieldClose({target: null}, randomField);
         expect(randomField.tplName).toBe(view.action);
 
         delete app.drawer;
@@ -94,59 +94,6 @@ describe("Editable Plugin", function() {
             _.each(view.fields, function(field) {
                 expect(field.tplName).toBe('edit');
             });
-        });
-    });
-
-    describe("Warning unsaved changes", function() {
-        var alertShowStub;
-        beforeEach(function() {
-            app.router = {
-                navigate: function() {}
-            };
-            alertShowStub = sinonSandbox.stub(app.alert, "show");
-            sinonSandbox.stub(Backbone.history, "getFragment");
-        });
-
-        afterEach(function() {
-            sinonSandbox.restore();
-        });
-
-        it("should not alert warning message if unsaved changes are empty", function() {
-            app.routing.triggerBefore("route");
-            expect(alertShowStub).not.toHaveBeenCalledOnce();
-
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return false;
-            });
-            app.routing.triggerBefore("route");
-            expect(alertShowStub).not.toHaveBeenCalledOnce();
-        });
-
-        it("should warn unsaved changes if router is changed with unsaved values", function() {
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return true;
-            });
-            app.routing.triggerBefore("route");
-            expect(alertShowStub).toHaveBeenCalledOnce();
-        });
-
-        it("should warn unsaved changes if custom unsaved logic is applied with unsaved values", function() {
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return true;
-            });
-            var _callback = function() {};
-            view.triggerBefore("unsavedchange", {callback: _callback});
-            expect(alertShowStub).toHaveBeenCalledOnce();
-        });
-
-
-        it("ALL EDITABLE VIEWS MUST DISPOSE IN JASMINE TEST", function() {
-            sinonSandbox.stub(view, "hasUnsavedChanges", function() {
-                return true;
-            });
-            view.dispose();
-            app.routing.triggerBefore("route");
-            expect(alertShowStub).not.toHaveBeenCalledOnce();
         });
     });
 

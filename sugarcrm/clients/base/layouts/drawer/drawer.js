@@ -163,10 +163,6 @@
      * Remove all drawers and reset
      */
     reset: function() {
-        if(!this.triggerBefore("reset", {drawer: this})) {
-            return false;
-        }
-
         var $main = app.$contentEl.children().first();
 
         _.each(this._components, function(component) {
