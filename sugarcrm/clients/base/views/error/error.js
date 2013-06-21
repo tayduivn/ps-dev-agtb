@@ -61,7 +61,7 @@
                 message: 'ERR_HTTP_500_TEXT'
             };
         } else {
-        	error = this.context.get('error');
+        	error = this.context.get('error') || {};
         	if(error.status && error.errorThrown) {
         		title = 'HTTP: '+error.status+' '+error.errorThrown
         	} else {
