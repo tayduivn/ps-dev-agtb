@@ -22,7 +22,7 @@
 
     initialize: function(options) {
         _.bindAll(this);
-        //turn off sorting & links for dupe check lists
+
         app.view.invokeParent(this, {type: 'view', name: 'selection-list', method: 'initialize', args:[options]});
 
         _.each(this.meta.panels, function(panel) {
@@ -67,5 +67,12 @@
     fetchDuplicates: function(model, options) {
         this.model = model;
         this.collection.fetch(options);
+    },
+
+    /**
+     * Overridden the initializeEvents method to turn off selection events in parent selection-list
+     */
+    initializeEvents: function() {
+
     }
 })
