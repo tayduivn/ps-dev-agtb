@@ -185,7 +185,7 @@
      */
     bindDataChange: function() {
         var ctx = this.model,
-            module = this.dashModel.get('dashboard_module');
+            module = app.controller.context.get("module");
         if (module == 'Forecasts') {
             ctx = this.context.parent;
             this.showTimeperiod = false;
