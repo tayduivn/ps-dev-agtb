@@ -59,6 +59,7 @@ class FilterApi extends SugarApi
                 'reqType' => 'GET',
                 'path' => array('<module>', '?', 'link', '?', 'filter'),
                 'pathVars' => array('module', 'record', '', 'link_name', ''),
+                'jsonParams' => array('filter'),
                 'method' => 'filterRelated',
                 'shortHelp' => 'Lists related filtered records.',
                 'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
@@ -95,11 +96,8 @@ class FilterApi extends SugarApi
         return $this->filterList($api, $args);
     }
 
-    protected function parseArguments(
-        ServiceBase $api,
-        array $args,
-        SugarBean $seed = null
-    ) {
+    protected function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
+    {
         $options = array();
 
         // Set up the defaults
@@ -123,24 +121,15 @@ class FilterApi extends SugarApi
             foreach ($orderBys as $order) {
                 $orderSplit = explode(':', $order);
 
-                if (!$seed->ACLFieldAccess(
-                    $orderSplit[0],
-                    'list'
-                ) || !isset($seed->field_defs[$orderSplit[0]])
+                if (!$seed->ACLFieldAccess($orderSplit[0], 'list')
+                    || !isset($seed->field_defs[$orderSplit[0]])
                 ) {
                     throw new SugarApiExceptionNotAuthorized(
-                        sprintf(
-                            'No access to view field: %s in module: %s',
-                            $orderSplit[0],
-                            $args['module']
-                        )
+                        sprintf('No access to view field: %s in module: %s', $orderSplit[0], $args['module'])
                     );
                 }
 
-                if (!isset($orderSplit[1]) || strtolower(
-                    $orderSplit[1]
-                ) == 'desc'
-                ) {
+                if (!isset($orderSplit[1]) || strtolower($orderSplit[1]) == 'desc') {
                     $orderSplit[1] = 'DESC';
                 } else {
                     $orderSplit[1] = 'ASC';
@@ -158,10 +147,7 @@ class FilterApi extends SugarApi
 
 
         //Set the list of fields to be used in the select.
-        $options['select'] = !empty($args['fields']) ? explode(
-            ",",
-            $args['fields']
-        ) : array();
+        $options['select'] = !empty($args['fields']) ? explode(",", $args['fields']) : array();
 
         //Force id and date_modified into the select
         $options['select'] = array_unique(
@@ -293,6 +279,7 @@ class FilterApi extends SugarApi
         $q->distinct(true);
 
         foreach ($options['order_by'] as $orderBy) {
+            self::verifyField($q, $orderBy[0]);
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
         // Add an extra record to the limit so we can detect if there are more records to be found
@@ -449,6 +436,72 @@ class FilterApi extends SugarApi
         return $data;
     }
 
+    /**
+     * Verify that the passed field is correct
+     * @param SugarQuery $q
+     * @param string $field
+     * @return bool
+     * @throws SugarApiExceptionInvalidParameter
+     */
+    protected static function verifyField(SugarQuery $q, $field)
+    {
+        if (strpos($field, '.')) {
+            // It looks like it's a related field that it's searching by
+            list($relatedTable, $field) = explode('.', $field);
+
+            $q->from->load_relationship($relatedTable);
+            if(empty($q->from->$relatedTable)) {
+                throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable for field $field");
+            }
+
+            if($q->from->$relatedTable->getType() == "many") {
+                // FIXME: we have a problem here: we should allow 'many' links for related to match against parent object
+                // but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
+                // but we should figure out how to find if 'many' is permittable or not.
+                // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
+            }
+
+            $q->join($relatedTable, array('joinType' => 'LEFT'));
+
+            $bean = $q->getTableBean($relatedTable);
+            if(empty($bean)) {
+                throw new SugarApiExceptionInvalidParameter("Cannot use condition against $relatedTable - unknown module");
+            }
+
+        } else {
+            $bean = $q->from;
+        }
+        $defs = $bean->field_defs;
+
+        if(empty($defs[$field])) {
+            throw new SugarApiExceptionInvalidParameter("Unknown field $field");
+        }
+
+        if(!$bean->ACLFieldAccess($field)) {
+            throw new SugarApiExceptionNotAuthorized("Access for field $field is not allowed");
+        }
+
+        $field_def = $defs[$field];
+        if(empty($field_def['source']) || $field_def['source'] == 'db' || $field_def['source'] == 'custom_field') {
+            return true;
+        }
+
+        if($field_def['source'] == 'relate') {
+            $relfield = $field_def['rname'];
+            $link = $field_def['link'];
+            return self::verifyField($q, "$link.$relfield");
+        }
+
+        return true;
+    }
+
+    /**
+     * Add filters to the query
+     * @param array $filterDefs
+     * @param SugarQuery_Builder_Where $where
+     * @param SugarQuery $q
+     * @throws SugarApiExceptionInvalidParameter
+     */
     protected static function addFilters(
         array $filterDefs,
         SugarQuery_Builder_Where $where,
@@ -478,14 +531,7 @@ class FilterApi extends SugarApi
                     self::addTrackerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
-                    if (strpos($field, '.')) {
-                        // It looks like it's a related field that it's searching by
-                        list($relatedTable, $relatedField) = explode(
-                            '.',
-                            $field
-                        );
-                        $q->join($relatedTable, array('joinType' => 'LEFT'));
-                    }
+                    self::verifyField($q, $field);
 
                     if (!is_array($filter)) {
                         // This is just simple match
@@ -621,13 +667,16 @@ class FilterApi extends SugarApi
         SugarQuery_Builder_Where $where,
         $link
     ) {
-        $sfOptions = array('joinType' => 'LEFT');
+        $sfOptions = array('joinType' => 'LEFT', 'favorites' => true);
         if ($link == '' || $link == '_this') {
+            $link_name = 'favorites';
         } else {
             $q->join($link, array('joinType' => 'LEFT'));
             $sfOptions['joinTo'] = $link;
+            $link_name = "sf_".$link;
         }
-        $fjoin = $q->join("favorites");
+
+        $fjoin = $q->join($link_name, $sfOptions);
 
         $where->notNull($fjoin->joinName() . '.id');
     }

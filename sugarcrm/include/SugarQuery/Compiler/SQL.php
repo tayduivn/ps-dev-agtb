@@ -54,11 +54,6 @@ class SugarQuery_Compiler_SQL
     protected $db;
 
     protected $jtcount = 0;
-    /**
-     * Bean templates for used tables
-     * @var array
-     */
-    protected $table_beans = array();
 
     public function __construct($db)
     {
@@ -116,13 +111,11 @@ class SugarQuery_Compiler_SQL
         if (!empty($this->sugar_query->from)) {
             $from_part = trim($this->compileFrom($this->sugar_query->from));
         }
+
         if (!empty($this->sugar_query->select)) {
             $select_part = trim(
                 $this->compileSelect($this->sugar_query->select)
             );
-        }
-        if (!empty($this->sugar_query->join)) {
-            $join_part = trim($this->compileJoin($this->sugar_query->join));
         }
         if (!empty($this->sugar_query->where)) {
             $where_part = trim($this->compileWhere($this->sugar_query->where));
@@ -142,6 +135,10 @@ class SugarQuery_Compiler_SQL
 
         if (!empty($order_by)) {
             $order_by_part = $this->compileOrderBy($order_by);
+        }
+
+        if (!empty($this->sugar_query->join)) {
+            $join_part = trim($this->compileJoin($this->sugar_query->join));
         }
 
         // DB MANAGER::limitQuerySql
@@ -228,21 +225,35 @@ class SugarQuery_Compiler_SQL
         $return = array();
         foreach ($orderBy as $order) {
             list($field, $direction) = $order;
-            $field = $this->canonicalizeFieldName($field);
+            try {
+                $field = $this->conditionField($field);
+            } catch(SugarApiExceptionInvalidParameter $ex) {
+                // if we can't resolve it, ignore it
+                continue;
+            }
             $defs = $this->getFieldVardef($field);
             if (empty($defs)) {
                 $GLOBALS['log']->error(
                     "Could not find definition for field $field, skipping ORDER BY"
                 );
                 continue;
-            } else {
-                if (!empty($defs['sort_on'])) {
-                    $field = $this->canonicalizeFieldName($defs['sort_on']);
-                } elseif (!empty($defs['source']) && $defs['source'] === 'non-db') {
-                    $GLOBALS['log']->error(
+            }
+
+            if (!empty($defs['sort_on'])) {
+                if (strstr($field, '.')) {
+                    list($table, $tfield) = explode(".", $field);
+                    $field = "$table.{$defs['sort_on']}";
+                } else {
+                    $field = $defs['sort_on'];
+                }
+                $defs = $this->getFieldVardef($field);
+            }
+
+            if (!empty($defs['source']) && $defs['source'] === 'non-db') {
+                $GLOBALS['log']->error(
                         "Could not sort on non-db field $field, skipping ORDER BY"
                     );
-                }
+                continue;
             }
             if (strcasecmp($direction, "ASC") !== 0) {
                 $direction = "DESC";
@@ -251,51 +262,6 @@ class SugarQuery_Compiler_SQL
         }
 
         return implode(',', $return);
-    }
-
-    /**
-     * Get bean that corresponds to this table name
-     *
-     * @param string $table_name
-     *
-     * @return SugarBean
-     */
-    protected function getTableBean($table_name)
-    {
-        if (!isset($this->table_beans[$table_name])) {
-            if (empty($this->sugar_query->join[$table_name])) {
-                return null;
-            }
-            $link_name = $this->sugar_query->join[$table_name]->linkName;
-            if (empty($link_name)) {
-                $this->table_beans[$table_name] = null;
-                return null;
-            }
-            //BEGIN SUGARCRM flav=pro ONLY
-            if ($link_name == 'favorites') {
-                // FIXME: special case, should eliminate it
-                $module = 'SugarFavorites';
-            }
-            //END SUGARCRM flav=pro ONLY
-            /* TODO Fix this hack so we don't need to have special cases for these modules */
-            if ($link_name == 'tracker') {
-                $module = 'Trackers';
-            }
-            if (empty($module)) {
-                $this->from_bean->load_relationship($link_name);
-                if (!empty($this->from_bean->$link_name)) {
-                    $module = $this->from_bean->$link_name->getRelatedModuleName(
-                    );
-                }
-            }
-            if (empty($module)) {
-                $this->table_beans[$table_name] = null;
-                return null;
-            }
-            $bean = BeanFactory::newBean($module);
-            $this->table_beans[$table_name] = $bean;
-        }
-        return $this->table_beans[$table_name];
     }
 
     /**
@@ -321,7 +287,7 @@ class SugarQuery_Compiler_SQL
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
             if ($table_name != $bean->getTableName()) {
-                $bean = $this->getTableBean($table_name);
+                $bean = $this->sugar_query->getTableBean($table_name);
                 if (empty($bean)) {
                     return "{$table_name}.{$field}";
                 }
@@ -345,8 +311,9 @@ class SugarQuery_Compiler_SQL
         $bean = $this->from_bean;
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
-            if ($table_name != $bean->getTableName()) {
-                $bean = $this->getTableBean($table_name);
+            $beanTable = $bean->getTableName();
+            if ($table_name != $beanTable && $table_name != $beanTable."_cstm") {
+                $bean = $this->sugar_query->getTableBean($table_name);
             }
         }
 
@@ -382,7 +349,7 @@ class SugarQuery_Compiler_SQL
         if (strstr($field, '.')) {
             list($table_name, $field) = explode('.', $field);
             if ($table_name != $bean->getTableName()) {
-                $bean = $this->getTableBean($table_name);
+                $bean = $this->sugar_query->getTableBean($table_name);
                 if (empty($bean)) {
                     return array("{$table_name}.{$field}", $alias);
                 }
@@ -462,7 +429,11 @@ class SugarQuery_Compiler_SQL
                     $data['id_name']
                 );
                 if (!empty($id_field)) {
-                    $fields[] = $id_field;
+                    if(is_array($id_field[0])) {
+                        $fields += $id_field;
+                    } else {
+                        $fields[] = $id_field;
+                    }
                 }
             }
             if (isset($data['custom_type']) && $data['custom_type'] == 'teamset') {
@@ -523,6 +494,7 @@ class SugarQuery_Compiler_SQL
                 if (!is_array($resolvedFields[0])) {
                     $resolvedFields = array($resolvedFields);
                 }
+
                 foreach ($resolvedFields as $resolvedField) {
                     if (empty($resolvedField)) {
                         continue;
@@ -546,7 +518,6 @@ class SugarQuery_Compiler_SQL
      * Create a from statement
      *
      * @param SugarBean|array $bean
-     *
      * @return string
      */
     protected function compileFrom($bean)
@@ -633,12 +604,54 @@ class SugarQuery_Compiler_SQL
         return $sql;
     }
 
+
+    /**
+     * Resolve field for condition
+     *
+     * Uses resolveField to resolve the field and then choose suitable form for query conditions.
+     * Unlike SELECT it can use only one field, so will throw on multi-field relations.
+     *
+     * @see resolveField()
+     *
+     * @param string $cond_field
+     * @throws SugarApiExceptionInvalidParameter
+     * @return string
+     */
+    protected function conditionField($cond_field)
+    {
+        $resField = $this->resolveField($cond_field);
+        if(empty($resField)) {
+            // right now we assume you know what you're doing here and leave it alone
+            // Filter checks the conditions on input, so wrong filters should be filtered out there
+            return $this->canonicalizeFieldName($cond_field);
+        } else {
+            if(is_array($resField[0]) && count($resField) > 1) {
+                // try to locate our field
+                foreach($resField as $fields) {
+                    if(!empty($fields[1]) && $fields[1] == $cond_field) {
+                        $field = $fields[0];
+                    }
+                }
+                if(empty($field)) {
+                    $GLOBALS['log']->info("Failed to resolve $cond_field against: ".var_export($resField, true));
+                    throw new SugarApiExceptionInvalidParameter("Can not use composite field $cond_field in condition");
+                }
+            }
+            if(is_array($resField[0])) {
+                $field = $resField[0][0];
+            } else {
+                $field = $resField[0];
+            }
+        }
+        return $field;
+    }
+
     /**
      * Compile a condition into SQL
      *
      * @param SugarQuery_Builder_Condition $condition
-     * @param string $sql
-     * @param string $operator
+     * @param string $sql Current SQL string
+     * @param string $operator Preceding logical operator - AND/OR
      *
      * @return string
      */
@@ -650,7 +663,8 @@ class SugarQuery_Compiler_SQL
         if (!empty($sql) && substr($sql, -1) != '(') {
             $sql .= $operator;
         }
-        $field = $this->canonicalizeFieldName($condition->field);
+
+        $field = $this->conditionField($condition->field);
 
         if ($condition->isNull) {
             $sql .= "{$field} IS NULL";
@@ -710,10 +724,10 @@ class SugarQuery_Compiler_SQL
                     $sql .= "{$field} LIKE {$value}";
                     break;
                 case 'EQUALFIELD':
-                    $sql .= "{$field} = {$condition->values}";
+                    $sql .= "{$field} = ".$this->conditionField($condition->values);
                     break;
                 case 'NOTEQUALFIELD':
-                    $sql .= "{$field} != {$condition->values}";
+                    $sql .= "{$field} != ". $this->conditionField($condition->values);
                     break;
                 case '=':
                 case '!=':
@@ -747,12 +761,8 @@ class SugarQuery_Compiler_SQL
      *
      * @return string
      */
-    protected function quoteValue(
-        $field,
-        $value,
-        $bean = false,
-        $operator = false
-    ) {
+    protected function quoteValue($field, $value, $bean = false, $operator = false)
+    {
         if ($value instanceof SugarQuery_Builder_Literal) {
             return (string) $value;
         }
@@ -769,7 +779,7 @@ class SugarQuery_Compiler_SQL
         if (stristr($field, '.')) {
             list($table, $field) = explode('.', $field);
             if ($table != $bean->getTableName()) {
-                $bean = $this->getTableBean($table);
+                $bean = $this->sugar_query->getTableBean($table);
                 if (empty($bean)) {
                     // quote the value by default
                     return $this->db->quoted($value);
