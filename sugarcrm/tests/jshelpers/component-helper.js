@@ -61,7 +61,7 @@
             model.fields[name] = fieldDef;
         }
 
-        return app.view.createField({
+        var field = app.view.createField({
             def: def,
             view: view,
             context: context,
@@ -69,6 +69,9 @@
             module:module,
             platform: client
         });
+
+        SugarTest.components.push(view);
+        return field;
     };
 
     test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent) {
@@ -88,7 +91,7 @@
             context.prepare();
         }
 
-        return app.view.createView({
+        var view = app.view.createView({
             name : viewName,
             context : context,
             module : module,
@@ -96,6 +99,9 @@
             layout: layout,
             platform: client
         });
+
+        SugarTest.components.push(view);
+        return view;
     };
 
     test.createLayout = function(client, module, layoutName, meta, context, loadFromModule, params) {
@@ -113,13 +119,15 @@
             context.prepare();
         }
 
-        return app.view.createLayout(_.extend({
+        var layout = app.view.createLayout(_.extend({
             name: layoutName,
             context: context,
             module: module,
             meta: meta,
             platform: client
         }, params));
+        SugarTest.components.push(layout);
+        return layout;
     };
 
     test.testMetadata = {
