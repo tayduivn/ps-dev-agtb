@@ -70,6 +70,19 @@ class SugarACL
     }
 
     /**
+     * Set ACLs for specific module
+     *
+     * For use mainly in unit tests, for overriding ACL functions
+     *
+     * @param string $module
+     * @param array $acldata Array of SugarACLStrategy objects that implement needed ACL
+     */
+    public static function setACL($module, $acldata)
+    {
+        self::$acls[$module] = $acldata;
+    }
+
+    /**
      * Load ACLs for module
      * @param string $module
      * @param array $context

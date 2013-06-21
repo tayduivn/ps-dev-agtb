@@ -28,7 +28,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
     public function setUp()
     {
-        SugarACL::$acls = array();
+        SugarACL::resetACLs();
         if(!$this->bean)
         {
             $this->bean = $this->getTestMock();
@@ -45,6 +45,7 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
         SugarTestHelper::tearDown();
         parent::tearDown();
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = array();
+        SugarACL::resetACLs();
     }
 
     public function getTestMock()
@@ -179,6 +180,17 @@ class SugarACLTest extends PHPUnit_Framework_SugarBeanRelated_TestCase
 
         $this->assertEmpty(SugarACL::listFilter('test', $list));
 
+    }
+
+    public function testSetACL()
+    {
+        $acct = BeanFactory::getBean('Accounts');
+        $this->assertTrue($acct->ACLAccess('edit'));
+
+        $rejectacl = $this->getMock('SugarACLStatic');
+        $rejectacl->expects($this->any())->method('checkAccess')->will($this->returnValue(false));
+        SugarACL::setACL('Accounts', array($rejectacl));
+        $this->assertFalse($acct->ACLAccess('edit'));
     }
 }
 
