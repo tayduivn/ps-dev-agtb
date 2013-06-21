@@ -17,6 +17,13 @@ class Comment extends Basic
     public $created_by_name;
 
     /**
+     * Disable Custom Field lookup since Activity Streams don't support them
+     *
+     * @var bool
+     */
+    public $disable_custom_fields = true;
+
+    /**
      * Method that returns a JSON representation of the bean.
      * @return string
      */
