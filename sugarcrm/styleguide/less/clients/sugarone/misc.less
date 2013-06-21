@@ -1,0 +1,83 @@
+/* Misc
+-------------------------------------------------- */
+
+.timeaway, .display-cafes, .display-directions {
+    padding: 10px 0 10px 10px;
+}
+
+.acomment .avatar {
+  margin-right: 10px;
+}
+
+
+.docs-input-sizes select,
+.docs-input-sizes input[type=text] {
+  display: block;
+  margin-bottom: 9px;
+}
+
+.news-article, .meetingEvent {
+  padding: 10px;
+  border-bottom: 1px solid @grayLighter;
+  h5 {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.padded {
+  padding: 20px;
+}
+
+.record-cell[data-name="title"], .record-cell[data-name="account_name"]  {
+    font-size: 12px !important;
+}
+
+.record-cell[data-name="date_modified_by"] {
+    position: absolute !important;
+    right: 0;
+    bottom: -28px;
+    text-align: right;
+}    
+.record .record-cell[data-name="date_modified_by"][data-type="date"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="datetimecombo"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="fieldset"] .normal > span,  .record .record-cell[data-name="date_modified_by"] .record-label {
+        display: inline !important;
+    }
+    .record .record-cell[data-name="date_modified_by"] .normal {
+        font-size: @fontSizeSmall;
+        color: @grayLight;
+        display: inline !important;
+    }
+
+.main-pane .dashboard {
+    .border-radius(0);
+    .box-shadow(none);
+}
+
+.record {position: relative;}
+
+.btn.btn-invisible.addEventBtn, .gdocNew {
+    position:absolute;
+    top: 4px;
+    right: 70px;
+}
+
+
+.sugarone {
+    font-size: 16px;
+    margin: 12px 10px 0;
+    a {
+        color: @white;
+        b {
+            font-weight: normal;
+            color: @red;
+        }
+    }
+}
+
+.life {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: @fontSizeSmall;
+    color: @grayLight;
+}
