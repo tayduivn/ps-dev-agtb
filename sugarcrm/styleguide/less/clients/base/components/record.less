@@ -390,7 +390,16 @@
     }*/
 
     &[data-type="email"] {
-      .control-group.email {
+      .normal > span {
+        display: block !important;
+        margin-bottom: 10px;
+      }
+      .detail .control-group.email {
+        .ellipsis-cell {
+          height: 20px;
+        }
+      }
+      .edit .control-group.email {
         padding-right: 132px;
         position: relative;
         margin-bottom: 2px;
@@ -584,6 +593,10 @@
       }
       .edit label {
         padding: 4px 0 2px;
+      }
+      .address .detail {
+        min-height: 10px;
+        display: block;
       }
     }
 

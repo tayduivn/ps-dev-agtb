@@ -16,6 +16,26 @@ h4 i {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.ellipsis-container {
+  display: table;
+  .ellipsis-cell {
+    display: table-cell;
+    position: relative;
+    width: 100%;
+    .ellipsis_inline {
+      display: inline-block !important;
+      width: 100%;
+      position: absolute;
+    }
+  }
+  label.ellipsis-addon {
+    display: table-cell;
+    position: relative;
+    padding: 0 0 0 4px;
+    margin: 0;
+    white-space: nowrap;
+  }
+}
 
 //from nutmeg
 html, body, #content {
