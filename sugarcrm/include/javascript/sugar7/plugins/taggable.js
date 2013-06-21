@@ -122,6 +122,8 @@
                 var blankItem = this._tplTagList({});
                 var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
 
+                ul.css('top', el.outerHeight());
+
                 if (word) {
                     ul.html(defaultItem).appendTo(el.parent()).show();
 
@@ -189,21 +191,11 @@
                     }
                     // Up arrow.
                     if (event.keyCode == 38) {
-                        var prev = active.prev();
-                        if (!prev.length) {
-                            prev = dropdown.find('li').last();
-                        }
-                        active.removeClass('active');
-                        prev.addClass('active');
+                        this.selectNextDropdownOption(active, false);
                     }
                     // Down arrow.
                     if (event.keyCode == 40) {
-                        var next = active.next();
-                        if (!next.length) {
-                            next = dropdown.find('li').first();
-                        }
-                        active.removeClass('active');
-                        next.addClass('active');
+                        this.selectNextDropdownOption(active, true);
                     }
                 }
 
@@ -220,6 +212,27 @@
                 }
             },
 
+            /**
+             * Given the currently selected option, select the next option, whether it is
+             * by going down or up.
+             *
+             * @param {jQuery DOM} $current
+             * @param {boolean} down
+             */
+            selectNextDropdownOption: function($current, down) {
+                var next = down ? $current.next() : $current.prev();
+
+                if (next.length > 0) {
+                    $current.removeClass('active');
+
+                    if (next.hasClass('disabled')) {
+                        this.selectNextDropdownOption(next, down);
+                    } else {
+                        next.addClass('active');
+                    }
+                }
+            },
+
             hideTypeahead: function() {
                 var self = this;
                 setTimeout(function() {
@@ -227,9 +240,17 @@
                 }, 150);
             },
 
+            /**
+             * Make the dropdown option the currently selected option on hover.
+             * @param event
+             */
             switchActiveTypeahead: function(event) {
-                this.$("ul.activitystream-tag-dropdown .active").removeClass('active');
-                this.$(event.currentTarget).addClass('active');
+                var currentTarget = this.$(event.currentTarget);
+
+                if (!currentTarget.hasClass('disabled')) {
+                    this.$("ul.activitystream-tag-dropdown .active").removeClass('active');
+                    currentTarget.addClass('active');
+                }
             },
 
             addTag: function(event) {
@@ -239,7 +260,9 @@
                     lastIndex = this._lastLeaderPosition(body.html()),
                     data = el.data();
 
-                if (el.hasClass('placeholder')) return;
+                if (el.hasClass('placeholder') || el.hasClass('disabled')) {
+                    return;
+                }
 
                 var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
                 tag.data("id", data.id).data("module", data.module).data("name", data.name);
@@ -335,7 +358,7 @@
                 component._tplTag = Handlebars.templates['p.taggable.tag'];
 
                 if (!_.has(Handlebars.templates, "p.taggable.taglist")) {
-                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module-mini label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}{{#if noAccess}}<div class="pull-right">({{str "LBL_NO_ACCESS_LOWER"}})</div>{{/if}}</a></li>';
+                    tplTagList = '<li{{#if noAccess}} class="disabled"{{/if}}>{{#if htmlName}}<a><div class="label label-module-mini label-{{module}} pull-left">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}{{#if noAccess}}<div class="pull-right">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>';
                     Handlebars.templates['p.taggable.taglist'] = Handlebars.compile(tplTagList);
                 }
                 component._tplTagList = Handlebars.templates['p.taggable.taglist'];

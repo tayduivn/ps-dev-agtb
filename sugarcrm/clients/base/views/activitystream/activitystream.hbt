@@ -63,10 +63,10 @@
 </ul>
 {{#unless readonly}}
     <div class="actions btn-group">
-        <a class="btn btn-mini comment-btn" rel="tooltip" data-title="Comment">
+        <a class="btn btn-mini comment-btn" rel="tooltip" data-title="{{str 'LBL_COMMENT'}}">
             <i class="icon-comment"></i>
         </a>
-        <a class="btn btn-mini preview-btn" rel="tooltip" data-title="Preview" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
+        <a class="btn btn-mini preview-btn" rel="tooltip" data-title="{{str 'LBL_PREVIEW'}}" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
             <i class="icon-eye-open"></i>
         </a>
     </div>

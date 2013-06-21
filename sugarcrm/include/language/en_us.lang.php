@@ -3982,6 +3982,7 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
+    'LBL_COMMENT' => 'Comment',
 
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
