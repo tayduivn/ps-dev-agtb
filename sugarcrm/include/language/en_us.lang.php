@@ -3786,6 +3786,12 @@ $app_strings = array (
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
 
+    //portal record tutorial
+    'LBL_PORTAL_TOUR_RECORD_DETAILS' => 'The record view allows you to see the details of a record.',
+    'LBL_PORTAL_TOUR_RECORD_NOTES' => 'Notes let you collaborate with other portal users and support representatives.',
+    'LBL_PORTAL_TOUR_RECORD_ADD_NOTE' => 'Click here to add a note to this record.',
+    'LBL_PORTAL_TOUR_RECORD_VIEW_NOTE' => 'Click on these icons to view the details of attached notes.',
+
     //for portal
 
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
