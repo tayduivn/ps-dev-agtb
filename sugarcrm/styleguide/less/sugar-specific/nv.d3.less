@@ -505,19 +505,46 @@ svg .title {
 * Pareto
 */
 
-.nv-quotaWrap line {
-  opacity: .8;
-  stroke: #444;
-  stroke-width: 3;
-  /*stroke-dasharray: '20, 5'; dashed lines must be defined in JS*/
-}
-
 .nv-multiBarWithLegend .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
   fill-opacity: 1;
   stroke-opacity: 1;
   stroke-width: 2;
 }
 
+.nv-pareto {
+  .nv-quotaWrap line {
+    opacity: .8;
+    stroke: #444;
+    stroke-width: 3;
+    /*stroke-dasharray: '20, 5'; dashed lines must be defined in JS*/
+  }
+  .nv-y.nv-axis .domain {
+    display: none;
+  }
+  .nv-y.nv-axis .tick line {
+    stroke-width: 2px;
+    stroke: #bbb;
+  }
+  .nv-x.nv-axis .domain {
+    stroke-width: 4px;
+    stroke: #bbb;
+  }
+  svg text {
+    font-size: 12px;
+    fill: #aaa;
+  }
+  .nvd3 .nv-multibar .nv-groups rect {
+    stroke-opacity: 1;
+    stroke-width: 1;
+    stroke: #FFF;
+    fill-opacity: 0.85;
+  }
+  .nvd3 .nv-x.nv-axis text,
+  .nvd3.nv-legend text {
+    fill: #888;
+    font-size: 12px;
+  }
+}
 .nvd3 .nv-lineLegend .nv-series {
   cursor: default;
 }

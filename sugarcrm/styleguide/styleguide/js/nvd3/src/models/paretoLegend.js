@@ -6,7 +6,7 @@ nv.models.paretoLegend = function () {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 5, right: 0, bottom: 5, left: 0}
+  var margin = {top: 5, right: 0, bottom: 0, left: 0}
     , width = 400
     , height = 20
     , getKey = function (d) { return d.key; }
@@ -56,51 +56,50 @@ nv.models.paretoLegend = function () {
             dispatch.legendDblclick(d,i);
           });
 
-
-      if (data[0].type === 'bar')
-      {
-        seriesEnter.append('rect')
-            .attr('class', function (d,i) {
-              return this.getAttribute('class') || classes(d,i);
-            })
-            .attr('fill', function (d,i) { return this.getAttribute('fill') || color(d,i); })
-            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
-            .attr('stroke-width', 0)
-            .attr('width', 10)
-            .attr('height', 10)
-            .attr('transform', 'translate(-5,-5)');
-        seriesEnter.append('text')
-          .text(getKey)
-          .attr('text-anchor', 'start')
-          .attr('dy', '.36em')
-          .attr('dx', '8');
-      }
-      else
-      {
+      if (data[0].type === 'bar') {
         seriesEnter.append('circle')
-            .attr('class', function (d,i) {
-              return this.getAttribute('class') || classes(d,i);
-            })
+            .attr('class', function (d,i) { return this.getAttribute('class') || classes(d,i); })
             .attr('fill', function (d,i) { return this.getAttribute('fill') || color(d,i); })
-            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
-            .attr('stroke-width', 0)
-            .attr('r', 4)
-            .attr('transform', 'translate(8,0)');
-        seriesEnter.append('line')
-            .attr('class', function (d,i) {
-              return this.getAttribute('class') || classes(d,i);
-            })
             .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
             .attr('stroke-width', 2)
-            .attr('x0',0)
-            .attr('x1',16)
-            .attr('y0',0)
-            .attr('y1',0);
+            .attr('r', 6)
+            .attr('transform', 'translate(4,-4)');
         seriesEnter.append('text')
           .text(getKey)
-          .attr('text-anchor', 'start')
-          .attr('dy', '.36em')
-          .attr('dx', '20');
+          .attr('dy', '1.3em')
+          .attr('dx', '0')
+          .attr('text-anchor','middle');
+      } else {
+        seriesEnter.append('circle')
+            .attr('class', function (d,i) { return this.getAttribute('class') || classes(d,i); })
+            .attr('fill', function (d,i) { return this.getAttribute('fill') || color(d,i); })
+            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
+            .attr('stroke-width', 0)
+            .attr('r', function (d,i) { return d.type === 'dash' ? 0 : 5; })
+            .attr('transform', 'translate(0,-4)');
+        seriesEnter.append('line')
+            .attr('class', function (d,i) { return this.getAttribute('class') || classes(d,i); })
+            .attr('stroke', function (d,i) { return this.getAttribute('stroke') || color(d,i); })
+            .attr('stroke-width', 3)
+            .attr('x0',0)
+            .attr('x1',function (d,i) { return d.type === 'dash' ? 40 : 20; })
+            .attr('y0',0)
+            .attr('y1',0)
+            .style('stroke-dasharray', function (d,i) { return d.type === 'dash' ? '8, 8' : '0,0'; } )
+            .style('stroke-width','4px')
+            .attr('transform', function (d,i) { return d.type === 'dash' ? 'translate(-10,-4)' : 'translate(0,-4)'; } );
+        seriesEnter.append('circle')
+            .attr('class', function (d,i) { return this.getAttribute('class') || classes(d,i); })
+            .attr('fill', function (d,i) { return this.getAttribute('fill') || color(d,i); })
+            .attr('stroke', function (d,i) { return this.getAttribute('fill') || color(d,i); })
+            .attr('stroke-width', 0)
+            .attr('r', function (d,i) { return d.type === 'dash' ? 0 : 5; })
+            .attr('transform', 'translate(20,-4)');
+        seriesEnter.append('text')
+          .text(getKey)
+          .attr('dy', '1.3em')
+          .attr('dx', '10')
+          .attr('text-anchor','middle');
       }
 
       series.classed('disabled', function (d) { return d.disabled; });
@@ -111,52 +110,22 @@ nv.models.paretoLegend = function () {
 
       // NEW ALIGNING CODE, TODO: clean up
       if (align) {
-        var seriesWidths = [];
+
+        var legendKeys = [];
         series.each(function (d,i) {
-          seriesWidths.push(d3.select(this).select('text').node().getComputedTextLength() + 28); // 28 is ~ the width of the circle plus some padding
+          legendKeys.push(d3.select(this).select('text').node().getComputedTextLength() + 10); // 28 is ~ the width of the circle plus some padding
         });
-
-        //nv.log('Series Widths: ', JSON.stringify(seriesWidths));
-
-        var seriesPerRow = 0;
-        var legendWidth = 0;
-        var columnWidths = [];
-
-        while (legendWidth < availableWidth && seriesPerRow < seriesWidths.length) {
-          columnWidths[seriesPerRow] = seriesWidths[seriesPerRow];
-          legendWidth += seriesWidths[seriesPerRow += 1];
-        }
-
-
-        while (legendWidth > availableWidth && seriesPerRow > 1) {
-          columnWidths = [];
-          seriesPerRow -= 1;
-
-          for (k = 0; k < seriesWidths.length; k += 1) {
-            if (seriesWidths[k] > (columnWidths[k % seriesPerRow] || 0)) {
-              columnWidths[k % seriesPerRow] = seriesWidths[k];
-            }
-          }
-
-          legendWidth = columnWidths.reduce(function (prev, cur, index, array) { return prev + cur; });
-        }
-        //console.log(columnWidths, legendWidth, seriesPerRow);
+        var keyCount = legendKeys.length;
 
         var xPositions = [];
-        for (var i = 0, curX = 0; i < seriesPerRow; i += 1) {
+        for (var i = 0, curX = 0; i < keyCount; i += 1) {
+          curX += (i===0)?0:legendKeys[i-1]/2+legendKeys[i]/2;
           xPositions[i] = curX;
-          curX += columnWidths[i];
         }
 
-        series
-            .attr('transform', function (d, i) {
-              return 'translate(' + xPositions[i % seriesPerRow] + ',' + (5 + Math.floor(i / seriesPerRow) * 20) + ')';
-            });
-
-        //position legend as far right as possible within the total width
-        g.attr('transform', 'translate(' + (width - margin.right - legendWidth) + ',' + margin.top + ')');
-
-        height = margin.top + margin.bottom + (Math.ceil(seriesWidths.length / seriesPerRow) * 20);
+        series.attr('transform', function (d,i) {
+          return 'translate(' + xPositions[i % keyCount] + ',' + (5 + Math.floor(i / keyCount) * 30) + ')';
+        });
 
       } else {
 

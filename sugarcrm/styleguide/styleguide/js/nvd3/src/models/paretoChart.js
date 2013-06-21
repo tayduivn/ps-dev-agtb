@@ -5,7 +5,7 @@ nv.models.paretoChart = function () {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 5, right: 5, bottom: 34, left: 40}
+  var margin = {top: 10, right: 20, bottom: 40, left: 40}
     , width = null
     , height = null
     , getX = function (d) { return d.x; }
@@ -36,8 +36,8 @@ nv.models.paretoChart = function () {
     , x = multibar.xScale()
     , lines = nv.models.line()
     , y = multibar.yScale()
-    , xAxis = nv.models.axis().scale(x).orient('bottom').tickPadding(5)
-    , yAxis = nv.models.axis().scale(y).orient('left')
+    , xAxis = nv.models.axis().scale(x).orient('bottom').tickPadding(10)
+    , yAxis = nv.models.axis().scale(y).orient('left').tickPadding(10).showMaxMin(false)
 
     , barLegend = nv.models.paretoLegend()
     , lineLegend = nv.models.paretoLegend()
@@ -106,20 +106,23 @@ nv.models.paretoChart = function () {
       var container = d3.select(this),
           that = this;
 
+      var expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
+
+      margin.left = (expandMode) ? 50 : 60;
+      margin.bottom = (expandMode) ? 40 : 34;
+
       var availableWidth = (width  || parseInt(container.style('width'), 10) || 960) - margin.left - margin.right
         , availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom
-        , expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
+        , availableLegend = (width  || parseInt(container.style('width'), 10) || 960) - margin.right - margin.right;
 
       chart.update = function () { container.transition().duration(300).call(chart); };
       chart.container = this;
 
-      margin.left = (expandMode) ? 50 : 40;
-      margin.bottom = (expandMode) ? 40 : 34;
 
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
-      if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
+      if (!data || !data.length || !data.filter(function(d) { return d.values.length; }).length) {
         var noDataText = container.selectAll('.nv-noData').data([noData]);
 
         noDataText.enter().append('text')
@@ -130,7 +133,7 @@ nv.models.paretoChart = function () {
         noDataText
           .attr('x', margin.left + availableWidth / 2)
           .attr('y', margin.top + availableHeight / 2)
-          .text(function(d) { return d });
+          .text(function(d) { return d; });
 
         return chart;
       } else {
@@ -202,7 +205,8 @@ nv.models.paretoChart = function () {
       gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
       gEnter.append('g').attr('class', 'nv-barsWrap');
-      gEnter.append('g').attr('class', 'nv-linesWrap');
+      gEnter.append('g').attr('class', 'nv-linesWrap1');
+      gEnter.append('g').attr('class', 'nv-linesWrap2');
       gEnter.append('g').attr('class', 'nv-quotaWrap');
 
       //------------------------------------------------------------
@@ -214,14 +218,13 @@ nv.models.paretoChart = function () {
       var titleHeight = 0
         , legendHeight = 0
         , wideLegend = multibar.stacked() && dataBars.length > 2
-        , quotaLegend = {'key':'Quota ($'+ d3.format(',.2s')(quotaValue) +')', 'type':'line', 'color':'#444', 'values':{'series':0,'x':0,'y':0}};
+        , quotaLegend = {'key':'Quota', 'type':'dash', 'color':'#444', 'values':{'series':0,'x':0,'y':0}};
 
       if (showLegend) {
+
         // bar series legend
         gEnter.append('g').attr('class', 'nv-legendWrap nv-barLegend');
-
-        barLegend.width(availableWidth * (wideLegend ? 0.75 : 0.5));
-
+        barLegend.width(availableLegend);
         g.select('.nv-legendWrap.nv-barLegend')
             .datum(
               //data
@@ -232,11 +235,10 @@ nv.models.paretoChart = function () {
             )
             .call(barLegend);
 
+
         // line series legend
         gEnter.append('g').attr('class', 'nv-legendWrap nv-lineLegend');
-
-        lineLegend.width(availableWidth * (wideLegend ? 0.25 : 0.4));
-
+        lineLegend.width(availableLegend);
         g.select('.nv-legendWrap.nv-lineLegend')
             .datum(
               data.filter(function (d) {
@@ -245,18 +247,91 @@ nv.models.paretoChart = function () {
             )
             .call(lineLegend);
 
+
+        // bar legend data
+        var barKeyWidths = [];
+        var barLegendKeys = g.select('.nv-legendWrap.nv-barLegend').selectAll('.nv-series');
+        barLegendKeys.select('text').each( function (d,i) {
+          barKeyWidths.push(d3.select(this).node().getComputedTextLength()); // 28 is ~ the width of the circle plus some padding
+        });
+        var barMaxKeyWidth = d3.max(barKeyWidths);
+        var barColsPerLegend = 0;
+
+        // line legend data
+        var lineKeyWidths = [];
+        var lineLegendKeys = g.select('.nv-legendWrap.nv-lineLegend').selectAll('.nv-series');
+        lineLegendKeys.select('text').each( function (d,i) {
+          lineKeyWidths.push(d3.select(this).node().getComputedTextLength()); // 28 is ~ the width of the circle plus some padding
+        });
+        var lineMaxKeyWidth = d3.max(lineKeyWidths);
+        var lineColsPerLegend = 0;
+
+        // calculate max keys per legend
+        var colCount = barKeyWidths.length + lineKeyWidths.length;
+        var legendWidth = 0;
+
+        for (var i = 0; i < colCount; i += 1) {
+          if (legendWidth < availableLegend) {
+
+            // nv.log('legendWidth',legendWidth)
+            // nv.log('barMaxKeyWidth',barMaxKeyWidth)
+            // nv.log('legendWidth + barMaxKeyWidth',legendWidth + barMaxKeyWidth < availableLegend);
+            // nv.log('barKeyWidths.length',barKeyWidths.length);
+            // nv.log('lineColsPerLegend % lineKeyWidths.length',lineColsPerLegend % lineKeyWidths.length);
+            // nv.log('barColsPerLegend % barKeyWidths.length',barColsPerLegend % barKeyWidths.length);
+
+            if (
+                legendWidth + barMaxKeyWidth < availableLegend &&
+                (barColsPerLegend <= lineColsPerLegend || lineColsPerLegend === lineKeyWidths.length) &&
+                barColsPerLegend < barKeyWidths.length
+                //barColsPerLegend % barKeyWidths.length <= lineColsPerLegend % lineKeyWidths.length
+            ) {
+              barColsPerLegend += 1;
+              legendWidth += barMaxKeyWidth;
+            } else if (
+              legendWidth + lineMaxKeyWidth < availableLegend &&
+              lineColsPerLegend < lineKeyWidths.length
+            ) {
+              lineColsPerLegend += 1;
+              legendWidth += lineMaxKeyWidth;
+            }
+          } else {
+            break;
+          }
+        }
+
+        barLegendKeys.attr('transform', function (d,i) {
+          return 'translate(' + barMaxKeyWidth * (i % barColsPerLegend) + ',' + (5 + Math.floor(i / barColsPerLegend) * 35) + ')';
+        });
+        lineLegendKeys.attr('transform', function (d,i) {
+          return 'translate(' + lineMaxKeyWidth * (i % lineColsPerLegend) + ',' + (5 + Math.floor(i / lineColsPerLegend) * 35) + ')';
+        });
+
+
+        barLegend.height(Math.ceil(barKeyWidths.length / barColsPerLegend) * 35);
+        lineLegend.height(Math.ceil(lineKeyWidths.length / lineColsPerLegend) * 35);
+
         //calculate position
-        legendHeight = Math.max(barLegend.height(), lineLegend.height());
+        legendHeight = Math.max(barLegend.height(), lineLegend.height()) + 15;
+
+
+        g.select('.nv-legendWrap.nv-barLegend')
+            .attr('transform', 'translate('+ (barMaxKeyWidth/2 - margin.left) +','+ (-legendHeight) +')');
+
+        g.select('.nv-legendWrap.nv-lineLegend')
+            .attr('transform', 'translate(' + (availableWidth - g.select('.nv-legendWrap.nv-lineLegend').node().getBBox().width) +','+ (-legendHeight) +')');
 
         if (margin.top !== legendHeight + titleHeight) {
-          margin.top = legendHeight + titleHeight;
+          margin.top = legendHeight + titleHeight + 15;
           availableHeight = (height || parseInt(container.style('height'), 10) || 400) - margin.top - margin.bottom;
         }
 
-        g.select('.nv-legendWrap.nv-barLegend')
-            .attr('transform', 'translate('+ (availableWidth * (wideLegend ? 0.25 : 0.4)) +','+ (-margin.top) +')');
-        g.select('.nv-legendWrap.nv-lineLegend')
-            .attr('transform', 'translate(0,'+ (-margin.top) +')');
+        // nv.log('barColsPerLegend',barColsPerLegend);
+        // nv.log('lineColsPerLegend',lineColsPerLegend);
+        // nv.log('availableWidth',availableWidth);
+        // nv.log('availableLegend',availableLegend);
+        // nv.log('legendWidth',legendWidth);
+
       }
 
       if (showTitle && properties.title) {
@@ -331,7 +406,7 @@ nv.models.paretoChart = function () {
       var barsWrap = g.select('.nv-barsWrap')
           .datum(dataBars.length ? dataBars : [{values: []}]);
 
-      var linesWrap = g.select('.nv-linesWrap')
+      var linesWrap1 = g.select('.nv-linesWrap1')
           .datum(
             dataLines.length ? dataLines.map(function (d) {
                 d.values = (!multibar.stacked()) ? d.valuesOrig.map(function (v,i) {
@@ -340,10 +415,23 @@ nv.models.paretoChart = function () {
                 return d;
               }) : [{values:[]}]
           );
-
-      barsWrap.transition().call(multibar);
-      linesWrap.transition().call(lines);
-
+      var linesWrap2 = g.select('.nv-linesWrap2')
+          .datum(
+            dataLines.length ? dataLines.map(function (d) {
+                d.values = (!multibar.stacked()) ? d.valuesOrig.map(function (v,i) {
+                  return {'series': v.series, 'x': (v.x + v.series * 0.25 - i * 0.25), 'y': v.y};
+                }) : d.valuesOrig;
+                return d;
+              }) : [{values:[]}]
+          );
+      barsWrap.call(multibar);
+      //.selectAll('rect.nv-bar').each(function(d){ console.log(this); } );
+      linesWrap1.call(lines);
+      linesWrap2.call(lines);
+      linesWrap1.selectAll('path').style('stroke-width',8).style('stroke','#FFFFFF');
+      linesWrap2.transition().selectAll('circle').attr('r',8).style('stroke','#FFFFFF');
+      linesWrap2.transition().selectAll('path').style('stroke-width',4);
+      //barsWrap;
       //------------------------------------------------------------
       // Quota Line
 
@@ -358,7 +446,8 @@ nv.models.paretoChart = function () {
           .attr('x2', availableWidth)
           .attr('y2', 0)
           .attr('transform', 'translate(0,'+ y(quotaValue) +')')
-          .style('stroke-dasharray','20, 5');
+          .style('stroke-dasharray','8, 8')
+          .style('stroke-width','4px');
       }
 
       //------------------------------------------------------------
@@ -440,8 +529,7 @@ nv.models.paretoChart = function () {
           .selectAll('text, line')
           .style('opacity', 0);
       }
-      if (rotateLabels)
-      {
+      if (rotateLabels) {
         xTicks
           .selectAll('text')
           .attr('transform', function (d,i,j) { return 'rotate('+ rotateLabels +' 0,0) translate(0,10)'; })
@@ -456,6 +544,18 @@ nv.models.paretoChart = function () {
       g.select('.nv-y.nv-axis').transition()
           .style('opacity', dataBars.length ? 1 : 0)
           .call(yAxis);
+
+
+      // Quota line label
+      g.selectAll('text.nv-quotaValue').remove();
+      g.select('.nv-y.nv-axis').append('text')
+          .attr('class', 'nv-quotaValue')
+          .text('$'+ d3.format(',.2s')(quotaValue))
+          .attr('dy', '.36em')
+          .attr('dx', '0')
+          .attr('text-anchor','end')
+          .attr('transform', 'translate(-10,'+ y(quotaValue) +')');
+
 
       //------------------------------------------------------------
 
@@ -616,14 +716,14 @@ nv.models.paretoChart = function () {
     multibar.fill(fill);
     multibar.classes(classes);
 
-    lines.color(colors);
-    lines.fill(fill);
+    lines.color( function (d,i) { return d3.interpolateHsl( d3.rgb('#1a8221'), d3.rgb('#62b464') )(i/1); } );
+    lines.fill( function (d,i) { return d3.interpolateHsl( d3.rgb('#1a8221'), d3.rgb('#62b464') )(i/1); } );
     lines.classes(classes);
 
     barLegend.color(colors);
     barLegend.classes(classes);
 
-    lineLegend.color(colors);
+    lineLegend.color(function (d,i) { return d3.interpolateHsl( d3.rgb('#1a8221'), d3.rgb('#62b464') )(i/1); });
     lineLegend.classes(classes);
 
     return chart;

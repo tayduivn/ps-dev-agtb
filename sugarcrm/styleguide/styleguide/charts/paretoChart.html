@@ -7,6 +7,36 @@
   <title>Forecasting Chart</title>
   <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
   <link href="../css/sugar.css" rel="stylesheet" type="text/css">
+  <style>
+    .nv-y.nv-axis .domain {
+      display: none;
+    }
+    .nv-y.nv-axis .tick line {
+      stroke-width: 2px;
+      stroke: #bbb;
+    }
+    .nv-x.nv-axis .domain {
+      stroke-width: 4px;
+      stroke: #bbb;
+    }
+    svg text {
+      font-size: 12px;
+      font-weight: bold;
+      fill: #aaa;
+    }
+    .nvd3 .nv-multibar .nv-groups rect {
+      stroke-opacity: 1;
+      stroke-width: 2;
+      stroke: #FFF;
+      fill-opacity: 0.85;
+    }
+    .nvd3 .nv-x.nv-axis text,
+    .nvd3.nv-legend text {
+      fill: #888;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body class="full-screen">
 
@@ -109,11 +139,11 @@
       var chartData = this.collection.models.map( function(d,i){return d.attributes} )[0];
 
       this.chart = nv.models.paretoChart()
-            .showTitle(true)
+            .showTitle(false)
             .showLegend(true)
             .tooltips(true)
             .showControls(false)
-            .stacked(false)
+            .stacked(true)
             .clipEdge(false)
             .colorData( 'default' );
 
