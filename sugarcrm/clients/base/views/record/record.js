@@ -62,16 +62,6 @@
     },
 
     /**
-     * Compare with last fetched data and return true if model contains changes
-     *
-     * @return true if current model contains unsaved changes
-     * @link {app.plugins.view.editable}
-     */
-    hasUnsavedChanges: function() {
-        return !_.isEmpty(this.model.changedAttributes(this.model._syncedAttributes));
-    },
-
-    /**
      * Called when current record is being duplicated to allow customization of fields
      * that will be copied into new record.
      *
@@ -435,10 +425,7 @@
             }
         });
     },
-    /**
-     * {@inheritdoc}
-     * Attach tab handler to jump into the next target field
-     */
+
     handleKeyDown: function (e, field) {
         if (e.which === 9) { // If tab
             e.preventDefault();
@@ -446,26 +433,24 @@
             var direction = e.shiftKey ? 'prevField' : 'nextField',
                 nextField = field[direction];
 
-            if (!nextField) {
-                return;
-            }
+            if (nextField) {
+                if (nextField.$el.closest('.panel_hidden').hasClass('hide')) {
+                    this.toggleMoreLess();
+                }
+                this.toggleField(field, false);
+                this.toggleField(nextField, true);
+                // the field we need to toggle until we reach one that's not
+                if (field.isDisabled() && nextField) {
+                    var curField = field;
+                    while (curField.isDisabled) {
+                        if (curField[direction]) {
+                            this.toggleField(curField[direction], true);
+                            curField = curField[direction];
+                        } else {
+                            break;
+                        }
 
-            if (nextField.$el.closest('.panel_hidden').hasClass('hide')) {
-                this.toggleMoreLess();
-            }
-            this.toggleField(field, false);
-            this.toggleField(nextField, true);
-            // the field we need to toggle until we reach one that's not
-            if (field.isDisabled() && nextField) {
-                var curField = field;
-                while (curField.isDisabled) {
-                    if (curField[direction]) {
-                        this.toggleField(curField[direction], true);
-                        curField = curField[direction];
-                    } else {
-                        break;
                     }
-
                 }
             }
         }
