@@ -88,7 +88,7 @@ describe("Preview View", function() {
             preview.model = dummyModel;
             preview.bindUpdates(dummySourceModel);
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("PUT", /.*\/rest\/v10\/Cases\/testid.*/,
+            SugarTest.server.respondWith("PUT", /.*rest\/v10\/Cases\/testid.*/,
             [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
             dummySourceModel.save();
 

@@ -501,7 +501,7 @@ describe("Create View", function() {
             view.model = bean;
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
+            SugarTest.server.respondWith("GET", /.*rest\/v10\/Contacts\/1234.*/,
                 [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
 
             var success = function(){};
@@ -536,7 +536,7 @@ describe("Create View", function() {
             view.model = bean;
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
+            SugarTest.server.respondWith("GET", /.*rest\/v10\/Contacts\/1234.*/,
                 [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
 
             var success = function(){};

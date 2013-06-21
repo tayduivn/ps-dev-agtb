@@ -34,7 +34,7 @@ describe("Prospects.Views.ConvertResults", function() {
         var leadName ='Test User';
 
         SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET",  /.*\/rest\/v10\/Leads.*/,
+        SugarTest.server.respondWith("GET",  /.*rest\/v10\/Leads.*/,
             [200, {  "Content-Type": "application/json"},
                 JSON.stringify( new Backbone.Model({ id: "xyz", name: leadName}))]);
 
