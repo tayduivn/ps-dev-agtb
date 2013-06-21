@@ -31,7 +31,7 @@
         }
     },
     loadData: function (options) {
-
+        var self = this;
         if (this.disposed || this.meta.config) {
             return;
         }
@@ -41,7 +41,7 @@
                 this.model.get('name') ||
                 this.model.get('account_name') ||
                 this.model.get('full_name'),
-            limit = parseInt(this.settings.get("limit"), 10),
+            limit = parseInt(this.settings.get("limit"), 10) || 5,
             self = this;
         this.screen_name = this.settings.get('twitter') || false;
         if (!twitter || this.viewName === 'config') {
@@ -50,12 +50,10 @@
 
         twitter = twitter.replace(" ", "");
         this.twitter = twitter;
-        $.ajax({
-            url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&include_rts=true&count=" + limit + "&callback=?",
-            dataType: "jsonp",
-            context: this,
-            success: function (data) {
-                if (this.disposed) {
+        var url = app.api.buildURL('connector/twitter','',{id:twitter},{count:limit});
+        app.api.call('READ', url, {},{
+            success:function (data) {
+                if (self.disposed) {
                     return;
                 }
                 var tweets = [];
@@ -84,8 +82,18 @@
                     tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date});
                 }, this);
 
-                this.tweets = tweets;
+                self.tweets = tweets;
                 self.render();
+            },
+            error: function(xhr,status,error){
+                if (xhr.status == 424) {
+                    self.needConnect = false;
+                    if (xhr.message && xhr.message == 'need OAuth') {
+                        self.needConnect = true;
+                    }
+                    self.template = app.template.get(self.name + '.twitter-need-configure.Home');
+                    app.view.View.prototype._render.call(self);
+                }
             },
             complete: (options) ? options.complete : null
         });

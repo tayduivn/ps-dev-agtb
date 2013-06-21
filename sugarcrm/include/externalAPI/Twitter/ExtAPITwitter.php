@@ -45,7 +45,7 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
     {
         $td = $GLOBALS['timedate'];
 
-        $twitter_json_url = 'http://api.twitter.com/1/statuses/friends_timeline.json';
+        $twitter_json_url = 'http://api.twitter.com/1.1/statuses/user_timeline.json';
         $reply = $this->makeRequest('GET', $twitter_json_url,array('count'=>$maxEntries));
 
         if ( !$reply['success'] ) {
@@ -80,6 +80,30 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
         return array('success'=>TRUE,'messages'=>$messages);
     }
 
+    /**
+     * Gets a twitter users last maxEntries
+     * @param $twitterHandle twitter screen name
+     * @param $maxTime
+     * @param $maxEntries maximum number of entries to retrieve
+     * @return array
+     */
+    public function getUserTweets($twitterHandle, $maxTime, $maxEntries)
+    {
+        $td = $GLOBALS['timedate'];
+
+        $twitter_json_url = 'http://api.twitter.com/1.1/statuses/user_timeline.json';
+        $reply = $this->makeRequest('GET', $twitter_json_url,array(
+                'count'=>$maxEntries,
+                'screen_name'=>$twitterHandle,
+            ));
+
+        if ( !$reply['success'] ) {
+            $GLOBALS['log']->error('Twitter failed, reply said: '.print_r($reply,true));
+            return $reply;
+        }
+
+        return $reply['responseJSON'];
+    }
 
 
     // Internal functions
