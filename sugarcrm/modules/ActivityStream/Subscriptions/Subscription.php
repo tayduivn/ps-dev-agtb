@@ -19,6 +19,13 @@ class Subscription extends Basic
     public $created_by_name;
 
     /**
+     * Disable Custom Field lookup since Activity Streams don't support them
+     *
+     * @var bool
+     */
+    public $disable_custom_fields = true;
+
+    /**
      * Gets the subscribed users for the record specified.
      * @param  SugarBean $record
      * @param  string    $type   Return type for data
