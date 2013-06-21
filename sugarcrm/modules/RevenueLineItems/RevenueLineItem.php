@@ -497,10 +497,11 @@ class RevenueLineItem extends SugarBean
     
     /**
      * Converts (copies) RLI to Products (QuotedLineItem)
-     * @return object Product
+     * @return Product
      */
     public function convertToQuotedLineItem()
     {
+        /* @var $product Product */
         $product = BeanFactory::getBean('Products');
         $product->id = create_guid();
         $product->new_with_id = true;
@@ -509,6 +510,10 @@ class RevenueLineItem extends SugarBean
                 $product->$field['name'] = $this->$field['name'];
             }
         }
+
+        // we need to set the discount_price (unit_price) to be the likely_case amount
+        $product->discount_price = $this->likely_case;
+        
         return $product;
     }
 }

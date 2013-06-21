@@ -128,13 +128,17 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
     
     /**
      * @group revenuelineitems
+     * @covers RevenueLineItem::convertToQuotedLineItem()
      */
     public function testConvertToQuotedLineItem()
     {
-        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        /* @var $rli RevenueLineItem */
+        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli->likely_case = '100.00';
         $rli->sales_stage = 'Test';
         $product = $rli->convertToQuotedLineItem();
 
+        $this->assertEquals($rli->likely_case, $product->discount_price);
         $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
     }
 }
