@@ -245,26 +245,34 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
             col = relContext.get("collection"),
             fields = relContext.get('fields') || [],
             self = this,
-            //If we can't get related data, return blank.
-            ret = "";
+            //First check if there is a relate field availible before loading a rel context.
+            rField = _.find(this.view.model.fields, function(def){
+                return (def.type && def.type == "relate" && def.id_name && def.link && def.link == link)
+            });
+
+        //Now check if a relate field for this link cahnged since we last loaded this value
+        if (rField &&
+            (this.view.model.get(rField.id_name) == "" ||
+                (relContext.get("model") && relContext.get("model").get("id") != this.view.model.get(rField.id_name))
+            )) {
+            //Nuke the context info now since its no longer valid
+            fields = [];
+            relContext.set({fields:fields, model:null});
+            //We are using a relate field but its empty for now, so abort.
+            if (this.view.model.get(rField.id_name) == "")
+                return "";
+        }
 
         if (field && !_.contains(fields, field)) {
             fields.push(field);
-            relContext.prepare();
-            col = relContext.get("collection");
-            //Call set in case fields was not already on the context
-            relContext.set('fields', fields);
-            if (relContext._dataFetched){
-                relContext.resetLoadFlag();
-            }
-            relContext.loadData({success:function(){
-                // We will fire the link change event once the load is complete to re-fire the dependency with the correct data.
-                self.view.model.trigger("change:" + link);
-            }});
+            this._loadRelatedData(link, fields, relContext, rField);
+        }
+        else if (rField && relContext.get("model")) {
+            return relContext.get("model").get(field);
         }
         else if (relContext._dataFetched && col.page > 0) {
             if (col.length > 0) {
-                ret =  col.models[0].get(field);
+                return  col.models[0].get(field);
             }
         } else {
             // This link is currently being loaded (with the field we need). Collection's don't fire a sync/fetch event,
@@ -274,7 +282,45 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
                 self.view.model.trigger("change:" + link);
             });
         }
-        return ret;
+        return "";
+    },
+    //Helper function to trigger the actual load call of related data
+    _loadRelatedData : function(link, fields, relContext, rField) {
+        var self = this;
+        if (rField && this.view.model.get(rField.id_name)){
+            //If we are using a relate field rather than a full link
+            var modelId = this.view.model.get(rField.id_name),
+                model =  relContext.get("model")
+                     || SUGAR.App.data.createRelatedBean(this.view.model, this.view.model.get(rField.id_name), link);
+            relContext.set({
+                modelId:modelId,
+                model : model
+            });
+        } else {
+            //If we don't have a record id, we can't make a server call for anything so abort at this point
+            if (_.isEmpty(this.view.model.get("id")))
+                return "" ;
+        }
+
+        relContext.prepare();
+        //Call set in case fields was not already on the context
+        relContext.set({
+            'fields' : fields,
+            //Force skipFetch false if this context had the data we wanted, we wouldn't be here.
+            skipFetch : false
+        });
+        if (relContext._dataFetched){
+            relContext.resetLoadFlag();
+        }
+
+        //don't use the link api if we are forcing an id pulled from a field on the current model.
+        if (rField) relContext.attributes.link = null;
+        relContext.loadData({success:function(){
+            // We will fire the link change event once the load is complete to re-fire the dependency with the correct data.
+            self.view.model.trigger("change:" + link);
+        }});
+        if (rField) relContext.attributes.link = link;
+
     },
     fireOnLoad : function(dep) {
         //Disable fire on load for now as we no longer have edit vs detail views and
