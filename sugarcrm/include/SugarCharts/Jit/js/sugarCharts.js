@@ -87,6 +87,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             // get chartId from params or use the default for sugar
                             var chartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
 
+                            d3.select('#' + chartId + ' svg').remove();
+
                             // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
                             // only so we can custom format the Y-Axis values
                             d3.select('#' + chartId)

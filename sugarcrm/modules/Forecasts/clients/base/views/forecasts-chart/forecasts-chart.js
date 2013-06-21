@@ -174,12 +174,7 @@
                 'showAggregates': false,
                 'saveImageTo': '',
                 'dataPointSize': '5'
-            },
-            oldChart = $('#' + chartId);
-
-        if (!_.isEmpty(oldChart)) {
-            d3.select('#' + chartId + ' svg').remove();
-        }
+            };
 
         SUGAR.charts = $.extend(SUGAR.charts,
             {
