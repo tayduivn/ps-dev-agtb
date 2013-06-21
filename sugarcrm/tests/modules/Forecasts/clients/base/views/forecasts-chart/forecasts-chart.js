@@ -12,16 +12,15 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-
-describe('forecasts_chart_dashlet', function() {
+describe('forecasts_chart', function() {
 
     var app, view, context, parent, stubs = [];
 
     beforeEach(function() {
         app = SugarTest.app;
         view = SugarTest.loadFile(
-            '../modules/Forecasts/clients/base/views/forecasts-chart-dashlet',
-            'forecasts-chart-dashlet', 'js',
+            '../modules/Forecasts/clients/base/views/forecasts-chart',
+            'forecasts-chart', 'js',
             function(d) {
                 return eval(d);
             });

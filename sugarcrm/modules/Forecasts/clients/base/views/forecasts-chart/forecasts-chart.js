@@ -24,6 +24,8 @@
      * {@inheritdoc}
      */
     initialize: function(options) {
+        var fieldOptions,
+            cfg = app.metadata.getModule('Forecasts', 'config');
         app.view.View.prototype.initialize.call(this, options);
         this.values.clear({silent: true});
         app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
@@ -38,10 +40,25 @@
             }, this),
             complete: options ? options.complete : null
         });
+        fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options);
+        this.dashletConfig.dataset.options = {};
+
+        if (cfg.show_worksheet_worst) {
+            this.dashletConfig.dataset.options['worst'] = fieldOptions['worst'];
+        }
+
+        if (cfg.show_worksheet_likely) {
+            this.dashletConfig.dataset.options['likely'] = fieldOptions['likely'];
+        }
+
+        if (cfg.show_worksheet_best) {
+            this.dashletConfig.dataset.options['best'] = fieldOptions['best'];
+        }
+
     },
 
     /**
-     * {@inheritdoc}
+     * {@override}
      */
     loadData: function(options) {
         this.renderChart();
@@ -251,6 +268,7 @@
         params.minColumnWidth = 120;
         params.chartId = chartId;
         params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
+        params.timeperiod_id = this.context.parent.get('selectedTimePeriod');
 
         chart = new loadSugarChart(
             chartId,

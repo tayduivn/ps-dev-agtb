@@ -11,25 +11,21 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$viewdefs['Forecasts']['base']['view']['forecasts-chart-dashlet'] = array(
+$viewdefs['Forecasts']['base']['view']['forecasts-chart'] = array(
     'dashlets' => array(
         array(
-            'name' => 'Forecast',
-            'description' => '',
-            'config' => array(
-            ),
-            'preview' => array(
-            ),
-            /*
+            'name' => 'LBL_DASHLET_FORECASTS_CHART',
+            'description' => 'LBL_DASHLET_FORECASTS_DESC',
+            'config' => array(),
+            'preview' => array(),
             'filter' => array(
                 'module' => array('Forecasts'),
             )
-            */
         )
     ),
     'group_by' => array(
         'name' => 'group_by',
-        'label' => 'Group By',
+        'label' => 'LBL_DASHLET_FORECASTS_GROUPBY',
         'type' => 'enum',
         'searchBarThreshold' => 5,
         'default' => true,
@@ -39,7 +35,7 @@ $viewdefs['Forecasts']['base']['view']['forecasts-chart-dashlet'] = array(
     ),
     'dataset' => array(
         'name' => 'dataset',
-        'label' => 'Dataset',
+        'label' => 'LBL_DASHLET_FORECASTS_DATASET',
         'type' => 'enum',
         'searchBarThreshold' => 5,
         'default' => true,

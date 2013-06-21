@@ -3993,6 +3993,10 @@ $app_strings = array (
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_CLOSE' => 'Close',
+    'LBL_DASHLET_FORECASTS_CHART' => 'Forecast',
+    'LBL_DASHLET_FORECASTS_DESC' => 'Forecast Pareto Chart',
+    'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
+    'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
 
 );
 
