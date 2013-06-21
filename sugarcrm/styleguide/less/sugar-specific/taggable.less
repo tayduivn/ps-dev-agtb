@@ -1,14 +1,17 @@
-.omnibar {
-  .activitystream-tag-dropdown {
-    width: 100%;
-    top: 31px;
-    left: -1px;
+ul.activitystream-tag-dropdown {
+  left: -1px;
+  margin-top: 0;
+  width: 100%;
+  // override mouse hover effect on dropdown
+  & li > a:hover {
+    background-color: @dropdownBackground;
+    color: @dropdownLinkColor;
   }
-}
-
-.reply-area {
-  .activitystream-tag-dropdown {
-    width: 100%;
-    top: 30px;
+  // disable dropdown menu item to indicate user has no access
+  .disabled > a,
+  .disabled > a:hover {
+    background: @dropdownDisabledBackground;
+    color: @dropdownDisabledLinkColor;
+    text-decoration: none;
   }
 }
