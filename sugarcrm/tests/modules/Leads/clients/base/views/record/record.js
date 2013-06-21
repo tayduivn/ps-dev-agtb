@@ -26,7 +26,7 @@ describe("Leads.Views.Record", function() {
 
     it("should replace blackout field value with default if it exists", function() {
         var prefill = app.data.createBean('Leads');
-        prefill.fields = { status: { default: 'Foo' }}; //default
+        prefill.fields = { status: { 'default': 'Foo' }}; //default
         prefill.set('status', 'Converted');
         view.setupDuplicateFields(prefill);
         expect(prefill.get('status')).toEqual('Foo');

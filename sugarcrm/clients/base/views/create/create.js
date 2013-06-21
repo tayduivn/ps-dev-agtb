@@ -80,6 +80,16 @@
 
     },
 
+    /**
+     * Check unsaved changes
+     *
+     * @return true if current model contains unsaved changes
+     * @link {app.plugins.view.editable}
+     */
+    hasUnsavedChanges: function() {
+        return this.model.isNew() && this.model.hasChanged();
+    },
+
     handleSync: function () {
         //override handleSync since there is no need to save the previous model state
     },

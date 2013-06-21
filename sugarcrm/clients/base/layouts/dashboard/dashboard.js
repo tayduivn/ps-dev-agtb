@@ -147,6 +147,8 @@
                 if (app.user.getPreference('home-last-visit')) {
                     model = _.findWhere(this.collection.models, {id: app.user.getPreference('home-last-visit')});
                 }
+                //SC-748: Should dispose the dashboard to release the warning listener
+                this.dispose();
                 app.navigate(this.context, model);
             }
         } else {
