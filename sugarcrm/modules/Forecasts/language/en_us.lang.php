@@ -433,6 +433,8 @@ $mod_strings = array (
     'LBL_CAMPAIGN' => 'Campaign',
     'LBL_TEAMS' => 'Teams',
     'LBL_CATEGORY' => 'Category',
+    'LBL_COST_PRICE' => 'Cost Price',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_TEXT' => 'Select which columns should be displayed for the worksheet view. By default, the following fields will be selected:',
 
     // pipline opportunities dashlet
     'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',

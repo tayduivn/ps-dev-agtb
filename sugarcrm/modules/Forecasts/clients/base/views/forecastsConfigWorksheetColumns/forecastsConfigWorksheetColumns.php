@@ -19,8 +19,7 @@ $fields = array(
     // Default enabled columns
     array(
         'name' => 'commit_stage',
-        'label' => 'LBL_COMMIT_STAGE_FORECAST',
-        'label_module' => 'Products'
+        'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
     ),
     array(
         'name' => 'opportunity_name',
@@ -30,12 +29,12 @@ $fields = array(
     array(
         'name' => 'account_name',
         'label' => 'LBL_LIST_ACCOUNT_NAME',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'date_closed',
         'label' => 'LBL_DATE_CLOSED',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'sales_stage',
@@ -48,23 +47,22 @@ $fields = array(
     ),
     array(
         'name' => 'worst_case',
-        'label' => 'LB_FS_WORST_CASE',
+        'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST',
     ),
     array(
         'name' => 'likely_case',
-        'label' => 'LBL_LIKELY_CASE',
-        'label_module' => 'Products'
+        'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY',
     ),
     array(
         'name' => 'best_case',
-        'label' => 'LB_FS_BEST_CASE',
+        'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST',
     ),
 
     // Non-default-enabled columns
     array(
         'name' => 'product_type',
         'label' => 'LBL_TYPE',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'lead_source',
@@ -86,12 +84,12 @@ $fields = array(
     array(
         'name' => 'next_step',
         'label' => 'LBL_NEXT_STEP',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'description',
         'label' => 'LBL_DESCRIPTION',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
 );
 
@@ -103,13 +101,12 @@ $fields = array(
     // Default enabled columns
     array(
         'name' => 'commit_stage',
-        'label' => 'LBL_COMMIT_STAGE_FORECAST',
-        'label_module' => 'Products'
+        'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
     ),
     array(
         'name' => 'name',
         'label' => 'LBL_LIST_NAME',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'opportunity_name',
@@ -119,22 +116,22 @@ $fields = array(
     array(
         'name' => 'account_name',
         'label' => 'LBL_LIST_ACCOUNT_NAME',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'date_closed',
         'label' => 'LBL_DATE_CLOSED',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'product_template_name',
         'label' => 'LBL_PRODUCT',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'sales_stage',
         'label' => 'LBL_SALES_STAGE',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'probability',
@@ -142,33 +139,31 @@ $fields = array(
     ),
     array(
         'name' => 'worst_case',
-        'label' => 'LB_FS_WORST_CASE',
+        'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST',
     ),
     array(
         'name' => 'likely_case',
-        'label' => 'LBL_LIKELY_CASE',
-        'label_module' => 'Products'
+        'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY',
     ),
     array(
         'name' => 'best_case',
-        'label' => 'LB_FS_BEST_CASE',
+        'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST',
     ),
 
     // Non-default-enabled columns
     array(
         'name' => 'list_price',
         'label' => 'LBL_LIST_PRICE',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'cost_price',
         'label' => 'LBL_COST_PRICE',
-        'label_module' => 'Products'
     ),
     array(
         'name' => 'discount_price',
         'label' => 'LBL_DISCOUNT_PRICE',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'discount_amount',
@@ -177,7 +172,7 @@ $fields = array(
     array(
         'name' => 'quantity',
         'label' => 'LBL_LIST_QUANTITY',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'category_name',
@@ -186,7 +181,7 @@ $fields = array(
     array(
         'name' => 'total_amount',
         'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'sales_status',
@@ -195,7 +190,7 @@ $fields = array(
     array(
         'name' => 'product_type',
         'label' => 'LBL_TYPE',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'lead_source',
@@ -217,12 +212,12 @@ $fields = array(
     array(
         'name' => 'next_step',
         'label' => 'LBL_NEXT_STEP',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
     array(
         'name' => 'description',
         'label' => 'LBL_DESCRIPTION',
-        'label_module' => 'Products'
+        'label_module' => 'RevenueLineItems'
     ),
 );
 //END SUGARCRM flav=ent ONLY
