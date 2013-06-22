@@ -24,11 +24,13 @@
  
 require_once 'modules/Campaigns/Campaign.php';
 require_once 'modules/CampaignLog/CampaignLog.php';
+require_once 'modules/CampaignTrackers/CampaignTracker.php';
 
 class SugarTestCampaignUtilities
 {
     private static $_createdCampaigns    = array();
     private static $_createdCampaignLogs = array();
+    private static $_createdCampaignTrackers = array();
 
     private function __construct() {}
 
@@ -109,5 +111,43 @@ class SugarTestCampaignUtilities
         }
 
         return $campaignLogIds;
+    }
+
+    public static function createCampaignTracker($campaignId, $name = '', $url = '')
+    {
+        $time = mt_rand();
+        if ($name == '') {
+            $name = 'SugarCampaignTracker'.$time;
+        }
+        if ($url == '') {
+            $url = 'http://www.foo.com/'.$time;
+        }
+        $campaignTracker = BeanFactory::getBean("CampaignTrackers");
+        $campaignTracker->campaign_id   = $campaignId;
+        $campaignTracker->tracker_name    = $name;
+        $campaignTracker->tracker_url  = $url;
+
+        $campaignTracker->save();
+        $GLOBALS["db"]->commit();
+        self::$_createdCampaignTrackers[] = $campaignTracker;
+
+        return $campaignTracker;
+    }
+
+    public static function removeAllCreatedCampaignTrackers()
+    {
+        $campaignTrackerIds = self::getCreatedCampaignTrackerIds();
+        $GLOBALS["db"]->query("DELETE FROM campaign_trkrs WHERE id IN ('" . implode("', '", $campaignTrackerIds) . "')");
+    }
+
+    public static function getCreatedCampaignTrackerIds()
+    {
+        $campaignTrackerIds = array();
+
+        foreach (self::$_createdCampaignTrackers as $campaignTracker) {
+            $campaignTrackerIds[] = $campaignTracker->id;
+        }
+
+        return $campaignTrackerIds;
     }
 }
