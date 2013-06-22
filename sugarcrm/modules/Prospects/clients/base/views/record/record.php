@@ -108,10 +108,14 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
                 ),
                 array(
+                    'name' => 'follow',
+                    'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
                 ),
