@@ -57,6 +57,7 @@
         options.context.prepare(true);
 
         app.view.View.prototype.initialize.call(this, options);
+        this.fallbackFieldTemplate = "edit";
     },
 
     /**

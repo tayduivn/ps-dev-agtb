@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 20042012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    fallbackFieldTemplate: "edit",
     /**
      * Login form view.
      * @class View.Views.LoginView
@@ -36,7 +37,6 @@
         'click [name=signup_button]': 'signup',
         'keypress': 'handleKeypress'
     },
-
     /**
      * Sign Up button
      */

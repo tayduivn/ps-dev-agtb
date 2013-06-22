@@ -26,7 +26,7 @@
  ********************************************************************************/
 
 $viewdefs['portal']['view']['create'] = array(
-    'type' => 'record',
+    'surrogate_template' => 'record',
     'buttons' => array(
         array(
             'name'    => 'cancel_button',

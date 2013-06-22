@@ -71,8 +71,6 @@
 
         app.view.View.prototype.initialize.call(this, options);
 
-        this.fallbackFieldTemplate = 'list-header';
-
         this.attachEvents();
 
         // Dashboard layout injects shared context with limit: 5.

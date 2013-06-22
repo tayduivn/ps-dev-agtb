@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['base']['view']['selection-headerpane'] = array(
-    'type' => 'headerpane',
+    'surrogate_template' => 'headerpane',
     'buttons' => array(
         array(
             'name' => 'close',
