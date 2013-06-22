@@ -269,17 +269,15 @@ class SubPanel
      */
     function saveSubPanelDefOverride($panel, $subsection, $override)
     {
-        global $layout_defs, $beanList;
         $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/Layoutdefs/";
-        $layoutDefsName = "layout_defs['{$panel->parent_bean->module_dir}']['subpanel_setup']['" . strtolower(
-                $panel->name
-            ) . "']";
+        $layoutDefsName = "layout_defs['{$panel->parent_bean->module_dir}']['subpanel_setup']['"
+                        . strtolower($panel->name) . "']";
         $layoutDefsExtName = "layoutdefs";
         $moduleInstallerMethod = "rebuild_layoutdefs";
         //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
         $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
-        if(!isModuleBWC($panel->parent_bean->module_dir)) {
+        if (!isModuleBWC($panel->parent_bean->module_dir)) {
             $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
             $layoutDefsName = "viewdefs['{$panel->parent_bean->module_dir}']['base']['layout']['subpanels']['components'][]";
             $layoutDefsExtName = "sidecarsubpanelbaselayout";
@@ -299,16 +297,10 @@ class SubPanel
         //each custom subpanel needs to have a unique custom def file
         $oldName1 = '_override' . $panel->parent_bean->object_name . $panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'];
         $oldName2 = '_override' . $panel->parent_bean->object_name . $panel->_instance_properties['get_subpanel_data'];
-        if (file_exists(
-            "{$layoutPath}/$oldName1.php"
-        )
-        ) {
+        if (file_exists("{$layoutPath}/$oldName1.php")) {
             @unlink("{$layoutPath}/$oldName1.php");
         }
-        if (file_exists(
-            "{$layoutPath}/$oldName2.php"
-        )
-        ) {
+        if (file_exists("{$layoutPath}/$oldName2.php")) {
             @unlink("{$layoutPath}/$oldName2.php");
         }
         $extname = '_override' . $filename;
@@ -321,14 +313,14 @@ class SubPanel
         //tyoung 10.12.07 pushed panel->name to lowercase to match case in subpaneldefs.php files -
         //gave error on bad index 'module' as this override key didn't match the key in the subpaneldefs
 
-//  	$GLOBALS['log']->debug('SubPanel.php->saveSubPanelDefOverride(): '.$name);
-        $newValue = override_value_to_string($layoutDefsName, $overrideName, $filename);
+        $overrideValue = array(
+            "link" => $panel->name,
+            "view" => $filename,
+        );
+        $newValue = override_value_to_string($layoutDefsName, $overrideName, $overrideValue);
         mkdir_recursive($layoutPath, true);
 
-        $fp = sugar_fopen(
-            "{$layoutPath}/{$extname}.php",
-            'w'
-        );
+        $fp = sugar_fopen("{$layoutPath}/{$extname}.php", 'w');
         fwrite($fp, "<?php\n//auto-generated file DO NOT EDIT\n$newValue\n?>");
         fclose($fp);
         require_once('ModuleInstall/ModuleInstaller.php');
@@ -339,7 +331,8 @@ class SubPanel
         foreach (SugarAutoLoader::existing(
                      'modules/' . $panel->parent_bean->module_dir . '/layout_defs.php',
                      SugarAutoLoader::loadExtension($layoutDefsExtName, $panel->parent_bean->module_dir)
-                 ) as $file) {
+                 ) as $file
+        ) {
             include $file;
         }
     }
@@ -349,10 +342,9 @@ class SubPanel
 		$subpanel_setup = '';
 		$layout_defs = get_layout_defs();
 
-		if(!empty($layout_defs) && !empty($layout_defs[$module]['subpanel_setup']))
-      {
-      	$subpanel_setup = $layout_defs[$module]['subpanel_setup'];
-      }
+        if (!empty($layout_defs) && !empty($layout_defs[$module]['subpanel_setup'])) {
+            $subpanel_setup = $layout_defs[$module]['subpanel_setup'];
+        }
 
       return $subpanel_setup;
 	}

@@ -58,9 +58,8 @@ class MetaDataConverter
             $newpanels = array();
             $offset = 0;
             foreach ($defs['panels'] as $row) {
-                if (is_array(
-                        $row[0]
-                    ) && isset($row[0]['type']) && $row[0]['type'] == 'fieldset' && isset($row[0]['related_fields'])
+                if (is_array($row[0]) && isset($row[0]['type'])
+                    && $row[0]['type'] == 'fieldset' && isset($row[0]['related_fields'])
                 ) {
                     // Fieldset.... convert
                     foreach ($row[0]['related_fields'] as $fName) {
@@ -274,8 +273,7 @@ class MetaDataConverter
                 'sort_by' => 'id',
                 'title_key' => $label,
                 'get_subpanel_data' => $def['context']['link'],
-                'top_buttons' =>
-                array(
+                'top_buttons' => array(
                     array(
                         'widget_class' => 'SubPanelTopButtonQuickCreate',
                     ),

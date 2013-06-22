@@ -906,10 +906,11 @@ class MetaDataFiles
 
         foreach($mergeComponents as $mergeComponent) {
             if(isset($mergeComponent['override_subpanel_list_view'])) {
-                $mergeContext = str_replace('subpanel-for-', '', $mergeComponent['override_subpanel_list_view']);
+                $overrideView = $mergeComponent['override_subpanel_list_view']['view'];
+                $mergeContext = $mergeComponent['override_subpanel_list_view']['link'];
                 foreach($currentComponents as $key => $currentComponent) {
                     if(!empty($currentComponent['context']['link']) && $currentComponent['context']['link'] == $mergeContext) {
-                        $currentDefs['components'][$key]['override_subpanel_list_view'] = $mergeComponent['override_subpanel_list_view'];
+                        $currentDefs['components'][$key]['override_subpanel_list_view'] = $overrideView;
                         continue;
                     }
                 }

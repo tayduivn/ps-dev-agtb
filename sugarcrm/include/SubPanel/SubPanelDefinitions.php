@@ -633,71 +633,72 @@ class SubPanelDefinitions
 	 * @param boolean 	Optional - include the subpanel title label in the return array (false)
 	 * @return array	All tabs that pass an ACL check
 	 */
-	function get_available_tabs ($FromGetModuleSubpanels=false)
-	{
-		global $modListHeader ;
-		global $modules_exempt_from_availability_check ;
+    function get_available_tabs($FromGetModuleSubpanels = false)
+    {
+        global $modListHeader;
+        global $modules_exempt_from_availability_check;
 
-        if (isset ( $this->_visible_tabs_array ))
-			return $this->_visible_tabs_array ;
+        if (isset($this->_visible_tabs_array)) {
+            return $this->_visible_tabs_array;
+        }
 
-		if (empty($modListHeader))
-		    $modListHeader = query_module_access_list($GLOBALS['current_user']);
+        if (empty($modListHeader)) {
+            $modListHeader = query_module_access_list($GLOBALS['current_user']);
+        }
 
-		$this->_visible_tabs_array = array ( ) ; // bug 16820 - make sure this is an array for the later ksort
-		if (isset ( $this->layout_defs [ 'subpanel_setup' ] )) // bug 17434 - belts-and-braces - check that we have some subpanels first
-		{
-			//retrieve list of hidden subpanels
-			$hidden_panels = $this->get_hidden_subpanels();
+        $this->_visible_tabs_array = array(); // bug 16820 - make sure this is an array for the later ksort
+        if (isset ($this->layout_defs ['subpanel_setup'])) { // bug 17434 - belts-and-braces - check that we have some subpanels first
+            //retrieve list of hidden subpanels
+            $hidden_panels = $this->get_hidden_subpanels();
 
-			//activities is a special use case in that if it is hidden,
-			//then the history tab should be hidden too.
-			if(!empty($hidden_panels) && is_array($hidden_panels) && in_array('activities',$hidden_panels)){
-				//add history to list hidden_panels
-				$hidden_panels['history'] = 'history';
-			}
+            //activities is a special use case in that if it is hidden,
+            //then the history tab should be hidden too.
+            if (!empty($hidden_panels) && is_array($hidden_panels) && in_array('activities', $hidden_panels)) {
+                //add history to list hidden_panels
+                $hidden_panels['history'] = 'history';
+            }
 
-			foreach ( $this->layout_defs [ 'subpanel_setup' ] as $key => $values_array )
-			{
-                if(empty($values_array['module'])) {
+            foreach ($this->layout_defs ['subpanel_setup'] as $key => $values_array) {
+                if (empty($values_array['module'])) {
                     continue;
                 }
-				//exclude if this subpanel is hidden from admin screens
+                //exclude if this subpanel is hidden from admin screens
                 $module = $key;
-                if ( isset($values_array['module']) )
+                if (isset($values_array['module'])) {
                     $module = strtolower($values_array['module']);
-				 if ($hidden_panels && is_array($hidden_panels) && (in_array($module, $hidden_panels) || array_key_exists($module, $hidden_panels)) ){
-				 	//this panel is hidden, skip it
-				 	continue;
-				 }
+                }
+                if ($hidden_panels && is_array($hidden_panels) && (in_array($module, $hidden_panels) || array_key_exists($module, $hidden_panels))) {
+                    //this panel is hidden, skip it
+                    continue;
+                }
 
-				// make sure the module attribute is set, else none of this works...
-				if ( !isset($values_array [ 'module' ])) {
-					$GLOBALS['log']->debug("SubPanelDefinitions->get_available_tabs(): no module defined in subpaneldefs for '$key' =>" . var_export($values_array,true) . " - ingoring subpanel defintion") ;
-					continue;
-				}
+                // make sure the module attribute is set, else none of this works...
+                if (!isset($values_array ['module'])) {
+                    $GLOBALS['log']->debug("SubPanelDefinitions->get_available_tabs(): no module defined in subpaneldefs for '$key' =>"
+                                         . var_export($values_array, true) . " - ingoring subpanel defintion");
+                    continue;
+                }
 
-				//check permissions.
-				$exempt = array_key_exists ( $values_array [ 'module' ], $modules_exempt_from_availability_check ) ;
-				$ok = $exempt || ( (! ACLController::moduleSupportsACL ( $values_array [ 'module' ] ) || ACLController::checkAccess ( $values_array [ 'module' ], 'list', true ) ) ) ;
+                //check permissions.
+                $exempt = array_key_exists($values_array ['module'], $modules_exempt_from_availability_check);
+                $ok = $exempt || ((!ACLController::moduleSupportsACL($values_array ['module']) || ACLController::checkAccess($values_array ['module'], 'list', true)));
 
-				$GLOBALS [ 'log' ]->debug ( "SubPanelDefinitions->get_available_tabs(): " . $key . "= " . ( $exempt ? "exempt " : "not exempt " .( $ok ? " ACL OK" : "" ) ) ) ;
+                $GLOBALS ['log']->debug("SubPanelDefinitions->get_available_tabs(): " . $key . "= " . ($exempt ? "exempt " : "not exempt " . ($ok ? " ACL OK" : "")));
 
-				if ( $ok )
-				{
-					while ( ! empty ( $this->_visible_tabs_array [ $values_array [ 'order' ] ] ) )
-					{
-						$values_array [ 'order' ] ++ ;
-					}
+                if ($ok) {
+                    while (!empty ($this->_visible_tabs_array [$values_array ['order']])) {
+                        $values_array ['order']++;
+                    }
 
-					$this->_visible_tabs_array [ $values_array ['order'] ] = ($FromGetModuleSubpanels) ? array($key=>$values_array['title_key']) : $key ;
-				}
-			}
-		}
+                    $this->_visible_tabs_array [$values_array ['order']] = ($FromGetModuleSubpanels) ? array($key => $values_array['title_key']) : $key;
+                }
+            }
+        }
 
-		ksort ( $this->_visible_tabs_array ) ;
-		return $this->_visible_tabs_array ;
-	}
+        ksort($this->_visible_tabs_array);
+
+        return $this->_visible_tabs_array;
+    }
 
 	/**
 	 * Load the definition of the a sub-panel.
@@ -726,18 +727,17 @@ class SubPanelDefinitions
         return false;
 	}
 
-	/**
-	 * Load the layout def file and associate the definition with a variable in the file.
-	 */
-    function open_layout_defs ( $reload = false , $layout_def_key = '' , $original_only = false )
+    /**
+     * Load the layout def file and associate the definition with a variable in the file.
+     */
+    function open_layout_defs($reload = false, $layout_def_key = '', $original_only = false)
     {
-        $layout_defs [ $this->_focus->module_dir ] = array ( ) ;
-        $layout_defs [ $layout_def_key ] = array ( ) ;
+        $layout_defs [$this->_focus->module_dir] = array();
+        $layout_defs [$layout_def_key] = array();
 
-        if (empty ( $this->layout_defs ) || $reload || (! empty ( $layout_def_key ) && ! isset ( $layout_defs [ $layout_def_key ] )))
-        {
-            if(!$original_only) {
-                if(isModuleBWC($this->_focus->module_dir)) {
+        if (empty ($this->layout_defs) || $reload || (!empty ($layout_def_key) && !isset ($layout_defs [$layout_def_key]))) {
+            if (!$original_only) {
+                if (isModuleBWC($this->_focus->module_dir)) {
                     $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php');
                     $def_path[] = SugarAutoLoader::loadExtension("layoutdefs", $this->_focus->module_dir);
                 } else {
@@ -745,13 +745,13 @@ class SubPanelDefinitions
                     $def_path[] = SugarAutoLoader::loadExtension("sidecarsubpanelbaselayout", $this->_focus->module_dir);
                 }
             }
-            foreach(SugarAutoLoader::existing($def_path) as $file) {
+            foreach (SugarAutoLoader::existing($def_path) as $file) {
                 require $file;
             }
 
             $layoutDefsKey = !empty($layout_def_key) ? $layout_def_key : $this->_focus->module_dir;
             // convert sidecar subpanels to the array the SubpanelDefinitions are looking for
-            if(!isModuleBWC($this->_focus->module_dir) && isset($viewdefs)) {
+            if (!isModuleBWC($this->_focus->module_dir) && isset($viewdefs)) {
                 require_once('include/MetaDataManager/MetaDataConverter.php');
                 $metaDataConverter = new MetaDataConverter();
                 $convertLayoutDefs = $viewdefs[$this->_focus->module_dir]['base']['layout']['subpanels']['components'];
