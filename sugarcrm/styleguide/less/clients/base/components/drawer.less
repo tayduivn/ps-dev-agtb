@@ -45,3 +45,12 @@
 body.noscroll {
     overflow: hidden;
 }
+//UIUX-808: remove buttons from headerpane when in drawer
+#content .transition.drawer {
+    .headerpane,
+    .preview-headerbar {
+        .btn-toolbar {
+            visibility: hidden;
+        }
+    }
+}
