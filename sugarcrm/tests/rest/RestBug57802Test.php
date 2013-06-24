@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once 'tests/rest/RestTestBase.php';
-require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'include/MetaDataManager/MetaDataHacks.php';
 
 /**
  * Bug 57802 - REST API Metadata: vardef len property must be number, not string
@@ -78,7 +78,7 @@ class RestBug57802Test extends RestTestBase
             ),
         );
         
-        $mm = new RestBug57802MetaDataManager($this->_user);
+        $mm = new RestBug57802MetaDataHacks();
         $cleaned = $mm->getNormalizedFields($fielddef);
         
         foreach ($cleaned as $field => $def) {
@@ -96,7 +96,7 @@ class RestBug57802Test extends RestTestBase
 /**
  * Accessor class to the protected metadata manager method needed for testing
  */
-class RestBug57802MetaDataManager extends MetaDataManager
+class RestBug57802MetaDataHacks extends MetaDataHacks
 {
     public function getNormalizedFields($fielddef) {
         return $this->normalizeFielddefs($fielddef);
