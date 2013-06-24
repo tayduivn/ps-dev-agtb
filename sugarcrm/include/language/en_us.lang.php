@@ -4007,6 +4007,8 @@ $app_strings = array (
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_CLOSE' => 'Close',
 
+    'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
+    'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
 );
 
 $app_list_strings['interactions_options'] = array (
