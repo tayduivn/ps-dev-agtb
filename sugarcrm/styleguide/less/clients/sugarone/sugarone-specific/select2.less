@@ -185,9 +185,6 @@
     outline: thin dotted \9; /* IE6-9 */
     .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(82,168,236,.6)");
   }
-  &.required .select2-choice {
-    border-color: lighten(@gray, 25%);
-  }
 }
 
 .select2-drop {
@@ -292,11 +289,6 @@
   display: block;
   padding: 3px;
 }
-.currency {
-  .select2-choice span {
-    min-width: 8px;
-  }
-}
 .select2-offscreen {
   position: absolute;
   left: -10000px;
@@ -307,10 +299,4 @@
 }
 .select2-container.select2-allowclear .select2-choice abbr {
   display: inline;
-}
-
-td > .edit .select2-container-multi {
-  position: absolute;
-  z-index: 10;
-  top: -15px;
 }
