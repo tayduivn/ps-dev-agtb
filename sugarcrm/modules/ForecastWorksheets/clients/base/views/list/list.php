@@ -115,7 +115,7 @@ $listDefs = array(
                 array(
                     'name' => 'worst_case',
                     'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE',
+                    'label' => 'LBL_WORST',
                     'default' => true,
                     'enabled' => true,
                     'convertToBase'=> true,
@@ -129,7 +129,7 @@ $listDefs = array(
                 ),
                 array(
                     'name' => 'likely_case',
-                    'label' => 'LBL_LIKELY_CASE',
+                    'label' => 'LBL_LIKELY',
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
@@ -144,7 +144,7 @@ $listDefs = array(
                 ),
                 array(
                     'name' => 'best_case',
-                    'label' => 'LBL_BEST_CASE',
+                    'label' => 'LBL_BEST',
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
@@ -240,7 +240,7 @@ $listDefs = array(
                 array(
                     'name' => 'worst_case',
                     'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE',
+                    'label' => 'LBL_WORST',
                     'default' => true,
                     'enabled' => true,
                     'convertToBase'=> true,
@@ -255,7 +255,7 @@ $listDefs = array(
                 ),
                 array(
                     'name' => 'likely_case',
-                    'label' => 'LBL_LIKELY_CASE',
+                    'label' => 'LBL_LIKELY',
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
@@ -271,7 +271,7 @@ $listDefs = array(
                 ),
                 array(
                     'name' => 'best_case',
-                    'label' => 'LBL_BEST_CASE',
+                    'label' => 'LBL_BEST',
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,

@@ -4047,6 +4047,14 @@ $app_strings = array (
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
+    
+    //SFA
+    'LBL_BEST' => 'Best',
+    'LBL_WORST' => 'Worst',
+    'LBL_LIKELY' => 'Likely',
+    'LBL_BEST_ADJUSTED' => 'Best (Adjusted)',
+    'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
+    'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
 );
 
 $app_list_strings['interactions_options'] = array (

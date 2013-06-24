@@ -52,7 +52,7 @@ $fields = array(
     array(
         'name' => 'best_case',
         'type' => 'currency',
-        'label' => 'LBL_BEST_CASE',
+        'label' => 'LBL_BEST',
         'related_fields' => array(
             'best_case',
             'currency_id',
@@ -64,7 +64,7 @@ $fields = array(
     array(
         'name' => 'worst_case',
         'type' => 'currency',
-        'label' => 'LBL_WORST_CASE',
+        'label' => 'LBL_WORST',
         'related_fields' => array(
             'worst_case',
             'currency_id',
@@ -155,7 +155,7 @@ $fields = array(
     array(
         'name' => 'best_case',
         'type' => 'currency',
-        'label' => 'LBL_BEST_CASE',
+        'label' => 'LBL_BEST',
         'related_fields' => array(
             'best_case',
             'currency_id',
@@ -168,7 +168,7 @@ $fields = array(
     array(
         'name' => 'worst_case',
         'type' => 'currency',
-        'label' => 'LBL_WORST_CASE',
+        'label' => 'LBL_WORST',
         'related_fields' => array(
             'worst_case',
             'currency_id',
