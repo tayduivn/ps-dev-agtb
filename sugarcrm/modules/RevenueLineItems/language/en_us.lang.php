@@ -151,4 +151,7 @@ $mod_strings = array(
     'LBL_DISCOUNT_AS_PERCENT' => 'Discount in %',
     'SAVE_RLI_QUOTE_NOTICE' => 'This item has already been converted to quote. Your changes will not be updated in the corresponding quote.',
 
+    'LBL_QUOTED' => 'Quoted',
+    'LBL_NOT_QUOTED' => 'Not Quoted'
+
 );

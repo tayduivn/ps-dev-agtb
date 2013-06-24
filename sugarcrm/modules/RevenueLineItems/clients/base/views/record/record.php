@@ -365,6 +365,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
+                    'type' => 'badge',
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'quote_id',
+                    ),
+                ),
+                array(
                     'type' => 'follow',
                     'readonly' => true,
                 ),
