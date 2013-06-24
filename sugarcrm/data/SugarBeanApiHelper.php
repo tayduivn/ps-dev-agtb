@@ -88,21 +88,29 @@ class SugarBeanApiHelper
 
             }
 
-            if (isset($bean->field_defs['email']) && 
-                (empty($fieldList) || in_array('email', $fieldList))
-                //BEGIN SUGARCRM flav=pro ONLY
-                && $bean->ACLFieldAccess('email1', 'access')
-                //END SUGARCRM flav=pro ONLY
-            ) {
-                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
-                $field = $sfh->getSugarField('Email');
-                array_walk($emailsRaw, array($field, "formatEmails"));
-                $data['email'][] = $emailsRaw;
+            if (isset($bean->field_defs['email']) && (empty($fieldList) || in_array('email',$fieldList))) {
+                if(!empty($bean->emailData)) {
+                    $rawEmails = $bean->emailData;
+                } else if(!empty($bean->emailAddress->addresses)) {
+                    $rawEmails = $bean->emailAddress->addresses;
+                }
+                if(!empty($rawEmails)) {
+                        $data['email'] = array();
+                        $emailProps = array('email_address','opt_out','invalid_email','primary_address');
+                        foreach ($rawEmails as $rawEmail) {
+                            $formattedEmail = array();
+                            foreach ($emailProps as $property) {
+                                if (isset($rawEmail[$property])) {
+                                    $formattedEmail[$property] = $rawEmail[$property];
+                                }
+                            }
+                            $data['email'][] = $formattedEmail;
+                        }
+                }
             }
+
+
             //BEGIN SUGARCRM flav=pro ONLY
-            elseif(!$bean->ACLFieldAccess('email1', 'access')) {
-                unset($data['email']);
-            }
             // mark if its a favorite
             // FIXME: this should not always send the favorite, but because of the bug #62096 we always send it
             if ( !isset($data['my_favorite'])) { //&& in_array('my_favorite', $fieldList)) {
