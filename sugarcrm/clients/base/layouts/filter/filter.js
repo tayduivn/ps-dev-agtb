@@ -144,6 +144,8 @@
 
         _.each(ctxList, function(ctx) {
             ctx.get('collection').origFilterDef = filter.get('filter_definition');
+            ctx.get('collection').resetPagination();
+            ctx.get('collection').reset();
         });
         this.trigger('filter:clear:quicksearch');
     },
@@ -163,10 +165,13 @@
                 options = {
                     //Show alerts for this request
                     showAlerts: true,
-                    success: function() {
+                    success: function(collection, response, options) {
                         // Close the preview pane to ensure that the preview
                         // collection is in sync with the list collection.
                         app.events.trigger('preview:close');
+
+                        // reset the collection with what we fetched to trigger rerender
+                        if (!self.disposed && collection) collection.reset(response);
                     }};
 
             ctxCollection.filterDef = filterDef;
