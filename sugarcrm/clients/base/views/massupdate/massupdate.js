@@ -270,8 +270,8 @@
             if(_.isEmpty(errors)) {
                 confirmMessage += '<br>[' + emptyValues.join(',') + ']<br>' + app.lang.getAppString('LBL_MASS_UPDATE_EMPTY_CONFIRM') + '<br>';
                 if(massUpdate) {
-                    var fetchMassupdate = function() {
-
+                    var fetchMassupdate = _.bind(function() {
+                        var successMessages = this.buildSaveSuccessMessages(massUpdate);
                         massUpdate.fetch({
                             //Show alerts for this request
                             showAlerts: true,
@@ -282,7 +282,7 @@
                             success: function(data, response) {
                                 self.hide();
                                 if(response.status == 'done') {
-                                    app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'), autoClose: true});
+                                    app.alert.show('massupdate_success_notice', {level: 'success', messages: successMessages[response.status], autoClose: true});
                                     //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                     //TODO: Need trigger for fetching new record list
                                     self.layout.collection.fetch({
@@ -292,11 +292,11 @@
                                         relate: !!self.layout.collection.link
                                     });
                                 } else if(response.status == 'queued') {
-                                    app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                                    app.alert.show('jobqueue_notice', {level: 'success', messages: successMessages[response.status], autoClose: true});
                                 }
                             }
                         });
-                    };
+                    }, this);
                     if(emptyValues.length == 0) {
                         fetchMassupdate.call(this);
                     } else {
@@ -313,6 +313,19 @@
         }, this);
 
         this.checkValidationError();
+    },
+
+    /**
+     * Build dynamic success messages to be displayed if the API call is successful
+     * This is overridden by massaddtolist view which requires different success messages
+     *
+     * @param massUpdateModel - contains the attributes of what records are being updated (used by override in massaddtolist)
+     */
+    buildSaveSuccessMessages: function(massUpdateModel) {
+        return {
+            done: app.lang.getAppString('LBL_MASS_UPDATE_SUCCESS'),
+            queued: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED')
+        };
     },
 
     /**

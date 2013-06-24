@@ -1,6 +1,6 @@
 describe("Base.View.Massaddtolist", function() {
 
-    var view, app, layout,
+    var view, app, layout, router,
         convertedFieldDef = {
             'name': 'prospect_lists_name',
             'id_name': 'prospect_lists_id',
@@ -9,7 +9,8 @@ describe("Base.View.Massaddtolist", function() {
             'module': 'ProspectLists',
             'source': 'non-db',
             'vname': 'LBL_PROSPECT_LIST',
-            'label': 'LBL_PROSPECT_LIST'
+            'label': 'LBL_PROSPECT_LIST',
+            'required': true
         };
 
     beforeEach(function() {
@@ -32,6 +33,12 @@ describe("Base.View.Massaddtolist", function() {
         view = SugarTest.createView("base", "Contacts", "massaddtolist", null, null, null, layout);
         stub.restore();
         view.model = new Backbone.Model();
+
+        //mock out buildRoute - save existing router so we can put it back
+        router = app.router;
+        app.router = {
+            buildRoute: sinon.stub()
+        };
     });
 
     afterEach(function() {
@@ -41,6 +48,7 @@ describe("Base.View.Massaddtolist", function() {
         view.model = null;
         view = null;
         layout.dispose();
+        app.router = router;
     });
 
     it("should generate its field from appropriate list field in metadata", function() {
@@ -76,6 +84,40 @@ describe("Base.View.Massaddtolist", function() {
         view.visible = true;
         view.render();
         expect(view.visible).toBe(false);
+    });
+
+    it("should generate appropriate success messages if entire result set selected", function() {
+        var massUpdateModel = {
+            getAttributes: function() {
+                return {
+                    massupdate_params: {
+                        entire: true
+                    }
+                }
+            }
+        };
+        var successMessages = view.buildSaveSuccessMessages(massUpdateModel);
+        expect(successMessages['done']).toBe('LBL_MASS_ADD_TO_LIST_SUCCESS_ENTIRE');
+        expect(successMessages['queued']).toBe('LBL_MASS_ADD_TO_LIST_QUEUED_ENTIRE');
+    });
+
+    it("should generate appropriate success messages if a subset selected", function() {
+        var massUpdateModel = {
+            getAttributes: function() {
+                return {
+                    massupdate_params: {
+                        entire: false,
+                        uid: [
+                            '123',
+                            '456'
+                        ]
+                    }
+                }
+            }
+        };
+        var successMessages = view.buildSaveSuccessMessages(massUpdateModel);
+        expect(successMessages['done']).toBe('LBL_MASS_ADD_TO_LIST_SUCCESS_SUBSET');
+        expect(successMessages['queued']).toBe('LBL_MASS_ADD_TO_LIST_QUEUED_SUBSET');
     });
 
 });

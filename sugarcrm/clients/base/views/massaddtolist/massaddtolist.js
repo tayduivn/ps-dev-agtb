@@ -32,6 +32,7 @@
      */
     extendsFrom: 'MassupdateView',
     addToListFieldName: 'prospect_lists',
+    listModule: 'ProspectLists',
 
     initialize: function(options) {
         var additionalEvents = {};
@@ -65,6 +66,7 @@
             addToListField.name = this.addToListFieldName + '_name';
             addToListField.label = addToListField.label || addToListField.vname;
             addToListField.type = 'relate';
+            addToListField.required = true;
             this.addToListField = addToListField;
         }
     },
@@ -94,9 +96,45 @@
     getAttributes: function() {
         var attributes = {};
         attributes[this.addToListFieldName] = [
-            this.model.get(this.addToListFieldName + '_id')
+            this.model.get(this.addToListField.id_name)
         ];
         return attributes;
+    },
+
+    /**
+     * Build dynamic success messages to be displayed if the API call is successful
+     * Overridden to build different success messages from massupdate
+     *
+     * @param massUpdateModel - contains the attributes of what records are being updated
+     */
+    buildSaveSuccessMessages: function(massUpdateModel) {
+        var doneLabel, queuedLabel, numberUpdated,
+            listName = this.model.get(this.addToListField.name),
+            listId = this.model.get(this.addToListField.id_name),
+            listUrl = '#' + app.router.buildRoute(this.listModule, listId);
+
+        if (massUpdateModel.getAttributes().massupdate_params.entire) {
+            doneLabel = 'LBL_MASS_ADD_TO_LIST_SUCCESS_ENTIRE';
+            queuedLabel = 'LBL_MASS_ADD_TO_LIST_QUEUED_ENTIRE';
+            numberUpdated = '';
+        } else {
+            doneLabel = 'LBL_MASS_ADD_TO_LIST_SUCCESS_SUBSET';
+            queuedLabel = 'LBL_MASS_ADD_TO_LIST_QUEUED_SUBSET';
+            numberUpdated = massUpdateModel.getAttributes().massupdate_params.uid.length;
+        }
+
+        return {
+            done: app.lang.get(doneLabel, null, {
+                numberUpdated: numberUpdated,
+                listName: listName,
+                listUrl: listUrl
+            }),
+            queued: app.lang.get(queuedLabel, null, {
+                numberUpdated: numberUpdated,
+                listName: listName,
+                listUrl: listUrl
+            })
+        };
     },
 
     /**
@@ -107,7 +145,7 @@
             layout: 'create-nodupecheck',
             context: {
                 create: true,
-                module: 'ProspectLists'
+                module: this.listModule
             }
         }, _.bind(this.selectNewlyCreatedList, this));
     },
