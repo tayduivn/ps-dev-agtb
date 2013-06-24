@@ -2,35 +2,16 @@ describe("Emails.Field.Sender", function() {
     var app, field, drawer;
 
     beforeEach(function() {
-        app = SugarTest.app;
+        var def;
 
-        var def = {
-            name:      'email_config',
-            label:     'LBL_FROM',
-            type:      'sender',
-            css_class: 'inherit-width',
+        app = SugarTest.app;
+        def = {
             endpoint:  {
                 module: 'OutboundEmailConfiguration',
                 action: 'list'
             }
         };
-
-        SugarTest.loadComponent("base", "field", "sender", "Emails");
-
-        var view    = new app.view.View({name: 'edit', context: null}),
-            context = app.context.getContext(),
-            model   = new Backbone.Model();
-
-        model.fields           = {};
-        model.fields[def.name] = def;
-
-        field = app.view.createField({
-            def:     def,
-            view:    view,
-            context: context,
-            module:  'Emails',
-            model:   model
-        });
+        field = SugarTest.createField("base", "email_config", "sender", "edit", def, 'Emails', null, null, true);
 
         //used as mock for select2 library
         if (!$.fn.select2) {
@@ -52,12 +33,12 @@ describe("Emails.Field.Sender", function() {
     });
 
     afterEach(function() {
+        field.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        delete field.model;
-        delete field;
         SugarTest.app.drawer = drawer;
+        SugarTest.testMetadata.dispose();
     });
 
     it("should call custom endpoint on render when tplName is 'edit'", function() {
