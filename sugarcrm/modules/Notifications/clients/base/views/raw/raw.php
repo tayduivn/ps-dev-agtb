@@ -28,6 +28,7 @@ $viewdefs['Notifications']['base']['view']['raw'] = array(
                 ),
                 array(
                     'name' => 'date_entered',
+                    'css_class' => 'pull-right date',
                 ),
                 // FIXME: this should be uncommented when SC-1143 gets done
                 //  array(
