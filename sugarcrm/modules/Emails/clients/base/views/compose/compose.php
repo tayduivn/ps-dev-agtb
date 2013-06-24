@@ -1,6 +1,6 @@
 <?php
 $viewdefs['Emails']['base']['view']['compose'] = array(
-    'type'    => 'record',
+    'use_template' => 'record',
     'buttons' => array(
         array(
             'type'      => 'button',

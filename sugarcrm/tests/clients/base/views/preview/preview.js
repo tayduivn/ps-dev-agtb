@@ -84,16 +84,16 @@ describe("Preview View", function() {
     it("should bind our fetch to source models fetch", function(){
             var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
             var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
-            var dummyFetchSpy = sinon.stub(dummyModel, 'fetch', function(){});
+            var dummyFetchStub = sinon.stub(dummyModel, 'fetch');
             preview.model = dummyModel;
             preview.bindUpdates(dummySourceModel);
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith("PUT", /.*rest\/v10\/Cases\/testid.*/,
             [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
             dummySourceModel.save();
-
             SugarTest.server.respond();
-            expect(dummyFetchSpy).toHaveBeenCalled();
+            expect(dummyFetchStub).toHaveBeenCalled();
+            dummyFetchStub.restore();
     });
     it("should trigger 'preview:close' and 'list:preview:decorate' when source model destroy", function() {
         var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
