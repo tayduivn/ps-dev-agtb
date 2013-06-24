@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/MetaDataManager/MetaDataHacks.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
  * Bug 56505 - Incorrect format for property "default" in multiselect field's vardef
@@ -55,7 +55,7 @@ class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
             'default' => '^bobby^,^billy^',
         );
         
-        $mm = new MetaDataHacksBug56505($GLOBALS['current_user']);
+        $mm = new MetaDataManagerBug56505($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);
         
         $this->assertArrayHasKey('aaa_test_c', $newdefs, "New defs did not return custom test field");
@@ -69,7 +69,7 @@ class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
 /**
  * Accessor class to the metadatamanager to allow access to protected methods
  */
-class MetaDataHacksBug56505 extends MetaDataHacks
+class MetaDataManagerBug56505 extends MetaDataManager
 {
     public function getNormalizedFielddefs($defs)
     {

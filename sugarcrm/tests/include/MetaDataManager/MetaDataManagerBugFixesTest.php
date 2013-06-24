@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/MetaDataManager/MetaDataHacks.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -50,7 +50,7 @@ class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
             'len' => '25',
         );
         
-        $mm = new MetaDataHacksBugFixes($GLOBALS['current_user']);
+        $mm = new MetaDataManagerBugFixes($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);
         
         $this->assertFalse(array_key_exists('len', $newdefs));
@@ -60,7 +60,7 @@ class MetaDataManagerBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
 /**
  * Accessor class to the metadatamanager to allow access to protected methods
  */
-class MetaDataHacksBugFixes extends MetaDataHacks
+class MetaDataManagerBugFixes extends MetaDataManager
 {
     public function getNormalizedFielddefs($defs)
     {

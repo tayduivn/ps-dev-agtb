@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 require_once 'tests/rest/RestTestBase.php';
-require_once 'include/MetaDataManager/MetaDataHacks.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 /**
  * Bug 57890 - Required values should be boolean
@@ -87,7 +87,7 @@ class RestBug57890Test extends RestTestBase
             ),
         );
         
-        $mm = new RestBug57890MetaDataHacks($this->_user);
+        $mm = new RestBug57890MetaDataManager($this->_user);
         $cleaned = $mm->getNormalizedFields($fielddef);
         
         foreach ($cleaned as $field => $def) {
@@ -101,7 +101,7 @@ class RestBug57890Test extends RestTestBase
 /**
  * Accessor class to the protected metadata manager method needed for testing
  */
-class RestBug57890MetaDataHacks extends MetaDataHacks
+class RestBug57890MetaDataManager extends MetaDataManager
 {
     public function getNormalizedFields($fielddef) {
         return $this->normalizeFielddefs($fielddef);
