@@ -28,6 +28,15 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     /**
+     * @var Localization
+     */
+    protected $_locale;
+
+    /**
+     * @var User
+     */
+    protected $_user;
+    /**
      * pre-class environment setup
      *
      * @access public
@@ -291,5 +300,27 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_user->setPreference('num_grp_sep','');
         $this->assertEmpty($this->_locale->getNumberGroupingSeparator(), "1000s separator should be ''");
+    }
+
+    /**
+     * Test to make sure that when num_grp_sep is passed with out a sugarDefaultConfig Name it returns null if not set
+     *
+     * @covers getPrecedentPreference
+     */
+    public function testGetPrecedentPreferenceReturnsNullForNumGrpSep()
+    {
+        $this->assertNull($this->_locale->getPrecedentPreference('num_grp_sep', $this->_user));
+    }
+
+    /**
+     * Test to make sure that the proper value is returned from getPrecedentPreference for num_grp_sep
+     * when the user has one
+     *
+     * @covers getPrecedentPreference
+     */
+    public function testGetPrecedentPreferenceReturnsValueForNumGrpSep()
+    {
+        $this->_user->setPreference('num_grp_sep', '!');
+        $this->assertEquals('!', $this->_locale->getPrecedentPreference('num_grp_sep', $this->_user));
     }
 }

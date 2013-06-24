@@ -139,6 +139,13 @@ class Localization {
 		if(!empty($sugarConfigPrefName)){
 			$prefName = $sugarConfigPrefName;
 		}
+
+        // if we don't have a user pref for the num_grp_sep, just return NULL as the key is not
+        // in the main global config and if we let it continue, it will just return '' (empty string)
+        if($prefName == 'num_grp_sep' && empty($sugarConfigPrefName) && is_null($userPref)) {
+            return null;
+        }
+
 		// cn: 9549 empty() call on a value of 0 (0 significant digits) resulted in a false-positive.  changing to "isset()"
 		$pref = (!isset($sugar_config[$prefName]) || (empty($sugar_config[$prefName]) && $sugar_config[$prefName] !== '0')) ? $pref : $sugar_config[$prefName];
 		$pref = (empty($userPref) && $userPref !== '0') ? $pref : $userPref;
