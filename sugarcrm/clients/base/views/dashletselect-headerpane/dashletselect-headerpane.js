@@ -31,6 +31,7 @@
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.template = app.template.getView('headerpane');
         this.title = app.lang.get(this.meta.title, this.module);
     },
 

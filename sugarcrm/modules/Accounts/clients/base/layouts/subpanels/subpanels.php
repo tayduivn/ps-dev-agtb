@@ -9,24 +9,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
       ),
     ),
     array (
-      'layout' => array (
-        'components' => array (
-            array (
-                'view' => 'panel-top',
-            ),
-            array (
-                'view' => 'massupdate',
-            ),
-            array (
-                'view' => 'subpanel-for-accounts',
-            ),
-            array (
-                'view' => 'list-bottom',
-            ),
-        ),
-        'type' => 'panel',
-        'span' => 12,
-      ),
+      'layout' => 'subpanel',
       'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'contacts',

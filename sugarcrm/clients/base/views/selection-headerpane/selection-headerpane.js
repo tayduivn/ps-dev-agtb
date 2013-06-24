@@ -25,6 +25,7 @@
             this.events = _.extend({}, this.events, additionalEvents);
         }
         app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
+        this.template = app.template.getView('headerpane');
     },
 
     _renderHtml: function() {
