@@ -63,7 +63,7 @@
     </thead>
     <tbody>
     {{#each ../filteredCollection.models}}
-    <tr name="{{module}}_{{attributes.id}}" class="single">
+    <tr name="{{module}}_{{attributes.id}}" class="single" data-forcast="{{attributes.commit_stage}}">
         {{#each ../../leftColumns}}
         <td >
              {{field ../../../this model=../this template=../../../this.viewName}}
