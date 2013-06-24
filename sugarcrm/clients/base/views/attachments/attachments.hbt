@@ -45,7 +45,7 @@
                 <div class="actions pull-right">
                     <a class="btn btn-invisible btn-dark preview-attachment" data-model-id="{{getFieldValue this "id"}}"><i class="icon-eye-open"></i></a>
                 </div>
-                <p style="padding-right:40px;"><a href="#{{modelRoute this}}">{{getFieldValue this "name"}}</a><br>
+                <p style="padding-right:40px;"><a href="#{{buildRoute model=this}}">{{getFieldValue this "name"}}</a><br>
                 <date class="date">{{timeago this.attributes.date_entered}}</date>
             </li>
         {{/each}}

@@ -90,11 +90,11 @@
 
     /**
      * Returns a url to a user record
-     * @param id
+     * @param {String} id the User record id.
      * @protected
      */
-    _buildUserUrl: function (id) {
-        return '#' + app.bwc.buildRoute('Users', id);
+    _buildUserUrl: function(id) {
+        return '#' + app.route.buildRoute('Users', id);
     },
 
     /**

@@ -1048,14 +1048,14 @@ tmpMetadata = {
         },
         "button": {
             "templates": {
-                "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
+                "default": "<a href=\"{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"btn {{class}} {{#if def.primary}}btn-primary{{/if}}\">" +
                     "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }
         },
         "navElement": {
             "templates": {
-                "default": "<a href=\"{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}" +
+                "default": "<a href=\"{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}" +
                     "{{else}}javascript:void(0){{/if}}\" class=\"{{class}}\">" +
                     "{{#if def.icon}}<i class=\"{{def.icon}}\"><\/i>{{/if}}{{label}}<\/a>\n"
             }

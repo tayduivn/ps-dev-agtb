@@ -38,19 +38,22 @@
         }
         app.view.Field.prototype._render.call(this);
     },
-    // Takes care of building href for when there's a def.link and also if is bwc enabled
-    buildHref: function() {
-        var module, moduleMeta, href = '', defRoute;
-        module = this.context.get('module') || this.model.get("_module");
-        moduleMeta = app.metadata.getModule(module) || {};
-        defRoute = this.def.route ? this.def.route : {};
 
-        // Starts as sidecar href unless we encounter bwc enabled
-        href = '#' + app.router.buildRoute(module, this.model.id, defRoute.action, defRoute.options);
-        if ((moduleMeta && moduleMeta.isBwcEnabled && _.isUndefined(this.def.bwcLink) || (!_.isUndefined(this.def.bwcLink) && this.def.bwcLink))) {
-            href = '#' + app.bwc.buildRoute(module, this.model.id, 'DetailView');
-        }
-        return href;
+    /**
+     * Takes care of building href for when there's a def.link and also if is
+     * bwc enabled.
+     *
+     * Deprecated functionality:
+     * If `this.def.bwcLink` is set to `true` on metadata, we force the href
+     * to be in BWC.
+     *
+     * TODO remove this from the base field
+     */
+    buildHref: function() {
+        var defRoute = this.def.route ? this.def.route : {},
+            module = this.context.get('module') || this.model.get('module');
+        // FIXME remove this.def.bwcLink functionality (not yet removed due to Portal need for Documents)
+        return '#' + app.router.buildRoute(module, this.model.id, defRoute.action, this.def.bwcLink);
     },
     /**
      * Trim whitespace from value if it is a String

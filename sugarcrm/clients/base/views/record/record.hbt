@@ -37,8 +37,8 @@
                 {{#unless createMode}}
                 {{#if showPrevNextBtnGroup}}
                 <div class="btn-group btn-group-previous-next">
-                    <a href="{{#if collection.previous}}#{{modelRoute collection.previous def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
-                    <a href="{{#if collection.next}}#{{modelRoute collection.next def.route.action}}{{else}}javascript:void(0){{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
+                    <a href="{{#if collection.previous}}#{{buildRoute model=collection.previous action=def.route.action}}{{else}}javascript:void(0);{{/if}}" class="btn btn-invisible previous-row{{#unless collection.previous}} disabled{{/unless}}"><i class="icon-chevron-left"></i></a>
+                    <a href="{{#if collection.next}}#{{buildRoute model=collection.next action=def.route.action}}{{else}}javascript:void(0);{{/if}}" class="btn btn-invisible next-row{{#unless collection.next}} disabled{{/unless}}"><i class="icon-chevron-right"></i></a>
                 </div>
                 {{/if}}
                 {{/unless}}

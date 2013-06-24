@@ -10,7 +10,7 @@
             <ul role="menu">
                 {{#each this.collection.models}}
                     <li><a class="row-fluid"
-                           href="#{{modelRoute this "detail"}}"><span
+                           href="#{{buildRoute model=this action="detail"}}"><span
                             class="span8 ellipsis_inline"
                             data-original-title="{{this.attributes.name}}"
                             data-placement="bottom"><span

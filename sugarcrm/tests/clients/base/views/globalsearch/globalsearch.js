@@ -119,25 +119,19 @@ describe("Global Search", function() {
             };
             cb.success(data);
         });
-        // Workaround because router not defined yet
-        var oRouter = SugarTest.app.router;
-        SugarTest.app.router = {buildRoute: function(){}};
-        var buildRouteStub = sinon.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
-            return module+'/'+id;
-        });
-        var bwcBuildRouteStub = sinon.stub(SugarTest.app.bwc, 'buildRoute', function(module, id, action) {
-            return "#bwc/index.php?module=" + module + '&action=' + action + '&record=' + id;
-        });
+
+        var buildRouteSpy = sinon.spy(SugarTest.app.router, 'buildRoute');
+        var bwcBuildRouteSpy = sinon.stub(SugarTest.app.bwc, 'buildRoute');
         var plugin = {provide: function(data) {return data}};
         var pluginSpy = sinon.spy(plugin, 'provide');
         view.fireSearchRequest('test', plugin);
-        expect(buildRouteStub.calledWith("Accounts", "test1")).toBe(true);
-        expect(bwcBuildRouteStub.calledWith("bwcModule", "test2", "DetailView")).toBe(true);
+        expect(buildRouteSpy.calledWith('Accounts', 'test1')).toBe(true);
+        expect(bwcBuildRouteSpy.calledWith('bwcModule', 'test2', 'DetailView')).toBe(true);
         getModuleStub.restore();
         apiSearchStub.restore();
-        buildRouteStub.restore();
-        bwcBuildRouteStub.restore();
-        SugarTest.app.router = oRouter;
+        buildRouteSpy.restore();
+        bwcBuildRouteSpy.restore();
+        pluginSpy.restore();
     });
 
     it("Should fire search request when 'enter' key is typed", function() {

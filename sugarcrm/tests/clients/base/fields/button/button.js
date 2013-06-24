@@ -231,14 +231,14 @@ describe("Base.Field.Button", function() {
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
         field.render();
-        expect(field.full_route).toBeNull();
+        expect(field.fullRoute).toBeNull();
 
         def = {
             'route' : 'custom/route'
         };
         field = SugarTest.createField("base","button", "button", "edit", def);
         field.render();
-        expect(field.full_route).toEqual('custom/route');
+        expect(field.fullRoute).toEqual('custom/route');
     });
 
     it("should test hasAccess control before it is rendered", function() {

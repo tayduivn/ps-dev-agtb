@@ -12,10 +12,10 @@
  */
 ({
     favRowTemplate: Handlebars.compile(
-      '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{modelRoute this}}" data-route="#{{modelRoute this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+      '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     recentRowTemplate: Handlebars.compile(
-        '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{modelRoute this}}" data-route="#{{modelRoute this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
+        '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
     plugins: ['dropdown'],
     events: {

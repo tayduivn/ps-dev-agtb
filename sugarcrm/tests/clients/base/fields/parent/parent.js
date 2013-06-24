@@ -37,18 +37,10 @@ describe("Base.Field.Parent", function() {
                 return obj;
             };
         }
-        // Workaround because router not defined yet
-        oRouter = SugarTest.app.router;
-        SugarTest.app.router = {buildRoute: function(){}};
-        buildRouteStub = sinon.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
-            return module+'/'+id;
-        });
     });
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
-        buildRouteStub.restore();
-        SugarTest.app.router = oRouter;
         sinonSandbox.restore();
         delete Handlebars.templates;
         field.model = null;
@@ -70,7 +62,6 @@ describe("Base.Field.Parent", function() {
     });
     it("should deal get related module for parent", function() {
         var actual_id = field.model.get('parent_id'),
-            actual_name = field.model.get('parent_name'),
             actual_module = field.model.get('parent_type'),
             _relatedModuleSpy = sinon.spy(field, "getSearchModule"),
             _relateIdSpy = sinon.spy(field, "_getRelateId");
