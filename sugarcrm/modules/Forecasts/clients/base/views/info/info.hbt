@@ -9,11 +9,6 @@
                 </div>
             {{/each}}
         {{/if}}
-        {{#if this.meta.last_commit}}
-            {{#each this.meta.last_commit}}
-                {{field ../this model=../this.model}}
-            {{/each}}
-        {{/if}}
     </div>
     <div class="span8 datapoints">
         <div class="pull-right">
@@ -23,6 +18,11 @@
         </div>
     </div>
 </div>
+{{#if this.meta.last_commit}}
+    {{#each this.meta.last_commit}}
+        {{field ../this model=../this.model}}
+    {{/each}}
+{{/if}}
 {{#if this.meta.commitlog}}
     {{#each this.meta.commitlog}}
         {{field ../this model=../this.model}}

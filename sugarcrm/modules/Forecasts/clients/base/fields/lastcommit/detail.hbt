@@ -1,1 +1,15 @@
-{{#if this.commit_date}}{{timeago commit_date "LBL_COMMITTED_TIME_RELATIVE"}}&nbsp;<i id="show_hide_history_log" class="icon-caret-down icon-sm"></i>{{/if}}
+<div class='row-fluid'>
+    <div class="span4">
+        {{#if this.commit_date}}{{timeago commit_date "LBL_COMMITTED_TIME_RELATIVE"}}&nbsp;<i id="show_hide_history_log"
+                                                                                              class="icon-caret-down icon-sm"></i>{{/if}}
+    </div>
+    <div class="span8 datapoints">
+        <div class="pull-right">
+            {{#each this.data_points}}
+                <div class="datapoint pull-left">
+                    {{formatCurrency this}}
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
