@@ -164,15 +164,26 @@
         this.previewId = previewId;
     },
     bindUpdates: function(sourceModel) {
-        var self = this;
+        if (this.sourceModel) {
+            this.stopListening(this.sourceModel);
+        }
         this.sourceModel = sourceModel;
         this.listenTo(this.sourceModel, 'sync', function() {
-            self.model.fetch({
+            if (!this.model) {
+                return;
+            }
+            this.model.fetch({
                 //Show alerts for this request
                 showAlerts: true,
-                fields: self.getFieldNames(self.model.module)
+                fields: this.getFieldNames(this.model.module)
             });
-        });
+        }, this);
+        this.listenTo(this.sourceModel, 'change', function() {
+            if (!this.model) {
+                return;
+            }
+            this.model.set(this.sourceModel.attributes);
+        }, this);
     },
     /**
      * Renders the preview dialog with the data from the current model and collection
