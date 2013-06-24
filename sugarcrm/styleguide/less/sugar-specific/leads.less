@@ -10,12 +10,11 @@
 .accordion {
   // Header
   .accordion-heading {
-    background-color:@grayLighter;
+    background-color: @grayLighter;
     border-bottom: 0;
     position: relative;
     padding: 10px 8px 10px 16px;
     height: 28px;
-
     .title {
       line-height: 26px;
     }
@@ -33,6 +32,9 @@
       .title {
         font-weight: bold;
       }
+      &:hover {
+        background-color: lighten(@grayLighter,2%);
+      }
     }
     &:not(.enabled){
       color: @grayLight;
@@ -48,7 +50,6 @@
       }
     }
   }
-
   // Inner needs the styles because you can't animate properly with any styles on the element
   .accordion-inner {
     padding: 0;
@@ -62,7 +63,6 @@
     border-bottom: 1px solid #DCDCDC;
     border-top: 1px solid @white;
   }
-
   // for record edit view in duplist
   .headerpane {
     background: none;
@@ -84,54 +84,16 @@
   .record {
     margin-top: 4px;
   }
+}
 
-  .flex-list-view.left-actions table.dataTable {
-    tr:last-child td {
-      border-bottom: none !important;
-    }
-    thead > tr > th:first-child,
-    tbody > tr > td:first-child {
-      text-align: center;
-      width: 42px;
-      padding: 8px;
-      z-index: 10;
-    }
-    thead > tr > th:last-child,
-    tbody > tr > td:last-child {
-      text-align: right;
-      padding: 4px 8px 4px 0;
-      width: 36px;
-      min-width: 36px;
-      z-index: 10;
-    }
-    thead > tr > th:last-child {
-      height: 34px;
-    }
-    tbody > tr > td:last-child {
-      height: 27px;
-    }
-    thead > tr > th:nth-child(2),
-    tbody > tr > td:nth-child(2) {
-      padding-left: 70px;
-    }
-    thead > tr > th:nth-last-child(2),
-    tbody > tr > td:nth-last-child(2) {
-      padding-right: 8px;
-      min-width: 26px;
-    }
-    td,
-    th {
-      border-color: darken(#F8F8F8,10%);
-      .controls {
-        padding: 5px 0;
-      }
-    }
-  }
+#convert-accordion {
   .want_filter {
     display: none;
   }
+  tr:last-child td {
+    border-bottom: none !important;
+  }
 }
-
 
 // Want Filter for Duplist
 div.want_filter {

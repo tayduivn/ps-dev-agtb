@@ -1,384 +1,48 @@
-//from nutmeg/sugar-forecasts
-.dataTables_wrapper {
-  overflow-x: auto;
-  .rtl(@direction,ltr);
-  table.dataTable {
-    .rtl(@direction,rtl);
-  }
-  //from twitter-bootstrap/datatables.less
-  position: relative;
-  clear: both;
-  *zoom: 1;
-  //
-}
+
 table.dataTable {
   margin: 0 auto;
   clear: both;
   width: 100%;
 
-  input[type="text"] {
-    //position: relative;
-    width: 100%;
-    min-height: 28px;
-    .box-sizing(border-box);
-  }
-
-  span.full-name.edit {
-    span.edit {
-      display: inline-block;
-      width: 50%;
-    }
-  }
-
-  //  TABLE HEADER
-  & > thead {
-    th {
-      line-height: 26px !important;
-      min-width: 20px;
-      max-width: 100px;
-      margin-top: 0 !important;
-      font-weight: normal;
-      font-size: @fontSizeSmall;
-      color: @tableHeader;
-      border-right: 1px solid darken(@grayLighter,5%);
-      .rtl(@direction,ltr);
-
-      &:not(:last-child) > * {
-        display: inline-block;
-        width: 100%;
-        overflow-x: hidden;
-        white-space: nowrap;
-        word-break: break-word;
-        //position: relative;
-        vertical-align: middle;
-        text-overflow: ellipsis;
-      }
-      &:first-child {
-        overflow-x: visible;
-        padding-left: 15px;
-        padding-right: 0;
-      }
-
-      /*
-      &:last-child {
-        max-width: 60px;
-        min-width: 60px;
-        width: 60px;
-        padding: 0 8px 0 5px;
-        //vertical-align: middle;
-        overflow-x: visible;
-        border-right: 0;
-      }
-
-      &:first-child {
-        overflow-x: visible;
-        padding-left: 15px;
-        padding-right: 0;
-        width: 50px;
-        height: 26px;
-        //z-index: 1;
-        background: @white;
-        position: absolute;
-        left: 0;
-        border-right: 0;
-      }
-      &:nth-child(2) {
-        padding-left: 75px;
-      }
-      &:nth-last-child(2) {
-        padding-right: 75px;
-      }
-      &:last-child {
-        max-width: 60px;
-        min-width: 60px;
-        width: 60px;
-        padding: 0 8px 0 5px;
-        //vertical-align: middle;
-        overflow-x: visible;
-        border-right: 0;
-        height: 42px;
-        line-height: 42px !important;
-        background: @white;
-        position: absolute;
-        right: 0;
-      }
-      */
-      a {
-      /*
-        color: @grayLight;
-      */
-        text-decoration: none;
-      }
-    }
-    tr.alert.alert-warning {
-      height: 35px;
-      &> td {
-        &> div {
-          position: absolute;
-          text-align: center;
-          width: 100%;
-        }
-      }
-    }
-  }
-
-  //  TABLE BODY
-  & > tbody {
-    & > tr {
-      //from tables.less?
-      &:last-child {
-        td {
-          border-bottom-width: 2px;
-        }
-      }
-      & > td {
-        white-space: nowrap;
-        word-break: break-word;
-        position: relative;
-        vertical-align: middle;
-        text-overflow: ellipsis;
-        max-width: 100px;
-        border-top: 1px solid darken(@grayLighter, 5%);
-        border-bottom: 1px solid darken(@grayLighter, 5%);
-        background-color: @white;
-        .rtl(@direction,ltr);
-        &> *:not(.overflow-visible) {
-          overflow-x: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
-          display: inline-block;
-          white-space: nowrap;
-          word-break: break-word;
-          position: relative;
-          vertical-align: middle;
-        }
-        &:first-child {
-          overflow-x: visible;
-          padding-left: 15px;
-          padding-right: 0;
-          span {
-            overflow: visible;
-          }
-          &.editableColumn {
-            max-width: 80px;
-          }
-        }
-        &:last-child {
-          max-width: 60px;
-          min-width: 60px;
-          padding: 0 8px 0 5px;
-          width: 60px;
-          //vertical-align: middle;
-          overflow-x: visible;
-          border-right: 0;
-        }
-        &.editableColumn {
-            padding: 0px;
-            min-width: 80px;
-            > span {
-                margin-left: 16px;
-                padding: 8px 8px 8px 0px;
-            }
-            > span.isEditable {
-                padding: 0px;
-                &.active {
-                    margin-left: 2px;
-                }
-            }
-
-              .clickToEdit {
-                  padding: 8px 8px 8px 0px;
-                  &.active {
-                      padding: 0px;
-                  }
-              }
-
-
-        }
-        &.tright.editableColumn {
-            > span {
-                margin-left: 0px;
-            }
-        }
-        .full-name.list {
-          &:hover {
-            color: @linkColorHover;
-            cursor: pointer;
-            &> .list {
-              text-decoration: underline;
-              a {
-                color: @linkColorHover;
-              }
-            }
-          }
-          .ellipsis_inline {
-            display: inline !important;
-          }
-        }
-      }
-    }
-   & > tr[data-forecast="include"] {
-
-     & > td {
-     font-weight: bold;
-       &:first-child {
-           & > span:before {
-               width: 6px;
-               background-color: @blue;
-               position: absolute;
-               height: 29px;
-               left: -11px;
-               content: "";
-               top: 3px;
-           }
-           &:hover {
-               & > span.isEditable:before {
-                   display: none;
-               }
-           }
-       }
-       }
-   }
-  }
   /* ---------
-  TABLE FOOTER */
-  & > tfoot {
-    th {
-      white-space: normal;
-      word-break: break-word;
-    }
-    td {
-      font-weight: bold;
-      border-top: 2px solid @grayLight !important;
-    }
-    tr.overall th {
-      font-weight: bold;
-    }
-  }
-
-  /* ---------
-  TABLE ROW (specific)*/
-  tr {
-    //for preview
-    &.highlighted {
-      &.current td {
-        #gradient > .vertical(darken(@grayLighter, 6%), darken(@grayLighter, 2%));
-        border-bottom: 1px solid darken(@grayLighter, 8%);
-        &:last-child {
-          z-index: 2;
-        }
-        .rowaction.btn {
-            .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important;");
-        }
-        .icon-eye-open {
-          color: @grayDark;
-        }
-      }
-    }
-    //also for preview??legacy?
-    &.active {
-      td {
-        background-image: url('@{textureSecondary}');
-        .icon-eye-open {
-          color:@black !important;
-        }
-      }
-    }
-    &.tr-inline-edit {
-      &> td {
-        &> span {
-          width: 100%;
-        }
-        overflow: visible;
-        background: #e5f1fc;
-        //padding-bottom: 0;
-        padding: 4px;
-        //vertical-align: top;
-        &:first-child {
-          //padding-top: 10px;
-          .btn {
-            margin-left: 0;
-          }
-        }
-        &:last-child {
-          //padding-top: 10px;
-          padding: 4px 8px 4px 4px;
-          .btn {
-            float: right;
-          }
-        }
-        &> *:not(.overflow-visible) {
-          overflow: visible;
-          //vertical-align: top;
-        }
-        .select2-container .select2-choice {
-          line-height: 26px;
-          height: 26px;
-          abbr {
-            top: 6px;
-          }
-          div {
-            top: 0;
-          }
-        }
-        .input-append.date {
-          margin-bottom: 0;
-          font-size: @baseFontSize;
-            .add-on {
-                background-color: @white;
-                top: 6px;
-                padding: 1px 4px;
-                margin-left: -30px;
-            }
-          td {
-            background-color: @white;
-          }
-          input.datepicker {
-            width: 100px;
-            margin-top: 0;
-          }
-          // reset datepicker since it is table inside table
-          span.year.active:hover,
-          span.year.active,
-          span.month.active:hover,
-          span.month.active,
-          td.active,
-          td.active:hover {
-            background-color: @gray;
-          }
-        }
-        .help-block {
-          display: none;
-        }
-      }
-    }
-    //forecasts
-    &.single span.detail:hover,
-    &.single span.list:hover {
-      overflow: visible;
-      .edit-icon {
-        position: absolute;
-        left: -14px;
-        top: 9px;
-      }
-    }
-  }
-  /* ---------
-  TABLE HEADER CELL (specific)*/
+  TABLE HEADER CELL (specific) */
   th {
-    &.sorting {
-      color: @gray;
+    line-height: 26px;
+    min-width: 20px;
+    max-width: 100px;
+    margin-top: 0 !important;
+    font-weight: normal;
+    font-size: @fontSizeSmall;
+    color: @tableHeader;
+    border-right: 1px solid darken(@grayLighter,5%);
+    .rtl(@direction,ltr);
+    background-color: @white;
+
+    &:not(:last-child) > * {
+      display: inline-block;
+      width: 100%;
+      overflow-x: hidden;
+      white-space: nowrap;
+      word-break: break-word;
+      vertical-align: middle;
+      text-overflow: ellipsis;
     }
-    &.sorting_asc,
-    &.sorting_desc {
-      font-weight: bold;
+    /*&:first-child {
+      overflow-x: visible;
+      padding: 8px;
+      text-align: center;
+    }*/
+    &:last-child {
+      border-right: 0;
+    }
+    a {
+      text-decoration: none;
     }
     &.header-quota {
       min-width: 70px;
     }
-    .btn-group {
-      margin: 0 0 0 -8px;
-      width: 60px;
+    .dropdown-menu {
+      text-align: left;
     }
     .btn input {
       margin: -2px 0 0 0;
@@ -401,16 +65,219 @@ table.dataTable {
   }
 
   /* ---------
-  TABLE CELL (specific)*/
+  TABLE BODY */
+  & > tbody > tr {
+    &:last-child {
+      td {
+        border-bottom-width: 2px;
+      }
+    }
+    & > td {
+      height: 38px;
+      padding: 4px 8px;
+      .box-sizing(border-box);
+
+      white-space: nowrap;
+      word-break: break-word;
+      position: relative;
+      vertical-align: middle;
+      text-overflow: ellipsis;
+      max-width: 100px;
+      border-top: 1px solid darken(@grayLighter, 5%);
+      border-bottom: 1px solid darken(@grayLighter, 5%);
+      background-color: @white;
+      .rtl(@direction,ltr);
+      &> *:not(.overflow-visible) {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: inline-block;
+        white-space: nowrap;
+        word-break: break-word;
+        position: relative;
+        vertical-align: middle;
+      }
+      &:first-child {
+        overflow-x: visible;
+        span {
+          overflow: visible;
+        }
+      }
+      &:last-child {
+        overflow-x: visible;
+        border-right: 0;
+      }
+      .full-name.list {
+        &:hover {
+          color: @linkColorHover;
+          cursor: pointer;
+          &> .list {
+            text-decoration: underline;
+            a {
+              color: @linkColorHover;
+            }
+          }
+        }
+        .ellipsis_inline {
+          display: inline !important;
+        }
+      }
+    }
+    & > tr[data-forecast="include"] {
+      & > td {
+        font-weight: bold;
+        &:first-child {
+          & > span:before {
+            width: 6px;
+            background-color: @blue;
+            position: absolute;
+            height: 29px;
+            left: -11px;
+            content: "";
+            top: 3px;
+          }
+          &:hover {
+            & > span.isEditable:before {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* ---------
+  TABLE FOOTER */
+  & > tfoot {
+    th {
+      white-space: normal;
+      word-break: break-word;
+    }
+    td {
+      font-weight: bold;
+      border-top: 2px solid @grayLight;
+    }
+    tr.overall th {
+      font-weight: bold;
+    }
+  }
+
+  /* ---------
+  TABLE ROW (specific) */
+  tr {
+    //for preview
+    &.highlighted {
+      &.current td {
+        #gradient > .vertical(darken(@grayLighter, 6%), darken(@grayLighter, 2%));
+        border-bottom: 1px solid darken(@grayLighter, 8%);
+        &:last-child {
+          z-index: 2;
+        }
+        .rowaction.btn {
+          .box-shadow(~"inset 0 1px 6px rgba(0,0,0,.2) !important;");
+        }
+        .icon-eye-open {
+          color: @grayDark;
+        }
+      }
+    }
+    //also for preview??legacy?
+    &.active {
+      td {
+        background-image: url('@{textureSecondary}');
+        .icon-eye-open {
+          color:@black !important;
+        }
+      }
+    }
+    //inline editing
+    &.tr-inline-edit {
+      &> td {
+        overflow: visible;
+        background: #e5f1fc;
+        padding: 4px;
+        &> span {
+          width: 100%;
+        }
+        &:first-child {
+          .btn {
+            margin-left: 0;
+            padding: 0;
+          }
+        }
+        &:last-child {
+          .btn {
+            margin-left: 0;
+            width: 100%;
+            .box-sizing(border-box);
+          }
+        }
+        input[type="text"] {
+          width: 100%;
+        }
+        &> *:not(.overflow-visible) {
+          overflow: visible;
+        }
+        .select2-container .select2-choice {
+          line-height: 26px;
+          height: 26px;
+          abbr {
+            top: 6px;
+          }
+          div {
+            top: 0;
+          }
+        }
+        .input-append.date {
+          margin-bottom: 0;
+          font-size: @baseFontSize;
+          .add-on {
+            background-color: @white;
+            top: 6px;
+            padding: 1px 4px;
+            margin-left: -30px;
+          }
+          td {
+            background-color: @white;
+          }
+          input.datepicker {
+            width: 100px;
+            margin-top: 0;
+          }
+          // reset datepicker since it is table inside table
+          span.year.active:hover,
+          span.year.active,
+          span.month.active:hover,
+          span.month.active,
+          td.active,
+          td.active:hover {
+            background-color: @gray;
+          }
+        }
+        .help-block {
+          display: none;
+        }
+      }
+    }
+    //alert messages
+    &.alert.alert-warning {
+      height: 35px;
+      &> td {
+        &> div {
+          position: absolute;
+          text-align: center;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  /* ---------
+  TABLE CELL (specific) */
   td {
     .actions {
-      display:inline-block;
+      display: inline-block;
       white-space: nowrap;
-      margin: 0;
-      float: right;
-      span {
-        width: 13px;
-      }
       a {
         &:hover:not(.disabled) {
           color: @grayDark;
@@ -420,14 +287,7 @@ table.dataTable {
         color: @gray !important;
       }
       .dropdown-menu {
-        padding: 0;
-        li:first-child a {
-          border-top:none;
-        }
-        &:before,
-        &:after {
-          display: none;
-        }
+        text-align: left;
       }
     }
     .btn-toolbar {
@@ -445,16 +305,37 @@ table.dataTable {
     }
   }
 
+  /* ---------
+  MISC */
   &.inline-edit-active {
     tr {
       td {
         overflow-x: visible !important;
       }
     }
+    input[type="text"] {
+      width: auto;
+    }
   }
-
-  /* ---------
-  MISC*/
+  input[type="text"] {
+    min-height: 28px;
+    .box-sizing(border-box);
+    padding: 4px 6px 3px;
+  }
+  input[type=radio],
+  input[type=checkbox] {
+    border: 0;
+  }
+  input[type=checkbox] {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  span.full-name.edit {
+    span.edit {
+      display: inline-block;
+      width: 50%;
+    }
+  }
   td.number,
   tfoot th.number {
     text-align: right;
@@ -463,17 +344,16 @@ table.dataTable {
     span.edit {
       div.controls {
         position: relative;
-        //right: 5px;
-        //padding-right: 14px;
       }
     }
   }
   label.original {
-    margin-bottom: 0;
+    margin: 0 2px 0 0;
     display: inline-block;
     background-color: @grayLight;
     .border-radius(4px);
     padding: 2px 4px;
+
   }
   .converted {
     display: inline-block;
@@ -485,188 +365,412 @@ table.dataTable {
   }
   //nutmeg ?legacy?
   .icon-star {
-    margin: 0 16px
-  }
-  .icon-star {
+    margin: 0 16px;
     color: @grayLight;
   }
   .active .icon-star {
     color: @orange;
   }
-
   .help-block {
-      margin-bottom: 0px;
+    margin-bottom: 0px;
   }
 }
 
+/* ---------
+FLEXLIST GENERIC */
+.flex-list-view {
+
+  /*DUPLICATES*/
+  table.dataTable.duplicates {
+    tbody > tr > td:last-child .list {
+      overflow: visible;
+    }
+    tbody > tr:last-child > td {
+      border-bottom-width: 0;
+    }
+    /*create record dup check*/
+    &.duplicates-selectedit {
+      thead > tr > th:first-child,
+      tbody > tr > td:first-child {
+        padding-left: 20px;
+      }
+      thead > tr > th:last-child,
+      tbody > tr > td:last-child {
+        width: 135px;
+        max-width: 135px;
+        padding-left: 0;
+      }
+    }
+    /*convert lead dup check*/
+    &.duplicates-singleselect {
+      thead > tr > th:first-child,
+      tbody > tr > td:first-child {
+        width: 59px;
+      }
+      thead > tr > th:last-child,
+      tbody > tr > td:last-child {
+        width: 45px;
+      }
+    }
+    /*lead record view find duplicates*/
+    &.duplicates-multiselect {
+      thead > tr > th:first-child,
+      tbody > tr > td:first-child {
+        width: 45px;
+      }
+      thead > tr > th:first-child {
+        .btn.checkall {
+          .border-radius(3px);
+        }
+        .btn-group span,
+        .dropdown-menu {
+          display: none;
+        }
+      }
+      thead > tr > th:last-child,
+      tbody > tr > td:last-child {
+        width: 45px;
+      }
+    }
+  }
+
+  /*LEFT ACTIONS ONLY*/
+  &.left-actions table.dataTable {
+    & > thead > tr > th:first-child {
+      width: 71px;
+      height: 42px;
+      padding: 7px 8px;
+      .box-sizing(border-box);
+      background: @white;
+      overflow-x: visible;
+      text-align: center;
+      span {
+        overflow-x: visible;
+      }
+    }
+    & > tbody > tr > td:first-child {
+      width: 71px;
+      height: 38px;
+      padding: 8px 0;
+      .box-sizing(border-box);
+      text-align: center;
+      z-index: 10;
+    }
+  }
+
+  /*RIGHT ACTIONS ONLY*/
+  &.right-actions table.dataTable {
+    & > thead > tr > th:last-child {
+      width: 71px;
+      height: 42px;
+      padding: 4px 8px 0;
+      .box-sizing(border-box);
+      background: @white;
+      overflow-x: visible;
+      text-align: center;
+      line-height: 38px;
+    }
+    & > tbody > tr > td {
+      &:last-child {
+        width: 71px;
+        height: 38px;
+        padding: 4px 8px;
+        .box-sizing(border-box);
+        text-align: center;
+        overflow-x: visible;
+        .list .btn.rowaction {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  /*FORECASTS SALES REP WORKSHEET*/
+  &.forecast-worksheet table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      &:first-child {
+        padding-left: 14px;
+      }
+    }
+    & > tbody > tr > td {
+      &.editableColumn {
+        padding: 0px 2px;
+        min-width: 80px;
+        max-width: 100%;
+        height: 37px;
+        &:first-child {
+          max-width: 80px;
+        }
+        span.detail,
+        span.list {
+          padding-right: 8px;
+          padding-left: 14px;
+        }
+        span.detail:hover,
+        span.list:hover {
+          overflow: visible;
+          .edit-icon {
+            position: absolute;
+            left: -2px;
+            top: 3px;
+          }
+        }
+        .clickToEdit.active {
+          padding-right: 1px;
+        }
+      }
+    }
+    & > tfoot > tr > td:last-child {
+      border-top: none;
+      position: absolute;
+    }
+  }
+
+  /*FORECASTS MANAGER WORKSHEET*/
+  &.forecast-manager-worksheet table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td,
+    & > tfoot > tr > td {
+      &:first-child {
+        padding-left: 14px;
+      }
+    }
+    & > tbody > tr > td {
+      padding: 0px 4px;
+      span.detail:hover,
+      span.list:hover {
+        overflow: visible;
+        .edit-icon {
+          position: absolute;
+          left: -2px;
+          top: 6px;
+        }
+      }
+      .isEditable {
+        padding: 4px 10px 3px 3px;
+        &.active {
+          padding: 1px 3px 1px 3px;
+        }
+        .clickToEdit {
+          padding-left: 10px;
+        }
+      }
+    }
+    & > tfoot > tr > td:last-child {
+      border-top: none;
+      position: absolute;
+    }
+    & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      .box-sizing(border-box);
+      background-color: @grayLight;
+      position: relative;
+      text-align: left;
+      .icon-arrow-down:before {
+        color: @red;
+      }
+      .icon-arrow-up:before {
+        color: @green;
+      }
+      span.list {
+        color: @grayDark;
+        padding: 10px 20px;
+        width: 100%;
+        .box-sizing(border-box);
+        .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.4);");
+        .relativetime {
+          color: @gray;
+        }
+      }
+    }
+  }
+
+}
+
+/*Mixins for .scroll-width classes*/
+.right-shadow {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: -1px;
+  bottom: -1px;
+  width: 5px;
+
+  /* Webkit (Safari/Chrome 10) */
+  //background-image: -webkit-gradient(linear, left top, right top, color-stop(0, rgba(0, 0, 0, 0.1)), color-stop(1, transparent));
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#bbb), to(transparent));
+  /* Webkit (Chrome 11+) */
+  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
+  /* Mozilla Firefox */
+  background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
+  /* Opera */
+  background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
+  /* IE10 Consumer Preview */
+  background-image: -ms-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
+  /* W3C Markup, IE10 Release Preview */
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.left-shadow {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: -1px;
+  bottom: -1px;
+  width: 5px;
+
+  /* Webkit (Safari/Chrome 10) */
+  //background-image: -webkit-gradient(linear, right top, left top, color-stop(0, rgba(0, 0, 0, 0.1)), color-stop(1, transparent));
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#bbb), to(transparent));
+  /* Webkit (Chrome 11+) */
+  background-image: -webkit-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
+  /* Mozilla Firefox */
+  background-image: -moz-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
+  /* Opera */
+  background-image: -o-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
+  /* IE10 Consumer Preview */
+  background-image: -ms-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
+  /* W3C Markup, IE10 Release Preview */
+  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+}
 /**
  * The flex list allows you to add left actions and right actions to the traditional list view.
  * The code below aims to fix the first action column and the last action column
  */
- .no-touch {
+.no-touch {
   .flex-list-view {
     position: relative;
     .flex-list-view-content {
       overflow-y: auto;
       width: 100%;
     }
-    // .flex-list.left-actions to fix the first column
-    &.left-actions {
-      table.dataTable {
-        & > thead >tr > th {
-          &:first-child {
-            overflow-x: visible;
-            padding-left: 15px;
-            padding-right: 0;
-            width: 52px;
-            height: 28px;
-            //z-index: 11;
-            //z-index: 1;
-            background: @white;
-            position: absolute;
-            left: 0;
-            border-right: 0;
-            .box-shadow(~"2px 0 1px 0 rgba(0,0,0,.1);");
-            span {
-              overflow-x: visible;
-            }
-          }
-          &:nth-child(2) {
-            padding-left: 75px;
+
+    /*.flex-list.left-actions to fix the first column*/
+    &.left-actions.scroll-width table.dataTable {
+      & > thead > tr > th:first-child {
+        height: 42px;
+      }
+      & > tbody > tr > td:first-child {
+        height: 39px;
+      }
+      & > thead > tr > th,
+      & > tbody > tr > td {
+        &:first-child {
+          position: absolute;
+          left: 0;
+          border-right: 0;
+          &:after {
+            .right-shadow;
           }
         }
-        & > tbody > tr > td {
-          &:first-child {
-            overflow-x: visible;
-            padding-left: 15px;
-            padding-right: 0;
-            width: 52px;
-            position: absolute;
-            left: 0;
-            z-index: 10;
-            .box-shadow(~"2px 0 1px 0 rgba(0,0,0,.1);");
-          }
+        &:nth-child(2) {
+          max-width: 188px;
+          padding-left: 80px;
+        }
+      }
+      /*create record dup check*/
+      &.duplicates-multiselect {
+        thead > tr > th,
+        tbody > tr > td {
           &:nth-child(2) {
-            padding-left: 75px;
+            max-width: 161px;
+            padding-left: 53px;
+          }
+        }
+      }
+      /*convert lead dup check*/
+      &.duplicates-singleselect {
+        thead > tr > th,
+        tbody > tr > td {
+          &:nth-child(2) {
+            max-width: 175px;
+            padding-left: 67px;
           }
         }
       }
     }
 
-    // .flex-list.right-actions to fix the last column
-    &.right-actions {
-      table.dataTable {
-        & > thead > tr > th {
-          &:nth-last-child(2) {
-            padding-right: 75px;
-            background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
-            background-position: ~"-moz-calc(100% - 75px)" 50% !important;
-            background-position: ~"-webkit-calc(100% - 75px)" 50% !important;
-            background-position: ~"calc(100% - 75px)" 50% !important;
-          }
-          &:last-child {
-            max-width: 60px;
-            min-width: 60px;
-            width: 60px;
-            padding: 4px 8px 0 5px; //vertical-align: middle;
-            overflow-x: visible;
-            border-right: 0;
-            height: 40px;
-            line-height: 42px !important;
-            background: @white;
-            position: absolute;
-            right: 0;
-            .box-shadow(~"-2px 0 1px 0 rgba(0,0,0,.1);");
+    /*.flex-list.right-actions to fix the last column*/
+    &.right-actions.scroll-width table.dataTable {
+      & > thead > tr > th:last-child {
+        height: 42px;
+      }
+      & > tbody > tr > td:last-child {
+        height: 39px;
+      }
+      & > thead > tr > th,
+      & > tbody > tr > td {
+        &:last-child {
+          position: absolute;
+          right: 0;
+          border-left: 0;
+          border-right: 0;
+          &:before {
+            .left-shadow;
           }
         }
-        & > tbody > tr > td {
-          &:nth-last-child(2) {
-            padding-right: 75px;
-            min-width: 100px;
-              > span.isEditable {
-              margin-left: 16px;
-              }
-          }
-          &:last-child {
-            max-width: 60px;
-            min-width: 60px;
-            padding: 4px 8px 0 5px;
-            width: 60px; //vertical-align: middle;
-            overflow-x: visible;
-            border-right: 0;
-            height: 32px;
-            position: absolute;
-            right: 0;
-            .box-shadow(~"-2px 0 1px 0 rgba(0,0,0,.1);");
-          }
+        &:nth-last-child(2) {
+          max-width: 188px;
+          padding-right: 80px;
+          background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
+          background-position: ~"-moz-calc(100% - 80px)" 50% !important;
+          background-position: ~"-webkit-calc(100% - 80px)" 50% !important;
+          background-position: ~"calc(100% - 80px)" 50% !important;
         }
+      }
+      & > tfoot > tr > td {
+        &:nth-last-child(2) {
+          max-width: 188px;
+          padding-right: 80px;
+        }
+      }
+      /*create record dup check*/
+      &.duplicates-selectedit {
+        thead > tr > th:nth-last-child(2),
+        tbody > tr > td:nth-last-child(2) {
+          max-width: 251px;
+          padding-right: 143px;
+        }
+      }
+      /*convert lead dup check*/
+      &.duplicates-singleselect {
+        thead > tr > th:nth-last-child(2),
+        tbody > tr > td:nth-last-child(2) {
+          max-width: 161px;
+          padding-right: 53px;
+        }
+      }
+      /*lead record view find duplicates*/
+      &.duplicates-multiselect {
+        thead > tr > th:nth-last-child(2),
+        tbody > tr > td:nth-last-child(2) {
+          max-width: 161px;
+          padding-right: 53px;
+        }
+      }
+    }
 
-        & > tbody > tr[name$="_commit_history"] > td:first-child {
-          padding: 0;
-          width: 100%;
+    /*forecast worksheets*/
+    &.right-actions.scroll-width.forecast-worksheet table.dataTable {
+      & > thead > tr > th,
+      & > tbody > tr > td,
+      & > tfoot > tr > td {
+        &:nth-last-child(2) {
           max-width: 100%;
-          height: auto;
-          .box-sizing(border-box);
-          background-color: @grayLight;
-          position: relative;
-          .icon-arrow-down:before {
-            color: @red;
-          }
-          .icon-arrow-up:before {
-            color: @green;
-          }
-          span.list {
-            color: @grayDark;
-            padding: 10px 20px;
-            width: 100%;
-            .box-sizing(border-box);
-            .box-shadow(~"inset 0 10px 6px -6px rgba(0,0,0,.4);");
-            .relativetime {
-              color: @gray;
-            }
-          }
-        }
-
-        & > tfoot > tr > td {
-          &:nth-last-child(2) {
-            padding-right: 75px;
-          }
-        }
-      }
-
-      /* fixes styling issue with dupcheck list */
-      table.duplicates.highlight {
-        & > thead > tr > th {
-          background-color: @white;
-          &:last-child {
-            background-color: @white;
-          }
-        }
-        & > tbody > tr:nth-child(even) > td {
-          background-color: @white;
-        }
-        & > tbody > tr:nth-child(odd) > td {
-          background-color: #F8F8F8;
-        }
-        & > tbody > tr > td {
-          &:nth-last-child(2) {
-            padding-top: 2px;
-            padding-bottom: 2px;
-          }
-          &:last-child .list {
-            width: 60px;
-            overflow: visible;
-          }
         }
       }
     }
-    input[type=radio], input[type=checkbox] {
-      border: 0;
+    &.right-actions.scroll-width.forecast-manager-worksheet table.dataTable {
+      & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
+        position: relative;
+      }
     }
-    input[type=checkbox] {
-      padding:0 !important;
-      margin: 0 !important;
-    }
+
   }
 }
 
@@ -677,17 +781,30 @@ table.dataTable {
   }
 }
 
+.subpanel .flex-list-view table.dataTable {
+  tbody > tr > td {
+    border-bottom-width: 0;
+  }
+  &> thead > tr > th:first-child,
+  &> tbody > tr > td:first-child {
+    padding-left: 10px
+  }
+}
+
 //from twitter-bootstrap/datatables.less
 .sorting {
   background: url('@{baseUrl}/img/sort_both.png') no-repeat 98% 50%;
   padding-right: 25px !important;
+  color: @gray;
   cursor: pointer;
   *cursor: hand;
 }
-.sorting_asc, .sorting_desc {
+.sorting_asc,
+.sorting_desc {
   .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1);");
   padding-right: 25px !important;
-    border-right: 0px !important;
+  border-right: 0;
+  font-weight: bold;
 }
 .sorting_asc {
   background: @grayLighter url('@{baseUrl}/img/sort_asc.png') no-repeat center right;
@@ -730,33 +847,29 @@ table.dataTable th:active {
 }
 
 .morecol {
-  text-align: center !important;
-  cursor: pointer;
-  line-height: 52px !important;
   .btn {
-      .box-shadow(none) !important;
-      border: none !important;
-      margin: 0;
+    margin: 0;
+    padding: 4px 0px;
   }
   .dropdown-menu {
-    text-align: left !important;
+    text-align: left;
     font-size: @baseFontSize;
     font-weight: normal;
     color: @grayLight;
-    a, .btn {
+    .border-radius(2px);
+    .btn {
       padding-left: 22px;
-      //color: @grayLight;
       width: 100%;
-      text-align: left !important;
-      text-decoration: none !important;
+      text-align: left;
+      text-decoration: none;
     }
     button {
       text-decoration: none;
       color: @gray;
       &:hover,
       &:active {
-        color: @gray !important;
-        .box-shadow(none) !important;
+        color: @gray;
+        .box-shadow(none);
         text-decoration: none;
       }
       &.active {
@@ -769,12 +882,12 @@ table.dataTable th:active {
           margin-right: 5px;
         }
       }
-      &:not(.active){
+      &:not(.active) {
         padding-left: 30px;
       }
     }
     li {
-        border-bottom: 1px solid @grayLighter;
+      border-bottom: 1px solid @grayLighter;
     }
   }
 }
