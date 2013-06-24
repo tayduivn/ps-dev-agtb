@@ -109,7 +109,7 @@ class StudioModule
                 array(
                     'name'  => translate('LBL_RECORDVIEW'), 
                     'type'  => MB_RECORDVIEW, 
-                    'image' => 'Record',
+                    'image' => 'RecordView',
                     'path'  => "modules/{$this->module}/clients/base/views/record/record.php",
                 ),
                 array(
