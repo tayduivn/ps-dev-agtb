@@ -1,19 +1,11 @@
-.span8 .headerpane {
-  width: 66%;
-  border-right: 1px solid darken(@grayLighter,10%);
-}
 
+//headerpane record name edit
+//sugar7
 .headerpane {
   min-height: 60px;
-  width: 100%;
-  height: 61px;
   z-index: 1000;
-  background: @grayLighter;
-  border-bottom: 1px solid darken(@grayLighter,10%);
-  .box-sizing(border-box);
   display: table;
-  position: fixed;
-  top: 48px;
+  width: 100%;
   h1 {
     font-size: @fontSizeHeader;
     line-height: 22px;
@@ -44,6 +36,17 @@
     }
   }
 
+  //module type element label
+  .label-module {
+    width: 32px;
+    height: 32px;
+    vertical-align: top;
+    margin-right: 12px;
+    margin-top: 11px;
+    display: inline-block;
+    position: relative;
+  }
+
   //40+1+1=42px=standard height of headerpane elements
   .record-cell {
     display: inline-block;
@@ -63,7 +66,7 @@
     max-width: 300px;
   }
 
-  span[data-type="image"], span[data-type="avatar"] {
+  span[data-type="image"] {
     margin-right: 12px;
     margin-left: 2px;
     padding-top: 9px;
@@ -77,8 +80,6 @@
   }
 
   span {
-    &[data-type="parent"],
-    &[data-type="relate"],
     &[data-type="text"],
     &[data-type="int"] {
       padding-top: 19px;
@@ -87,9 +88,6 @@
         display: inline-block;
       }
     }
-  }
-  span[data-type="relate"] .edit > .select2-container {
-    min-width: 275px;
   }
 
   span[data-type="fieldset-with-labels"] {
@@ -152,10 +150,6 @@
         top: 7px;
       }
     }
-  }
-  /* Must be same as above margin-top definition */
-  .input-append .add-on {
-    margin-top: -3px;
   }
 
   .help-block {
@@ -227,9 +221,10 @@
 
 //email compose recipient select2
 .record div[data-type="recipients"].controls.btn-fit {
+  margin-bottom: 6px;
   .btn {
-    top: 0;
-    right: 0;
+    top: -1px;
+    right: 9px;
   }
 }
 .record div[data-name="to_addresses"].controls.btn-fit {
@@ -242,31 +237,21 @@
       width: auto;
     }
     .select2-search-field input {
-      padding: 0 6px;
+      padding: 1px 7px;
       margin-left: 0;
       position: absolute;
-      min-height: 22px;
     }
-  }
-}
-.record div[data-type="attachments"].controls {
-  input[type="file"] {
-    display: none;
-  }
-  .select2-search-field input {
-    padding: 0 6px;
-    min-height: 22px;
   }
 }
 
 //main record edit
 .record {
   clear: both;
-  margin: 10px 20px 10px 5px;
+  margin: 20px 20px 10px 5px;
   .form-horizontal {
     .record-cell,
     .normal {
-      min-height: 50px;
+      min-height: 20px;
       padding-left: 0;
     }
     .record-cell {
@@ -276,16 +261,15 @@
       .select2-container {
         margin-left: 0 !important;
         z-index: 1;
-        min-height: 28px;
       }
       //for email compose
       .compose-sender-options {
         position: absolute;
-        top: 2px;
-        right: 39px;
+        top: 1px;
+        right: 47px;
         z-index: 2;
         background-color: #FFF;
-        padding: 4px;
+        padding: 2px 4px 2px;
       }
       .help-block {
         min-height: 8px;
@@ -305,8 +289,7 @@
     display: inline-block;
     position: relative;
     padding-left: 15px;
-    min-height: 40px;
-    padding-bottom: 10px;
+    min-height: 20px;
     .record-label {
       font-size: @fontSizeSmall;
       color: darken(@grayLight, 5%);
@@ -325,7 +308,6 @@
     }
 
     input[type="text"],
-    input[type="password"],
     textarea,
     .uneditable-input {
       position: relative;
@@ -336,26 +318,6 @@
       font-weight: 500;
       color: @gray;
       width: 100%;
-    }
-    /* Must be same as above margin-top definition */
-    .input-append input[type="text"] + .add-on,
-    .input-append textarea + .add-on {
-      margin-top: -5px;
-    }
-
-    .edit > [type="password"]:first-of-type {
-      margin-bottom: 1px !important;
-      z-index: 2;
-    }
-
-    .edit > [type="password"]:not(:first-of-type) {
-      margin-top: -3px !important;
-    }
-
-    /* Must be same as above margin-top definition */
-    .input-append input[type="text"] + .add-on,
-    .input-append textarea + .add-on {
-      margin-top: -5px;
     }
 
     span.disabled {
@@ -418,7 +380,7 @@
     &[data-type="email"] {
       .normal > span {
         display: block !important;
-        margin-bottom: 10px;
+        margin-bottom: 0;
       }
       .detail .control-group.email {
         .ellipsis-cell {
@@ -429,9 +391,11 @@
         padding-right: 132px;
         position: relative;
         margin-bottom: 2px;
-        input[type="text"] {
-          min-height: 18px;
-          margin-bottom: 6px;
+        input[type="text"]{
+            min-height: 20px;
+            padding: 6px 6px 3px;
+            margin-bottom: 2px;
+            .border-radius(0);
         }
         .input-append.widget {
           margin-bottom: 0;
@@ -451,8 +415,7 @@
         }
         .btn-toolbar {
           position: absolute;
-          /* Must be same as input[type="text"] margin-top definition */
-          top: -5px;
+          top: -3px;
           right: 0;
           width: 118px;
           padding: 0;
@@ -551,45 +514,19 @@
           }
         }
       }
-    }
-
-    &[data-type="date"],
-    &[data-type="datetimecombo"] {
-
+      .input-append.date {
         input[type="text"] {
-            width: 110px;
+          width: 110px;
         }
         .add-on {
-            z-index: 2;
-            padding: 4px;
-            margin: -2px 10px 0 -30px;
-            width: 12px;
-            height: 12px;
-            position: relative;
-            top: -4px;
-            left: 7px;
-            background: @white;
-            font-size: 12px;
+          z-index: 2;
+          padding: 4px;
+          margin: -2px 10px 0 -30px;
+          width: 12px;
+          height: 12px;
+          background: @white;
         }
-
-        .input-append.date {
-            .add-on {
-                top: 4px;
-                left: 5px;
-            }
-            .error {
-                .add-on {
-                    &:not(.error-tooltip) {
-                        left: 1px;
-                    }
-                }
-             }
-            .ui-timepicker-input,
-            .ui-timepicker-list {
-                margin-left: 10px;
-            }
-         }
-
+      }
     }
 
     &[data-type="fieldset"] {
@@ -600,7 +537,7 @@
       input[type="text"] {
         .border-radius(0);
         border-width: 0 1px 1px 1px;
-        /*padding: 7px 6px 6px;*//*UIUX-869*/
+        padding: 7px 6px 6px;
         &:focus {
           z-index: 2;
         }
@@ -610,7 +547,7 @@
           .border-top-left-radius(3px);
           .border-top-right-radius(3px);
           border-width: 1px 1px 1px 1px;
-          /*padding: 6px;*/
+          padding: 6px;
         }
         > span:last-child input[type="text"] {
           .border-bottom-left-radius(3px);
@@ -636,13 +573,9 @@
       }
     }
 
-    &[data-name="fieldset_address"],
     &[data-name="fieldset_shipping_address"],
     &[data-name="fieldset_alt_address"],
     &[data-name="fieldset_altaddress"] {
-      input[type="text"] {
-        margin-top: -1px;
-      }
       .address.edit > .edit:nth-last-child(2) > input {
         .border-bottom-left-radius(3px);
         .border-bottom-right-radius(3px);
@@ -671,10 +604,6 @@
           margin-right: 6px;
         }
       }
-      .actions .dropdown-menu {
-        left: 0;
-        right: auto;
-      }
       .btn.dropdown-toggle {
         [class^="icon-"] {
           margin-right: 0;
@@ -684,7 +613,7 @@
   }
 
   .record-edit-link-wrapper {
-    top: 15px;
+    top: 0px;
     left: -18px;
   }
 
@@ -717,7 +646,7 @@
         display: inline-block;
       }
       .edit {
-        padding: 0;
+        padding: 4px 0 0;
         .select2-container {
           margin-top: 0;
         }
@@ -729,6 +658,22 @@
         }
       }
     }
+    .record-cell input[type="text"],
+    .record-cell textarea,
+    .record-cell .uneditable-input {
+      margin-left: -7px !important;
+      margin-top: 1px !important;
+    }
+
+    .record-cell .select2-container {
+      margin-left: -9px !important;
+      margin-top: -1px !important;
+    }
+
+    .record-cell input.input-large {
+      margin-top: -1px !important;
+    }
+
     .record-cell .address.edit {
       &> .edit {
         padding-top: 0;
@@ -773,14 +718,14 @@
 
 //show more-less control
 .show-hide-toggle {
-  padding: 0 0 20px;
-  .record-cell {
-    text-indent: 20px;
-  }
+  margin: 0 20px 20px 20px;
 }
 
 /* Special treatment for the address fields */
 .record-cell {
+  [class*='address_'] {
+    margin-bottom: 2px;
+  }
   [class*='address_']:not(.edit) {
     display: inline-block;
   }
@@ -798,9 +743,6 @@
         margin-right: 4px;
       }
     }
-  }
-  .detail .ellipsis_inline {
-    display: inline-block !important;
   }
   .address_city {
     .ellipsis_inline:empty:after {

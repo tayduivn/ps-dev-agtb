@@ -2,16 +2,17 @@
 
 // Base alert styles
 .alert {
-  padding: 8px 20px 8px 10px;
-  background-color: @grayLighter;
-  border: 1px solid @grayLight;
+  padding: 2px 20px 2px 10px;
+  background-color: @NavigationBar;
+  border: 1px solid @BorderColor;
 }
 .alert [class^=icon-] {
   margin: 0 5px 0 0;
 }
 .alert,
 .alert-heading {
-  color:  @gray;
+  color: @white;
+  text-shadow: none;
 }
 
 // Adjust close link position
@@ -40,7 +41,6 @@
   color: darken(@red, 10%);
 }
 .alert-warning {
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
   border: 1px solid @warningBorder;
   background-color: @warningBackground;
 }
@@ -57,7 +57,7 @@
 
 .alert-top {
   position: fixed;
-  top: 38px;
+  top: 30px;
   width: 100%;
   z-index: 1060;
   text-align: center;
@@ -68,7 +68,7 @@
   float: none;
   display: block;
   max-width: 50%;
-  @shadow: 0 1px 4px rgba(0,0,0,.4);
+  @shadow: 0 1px 3px rgba(0,0,0,.3);
   .box-shadow(@shadow);
 }
 .alert a.btn {
@@ -83,7 +83,8 @@
 }
 .alert-top .alert {
   margin-top: @baseLineHeight;
-  margin-bottom: 10px;
+  //margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 .alert.modal {

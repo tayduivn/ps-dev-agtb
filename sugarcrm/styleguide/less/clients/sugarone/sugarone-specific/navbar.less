@@ -12,92 +12,34 @@
 // Navbar search
 .navbar-search {
   margin-top: 8px;
-  margin-right: 6px;
+  float: none;
   .btn-group .dropdown-toggle {
     box-shadow: none;
   }
-  .search-query {
-    color: @grayLighter;
-    #gradient > .vertical(lighten(@navbarBackground, 20%), lighten(@navbarBackgroundHighlight, 20%));
-    border: 1px solid #111;
-    .border-radius(2px);
-    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15)");
 
-    // Placeholder text gets special styles; can't be bundled together though for some reason
-    .placeholder(@grayDarker);
-
-    // Hover states
-    &:hover {
-      color: @grayDark;
-      background: @white;
-    }
-    // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
-    &:focus,
-    &.focused {
-      color: @grayDark;
-      background: @white;
-      border: 1px solid @gray;
-    }
-  }
   .btn-group .dropdown-toggle {
     box-shadow: none;
-  }
-  .search-query {
-    margin-bottom: 0;
-    min-height: 1px;
-    padding: 4px 9px;
-    .border-radius(2px);
-    .transition(none);
-    // Hover states
-    &:hover {
-      background-color: @grayLight;
-      background-color: rgba(255,255,255,.5);
-    }
-    // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
-    &:focus,
-    &.focused {
-      text-shadow: 0 1px 0 @white;
-      background-color: @white;
-      outline: 0;
-    }
   }
   .btn-toolbar {
     margin-top:0;
   }
+  .search-query {
+    padding: 4px 10px;
+    line-height: @baseLineHeight;
+    .border-radius(4px);
+  }
 }
-.search-query {
-  .border-radius(4px);
-}
-.search-query {
-  .border-radius(4px);
-}
+
 
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
-.cube {
-  background: url('@{baseUrl}/img/badge_256nmd.png') 17px 11px no-repeat;
-  background-size: 21px;
-  float: left;
-  height: 32px;
-  width: 28px;
-  z-index: 2000;
-  display: block;
-  &.hide {
-    display: none;
-  }
-  &.btn.btn-invisible:hover {
-    background: url('@{baseUrl}/img/badge_256nmd.png') 17px 11px no-repeat;
-    background-size: 21px;
-  }
-}
 
 .navbar {
-  color: #58595B;
   .navbar-inner {
     border: none;
     height: 44px;
-    @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @BorderColor;
+    @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 1px 0 @BorderColor;
     .box-shadow(@shadow);
   }
   &> .navbar-inner {
@@ -142,25 +84,25 @@
   // Menu position and menu carets
   .dropdown-menu {
     a [class^="icon-"] {
-      position: relative;
-      top: -1px;
-      text-indent: -26px;
+      position: absolute;
+      left: 12px;
+      text-indent: 0;
       color: @grayLight;
-      vertical-align: middle;
+      line-height: 15px;
     }
     .dropdownMinWidth();
     margin-top: 0;
-    top: 50px;
+    top: 33px;
     /*right: -8px;*/
     left: auto;
-    .border-radius(4px);
+    .border-radius(0,2px,0,2px);
     &:before {
       border-bottom-color: rgba(0,0,0,.2);
     }
     li a {
       display: block;
-      padding: 6px 8px 8px;
-      text-indent: 32px;
+      padding: 0;
+      text-indent: 0;
       position: relative;
     }
     li,
@@ -197,7 +139,7 @@
       right: 29px;
       top: 42px;
       left: auto;
-      padding: 8px 0 0 0;
+      padding: 4px 8px;
       li {
         padding: 4px 8px;
         &.divider {
@@ -213,7 +155,7 @@
       right: 31px;
       top: 1px;
       height: 24px;
-      .border-radii(0,0,3px,3px);
+      .border-radius(0px,0px,3px,3px);
       &:hover {
         border-color: transparent;
       }
@@ -250,6 +192,7 @@
         // Hover
         &:hover {
           background-color:  lighten(@NavigationBar,20%); // "transparent" is default to differentiate :hover from .active
+          color: lighten(@black,100%);
           text-shadow: 0 -1px 0 rgb(0,0,0);
         }
         &.btn {
@@ -296,7 +239,7 @@
             &> ul {
               background: @white;
               border: 1px solid rgba(0,0,0,.2);;
-              .border-radius(2px);
+              .border-radius(0,2px,0,2px);
               max-height: 330px;
               overflow-y: auto;
               overflow-x: hidden;
@@ -309,7 +252,7 @@
           div.btn-group:not(.open) {
             //.box-shadow(~"inset 0 -10px 15px rgba(255,255,255,.3)");
             background-color: rgba(0,0,0,0.21);
-            #gradient > .vertical(@NavigationBar, lighten(@NavigationBar, 26%));
+            #gradient > .vertical(@black, lighten(@black,26%));
             border-left-color: lighten(@black,15%);
             border-right-color: @black;
           }
@@ -323,9 +266,12 @@
             margin-bottom: 0;
             line-height: 32px;
             .caret {
+              border-top-color: @white;
+              border-bottom-color: @white;
               margin-top: 15px;
             }
             &:hover {
+              color: lighten(@black,100%) !important;
               text-decoration: none;
             }
             &:not(.dropdown-toggle) {
@@ -366,11 +312,14 @@
               }
             }
           }
+          .icon-chevron-down {
+            padding-top: 11px;
+          }
         }
       }
 
       // Secondary (floated right) nav in topbar
-      &.pull-right {
+      &.pull-right { // xxx
         &> li {
           border-left: 1px solid darken(@white, 75%) !important;
           border-right-color: transparent !important;
@@ -409,25 +358,28 @@
               }
             }
           }
-<<<<<<< HEAD
-        }
-      }
-      &:not(.pull-right) {
-        > li.dropdown div.btn-group {
-          padding-right: 8px;
-          a.btn-invisible.btn-link.dropdown-toggle {
-              margin-right: -8px;
+          #notificationDrop {
+          .border-radius(0,2px,0,2px);
+            text-align: center;
+            min-width: 20px;
+            line-height: 19px;
+            &:active {
+              background: none;
+            }
           }
-        }
-=======
           #userActions {
             a {
->>>>>>> SugarOne: copy entire changed less files as is to sugar-specific
 
-        > li.dropdown.home > .btn-group {
-          padding-right: 0;
+            }
+          }
         }
       }
+    }
+
+    // Dropdown toggle caret
+    li.dropdown > .dropdown-toggle .caret,
+    .open.dropdown .caret {
+      border-top-color: @white;
     }
 
     // Active nav items
@@ -463,52 +415,16 @@
     @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
     .box-shadow(@shadow);
   }
-  .profileactions-profile .avatar {
-    position: absolute;
-    left: 11px;
-    top: 2px;
-    height: 20px;
-    width: 20px;
-    .box-shadow(none);
-  }
   form .btn {
     margin-left: -11px;
     line-height: 16px;
   }
   //fix position and size
   .icon-plus.icon-md {
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    left: 1px;
-    top: 1px;
+      line-height: 14px;
   }
-
-  .btn-group:hover > .routeLink {
-    color: @navbarLinkColorActive !important;
-  }
-
-  .btn-group:hover > .btn .caret {
-    border-top-color: @navbarLinkColorActive;
-    border-bottom-color: @navbarLinkColorActive;
-  }
-  .open.dropdown .caret {
-    border-top-color: @white;
-    border-bottom-color: @white;
-  }
-
-  .dropdown .caret {
-    border-top-color: @gray;
-    border-bottom-color: @gray;
-  }
-}
-
-.touch {
-  .navbar-fixed-top, .navbar-fixed-bottom {
-    position: absolute;
-  }
-  #searchForm {
-    position: absolute !important;
+  .icon-plus:before {
+      margin: 3px 0 -2px;
   }
 }
 

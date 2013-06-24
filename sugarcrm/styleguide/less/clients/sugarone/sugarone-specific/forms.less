@@ -139,6 +139,18 @@ input[type=radio] {
   display: none;
 }
 
+.acomment div.reply,
+.acomment input.reply,  {
+  min-height: 18px;
+  margin: 0;
+  padding: 6px 8px;
+  border: 1px solid darken(@grayLighter, 5%);
+  background-color: @white;
+  .placeholder {
+    color: @grayLight;
+  }
+}
+
 .input-append {
   position: relative;
   display: inline-block;
@@ -151,6 +163,8 @@ input[type=radio] {
     margin-left: -26px;
     position: relative;
     font-size: @baseFontSize;
+    right: 2px;
+    top: 4px;
   }
   span {
     font-size: @baseFontSize;
@@ -161,7 +175,8 @@ input[type=radio] {
   &.radio {
     padding-left: 0;
     .add-on {
-      background: transparent !important;
+      top: 5px;
+      background:transparent !important;
       border: none;
     }
   }
@@ -190,11 +205,11 @@ input[type=radio] {
   }
   input{
     .border-radius(@inputBorderRadius);
-    /* The size is defined in twitter-bootstrap/forms.less */
-    padding: 4px 6px;
+    width: 100%;
+    padding-right: 0;
   }
   .ui-timepicker-list {
-    font-size: @baseFontSize;
+    font-size: 12px;
     li {
       color: lighten(@gray, 20%);
     }
@@ -208,17 +223,11 @@ input[type=radio] {
 
 .welcome {
   position: absolute;
-  width: 100%;
-  .control-group {
-    &:not(:first-child) {
-      margin: 13px 0 !important;
-    }
-  }
+  left: 50%;
 }
 .thumbnail.signup,
 .thumbnail.login {
-  width: 240px;
-  margin: 0 auto;
+  left: -50%;
   padding: 20px;
   margin-top: 4px;
   .box-shadow(~"inset 0 -1px 10px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.8), 0 2px 1px rgba(0,0,0,.1)");
@@ -237,22 +246,6 @@ input[type=radio] {
   text-align: right;
   margin-right: 12px;
 }
-.modal .brand,
-.thumbnail .brand {
-  background: url('@{baseUrl}/img/sugar-red.png') 50% 50% no-repeat;
-  text-indent: -7000px;
-  margin: 0 auto;
-  width: 220px;
-  height: 42px;
-}
-
-.welcome {
-  .control-group {
-    &:not(:first-child) {
-      margin: 13px 0 !important;
-    }
-  }
-}
 
 .control-group {
   margin-bottom: 0;
@@ -267,7 +260,6 @@ input[type=radio] {
   }
   label {
     padding: 0 1em 0 0;
-    cursor: default;
     .rtlPadding(@direction,0 0 0 1em);
     display: inline-block;
     float: none;
@@ -438,19 +430,13 @@ input[type=radio] {
     border-bottom: 1px solid lighten(@grayLight,14%);
     height: auto;
   }
-  .card2 .control-group.single .control-label .control-label-background {
-    height: 0;
-    border-radius: 3px;
-    border-top: 1px solid lighten(@grayLight,14%);
-    border-bottom: 1px solid lighten(@grayLight,14%);
-  }
 
   div.control-label {
     padding-top: 0;
     .control-label-background {
       height: 100%;
       position: absolute;
-      padding: 4px 0 12px;
+      padding: 7px 0 12px;
       text-align: right;
       border-left: 1px solid lighten(@grayLight,14%);
       border-right: 1px solid lighten(@grayLight,14%);
@@ -459,7 +445,7 @@ input[type=radio] {
     }
     label {
       color: lighten(@gray,20%);
-      font-size: @fontSizeSmall;
+      font-size: 11px;
       margin-bottom: 0;
     }
   }
@@ -471,7 +457,7 @@ input[type=radio] {
 
 .help-block {
   font-weight: normal;
-  font-size: @baseFontSize;
+  font-size: 12px;
 }
 .form-actions {
   border: none;
@@ -560,7 +546,7 @@ input[type=radio] {
   position: absolute;
   height: 10px;
   line-height: 10px;
-  font-size: @fontSizeMini;
+  font-size: 10px;
   display: inline-block;
   width: 100%;
   color: white;
@@ -570,7 +556,7 @@ input[type=radio] {
   position: absolute;
   bottom: -3px;
   left: -3px;
-  font-size: @fontSizeMini;
+  font-size: 10px;
   background-color: black;
   display: inline-block;
   border: 3px solid black;
@@ -668,11 +654,6 @@ input[type="color"],
   //margin-bottom: 10px;
   //tbs default is 9px but that is through off the alignment of addons so setting to 0px
   margin-bottom: 0;
-}
-
-
-input.required {
-  border: 1px solid lighten(@gray, 25%);
 }
 
 //??legacy??
