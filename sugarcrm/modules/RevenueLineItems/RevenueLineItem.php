@@ -243,6 +243,14 @@ class RevenueLineItem extends SugarBean
             // if $opp is not set, load it up
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
         }
+
+        /**
+         * If the loaded ID does not match what was on the product, just ignore it.
+         */
+        if ($opp->id != $this->opportunity_id) {
+            return;
+        }
+
         // get the closed won and closed lost values
         $closed_won = $settings['sales_stage_won'];
         $closed_lost = $settings['sales_stage_lost'];
