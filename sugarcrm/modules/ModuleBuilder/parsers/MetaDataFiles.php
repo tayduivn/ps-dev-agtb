@@ -91,8 +91,7 @@ class MetaDataFiles
         MB_WIRELESSBASICSEARCH => MB_WIRELESS,
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW => MB_PORTAL,
-        MB_PORTALDETAILVIEW => MB_PORTAL,
+        MB_PORTALRECORDVIEW => MB_PORTAL,
         MB_PORTALLISTVIEW => MB_PORTAL,
         MB_PORTALSEARCHVIEW => MB_PORTAL,
         //END SUGARCRM flav=ent ONLY
@@ -117,6 +116,7 @@ class MetaDataFiles
         MB_EDITVIEW               => 'editviewdefs' ,
         MB_DETAILVIEW             => 'detailviewdefs' ,
         MB_QUICKCREATE            => 'quickcreatedefs',
+        MB_RECORDVIEW             => 'record',
         //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSEDITVIEW       => 'edit' ,
         MB_WIRELESSDETAILVIEW     => 'detail' ,
@@ -125,8 +125,7 @@ class MetaDataFiles
         MB_WIRELESSADVANCEDSEARCH => 'search' ,
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW         => 'edit',
-        MB_PORTALDETAILVIEW       => 'detail',
+        MB_PORTALRECORDVIEW       => 'record',
         MB_PORTALLISTVIEW         => 'list',
         MB_PORTALSEARCHVIEW       => 'search',
         //END SUGARCRM flav=ent ONLY
@@ -143,14 +142,14 @@ class MetaDataFiles
         MB_EDITVIEW    => 'EditView' ,
         MB_DETAILVIEW  => 'DetailView' ,
         MB_QUICKCREATE => 'QuickCreate',
+        MB_RECORDVIEW  => array('base', 'view', 'record'),
 
         //BEGIN SUGARCRM flav=pro ONLY
         MB_WIRELESSEDITVIEW => array('mobile','view','edit'),
         MB_WIRELESSDETAILVIEW => array('mobile','view','detail'),
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        MB_PORTALEDITVIEW => array('portal','view','edit'),
-        MB_PORTALDETAILVIEW => array('portal','view','detail'),
+        MB_PORTALRECORDVIEW => array('portal','view','record'),
         //END SUGARCRM flav=ent ONLY
 
     );
@@ -516,10 +515,10 @@ class MetaDataFiles
      * Gets a metadata directory for a given module and path (custom, history, etc)
      *
      * @static
-     * @param  string      $module    The name of the module to get metadata for
-     * @param  string      $path      The path to the metadata (base path, custom path, working path, history path)
-     * @param  string      $client    The client making this request
-     * @param  string      $component Layout or view
+     * @param string $module The name of the module to get metadata for
+     * @param string $path The path to the metadata (base path, custom path, working path, history path)
+     * @param string $client The client making this request
+     * @param string $component Layout or view
      * @return null|string Null if the request is invalid, path if it is good
      */
     public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION)
@@ -539,9 +538,9 @@ class MetaDataFiles
      * Gets a metadata directory path for a module from its SugarObject template type
      *
      * @static
-     * @param  string $module    The name of the module to get metadata for
-     * @param  string $client    The client making this request
-     * @param  string $component Layout or view
+     * @param string $module The name of the module to get metadata for
+     * @param string $client The client making this request
+     * @param string $component Layout or view
      * @return string
      */
     public static function getSugarObjectFileDir($module, $client = '', $component = self::COMPONENTVIEW)
@@ -564,9 +563,9 @@ class MetaDataFiles
      * replacing variables with correct values based on the module
      *
      * @static
-     * @param  SugarBean|string $module Either a been or a string name of a module
-     * @param  array            $defs   The defs associated with this module
-     * @return array            Cleaned up metadata
+     * @param SugarBean|string $module Either a been or a string name of a module
+     * @param array $defs The defs associated with this module
+     * @return array Cleaned up metadata
      */
     public static function getModuleMetaDataDefsWithReplacements($module, $defs)
     {
@@ -589,8 +588,8 @@ class MetaDataFiles
      *
      * @TODO Consider making a MetaDataUtils class and adding this to that class
      * @static
-     * @param  array $source       The input array to work replacements on
-     * @param  array $replacements An array of replacements as $find => $replace pairs
+     * @param array $source The input array to work replacements on
+     * @param array $replacements An array of replacements as $find => $replace pairs
      * @return array $source array with $replacements applied to them
      */
     public static function recursiveVariableReplace($source, $replacements)
@@ -631,8 +630,7 @@ class MetaDataFiles
         $map = array(
             //BEGIN SUGARCRM flav=ent ONLY
             "portal" => array(
-                'edit' => MB_PORTALEDITVIEW,
-                'detail' => MB_PORTALDETAILVIEW,
+                'record' => MB_PORTALRECORDVIEW,
                 'search' => MB_PORTALSEARCHVIEW,
                 'list' => MB_PORTALLISTVIEW
             ),

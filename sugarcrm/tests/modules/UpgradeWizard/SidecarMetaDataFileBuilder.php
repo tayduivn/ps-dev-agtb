@@ -61,18 +61,8 @@ class SidecarMetaDataFileBuilder {
         ),
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        array(
-            'module'      => 'Cases', 'view' => 'edit', 'type' => 'portal', 
-            'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesportaledit.php',
-            'legacypath'  => 'custom/working/portal/modules/Cases/metadata/editviewdefs.php', 
-            'sidecarpath' => 'custom/working/modules/Cases/clients/portal/views/edit/edit.php',
-        ),
-        array(
-            'module'      => 'Cases', 'view' => 'detail', 'type' => 'portal', 
-            'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesportaldetail.php',
-            'legacypath'  => 'custom/portal/modules/Cases/metadata/detailviewdefs.php_1341122961', 
-            'sidecarpath' => 'custom/history/modules/Cases/clients/portal/views/detail/detail.php_1341122961',
-        ),
+        // TODO Change these to a record view when record upgrades are developed
+        /*
         array(
             'module'      => 'Bugs', 'view' => 'list', 'type' => 'portal', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsportallist.php',
@@ -85,6 +75,7 @@ class SidecarMetaDataFileBuilder {
             'legacypath'  => 'custom/portal/modules/Bugs/metadata/searchformdefs.php', 
             'sidecarpath' => 'custom/modules/Bugs/clients/portal/views/search/search.php',
         ),
+        */
         //END SUGARCRM flav=ent ONLY
     );
 

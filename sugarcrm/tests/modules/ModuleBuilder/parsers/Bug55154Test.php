@@ -193,10 +193,10 @@ class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
     //END SUGARCRM flav=pro ONLY
     
     //BEGIN SUGARCRM flav=ent ONLY
-    public function testPortalDetailView()
+    public function testPortalRecordView()
     {
         // SidecarGridLayoutMetaDataParser
-        $parser = ParserFactory::getParser(MB_PORTALDETAILVIEW, $this->testModule, null, null, MB_PORTAL);
+        $parser = ParserFactory::getParser(MB_PORTALRECORDVIEW, $this->testModule, null, null, MB_PORTAL);
         
         // Currently rendered fields
         $layout = $parser->getLayout();

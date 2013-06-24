@@ -157,6 +157,7 @@ class ModuleBuilderController extends SugarController
                 case MB_EDITVIEW :
                 case MB_DETAILVIEW :
                 case MB_QUICKCREATE :
+                case MB_RECORDVIEW :
                     //BEGIN SUGARCRM flav=pro ONLY
                 case MB_WIRELESSEDITVIEW :
                 case MB_WIRELESSDETAILVIEW :
@@ -985,8 +986,7 @@ class ModuleBuilderController extends SugarController
         }
 
         switch ($view) {
-            case 'edit' :
-            case 'detail' :
+            case 'record' :
                 $this->view = 'portallayoutView';
                 break;
             case 'list' :
