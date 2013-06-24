@@ -80,9 +80,9 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
             panels: [
                 {
                     fields: [
-                        {type: 'html'},
+                        {name: 'foo', type: 'blah', readonly: true, required: false},
                         {name: 'bar', type: 'blah'},
-                        {type: 'html'}
+                        {name: 'baz', readonly: true, required: false}
                     ]
                 }
             ]
