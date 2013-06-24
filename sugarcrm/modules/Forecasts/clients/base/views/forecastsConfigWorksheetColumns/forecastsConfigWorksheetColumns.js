@@ -71,6 +71,8 @@
 
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS', 'Forecasts');
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
+        this.allOptions = [];
+        this.selectedOptions = [];
 
         var cfgFields = app.metadata.getModule('Forecasts', 'config').worksheet_columns,
             index = 0;
@@ -194,7 +196,7 @@
      *
      * @param {Object} fieldObj
      */
-    removeOption: function( fieldObj) {
+    removeOption: function(fieldObj) {
         this.allOptions = _.without(this.allOptions, fieldObj);
         this.selectedOptions = _.without(this.selectedOptions, fieldObj);
     },
@@ -258,6 +260,8 @@
     _dispose: function() {
         // remove event listener from select2
         this.wkstColumnsSelect2.off();
+        this.wkstColumnsSelect2.select2('destroy');
+        this.wkstColumnsSelect2 = null;
         app.view.Component.prototype._dispose.call(this);
     }
 })

@@ -73,6 +73,9 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.titleViewNameTitle = app.lang.get('LBL_FORECASTS_CONFIG_TITLE_SCENARIOS', 'Forecasts');
+        this.selectedOptions = [];
+        this.defaultOption = {};
+        this.scenarioOptions = [];
 
         // set up scenarioOptions
         _.each(options.meta.panels[0].fields, function(field) {
@@ -255,7 +258,12 @@
      */
     _dispose: function() {
         // remove event listener from select2
+        this.defaultSelect2.off();
+        this.defaultSelect2.select2('destroy');
+        this.defaultSelect2 = null;
         this.optionsSelect2.off();
+        this.optionsSelect2.select2('destroy');
+        this.optionsSelect2 = null;
         app.view.Component.prototype._dispose.call(this);
     }
 })
