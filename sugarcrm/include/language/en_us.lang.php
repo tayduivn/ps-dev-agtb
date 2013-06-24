@@ -1853,7 +1853,7 @@ $app_list_strings = array (
   ),
     //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
-        'forecast' => 'Included In Forecast',
+        'forecast' => 'In Forecast',
         'sales_stage' => 'Sales Stage',
         'probability' => 'Probability'
     ),
