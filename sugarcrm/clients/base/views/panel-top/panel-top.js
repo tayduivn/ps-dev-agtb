@@ -8,8 +8,7 @@
     className: "subpanel-header",
     events: {
         "click": "togglePanel",
-        "click a[name=create_button]:not('.disabled')": "createRelatedRecord",
-        "click a[name=select_button]:not('.disabled')": "openSelectDrawer"
+        "click a[name=create_button]:not('.disabled')": "createRelatedRecord"
     },
 
     /**
@@ -39,47 +38,6 @@
     _toggleSubpanel: function() {
         var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
         this.layout.trigger("hide", !currentlyVisible);
-    },
-
-    /**
-     * Event handler for the select button that opens a link selection dialog in a drawer for linking
-     * an existing record
-     */
-    openSelectDrawer: function() {
-        var parentModel = this.context.parent.get("model"),
-            linkModule = this.context.get("module"),
-            link = this.context.get("link"),
-            self = this;
-
-        app.drawer.open({
-            layout: 'link-selection',
-            context: {
-                module: linkModule
-            }
-        }, function(model) {
-            if(!model) {
-                return;
-            }
-            var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
-                options = {
-                    //Show alerts for this request
-                    showAlerts: true,
-                    relate: true,
-                    success: function(model) {
-                        self.context.resetLoadFlag();
-                        self.context.set('skipFetch', false);
-                        self.context.loadData();
-                    },
-                    error: function(error) {
-                        app.alert.show('server-error', {
-                            level: 'error',
-                            messages: 'ERR_GENERIC_SERVER_ERROR',
-                            autoClose: false
-                        });
-                    }
-                };
-            relatedModel.save(null, options);
-        });
     },
 
     /**

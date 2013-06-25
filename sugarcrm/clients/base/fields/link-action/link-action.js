@@ -26,26 +26,69 @@
  ********************************************************************************/
 ({
     /**
-     * Unlink row action used in Subpanels.
-     * Triggers 'list:unlinkrow:fire' event on context on click.
+     * Link action used in Subpanels.
      *
-     * @class View.Fields.UnlinkActionField
-     * @alias SUGAR.App.view.fields.UnlinkActionField
+     * @class View.Fields.LinkActionField
+     * @alias SUGAR.App.view.fields.LinkActionField
      * @extends View.Fields.RowactionField
      */
     extendsFrom: 'RowactionField',
+    events: {
+        "click a[name=select_button]:not('.disabled')": "openSelectDrawer"
+    },
     /**
      * @param options
      * @override
      */
     initialize: function(options) {
-        options.def.event =  options.def.event || 'list:unlinkrow:fire';  // default event
-        options.def.acl_action =  options.def.acl_action || 'delete';  // default ACL
+        options.def.acl_action =  options.def.acl_action || 'view';  // default ACL
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
         this.type = 'rowaction';
     },
     /**
-     * We cannot unlink one-to-many relationships where the relationship is a required field.
+     * Event handler for the select button that opens a link selection dialog in a drawer for linking
+     * an existing record
+     */
+    openSelectDrawer: function() {
+        var parentModel = this.context.get("parentModel"),
+            linkModule = this.context.get("module"),
+            link = this.context.get("link"),
+            self = this;
+
+        app.drawer.open({
+            layout: 'link-selection',
+            context: {
+                module: linkModule
+            }
+        }, function(model) {
+            if(!model) {
+                return;
+            }
+            var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
+                options = {
+                    //Show alerts for this request
+                    showAlerts: true,
+                    relate: true,
+                    success: function(model) {
+                        self.context.resetLoadFlag();
+                        self.context.set('skipFetch', false);
+                        self.context.loadData();
+                    },
+                    error: function(error) {
+                        app.alert.show('server-error', {
+                            level: 'error',
+                            messages: 'ERR_GENERIC_SERVER_ERROR',
+                            autoClose: false
+                        });
+                    }
+                };
+            relatedModel.save(null, options);
+        });
+    },
+    /**
+     * A side effect of linking an existing record is that in the process,
+     * we could be deleting an existing required relationship.
+     *
      * Returns false if relationship is required otherwise calls parent for additional ACL checks
      * @return {Boolean} true if allow access, false otherwise
      * @override

@@ -48,10 +48,9 @@ $viewdefs['base']['view']['panel-top'] = array(
                     'acl_action' => 'create',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'link-action',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'view',
                 ),
             ),
         ),

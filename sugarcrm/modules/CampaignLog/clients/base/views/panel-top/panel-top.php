@@ -18,28 +18,5 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
             'css_class' => 'btn-invisible',
             'icon' => 'icon-chevron-down',
         ),
-        array(
-            'type' => 'actiondropdown',
-            'name' => 'panel_dropdown',
-            'css_class' => 'pull-right',
-            'buttons' => array(
-                array(
-                    'type' => 'rowaction',
-                    'icon' => 'icon-plus',
-                    'name' => 'create_button',
-                    'label' => ' ',
-                    'acl_action' => 'create',
-                    'css_class' => 'disabled',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'name' => 'select_button',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'icon' => 'icon-pencil',
-                    'acl_action' => 'view',
-                    'css_class' => 'disabled',
-                ),
-            ),
-        ),
     ),
 );
