@@ -75,7 +75,7 @@
     filterCollection: function() {
         this.collection.remove(_.filter(this.collection.models, function(model){
             return !app.acl.hasAccessToModel("view", model);
-        }, this));
+        }, this), { silent: true });
     },
 
     _renderHtml: function(){
@@ -183,6 +183,17 @@
                 return;
             }
             this.model.set(this.sourceModel.attributes);
+        }, this);
+        // Close preview when model destroy
+        this.listenTo(this.sourceModel, 'destroy', function(model) {
+            if (model && this.model && (this.model.get("id") == model.get("id"))) {
+                // Remove the decoration of the highlighted row
+                app.events.trigger("list:preview:decorate", false);
+                // Close the preview panel
+                app.events.trigger('preview:close');
+                return;
+            }
+
         }, this);
     },
     /**
@@ -310,6 +321,15 @@
     bindDataChange: function() {
         if(this.collection) {
             this.collection.on("reset", this.filterCollection, this);
+            // when remove active model from collection then close preview
+            this.collection.on("remove", function(model) {
+                if (model && this.model && (this.model.get("id") == model.get("id"))) {
+                    // Remove the decoration of the highlighted row
+                    app.events.trigger("list:preview:decorate", false);
+                    // Close the preview panel
+                    app.events.trigger('preview:close');
+                }
+            }, this);
         }
     }
 })
