@@ -47,6 +47,19 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected $maxSpan = 12;
 
     protected $defaultColumns = 2;
+    
+    /**
+     * Array of named panels for record views. If a panel does not have a label
+     * but does have a name and the name is an index of this array, the corresponding
+     * label will be used. If a panel has a label the label will be used.
+     * 
+     * @var array
+     */
+    protected $panelLabels = array(
+        'panel_header' => 'LBL_RECORD_HEADER',
+        'panel_body' => 'LBL_RECORD_BODY',
+        'panel_hidden' => 'LBL_SHOW_MORE',
+    );
         
     /**
      * Checks for the existence of the view variable for portal metadata
@@ -379,7 +392,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
         $internalPanels = array();
         foreach ($panels as $n => $panel) {
-            $pLabel = !empty($panel['label']) ? $panel['label'] : $n;
+            // Handle panel labeling...
+            $pLabel = $n;
+            if (!empty($panel['label'])) {
+                $pLabel = $panel['label'];
+            } elseif (isset($panel['name'])) {
+                if (isset($this->panelLabels[$panel['name']])) {
+                    $pLabel = $this->panelLabels[$panel['name']];
+                }
+            }
             
             // Get panel column value
             $panelColumns = 2;
