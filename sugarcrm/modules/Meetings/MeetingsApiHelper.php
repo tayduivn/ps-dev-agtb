@@ -36,6 +36,10 @@ class MeetingsApiHelper extends SugarBeanApiHelper
         global $db;
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
+        $leadInvitees = array();
+        $contactInvitees = array();
+        $userInvitees = array();
+
         $userInvitees[] = $bean->assigned_user_id;
         if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
             $userInvitees[] = $GLOBALS['current_user']->id;
@@ -52,8 +56,20 @@ class MeetingsApiHelper extends SugarBeanApiHelper
             }
         }
 
+        $leads = $bean->get_linked_beans('leads', 'Lead');
+        foreach($leads AS $lead) {
+            $leadInvitees[] = $lead->id;
+        }
+
+        $contacts = $bean->get_linked_beans('contacts', 'Contact');
+        foreach($contacts AS $contact) {
+            $contactInvitees[] = $contact->id;
+        }
+
         $bean->users_arr = $userInvitees;
-        
+        $bean->leads_arr = $leadInvitees;
+        $bean->contacts_arr = $contactInvitees;
+
         return $data;
     }
 
