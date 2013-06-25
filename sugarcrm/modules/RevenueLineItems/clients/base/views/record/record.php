@@ -393,14 +393,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
-                ),
+                ),                
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
@@ -417,6 +410,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 //END SUGARCRM flav=ent ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
+                ),
             ),
         ),
         array(

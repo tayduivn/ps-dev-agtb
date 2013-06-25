@@ -10,9 +10,17 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 ({
     extendsFrom: 'MassupdateView',
+    
+    /**
+     * {@inheritdoc}
+     */
+    initialize: function(options) {
+        this.plugins = _.clone(this.plugins) || [];
+        this.plugins.push("disable-massdelete");
+        app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'initialize', args: [options]});
+    },
 
     /**
      * {@inheritdoc}
