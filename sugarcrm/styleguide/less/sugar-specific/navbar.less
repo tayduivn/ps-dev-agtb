@@ -64,6 +64,7 @@
   .btn-toolbar {
     margin-top:0;
   }
+
 }
 .search-query {
   .border-radius(4px);
@@ -247,7 +248,6 @@
         // Hover
         &:hover {
           background-color:  lighten(@NavigationBar,20%); // "transparent" is default to differentiate :hover from .active
-          color: lighten(@black,100%);
           text-shadow: 0 -1px 0 rgb(0,0,0);
         }
         &.btn {
@@ -321,12 +321,9 @@
             margin-bottom: 0;
             line-height: 32px;
             .caret {
-              border-top-color: @white;
-              border-bottom-color: @white;
               margin-top: 15px;
             }
             &:hover {
-              color: lighten(@black,100%) !important;
               text-decoration: none;
             }
             &:not(.dropdown-toggle) {
@@ -374,7 +371,7 @@
       }
 
       // Secondary (floated right) nav in topbar
-      &.pull-right { // xxx
+      &.pull-right {
         &> li {
           border-left: 1px solid darken(@white, 75%) !important;
           border-right-color: transparent !important;
@@ -422,12 +419,6 @@
       }
     }
 
-    // Dropdown toggle caret
-    li.dropdown > .dropdown-toggle .caret,
-    .open.dropdown .caret {
-      border-top-color: @white;
-    }
-
     // Active nav items
     .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link,
     .active > a,
@@ -471,6 +462,24 @@
   }
   .icon-plus:before {
       margin: 3px 0 -2px;
+  }
+
+  .btn-group:hover > .routeLink {
+    color: @navbarLinkColorActive !important;
+  }
+
+  .btn-group:hover > .btn .caret {
+    border-top-color: @navbarLinkColorActive;
+    border-bottom-color: @navbarLinkColorActive;
+  }
+  .open.dropdown .caret {
+    border-top-color: @white;
+    border-bottom-color: @white;
+  }
+
+  .dropdown .caret {
+    border-top-color: @gray;
+    border-bottom-color: @gray;
   }
 }
 
