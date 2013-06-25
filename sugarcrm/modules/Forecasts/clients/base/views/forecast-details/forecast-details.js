@@ -184,6 +184,10 @@
      * {@inheritdoc}
      */
     bindDataChange: function() {
+        if(this.meta.config) {
+            return;
+        }
+
         var ctx = this.model,
             module = app.controller.context.get("module");
         if (module == 'Forecasts') {
@@ -208,12 +212,25 @@
         }, this);
     },
 
+    unbindData: function() {
+        var ctx = this.context.parent;
+        if(ctx) {
+            ctx.off(null, null, this);
+        }
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+
     /**
      * Overrides loadData to load from a custom URL
      *
      * @override
      */
     loadData: function(options) {
+        if(this.meta.config) {
+            return;
+        }
+
         if(!_.isEmpty(this.model.get('selectedTimePeriod'))) {
             var url = this.getProjectedURL(),
                 cb = {
