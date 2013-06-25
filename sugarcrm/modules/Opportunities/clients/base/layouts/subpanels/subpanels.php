@@ -5,6 +5,7 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_RLI_SUBPANEL_TITLE',
+            'override_subpanel_list_view' => 'subpanel-for-opportunities',
             'context' => array(
                 'link' => 'revenuelineitems',
             ),
@@ -27,13 +28,6 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-            'context' => array(
-                'link' => 'notes',
-            ),
-        ),
-        array(
-            'layout' => 'subpanel',
             'label' => 'LBL_LEADS_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'leads',
@@ -44,6 +38,13 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
             'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'documents',
+            ),
+        ),
+        array (
+            'layout' => 'subpanel',
+            'label' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
+            'context' => array (
+                'link' => 'contracts',
             ),
         ),
     ),
