@@ -278,12 +278,19 @@ class SubPanel
         $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
         if (!isModuleBWC($panel->parent_bean->module_dir)) {
+            require_once 'include/MetaDataManager/MetaDataConverter.php';
+            $mc = new MetaDataConverter();
             $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
             $layoutDefsName = "viewdefs['{$panel->parent_bean->module_dir}']['base']['layout']['subpanels']['components'][]";
             $layoutDefsExtName = "sidecarsubpanelbaselayout";
             $moduleInstallerMethod = "rebuild_sidecarsubpanelbaselayout";
             $filename = "subpanel-for-{$panel->name}";
             $overrideName = 'override_subpanel_list_view';
+            if($panel->_instance_properties['subpanel_name'] == 'default') {
+                $viewName = 'subpanel-for-' . strtolower($panel->parent_bean->module_dir);
+            } else {
+                $viewName = $mc->fromLegacySubpanelName($panel->_instance_properties['subpanel_name']);
+            }
         }
 
 
@@ -315,7 +322,7 @@ class SubPanel
 
         $overrideValue = array(
             "link" => $panel->name,
-            "view" => $filename,
+            "view" => $viewName,
         );
         $newValue = override_value_to_string($layoutDefsName, $overrideName, $overrideValue);
         mkdir_recursive($layoutPath, true);

@@ -528,22 +528,38 @@ class AbstractRelationships
     {
         $layoutPath = "custom/Extension/modules/{$moduleName}/Ext/clients/{$client}/layouts/subpanels";
 
-        if(!is_dir($layoutPath)) {
+        if (!is_dir($layoutPath)) {
             mkdir($layoutPath, 0777, true);
+        }
+
+        if ($definition['subpanel_name'] !== 'default') {
+            require_once('include/MetaDataManager/MetaDataConverter.php');
+            $mc = new MetaDataConverter();
+            $override_array = array(
+                'link' => strtolower($definition['module']),
+                'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
+            );
         }
 
         $fileName = "{$layoutPath}/{$relationshipName}_{$moduleName}.php";
         $varName = "viewdefs['{$moduleName}']['{$client}']['layout']['subpanels']['components'][]";
-
         $layoutDefs = array(
             'layout' => "subpanel",
             'label' => $definition['title_key'],
-            'context' => array (
+            'context' => array(
                 'link' => $definition['get_subpanel_data'],
             ),
         );
 
         write_array_to_file($varName, $layoutDefs, $fileName);
+
+        if (!empty($override_array)) {
+            write_array_to_file(
+                "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]['override_subpanel_list_view']",
+                $override_array,
+                "{$layoutPath}/_overridesubpanel-for-{$relationshipName}.php"
+            );
+        }
 
         return $fileName;
     }

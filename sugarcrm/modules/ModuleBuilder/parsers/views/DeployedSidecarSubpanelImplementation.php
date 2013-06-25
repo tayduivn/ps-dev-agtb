@@ -26,14 +26,17 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     /**
      * The constructor
      * @param string $linkName
-     * @param string $loadedModule
-     * @param string $client
+     * @param string $loadedModule - Accounts
+     * @param string $client - base
      */
     public function __construct($linkName, $loadedModule, $client = 'base')
     {
         $GLOBALS['log']->debug(get_class($this) . "->__construct($linkName , $loadedModule)");
+
         $this->mdc = new MetaDataConverter();
-        $this->_subpanelName = $subpanelName = 'For' . $loadedModule;
+        $this->loadedModule = $loadedModule;
+        $this->linkName = $linkName;
+        $this->legacySubpanelName = 'For' . $loadedModule;
         // get the link and the related module name as the module we need the subpanel from
         $bean = BeanFactory::getBean($loadedModule);
         $link = new Link2($linkName, $bean);
@@ -41,43 +44,31 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->_moduleName = $moduleName;
         $this->bean = BeanFactory::getBean($moduleName);
         $this->setViewClient($client);
+        $this->setUpSubpanelViewDefFileInfo();
+
+
         if (empty($this->bean)) {
-            throw new Exception("Bean was not provided for {$subpanelName}");
+            throw new Exception("Bean was not provided for {$this->sidecarSubpanelName}");
         }
 
         $this->historyPathname = 'custom/history/modules/' . $moduleName . '/clients/' . $this->getViewClient(
-            ) . '/views/' . $subpanelName . '/' . self::HISTORYFILENAME;
+            ) . '/views/' . $this->sidecarSubpanelName. '/' . self::HISTORYFILENAME;
         $this->_history = new History($this->historyPathname);
 
-        if ($subpanelName != 'default' && !stristr($subpanelName, 'for')) {
-            $subpanelName = 'For' . ucfirst($subpanelName);
-        }
-        $this->sidecarSubpanelName = $this->mdc->fromLegacySubpanelName($subpanelName);
-        $subpanelFile = "modules/{$moduleName}/clients/" . $this->getViewClient(
-            ) . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
-
-        $defaultSubpanelFile = "modules/{$moduleName}/clients/base/views/subpanel-list/subpanel-list.php";
-        $this->loadedSupbanelName = $this->sidecarSubpanelName;
-
-        // using includes because require_once causes an empty array
-        if (file_exists('custom/' . $subpanelFile)) {
-            include 'custom/' . $subpanelFile;
-        } elseif (file_exists($subpanelFile)) {
-            include $subpanelFile;
-        } elseif (file_exists($defaultSubpanelFile)) {
-            include $defaultSubpanelFile;
-            $this->loadedSupbanelName = 'subpanel-list';
-        } else {
-            throw new Exception(sprintf("No file found for subpanel: %s", $subpanelName));
-        }
-
-        $this->sidecarFile = "custom/" . $subpanelFile;
 
         if (file_exists($this->historyPathname)) {
             // load in the subpanelDefOverride from the history file
             $GLOBALS['log']->debug(get_class($this) . ": loading from history");
             require $this->historyPathname;
         }
+
+
+        if (empty($this->loadedSubpanelFileName)) {
+            throw new Exception(sprintf("No valid file for subpanel '%s'", $this->sidecarSubpanelName));
+        }
+
+        @include $this->loadedSubpanelFileName;
+
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array();
         $this->_fielddefs = $this->bean->field_defs;
         $this->_language = '';
@@ -90,9 +81,78 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     }
 
     /**
+     * Sets up the class vars for the file information
+     * @return bool
+     * @throws Exception
+     */
+    protected function setupSubpanelViewDefFileInfo()
+    {
+        $this->sidecarSubpanelName = $this->mdc->fromLegacySubpanelName($this->legacySubpanelName);
+
+        // check if there is an override
+        $layoutFiles = array(
+            "modules/{$this->loadedModule}/clients/" . $this->getViewClient() . "/layouts/subpanels/subpanels.php",
+        );
+        $layoutExtensionName = array(
+            "sidecarsubpanel" . $this->getViewClient() . "layout",
+        );
+
+        if ($this->getViewClient() !== 'base') {
+            $layoutFiles[] = "modules/{$this->loadedModule}/clients/base/layouts/subpanels/subpanels.php";
+            $layoutExtensionName[] = "sidecarsubpanelbaselayout";
+        }
+        foreach ($layoutFiles as $file) {
+            @include $file;
+        }
+        foreach ($layoutExtensionName as $extension) {
+            $file = SugarAutoLoader::loadExtension($extension, $this->_moduleName);
+            if ($file !== false) {
+                @include $file;
+            }
+        }
+
+        if(!empty($viewdefs[$this->loadedModule]['base']['layout']['subpanels']['components'])) {
+
+            $components = $viewdefs[$this->loadedModule]['base']['layout']['subpanels']['components'];
+
+            foreach ($components as $key => $component) {
+                if (empty($component['override_subpanel_list_view'])) {
+                    continue;
+                }
+                if ($component['override_subpanel_list_view']['link'] == $this->linkName) {
+                    $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
+                    $this->loadedSupbanelName = $component['override_subpanel_list_view']['view'];
+                    $this->loadedSubpanelFileName = file_exists("custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php") ? "custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php" : "{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php";
+                    $this->sidecarFile = "custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+                    $this->overrideArrayKey = $key;
+                    return true;
+                }
+            }
+        }
+
+        $subpanelFile = "modules/{$this->_moduleName}/clients/" . $this->getViewClient(
+            ) . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+
+        $defaultSubpanelFile = "modules/{$this->_moduleName}/clients/base/views/subpanel-list/subpanel-list.php";
+        $this->loadedSupbanelName = $this->sidecarSubpanelName;
+
+        // using includes because require_once causes an empty array
+        if (file_exists('custom/' . $subpanelFile)) {
+            $this->loadedSubpanelFileName = 'custom/' . $subpanelFile;
+        } elseif (file_exists($subpanelFile)) {
+            $this->loadedSubpanelFileName = $subpanelFile;
+        } elseif (file_exists($defaultSubpanelFile)) {
+            $this->loadedSubpanelFileName = $defaultSubpanelFile;
+            $this->loadedSupbanelName = 'subpanel-list';
+        } else {
+            throw new Exception(sprintf("No file found for subpanel: %s", $this->loadedSupbanelName));
+        }
+        $this->sidecarFile = "custom/" . $subpanelFile;
+    }
+
+    /**
      * Get the correct viewdefs from the array in the file
      * @param array $viewDefs
-     * @param string $moduleName
      * @return array
      */
     public function getNewViewDefs(array $viewDefs)
@@ -126,6 +186,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
      * Save a definition that will be used to display a subpanel for $this->_moduleName
      * @param array defs Layout definition in the same format as received by the constructor
      */
+
     public function deploy($defs)
     {
         // first sort out the historical record...
@@ -140,7 +201,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         }
 
         // always set the type to subpanel-list for the client
-        if(strpos($this->sidecarSubpanelName, 'subpanel-for-')) {
+        if (strpos($this->sidecarSubpanelName, 'subpanel-for-')) {
             $this->_viewdefs['type'] = 'subpanel-list';
         }
 
@@ -149,6 +210,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->_viewdefs,
             $this->sidecarFile
         );
+
+
     }
 
 }
