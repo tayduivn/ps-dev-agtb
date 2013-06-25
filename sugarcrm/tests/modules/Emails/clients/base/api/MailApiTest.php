@@ -115,7 +115,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "status" => "foo",
         );
 
-        $this->setExpectedException("SugarApiExceptionRequestMethodFailure");
+        $this->setExpectedException("SugarApiExceptionInvalidParameter");
         $this->mailApi->createMail($this->api, $args);
     }
 
