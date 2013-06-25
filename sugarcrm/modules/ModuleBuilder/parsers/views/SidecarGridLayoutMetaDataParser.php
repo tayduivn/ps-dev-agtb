@@ -533,7 +533,16 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // Get the panel label
         $nestedDefs = $this->getNestedDefs($originalDefs, $this->_view);
         $panelKey = key($nestedDefs['panels']);
-        $label = isset($nestedDefs['panels'][$panelKey]['label']) ? $nestedDefs['panels'][$panelKey]['label'] : $panelKey;
+        
+        // Handle labels the same way that the converter does
+        $label = $panelKey;
+        if (isset($nestedDefs['panels'][$panelKey]['label'])) {
+            $label = $nestedDefs['panels'][$panelKey]['label'];
+        } elseif (isset($nestedDefs['panels'][$panelKey]['name'])) {
+            if (isset($this->panelLabels[$nestedDefs['panels'][$panelKey]['name']])) {
+                $label = $this->panelLabels[$nestedDefs['panels'][$panelKey]['name']];
+            }
+        }
         
         // Loop and find
         if (isset($this->_viewdefs['panels'][$label]) && is_array($this->_viewdefs['panels'][$label])) {
