@@ -2504,7 +2504,7 @@ class InboundEmail extends SugarBean {
 			$GLOBALS['log']->debug($l.': I-E testing string: '.$serviceTest);
 
 			// open the connection and try the test string
-			$this->conn = imap_open($serviceTest, $login, $passw);
+			$this->conn = $this->getImapConnection($serviceTest, $login, $passw);
 
 			if(($errors = imap_last_error()) || ($alerts = imap_alerts())) {
 				if($errors == 'Too many login failures' || $errors == '[CLOSED] IMAP connection broken (server response)') { // login failure means don't bother trying the rest
@@ -4798,12 +4798,12 @@ eoq;
 
 		// final test
 		if(!is_resource($this->conn) && !$test) {
-			$this->conn = imap_open($connectString, $this->email_user, $this->email_password, CL_EXPUNGE);
+			$this->conn = $this->getImapConnection($connectString, $this->email_user, $this->email_password, CL_EXPUNGE);
 		}
 
 		if($test) {
 			if ($opts == false && !is_resource($this->conn)) {
-				$this->conn = imap_open($connectString, $this->email_user, $this->email_password, CL_EXPUNGE);
+				$this->conn = $this->getImapConnection($connectString, $this->email_user, $this->email_password, CL_EXPUNGE);
 			}
 			$errors = '';
 			$alerts = '';
@@ -4891,6 +4891,44 @@ eoq;
 		}
 	}
 
+    /**
+     * Attempt to create an IMAP connection using passed in parameters
+     * return either the connection resource or false if unable to connect
+     *
+     * @param  string  $mailbox  Mailbox to be used to create imap connection
+     * @param  string  $username The user name
+     * @param  string  $password The password associated with the username
+     * @param  integer $options  Bitmask for options parameter to the imap_open function
+     *
+     * @return resource|boolean  Connection resource on success, FALSE on failure
+     */
+    protected function getImapConnection($mailbox, $username, $password, $options = 0)
+    {
+        // if php is prior to 5.3.2, then return call without disable parameters as they are not supported yet
+        if (version_compare(phpversion(), '5.3.2', '<')) {
+            return imap_open($mailbox, $username, $password, $options);
+        }
+
+        $connection = null;
+        $authenticators = array('', 'GSSAPI', 'NTLM');
+
+        while (!$connection && ($authenticator = array_shift($authenticators)) !== null) {
+            if ($authenticator) {
+                $params = array(
+                    'DISABLE_AUTHENTICATOR' => $authenticator,
+                );
+            } else {
+                $params = array();
+            }
+
+            $connection = imap_open($mailbox, $username, $password, $options, 0, $params);
+        }
+
+        return $connection;
+    }
+
+
+    
 	/**
 	 * retrieves an array of I-E beans based on the group_id
 	 * @param	string	$groupId	GUID of the group user or Individual
