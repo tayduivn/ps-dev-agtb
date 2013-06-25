@@ -3685,6 +3685,7 @@ $app_strings = array (
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_NO_ACCESS' => '(No Access)',
+    'LBL_NO_ACCESS_LOWER' => 'no access',
     'LBL_NO_FIELD_ACCESS' => 'No access',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Link Existing Record',
@@ -3995,6 +3996,7 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
+    'LBL_COMMENT' => 'Comment',
 
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',

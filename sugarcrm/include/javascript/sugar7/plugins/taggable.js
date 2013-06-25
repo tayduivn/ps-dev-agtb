@@ -4,8 +4,8 @@
             events: {
                 'keyup .taggable': 'getEntities',
                 'blur .taggable': 'hideTypeahead',
-                'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
-                'click ul.typeahead.activitystream-tag-dropdown li': 'addTag'
+                'mouseover ul.activitystream-tag-dropdown li': 'switchActiveTypeahead',
+                'click ul.activitystream-tag-dropdown li': 'addTag'
             },
 
             _possibleLeaders: ['@', '#'],
@@ -51,9 +51,11 @@
                     text = el.text(),
                     leader = this._getLeader(text),
                     list,
-                    word;
+                    word,
+                    searchParams,
+                    parentModel;
 
-                el.parent().find('ul.typeahead.activitystream-tag-dropdown').remove();
+                el.parent().find('ul.activitystream-tag-dropdown').remove();
 
                 word = this._getTerm(leader, text);
 
@@ -93,7 +95,8 @@
                                     module: el.get('_module'),
                                     id: el.get('id'),
                                     name: el.get('name'),
-                                    htmlName: htmlName
+                                    htmlName: htmlName,
+                                    noAccess: (el.get('has_access') === false) //only if false, undefined does not mean no access
                                 },
                                 i = $(this._tplTagList(data)).data(data);
 
@@ -108,37 +111,42 @@
                         var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
                         ul.append(i);
                         self._taggingTimeout = setTimeout(function() {
-                            self.$("ul.typeahead.activitystream-tag-dropdown").remove();
+                            self.$("ul.activitystream-tag-dropdown").remove();
                         }, 1500);
                     }
 
                     ulParent.append(ul);
                 };
 
-                var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
+                var ul = $("<ul/>").addClass('dropdown-menu activitystream-tag-dropdown');
                 var blankItem = this._tplTagList({});
                 var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
 
-                ul.css({
-                    top: el.position().top + el.height(),
-                    left: el.position().left
-                });
+                ul.css('top', el.outerHeight());
 
                 if (word) {
                     ul.html(defaultItem).appendTo(el.parent()).show();
 
+                    searchParams = {q: word, limit: 8};
                     switch (leader) {
                         case '#':
-                            app.api.search({q: word, limit: 8}, {success: function(response) {
+                            app.api.search(searchParams, {success: function(response) {
                                 var coll = app.data.createMixedBeanCollection(response.records);
                                 callback.call(self, coll);
                             }});
                             break;
                         case '@':
+                            searchParams.module_list = "Users";
+                            parentModel = this._getParentModel('record', this.context);
+                            if (parentModel) {
+                                searchParams.has_access_module = parentModel.get('_module');
+                                searchParams.has_access_record = parentModel.get('id');
+                            }
+
                             // We cannot use the filter API here as we need to
                             // support users typing in full names, which are not
                             // stored in the database as fields.
-                            app.api.search({q: word, module_list: "Users", limit: 8}, {success: function(response) {
+                            app.api.search(searchParams, {success: function(response) {
                                 var coll = app.data.createBeanCollection("Users", response.records);
                                 callback.call(self, coll);
                             }});
@@ -147,8 +155,28 @@
                 }
             }, 250),
 
+            /**
+             * Traverse up the context hierarchy and look for given layout, retrieve the model from the layout's context
+             *
+             * @param layoutName to look for up the context hierarchy
+             * @param context start of context hierarchy
+             * @returns {*}
+             * @private
+             */
+            _getParentModel: function(layoutName, context) {
+                if (context) {
+                    if (context.get('layout') === layoutName) {
+                        return context.get('model');
+                    } else {
+                        return this._getParentModel(layoutName, context.parent);
+                    }
+                } else {
+                    return null;
+                }
+            },
+
             getEntities: function(event) {
-                var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown"),
+                var dropdown = this.$("ul.activitystream-tag-dropdown"),
                     currentTarget = this.$(event.currentTarget);
                 // Coerce integer to a boolean.
                 var dropdownOpen = !!(dropdown.length);
@@ -163,21 +191,11 @@
                     }
                     // Up arrow.
                     if (event.keyCode == 38) {
-                        var prev = active.prev();
-                        if (!prev.length) {
-                            prev = dropdown.find('li').last();
-                        }
-                        active.removeClass('active');
-                        prev.addClass('active');
+                        this.selectNextDropdownOption(active, false);
                     }
                     // Down arrow.
                     if (event.keyCode == 40) {
-                        var next = active.next();
-                        if (!next.length) {
-                            next = dropdown.find('li').first();
-                        }
-                        active.removeClass('active');
-                        next.addClass('active');
+                        this.selectNextDropdownOption(active, true);
                     }
                 }
 
@@ -194,16 +212,45 @@
                 }
             },
 
+            /**
+             * Given the currently selected option, select the next option, whether it is
+             * by going down or up.
+             *
+             * @param {jQuery DOM} $current
+             * @param {boolean} down
+             */
+            selectNextDropdownOption: function($current, down) {
+                var next = down ? $current.next() : $current.prev();
+
+                if (next.length > 0) {
+                    $current.removeClass('active');
+
+                    if (next.hasClass('disabled')) {
+                        this.selectNextDropdownOption(next, down);
+                    } else {
+                        next.addClass('active');
+                    }
+                }
+            },
+
             hideTypeahead: function() {
                 var self = this;
                 setTimeout(function() {
-                    self.$("ul.typeahead.activitystream-tag-dropdown").remove();
+                    self.$("ul.activitystream-tag-dropdown").remove();
                 }, 150);
             },
 
+            /**
+             * Make the dropdown option the currently selected option on hover.
+             * @param event
+             */
             switchActiveTypeahead: function(event) {
-                this.$("ul.typeahead.activitystream-tag-dropdown .active").removeClass('active');
-                this.$(event.currentTarget).addClass('active');
+                var currentTarget = this.$(event.currentTarget);
+
+                if (!currentTarget.hasClass('disabled')) {
+                    this.$("ul.activitystream-tag-dropdown .active").removeClass('active');
+                    currentTarget.addClass('active');
+                }
             },
 
             addTag: function(event) {
@@ -213,7 +260,9 @@
                     lastIndex = this._lastLeaderPosition(body.html()),
                     data = el.data();
 
-                if (el.hasClass('placeholder')) return;
+                if (el.hasClass('placeholder') || el.hasClass('disabled')) {
+                    return;
+                }
 
                 var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
                 tag.data("id", data.id).data("module", data.module).data("name", data.name);
@@ -309,7 +358,7 @@
                 component._tplTag = Handlebars.templates['p.taggable.tag'];
 
                 if (!_.has(Handlebars.templates, "p.taggable.taglist")) {
-                    tplTagList = '<li><a>{{#if htmlName}}<div class="label label-module-mini label-{{module}} pull-left" rel="tooltip" data-title="{{parent_type}}">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}</a></li>';
+                    tplTagList = '<li{{#if noAccess}} class="disabled"{{/if}}>{{#if htmlName}}<a><div class="label label-module-mini label-{{module}} pull-left">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}{{#if noAccess}}<div class="pull-right">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>';
                     Handlebars.templates['p.taggable.taglist'] = Handlebars.compile(tplTagList);
                 }
                 component._tplTagList = Handlebars.templates['p.taggable.taglist'];

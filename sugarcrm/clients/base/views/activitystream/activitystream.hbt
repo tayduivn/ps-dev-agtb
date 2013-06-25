@@ -24,11 +24,11 @@
         <a href="#Users/{{model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
     </date>
 </p>
-<ul class="commented">
+<ul class="comments">
 {{#if model.attributes.comment_count}}
     {{#each model.attributes.comments.models}}
     {{#with attributes}}
-    <li>
+    <li class="comment">
          <a href="#Users/{{created_by}}" id="avatar-comment-{{id}}" class="pull-left avatar">
         {{#if picture_url}}
             <img src="{{picture_url}}" alt="{{created_by_name}}">
@@ -45,7 +45,7 @@
     {{/with}}
     {{/each}}
     {{#if remaining_comments}}
-    <li>
+    <li class="comment">
         <a class="more">
             {{str more_tpl "Activities" remaining_comments}}
         </a>
@@ -53,22 +53,20 @@
     {{/if}}
 {{/if}}
     {{#unless readonly}}
-        <li class="acomment hide">
-            <div class="control-group form-horizontal">
-                <div class="controls controls-two btn-fit">
-                    <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true"></div>
-                    <input type="submit" class="btn btn-primary reply-btn" value="{{str "LBL_EMAIL_REPLY"}}">
-                </div>
+        <li class="comment reply-area hide">
+            <div class="reply-input">
+                <div data-placeholder="{{str "LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER"}}" class="reply taggable" contenteditable="true"></div>
+                <button class="btn btn-primary reply-btn">{{str "LBL_EMAIL_REPLY"}}</button>
             </div>
         </li>
     {{/unless}}
 </ul>
 {{#unless readonly}}
     <div class="actions btn-group">
-        <a class="btn btn-mini comment" rel="tooltip" data-title="Comment">
+        <a class="btn btn-mini comment-btn" rel="tooltip" data-title="{{str 'LBL_COMMENT'}}">
             <i class="icon-comment"></i>
         </a>
-        <a class="btn btn-mini preview" rel="tooltip" data-title="Preview" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
+        <a class="btn btn-mini preview-btn" rel="tooltip" data-title="{{str 'LBL_PREVIEW'}}" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
             <i class="icon-eye-open"></i>
         </a>
     </div>

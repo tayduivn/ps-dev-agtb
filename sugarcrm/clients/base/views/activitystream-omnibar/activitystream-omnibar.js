@@ -7,7 +7,7 @@
         'input div[data-placeholder]': 'checkPlaceholder'
     },
 
-    className: "row omnibar activitystream-post",
+    className: "omnibar",
 
     plugins: ['dragdrop_attachments', 'taggable'],
 

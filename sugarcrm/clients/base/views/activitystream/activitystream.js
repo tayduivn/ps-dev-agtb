@@ -7,8 +7,8 @@
         'click .reply': 'showAddComment',
         'click .reply-btn': 'addComment',
         'click .deleteRecord': 'deleteRecord',
-        'click .preview': 'previewRecord',
-        'click .comment': 'toggleReplyBar',
+        'click .preview-btn': 'previewRecord',
+        'click .comment-btn': 'toggleReplyBar',
         'click .more': 'fetchComments',
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
@@ -233,7 +233,7 @@
         this.processAvatars();
 
         // Save state of the reply bar before rendering
-        var isReplyBarOpen = this.$(".comment").hasClass("active") && this.$(".comment").is(":visible"),
+        var isReplyBarOpen = this.$(".comment-btn").hasClass("active") && this.$(".comment-btn").is(":visible"),
             replyVal = this.$(".reply").html();
 
         app.view.View.prototype._renderHtml.call(this);
@@ -331,8 +331,8 @@
     },
 
     toggleReplyBar: function() {
-        this.$(".comment").toggleClass("active");
-        this.$(".acomment").toggleClass("hide");
+        this.$(".comment-btn").toggleClass("active");
+        this.$(".reply-area").toggleClass("hide");
     },
 
     showTooltip: function(e) {
