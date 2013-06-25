@@ -13,6 +13,7 @@ describe("Emails.fields.compose-actionbar", function() {
     });
 
     afterEach(function() {
+        field.dispose();
         app.cache.cutAll();
         app.view.reset();
         field = null;

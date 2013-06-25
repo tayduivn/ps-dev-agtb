@@ -70,6 +70,18 @@
             platform: client
         });
 
+
+        var _origDispose = field._dispose;
+        field._dispose = function() {
+            if(this.context) {
+                SugarTest._events.context.push(this.context._events);
+            }
+            if(this.model) {
+                SugarTest._events.model.push(this.model._events);
+            }
+            _origDispose.apply(this, arguments);
+        };
+
         SugarTest.components.push(view);
         return field;
     };
@@ -100,6 +112,17 @@
             platform: client
         });
 
+        var _origDispose = view._dispose;
+        view._dispose = function() {
+            if(this.context) {
+                SugarTest._events.context.push(this.context._events);
+            }
+            if(this.model) {
+                SugarTest._events.model.push(this.model._events);
+            }
+            _origDispose.apply(this, arguments);
+        };
+
         SugarTest.components.push(view);
         return view;
     };
@@ -126,6 +149,16 @@
             meta: meta,
             platform: client
         }, params));
+        var _origDispose = layout._dispose;
+        layout._dispose = function() {
+            if(this.context) {
+                SugarTest._events.context.push(this.context._events);
+            }
+            if(this.model) {
+                SugarTest._events.model.push(this.model._events);
+            }
+            _origDispose.apply(this, arguments);
+        };
         SugarTest.components.push(layout);
         return layout;
     };
