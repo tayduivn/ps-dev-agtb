@@ -1749,6 +1749,19 @@ $app_list_strings = array (
     'next_year' => 'Next Year',
     'between' => 'Is Between',
   ),
+    'date_range_operator_dom' =>
+    array(
+        'last_year' => 'Last Year',
+        'last_month' => 'Last Month',
+        'last_30_days' => 'Last 30 Days',
+        'last_7_days' => 'Last 7 Days',
+        'this_month' => 'This Month',
+        'this_year' => 'This Year',
+        'next_7_days' => 'Next 7 Days',
+        'next_30_days' => 'Next 30 Days',
+        'next_month' => 'Next Month',
+        'next_year' => 'Next Year',
+    ),
   'numeric_range_search_dom' =>
   array(
     '=' => 'Equals',
@@ -1826,16 +1839,20 @@ $app_list_strings = array (
             '$between' => 'is between',
         ),
         'date' => array(
-            '$lt' => 'before',
-            '$gt' => 'after',
-        ),
-        'datetime' => array(
-            '$lt' => 'before',
-            '$gt' => 'after'
-        ),
-        'datetimecombo' => array(
-            '$lt' => 'before',
-            '$gt' => 'after'
+            '$starts' => 'is equal to',
+            '$lte' => 'before',
+            '$gte' => 'after',
+            'last_7_days' => 'last 7 days',
+            'next_7_days' => 'next 7 days',
+            'last_30_days' => 'last 30 days',
+            'next_30_days' => 'next 30 days',
+            'last_month' => 'last month',
+            'this_month' => 'this month',
+            'next_month' => 'next month',
+            'last_year' => 'last year',
+            'this_year' => 'this year',
+            'next_year' => 'next year',
+            '$dateBetween' => 'is between',
         ),
         'bool' => array(
             '$equals' => 'is'
