@@ -193,10 +193,6 @@ $mod_strings = array (
     'LBL_CURRENCY_RATE' => 'Currency Rate',
     'LBL_BASE_RATE' => 'Base Rate',
 
-    'LBL_INCLUDED_BEST_TOTALS'=>'Best Included Totals',
-    'LBL_INCLUDED_LIKELY_TOTALS'=>'Likely Included Totals',
-    'LBL_INCLUDED_WORST_TOTALS'=>'Worst Included Totals',
-
     'LBL_QUOTA' => 'Quota',
 
     'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
