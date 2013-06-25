@@ -45,6 +45,12 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
  */
 class MetaDataManager 
 {
+    /**
+     * SugarFieldHandler, to assist with cleansing default sugar field values
+     *
+     * @var SugarFieldHandler
+     */
+    protected $sfh;
 
     /**
      * The user bean for the logged in user
@@ -446,7 +452,7 @@ class MetaDataManager
                 // get the field names
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-                $fieldsAcl = $this->metaDataHacks->fixAcls($fieldsAcl);
+
                 foreach ($fieldsAcl as $field => $fieldAcl) {
                     switch ($fieldAcl['acl']) {
                         case SugarACL::ACL_READ_WRITE:
