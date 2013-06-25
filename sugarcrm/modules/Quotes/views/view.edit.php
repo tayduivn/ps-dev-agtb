@@ -199,6 +199,9 @@ class QuotesViewEdit extends ViewEdit
         $this->ss->assign("CURRENCY", $selectCurrency);
 		$this->ss->assign('CURRENCY_JAVASCRIPT', $currency->getJavascript());
 
+        if($this->bean->fetched_row['date_quote_expected_closed'] == '1970-01-01') {
+            $this->bean->date_quote_expected_closed = '';
+        }
 
 		$add_row = array();
 		if (!empty($this->bean->id))

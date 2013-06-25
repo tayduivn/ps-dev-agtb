@@ -45,17 +45,6 @@
             }, this
         );
     },
-
-    initButtons: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initButtons'});
-
-        // if the model has a quote_id and it's not empty, disable the convert_to_quote_button
-        if (this.model.has('quote_id') && !_.isEmpty(this.model.get('quote_id'))
-            && !_.isUndefined(this.buttons['convert_to_quote_button'])) {
-            this.buttons['convert_to_quote_button'].setDisabled(true);
-        }
-    },
-
     /**
      * Bind to model to make it so that it will re-render once it has loaded.
      */
@@ -91,36 +80,6 @@
             }
             this.model.trigger("change:" + currencyField);
         }, this);
-    },
-
-    convertToQuote: function(e) {
-        var alert = app.alert.show('info_quote', {
-            level: 'info',
-            autoClose: false,
-            closeable: false,
-            title: app.lang.get("LBL_CONVERT_TO_QUOTE_INFO", this.module) + ":",
-            messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_INFO_MESSAGE", this.module)]
-        });
-        // remove the close since we don't want this to be closable
-        alert.$el.find('a.close').remove();
-
-        var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id });
-        var callbacks = {
-            'success': _.bind(function(resp, status, xhr) {
-                app.alert.dismiss('info_quote');
-                window.location.hash = "#bwc/index.php?module=Quotes&action=EditView&record=" + resp.id;
-            }, this),
-            'error': _.bind(function(resp, status, xhr) {
-                app.alert.dismiss('info_quote');
-                app.alert.show('error_xhr', {
-                    level: 'error',
-                    autoClose: true,
-                    title: app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR", this.module) + ":",
-                    messages: [app.lang.get("LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE", this.module)]
-                });
-            }, this)
-        };
-        app.api.call("create", url, null, callbacks);
     },
 
     /**
