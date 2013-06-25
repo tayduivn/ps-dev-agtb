@@ -30,7 +30,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs["Emails"]["base"]["view"]["compose-addressbook-recipientscontainer"] = array(
-    "use_template"   => "record",
     "panels" => array(
         array(
             "name"         => "selected_recipients",

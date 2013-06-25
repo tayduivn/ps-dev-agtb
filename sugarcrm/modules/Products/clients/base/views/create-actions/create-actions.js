@@ -18,6 +18,7 @@
         //reinitialize array on each init
         this.currencyFields = [];
         app.view.invokeParent(this, {type: 'view', name: 'create', method: 'initialize', args: [options]});
+        this.template = app.template.getView('record');
         this._setupCommitStageField(options.meta.panels);
 
         //pull the fields in the panels that are editable currency fields

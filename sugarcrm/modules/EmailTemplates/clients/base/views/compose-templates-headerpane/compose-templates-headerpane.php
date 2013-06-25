@@ -29,7 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs["EmailTemplates"]["base"]["view"]["compose-templates-headerpane"] = array(
-    "use_template"    => "headerpane",
     "title"   => "LBL_LIST_FORM_TITLE",
     "buttons" => array(
         array(

@@ -13,7 +13,6 @@
  */
 
 $viewdefs['Opportunities']['base']['view']['create-actions'] = array(
-    'use_template'    => 'record',
     'buttons' => array(
         array(
             'name'      => 'cancel_button',

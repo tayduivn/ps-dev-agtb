@@ -37,6 +37,7 @@
     initialize: function(options) {
         _.bindAll(this);
         app.view.invokeParent(this, {type: 'view', name: 'selection-list', method: 'initialize', args: [options]});
+        this.template = app.template.getView('list');
 
         // treat the DataManager.sync override like a before_sync callback in order to add additional options to the
         // call

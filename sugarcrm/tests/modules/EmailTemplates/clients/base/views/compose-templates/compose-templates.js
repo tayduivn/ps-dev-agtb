@@ -15,7 +15,7 @@ describe("EmailTemplates.View.ComposeTemplates", function() {
         SugarTest.testMetadata.init();
         filterDef = [{"$or":[{"type":{"$is_null":""}},{"type":{"$equals":""}},{"type":{"$equals":"email"}}]}];
         listMeta = {
-            "use_template": "list",
+            "template": "list",
             "filterDef" : filterDef,
             "panels":[
                 {

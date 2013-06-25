@@ -13,7 +13,7 @@
  */
 
 $viewdefs['base']['view']['dupecheck-list-multiselect'] = array(
-    'use_template' => 'list',
+    'template' => 'list',
     'selection' => array(
         'type' => 'multi',
         'label' => 'LBL_LINK_SELECT'

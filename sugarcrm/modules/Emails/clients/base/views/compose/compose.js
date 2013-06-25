@@ -9,6 +9,7 @@
     initialize: function(options) {
         _.bindAll(this);
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
+        this.template = app.template.getView('record');
         this.events = _.extend({}, this.events, {
             'click .cc-option': 'showSenderOptionField',
             'click .bcc-option': 'showSenderOptionField',

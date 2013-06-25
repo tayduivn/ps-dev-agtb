@@ -13,7 +13,7 @@
  */
 
 $viewdefs['base']['view']['dupecheck-list-edit'] = array(
-    'use_template' => 'list',
+    'template' => 'list',
     'rowactions' => array(
         'label' => 'LBL_LISTVIEW_ACTIONS',
         'actions' => array(

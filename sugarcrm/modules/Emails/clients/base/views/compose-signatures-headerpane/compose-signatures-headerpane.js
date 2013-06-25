@@ -27,6 +27,11 @@
 ({
     extendsFrom: "HeaderpaneView",
 
+    initialize: function(options) {
+        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args: [options]});
+        this.template = app.template.getView('headerpane');
+    },
+
     events: {
         "click [name=cancel_button]": "_cancel"
     },
