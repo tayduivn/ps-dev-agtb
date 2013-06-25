@@ -1,6 +1,6 @@
 ({
     plugins: ['error-decoration'],
-
+    fallbackFieldTemplate: 'edit',
     /**
      * Login form view.
      * @class View.Views.LoginView
@@ -57,7 +57,6 @@
         options.context.prepare(true);
 
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = "edit";
     },
 
     /**

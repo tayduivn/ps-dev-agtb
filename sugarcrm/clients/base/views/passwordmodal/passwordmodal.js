@@ -26,9 +26,9 @@
  ********************************************************************************/
 ({
     extendsFrom:'BaseeditmodalView',
+    fallbackFieldTemplate: 'edit',
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = "edit";
         if (this.layout) {
             this.layout.on("app:view:password:editmodal", function() {
                 this.model = this.context.get('model');

@@ -26,6 +26,7 @@
  ********************************************************************************/
 ({
     plugins: ['ellipsis_inline'],
+    fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:
      *  - preview:open                  indicate we must show the preview panel
@@ -47,7 +48,6 @@
     hiddenPanelExists: false,
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = "detail";
         app.events.on("preview:render", this._renderPreview, this);
         app.events.on("preview:collection:change", this.updateCollection, this);
         app.events.on("preview:close", this.closePreview,  this);
