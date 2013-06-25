@@ -27,6 +27,7 @@ class SugarApiException extends Exception
     public $messageLabel = 'EXCEPTION_UNKNOWN_EXCEPTION';
     public $msgArgs = null;
     protected $moduleName = null;
+    
     /**
      * Extra data attached to the exception
      * @var array
@@ -230,19 +231,14 @@ class SugarApiExceptionEditConflict extends SugarApiException
     public $errorLabel = 'edit_conflict';
     public $messageLabel = 'EXCEPTION_EDIT_CONFLICT';
 }
-/**
- * Thrown when server metadata does not match client's metadata and the request can not
- * be processed because of it.
- */
-class SugarApiExceptionMetadataConflict extends SugarApiException
+
+class SugarApiExceptionInvalidHash extends SugarApiException
 {
     public $httpCode = 412;
-    public $errorLabel = 'metadata_conflict';
-    public $messageLabel = 'EXCEPTION_METADATA_CONFLICT';
+    public $errorLabel = 'metadata_out_of_date';
+    public $messageLabel = 'EXCEPTION_METADATA_OUT_OF_DATE';
 }
-/**
- * Request size exceeds server limits.
- */
+
 class SugarApiExceptionRequestTooLarge extends SugarApiException
 {
     public $httpCode = 413;
@@ -272,7 +268,7 @@ class SugarApiExceptionInvalidParameter extends SugarApiException
  */
 class SugarApiExceptionRequestMethodFailure extends SugarApiException
 {
-    public $httpCode = 422;
+    public $httpCode = 424;
     public $errorLabel = 'request_failure';
     public $messageLabel = 'EXCEPTION_REQUEST_FAILURE';
 }

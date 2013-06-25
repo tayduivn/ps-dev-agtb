@@ -189,7 +189,7 @@ class MailApi extends ModuleApi
                 );
             }
 
-            throw new SugarApiExceptionRequestMethodFailure("Invalid Status Property");
+            throw new SugarApiExceptionInvalidParameter("Invalid Status Property");
         }
 
         if (!isset($result['SUCCESS']) || !($result['SUCCESS'])) {

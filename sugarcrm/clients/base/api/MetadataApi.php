@@ -22,11 +22,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/api/SugarApi.php';
-require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi
 {
+    /**
+     * @return array
+     */
     public function registerApiRest()
     {
         return array(
@@ -38,6 +40,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getAllMetadataPost' => array(
                 'reqType' => 'POST',
@@ -47,6 +50,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return all metadata for the system, filtered by the array of hashes sent to the server',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getAllMetadataHashes' => array(
                 'reqType' => 'GET',
@@ -55,6 +59,7 @@ class MetadataApi extends SugarApi
                 'method' => 'getAllMetadataHash',
                 'shortHelp' => 'This method will return the hash of all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
+                'ignoreMetaHash' => true,
             ),
             'getPublicMetadata' =>  array(
                 'reqType' => 'GET',
@@ -65,6 +70,7 @@ class MetadataApi extends SugarApi
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noLoginRequired' => true,
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getLanguage' => array(
                 'reqType' => 'GET',
@@ -76,6 +82,7 @@ class MetadataApi extends SugarApi
                 'noLoginRequired' => true,
                 'rawReply' => true,
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
             'getPublicLanguage' => array(
                 'reqType' => 'GET',
@@ -87,6 +94,7 @@ class MetadataApi extends SugarApi
                 'noLoginRequired' => true,
                 'rawReply' => true,
                 'noEtag' => true,
+                'ignoreMetaHash' => true,
             ),
         );
     }
@@ -244,7 +252,7 @@ class MetadataApi extends SugarApi
 
         if ( empty($data) ) {
             // since this is a public metadata call pass true to the meta data manager to only get public/
-            $mm = $this->getMetadataManager( TRUE );
+            $mm = $this->getMetadataManager( true );
 
             // Start collecting data
             $data = array();
@@ -259,7 +267,7 @@ class MetadataApi extends SugarApi
             $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);
             $data["_hash"] = md5(serialize($data));
 
-            $this->putMetadataCache($data, $this->platforms[0], TRUE);
+            $this->putMetadataCache($data, $this->platforms[0], true);
 
         }
         if (empty($hash) || $hash != $data['_hash']) {
@@ -350,7 +358,9 @@ class MetadataApi extends SugarApi
                             $controller = trim(trim($controller), ",;");
                             $controller = $this->insertHeaderComment($controller, $mdType, $name, $platform);
 
-                            if ( !isset($platControllers[$platform]) ) { $platControllers[$platform] = array(); }
+                            if ( !isset($platControllers[$platform]) ) {
+                                $platControllers[$platform] = array();
+                            }
                             $platControllers[$platform][] = "\"$name\": {\"controller\": ".$controller." }";
 
                         }
@@ -437,12 +447,12 @@ class MetadataApi extends SugarApi
 
     /*
      * Filters the results for Public and Private Metadata
-     * @param array $args            the Arguments from the Rest Request
-     * @param array $data            the data to be filtered
-     * @param bool  $onlyHash        check to return only hashes
-     * @param array $baseChunks      the chunks we want filtered
+     * @param array $args the Arguments from the Rest Request
+     * @param array $data the data to be filtered
+     * @param bool  $onlyHash check to return only hashes
+     * @param array $baseChunks the chunks we want filtered
      * @param array $perModuleChunks the module chunks we want filtered
-     * @param array $moduleFilter    the specific modules we want
+     * @param array $moduleFilter the specific modules we want
      */
 
     protected function filterResults($args, $data, $onlyHash = false, $baseChunks = array(), $perModuleChunks = array(), $moduleFilter = array())
@@ -550,7 +560,7 @@ class MetadataApi extends SugarApi
      * Fills in additional app list strings data as needed by the client
      *
      * @param  array $public Public app list strings
-     * @param  array $main   Core app list strings
+     * @param  array $main Core app list strings
      * @return array
      */
     protected function fillInAppListStrings(Array $public, Array $main)
@@ -663,7 +673,7 @@ class MetadataApi extends SugarApi
     /**
      * Given a platform and language, returns the language JSON contents.
      * @param ServiceBase $api
-     * @param array       $args
+     * @param array $args
      */
     public function getLanguage(ServiceBase $api, array $args, $public = false)
     {

@@ -26,7 +26,15 @@ require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 require_once('include/api/RestResponse.php');
 require_once('include/api/RestRequest.php');
 
-class RestService extends ServiceBase {
+
+/** @noinspection PhpInconsistentReturnPointsInspection */
+/** @noinspection PhpInconsistentReturnPointsInspection */
+class RestService extends ServiceBase
+{
+    /**
+     * X-Header containging the clients metadata hash
+     */
+    const HEADER_META_HASH = "X_METADATA_HASH";
 
     public $user;
     /**
@@ -102,7 +110,7 @@ class RestService extends ServiceBase {
             $this->request = $this->getRequest();
             $this->request_headers = $this->request->request_headers;
 
-            if($this->min_version > $this->request->version || $this->max_version < $this->request->version) {
+            if ($this->min_version > $this->request->version || $this->max_version < $this->request->version) {
                 throw new SugarApiExceptionIncorrectVersion("Please change your url to reflect version between {$this->min_version} and {$this->max_version}");
             }
 
@@ -112,7 +120,7 @@ class RestService extends ServiceBase {
             $loginException = $authenticateUser['exception'];
 
             // Figure out the platform
-            if ( $isLoggedIn ) {
+            if ($isLoggedIn) {
                 if ( isset($_SESSION['platform']) ) {
                     $this->platform = $_SESSION['platform'];
                 }
@@ -130,7 +138,7 @@ class RestService extends ServiceBase {
 
             $route = $this->findRoute($this->request);
 
-            if ( $route == false ) {
+            if ($route == false) {
                 throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$this->request->rawPath);
             }
 
@@ -139,19 +147,35 @@ class RestService extends ServiceBase {
             // Get it back in case hook changed it
             $route = $this->request->getRoute();
 
+            // Get the request args early for use in current user api
+            $argArray = $this->getRequestArgs($route);
 
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
-                if ( !$isLoggedIn ) {
-                    if(!$loginException) {
+                if (!$isLoggedIn) {
+                    if (!$loginException) {
                         // @TODO Localize exception strings
                         throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
                     } else {
                         throw $loginException;
                     }
+                } else if (empty($route['ignoreMetaHash'])){
+                    // If we are logged in, but the meta hash sent doesn't match whats in cache
+                    // return an error to force a resync so that the new metadata gets picked up.
+                    $mm = new MetaDataManager($this->user, $this->platform);
+                    if ((isset($this->request_headers[self::HEADER_META_HASH]) &&
+                        !$mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform))
+                        || $mm->hasUserMetadataChanged($this->user)
+                    ) {
+                        // Unset the user hash
+                        $mm->unsetUserMetadataHasChanged($this->user);
+
+                        // Mismatch in hashes... Return error so the cleint will resync its metadata and try again.
+                        throw new SugarApiExceptionInvalidHash();
+                    }
                 }
             }
 
-            if ( $isLoggedIn ) {
+            if ($isLoggedIn) {
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
             } else {
@@ -165,18 +189,19 @@ class RestService extends ServiceBase {
             $pathVars = $this->request->getPathVars($route);
 
             $getVars = array();
-            if ( !empty($_GET)) {
+            if (!empty($_GET)) {
                 // This has some get arguments, let's parse those in
                 $getVars = $_GET;
-                if ( !empty($route['jsonParams']) ) {
-                    foreach ( $route['jsonParams'] as $fieldName ) {
-                        if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
-                             &&  isset($_GET[$fieldName]{0})
-                             && ( $_GET[$fieldName]{0} == '{'
-                                   || $_GET[$fieldName]{0} == '[' )) {
+                if (!empty($route['jsonParams'])) {
+                    foreach ($route['jsonParams'] as $fieldName) {
+                        if (isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
+                            && isset($_GET[$fieldName]{0})
+                            && ($_GET[$fieldName]{0} == '{'
+                                || $_GET[$fieldName]{0} == '[')
+                        ) {
                             // This may be JSON data
-                            $jsonData = @json_decode($_GET[$fieldName],true,32);
-                            if ( $jsonData == null ) {
+                            $jsonData = @json_decode($_GET[$fieldName], true, 32);
+                            if ($jsonData == null) {
                                 // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
                                 continue;
                             }
@@ -188,27 +213,29 @@ class RestService extends ServiceBase {
             }
 
             $postVars = array();
-            if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            if (isset($route['rawPostContents']) && $route['rawPostContents']) {
                 // This route wants the raw post contents
                 // We just ignore it here, the function itself has to know how to deal with the raw post contents
                 // this will mostly be used for binary file uploads.
-            } else if ( !empty($_POST) ) {
-                // They have normal post arguments
-                $postVars = $_POST;
             } else {
-                $postContents = null;
-                if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
-                    $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+                if (!empty($_POST)) {
+                    // They have normal post arguments
+                    $postVars = $_POST;
                 } else {
-                    $postContents = file_get_contents('php://input');
-                }
-                if ( !empty($postContents) ) {
-                    // This looks like the post contents are JSON
-                    // Note: If we want to support rest based XML, we will need to change this
-                    $postVars = @json_decode($postContents,true,32);
-                    if ( !is_array($postVars) ) {
-                        // FIXME: Handle improperly encoded JSON
-                        $postVars = array();
+                    $postContents = null;
+                    if (!empty($GLOBALS['HTTP_RAW_POST_DATA'])) {
+                        $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+                    } else {
+                        $postContents = file_get_contents('php://input');
+                    }
+                    if (!empty($postContents)) {
+                        // This looks like the post contents are JSON
+                        // Note: If we want to support rest based XML, we will need to change this
+                        $postVars = @json_decode($postContents, true, 32);
+                        if (!is_array($postVars)) {
+                            // FIXME: Handle improperly encoded JSON
+                            $postVars = array();
+                        }
                     }
                 }
             }
@@ -265,11 +292,12 @@ class RestService extends ServiceBase {
      *                               of path parts or as a string
      * @return string The path to the resource
      */
-    public function getResourceURI($resource) {
-
+    public function getResourceURI($resource)
+    {
         // Empty resources are simply the URI for the current request
         if (empty($resource)) {
-            $siteUrl = SugarConfig::get('site_url');
+            $siteUrl = SugarConfig::getInstance()->get('site_url');
+
             return $siteUrl . (empty($this->request)?$_SERVER['REQUEST_URI']:$this->request->getRequestURI());
         }
 
@@ -290,6 +318,7 @@ class RestService extends ServiceBase {
                 return $req->getResourceURIBase() . implode('/', $resource);
             }
         }
+
         return '';
     }
 
@@ -299,11 +328,12 @@ class RestService extends ServiceBase {
      * This will also be used by the exception handler when dispatching exceptions
      * under the same requested response type conditions.
      *
-     * @param string $message
-     * @param int $code
+     * @param  string $message
+     * @param  int    $code
      * @return array
      */
-    public function getHXRReturnArray($message, $code = 200) {
+    public function getHXRReturnArray($message, $code = 200)
+    {
         return array(
             'xhr' => array(
                 'code' => $code,
@@ -315,12 +345,14 @@ class RestService extends ServiceBase {
     /**
      * Attempts to find the route for this request, API version and request method
      *
-     * @param RestRequest $req REST request data
+     * @param  RestRequest $req REST request data
      * @return mixed
      */
-    protected function findRoute(RestRequest $req) {
+    protected function findRoute(RestRequest $req)
+    {
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
+
         return $this->dict->lookupRoute($req->path, $req->version, $req->method, $req->platform);
     }
 
@@ -336,7 +368,7 @@ class RestService extends ServiceBase {
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getErrorLabel();
             $message = $exception->getMessage();
-        } else if ( is_a($exception,"OAuth2ServerException") ) {
+        } elseif ( is_a($exception,"OAuth2ServerException") ) {
             //The OAuth2 Server uses a slightly different exception API
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getMessage();
@@ -345,9 +377,6 @@ class RestService extends ServiceBase {
             $httpError = 500;
             $errorLabel = 'unknown_error';
             $message = $exception->getMessage();
-        }
-        if(!empty($exception->extraData)) {
-            $data = $exception->extraData;
         }
         $this->response->setStatus($httpError);
 
@@ -359,6 +388,7 @@ class RestService extends ServiceBase {
                 $this->response->setContent($this->getHXRReturnArray($message, $httpError));
                 $this->response->setType(RestResponse::JSON_HTML, true);
                 $this->response->setStatus(200);
+
                 return;
             }
         }
@@ -370,11 +400,8 @@ class RestService extends ServiceBase {
         $replyData = array(
             'error'=>$errorLabel,
         );
-        if( !empty($message) ) {
+        if ( !empty($message) ) {
             $replyData['error_message'] = $message;
-        }
-        if(!empty($data)) {
-            $replyData = array_merge($replyData, $data);
         }
         $this->response->setContent($replyData);
     }
@@ -382,11 +409,13 @@ class RestService extends ServiceBase {
     /**
      * Handles authentication of the current user
      *
-     * @param string $platform The platform type for this request
-     * @returns bool Was the login successful
+     * @return array containing two properties; bool isLoggedIn:
+     *  Was the login successful, Exception|bool exception
+     * @throws SugarApiExceptionRequestTooLarge
      * @throws SugarApiExceptionNeedLogin
      */
-    protected function authenticateUser() {
+    protected function authenticateUser()
+    {
         $valid = false;
 
         $token = $this->grabToken();
@@ -397,7 +426,7 @@ class RestService extends ServiceBase {
                 $oauthServer->verifyAccessToken($token);
                 if ( isset($_SESSION['authenticated_user_id']) && $_SESSION['unique_key'] == $GLOBALS['sugar_config']['unique_key']) {
                     $GLOBALS['current_user'] = BeanFactory::getBean('Users',$_SESSION['authenticated_user_id']);
-                    if(!empty($GLOBALS['current_user'])) {
+                    if (!empty($GLOBALS['current_user'])) {
                         $valid = true;
                         $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
                     }
@@ -408,7 +437,7 @@ class RestService extends ServiceBase {
             }
         }
 
-        if ( $valid === false ) {
+        if ($valid === false) {
             // In the case of large file uploads that are too big for the request too handle AND
             // the auth token being sent as part of the request body, you will get a no auth error
             // message on uploads. This check is in place specifically for file uploads that are too
@@ -440,6 +469,7 @@ class RestService extends ServiceBase {
             // so we do it here instead of the catch block above
             $_SESSION = array();
             $exception = (isset($e)) ? $e : false;
+
             return array('isLoggedIn' => false, 'exception' => $exception);
         }
 
@@ -471,15 +501,15 @@ class RestService extends ServiceBase {
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
             // Passing a session id claiming to be an oauth token
             $sessionId = $_SERVER['HTTP_OAUTH_TOKEN'];
-        } else if ( isset($_POST['oauth_token']) ) {
+        } elseif ( isset($_POST['oauth_token']) ) {
             $sessionId = $_POST['oauth_token'];
-        } else if ( isset($_GET['oauth_token']) ) {
+        } elseif ( isset($_GET['oauth_token']) ) {
             $sessionId = $_GET['oauth_token'];
-        } else if ( function_exists('apache_request_headers') ) {
+        } elseif ( function_exists('apache_request_headers') ) {
             // Some PHP implementations don't populate custom headers by default
             // So we have to go for a hunt
             $headers = apache_request_headers();
-            foreach ( $headers as $key => $value ) {
+            foreach ($headers as $key => $value) {
                 if ( strtolower($key) == 'oauth_token' ) {
                     $sessionId = $value;
                     break;
@@ -498,7 +528,8 @@ class RestService extends ServiceBase {
      * @access protected
      * @param array $args The request arguments
      */
-    protected function setContentTypeHeader($args) {
+    protected function setContentTypeHeader($args)
+    {
         if (isset($args['format']) && $args['format'] == 'sugar-html-json') {
         } else {
             // @TODO: Handle other response types here
@@ -523,28 +554,30 @@ class RestService extends ServiceBase {
 
     /**
      * Set a response header
-     * @param string $header
-     * @param string $info
+     * @param  string $header
+     * @param  string $info
      * @return bool
      */
     public function setHeader($header, $info)
     {
-        if(empty($this->response)) {
+        if (empty($this->response)) {
            return false;
         }
+
         return $this->response->setHeader($header, $info);
     }
 
     /**
      * Check if the response headers have a header set
-     * @param string $header
+     * @param  string $header
      * @return bool
      */
     public function hasHeader($header)
     {
-        if(empty($this->response)) {
+        if (empty($this->response)) {
             return false;
         }
+
         return $this->response->hasHeader($header);
     }
 
@@ -554,9 +587,10 @@ class RestService extends ServiceBase {
      */
     public function sendHeaders()
     {
-        if(empty($this->response)) {
+        if (empty($this->response)) {
            return false;
         }
+
         return $this->response->sendHeaders();
     }
 
@@ -565,7 +599,8 @@ class RestService extends ServiceBase {
      *
      * @access protected
      */
-    protected function setResourceURIBase() {
+    protected function setResourceURIBase()
+    {
         // Only do this if it hasn't been done already
         if (empty($this->resourceURIBase)) {
             // Default the base part of the request URI
@@ -584,7 +619,7 @@ class RestService extends ServiceBase {
             }
 
             // This is for our URI return value
-            $siteUrl = SugarConfig::get('site_url');
+            $siteUrl = SugarConfig::getInstance()->get('site_url');
 
             // Get the file uri bas
             $this->resourceURIBase = $siteUrl . $apiBase;
@@ -594,15 +629,17 @@ class RestService extends ServiceBase {
     /**
      * Handles the response
      *
-     * @param array|string $output The output to send
-     * @param array $route The route for this request
-     * @param array $args The request arguments
+     * @param array $route  The route for this request
+     * @param array  $args   The request arguments
+     *
+     * @return void
      */
-    protected function respond($route, $args) {
+    protected function respond($route, $args)
+    {
         if (!empty($route['rawReply'])) {
             if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
                 $this->response->generateETagHeader();
-            } elseif($_SERVER['REQUEST_METHOD'] == 'POST') {
+            } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $this->response->setPostHeaders();
             }
         } else {
@@ -616,14 +653,15 @@ class RestService extends ServiceBase {
      * This function generates the necessary cache headers for using ETags with dynamic content. You
      * simply have to generate the ETag, pass it in, and the function handles the rest.
      *
-     * @param string $etag ETag to use for this content.
-     * @return bool Did we have a match?
+     * @param  string $etag ETag to use for this content.
+     * @return bool   Did we have a match?
      */
     public function generateETagHeader($etag)
     {
-        if(empty($this->response)) {
+        if (empty($this->response)) {
            return false;
         }
+
         return $this->response->generateETagHeader($etag);
     }
 
@@ -632,7 +670,7 @@ class RestService extends ServiceBase {
      */
     public function fileResponse($filename)
     {
-        if(empty($this->response)) {
+        if (empty($this->response)) {
            return false;
         }
         $this->response->setType(RestResponse::FILE)->setFilename($filename);
@@ -648,7 +686,74 @@ class RestService extends ServiceBase {
     public function setResponse(RestResponse $resp)
     {
         $this->response = $resp;
+
         return $this;
+    }
+    
+    /**
+     * Gets the full collection of arguments from the request
+     * 
+     * @param  array $route The route description for this request
+     * @return array
+     */
+    protected function getRequestArgs($route)
+    {
+        // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
+        $pathVars = $this->request->getPathVars($route);
+
+        $getVars = array();
+        if ( !empty($_GET)) {
+            // This has some get arguments, let's parse those in
+            $getVars = $_GET;
+            if ( !empty($route['jsonParams']) ) {
+                foreach ( $route['jsonParams'] as $fieldName ) {
+                    if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
+                         &&  isset($_GET[$fieldName]{0})
+                         && ( $_GET[$fieldName]{0} == '{'
+                               || $_GET[$fieldName]{0} == '[' )) {
+                        // This may be JSON data
+                        $jsonData = @json_decode($_GET[$fieldName],true,32);
+                        if ( $jsonData == null ) {
+                            // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
+                            continue;
+                        }
+                        // Need to dig through this array and make sure all of the elements in here are safe
+                        $getVars[$fieldName] = $jsonData;
+                    }
+                }
+            }
+        }
+
+        $postVars = array();
+        if ( isset($route['rawPostContents']) && $route['rawPostContents'] ) {
+            // This route wants the raw post contents
+            // We just ignore it here, the function itself has to know how to deal with the raw post contents
+            // this will mostly be used for binary file uploads.
+        } else if ( !empty($_POST) ) {
+            // They have normal post arguments
+            $postVars = $_POST;
+        } else {
+            $postContents = null;
+            if ( !empty($GLOBALS['HTTP_RAW_POST_DATA']) ) {
+                $postContents = $GLOBALS['HTTP_RAW_POST_DATA'];
+            } else {
+                $postContents = file_get_contents('php://input');
+            }
+            if ( !empty($postContents) ) {
+                // This looks like the post contents are JSON
+                // Note: If we want to support rest based XML, we will need to change this
+                $postVars = @json_decode($postContents,true,32);
+                if ( !is_array($postVars) ) {
+                    // FIXME: Handle improperly encoded JSON
+                    $postVars = array();
+                }
+            }
+        }
+        
+        // I know this looks a little weird, overriding post vars with get vars, but
+        // in the case of REST, get vars are fairly uncommon and pretty explicit, where
+        // the posted document is probably the output of a generated form.
+        return array_merge($postVars,$getVars,$pathVars);
     }
 }
 

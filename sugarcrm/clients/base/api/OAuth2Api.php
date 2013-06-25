@@ -22,8 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 
-class OAuth2Api extends SugarApi {
-    public function registerApiRest() {
+class OAuth2Api extends SugarApi
+{
+    public function registerApiRest()
+    {
         return array(
             'token' => array(
                 'reqType' => 'POST',
@@ -57,7 +59,8 @@ class OAuth2Api extends SugarApi {
         );
     }
 
-    public function token($api, $args) {
+    public function token($api, $args)
+    {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
         ob_start();
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
@@ -67,10 +70,10 @@ class OAuth2Api extends SugarApi {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
             $oauth2Server->grantAccessToken($args);
             // if we're here, the login was OK
-            if(!empty($GLOBALS['current_user'])) {
+            if (!empty($GLOBALS['current_user'])) {
                 $GLOBALS['current_user']->call_custom_logic('after_login');
             }
-        } catch(OAuth2ServerException $e) {
+        } catch (OAuth2ServerException $e) {
             // failed to get token - something went wrong - list as failed login
             // We catch only OAuth2ServerException exceptions since other ones result from the
             // AuthController failing to log in, and the controller would call the hook
@@ -82,9 +85,10 @@ class OAuth2Api extends SugarApi {
         return ob_get_clean();
     }
 
-    public function logout($api, $args) {
+    public function logout($api, $args)
+    {
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
-        if(!empty($api->user)) {
+        if (!empty($api->user)) {
             $api->user->call_custom_logic('before_logout');
         }
 
@@ -98,6 +102,9 @@ class OAuth2Api extends SugarApi {
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
         session_regenerate_id(true);
+
+        // Whack the cookie that was set in BWC mode
+        setcookie(session_name(), session_id(), time() - 3600, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), ini_get('session.cookie_httponly'));
         $GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
 
         return array('success'=>true);
