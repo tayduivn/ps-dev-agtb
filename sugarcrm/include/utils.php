@@ -1258,7 +1258,7 @@ function return_module_language($language, $module, $refresh=false)
     }
 
     // If we are in debug mode for translating, turn on the prefix now!
-    if ($sugar_config['translation_string_prefix']) {
+    if ($sugar_config['translation_string_prefix'] && isset($loaded_mod_strings)) {
         foreach ($loaded_mod_strings as $entry_key=>$entry_value) {
             $loaded_mod_strings[$entry_key] = $language_used.' '.$entry_value;
         }
