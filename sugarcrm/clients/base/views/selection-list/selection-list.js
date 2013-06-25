@@ -25,6 +25,13 @@
         options.meta = options.meta || {};
         options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+        this.initializeEvents();
+    },
+
+    /**
+     * Override to setup events for subclasses
+     */
+    initializeEvents: function () {
         this.context.on("change:selection_model", this._selectAndClose, this);
         this.context.on('selection-list:select', this._selectAndCloseImmediately, this);
     },
