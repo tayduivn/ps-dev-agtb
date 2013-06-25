@@ -14,6 +14,7 @@
  */
 
 $viewdefs['Emails']['base']['layout']['compose-addressbook-list'] = array(
+    "type" => "list",
     'components' =>
     array(
         array(
