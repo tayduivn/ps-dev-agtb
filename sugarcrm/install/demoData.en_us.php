@@ -21459,6 +21459,11 @@ $sugar_demodata['email_seed_data_subjects'] = array(
 	'Introduce all players', 
 );
 $sugar_demodata['email_seed_data_descriptions'] = 'Meeting to discuss project plan and hash out the details of implementation';
+$sugar_demodata['email_seed_data_types'] = array(
+    'inbound',
+    'draft',
+    'out',
+);
 
 //leads
 $sugar_demodata['primary_address_state'] = 'CA';
