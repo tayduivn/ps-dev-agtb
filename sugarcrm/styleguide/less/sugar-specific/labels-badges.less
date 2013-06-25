@@ -52,7 +52,10 @@ a > .label,
 .dropdown-menu .label-module-mini {
   margin: 0 10px 0 0;
 }
-
+.disabled .label-Users {
+  background-color: @grayLight;
+  .box-shadow(0 2px 0 @grayLight);
+}
 .label {
   &-important {background-color: @btnDangerBackground;}
   &-warning {background-color: @orange;}
@@ -80,7 +83,7 @@ a > .label,
   &-Opportunities {background-color: @purple;.box-shadow(0 2px 0 darken(@purple,5%));}
   &-Products {background-color: darken(@purple,10%);.box-shadow(0 2px 0 darken(@purple,15%));}
   &-Prospects {background-color: @pink;.box-shadow(0 2px 0 darken(@pink,5%));}
-  &-ProspectLists {background-color: darken(@pink,10%);.box-shadow(0 2px 0 darken(@pink,15%));}  
+  &-ProspectLists {background-color: darken(@pink,10%);.box-shadow(0 2px 0 darken(@pink,15%));}
   &-Reports {background-color: darken(@orange,10%);.box-shadow(0 2px 0 darken(@orange,15%));}
   &-Quotes {background-color: darken(@purple,20%);.box-shadow(0 2px 0 darken(@purple,25%));}
   &-Users {background-color: @grayDarker;.box-shadow(0 2px 0 darken(@grayDarker,5%));}
