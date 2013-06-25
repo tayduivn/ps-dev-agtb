@@ -134,7 +134,6 @@ $mod_strings = array(
     'LBL_OPPORTUNITY' => 'Opportunity',
     'LBL_REVENUELINEITEM_ID' => 'Revenue Line Item ID:',
     'LBL_REVENUELINEITEM' => 'Revenue Line Item', 
-    'LBL_LIKELY' => 'Final Quoted Line Item Amount',
     'LBL_EXPERT_ID' => 'Product Expert',
     'LBL_FORECAST' => 'Include in Forecast',
     'LBL_CALCULATED_LINE_ITEM_AMOUNT' => 'Calculated Quoted Line Item Amount',

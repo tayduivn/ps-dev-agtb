@@ -259,14 +259,14 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         // figure out the label
         switch ($this->dataset) {
             case "best":
-                $label = $app_strings['LB_BEST'];
+                $label = $app_strings['LBL_BEST'];
                 break;
             case "worst":
-                $label = $app_strings['LB_WORST'];
+                $label = $app_strings['LBL_WORST'];
                 break;
             case 'likely':
             default:
-                $label = $app_strings['LB_LIKELY'];
+                $label = $app_strings['LBL_LIKELY'];
                 break;
         }
 

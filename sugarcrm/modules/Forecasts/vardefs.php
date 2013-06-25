@@ -85,7 +85,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
  'wk_likely_case' =>
   array (
     'name' => 'wk_likely_case',
-    'vname' => 'LB_LIKELY',
+    'vname' => 'LBL_LIKELY',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -93,7 +93,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   'wk_worst_case' =>
   array (
     'name' => 'wk_worst_case',
-    'vname' => 'LB_WORST',
+    'vname' => 'LBL_WORST',
     'type' => 'currency',
     'source'=>'non-db',
     ) ,
@@ -101,7 +101,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   'wk_best_case' =>
   array (
     'name' => 'wk_best_case',
-    'vname' => 'LB_BEST',
+    'vname' => 'LBL_BEST',
     'type' => 'currency',
     'source'=>'non-db',
     ),
@@ -130,7 +130,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   'best_case' =>
   array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_ADJUSTED',
+    'vname' => 'LBL_BEST_ADJUSTED',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -138,7 +138,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   'likely_case' =>
   array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY_ADJUSTED',
+    'vname' => 'LBL_LIKELY_ADJUSTED',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -146,7 +146,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   'worst_case' =>
   array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_ADJUSTED',
+    'vname' => 'LBL_WORST_ADJUSTED',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -211,7 +211,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   'best_case' =>
   array (
     'name' => 'best_case',
-    'vname' => 'LB_BEST_ADJUSTED',
+    'vname' => 'LBL_BEST_ADJUSTED',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -219,7 +219,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   'likely_case' =>
   array (
     'name' => 'likely_case',
-    'vname' => 'LB_LIKELY_ADJUSTED',
+    'vname' => 'LBL_LIKELY_ADJUSTED',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -227,7 +227,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   'worst_case' =>
   array (
     'name' => 'worst_case',
-    'vname' => 'LB_WORST_ADJUSTED',
+    'vname' => 'LBL_WORST_ADJUSTED',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -235,7 +235,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
  'wk_likely_case' =>
   array (
     'name' => 'wk_likely_case',
-    'vname' => 'LB_LIKELY',
+    'vname' => 'LBL_LIKELY',
     'type' => 'currency',
     'source'=>'non-db',
   ),
@@ -243,7 +243,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   'wk_worst_case' =>
   array (
     'name' => 'wk_worst_case',
-    'vname' => 'LB_WORST',
+    'vname' => 'LBL_WORST',
     'type' => 'currency',
     'source'=>'non-db',
     ) ,
@@ -251,7 +251,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   'wk_best_case' =>
   array (
     'name' => 'wk_best_case',
-    'vname' => 'LB_BEST',
+    'vname' => 'LBL_BEST',
     'type' => 'currency',
     'source'=>'non-db',
     ) ,
