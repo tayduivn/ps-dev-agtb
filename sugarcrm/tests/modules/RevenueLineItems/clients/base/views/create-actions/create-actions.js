@@ -56,7 +56,7 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
         };
 
         app = SugarTest.app;
-        SugarTest.seedMetadata(true);
+        SugarTest.seedMetadata(true, './fixtures');
         app.user.setPreference('decimal_precision', 2);
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');

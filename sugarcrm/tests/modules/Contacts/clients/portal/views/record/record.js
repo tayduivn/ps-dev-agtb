@@ -4,7 +4,7 @@ describe("PortalContacts.Views.Record", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.seedMetadata(true);
+        SugarTest.seedMetadata(true, './fixtures');
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('portal', 'view', 'record', 'Contacts');
