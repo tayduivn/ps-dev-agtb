@@ -33,22 +33,6 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
             'editable'          => false
         ),
         array(
-            'id'                => 'messages_for_delete',
-            'name'              => 'Messages for delete',
-            'filter_definition' => array(
-                'activity_type' => 'delete',
-            ),
-            'editable'          => false
-        ),
-        array(
-            'id'                => 'messages_for_undelete',
-            'name'              => 'Messages for undelete',
-            'filter_definition' => array(
-                'activity_type' => 'undelete',
-            ),
-            'editable'          => false
-        ),
-        array(
             'id'                => 'messages_for_link',
             'name'              => 'Messages for link',
             'filter_definition' => array(
