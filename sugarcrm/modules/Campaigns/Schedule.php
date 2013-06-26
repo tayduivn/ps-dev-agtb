@@ -70,7 +70,10 @@ if (!empty($campaign_id)) {
 
 if ($campaign_id && isset($campaign) && $campaign->status == 'Inactive') {
 	$ss = new Sugar_Smarty();
-	$ss->assign('campaignName', $campaign->name);
+
+    $data = array($campaign->name);
+    $ss->assign('campaignInactive', string_format(translate('LBL_CAMPAIGN_INACTIVE_SCHEDULE', 'Campaigns'), $data));
+
 	$ss->display('modules/Campaigns/tpls/campaign-inactive.tpl');
 } else {
 	$focus = BeanFactory::getBean('EmailMarketing');
