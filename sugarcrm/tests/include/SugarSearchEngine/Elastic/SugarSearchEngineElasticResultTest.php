@@ -74,4 +74,12 @@ class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCas
         $this->assertEquals('<span class="highlight">test</span>2 account', $text['name']['text'], 'Incorrect highlighted text');
 
     }
+
+    public function testGetSource()
+    {
+        $source = $this->_elasticResult->getSource();
+        $msg = 'Expected getSource() to return an array, returned ' . var_export($source, true);
+        $this->assertTrue(is_array($source), $msg);
+    }
+
 }

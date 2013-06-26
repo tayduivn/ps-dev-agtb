@@ -28,13 +28,10 @@
  ********************************************************************************/
 
 
-
 require_once 'include/SugarSearchEngine/Elastic/SugarSearchEngineElastic.php';
 
 class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    public $bean;
 
     public function setUp()
     {
@@ -43,6 +40,19 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $this->bean->id = create_guid();
         $this->bean->name = 'Test';
         $this->bean->assigned_user_id = create_guid();
+        
+        if (empty($this->_db)) {
+            $this->_db = DBManagerFactory::getInstance();
+        }
+        
+        $this->account = SugarTestAccountUtilities::createAccount();
+        $this->contact = SugarTestContactUtilities::createContact();
+    }
+    
+    public function tearDown()
+    {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     public function providerQueryStringData()
@@ -72,12 +82,75 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($canAppend, $result, 'Expect different value from canAppendWildcard()');
     }
 
+
     public function testCreateIndexDocument() {
         $stub = new SugarSearchEngineElasticTestStub();
         $document = $stub->createIndexDocument($this->bean);
         $data = $document->getData();
         $this->assertEquals($this->bean->assigned_user_id, $data['doc_owner']);
         
+    }
+    
+    public function searchProvider()
+    {
+        return array(
+            //array(array('moduleFilter' => array('Calls'), 'addSearchBoosts' => true)),
+            //array(array('moduleFilter' => array('Accounts'), 'addSearchBoosts' => true)),
+            array(array('moduleFilter' => array('Contacts'), 'addSearchBoosts' => true)),
+        );
+    }
+    
+    /**
+     * @dataProvider searchProvider
+     */
+    public function testSearch($options)
+    {
+        $stub = new SugarSearchEngineElasticTestStub();
+        $searchTerm = 'sk';
+        $offset = 0;
+        $limit = 20;
+        $searchResult = $stub->search($searchTerm, $offset, $limit, $options);
+        $msg = "search() returned NULL, expected SugarSeachEngineElasticResultSet";
+        $this->assertNotNull($searchResult, $msg);
+    }
+    
+    
+    public function searchFieldOptionsProvider()
+    {
+        return array(
+            array(array('moduleFilter' => array(), 'addSearchBoosts' => true), false),
+            array(array('moduleFilter' => array('Accounts'), 'addSearchBoosts' => true), false),
+            array(array('moduleFilter' => array('Administration'), 'addSearchBoosts' => true), true),
+        );
+    }
+    
+    /** 
+     * @dataProvider searchFieldOptionsProvider
+     */
+    public function testGetSearchFields($options, $emptyListExpected)
+    {
+        $stub = new SugarSearchEngineElasticTestStub();
+        $fields = $stub->getSearchFields($options);
+        $emptyFieldsList = empty($fields);
+        $moduleName = empty($options['moduleFilter']) ? 'no module filter' : $options['moduleFilter'][0];
+        $emptyState = $emptyListExpected ? 'empty' : 'populated';
+        $this->assertEquals($emptyFieldsList, $emptyListExpected, "Expected $emptyState field list for $moduleName.");
+    }
+    
+    
+    public function testGetSearchFieldsBoost()
+    {
+        $stub = new SugarSearchEngineElasticTestStub();
+        $modules = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
+        foreach ($modules as $module) {
+            $options = array('moduleFilter' => array($module), 'addSearchBoosts' => true);
+            $fields = $stub->getSearchFields($options);
+            foreach ($fields as $fieldName) {
+                $boost = substr($fieldName, -2);
+                $boostOK = (preg_match('/\^\d/', $fieldName) === 1);
+                $this->assertTrue($boostOK);
+            }
+        }
     }
 
 
@@ -102,7 +175,39 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $ret = SugarSearchEngineFactory::getInstance('Elastic')->isTypeFtsEnabled($type);
         $this->assertEquals($searchable, $ret, 'field type incorrect searchable definition');
     }
-
+    
+    
+    /**
+     * testForceAsyncIndex()
+     *
+     * Tests if index bean adds a bean to the fts_queue table when the forceAsyncIndex
+     * property is set to true.
+     */
+    public function testForceAsyncIndex()
+    {
+        $stub = new SugarSearchEngineElasticTestStub();
+        $stub->setForceAsyncIndex(true);
+        /*
+        // get an account bean to test with.
+        $accountIDQuery = 'select id from accounts limit 1';
+        $account = $this->_db->getOne($accountIDQuery);
+        $accountBean = BeanFactory::getBean('Accounts', $account['id']);
+        
+        */
+        // find out how many times this account bean is in fts_queue already.
+        $ftsQueueQuery = "select count(bean_id) as total from fts_queue where bean_id = '{$this->account->id}'";
+        //print("query: $ftsQueueQuery");
+        $ftsCountBefore = $this->_db->getOne($ftsQueueQuery);
+        
+        // index the bean.
+        $stub->indexBean($this->account, false);
+        
+        // re-check for presence of bean in fts_queue. Should be incremeted by 1.
+        $ftsCountAfter = $this->_db->getOne($ftsQueueQuery);
+        
+        $msg = "Expected Account bean id {$this->account->id} to be added to fts_queue table";
+        $this->assertEquals($ftsCountBefore['total'], ($ftsCountAfter['total'] - 1), $msg);
+    }
 }
 
 
@@ -112,5 +217,15 @@ class SugarSearchEngineElasticTestStub extends SugarSearchEngineElastic
     public function canAppendWildcard($queryString)
     {
         return parent::canAppendWildcard($queryString);
+    }
+
+    public function getSearchFields($options)
+    {
+        return parent::getSearchFields($options);
+    }
+
+    public function setForceAsyncIndex($state)
+    {
+        $this->forceAsyncIndex = $state;
     }
 }

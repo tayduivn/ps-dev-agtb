@@ -30,7 +30,6 @@
 
 require_once 'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php';
 
-
 class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -88,9 +87,9 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestContactUtilities::removeAllCreatedContacts();
-        $this->_db->query("DELETE FROM {$this->indexer->table_name}");
+        $GLOBALS['db']->query("DELETE FROM {$this->indexer->table_name}");
         $jobQueue = BeanFactory::getBean('SchedulersJobs', null);
-        $this->_db->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
+        $GLOBALS['db']->query("DELETE FROM {$jobQueue->table_name} WHERE name like 'FTSConsumer%' ");
 
         unset($GLOBALS['current_user']);
     }
@@ -151,13 +150,13 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Ensure consumers are cleared out
      */
-    public function testRemoveExistinFTSConsumers()
+    public function testRemoveExistingFTSConsumers()
     {
         $this->indexer->initiateFTSIndexer(array('Accounts'));
         $this->indexer->removeExistingFTSConsumersStub();
 
         $jobBean = BeanFactory::getBean('SchedulersJobs');
-        $query = "SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND deleted = 0";
+        $query = "SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSConsumer%' AND resolution != 'success'";
         $recordExists = $this->_db->getOne($query);
         $this->assertFalse($recordExists, "Unable to clean fts consumers");
     }
@@ -261,6 +260,46 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
         $query = "SELECT bean_id FROM {$this->indexer->table_name} WHERE bean_id='$record_id'";
         return $this->_db->getOne($query);
     }
+    
+    
+    /**
+     * testPopulateIndexQueueForModule()
+     *
+     * Tests to see if the correct number of records are added to fts_queue table.
+     */
+    public function testPopulateIndexQueueForModule()
+    {
+        // select a module
+        $module = 'Accounts';
+        $beanName = BeanFactory::getBeanName($module);
+        // get the number of records for this bean type currently in fts_queue.
+        $countFTS_SQL = "select count(bean_module) as total from fts_queue where bean_module = '$beanName'";
+        $ftsRowBefore = $this->_db->getOne($countFTS_SQL);
+        
+        // get the count of beans of this module.
+        $countBean_SQL = "select count(id) as total from {$this->account->table_name} where deleted = 0";
+        $beanRow = $this->_db->getOne($countBean_SQL);
+        
+        // queue the module
+        $populateResult = $this->indexer->populateIndexQueueForModule($module);
+        
+        // assert that the populateIndexQueueForModule() call returns 1
+        $msg = "Expected populateIndexQueueForModule('$module') to return 1, but returned ";
+        $msg .= var_export($populateResult, true);
+        $this->assertEquals($populateResult, 1, $msg);
+        
+        // get a new count of records in fts_queue for this module.
+        $ftsRowAfter = $this->_db->getOne($countFTS_SQL);
+        
+        // subtract the old total from the new total.
+        $diff = $ftsRowAfter - $ftsRowBefore;
+        
+        // assert that difference is equal to count of beans for this module.
+        $msg = "Expected populateIndexQueueForModule('$module') to add {$beanRow['total']} ";
+        $msg .= "entries to fts_queue, but added $diff.";
+        $this->assertEquals($beanRow['total'], $diff, $msg);
+    }
+    
 }
 
 
