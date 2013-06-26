@@ -32,4 +32,10 @@ $viewdefs['base']['layout']['header'] = array(
             'view' => 'globalsearch',
         ),
     ),
+    'last_state' => array(
+        'id' => 'app-header',
+        'defaults' => array(
+            'last-home' => 'dashboard',
+        ),
+    )
 );

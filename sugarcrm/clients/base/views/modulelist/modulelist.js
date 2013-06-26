@@ -25,35 +25,15 @@
         'click .actionLink' : 'handleMenuEvent',
         "click a[data-route]": "handleRouteEvent"
     },
-    lastHomePage: {
-        dashboard: 'dashboard',
-        activities: 'activities'
-    },
     handleRouteEvent: function (event) {
-        var currentTarget = this.$(event.currentTarget),
-            route = currentTarget.data("route"),
-            lastClickedKey = app.user.lastState.key('last-clicked', this),
-            lastClicked = app.user.lastState.get(lastClickedKey);
+        var currentFragment,
+            currentTarget = this.$(event.currentTarget),
+            route = currentTarget.data("route");
 
         if (route) {
             event.preventDefault();
-
-            // Go to activities if the user clicked on the cube and activities was last clicked.
-            if (currentTarget.hasClass('cube')) {
-                if (lastClicked === this.lastHomePage.activities) {
-                    route = '#' + this.lastHomePage.activities;
-                }
-            }
-
-            // Save which was last clicked. Activities or Dashboard?
-            if ((route.indexOf('#Home') === 0) && (lastClicked !== this.lastHomePage.dashboard)) {
-                app.user.lastState.set(lastClickedKey, this.lastHomePage.dashboard);
-            } else if ((route === ('#' + this.lastHomePage.activities)) && (lastClicked !== this.lastHomePage.activities)) {
-                app.user.lastState.set(lastClickedKey, this.lastHomePage.activities);
-            }
-
-            // Navigate to route or refresh the current page
-            if (("#" + Backbone.history.getFragment()) === route) {
+            currentFragment = Backbone.history.getFragment();
+            if (("#" + currentFragment) === route) {
                 app.router.refresh();
             } else {
                 app.router.navigate(route, {trigger: true});
