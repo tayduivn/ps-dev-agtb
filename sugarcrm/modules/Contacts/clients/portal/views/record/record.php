@@ -57,10 +57,8 @@ $viewdefs['Contacts']['portal']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'portal_password',
-                    'type' => 'url',
+                    'type' => 'change-my-password',
                     'label' => 'LBL_CONTACT_EDIT_PASSWORD',
-                    'class' => 'password',
-                    'view' => 'detail',
                     'displayParams' =>
                     array(
                         'colspan' => 2,
