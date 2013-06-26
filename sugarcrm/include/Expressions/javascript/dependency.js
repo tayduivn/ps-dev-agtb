@@ -66,6 +66,13 @@ AH.ANIMATE = true;
 
 /**
  * @STATIC
+ *  * Event which is fired after loadComplete method is done.
+ * Meaning it that all the onload dependencies were fired.
+ */
+AH.AFTER_LOAD_COMPLETE = new YAHOO.util.CustomEvent("AFTER_LOAD_COMPLETE");
+
+/**
+ * @STATIC
  * This array maps variables to their respective element id's.
  */
 AH.VARIABLE_MAP = {};
@@ -629,6 +636,7 @@ AH.loadComplete = function()
     {
         SUGAR.forms.Trigger.fire.call(AH.QUEUEDDEPS[i].trigger);
     }
+    AH.AFTER_LOAD_COMPLETE.fire();
 }
 
 /**
