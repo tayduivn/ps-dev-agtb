@@ -6,10 +6,6 @@
         'click a[name=merge_duplicates_button]:not(".disabled")': 'mergeDuplicates'
     },
 
-    initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
-    },
-
     /**
      * Wait for the mass_collection to be set up so we can add listener
      */
