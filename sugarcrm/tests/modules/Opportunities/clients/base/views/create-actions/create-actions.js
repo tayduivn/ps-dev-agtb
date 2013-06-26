@@ -34,7 +34,7 @@ describe("Opportunities.Base.Views.CreateActions", function() {
         SugarTest.loadComponent('base', 'view', 'create-actions');
         SugarTest.testMetadata.set();
 
-        SugarTest.seedMetadata(true);
+        SugarTest.seedMetadata(true, './fixtures');
 
         view = SugarTest.createView('base', 'Opportunities', 'create-actions', options.meta, null, true);
     });

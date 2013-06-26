@@ -46,7 +46,7 @@ describe('RevenueLineItems.Base.Views.FilterRows', function() {
         SugarTest.loadComponent('base', 'view', 'filter-rows');
         SugarTest.testMetadata.set();
 
-        SugarTest.seedMetadata(true);
+        SugarTest.seedMetadata(true, './fixtures');
         app.metadata.getModule("Forecasts", "config").is_setup = 1;
 
         sandbox.stub(app.view.views.BaseFilterRowsView.prototype, 'getFilterableFields', function() {
