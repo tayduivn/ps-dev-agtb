@@ -1,10 +1,10 @@
 ({
     fieldTag: 'input.select2',
 
-    initialize: function(opts) {
+    initialize: function(options) {
         _.bindAll(this);
-        this.endpoint = opts.def.endpoint;
-        app.view.Field.prototype.initialize.call(this, opts);
+        app.view.Field.prototype.initialize.call(this, options);
+        this.endpoint = this.def.endpoint;
     },
 
     _render: function() {
