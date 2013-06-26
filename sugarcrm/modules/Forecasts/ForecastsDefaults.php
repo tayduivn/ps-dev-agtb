@@ -144,7 +144,21 @@ class ForecastsDefaults
             // whether or not to show the worst total in the forecasts projected view
             'show_projected_worst' => 0,
             // whether or not to show the commit warnings
-            'show_forecasts_commit_warnings' => 1
+            'show_forecasts_commit_warnings' => 1,
+            // default enabled worksheet columns
+            'worksheet_columns' => array(
+                'commit_stage',
+                'name',
+                'account_name',
+                'date_closed',
+                'product_template_name',
+                'likely_case',
+                'sales_stage',
+                'probability',
+                'best_case',
+                'worst_case',
+                'opportunity_name',
+            )
         );
     }
 

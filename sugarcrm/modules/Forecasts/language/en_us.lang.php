@@ -425,6 +425,17 @@ $mod_strings = array (
     'LBL_FORECASTS_CUSTOM_BASED_TITLE' => 'Custom Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_NO_BASED_TITLE' =>'Ranges not based on probabilities',
 
+    // worksheet columns config
+    'LBL_DISCOUNT' => 'Discount',
+    'LBL_OPPORTUNITY_STATUS' => 'Opportunity Status',
+    'LBL_OPPORTUNITY_NAME' => 'Opportunity Name',
+    'LBL_PRODUCT_TEMPLATE' => 'Product Catalog',
+    'LBL_CAMPAIGN' => 'Campaign',
+    'LBL_TEAMS' => 'Teams',
+    'LBL_CATEGORY' => 'Category',
+    'LBL_COST_PRICE' => 'Cost Price',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_TEXT' => 'Select which columns should be displayed for the worksheet view. By default, the following fields will be selected:',
+
     // pipline opportunities dashlet
     'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',
     'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/config">Please click here to configure Forecasting</a>.'
