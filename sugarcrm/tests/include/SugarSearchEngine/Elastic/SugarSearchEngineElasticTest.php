@@ -35,6 +35,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('app_list_strings');
         // create a Bean..doesn't need to be saved
         $this->bean = BeanFactory::newBean('Accounts');
         $this->bean->id = create_guid();

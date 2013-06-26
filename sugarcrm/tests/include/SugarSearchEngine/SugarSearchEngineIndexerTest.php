@@ -53,6 +53,7 @@ class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('app_list_strings');
         if(empty($GLOBALS['db']) || !($GLOBALS['db'] instanceOf DBManager))
         {
             $GLOBALS['db'] = DBManagerFactory::getInstance();
