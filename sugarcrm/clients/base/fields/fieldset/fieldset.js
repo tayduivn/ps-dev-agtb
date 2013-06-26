@@ -78,7 +78,7 @@
 
         if (this.focusIndex >= this.fields.length) {
             // done focusing our inputs return false
-            this.focusIndex = -1
+            this.focusIndex = -1;
             return false;
         } else {
             // this field is disabled skip ahead

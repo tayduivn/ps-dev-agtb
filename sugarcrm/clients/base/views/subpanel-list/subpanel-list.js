@@ -8,6 +8,8 @@
      */
     extendsFrom: 'RecordlistView',
 
+    plugins: ['ellipsis_inline', 'error-decoration', 'editable'],
+
     contextEvents: {
         "list:editall:fire": "toggleEdit",
         "list:editrow:fire": "editClicked",
