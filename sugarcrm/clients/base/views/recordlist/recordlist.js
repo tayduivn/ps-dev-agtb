@@ -96,7 +96,9 @@
     },
 
     addFavorite: function() {
-        if (this.meta.favorite && this.leftColumns[0] && _.isArray(this.leftColumns[0].fields)) {
+        var favoritesEnabled = app.metadata.getModule(this.module, "favoritesEnabled");
+        if (favoritesEnabled !== false
+            && this.meta.favorite && this.leftColumns[0] && _.isArray(this.leftColumns[0].fields)) {
             this.leftColumns[0].fields.push({type:'favorite'});
         }
     },
