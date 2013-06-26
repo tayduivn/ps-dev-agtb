@@ -14,6 +14,7 @@
  */
 
 $viewdefs['Products']['base']['view']['create-actions'] = array(
+    'template' => 'record',
     'buttons' => array(
         array(
             'name'      => 'cancel_button',

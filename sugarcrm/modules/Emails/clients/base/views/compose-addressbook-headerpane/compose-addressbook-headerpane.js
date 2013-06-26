@@ -33,11 +33,6 @@
         "click [name=cancel_button]": "_cancel"
     },
 
-    initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
-        this.template = app.template.getView('headerpane');
-    },
-
      /**
       * The user clicked the Done button so trigger an event to add selected recipients from the address book to the
       * target field and then close the drawer.

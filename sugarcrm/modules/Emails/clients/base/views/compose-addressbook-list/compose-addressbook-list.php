@@ -1,5 +1,6 @@
 <?php
 $viewdefs["Emails"]["base"]["view"]["compose-addressbook-list"] = array(
+    'template' => 'list',
     "selection" => array(
         "type"    => "multi",
         "actions" => array(),

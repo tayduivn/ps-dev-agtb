@@ -25,9 +25,5 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    extendsFrom: 'BaseHeaderpaneView',
-    initialize: function (options) {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', platform: 'base', method: 'initialize', args:[options]});
-        this.template = app.template.getView('headerpane');
-    }
+    extendsFrom: 'BaseHeaderpaneView'
 })

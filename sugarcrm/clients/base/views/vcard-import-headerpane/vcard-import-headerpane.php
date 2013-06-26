@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['base']['view']['vcard-import-headerpane'] = array(
+    'template' => 'headerpane',
     'title' => "LBL_IMPORT_VCARD",
     'buttons' => array(
         array(

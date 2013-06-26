@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs["Emails"]["base"]["view"]["compose-addressbook-headerpane"] = array(
+    'template' => 'headerpane',
     "title"   => "LBL_COMPOSE_ADDRESSBOOK",
     "buttons" => array(
         array(

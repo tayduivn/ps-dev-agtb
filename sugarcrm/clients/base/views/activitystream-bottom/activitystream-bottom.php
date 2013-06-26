@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -27,26 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-$viewdefs["EmailTemplates"]["base"]["view"]["compose-templates-headerpane"] = array(
-    'template' => 'headerpane',
-    "title"   => "LBL_LIST_FORM_TITLE",
-    "buttons" => array(
-        array(
-            "name"      => "cancel_button",
-            "type"      => "button",
-            "label"     => "LBL_CANCEL_BUTTON_LABEL",
-            "css_class" => "btn-invisible btn-link",
-        ),
-        array(
-            "name"      => "done_button",
-            "type"      => "button",
-            "label"     => "LBL_DONE_BUTTON_LABEL",
-            "css_class" => "btn-primary",
-        ),
-        array(
-            'name' => 'sidebar_toggle',
-            'type' => 'sidebartoggle',
-        ),
-    ),
+$viewdefs['base']['view']['activitystream-bottom'] = array(
+    "template" => "list-bottom",
 );

@@ -31,11 +31,6 @@
         'click [name=vcard_cancel_button]': 'initiateCancel'
     },
 
-    initialize: function(options) {
-        app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args:[options]});
-        this.template = app.template.getView('headerpane');
-    },
-
     initiateFinish: function() {
         this.context.trigger('vcard:import:finish');
     },

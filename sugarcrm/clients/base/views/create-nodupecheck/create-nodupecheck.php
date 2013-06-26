@@ -17,6 +17,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $viewdefs['base']['view']['create-nodupecheck'] = array(
+    'template' => 'record',
     'buttons' => array(
         array(
             'name'      => 'cancel_button',

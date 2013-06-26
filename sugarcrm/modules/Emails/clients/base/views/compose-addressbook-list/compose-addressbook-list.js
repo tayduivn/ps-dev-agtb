@@ -3,7 +3,6 @@
 
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args: [options]});
-        this.template = app.template.getView('list');
         this.collection.sync = this.sync;
         this.context.on("compose:addressbook:search", this._search, this);
     },
