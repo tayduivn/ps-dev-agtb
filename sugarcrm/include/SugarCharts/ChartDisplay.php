@@ -230,6 +230,9 @@ class ChartDisplay
         $chart_groupings = array();
         foreach ($this->reporter->chart_rows as $row) {
             $row_remap = $this->get_row_remap($row);
+            if (!isset($row_remap['group_base_text'])) {
+                continue;
+            }
             $chart_groupings[$row_remap['group_base_text']] = true; // store all the groupingstem
             if (empty($chart_rows[$row_remap['group_text']][$row_remap['group_base_text']])) {
                 $chart_rows[$row_remap['group_text']][$row_remap['group_base_text']] = $row_remap;
@@ -325,6 +328,9 @@ class ChartDisplay
     protected function get_row_remap($row)
     {
         $row_remap = array();
+        if (!isset($row['cells'][$this->reporter->chart_numerical_position]['val'])) {
+            return $row_remap; 
+        }
         $row_remap['numerical_value'] = $numerical_value = unformat_number(strip_tags($row['cells'][$this->reporter->chart_numerical_position]['val']));
         global $do_thousands;
         if ($do_thousands) {
