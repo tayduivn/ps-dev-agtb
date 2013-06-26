@@ -76,7 +76,6 @@ class RevenueLineItem extends SugarBean
     public $date_closed;
     public $date_closed_timestamp;
     public $commit_stage;
-    public $opportunity_id;
     public $product_type;
 
     /**
@@ -97,6 +96,8 @@ class RevenueLineItem extends SugarBean
     public $category_id;
     public $account_name;
     public $account_id;
+    public $opportunity_id;
+    public $opportunity_name;
     public $contact_name;
     public $contact_id;
     public $related_product_id;

@@ -53,6 +53,23 @@ $dictionary['ForecastWorksheet'] = array(
             'options' => 'parent_type_display',
             'studio' => true,
         ),
+        'opportunity_id' =>
+        array(
+            'name' => 'opportunity_id',
+            'vname' => 'LBL_OPPORTUNITY_ID',
+            'type' => 'id',
+            'audited' => false,
+            'studio' => false
+        ),
+        'opportunity_name' =>
+        array(
+            'name' => 'opportunity_name',
+            'id_name' => 'opportunity_id',
+            'vname' => 'LBL_OPPORTUNITY_NAME',
+            'type' => 'varchar',
+            'len' => '255',
+            'studio' => false
+        ),
         'account_name' =>
         array(
             'name' => 'account_name',

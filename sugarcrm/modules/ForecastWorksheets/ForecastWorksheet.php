@@ -42,6 +42,8 @@ class ForecastWorksheet extends SugarBean
     public $module_dir = 'ForecastWorksheets';
     public $table_name = 'forecast_worksheets';
     public $disable_custom_fields = true;
+    public $opportunity_id;
+    public $opportunity_name;
 
     /**
      * Update the real table with the values when a save happens on the front end
@@ -130,7 +132,7 @@ class ForecastWorksheet extends SugarBean
 
         // load the account
         if (empty($opp->account_name) && !empty($opp->account_id)) {
-            $opp->account_name = $this->getAccountName($opp->account_id);
+            $opp->account_name = $this->getRelatedName('Accounts', $opp->account_id);
         }
 
         $this->copyValues($fields, $opp);
@@ -242,12 +244,19 @@ class ForecastWorksheet extends SugarBean
             'date_entered',
             'deleted',
             'team_id',
-            'team_set_id'
+            'team_set_id',
+            'opportunity_id',
+            'opportunity_name'
         );
 
         // load the account
         if (empty($rli->account_name) && !empty($rli->account_id)) {
-            $rli->account_name = $this->getAccountName($rli->account_id);
+            $rli->account_name = $this->getRelatedName('Accounts', $rli->account_id);
+        }
+
+        // load the opportunity
+        if (empty($this->opportunity_name) && !empty($rli->opportunity_id)) {
+            $rli->opportunity_name = $this->getRelatedName('Opportunities', $rli->opportunity_id);
         }
 
         $this->copyValues($fields, $rli);
@@ -264,25 +273,26 @@ class ForecastWorksheet extends SugarBean
     }
 
     /**
-     * Look up an Account name
+     * Look up an Item name
      *
-     * @param string $account_id        The Account Id that we need to find the name for
+     * @param string $module            The module we need to look in.
+     * @param string $id                The Item Id that we need to find the name for
      * @return string                   The name for the account, or empty if one is not found
      */
-    protected function getAccountName($account_id)
+    protected function getRelatedName($module, $id)
     {
-        // get the account_name
+        $returnValue = '';
         $sugar_query = new SugarQuery();
         $sugar_query->select('name');
-        $sugar_query->from(BeanFactory::getBean('Accounts'))->where()->equals('id', $account_id);
-        $account = $sugar_query->execute();
+        $sugar_query->from(BeanFactory::getBean($module))->where()->equals('id', $id);
+        $item = $sugar_query->execute();
 
-        if (!empty($account)) {
-            return $account[0]['name'];
+        if (!empty($item)) {
+            $returnValue = $item[0]['name'];
         }
 
         // if one is not found, just return empty
-        return '';
+        return $returnValue;
     }
 
     /**
