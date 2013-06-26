@@ -38,6 +38,7 @@ $viewdefs['base']['view']['attachments'] = array(
             ),
             'preview' => array(
                 'module' => 'Notes',
+                'link' => 'notes',
             ),
             'filter' => array(
                 'module' => array(
@@ -49,9 +50,48 @@ $viewdefs['base']['view']['attachments'] = array(
                     'Cases',
                 ),
                 'view' => 'record',
-            )
+            ),
         ),
  	),
+    'custom_toolbar' => array(
+        'buttons' => array(
+            array(
+                "type" => "dashletaction",
+                "css_class" => "dashlet-toggle btn btn-invisible minify",
+                "icon" => "icon-chevron-up",
+                "action" => "toggleMinify",
+            ),
+            array(
+                "dropdown_buttons" => array(
+                    array(
+                        "type" => "dashletaction",
+                        "action" => "editClicked",
+                        "label" => "LBL_DASHLET_CONFIG_EDIT_LABEL",
+                    ),
+                    array(
+                        "type" => "dashletaction",
+                        "label" => "LBL_CREATE_RELATED_RECORD",
+                        "action" => "openCreateDrawer",
+                    ),
+                    array(
+                        "type" => "dashletaction",
+                        "label" => "LBL_ASSOC_RELATED_RECORD",
+                        "action" => "openSelectDrawer",
+                    ),
+                    array(
+                        "type" => "dashletaction",
+                        "action" => "refreshClicked",
+                        "label" => "LBL_DASHLET_REFRESH_LABEL",
+                    ),
+                    array(
+                        "type" => "dashletaction",
+                        "action" => "removeClicked",
+                        "label" => "LBL_DASHLET_REMOVE_LABEL",
+                    ),
+                )
+            )
+        )
+    ),
     'buttons' => array(
         array(
             'type' => 'button',

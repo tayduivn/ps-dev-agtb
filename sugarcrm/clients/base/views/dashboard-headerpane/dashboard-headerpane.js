@@ -172,6 +172,9 @@
             }
         });
     },
+    bindDataChange: function () {
+        //empty out because dashboard header does not need to switch the button sets while model is changed
+    },
     toggleEdit: function(isEdit) {
         this.toggleFields(this.editableFields, isEdit);
     }

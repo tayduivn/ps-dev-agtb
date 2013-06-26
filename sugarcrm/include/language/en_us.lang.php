@@ -3171,9 +3171,9 @@ $app_strings = array (
     /* Sugar7 Dashboard */
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
-    'LBL_DASHLET_CONFIG_EDIT' => 'Edit',
-    'LBL_DASHLET_REFRESH' => 'Refresh',
-    'LBL_DASHLET_REMOVE' => 'Remove',
+    'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',
+    'LBL_DASHLET_REFRESH_LABEL' => 'Refresh',
+    'LBL_DASHLET_REMOVE_LABEL' => 'Remove',
     'LBL_DASHLET_DROP_HERE' => 'Drop here',
 
 
