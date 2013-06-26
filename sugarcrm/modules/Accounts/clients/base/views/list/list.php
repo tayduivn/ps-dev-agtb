@@ -61,6 +61,7 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'name' => 'phone_office',
                     'width' => '10%',
                     'label' => 'LBL_LIST_PHONE',
+                    'enabled' => true,
                     'default' => true,
                 ),
                 array (
@@ -69,6 +70,7 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
                     'sortable' => false,
+                    'enabled' => true,
                     'default' => true,
                 ),
                 array(
@@ -76,6 +78,7 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'width' => '15%',
                     'label' => 'LBL_EMAIL_ADDRESS',
                     'sortable' => false,
+                    'enabled' => true,
                     'default' => true,
                 ),
                 array (

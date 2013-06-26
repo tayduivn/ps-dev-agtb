@@ -21,14 +21,24 @@ $fields = array(
         'link' => true,
         'label' => 'LBL_LIST_NAME',
         'enabled' => true,
-        'default' => true
+        'default' => true,
     ),
     array(
         'name' => 'account_name',
-        'sortable' => false
+        'sortable' => false,
+        'enabled' => true,
+        'default' => true,
     ),
-    'status',
-    'quantity',
+    array(
+        'name' => 'status',
+        'enabled' => true,
+        'default' => true,
+    ),
+    array(
+        'name' => 'quantity',
+        'enabled' => true,
+        'default' => true,
+    ),
     array(
         'name' => 'discount_price',
         'type' => 'currency',
@@ -39,6 +49,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'list_price',
@@ -50,6 +62,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'cost_price',
@@ -61,8 +75,14 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
     ),
-    'date_entered'
+    array(
+        'name' => 'date_entered',
+        'enabled' => true,
+        'default' => true,
+    ),
 );
 //END SUGARCRM flav=pro && flav!=ent ONLY
 
@@ -74,30 +94,58 @@ $fields = array(
         'link' => true,
         'label' => 'LBL_LIST_NAME',
         'enabled' => true,
-        'default' => true
+        'default' => true,
     ),
     array(
         'name' => 'opportunity_name',
-        'sortable' => false
+        'sortable' => false,
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'account_name',
         'readonly' => true,
-        'sortable' => false
+        'sortable' => false,
+        'enabled' => true,
+        'default' => true,
     ),
-    'sales_stage',
-    'probability',
-    'date_closed',
-    'commit_stage',
+    array(
+        'name' => 'sales_stage',
+        'enabled' => true,
+        'default' => true,
+    ),
+    array(
+        'name' => 'probability',
+        'enabled' => true,
+        'default' => true,
+    ),
+    array(
+        'name' => 'date_closed',
+        'enabled' => true,
+        'default' => true,
+    ),
+    array(
+        'name' => 'commit_stage',
+        'enabled' => true,
+        'default' => true,
+    ),
     array(
         'name' => 'product_template_name',
-        'sortable' => false
+        'sortable' => false,
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'category_name',
-        'sortable' => false
+        'sortable' => false,
+        'enabled' => true,
+        'default' => true,
     ),
-    'quantity',
+    array(
+        'name' => 'quantity',
+        'enabled' => true,
+        'default' => true,
+    ),
     array(
         'name' => 'likely_case',
         'required' => true,
@@ -109,6 +157,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'best_case',
@@ -121,6 +171,8 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'worst_case',
@@ -133,10 +185,14 @@ $fields = array(
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
+        'enabled' => true,
+        'default' => true,
     ),
     array(
         'name' => 'assigned_user_name',
-        'sortable' => false
+        'sortable' => false,
+        'enabled' => true,
+        'default' => true,
     )
 );
 //END SUGARCRM flav=ent ONLY
