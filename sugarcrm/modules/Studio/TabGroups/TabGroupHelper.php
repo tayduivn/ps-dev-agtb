@@ -57,13 +57,23 @@ class TabGroupHelper{
      */
     function saveTabGroups($params){
     	//#30205
-    	global $sugar_config;
+    	global $sugar_config, $locale;
 
     	//Get the selected tab group language
-    	$grouptab_lang = (!empty($params['grouptab_lang'])?$params['grouptab_lang']:$_SESSION['authenticated_user_language']);
+        if (!empty($_REQUEST['grouptab_lang'])) {
+            $grouptab_lang = $_REQUEST['grouptab_lang'];
+        } else {
+            $grouptab_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
 
     	$tabGroups = array();
-		$selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
+        if (!empty($_REQUEST['dropdown_lang'])) {
+            $selected_lang = $_REQUEST['dropdown_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
         $slot_count = $params['slot_count'];
 		$completedIndexes = array();
         for($count = 0; $count < $slot_count; $count++){

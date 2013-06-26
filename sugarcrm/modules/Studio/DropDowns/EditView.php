@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: EditView.php 22072 2007-04-20 09:09:25Z clee $
 
-global $app_list_strings, $app_strings, $mod_strings;
+global $app_list_strings, $app_strings, $mod_strings, $locale;
 
 require_once('modules/Studio/DropDowns/DropDownHelper.php');
 require_once('modules/Studio/parsers/StudioParser.php');
@@ -39,7 +39,12 @@ $smarty = new Sugar_Smarty();
 $smarty->assign('MOD', $GLOBALS['mod_strings']);
 $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_RENAME_TABS']), false);
 $smarty->assign('title', $title);
-$selected_lang = (!empty($_REQUEST['dropdown_lang'])?$_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
+if (!empty($_REQUEST['dropdown_lang'])) {
+    $selected_lang = $_REQUEST['dropdown_lang'];
+} else {
+    $selected_lang = $locale->getAuthenticatedUserLanguage();
+}
+
 if(empty($selected_lang)){
 
     $selected_lang = $GLOBALS['sugar_config']['default_language'];
@@ -92,11 +97,15 @@ if(empty($_REQUEST['dropdown_name']) || !in_array($_REQUEST['dropdown_name'], $d
 $selected_dropdown = $my_list_strings[$_REQUEST['dropdown_name']];
 
 foreach($selected_dropdown as $key=>$value){
-   if($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings[$_REQUEST['dropdown_name']]) && isset($app_list_strings[$_REQUEST['dropdown_name']][$key])){
+    if(isset($_SESSION['authenticated_user_language']) 
+        && $selected_lang != $_SESSION['authenticated_user_language'] 
+        && !empty($app_list_strings[$_REQUEST['dropdown_name']]) 
+        && isset($app_list_strings[$_REQUEST['dropdown_name']][$key])
+    ) {
         $selected_dropdown[$key]=array('lang'=>$value, 'user_lang'=> '['.$app_list_strings[$_REQUEST['dropdown_name']][$key] . ']');
-   }else{
-       $selected_dropdown[$key]=array('lang'=>$value);
-   }
+    } else {
+        $selected_dropdown[$key]=array('lang'=>$value);
+    }
 }
 
 $selected_dropdown = $dh->filterDropDown($_REQUEST['dropdown_name'], $selected_dropdown);

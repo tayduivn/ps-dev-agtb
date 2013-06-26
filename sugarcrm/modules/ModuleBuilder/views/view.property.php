@@ -89,7 +89,7 @@ class ViewProperty extends SugarView
 
     function display()
     {
-        global $mod_strings;
+        global $mod_strings, $locale;
     	$ajax = new AjaxCompose();
         $smarty = new Sugar_Smarty();
         if (isset($_REQUEST['MB']) && $_REQUEST['MB'] == "1")
@@ -98,7 +98,12 @@ class ViewProperty extends SugarView
             $smarty->assign("view_package", $_REQUEST['view_package']);
         }
 
-        $selected_lang = (!empty($_REQUEST['selected_lang'])?$_REQUEST['selected_lang']:$_SESSION['authenticated_user_language']);
+        if (!empty($_REQUEST['selected_lang'])) {
+            $selected_lang = $_REQUEST['selected_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
 		if(empty($selected_lang)){
 		    $selected_lang = $GLOBALS['sugar_config']['default_language'];
 		}

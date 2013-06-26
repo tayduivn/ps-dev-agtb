@@ -34,8 +34,16 @@ class ParserDropDown extends ModuleBuilderParser {
      * @param REQUEST params  $params
      */
     function saveDropDown($params){
+        global $locale;
+        
 		$emptyMarker = translate('LBL_BLANK');
-		$selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
+		
+        if (!empty($_REQUEST['dropdown_lang'])) {
+            $selected_lang = $_REQUEST['dropdown_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
 		$type = $_REQUEST['view_package'];
 		$dir = '';
 		$dropdown_name = $params['dropdown_name'];

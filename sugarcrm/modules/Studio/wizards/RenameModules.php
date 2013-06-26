@@ -256,7 +256,7 @@ class RenameModules
      */
     protected function display()
     {
-        global $app_list_strings, $mod_strings;
+        global $app_list_strings, $mod_strings, $locale;
 
 
         require_once('modules/Studio/parsers/StudioParser.php');
@@ -267,12 +267,12 @@ class RenameModules
         $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array("<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>", $mod_strings['LBL_RENAME_TABS']), false);
         $smarty->assign('title', $title);
 
-        $selected_lang = (!empty($_REQUEST['dropdown_lang'])?$_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
-        if(empty($selected_lang))
-        {
-            $selected_lang = $GLOBALS['sugar_config']['default_language'];
+        if (!empty($_REQUEST['dropdown_lang'])) {
+            $selected_lang = $_REQUEST['dropdown_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
         }
-
+        
         if($selected_lang == $GLOBALS['current_language'])
         {
             $my_list_strings = $GLOBALS['app_list_strings'];
@@ -327,8 +327,13 @@ class RenameModules
      */
     public function save($redirect = TRUE)
     {
-        $this->selectedLanguage = (!empty($_REQUEST['dropdown_lang'])? $_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
-
+        global $locale;
+        if (!empty($_REQUEST['dropdown_lang'])) {
+            $this->selectedLanguage = $_REQUEST['dropdown_lang'];
+        } else {
+            $this->selectedLanguage = $locale->getAuthenticatedUserLanguage();
+        }
+        
         //Clear all relevant language caches
         $this->clearLanguageCaches();
 
@@ -868,12 +873,18 @@ class RenameModules
      */
     private function getChangedModules()
     {
+        global $locale;
         $count = 0;
         $allModuleEntries = array();
         $results = array();
         $params = $_REQUEST;
-
-        $selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
+        
+        if (!empty($_REQUEST['dropdown_lang'])) {
+            $selected_lang = $_REQUEST['dropdown_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
         $current_app_list_string = return_app_list_strings_language($selected_lang);
 
         while(isset($params['slot_' . $count]))

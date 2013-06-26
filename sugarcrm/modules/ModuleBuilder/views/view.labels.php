@@ -52,6 +52,8 @@ class ViewLabels extends ViewModulefields
  	//TODO Bundle Studio and ModuleBuilder label handling to increase maintainability.
  	function display()
  	{
+        global $locale;
+        
 		$editModule = $_REQUEST['view_module'];
 		$allLabels = (!empty($_REQUEST['labels']) && $_REQUEST['labels']== 'all');
 
@@ -63,12 +65,10 @@ class ViewLabels extends ViewModulefields
 		}
         $selected_lang = null;
         
-        if(!empty($_REQUEST['selected_lang'])) {
+        if (!empty($_REQUEST['selected_lang'])) {
             $selected_lang = $_REQUEST['selected_lang'];
-        } elseif(!empty($_SESSION['authenticated_user_language'])) {
-            $selected_lang = $_SESSION['authenticated_user_language'];
         } else {
-		    $selected_lang = $GLOBALS['sugar_config']['default_language'];
+		    $selected_lang = $locale->getAuthenticatedUserLanguage();
 		}
 
 		$smarty = new Sugar_Smarty();

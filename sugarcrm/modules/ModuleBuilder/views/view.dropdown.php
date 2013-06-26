@@ -68,9 +68,16 @@ class ViewDropdown extends SugarView
  	
  	function generateSmarty()
  	{
+ 		global $locale;
+ 		
 		//get the selected language
-		$selected_lang = (!empty($_REQUEST['dropdown_lang'])?$_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
-		$vardef = array();
+		if (!empty($_REQUEST['dropdown_lang'])) {
+            $selected_lang = $_REQUEST['dropdown_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
+        $vardef = array();
 		$package_name = 'studio';
 		$package_strings = array();
 		$new =false;

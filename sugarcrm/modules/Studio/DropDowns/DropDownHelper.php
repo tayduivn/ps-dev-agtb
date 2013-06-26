@@ -95,10 +95,17 @@ class DropDownHelper{
      * @param REQUEST params  $params
      */
     function saveDropDown($params){
+        global $locale;
        $count = 0;
        $dropdown = array();
        $dropdown_name = $params['dropdown_name'];
-       $selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
+        
+        if (!empty($_REQUEST['dropdown_lang'])) {
+            $selected_lang = $_REQUEST['dropdown_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
        $my_list_strings = return_app_list_strings_language($selected_lang);
        while(isset($params['slot_' . $count])){
 
