@@ -158,8 +158,8 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     protected function reportException($message, $e)
     {
         $this->logger->fatal("$message: ".get_class($e));
-    	if($this->logger->wouldLog('debug')) {
-    	    $this->logger->debug($e->getMessage());
-    	}
+        if($this->logger->wouldLog('error')) {
+            $this->logger->error($e->getMessage());
+        }
     }
 }
