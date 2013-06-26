@@ -35,6 +35,7 @@ $viewdefs['Leads']['base']['view']['subpanel-for-emails'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_LEAD_SOURCE',

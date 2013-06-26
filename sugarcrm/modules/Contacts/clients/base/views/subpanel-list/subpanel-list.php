@@ -35,6 +35,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-list'] = array('panels' =>
             'label' => 'LBL_LIST_CONTACT_NAME',
             'enabled' => true,
             'default' => true,
+            'sortable' => false,
         ),
         array(
           'name' => 'account_name',

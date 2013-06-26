@@ -33,6 +33,7 @@ $viewdefs['Quotes']['base']['view']['subpanel-for-emails'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'account_name',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_AMOUNT_USDOLLAR',
