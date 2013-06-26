@@ -107,10 +107,23 @@
             break;
         }
 
+        this.processEmbed();
+
+        // Resize video when the browser window is resized
+        this.resizeVideo = _.bind(_.throttle(this.resizeVideo, 500), this);
+        $(window).on('resize.' + this.cid, this.resizeVideo);
+    },
+
+    /**
+     * Determine if embeded links exist
+     */
+    processEmbed: function() {
+        var data = this.model.get('data'),
+            embedTpl, typeParts, type;
+
         if (_.isObject(data.embed) && data.embed.type) {
-            var typeParts = data.embed.type.split('.'),
-                type = typeParts.shift(),
-                embedTpl;
+            typeParts = data.embed.type.split('.');
+            type = typeParts.shift();
 
             _.each(typeParts, function(part) {
                 type = type + part.charAt(0).toUpperCase() + part.substr(1);
@@ -209,8 +222,7 @@
      * @param  {Event} event
      */
     previewRecord: function(event) {
-        var self = this,
-            el = this.$(event.currentTarget),
+        var el = this.$(event.currentTarget),
             data = el.data(),
             module = data.module,
             id = data.id;
@@ -237,17 +249,35 @@
             replyVal = this.$(".reply").html();
 
         app.view.View.prototype._renderHtml.call(this);
+        this.resizeVideo();
 
         // If the reply bar was previously open, keep it open (render hides it by default)
         if(isReplyBarOpen) {
             this.toggleReplyBar();
             this.$(".reply").html(replyVal);
         }
+    },
 
-        //TODO: make this be called by an onload on iframe in embedded player
-        this.$('.embed iframe').width(function(){
-            return Math.min($(this).parent('.embed').width(),480);
-        });
+    /**
+     * Resize the iframe that embeds video
+     */
+    resizeVideo: function() {
+        var data = this.model.get('data'),
+            $embed = this.$('.embed'),
+            $iframe, iframeWidth, iframeHeight;
+
+        if (data.embed && data.embed.type === 'video') {
+            $iframe = $embed.find('iframe');
+            if ($iframe.length > 0) {
+                iframeWidth = Math.min($embed.width(), 480);
+                iframeHeight = parseInt($iframe.prop('height'), 10) * (iframeWidth / parseInt($iframe.prop('width'), 10));
+
+                $iframe.prop({
+                    width: iframeWidth,
+                    height: iframeHeight
+                });
+            }
+        }
     },
 
     /**
@@ -396,6 +426,7 @@
     },
 
     _dispose: function() {
+        $(window).off('resize.' + this.cid);
         app.view.View.prototype._dispose.call(this);
         this.commentsCollection = null;
         this.opts = null;
