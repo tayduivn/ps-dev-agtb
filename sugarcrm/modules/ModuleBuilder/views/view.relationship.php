@@ -67,7 +67,14 @@ class ViewRelationship extends SugarView
 
     function display()
     {
-        $selected_lang = (!empty($_REQUEST['relationship_lang'])?$_REQUEST['relationship_lang']:$_SESSION['authenticated_user_language']);
+        global $locale;
+        
+        if (!empty($_REQUEST['relationship_lang'])) {
+            $selected_lang = $_REQUEST['relationship_lang'];
+        } else {
+            $selected_lang = $locale->getAuthenticatedUserLanguage();
+        }
+        
         $this->smarty = new Sugar_Smarty ( ) ;
         $ac = new AjaxCompose ( ) ;
         $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (!empty ( $_REQUEST [ 'view_package' ] ) && $_REQUEST [ 'view_package' ] != 'studio') ;

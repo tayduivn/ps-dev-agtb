@@ -807,6 +807,20 @@ eoq;
 
         return false;
     }
+    
+    /**
+     * Gets the authenticated user's language. This is used throughout the app.
+     * 
+     * @return string
+     */
+    public function getAuthenticatedUserLanguage()
+    {
+        if (!empty($_SESSION['authenticated_user_language'])) {
+            return $_SESSION['authenticated_user_language'];
+        }
+        
+        return $GLOBALS['sugar_config']['default_language'];
+    }
 } // end class def
 
 ?>
