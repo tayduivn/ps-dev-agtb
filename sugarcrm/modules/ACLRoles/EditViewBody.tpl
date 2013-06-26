@@ -42,7 +42,7 @@
 {/if}
 	{foreachelse}
 
-         <tr> <td colspan="2">No Modules Available</td></tr>
+         <tr> <td colspan="2">{$MOD.LBL_NO_MODULES_AVAILABLE}</td></tr>
 
 {/foreach}
 </TABLE>

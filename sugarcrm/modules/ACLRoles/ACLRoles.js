@@ -43,12 +43,12 @@ var aclviewer = function(){
 		},
 		display:function(o){
 					aclviewer.lastDisplay = '';
-					ajaxStatus.flashStatus('Done');
+					ajaxStatus.flashStatus(SUGAR.language.get('ACLRoles', 'LBL_DONE'));
 					document.getElementById('category_data').innerHTML = o.responseText;
 					
 				},
 		failed:function(){
-				ajax.flashStatus('Could Not Connect');
+				ajax.flashStatus(SUGAR.language.get('ACLRoles', 'LBL_COULD_NOT_CONNECT'));
 		},
 		
 		toggleDisplay:function(id){

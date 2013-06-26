@@ -85,7 +85,8 @@ switch($_REQUEST['adminAction']) {
 
 			$out = array('msg' => "success", 'count' => $count);
 		} else {
-			$out = array('msg' => "failure: bean or ID not defined");
+			$mod_strings = return_module_language($GLOBALS['current_language'], 'Administration');
+			$out = array('msg' => $mod_strings['LBL_REPAIRXSSEXECUTE_FAILED']);
 		}
 	break;
 	////	END REPAIRXSS
