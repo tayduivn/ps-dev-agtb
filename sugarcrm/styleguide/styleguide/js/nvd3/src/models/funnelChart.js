@@ -136,7 +136,7 @@ nv.models.funnelChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+ (-margin.left) +',' + (-margin.top) +')');
+            .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
