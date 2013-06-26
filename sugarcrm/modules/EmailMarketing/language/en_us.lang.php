@@ -86,7 +86,7 @@ $mod_strings = array (
   'LBL_SCHEDULE_BUTTON_TITLE'=>'Send',
   'LBL_SCHEDULE_BUTTON_LABEL'=>'Send',
   'LBL_SCHEDULE_BUTTON_KEY'=>'T',
-
+  'LBL_SPECIFY_RECORD_NUM'=>'A record number must be specified to delete the marketing campaign.',
 
 
 );

@@ -92,6 +92,7 @@ $mod_strings = array (
     'ERR_RESERVED_FIELD_NAME' => "Reserved Keyword",
 	'ERR_SELECT_FIELD_TYPE' => 'Please Select a Field Type',
 	'ERR_FIELD_NAME_ALREADY_EXISTS' => 'Field Name already exists',
+    'ERR_NO_MODULE_INCLUDED' => 'No Module Included Could Not Save',
     'LBL_BTN_ADD' => 'Add',
     'LBL_BTN_EDIT' => 'Edit',
     'LBL_GENERATE_URL' => 'Generate URL',
@@ -116,6 +117,14 @@ $mod_strings = array (
     'LBL_PARENT_DROPDOWN' => 'Parent Dropdown',
     'LBL_EDIT_VIS' => 'Edit Visibility',
     //END SUGARCRM flav=pro ONLY
+    'LBL_SIMULATION_MODE' => 'SIMULATION MODE - NO CHANGES WILL BE MADE EXCEPT CLEARING CACHE',
+    'LBL_SCAN_MODULE' => 'Scanning',
+    'LBL_DROPPING_COLUMN' => 'Dropping Column {0} from {1} for module',
+    'LBL_FIX_COLUMN_TYPE' => 'Fixing Column Type for {0} changing {1} to',
+    'LBL_FIELD_MISSING' => ' field(s) missing from',
+    'LBL_ADDING_COLUMN' => 'Adding Column {0} to',
+    'LBL_DONE' => 'Done',
+    'LBL_EXE_NON_SIM_MODE' => 'Execute non-simulation mode',
 );
 
 

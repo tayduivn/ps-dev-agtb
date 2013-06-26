@@ -39,10 +39,10 @@ unset($_SESSION['rebuild_relationships']);
 unset($_SESSION['rebuild_extensions']);
 // process commands
 if(empty($_REQUEST['install_file'])){
-    die( "File to install not specified." );
+    die( $mod_strings['LBL_UPGRADE_WIZARD_FILE_NOT_SPEC'] );
 }
 if( !isset($_REQUEST['mode']) || ($_REQUEST['mode'] == "") ){
-    die( "No mode specified." );
+    die( $mod_strings['LBL_UPGRADE_WIZARD_NO_MODE_SPEC'] );
 }
 
 if(!file_exists($base_tmp_upgrade_dir)) {

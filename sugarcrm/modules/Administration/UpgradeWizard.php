@@ -114,7 +114,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
                     !$upload->final_move($upload->get_stored_file_name())
                     ) {
     			    unlinkTempFiles();
-                    sugar_die("Invalid Package");
+                    sugar_die($mod_strings['LBL_UPGRADE_WIZARD_INVALID_PKG']);
             	} else {
     			     $tempFile = "upload://".$upload->get_stored_file_name();
                      $perform = true;
@@ -191,10 +191,10 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 
         if(substr($delete_me, -4) != ".zip" || substr($delete_me, 0, 9) != "upload://" ||
         strpos($checkFile, "..") !== false || !file_exists($checkFile)) {
-            die("<span class='error'>File is not a zipped archive.</span>");
+            die("<span class='error'>".$mod_strings['ERR_UW_NOT_ZIPPED']."</span>");
         }
 		if(unlink($delete_me)) { // successful deletion?
-			echo "Package $delete_me has been removed.<br>";
+			echo string_format($mod_strings['LBL_UPGRADE_WIZARD_PKG_REMOVED'], array($delete_me))."<br>";
 		} else {
 			die("Problem removing package $delete_me.");
 		}

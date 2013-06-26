@@ -221,7 +221,7 @@ class EAPMController extends SugarController
             $api->loadDocCache(true);
         }
 
-        echo 'SUCCESS';
+        echo $GLOBALS['mod_strings']['LBL_SUCCESS'];
     }
 
     protected function remapAction() {
