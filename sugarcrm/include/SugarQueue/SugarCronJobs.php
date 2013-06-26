@@ -170,6 +170,10 @@ class SugarCronJobs
             // if some job fails, change run status
             $this->jobFailed($this->job);
         }
+        // If the job produced a session, destroy it - we won't need it anymore
+        if(session_id()) {
+            session_destroy();
+        }
     }
 
     /**
