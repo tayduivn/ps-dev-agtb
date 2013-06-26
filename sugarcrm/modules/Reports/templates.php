@@ -290,8 +290,8 @@ template_columns_javascript($args);
 ?>
 <table border="0" cellspacing=0>
 <tr>
-	<td><b>Display Columns:</b></td>
-	<td><b>Hide Columns:</b></td>
+	<td><b><?php echo $mod_strings['LBL_DISPLAY_COLUMNS']; ?>:</b></td>
+	<td><b><?php echo $mod_strings['LBL_HIDE_COLUMNS']; ?>:</b></td>
 </tr>
 <tr>
 	<td>

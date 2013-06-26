@@ -305,7 +305,10 @@ $mod_strings = array (
 	'LBL_CLICK_APPLY_TAG' => 'Click Apply Tag',	
 	'LBL_HEAD_TAGS' => 'Tags',
 	'LBL_REMOVE' => 'Remove' /*for 508 compliance fix*/,
-	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
+    'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
+    'LBL_DEFAULT_LINK_TEXT' => 'Default link text.',
+    'LBL_SELECT_NODE' => 'Please select a node',
+    'LBL_ARTICLE_EXISTS' => 'Article already exists',
 
     //BEGIN SUGARCRM flav=ent ONLY
     // Portal Tour Content
