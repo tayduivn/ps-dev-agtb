@@ -41,7 +41,7 @@ $viewdefs['base']['view']['panel-top'] = array(
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'sticky-rowaction',
                     'icon' => 'icon-plus',
                     'name' => 'create_button',
                     'label' => ' ',

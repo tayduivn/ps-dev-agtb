@@ -317,10 +317,10 @@
              */
             isRequiredLink: function(module, link){
                 var relatedFields = app.data.getRelateFields(module, link);
-                var requiredField = _.find(relatedFields, function(field){
+                var requiredField = _.some(relatedFields, function(field){
                     return field.required === true;
                 }, this);
-                return !_.isEmpty(requiredField);
+                return requiredField;
             },
 
             /**

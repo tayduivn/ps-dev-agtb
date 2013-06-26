@@ -26,30 +26,24 @@
  ********************************************************************************/
 ({
     /**
-     * Link action used in Subpanels.
+     * Link action used in Subpanels.  It needs to be sticky so that we keep things lined up nicely.
      *
      * @class View.Fields.LinkActionField
      * @alias SUGAR.App.view.fields.LinkActionField
-     * @extends View.Fields.RowactionField
+     * @extends View.Fields.StickyRowactionField
      */
-    extendsFrom: 'RowactionField',
+    extendsFrom: 'StickyRowactionField',
     events: {
-        "click a[name=select_button]:not('.disabled')": "openSelectDrawer"
-    },
-    /**
-     * @param options
-     * @override
-     */
-    initialize: function(options) {
-        options.def.acl_action =  options.def.acl_action || 'view';  // default ACL
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
-        this.type = 'rowaction';
+        'click a[name=select_button]': 'openSelectDrawer'
     },
     /**
      * Event handler for the select button that opens a link selection dialog in a drawer for linking
      * an existing record
      */
     openSelectDrawer: function() {
+        if(this.isDisabled()){
+            return;
+        }
         var parentModel = this.context.get("parentModel"),
             linkModule = this.context.get("module"),
             link = this.context.get("link"),
@@ -86,20 +80,21 @@
         });
     },
     /**
-     * A side effect of linking an existing record is that in the process,
-     * we could be deleting an existing required relationship.
+     * A side effect of linking an existing record is that in the process, we could be deleting an existing
+     * required relationship.
+     * So here we prevent user from doing this by disabling the action.
      *
      * Returns false if relationship is required otherwise calls parent for additional ACL checks
      * @return {Boolean} true if allow access, false otherwise
      * @override
      */
-    hasAccess: function() {
+    isDisabled: function() {
+        if (app.view.invokeParent(this, {type: 'field', name: 'sticky-rowaction', method: 'isDisabled'})) {
+            return true;
+        }
         var link = this.context.get("link");
         var parentModule = this.context.get("parentModule");
         var required = app.utils.isRequiredLink(parentModule, link);
-        if(required){
-            return false;
-        }
-        return app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'hasAccess'});
+        return required;
     }
 })

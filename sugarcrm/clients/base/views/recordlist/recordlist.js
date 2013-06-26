@@ -56,6 +56,15 @@
     addActions:function () {
         if (this.actionsAdded) return;
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
+        if(_.isUndefined(this.leftColumns[0])){
+            //Add blank left column to contain favorite and inline-cancel buttons
+            this.leftColumns.push({
+                'type':'fieldset',
+                'label': '',
+                'sortable': false,
+                'fields': []
+            });
+        }
         //Add Favorite to left
         this.addFavorite();
 

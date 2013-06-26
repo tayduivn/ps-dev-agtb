@@ -7,6 +7,7 @@ describe('View.Fields.LinkAction', function() {
 
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
+        SugarTest.loadComponent('base', 'field', 'sticky-rowaction');
         SugarTest.loadComponent('base', 'field', 'link-action');
         field = SugarTest.createField("base", "link-action", "link-action", "edit", {
             'type':'rowaction',
@@ -28,29 +29,31 @@ describe('View.Fields.LinkAction', function() {
         sandbox.restore();
     });
 
-    it('should hide action if the user does not have access', function() {
+    it('should disable action if the user does not have access', function() {
         field.model = app.data.createBean(moduleName);
         var aclStub = sinon.stub(app.acl, "hasAccessToModel", function() {
             return false;
         });
         field.render();
-        expect(field.isHidden).toBeTruthy();
+        expect(field.def.css_class).toEqual("disabled");
         aclStub.restore();
     });
 
-    it('should hide action if any related field is required', function() {
+    it('should disable action if any related field is required', function() {
         field.model = app.data.createBean(moduleName);
         relatedFields = [{required: true}];
         field.render();
-        expect(field.isHidden).toBeTruthy();
+        expect(field.def.css_class).toEqual("disabled");
+        delete field.def.css_class; //cleanup
 
         relatedFields = [{required: false}, {required: true}];
         field.render();
-        expect(field.isHidden).toBeTruthy();
+        expect(field.def.css_class).toEqual("disabled");
+        delete field.def.css_class; //cleanup
 
         relatedFields = [{required: false}, {required: false}];
         field.render();
-        expect(field.isHidden).toBeFalsy();
+        expect(field.def.css_class).toBeUndefined();
     });
 
 });

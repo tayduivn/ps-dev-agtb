@@ -79,6 +79,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
+      'override_subpanel_list_view' => 'subpanel-for-accounts',
       'context' => array (
           'link' => 'contracts',
       ),
