@@ -217,6 +217,28 @@ table.dataTable {
         }
       }
     }
+   & > tr[data-forecast="include"] {
+
+     & > td {
+     font-weight: bold;
+       &:first-child {
+           & > span:before {
+               width: 6px;
+               background-color: @blue;
+               position: absolute;
+               height: 29px;
+               left: -11px;
+               content: "";
+               top: 3px;
+           }
+           &:hover {
+               & > span.isEditable:before {
+                   display: none;
+               }
+           }
+       }
+       }
+   }
   }
   /* ---------
   TABLE FOOTER */
