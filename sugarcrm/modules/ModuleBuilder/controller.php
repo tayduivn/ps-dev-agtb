@@ -596,13 +596,13 @@ class ModuleBuilderController extends SugarController
     public function action_SaveRelationshipLabel()
     {
         global $locale;
-        
+
         if (!empty($_REQUEST['relationship_lang'])) {
             $selected_lang = $_REQUEST['relationship_lang'];
         } else {
             $selected_lang = $locale->getAuthenticatedUserLanguage();
         }
-        
+
         if (empty($_REQUEST ['view_package'])) {
             $relationships = new DeployedRelationships ($_REQUEST ['view_module']);
             if (!empty ($_REQUEST ['relationship_name'])) {
