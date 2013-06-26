@@ -3019,7 +3019,7 @@ nv.models.funnelChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate('+ (-margin.left) +',' + (-margin.top) +')');
+            .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -4157,9 +4157,6 @@ nv.models.line = function() {
       chart.gradient = function(d,i,p) {
         return nv.utils.colorLinearGradient( d, chart.id() + '-' + i, p, color(d,i), wrap.select('defs') );
       };
-
-      //set up the gradient constructor function
-      //nv.utils.dropShadow( '#line_drop_shadow', {}, wrap.select('defs'));
 
       gEnter.append('g').attr('class', 'nv-groups');
       gEnter.append('g').attr('class', 'nv-scatterWrap');
