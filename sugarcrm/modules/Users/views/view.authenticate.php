@@ -63,6 +63,7 @@ class UsersViewAuthenticate extends SidecarView
     public function display()
     {
         if($this->dataOnly) {
+            $this->ss->assign("siteUrl", $GLOBALS['sugar_config']['site_url']);
             $this->ss->display(SugarAutoLoader::existingCustomOne('modules/Users/tpls/AuthenticateParent.tpl'));
         } else {
             parent::display();

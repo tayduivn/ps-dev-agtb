@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <HTML>
 <body>
-<script language="javascript">
-window.parent.AuthCallback({$authorization|@json}, window)
+<script>
+window.opener.postMessage('{$authorization|@json|escape:javascript}', '{$siteUrl|escape:javascript}')
+window.close()
 </script>
 </body>
 </HTML>
