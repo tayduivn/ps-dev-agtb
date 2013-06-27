@@ -64,7 +64,13 @@ var AH = SUGAR.forms.AssignmentHandler = function() {
  */
 AH.ANIMATE = true;
 
-/**
+    /**
+  * @STATIC
+ * This array maps form elements to their respective element in DOM.
+ */
+AH.COLLECTIONS_MAP = {};
+
+    /**
  * @STATIC
  *  * Event which is fired after loadComplete method is done.
  * Meaning it that all the onload dependencies were fired.
@@ -147,6 +153,7 @@ AH.registerForm = function(f, formEl) {
 	var form = formEl || document.forms[f];
 	if (typeof(AH.VARIABLE_MAP[f]) == "undefined")
 		AH.VARIABLE_MAP[f] = {};
+    AH.COLLECTIONS_MAP[f] = {};
 	if ( typeof(form) == 'undefined' ) return;
 	for ( var i = 0; i < form.length; i++ ) {
 		var el = form[i];
@@ -163,6 +170,11 @@ AH.registerForm = function(f, formEl) {
                     AH.VARIABLE_MAP[f][fieldName] = el;
                     AH.updateListeners(fieldName, f, el);
                 }
+                } else if(el.type && el.type == "radio") {
+                    if (!AH.COLLECTIONS_MAP[f][el.name]) {
+                        AH.COLLECTIONS_MAP[f][el.name] = [];
+                    }
+                AH.COLLECTIONS_MAP[f][el.name].push(el);
             }
 			AH.VARIABLE_MAP[f][el.id] = el;
             AH.updateListeners(el.id, f, el);
@@ -332,6 +344,15 @@ AH.getCachedRelatedField = function(link, ftype, view)
     return AH.LINKS[view][link][ftype];
 }
 
+ /**
+  * @STATIC
+ * Retrieve the collection behind a variable.
+ */
+AH.getCollection = function (variable, view) {
+    if (!view)view = AH.lastView;
+        var field = AH.COLLECTIONS_MAP[view][variable];
+        return field;
+}
 
 /**
  * @STATIC
@@ -1194,7 +1215,10 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
         }
 
         for (var i = 0; i < this.variables.length; i++) {
-            var el = handler.getElement(this.variables[i]);
+            var el = handler.getCollection(this.variables[i]);
+            if(!el) {
+                var el = handler.getElement(this.variables[i]);
+            }
             if (!el) continue;
             if (el.type && el.type.toUpperCase() == "CHECKBOX") {
                 YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this, true);
