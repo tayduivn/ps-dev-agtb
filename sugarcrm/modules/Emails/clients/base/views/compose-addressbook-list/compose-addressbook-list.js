@@ -65,5 +65,17 @@
                 massCollection.add(recipients.models);
             }
         }
+    },
+    /**
+     * Override to force translation of the module names as columns are added to the list.
+     *
+     * @param field
+     * @private
+     */
+    _renderField: function(field) {
+        if (field.name == '_module') {
+            field.model.set(field.name, app.lang.get('LBL_MODULE_NAME', field.model.get(field.name)));
+        }
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderField', args: [field]});
     }
 })
