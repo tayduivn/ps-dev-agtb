@@ -36,3 +36,31 @@
 		}
 	}
 }
+
+ul.notification-list {
+	border-top: 2px solid @tableBorder;
+	margin: 0;
+	li {
+		list-style: none;
+		line-height: 34px;
+		padding: 0 16px;
+		&:not(:last-child) {
+			border-bottom: 1px solid @tableBorder;
+		}
+		.ellipsis_inline {
+			display: inline-block !important;
+		}
+		.date {
+			margin-right: 28px;
+		}
+		.rowaction {
+			position: absolute;
+			right: 18px;
+		}
+		.label {
+			min-width: 50px;
+			text-align: center;
+			margin-right: 10px;
+		}
+	}
+}
