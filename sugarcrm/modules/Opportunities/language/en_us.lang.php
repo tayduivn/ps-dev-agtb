@@ -159,6 +159,8 @@ $mod_strings = array(
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
     //END SUGARCRM flav=ent ONLY
 
+    'LBL_QUOTE_SUBPANEL_TITLE' => 'Quotes',
+
     //Dashlet
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Closed Opportunities',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Opportunities that you have closed',
