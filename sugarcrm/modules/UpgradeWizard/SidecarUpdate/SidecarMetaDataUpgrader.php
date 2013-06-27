@@ -102,8 +102,6 @@ class SidecarMetaDataUpgrader
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         'portal' => array(
-            MB_PORTALEDITVIEW         => 'editviewdefs',
-            MB_PORTALDETAILVIEW       => 'detailviewdefs',
             MB_PORTALLISTVIEW         => 'listviewdefs',
             MB_PORTALSEARCHVIEW       => 'searchformdefs',
         ),
