@@ -302,6 +302,7 @@ $mod_strings = array (
     'LBL_PIPELINE_REVENUE' => 'Pipeline Revenue',
     'LBL_PIPELINE_OPPORTUNITIES' => 'Pipeline Opportunities',
     'LBL_LOADING' => 'Loading',
+    'LBL_IN_FORECAST' => 'In Forecast',
 
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',

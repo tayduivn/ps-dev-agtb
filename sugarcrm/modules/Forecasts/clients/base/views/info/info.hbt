@@ -2,8 +2,8 @@
     <div class="span4">
         {{#if this.meta.timeperiod}}
             {{#each this.meta.timeperiod}}
+                <strong>{{str "LBL_IN_FORECAST" "Forecasts"}}</strong>
                 <label for="date_filter" class="control-label">{{str this.label "Forecasts"}}</label>
-
                 <div class="controls">
                     {{field ../this model=../this.model}}
                 </div>
