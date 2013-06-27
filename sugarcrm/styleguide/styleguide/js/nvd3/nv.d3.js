@@ -2032,7 +2032,11 @@ nv.models.bubbleChart = function () {
                           .entries(data);
 
       //add series index to each data point for reference
-      filteredData = filteredData.map(function (d, i) {
+      filteredData = filteredData.sort(function(a,b){
+       //sort legend by key
+          return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+      })
+          .map(function (d, i) {
         d.series = i;
         d.classes = d.values[0].classes;
         d.color = d.values[0].color;
