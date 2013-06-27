@@ -427,6 +427,10 @@ class RestService extends ServiceBase
         if ( !empty($message) ) {
             $replyData['error_message'] = $message;
         }
+        if(!empty($data)) {
+            $replyData = array_merge($replyData, $data);
+        }
+
         $this->response->setContent($replyData);
     }
 
@@ -754,10 +758,10 @@ class RestService extends ServiceBase
 
         return $this;
     }
-    
+
     /**
      * Gets the full collection of arguments from the request
-     * 
+     *
      * @param  array $route The route description for this request
      * @return array
      */
@@ -816,7 +820,7 @@ class RestService extends ServiceBase
                 }
             }
         }
-        
+
         // I know this looks a little weird, overriding post vars with get vars, but
         // in the case of REST, get vars are fairly uncommon and pretty explicit, where
         // the posted document is probably the output of a generated form.
