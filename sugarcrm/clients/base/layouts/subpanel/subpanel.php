@@ -14,6 +14,5 @@ $viewdefs['base']['layout']['subpanel']  = array (
             'view' => 'list-bottom',
         ),
     ),
-    'type' => 'panel',
     'span' => 12,
 );
