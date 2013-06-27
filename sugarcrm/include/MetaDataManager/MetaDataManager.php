@@ -777,7 +777,12 @@ class MetaDataManager
     {
         // Get the current platform if one wasn't presented
         if (empty($platform)) {
-            $platform = $this->platforms[0];
+            $platform = is_array($this->platforms) ? $this->platforms[0] : $this->platforms;
+        }
+
+        //Merge the current platform with base
+        if ($platform != "base") {
+            $platform = "{$platform}_base";
         }
 
         // Is there a current metadata hash sent in the request (empty string is not a valid hash)
@@ -786,10 +791,11 @@ class MetaDataManager
             // for this platform matches what's in the session, ensuring that the
             // session value isn't false (the default value when setting from
             // cache)
-            $hashCache = sugar_cached("api/metadata/hashes.php");
-            if (file_exists($hashCache)) {
-                include $hashCache;
 
+            //Using @include for speed reasons since this will occur on every request
+            //and the file will almost always exist
+            @include sugar_cached("api/metadata/hashes.php");
+            if (!empty($hashes)) {
                 // Valid is either a platform hash that matches the session hash
                 // OR no platform hash and no session hash
                 $platformHash = empty($hashes['meta_hash_' . $platform]) ? null : $hashes['meta_hash_' . $platform];
