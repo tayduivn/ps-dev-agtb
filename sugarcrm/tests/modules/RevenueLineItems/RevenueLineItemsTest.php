@@ -58,6 +58,8 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
 
         parent::tearDown();
     }
@@ -225,7 +227,6 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($value, $revenuelineitem->$field);
         }
 
-        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
 
     /**
@@ -259,9 +260,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(SugarCurrency::convertAmount(400, '-99', 'currency-yen'), $revenuelineitem->cost_price);
         $this->assertEquals(SugarCurrency::convertAmount(700, '-99', 'currency-yen'), $revenuelineitem->discount_price);
 
-        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
         // remove test currencies
-        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**
@@ -521,7 +520,6 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($currency->id, $revenuelineitem->currency_id);
         $this->assertEquals($currency->conversion_rate, $revenuelineitem->base_rate);
 
-        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**
@@ -568,7 +566,6 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($product->name, $pt->name);
 
-        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
 
 }

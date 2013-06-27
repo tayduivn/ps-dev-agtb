@@ -527,7 +527,6 @@ class RevenueLineItem extends SugarBean
         }
         // we need to set the discount_price (unit_price) to be the likely_case amount
         $product->discount_price = $this->likely_case;
-        
         return $product;
     }
 }
