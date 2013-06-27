@@ -21,42 +21,26 @@
      * @returns {{default: Array, available: Array, visible: Array, options: Array}}
      */
     parseFields : function() {
-        var catalog = {
-            'default': [], //Fields visible by default
-            'available': [], //Fields hidden by default
-            'visible': [], //Fields user wants to see,
-            'options': []
-        };
-
-        // TODO: load field prefs and store names in this._fields.available.visible
-        // no prefs so use viewMeta as default and assign hidden fields
-        _.each(this.meta.panels, function (panel) {
-            _.each(panel.fields, function (fieldMeta, i) {
-                var addField = true;
-                if (addField) {
-                    if (app.metadata.getModule("Forecasts", "config").is_setup) {
-                        if (fieldMeta.name.indexOf('_case') != -1) {
-                            var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
-                            addField = (app.metadata.getModule("Forecasts", "config")[field] == 1);
-                        }
-                    } else {
-                        // forecast is not setup,
-                        addField = !(fieldMeta.name == "commit_stage");
+        var catalog = app.view.invokeParent(this, {
+            type: 'view',
+            name: 'recordlist',
+            method: 'parseFields'
+        });
+        _.each(catalog, function (group, i) {
+            catalog[i] = _.filter(group, function (fieldMeta) {
+                var leave = true;
+                if (app.metadata.getModule("Forecasts", "config").is_setup) {
+                    if (fieldMeta.name.indexOf('_case') != -1) {
+                        var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
+                        leave = (app.metadata.getModule("Forecasts", "config")[field] == 1);
                     }
-                    if (addField) {
-                        if (fieldMeta['default'] === false) {
-                            catalog.available.push(fieldMeta);
-                        } else {
-                            catalog['default'].push(fieldMeta);
-                            catalog.visible.push(fieldMeta);
-                        }
-                        catalog.options.push(_.extend({
-                            selected: (fieldMeta['default'] !== false)
-                        }, fieldMeta));
-                    }
+                } else {
+                    // forecast is not setup,
+                    leave = !(fieldMeta.name == "commit_stage");
                 }
-            }, this);
-        }, this);
+                return leave;
+            });
+        });
         return catalog;
     }
 })

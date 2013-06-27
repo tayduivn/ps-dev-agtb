@@ -56,6 +56,9 @@
                         this._fields.available.push(fieldMeta);
                     }
                 }, this);
+                if(this.visibleFieldsLastStateKey) {
+                    app.user.lastState.set(this.visibleFieldsLastStateKey, _.pluck(this._fields.visible, 'name'));
+                }
             },
             /**
              * Determines if only one column is visible, and if the `column` being toggled is the last visible one.

@@ -12,7 +12,10 @@ describe("Base.View.FlexList", function () {
                     "header":true,
                     "fields":["name", "case_number", "type", "created_by", "date_entered", "date_modified", "modified_user_id"]
                 }
-            ]
+            ],
+            last_state: {
+                id: 'record-list'
+            }
         }, "Cases");
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base", "Cases", "flex-list", null, null);
@@ -127,8 +130,11 @@ describe("Base.View.FlexList", function () {
         });
     });
 
+
+
     describe('default fields and available fields', function() {
-        it('should parse fields and separate default fields from available fields', function() {
+
+        beforeEach(function () {
             view.meta = {
                 panels: [
                     {
@@ -157,6 +163,29 @@ describe("Base.View.FlexList", function () {
                     }
                 ]
             };
+        });
+
+        it('should generate user last state key for visible fields', function() {
+            expect(view.visibleFieldsLastStateKey).not.toBeEmpty();
+        });
+
+        it('should retrieve the last state of fields when parse fields', function() {
+            var lastStateGetStub = sinon.stub(app.user.lastState, 'get', function(key) {
+                return ['test2'];
+            });
+            view._fields = view.parseFields();
+
+            expect(lastStateGetStub).toHaveBeenCalled();
+            expect(view._fields.visible).toEqual([
+                {
+                    'name': 'test2',
+                    'default': false
+                }
+            ]);
+            lastStateGetStub.restore();
+        });
+
+        it('should parse fields and separate default fields from available fields', function() {
             view._fields = view.parseFields();
 
             expect(view._fields['default']).toEqual([
@@ -165,7 +194,7 @@ describe("Base.View.FlexList", function () {
                     'default': true
                 }
             ]);
-            expect(view._fields['available']).toEqual([
+            expect(view._fields.available).toEqual([
                 {
                     'name': 'test1',
                     'default': false
@@ -179,13 +208,13 @@ describe("Base.View.FlexList", function () {
                     'default': false
                 }
             ]);
-            expect(view._fields['visible']).toEqual([
+            expect(view._fields.visible).toEqual([
                 {
                     'name': 'test3',
                     'default': true
                 }
             ]);
-            expect(view._fields['options']).toEqual([
+            expect(view._fields.options).toEqual([
                 {
                     'name': 'test1',
                     'default': false,
@@ -207,6 +236,20 @@ describe("Base.View.FlexList", function () {
                     'selected' : false
                 }
             ]);
+
+
+        });
+        it('should parse fields and use default fields as visible when user last state empty', function() {
+            var lastStateGetStub = sinon.stub(app.user.lastState, 'get');
+            view._fields = view.parseFields();
+            expect(view._fields.visible).toEqual([
+                {
+                    'name': 'test3',
+                    'default': true
+                }
+            ]);
+            lastStateGetStub.restore();
+
         });
     });
 });

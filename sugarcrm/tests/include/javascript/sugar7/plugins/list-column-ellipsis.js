@@ -36,4 +36,38 @@ describe("List Column Ellipsis Plugin", function() {
         expect(opts[1].selected).toEqual(true);
         expect(plugin._fields.visible.length).toEqual(1);
     });
+
+    it('Should use user last state for store visible when column toggled', function() {
+        var lastStateSetStub = sinon.stub(app.user.lastState, 'set');
+        plugin.visibleFieldsLastStateKey = 'test-visible-fields-laststate-key';
+        plugin._fields = {
+            avaliable: [
+                {
+                    'name': 'test1',
+                    'default': false
+                },
+                {
+                    'name': 'test2',
+                    'default': false
+                }
+            ],
+            visible: [],
+            options: [
+                {
+                    'name': 'test1',
+                    'default': false,
+                    'selected': false
+                },
+                {
+                    'name': 'test2',
+                    'default': false,
+                    'selected': false
+                }
+            ]
+        };
+        plugin._toggleColumn('test2');
+
+        expect(lastStateSetStub.lastCall.args[1]).toEqual(['test2']);
+        lastStateSetStub.restore();
+    });
 });

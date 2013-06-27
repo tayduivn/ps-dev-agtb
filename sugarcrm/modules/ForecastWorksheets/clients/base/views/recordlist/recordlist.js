@@ -404,6 +404,8 @@
 
             // insert the footer
             if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
+                // recalculate totals colspan
+                this.calculateTotalsColspan();
                 var tpl = app.template.getView('recordlist.totals', this.module);
                 this.$el.find('tbody').after(tpl(this));
             }
@@ -594,6 +596,18 @@
     },
 
     /**
+     * Calculate the totals colspan for the visible fields
+     */
+    calculateTotalsColspan: function() {
+        this.totals_colspan = this._fields.visible.length;
+        _.each(this._fields.visible, function(field) {
+            if(field.type === 'currency') {
+                this.totals_colspan--;
+            }
+        }, this);
+    },
+
+    /**
      * Calculate the totals for the visible fields
      */
     calculateTotals: function() {
@@ -602,13 +616,12 @@
             }),
             fieldNames = [];
 
-        this.totals_colspan = this._fields.visible.length;
+        this.calculateTotalsColspan();
         _.each(fields, function(field) {
             fieldNames.push(field.name);
             this.totals[field.name] = 0;
             this.totals["overall_" + field.name] = 0;
             this.totals[field.name + "_display"] = true;
-            this.totals_colspan--;
         }, this);
 
         // add up all the currency fields
@@ -739,29 +752,16 @@
      * @returns {{default: Array, available: Array, visible: Array, options: Array}}
      */
     parseFields: function() {
-        var catalog = {
-            'default': [], //Fields visible by default
-            'available': [], //Fields hidden by default
-            'visible': [], //Fields user wants to see,
-            'options': []
-        };
-        // TODO: load field prefs and store names in this._fields.available.visible
-        // no prefs so use viewMeta as default and assign hidden fields
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(fieldMeta, i) {
-                if (app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager')) {
-                    if (fieldMeta['default'] === false) {
-                        catalog.available.push(fieldMeta);
-                    } else {
-                        catalog['default'].push(fieldMeta);
-                        catalog.visible.push(fieldMeta);
-                    }
-                    catalog.options.push(_.extend({
-                        selected: (fieldMeta['default'] !== false)
-                    }, fieldMeta));
-                }
-            }, this);
-        }, this);
+        var catalog = app.view.invokeParent(this, {
+            type: 'view',
+            name: 'recordlist',
+            method: 'parseFields'
+        });
+        _.each(catalog, function (group, i) {
+            catalog[i] = _.filter(group, function (fieldMeta) {
+                return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');
+            });
+        });
         return catalog;
     },
 

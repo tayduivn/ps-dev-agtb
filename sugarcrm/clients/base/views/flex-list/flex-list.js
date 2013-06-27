@@ -36,6 +36,9 @@
         //Store right column fields
         this.rightColumns = [];
         this.addActions();
+
+        this.visibleFieldsLastStateKey = app.user.lastState.key('visible-fields', this);
+
         //Store default and available(+visible) field names
         this._fields = this.parseFields();
 
@@ -80,22 +83,35 @@
             'visible': [], //Fields user wants to see,
             'options': []
         };
-        // TODO: load field prefs and store names in this._fields.available.visible
-        // no prefs so use viewMeta as default and assign hidden fields
+        var visibleFieldsLastState = false;
+
+        if(this.visibleFieldsLastStateKey) {
+            visibleFieldsLastState = app.user.lastState.get(this.visibleFieldsLastStateKey);
+            if(!_.isArray(visibleFieldsLastState) || visibleFieldsLastState.length == 0) {
+                visibleFieldsLastState = false;
+            }
+        }
+
         _.each(this.meta.panels, function (panel) {
             _.each(panel.fields, function (fieldMeta, i) {
                 if (_.isNumber(this.displayFirstNColumns)) {
                     fieldMeta['default'] = (i < this.displayFirstNColumns);
                     panel.fields[i] = fieldMeta;
                 }
-                if (fieldMeta['default'] === false) {
-                    catalog.available.push(fieldMeta);
-                } else {
+                var fieldVisible = (fieldMeta['default'] !== false);
+                if (fieldVisible) {
                     catalog['default'].push(fieldMeta);
+                }
+                if(visibleFieldsLastState !== false) {
+                    fieldVisible = (_.indexOf(visibleFieldsLastState, fieldMeta.name) !== -1);
+                }
+                if(fieldVisible) {
                     catalog.visible.push(fieldMeta);
+                } else {
+                    catalog.available.push(fieldMeta);
                 }
                 catalog.options.push(_.extend({
-                    selected: (fieldMeta['default'] !== false)
+                    selected: fieldVisible
                 }, fieldMeta));
             }, this);
         }, this);
@@ -245,5 +261,4 @@
         var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
     }
-
 })
