@@ -53,6 +53,7 @@ class UsersViewAuthenticate extends SidecarView
             $this->authorization = $oapi->token($service, $args);
         } catch (Exception $e) {
             $GLOBALS['log']->error("Login exception: " . $e->getMessage());
+            sugar_die($e->getMessage());
         }
         if(!empty($_REQUEST['dataOnly'])) {
             $this->dataOnly = true;
