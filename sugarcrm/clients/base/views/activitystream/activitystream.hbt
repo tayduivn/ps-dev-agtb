@@ -45,7 +45,7 @@
     {{/with}}
     {{/each}}
     {{#if remaining_comments}}
-    <li class="more-comments">
+    <li class="comment more-comments">
         <a class="more">
             {{str more_tpl "Activities" remaining_comments}}
         </a>
