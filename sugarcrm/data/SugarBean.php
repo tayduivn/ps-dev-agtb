@@ -4211,7 +4211,11 @@ class SugarBean
         {
             if((empty($limit) || $limit == -1))
             {
-                $limit = $max_per_page + 1;
+                if ( $max_per_page != -99 || $max_per_page != -1 ) {
+                    $limit = $max_per_page + 1;
+                } else {
+                    $limit = $max_per_page;
+                }
                 $max_per_page = $limit;
             }
 
