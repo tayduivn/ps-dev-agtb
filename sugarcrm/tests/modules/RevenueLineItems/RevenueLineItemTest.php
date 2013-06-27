@@ -139,6 +139,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         $product = $rli->convertToQuotedLineItem();
 
         $this->assertEquals($rli->likely_case, $product->discount_price);
+        $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not Set');
         $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
     }
 }
