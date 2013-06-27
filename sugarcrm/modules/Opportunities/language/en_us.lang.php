@@ -146,6 +146,8 @@ $mod_strings = array(
 
     'LBL_TOTAL_RLIS' => '# of Total Revenue Line Items',
     'LBL_CLOSED_RLIS' => '# of Closed Revenue Line Items',
+    'NOTICE_NO_DELETE_CLOSED_RLIS' => 'You cannot delete Opportunities that contain closed Revenue Line Items',
+    'WARNING_NO_DELETE_CLOSED_SELECTED' => 'One or more of the selected records contains closed Revenue Line Items and cannot be deleted.',
     //END SUGARCRM flav=ent ONLY
 
     'LBL_QUOTE_SUBPANEL_TITLE' => 'Quotes',

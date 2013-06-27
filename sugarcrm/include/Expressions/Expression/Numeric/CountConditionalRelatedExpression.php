@@ -19,7 +19,7 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
  * ex: <i>count($contacts, 'first_name', array('Joe'))</i> in Accounts would return the <br/>
  * number of contacts related to this account with the first name of 'Joe'
  */
-class CountConditionalRelatedExpression extends NumericExpression
+class CountConditionalRelatedExpression extends SumRelatedExpression
 {
     /**
      * Returns the entire enumeration bare.
@@ -39,7 +39,7 @@ class CountConditionalRelatedExpression extends NumericExpression
         if (!is_array($values)) {
             $values = array($values);
         }
-
+        $GLOBALS["log"]->fatal($params);
         $count = 0;
         foreach ($linkField as $link) {
             if (in_array($link->$field, $values)) {

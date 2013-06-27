@@ -28,6 +28,8 @@
                 var closedModels = [],
                     sales_stage_won = null,
                     sales_stage_lost = null,
+                    closed_RLI_count = 0,
+                    message = null,
                     status = null,
                     module = this.getMassUpdateModel(this.module);
 
@@ -39,12 +41,27 @@
                         //BEGIN SUGARCRM flav=ent ONLY
                         //ENT allows sales_status, so we need to check to see if this module has it and use it
                         status = model.get("sales_status");
+
+                        //grab the closed RLI count (when on opps)
+                        closed_RLI_count = model.get("closed_revenue_line_items");
+                        if (_.isEmpty(closed_RLI_count)) {
+                            closed_RLI_count = 0;
+                        }
+                        
                         //END SUGARCRM flav=ent ONLY
                         if (_.isEmpty(status)) {
                             status = model.get("sales_stage");
                         }
 
+                        if (closed_RLI_count > 0) {
+                            if (_.isEmpty(message)) {
+                                message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
+                            }
+                            return true;
+                        }
+                        
                         if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
+                            message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
                             return true;
                         }
 
@@ -53,9 +70,14 @@
 
                     if (closedModels.length > 0) {
                         module.remove(closedModels, {silent:true});
+                        //uncheck items
+                        _.each(closedModels, function(item){
+                            var id = item.module + "_" + item.id;
+                            $("[name='" + id + "'] input").attr("checked", false);
+                        });
                         app.alert.show('delete_warning', {
                             level: 'warning',
-                            messages: app.lang.getAppString("WARNING_NO_DELETE_SELECTED")
+                            messages: message
                         });
                     }
                 }
