@@ -262,5 +262,13 @@ $mod_strings = array (
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
     'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    // Portal Tour Content
+    'LBL_PORTAL_TOUR_PROFILE_INTRO' => 'The Profile is where you can manage your contact information, password, and language preferences.',
+    'LBL_PORTAL_TOUR_PROFILE_EDIT' => 'Click here to edit your profile.',
+    'LBL_PORTAL_TOUR_PROFILE_LANGUAGE' => 'Here is where you can set your preferred language.  This will change the language used by Sugar Portal.',
+    'LBL_PORTAL_TOUR_PROFILE_RETURN' => 'You can return to your Profile at any time using the User menu.',
+    //END SUGARCRM flav=ent ONLY
 )
 ?>

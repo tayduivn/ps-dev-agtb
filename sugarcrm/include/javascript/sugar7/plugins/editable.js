@@ -3,16 +3,19 @@
         /**
          * Editable plug-in will help the view controller's fields switching in edit mode
          *
-         * This plugin register two main feature
+         * This plugin register two main features
          *
          * - toggleFields: switching mode within array of fields
          * - toggleField: switching mode a single field.
          *                In this case, key and mouse listerer will be enabled.
          *                This plugin automatically back from the editable mode
          *                when user clicks escape key or mouse key in out of the field area
-         *                (fieldClose, editableHandleKeyDown will take care of this feature)
+         *                (editableHandleMouseDown, editableHandleKeyDown will take care of this feature)
          * To override more key event handler, bind this.on("editable:keydown", function(evt, field))
          * The trigger will pass two parameters([mouse event], [field])
+         *
+         * Once the attached view contains unsaved changes, it will warn the message to user for confirming
+         * (this.hasUnsavedChanges must return true when the view contains unsaved changes)
          */
         app.plugins.register('editable', ['view'], {
             onAttach: function(component, plugin) {
@@ -21,20 +24,115 @@
                 }, this);
 
                 this.editableMouseClicked = _.debounce(_.bind(function(evt) {
-                    this.fieldClose.call(this, evt, evt.data.field);
+                    this.editableHandleMouseDown.call(this, evt, evt.data.field);
                 }, this), 0);
+
+                this.on("init", function() {
+                    //event register for preventing actions
+                    // when user escapes the page without saving unsaved changes
+                    app.routing.before("route", this.beforeRouteChange, this, true);
+                    $(window).on("beforeunload." + this.cid, _.bind(this.warnUnsavedChangesOnRefresh, this));
+
+                    this.before("unsavedchange", this.beforeViewChange, this, true);
+                    //If drawer is initialized, bind addtional before handler to prevent closing creation view
+                    if (_.isEmpty(app.additionalComponents['drawer'])) {
+                        return;
+                    }
+                    app.drawer.before("reset", this.beforeRouteChange, this, true);
+
+                    this._currentUrl = Backbone.history.getFragment();
+                });
+            },
+
+            /**
+             * Pre-event handler before current router is changed
+             *
+             * Pass onConfirmRoute as callback to continue navigating after confirmation
+             *
+             * @param {Object} parameters that is passed from caller
+             * @return {Boolean} true only if it contains unsaved changes
+             */
+            beforeRouteChange: function (params) {
+                var onConfirm = _.bind(this.onConfirmRoute, this);
+                return this.warnUnsavedChanges(onConfirm);
+            },
+
+
+            /**
+             * Pre-event handler before custom unsaved logic is passed
+             *
+             * Pass custom callback to continue the following logic after confirmation
+             *
+             * @param {Object} parameters that is passed from caller. Must contains 'callback'
+             * @return {Boolean} true only if it contains unsaved changes
+             */
+            beforeViewChange: function(param) {
+                if (!(param && _.isFunction(param.callback))) {
+                    app.logger.error('Custom unsavedchange must contain callback function.');
+                    return true;
+                }
+                var onConfirm = _.bind(function() {
+                    if(param.callback && _.isFunction(param.callback)) {
+                        param.callback.call(this);
+                    }
+                }, this);
+                return this.warnUnsavedChanges(onConfirm, param.message);
+            },
+
+            /**
+             * Popup dialog message to confirm the unsaved changes
+             *
+             * View must override hasUnsavedChanges and return true to active the warning dialog
+             *
+             * @param {Function} callback function which is executed once user clicks "ok"
+             * @param {String} custom warning message
+             * @return {Boolean} true only if it contains unsaved changes
+             */
+            warnUnsavedChanges: function (onConfirm, customMessage) {
+                this.$(":focus").trigger("change");
+                if (_.isFunction(this.hasUnsavedChanges) && this.hasUnsavedChanges()) {
+                    this._targetUrl = Backbone.history.getFragment();
+                    //Replace the url hash back to the current staying page
+                    app.router.navigate(this._currentUrl, {trigger: false, replace: true});
+
+                    app.alert.show('leave_confirmation', {
+                        level: 'confirmation',
+                        messages: app.lang.get(customMessage || 'LBL_WARN_UNSAVED_EDITS', this.module),
+                        onConfirm: onConfirm
+                    });
+                    return false;
+                }
+                return true;
+            },
+
+            /**
+             * Popup browser dialog message to confirm the unsaved changes
+             */
+            warnUnsavedChangesOnRefresh: function() {
+                if (_.isFunction(this.hasUnsavedChanges) && this.hasUnsavedChanges()) {
+                    return app.lang.get('LBL_WARN_UNSAVED_EDITS', this.module);
+                }
+                return;
+            },
+
+            /**
+             * Continue navigating target location once user confirms the discard changes
+             */
+            onConfirmRoute: function() {
+                this.unbindBeforeHandler();
+                app.router.navigate(this._targetUrl, {trigger: true});
             },
 
             /**
              * Switches entire fields between detail and edit modes.
              *
-             * @params fields {Array} Fields that needs to be toggled
-             * @param isEdit {Boolean} Force into edit mode
+             * @param {Array} Fields that needs to be toggled
+             * @param {Boolean} true if it force into edit mode
              */
             toggleFields: function(fields, isEdit) {
                 var viewName = (isEdit) ? 'edit' : this.action;
                 _.each(fields, function(field) {
-                    if(field.action == viewName){
+                    if (field.action === viewName){
                         return; //don't toggle if it's the same
                     }
                     var meta = this.getFieldMeta(field.name);
@@ -42,6 +140,8 @@
                         return;
                     }
 
+                    //defer the rendering entire toggling fields asynchronized to enhance the performace.
+                    //If it executes the process synchronized, the browser is stuck until all performance is complete.
                     _.defer(function(field){
                         if (field.disposed !== true) {
                             field.setMode(viewName);
@@ -56,14 +156,16 @@
             /**
              * Switches each individual field between detail and edit modes.
              *
-             * @param field {View.Field} Field that needs to be toggled
-             * @param cell {jQuery Node} Cell that field belongs in
-             * @param isEdit {Boolean} Force into edit mode
+             * It is specially designed for inline edit.
+             * Bind default escape key handler for cancelling inline edit mode.
+             *
+             * @param {View.Field} Field that needs to be toggled
+             * @param {Boolean} true if it force into edit mode
              */
             toggleField: function(field, isEdit) {
                 var viewName;
 
-                if(_.isUndefined(isEdit)) {
+                if (_.isUndefined(isEdit)) {
                     viewName = (field.tplName === this.action) ? "edit" : this.action;
                 } else {
                     viewName = (isEdit) ? "edit" : this.action;
@@ -72,7 +174,6 @@
                 field.setMode(viewName);
 
                 if (viewName === "edit") {
-                    var self = this;
 
                     if (_.isFunction(field.focus)) {
                         field.focus();
@@ -93,7 +194,16 @@
                     $(document).off("mousedown.record" + field.name);
                 }
             },
-            fieldClose: function(evt, field) {
+
+            /**
+             * Bind default mouse click handler for inline edit mode.
+             *
+             * Once user clicks the out of the field area, it will cancel the inilne edit mode.
+             *
+             * @param {Window.Event}
+             * @param {View.Field} Field that is in inline edit mode
+             */
+            editableHandleMouseDown: function(evt, field) {
                 if (field.tplName === this.action) {
                     return;
                 }
@@ -105,27 +215,59 @@
                 // When mouse clicks the document, it should maintain the edit mode within the following cases
                 // - Some fields (like email) may have buttons and the mousedown event will fire before the one
                 //   attached to the button is fired. As a workaround we wrap the buttons with .prevent-mousedown
+                var inPreventPlaceholder = (preventPlaceholder.length > 0);
                 // - If mouse is clicked within the same field placeholder area
+                var inTargetPlaceholder = (targetPlaceHolder.length > 0);
                 // - If cursor is focused among the field's input elements
-                if (preventPlaceholder.length > 0
-                    || targetPlaceHolder.length > 0
-                    || currFieldParent.find(":focus").length > 0
-                    || !_.isEmpty(app.drawer._components)) {
+                var isFocusInField = (currFieldParent.find(":focus").length > 0);
+                var drawerOpened = !_.isEmpty(app.drawer._components);
+                if (inPreventPlaceholder || inTargetPlaceholder || isFocusInField || drawerOpened) {
                     return;
                 }
                 this.toggleField(field, false);
             },
 
-            editableHandleKeyDown: function(e, field) {
-                if (e.which == 27) { // If esc
+            /**
+             * Bind key handlers for inline edit mode.
+             *
+             * Attach default escape key handler for cancelling inline edit mode.
+             * Custom handlers that is attached on current view's "editable:keydown" will be triggered in order.
+             *
+             * @param {Window.Event}
+             * @param {View.Field} Field that is in inline edit mode
+             */
+            editableHandleKeyDown: function(evt, field) {
+                if (evt.which == 27) { // If esc
                     this.toggleField(field, false);
                 }
-                this.trigger("editable:keydown", e, field);
+                this.trigger("editable:keydown", evt, field);
             },
+
+            /**
+             * Detach the event handlers for warning unsaved changes
+             */
+            unbindBeforeHandler: function() {
+
+                app.routing.offBefore("route", this.beforeRouteChange, this);
+                $(window).off("beforeunload." + this.cid);
+
+                if (_.isEmpty(app.additionalComponents['drawer'])) {
+                    return;
+                }
+                app.drawer.offBefore("reset", this.beforeRouteChange, this);
+                this.offBefore("unsavedchange");
+            },
+
+            /**
+             * @inheritdoc
+             * Unbind anonymous functions for key and mouse handlers
+             * Unbind beforeHandlers
+             */
             onDetach: function() {
+                $(document).off("mousedown", this.editableMouseClicked);
                 this.editableKeyDowned = null;
                 this.editableMouseClicked = null;
-                $(document).off("mousedown", this.editableMouseClicked);
+                this.unbindBeforeHandler();
             }
         });
     });

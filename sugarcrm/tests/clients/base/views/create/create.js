@@ -131,6 +131,7 @@ describe("Create View", function() {
     });
 
     afterEach(function() {
+        view.dispose();
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         sinonSandbox.restore();
@@ -501,7 +502,7 @@ describe("Create View", function() {
             view.model = bean;
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
+            SugarTest.server.respondWith("GET", /.*rest\/v10\/Contacts\/1234.*/,
                 [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
 
             var success = function(){};
@@ -536,7 +537,7 @@ describe("Create View", function() {
             view.model = bean;
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", /.*\/rest\/v10\/Contacts\/1234.*/,
+            SugarTest.server.respondWith("GET", /.*rest\/v10\/Contacts\/1234.*/,
                 [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
 
             var success = function(){};

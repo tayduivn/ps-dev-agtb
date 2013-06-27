@@ -61,7 +61,7 @@
             model.fields[name] = fieldDef;
         }
 
-        return app.view.createField({
+        var field = app.view.createField({
             def: def,
             view: view,
             context: context,
@@ -69,6 +69,21 @@
             module:module,
             platform: client
         });
+
+
+        var _origDispose = field._dispose;
+        field._dispose = function() {
+            if(this.context) {
+                SugarTest._events.context.push(this.context._events);
+            }
+            if(this.model) {
+                SugarTest._events.model.push(this.model._events);
+            }
+            _origDispose.apply(this, arguments);
+        };
+
+        SugarTest.components.push(view);
+        return field;
     };
 
     test.createView = function(client, module, viewName, meta, context, loadFromModule, layout, loadComponent) {
@@ -88,7 +103,7 @@
             context.prepare();
         }
 
-        return app.view.createView({
+        var view = app.view.createView({
             name : viewName,
             context : context,
             module : module,
@@ -96,6 +111,20 @@
             layout: layout,
             platform: client
         });
+
+        var _origDispose = view._dispose;
+        view._dispose = function() {
+            if(this.context) {
+                SugarTest._events.context.push(this.context._events);
+            }
+            if(this.model) {
+                SugarTest._events.model.push(this.model._events);
+            }
+            _origDispose.apply(this, arguments);
+        };
+
+        SugarTest.components.push(view);
+        return view;
     };
 
     test.createLayout = function(client, module, layoutName, meta, context, loadFromModule, params) {
@@ -113,13 +142,25 @@
             context.prepare();
         }
 
-        return app.view.createLayout(_.extend({
+        var layout = app.view.createLayout(_.extend({
             name: layoutName,
             context: context,
             module: module,
             meta: meta,
             platform: client
         }, params));
+        var _origDispose = layout._dispose;
+        layout._dispose = function() {
+            if(this.context) {
+                SugarTest._events.context.push(this.context._events);
+            }
+            if(this.model) {
+                SugarTest._events.model.push(this.model._events);
+            }
+            _origDispose.apply(this, arguments);
+        };
+        SugarTest.components.push(layout);
+        return layout;
     };
 
     test.testMetadata = {

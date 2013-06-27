@@ -39,7 +39,7 @@ $viewdefs['Leads']['base']['view']['convert-headerpane'] = array(
         array(
             'name'    => 'save_button',
             'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'label'   => 'LBL_SAVE_CONVERT_BUTTON_LABEL',
             'css_class' => 'btn-primary disabled',
             'acl_action' => 'edit',
         ),

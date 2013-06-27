@@ -19,6 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+// Be sure to include the base ACL's as well
+require_once 'modules/ACLActions/actiondefs.php';
+
  if(!defined('ACL_READ_ONLY')){   
  	define('ACL_READ_ONLY', 50);
  	define('ACL_READ_WRITE', 99);

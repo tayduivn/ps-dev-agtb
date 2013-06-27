@@ -22,7 +22,7 @@ $fields = array(
         'required' => true,
     ),
     array(
-        'name' => 'spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
+        'name' => 'spacer', // we need this for when forecasts is not setup and we also need to remove the spacer
         'span' => 6,
         'readonly' => true
     ),
@@ -125,8 +125,42 @@ $fieldsHidden = array(
     'support_contact',
     'support_description',
     'support_term',
-    'date_entered',
-    'date_modified',
+    array(
+        'name' => 'date_entered_by',
+        'readonly' => true,
+        'type' => 'fieldset',
+        'label' => 'LBL_DATE_ENTERED',
+        'fields' => array(
+            array(
+                'name' => 'date_entered',
+            ),
+            array(
+                'type' => 'label',
+                'default_value' => 'LBL_BY',
+            ),
+            array(
+                'name' => 'created_by_name',
+            ),
+        ),
+    ),
+    array(
+        'name' => 'date_modified_by',
+        'readonly' => true,
+        'type' => 'fieldset',
+        'label' => 'LBL_DATE_MODIFIED',
+        'fields' => array(
+            array(
+                'name' => 'date_modified',
+            ),
+            array(
+                'type' => 'label',
+                'default_value' => 'LBL_BY',
+            ),
+            array(
+                'name' => 'modified_by_name',
+            ),
+        ),
+    ),
 );
 //END SUGARCRM flav=pro && flav!=ent ONLY
 
@@ -144,22 +178,12 @@ $fields = array(
     'sales_stage',
     'probability',
     array(
-        'name' => 'date_closed',
-        'required' => true,
-    ),
-    array(
-        'name' => 'dc_spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
-        'span' => 6,
-        'readonly' => true
-    ),
-    array(
         'name' => 'commit_stage',
         'span' => 6
     ),
     array(
-        'name' => 'cs_spacer',  // we need this for when forecasts is not setup and we also need to remove the spacer
-        'span' => 6,
-        'readonly' => true
+        'name' => 'date_closed',
+        'required' => true,
     ),
     'product_template_name',
     array(
@@ -299,6 +323,42 @@ $fieldsHidden = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    array(
+        'name' => 'date_entered_by',
+        'readonly' => true,
+        'type' => 'fieldset',
+        'label' => 'LBL_DATE_ENTERED',
+        'fields' => array(
+            array(
+                'name' => 'date_entered',
+            ),
+            array(
+                'type' => 'label',
+                'default_value' => 'LBL_BY',
+            ),
+            array(
+                'name' => 'created_by_name',
+            ),
+        ),
+    ),
+    array(
+        'name' => 'date_modified_by',
+        'readonly' => true,
+        'type' => 'fieldset',
+        'label' => 'LBL_DATE_MODIFIED',
+        'fields' => array(
+            array(
+                'name' => 'date_modified',
+            ),
+            array(
+                'type' => 'label',
+                'default_value' => 'LBL_BY',
+            ),
+            array(
+                'name' => 'modified_by_name',
+            ),
+        ),
+    ),
 );
 //END SUGARCRM flav=ent ONLY
 
@@ -333,14 +393,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'acl_action' => 'edit',
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
-                ),
+                ),                
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
@@ -357,6 +410,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 //END SUGARCRM flav=ent ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
+                ),
             ),
         ),
         array(
@@ -373,6 +433,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'name' => 'name',
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
+                ),
+                array(
+                    'type' => 'badge',
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'quote_id',
+                    ),
                 ),
                 array(
                     'type' => 'follow',

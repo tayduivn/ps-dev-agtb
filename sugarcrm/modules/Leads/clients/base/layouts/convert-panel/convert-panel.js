@@ -179,7 +179,9 @@
                     field = {name: field};
                 }
                 if (_.contains(moduleMeta.hiddenFields, field.name || field)) {
-                    list[index] = {type:'html'};
+                    field.readonly = true;
+                    field.required = false;
+                    list[index] = field;
                 }
             });
         }, this);

@@ -1623,6 +1623,10 @@ class SugarBean
      */
     function setupCustomFields($module_name, $clean_load=true)
     {
+        if (empty($module_name)) {
+            // No need to load every single dynamic field here
+            return;
+        }
         $this->custom_fields = new DynamicField($module_name);
         $this->custom_fields->setup($this);
 
@@ -4207,7 +4211,11 @@ class SugarBean
         {
             if((empty($limit) || $limit == -1))
             {
-                $limit = $max_per_page + 1;
+                if ( $max_per_page != -99 || $max_per_page != -1 ) {
+                    $limit = $max_per_page + 1;
+                } else {
+                    $limit = $max_per_page;
+                }
                 $max_per_page = $limit;
             }
 
@@ -5004,12 +5012,6 @@ class SugarBean
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
         }
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-        $searchEngine = SugarSearchEngineFactory::getInstance();
-        $searchEngine->delete($this);
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**

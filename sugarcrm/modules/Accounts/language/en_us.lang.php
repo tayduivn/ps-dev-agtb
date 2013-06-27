@@ -75,6 +75,7 @@ $mod_strings = array (
 	'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
 	'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
 	'LBL_CAMPAIGN_ID' => 'Campaign ID',
+	'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE' => 'Campaigns',
 	'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
 	'LBL_CITY' => 'City:',
 	'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',

@@ -21,12 +21,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 class SugarApiException extends Exception
-{ 
+{
     public $httpCode = 400;
     public $errorLabel = 'unknown_exception';
     public $messageLabel = 'EXCEPTION_UNKNOWN_EXCEPTION';
     public $msgArgs = null;
     protected $moduleName = null;
+    
+    /**
+     * Extra data attached to the exception
+     * @var array
+     */
+    public $extraData = array();
 
     /**
      * @param string $messageLabel optional Label for error message.  Used to load the appropriate translated message.
@@ -46,7 +52,7 @@ class SugarApiException extends Exception
         if (!empty($errorLabel)) {
             $this->errorLabel = $errorLabel;
         }
-        
+
         if ($httpCode != 0) {
             $this->httpCode = $httpCode;
         }
@@ -127,14 +133,32 @@ class SugarApiException extends Exception
 
     }
 
+    /**
+     * Set exception extra data
+     * @param string $key
+     * @param mixed $data
+     * @return SugarApiException
+     */
+    public function setExtraData($key, $data)
+    {
+        $this->extraData[$key] = $data;
+        return $this;
+    }
+
 }
-class SugarApiExceptionError extends SugarApiException 
-{ 
-    public $httpCode = 500; 
+/**
+ * General error, no specific cause known.
+ */
+class SugarApiExceptionError extends SugarApiException
+{
+    public $httpCode = 500;
     public $errorLabel = 'fatal_error';
     public $messageLabel = 'EXCEPTION_FATAL_ERROR';
 }
 
+/**
+ * Incorrect API version
+ */
 class SugarApiExceptionIncorrectVersion extends SugarApiException
 {
     public $httpCode = 301;
@@ -142,63 +166,109 @@ class SugarApiExceptionIncorrectVersion extends SugarApiException
     public $messageLabel = 'EXCEPTION_INCORRECT_VERSION';
 }
 
-class SugarApiExceptionNeedLogin extends SugarApiException 
-{ 
-    public $httpCode = 401; 
+/**
+ * Token not supplied or token supplied is invalid.
+ * The client should get a new token and retry.
+ */
+class SugarApiExceptionNeedLogin extends SugarApiException
+{
+    public $httpCode = 401;
     public $errorLabel = 'need_login';
     public $messageLabel = 'EXCEPTION_NEED_LOGIN';
 }
-class SugarApiExceptionNotAuthorized extends SugarApiException 
-{ 
-    public $httpCode = 403; 
+/**
+ * This action is not allowed for this user.
+ */
+class SugarApiExceptionNotAuthorized extends SugarApiException
+{
+    public $httpCode = 403;
     public $errorLabel = 'not_authorized';
     public $messageLabel = 'EXCEPTION_NOT_AUTHORIZED';
 }
+/**
+ * This user is not active.
+ */
 class SugarApiExceptionPortalUserInactive extends SugarApiException
 {
     public $httpCode = 403;
     public $errorLabel = 'inactive_portal_user';
     public $messageLabel = 'EXCEPTION_INACTIVE_PORTAL_USER';
 }
+/**
+ * Portal is not activated by configuration.
+ */
 class SugarApiExceptionPortalNotConfigured extends SugarApiException
 {
     public $httpCode = 403;
     public $errorLabel = 'portal_not_configured';
     public $messageLabel = 'EXCEPTION_PORTAL_NOT_CONFIGURED';
 }
-class SugarApiExceptionNoMethod extends SugarApiException 
+/**
+ * URL does not resolve into a valid REST API method.
+ */
+class SugarApiExceptionNoMethod extends SugarApiException
 {
     public $httpCode = 404;
     public $errorLabel = 'no_method';
     public $messageLabel = 'EXCEPTION_NO_METHOD';
 }
+/**
+ * Resource specified by the URL does not exist.
+ */
 class SugarApiExceptionNotFound extends SugarApiException
 {
     public $httpCode = 404;
     public $errorLabel = 'not_found';
     public $messageLabel = 'EXCEPTION_NOT_FOUND';
 }
-class SugarApiExceptionMissingParameter extends SugarApiException
+/**
+ * Thrown when the client attempts to edit the data on the server that was already edited by
+ * different client.
+ */
+class SugarApiExceptionEditConflict extends SugarApiException
+{
+    public $httpCode = 409;
+    public $errorLabel = 'edit_conflict';
+    public $messageLabel = 'EXCEPTION_EDIT_CONFLICT';
+}
+
+class SugarApiExceptionInvalidHash extends SugarApiException
 {
     public $httpCode = 412;
-    public $errorLabel = 'missing_parameter';
-    public $messageLabel = 'EXCEPTION_MISSING_PARAMTER';
+    public $errorLabel = 'metadata_out_of_date';
+    public $messageLabel = 'EXCEPTION_METADATA_OUT_OF_DATE';
 }
-class SugarApiExceptionRequestMethodFailure extends SugarApiException
-{
-    public $httpCode = 412;
-    public $errorLabel = 'request_failure';
-    public $messageLabel = 'EXCEPTION_REQUEST_FAILURE';
-}
+
 class SugarApiExceptionRequestTooLarge extends SugarApiException
 {
     public $httpCode = 413;
     public $errorLabel = 'request_too_large';
     public $messageLabel = 'EXCEPTION_REQUEST_TOO_LARGE';
 }
+/**
+ * One of the required parameters for the request is missing.
+ */
+class SugarApiExceptionMissingParameter extends SugarApiException
+{
+    public $httpCode = 422;
+    public $errorLabel = 'missing_parameter';
+    public $messageLabel = 'EXCEPTION_MISSING_PARAMTER';
+}
+/**
+ * One of the required parameters for the request is incorrect.
+ */
 class SugarApiExceptionInvalidParameter extends SugarApiException
 {
     public $httpCode = 422;
     public $errorLabel = 'invalid_parameter';
     public $messageLabel = 'EXCEPTION_INVALID_PARAMETER';
+}
+/**
+ * The API method is unable to process parameters due to some of them being wrong.
+ */
+class SugarApiExceptionRequestMethodFailure extends SugarApiException
+{
+    public $httpCode = 424;
+    public $errorLabel = 'request_failure';
+    public $messageLabel = 'EXCEPTION_REQUEST_FAILURE';
 }

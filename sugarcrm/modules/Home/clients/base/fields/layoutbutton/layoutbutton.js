@@ -86,7 +86,10 @@
         if (this.model) {
             this.model.on("change:metadata", this.render, this);
             if(this.model.isNew()) {
+                //Assign default layout set
                 this.setLayout(1);
+                //clean out model changed attributes not to warn unsaved changes
+                this.model.changed = {};
             }
         }
     }

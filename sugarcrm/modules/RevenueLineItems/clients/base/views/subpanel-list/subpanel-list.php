@@ -14,48 +14,48 @@
 
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 // PRO/CORP only fields
-$fields = array (
-    array (
+$fields = array(
+    array(
         'name' => 'name',
         'link' => true,
         'label' => 'LBL_LIST_NAME',
         'enabled' => true,
         'default' => true
     ),
-    array (
+    array(
         'name' => 'account_name',
         'sortable' => false
     ),
     'status',
     'quantity',
-    array (
+    array(
         'name' => 'discount_price',
         'type' => 'currency',
-        'related_fields' => array (
+        'related_fields' => array(
             'currency_id',
             'base_rate',
         ),
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
-        
+
     ),
-    array (
+    array(
         'name' => 'list_price',
         'type' => 'currency',
-        'related_fields' => array (
+        'related_fields' => array(
             'currency_id',
             'base_rate',
         ),
         'convertToBase' => true,
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
-        
+
     ),
-    array (
+    array(
         'name' => 'cost_price',
         'type' => 'currency',
-        'related_fields' => array (
+        'related_fields' => array(
             'currency_id',
             'base_rate',
         ),
@@ -69,19 +69,19 @@ $fields = array (
 
 //BEGIN SUGARCRM flav=ent ONLY
 // ENT/ULT only fields
-$fields = array (
-    array (
+$fields = array(
+    array(
         'name' => 'name',
         'link' => true,
         'label' => 'LBL_LIST_NAME',
         'enabled' => true,
         'default' => true
     ),
-    array (
+    array(
         'name' => 'opportunity_name',
         'sortable' => false
     ),
-    array (
+    array(
         'name' => 'account_name',
         'readonly' => true,
         'sortable' => false
@@ -90,20 +90,20 @@ $fields = array (
     'probability',
     'date_closed',
     'commit_stage',
-    array (
+    array(
         'name' => 'product_template_name',
         'sortable' => false
     ),
-    array (
+    array(
         'name' => 'category_name',
         'sortable' => false
     ),
     'quantity',
-    array (
+    array(
         'name' => 'likely_case',
         'required' => true,
         'type' => 'currency',
-        'related_fields' => array (
+        'related_fields' => array(
             'currency_id',
             'base_rate',
         ),
@@ -111,11 +111,11 @@ $fields = array (
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
-    array (
+    array(
         'name' => 'best_case',
         'required' => true,
         'type' => 'currency',
-        'related_fields' => array (
+        'related_fields' => array(
             'currency_id',
             'base_rate',
         ),
@@ -123,11 +123,11 @@ $fields = array (
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
-    array (
+    array(
         'name' => 'worst_case',
         'required' => true,
         'type' => 'currency',
-        'related_fields' => array (
+        'related_fields' => array(
             'currency_id',
             'base_rate',
         ),
@@ -135,69 +135,77 @@ $fields = array (
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
-    array (
+    array(
+        'name' => 'quote_name',
+        'label' => 'LBL_ASSOCIATED_QUOTE',
+        'related_fields' => array('quote_id'),
+        // this is a hack to get the quote_id field loaded
+        'readonly' => true,
+        'bwcLink' => true,
+    ),
+    array(
         'name' => 'assigned_user_name',
         'sortable' => false
     )
 );
 //END SUGARCRM flav=ent ONLY
 
-$viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array (
+$viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array(
     'favorite' => true,
-    'panels' => array (
-        array (
+    'panels' => array(
+        array(
             'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
             'fields' => $fields
         ),
     ),
-    'selection' => array (
+    'selection' => array(
         'type' => 'multi',
-        'actions' => array (
-            array (
+        'actions' => array(
+            array(
                 'name' => 'edit_button',
                 'type' => 'button',
                 'label' => 'LBL_MASS_UPDATE',
                 'primary' => true,
-                'events' => array (
+                'events' => array(
                     'click' => 'function(e){
                                     this.view.layout.trigger("list:massupdate:fire");
                                 }'
                 ),
                 'acl_action' => 'massupdate',
             ),
-            array (
+            array(
                 'name' => 'quote_button',
                 'type' => 'button',
                 'label' => 'LBL_CREATE_QUOTE',
                 'primary' => true,
-                'events' => array (
+                'events' => array(
                     'click' => 'function(e) {
                                     this.view.layout.trigger("list:massquote:fire");
                                 }'
                 ),
                 'acl_action' => 'massquote',
             ),
-            array (
+            array(
                 'name' => 'delete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
                 'acl_action' => 'delete',
                 'primary' => true,
-                'events' => array (
+                'events' => array(
                     'click' => 'function(e) {
                                     this.view.layout.trigger("list:massdelete:fire");
                                 }'
                 ),
                 'acl_action' => 'delete',
             ),
-            array (
+            array(
                 'name' => 'export_button',
                 'type' => 'button',
                 'label' => 'LBL_EXPORT',
                 'acl_action' => 'export',
                 'primary' => true,
-                'events' => array (
+                'events' => array(
                     'click' => 'function(e) {
                                     this.view.layout.trigger("list:massexport:fire");
                                 }'
@@ -205,10 +213,10 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array (
             ),
         ),
     ),
-    'rowactions' => array (
+    'rowactions' => array(
         'css_class' => 'pull-right',
-        'actions' => array (
-            array (
+        'actions' => array(
+            array(
                 'type' => 'rowaction',
                 'css_class' => 'btn',
                 'tooltip' => 'LBL_PREVIEW',
@@ -216,7 +224,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array (
                 'icon' => 'icon-eye-open',
                 'acl_action' => 'view',
             ),
-            array (
+            array(
                 'type' => 'rowaction',
                 'name' => 'edit_button',
                 'icon' => 'icon-pencil',

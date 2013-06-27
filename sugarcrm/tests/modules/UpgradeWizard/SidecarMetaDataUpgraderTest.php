@@ -142,6 +142,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     //BEGIN SUGARCRM flav=ent ONLY
     // Added for Bug 55568 - new OOTB metadata was not included in upgrade
     public function testUpgraderUsedNewViewDefs() {
+        $this->markTestIncomplete("Marking incomplete until a decision is made on a record view upgrader");
         // Bug 55936 - Fixed hardcoded path for testing to pick up metadata changes
         $filename = 'custom/working/modules/Cases/clients/portal/views/edit/edit.php';
         $exists = file_exists($filename);

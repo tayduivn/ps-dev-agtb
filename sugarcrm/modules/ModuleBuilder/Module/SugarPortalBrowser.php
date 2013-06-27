@@ -78,22 +78,57 @@ class SugarPortalBrowser
      */
     function isPortalModule($module)
     {
-        // Create the path to search
-        $path = "modules/$module/clients/portal/views/";
+        // If this module isn't studio enabled for portal, don't bother with the
+        // rest of the validation
+        if ($this->isStudioEnabled($module)) {
+            // Create the path to search
+            $path = "modules/$module/clients/portal/views/";
 
-        // Handle it
-        // Bug 55003 - Notes showing as a portal module because it has non
-        // standard layouts
-        $views = SugarPortalModule::getViewFiles();
-        $viewFiles = array_keys($views);
-        foreach ($viewFiles as $file) {
-            if (SugarAutoLoader::fileExists($path . basename($file, '.php') . '/' . $file)) {
-                return true;
+            // Handle it
+            // Bug 55003 - Notes showing as a portal module because it has non
+            // standard layouts
+            $views = SugarPortalModule::getViewFiles();
+            $viewFiles = array_keys($views);
+            foreach ($viewFiles as $file) {
+                $fullPath = $path . basename($file, '.php') . '/' . $file;
+                if (SugarAutoLoader::fileExists($fullPath)) {
+                    return true;
+                }
             }
         }
 
         return false;
     }
-
+    
+    /**
+     * Checks to see if a module is studio enabled for portal.
+     * 
+     * The default expectation is false unless a module is explicitly true or
+     * does not set an expectation.
+     * 
+     * @param string $module The name of the module
+     * @return boolean
+     */
+    protected function isStudioEnabled($module) 
+    {
+        global $dictionary;
+        
+        $bean = BeanFactory::getBean($module);
+        $vardef = $dictionary[$bean->object_name];
+        
+        // No expectation set, means it does not explicitly disallow studio
+        // Explicit setting to true for the module means the same
+        if (!isset($vardef['studio_enabled']) || $vardef['studio_enabled'] === true) {
+            return true;
+        }
+        
+        // Explicit setting to true for the platform within an array
+        $array = is_array($vardef['studio_enabled']);
+        $isset = isset($vardef['studio_enabled']['portal']);
+        $valid = $array && $isset && $vardef['studio_enabled']['portal'] === true;
+        
+        // At this point it's safe to return $valid as it will either be true or
+        // false, which would be the default return
+        return $valid;
+    }
 }
-?>

@@ -3,15 +3,12 @@ describe("Base.Field.ActionMenu", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.view.Field.prototype._renderHtml = function() {};
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        field.model = null;
-        field.view = null;
         field._loadTemplate = null;
         field = null;
         Account = null;
@@ -21,16 +18,16 @@ describe("Base.Field.ActionMenu", function() {
         var def = {};
         field = SugarTest.createField("base","actionmenu", "actionmenu", "list", def);
         expect(field.context.get("mass_collection")).toBeDefined();
-
     });
 
     it('should populate selected model items', function() {
         var def = {};
-        field = SugarTest.createField("base","actionmenu", "actionmenu", "list", def);
         SugarTest.loadComponent("base", "view", "list");
         SugarTest.loadComponent("base", "view", "flex-list");
-        field.view = SugarTest.createView("base", "Account", "recordlist", {});
-        field.view.collection = { next_offset : -1 };
+        field = SugarTest.createField("base", "actionmenu", "actionmenu", "recordlist", def);
+        field.view.collection = new Backbone.Collection({
+            next_offset: -1
+        });
 
         var massCollection = field.context.get("mass_collection");
         expect(massCollection.length).toBe(0);

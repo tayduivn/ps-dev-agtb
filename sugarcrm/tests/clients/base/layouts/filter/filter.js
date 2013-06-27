@@ -244,7 +244,10 @@ describe("Base.Layout.Filter", function () {
         it('should handle filter change', function () {
             var spy = sinon.spy();
             var model = new Backbone.Model({id: '123', filter_definition: 'test'});
-            var ctxt = new Backbone.Model({collection: {}});
+            var ctxt = new Backbone.Model({collection: {
+                resetPagination:function(){},
+                reset: function(){}
+            }});
             var contextListStub = sinon.stub(layout, 'getRelevantContextList', function () {
                 return [ctxt];
             });

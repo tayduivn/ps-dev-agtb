@@ -375,42 +375,77 @@
 
         // More patch for some field types
         var fieldName = $row.find('.filter-field select').val(),
-            fieldType = this.fieldList[fieldName].type;
+            fieldType = this.fieldList[fieldName].type,
+            fieldDef = fields[fieldName];
+
         switch (fieldType) {
             case 'enum':
-                fields[fieldName].isMultiSelect = true;
+                fieldDef.isMultiSelect = true;
                 break;
             case 'bool':
-                fields[fieldName].type = 'enum';
+                fieldDef.type = 'enum';
                 break;
             case 'int':
-                fields[fieldName].auto_increment = false;
+                fieldDef.auto_increment = false;
                 break;
         }
 
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
-        model.set(fieldName, $row.data('value') || '');
+        var $fieldValue = $row.find('.filter-value');
 
-        // Render the value field
-        var field = this.createField(model, fields[fieldName]),
-            $fieldValue = $row.find('.filter-value'),
-            fieldContainer = $(field.getPlaceholder().string);
+        $fieldValue.removeClass('hide').empty();
 
-        $fieldValue.removeClass('hide').find('input, select').remove();
-        fieldContainer.appendTo($fieldValue);
-        data['valueField'] = field;
+        //If the operation is $between we need to set two inputs.
+        if (operation === '$between') {
+            var minmax = [],
+                value = $row.data('value') || [];
 
-        this._renderField(field);
-        fieldContainer.find('input, select, textarea').addClass('inherit-width');
+            model.set(fieldName + '_min', value[0] || '');
+            model.set(fieldName + '_max', value[1] || '');
+            minmax.push(this.createField(model, _.extend({}, fieldDef, {name: fieldName + '_min'})));
+            minmax.push(this.createField(model, _.extend({}, fieldDef, {name: fieldName + '_max'})));
+
+            data['valueField'] = minmax;
+            _.each(minmax, function(field) {
+                var fieldContainer = $(field.getPlaceholder().string);
+                $fieldValue.append(fieldContainer);
+                this.listenTo(field, 'render', function() {
+                    field.$('input, select, textarea').addClass('inherit-width');
+                });
+                this._renderField(field);
+            }, this);
+        } else {
+            model.set(fieldName, $row.data('value') || '');
+            // Render the value field
+            var field = this.createField(model, fieldDef),
+                fieldContainer = $(field.getPlaceholder().string);
+            $fieldValue.append(fieldContainer);
+            data['valueField'] = field;
+
+            this.listenTo(field, 'render', function() {
+                field.$('input, select, textarea').addClass('inherit-width');
+            });
+            this._renderField(field);
+        }
 
         // When the value change a quicksearch should be fired to update the results
         this.listenTo(model, "change", (function($row) {
             return function() {
-                var field = $row.data("valueField"),
-                // We use _.result here to prevent an undefined method error
-                // in case the val method is not defined on the field.
-                    result = field ? (field.unformat(field.value) || _.result(field, 'val')) : '';
+                var fields = $row.data("valueField"),
+                    result = '';
+                //If we have multiple fields we have to build an array of values
+                if (_.isArray(fields)) {
+                    result = [];
+                    _.each(fields, function(field) {
+                        result.push((field && field.$el) ? (field.unformat(field.value) || _.result(field, 'val')) : '');
+                    });
+                } else {
+                    // We use _.result here to prevent an undefined method error
+                    // in case the val method is not defined on the field.
+                    // We check field.$el because for some reasons it throws an error on date type fields
+                    result = (field && field.$el) ? (field.unformat(field.value) || _.result(field, 'val')) : '';
+                }
 
                 if (_.isArray(result)) {
                     // If we are filtering a multi-enum, strip out the blank value that
@@ -501,17 +536,22 @@
      */
     _disposeFields: function($row, opts) {
         var data = $row.data(), trigger = false, model;
+
         if (_.isObject(data) && _.isArray(opts)) {
             _.each(opts, function(val) {
                 if (data[val.field]) {
+                    //For in between filter we have an array of fields so we need to cover all cases
+                    var fields = _.isArray(data[val.field]) ? data[val.field] : [data[val.field]];
                     data[val.value] = "";
-                    model = data[val.field].model;
-                    if (val.field === "valueField" && model) {
-                        model.unset(data.valueField.name, {silent: true});
-                        trigger = true;
-                    }
-                    data[val.field].dispose();
-                    data[val.field] = "";
+                    _.each(fields, function(field) {
+                        model = field.model;
+                        if (val.field === "valueField" && model) {
+                            model.clear({silent: true});
+                            trigger = true;
+                        }
+                        field.dispose();
+                        field = null;
+                    });
                 }
             }, this);
         }

@@ -107,6 +107,7 @@ class ActivitiesApi extends FilterApi
 
     protected function formatResult(ServiceBase $api, array $args, SugarQuery $query, SugarBean $bean = null)
     {
+        $beanList = array();
         $response = array();
         $response['records'] = $query->execute('array', false);
         // We add one to it when setting it, so we subtract one now for the true
@@ -135,6 +136,24 @@ class ActivitiesApi extends FilterApi
                 if (is_null($bean) || empty($bean->id)) {
                     $record['fields'] = json_decode($record['fields'], true);
                     if (!empty($record['fields'])) {
+                        $aclBean = null;
+                        if (!is_null($bean)) {
+                            $aclBean = $bean;
+                        } elseif (!empty($record['data']['object']['module'])) {
+                            $aclModule = $record['data']['object']['module'];
+                            if (isset($beanList[$aclModule])) {
+                                $aclBean = $beanList[$aclModule];
+                            } else {
+                                $aclBean = BeanFactory::getBean($aclModule);
+                                if (!is_null($aclBean)) {
+                                    $beanList[$aclModule] = $aclBean;
+                                }
+                            }
+                        }
+                        if (!is_null($aclBean)) {
+                            $context = array('user' => $api->user);
+                            $aclBean->ACLFilterFieldList($record['data']['changes'], $context);
+                        }
                         foreach ($record['data']['changes'] as &$change) {
                             if (!in_array($change['field_name'], $record['fields'])) {
                                 unset($record['data']['changes'][$change['field_name']]);

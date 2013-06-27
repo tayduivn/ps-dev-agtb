@@ -115,8 +115,9 @@ class MBModule
             include ($this->path . '/config.php') ;
             $this->config = $config ;
         }
-        $label = (! empty ( $this->config [ 'label' ] )) ? $this->config [ 'label' ] : $this->name ;
-        $this->mblanguage = new MBLanguage ( $this->name, $this->path, $label, $this->key_name ) ;
+        $label = (!empty ($this->config ['label'])) ? $this->config ['label'] : $this->name;
+        $label_singular = !empty($this->config['label_singular']) ? $this->config['label_singular'] : $this->name;
+        $this->mblanguage = new MBLanguage ($this->name, $this->path, $label, $this->key_name, $label_singular);
         foreach ( $this->iTemplate as $temp )
         {
             if (! empty ( $this->config [ $temp ] ))
@@ -304,6 +305,7 @@ class MBModule
                 $this->mblanguage->reload () ;
             }
             $this->mblanguage->label = $this->config [ 'label' ] ;
+            $this->mblanguage->label_singular = !empty($this->config['label_singular']) ? $this->config['label_singular'] : $this->config['label'];
             //pass in the key_name incase it has changed mblanguage will check if it is different and handle it accordingly
             $this->mblanguage->save ( $this->key_name ) ;
 
@@ -828,6 +830,10 @@ class MBModule
         if (! empty ( $_REQUEST [ 'label' ] ))
         {
             $this->config [ 'label' ] = $_REQUEST [ 'label' ] ;
+        }
+
+        if (!empty($_REQUEST['label_singular'])) {
+            $this->config['label_singular'] = $_REQUEST['label_singular'];
         }
 
         $this->config [ 'importable' ] = ! empty( $_REQUEST[ 'importable' ] ) ;

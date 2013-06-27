@@ -135,6 +135,13 @@ $fields = array(
         'base_rate_field' => 'base_rate',
     ),
     array(
+        'name' => 'quote_name',
+        'label' => 'LBL_ASSOCIATED_QUOTE',
+        'related_fields' => array('quote_id'),
+        'readonly' => true,
+        'bwcLink' => true,
+    ),
+    array(
         'name' => 'assigned_user_name',
         'sortable' => false
     )

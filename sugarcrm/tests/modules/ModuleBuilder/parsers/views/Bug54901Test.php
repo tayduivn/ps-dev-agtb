@@ -87,9 +87,9 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
     }
     
-    public function testPortalDetailLayoutDoesNotIncludeInvalidFields() {
+    public function testPortalRecordLayoutDoesNotIncludeInvalidFields() {
         // Build the parser
-        $grid = new Bug54901TestGridParser(MB_PORTALDETAILVIEW, 'Cases', '', MB_PORTAL);
+        $grid = new Bug54901TestGridParser(MB_PORTALRECORDVIEW, 'Cases', '', MB_PORTAL);
         
         // Massage the field defs
         $grid->changeFieldType('resolution', 'parent');
@@ -107,29 +107,6 @@ class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertFalse($available, 'The system_id field was not excluded');
 
         $available = $grid->isAvailableFieldName('work_log', $fields);
-        $this->assertTrue($available, 'Work Log is showing as not available');
-    }
-    
-    public function testPortalEditLayoutDoesNotIncludeInvalidFields() {
-        // Build the parser
-        $grid = new Bug54901TestGridParser(MB_PORTALEDITVIEW, 'Cases', '', MB_PORTAL);
-        
-        // Massage the field defs
-        $grid->changeFieldType('resolution', 'parent');
-        $grid->changeFieldType('system_id', 'encrypt');
-        $grid->changeFieldType('work_log', 'relate');
-        
-        // Get our fields
-        $fields = $grid->getAvailableFields();
-
-        // Run the assertions
-        $available = $grid->isAvailableFieldName('resolution', $fields);
-        $this->assertFalse($available, 'The resolution field was not excluded');
-
-        $available = $grid->isAvailableFieldName('system_id', $fields);
-        $this->assertFalse($available, 'The system_id field was not excluded');
-
-        $available = $grid->isAvailableFieldName('work_log', $fields);
-        $this->assertFalse($available, 'The work_log field was not excluded after being changed to relate');
+        $this->assertFalse($available, 'Work Log was not excluded');
     }
 }

@@ -34,19 +34,22 @@
         }
 
         var self = this,
-            fileFields = [],
-            callbacks = {},
             options = {
-                success: _.bind(function() {
-                    this.changed = false;
-                    this.view.toggleRow(this.model.id, false);
-                }, this),
-                //Show alerts for this request
-                showAlerts: {
-                    'process' : true,
-                    'success': {
-                        messages: app.lang.getAppString('LBL_RECORD_SAVED')
-                    }
+                success: function() {
+                    self.model.save({}, {
+                        success: function(model) {
+                            self.changed = false;
+                            self.view.toggleRow(model.id, false);
+                        },
+                        //Show alerts for this request
+                        showAlerts: {
+                            'process': true,
+                            'success': {
+                                messages: app.lang.get('LBL_RECORD_SAVED', self.module)
+                            }
+                        },
+                        relate: self.model.link ? true : false
+                    });
                 }
         };
 

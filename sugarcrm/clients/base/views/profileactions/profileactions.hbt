@@ -1,7 +1,7 @@
 <ul class="nav pull-right megamenu" id="userList">
     <li class="dropdown" id="userActions">
         <div class="btn-group">
-            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle">
+            <a data-toggle="dropdown" href="javascript:void(0)" role="button" class="btn btn-invisible btn-link dropdown-toggle dtoggle" rel="tooltip" data-title="{{userName}}">
                 {{#if pictureUrl}}
                     <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">
                 {{else}}

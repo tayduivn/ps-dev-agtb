@@ -47,7 +47,7 @@ describe("Plugins.ErrorDecoration", function() {
         SugarTest.app.view.reset();
         view = null;
     });
-    describe('decorating fields', function() {
+    xdescribe('decorating fields', function() {
         it("should call decorateError on field during 'error:validation:field' event", function(){
             view.render();
             view.model.set({

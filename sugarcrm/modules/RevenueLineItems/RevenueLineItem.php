@@ -243,6 +243,14 @@ class RevenueLineItem extends SugarBean
             // if $opp is not set, load it up
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
         }
+
+        /**
+         * If the loaded ID does not match what was on the product, just ignore it.
+         */
+        if ($opp->id != $this->opportunity_id) {
+            return;
+        }
+
         // get the closed won and closed lost values
         $closed_won = $settings['sales_stage_won'];
         $closed_lost = $settings['sales_stage_lost'];
@@ -497,16 +505,26 @@ class RevenueLineItem extends SugarBean
     
     /**
      * Converts (copies) RLI to Products (QuotedLineItem)
-     * @return object Product
+     * @return Product
      */
     public function convertToQuotedLineItem()
     {
+        /* @var $product Product */
         $product = BeanFactory::getBean('Products');
+        $product->id = create_guid();
+        $product->new_with_id = true;
         foreach ($this->getFieldDefinitions() as $field) {
-            if ($field['name'] != 'id') {
+            if ($field['name'] == 'id') {
+                // if it's the ID field, associate it back to the product on the relationship field
+                $product->revenuelineitem_id = $this->$field['name'];
+            } else {
                 $product->$field['name'] = $this->$field['name'];
             }
         }
+
+        // we need to set the discount_price (unit_price) to be the likely_case amount
+        $product->discount_price = $this->likely_case;
+        
         return $product;
     }
 }

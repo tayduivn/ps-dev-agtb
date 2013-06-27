@@ -478,18 +478,24 @@
      * @param lastCommitDate
      */
     checkForDraftRows: function(lastCommitDate) {
-        if (this.layout.isVisible() && this.canEdit && !_.isUndefined(lastCommitDate)
-            && this.hasCheckedForDraftRecords === false && !_.isEmpty(this.collection.models)) {
-            // check to see if anything in the collection is a draft, if it is, then send an event
-            // to notify the commit button to enable
+        if (this.layout.isVisible() && this.canEdit && this.hasCheckedForDraftRecords === false
+            && !_.isEmpty(this.collection.models)) {
+
             this.hasCheckedForDraftRecords = true;
-            this.collection.find(function(item) {
-                if (item.get('date_modified') > lastCommitDate) {
-                    this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
-                    return true;
-                }
-                return false;
-            }, this);
+            if(_.isUndefined(lastCommitDate)) {
+                // we have rows but no commit, enable the commit button
+                this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+            } else {
+                // check to see if anything in the collection is a draft, if it is, then send an event
+                // to notify the commit button to enable
+                this.collection.find(function(item) {
+                    if (item.get('date_modified') > lastCommitDate) {
+                        this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+                        return true;
+                    }
+                    return false;
+                }, this);
+            }
         }
     },
 

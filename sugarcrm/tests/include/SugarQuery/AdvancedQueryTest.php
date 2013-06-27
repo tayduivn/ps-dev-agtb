@@ -1,26 +1,17 @@
 <?php
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
+
 
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
@@ -295,6 +286,134 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp('/LEFT JOIN contacts_cstm jt(\d+)_cstm ON \(jt\1_cstm.id_c = jt\1\.id\)/', $sql);
     }
 
+    /**
+     * test conditions on related variables
+     */
+    public function testRelateConditions()
+    {
+        $contact = BeanFactory::getBean("Contacts");
+        // regular query
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->where()->equals('first_name','Awesome');
+        $this->assertRegExp('/WHERE.*contacts\.first_name\s*=\s*\'Awesome\'/',$sq->compileSql());
+
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->where()->equals('contacts.last_name','Awesome');
+        $this->assertRegExp('/WHERE.*contacts\.last_name\s*=\s*\'Awesome\'/',$sq->compileSql());
+
+        // with related in name
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name", "account_name"));
+        $sq->from($contact);
+        $sq->where()->equals('account_name','Awesome');
+        $this->assertRegExp('/WHERE.*accounts\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+
+        // without related in name
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->where()->equals('account_name','Awesome');
+        $this->assertRegExp('/WHERE.*accounts\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+
+        // self-link
+        $acc = BeanFactory::getBean('Accounts');
+        $sq = new SugarQuery();
+        $sq->select(array("id", "name"));
+        $sq->from($acc);
+        $sq->where()->equals('parent_name','Awesome');
+        $this->assertRegExp('/WHERE.*jt\d+\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+
+        // custom field
+        BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
+        $contact = BeanFactory::getBean("Contacts");
+        $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
+        $this->assertTrue($contact->hasCustomFields());
+
+        // direct custom field
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->where()->equals('bigname_c','Chuck Norris');
+        $this->assertRegExp('/WHERE.*contacts_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/',$sq->compileSql());
+
+        // related custom field
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->where()->equals('report_to_bigname','Chuck Norris');
+        $this->assertRegExp('/WHERE.*jt\d+_cstm\.bigname_c\s*=\s*\'Chuck Norris\'/',$sq->compileSql());
+
+        // compare fields
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->where()->equalsField('bigname_c','report_to_bigname');
+        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*=\s*jt\d+_cstm.bigname_c/',$sq->compileSql());
+
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name", 'report_to_bigname'));
+        $sq->from($contact);
+        $sq->where()->notEqualsField('bigname_c','report_to_bigname');
+        $this->assertRegExp('/WHERE.*contacts_cstm.bigname_c\s*!=\s*jt\d+_cstm.bigname_c/',$sq->compileSql());
+    }
+
+    /**
+     * Test bad conditions
+     * @expectedException SugarApiExceptionInvalidParameter
+     */
+    public function testBadRelateConditions()
+    {
+        $contact = BeanFactory::getBean("Contacts");
+        // will throw because name is composite
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name", "account_name"));
+        $sq->from($contact);
+        $sq->where()->equals('report_to_name','Awesome');
+        $sql = $sq->compileSql();
+        $this->fail("Exception expected!");
+
+    }
+
+    public function testRelatedOrderBy()
+    {
+        BeanFactory::setBeanClass('Contacts', 'Contact_Mock_Bug62961');
+        $contact = BeanFactory::getBean("Contacts");
+        $this->assertArrayHasKey("report_to_bigname", $contact->field_defs);
+        $this->assertTrue($contact->hasCustomFields());
+
+        // by related field
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->orderBy("account_name");
+        $this->assertRegExp('/ORDER BY\s+accounts.name DESC/',$sq->compileSql());
+
+        // by custom field too
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->orderBy("account_name")->orderBy("bigname_c", "ASC");
+        $this->assertRegExp('/ORDER BY\s+accounts.name DESC\s*,\s*contacts_cstm.last_name ASC/',$sq->compileSql());
+
+        // by related custom field
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->orderBy("report_to_bigname");
+        $this->assertRegExp('/ORDER BY\s+jt\d+_cstm.last_name DESC/',$sq->compileSql());
+
+        // skip bad one
+        $sq = new SugarQuery();
+        $sq->select(array("id", "last_name"));
+        $sq->from($contact);
+        $sq->orderBy("report_to_name")->orderBy("account_name", "asc");
+        $this->assertRegExp('/ORDER BY\s+accounts.name asc/',$sq->compileSql());
+    }
+
 }
 
 class Contact_Mock_Bug62961 extends Contact
@@ -325,6 +444,7 @@ class Contact_Mock_Bug62961 extends Contact
                 'len' => '255',
                 'size' => '20',
                 'custom_module' => 'Contacts',
+                'sort_on' => 'last_name',
         );
         $this->field_defs['report_to_bigname'] =
         array(

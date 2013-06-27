@@ -40,7 +40,7 @@ describe("revenuelineitems_view_recordlist", function() {
         SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.testMetadata.set();
 
-        SugarTest.seedMetadata(true);
+        SugarTest.seedMetadata(true, './fixtures');
     });
     
     afterEach(function() {

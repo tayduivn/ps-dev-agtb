@@ -65,7 +65,7 @@ class Dashboard extends Basic
         }
         $offset = !empty($options['offset']) ? (int)$options['offset'] : 0;
         $limit = !empty($options['limit']) ? (int)$options['limit'] : -1;
-        $result = $this->get_list($order,$from,$offset,$limit,-99,0);
+        $result = $this->get_list($order,$from,$offset,$limit,-1,0);
         $nextOffset = (count($result['list']) > 0 && count($result['list']) ==  $limit) ? ($offset + $limit) : -1;
         return array('records'=>$result['list'], 'next_offset'=>$nextOffset);
     }

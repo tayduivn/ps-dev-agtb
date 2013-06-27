@@ -65,6 +65,10 @@
         this.setPlaceholder();
     },
     getPlaceholder: function() {
+        // Covers the use case where you have an actiondropdown field on listview right column, and list-column-ellipsis
+        // plugin is disabled. Actiondropdown will be rendered empty if viewName equals to list-header.
+        if (this.options.viewName === 'list-header') return app.view.Field.prototype.getPlaceholder.call(this);
+
         var cssClass = [],
             container = '',
             caretClass = this.def.primary ? 'btn btn-primary dropdown-toggle' : 'btn dropdown-toggle',

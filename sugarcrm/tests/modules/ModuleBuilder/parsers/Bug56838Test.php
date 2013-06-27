@@ -97,31 +97,20 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertTrue(isset($paneldefs[0]['label']), "There is no label for mobile list view defs");
         $this->assertEquals($paneldefs[0]['label'], 'LBL_PANEL_DEFAULT', "Expected mobile list view panel label to be 'LBL_PANEL_DEFAULT' but got '{$paneldefs[0]['label']}'");
     }
-        
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group Bug56838
      */
-    public function testPortalEditViewLabelIsCorrect()
+    public function testPortalRecordViewLabelIsCorrect()
     {
         // SidecarGridLayoutMetaDataParser
-        $parser = ParserFactory::getParser(MB_PORTALEDITVIEW, self::$testModule, null, null, MB_PORTAL);
+        $parser = ParserFactory::getParser(MB_PORTALRECORDVIEW, self::$testModule, null, null, MB_PORTAL);
         
         // Current layout
         $layout = $parser->getLayout();
         $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on portal edit views");
-        $this->assertArrayHasKey('LBL_PANEL_DEFAULT', $layout, "'LBL_PANEL_DEFAULT' was not found as the default panel label on portal edit views");
-    }
-
-    public function testPortalDetailViewLabelIsCorrect()
-    {
-        // SidecarGridLayoutMetaDataParser
-        $parser = ParserFactory::getParser(MB_PORTALDETAILVIEW, self::$testModule, null, null, MB_PORTAL);
-        
-        // Current layout
-        $layout = $parser->getLayout();
-        $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on portal detail views");
-        $this->assertArrayHasKey('LBL_PANEL_DEFAULT', $layout, "'LBL_PANEL_DEFAULT' was not found as the default panel label on portal detail views");
+        $this->assertArrayHasKey('LBL_PANEL_2', $layout, "'LBL_PANEL_2' was not found as the default panel label on portal edit views");
     }
 
     /**

@@ -28,6 +28,13 @@ $viewdefs['base']['layout']['activities'] = array(
                                     'layout' => array(
                                         'type' => 'filterpanel',
                                         'span' => 12,
+                                        'availableToggles' => array(
+                                            array(
+                                                'name' => 'activitystream',
+                                                'icon' => 'icon-th-list',
+                                                'label' => 'LBL_ACTIVITY_STREAM',
+                                            ),
+                                        ),
                                         'components' => array(
                                             array(
                                                 'layout' => 'filter',

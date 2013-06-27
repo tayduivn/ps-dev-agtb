@@ -1,0 +1,136 @@
+{{!
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
+
+}}
+<div class="row-fluid">
+    <strong>
+            <span class="span6">
+                {{str "LBL_QUOTA" "Forecasts"}}
+            </span>
+            <span class="span6 tright">
+                {{quota_amount_str}}
+            </span>
+    </strong>
+</div>
+
+{{#if show_details_likely}}
+
+    <div class="row-fluid projected_likely">
+            <span class="span6">
+                {{quota_likely_distance}}
+            </span>
+            <span class="span2 tright">
+                {{quota_likely_percent}}
+            </span>
+            <span class="span4 tright">
+                {{quota_likely_amount}}
+            </span>
+    </div>
+{{/if}}
+
+{{#if show_details_best}}
+    <div class="row-fluid projected_best">
+            <span class="span6">
+                {{quota_best_distance}}
+            </span>
+            <span class="span2 tright">
+                {{quota_best_percent}}
+            </span>
+            <span class="span4 tright">
+                {{quota_best_amount}}
+            </span>
+    </div>
+{{/if}}
+
+{{#if show_details_worst}}
+    <div class="row-fluid projected_worst">
+            <span class="span6">
+                {{quota_worst_distance}}
+            </span>
+            <span class="span2 tright">
+                {{quota_worst_percent}}
+            </span>
+            <span class="span4 tright">
+                {{quota_worst_amount}}
+            </span>
+    </div>
+{{/if}}
+
+<div class="row-fluid">
+    <strong>
+            <span class="span6">
+                {{str "LBL_CLOSED" "Forecasts"}}
+            </span>
+            <span class="span6 tright">
+                {{closed_amount_str}}
+            </span>
+    </strong>
+</div>
+
+{{#if show_details_likely}}
+    <div class="row-fluid projected_likely">
+            <span class="span6">
+                {{closed_likely_distance}}
+            </span>
+            <span class="span2 tright">
+                {{closed_likely_percent}}
+            </span>
+            <span class="span4 tright">
+                {{closed_likely_amount}}
+            </span>
+    </div>
+{{/if}}
+
+{{#if show_details_best}}
+    <div class="row-fluid projected_best">
+            <span class="span6">
+                {{closed_best_distance}}
+            </span>
+            <span class="span2 tright">
+                {{closed_best_percent}}
+            </span>
+            <span class="span4 tright">
+                {{closed_best_amount}}
+            </span>
+    </div>
+{{/if}}
+
+{{#if show_details_worst}}
+    <div class="row-fluid projected_worst">
+            <span class="span6">
+                {{closed_worst_distance}}
+            </span>
+            <span class="span2 tright">
+                {{closed_worst_percent}}
+            </span>
+            <span class="span4 tright">
+                {{closed_worst_amount}}
+            </span>
+    </div>
+{{/if}}
+
+<div class="row-fluid purpose" id="projected_bottom_line">
+    <div class="span4 tcenter">
+        {{str "LBL_PIPELINE_OPPORTUNITIES" "Forecasts"}}<br>
+        <strong>{{opportunities}}</strong>
+    </div>
+    <div class="span4 tcenter">
+        {{str "LBL_PIPELINE_REVENUE" "Forecasts"}}<br>
+        <strong>{{revenue_str}}</strong>
+    </div>
+    <div class="span4 tcenter">
+        {{str "LBL_PIPELINE_SIZE" "Forecasts"}}<br>
+        <strong>x{{pipeline}}</strong>
+    </div>
+</div>

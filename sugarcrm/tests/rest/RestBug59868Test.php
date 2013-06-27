@@ -52,7 +52,7 @@ class RestBug59868Test extends RestTestBase
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata');
 
-        $json = file_get_contents($reply['reply']['labels']['en_us']);
+        $json = file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $reply['reply']['labels']['en_us']);
 
         $object = json_decode($json);
         $this->assertTrue(is_object($object->app_list_strings->Elastic_boost_options), "App list string wasnt cast to object");

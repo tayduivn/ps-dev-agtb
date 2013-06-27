@@ -106,8 +106,7 @@ $vardefs = array(
                    //BEGIN SUGARCRM flav=pro ONLY
                    // Bug 56832 - Exclude list/detail/edit view from portal
                    'portallistview' => false,
-                   'portaldetailview' => false,
-                   'portaleditview' => false,
+                   'portalrecordview' => false,
                    //END SUGARCRM flav=pro ONLY
                ), // don't show in studio fields list
             'duplicate_on_record_copy' => 'always',

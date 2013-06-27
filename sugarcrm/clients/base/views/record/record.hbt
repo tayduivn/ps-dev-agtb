@@ -6,7 +6,7 @@
                 {{#if header}}
                     <h1>
                         {{#unless isAvatar}}
-                            <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}} avatar" data-original-title="">{{moduleIconLabel ../../../module}}</span>
+                            <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}}" data-placement="right" data-original-title="">{{moduleIconLabel ../../../module}}</span>
                         {{/unless}}
                         {{#each grid}}
                             {{#each this}}

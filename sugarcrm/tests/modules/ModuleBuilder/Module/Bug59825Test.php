@@ -97,8 +97,7 @@ class Bug59825Test extends Sugar_PHPUnit_Framework_TestCase
             //BEGIN SUGARCRM flav=ent ONLY
             // Portal types not including search, which was the cause of the bug
             // This simulates StudioModule::getPortalLayoutSources()
-            array('type' => MB_PORTALEDITVIEW),
-            array('type' => MB_PORTALDETAILVIEW),
+            array('type' => MB_PORTALRECORDVIEW),
             array('type' => MB_PORTALLISTVIEW),
             //END SUGARCRM flav=ent ONLY
         );

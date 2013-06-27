@@ -42,6 +42,7 @@ describe('Base.Field.Actiondropdown', function() {
     });
 
     afterEach(function() {
+        field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();

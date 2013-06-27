@@ -13,6 +13,9 @@
             this.model.trigger('setMode', this.context.get("create") ? 'edit' : 'view');
         }
     },
+    /**
+     * Relace all components based on the dashboard metadata value
+     */
     setMetadata: function() {
         if(!this.model.get("metadata")) return;
         //Clean all components
@@ -36,6 +39,9 @@
         this.loadData();
         this.render();
     },
+    /**
+     * Set current main layout's width proportion
+     */
     setWidth: function() {
         var metadata = this.model.get("metadata"),
             $el = this.$el.children();
@@ -45,16 +51,17 @@
             $($el.get(index)).addClass("span" + component.width);
         }, this);
     },
+    /**
+     * Set all appended dashlets drag-and-droppable
+     */
     applyDragAndDrop: function() {
         var self = this;
         this.$('.widget:not(.empty)').draggable({
             revert: 'invalid',
             handle: 'h4',
+            scroll: true,
+            scrollSensitivity: 100, //pixel
             appendTo: this.$el,
-            cursorAt: {
-                left: 150,
-                top: 16
-            },
             start: function(event, ui) {
                 $(this).css({visibility: 'hidden'});
                 self.model.trigger("setMode", "drag");
@@ -78,8 +85,8 @@
             activeClass: 'ui-droppable-active',
             hoverClass: 'active',
             tolerance: 'pointer',
-            accept: function() {
-                return self.$(this).find('.widget[data-action=droppable]').length === 1;
+            accept: function($el) {
+                return !$el.hasClass("sortable") && self.$(this).find('.widget[data-action=droppable]').length === 1;
             },
             drop: function(event, ui) {
                 var sourceIndex = ui.draggable.parents(".widget-container:first").data('index')(),
@@ -88,6 +95,13 @@
             }
         });
     },
+    /**
+     * Retrives the seperate component metadata from the whole dashboard components
+     *
+     * @param {Object} metadata for all dashboard componenets
+     * @param {String} tree based trace key (each digit represents the index number of the each level)
+     * @return {Object} component metadata and its dashlet frame layout
+     */
     getCurrentComponent: function(metadata, tracekey) {
         var position = tracekey.split(''),
             component = metadata.components;
@@ -104,18 +118,39 @@
             layout: layout
         };
     },
+    /**
+     * Switch the between two components
+     *
+     * @param {String} target key
+     * @param {String} source key
+     */
     switchComponent: function(target, source) {
+        if (target === source) {
+            return;
+        }
         var metadata = this.model.get("metadata");
         var targetComponent = this.getCurrentComponent(metadata, target),
             sourceComponent = this.getCurrentComponent(metadata, source);
 
-        //Swap the metadata
+        //Swap the metadata except 'width' property since it's previous size
+        var cloneMeta = app.utils.deepCopy(targetComponent.metadata);
+        _.each(targetComponent.metadata, function(value, key) {
+            if(key !== 'width') {
+                delete targetComponent.metadata[key];
+            }
+        }, this);
         _.each(sourceComponent.metadata, function(value, key) {
             if(key !== 'width') {
                 targetComponent.metadata[key] = value;
                 delete sourceComponent.metadata[key];
             }
         }, this);
+        _.each(cloneMeta, function(value, key) {
+            if(key !== 'width') {
+                sourceComponent.metadata[key] = value;
+            }
+        }, this);
+
         this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
         if(this.model._previousMode === 'view') {
@@ -125,12 +160,31 @@
                 showAlerts: true
             });
         }
-
         //Swap the view components
-        var targetDashlet = _.first(targetComponent.layout._components),
-            sourceDashlet = _.first(sourceComponent.layout._components);
-        targetComponent.layout._components.splice(0,1,sourceDashlet);
-        sourceComponent.layout._components.splice(0,1,targetDashlet);
+        var targetDashlet = targetComponent.layout._components.splice(0),
+            sourceDashlet = sourceComponent.layout._components.splice(0);
+
+        _.each(targetDashlet, function (comp) {
+            sourceComponent.layout._components.push(comp);
+            comp.layout = sourceComponent.layout;
+        }, this);
+        _.each(sourceDashlet, function (comp) {
+            targetComponent.layout._components.push(comp);
+            comp.layout = targetComponent.layout;
+        }, this);
+        //switch invisibility
+        var targetInvisible = targetComponent.layout._invisible,
+            sourceInvisible = sourceComponent.layout._invisible;
+        if(targetInvisible) {
+            sourceComponent.layout.setInvisible();
+        } else {
+            sourceComponent.layout.unsetInvisible();
+        }
+        if(sourceInvisible) {
+            targetComponent.layout.setInvisible();
+        } else {
+            targetComponent.layout.unsetInvisible();
+        }
 
         //Swap the DOM
         var cloneEl = targetComponent.layout.$el.children(":first").get(0);

@@ -7,13 +7,10 @@ describe("iframe", function() {
         };
         app = SugarTest.app;
         field = SugarTest.createField("base","iframe", "iframe", "detail", def);
-        field.model = {get : function(key){
-            var values = {
-                "ONE":"1",
-                "TWO":"2"
-            };
-            return values[key];
-        }};
+        field.model = new Backbone.Model({
+            "ONE":"1",
+            "TWO":"2"
+        });
     });
 
     afterEach(function() {

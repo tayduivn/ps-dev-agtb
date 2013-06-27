@@ -56,12 +56,6 @@ class StudioModule
 
     public function __construct ($module)
     {
-           //Sources can be used to override the file name mapping for a specific view or the parser for a view.
-        //The
-        $this->sources = array (	'editviewdefs.php' => array ( 'name' => translate ('LBL_EDITVIEW') , 'type' => MB_EDITVIEW , 'image' => 'EditView' ) ,
-                                    'detailviewdefs.php' => array ( 'name' => translate('LBL_DETAILVIEW') , 'type' => MB_DETAILVIEW , 'image' => 'DetailView' ) ,
-                                    'listviewdefs.php' => array ( 'name' => translate('LBL_LISTVIEW') , 'type' => MB_LISTVIEW , 'image' => 'ListView' ) ) ;
-
         $moduleList = $GLOBALS [ 'app_list_strings' ] [ 'moduleList' ];
         if (empty($moduleList) && !is_array($moduleList)) {
             $moduleList = array();
@@ -74,9 +68,58 @@ class StudioModule
         if ($this->seed) {
             $this->fields = $this->seed->field_defs;
         }
-
-        // Set BWC
+        
+        // Set BWC since this is needed for sources
         $this->bwc = isModuleBWC($module);
+        
+        $this->setSources();
+    }
+    
+    /**
+     * Sets the viewdef file sources for use in studio
+     */
+    protected function setSources()
+    {
+        // Backward Compatible modules need the old way of doing things
+        if ($this->bwc) {
+            // Sources can be used to override the file name mapping for a specific 
+            // view or the parser for a view.
+            $this->sources = array(
+                array(
+                    'name'  => translate('LBL_EDITVIEW'), 
+                    'type'  => MB_EDITVIEW, 
+                    'image' => 'EditView',
+                    'path'  => "modules/{$this->module}/metadata/editviewdefs.php",
+                ),
+                array(
+                    'name'  => translate('LBL_DETAILVIEW'), 
+                    'type'  => MB_DETAILVIEW, 
+                    'image' => 'DetailView',
+                    'path'  => "modules/{$this->module}/metadata/detailviewdefs.php",
+                ),
+                array(
+                    'name'  => translate('LBL_LISTVIEW'), 
+                    'type'  => MB_LISTVIEW, 
+                    'image' => 'ListView',
+                    'path'  => "modules/{$this->module}/metadata/listviewdefs.php",
+                ),
+            );
+        } else {
+            $this->sources = array(
+                array(
+                    'name'  => translate('LBL_RECORDVIEW'), 
+                    'type'  => MB_RECORDVIEW, 
+                    'image' => 'Record',
+                    'path'  => "modules/{$this->module}/clients/base/views/record/record.php",
+                ),
+                array(
+                    'name'  => translate('LBL_LISTVIEW'), 
+                    'type'  => MB_LISTVIEW, 
+                    'image' => 'ListView',
+                    'path'  => "modules/{$this->module}/clients/base/views/list/list.php",
+                ),
+            );
+        }
     }
 
      /*
@@ -205,11 +248,13 @@ class StudioModule
     public function getViews()
     {
         $views = array () ;
-        foreach ($this->sources as $file => $def) {
-            if (file_exists ( "modules/{$this->module}/metadata/$file" )
-                || file_exists ( "custom/modules/{$this->module}/metadata/$file" ))
-            {
-                $views [ str_replace ( '.php', '' , $file) ] = $def ;
+        
+        foreach ($this->sources as $def) {
+            // Remove path from the defs as it's not needed in the views array
+            $path = $def['path'];
+            unset($def['path']);
+            if (file_exists($path) || file_exists("custom/$path")) {
+                $views[basename($path, '.php')] = $def;
             }
         }
 
@@ -534,8 +579,7 @@ class StudioModule
     public function getPortalLayoutSources()
     {
         return array(
-            array('type' => MB_PORTALDETAILVIEW),
-            array('type' => MB_PORTALEDITVIEW),
+            array('type' => MB_PORTALRECORDVIEW),
             array('type' => MB_PORTALLISTVIEW),
         );
     }

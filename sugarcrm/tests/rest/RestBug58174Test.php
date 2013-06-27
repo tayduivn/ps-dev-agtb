@@ -116,7 +116,7 @@ class RestBug58174Test extends RestTestBase
 
         //$this->assertFileExists($reply['reply']['labels']['en_us'], "Language file does not exist");
 
-        $json = file_get_contents($reply['reply']['labels']['en_us']);
+        $json = file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $reply['reply']['labels']['en_us']);
 
         $object = json_decode($json, true);
 

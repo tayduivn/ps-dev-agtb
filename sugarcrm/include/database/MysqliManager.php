@@ -166,14 +166,26 @@ class MysqliManager extends MysqlManager
         // This is some heavy duty debugging, leave commented out unless you need this:
         /*
           $bt = debug_backtrace();
-          for ( $i = count($bt) ; $i-- ; $i > 0 ) {
-              if ( strpos('MysqliManager.php',$bt[$i]['file']) === false ) {
-                  $line = $bt[$i];
+          $line['file'] = 'NO_FILE';
+          $line['line'] = 'NO_LINE';
+          $line['function'] = 'NO_FUNCTION';
+          $i = 0;
+          foreach ( $bt as $i => $tryLine ) {
+              if ( strpos($tryLine['file'],'include/database') === false && strpos($tryLine['file'],'include/SugarQuery') === false ) {
+                  $line = $tryLine;
+                  // Go function line up to find the real function
+                  if ( isset($bt[($i+1)]['function']) ) {
+                      $line['function'] = $bt[($i+1)]['function'];
+                  }
+                  break;
               }
           }
-
-          $GLOBALS['log']->fatal("${line['file']}:${line['line']} ${line['function']} \nQuery: $sql\n");
-          */
+        $dumpQuery = str_replace(array('      ','     ','    ','   ','  ',"\n","\t","\r"),
+                                 array(' ',     ' ',    ' ',   ' ',  ' ', ' ', ' ', ' ',),
+                                 $sql);
+          
+        $GLOBALS['log']->fatal("{$line['file']}:{$line['line']} ${line['function']} \nQuery: $dumpQuery\n");
+        */
 
 		if($keepResult) {
 			$this->lastResult = $result;

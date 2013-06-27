@@ -68,6 +68,7 @@ $GLOBALS['starttTime'] = microtime(true);
 
 set_include_path(
     dirname(__FILE__) . '/..' . PATH_SEPARATOR .
+    dirname(__FILE__) . '/../vendor' . PATH_SEPARATOR .
     get_include_path()
 );
 
@@ -136,7 +137,6 @@ require_once('include/database/DBManagerFactory.php');
 require_once('include/dir_inc.php');
 
 require_once('include/Localization/Localization.php');
-require_once('include/javascript/jsAlerts.php');
 require_once('include/TimeDate.php');
 require_once('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
 
@@ -145,26 +145,19 @@ require_once('include/utils/mvc_utils.php');
 require_once('include/SugarObjects/LanguageManager.php');
 require_once('include/SugarObjects/VardefManager.php');
 
-require('modules/DynamicFields/templates/Fields/TemplateText.php');
-
 require_once('include/utils/file_utils.php');
-require_once('include/SugarEmailAddress/SugarEmailAddress.php');
 require_once('include/SugarLogger/LoggerManager.php');
 require_once('modules/Trackers/BreadCrumbStack.php');
 require_once('modules/Trackers/Tracker.php');
 require_once('modules/Trackers/TrackerManager.php');
-require_once('modules/ACL/ACLController.php');
-require_once('modules/Administration/Administration.php');
 require_once('modules/Administration/updater_utils.php');
 require_once('modules/Users/User.php');
 require_once('modules/Users/authentication/AuthenticationController.php');
 require_once('include/utils/LogicHook.php');
-require_once('include/SugarTheme/SugarTheme.php');
 require_once('include/MVC/SugarModule.php');
 require_once('include/SugarCache/SugarCache.php');
 require('modules/Currencies/Currency.php');
 require_once('include/MVC/SugarApplication.php');
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 require_once 'data/SugarACL.php';
 
 require_once('include/upload_file.php');

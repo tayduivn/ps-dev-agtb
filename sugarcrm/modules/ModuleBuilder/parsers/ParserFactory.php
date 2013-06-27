@@ -42,8 +42,7 @@ class ParserFactory
     protected static function _helperConvertToViewConstant($view)
     {
         $map = array(
-            'edit' => MB_PORTALEDITVIEW,
-            'detail' => MB_PORTALDETAILVIEW,
+            'record'=> MB_PORTALRECORDVIEW,
             'search' => MB_PORTALSEARCHVIEW,
             'list' => MB_PORTALLISTVIEW
         );
@@ -62,10 +61,10 @@ class ParserFactory
     /*
      * Create a new parser
      *
-     * @param  string                 $view        The view, for example EditView or ListView. For search views, use advanced_search or basic_search
-     * @param  string                 $moduleName  Module name
-     * @param  string                 $packageName Package name. If present implies that we are being called from ModuleBuilder
-     * @param  string                 $client      The view client (e.g. portal, wireless, etc.)
+     * @param string $view          The view, for example EditView or ListView. For search views, use advanced_search or basic_search
+     * @param string $moduleName    Module name
+     * @param string $packageName   Package name. If present implies that we are being called from ModuleBuilder
+     * @param string $client        The view client (e.g. portal, wireless, etc.)
      * @return AbstractMetaDataParser
      */
 
@@ -89,7 +88,10 @@ class ParserFactory
             }
         }
 
-        switch ($lView) {
+        switch ( $lView) {
+            case MB_RECORDVIEW:
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
+                return new SidecarGridLayoutMetaDataParser ( $view, $moduleName, $packageName, 'base' ) ;
             case MB_EDITVIEW :
             case MB_DETAILVIEW :
             case MB_QUICKCREATE :
@@ -100,13 +102,12 @@ class ParserFactory
             case MB_WIRELESSEDITVIEW :
             case MB_WIRELESSDETAILVIEW :
             //BEGIN SUGARCRM flav=ent ONLY
-            case MB_PORTALDETAILVIEW:
-            case MB_PORTALEDITVIEW:
+            case MB_PORTALRECORDVIEW:
             //END SUGARCRM flav=ent ONLY
                 if (empty($client)) {
                     $client = MB_WIRELESS;
                     //BEGIN SUGARCRM flav=ent ONLY
-                    if ($lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW) {
+                    if ($lView == MB_PORTALRECORDVIEW) {
                         $client = MB_PORTAL;
                     }
                     //END SUGARCRM flav=ent ONLY
@@ -243,3 +244,4 @@ class ParserFactory
     }
 
 }
+?>

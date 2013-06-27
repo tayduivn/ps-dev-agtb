@@ -439,6 +439,26 @@ describe("BaseFilterRowsView", function() {
             expect($valueField.html()).not.toBeEmpty();
             createFieldSpy.restore();
         });
+        it('should create two inputs if the operator is in between', function() {
+            $filterField.val('case_number');
+            $operatorField.val('$between');
+            var createFieldSpy = sinon.spy(view, 'createField');
+            view.handleOperatorSelected({currentTarget: $operatorField});
+            expect(createFieldSpy).toHaveBeenCalledTwice();
+            expect(createFieldSpy.firstCall.args[1]).toEqual({
+                type: 'int',
+                name: 'case_number_min',
+                auto_increment: false
+            });
+            expect(createFieldSpy.lastCall.args[1]).toEqual({
+                type: 'int',
+                name: 'case_number_max',
+                auto_increment: false
+            });
+            expect($valueField.html()).not.toBeEmpty();
+            expect(_.size($valueField.find('input'))).toEqual(2);
+            createFieldSpy.restore();
+        });
         it('should dispose previous value field', function() {
             var disposeStub = sinon.stub(view, '_disposeFields');
             view.handleOperatorSelected({currentTarget: $operatorField});

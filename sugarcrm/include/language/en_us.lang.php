@@ -71,6 +71,7 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
+    'CampaignTrackers'=>'Campaign Trackers',
     'Documents'=>'Documents',
     'DocumentRevisions'=>'Document Revisions',
     'Connectors'=>'Connectors',
@@ -169,6 +170,7 @@ $app_list_strings = array (
     'Prospects' => 'Target',
     'ProspectLists' => 'Target List',
     'Campaigns'=>'Campaign',
+    'CampaignTrackers'=>'Campaign Tracker',
     'Documents'=>'Document',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=pro ONLY
@@ -1780,28 +1782,48 @@ $app_list_strings = array (
         ),
         'currency' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'int' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'double' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'float' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'decimal' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'date' => array(
             '$lt' => 'before',
@@ -1866,6 +1888,8 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_FAVORITE' => 'Favorite', // Record view header panel element
+  'LBL_FOLLOW' => 'Follow', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_TOUR_NEXT' => 'Next',
   'LBL_TOUR_SKIP' => 'Skip',
@@ -2393,7 +2417,7 @@ $app_strings = array (
     'LBL_SEARCH_UNAVAILABLE' => 'Search unavailable, please try again later.',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
-    'LBL_TEAM_ADD' => 'Add Team',
+    'LBL_TEAM_ADD' => 'Add&nbsp;Team',
     'LBL_TEAM_REMOVE' => 'Remove Team',
     'LBL_TEAM_PRIMARY' => 'Set as Primary Team',
     //END SUGARCRM flav=pro ONLY
@@ -2464,6 +2488,7 @@ $app_strings = array (
     'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
     'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
     'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_INVALID_TOKEN'           => 'Your authentication token is invalid.',
     'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
     'EXCEPTION_INACTIVE_PORTAL_USER'    => 'You cannot access Portal because your portal account is inactive. Please contact customer support if you need access.',
     'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
@@ -2472,7 +2497,10 @@ $app_strings = array (
     'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
     'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
     'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_METADATA_OUT_OF_DATE'    => 'Your metadata or user hash did not match the server. Please resync your metadata.',
     'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
+    'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
+    'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',
 
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -2488,7 +2516,8 @@ $app_strings = array (
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
-
+    'NOTICE_NO_DELETE_CLOSED' => 'You cannot delete records that have a closed sales status.',
+    'WARNING_NO_DELETE_SELECTED' => 'One or more of the selected records has a status of Closed Won or Closed Lost and cannot be deleted.',
 
     //END SUGARCRM flav=pro ONLY
 
@@ -2681,9 +2710,14 @@ $app_strings = array (
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
     'LBL_CREATE_QUOTE' => 'Create a Quote',
+    'LBL_GENERATE_QUOTE' => 'Generate Quote',
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
+    'LBL_MASS_ADD_TO_LIST_SUCCESS_SUBSET' => 'You successfully updated {{numberUpdated}} items to the <a href="{{listUrl}}">{{listName}}</a> target list.',
+    'LBL_MASS_ADD_TO_LIST_QUEUED_SUBSET' => 'Your request to update {{numberUpdated}} items to the <a href="{{listUrl}}">{{listName}}</a> target list has been scheduled.',
+    'LBL_MASS_ADD_TO_LIST_SUCCESS_ENTIRE' => 'You successfully updated all records in this result set to the <a href="{{listUrl}}">{{listName}}</a> target list.',
+    'LBL_MASS_ADD_TO_LIST_QUEUED_ENTIRE' => 'Your request to update all records in this result set to the <a href="{{listUrl}}">{{listName}}</a> target list has been scheduled.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
     'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Existing values will be replaced with empty values. Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
@@ -3018,6 +3052,7 @@ $app_strings = array (
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
+    'LBL_WARN_UNSAVED_EDITS' => 'You are leaving and have unsaved edits.',
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
@@ -3156,9 +3191,9 @@ $app_strings = array (
     /* Sugar7 Dashboard */
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
-    'LBL_DASHLET_CONFIG_EDIT' => 'Edit',
-    'LBL_DASHLET_REFRESH' => 'Refresh',
-    'LBL_DASHLET_REMOVE' => 'Remove',
+    'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',
+    'LBL_DASHLET_REFRESH_LABEL' => 'Refresh',
+    'LBL_DASHLET_REMOVE_LABEL' => 'Remove',
     'LBL_DASHLET_DROP_HERE' => 'Drop here',
 
 
@@ -3677,6 +3712,7 @@ $app_strings = array (
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_NO_ACCESS' => '(No Access)',
+    'LBL_NO_ACCESS_LOWER' => 'no access',
     'LBL_NO_FIELD_ACCESS' => 'No access',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Link Existing Record',
@@ -3783,6 +3819,12 @@ $app_strings = array (
     //begin portal
     //BEGIN SUGARCRM flav=ent ONLY
 
+    //portal record tutorial
+    'LBL_PORTAL_TOUR_RECORD_DETAILS' => 'The record view allows you to see the details of a record.',
+    'LBL_PORTAL_TOUR_RECORD_NOTES' => 'Notes let you collaborate with other portal users and support representatives.',
+    'LBL_PORTAL_TOUR_RECORD_ADD_NOTE' => 'Click here to add a note to this record.',
+    'LBL_PORTAL_TOUR_RECORD_VIEW_NOTE' => 'Click on these icons to view the details of attached notes.',
+
     //for portal
 
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
@@ -3857,6 +3899,7 @@ $app_strings = array (
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
+    'LBL_CURRENT_PASSWORD'				=> 'Current Password',
     'LBL_SET_NEW_PASSWORD'              => 'Enter Password',
     'LBL_NEW_PASSWORD1'                 => 'New Password',
     'LBL_NEW_PASSWORD2'                 => 'Confirm Password',
@@ -3981,6 +4024,7 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_DATA_VIEW' => 'Data View',
+    'LBL_COMMENT' => 'Comment',
 
     //application error messages
     'ERR_GENERIC_SERVER_ERROR' => 'There was an error while connecting to the server. Please try again.',
@@ -3998,6 +4042,8 @@ $app_strings = array (
     'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
     'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
 
+    'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
+    'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
 );
 
 $app_list_strings['interactions_options'] = array (

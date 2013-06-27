@@ -126,7 +126,7 @@ describe("Leads.Base.Layout.ConvertMain", function() {
             convertCompleteStub = sinon.stub(layout, 'convertComplete');
 
             SugarTest.seedFakeServer();
-            leadConvertPattern = /.*\/rest\/v10\/Leads\/lead123\/convert.*/;
+            leadConvertPattern = /.*rest\/v10\/Leads\/lead123\/convert.*/;
             mockLeadConvertResponse = [200, { "Content-Type": "application/json"}, JSON.stringify({})];
 
             layout.context.set('leadsModel', new Backbone.Model({id:'lead123'}));

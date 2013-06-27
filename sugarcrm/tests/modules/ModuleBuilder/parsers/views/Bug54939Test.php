@@ -85,7 +85,7 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('system_id', $fields, 'The system_id field was excluded');
         $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
 
-        $grid = new Bug54939TestGridParser(MB_PORTALDETAILVIEW, 'Cases', '', MB_PORTAL);
+        $grid = new Bug54939TestGridParser(MB_PORTALRECORDVIEW, 'Cases', '', MB_PORTAL);
         $grid->changeFieldType('resolution', 'parent');
         $grid->changeFieldType('system_id', 'encrypt');
         $fields = $grid->getAvailableFields();

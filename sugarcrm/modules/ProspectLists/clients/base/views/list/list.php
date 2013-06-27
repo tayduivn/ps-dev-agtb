@@ -33,7 +33,7 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
         0 => array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
-               array(
+                array(
                     'name' => 'name',
                     'width' => '25',
                     'label' => 'LBL_LIST_PROSPECT_LIST_NAME',
@@ -55,14 +55,13 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true
                 ),
-                array(
-                    'width' => '10',
+                array (
+                    'name' => 'assigned_user_name',
+                    'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
-                    'enabled' => true,
-                    'default' => true
+                    'default' => true,
                 ),
-
                 array(
                     'name' => 'date_entered',
                     'type' => 'datetime',
