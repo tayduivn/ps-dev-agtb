@@ -357,9 +357,6 @@
       &.well-invisible {
         padding-right: 0;
         padding-left: 0;
-        .widget-container {
-//          padding: 0;
-        }
       }
       [class*="-container"] {
         padding: 2px;
@@ -378,6 +375,13 @@
     }
   }
 }
+
+.widget-container {
+  .btn-toolbar .btn {
+    margin-left: 0;
+  }
+}
+
 
 .swappable-dashlet.icon-download-alt {
   display: none;
