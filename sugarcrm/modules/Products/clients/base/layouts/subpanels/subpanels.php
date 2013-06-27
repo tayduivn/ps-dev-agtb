@@ -17,9 +17,10 @@ $viewdefs['Products']['base']['layout']['subpanels'] = array (
     ),
     array (
       'layout' => 'subpanel',
-      'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+      'label' => 'LBL_RELATED_PRODUCTS',
+      'override_subpanel_list_view' => 'subpanel-for-products',
       'context' => array (
-        'link' => 'notes',
+        'link' => 'related_products',
       ),
     ),
   ),

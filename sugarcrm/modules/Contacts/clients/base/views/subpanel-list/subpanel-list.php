@@ -11,8 +11,8 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$viewdefs['Contacts']['base']['view']['subpanel-list'] = array('panels' =>
-  array(
+$viewdefs['Contacts']['base']['view']['subpanel-list'] = array('panels' => array(
+    'type' => 'subpanel-list',
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',

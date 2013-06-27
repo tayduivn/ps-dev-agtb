@@ -30,8 +30,9 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
       ),
     ),
     array (
-      'layout' => "subpanel",
+      'layout' => 'subpanel',
       'label' => 'LBL_DIRECT_REPORTS_SUBPANEL_TITLE',
+      'override_subpanel_list_view' => 'subpanel-for-contacts',
       'context' => array (
         'link' => 'direct_reports',
       ),

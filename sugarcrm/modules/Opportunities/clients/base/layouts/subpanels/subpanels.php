@@ -20,6 +20,7 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_INVITEE',
+            'override_subpanel_list_view' => 'subpanel-for-opportunities',
             'context' => array(
                 'link' => 'contacts',
             ),
