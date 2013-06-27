@@ -63,9 +63,9 @@
     </thead>
     <tbody>
     {{#each ../filteredCollection.models}}
-    <tr name="{{module}}_{{attributes.id}}" class="single" data-forcast="{{attributes.commit_stage}}">
+    <tr name="{{module}}_{{attributes.id}}" class="single" data-forecast="{{attributes.commit_stage}}">
         {{#each ../../leftColumns}}
-        <td >
+        <td>
              {{field ../../../this model=../this template=../../../this.viewName}}
         </td>
         {{/each}}
