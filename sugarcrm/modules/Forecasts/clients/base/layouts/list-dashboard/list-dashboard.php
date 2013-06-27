@@ -25,6 +25,20 @@ $viewdefs['Forecasts']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
+                                'name' => 'forecast-details',
+                                'label' => 'Forecast',
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Forecasts',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' =>
+                            array(
                                 'name' => 'forecasts-chart',
                                 'label' => 'Forecast',
                             ),

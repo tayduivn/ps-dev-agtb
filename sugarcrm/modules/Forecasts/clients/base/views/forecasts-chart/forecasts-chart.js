@@ -61,6 +61,10 @@
      * {@override}
      */
     loadData: function(options) {
+        if(this.meta.config) {
+            return;
+        }
+
         this.renderChart();
     },
 
@@ -113,6 +117,10 @@
      * {@inheritdoc}
      */
     bindDataChange: function() {
+        if(this.meta.config) {
+            return;
+        }
+
         this.context.parent.on('forecasts:worksheet:committed', function() {
             this.renderChart();
         }, this);
@@ -144,6 +152,18 @@
         this.values.on('change', function(value) {
             this.renderChart();
         }, this);
+    },
+
+    /**
+     * {@inheritdoc}
+     * Clean up!
+     */
+    unbindData: function() {
+        var ctx = this.context.parent;
+        if (ctx) {
+            ctx.off(null, null, this);
+        }
+        app.view.View.prototype.unbindData.call(this);
     },
 
     /**
