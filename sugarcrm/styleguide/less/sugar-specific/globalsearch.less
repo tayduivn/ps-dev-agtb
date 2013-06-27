@@ -21,7 +21,25 @@
     }
     .rtlFloat(@direction,left);
     .dropdown-menu {
-        padding: 0;
+        background:none;
+        .border-radius(none);
+        .box-shadow(none);
+        border: 0;
+        .globalsearch-adv-wrap {
+            background:red;
+            border:1px solid blue;
+            .border-radius(2px);
+            z-index: @zindexDropdown;
+            background-color: @dropdownBackground;
+            border: 1px solid #ccc; // Fallback for IE7-8
+            border: 1px solid @dropdownBorder;
+            *border-right-width: 2px;
+            *border-bottom-width: 2px;
+            .box-shadow(0 5px 10px rgba(0,0,0,.2));
+            -webkit-background-clip: padding-box;
+             -moz-background-clip: padding;
+                  background-clip: padding-box;
+        }
         li {
             padding: 7px 20px 4px;
             min-width: 120px;
