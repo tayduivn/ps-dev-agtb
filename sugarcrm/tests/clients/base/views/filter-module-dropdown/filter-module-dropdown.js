@@ -71,7 +71,7 @@ describe("BaseFilterModuleDropdownView", function () {
         });
     });
 
-    xdescribe('filterList', function() {
+    describe('filterList', function() {
 
         it('gets module list for Activity Stream', function() {
             var expected, filterList;
@@ -108,7 +108,7 @@ describe("BaseFilterModuleDropdownView", function () {
         });
     });
 
-    xdescribe('pullSubpanelRelationships', function() {
+    describe('pullSubpanelRelationships', function() {
 
         it('should return subpanels metadata', function() {
             var metadataStub = sinon.stub(app.utils, 'getSubpanelList', function(module) {
@@ -120,7 +120,7 @@ describe("BaseFilterModuleDropdownView", function () {
         });
     });
 
-    xdescribe('select2 options', function() {
+    describe('select2 options', function() {
 
         it('should initSelection for selected module', function() {
             var $input = $('<input type="text">').val('all_modules'),

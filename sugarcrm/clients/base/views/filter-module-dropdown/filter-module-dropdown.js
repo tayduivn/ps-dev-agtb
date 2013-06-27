@@ -243,7 +243,9 @@
      * @private
      */
     _dispose: function() {
-        this.filterNode.select2('destroy');
+        if (!_.isEmpty(this.filterNode)) {
+            this.filterNode.select2('destroy');
+        }
         app.view.View.prototype._dispose.call(this);
     }
 })

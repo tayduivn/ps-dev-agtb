@@ -69,7 +69,7 @@ describe("BaseFilterFilterDropdownView", function () {
         });
     });
 
-    xdescribe('filterList', function() {
+    describe('filterList', function() {
 
         var expected, filterList, canCreateStub;
 
@@ -99,7 +99,7 @@ describe("BaseFilterFilterDropdownView", function () {
         });
     });
 
-    xdescribe('select2 options', function() {
+    describe('select2 options', function() {
 
         describe('initSelection', function() {
 
