@@ -538,6 +538,38 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('new', $revenuelineitem->product_type);
     }
 
+    /**
+     * @group revenuelineitems
+     *
+     * Test that RLI converted to quote uses product name.
+     */
+    public function testRevenueLineItemQuoteName()
+    {
+
+        $pt_values = array(
+            'name' => 'foobar',
+            'mft_part_num' => 'unittest',
+            'list_price' => '800',
+            'cost_price' => '400',
+            'discount_price' => '700',
+            'list_usdollar' => '800',
+            'cost_usdollar' => '400',
+            'discount_usdollar' => '700',
+            'tax_class' => 'Taxable',
+            'weight' => '100'
+        );
+
+        $pt = SugarTestProductTemplatesUtilities::createProductTemplate('', $pt_values);
+
+        $revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $revenuelineitem->product_template_id = $pt->id;
+
+        $product = $revenuelineitem->convertToQuotedLineItem();
+
+        $this->assertEquals($product->name, $pt->name);
+
+        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
+    }
 
 }
 
