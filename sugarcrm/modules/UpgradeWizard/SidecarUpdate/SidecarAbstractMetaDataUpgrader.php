@@ -138,8 +138,6 @@ abstract class SidecarAbstractMetaDataUpgrader
         //BEGIN SUGARCRM flav=ent ONLY
         'portal'   => array(
             'list'   => 'viewdefs',
-            'edit'   => 'viewdefs',
-            'detail' => 'viewdefs',
         ),
         //END SUGARCRM flav=ent ONLY
         'wireless' => array(
@@ -156,8 +154,6 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     protected $views = array(
         //BEGIN SUGARCRM flav=ent ONLY
-        'portaledit'     => MB_PORTALEDITVIEW,
-        'portaldetail'   => MB_PORTALDETAILVIEW,
         'portallist'     => MB_PORTALLISTVIEW,
         'portalsearch'   => MB_PORTALSEARCHVIEW,
         //END SUGARCRM flav=ent ONLY
@@ -175,8 +171,6 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     protected $vardefIndexes = array(
         //BEGIN SUGARCRM flav=ent ONLY
-        'portaledit'     => 'editview',
-        'portaldetail'   => 'detailview',
         'portallist'     => 'listview',
         //END SUGARCRM flav=ent ONLY
         'wirelessedit'   => 'EditView',
