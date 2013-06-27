@@ -19,7 +19,7 @@ $viewdefs["Emails"]["base"]["view"]["compose-addressbook-list"] = array(
                     "sortable" => true,
                 ),
                 array(
-                    "name"     => "module",
+                    "name"     => "_module",
                     "label"    => "LBL_MODULE",
                     "sortable" => false,
                 ),

@@ -81,8 +81,7 @@ $viewdefs['Emails']['base']['layout']['compose-addressbook'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'compose-addressbook',
     'name' => 'base',
     'span' => 12,
 );
-
