@@ -97,7 +97,13 @@ class SugarBeanApiHelper
                 $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
                 $field = $sfh->getSugarField('Email');
                 array_walk($emailsRaw, array($field, "formatEmails"));
-                $data['email'][] = $emailsRaw;
+                if (empty($data['email'])) {
+                    $data['email'] = array();
+                }
+                if (!is_array($data['email'])) {
+                    $data['email'] = array($data['email']);
+                }
+                $data['email'] += $emailsRaw;
             }
             //BEGIN SUGARCRM flav=pro ONLY
             elseif(!$bean->ACLFieldAccess('email1', 'access')) {

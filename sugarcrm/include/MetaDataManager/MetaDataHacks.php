@@ -32,10 +32,9 @@ class MetaDataHacks
      */
     public function fixAcls(array $fieldsAcls)
     {
-        if (isset($fieldsAcls['email1'])) {
-            $fieldsAcls['email'] = $fieldsAcls['email1'];
+        if (!empty($fieldsAcls['email']) && !empty($fieldsAcls['email1'])) {
+            $fieldsAcls['email']['acl'] = $fieldsAcls['email1']['acl'];
         }
-
         return $fieldsAcls;
     }
 
