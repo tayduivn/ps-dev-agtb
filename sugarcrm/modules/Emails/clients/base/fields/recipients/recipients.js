@@ -110,17 +110,17 @@
                 more: false
             },
             options = {},
-            callbacks = {},
-            url;
+            callbacks = {};
 
         // add the search term to the URL params
         options.q = query.term;
+        // add the allowed modules to the URL params
+        options.module_list = 'Accounts,Contacts,Leads,Prospects,Users';
+        // add the necessary fields to the URL params
+        options.fields = 'name,email';
         // the first 10 results should be enough
         // if more results are needed, then the address book should be used
         options.max_num = 10;
-        // build the URL for fetching recipients that match the search term
-        url = app.api.buildURL("Mail", "recipients/find", null, options);
-
         // create the callbacks
         callbacks.success = function(result) {
             // add the recipients that were found via the select2 callback
@@ -134,9 +134,7 @@
             // execute the select2 callback to add any new recipients
             query.callback(data);
         };
-
-        // make the API call
-        app.api.call("read", url, null, callbacks);
+        app.api.search(options, callbacks);
     }, 300),
 
     /**
