@@ -807,7 +807,14 @@ class MetadataApi extends SugarApi
 
         // Handle the cache file
         $cacheFile = sugar_cached($cacheDir . '/metadata_'.$platform.'_'.$type.'.php');
-        write_array_to_file('metadata', $data, $cacheFile);
+        $write =   "<?php\n" .
+                   '// created: ' . date('Y-m-d H:i:s') . "\n" .
+                   '$metadata = ' .
+                    var_export_helper($data) . ';';
+                    
+        // Write with atomic writing to prevent issues with simultaneous requests
+        // for this file
+        sugar_file_put_contents_atomic($cacheFile, $write);
     }
 
     protected function getMetadataCache($platform, $isPublic)
