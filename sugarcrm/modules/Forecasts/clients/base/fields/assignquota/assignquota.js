@@ -97,6 +97,7 @@
                     messages: [app.lang.get('LBL_QUOTA_ASSIGNED', 'Forecasts')]
                 });
                 this.disableButton = true;
+                this.context.trigger('forecasts:quota_assigned');
                 if (!this.disposed) {
                     this.render();
                 }

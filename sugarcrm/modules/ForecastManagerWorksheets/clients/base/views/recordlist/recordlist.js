@@ -40,6 +40,11 @@
  *  by: forecasts:worksheet:saved event
  *  when: only when the commit button is pressed
  *
+ * forecasts:assign_quota
+ *  on: this.context.parent || this.context
+ *  by: forecasts:worksheet:saved event
+ *  when: only when the Assign Quota button is pressed
+ *
  */
 ({
     /**
@@ -252,6 +257,11 @@
                         title: app.lang.get('LBL_ASSIGNING_QUOTA', 'Forecasts')
                     });
                     this.saveWorksheet(true, true);
+                }, this);
+
+                this.context.parent.on('forecasts:quota_assigned', function() {
+                    // after the quote has been re-assigned, lets refresh the data just in case.
+                    this.refreshData();
                 }, this);
 
                 app.routing.before('route', function() {
