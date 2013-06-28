@@ -30,6 +30,8 @@
             
             /**
              * Marks delete option as disabled and adds tooltip for listview items that are closed lost/won
+             * 
+             * @return string message that was set
              */
             removeDelete: function() {
                 var sales_stage_won = null,
@@ -49,7 +51,7 @@
                         
                         //grab the closed RLI count (when on opps)
                         closed_RLI_count = this.model.get("closed_revenue_line_items");
-                        if (_.isEmpty(closed_RLI_count)) {
+                        if (_.isNull(closed_RLI_count)) {
                             closed_RLI_count = 0;
                         }
                         
@@ -68,7 +70,7 @@
                             message = app.lang.getAppString("NOTICE_NO_DELETE_CLOSED");
                         }
                         
-                        //if we have a messge, disable the button.
+                        //if we have a message, disable the button.
                         if (!_.isEmpty(message)) {
                             button = this.getFieldElement();
                             button.addClass("disabled");
@@ -77,6 +79,7 @@
                         }
                     }
                 }
+                return message;
             }
         })
     })

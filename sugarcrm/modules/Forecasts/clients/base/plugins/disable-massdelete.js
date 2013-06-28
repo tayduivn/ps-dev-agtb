@@ -23,8 +23,10 @@
              * throws a warning if it removes anything
              * 
              * @param evt
+             * @return string message
              */
             confirmDelete: function(evt) {
+                
                 var closedModels = [],
                     sales_stage_won = null,
                     sales_stage_lost = null,
@@ -41,10 +43,10 @@
                         //BEGIN SUGARCRM flav=ent ONLY
                         //ENT allows sales_status, so we need to check to see if this module has it and use it
                         status = model.get("sales_status");
-
+                        
                         //grab the closed RLI count (when on opps)
                         closed_RLI_count = model.get("closed_revenue_line_items");
-                        if (_.isEmpty(closed_RLI_count)) {
+                        if (_.isNull(closed_RLI_count)) {
                             closed_RLI_count = 0;
                         }
                         
@@ -57,11 +59,12 @@
                             if (_.isEmpty(message)) {
                                 message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
                             }
-                            return true;
                         }
                         
                         if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
                             message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
+                        }
+                        if (!_.isNull(message)) {
                             return true;
                         }
 
@@ -85,6 +88,7 @@
                 if (module.models.length > 0) {
                     app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'confirmDelete', args: [evt]});
                 }
+                return message;
             }
         })
     })

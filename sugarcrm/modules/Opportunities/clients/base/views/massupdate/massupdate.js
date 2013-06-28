@@ -21,4 +21,4 @@
         this.plugins.push("disable-massdelete");
         app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'initialize', args: [options]});
     }
-});
+})
