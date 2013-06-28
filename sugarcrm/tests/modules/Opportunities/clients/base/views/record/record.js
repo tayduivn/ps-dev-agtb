@@ -39,7 +39,7 @@ describe("Opportunities.Base.Views.Record", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.set();
-        SugarTest.seedMetadata(true);
+        SugarTest.seedMetadata(true, './fixtures');
 
 
         var context = app.context.getContext();

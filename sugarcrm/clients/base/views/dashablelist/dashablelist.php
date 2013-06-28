@@ -80,7 +80,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Contacts',
                 'display_columns' => array(
-                    'name',
+                    'full_name',
                     'title',
                     'phone_work',
                     'date_entered',
@@ -91,7 +91,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'preview' => array(
                 'module' => 'Contacts',
                 'display_columns' => array(
-                    'name',
+                    'full_name',
                     'title',
                     'phone_work',
                     'date_entered',
@@ -106,7 +106,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'config' => array(
                 'module' => 'Leads',
                 'display_columns' => array(
-                    'name',
+                    'full_name',
                     'phone_work',
                     'email',
                 ),
@@ -115,11 +115,35 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'preview' => array(
                 'module' => 'Leads',
                 'display_columns' => array(
-                    'name',
+                    'full_name',
                     'phone_work',
                     'email',
                 ),
                 'my_items' => '1',
+            ),
+        ),
+        array(
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
+            'config' => array(
+                'module' => 'Reports',
+                'display_columns' => array(
+                    'name',
+                    'module',
+                    'report_type',
+                ),
+                'my_items' => '1',
+                'favorites' => '1',
+            ),
+            'preview' => array(
+                'module' => 'Reports',
+                'display_columns' => array(
+                    'name',
+                    'module',
+                    'report_type',
+                ),
+                'my_items' => '1',
+                'favorites' => '1',
             ),
         ),
     ),

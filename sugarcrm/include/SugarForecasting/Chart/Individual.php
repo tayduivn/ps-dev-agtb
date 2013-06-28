@@ -276,6 +276,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $properties['goal_marker_label'][1] = $label;
         $properties['value_name'] = $label;
         $properties['label_name'] = $label_name;
+        $properties['title'] = string_format($forecast_strings['LBL_CHART_FORECAST_FOR'], array($this->timePeriod->name));
 
         // create the chart data as the display engine expects it
         $chart = array(

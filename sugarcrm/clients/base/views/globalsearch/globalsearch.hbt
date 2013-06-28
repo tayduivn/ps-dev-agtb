@@ -4,16 +4,18 @@
         <div class="advanced">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
-                    <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+                    <a class="advanced btn-invisible dropdown-toggle dtoggle" data-toggle="dropdown" href="javascript:void(0);">
                         <span class="caret"></span>
                     </a>
-                    <div class="dropdown-menu pull-right">
-                        <ul class="globalsearch-adv reset-width" role="menu">
-                            <li><label class="active"><input class="select-module" data-module="all" type="checkbox" checked="checked"> {{str "LBL_SEARCH_ALL_MODULES"}}</label></li>
-                            {{#each searchModules}}
-                            <li><label><input class="select-module" data-module="{{this}}" type="checkbox"> {{str "LBL_MODULE_NAME" this}}</label></li>
-                            {{/each}}
-                        </ul>
+                      <div class="dropdown-menu pull-right scroll-child">
+                        <div class="globalsearch-adv-wrap">
+                            <ul class="globalsearch-adv reset-width" role="menu">
+                                <li><label class="active"><input class="select-module" data-module="all" type="checkbox" checked="checked"> {{str "LBL_SEARCH_ALL_MODULES"}}</label></li>
+                                {{#each searchModules}}
+                                <li><label><input class="select-module" data-module="{{this}}" type="checkbox"> {{str "LBL_MODULE_NAME" this}}</label></li>
+                                {{/each}}
+                            </ul>
+                        </div>
                     </div>
                     <a class="btn btn-inverse" href="javascript:void(0);"><i class="icon icon-search"></i></a>
                 </div>

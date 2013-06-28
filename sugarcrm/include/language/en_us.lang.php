@@ -1782,28 +1782,48 @@ $app_list_strings = array (
         ),
         'currency' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'int' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'double' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'float' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'decimal' => array(
             '$equals' => 'is equal to',
+            '$not_equals' => 'is not equal to',
+            '$gt' => 'is greater than',
+            '$lt' => 'is less than',
             '$gte' => 'is greater than or equal to',
             '$lte' => 'is less than or equal to',
+            '$between' => 'is between',
         ),
         'date' => array(
             '$lt' => 'before',
@@ -1855,7 +1875,7 @@ $app_list_strings = array (
   ),
     //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
-        'forecast' => 'Included In Forecast',
+        'forecast' => 'In Forecast',
         'sales_stage' => 'Sales Stage',
         'probability' => 'Probability'
     ),
@@ -3171,9 +3191,9 @@ $app_strings = array (
     /* Sugar7 Dashboard */
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
-    'LBL_DASHLET_CONFIG_EDIT' => 'Edit',
-    'LBL_DASHLET_REFRESH' => 'Refresh',
-    'LBL_DASHLET_REMOVE' => 'Remove',
+    'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',
+    'LBL_DASHLET_REFRESH_LABEL' => 'Refresh',
+    'LBL_DASHLET_REMOVE_LABEL' => 'Remove',
     'LBL_DASHLET_DROP_HERE' => 'Drop here',
 
 
@@ -3879,6 +3899,7 @@ $app_strings = array (
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
+    'LBL_CURRENT_PASSWORD'				=> 'Current Password',
     'LBL_SET_NEW_PASSWORD'              => 'Enter Password',
     'LBL_NEW_PASSWORD1'                 => 'New Password',
     'LBL_NEW_PASSWORD2'                 => 'Confirm Password',
@@ -4016,6 +4037,10 @@ $app_strings = array (
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_CLOSE' => 'Close',
+    'LBL_DASHLET_FORECASTS_CHART' => 'Forecast',
+    'LBL_DASHLET_FORECASTS_DESC' => 'Forecast Pareto Chart',
+    'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
+    'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',

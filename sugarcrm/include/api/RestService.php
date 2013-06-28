@@ -240,11 +240,6 @@ class RestService extends ServiceBase
                 }
             }
 
-            // I know this looks a little weird, overriding post vars with get vars, but
-            // in the case of REST, get vars are fairly uncommon and pretty explicit, where
-            // the posted document is probably the output of a generated form.
-            $argArray = array_merge($postVars,$getVars,$pathVars);
-
             $headers = array();
             foreach ($this->special_headers as $header) {
                 if(isset($this->request_headers[$header])) {

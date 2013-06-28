@@ -551,5 +551,9 @@ $mod_strings = array (
     'LBL_GREATER_THAN_EQUAL' => 'Greater Than Equal To',
     'LBL_WORKSHEET' => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
+
+    //Dashlet
+    'LBL_DASHLET_LISTVIEW_NAME' => 'My Favorite Reports',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your reports',
 );
 ?>

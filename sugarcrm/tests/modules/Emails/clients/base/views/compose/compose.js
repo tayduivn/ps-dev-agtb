@@ -22,6 +22,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     afterEach(function() {
+        view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();

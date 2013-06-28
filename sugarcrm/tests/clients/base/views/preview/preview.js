@@ -95,6 +95,58 @@ describe("Preview View", function() {
             SugarTest.server.respond();
             expect(dummyFetchSpy).toHaveBeenCalled();
     });
+    it("should trigger 'preview:close' and 'list:preview:decorate' when source model destroy", function() {
+        var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+        var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+        var closePreviewFired = false;
+        var listPreviewDecorateFired = false;
+        var triggerStub = sinon.stub(app.events,"trigger", function(event){
+            expect(event).not.toBeEmpty();
+            if(event == "preview:close"){
+                closePreviewFired = true;
+            } else if(event == "list:preview:decorate"){
+                listPreviewDecorateFired = true;
+            }
+        });
+
+        preview.model = dummyModel;
+        preview.bindUpdates(dummySourceModel);
+
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("DELETE", /.*rest\/v10\/Cases\/testid.*/,
+            [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
+        dummySourceModel.destroy();
+        SugarTest.server.respond();
+
+        expect(closePreviewFired).toBe(true);
+        expect(listPreviewDecorateFired).toBe(true);
+
+        triggerStub.restore();
+    });
+    it("should trigger 'preview:close' and 'list:preview:decorate' when model remove from collection", function() {
+        var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+        var dummyCollection = {};
+        var closePreviewFired = false;
+        var listPreviewDecorateFired = false;
+        var triggerStub = sinon.stub(app.events,"trigger", function(event){
+            expect(event).not.toBeEmpty();
+            if(event == "preview:close"){
+                closePreviewFired = true;
+            } else if(event == "list:preview:decorate"){
+                listPreviewDecorateFired = true;
+            }
+        });
+        dummyCollection.models = [dummyModel];
+
+        preview.renderPreview(dummyModel, dummyCollection);
+        preview.collection.remove(dummyModel);
+
+        expect(closePreviewFired).toBe(true);
+        expect(listPreviewDecorateFired).toBe(true);
+
+        triggerStub.restore();
+    });
+
     describe("renderPreview", function(){
         it("should trigger 'preview:open' and 'list:preview:decorate' events", function(){
             var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});

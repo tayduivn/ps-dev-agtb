@@ -323,7 +323,7 @@ $mod_strings = array (
     'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
 
-    'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
+    'LBL_CHART_FORECAST_FOR' => ' for {0}',
     'LBL_FORECAST_TITLE' => 'Forecast: {0}',
     'LBL_CHART_INCLUDED' => 'Included',
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',
@@ -424,6 +424,17 @@ $mod_strings = array (
     'LBL_FORECASTS_RANGES_BASED_TITLE' => 'Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_BASED_TITLE' => 'Custom Ranges based on probabilities',
     'LBL_FORECASTS_CUSTOM_NO_BASED_TITLE' =>'Ranges not based on probabilities',
+
+    // worksheet columns config
+    'LBL_DISCOUNT' => 'Discount',
+    'LBL_OPPORTUNITY_STATUS' => 'Opportunity Status',
+    'LBL_OPPORTUNITY_NAME' => 'Opportunity Name',
+    'LBL_PRODUCT_TEMPLATE' => 'Product Catalog',
+    'LBL_CAMPAIGN' => 'Campaign',
+    'LBL_TEAMS' => 'Teams',
+    'LBL_CATEGORY' => 'Category',
+    'LBL_COST_PRICE' => 'Cost Price',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_TEXT' => 'Select which columns should be displayed for the worksheet view. By default, the following fields will be selected:',
 
     // pipline opportunities dashlet
     'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',

@@ -63,7 +63,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
 
                             var paretoChart = nv.models.paretoChart()
-                                .margin({top: 0, right: 0, bottom: 20, left: 45})
+                                .margin({top: 0, right: 10, bottom: 20, left: 30})
                                 .showTitle(false)
                                 .tooltips(true)
                                 .tooltipLine(function(key, x, y, e, graph) {
@@ -87,6 +87,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                             // get chartId from params or use the default for sugar
                             var chartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b';
 
+                            d3.select('#' + chartId + ' svg').remove();
+
                             // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
                             // only so we can custom format the Y-Axis values
                             d3.select('#' + chartId)
@@ -94,32 +96,13 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 .datum( SUGAR.charts.translateDataToD3(json,params) )
                                 .transition().duration(500)
                                 .call(paretoChart)
-                                .selectAll('.nv-y.nv-axis text')
+                                .selectAll('.nv-y.nv-axis .tick')
+                                .select('text')
                                 .text(function(d) {
-                                    return App.user.get('preferences').currency_symbol + d3.format(",.2s")(d);
+                                    return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
                                 });
 
                             nv.utils.windowResize(paretoChart.update);
-
-                            //this expand to full screen call shouldn't be in the chart def
-                            //don't know where to put it
-                            $('.thumbnail.viz .btn-expand-full').unbind('click').bind('click',
-                                function(e){
-                                    if ( $('.thumbnail.viz').hasClass('expanded') )
-                                    {
-                                        $('.thumbnail.viz').removeClass('expanded');
-                                        $('.thumbnail.viz .chart-container').css({'height':'300px'});
-                                        $('.thumbnail.viz .btn-expand-full span').removeClass('icon-resize-small');
-                                    }
-                                    else
-                                    {
-                                        $('.thumbnail.viz').addClass('expanded');
-                                        $('.thumbnail.viz .chart-container').css({'height':$(window).height()-130});
-                                        $('.thumbnail.viz .btn-expand-full span').addClass('icon-resize-small');
-                                    }
-                                    that.chartObject.update();
-                                }
-                            );
 
                             that.chartObject = paretoChart;
 

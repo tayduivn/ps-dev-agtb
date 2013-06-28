@@ -27,10 +27,10 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('soap/SoapHelperFunctions.php');
+require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
-
+SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -43,15 +43,8 @@ require_once 'include/SugarFields/SugarFieldHandler.php';
  *  "platform": is a bool value which lets you know if the data is for a mobile view, portal or not.
  *
  */
-class MetaDataManager 
+class MetaDataManager
 {
-    /**
-     * SugarFieldHandler, to assist with cleansing default sugar field values
-     *
-     * @var SugarFieldHandler
-     */
-    protected $sfh;
-
     /**
      * The user bean for the logged in user
      *
@@ -73,6 +66,13 @@ class MetaDataManager
     );
 
     /**
+     * The metadata hacks class
+     * 
+     * @var MetaDataHacks
+     */
+    protected $metaDataHacks;
+
+    /**
      * The constructor for the class.
      *
      * @param User  $user      A User bean
@@ -87,7 +87,8 @@ class MetaDataManager
 
         $this->user = $user;
         $this->platforms = $platforms;
-
+        $className = SugarAutoLoader::customClass('MetaDataHacks');
+        $this->metaDataHacks = new $className();
     }
 
     /**
@@ -337,13 +338,15 @@ class MetaDataManager
             if (!isset($data['relationships'])) {
                 $data['relationships'] = array();
             }
-
-            return $data;
+            if(!isset($data['fields'])) {
+                $data['fields'] = array();
+            }
         }
 
         // Bug 56505 - multiselect fields default value wrapped in '^' character
-        if (!empty($data['fields']) && is_array($data['fields']))
-            $data['fields'] = $this->normalizeFielddefs($data['fields']);
+        if (!empty($data['fields'])) {
+            $data['fields'] = $this->metaDataHacks->normalizeFieldDefs($data['fields']);
+        }
 
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
@@ -452,9 +455,9 @@ class MetaDataManager
                 // get the field names
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
-
-                foreach ($fieldsAcl as $field => $fieldAcl) {
-                    switch ($fieldAcl['acl']) {
+                $fieldsAcl = $this->metaDataHacks->fixAcls($fieldsAcl);
+                foreach ( $fieldsAcl as $field => $fieldAcl ) {
+                    switch ( $fieldAcl['acl'] ) {
                         case SugarACL::ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
@@ -614,47 +617,6 @@ class MetaDataManager
         return array_keys($platforms);
     }
 
-    /**
-     * Cleans field def default values before returning them as a member of the
-     * metadata response payload
-     *
-     * Bug 56505
-     * Cleans default value of fields to strip out metacharacters used by the app.
-     * Used initially for cleaning default multienum values.
-     *
-     * @param array $fielddefs
-     * @return array
-     */
-    protected function normalizeFielddefs(Array $fielddefs) {
-        $this->getSugarFieldHandler();
-
-        foreach ($fielddefs as $name => $def) {
-            if (isset($def['type'])) {
-                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
-
-                $field = $this->sfh->getSugarField($type);
-
-                $fielddefs[$name] = $field->getNormalizedDefs($def);
-            }
-        }
-
-        return $fielddefs;
-    }
-
-    /**
-     * Gets the SugarFieldHandler object
-     *
-     * @return SugarFieldHandler The SugarFieldHandler
-     */
-    protected function getSugarFieldHandler() {
-        if (!$this->sfh instanceof SugarFieldHandler) {
-            $this->sfh = new SugarFieldHandler;
-        }
-
-        return $this->sfh;
-    }
-
-
      /*
      * Factory for layouts.
      *
@@ -777,7 +739,12 @@ class MetaDataManager
     {
         // Get the current platform if one wasn't presented
         if (empty($platform)) {
-            $platform = $this->platforms[0];
+            $platform = is_array($this->platforms) ? $this->platforms[0] : $this->platforms;
+        }
+
+        //Merge the current platform with base
+        if ($platform != "base") {
+            $platform = "{$platform}_base";
         }
 
         // Is there a current metadata hash sent in the request (empty string is not a valid hash)
@@ -786,10 +753,11 @@ class MetaDataManager
             // for this platform matches what's in the session, ensuring that the
             // session value isn't false (the default value when setting from
             // cache)
-            $hashCache = sugar_cached("api/metadata/hashes.php");
-            if (file_exists($hashCache)) {
-                include $hashCache;
 
+            //Using @include for speed reasons since this will occur on every request
+            //and the file will almost always exist
+            @include sugar_cached("api/metadata/hashes.php");
+            if (!empty($hashes)) {
                 // Valid is either a platform hash that matches the session hash
                 // OR no platform hash and no session hash
                 $platformHash = empty($hashes['meta_hash_' . $platform]) ? null : $hashes['meta_hash_' . $platform];

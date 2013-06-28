@@ -28,6 +28,7 @@
             }
             this.meta.panels = this.dashletConfig.dashlet_config_panels;
         } else {
+            this.context.set("skipFetch", false);
             this.context.set("limit", this.settings.get("display_rows") || 5);
             var collection = this.context.get("collection");
 

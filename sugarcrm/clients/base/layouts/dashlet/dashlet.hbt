@@ -1,20 +1,9 @@
-<div class="thumbnail widget">
-    {{#unless meta.preview}}
-    <div class="btn-toolbar pull-right">
-        <a href="javascript:void(0)" data-toggle="widget" class="dashlet_toggle btn btn-invisible minify" rel="tooltip" data-original-title="Collapse" data-placement="top">
-            <i class="icon-chevron-up"></i>
-        </a>
-        <a data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><i data-action="loading" class="icon-cog"></i></a>
-        <ul class="dropdown-menu left carettop">
-            <div>
-                <li><a class="widget-edit" data-action="edit">{{str "LBL_DASHLET_CONFIG_EDIT"}}</a></li>
-                <li><a class="widget-refresh" data-action="refresh">{{str "LBL_DASHLET_REFRESH"}}</a></li>
-                <li><a class="widget-remove" data-action="delete">{{str "LBL_DASHLET_REMOVE"}}</a></li>
-            </div>
-        </ul>
-    </div>
-    {{/unless}}
-    <h4 data-toggle="widget">{{meta.label}}</h4>
-    <div class="widget-content">
-    </div>
+<div class="thumbnail widget" data-action="droppable">
+    {{#if meta.preview}}
+        <h4 data-toggle="widget">{{meta.label}}</h4>
+    {{else}}
+        <div data-dashlet="toolbar"></div>
+    {{/if}}
+    <div data-dashlet="widget" class="widget-content"></div>
+    <div class="swappable-dashlet icon-download-alt"></div>
 </div>
