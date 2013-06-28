@@ -157,7 +157,7 @@
                     // If there is an existing placeholder then add required label after it
                     newPlaceholder = old + " (" + requiredPlaceholder + ")";
                 }
-                el.attr("placeholder", newPlaceholder);
+                el.attr("placeholder", newPlaceholder).addClass("required");
             },
 
             /**
