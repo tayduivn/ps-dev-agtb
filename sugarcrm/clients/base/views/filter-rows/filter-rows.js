@@ -159,11 +159,6 @@
      * @returns {Field}
      */
     createField: function(model, def) {
-        if (def.type === 'enum') {
-            def.searchBarThreshold = 9999;
-        }
-        // minimumResultsForSearch set to 9999 to hide the search field,
-        // See: https://github.com/ivaynberg/select2/issues/414
         var obj = {
             meta: {
                 view: "edit"
@@ -338,6 +333,9 @@
         var model = app.data.createBean(this.moduleName);
         var field = this.createField(model, {
                 type: 'enum',
+                // minimumResultsForSearch set to 9999 to hide the search field,
+                // See: https://github.com/ivaynberg/select2/issues/414
+                searchBarThreshold: 9999,
                 options: payload
             }),
             $field = $(field.getPlaceholder().string);
@@ -381,9 +379,15 @@
         switch (fieldType) {
             case 'enum':
                 fieldDef.isMultiSelect = true;
+                // minimumResultsForSearch set to 9999 to hide the search field,
+                // See: https://github.com/ivaynberg/select2/issues/414
+                fieldDef.searchBarThreshold = 9999;
                 break;
             case 'bool':
                 fieldDef.type = 'enum';
+                // minimumResultsForSearch set to 9999 to hide the search field,
+                // See: https://github.com/ivaynberg/select2/issues/414
+                fieldDef.searchBarThreshold = 9999;
                 break;
             case 'int':
                 fieldDef.auto_increment = false;
