@@ -292,11 +292,6 @@ class VardefManager{
             }
         }
 
-        if (empty($params['ignore_rel_calc_fields'])) {
-            if(!empty($GLOBALS['dictionary'][$object]) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
-                $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
-            }
-        }
         //load custom fields into the vardef cache
         if($cacheCustom && !empty($GLOBALS['dictionary'][$object]['fields'])){
             require_once("modules/DynamicFields/DynamicField.php");
@@ -586,8 +581,9 @@ class VardefManager{
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($params['ignore_rel_calc_fields']) && !empty($GLOBALS['dictionary'][$object]) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
-        {
+        if (empty($params['ignore_rel_calc_fields']) &&
+            !empty($GLOBALS['dictionary'][$object]) &&
+            !isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
             $refresh = true;
         }
         //END SUGARCRM flav=pro ONLY

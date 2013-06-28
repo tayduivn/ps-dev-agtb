@@ -1917,10 +1917,15 @@ class SugarBean
         }
     }
 
-    function updateRelatedCalcFields($linkName = "")
+    /**
+     * Update any related calculated fields
+     *
+     * @param string $linkName      The specific link that needs updating
+     */
+    public function updateRelatedCalcFields($linkName = "")
     {
-
-        if (empty($this->id) || $this->new_with_id) {
+        // we don't have an id, lets not run this code.
+        if (empty($this->id)) {
             return;
         }
 
@@ -1935,14 +1940,10 @@ class SugarBean
         }
 
         $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
-        if (!empty($dictionary[$this->object_name]['related_calc_fields']))
-        {
+        if (!empty($dictionary[$this->object_name]['related_calc_fields'])) {
             $links = $dictionary[$this->object_name]['related_calc_fields'];
-            foreach($links as $lname)
-            {
-
-                if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2))
-                {
+            foreach($links as $lname) {
+                if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2)) {
                     continue;
                 }
 
@@ -1952,18 +1953,18 @@ class SugarBean
                 $data_changes = $this->db->getDataChanges($this);
                 $changed_fields = array_keys($data_changes);
 
-                // if fields influencing calculated fields are not changed,
-                // skip resaving of related beans
-                if (!array_intersect($influencing_fields, $changed_fields)) {
+                // if fetched_row is empty we have a new record, so don't check for changed_fields
+                // if deleted is 1, we need to update all related items
+                // the only time we want to check if any of the influcenceing fields have changed is when, it's a, non-deleted record
+                // and when we are updating a row.
+                if (!empty($this->fetched_row) && $this->deleted == 0 && !array_intersect($influencing_fields, $changed_fields)) {
                     continue;
                 }
 
                 $beans = $this->$lname->getBeans();
                 //Resave any related beans
-                if(!empty($beans))
-                {
-                    foreach($beans as $rBean)
-                    {
+                if(!empty($beans))  {
+                    foreach($beans as $rBean) {
                         if (empty($rBean->deleted)) {
                             SugarRelationship::addToResaveList($rBean);
                         }
@@ -1972,8 +1973,7 @@ class SugarBean
             }
         }
 
-        if ($this->has_calc_field_with_link($linkName))
-        {
+        if ($this->has_calc_field_with_link($linkName)) {
             //Save will updated the saved_beans array
             SugarRelationship::addToResaveList($this);
         }
@@ -4971,16 +4971,13 @@ class SugarBean
      *
      * If it is not overridden, then marking this type of item is not allowed
 	 */
-	function mark_deleted($id)
-	{
-		global $current_user;
-		$date_modified = $GLOBALS['timedate']->nowDb();
-		if(isset($_SESSION['show_deleted']))
-		{
-			$this->mark_undeleted($id);
-		}
-		else
-		{
+    public function mark_deleted($id)
+    {
+        global $current_user;
+        $date_modified = $GLOBALS['timedate']->nowDb();
+        if (isset($_SESSION['show_deleted'])) {
+            $this->mark_undeleted($id);
+        } else {
             // Ensure that Activity Messages do not occur in the context of a Delete action (e.g. unlink)
             // and do so for all nested calls within the Top Level Delete Context
             $opflag = static::enterOperation('delete');
@@ -4991,13 +4988,14 @@ class SugarBean
             $this->call_custom_logic("before_delete", $custom_logic_arguments);
             $this->deleted = 1;
             $this->mark_relationships_deleted($id);
-            if ( isset($this->field_defs['modified_user_id']) ) {
+            if (isset($this->field_defs['modified_user_id'])) {
                 if (!empty($current_user)) {
                     $this->modified_user_id = $current_user->id;
                 } else {
                     $this->modified_user_id = 1;
                 }
-                $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$this->modified_user_id' where id='$id'";
+                $query = "UPDATE $this->table_name set deleted=1, date_modified = '$date_modified',
+                            modified_user_id = '$this->modified_user_id' where id='$id'";
                 //BEGIN SUGARCRM flav=pro ONLY
                 if ($this->isFavoritesEnabled()) {
                     SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
@@ -5011,9 +5009,7 @@ class SugarBean
                 }
                 //END SUGARCRM flav=pro ONLY
             }
-            $this->db->query($query, true,"Error marking record deleted: ");
-
-            SugarRelationship::resaveRelatedBeans();
+            $this->db->query($query, true, "Error marking record deleted: ");
 
             // Take the item off the recently viewed lists
             $tracker = BeanFactory::getBean('Trackers');
@@ -5024,6 +5020,8 @@ class SugarBean
             $searchEngine = SugarSearchEngineFactory::getInstance();
             $searchEngine->delete($this);
             //END SUGARCRM flav=pro ONLY
+
+            SugarRelationship::resaveRelatedBeans();
 
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
