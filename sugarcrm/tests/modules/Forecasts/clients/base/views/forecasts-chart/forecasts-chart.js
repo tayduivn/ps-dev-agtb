@@ -34,6 +34,9 @@ describe('forecasts_chart', function() {
         });
         context.parent = parent;
         view.context = context;
+        view.meta = {
+            config: false
+        };
     });
 
     afterEach(function() {
@@ -41,6 +44,7 @@ describe('forecasts_chart', function() {
             stub.restore();
         });
         delete view.context;
+        delete view.meta;
     });
 
     describe('forecasts context change events', function() {
