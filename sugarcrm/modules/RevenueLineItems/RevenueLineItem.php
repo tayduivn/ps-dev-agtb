@@ -521,10 +521,15 @@ class RevenueLineItem extends SugarBean
                 $product->$field['name'] = $this->$field['name'];
             }
         }
-
+        // use product name if available
+        if (!empty($this->product_template_id)) {
+            $pt = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
+            if (!empty($pt) && !empty($pt->name)) {
+                $product->name = $pt->name;
+            }
+        }
         // we need to set the discount_price (unit_price) to be the likely_case amount
         $product->discount_price = $this->likely_case;
-        
         return $product;
     }
 }
