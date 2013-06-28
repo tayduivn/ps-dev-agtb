@@ -62,5 +62,31 @@ ul.notification-list {
 			text-align: center;
 			margin-right: 10px;
 		}
+		span.raw {
+			&:nth-child(1) {
+				position: absolute;
+			}
+			&:nth-child(2) {
+				position: relative;
+				line-height: normal;
+				padding-top: 10px;
+				margin-left: 70px;
+				.ellipsis_inline {
+					width: 42%;
+					width: ~"-moz-calc(100% - 225px)";
+					width: ~"-webkit-calc(100% - 225px)";
+					width: ~"calc(100% - 225px)";
+					line-height: normal;
+					padding-top: 10px;
+					cursor: pointer;
+				}
+			}
+			&.expanded:nth-child(2) {
+				.ellipsis_inline {
+					white-space: normal;
+					cursor: normal;
+				}
+			}
+		}
 	}
 }
