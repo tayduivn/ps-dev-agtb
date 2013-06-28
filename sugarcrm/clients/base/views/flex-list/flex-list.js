@@ -21,6 +21,8 @@
     className: 'flex-list-view',
     // Model being previewed (if any)
     _previewed: null,
+    displayFirstNColumns: null,
+
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'view', name: 'list', method: 'initialize', args: [options]});
         this.template = app.template.getView('flex-list');
@@ -80,6 +82,10 @@
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(this.meta.panels, function (panel) {
             _.each(panel.fields, function (fieldMeta, i) {
+                if (_.isNumber(this.displayFirstNColumns)) {
+                    fieldMeta['default'] = (i < this.displayFirstNColumns);
+                    panel.fields[i] = fieldMeta;
+                }
                 if (fieldMeta['default'] === false) {
                     catalog.available.push(fieldMeta);
                 } else {

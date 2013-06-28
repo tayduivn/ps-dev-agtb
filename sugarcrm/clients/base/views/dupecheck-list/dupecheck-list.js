@@ -14,22 +14,20 @@
     /**
      * @class View.DupecheckListView
      * @alias SUGAR.App.view.views.DupecheckListView
-     * @extends View.SelectionListView
+     * @extends View.FlexListView
      */
-    extendsFrom: 'SelectionListView',
+    extendsFrom: 'FlexListView',
     plugins: ['ellipsis_inline', 'list-column-ellipsis', 'list-disable-sort', 'list-remove-links'],
     collectionSync: null,
+    displayFirstNColumns: 4,
+    additionalTableClasses: null,
 
     initialize: function(options) {
-        _.bindAll(this);
+        //use dupecheck-list metadata by default - subviews will just extend
+        var dupeListMeta = app.metadata.getView(options.module, 'dupecheck-list') || {};
+        options.meta = _.extend({}, dupeListMeta, options.meta || {});
 
-        app.view.invokeParent(this, {type: 'view', name: 'selection-list', method: 'initialize', args:[options]});
-
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field) {
-                field.sortable = false;
-            });
-        });
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
 
         this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
 
@@ -45,17 +43,21 @@
         //save off the collection's sync so we can run our own and then run the original
         //this is so we can switch the endpoint out
         this.collectionSync = this.collection.sync;
-        this.collection.sync = this.sync;
+        this.collection.sync = _.bind(this.sync, this);
     },
 
     _renderHtml: function() {
-        app.view.invokeParent(this, {type: 'view', name: 'selection-list', method: '_renderHtml'});
-        this.$('table.table-striped').addClass('duplicates highlight');
+        var classesToAdd = 'duplicates highlight';
+        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
+        if (this.additionalTableClasses) {
+            classesToAdd = classesToAdd + ' ' + this.additionalTableClasses;
+        }
+        this.$('table.table-striped').addClass(classesToAdd);
     },
 
     sync: function(method, model, options) {
         options = options || {};
-        options.endpoint = this.endpoint;
+        options.endpoint = _.bind(this.endpoint, this);
         this.collectionSync(method, model, options);
     },
 
@@ -67,12 +69,5 @@
     fetchDuplicates: function(model, options) {
         this.model = model;
         this.collection.fetch(options);
-    },
-
-    /**
-     * Overridden the initializeEvents method to turn off selection events in parent selection-list
-     */
-    initializeEvents: function() {
-
     }
 })

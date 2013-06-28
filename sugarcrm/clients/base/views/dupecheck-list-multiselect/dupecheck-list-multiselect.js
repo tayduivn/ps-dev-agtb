@@ -1,3 +1,4 @@
 ({
-    extendsFrom: 'DupecheckListView'
-})
+    extendsFrom: 'DupecheckListView',
+    additionalTableClasses: 'duplicates-multiselect'
+ })

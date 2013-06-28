@@ -18,5 +18,4 @@ $viewdefs['base']['view']['dupecheck-list-multiselect'] = array(
         'type' => 'multi',
         'label' => 'LBL_LINK_SELECT'
     ),
-    'rowactions' => array(),
 );

@@ -84,18 +84,6 @@ describe('Base.View.DupeCheckList', function() {
         expect(view.model.get('foo')).toEqual('bar');
     });
 
-    it('should be able to add preview rowaction with meta flag', function(){
-        var view, previewField;
-        listMeta['rowactions'] = {};
-        listMeta['showPreview'] = true;
-
-        view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
-        view.layout = layout;
-        view.render();
-        previewField = _.last(view.rightColumns);
-        expect(previewField.event).toEqual('list:preview:fire');
-    });
-
     it('should be calling the duplicate check api', function() {
         var ajaxStub;
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
