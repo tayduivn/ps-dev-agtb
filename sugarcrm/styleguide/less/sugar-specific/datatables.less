@@ -519,7 +519,7 @@ table.dataTable {
             padding-left: 15px;
             padding-right: 0;
             width: 52px;
-            height: 26px;
+            height: 28px;
             //z-index: 11;
             //z-index: 1;
             background: @white;
@@ -571,7 +571,7 @@ table.dataTable {
             padding: 4px 8px 0 5px; //vertical-align: middle;
             overflow-x: visible;
             border-right: 0;
-            height: 38px;
+            height: 40px;
             line-height: 42px !important;
             background: @white;
             position: absolute;
@@ -594,7 +594,7 @@ table.dataTable {
             width: 60px; //vertical-align: middle;
             overflow-x: visible;
             border-right: 0;
-            height: 31px;
+            height: 32px;
             position: absolute;
             right: 0;
             .box-shadow(~"-2px 0 1px 0 rgba(0,0,0,.1);");
@@ -659,6 +659,13 @@ table.dataTable {
           }
         }
       }
+    }
+    input[type=radio], input[type=checkbox] {
+      border: 0;
+    }
+    input[type=checkbox] {
+      padding:0 !important;
+      margin: 0 !important;
     }
   }
 }
