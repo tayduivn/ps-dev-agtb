@@ -1875,7 +1875,7 @@ $app_list_strings = array (
   ),
     //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
-        'forecast' => 'Included In Forecast',
+        'forecast' => 'In Forecast',
         'sales_stage' => 'Sales Stage',
         'probability' => 'Probability'
     ),
@@ -4037,6 +4037,10 @@ $app_strings = array (
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_CLOSE' => 'Close',
+    'LBL_DASHLET_FORECASTS_CHART' => 'Forecast',
+    'LBL_DASHLET_FORECASTS_DESC' => 'Forecast Pareto Chart',
+    'LBL_DASHLET_FORECASTS_GROUPBY' => 'Group By',
+    'LBL_DASHLET_FORECASTS_DATASET' => 'Dataset',
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',

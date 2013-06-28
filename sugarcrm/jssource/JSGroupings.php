@@ -50,13 +50,6 @@
                             'include/javascript/jquery/jquery.popoverext.js'             =>   $target,
                         );
                         break;
-                    // these are the only files not in bootstrap.min.js that we need in forecasts
-                    // as bootstrap.min.js is already included in sugar_grp1_bootstrap.js
-                    case 'bootstrap_forecasts':
-                        return array(
-                            'styleguide/assets/js/bootstrap-datepicker.js' => $target,
-                        );
-                        break;
                     case 'jquery_core':
                         return array (
                             'include/javascript/jquery/jquery-min.js'             =>    $target,
@@ -343,6 +336,7 @@
                    // D3 library
                    'styleguide/assets/js/nvd3/lib/d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'styleguide/assets/js/nvd3/lib/topojson.js' => 'include/javascript/sugar_sidecar.min.js',
+                   'include/SugarCharts/Jit/js/sugarCharts.js' => 'include/javascript/sugar_sidecar.min.js',
                    // To add more models to NV D3, run the makefile in styleguide/js/nvd3.
                    'styleguide/assets/js/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
@@ -397,29 +391,6 @@
             ),
            //END SUGARCRM flav=ent ONLY
         );
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    // groupings for sidecar forecast
-    // use sidecar/src/include-manifest.php file to define what files should be loaded
-    // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
-    $sidecar_forecasts = array();
-    $cached_file = 'include/javascript/sidecar_forecasts.js';
-
-    $sidecar_forecasts = array();
-    $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.min.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/jquery/jquery.dataTables.customSort.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/jquery/jquery.jeditable.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/jquery/jquery.jstree.js'] = $cached_file;
-    // cookie.js is needed by jit.js, including in case we need to display legacy (i. e. non-NVD3) charts in Forecasts
-    $sidecar_forecasts['include/javascript/cookie.js'] = $cached_file;
-    $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
-    $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
-    $sidecar_forecasts['modules/Forecasts/clients/base/lib/error.js'] = $cached_file;
-
-    $js_groupings[] = $sidecar_forecasts;
-    //END SUGARCRM flav=pro ONLY
 
     /**
      * Check for custom additions to this code

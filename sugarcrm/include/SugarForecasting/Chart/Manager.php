@@ -153,6 +153,8 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         // set the pareto line colors
         $properties['goal_marker_color'][1] = $this->defaultColorsArray[0];
         $properties['goal_marker_color'][2] = $this->defaultColorsArray[1];
+        $timeperiod = BeanFactory::getBean('TimePeriods', $this->getArg('timeperiod_id'));
+        $properties['title'] = string_format($forecast_strings['LBL_CHART_FORECAST_FOR'], array($timeperiod->name));
 
         // figure out the labels
         $labels = array();
