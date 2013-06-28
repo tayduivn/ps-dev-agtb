@@ -122,6 +122,30 @@ $viewdefs['base']['view']['dashablelist'] = array(
                 'my_items' => '1',
             ),
         ),
+        array(
+            'name' => 'LBL_DASHLET_LISTVIEW_NAME',
+            'description' => 'LBL_DASHLET_LISTVIEW_DESCRIPTION',
+            'config' => array(
+                'module' => 'Reports',
+                'display_columns' => array(
+                    'name',
+                    'module',
+                    'report_type',
+                ),
+                'my_items' => '1',
+                'favorites' => '1',
+            ),
+            'preview' => array(
+                'module' => 'Reports',
+                'display_columns' => array(
+                    'name',
+                    'module',
+                    'report_type',
+                ),
+                'my_items' => '1',
+                'favorites' => '1',
+            ),
+        ),
     ),
     'dashlet_config_panels' => array(
         array(
