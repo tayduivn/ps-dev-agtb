@@ -327,6 +327,16 @@
       color: @gray;
       width: 100%;
     }
+
+    .edit > [type="password"]:first-of-type {
+      margin-bottom: 1px !important;
+      z-index: 2;
+    }
+
+    .edit > [type="password"]:not(:first-of-type) {
+      margin-top: -3px !important;
+    }
+
     /* Must be same as above margin-top definition */
     .input-append input[type="text"] + .add-on,
     .input-append textarea + .add-on {
