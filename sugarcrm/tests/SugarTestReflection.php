@@ -53,9 +53,25 @@ class SugarTestReflection
     
     public static function callProtectedMethod($object, $method, $args = array())
     {
-        $rc = new ReflectionClass($object);
+        $rc = new ReflectionObject($object);
         $rm = $rc->getMethod($method);
         $rm->setAccessible(true);
         return $rm->invokeArgs($object, $args);
+    }
+
+    public static function setProtectedValue($object, $property, $value)
+    {
+        $ro = new ReflectionObject($object);
+        $rp = $ro->getProperty($property);
+        $rp->setAccessible(true);
+        $rp->setValue($object, $value);
+    }
+
+    public static function getProtectedValue($object, $property)
+    {
+        $ro = new ReflectionObject($object);
+        $rp = $ro->getProperty($property);
+        $rp->setAccessible(true);
+        return $rp->getValue($object);
     }
 }

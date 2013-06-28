@@ -81,7 +81,10 @@ class RestService extends ServiceBase
      */
     public function getRequest()
     {
-        return new RestRequest($_SERVER, $_REQUEST);
+        if (!isset($this->request)) {
+            $this->request = new RestRequest($_SERVER, $_REQUEST);
+        }
+        return $this->request;
     }
 
     /**
@@ -96,7 +99,10 @@ class RestService extends ServiceBase
      */
     public function getResponse()
     {
-        return new RestResponse($_SERVER);
+        if (!isset($this->response)) {
+            $this->response = new RestResponse($_SERVER);
+        }
+        return $this->response;
     }
 
     /**
@@ -742,15 +748,17 @@ class RestService extends ServiceBase
             $getVars = $_GET;
             if ( !empty($route['jsonParams']) ) {
                 foreach ( $route['jsonParams'] as $fieldName ) {
-                    if ( isset($_GET[$fieldName]) && !empty($_GET[$fieldName])
+                    if ( isset($_GET[$fieldName]) 
+                         && !empty($_GET[$fieldName])
+                         && is_string($_GET[$fieldName])
                          &&  isset($_GET[$fieldName]{0})
                          && ( $_GET[$fieldName]{0} == '{'
                                || $_GET[$fieldName]{0} == '[' )) {
                         // This may be JSON data
                         $jsonData = @json_decode($_GET[$fieldName],true,32);
-                        if ( $jsonData == null ) {
-                            // Did not decode, could be a string that just happens to start with a '{', don't mangle it further
-                            continue;
+                        if (json_last_error() !== 0) {
+                            // Bad JSON data, throw an exception instead of trying to process it
+                            throw new SugarApiExceptionInvalidParameter();
                         }
                         // Need to dig through this array and make sure all of the elements in here are safe
                         $getVars[$fieldName] = $jsonData;
@@ -778,9 +786,9 @@ class RestService extends ServiceBase
                 // This looks like the post contents are JSON
                 // Note: If we want to support rest based XML, we will need to change this
                 $postVars = @json_decode($postContents,true,32);
-                if ( !is_array($postVars) ) {
-                    // FIXME: Handle improperly encoded JSON
-                    $postVars = array();
+                if (json_last_error() !== 0) {
+                    // Bad JSON data, throw an exception instead of trying to process it
+                    throw new SugarApiExceptionInvalidParameter();
                 }
             }
         }
