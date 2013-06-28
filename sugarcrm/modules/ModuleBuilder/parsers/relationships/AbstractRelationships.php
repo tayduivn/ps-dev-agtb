@@ -477,11 +477,16 @@ class AbstractRelationships
     protected function saveSubpanelDefinitions ($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions)
     {
         mkdir_recursive ( "$basepath/layoutdefs/" ) ;
+        $installDefs = array();
 
         foreach ( $subpanelDefinitions as $moduleName => $definitions )
         {
             if (!isModuleBWC($moduleName)) {
                 foreach ( $definitions as $definition ) {
+                    // we currently do not support collections in sidecar
+                    if (!empty($definition['collection_list'])) {
+                        continue;
+                    }
                     $installDefs[$moduleName] = array(
                         'from' => $this->saveSidecarSubpanelDefinitions(
                             $moduleName,

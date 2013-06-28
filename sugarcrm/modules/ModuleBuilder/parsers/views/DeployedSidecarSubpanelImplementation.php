@@ -204,6 +204,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         if (strpos($this->sidecarSubpanelName, 'subpanel-for-')) {
             $this->_viewdefs['type'] = 'subpanel-list';
         }
+        // TODO: remove this when we have BWC modules converted
+        $this->stripUnwantedBWCKeys();
 
         write_array_to_file(
             "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']",
@@ -211,7 +213,29 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->sidecarFile
         );
 
+    }
 
+    /**
+     * Temporary method to remove BWC keys for sidecar subpanels
+     */
+    public function stripUnwantedBWCKeys()
+    {
+        static $unwantedKeys = array(
+            'width',
+        );
+        foreach ($this->_viewdefs['panels'] as &$panel) {
+            if (empty($panel['fields'])) {
+                continue;
+            }
+            foreach ($panel['fields'] as &$field) {
+                foreach ($unwantedKeys as $unwantedKey) {
+                    if (empty($field[$unwantedKey])) {
+                        continue;
+                    }
+                    unset($field[$unwantedKey]);
+                }
+            }
+        }
     }
 
 }
