@@ -63,10 +63,11 @@ ul.notification-list {
 			margin-right: 10px;
 		}
 		span.raw {
-			&:nth-child(1) {
+			&.level {
 				position: absolute;
+				margin-top: 9px;
 			}
-			&:nth-child(2) {
+			&.name {
 				position: relative;
 				line-height: normal;
 				padding-top: 10px;
@@ -81,7 +82,7 @@ ul.notification-list {
 					cursor: pointer;
 				}
 			}
-			&.expanded:nth-child(2) {
+			&.expanded.name {
 				.ellipsis_inline {
 					white-space: normal;
 					cursor: normal;
