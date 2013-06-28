@@ -2208,10 +2208,10 @@ class SugarBean
 
                 switch ($me->getCode()) {
                     case MailerException::FailedToConnectToRemoteServer:
-                        $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
+                        $GLOBALS['log']->error("Notifications: error sending e-mail, smtp server was not found ");
                         break;
                     default:
-                        $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+                        $GLOBALS['log']->error("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
                         break;
                 }
             }
