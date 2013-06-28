@@ -521,6 +521,11 @@ qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_str
 qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
+
+    qualifiers[qualifiers.length] = {name:'tp_last_quarter',value:'<?php echo $mod_strings['LBL_LAST_QUARTER']; ?>'};
+    qualifiers[qualifiers.length] = {name:'tp_this_quarter',value:'<?php echo $mod_strings['LBL_THIS_QUARTER']; ?>'};
+    qualifiers[qualifiers.length] = {name:'tp_next_quarter',value:'<?php echo $mod_strings['LBL_NEXT_QUARTER']; ?>'};
+
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
@@ -546,6 +551,10 @@ qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_str
 qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
+
+    qualifiers[qualifiers.length] = {name:'tp_last_quarter',value:'<?php echo $mod_strings['LBL_LAST_QUARTER']; ?>'};
+    qualifiers[qualifiers.length] = {name:'tp_this_quarter',value:'<?php echo $mod_strings['LBL_THIS_QUARTER']; ?>'};
+    qualifiers[qualifiers.length] = {name:'tp_next_quarter',value:'<?php echo $mod_strings['LBL_NEXT_QUARTER']; ?>'};
 
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
