@@ -18,6 +18,9 @@ $viewdefs['base']['layout']['footer'] = array(
     array(
         'type' => 'simple',
         array(
+            'view' => 'language-actions'
+        ),
+        array(
             'view' => 'reminders',
         ),
         array(
