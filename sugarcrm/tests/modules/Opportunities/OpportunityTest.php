@@ -87,6 +87,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, $opp->$case);
     }
 
+    //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     /**
      * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
      * @group forecasts
@@ -163,7 +165,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
     }
 
-    //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav=pro && flav!=ent ONLY
 
     /**
      * Test that the base_rate field is populated with rate of currency_id

@@ -657,7 +657,7 @@ class Quote extends SugarBean {
     function getRelatedOpportunities()
     {
         $results = array();
-        $query = "select * from quotes_opportunities where quote_id = '{$this->id}'";
+        $query = "select * from quotes_opportunities where quote_id = '{$this->id}' and deleted = 0";
         $result = $this->db->query($query);
         while($row = $this->db->fetchByAssoc($result)) {
             $results[] = $row;
@@ -671,7 +671,7 @@ class Quote extends SugarBean {
      */
     function getRelatedOpportunityCount()
     {
-        $query = "select count(id) from quotes_opportunities where quote_id = '{$this->id}'";
+        $query = "select count(id) from quotes_opportunities where quote_id = '{$this->id}' and deleted = 0";
         return $this->db->getOne($query);
     }
 

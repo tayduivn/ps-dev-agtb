@@ -14,7 +14,7 @@
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
     'audited' => true,
-    'comment' => 'The user (not Admin)) view of a RevenueLineItem definition; an instance of a roduct used in the worksheets and opportunities',
+    'comment' => 'The user (not Admin)) view of a RevenueLineItem definition; an instance of a product used in the worksheets and opportunities',
     'fields' => array(
         'product_template_id' =>  array(
             'name' => 'product_template_id',
@@ -674,16 +674,6 @@ $dictionary['RevenueLineItem'] = array(
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
         ),
-        'opportunity_link' =>  array(
-            'name' => 'opportunity_link',
-            'type' => 'link',
-            'relationship' => 'revenuelineitems_opportunities',
-            'vname' => 'LBL_OPPORTUNITY',
-            'link_type' => 'one',
-            'module' => 'Opportunities',
-            'bean_name' => 'Opportunity',
-            'source' => 'non-db',
-        ),
         'opportunity_name' => array(
             'name' => 'opportunity_name',
             'rname' => 'name',
@@ -691,7 +681,7 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_OPPORTUNITY_NAME',
             'join_name' => 'opportunities',
             'type' => 'relate',
-            'link' => 'opportunity_link',
+            'link' => 'opportunities',
             'table' => 'opportunities',
             'isnull' => 'true',
             'module' => 'Opportunities',

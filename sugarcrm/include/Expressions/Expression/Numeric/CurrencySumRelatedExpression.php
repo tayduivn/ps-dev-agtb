@@ -25,7 +25,7 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
  * ex: <i>rollupCurrencySum($products, "likely_case")</i> in Opportunities would return the <br/>
  * sum of the likely_case field converted to base currency for all the products related to this Opportunity
  */
-class CurrencySumRelatedExpression extends NumericExpression
+class CurrencySumRelatedExpression extends SumRelatedExpression
 {
 	/**
 	 * Returns the entire enumeration bare.

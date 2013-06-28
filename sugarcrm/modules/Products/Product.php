@@ -118,6 +118,14 @@ class Product extends SugarBean
     public $product_index;
     public $revenuelineitem_id;
 
+
+    /**
+     * Don't update the quote on save.
+     *
+     * @var bool
+     */
+    public $ignoreQuoteSave = false;
+
     public $table_name = "products";
     public $rel_manufacturers = "manufacturers";
     public $rel_types = "product_types";
@@ -187,262 +195,9 @@ class Product extends SugarBean
     }
 
 
-    /** Returns a list of the associated products
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved.
-     * Contributor(s): ______________________________________..
-     */
-    public function create_new_list_query(
-        $order_by,
-        $where,
-        $filter = array(),
-        $params = array(),
-        $show_deleted = 0,
-        $join_type = '',
-        $return_array = false,
-        $parentbean = null,
-        $singleSelect = false
-    ) {
-        if (!empty($filter) && (isset($filter['discount_amount']) || isset($filter['deal_calc']))) {
-            $filter['discount_select'] = 1;
-            $filter['deal_calc_usdollar'] = 1;
-            $filter['discount_amount_usdollar'] = 1;
-        }
-        $ret_array = parent::create_new_list_query(
-            $order_by,
-            $where,
-            $filter,
-            $params,
-            $show_deleted,
-            $join_type,
-            true,
-            $parentbean,
-            $singleSelect
-        );
-        
-        $ret_array['from'] = $ret_array['from'] . " LEFT JOIN contacts on contacts.id = products.contact_id";
-        
-        //Add clause to remove opportunity related products
-            $ret_array['where'] = $ret_array['where'] .
-                " AND (products.opportunity_id is not null OR products.opportunity_id <> '')";
-
-        //If return_array is set to true, return as an Array
-        if ($return_array) {
-            return $ret_array;
-        }
-
-        return implode(" ", $ret_array);
-    }
-
-
-    public function create_export_query(&$order_by, &$where, $relate_link_join = '')
-    {
-        $custom_join = $this->custom_fields->getJOIN(true, true, $where);
-        if ($custom_join) {
-            $custom_join['join'] .= $relate_link_join;
-        }
-        $query = "SELECT $this->table_name.* ";
-        if ($custom_join) {
-            $query .= $custom_join['select'];
-        }
-        $query .= " FROM $this->table_name ";
-
-        if ($custom_join) {
-            $query .= $custom_join['join'];
-        }
-
-        $where_auto = "$this->table_name.deleted=0 AND
-            ($this->table_name.opportunity_id is not null OR $this->table_name.opportunity_id <> '')";
-
-        if ($where != "") {
-            $query .= "where ($where) AND " . $where_auto;
-        } else {
-            $query .= "where " . $where_auto;
-        }
-
-        if (!empty($order_by)) {
-            $query .= " ORDER BY $order_by";
-        }
-
-        return $query;
-    }
-
-
     public function fill_in_additional_list_fields()
     {
         $this->fill_in_additional_detail_fields();
-    }
-
-    public function fill_in_additional_detail_fields()
-    {
-        parent::fill_in_additional_detail_fields();
-
-
-        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-        $this->currency_symbol = $currency->symbol;
-        $this->currency_name = $currency->name;
-        if ($currency->id != $this->currency_id || $currency->deleted == 1) {
-            $this->cost_price = $this->cost_usdollar;
-            $this->discount_price = $this->discount_usdollar;
-            $this->list_price = $this->list_usdollar;
-            $this->deal_calc = $this->deal_calc_usdollar;
-            if (!(isset($this->discount_select) && $this->discount_select)) {
-                $this->discount_amount = $this->discount_amount_usdollar;
-            }
-            $this->currency_id = $currency->id;
-        }
-
-        if (isset($this->discount_select) && $this->discount_select) {
-            $this->discount_amount = format_number($this->discount_amount, 2);
-        }
-
-        $this->get_account();
-        $this->get_contact();
-        $this->get_quote();
-        $this->get_manufacturer();
-        $this->get_type();
-        $this->get_category();
-    }
-
-
-    /** Returns a list of the associated opportunities
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved..
-     * Contributor(s): ______________________________________..
-     */
-    public function get_quote()
-    {
-        $query = "SELECT q.id, q.name, q.assigned_user_id from quotes q, $this->table_name obj where q.id = obj.quote_id and obj.id = '$this->id' and obj.deleted=0 and q.deleted=0";
-        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
-
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
-            $this->quote_name_owner = $row['assigned_user_id'];
-            $this->quote_name_mod = 'Quotes';
-            $this->quote_name = $row['name'];
-            $this->quote_id = $row['id'];
-        } else {
-            $this->quote_name = '';
-            $this->quote_name_owner = '';
-            $this->quote_name_mod = '';
-            $this->quote_id = '';
-        }
-    }
-
-    /** Returns a list of the associated opportunities
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved..
-     * Contributor(s): ______________________________________..
-     */
-    public function get_account()
-    {
-        $query = "SELECT a1.id, a1.name, a1.assigned_user_id from accounts a1, $this->table_name obj where a1.id = obj.account_id and obj.id = '$this->id' and obj.deleted=0 and a1.deleted=0";
-        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
-
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
-            $this->account_name = $row['name'];
-            $this->account_id = $row['id'];
-            $this->account_name_owner = $row['assigned_user_id'];
-            $this->account_name_mod = 'Accounts';
-        } else {
-            $this->account_name = '';
-            $this->account_id = '';
-            $this->account_name_owner = '';
-            $this->account_name_mod = '';
-        }
-    }
-
-    /** Returns a list of the associated opportunities
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved..
-     * Contributor(s): ______________________________________..
-     */
-    public function get_contact()
-    {
-        $query = "SELECT c1.id, c1.first_name, c1.last_name, c1.assigned_user_id from contacts  c1, $this->table_name p1 where c1.id = p1.contact_id and p1.id = '$this->id' and p1.deleted=0 and c1.deleted=0";
-        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
-
-        global $locale;
-
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
-            $this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
-            $this->contact_id = $row['id'];
-            $this->contact_name_owner = $row['assigned_user_id'];
-            $this->contact_name_mod = 'Contacts';
-        } else {
-            $this->contact_name = '';
-            $this->contact_id = '';
-            $this->contact_name_owner = '';
-            $this->contact_name_mod = '';
-        }
-    }
-
-    /** Returns a list of the associated opportunities
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved..
-     * Contributor(s): ______________________________________..
-     */
-    public function get_manufacturer()
-    {
-        $query = "SELECT m1.name from $this->rel_manufacturers m1, $this->table_name p1 where m1.id = p1.manufacturer_id and p1.id = '$this->id' and p1.deleted=0 and m1.deleted=0";
-        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
-
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
-            $this->manufacturer_name = $row['name'];
-        } else {
-            $this->manufacturer_name = '';
-        }
-    }
-
-    /** Returns a list of the associated opportunities
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved..
-     * Contributor(s): ______________________________________..
-     */
-    public function get_type()
-    {
-        $query = "SELECT t1.name from $this->rel_types t1, $this->table_name p1 where t1.id = p1.type_id and p1.id = '$this->id' and p1.deleted=0 and t1.deleted=0";
-        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
-
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
-            $this->type_name = $row['name'];
-        } else {
-            $this->type_name = '';
-        }
-    }
-
-    /** Returns a list of the associated opportunities
-     * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
-     * All Rights Reserved..
-     * Contributor(s): ______________________________________..
-     */
-    public function get_category()
-    {
-        $query = "SELECT t1.name from $this->rel_categories t1, $this->table_name p1 where t1.id = p1.category_id and p1.id = '$this->id' and p1.deleted=0 and t1.deleted=0";
-        $result = $this->db->query($query, true, " Error filling in additional detail fields: ");
-
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
-
-        if ($row != null) {
-            $this->category_name = $row['name'];
-        } else {
-            $this->category_name = '';
-        }
     }
 
     /**
@@ -644,7 +399,7 @@ class Product extends SugarBean
         $id = parent::save($check_notify);
 
         // We need to update the associated product bundle and quote totals that might be impacted by this product.
-        if (isset($id)) {
+        if (isset($id) && $this->ignoreQuoteSave === false) {
             $tax_rate = 0.00;
             $query = "select * from quotes INNER JOIN taxrates on quotes.taxrate_id=taxrates.id where quotes.id='" . $this->quote_id . "' and quotes.deleted=0 and taxrates.deleted=0";
             $result = $this->db->query($query);
@@ -869,5 +624,34 @@ class Product extends SugarBean
         }
 
         return $array_assign;
+    }
+
+    /**
+     * Converts (copies) a Products (QuotedLineItem) to a Revenue Line Item
+     * @return RevenueLineItem
+     */
+    public function convertToRevenueLineItem()
+    {
+        /* @var $rli RevenueLineItem */
+        $rli = BeanFactory::getBean('RevenueLineItems');
+        $rli->id = create_guid();
+        $rli->new_with_id = true;
+
+        foreach ($this->getFieldDefinitions() as $field) {
+            if ($field['name'] != 'id') {
+                $rli->$field['name'] = $this->$field['name'];
+            }
+        }
+
+        // since we don't have a likely_case on products,
+        if ($rli->likely_case == '0.00') {
+            $rli->likely_case = $this->total_amount;
+        }
+
+        $this->revenuelineitem_id = $rli->id;
+        $this->ignoreQuoteSave = true;
+        $this->save();
+
+        return $rli;
     }
 }
