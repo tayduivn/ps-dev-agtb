@@ -39,6 +39,7 @@ $viewdefs['Notes']['base']['view']['subpanel-for-history'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'contact_name',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_DATE_MODIFIED',
@@ -59,6 +60,7 @@ $viewdefs['Notes']['base']['view']['subpanel-for-history'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
       ),
     ),

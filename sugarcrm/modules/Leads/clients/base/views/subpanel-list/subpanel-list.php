@@ -35,6 +35,7 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_REFERED_BY',
@@ -59,6 +60,7 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'email1',
+          'sortable' => false,
         ),
         array(
           'name' => 'lead_source_description',
@@ -73,6 +75,7 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
       ),
     ),

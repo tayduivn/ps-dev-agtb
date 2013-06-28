@@ -33,6 +33,7 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-emails'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'account_name',
+          'sortable' => false,
         ),
         array(
           'name' => 'sales_stage',

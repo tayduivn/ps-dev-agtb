@@ -2,7 +2,7 @@
 $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
   'components' => array (
     array (
-      'layout' => "subpanel",
+      'layout' => 'subpanel',
       'label' => 'LBL_MEMBER_ORG_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'members',

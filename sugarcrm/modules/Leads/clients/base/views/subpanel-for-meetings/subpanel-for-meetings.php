@@ -41,6 +41,7 @@ $viewdefs['Leads']['base']['view']['subpanel-for-meetings'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_USER_NAME',
@@ -53,6 +54,7 @@ $viewdefs['Leads']['base']['view']['subpanel-for-meetings'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'email1',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_PHONE',

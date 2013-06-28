@@ -33,6 +33,7 @@ $viewdefs['Notes']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'contact_name',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_DATE_MODIFIED',

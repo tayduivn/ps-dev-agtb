@@ -35,6 +35,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-opportunities'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'account_name',
@@ -43,6 +44,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-opportunities'] = array(
           'label' => 'LBL_LIST_ACCOUNT_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'opportunity_role',
@@ -55,6 +57,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-opportunities'] = array(
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'phone_work',

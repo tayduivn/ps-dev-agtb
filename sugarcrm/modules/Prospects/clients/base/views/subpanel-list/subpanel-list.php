@@ -35,6 +35,7 @@ $viewdefs['Prospects']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_TITLE',
@@ -47,6 +48,7 @@ $viewdefs['Prospects']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'email1',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_PHONE',

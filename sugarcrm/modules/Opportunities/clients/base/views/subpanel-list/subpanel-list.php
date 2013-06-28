@@ -33,6 +33,7 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'account_name',
+          'sortable' => false,
         ),
         array(
           'name' => 'sales_stage',
@@ -59,6 +60,7 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_ASSIGNED_TO_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
       ),
     ),

@@ -41,6 +41,7 @@ $viewdefs['Leads']['base']['view']['subpanel-for-calls'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'account_name',
@@ -49,12 +50,14 @@ $viewdefs['Leads']['base']['view']['subpanel-for-calls'] = array(
           'label' => 'LBL_LIST_ACCOUNT_NAME',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'email1',
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
+          'sortable' => false,
         ),
         array(
           'name' => 'phone_work',

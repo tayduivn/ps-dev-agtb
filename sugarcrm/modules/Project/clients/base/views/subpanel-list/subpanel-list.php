@@ -33,6 +33,7 @@ $viewdefs['Project']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'assigned_user_name',
+          'sortable' => false,
         ),
         array(
           'label' => 'LBL_DATE_START',
