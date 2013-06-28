@@ -42,6 +42,7 @@
             }
         ]
     },
+    fallbackFieldTemplate: "detail",
     events: {
         'click [name=name]': 'gotoDetail',
         'click .icon-eye-open': 'loadPreview',
@@ -50,7 +51,6 @@
     initialize: function(options) {
         this.options.meta = this._meta;
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = "detail"; // will use detail sugar fields
     },
     /**
      * Uses query in context and fires a search request thereafter rendering

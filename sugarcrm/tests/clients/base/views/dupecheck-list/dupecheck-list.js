@@ -13,7 +13,7 @@ describe('Base.View.DupeCheckList', function() {
         SugarTest.loadComponent('base', 'view', 'dupecheck-list');
         SugarTest.testMetadata.init();
         listMeta = {
-            'type': 'list',
+            'template': 'list',
             'panels':[
                 {
                     'name':'panel_header',

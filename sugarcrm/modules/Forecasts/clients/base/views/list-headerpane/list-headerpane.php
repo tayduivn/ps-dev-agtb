@@ -13,7 +13,6 @@
  */
 
 $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
-    'type' => 'headerpane',
     'tree' => array(
         array(
             'type' => 'reportingUsers',

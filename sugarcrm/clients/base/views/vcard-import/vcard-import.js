@@ -25,9 +25,9 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    fallbackFieldTemplate: 'edit',
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = 'edit';
         this.context.off("vcard:import:finish", null, this);
         this.context.on("vcard:import:finish", this.importVCard, this);
     },

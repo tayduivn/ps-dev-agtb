@@ -43,7 +43,7 @@
     <div id="fieldPlaceHolders" class="hide">
         {{#each meta.panels}}
         {{#each fields}}
-        {{field ../../this}}
+        {{field ../../this template="edit"}}
         {{/each}}
         {{/each}}
     </div>

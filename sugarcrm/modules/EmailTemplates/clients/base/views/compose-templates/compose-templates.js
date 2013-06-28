@@ -35,6 +35,7 @@
 
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args: [options]});
+
         _.each(this.meta.panels, function(panel) {
             _.each(panel.fields, function(field) {
                 field.sortable = false;

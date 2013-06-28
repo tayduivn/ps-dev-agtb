@@ -1,5 +1,5 @@
 describe("Emails.Field.Sender", function() {
-    var app, field, drawer;
+    var app, field, drawer, ajaxStub;
 
     beforeEach(function() {
         var def;
@@ -30,34 +30,37 @@ describe("Emails.Field.Sender", function() {
         SugarTest.app.drawer = {
             close: function(){}
         };
+        ajaxStub = sinon.stub($, 'ajax', $.noop);
     });
 
     afterEach(function() {
+        ajaxStub.restore();
         field.dispose();
         app.cache.cutAll();
         app.view.reset();
-        delete Handlebars.templates;
+        delete field.model;
+        field = null;
         SugarTest.app.drawer = drawer;
         SugarTest.testMetadata.dispose();
     });
 
     it("should call custom endpoint on render when tplName is 'edit'", function() {
-        var populateValues = sinon.spy(field, "populateValues");
-
-        SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*rest\/v10\/OutboundEmailConfiguration\/list.*/,
-            [200, {"Content-Type": "application/json"}, ""]);
-
+        var url, regex, apiCallStub;
+        url = "rest/v10/OutboundEmailConfiguration/list";
+        regex = new RegExp(".*"+url);
+        apiCallStub = sinon.stub(app.api, 'call');
         field.options.viewName = "edit";
         field._render();
-        SugarTest.server.respond();
-        expect(populateValues.calledOnce).toBeTruthy();
-
-        populateValues.restore();
+        expect(apiCallStub.calledOnce).toBeTruthy();
+        expect(apiCallStub.args[0][0]).toEqual("GET");
+        expect(apiCallStub.args[0][1]).toMatch(/.*rest\/v10\/OutboundEmailConfiguration\/list/);
+        apiCallStub.restore();
     });
 
     it("should not call custom endpoint on render when tplName is not 'edit'", function() {
-        var populateValues = sinon.spy(field, "populateValues");
+        var apiCallStub, populateValues;
+        populateValues = sinon.spy(field, "populateValues");
+        apiCallStub = sinon.stub(app.api, 'call');
 
         SugarTest.seedFakeServer();
         SugarTest.server.respondWith("GET", /.*rest\/v10\/OutboundEmailConfiguration\/list.*/,
@@ -69,6 +72,7 @@ describe("Emails.Field.Sender", function() {
         expect(populateValues.calledOnce).toBeFalsy();
 
         populateValues.restore();
+        apiCallStub.restore();
     });
 
     it("should set the default value if custom endpoint returns data and the model does not yet have a value", function() {
@@ -76,16 +80,9 @@ describe("Emails.Field.Sender", function() {
                 {id: "abcd", display: "Configuration A", type: "system", default: true},
                 {id: "efgh", display: "Configuration B", type: "user", default: false}
             ];
-
-        SugarTest.seedFakeServer();
-        SugarTest.server.respondWith("GET", /.*rest\/v10\/OutboundEmailConfiguration\/list.*/,
-            [200, {"Content-Type": "application/json"},
-            JSON.stringify(results)]);
-
+        field.disposed = false;
         field.model.unset("email_config", {silent: true});
-        field._render();
-        SugarTest.server.respond();
-
+        field.populateValues(results);
         expect(field.model.get("email_config")).toBe(results[0].id);
     });
 });

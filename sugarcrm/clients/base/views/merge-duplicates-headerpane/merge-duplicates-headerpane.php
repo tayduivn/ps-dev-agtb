@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['base']['view']['merge-duplicates-headerpane'] = array(
-    'type' => 'headerpane',
+    'template' => 'headerpane',
     'title' => 'LBL_MERGE_DUPLICATES',
     'buttons' => array(
         array(

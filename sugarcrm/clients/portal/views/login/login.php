@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['portal']['view']['login'] = array(
-    'type' => 'edit',
+    'action' => 'edit',
     'buttons' =>
         array(
             array(

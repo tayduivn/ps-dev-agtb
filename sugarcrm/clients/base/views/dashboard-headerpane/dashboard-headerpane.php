@@ -1,6 +1,5 @@
 <?php
 $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
-    "type"    => "headerpane",
     "buttons" => array(
         array(
             "type" => "actiondropdown",

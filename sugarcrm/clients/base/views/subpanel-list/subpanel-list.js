@@ -7,7 +7,7 @@
      * @extends View.RecordlistView
      */
     extendsFrom: 'RecordlistView',
-
+    fallbackFieldTemplate: 'list',
     plugins: ['ellipsis_inline', 'error-decoration', 'editable'],
 
     contextEvents: {

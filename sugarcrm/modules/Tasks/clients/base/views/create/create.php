@@ -30,7 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Tasks']['base']['view']['create'] = array(
-    'type' => 'record',
+    'template' => 'record',
     'buttons' => array(
         array(
             'name'    => 'cancel_button',

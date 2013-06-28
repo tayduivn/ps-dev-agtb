@@ -29,7 +29,7 @@ if(!defined("sugarEntry") || !sugarEntry) die("Not A Valid Entry Point");
  */
 
 $viewdefs["Emails"]["base"]["view"]["compose-signatures-list"] = array(
-    "type"   => "list",
+    'template' => 'list',
     "panels" => array(
         array(
             "fields" => array(

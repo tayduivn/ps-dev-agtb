@@ -1,6 +1,6 @@
 ({
     plugins: ['error-decoration'],
-
+    fallbackFieldTemplate: 'edit',
     /**
      * Login form view.
      * @class View.Views.LoginView

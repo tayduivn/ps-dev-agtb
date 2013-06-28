@@ -16,7 +16,7 @@
         <div class="row-fluid">
             <div class="controls filter-value span7">
                 {{#with this.addToListField}}
-                    {{field ../this}}
+                    {{field ../this template="edit"}}
                 {{/with}}
             </div>
         </div>

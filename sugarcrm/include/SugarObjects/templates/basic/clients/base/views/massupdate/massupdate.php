@@ -29,7 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 $module_name = '<module_name>';
 $viewdefs[$module_name]['base']['view']['massupdate'] = array(
-    'type' => 'edit',
     'buttons' => array(
         array(
             'name' => 'update_button',

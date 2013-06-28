@@ -36,7 +36,6 @@
             DUPLICATE: 'duplicate'
         });
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args:[options]});
-
         this.model.off("change", null, this);
 
         //keep track of what post-save action was chosen in case user chooses to ignore dupes

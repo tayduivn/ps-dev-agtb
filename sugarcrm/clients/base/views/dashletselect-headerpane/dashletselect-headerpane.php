@@ -1,6 +1,6 @@
 <?php
 $viewdefs["base"]["view"]["dashletselect-headerpane"] = array(
-    "type"    => "headerpane",
+    'template' => 'headerpane',
     "title"   => "LBL_DASHLET_ADD",
     "buttons" => array(
         array(

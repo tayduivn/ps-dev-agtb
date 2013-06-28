@@ -13,7 +13,7 @@
  */
 
 $viewdefs['base']['view']['dupecheck-list-select'] = array(
-    'type' => 'list',
+    'template' => 'list',
     'selection' => array(
         'type' => 'single',
         'label' => 'LBL_LINK_SELECT'

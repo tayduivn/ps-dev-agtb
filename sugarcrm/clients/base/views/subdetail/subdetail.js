@@ -31,12 +31,12 @@
  * @extends View.View
  */
 ({
+    fallbackFieldTemplate: 'detail',
     events: {
         'click [data-toggle=tab]': 'closeSubdetail'
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.fallbackFieldTemplate = "detail";
     },
     render: function() {
         //avoid to have an empty detail view

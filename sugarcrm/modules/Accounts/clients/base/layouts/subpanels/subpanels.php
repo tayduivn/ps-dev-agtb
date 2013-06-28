@@ -9,7 +9,7 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
       ),
     ),
     array (
-      'layout' => "subpanel",
+      'layout' => 'subpanel',
       'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'contacts',

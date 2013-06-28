@@ -71,7 +71,7 @@ describe("Create View", function() {
         }, moduleName);
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.addViewDefinition(viewName, {
-            "type":"record",
+            "template":"record",
             "buttons": [
                 {
                     "name":"cancel_button",
