@@ -1,30 +1,26 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once('clients/base/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi
 {
-
+    /**
+     * {@inheritdoc}
+     *
+     * @return array
+     */
     public function registerApiRest()
     {
         return
@@ -57,22 +53,25 @@ class ForecastsConfigApi extends ConfigModuleApi
     }
 
     /**
-     * Save function for the config settings for Forecasts' special needs.
-     * @param $api
-     * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
+     * Forecast Override since we have custom logic that needs to be ran
+     *
+     * {@inheritdoc}
      */
-    public function forecastsConfigSave($api, $args)
+    public function forecastsConfigSave(ServiceBase $api, array $args)
     {
         //acl check, only allow if they are module admin
-        if(!$api->user->isAdminForModule("Forecasts")) {
+        if (!$api->user->isAdminForModule("Forecasts")) {
             // No create access so we construct an error message and throw the exception
             $failed_module_strings = return_module_language($GLOBALS['current_language'], 'forecasts');
             $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
             $args = null;
-            if(!empty($moduleName)) {
+            if (!empty($moduleName)) {
                 $args = array('moduleName' => $moduleName);
             }
-            throw new SugarApiExceptionNotAuthorized($GLOBALS['app_strings']['EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED'], $args);
+            throw new SugarApiExceptionNotAuthorized(
+                $GLOBALS['app_strings']['EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED'],
+                $args
+            );
         }
 
         $admin = BeanFactory::getBean('Administration');
@@ -90,7 +89,10 @@ class ForecastsConfigApi extends ConfigModuleApi
         if (!empty($prior_forecasts_settings['is_upgrade'])) {
             $db = DBManagerFactory::getInstance();
             // check if we need to upgrade opportunities when coming from version below 6.7.x.
-            $upgraded = $db->getOne("SELECT count(id) as total FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
+            $upgraded = $db->getOne(
+                "SELECT count(id) as total FROM upgrade_history
+                    WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%';"
+            );
             if ($upgraded == 1) {
                 //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
                 $args['has_commits'] = true;
@@ -101,14 +103,15 @@ class ForecastsConfigApi extends ConfigModuleApi
         if (isset($args['show_custom_buckets_options'])) {
             $json = getJSONobj();
             $_args = array(
-                'dropdown_lang' => isset($_SESSION['authenticated_user_language']) ? $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
+                'dropdown_lang' => isset($_SESSION['authenticated_user_language']) ?
+                        $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
                 'dropdown_name' => 'commit_stage_custom_dom',
                 'view_package' => 'studio',
                 'list_value' => $json->encode($args['show_custom_buckets_options'])
             );
             $_REQUEST['view_package'] = 'studio';
             require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
-            $parser = new ParserDropDown ();
+            $parser = new ParserDropDown();
             $parser->saveDropDown($_args);
             unset($args['show_custom_buckets_options']);
         }
@@ -131,35 +134,58 @@ class ForecastsConfigApi extends ConfigModuleApi
     }
 
     /**
-     * compares two sets of forecasting settings to see if the primary timeperiods settings are the same
+     * Compares two sets of forecasting settings to see if the primary timeperiods settings are the same
      *
-     * @param $priorSettings
-     * @param $currentSettings
+     * @param array $priorSettings              The Prior Settings
+     * @param array $currentSettings            The New Settings Coming from the Save
      *
      * @return boolean
      */
     public function timePeriodSettingsChanged($priorSettings, $currentSettings)
     {
-        if (!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_shown_backward']))) {
+        if (!isset($priorSettings['timeperiod_shown_backward']) ||
+            (isset($currentSettings['timeperiod_shown_backward']) &&
+                ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_shown_backward'])
+            )
+        ) {
             return true;
         }
-        if (!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_shown_forward']))) {
+        if (!isset($priorSettings['timeperiod_shown_forward']) ||
+            (isset($currentSettings['timeperiod_shown_forward']) &&
+                ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_shown_forward'])
+            )
+        ) {
             return true;
         }
-        if (!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
+        if (!isset($priorSettings['timeperiod_interval']) ||
+            (isset($currentSettings['timeperiod_interval']) &&
+                ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval'])
+            )
+        ) {
             return true;
         }
-        if (!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
+        if (!isset($priorSettings['timeperiod_type']) ||
+            (isset($currentSettings['timeperiod_type']) &&
+                ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type'])
+            )
+        ) {
             return true;
         }
-        if (!isset($priorSettings['timeperiod_start_date']) || (isset($currentSettings['timeperiod_start_date']) && ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date']))) {
+        if (!isset($priorSettings['timeperiod_start_date']) ||
+            (isset($currentSettings['timeperiod_start_date']) &&
+                ($currentSettings['timeperiod_start_date'] != $priorSettings['timeperiod_start_date'])
+            )
+        ) {
             return true;
         }
-        if (!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {
+        if (!isset($priorSettings['timeperiod_leaf_interval']) ||
+            (isset($currentSettings['timeperiod_leaf_interval']) &&
+                ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval'])
+            )
+        ) {
             return true;
         }
 
         return false;
     }
-
 }
