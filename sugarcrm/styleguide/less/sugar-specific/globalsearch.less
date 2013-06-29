@@ -21,10 +21,13 @@
     }
     .rtlFloat(@direction,left);
     .dropdown-menu {
+/*
         background:none;
         .border-radius(none);
         .box-shadow(none);
         border: 0;
+*/
+        overflow: hidden;
         .globalsearch-adv-wrap {
             background:red;
             border:1px solid blue;
@@ -44,7 +47,9 @@
             padding: 7px 20px 4px;
             min-width: 120px;
             &:not(:last-child) {
+                /*
                 border-bottom: 1px solid @grayLighter;
+                */
             }
             label.active {
                 font-weight: 900;
