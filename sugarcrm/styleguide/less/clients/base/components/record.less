@@ -1,4 +1,3 @@
-
 //headerpane record name edit
 //sugar7
 .headerpane {
@@ -549,7 +548,7 @@
       input[type="text"] {
         .border-radius(0);
         border-width: 0 1px 1px 1px;
-        padding: 7px 6px 6px;
+        /*padding: 7px 6px 6px;*//*UIUX-869*/
         &:focus {
           z-index: 2;
         }
@@ -559,7 +558,7 @@
           .border-top-left-radius(3px);
           .border-top-right-radius(3px);
           border-width: 1px 1px 1px 1px;
-          padding: 6px;
+          /*padding: 6px;*/
         }
         > span:last-child input[type="text"] {
           .border-bottom-left-radius(3px);
@@ -585,9 +584,13 @@
       }
     }
 
+    &[data-name="fieldset_address"],
     &[data-name="fieldset_shipping_address"],
     &[data-name="fieldset_alt_address"],
     &[data-name="fieldset_altaddress"] {
+      input[type="text"] {
+        margin-top: -1px;
+      }
       .address.edit > .edit:nth-last-child(2) > input {
         .border-bottom-left-radius(3px);
         .border-bottom-right-radius(3px);
@@ -735,9 +738,6 @@
 
 /* Special treatment for the address fields */
 .record-cell {
-  [class*='address_'] {
-    margin-bottom: 2px;
-  }
   [class*='address_']:not(.edit) {
     display: inline-block;
   }
