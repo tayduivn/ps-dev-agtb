@@ -220,8 +220,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         unset($GLOBALS['disable_date_format']);
-        unset($GLOBALS['saving_relationships']);
-        unset($GLOBALS['updating_relationships']);
+        SugarBean::resetOperations();
         $GLOBALS['timedate']->clearCache();
         if (constant('CHECK_FILE_MAPS')) {
             if (!self::compareArray(SugarAutoLoader::scanDir(""), SugarAutoLoader::$filemap)) {
