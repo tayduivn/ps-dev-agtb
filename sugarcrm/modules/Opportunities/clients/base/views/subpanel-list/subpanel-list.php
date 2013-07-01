@@ -48,10 +48,10 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'default' => true,
         ),
         array(
-          'label' => 'LBL_LIST_AMOUNT_USDOLLAR',
+          'label' => 'LBL_LIKELY',
           'enabled' => true,
           'default' => true,
-          'name' => 'amount_usdollar',
+          'name' => 'amount',
         ),
         array(
           'name' => 'assigned_user_name',

@@ -131,7 +131,7 @@ $dictionary['Opportunity'] = array(
         ),
         'amount' => array(
             'name' => 'amount',
-            'vname' => 'LBL_AMOUNT',
+            'vname' => 'LBL_LIKELY',
             //'function'=>array('vname'=>'getCurrencyType'),
             'type' => 'currency',
             //'disable_num_format' => true,

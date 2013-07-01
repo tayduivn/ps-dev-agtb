@@ -34,7 +34,7 @@ $fields = array(
     array(
         'name' => 'amount',
         'type' => 'currency',
-        'label' => 'LBL_LIST_AMOUNT',
+        'label' => 'LBL_LIKELY',
         'related_fields' => array(
             'amount',
             'currency_id',
@@ -142,7 +142,7 @@ $fields = array(
     array(
         'name' => 'amount',
         'type' => 'currency',
-        'label' => 'LBL_LIST_AMOUNT',
+        'label' => 'LBL_LIKELY',
         'related_fields' => array(
             'amount',
             'currency_id',

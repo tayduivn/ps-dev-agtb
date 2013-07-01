@@ -44,7 +44,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
         'likely_case_adjusted' =>
         array(
             'name' => 'likely_case_adjusted',
-            'vname' => 'LBL_LIKELY',
+            'vname' => 'LBL_LIKELY_ADJUSTED',
             'type' => 'currency',
         ),
         'worst_case' =>
