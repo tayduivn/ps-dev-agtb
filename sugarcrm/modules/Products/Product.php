@@ -730,7 +730,6 @@ class Product extends SugarBean
                         $subtotal = $currency->convertFromDollar($subtotal_usdollar);
                         $deal_tot_usdollar = $deal_tot_usdollar;
                         $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
-                        $new_sub_usdollar = $new_sub_usdollar;
                         $new_sub = $currency->convertFromDollar($new_sub_usdollar);
                         $tax = $currency->convertFromDollar($tax_usdollar);
                         $updateQuery = "update quotes set tax=" . $tax . ",tax_usdollar=" . $tax_usdollar . ",total=" . $total . ",total_usdollar=" . $total_usdollar . ",deal_tot=" . $deal_tot . ",deal_tot_usdollar=" . $deal_tot_usdollar . ",new_sub=" . $new_sub . ",new_sub_usdollar=" . $new_sub_usdollar . ",subtotal=" . $subtotal .
