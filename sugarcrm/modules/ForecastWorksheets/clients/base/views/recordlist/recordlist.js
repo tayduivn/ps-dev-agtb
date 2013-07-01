@@ -746,26 +746,6 @@
     },
 
     /**
-     * We have to overwrite this method completely, since there is currently no way to completely disable
-     * a field from being displayed
-     *
-     * @returns {{default: Array, available: Array, visible: Array, options: Array}}
-     */
-    parseFields: function() {
-        var catalog = app.view.invokeParent(this, {
-            type: 'view',
-            name: 'recordlist',
-            method: 'parseFields'
-        });
-        _.each(catalog, function (group, i) {
-            catalog[i] = _.filter(group, function (fieldMeta) {
-                return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');
-            });
-        });
-        return catalog;
-    },
-
-    /**
      * Get the totals that need to be committed
      *
      * @returns {{amount: number, best_case: number, worst_case: number, overall_amount: number, overall_best: number, overall_worst: number, timeperiod_id: (*|bindDataChange.selectedTimeperiod), lost_count: number, lost_amount: number, won_count: number, won_amount: number, included_opp_count: number, total_opp_count: Number, closed_count: number, closed_amount: number}}

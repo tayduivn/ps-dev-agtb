@@ -46,12 +46,17 @@ $dictionary['ForecastWorksheet'] = array(
             'parent_type' => 'record_type_display',
             'type_name' => 'parent_type',
             'id_name' => 'parent_id',
-            'vname' => 'LBL_LIST_RELATED_TO',
+            'vname' => 'LBL_NAME',
             'type' => 'parent',
             'group' => 'parent_name',
             'source' => 'non-db',
             'options' => 'parent_type_display',
             'studio' => true,
+            'related_fields' => array(
+                'parent_id',
+                'parent_type',
+                'parent_deleted',
+            )
         ),
         'opportunity_id' =>
         array(
@@ -77,7 +82,10 @@ $dictionary['ForecastWorksheet'] = array(
             'vname' => 'LBL_ACCOUNT_NAME',
             'type' => 'varchar',
             'len' => '255',
-            'studio' => false
+            'studio' => false,
+            'related_fields' => array(
+                'account_id',
+            )
         ),
         'account_id' =>
         array(
@@ -104,7 +112,12 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'align' => 'right',
+            'related_fields' => array(
+                'base_rate',
+                'currency_id'
+            ),
         ),
         'best_case' =>
         array(
@@ -115,7 +128,12 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'align' => 'right',
+            'related_fields' => array(
+                'base_rate',
+                'currency_id'
+            ),
         ),
         'worst_case' =>
         array(
@@ -126,7 +144,12 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'align' => 'right',
+            'related_fields' => array(
+                'base_rate',
+                'currency_id'
+            ),
         ),
         'base_rate' =>
         array(
@@ -188,7 +211,7 @@ $dictionary['ForecastWorksheet'] = array(
             'required' => true,
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
-            'studio' => false
+            'studio' => false,
         ),
         'date_closed_timestamp' =>
         array(
@@ -214,7 +237,7 @@ $dictionary['ForecastWorksheet'] = array(
         'probability' =>
         array(
             'name' => 'probability',
-            'vname' => 'LBL_PROBABILITY',
+            'vname' => 'LBL_OW_PROBABILITY',
             'type' => 'int',
             'dbType' => 'double',
             'audited' => false,
@@ -226,7 +249,7 @@ $dictionary['ForecastWorksheet'] = array(
         'commit_stage' =>
         array(
             'name' => 'commit_stage',
-            'vname' => 'LBL_COMMIT_STAGE',
+            'vname' => 'LBL_FORECAST',
             'type' => 'enum',
             'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',

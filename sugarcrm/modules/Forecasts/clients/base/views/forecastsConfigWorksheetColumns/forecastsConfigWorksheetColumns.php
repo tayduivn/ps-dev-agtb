@@ -22,7 +22,7 @@ $fields = array(
         'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
     ),
     array(
-        'name' => 'opportunity_name',
+        'name' => 'parent_name',
         'label' => 'LBL_NAME',
         'label_module' => 'Opportunities'
     ),
@@ -104,7 +104,7 @@ $fields = array(
         'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
     ),
     array(
-        'name' => 'name',
+        'name' => 'parent_name',
         'label' => 'LBL_LIST_NAME',
         'label_module' => 'RevenueLineItems'
     ),

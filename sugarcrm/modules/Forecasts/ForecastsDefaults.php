@@ -148,7 +148,7 @@ class ForecastsDefaults
             // default enabled worksheet columns
             'worksheet_columns' => array(
                 'commit_stage',
-                'name',
+                'parent_name',
                 'account_name',
                 'date_closed',
                 'product_template_name',
