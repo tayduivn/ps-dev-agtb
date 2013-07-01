@@ -131,26 +131,26 @@ class Localization {
             }
 		}
 
-		// set fallback defaults defined in this class
-		if(isset($this->$prefName)) {
-			$pref = $this->$prefName;
-		}
-		//rrs: 33086 - give the ability to pass in the preference name as stored in $sugar_config.
-		if(!empty($sugarConfigPrefName)){
-			$prefName = $sugarConfigPrefName;
-		}
-
+        // set fallback defaults defined in this class
+        if (isset($this->$prefName)) {
+            $pref = $this->$prefName;
+        }
+        //rrs: 33086 - give the ability to pass in the preference name as stored in $sugar_config.
+        if (!empty($sugarConfigPrefName)) {
+            $prefName = $sugarConfigPrefName;
+        }
+        
         // if we don't have a user pref for the num_grp_sep, just return NULL as the key is not
         // in the main global config and if we let it continue, it will just return '' (empty string)
         if($prefName == 'num_grp_sep' && empty($sugarConfigPrefName) && is_null($userPref)) {
             return null;
         }
-
-		// cn: 9549 empty() call on a value of 0 (0 significant digits) resulted in a false-positive.  changing to "isset()"
-		$pref = (!isset($sugar_config[$prefName]) || (empty($sugar_config[$prefName]) && $sugar_config[$prefName] !== '0')) ? $pref : $sugar_config[$prefName];
-		$pref = (empty($userPref) && $userPref !== '0') ? $pref : $userPref;
-		return $pref;
-	}
+        
+        // cn: 9549 empty() call on a value of 0 (0 significant digits) resulted in a false-positive.  changing to "isset()"
+        $pref = (!isset($sugar_config[$prefName]) || (empty($sugar_config[$prefName]) && $sugar_config[$prefName] !== '0')) ? $pref : $sugar_config[$prefName];
+        $pref = (empty($userPref) && $userPref !== '0') ? $pref : $userPref;
+        return $pref;
+    }
 
 	///////////////////////////////////////////////////////////////////////////
 	////	CURRENCY HANDLING
@@ -806,6 +806,20 @@ eoq;
             return mb_detect_encoding($str,'ASCII,JIS,UTF-8,EUC-JP,SJIS,ISO-8859-1',$strict);
 
         return false;
+    }
+    
+    /**
+     * Gets the authenticated user's language. This is used throughout the app.
+     * 
+     * @return string
+     */
+    public function getAuthenticatedUserLanguage()
+    {
+        if (!empty($_SESSION['authenticated_user_language'])) {
+            return $_SESSION['authenticated_user_language'];
+        }
+        
+        return $GLOBALS['sugar_config']['default_language'];
     }
 } // end class def
 
