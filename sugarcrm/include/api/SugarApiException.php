@@ -103,26 +103,8 @@ class SugarApiException extends Exception
             $this->message = null;
             return;
         }
-        $strings = null;
-        // If no module name set, then the label is for app_strings
-        if(empty($moduleName)){
-            global $app_strings;
-            if(!isset($app_strings)){
-                $app_strings = return_application_language($GLOBALS['current_language']);
-            }
-            $strings = $app_strings;
-        } else {
-            // Load the mod strings for this message label
-            $strings = return_module_language($GLOBALS['current_language'],$this->moduleName);
-        }
-        // For compatibility (since there are ~100 untranslated SugarApiException messages),
-        // if the $messageLabel isn't in the string bundle we'll treat it like the message itself
-        $message = null;
-        if(array_key_exists($messageLabel,$strings)){
-            $message = $strings[$messageLabel];
-        } else {
-            $message = $messageLabel;
-        }
+        $message = translate($messageLabel, $moduleName);
+
         // If no arguments provided, return message.
         // If there are arguments, insert into message then return formatted message
         if(empty($msgArgs)){
@@ -130,7 +112,6 @@ class SugarApiException extends Exception
         } else {
             $this->message = string_format($message,$msgArgs);
         }
-
     }
 
     /**
