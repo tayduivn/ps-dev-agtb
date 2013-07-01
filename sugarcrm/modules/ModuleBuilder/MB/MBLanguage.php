@@ -140,81 +140,84 @@ class MBLanguage{
 				}
 			}
 		}
-		function save($key_name, $duplicate=false, $rename=false){
-			$header = file_get_contents('modules/ModuleBuilder/MB/header.php');
-			$save_path = $this->path . '/language';
-			mkdir_recursive($save_path);
-			foreach($this->strings as $lang=>$values){
-				//Check if the module Label has changed.
-				$renameLang = $rename || empty($values) || (isset($values['LBL_MODULE_NAME']) && $this->label != $values['LBL_MODULE_NAME']);
-				$mod_strings = return_module_language(str_replace('.lang.php','',$lang), 'ModuleBuilder');
-                $required = array(
-                'LBL_LIST_FORM_TITLE'=>$this->label . " " . $mod_strings['LBL_LIST'],
-                'LBL_MODULE_NAME'=>$this->label,
-                'LBL_MODULE_TITLE'=>$this->label,
+
+    function save($key_name, $duplicate = false, $rename = false)
+    {
+        $header = file_get_contents('modules/ModuleBuilder/MB/header.php');
+        $save_path = $this->path . '/language';
+        mkdir_recursive($save_path);
+        foreach ($this->strings as $lang => $values) {
+            //Check if the module Label or Singular Label has changed.
+            $renameLang = $rename || empty($values) || (isset($values['LBL_MODULE_NAME']) && $this->label != $values['LBL_MODULE_NAME']) && (isset($values['LBL_MODULE_NAME_SINGULAR']) && $this->label_singular != $values['LBL_MODULE_NAME_SINGULAR']);
+            $mod_strings = return_module_language(str_replace('.lang.php', '', $lang), 'ModuleBuilder');
+            $required = array(
+                'LBL_LIST_FORM_TITLE' => $this->label . " " . $mod_strings['LBL_LIST'],
+                'LBL_MODULE_NAME' => $this->label,
+                'LBL_MODULE_TITLE' => $this->label,
                 'LBL_MODULE_NAME_SINGULAR' => $this->label_singular,
-                'LBL_HOMEPAGE_TITLE'=>$mod_strings['LBL_HOMEPAGE_PREFIX'] . " " . $this->label,
+                'LBL_HOMEPAGE_TITLE' => $mod_strings['LBL_HOMEPAGE_PREFIX'] . " " . $this->label,
                 //FOR GENERIC MENU
-                'LNK_NEW_RECORD'=>$mod_strings['LBL_CREATE'] ." ". $this->label,
-                'LNK_LIST'=>$mod_strings['LBL_VIEW'] ." ". $this->label,
-                'LNK_IMPORT_'.strtoupper($this->key_name)=>translate('LBL_IMPORT') ." ". $this->label,
-                'LBL_SEARCH_FORM_TITLE'=>$mod_strings['LBL_SEARCH'] ." ". $this->label, 
-                'LBL_HISTORY_SUBPANEL_TITLE'=>$mod_strings['LBL_HISTORY'],
-                'LBL_ACTIVITIES_SUBPANEL_TITLE'=>$mod_strings['LBL_ACTIVITIES'],
-                'LBL_'.strtoupper($this->key_name).'_SUBPANEL_TITLE'=>$this->label, 
-                'LBL_NEW_FORM_TITLE' => $mod_strings['LBL_NEW'] ." ". $this->label,
-                );
-				foreach($required as $k=>$v){
-					if(empty($values[$k]) || $renameLang){
-						$values[$k] = $v;			
-					}
-				}
-				write_array_to_file('mod_strings', $values, $save_path .'/'.$lang,'w', $header);
-			}
-			$app_save_path = $this->path . '/../../language/application';
-			mkdir_recursive($app_save_path);
-			$key_changed = ($this->key_name != $key_name);
-			
-			foreach($this->appListStrings as $lang=>$values){
-				// Load previously created modules data
-				$app_list_strings = array ();
-				$neededFile = $app_save_path . '/'. $lang;
-				if (file_exists($neededFile)) {
-					include $neededFile;
-				}
+                'LNK_NEW_RECORD' => $mod_strings['LBL_CREATE'] . " " . $this->label_singular,
+                'LNK_LIST' => $mod_strings['LBL_VIEW'] . " " . $this->label,
+                'LNK_IMPORT_' . strtoupper($this->key_name) => translate('LBL_IMPORT') . " " . $this->label_singular,
+                'LBL_SEARCH_FORM_TITLE' => $mod_strings['LBL_SEARCH'] . " " . $this->label_singular,
+                'LBL_HISTORY_SUBPANEL_TITLE' => $mod_strings['LBL_HISTORY'],
+                'LBL_ACTIVITIES_SUBPANEL_TITLE' => $mod_strings['LBL_ACTIVITIES'],
+                'LBL_' . strtoupper($this->key_name) . '_SUBPANEL_TITLE' => $this->label,
+                'LBL_NEW_FORM_TITLE' => $mod_strings['LBL_NEW'] . " " . $this->label_singular,
+                'LNK_IMPORT_VCARD' => translate('LBL_IMPORT') . " " . $this->label_singular . ' vCard',
+                'LBL_IMPORT' => translate('LBL_IMPORT') . " " . $this->label_singular,
+                'LBL_IMPORT_VCARDTEXT' => "Automatically create a new {$this->label_singular} record by importing a vCard from your file system.",
+            );
+            foreach ($required as $k => $v) {
+                if (empty($values[$k]) || $renameLang) {
+                    $values[$k] = $v;
+                }
+            }
+            write_array_to_file('mod_strings', $values, $save_path . '/' . $lang, 'w', $header);
+        }
+        $app_save_path = $this->path . '/../../language/application';
+        sugar_mkdir($app_save_path, null, true);
+        $key_changed = ($this->key_name != $key_name);
 
-				
-				if(!$duplicate){
-					unset($values['moduleList'][$this->key_name]);
-				}
-				
+        foreach ($this->appListStrings as $lang => $values) {
+            // Load previously created modules data
+            $app_list_strings = array();
+            $neededFile = $app_save_path . '/' . $lang;
+            if (file_exists($neededFile)) {
+                include $neededFile;
+            }
 
-				$values = sugarLangArrayMerge($values, $app_list_strings);
-				$values['moduleList'][$key_name]= $this->label;
-				
-				
-				$appFile = $header. "\n";
-				require_once('include/utils/array_utils.php');
-				$this->getGlobalAppListStringsForMB($values);
-				foreach($values as $key=>$array){
-					if($duplicate){
-						//keep the original when duplicating
-						$appFile .= override_value_to_string_recursive2 ('app_list_strings', $key, $array);
-					}
-					$okey = $key;
-					if($key_changed)$key = str_replace($this->key_name, $key_name, $key);
-					if($key_changed)$key = str_replace(strtolower($this->key_name), strtolower($key_name), $key);
-					// if we aren't duplicating or the key has changed let's add it
-					if(!$duplicate || $okey != $key){
-						$appFile .= override_value_to_string_recursive2 ('app_list_strings', $key, $array);
-					}
-				}
-			
-				$fp = sugar_fopen($app_save_path . '/'. $lang, 'w');
-				fwrite($fp, $appFile);
-				fclose($fp);
-			}
-		}
+
+            if (!$duplicate) {
+                unset($values['moduleList'][$this->key_name]);
+            }
+
+
+            $values = sugarLangArrayMerge($values, $app_list_strings);
+            $values['moduleList'][$key_name] = $this->label;
+
+
+            $appFile = $header . "\n";
+            require_once('include/utils/array_utils.php');
+            $this->getGlobalAppListStringsForMB($values);
+            foreach ($values as $key => $array) {
+                if ($duplicate) {
+                    //keep the original when duplicating
+                    $appFile .= override_value_to_string_recursive2('app_list_strings', $key, $array);
+                }
+                $okey = $key;
+                if ($key_changed) {
+                    $key = str_replace(strtolower($this->key_name), strtolower($key_name), $key);
+                }
+                // if we aren't duplicating or the key has changed let's add it
+                if (!$duplicate || $okey != $key) {
+                    $appFile .= override_value_to_string_recursive2('app_list_strings', $key, $array);
+                }
+            }
+            sugar_file_put_contents_atomic($app_save_path . '/' . $lang, $appFile);
+        }
+    }
 		
 		/**
 		*  If there is no this dropdown list  in  custom\modulebuilder\packages\$package\language\application\$lang.lang.php , 

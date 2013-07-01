@@ -116,7 +116,7 @@ class MBModule
             $this->config = $config ;
         }
         $label = (!empty ($this->config ['label'])) ? $this->config ['label'] : $this->name;
-        $label_singular = !empty($this->config['label_singular']) ? $this->config['label_singular'] : $this->name;
+        $label_singular = !empty($this->config['label_singular']) ? $this->config['label_singular'] : $label;
         $this->mblanguage = new MBLanguage ($this->name, $this->path, $label, $this->key_name, $label_singular);
         foreach ( $this->iTemplate as $temp )
         {
