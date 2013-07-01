@@ -47,6 +47,7 @@ class Bug49878Test extends Sugar_PHPUnit_Framework_OutputTestCase
     */
     public function testCheckEnabledModules()
     {
+        $this->markTestIncomplete("Test needs changed to not test an output method");
         SugarTestHelper::setUp('moduleList');
         $testModuleName = "\"TestName\"";
         $_REQUEST['enabled_modules'] = htmlentities("[\"Accounts\", " . $testModuleName . "]");
