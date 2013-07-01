@@ -112,6 +112,12 @@ $sugar_smarty->assign("do_round_help", $do_round_help);
 $sugar_smarty->assign("js_custom_version", $sugar_config['js_custom_version']);
 $sugar_smarty->assign("sugar_version", $sugar_version);
 
+// Set fiscal start date
+$admin = BeanFactory::getBean('Administration');
+$config = $admin->getConfigForModule('Forecasts', 'base');
+if (!empty($config['timeperiod_start_date'])) {
+    $sugar_smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
+}
 
 $chart_types = array(
 	'none'=>$mod_strings['LBL_NO_CHART'],

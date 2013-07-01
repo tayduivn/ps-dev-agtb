@@ -151,6 +151,9 @@ ACLAllowedModules = {$ACLAllowedModules};
 </form>
 </p>
 <script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
+{if !empty($fiscalStartDate)}
+<script type="text/javascript" src="cache/modules/modules_def_fiscal_{$current_language}_{$md5_current_user_id}.js"></script>
+{/if}
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

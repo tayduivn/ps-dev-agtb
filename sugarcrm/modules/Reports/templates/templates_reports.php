@@ -429,6 +429,13 @@ EOD
     $smarty->assign('reportAssignedToName', $args['reporter']->saved_report->assigned_user_name);
     $smarty->assign('summaryAndGroupDefData', $summaryAndGroupDefData);
 
+    // Set fiscal start date
+    $admin = BeanFactory::getBean('Administration');
+    $config = $admin->getConfigForModule('Forecasts', 'base');
+    if (!empty($config['timeperiod_start_date'])) {
+        $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
+    }
+
     echo $smarty->fetch("modules/Reports/templates/_reportCriteriaWithResult.tpl");
 
 	reportResults($reporter, $args);
@@ -809,6 +816,14 @@ function template_reports_report(&$reporter,&$args) {
 	$smarty->assign('args_image_path', $args['IMAGE_PATH']);
 	template_reports_request_vars_js($smarty, $reporter,$args);
 	$smarty->assign('cache_path', sugar_cached(''));
+
+    // Set fiscal start date
+    $admin = BeanFactory::getBean('Administration');
+    $config = $admin->getConfigForModule('Forecasts', 'base');
+    if (!empty($config['timeperiod_start_date'])) {
+        $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
+    }
+
 	echo $smarty->fetch("modules/Reports/templates/_template_reports_report.tpl");
 
 ob_start();
