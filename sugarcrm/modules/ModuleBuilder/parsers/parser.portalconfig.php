@@ -89,12 +89,19 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
+        //Get the current portal status because if it has changed we need to clear the base metadata
+        $admin = Administration::getSettings();
+        $wasActive = !empty($admin->settings['portal_on']);
         if (isset($portalConfig['appStatus']) && $portalConfig['appStatus'] == 'true') {
             $portalConfig['appStatus'] = 'online';
             $portalConfig['on'] = 1;
+            //Clear the base metadata if portal was not active
+            $clearBaseMetadata = !$wasActive;
         } else {
             $portalConfig['appStatus'] = 'offline';
             $portalConfig['on'] = 0;
+            //Clear the base metadata if portal was active
+            $clearBaseMetadata = $wasActive;
         }
         //TODO: Remove after we resolve issues with test associated to this
         $GLOBALS['log']->info("Updating portal config");
@@ -106,9 +113,13 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
 
         }
 
+        $cachedBasePrivateMetadata = sugar_cached('api/metadata/metadata_base_private.php');
         $cachedPublicMetadata = sugar_cached('api/metadata/metadata_portal_public.php');
         $cachedPrivateMetadata = sugar_cached('api/metadata/metadata_portal_private.php');
         // Clear the cached public and private metadata files
+        if ($clearBaseMetadata && file_exists($cachedBasePrivateMetadata)) {
+            unlink($cachedBasePrivateMetadata);
+        }
         if (file_exists($cachedPublicMetadata))
             unlink($cachedPublicMetadata);
         if (file_exists($cachedPrivateMetadata))
