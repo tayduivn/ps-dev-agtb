@@ -7,7 +7,7 @@
     {{/if}}
 </a>
 {{else}}
-<div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
+<div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-placement="right" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
     {{moduleIconLabel model.attributes.parent_type}}
 </div>
 {{/eq}}
