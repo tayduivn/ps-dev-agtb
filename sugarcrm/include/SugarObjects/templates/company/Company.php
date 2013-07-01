@@ -55,7 +55,7 @@ class Company extends Basic
  	 */
 	public function save($check_notify=false)
  	{
- 	    if(!empty($GLOBALS['resavingRelatedBeans']))
+ 	    if(static::inOperation('saving_related'))
  	    {
  	        parent::save($check_notify);
  	        return $this;

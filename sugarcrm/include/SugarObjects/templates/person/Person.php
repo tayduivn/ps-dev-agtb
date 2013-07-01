@@ -126,7 +126,7 @@ class Person extends Basic
 	public function save($check_notify=false)
 	{
 		//If we are saving due to relationship changes, don't bother trying to update the emails
-        if(!empty($GLOBALS['resavingRelatedBeans']))
+        if(static::inOperation('saving_related'))
         {
             parent::save($check_notify);
             return $this->id;

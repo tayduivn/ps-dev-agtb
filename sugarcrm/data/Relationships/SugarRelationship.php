@@ -541,7 +541,7 @@ abstract class SugarRelationship
      */
     public static function resaveRelatedBeans()
     {
-        if(!SugarBean::enterOperation('updating_relationships')) {
+        if(!SugarBean::enterOperation('saving_related')) {
             return;
         }
 
@@ -559,7 +559,7 @@ abstract class SugarRelationship
             }
         }
 
-        SugarBean::leaveOperation('updating_relationships');
+        SugarBean::leaveOperation('saving_related');
 
         //Reset the list of beans that will need to be resaved
         self::$beansToResave = array();

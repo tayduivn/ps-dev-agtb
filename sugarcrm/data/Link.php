@@ -961,10 +961,10 @@ class Link {
         //Resave records with calculated relate fields to update those fields
         if (!empty($this->_bean->id) && empty($this->_bean->deleted)
                 && VardefManager::modHasCalcFieldsWithLink($this->_bean->module_dir, $this->_bean->object_name, $linkField['name'])
-                && SugarBean::enterOperation('saving_relationships'))
+                && $this->_bean->enterOperation('saving_related'))
         {
             $this->_bean->save();
-            SugarBean::leaveOperation('saving_relationships');
+            $this->_bean->leaveOperation('saving_related');
         }
         //END SUGARCRM flav=een ONLY
         $this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
@@ -982,10 +982,10 @@ class Link {
                 //Resave records with calculated relate fields to update those fields
                 if (!empty($rbean->id) && empty($rbean->deleted)
                         && VardefManager::modHasCalcFieldsWithLink($custom_logic_arguments['related_module'], $class, $linkField['name'])
-                        && SugarBean::enterOperation('saving_relationships'))
+                        && $this->_bean->enterOperation('saving_related'))
                 {
                     $rbean->save();
-                    SugarBean::leaveOperation('saving_relationships');
+                    $this->_bean->leaveOperation('saving_related');
                 }
                 //END SUGARCRM flav=een ONLY
                 $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);

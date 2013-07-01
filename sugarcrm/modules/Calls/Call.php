@@ -203,7 +203,7 @@ class Call extends SugarBean {
 			}
 			if((!isset($GLOBALS['installing']) || $GLOBALS['installing'] != true) && (empty($this->id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $GLOBALS['current_user']->id != $this->assigned_user_id) || (isset($old_assigned_user_id) && !empty($old_assigned_user_id) && isset($this->assigned_user_id) && !empty($this->assigned_user_id) && $old_assigned_user_id != $this->assigned_user_id) ){
 				$this->special_notification = true;
-				if(!isset($GLOBALS['resavingRelatedBeans']) || $GLOBALS['resavingRelatedBeans'] == false) {
+				if(!static::inOperation('saving_related')) {
 					$check_notify = true;
 				}
                 if(isset($_REQUEST['assigned_user_name'])) {
@@ -846,7 +846,7 @@ class Call extends SugarBean {
     	// For the api, these sometimes will not be set [linking related records]
     	if(empty($userInvitees) && empty($existingUsers)) {
     		return true;
-    	}    	
+    	}
         $this->users_arr = $userInvitees;
 
         $deleteUsers = array();

@@ -126,7 +126,7 @@ class ActivityQueueManager
      */
     protected function isValidLink(array $args)
     {
-        if(SugarBean::inOperation('updating_relationships')) {
+        if(SugarBean::inOperation('saving_related')) {
             return false;
         }
         $blacklist  = in_array($args['link'], self::$linkBlacklist);
@@ -147,11 +147,11 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
-        // Subscribe the user that created the record, and the user to whom the
-        // record is assigned.
-        if(SugarBean::inOperation('updating_relationships')) {
+        if($bean->deleted || $bean->inOperation('saving_related')) {
             return;
         }
+        // Subscribe the user that created the record, and the user to whom the
+        // record is assigned.
         $subs = BeanFactory::getBeanName('Subscriptions');
         if (isset($bean->assigned_user_id)) {
             $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id);
