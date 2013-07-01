@@ -159,57 +159,20 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array(
             'fields' => $fields
         ),
     ),
-    'selection' => array(
+    'selection' => array (
         'type' => 'multi',
-        'actions' => array(
-            array(
-                'name' => 'edit_button',
-                'type' => 'button',
-                'label' => 'LBL_MASS_UPDATE',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e){
-                                    this.view.layout.trigger("list:massupdate:fire");
-                                }'
-                ),
-                'acl_action' => 'massupdate',
-            ),
-            array(
+        'actions' => array (
+            array (
                 'name' => 'quote_button',
                 'type' => 'button',
                 'label' => 'LBL_CREATE_QUOTE',
                 'primary' => true,
-                'events' => array(
+                'events' => array (
                     'click' => 'function(e) {
                                     this.view.layout.trigger("list:massquote:fire");
                                 }'
                 ),
                 'acl_action' => 'massquote',
-            ),
-            array(
-                'name' => 'delete_button',
-                'type' => 'button',
-                'label' => 'LBL_DELETE',
-                'acl_action' => 'delete',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e) {
-                                    this.view.layout.trigger("list:massdelete:fire");
-                                }'
-                ),
-                'acl_action' => 'delete',
-            ),
-            array(
-                'name' => 'export_button',
-                'type' => 'button',
-                'label' => 'LBL_EXPORT',
-                'acl_action' => 'export',
-                'primary' => true,
-                'events' => array(
-                    'click' => 'function(e) {
-                                    this.view.layout.trigger("list:massexport:fire");
-                                }'
-                ),
             ),
         ),
     ),
