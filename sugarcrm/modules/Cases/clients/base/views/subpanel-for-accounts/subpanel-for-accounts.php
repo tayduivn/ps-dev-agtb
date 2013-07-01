@@ -13,6 +13,7 @@
  */
 $viewdefs['Cases']['base']['view']['subpanel-for-accounts'] = array(
   'type' => 'subpanel-list',
+  'panels' =>
   array(
     array(
       'name' => 'panel_header',
