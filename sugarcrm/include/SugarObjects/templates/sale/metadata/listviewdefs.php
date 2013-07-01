@@ -92,4 +92,3 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_MODIFIED')
 );
 
-?>

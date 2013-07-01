@@ -53,4 +53,3 @@ $viewdefs[$module_name]['DetailView'] = array(
                 array(array('name' => 'description', 'nl2br' => true)),
     )
 );
-?>

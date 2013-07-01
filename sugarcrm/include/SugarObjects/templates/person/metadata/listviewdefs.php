@@ -94,4 +94,3 @@ $listViewDefs[$module_name] = array(
         'default' => false),
 //END SUGARCRM flav=pro ONLY
 );
-?>

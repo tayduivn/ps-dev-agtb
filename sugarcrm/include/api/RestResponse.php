@@ -173,11 +173,16 @@ class RestResponse extends Zend_Http_Response
                 $response = $this->body;
                 break;
         }
-    	if(!$this->hasHeader("Content-Type")) {
-    	    $this->setContentTypeByType();
-    	}
-    	
-    	return $response;
+        
+        if(!$this->hasHeader("Content-Type")) {
+            $this->setContentTypeByType();
+        }
+        
+        if(!empty($response) && is_string($response)) {
+            $this->setHeader('Content-Length', strlen($response));
+        }
+        
+        return $response;
     }
 
     /**
