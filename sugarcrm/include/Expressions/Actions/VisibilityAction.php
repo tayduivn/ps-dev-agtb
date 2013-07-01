@@ -105,6 +105,7 @@ class VisibilityAction extends AbstractAction{
 				}
 			},
 			legacyExec : function(context, target, hide) {
+				var Dom = YAHOO.util.Dom;
 				var inv_class = 'vis_action_hidden',
 					inputTD = Dom.getAncestorByTagName(target, 'TD'),
 					labelTD = Dom.getPreviousSiblingBy(inputTD, function(e){
