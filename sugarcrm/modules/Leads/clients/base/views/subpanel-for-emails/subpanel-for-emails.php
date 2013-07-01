@@ -12,7 +12,9 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Leads']['base']['view']['subpanel-for-emails'] = array(
-  'panels' => array(
+  'type' => 'subpanel-list',
+  'panels' =>
+  array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',

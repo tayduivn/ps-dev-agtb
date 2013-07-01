@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -49,5 +48,6 @@ class SidecarSubpanelLayoutMetaDataParser extends SidecarListLayoutMetaDataParse
         $this->_viewdefs = $this->implementation->getViewdefs();
         $this->_paneldefs = $this->implementation->getPanelDefs();
         $this->_fielddefs = $this->implementation->getFieldDefs();
+        $this->columns = array('LBL_DEFAULT' => 'getDefaultFields', 'LBL_HIDDEN' => 'getAvailableFields');
     }
 }

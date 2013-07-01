@@ -360,6 +360,10 @@ class ModuleInstaller{
 				if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
+                // we have already written out this item elsewhere
+                if(isset($item['do_not_write']) && $item['do_not_write'] === true) {
+                    continue;
+                }
 				$GLOBALS['log']->debug("Installing section $section from $from for " .$item['to_module'] );
                 if($item['to_module'] == 'application') {
                     $path = "custom/Extension/application/Ext/$extname";
@@ -1346,6 +1350,18 @@ class ModuleInstaller{
 						rmdir_recursive( $path );
 					}
 				}
+                // remove the subpanel layoutdefs for the relationship
+                $subpanelFileName = "{$rel_name}_{$mod}.php";
+                $overrideFileName = "_overridesubpanel-for-{$rel_name}.php";
+                foreach (glob("{$basepath}/clients/*", GLOB_NOSORT | GLOB_ONLYDIR) AS $path) {
+                    foreach (glob($path . "/layouts/subpanels/*.php", GLOB_NOSORT) AS $file) {
+                        $baseFile = basename($file);
+                        if ($baseFile !== $subpanelFileName && $baseFile !== $overrideFileName) {
+                            continue;
+                        }
+                        unlink($file);
+                    }
+                }
 			}
 
 			foreach (array($filename , "custom" . $filename, $rel_name ."_". $mod. ".php") as $fn) {

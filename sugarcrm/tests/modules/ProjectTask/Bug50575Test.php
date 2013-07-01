@@ -164,9 +164,10 @@ class Bug50575Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestProjectTaskUtilities::removeAllCreatedProjectTasks();
         SugarTestProjectUtilities::removeAllCreatedProjects();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-
-        $this->relationships->delete($this->relationship->getName());
-        $this->relationships->save();
+        if(is_object($this->relationships)) {
+            $this->relationships->delete($this->relationship->getName());
+            $this->relationships->save();
+        }
         parent::tearDown();
         SugarCache::$isCacheReset = false;
         SugarTestHelper::tearDown();

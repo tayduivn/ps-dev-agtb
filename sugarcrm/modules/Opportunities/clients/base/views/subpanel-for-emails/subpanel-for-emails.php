@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['Opportunities']['base']['view']['subpanel-for-emails'] = array(
+  'type' => 'subpanel-list',
   'panels' =>
   array(
     array(
