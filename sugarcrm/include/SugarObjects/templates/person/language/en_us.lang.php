@@ -72,4 +72,6 @@ $mod_strings = array(
     'LBL_FACEBOOK' => 'Facebook Account',
     'LBL_TWITTER' => 'Twitter Account',
     'LBL_GOOGLEPLUS' => 'Google Plus ID',
+    'NTC_COPY_ALTERNATE_ADDRESS' => 'Copy alternate address to primary address',
+    'NTC_COPY_PRIMARY_ADDRESS' => 'Copy primary address to alternate address',
 );
