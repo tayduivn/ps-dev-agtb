@@ -53,7 +53,7 @@ $dictionary['Administration'] = array('table' => 'config', 'comment' => 'System 
     'comment' => 'Which platform to send this back with vai the api'
   ),
 ), 'indices'=>array( array('name'=>'idx_config_cat', 'type'=>'index',  'fields'=>array('category')), array('name'=>'idx_config_platform', 'type'=>'index',  'fields'=>array('platform'))),
-'acls' => array('SugarACLAdministration' => true),
+'acls' => array('SugarACLAdministration' => true, 'SugarACLStatic' => false),
                             );
 
 $dictionary['UpgradeHistory'] = array(

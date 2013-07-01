@@ -78,7 +78,8 @@ $dictionary['Filters'] = array(
 ),
 	'relationships'=>array (
 ),
-'acls' => array('SugarACLFilters' => true),
+'acls' => array('SugarACLFilters' => true, 'SugarACLStatic' => false),
+
 
 	'optimistic_locking'=>true,
 	);

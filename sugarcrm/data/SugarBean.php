@@ -1562,8 +1562,16 @@ class SugarBean
         {
             if(!$this->db->tableExists($this->table_name)) {
                 $this->db->createTable($this);
-                if($this->bean_implements('ACL')) {
-                    if(!empty($this->acltype)) {
+                if ($this->bean_implements('ACL')) {
+                    $aclList = SugarACL::loadACLs($this->getACLCategory());
+                    foreach($aclList as $acl) {
+                        if($acl instanceof SugarACLStatic) {
+                            $createACL = true;
+                        }
+                    }
+                }
+                if(!empty($createACL)) {
+                    if (!empty($this->acltype)) {
                         ACLAction::addActions($this->getACLCategory(), $this->acltype);
                     } else {
                         ACLAction::addActions($this->getACLCategory());
