@@ -115,9 +115,7 @@
         return (this.tplName === "list") ? _.first(attachments) : attachments;
     },
     startDownload: function(e) {
-        var uri = self.$(e.currentTarget).data('url') +
-            '?oauth_token=' +
-            app.api.getOAuthToken();
+        var uri = self.$(e.currentTarget).data('url');
 
         App.api.fileDownload(uri, {
             error: function(data) {

@@ -94,12 +94,51 @@ class SugarOAuth2Server extends OAuth2
      * Implementing classes may want to override this function to implement
      * other access token generation schemes.
      *
-     * @return An unique access token.
+     * @return
+     * An unique access token.
      *
+     * @ingroup oauth2_section_4
      * @see OAuth2::genAuthCode()
      */
     protected function genAccessToken()
     {
         return create_guid();
     }
+
+    /**
+     * This starts output buffering so the returned data is actual data instead
+     * of raw JSON-encoded stuff.
+     * @see OAuth2::grantAccessToken()
+     */
+    public function grantAccessToken(array $inputData = NULL, array $authHeaders = NULL)
+    {
+        // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
+        ob_start();
+        parent::grantAccessToken($inputData, $authHeaders);
+        $authData = json_decode(ob_get_clean(),true);
+        
+        // Load the refresh token to get the download token, it should already be in memory
+        $tokenSeed = BeanFactory::newBean('OAuthTokens');
+        $token = $tokenSeed->load($authData['refresh_token'],'oauth2');
+        $downloadToken = $token->download_token;
+
+        $authData['refresh_expires_in'] = $token->expire_ts-time();
+        $authData['download_token'] = $token->download_token;
+
+        return $authData;
+    }
+
+    /**
+     * This function verifies download tokens, these are limited use tokens
+     * that will only be used if the specified API allows it
+     * @param $token The download token
+     * @throws OAuth2AuthenticateException
+     */
+    public function verifyDownloadToken($token)
+    {
+        // Flag this so the storage system uses a different method to get the access token
+        $this->storage->isDownloadToken = true;
+        return $this->verifyAccessToken($token);
+    }
+
 }

@@ -34,7 +34,6 @@ class OAuth2Api extends SugarApi
                 'method' => 'token',
                 'shortHelp' => 'OAuth2 token requests.',
                 'longHelp' => 'include/api/help/oauth2_token_post_help.html',
-                'rawReply' => true, // The OAuth server sets specific headers and outputs in the exact format requested by the spec, so we don't want to go around messing with it.
                 'noLoginRequired' => true,
                 'keepSession' => true,
             ),
@@ -62,13 +61,12 @@ class OAuth2Api extends SugarApi
     public function token($api, $args)
     {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
-        ob_start();
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
         $oauth2Server->setPlatform($platform);
 
         try {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
-            $oauth2Server->grantAccessToken($args);
+            $authData = $oauth2Server->grantAccessToken($args);
             // if we're here, the login was OK
             if (!empty($GLOBALS['current_user'])) {
                 $GLOBALS['current_user']->call_custom_logic('after_login');
@@ -81,8 +79,10 @@ class OAuth2Api extends SugarApi
             throw $e;
         }
 
-        // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
-        return ob_get_clean();
+        // Adding the setcookie() here instead of calling $api->setHeader() because
+        // manually adding a cookie header will break 3rd party apps that use cookies
+        setcookie(RestService::DOWNLOAD_COOKIE, $authData['download_token'], time()+$authData['refresh_expires_in'], ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
+        return $authData;
     }
 
     public function logout($api, $args)
@@ -98,6 +98,8 @@ class OAuth2Api extends SugarApi
             // because if someone else has your refresh token logging out is the nicest possible thing they could do.
             $oauth2Server->storage->unsetRefreshToken($args['refresh_token']);
         }
+
+        setcookie(RestService::DOWNLOAD_COOKIE, false, -1, ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), true);
 
         // The OAuth access token is actually just a session, so we can nuke that here.
         $_SESSION = array();
