@@ -218,7 +218,7 @@ nv.models.bubbleChart = function () {
       //add series index to each data point for reference
       filteredData = filteredData.sort(function(a,b){
        //sort legend by key
-          return a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
+          return parseInt(a.key) < parseInt(b.key) ? -1 : parseInt(a.key) > parseInt(b.key) ? 1 : 0;
       })
           .map(function (d, i) {
         d.series = i;
