@@ -902,7 +902,7 @@ class MetaDataFiles
     public static function mergeSubpanels(array $mergeDefs, array $currentDefs)
     {
         $mergeComponents = $mergeDefs['components'];
-        $currentComponents = $currentDefs['components'];
+        $currentComponents = &$currentDefs['components'];
 
         foreach($mergeComponents as $mergeComponent) {
             // if it is the only thing in the array its an override and it needs to be added to an existing component
@@ -916,7 +916,7 @@ class MetaDataFiles
                     }
                 }
             } else {
-                $currentDefs['components'][] = $mergeComponent;
+                $currentComponents[] = $mergeComponent;
             }
         }
 
