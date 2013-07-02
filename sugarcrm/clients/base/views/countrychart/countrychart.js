@@ -81,11 +81,11 @@
 
         svg.call(zoom);
 
-        $.getJSON(app.utils.buildUrl('styleguide/assets/js/nvd3/data/cldr_en.json'), function(labels) {
+        $.getJSON(app.utils.buildUrl('include/javascript/nvd3/data/cldr_en.json'), function (labels) {
             country_label = labels;
         });
 
-        $.getJSON(app.utils.buildUrl('styleguide/assets/js/nvd3/data/ne_110m_admin_0_countries.json'), function(world) {
+        $.getJSON(app.utils.buildUrl('include/javascript/nvd3/data/ne_110m_admin_0_countries.json'), function (world) {
             world_map = topojson.feature(world, world.objects.countries).features;
             loadChart(world_map, 'countries');
             if (autoSpin) {
@@ -93,7 +93,7 @@
             }
         });
 
-        $.getJSON(app.utils.buildUrl('styleguide/assets/js/nvd3/data/us-states.json'), function(country) {
+        $.getJSON(app.utils.buildUrl('include/javascript/nvd3/data/us-states.json'), function (country) {
             country_map['USA'] = country.features;
         });
 
