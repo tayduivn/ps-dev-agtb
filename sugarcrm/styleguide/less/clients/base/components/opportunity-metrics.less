@@ -23,7 +23,7 @@ div.opportunity-metric {
     border-right: 1px solid darken(@grayLighter,5%);
     float: left;
     padding: 20px 0 10px;
-    box-sizing: border-box;
+    .box-sizing(border-box);
 
     &:last-child {
         border-right: none;
@@ -65,7 +65,7 @@ div.opportunity-metric {
     div.deal-amount-metric {
         font-size: 16px;
         font-weight: bold;
-        box-sizing: border-box;
+        .box-sizing(border-box);
         &.won {
             color: @green;
         }

@@ -1,66 +1,76 @@
+//for activity stream
 .activitystream-list {
-    width: 100%;
+  width: 100%;
+  margin: 0;
+  list-style: none;
 }
-.activitystream-list p {
-    margin: 0;
-}
-.activitystream-list.nav-tabs > li > a {
+.activitystream-posts-comments-container {
+  border-bottom: 1px solid @grayLighter;
+  padding: 12px 68px 8px 80px;
+  position: relative;
+  font-size: @fontSizeLarge - 2;
+  min-height: 46px;
+  .avatar,
+  .avatar img,
+  .label-module {
     width: 42px;
     height: 42px;
-    padding: 0;
-    margin: 0 20px 0 0;
     border: none;
-}
-.activitystream-list .label-module {
-    margin-right: 20px;
-}
-
-.activitystream-list.nav-tabs > li > a:hover {
-    background: none;
-}
-
-.activitystream-posts-comments-container {
-    border-bottom: 1px solid @grayLighter;
-    padding: 10px 10px 10px 20px;
-    position: relative;
-    font-size: @fontSizeLarge - 2;
-}
-
-date {
-  font-size: @fontSizeSmall;
-  color: @grayLight;
-}
-span.relativetime {
-   display: inline-block;
-}
-
-.activitystream-posts-comments-container .actions {
-  display: block;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-weight: normal;
-}
-
-.comments {
-  margin: 15px -10px -11px -20px;
-  .avatar {
-    margin-right: 20px;
   }
-  .more {
-    display: block;
-    text-decoration: none;
+  .avatar,
+  .label-module {
+    position: absolute;
+    left: 20px;
+    top: 12px;
   }
-  .comment {
-    background: @grayLighter;
-    border-top: 1px solid @white;
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    font-size: @baseFontSize;
-    list-style: none;
-    padding: 10px 10px 10px 38px;
-    &:nth-of-type(1) {
+  .label-module {
+    .box-sizing(border-box);
+  }
+  .tagged span.label {
+    font-size: @baseFontSize-1;
+  }
+  p {
+    margin: 0;
+  }
+  date {
+    font-size: @fontSizeSmall;
+    color: @grayLight;
+  }
+  .relativetime {
+     display: inline-block;
+  }
+  .embed {
+    min-height: 18px;
+    max-width: 480px;
+    iframe,
+    img {
+      margin-top: 11px;
+    }
+  }
+  .comments {
+    margin: 12px -68px -8px -80px;
+    .avatar,
+    .avatar img {
+      height: 24px;
+      width: 24px;
+    }
+    .avatar {
+      left: 38px;
+    }
+    &> .comment:first-child {
       .box-shadow(~"inset 0 4px 8px -4px rgba(0, 0, 0, 0.5)");
-      padding-top: 12px;
+    }
+    .comment {
+      background: @grayLighter;
+      list-style: none;
+      border-top: 1px solid @white;
+      border-bottom: 1px solid darken(@grayLighter, 5%);
+      padding: 8px 10px 8px 80px;
+      font-size: @baseFontSize;
+      position: relative;
+    }
+    .more-comments {
+      padding: 6px 8px 6px 40px;
     }
   }
   .reply-area {
@@ -70,16 +80,83 @@ span.relativetime {
     }
     .reply-btn {
       position: absolute;
-      top: 3px;
+      top: 2px;
       right: -60px;
     }
     .reply {
       background-color: @white;
       border: 1px solid darken(@grayLighter, 5%);
+      min-height: 18px;
       padding: 6px 8px;
       .placeholder {
         color: @grayLight;
       }
+    }
+  }
+  .actions {
+    display: block;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-weight: normal;
+  }
+}
+
+
+//for activity stream in preview
+.preview-pane {
+  .activitystream-layout {
+    padding: 28px 5% 0;
+    margin: 8px;
+  }
+  .activitystream-list {
+    background-color: #fff;
+    border: 1px solid darken(@grayLighter, 15%);
+  }
+  .activitystream-posts-comments-container {
+    padding: 8px 14px 8px 50px;
+    font-size: @baseFontSize;
+    min-height: 36px;
+    .avatar,
+    .avatar img,
+    .label-module {
+      height: 28px;
+      width: 28px;
+    }
+    .avatar,
+    .label-module {
+      left: 12px;
+      top: 12px;
+    }
+    .label-module {
+      font-size: 11px;
+      .box-sizing(border-box);
+    }
+    .embed {
+      iframe,
+      img {
+        margin-top: 5px;
+      }
+    }
+    .comments {
+      margin: 8px -14px -8px -50px;
+      .comment {
+        padding: 8px 8px 4px 50px;
+      }
+      .avatar,
+      .avatar img {
+        height: 24px;
+        width: 24px;
+      }
+      .avatar {
+        left: 16px;
+      }
+      .more-comments {
+        padding: 4px 8px 4px 18px;
+      }
+    }
+    > .comment:last-child {
+      border-bottom: none;
     }
   }
 }
@@ -106,36 +183,9 @@ span.relativetime {
   }
 }
 
-ul.unstyled, ol.unstyled {
-  margin: 0 !important;
-}
-
 // UIUX-513: Add support for placeholders in content editable div tags.
 div[data-placeholder]:not(:focus):not([data-hide-placeholder]):before {
   content: attr(data-placeholder);
   margin-left: 2px;
   color: @grayLight;
-}
-
-.block-footer {
-  padding: 10px;
-  margin-bottom: 0;
-  color: lighten(@gray, 12%);
-  .box-sizing(border-box);
-  text-align: center;
-  #gradient > .vertical(@grayLighter, @white);
-  border-top: 1px solid darken(@grayLighter, 15%);
-  .box-shadow(inset 0 1px 2px rgba(0,0,0,.05));
-  .clearfix();
-}
-
-.results article:nth-child(even),
-.results article:nth-child(odd) {
-  background-color: transparent;
-  border-top: 1px solid lighten(@grayDarker, 15%);
-  border-bottom-color: @grayDarker;
-  padding: 10px 20px;
-}
-.results article:first-child {
-  .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.6)");
 }
