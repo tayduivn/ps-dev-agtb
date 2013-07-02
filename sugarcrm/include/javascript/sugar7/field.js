@@ -129,12 +129,36 @@
                 }
                 if (this.def.required) {
                     this.clearRequiredLabel();
-                    if (this.action === "edit" && this._shouldRenderRequiredPlaceholder()) {
+                    if (this.action === 'edit' && this._shouldRenderRequiredPlaceholder()) {
                         this.decorateRequired();
+                    }
+                }
+                if (this.def.help) {
+                    this.clearHelper();
+                    if (this.action === 'edit') {
+                        this.decorateHelper();
                     }
                 }
             },
 
+            /**
+             * Remove helper tooltip
+             */
+            clearHelper: function() {
+                this.$el.closest('.record-cell').attr({
+                    'rel': ''
+                });
+            },
+            /**
+             * Default implementation for field helper
+             */
+            decorateHelper: function() {
+                this.$el.closest('.record-cell').attr({
+                    'rel': 'tooltip',
+                    'data-title': this.def['help'],
+                    'data-placement': 'bottom'
+                });
+            },
             /**
              * Helper to determine if we should call decorateRequired. Primarily for pages like Login
              * where we don't want to have (Required) in the placeholder on initial render. This gets
