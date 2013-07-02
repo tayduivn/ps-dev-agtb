@@ -905,7 +905,8 @@ class MetaDataFiles
         $currentComponents = $currentDefs['components'];
 
         foreach($mergeComponents as $mergeComponent) {
-            if(isset($mergeComponent['override_subpanel_list_view'])) {
+            // if it is the only thing in the array its an override and it needs to be added to an existing component
+            if(isset($mergeComponent['override_subpanel_list_view']) && count($mergeComponent) == 1) {
                 $overrideView = $mergeComponent['override_subpanel_list_view']['view'];
                 $mergeContext = $mergeComponent['override_subpanel_list_view']['link'];
                 foreach($currentComponents as $key => $currentComponent) {

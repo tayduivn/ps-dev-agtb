@@ -267,7 +267,7 @@ class MetaDataConverter
             $label = isset($def['label']) ? $def['label'] : translate($linkModule);
             $return[$def['context']['link']] = array(
                 'order' => $order,
-                'module' => $linkModule,
+                'module' => $bean->module_dir,
                 'subpanel_name' => 'default',
                 'sort_order' => 'asc',
                 'sort_by' => 'id',
