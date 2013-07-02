@@ -6,7 +6,7 @@
      */
     initialize: function(opts) {
         opts.type = "panel";
-        console.log(opts);
+        //Check for the override_subpanel_list_view from the parent layout metadata and replace the list view if found.
         if (opts.meta && opts.def && opts.def.override_subpanel_list_view) {
             _.each(opts.meta.components, function(def){
                 if (def.view && def.view == "subpanel-list") {
