@@ -105,16 +105,16 @@ describe("Global Search", function() {
         expect(view.$('input:checkbox[data-module="all"]').attr('checked')).toBeDefined();
     });
 
-    it("Should return search results", function() {
+    it('Should return search results', function() {
         var getModuleStub = sinon.stub(SugarTest.app.metadata, 'getModule', function(module) {
-            return {isBwcEnabled: module === 'bwcModule' ? true : false}
+            return {isBwcEnabled: module === 'bwcModule' ? true : false};
         });
-        var apiSearchStub = sinon.stub(SugarTest.app.api, 'search', function(params,cb) {
+        var apiSearchStub = sinon.stub(SugarTest.app.api, 'search', function(params, cb) {
             var data = {
-                next_offset:-1,
-                records:[
-                           {id:'test1',name:'test1',_module:'Accounts',_search:{}},
-                           {id:'test2',name:'test2',_module:'bwcModule',_search:{}}
+                next_offset: -1,
+                records: [
+                    {id: 'test1', name: 'test1', module: 'Accounts', _search: {}},
+                    {id: 'test2', name: 'test2', module: 'bwcModule', _search: {}}
                 ]
             };
             cb.success(data);

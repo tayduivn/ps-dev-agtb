@@ -28,7 +28,7 @@
 }}
 {{#each data.records}}
     <li>
-        <span>{{str "LBL_MODULE_NAME" _module}}: </span><a href="#{{_module}}/{{id}}"><strong>{{name}}</strong></a>
+        <span>{{str "LBL_MODULE_NAME" module}}: </span><a href="#{{module}}/{{id}}"><strong>{{name}}</strong></a>
     </li>
 {{/each}}
 {{#eq data.records.length "0"}}
