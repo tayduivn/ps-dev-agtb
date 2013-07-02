@@ -31,7 +31,6 @@
     initialize: function(options) {
         //reinitialize array on each init
         this.currencyFields = [];
-        this._setupCommitStageField(options.meta.panels);
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
 
         //pull the fields in the panels that are editable currency fields
@@ -80,28 +79,5 @@
             }
             this.model.trigger("change:" + currencyField);
         }, this);
-    },
-
-    /**
-     * Set up the commit_stage field based on forecast settings - if forecasts is set up, adds the correct dropdown
-     * elements, if forecasts is not set up, it removes the field.
-     * @param panels
-     * @private
-     */
-    _setupCommitStageField: function(panels) {
-        _.each(panels, function(panel) {
-            if (!app.metadata.getModule("Forecasts", "config").is_setup) {
-                panel.fields = _.filter(panel.fields, function(field) {
-                    // also remove the spacer so the look stays the same
-                    return (field.name != "commit_stage" && field.name != "cs_spacer");
-                })
-            } else {
-                _.each(panel.fields, function(field) {
-                    if (field.name == "commit_stage") {
-                        field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
-                    }
-                });
-            }
-        });
     }
 })
