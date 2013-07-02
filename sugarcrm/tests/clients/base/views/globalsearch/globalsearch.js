@@ -1,14 +1,14 @@
 describe("Global Search", function() {
     var moduleName = 'Accounts',
         viewName = 'globalsearch',
-        view, getModulesStub, hasAccessStub, isAuthenticatedStub;
+        view;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
-        getModulesStub = sinon.stub(SugarTest.app.metadata, 'getModules', function() {
+        sinon.collection.stub(SugarTest.app.metadata, 'getModules', function() {
             return {
                 Accounts: {ftsEnabled:true, globalSearchEnabled: true},
                 Contacts: {ftsEnabled:true, globalSearchEnabled: true},
@@ -17,14 +17,14 @@ describe("Global Search", function() {
                 NoAccess: {ftsEnabled: true}
             }
         });
-        hasAccessStub = sinon.stub(SugarTest.app.acl, 'hasAccess', function(action,module) {
+        sinon.collection.stub(SugarTest.app.acl, 'hasAccess', function(action,module) {
             if (module === 'NoAccess') {
                 return false;
             } else {
                 return true;
             }
         });
-        isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
+        sinon.collection.stub(SugarTest.app.api, 'isAuthenticated', function() {
             return true;
         });
         view = SugarTest.createView("base", moduleName, "globalsearch", null, null);
@@ -33,9 +33,7 @@ describe("Global Search", function() {
 
     afterEach(function() {
         SugarTest.testMetadata.dispose();
-        getModulesStub.restore();
-        hasAccessStub.restore();
-        isAuthenticatedStub.restore();
+        sinon.collection.restore();
         view = null;
     });
 
@@ -52,17 +50,18 @@ describe("Global Search", function() {
     });
     it("Should only show global search enabled modules", function() {
         var actual,
-            acl = {hasAccess:function() {}},
+            acl = {
+                hasAccess: function() {
+                    return true;
+                }
+            },
             moduleNames = ['Bugs','Cases','KBDocuments','Home'],
             modules = {
                 Bugs: {globalSearchEnabled:true},
                 Cases: {globalSearchEnabled:true},
                 KBDocuments: {globalSearchEnabled:true},
                 Home: {globalSearchEnabled: false}
-            },
-            hasAccessStub = sinon.stub(acl, 'hasAccess', function(action, module) {
-                return true;
-            });
+            };
         actual = view.populateSearchableModules({
             modules: modules,
             moduleNames: moduleNames,
@@ -106,10 +105,11 @@ describe("Global Search", function() {
     });
 
     it('Should return search results', function() {
-        var getModuleStub = sinon.stub(SugarTest.app.metadata, 'getModule', function(module) {
-            return {isBwcEnabled: module === 'bwcModule' ? true : false};
+
+        sinon.collection.stub(SugarTest.app.metadata, 'getModule', function(module) {
+            return {isBwcEnabled: module === 'bwcModule'};
         });
-        var apiSearchStub = sinon.stub(SugarTest.app.api, 'search', function(params, cb) {
+        sinon.collection.stub(SugarTest.app.api, 'search', function(params, cb) {
             var data = {
                 next_offset: -1,
                 records: [
@@ -120,44 +120,38 @@ describe("Global Search", function() {
             cb.success(data);
         });
 
-        var buildRouteSpy = sinon.spy(SugarTest.app.router, 'buildRoute');
-        var bwcBuildRouteSpy = sinon.stub(SugarTest.app.bwc, 'buildRoute');
-        var plugin = {provide: function(data) {return data}};
-        var pluginSpy = sinon.spy(plugin, 'provide');
-        view.fireSearchRequest('test', plugin);
+        var buildRouteSpy = sinon.collection.spy(SugarTest.app.router, 'buildRoute');
+        var bwcBuildRouteSpy = sinon.collection.stub(SugarTest.app.bwc, 'buildRoute');
+        view.fireSearchRequest('test', {
+            provide: function(data) {
+                return data;
+            }
+        });
         expect(buildRouteSpy.calledWith('Accounts', 'test1')).toBe(true);
         expect(bwcBuildRouteSpy.calledWith('bwcModule', 'test2', 'DetailView')).toBe(true);
-        getModuleStub.restore();
-        apiSearchStub.restore();
-        buildRouteSpy.restore();
-        bwcBuildRouteSpy.restore();
-        pluginSpy.restore();
     });
 
     it("Should fire search request when 'enter' key is typed", function() {
-        var searchSpy = sinon.stub(view,'fireSearchRequest');
+        var searchSpy = sinon.collection.stub(view, 'fireSearchRequest');
         var e = jQuery.Event("keyup");
         e.keyCode = $.ui.keyCode.ENTER;
         view.$('.search-query').focus();
         view.$('.search-query').val('abc');
         view.$('.search-query').trigger(e);
         expect(searchSpy).toHaveBeenCalled();
-        view.fireSearchRequest.restore();
     });
-    
+
     it("Should fire search request when search button is clicked", function() {
-        var searchSpy = sinon.stub(view,'fireSearchRequest');
+        var searchSpy = sinon.collection.stub(view, 'fireSearchRequest');
         view.$('.search-query').val('abc');
         view.$('.icon-search').click();
         expect(searchSpy).toHaveBeenCalled();
-        view.fireSearchRequest.restore();
     });
-    
+
     it("Should not fire search request when search field is empty", function() {
-        var searchSpy = sinon.stub(view,'fireSearchRequest');
+        var searchSpy = sinon.collection.stub(view, 'fireSearchRequest');
         view.$('.search-query').val('');
         view.$('.icon-search').click();
         expect(searchSpy).not.toHaveBeenCalled();
-        view.fireSearchRequest.restore();
     });
 });

@@ -1,5 +1,16 @@
 (function(app) {
-    var bwcMethods = {
+
+    /**
+     * Backwards compatibility (Bwc) class manages all required methods for BWC
+     * modules.
+     *
+     * A BWC module is defined in the metadata by the `isBwcEnabled` property.
+     *
+     * @class Sugar.Bwc
+     * @singleton
+     * @alias SUGAR.App.bwc
+     */
+    var Bwc = {
         /**
          * Performs backward compatibility login.
          *
@@ -35,23 +46,24 @@
         },
 
         /**
-          * Builds a backwards compatible route. For example:
-          * bwc/index.php?module=MyModule&action=DetailView&record12345
-          *
-          * @param {String} module(required) The name of the module.
-          * @param {String} id(optional) The model's ID.
-          * @param {String} action(optional) backwards compatible action name.
-          * @param {Object} params(optional) Additional URL parameters. Should not include id/module/action.
-          * @return {String} route The built route.
-          */
-         buildRoute: function(module, id, action, params) {
+         * Builds a backwards compatible route. For example:
+         * bwc/index.php?module=MyModule&action=DetailView&record12345
+         *
+         * @param {String} module The name of the module.
+         * @param {String} [id] The model's ID.
+         * @param {String} [action] Backwards compatible action name.
+         * @param {Object} [params] Extra params to be sent on the bwc link.
+         * @return {String} The built route.
+         */
+        buildRoute: function(module, id, action, params) {
 
             /**
              * app.bwc.buildRoute is for internal use and we control its callers, so we're
              * assuming callers will provide the module param which is marked required!
              */
-            var href = "bwc/index.php?";
-            var params = _.extend({}, { module: module }, params);
+            var href = 'bwc/index.php?',
+                params = _.extend({}, { module: module }, params);
+
             if (!action && !id || action==='DetailView' && !id) {
                 params.action = 'index';
             } else {
@@ -66,7 +78,7 @@
                 }
             }
             return href + $.param(params);
-         },
+        },
 
         /**
          * For BWC modules, we need to get URL params for creating the related record
@@ -109,5 +121,5 @@
             app.router.navigate("#" + route, {trigger: true}); // Set route so that we switch over to BWC mode
         }
     };
-    app.augment('bwc', bwcMethods, false);
+    app.augment('bwc', Bwc, false);
 })(SUGAR.App);
