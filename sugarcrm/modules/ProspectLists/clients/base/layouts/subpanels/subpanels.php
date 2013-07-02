@@ -33,6 +33,7 @@ $viewdefs['ProspectLists']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
+      'override_subpanel_list_view' => 'subpanel-for-prospectlists',
       'context' => array (
         'link' => 'accounts',
       ),

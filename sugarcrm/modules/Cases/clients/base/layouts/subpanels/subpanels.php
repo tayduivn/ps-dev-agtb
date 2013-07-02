@@ -11,6 +11,7 @@ $viewdefs['Cases']['base']['layout']['subpanels'] = array (
       array (
           'layout' => 'subpanel',
           'label' => 'LBL_CONTACTS_SUBPANEL_TITLE',
+          'override_subpanel_list_view' => 'subpanel-for-cases',
           'context' => array (
               'link' => 'contacts',
           ),
