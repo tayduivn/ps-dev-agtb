@@ -40,8 +40,8 @@ foreach ($themesClientsDir as $platform) {
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link data-linkcss="bootstrap" href="../styleguide/css/bootstrap.css" rel="stylesheet">
-    <link data-linkcss="bootstrap" href="../styleguide/css/sugar.css" rel="stylesheet">
+    <link data-linkcss="bootstrap" href="../assets/css/bootstrap.css" rel="stylesheet">
+    <link data-linkcss="bootstrap" href="../assets/css/sugar.css" rel="stylesheet">
 </head>
 <body>
 
@@ -142,8 +142,8 @@ foreach ($themesClientsDir as $platform) {
     </div>
 </div>
 </form>
-<script src="../styleguide/js/jquery-1.7.2.min.js"></script>
-<script src="../assets/js/bootstrap-modal.js"></script>
+<script src="../../include/javascript/jquery/jquery.js"></script>
+<script src="../../include/javascript/twitterbootstrap/bootstrap-modal.js"></script>
 <script>
     $('.btn-submit').click(function() {
         var attrs = $('form').serialize();
@@ -159,7 +159,7 @@ foreach ($themesClientsDir as $platform) {
                   'data-linkcss': 'bootstrap',
                   rel:  "stylesheet",
                   type: "text/css",
-                  href: '../styleguide/css/bootstrap.css?t=' + new Date().getTime()
+                  href: '../assets/css/bootstrap.css?t=' + new Date().getTime()
                 });
             $("head").append("<link>");
                 var css = $("head").children(":last");
