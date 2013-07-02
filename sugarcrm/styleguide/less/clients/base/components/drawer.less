@@ -55,8 +55,22 @@ body.noscroll {
     }
 }
 
-@media (max-width: 768px) {
 
+.drawer {
+    .span8 .headerpane {
+        width: 66%;
+    }
+    .span12 .headerpane {
+        width: 100%;
+    }
+    .headerpane {
+        position: fixed;
+        top: 48px;
+        left: -1px;
+    }
+    .record {
+        margin-top: 70px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -64,12 +78,6 @@ body.noscroll {
       overflow: auto;
     }
     .drawer {
-        .headerpane {
-            position: fixed;
-            width: 66%;
-            top: 48px;
-            left: 0;
-        }
         .drawerTrig {
             display: none;
         }
