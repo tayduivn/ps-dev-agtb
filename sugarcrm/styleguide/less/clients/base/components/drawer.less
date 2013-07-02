@@ -55,10 +55,26 @@ body.noscroll {
     }
 }
 
+@media (max-width: 768px) {
 
+}
 
 @media (max-width: 768px) {
     #drawers .drawer {
       overflow: auto;
+    }
+    .drawer {
+        .headerpane {
+            position: fixed;
+            width: 66%;
+            top: 48px;
+            left: 0;
+        }
+        .drawerTrig {
+            display: none;
+        }
+        .headerpane {
+            width: 100%;
+        }
     }
 }
