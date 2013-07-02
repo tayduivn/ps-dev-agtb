@@ -82,6 +82,8 @@
   }
 
   span {
+    &[data-type="parent"],
+    &[data-type="relate"],
     &[data-type="text"],
     &[data-type="int"] {
       padding-top: 19px;
@@ -90,6 +92,9 @@
         display: inline-block;
       }
     }
+  }
+  span[data-type="relate"] .edit > .select2-container {
+    min-width: 275px;
   }
 
   span[data-type="fieldset-with-labels"] {
