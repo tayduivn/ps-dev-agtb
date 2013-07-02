@@ -686,6 +686,12 @@ class ForecastManagerWorksheet extends SugarBean
             $newTotal = $directAmount;
         }
 
+        // if a user is not a manager, then just take the value that the manager assigned to them as the rollup and use
+        // it for their direct amount
+        if (User::isManager($userId) === false) {
+            $newTotal = $managerAmount;
+        }
+
         //save Manager quota
         if ($newTotal != $directAmount) {
             $quota->user_id = $userId;
