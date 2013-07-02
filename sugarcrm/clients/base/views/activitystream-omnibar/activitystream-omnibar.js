@@ -32,6 +32,7 @@
             parentId = this.context.parent.get("model").id,
             parentType = this.context.parent.get("model").module,
             attachments = this.$('.activitystream-pending-attachment'),
+            $submitButton = this.$('button.addPost'),
             payload = {
                 activity_type: "post",
                 parent_id: parentId || null,
@@ -39,23 +40,31 @@
                 data: {}
             };
 
-        payload.data.value = this.getText(this.$('div.sayit'));
-        if (this.getTags) {
-            payload.data.tags = this.getTags(this.$('div.sayit'));
-        }
+        if (!$submitButton.hasClass('disabled')) {
+            $submitButton.addClass('disabled');
 
-        if (payload.data.value) {
-            var bean = app.data.createBean('Activities');
-            bean.save(payload, {
-                success: function(model) {
-                    self.$('div.sayit').html('').trigger('change').focus();
-                    model.set('picture', app.user.get('picture'));
-                    self.collection.add(model);
-                    self.layout.prependPost(model);
-                }
-            });
+            payload.data.value = this.getText(this.$('div.sayit'));
+            if (this.getTags) {
+                payload.data.tags = this.getTags(this.$('div.sayit'));
+            }
+
+            if (payload.data.value) {
+                var bean = app.data.createBean('Activities');
+                bean.save(payload, {
+                    success: function(model) {
+                        self.$('div.sayit').html('').trigger('change').focus();
+                        model.set('picture', app.user.get('picture'));
+                        self.collection.add(model);
+                        self.layout.prependPost(model);
+                    },
+                    complete: function() {
+                        $submitButton.removeClass('disabled');
+                    },
+                    showAlerts: true
+                });
+            }
+            this.trigger("attachments:process");
         }
-        this.trigger("attachments:process");
     },
 
     getText: function($el) {

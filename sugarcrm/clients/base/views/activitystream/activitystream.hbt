@@ -1,9 +1,9 @@
 {{#eq model.attributes.activity_type "post"}}
-<a href="#Users/{{model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar avatar42" rel="tooltip" data-title="{{model.attributes.created_by_name}}" data-placement="right">
+<a href="#Users/{{model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar" rel="tooltip" data-title="{{model.attributes.created_by_name}}" data-placement="right">
     {{#if model.attributes.picture_url}}
         <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}}">
     {{else}}
-        <i class="icon-user icon-3x" alt="{{model.attributes.created_by_name}}"></i>
+        <i class="icon-user" alt="{{model.attributes.created_by_name}}"></i>
     {{/if}}
 </a>
 {{else}}
@@ -33,7 +33,7 @@
         {{#if picture_url}}
             <img src="{{picture_url}}" alt="{{created_by_name}}">
         {{else}}
-            <i class="icon-user icon-2X"></i>
+            <i class="icon-user"></i>
         {{/if}}
         </a>
         <p>
@@ -45,7 +45,7 @@
     {{/with}}
     {{/each}}
     {{#if remaining_comments}}
-    <li class="comment">
+    <li class="comment more-comments">
         <a class="more">
             {{str more_tpl "Activities" remaining_comments}}
         </a>

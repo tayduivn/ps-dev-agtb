@@ -1,5 +1,5 @@
 ({
-    className: "block filtered tabs-left activitystream-layout",
+    className: "block filtered activitystream-layout",
 
     initialize: function(opts) {
         this.opts = opts;

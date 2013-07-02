@@ -1,5 +1,19 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     extendsFrom: 'ActivitystreamLayout',
+
+    _previewOpened: false, //is the preview pane open?
 
     /**
      * Fetch and render activities when 'preview:render' event has been fired.
@@ -7,6 +21,13 @@
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'layout', name: 'activitystream', method: 'initialize', args:[options]});
         app.events.on("preview:render", this.fetchActivities, this);
+        app.events.on('preview:open', function() {
+            this._previewOpened = true;
+        }, this);
+        app.events.on('preview:close', function() {
+            this._previewOpened = false;
+            this.disposeAllActivities();
+        }, this);
     },
 
     /**
@@ -18,8 +39,6 @@
      * @param previewId
      */
     fetchActivities: function(model, collection, fetch, previewId) {
-        var self = this;
-
         this.disposeAllActivities();
         this.collection.fetch({
             /*
@@ -33,12 +52,31 @@
             /*
              * Render activity stream
              */
-            success: function(collection) {
+            success: _.bind(this.renderActivities, this)
+        });
+    },
+
+    /**
+     * Render activity stream once the preview pane opens. Hide it when there are no activities.
+     * @param collection
+     */
+    renderActivities: function(collection) {
+        var self = this;
+
+        if (this._previewOpened) {
+            if (collection.length === 0) {
+                this.$el.hide();
+            } else {
+                this.$el.show();
                 collection.each(function(model) {
                     self.renderPost(model, true);
                 });
             }
-        });
+        } else {
+            _.delay(function(){
+                self.renderActivities(collection);
+            }, 500);
+        }
     },
 
     /**
