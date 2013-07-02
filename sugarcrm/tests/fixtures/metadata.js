@@ -1,4 +1,5 @@
-var fixtures = typeof(fixtures) == "object" ? fixtures : {};
+var fixtures = typeof(fixtures) == "object" ? fixtures : {},
+    tmpMetadata;
 
 fixtures.jssource = {
    "modules": {
@@ -52,7 +53,7 @@ fixtures.jssource = {
                     "}," +
                     "customCallback : function(){}" +
                     "}"
-            },            
+            },
             "enum": {
                 controller: "{" +
                     "fieldTag:\"select\",\n" +
@@ -68,7 +69,8 @@ fixtures.jssource = {
         }
     }
 };
-fixtures.metadata = {
+
+tmpMetadata = {
     _hash: '2q34aasdfwrasdfse',
     "server_info": {
         "flavor":"ENT",
@@ -1226,3 +1228,9 @@ fixtures.metadata = {
         }
     }
 };
+
+if (_.has(fixtures, 'metadata')) {
+    jQuery.extend(true, fixtures.metadata, tmpMetadata);
+} else {
+    fixtures.metadata = tmpMetadata;
+}
