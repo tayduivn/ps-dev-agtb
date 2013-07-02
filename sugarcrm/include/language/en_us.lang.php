@@ -1761,8 +1761,8 @@ $app_list_strings = array (
   ),
     'filter_operators_dom' => array(
         'enum' => array(
-            '$in' => 'is',
-            '$not_in' => 'is not',
+            '$in' => 'is any of',
+            '$not_in' => 'is not any of',
         ),
         'varchar' => array(
             '$equals' => 'matches',
