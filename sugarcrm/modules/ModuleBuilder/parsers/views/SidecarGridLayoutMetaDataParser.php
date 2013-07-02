@@ -449,16 +449,23 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                    $row = array();
                 }
 
+                /*
                 if (empty($field)) {
                     $fieldToInsert = $this->FILLER;
                 } elseif(is_array($field)) {
                     // Handle special fields like fieldset
                     if (isset($field['type'])) {
-                        if ($field['type'] == 'fieldset' && isset($field['fields'])) {
+                        if ($field['type'] == 'fieldset' && isset($field['fields']) && isset($field['name'])) {
                             $fieldToInsert = $field['name'];
                         } elseif (!empty($field['readonly'])) {
                             // This handles non-field fields like favorite and follow
                             $fieldToInsert = $field['type'];
+                        } elseif (isset($field['name'])) {
+                            // This handles normal condition named fields
+                            $fieldToInsert = $field['name'];
+                        } else {
+                            // This handles junk metadata
+                            $fieldToInsert = $this->FILLER;
                         }
                     } else {
                         $fieldToInsert = empty($field['name']) ? $this->FILLER : $field['name'];
@@ -466,6 +473,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 } else {
                     $fieldToInsert = $field;
                 }
+                */
+                $fieldToInsert = $this->getFieldToInsert($field);
                 // add field to row + enough (empty) to make it to colspan
                 $row[] = $this->_addInternalCell($fieldToInsert);
                 $this->_packRowWithEmpty($row, $colspan-1);
@@ -638,5 +647,34 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         }
         
         return parent::getViewDefFromFieldname($fieldname);
+    }
+    
+    protected function getFieldToInsert($field)
+    {
+        // Empty fields just need to be filler
+        if (empty($field)) {
+            return $this->FILLER;
+        } 
+        
+        // Arrays need to be inspected a little closer
+        if (is_array($field)) {
+            // Handle special fields like fieldset
+            if (isset($field['type'])) {
+                if ($field['type'] == 'fieldset' && isset($field['fields']) && isset($field['name'])) {
+                    return $field['name'];
+                } 
+                
+                // This handles non-field fields like favorite and follow
+                if (!empty($field['readonly'])) {
+                    return $field['type'];
+                }
+            }
+            
+            // This handles normal condition named fields and filler fields
+            return empty($field['name']) ? $this->FILLER : $field['name'];
+        } 
+        
+        // Non empty non arrays just return the field
+        return $field;
     }
 }

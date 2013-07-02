@@ -103,7 +103,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                 ),
                 array(
-                    'name' => 'fieldset_name',
+                    'name' => 'full_name',
                     'type' => 'fieldset-with-labels',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
