@@ -132,6 +132,7 @@ $app_list_strings = array (
   array (
     'Home' => 'Home',
     'Dashboard' => 'Dashboard',
+    'Styleguide' => 'Styleguide',
     'Contacts' => 'Contact',
     'Accounts' => 'Account',
     'Opportunities' => 'Opportunity',
@@ -4838,6 +4839,8 @@ $app_list_strings['state_dom'] = array(
   'America/Montevideo' => 'America/Montevideo',
   'America/Caracas' => 'America/Caracas',
   );
+
+  $app_list_strings['moduleList']['Styleguide'] = 'Styleguide';
 
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
   $app_list_strings['eapm_list']= array(

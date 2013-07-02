@@ -56,6 +56,7 @@ $moduleList[] = 'RevenueLineItems';
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
 $moduleList[] = 'Bugs';
+$moduleList[] = 'Styleguide';
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -116,6 +117,7 @@ $beanList['Roles']  = 'Role';
 
 $beanList['Audit']  = 'Audit';
 
+$beanList['Styleguide'] = 'Styleguide';
 // deferred
 //$beanList['Queues'] = 'Queue';
 
@@ -328,6 +330,7 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
+$beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
 $beanFiles['UserSignature'] = 'modules/UserSignatures/UserSignature.php';
 
 // added these lists for security settings for tabs

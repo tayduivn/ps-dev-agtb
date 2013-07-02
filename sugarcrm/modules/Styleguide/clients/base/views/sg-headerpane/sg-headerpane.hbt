@@ -1,0 +1,8 @@
+<h1><span class="module-title">{{{section.title}}}</span></h1>
+<div class="btn-toolbar pull-right">
+    <span class="list-headerpane">
+        <select name="sections" id="find_patterns" class="select2 search" data-placeholder="Search styleguide&hellip;">
+            <option></option>
+        </select>
+    </span>
+</div>

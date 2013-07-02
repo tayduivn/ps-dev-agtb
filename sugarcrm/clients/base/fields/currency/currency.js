@@ -188,5 +188,10 @@
         app.view.Field.prototype.setDisabled.call(this, disable);
 
         this.getCurrencyField().setDisabled(disable);
+    },
+
+    setMode: function(name) {
+        app.view.Field.prototype.setMode.call(this, name);
+        this.getCurrencyField().setMode(name);
     }
 })
