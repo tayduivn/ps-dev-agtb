@@ -32,19 +32,50 @@ $listDefs = array(
                 ),
                 array(
                     'name' => 'parent_name',
-                    'label' => 'LBL_NAME',
+                    'label' => 'LBL_REVENUELINEITEM_NAME',
                     'link' => true,
                     'id' => 'parent_id',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
+                    'display' => false,
                     'type' => 'parent',
                     'readonly' => true,
                     'related_fields' => array(
                         'parent_id',
                         'parent_type',
-                        'parent_deleted',
-                        'account_name',
+                        'parent_deleted'
+                    )
+                ),
+                array(
+                    'name' => 'opportunity_name',
+                    'label' => 'LBL_OPPORTUNITY_NAME',
+                    'link' => true,
+                    'id' => 'opportunity_id',
+                    'id_name' => 'id',
+                    'module' => 'Opportunities',
+                    'sortable' => true,
+                    'default' => true,
+                    'enabled' => true,
+                    'type' => 'relate',
+                    'readonly' => true,
+                    'related_fields' => array(
+                        'opportunity_id',
+                    )
+                ),
+                array(
+                    'name' => 'account_name',
+                    'label' => 'LBL_ACCOUNT_NAME',
+                    'link' => true,
+                    'id' => 'account_id',
+                    'id_name' => 'id',
+                    'module' => 'Accounts',
+                    'sortable' => true,
+                    'default' => true,
+                    'enabled' => true,
+                    'type' => 'relate',
+                    'readonly' => true,
+                    'related_fields' => array(
                         'account_id',
                     )
                 ),
