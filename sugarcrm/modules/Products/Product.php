@@ -650,7 +650,7 @@ class Product extends SugarBean
             $result = $this->db->query($query);
             if ($row = $this->db->fetchByAssoc($result)) {
                 $tax_rate = $row['value'] / 100;
-                $shipping_usdollar = $row['shipping_usdollar'];
+                $shipping_usdollar = is_numeric($row['shipping_usdollar']) ? $row['shipping_usdollar'] : 0.00;
             }
             $query = "select product_bundles.id as bundle_id from product_bundle_product" .
                 " INNER JOIN product_bundles on product_bundles.id=product_bundle_product.bundle_id" .
@@ -661,7 +661,7 @@ class Product extends SugarBean
                 $query = "select shipping_usdollar from product_bundles where id='" . $bundle_id . "' and deleted=0";
                 $result = $this->db->query($query);
                 if ($row = $this->db->fetchByAssoc($result)) {
-                    $shipping_usdollar = $row['shipping_usdollar'];
+                    $shipping_usdollar = is_numeric($row['shipping_usdollar']) ? $row['shipping_usdollar'] : 0.00;
                 }
                 $query = "select * from product_bundle_product where bundle_id='" . $bundle_id . "' and deleted=0";
                 $result = $this->db->query($query);
@@ -720,14 +720,18 @@ class Product extends SugarBean
                             $shipping_usdollar += $row['shipping_usdollar'];
                             $row =  $this->db->fetchByAssoc($result);
                         }*/
-                        $total_usdollar += $row['new_sub_usdollar'] + $row['tax_usdollar'] + $row['shipping_usdollar'];
+                        $shipping_usdollar = is_numeric($row['shipping_usdollar']) ? $row['shipping_usdollar'] : 0.00;
+                        $subtotal_usdollar = is_numeric($row['subtotal_usdollar']) ? $row['subtotal_usdollar'] : 0.00;
+                        $deal_tot_usdollar = is_numeric($row['deal_tot_usdollar']) ? $row['deal_tot_usdollar'] : 0.00;
+                        $new_sub_usdollar = is_numeric($row['new_sub_usdollar']) ? $row['new_sub_usdollar'] : 0.00;
+                        $tax_usdollar = is_numeric($row['tax_usdollar']) ? $row['tax_usdollar'] : 0.00;
+                        $total_usdollar += $row['new_sub_usdollar'] + $row['tax_usdollar'] + $shipping_usdollar;
                         $total = $currency->convertFromDollar($total_usdollar);
-                        $subtotal = $currency->convertFromDollar($row['subtotal_usdollar']);
-                        $deal_tot_usdollar = $row['deal_tot_usdollar'];
+                        $subtotal = $currency->convertFromDollar($subtotal_usdollar);
+                        $deal_tot_usdollar = $deal_tot_usdollar;
                         $deal_tot = $currency->convertFromDollar($deal_tot_usdollar);
-                        $new_sub_usdollar = $row['new_sub_usdollar'];
                         $new_sub = $currency->convertFromDollar($new_sub_usdollar);
-                        $tax = $currency->convertFromDollar($row['tax_usdollar']);
+                        $tax = $currency->convertFromDollar($tax_usdollar);
                         $updateQuery = "update quotes set tax=" . $tax . ",tax_usdollar=" . $tax_usdollar . ",total=" . $total . ",total_usdollar=" . $total_usdollar . ",deal_tot=" . $deal_tot . ",deal_tot_usdollar=" . $deal_tot_usdollar . ",new_sub=" . $new_sub . ",new_sub_usdollar=" . $new_sub_usdollar . ",subtotal=" . $subtotal .
                             ",subtotal_usdollar=" . $subtotal_usdollar . " where id='" . $this->quote_id . "'";
                         $result = $this->db->query($updateQuery);
