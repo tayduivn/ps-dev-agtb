@@ -34,10 +34,32 @@ class MailerException extends Exception
     const InvalidAttachment             = 9;
     const InvalidMailer                 = 10;
 
+    static protected $errorMessageMappings = array(
+        self::ResourceNotFound              => 'LBL_INTERNAL_ERROR',
+        self::InvalidConfiguration          => 'LBL_INVALID_CONFIGURATION',
+        self::InvalidHeader                 => 'LBL_INVALID_HEADER',
+        self::InvalidEmailAddress           => 'LBL_INVALID_EMAIL',
+        self::FailedToSend                  => 'LBL_INTERNAL_ERROR',
+        self::FailedToConnectToRemoteServer => 'LBL_FAILED_TO_CONNECT',
+        self::FailedToTransferHeaders       => 'LBL_INTERNAL_ERROR',
+        self::InvalidAttachment             => 'LBL_INVALID_ATTACHMENT',
+        self::InvalidMailer                 => 'LBL_INTERNAL_ERROR',
+    );
+
     public function getLogMessage() {
         return "MailerException - @(" . basename($this->getFile()) . ":" .  $this->getLine() . " [" . $this->getCode() . "]" . ") - " . $this->getMessage();
     }
     public function getTraceMessage() {
         return "MailerException: (Trace)\n" . $this->getTraceAsString();
+    }
+    public function getUserFriendlyMessage() {
+        $moduleName = 'Emails';
+        if (isset(self::$errorMessageMappings[$this->getCode()])) {
+            $exception_code = self::$errorMessageMappings[$this->getCode()];
+        }
+        if (empty($exception_code)) {
+            $exception_code = 'LBL_INTERNAL_ERROR'; //use generic message if a user-friendly version is not available
+        }
+        return translate($exception_code, $moduleName);
     }
 }

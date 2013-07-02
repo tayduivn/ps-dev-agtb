@@ -484,33 +484,6 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
         OutboundEmailConfigurationTestHelper::tearDown();
     }
-
-    public function testGetErrorMessage_ErrorCodeExists_ReturnsMappedModuleString()
-    {
-        global $mod_string;
-        $expected                         = 'bar';
-        $mod_string['LBL_INTERNAL_ERROR'] = $expected;
-
-        $mailRecord = new MailRecordCaller();
-
-        $exception = new MailerException('foo', MailerException::FailedToSend);
-        $result    = $mailRecord->getErrorMessageCaller($exception);
-
-        $this->assertEquals($expected, $result, 'Should map to the correct error message');
-        unset($mod_string['LBL_INTERNAL_ERROR']);
-    }
-
-    public function testGetErrorMessage_ErrorCodeDoesNotExist_ReturnsErrorMessage()
-    {
-        $expected = 'foo';
-
-        $mailRecord = new MailRecordCaller();
-
-        $exception = new MailerException($expected, 99999);
-        $result    = $mailRecord->getErrorMessageCaller($exception);
-
-        $this->assertEquals($expected, $result, 'Should return the specified error message in the exception');
-    }
 }
 
 class MailRecordCaller extends MailRecord
@@ -525,11 +498,6 @@ class MailRecordCaller extends MailRecord
     public function addAttachmentsCaller($attachments = array(), $isDocuments = false)
     {
         return $this->addAttachments($attachments, $isDocuments);
-    }
-
-    public function getErrorMessageCaller($exception)
-    {
-        return $this->getErrorMessage($exception);
     }
 
     public function setSendRequestCaller(

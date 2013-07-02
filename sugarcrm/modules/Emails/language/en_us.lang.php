@@ -414,5 +414,7 @@ $mod_strings = array (
     'LBL_INVALID_EMAIL' => 'Please provide correct email addresses.',
     'LBL_FAILED_TO_CONNECT' => 'Could not connect to the email server. Please make sure that email configuration has been setup correctly.',
     'LBL_INVALID_ATTACHMENT' => 'Could not attach the file provided. Please try again.',
+    'LBL_MISSING_CONFIGURATION' => 'Email configuration was not specified. Please provide a valid email configuration.',
+    'LBL_INVALID_MAILAPI_STATUS' => 'Invalid email status was sent on the request. Please provide a valid status.',
 );
 

@@ -51,7 +51,11 @@ class PHPMailerProxy extends PHPMailer
             $this->smtp = new SMTPProxy;
         }
 
-        return parent::SmtpConnect($options);
+        $result = parent::SmtpConnect($options);
+        if ($result === false) {
+            throw new phpmailerException($this->Lang('smtp_connect_failed'), self::STOP_CRITICAL);
+        }
+        return $result;
     }
 
     public function SetError($msg)
