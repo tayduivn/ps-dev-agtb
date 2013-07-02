@@ -73,7 +73,6 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'bwcLink' => true,
                     'name' => 'assigned_user_name',
                     'module' => 'Users',
                     'width' => 14,

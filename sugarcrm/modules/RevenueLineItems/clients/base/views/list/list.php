@@ -193,7 +193,6 @@ $fields = array(
         'label' => 'LBL_ASSOCIATED_QUOTE',
         'related_fields' => array('quote_id'),
         'readonly' => true,
-        'bwcLink' => true,
         'enabled' => true,
         'default' => true,
     ),

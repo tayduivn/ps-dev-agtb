@@ -14,6 +14,26 @@
                 }
             });
         },
+
+        /**
+         * Translates an action to a BWC action.
+         *
+         * If the action wasn't found to be translated, the given action is
+         * returned.
+         *
+         * @param {String} action The action to translate to a BWC one.
+         * @return {String} The BWC equivalent action.
+         */
+        getAction: function(action) {
+            var bwcActions = {
+                'create': 'EditView',
+                'edit': 'EditView',
+                'detail': 'DetailView'
+            };
+
+            return bwcActions[action] || action;
+        },
+
         /**
           * Builds a backwards compatible route. For example:
           * bwc/index.php?module=MyModule&action=DetailView&record12345

@@ -37,15 +37,6 @@
         }
         return result;
     },
-    //Overriden methods to get related module and id and anything specific to parent.js
-    _buildRoute: function() {
-        var module, idName;
-        if (!this.value || this.value !== this.hiddenValue) {
-            module = this.getSearchModule();
-            idName = this._getRelateId();
-            app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'buildRoute', args: [module, idName]});
-        }
-    },
     _getRelateId: function() {
         return this.model.get("parent_id");
     },

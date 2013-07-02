@@ -21,7 +21,6 @@
      */
     initialize: function (options) {
         this.minChars = options.def.minChars || this.minChars;
-        this.bwcLink = options.def.bwcLink;//false is a perfectly valid value for this boolean metadata property!
         app.view.Field.prototype.initialize.call(this, options);
         var populateMetadata = app.metadata.getModule(this.getSearchModule());
 
@@ -146,28 +145,20 @@
         return result;
     },
 
-    //First checks if there's a bwcLink on the field (the bwcLink property allows overriding which module will be used;
-    //e.g. we can point an assigned_user_name (Users) to an Employees detail view). If no bwcLink exists, we "fallback"
-    //checking top level of the related module's meta for isBwcEnabled. For either of these cases, we create bwc route.
-    //If, for some reason, the meta value for bwcLink is explicitly set to false, isBwcEnabled will be ignored.
-    buildRoute: function (module, idName) {
-        var moduleMeta = app.metadata.getModule(module) || {};//fallback so we don't clutter tests with stubs ;)
-        if (this.bwcLink || (this.def.bwcLink !== false && moduleMeta.isBwcEnabled)) {
-            this.href = '#' + app.bwc.buildRoute(module, idName, 'DetailView');
-        } else {
-            //Normal Sidecar route
-            this.href = '#' + app.router.buildRoute(module, idName);
-        }
+    /**
+     * Builds the route for the relate module's record.
+     * @param {String} module The related module.
+     * @param {String} id The record id to link to.
+     *
+     * TODO since base.js has a build href, we should try to reuse code or
+     * extend this one from other "link" field
+     */
+    buildRoute: function (module, id) {
+        this.href = '#' + app.router.buildRoute(module, id);
     },
     //Derived controllers can override these if related module and id in another place
     _buildRoute: function () {
-        var module, idName;
-        module = this._getRelateModule();
-        idName = this._getRelateId();
-        this.buildRoute(module, idName);
-    },
-    _getRelateModule: function () {
-        return this.def.module;
+        this.buildRoute(this.getSearchModule(), this._getRelateId());
     },
     _getRelateId: function () {
         return this.model.get(this.def.id_name);
