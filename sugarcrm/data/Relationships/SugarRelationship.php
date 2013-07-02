@@ -541,7 +541,7 @@ abstract class SugarRelationship
      */
     public static function resaveRelatedBeans()
     {
-        if(!SugarBean::enterOperation('saving_related')) {
+        if (!SugarBean::enterOperation('saving_related')) {
             return;
         }
 
