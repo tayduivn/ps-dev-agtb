@@ -24,19 +24,20 @@
 
 require_once('modules/Emails/EmailRecipientsService.php');
 
-
 /**
  * @group functional
  * @group email
  */
 class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $emailRecipientsService;
+    private $emailRecipientsService,
+            $salt;
 
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
         $this->emailRecipientsService = new EmailRecipientsService;
+        $this->salt = create_guid();
     }
 
     public function tearDown()
@@ -72,7 +73,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFindCount_SearchAllModulesForTerm_ReturnsTwo()
     {
         $this->createRecipientsAcrossModules();
-        $term     = "sam_";
+        $term     = "{$this->salt}_sam_";
         $expected = 2;
         $actual   = $this->emailRecipientsService->findCount($term);
         $this->assertEquals($expected, $actual, "Should have found {$expected} recipients who matched {$term}.");
@@ -81,7 +82,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFindCount_SearchContactsForTerm_ReturnsOne()
     {
         $this->createRecipientsAcrossModules();
-        $term     = "jiminy_";
+        $term     = "{$this->salt}_jiminy_";
         $module   = "contacts";
         $expected = 1;
         $actual   = $this->emailRecipientsService->findCount($term, $module);
@@ -91,7 +92,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFind_SearchAllModulesForTerm_ReturnsTwo()
     {
         $this->createRecipientsAcrossModules();
-        $term     = "sam_";
+        $term     = "{$this->salt}_sam_";
         $expected = 2;
         $actual   = count($this->emailRecipientsService->find($term));
         $this->assertEquals($expected, $actual, "Should have found {$expected} recipients who matched {$term}.");
@@ -100,7 +101,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFind_SearchContactsForTerm_ReturnsOne()
     {
         $this->createRecipientsAcrossModules();
-        $term     = "jiminy_";
+        $term     = "{$this->salt}_jiminy_";
         $module   = "contacts";
         $expected = 1;
         $actual   = count($this->emailRecipientsService->find($term, $module));
@@ -110,7 +111,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFind_SearchContactsForTermWithLimit_ReturnsOne()
     {
         $this->createRecipientsAcrossModules();
-        $term     = "sam_";
+        $term     = "{$this->salt}_sam_";
         $module   = "contacts";
         $orderBy  = array();
         $expected = 1;
@@ -121,13 +122,13 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFind_SearchAccountsForTermAndOrderByEmailAsc_ReturnsSortedMatchingAccounts()
     {
         $this->createRecipientsAcrossModules();
-        $term        = "account.";
+        $term        = "{$this->salt}_";
         $module      = "accounts";
         $orderBy     = array("email" => "ASC");
         $limit       = 3;
         $recipients  = $this->emailRecipientsService->find($term, $module, $orderBy, $limit);
 
-        $expected = "account.my@yahoo.com";
+        $expected = "{$this->salt}_my_account@yahoo.com";
         $actual   = $recipients[0]["email"];
         $this->assertEquals(
             $expected,
@@ -135,7 +136,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
             "Should have sorted the recipients such that the recipient with the email address '{$expected}' was first."
         );
 
-        $expected = "account.that@yahoo.com";
+        $expected = "{$this->salt}_that_account@yahoo.com";
         $actual   = $recipients[1]["email"];
         $this->assertEquals(
             $expected,
@@ -143,7 +144,7 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
             "Should have sorted the recipients such that the recipient with the email address '{$expected}' was second."
         );
 
-        $expected = "account.this@yahoo.com";
+        $expected = "{$this->salt}_this_account@yahoo.com";
         $actual   = $recipients[2]["email"];
         $this->assertEquals(
             $expected,
@@ -378,53 +379,53 @@ class EmailRecipientsServiceTest extends Sugar_PHPUnit_Framework_TestCase
             array(
                 "type"  => "accounts",
                 "name"  => "This Account",
-                "email" => "account.this@yahoo.com",
+                "email" => "{$this->salt}_this_account@yahoo.com",
             ),
             array(
                 "type"  => "accounts",
                 "name"  => "My Account",
-                "email" => "account.my@yahoo.com",
+                "email" => "{$this->salt}_my_account@yahoo.com",
             ),
             array(
                 "type"  => "accounts",
                 "name"  => "That Account",
-                "email" => "account.that@yahoo.com",
+                "email" => "{$this->salt}_that_account@yahoo.com",
             ),
             array(
                 "type"       => "contacts",
                 "first_name" => "John",
                 "last_name"  => "Doe",
-                "email"      => "john_doe@yahoo.com",
+                "email"      => "{$this->salt}_john_doe@yahoo.com",
             ),
             array(
                 "type"       => "contacts",
                 "first_name" => "Sam",
                 "last_name"  => "The Sham",
-                "email"      => "sam_the_sham@yahoo.com",
+                "email"      => "{$this->salt}_sam_the_sham@yahoo.com",
             ),
             array(
                 "type"       => "contacts",
                 "first_name" => "Jiminy",
                 "last_name"  => "Crickett",
-                "email"      => "jiminy_crickett@gmail.com",
+                "email"      => "{$this->salt}_jiminy_crickett@gmail.com",
             ),
             array(
                 "type"       => "leads",
                 "first_name" => "Davey",
                 "last_name"  => "Crockett",
-                "email"      => "davey_crockett@alamo.com",
+                "email"      => "{$this->salt}_davey_crockett@alamo.com",
             ),
             array(
                 "type"       => "leads",
                 "first_name" => "Jim",
                 "last_name"  => "Bowie",
-                "email"      => "jim_bowie@alamo.com",
+                "email"      => "{$this->salt}_jim_bowie@alamo.com",
             ),
             array(
                 "type"       => "leads",
                 "first_name" => "Sam",
                 "last_name"  => "Houston",
-                "email"      => "sam_houston@alamo.com",
+                "email"      => "{$this->salt}_sam_houston@alamo.com",
             ),
         );
 
