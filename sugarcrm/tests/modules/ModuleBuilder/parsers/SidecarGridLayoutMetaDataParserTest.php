@@ -295,7 +295,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
             array('panel' => array(array('label' => 'Super Awesome Label', 'fields' => array())), 'expectation' => 'Super Awesome Label'),
             
             // Tests no label set but a panel name set
-            array('panel' => array(array('name' => 'panel_hidden', 'fields' => array())), 'expectation' => 'LBL_SHOW_MORE'),
+            array('panel' => array(array('name' => 'panel_hidden', 'fields' => array())), 'expectation' => 'LBL_RECORD_SHOWMORE'),
             array('panel' => array(array('name' => 'panel_header', 'fields' => array())), 'expectation' => 'LBL_RECORD_HEADER'),
             array('panel' => array(array('name' => 'panel_body', 'fields' => array())), 'expectation' => 'LBL_RECORD_BODY'),
             
