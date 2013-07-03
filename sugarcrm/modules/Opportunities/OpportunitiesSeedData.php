@@ -77,10 +77,7 @@ class OpportunitiesSeedData {
             /* @var $opp Opportunity */
             $opp = BeanFactory::getBean('Opportunities');
     
-            /* @var $rli RevenueLineItem */
-            $rli = BeanFactory::getBean('RevenueLineItems');
-            
-             //Create new opportunities
+            //Create new opportunities
             //BEGIN SUGARCRM flav=pro ONLY
             $opp->team_id = $account->team_id;
             $opp->team_set_id = $account->team_set_id;
@@ -135,7 +132,7 @@ class OpportunitiesSeedData {
             $rlis_to_create = 1;
             //end SUGARCRM flav=pro && flav!=ent ONLY
             //BEGIN SUGARCRM flav=ent ONLY
-            $rlis_to_create = rand(3, 10);
+            $rlis_to_create = rand(3, 5);
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             $rlis_created = 0;
@@ -153,6 +150,9 @@ class OpportunitiesSeedData {
                 $amount = rand(10000, 75000);
                 $rand_best_worst = rand(1000, 9000);
                 //END SUGARCRM flav=ent ONLY
+
+                /* @var $rli RevenueLineItem */
+                $rli = BeanFactory::getBean('RevenueLineItems');
                 
                 $rli->name = $opp->name;
                 $rli->best_case = $amount+$rand_best_worst;

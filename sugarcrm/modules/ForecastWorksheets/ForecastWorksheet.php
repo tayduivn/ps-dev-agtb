@@ -127,7 +127,13 @@ class ForecastWorksheet extends SugarBean
             'deleted',
             'team_id',
             'team_set_id',
-            'sales_status'
+            'sales_status',
+            'description',
+            'next_step',
+            'lead_source',
+            array('product_type' => 'opportunity_type'),
+            'campaign_id',
+            'campaign_name'
         );
 
         // load the account
@@ -246,7 +252,15 @@ class ForecastWorksheet extends SugarBean
             'team_id',
             'team_set_id',
             'opportunity_id',
-            'opportunity_name'
+            'opportunity_name',
+            'description',
+            'next_step',
+            'lead_source',
+            'product_type',
+            'campaign_id',
+            'campaign_name',
+            'product_template_id',
+            'product_template_name'
         );
 
         // load the account

@@ -73,7 +73,10 @@ $dictionary['ForecastWorksheet'] = array(
             'vname' => 'LBL_OPPORTUNITY_NAME',
             'type' => 'varchar',
             'len' => '255',
-            'studio' => false
+            'studio' => false,
+            'related_fields' => array(
+                'opportunity_id',
+            )
         ),
         'account_name' =>
         array(
@@ -94,6 +97,42 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'id',
             'audited' => false,
             'studio' => false
+        ),
+        'campaign_id' => array(
+            'name' => 'campaign_id',
+            'vname' => 'LBL_CAMPAIGN_ID',
+            'type' => 'id',
+            'audited' => false,
+            'studio' => false
+        ),
+        'campaign_name' => array(
+            'name' => 'campaign_name',
+            'id_name' => 'campaign_id',
+            'vname' => 'LBL_CAMPAIGN',
+            'type' => 'varchar',
+            'len' => '255',
+            'module' => 'Campaigns',
+            'related_fields' => array(
+                'campaign_id',
+            )
+        ),
+        'product_template_id' => array(
+            'name' => 'product_template_id',
+            'vname' => 'LBL_PRODUCT_TEMPLATE_ID',
+            'type' => 'id',
+            'audited' => false,
+            'studio' => false
+        ),
+        'product_template_name' => array(
+            'name' => 'product_template_name',
+            'id_name' => 'product_template_id',
+            'vname' => 'LBL_PRODUCT',
+            'type' => 'varchar',
+            'len' => '255',
+            'module' => 'ProductTemplates',
+            'related_fields' => array(
+                'product_template_id',
+            )
         ),
         'sales_status' => array(
             'name' => 'sales_status',
@@ -263,6 +302,33 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'int',
             'comment' => 'Is A Draft Version',
             'studio' => false
+        ),
+        'next_step' => array(
+            'name' => 'next_step',
+            'vname' => 'LBL_NEXT_STEP',
+            'type' => 'varchar',
+            'len' => '100',
+            'comment' => 'The next step in the sales process',
+            'merge_filter' => 'enabled',
+        ),
+        'lead_source' => array(
+            'name' => 'lead_source',
+            'vname' => 'LBL_LEAD_SOURCE',
+            'type' => 'enum',
+            'options' => 'lead_source_dom',
+            'len' => '50',
+            'comment' => 'Source of the product',
+            'merge_filter' => 'enabled',
+        ),
+        'product_type' => array(
+            'name' => 'product_type',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'options' => 'opportunity_type_dom',
+            'len' => '255',
+            'audited' => true,
+            'comment' => 'Type of product ( from opportunities opportunity_type ex: Existing, New)',
+            'merge_filter' => 'enabled',
         ),
         'parent_deleted' =>
         array(
