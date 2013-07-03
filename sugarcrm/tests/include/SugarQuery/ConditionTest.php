@@ -98,11 +98,6 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $this->opportunity_bean = BeanFactory::newBean('Opportunities');
     }
 
-    public function tearDown()
-    {
-
-    }
-
     public function testEquals()
     {
         $sq = new SugarQuery();

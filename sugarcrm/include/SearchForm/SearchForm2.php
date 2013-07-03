@@ -840,7 +840,6 @@ require_once('include/EditView/EditView2.php');
                              if ($type == 'relate' && !empty($this->seed->field_name_map[$field]['link'])
                                  && !empty($this->seed->field_name_map[$field]['rname'])) {
                                      $link = $this->seed->field_name_map[$field]['link'];
-                                     $relname = $link['relationship'];
                                      if (($this->seed->load_relationship($link))){
                                          //Martin fix #27494
                                          $db_field = $this->seed->field_name_map[$field]['name'];
