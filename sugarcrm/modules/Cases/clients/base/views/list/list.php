@@ -39,6 +39,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_NUMBER',
                     'width' =>  5,
                     'default' => true,
+                    'enabled' => true,
                 ),
                 array(
                     'name' => 'name',
@@ -46,6 +47,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'width' =>  25,
                     'link' => true,
                     'default' => true,
+                    'enabled' => true,
                 ),
                 array(
                     'name' => 'account_name',
@@ -57,6 +59,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'related_fields' => array('account_id'),
                     'link' => true,
                     'default' => true,
+                    'enabled' => true,
                     'sortable' => false,
                 ),
                 array(
@@ -64,12 +67,14 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_PRIORITY',
                     'width' =>  10,
                     'default' => true,
+                    'enabled' => true,
                 ),
                 array(
                     'name' => 'status',
                     'label' => 'LBL_STATUS',
                     'width' =>  10,
                     'default' => true,
+                    'enabled' => true,
                 ),
                 array(
                     'name' => 'assigned_user_name',
@@ -77,13 +82,15 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'width' =>  10,
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
+                    'enabled' => true,
                     'sortable' => false,
                 ),
-                array (
+                array(
                     'name' => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'width' => 10,
                     'default' => true,
+                    'enabled' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -91,6 +98,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_TEAM',
                     'width' =>  10,
                     'default' => false,
+                    'enabled' => true,
                     'sortable' => false,
                 ),
                 //END SUGARCRM flav=pro ONLY

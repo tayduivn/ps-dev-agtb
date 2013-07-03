@@ -56,13 +56,23 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
-                array (
+                array(
                     'name' => 'end_date',
                     'width' => 13,
                     'label' => 'LBL_LIST_END_DATE',
                     'default' => true,
+                    'enabled' => true,
                 ),
-                array (
+                //BEGIN SUGARCRM flav=pro ONLY
+                array(
+                    'name' => 'team_name',
+                    'width' => '15', 
+                    'label' => 'LBL_LIST_TEAM',
+                    'default' => false,
+                    'enabled' => true,
+                ),
+                //END SUGARCRM flav=pro ONLY
+                array(
                     'bwcLink' => true,
                     'name' => 'assigned_user_name',
                     'module' => 'Users',
@@ -71,8 +81,9 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'sortable' => false,
                     'default' => true,
+                    'enabled' => true,
                 ),
-                array (
+                array(
                     'name' => 'date_entered',
                     'type' => 'datetime',
                     'label' => 'LBL_DATE_ENTERED',
