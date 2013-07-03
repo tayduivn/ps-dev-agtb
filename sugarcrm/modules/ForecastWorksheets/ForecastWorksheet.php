@@ -44,6 +44,19 @@ class ForecastWorksheet extends SugarBean
     public $disable_custom_fields = true;
     public $opportunity_id;
     public $opportunity_name;
+    public $product_template_id;
+    public $product_template_name;
+    public $next_step;
+    public $lead_source;
+    public $description;
+    public $category_id;
+    public $category_name;
+    public $list_price;
+    public $cost_price;
+    public $discount_price;
+    public $discount_amount;
+    public $quantity;
+    public $total_amount;
 
     /**
      * Update the real table with the values when a save happens on the front end
@@ -260,7 +273,15 @@ class ForecastWorksheet extends SugarBean
             'campaign_id',
             'campaign_name',
             'product_template_id',
-            'product_template_name'
+            'product_template_name',
+            'category_id',
+            'category_name',
+            'list_price',
+            'cost_price',
+            'discount_price',
+            'discount_amount',
+            'quantity',
+            'total_amount'
         );
 
         // load the account
@@ -271,6 +292,16 @@ class ForecastWorksheet extends SugarBean
         // load the opportunity
         if (empty($this->opportunity_name) && !empty($rli->opportunity_id)) {
             $rli->opportunity_name = $this->getRelatedName('Opportunities', $rli->opportunity_id);
+        }
+
+        // Product Template
+        if (empty($this->product_template_name) && !empty($rli->product_template_id)) {
+            $rli->product_template_name = $this->getRelatedName('ProductTemplates', $rli->product_template_id);
+        }
+
+        // Product Category
+        if (empty($this->category_name) && !empty($rli->category_id)) {
+            $rli->category_name = $this->getRelatedName('ProductCategories', $rli->category_id);
         }
 
         $this->copyValues($fields, $rli);

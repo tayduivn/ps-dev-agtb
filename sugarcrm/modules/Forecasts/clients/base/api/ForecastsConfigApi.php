@@ -126,7 +126,7 @@ class ForecastsConfigApi extends ConfigModuleApi
         $current_forecasts_settings = parent::configSave($api, $args);
 
         // did this change?
-        if ($prior_forecasts_settings['worksheet_columns'] !== $args['worksheet_columsn']) {
+        if ($prior_forecasts_settings['worksheet_columns'] !== $args['worksheet_columns']) {
             $this->setWorksheetColumns($api, $args['worksheet_columns']);
         }
 
@@ -198,7 +198,7 @@ class ForecastsConfigApi extends ConfigModuleApi
      * @param ServiceBase $api
      * @param $worksheetColumns
      */
-    protected function setWorksheetColumns(ServiceBase $api, $worksheetColumns)
+    public function setWorksheetColumns(ServiceBase $api, $worksheetColumns)
     {
         require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
         $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, 'ForecastWorksheets', null, null, $api->platform);
@@ -210,7 +210,7 @@ class ForecastsConfigApi extends ConfigModuleApi
         $fields = $views['forecastsConfigWorksheetColumns']['meta']['panels'][0]['fields'];
 
         $cteable = array(
-            'commit_sage',
+            'commit_stage',
             'worst_case',
             'likely_case',
             'best_case',
@@ -222,7 +222,12 @@ class ForecastsConfigApi extends ConfigModuleApi
         $currency_fields = array(
             'worst_case',
             'likely_case',
-            'best_case'
+            'best_case',
+            'list_price',
+            'cost_price',
+            'discount_price',
+            'discount_amount',
+            'total_amount'
         );
 
         foreach ($fields as $field) {

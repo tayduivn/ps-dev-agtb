@@ -125,24 +125,28 @@ if(empty($dollar_id)) {
 global $manufacturer_id_arr;
 $first_name_max = $first_name_count - 1;
 
+    $cost = rand(300, 600);
+    $list = rand(700, 1000);
+    $discount = rand($list-200, $list-50);
+
 	$template = new ProductTemplate();
 	$template->name = $first_name_array[mt_rand(0,$first_name_max)] .$sugar_demodata['product_ext_name'];
 	$template->tax_class = "Taxable";
 	$template->manufacturer_id = $manufacturer_id_arr[0];
 	$template->currency_id = $dollar_id;
-	$template->cost_price = 500.00;
-	$template->cost_usdollar = 500.00;
-	$template->list_price = 800.00;
-	$template->list_usdollar = 800.00;
-	$template->discount_price = 700.00;
-	$template->discount_usdollar = 700.00;
+	$template->cost_price = $cost;
+	$template->cost_usdollar = $cost;
+	$template->list_price = $list;
+	$template->list_usdollar = $list;
+	$template->discount_price = $discount;
+	$template->discount_usdollar = $discount;
 	$template->pricing_formula = "IsList";
 	$template->mft_part_num = $company_name_array[mt_rand(0,$company_name_count-1)].' '.mt_rand(1,1000000) ."XYZ987";
 	$template->pricing_factor = "1";
 	$template->status = "Available";
-	$template->weight = 20.0;
+	$template->weight = rand(10, 40);
 	$template->date_available = "2004-10-15";
-	$template->qty_in_stock = "72";
+	$template->qty_in_stock = rand(0, 150);
 	$template->category_id = $category_id;
 	$template->save();
 

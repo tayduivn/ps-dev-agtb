@@ -321,9 +321,20 @@ echo "<br>";
   //END SUGARCRM lic=sub ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
-    //Intall forecasts configuration
+    //Install forecasts configuration
     require_once('modules/Forecasts/ForecastsDefaults.php');
-    ForecastsDefaults::setupForecastSettings();
+    $forecast_config = ForecastsDefaults::setupForecastSettings();
+
+    // setup the forecast columns based on the config
+    require_once('include/api/RestService.php');
+    $api = new RestService();
+    $api->user = $GLOBALS['current_user'];
+    $api->platform = 'base';
+    require_once('modules/Forecasts/clients/base/api/ForecastsConfigApi.php');
+    $client = new ForecastsConfigApi();
+    $client->setWorksheetColumns($api, $forecast_config['worksheet_columns']);
+
+    unset($api, $client, $forecast_config);
     //END SUGARCRM flav=pro ONLY
 
     installerHook('pre_createUsers');

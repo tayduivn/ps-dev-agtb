@@ -58,9 +58,14 @@
     totals: {},
 
     /**
-     * Totals Colspan
+     * Before W/L/B Columns Colspan
      */
-    totals_colspan: 0,
+    before_colspan: 0,
+
+    /**
+     * After W/L/B Columns Colspan
+     */
+    after_colspan: 0,
 
     /**
      * Selected User Storage
@@ -149,6 +154,11 @@
                 }, this);
                 this.on('render', function() {
                     this.renderCallback();
+                }, this);
+
+                this.on('list:toggle:column', function(column, isVisible, columnMeta) {
+                    // if we hide or show a column, recalculate totals
+                    this.calculateTotals();
                 }, this);
 
                 this.context.parent.on('forecasts:worksheet:totals', function(totals, type) {
@@ -404,8 +414,6 @@
 
             // insert the footer
             if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
-                // recalculate totals colspan
-                this.calculateTotalsColspan();
                 var tpl = app.template.getView('recordlist.totals', this.module);
                 this.$el.find('tbody').after(tpl(this));
             }
@@ -596,27 +604,26 @@
     },
 
     /**
-     * Calculate the totals colspan for the visible fields
-     */
-    calculateTotalsColspan: function() {
-        this.totals_colspan = this._fields.visible.length;
-        _.each(this._fields.visible, function(field) {
-            if(field.type === 'currency') {
-                this.totals_colspan--;
-            }
-        }, this);
-    },
-
-    /**
      * Calculate the totals for the visible fields
      */
     calculateTotals: function() {
-        var fields = _.filter(this._fields.visible, function(field) {
-                return field.type === 'currency';
+
+        var calcFields = ['worst_case', 'best_case', 'likely_case'],
+            fields = _.filter(this._fields.visible, function(field) {
+                return _.contains(calcFields, field.name);
             }),
             fieldNames = [];
 
-        this.calculateTotalsColspan();
+        // loop though all the fields and find where the worst/likely/best start at
+        for(var x=0; x<this._fields.visible.length; x++){
+            var f = this._fields.visible[x];
+            if (_.contains(calcFields, f.name)) {
+                break;
+            }
+        }
+
+        this.before_colspan = x;
+        this.after_colspan = (this._fields.visible.length-(x+fields.length));
         _.each(fields, function(field) {
             fieldNames.push(field.name);
             this.totals[field.name] = 0;

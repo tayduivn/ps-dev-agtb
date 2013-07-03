@@ -70,8 +70,10 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'opportunity_name',
             'id_name' => 'opportunity_id',
+            'module' => 'Opportunities',
             'vname' => 'LBL_OPPORTUNITY_NAME',
-            'type' => 'varchar',
+            'type' => 'relate',
+            'dbType' => 'varchar',
             'len' => '255',
             'studio' => false,
             'related_fields' => array(
@@ -82,8 +84,10 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'account_name',
             'id_name' => 'account_id',
+            'module' => 'Accounts',
             'vname' => 'LBL_ACCOUNT_NAME',
-            'type' => 'varchar',
+            'type' => 'relate',
+            'dbType' => 'varchar',
             'len' => '255',
             'studio' => false,
             'related_fields' => array(
@@ -109,7 +113,8 @@ $dictionary['ForecastWorksheet'] = array(
             'name' => 'campaign_name',
             'id_name' => 'campaign_id',
             'vname' => 'LBL_CAMPAIGN',
-            'type' => 'varchar',
+            'type' => 'relate',
+            'dbType' => 'varchar',
             'len' => '255',
             'module' => 'Campaigns',
             'related_fields' => array(
@@ -127,11 +132,31 @@ $dictionary['ForecastWorksheet'] = array(
             'name' => 'product_template_name',
             'id_name' => 'product_template_id',
             'vname' => 'LBL_PRODUCT',
-            'type' => 'varchar',
+            'type' => 'relate',
+            'dbType' => 'varchar',
             'len' => '255',
             'module' => 'ProductTemplates',
             'related_fields' => array(
                 'product_template_id',
+            )
+        ),
+        'category_id' =>  array(
+            'name' => 'category_id',
+            'vname' => 'LBL_CATEGORY',
+            'type' => 'id',
+            'required' => false,
+            'reportable' => true,
+        ),
+        'category_name' =>  array(
+            'name' => 'category_name',
+            'id_name' => 'category_id',
+            'vname' => 'LBL_CATEGORY_NAME',
+            'type' => 'relate',
+            'module' => 'ProductCategories',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'related_fields' => array(
+                'category_id'
             )
         ),
         'sales_status' => array(
@@ -329,6 +354,53 @@ $dictionary['ForecastWorksheet'] = array(
             'audited' => true,
             'comment' => 'Type of product ( from opportunities opportunity_type ex: Existing, New)',
             'merge_filter' => 'enabled',
+        ),
+        'list_price' =>  array(
+            'name' => 'list_price',
+            'vname' => 'LBL_LIST_PRICE',
+            'type' => 'currency',
+            'len' => '26,6',
+            'audited' => true,
+            'comment' => 'List price of product ("List" in Quote)'
+        ),
+        'cost_price' =>  array(
+            'name' => 'cost_price',
+            'vname' => 'LBL_COST_PRICE',
+            'type' => 'currency',
+            'len' => '26,6',
+            'audited' => true,
+            'comment' => 'Product cost ("Cost" in Quote)'
+        ),
+        'discount_price' =>  array(
+            'name' => 'discount_price',
+            'vname' => 'LBL_DISCOUNT_PRICE',
+            'type' => 'currency',
+            'len' => '26,6',
+            'audited' => true,
+            'comment' => 'Discounted price ("Unit Price" in Quote)'
+        ),
+        'discount_amount' =>  array(
+            'name' => 'discount_amount',
+            'vname' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
+            'type' => 'currency',
+            'options' => 'discount_amount_class_dom',
+            'len' => '26,6',
+            'precision' => 6,
+            'comment' => 'Discounted amount'
+        ),
+        'quantity' =>  array(
+            'name' => 'quantity',
+            'vname' => 'LBL_QUANTITY',
+            'type' => 'int',
+            'len' => 5,
+            'comment' => 'Quantity in use',
+            'default' => 1
+        ),
+        'total_amount' => array(
+            'name' => 'total_amount',
+            'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
+            'reportable' => false,
+            'type' => 'currency'
         ),
         'parent_deleted' =>
         array(

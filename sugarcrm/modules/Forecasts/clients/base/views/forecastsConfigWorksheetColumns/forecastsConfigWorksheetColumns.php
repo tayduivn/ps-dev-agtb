@@ -167,7 +167,7 @@ $fields = array(
     ),
     array(
         'name' => 'discount_amount',
-        'label' => 'LBL_DISCOUNT',
+        'label' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
     ),
     array(
         'name' => 'quantity',
@@ -182,10 +182,6 @@ $fields = array(
         'name' => 'total_amount',
         'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
         'label_module' => 'RevenueLineItems'
-    ),
-    array(
-        'name' => 'sales_status',
-        'label' => 'LBL_OPPORTUNITY_STATUS',
     ),
     array(
         'name' => 'product_type',
