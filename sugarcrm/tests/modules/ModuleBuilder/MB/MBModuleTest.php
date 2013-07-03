@@ -16,13 +16,23 @@ require_once 'modules/ModuleBuilder/MB/MBModule.php';
 
 class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $moduleName = 'superAwesomeModule';
+    protected $packageKey = 'sap';
+    protected $mbModuleName;
+    protected $target;
+    protected $path;
+    
     protected function setUp()
     {
         SugarTestHelper::setUp('current_user');
+        $this->mbModuleName = "{$this->packageKey}_{$this->moduleName}";
+        $this->path = "modules/{$this->moduleName}";
+        $this->target = "$this->path/clients/base/menus/header/header.php";
     }
 
     protected function tearDown()
     {
+        @unlink($this->target);
         SugarTestHelper::tearDown();
     }
 
@@ -31,53 +41,80 @@ class MBModuleTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCreateMenu()
     {
-        $moduleName = 'superAwesomeModule';
-        $packageKey = 'sap';
-        $mbModuleName = "{$packageKey}_{$moduleName}";
-        $importRoute = http_build_query(
-            array(
-                'module' => 'Import',
-                'action' => 'Step1',
-                'import_module' => $mbModuleName,
-                'return_module' => $mbModuleName,
-                'return_action' => 'index',
-            )
-        );
+        $expectedArray = $this->getExpectedActionItems();
+
+        $mb = new MBModule($this->moduleName, "modules/{$this->moduleName}", 'superAwesomePackage', $this->packageKey);
+        $mb->config['importable'] = false;
+        $mb->createMenu($this->path);
+        
+        // Assertions
+        $this->assertFileExists($this->target);
+
+        include $this->target;
+
+        $menu = $viewdefs[$this->mbModuleName]['base']['menu']['header'];
+        $this->assertEquals($expectedArray, $menu);
+    }
+    
+    /**
+     * @covers MBModule::createMenu
+     */
+    public function testCreateMenuWithImport()
+    {
+        $expectedArray = $this->getExpectedActionItems(true);
+
+        $mb = new MBModule($this->moduleName, "modules/{$this->moduleName}", 'superAwesomePackage', $this->packageKey);
+        $mb->config['importable'] = true;
+        $mb->createMenu($this->path);
+        
+        // Assertions
+        $this->assertFileExists($this->target);
+
+        include $this->target;
+
+        $menu = $viewdefs[$this->mbModuleName]['base']['menu']['header'];
+        $this->assertEquals($expectedArray, $menu);
+    }
+    
+    protected function getExpectedActionItems($import = false)
+    {
         $expectedArray = array(
             array(
-                'route' => "#$mbModuleName/create",
+                'route' => "#{$this->mbModuleName}/create",
                 'label' => 'LNK_NEW_RECORD',
                 'acl_action' => 'create',
-                'acl_module' => $mbModuleName,
+                'acl_module' => $this->mbModuleName,
                 'icon' => 'icon-plus',
             ),
             array(
-                'route' => "#$mbModuleName",
+                'route' => "#{$this->mbModuleName}",
                 'label' => 'LNK_LIST',
                 'acl_action' => 'list',
-                'acl_module' => $mbModuleName,
+                'acl_module' => $this->mbModuleName,
                 'icon' => 'icon-reorder',
             ),
-            array(
+        );
+            
+        if ($import) {
+            $importRoute = http_build_query(
+                array(
+                    'module' => 'Import',
+                    'action' => 'Step1',
+                    'import_module' => $this->mbModuleName,
+                    'return_module' => $this->mbModuleName,
+                    'return_action' => 'index',
+                )
+            );
+            
+            $expectedArray[] = array(
                 'route' => "#bwc/index.php?{$importRoute}",
                 'label' => 'LBL_IMPORT',
                 'acl_action' => 'import',
-                'acl_module' => $mbModuleName,
+                'acl_module' => $this->mbModuleName,
                 'icon' => '',
-            ),
-        );
-
-        $mb = new MBModule($moduleName, "modules/{$moduleName}", 'superAwesomePackage', $packageKey);
-        $mb->config['importable'] = true;
-        $path = "modules/{$moduleName}";
-        $mb->createMenu($path);
-        $target = "$path/clients/base/menus/header/header.php";
-        $this->assertFileExists($target);
-
-        include $target;
-
-        $menu = $viewdefs[$mbModuleName]['base']['menu']['header'];
-        $this->assertEquals($expectedArray, $menu);
-        unlink($target);
+            );
+        }
+        
+        return $expectedArray;
     }
 }
