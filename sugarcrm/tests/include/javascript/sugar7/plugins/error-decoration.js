@@ -2,10 +2,11 @@ describe("Plugins.ErrorDecoration", function() {
     var moduleName = 'Cases',
         app,
         viewName = 'record',
-        view;
-
+        view,
+        clock;
 
     beforeEach(function() {
+        clock = sinon.useFakeTimers();
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadComponent('base', 'field', 'base');
@@ -36,7 +37,7 @@ describe("Plugins.ErrorDecoration", function() {
                             [{name: "type", type: "text", label: "type", span: 8, labelSpan: 4}]
                         ],
                         lastTabIndex: 0
-                    }
+                    };
                 }
             };
         };
@@ -46,8 +47,9 @@ describe("Plugins.ErrorDecoration", function() {
         SugarTest.testMetadata.dispose();
         SugarTest.app.view.reset();
         view = null;
+        clock.restore();
     });
-    xdescribe('decorating fields', function() {
+    describe('decorating fields', function() {
         it("should call decorateError on field during 'error:validation:field' event", function(){
             view.render();
             view.model.set({
@@ -62,11 +64,10 @@ describe("Plugins.ErrorDecoration", function() {
             //Simulate a 'required' error on description field
             view.model.trigger('error:validation:description', {required : true});
 
-            //Defer expectations since decoration is deferred
-            _.defer(function(stub){
-                expect(stub.calledWithExactly({required: true})).toBe(true);
-                stub.restore();
-            }, stub);
+            //Use sinon clock to delay expectations since decoration is deferred
+            clock.tick(20);
+            expect(stub.calledWithExactly({required: true})).toBe(true);
+            stub.restore();
         });
 
         it("should call clearErrorDecoration on each field", function(){
@@ -84,11 +85,10 @@ describe("Plugins.ErrorDecoration", function() {
             //Unit test
             view.clearValidationErrors(_.toArray(view.fields));
 
-            //Defer expectations since decoration is deferred
-            _.defer(function(stub){
-                expect(stub.calledOnce).toBe(true);
-                stub.restore();
-            }, stub);
+            //Use sinon clock to delay expectations since decoration is deferred
+            clock.tick(20);
+            expect(stub.calledOnce).toBe(true);
+            stub.restore();
         });
     });
 });

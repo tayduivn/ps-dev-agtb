@@ -218,6 +218,7 @@ describe("Record View", function () {
         });
 
         it("should call clearValidationErrors when Cancel is clicked", function () {
+            var clock = sinon.useFakeTimers();
             view.render();
             view.model.set({
                 name: 'Name',
@@ -226,11 +227,11 @@ describe("Record View", function () {
             });
             var stub = sinon.stub(view, "clearValidationErrors");
             view.cancelClicked();
-            //Defer expectations since decoration is deferred
-            _.defer(function (stub) {
-                expect(stub.calledOnce).toBe(true);
-                stub.restore();
-            }, stub);
+            //Use sinon clock to delay expectations since decoration is deferred
+            clock.tick(20);
+            expect(stub.calledOnce).toBe(true);
+            stub.restore();
+            clock.restore();
         });
 
         it("Should display all 8 editable fields when more link is clicked", function () {
