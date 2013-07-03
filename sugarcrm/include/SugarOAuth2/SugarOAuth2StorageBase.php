@@ -149,16 +149,36 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
         }
 
         if ( $loginSuccess ) {
-            $userBean = BeanFactory::newBean('Users');
-            $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));
-            if ( $userBean == null ) {
-                throw new SugarApiExceptionNeedLogin();
-            }
-            $this->userBean = $userBean;
+            $this->userBean = $this->loadUserFromName($username);
             return array('user_id' => $this->userBean->id);
         } else {
             throw new SugarApiExceptionNeedLogin();
         }
     }
     // END METHODS FROM IOAuth2GrantUser
+
+    /**
+     * Loads the current user from the user name
+     * split out so that portal can load users properly
+     *
+     * @param string $username The name of the user you want to load
+     *
+     * @return SugarBean The user from the name
+     */
+    public function loadUserFromName($username)
+    {
+        $userBean = BeanFactory::newBean('Users');
+        $userBean = $userBean->retrieve_by_string_fields(
+            array(
+                'user_name'=>$username,
+                'deleted'=>'0',
+                'status'=>'Active',
+                'portal_only'=>'0',
+                'is_group'=>'0',
+            ));
+        if ( $userBean == null ) {
+            throw new SugarApiExceptionNeedLogin();
+        }
+        return $userBean;
+    }
 }

@@ -55,15 +55,29 @@ class OAuth2Api extends SugarApi
                 'longHelp' => 'include/api/help/oauth2_bwc_login_post_help.html',
                 'keepSession' => true,
             ),
+            'oauth_sudo' => array(
+                'reqType' => 'POST',
+                'path' => array('oauth2','sudo','?'),
+                'pathVars' => array('','','user_name'),
+                'method' => 'sudo',
+                'shortHelp' => 'Get an access token for another user',
+                'longHelp' => 'include/api/help/oauth2_sudo_post_help.html',
+            ),
         );
     }
 
-    public function token($api, $args)
+    protected function getOAuth2Server($args)
     {
         $platform = empty($args['platform']) ? 'base' : $args['platform'];
         $oauth2Server = SugarOAuth2Server::getOAuth2Server();
         $oauth2Server->setPlatform($platform);
 
+        return $oauth2Server;
+    }
+
+    public function token($api, $args)
+    {
+        $oauth2Server = $this->getOAuth2Server($args);
         try {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
             $authData = $oauth2Server->grantAccessToken($args);
@@ -87,8 +101,8 @@ class OAuth2Api extends SugarApi
 
     public function logout($api, $args)
     {
-        $oauth2Server = SugarOAuth2Server::getOAuth2Server();
-        if (!empty($api->user)) {
+        $oauth2Server = $this->getOAuth2Server($args);
+        if(!empty($api->user)) {
             $api->user->call_custom_logic('before_logout');
         }
 
@@ -124,6 +138,45 @@ class OAuth2Api extends SugarApi
     {
         // we need to set the domain to '/' in order to work in bwc
         setcookie(session_name(), session_id(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), ini_get('session.cookie_httponly'));
+    }
+
+    /**
+     * This API allows a user to impersonate another user
+     * restricting their security to the level of the impersonated user
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     */
+    public function sudo(ServiceBase $api, array $args)
+    {
+        if (!$api->user->isAdmin() || !empty($_SESSION['sudo_for'])) {
+            // Don't let non-admins sudo
+            // Also don't let a sudo user sudo again (so they can't hide their tracks)
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
+        if (!empty($args['client_id'])) {
+            $clientId = $args['client_id'];
+        } else {
+            $clientId = 'sugar';
+        }
+
+        if (!empty($args['platform'])) {
+            $platform = $args['platform'];
+        } else {
+            $platform = 'base';
+        }
+
+
+        $oauth2Server = $this->getOAuth2Server($args);
+
+        $token = $oauth2Server->getSudoToken($args['user_name'], $clientId, $platform);
+
+        if (!$token) {
+            throw new SugarApiExceptionRequestMethodFailure("Could not setup a token for the requested user");
+        }
+
+        return $token;
     }
 
 }
