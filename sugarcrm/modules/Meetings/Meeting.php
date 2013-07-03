@@ -256,36 +256,38 @@ class Meeting extends SugarBean {
 		}
 
         // Make sure we have an ID so we can build relationships
-        if ( !isset($this->id) || empty($this->id) ) {
+        if (!isset($this->id) || empty($this->id)) {
             $this->id = create_guid();
             $this->new_with_id = true;
         }
         // Previously this was handled in both the MeetingFormBase and the AfterImportSave function, so now it just happens every time you save a record.
-	    if ( $this->parent_type == 'Contacts' ) {
-            if ( is_array($this->contacts_arr) ) {
+        if ($this->parent_type == 'Contacts') {
+            if (is_array($this->contacts_arr) && !in_array($this->parent_id, $this->contacts_arr)) {
                 $this->contacts_arr[] = $this->parent_id;
             }
-	        $this->load_relationship('contacts');
-	        if ( !$this->contacts->relationship_exists('contacts',array('id'=>$this->parent_id)) ) {
-	            $this->contacts->add($this->parent_id);
+            $this->load_relationship('contacts');
+            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->parent_id))) {
+                $this->contacts->add($this->parent_id);
             }
-	    }
-	    elseif ( $this->parent_type == 'Leads' ) {
-            if ( isset($this->leads_arr) && is_array($this->leads_arr) ) {
+        } elseif ($this->parent_type == 'Leads') {
+            if (isset($this->leads_arr) && is_array($this->leads_arr) && !in_array($this->parent_id, $this->leads_arr)) {
                 $this->leads_arr[] = $this->parent_id;
             }
-	        $this->load_relationship('leads');
-	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) ) {
-	            $this->leads->add($this->parent_id);
+            $this->load_relationship('leads');
+            if (!$this->leads->relationship_exists('leads', array('id' => $this->parent_id))) {
+                $this->leads->add($this->parent_id);
             }
-	    }
+        }
 
-	    if(!empty($this->contact_id)) {
-	    	$this->load_relationship('contacts');
-	    	if(!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
-	    		$this->contacts->add($this->contact_id);
-	    	}
-	    }
+        if (!empty($this->contact_id)) {
+            if (is_array($this->contacts_arr) && !in_array($this->contact_id, $this->contacts_arr)) {
+                $this->contacts_arr[] = $this->contact_id;
+            }
+            $this->load_relationship('contacts');
+            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
+                $this->contacts->add($this->contact_id);
+            }
+        }
 
         if ( isset($api) && is_a($api,'WebMeeting') && empty($this->in_relationship_update) ) {
             // Make sure the API initialized and it supports Web Meetings
@@ -486,7 +488,7 @@ class Meeting extends SugarBean {
         if(!empty($this->date_start))
         {
             $td = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$this->date_start);
-            if (!empty($td)) 
+            if (!empty($td))
             {
     	        if (!empty($this->duration_hours) && $this->duration_hours != '')
                 {
@@ -497,8 +499,8 @@ class Meeting extends SugarBean {
                     $td = $td->modify("+{$this->duration_minutes} mins");
                 }
                 $this->date_end = $td->format($GLOBALS['timedate']->get_date_time_format());
-            } 
-            else 
+            }
+            else
             {
                 $GLOBALS['log']->fatal("Meeting::save: Bad date {$this->date_start} for format ".$GLOBALS['timedate']->get_date_time_format());
             }
