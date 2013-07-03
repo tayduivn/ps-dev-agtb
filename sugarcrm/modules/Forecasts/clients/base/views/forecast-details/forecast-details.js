@@ -150,11 +150,11 @@
         this.model.set({
             opportunities : 0,
             revenue : 0,
-            closed_amount : 0,
+            closed_amount : undefined,
             closed_likely_amount : 0,
             closed_likely_percent : 0,
             closed_likely_distance : 0,
-            quota_amount : 0,
+            quota_amount : undefined,
             quota_likely_amount : 0,
             quota_likely_percent : 0,
             quota_likely_distance : 0,
@@ -261,13 +261,27 @@
     },
 
     /**
+     * {@inheritdoc}
+     */
+    _render: function() {
+        app.view.View.prototype._render.call(this);
+        this.renderSubDetails();
+    },
+
+    /**
      * Used to re-render only the projected data inside the widget so render doesnt
      * get called and dispose the select2 timeperiod field, which would then go
      * re-fetch its data at least once every render
      */
     renderSubDetails: function() {
         if(this.$el && this.subDetailsTpl) {
-            this.$el.find('#guages').html(this.subDetailsTpl(this.model.toJSON()));
+            var subEl = this.$el.find('#guages');
+            // Check if closed or quota is undefined (during opps/rli loading when those numbers aren't available yet)
+            if(!_.isUndefined(this.model.get('closed_amount')) && !_.isUndefined(this.model.get('quota_amount'))) {
+                subEl.html(this.subDetailsTpl(this.model.toJSON()));
+            } else {
+                subEl.html('');
+            }
         }
     },
 
