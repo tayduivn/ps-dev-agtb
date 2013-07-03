@@ -33,6 +33,7 @@ class RestService extends ServiceBase
      * X-Header containging the clients metadata hash
      */
     const HEADER_META_HASH = "X_METADATA_HASH";
+    const USER_META_HASH = 'X_USERPREF_HASH';
     const DOWNLOAD_COOKIE = 'download_token';
 
     public $user;
@@ -193,13 +194,11 @@ class RestService extends ServiceBase
                     // If we are logged in, but the meta hash sent doesn't match whats in cache
                     // return an error to force a resync so that the new metadata gets picked up.
                     $mm = new MetaDataManager($this->user, $this->platform);
-                    if ((isset($this->request_headers[self::HEADER_META_HASH]) &&
-                        !$mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform))
-                        || $mm->hasUserMetadataChanged($this->user)
+                    if ((isset($this->request_headers[self::HEADER_META_HASH]) 
+                        && !$mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform))
+                        || ((isset($this->request_headers[self::USER_META_HASH]) 
+                                && $mm->hasUserMetadataChanged($this->user, $this->request_headers[self::USER_META_HASH])))
                     ) {
-                        // Unset the user hash
-                        $mm->unsetUserMetadataHasChanged($this->user);
-
                         // Mismatch in hashes... Return error so the cleint will resync its metadata and try again.
                         throw new SugarApiExceptionInvalidHash();
                     }

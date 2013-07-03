@@ -177,7 +177,9 @@ class CurrentUserApi extends SugarApi
             }
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
-
+        
+        // Send back a hash of this data for use by the client
+        $user_data['_hash'] = md5($current_user->date_modified);
         //END SUGARCRM flav=pro ONLY
 
         return array('current_user' => $user_data);

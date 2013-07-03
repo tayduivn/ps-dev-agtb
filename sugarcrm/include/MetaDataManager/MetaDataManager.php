@@ -804,44 +804,29 @@ class MetaDataManager
 
     /**
      * Tells the app the user preference metadata has changed.
-     *
-     * Because Administration and Users are BWC modules, we cannot use SESSIONS
-     * to relay information between requests since a BWC request is a different
-     * HTTP request from an API request. Because of that, this method and all
-     * methods surrounding the user metadata change notification build a simple
-     * empty file in the api/metadata/ cache directory for use between requests.
+     * 
+     * For now this will be done by simply changing the date_modified on the User
+     * record and using that as the metadata hash value. This could change in the
+     * future.
      *
      * @param Person $user The user that is changing preferences
      */
     public function setUserMetadataHasChanged($user)
     {
-        sugar_touch(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
+        $user->update_date_modified = true;
+        $user->save();
     }
 
     /**
      * Checks the state of changed metadata for a user
      *
      * @param Person $user The user that is changing preferences
+     * @param string $hash The user preference data hash to compare
      *
      * @return bool
      */
-    public function hasUserMetadataChanged($user)
+    public function hasUserMetadataChanged($user, $hash)
     {
-        return file_exists(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
+        return md5($user->date_modified) != $hash;
     }
-
-    /**
-     * Clears the temporary file that is used to indicate that a user has changed
-     * their preferences.
-     *
-     * @param Person $user The user that is changing preferences
-     */
-    public function unsetUserMetadataHasChanged($user)
-    {
-        //unset($_SESSION['user_metadata_changed']);
-        if ($this->hasUserMetadataChanged($user)) {
-            @unlink(sugar_cached("api/metadata/user_metadata_changed_{$user->id}"));
-        }
-    }
-
 }

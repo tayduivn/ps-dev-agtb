@@ -59,9 +59,6 @@ $focus = BeanFactory::getBean('Users', $_POST['record']);
 //update any ETag seeds that are tied to the user object changing
 $focus->incrementETag("mainMenuETag");
 
-// See if this request is for the current user
-$forCurrentUser = $_POST['record'] == $current_user->id;
-
 // [BR-200] Set the reauth forcing array of fields now for comparison later
 $userApi = new CurrentUserApi;
 $reauthFields = array_keys($userApi->getUserPrefsToCache());
@@ -375,7 +372,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
         }
 
         // [BR-200] Force reauth so user pref metadata is refreshed
-        if ($forCurrentUser && $refreshMetadata) {
+        if ($refreshMetadata) {
             $mm = new MetaDataManager($current_user);
             $mm->setUserMetadataHasChanged($focus);
         }
