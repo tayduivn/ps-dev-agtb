@@ -113,10 +113,8 @@ class SugarOAuth2Server extends OAuth2
     public function grantAccessToken(array $inputData = NULL, array $authHeaders = NULL)
     {
         // grantAccessToken directly echo's (BAD), but it's a 3rd party library, so what are you going to do?
-        ob_start();
-        parent::grantAccessToken($inputData, $authHeaders);
-        $authData = json_decode(ob_get_clean(),true);
-        
+        $authData = parent::grantAccessToken($inputData, $authHeaders);
+
         // Load the refresh token to get the download token, it should already be in memory
         $tokenSeed = BeanFactory::newBean('OAuthTokens');
         $token = $tokenSeed->load($authData['refresh_token'],'oauth2');
@@ -172,7 +170,7 @@ class SugarOAuth2Server extends OAuth2
         // But the oauth2 library doesn't let us pass enough through to skip that part.
         $this->storage->unsetRefreshToken($token['refresh_token']);
         unset($token['refresh_token']);
-        
+
         return $token;
     }
 }
