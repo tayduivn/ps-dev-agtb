@@ -28,6 +28,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
+require_once 'data/Link2.php';
+
 /**
  * Assists in backporting 6.6 Metadata formats to legacy style in order to
  * maintain backward compatibility with old clients consuming the V3 and V4 apis.
@@ -267,7 +270,7 @@ class MetaDataConverter
             $label = isset($def['label']) ? $def['label'] : translate($linkModule);
             $return[$def['context']['link']] = array(
                 'order' => $order,
-                'module' => $linkModule,
+                'module' => $bean->module_dir,
                 'subpanel_name' => 'default',
                 'sort_order' => 'asc',
                 'sort_by' => 'id',

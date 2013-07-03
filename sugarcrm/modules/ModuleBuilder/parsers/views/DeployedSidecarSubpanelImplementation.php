@@ -16,6 +16,7 @@ require_once 'modules/ModuleBuilder/parsers/views/MetaDataImplementationInterfac
 require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation.php';
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 require_once 'include/MetaDataManager/MetaDataConverter.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
@@ -212,7 +213,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->_viewdefs,
             $this->sidecarFile
         );
-
+        // clear the cache
+        MetaDataManager::clearAPICache();
     }
 
     /**

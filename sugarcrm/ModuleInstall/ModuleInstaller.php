@@ -1969,7 +1969,7 @@ private function dir_file_count($path){
      * return null
      */
 	function addFieldsToLayout($layoutAdditions) {
-	require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
+	    require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
 
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
@@ -1980,7 +1980,7 @@ private function dir_file_count($path){
         {
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) )
             {
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
+                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW, MB_RECORDVIEW ) as $view )
                 {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
