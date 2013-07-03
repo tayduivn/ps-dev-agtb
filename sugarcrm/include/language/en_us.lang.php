@@ -2917,6 +2917,7 @@ $app_strings = array (
     'LBL_LOGIN_ADMIN_CALL' => 'Please contact the system administrator.',
     'LBL_LOGIN_USERNAME' => 'Username',
     'LBL_LOGIN_PASSWORD' => 'Password',
+    'LBL_LOGGED_OUT' => 'You have been logged out from the application.',
     // END LOGIN PAGE STRINGS
 
     'LBL_SYNC' => 'Sync',
