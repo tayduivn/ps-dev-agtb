@@ -25,11 +25,25 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fallbackFieldTemplate: 'edit',
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.off("vcard:import:finish", null, this);
         this.context.on("vcard:import:finish", this.importVCard, this);
+    },
+
+    /**
+     * {@inheritdocs}
+     *
+     * Sets up the file field to edit mode
+     *
+     * @param {View.Field} field
+     * @private
+     */
+    _renderField: function(field) {
+        app.view.View.prototype._renderField.call(this, field);
+        if (field.name === 'vcard_import') {
+            field.setMode('edit');
+        }
     },
 
     importVCard: function() {
