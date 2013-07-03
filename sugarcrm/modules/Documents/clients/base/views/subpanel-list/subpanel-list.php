@@ -27,6 +27,12 @@ $viewdefs['Documents']['base']['view']['subpanel-list'] = array(
           'link' => true,
         ),
         array(
+          'name' => 'filename',
+          'label' => 'LBL_LIST_FILENAME',
+          'enabled' => true,
+          'default' => true,
+        ),
+        array(
           'name' => 'category_id',
           'label' => 'LBL_LIST_CATEGORY',
           'enabled' => true,
