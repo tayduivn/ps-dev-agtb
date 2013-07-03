@@ -88,7 +88,10 @@
             // custom success handler
             options.success = _.bind(function(model, data, options) {
                 app.alert.dismiss('info_quote');
-                window.location.hash = "#bwc/index.php?module=Quotes&action=EditView&record=" + data.id;
+                app.router.navigate(app.bwc.buildRoute('Quotes', data.id, 'EditView', {
+                    return_module: this.module,
+                    return_id: this.model.id
+                }), {trigger: true});
             }, this);
             options.error = _.bind(function(resp, status, xhr) {
                 app.alert.dismiss('info_quote');

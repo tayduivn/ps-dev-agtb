@@ -122,7 +122,10 @@
         var callbacks = {
             'success': _.bind(function(resp, status, xhr) {
                 app.alert.dismiss('info_quote');
-                window.location.hash = "#bwc/index.php?module=Quotes&action=EditView&record=" + resp.id;
+                app.router.navigate(app.bwc.buildRoute('Quotes', resp.id, 'EditView', {
+                    return_module: this.model.module,
+                    return_id: this.model.id
+                }), {trigger: true});
             }, this),
             'error': _.bind(function(resp, status, xhr) {
                 app.alert.dismiss('info_quote');
