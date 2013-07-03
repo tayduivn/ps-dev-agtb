@@ -1,5 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,10 +20,16 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('data/BeanFactory.php');
-require_once('include/api/SugarApi.php');
+require_once('clients/base/api/FilterApi.php');
 
-class DashboardApi extends SugarApi
+class DashboardListApi extends FilterApi
 {
+    protected static $mandatory_fields = array(
+        'id',
+        'name',
+        'view'
+    );
+
     /**
      * Rest Api Registration Method
      *
@@ -32,54 +37,71 @@ class DashboardApi extends SugarApi
      */
     public function registerApiRest()
     {
-        $dashboardApi = array(
-            'createDashboardForModule' => array(
-                'reqType' => 'POST',
+        return array(
+            'getDashboardsForModule' => array(
+                'reqType' => 'GET',
                 'path' => array('Dashboards', '<module>'),
                 'pathVars' => array('', 'module'),
-                'method' => 'createDashboard',
-                'shortHelp' => 'Create a new dashboard for a module',
-                'longHelp' => 'include/api/help/create_dashboard.html',
+                'method' => 'getDashboards',
+                'shortHelp' => 'Get dashboards for a module',
+                'longHelp' => 'include/api/help/get_dashboards.html',
             ),
-            'createDashboardForHome' => array(
-                'reqType' => 'POST',
+            'getDashboardsForHome' => array(
+                'reqType' => 'GET',
                 'path' => array('Dashboards'),
                 'pathVars' => array(''),
-                'method' => 'createDashboard',
-                'shortHelp' => 'Create a new dashboard for home',
-                'longHelp' => 'include/api/help/create_dashboard.html',
+                'method' => 'getDashboards',
+                'shortHelp' => 'Get dashboards for home',
+                'longHelp' => 'include/api/help/get_dashboards.html',
             ),
         );
-        return $dashboardApi;
     }
 
     /**
-     * Create a new dashboard
+     * Get the dashboards for the current user
      *
      * @param ServiceBase $api      The Api Class
      * @param array $args           Service Call Arguments
      * @return mixed
      */
-    public function createDashboard($api, $args) {
-        $args['dashboard_module'] = empty($args['module']) ? 'Home' : $args['module'];
-        $bean = BeanFactory::newBean('Dashboards');
-        
-        if (!$bean->ACLAccess('save')) {
-            // No create access so we construct an error message and throw the exception
-            $failed_module_strings = return_module_language($GLOBALS['current_language'], 'Dashboards');
-            $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
-            $args = null;
-            if(!empty($moduleName)){
-                $args = array('moduleName' => $moduleName);
-            }
-            throw new SugarApiExceptionNotAuthorized('EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED', $args);
+    public function getDashboards($api, $args)
+    {
+        if (empty($args['filter'])||!is_array($args_filter)) {
+            $args['filter'] = array();
         }
 
-        $id = $this->updateBean($bean, $api, $args);
-        $args['record'] = $id;
+        // Tack on some required filters.
+        $module = empty($args['module']) ? 'Home' : $args['module'];
+        $args['filter'][]['dashboard_module'] = $module;
+
         $args['module'] = 'Dashboards';
-        $bean = $this->loadBean($api, $args, 'view');
-        $data = $this->formatBean($api, $args, $bean);
-        return $data;
+
+        if (!empty($args['view'])) {
+            $args['filter'][]['view'] = $args['view'];
+        }
+        $args['fields'] = 'id,name,view';
+
+        $ret = $this->filterList($api, $args);
+        
+        // Add dashboard URL's
+        foreach ($ret['records'] as $idx => $dashboard) {
+            $ret['records'][$idx]['url'] = $api->getResourceURI('Dashboards/'.$dashboard['id']);
+        }
+        
+        return $ret;
     }
+
+    /**
+     * Redefine the getoptions to pull in the correct Dashboard filters
+     */
+    protected function parseArguments(ServiceBase $api, array $args, SugarBean $seed = null)
+    {
+        if (!isset($args['order_by'])) {
+            $args['order_by'] = 'date_entered:DESC';
+        }
+        $options = parent::parseArguments($api, $args, $seed);
+        
+        return $options;
+    }
+
 }
