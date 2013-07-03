@@ -356,17 +356,13 @@ module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes(
 	$month = translate('LBL_MONTH');
 	$year = translate('LBL_YEAR');
     $quarter = translate('LBL_QUARTER');
-    $fiscalYear = translate('LBL_FISCAL_YEAR');
-    $fiscalQuarter = translate('LBL_FISCAL_QUARTER');
 ?>
 var summary_types = {sum:'<?php echo $sum; ?>',avg:'<?php echo $avg; ?>',max:'<?php echo $max; ?>',min:'<?php echo $min; ?>'};
     var date_summary_types = {
         day:'<?php echo $day; ?>',
         month:'<?php echo $month; ?>',
         year:'<?php echo $year; ?>',
-        quarter:'<?php echo $quarter; ?>',
-        fiscalYear:'<?php echo $fiscalYear; ?>',
-        fiscalQuarter:'<?php echo $fiscalQuarter; ?>'
+        quarter:'<?php echo $quarter; ?>'
     };
 
 // create summary_defs_field and group_by_field_defs for every module
@@ -618,14 +614,6 @@ date_group_defs[date_group_defs.length] = {name:'day', value:'<?php echo $mod_st
 date_group_defs[date_group_defs.length] = {name:'month', value:'<?php echo $mod_strings['LBL_BY_MONTH']; ?>'};
 date_group_defs[date_group_defs.length] = {name:'year', value:'<?php echo $mod_strings['LBL_BY_YEAR']; ?>'};
 date_group_defs[date_group_defs.length] = {name:'quarter', value:'<?php echo $mod_strings['LBL_BY_QUARTER']; ?>'};
-    date_group_defs[date_group_defs.length] = {
-        name:'fiscalYear',
-        value:'<?php echo $mod_strings['LBL_BY_FISCAL_YEAR']; ?>'
-    };
-    date_group_defs[date_group_defs.length] = {
-        name:'fiscalQuarter',
-        value:'<?php echo $mod_strings['LBL_BY_FISCAL_QUARTER']; ?>'
-    };
 
 var qualifiers = new Array();
 qualifiers[qualifiers.length] = {name:'any',value:'<?php echo $mod_strings['LBL_ANY']; ?>'};
@@ -658,40 +646,88 @@ for(i in module_defs) {
 function template_module_defs_fiscal_js()
 {
     global $current_language;
-    $mod_strings = return_module_language($current_language,'Reports');
-?>
+    $mod_strings = return_module_language($current_language, 'Reports');
 
-var qualifiers = [
-    {
-        name : "tp_previous_fiscal_year",
-        value : "<?php echo $mod_strings['LBL_PREVIOUS_FISCAL_YEAR']; ?>"
-    },
-    {
-        name : "tp_previous_fiscal_quarter",
-        value : "<?php echo $mod_strings['LBL_PREVIOUS_FISCAL_QUARTER']; ?>"
-    },
-    {
-        name : "tp_current_fiscal_year",
-        value : "<?php echo $mod_strings['LBL_CURRENT_FISCAL_YEAR']; ?>"
-    },
-    {
-        name : "tp_current_fiscal_quarter",
-        value : "<?php echo $mod_strings['LBL_CURRENT_FISCAL_QUARTER']; ?>"
-    },
-    {
-        name : "tp_next_fiscal_year",
-        value : "<?php echo $mod_strings['LBL_NEXT_FISCAL_YEAR']; ?>"
-    },
-    {
-        name : "tp_next_fiscal_quarter",
-        value : "<?php echo $mod_strings['LBL_NEXT_FISCAL_QUARTER']; ?>"
+    // Prepare the arrays for json_encode()
+    $fiscalSummaryArray = array(
+        'fiscalYear' => translate('LBL_FISCAL_YEAR'),
+        'fiscalQuarter' => translate('LBL_FISCAL_QUARTER')
+    );
+    $fiscalGroupingsArray = array(
+        array(
+            'name' => 'fiscalYear',
+            'value' => $mod_strings['LBL_BY_FISCAL_YEAR']
+        ),
+        array(
+            'name' => 'fiscalQuarter',
+            'value' => $mod_strings['LBL_BY_FISCAL_QUARTER']
+        )
+    );
+    $fiscalFiltersArray = array(
+        array(
+            'name' => 'tp_previous_fiscal_year',
+            'value' => $mod_strings['LBL_PREVIOUS_FISCAL_YEAR']
+        ),
+        array(
+            'name' => 'tp_previous_fiscal_quarter',
+            'value' => $mod_strings['LBL_PREVIOUS_FISCAL_QUARTER']
+        ),
+        array(
+            'name' => 'tp_current_fiscal_year',
+            'value' => $mod_strings['LBL_CURRENT_FISCAL_YEAR']
+        ),
+        array(
+            'name' => 'tp_current_fiscal_quarter',
+            'value' => $mod_strings['LBL_CURRENT_FISCAL_QUARTER']
+        ),
+        array(
+            'name' => 'tp_next_fiscal_year',
+            'value' => $mod_strings['LBL_NEXT_FISCAL_YEAR']
+        ),
+        array(
+            'name' => 'tp_next_fiscal_quarter',
+            'value' => $mod_strings['LBL_NEXT_FISCAL_QUARTER']
+        )
+    );
+
+    // Prepare JSON strings for HEREDOC
+    $jsonFiscalSummaryArray = json_encode($fiscalSummaryArray);
+    $jsonFiscalGroupingsArray = json_encode($fiscalGroupingsArray);
+    $jsonFiscalFiltersArray = json_encode($fiscalFiltersArray);
+
+    $return = <<<EOT
+var fiscalSummary = {$jsonFiscalSummaryArray};
+// Add the fiscal group by defs to all modules with date type fields
+for (module_name in module_defs) {
+    for (field_name in module_defs[module_name].field_defs) {
+        var field_def = module_defs[module_name].field_defs[field_name];
+        var field_type = field_def.type;
+
+        if (field_type == 'date' || field_type == 'datetime' || field_type == 'datetimecombo') {
+            // Just loop over the fiscal group bys
+            for (stype in fiscalSummary) {
+                module_defs[module_name].group_by_field_defs[field_def.name + ':' + stype] = {
+                    name : field_def.name + ':' + stype,
+                    field_def_name : field_def.name,
+                    vname : fiscalSummary[stype] + ': ' + field_def.vname,
+                    column_function : stype,
+                    summary_type : 'column',
+                    field_type : field_type
+                };
+            }
+        }
     }
-];
+}
 
-filter_defs['date'] = filter_defs['date'].concat(qualifiers);
-filter_defs['datetime'] = filter_defs['datetime'].concat(qualifiers);
-filter_defs['datetimecombo'] = filter_defs['datetimecombo'].concat(qualifiers);
+var fiscalGroupings = {$jsonFiscalGroupingsArray};
+date_group_defs = date_group_defs.concat(fiscalGroupings);
 
-<?php
+var fiscalFilters = {$jsonFiscalFiltersArray};
+filter_defs['date'] = filter_defs['date'].concat(fiscalFilters);
+filter_defs['datetime'] = filter_defs['datetime'].concat(fiscalFilters);
+filter_defs['datetimecombo'] = filter_defs['datetimecombo'].concat(fiscalFilters);
+EOT;
+
+    echo $return;
 }
 ?>
