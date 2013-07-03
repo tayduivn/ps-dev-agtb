@@ -3040,7 +3040,7 @@ function _pptd($mixed)
 function decodeJavascriptUTF8($str)
 {
     //BEGIN SUGARCRM flav=int ONLY
-    public function afunc($matches)
+    function afunc($matches)
     {
         return '&#' . hexdec($matches[1]) . ';';
     }
