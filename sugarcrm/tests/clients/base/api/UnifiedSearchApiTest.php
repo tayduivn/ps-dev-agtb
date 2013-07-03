@@ -45,6 +45,8 @@ class UnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp('ACLStatic');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
 
         // create a bunch of accounts
         for ($x=0; $x<10; $x++) {
