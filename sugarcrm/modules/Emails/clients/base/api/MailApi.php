@@ -176,7 +176,7 @@ class MailApi extends ModuleApi
 
         if ($args["status"] == "ready") {
             if (empty($args["email_config"])) {
-                throw new SugarApiExceptionRequestMethodFailure("No mail configuration specified.");
+                throw new SugarApiExceptionRequestMethodFailure('LBL_MISSING_CONFIGURATION', null, 'Emails');
             }
 
             $result = $mailRecord->send();
@@ -189,7 +189,7 @@ class MailApi extends ModuleApi
                 );
             }
 
-            throw new SugarApiExceptionInvalidParameter("Invalid Status Property");
+            throw new SugarApiExceptionInvalidParameter('LBL_INVALID_MAILAPI_STATUS', null, 'Emails');
         }
 
         if (!isset($result['SUCCESS']) || !($result['SUCCESS'])) {
@@ -200,7 +200,11 @@ class MailApi extends ModuleApi
                 $GLOBALS["log"]->error("MailApi: Request Failed - Message: {$eMessage}  Data: {$eData}");
             }
 
-            throw new SugarApiExceptionRequestMethodFailure($eMessage);
+            if (isset($result['ERROR_MESSAGE'])) {
+                throw new SugarApiExceptionRequestMethodFailure($result['ERROR_MESSAGE']);
+            } else {
+                throw new SugarApiExceptionRequestMethodFailure('LBL_INTERNAL_ERROR', null, 'Emails');
+            }
         }
 
         if (isset($result["EMAIL"])) {

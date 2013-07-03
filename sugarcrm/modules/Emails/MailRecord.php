@@ -50,19 +50,6 @@ class MailRecord
     public $html_body;
     public $text_body;
 
-    // Mapping Error Code to Error Message
-    static protected $errorMessageMappings = array(
-        MailerException::ResourceNotFound              => 'LBL_INTERNAL_ERROR',
-        MailerException::InvalidConfiguration          => 'LBL_INVALID_CONFIGURATION',
-        MailerException::InvalidHeader                 => 'LBL_INVALID_HEADER',
-        MailerException::InvalidEmailAddress           => 'LBL_INVALID_EMAIL',
-        MailerException::FailedToSend                  => 'LBL_INTERNAL_ERROR',
-        MailerException::FailedToConnectToRemoteServer => 'LBL_FAILED_TO_CONNECT',
-        MailerException::FailedToTransferHeaders       => 'LBL_INTERNAL_ERROR',
-        MailerException::InvalidAttachment             => 'LBL_INVALID_ATTACHMENT',
-        MailerException::InvalidMailer                 => 'LBL_INTERNAL_ERROR',
-    );
-
     function __construct() {}
 
     /**
@@ -130,7 +117,7 @@ class MailRecord
             $errorData  = $this->endCapturingOutput();
 
             if (strlen($errorData) > 0) {
-                throw new MailerException("Internal Error");
+                throw new MailerException('Email2Send returning unexpected output: ' . $errorData);
             }
 
             $result = array(
@@ -143,11 +130,16 @@ class MailRecord
                 $errorData = $this->endCapturingOutput();
             }
 
+            if (!($e instanceof MailerException)) {
+                $e = new MailerException($e->getMessage());
+            }
+            $GLOBALS["log"]->error($e->getLogMessage());
+
             $result = array(
                 "SUCCESS"       => false,
                 "EMAIL"         => $email,
                 "REQUEST"       => $request,
-                "ERROR_MESSAGE" => $this->getErrorMessage($e),
+                "ERROR_MESSAGE" => $e->getUserFriendlyMessage(),
                 "ERROR_DATA"    => $errorData,
             );
         }
@@ -324,28 +316,5 @@ class MailRecord
         }
 
         return $recipient;
-    }
-
-    /**
-     * Get the appropriate error message given the error code.
-     *
-     * @param $exception
-     * @return string
-     */
-    protected function getErrorMessage($exception)
-    {
-        global $mod_string;
-
-        if (isset(self::$errorMessageMappings[$exception->getCode()])) {
-            $exception_code = self::$errorMessageMappings[$exception->getCode()];
-        }
-
-        if (!empty($exception_code) && !empty($mod_string[$exception_code])) {
-            $message = $mod_string[$exception_code]; //get the translated version
-        } else {
-            $message = $exception->getMessage(); //use the exception message if a user-friendly version is not available
-        }
-
-        return $message;
     }
 }
