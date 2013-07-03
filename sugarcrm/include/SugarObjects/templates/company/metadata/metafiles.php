@@ -40,4 +40,3 @@ $module_name = '<module_name>';
  	'popupdefs'	      =>    'modules/'. $module_name. '/metadata/popupdefs.php',
  	'searchfields'	  =>    'modules/'. $module_name. '/metadata/SearchFields.php',
  );
-?>

@@ -85,4 +85,3 @@ $viewdefs[$module_name]['DetailView'] = array(
 )
 );
 
-?>

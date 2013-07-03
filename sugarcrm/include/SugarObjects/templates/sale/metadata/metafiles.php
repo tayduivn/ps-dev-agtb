@@ -38,4 +38,3 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	'searchfields'	  =>    'modules/'.$module_name.'/metadata/SearchFields.php',
 
  );
-?>

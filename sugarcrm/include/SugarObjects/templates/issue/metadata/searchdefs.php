@@ -61,4 +61,3 @@ $_object_name = '<_object_name>';
 						),
 					),
  			   );
-?>

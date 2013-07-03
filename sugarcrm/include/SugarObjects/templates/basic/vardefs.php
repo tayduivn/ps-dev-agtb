@@ -236,4 +236,3 @@ $vardefs = array(
 
 
 );
-?>

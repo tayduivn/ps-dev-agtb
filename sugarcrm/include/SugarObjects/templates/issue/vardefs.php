@@ -140,4 +140,3 @@ $vardefs = array (
 	),
 	
 );
-?>

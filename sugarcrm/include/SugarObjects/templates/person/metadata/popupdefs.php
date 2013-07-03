@@ -33,4 +33,3 @@ $popupMeta = array('moduleMain' => $module_name,
 						'searchInputs' =>
 							array('first_name', 'last_name'),
 						);
-?>

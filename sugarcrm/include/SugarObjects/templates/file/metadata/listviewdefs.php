@@ -74,5 +74,3 @@ $OBJECT_NAME = '<OBJECT_NAME>';
         'label' => 'LBL_LIST_EXP_DATE',
         'default' => true),
         );
-?>
-
