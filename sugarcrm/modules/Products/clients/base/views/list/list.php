@@ -22,7 +22,7 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 array(
                     'name' => 'name',
                     'link' => true,
-                    'label' => 'LBL_LIST_NAME',
+                    'label' => 'LBL_PRODUCT',
                     'enabled' => true,
                     'default' => true
                 ),
