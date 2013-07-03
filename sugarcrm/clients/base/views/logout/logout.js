@@ -6,6 +6,7 @@
      */
     events: {
         "click [name=login_button]": "login",
+        "click [name=login_form_button]": "login_form",
     },
     
     /**
@@ -44,6 +45,17 @@
      */
     login: function() {
     	app.router.login();
+    },
+    
+    /**
+     * Process Login
+     */
+    login_form: function() {
+        app.controller.loadView({
+            module: "Login",
+            layout: "login",
+            create: true
+        });
     }
 
 })
