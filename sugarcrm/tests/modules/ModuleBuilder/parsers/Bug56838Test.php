@@ -109,8 +109,8 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         
         // Current layout
         $layout = $parser->getLayout();
-        $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on portal edit views");
-        $this->assertArrayHasKey('LBL_PANEL_2', $layout, "'LBL_PANEL_2' was not found as the default panel label on portal edit views");
+        $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on portal record views");
+        $this->assertArrayHasKey('LBL_RECORD_BODY', $layout, "'LBL_RECORD_BODY' was not found as the default panel label on portal record views");
     }
 
     /**

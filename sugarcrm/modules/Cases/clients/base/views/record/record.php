@@ -130,7 +130,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,

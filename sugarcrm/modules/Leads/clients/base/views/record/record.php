@@ -147,7 +147,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,
@@ -164,7 +163,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'hide' => true,
-            'label' => 'LBL_PANEL_3',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,
