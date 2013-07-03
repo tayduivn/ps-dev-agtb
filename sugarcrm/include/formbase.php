@@ -207,30 +207,51 @@ function getAnyToForm($ignore='', $usePostAsAuthority = false)
 
 }
 
-function handleRedirect($return_id='', $return_module='', $additionalFlags = false)
+/**
+ * Handles a redirect from a Form SugarCRM based or return_url information.
+ *
+ * This function redirect automatically if $_REQUEST['return_url'] isn't empty.
+ * It also exits the app always.
+ *
+ * @see buildRedirectUrl()
+ * @see SugarApplication::redirect()
+ *
+ * @deprecated since 7.0.0. Use buildRedirectUrl() and SugarApplication::redirect().
+ *
+ * @param string $return_id (optional) The record id to redirect to.
+ * @param string $return_module (optional) The module to redirect to.
+ * @param array $additionalFlags (optional) Additional flags to sent to the URL.
+ */
+function handleRedirect($return_id = '', $return_module = '', array $additionalFlags = array())
 {
-	if(isset($_REQUEST['return_url']) && $_REQUEST['return_url'] != "")
-	{
-		header("Location: ". $_REQUEST['return_url']);
-		exit;
-	}
+    trigger_error(
+        'handleRedirect() is deprecated since version 7.0.0. Use buildRedirectUrl() and SugarApplication::redirect().',
+        E_USER_DEPRECATED
+    );
 
-	$url = buildRedirectURL($return_id, $return_module);
-	header($url);
-	exit;
+    if (!empty($_REQUEST['return_url'])) {
+        $url = $_REQUEST['return_url'];
+    } else {
+        $url = buildRedirectURL($return_id, $return_module, $additionalFlags);
+    }
+
+    SugarApplication::redirect($url);
 }
 
-//eggsurplus: abstract to simplify unit testing
-// FIXME will need to refactor this to redirect to parent iframe sidecar urls
-function buildRedirectURL($return_id='', $return_module='')
+/**
+ * Builds a redirect URL based on a Form SugarCRM.
+ *
+ * @param string $return_id (optional) The record id to redirect to.
+ * @param string $return_module (optional) The module to redirect to.
+ * @param array $additionalFlags (optional) Additional flags to sent to the URL.
+ *
+ * @return string The url built from the current $_REQUEST information.
+ */
+function buildRedirectURL($return_id = '', $return_module = '', array $additionalFlags = array())
 {
     if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "")
 	{
 		$return_module = $_REQUEST['return_module'];
-	}
-	else
-	{
-		$return_module = $return_module;
 	}
 	if(isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != "")
 	{
@@ -244,7 +265,7 @@ function buildRedirectURL($return_id='', $return_module='')
 
             // Meeting Integration
             if(isset($_REQUEST['meetingIntegrationFlag']) && $_REQUEST['meetingIntegrationFlag'] == 1) {
-            	$additionalFlags = array('meetingIntegrationShowForm' => '1');
+                $additionalFlags['meetingIntegrationShowForm'] = '1';
             }
             // END Meeting Integration
         }
@@ -285,12 +306,7 @@ function buildRedirectURL($return_id='', $return_module='')
 		$return_id = $_REQUEST['return_id'];
 	}
 
-    $add = "";
-    if(isset($additionalFlags) && !empty($additionalFlags)) {
-        foreach($additionalFlags as $k => $v) {
-            $add .= "&{$k}={$v}";
-        }
-    }
+    $add = http_build_query($additionalFlags);
 
     if (!isset($isDuplicate) || !$isDuplicate)
     {
@@ -298,12 +314,12 @@ function buildRedirectURL($return_id='', $return_module='')
         if(isset($_REQUEST['offset']) && empty($_REQUEST['duplicateSave'])) {
             $url .= "&offset=".$_REQUEST['offset'];
         }
-        return "Location: $url";
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
         $url="index.php?{$standard}{$add}";
-        return "Location: $url";
     }
+
+    return $url;
 }
 
 function getLikeForEachWord($fieldname, $value, $minsize=4)

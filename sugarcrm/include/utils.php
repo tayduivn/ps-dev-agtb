@@ -5459,3 +5459,63 @@ function isModuleBWC($module)
 
     return in_array($module, $bwcModules);
 }
+
+/**
+ * Translate a bwc action to a sidecar one.
+ *
+ * @param string $action The action to find a sidecar mapped one.
+ * @return string The mapped action or the action given if no action map was
+ *   found.
+ */
+function translateToSidecarAction($action)
+{
+    static $bwcActionMap = array(
+        'index' => '',
+        'DetailView' => '',
+        'EditView' => 'edit',
+    );
+
+    if (isset($bwcActionMap[$action])) {
+        $action = $bwcActionMap[$action];
+    }
+    return $action;
+}
+
+/**
+ * Builds a sidecar route from a BWC page.
+ *
+ * This will NOT check if the module is in BWC or not, it will trigger the
+ * navigation to sidecar url.
+ * @see isModuleBWC() to check if a module is in BWC or not.
+ * This expects the sidecar actions.
+ * @see translateToSidecarAction() if you need to know which action to map to.
+ *
+ * @param string $module The sidecar module to return to.
+ * @param string $id (optional) The record id to return to.
+ * @param string $action (optional) The action to return to.
+ * @return string The sidecar route based on the arguments given.
+ */
+function buildSidecarRoute($module, $id = null, $action = null)
+{
+    $route = $module;
+    if (!empty($id)) {
+        $route .= "/$id";
+    }
+    if (!empty($action)) {
+        $route .= "/$action";
+    }
+    return $route;
+}
+
+/**
+ * Navigate to a sidecar url from a BWC page.
+ *
+ * @see buildSidecarRoute() to build the url param to pass to this function.
+ *
+ * @param string $url The sidecar url to navigate to.
+ * @return string The script to use for a sidecar navigation
+ */
+function navigateToSidecar($url)
+{
+    return "parent.SUGAR.App.router.navigate('$url', {trigger: true});";
+}

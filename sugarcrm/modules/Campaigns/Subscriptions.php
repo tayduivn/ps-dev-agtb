@@ -83,7 +83,7 @@ if(isset($_REQUEST['record'])){
 }
 if(isset($_REQUEST['sidecar_return'])){
     $this->ss->assign("SIDECAR_RETURN", $_REQUEST['sidecar_return']);
-    $cancelButtonClick = "top.App.router.navigate('".$_REQUEST['sidecar_return']."', {trigger:true});";
+    $cancelButtonClick = "parent.SUGAR.App.router.navigate('" . $_REQUEST['sidecar_return'] . "', {trigger: true});";
 } else {
     $this->ss->assign("SIDECAR_RETURN", '');
     $cancelButtonClick = "this.form.action.value='".$this->ss->get_template_vars('RETURN_ACTION')."';this.form.module.value='".$this->ss->get_template_vars('RETURN_MODULE')."';";
