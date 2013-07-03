@@ -51,7 +51,6 @@ $viewdefs['base']['view']['panel-top'] = array(
                     'type' => 'rowaction',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'icon' => 'icon-pencil',
                     'acl_action' => 'view',
                 ),
             ),
