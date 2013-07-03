@@ -12,7 +12,7 @@
         input {
             display: inline-block;
             &[type=checkbox]{
-                margin: 0 0 3px 0;
+                margin: 0 5px 3px 0;
             }
         }
         &.hide {
@@ -20,32 +20,36 @@
         }
     }
     .rtlFloat(@direction,left);
-    .dropdown-menu {
-/*
-        background:none;
+    .advanced .dropdown-menu {
+        background: none;
         .border-radius(none);
         .box-shadow(none);
         border: 0;
-*/
+        padding-top: 0;
+        top: 36px;
+    }
+    .dropdown-menu {
         .border-radius(2px);
         overflow: hidden;
         .globalsearch-adv-wrap {
-            background:red;
-            border:1px solid blue;
-            .border-radius(2px);
-            z-index: @zindexDropdown;
-            background-color: @dropdownBackground;
-            border: 1px solid #ccc; // Fallback for IE7-8
-            border: 1px solid @dropdownBorder;
-            *border-right-width: 2px;
-            *border-bottom-width: 2px;
-            .box-shadow(0 5px 10px rgba(0,0,0,.2));
-            -webkit-background-clip: padding-box;
-             -moz-background-clip: padding;
-                  background-clip: padding-box;
+            .globalsearch-adv {
+                border: 1px solid @dropdownBorder;
+                background: red;
+                .border-radius(2px);
+                z-index: @zindexDropdown;
+                background-color: @dropdownBackground;
+                *border-right-width: 2px;
+                *border-bottom-width: 2px;
+                .box-shadow(0 5px 10px rgba(0,0,0,.2));
+                -webkit-background-clip: padding-box;
+                -moz-background-clip: padding;
+                background-clip: padding-box;
+                margin-top: 6px;
+                padding: 4px;
+            }
         }
         li {
-            padding: 7px 20px 4px;
+            padding: 5px 10px;
             min-width: 120px;
             &:not(:last-child) {
                 /*
@@ -58,6 +62,7 @@
         }
         // Typeahead
         &.typeahead {
+          max-width: 140px;
           li, a {
             padding: 0;
             margin: 0;
@@ -66,6 +71,15 @@
           }
           li > a {
             padding: 10px;
+            display: inline-block;
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            .box-sizing(border-box);
+          }
+          .label {
+            margin-right: 4px;
           }
         }
     }
