@@ -29,9 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['base']['view']['logout'] = array(
-    'type' => 'edit',
-    'buttons' =>
-        array(
+    'action' => 'edit',
+    'buttons' => array(
             array(
                 'name' => 'login_button',
                 'type' => 'button',
@@ -43,5 +42,5 @@ $viewdefs['base']['view']['logout'] = array(
                 'type' => 'button',
                 'label' => 'LBL_LOGIN_FORM_LABEL',
             ),
-        ),
+    ),
 );

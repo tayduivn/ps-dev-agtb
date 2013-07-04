@@ -1,35 +1,12 @@
 ({
     /**
      * Login form view.
-     * @class View.Views.LoginView
-     * @alias SUGAR.App.view.views.LoginView
+     * @class View.Views.LogoutView
+     * @alias SUGAR.App.view.views.LogoutView
      */
     events: {
         "click [name=login_button]": "login",
         "click [name=login_form_button]": "login_form",
-    },
-    
-    /**
-     * Get the fields metadata from panels and declare a Bean with the metadata attached
-     * @param meta
-     * @private
-     */
-    _declareModel: function(meta) {
-        app.data.declareModel('Login');
-    },
-    
-    /**
-     * @override
-     * @param options
-     */
-    initialize: function(options) {
-        // Declare a Bean so we can process field validation
-        this._declareModel(options.meta);
-
-        // Reprepare the context because it was initially prepared without metadata
-        options.context.prepare(true);
-
-        app.view.View.prototype.initialize.call(this, options);
     },
 
     /**
@@ -38,8 +15,19 @@
      */
     _render: function() {
         app.view.View.prototype._render.call(this);
+        this.refreshAddtionalComponents();
+        return this;
     },
-    
+
+    /**
+     * Refresh additional components
+     */
+    refreshAddtionalComponents: function() {
+        _.each(app.additionalComponents, function(component) {
+            component.render();
+        });
+    },
+
     /**
      * Process Login
      */
@@ -48,7 +36,7 @@
     },
     
     /**
-     * Process Login
+     * Show Login form
      */
     login_form: function() {
         app.controller.loadView({
@@ -57,5 +45,4 @@
             create: true
         });
     }
-
 })
