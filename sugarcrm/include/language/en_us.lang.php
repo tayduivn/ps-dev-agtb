@@ -3993,6 +3993,13 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_PLURAL' => 'Emails (To)',
     'TPL_HISTORY_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
 
+    // planned activities dashlet
+    'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled meetings and calls.',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
+    'TPL_PLANNED_ACTIVITIES_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
+
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',
     'LBL_MODULE_INTERACTIONS_TITLE' => '{{str "LBL_MODULE_NAME" attributes._module}} interactions',
@@ -4088,6 +4095,8 @@ $app_strings = array (
     'LBL_BEST_ADJUSTED' => 'Best (Adjusted)',
     'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
+
+    'LBL_OVERDUE' => 'Overdue',
 );
 
 $app_list_strings['interactions_options'] = array (

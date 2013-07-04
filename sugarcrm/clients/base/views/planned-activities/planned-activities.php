@@ -1,0 +1,115 @@
+<?php
+
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ('Company') that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
+$viewdefs['base']['view']['planned-activities'] = array(
+    'dashlets' => array(
+        array(
+            'name' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+            'description' => 'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION',
+            'config' => array(),
+            'preview' => array(),
+            'filter' => array(
+                'module' => array(
+                    'Accounts',
+                    'Contacts',
+                    'Home',
+                    'Leads',
+                    'Opportunities',
+                ),
+                'view' => 'record',
+            ),
+        ),
+    ),
+    'custom_toolbar' => array(
+        'buttons' => array(
+            array(
+                'type' => 'actiondropdown',
+                'no_default_action' => true,
+                'icon' => 'icon-plus',
+                'buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'createMeeting',
+                        'label' => 'LBL_SCHEDULE_MEETING',
+                        'acl_action' => 'create',
+                        'acl_module' => 'Meetings',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'createCall',
+                        'label' => 'LBL_SCHEDULE_CALL',
+                        'acl_action' => 'create',
+                        'acl_module' => 'Calls',
+                    ),
+                ),
+            ),
+            array(
+                'dropdown_buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'toggleClicked',
+                        'label' => 'LBL_DASHLET_MINIMIZE',
+                        'event' => 'minimize',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                    ),
+                ),
+            ),
+        ),
+    ),
+    'panels' => array(
+        array(
+            'name' => 'panel_body',
+            'labelsOnTop' => true,
+            'fields' => array(),
+        ),
+    ),
+    'tabs' => array(
+        array(
+            'active' => true,
+            'filter_applied_to' => 'date_start',
+            'filters' => array(
+                'status' => array('$not_equals' => 'Held'),
+            ),
+            'link' => 'meetings',
+            'module' => 'Meetings',
+            'order_by' => 'date_start:asc',
+            'record_date' => 'date_start',
+        ),
+        array(
+            'filter_applied_to' => 'date_start',
+            'filters' => array(
+                'status' => array('$not_equals' => 'Held'),
+            ),
+            'link' => 'calls',
+            'module' => 'Calls',
+            'order_by' => 'date_start:asc',
+            'record_date' => 'date_start',
+        ),
+    ),
+);
