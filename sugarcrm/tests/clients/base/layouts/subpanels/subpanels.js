@@ -83,7 +83,22 @@ describe("Subpanels layout", function() {
             expect(actual[0].context.link).toEqual('good');
             layout.model = null;//so we don't try to dispose bogus
         });
-
+        it('Should disable toggle buttons if all subpanels are hidden', function() {
+            layout.layout = new Backbone.View({
+                trigger: function(){}
+            });
+            var stub = sinonSandbox.stub(layout.layout, 'trigger');
+            layout._disableSubpanelToggleButton([1,2,3]);
+            expect(stub).not.toHaveBeenCalled();
+        });
+        it('Should not disable toggle buttons if unless all subpanels are hidden', function() {
+            layout.layout = new Backbone.View({
+                trigger: function(){}
+            });
+            var stub = sinonSandbox.stub(layout.layout, 'trigger');
+            layout._disableSubpanelToggleButton([]);
+            expect(stub).toHaveBeenCalled();
+        });
         it('Should hide hidden subpanels and also hide ACL forbidden subpanels', function() {
             layout.model = {
                 fields: {

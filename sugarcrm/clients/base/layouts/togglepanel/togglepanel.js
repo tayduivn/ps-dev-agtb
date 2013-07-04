@@ -53,7 +53,6 @@
                 toggle = (_.isString(component.layout)) ? component.layout : component.layout.name;
             }
 
-
             var availableToggle = _.find(this.options.meta.availableToggles, function (curr) {
                 return curr.name === toggle;
             }, this);
@@ -113,13 +112,16 @@
      */
     toggleView: function (e) {
         var $el = this.$(e.currentTarget);
-
-        // Only toggle if we click on an inactive button.
+        if ($el.attr('disabled')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        // Only toggle if we click on an inactive button
         if (!$el.hasClass("active")) {
             var data = $el.data();
             this.showComponent(data.view);
             app.user.lastState.set(this.toggleViewLastStateKey, data.view);
-            e.preventDefault();
         }
     },
 
