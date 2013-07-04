@@ -7,14 +7,14 @@
         this.context.on("openSidebar", this.openSide, this);
     },
     toggleSide: function() {
-        this.$('.main-pane').not("#dashboard").toggleClass('span12');
-        this.$('.main-pane').not("#dashboard").toggleClass('span8');
+        this.$('.main-pane').not("#dashboard,.dashboard").toggleClass('span12');
+        this.$('.main-pane').not("#dashboard,.dashboard").toggleClass('span8');
         this.$('.side').toggle();
         app.controller.context.trigger("toggleSidebarArrows");
     },
     openSide: function() {
-        this.$('.main-pane').not("#dashboard").addClass('span8');
-        this.$('.main-pane').not("#dashboard").removeClass('span12');
+        this.$('.main-pane').not("#dashboard,.dashboard").addClass('span8');
+        this.$('.main-pane').not("#dashboard,.dashboard").removeClass('span12');
         this.$('.side').show();
         app.controller.context.trigger("openSidebarArrows");
     },
