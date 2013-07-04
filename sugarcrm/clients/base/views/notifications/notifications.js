@@ -53,7 +53,7 @@
     /**
      * @inheritdoc
      */
-    initialize: function (options) {
+    initialize: function(options) {
         options.module = 'Notifications';
 
         app.view.View.prototype.initialize.call(this, options);
@@ -67,7 +67,7 @@
      * @return {View.Notifications} Instance of this view.
      * @protected
      */
-    _bootstrap: function () {
+    _bootstrap: function() {
         this._initOptions();
         this._initCollection();
         this.startPulling();
@@ -82,7 +82,7 @@
      * @return {View.Notifications} Instance of this view.
      * @protected
      */
-    _initOptions: function () {
+    _initOptions: function() {
         var options = _.extend(this._defaultOptions, this.meta || {});
 
         this.delay = options.delay * 60 * 1000;
@@ -98,7 +98,7 @@
      * @return {View.Notifications} Instance of this view.
      * @protected
      */
-    _initCollection: function () {
+    _initCollection: function() {
         this.collection = app.data.createBeanCollection(this.module);
         this.collection.options = {
             params: {
@@ -109,6 +109,19 @@
             fields: ['date_entered', 'id', 'name', 'type']
         };
 
+        this.collection.sync = _.wrap(
+            this.collection.sync,
+            function(sync, method, model, options) {
+                options = options || {};
+                options.endpoint = function(method, model, options, callbacks) {
+                    var url = app.api.buildURL(model.module, 'pull', {}, options.params);
+                    return app.api.call('read', url, {}, callbacks);
+                };
+
+                sync(method, model, options);
+            }
+        );
+
         return this;
     },
 
@@ -118,7 +131,7 @@
      * @param {String} type Notification type.
      * @return {String} Matching label or type if supplied type doesn't exist.
      */
-    getTypeLabel: function (type) {
+    getTypeLabel: function(type) {
         var list = app.lang.getAppListStrings('notifications_type_list');
         return list[type] || type;
     },
@@ -130,7 +143,7 @@
      * @return {String} Matching css class or an empty string if supplied type
      * doesn't exist.
      */
-    getTypeCss: function (type) {
+    getTypeCss: function(type) {
         return this.typeCss[type] || '';
     },
 
@@ -141,7 +154,7 @@
      *
      * @return {View.Notifications} Instance of this view.
      */
-    startPulling: function () {
+    startPulling: function() {
         if (!_.isNull(this._intervalId)) {
             return;
         }
@@ -166,7 +179,7 @@
      *
      * @return {View.Notifications} Instance of this view.
      */
-    stopPulling: function () {
+    stopPulling: function() {
         if (!_.isNull(this._intervalId)) {
             window.clearInterval(this._intervalId);
             this._intervalId = null;
@@ -181,7 +194,7 @@
      *
      * @return {View.Notifications} Instance of this view.
      */
-    pull: function () {
+    pull: function() {
         if (this.disposed || this.isOpened()) {
             return;
         }
@@ -189,7 +202,7 @@
         var self = this;
 
         this.collection.fetch({
-            success: function () {
+            success: function() {
                 if (self.disposed || self.isOpened()) {
                     return;
                 }
@@ -208,7 +221,7 @@
      *
      * @deprecated
      */
-    open: function (event) {
+    open: function(event) {
         if (this.disposed) {
             return;
         }
@@ -222,7 +235,7 @@
      *
      * @return {Boolean} True if dropdown is opened, false otherwise.
      */
-    isOpened: function () {
+    isOpened: function() {
         return this.$('.notification-list').hasClass('open');
     },
 
@@ -234,7 +247,7 @@
      *
      * @inheritdoc
      */
-    _renderHtml: function () {
+    _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
             return;
         }
@@ -244,7 +257,7 @@
             return;
         }
 
-        _.each(this.collection.models, function (model) {
+        _.each(this.collection.models, function(model) {
             model.set('typeCss', this.getTypeCss(model.get('type')));
             model.set('typeLabel', this.getTypeLabel(model.get('type')));
         }, this);
@@ -255,7 +268,7 @@
     /**
      * @inheritdoc
      */
-    _dispose: function () {
+    _dispose: function() {
         this.stopPulling();
         this.collection.off();
         app.view.View.prototype._dispose.call(this);
