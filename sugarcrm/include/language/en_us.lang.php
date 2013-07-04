@@ -3168,7 +3168,6 @@ $app_strings = array (
     'LBL_DASHLET_MINIMIZE' => 'Minimize',
     'LBL_DASHLET_MAXIMIZE' => 'Maximize',
 
-
     'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
 
@@ -3177,6 +3176,8 @@ $app_strings = array (
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
+
+    'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
@@ -3983,6 +3984,15 @@ $app_strings = array (
     'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
     'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
+    // history dashlet
+    'LBL_HISTORY_DASHLET' => 'History',
+    'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
+    'LBL_HISTORY_DASHLET_EMAIL_INBOUND_SINGULAR' => 'Email (From)',
+    'LBL_HISTORY_DASHLET_EMAIL_INBOUND_PLURAL' => 'Emails (From)',
+    'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_SINGULAR' => 'Email (To)',
+    'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_PLURAL' => 'Emails (To)',
+    'TPL_HISTORY_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
+
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',
     'LBL_MODULE_INTERACTIONS_TITLE' => '{{str "LBL_MODULE_NAME" attributes._module}} interactions',
@@ -4089,6 +4099,12 @@ $app_list_strings['interactions_options'] = array (
 );
 
 $app_list_strings['activity_user_options'] = array (
+    '7' => 'Last 7 Days',
+    '30' => 'Last 30 Days',
+    '90' => 'Last Quarter',
+);
+
+$app_list_strings['history_filter_options'] = array (
     '7' => 'Last 7 Days',
     '30' => 'Last 30 Days',
     '90' => 'Last Quarter',
