@@ -27,25 +27,25 @@
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
-        if(!options.meta.panels[0].fields || options.meta.panels[0].fields.length == 0) {
+        if(_.size(options.meta.panels[0].fields) === 0) {
             var moduleMetadata = app.metadata.getModule(options.module),
                 massFields = [];
             _.each(moduleMetadata.fields, function(field){
                 if(field.massupdate) {
-                    field.label = field.label || field.vname;
-                    if(!field.label) delete field.label;
+                    var cloneField = app.utils.deepCopy(field);
+                    cloneField.label = field.label || field.vname;
+                    if(!cloneField.label) delete cloneField.label;
                     //TODO: Remove hack code for teamset after metadata return correct team type
-                    if(field.name === 'team_name') {
-                        var team_field = _.clone(field);
-                        team_field.type = 'teamset';
-                        team_field.css_class = 'span9';
-                        field = {
+                    if(cloneField.name === 'team_name') {
+                        cloneField.type = 'teamset';
+                        cloneField.css_class = 'span9';
+                        cloneField = {
                             type: 'fieldset',
-                            name: team_field.name,
-                            label: team_field.label,
+                            name: 'team_name',
+                            label: cloneField.label,
                             css_class : 'row-fluid',
                             fields: [
-                                team_field,
+                                cloneField,
                                 {
                                     'name' : 'team_name_type',
                                     'type' : 'bool',
@@ -55,11 +55,11 @@
                             ]
                         };
                     }
-                    if(field.type === 'bool') {
-                        field.type = 'enum';
-                        field.options = 'checkbox_dom';
+                    if(cloneField.type === 'bool') {
+                        cloneField.type = 'enum';
+                        cloneField.options = 'checkbox_dom';
                     }
-                    massFields.push(field);
+                    massFields.push(cloneField);
                 }
             });
             options.meta.panels[0].fields = massFields;
