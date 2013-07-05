@@ -62,6 +62,16 @@
     forecastsConfigOK: false,
 
     /**
+     * Contains the latest saved data from the server
+     */
+    serverData: {},
+
+    /**
+     * The parent module for the dashlet
+     */
+    currentModule: '',
+
+    /**
      * events on the view for which to watch
      */
     events : {
@@ -74,12 +84,16 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
+        this.currentModule = app.controller.context.get("module");
+
         // check to make sure that forecast is configured
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
         this.isForecastSetup = this.forecastConfig.is_setup;
         this.forecastsConfigOK = app.utils.checkForecastConfig();
 
         if(this.isForecastSetup && this.forecastsConfigOK) {
+            this.serverData = {};
+
             // set up the model data
             this.resetModel();
 
@@ -188,28 +202,32 @@
             return;
         }
 
-        var ctx = this.model,
-            module = app.controller.context.get("module");
-        if (module == 'Forecasts') {
+        var ctx = this.model;
+        if (this.currentModule == 'Forecasts') {
             ctx = this.context.parent;
             this.showTimeperiod = false;
         }
 
         ctx.on('change:selectedTimePeriod', function(model) {
-            if(module == 'Forecasts') {
+            if(this.currentModule == 'Forecasts') {
                 this.updateDetailsForSelectedTimePeriod(model.get('selectedTimePeriod'));
             }
             // reload widget data when the selectedTimePeriod changes
             this.loadData({});
         }, this);
 
-        ctx.on('change:selectedUser', function(model) {
-            if(module == 'Forecasts') {
+        // Home module doesn't have a changing selectedUser
+        if(this.currentModule == 'Forecasts') {
+            ctx.on('change:selectedUser', function(model) {
                 this.updateDetailsForSelectedUser(model.get('selectedUser'));
-            }
-            // reload widget data when the selectedUser changes
-            this.loadData({});
-        }, this);
+                // reload widget data when the selectedUser changes
+                this.loadData({});
+            }, this);
+
+            ctx.on('forecasts:worksheet:totals', function(data) {
+                this.calculateData(this.mapAllTheThings(data, true));
+            }, this);
+        }
     },
 
     unbindData: function() {
@@ -219,7 +237,6 @@
         }
         app.view.View.prototype.unbindData.call(this);
     },
-
 
     /**
      * Overrides loadData to load from a custom URL
@@ -255,70 +272,95 @@
     },
 
     /**
+     * Any variable mapping happens here
+     *
+     * @param data an Object
+     */
+    mapAllTheThings: function(data, fromModel) {
+        if(this.shouldRollup) {
+            // Manager View
+            if(fromModel) {
+                data.likely = data.likely_case_adjusted;
+                data.best = data.best_case_adjusted;
+                data.worst = data.worst_case_adjusted;
+            } else {
+                data.likely = data.likely_adjusted;
+                data.best = data.best_adjusted;
+                data.worst = data.worst_adjusted;
+            }
+        } else {
+            // Rep View
+            if(fromModel) {
+                data.likely = data.likely_case;
+            } else {
+                data.likely = data.amount;
+            }
+
+            data.best = data.best_case;
+            data.worst = data.worst_case;
+            data.closed_amount = data.won_amount;
+
+            // can happen if data comes fromModel and won_amount isnt there
+            if(_.isUndefined(data.closed_amount)) {
+                data.closed_amount = 0;
+            }
+        }
+
+        return data;
+    },
+
+    /**
      * Success callback function for loadData to call
      *
      * @param data
      */
     handleNewDataFromServer: function(data) {
-        var dataObj = {
-                quota_amount : data.quota_amount,
-                quota_amount_str: app.currency.formatAmountLocale(data.quota_amount)
-            },
-            // object that holds data for shouldRollup case or !shouldRollup
-            // then gets merged back into dataObj after the if/else
-            specificCaseModel = {};
+        this.calculateData(this.mapAllTheThings(data, false));
+    },
+
+    /**
+     * Handles parsing data objects into model
+     *
+     * @param data
+     */
+    calculateData: function(data) {
+        // update serverData with changes from data
+        _.extend(this.serverData, data);
+
+        // update data with any values serverData had but data doesn't
+        _.extend(data, this.serverData);
+
+        this.likelyTotal = data.likely;
+        this.bestTotal = data.best;
+        this.worstTotal = data.worst;
 
         if(this.shouldRollup) {
             // Handle progressManager-specific data
-            this.likelyTotal = data.likely_adjusted;
-            this.bestTotal = data.best_adjusted;
-            this.worstTotal = data.worst_adjusted;
-
-            specificCaseModel = {
-                opportunities : data.opportunities,
-                closed_amount : data.closed_amount,
-                closed_amount_str: app.currency.formatAmountLocale(data.closed_amount),
-                revenue : data.pipeline_revenue,
-                revenue_str : app.currency.formatAmountLocale(data.pipeline_revenue)
-            };
-
+            data.revenue = data.pipeline_revenue;
         } else {
-            // Handle progressRep-specific data
-            this.likelyTotal = data.amount;
-            this.bestTotal = data.best_case;
-            this.worstTotal = data.worst_case;
-
-            specificCaseModel = {
-                closed_amount: data.won_amount,
-                closed_amount_str: app.currency.formatAmountLocale(data.won_amount),
-                opportunities : 0,
-                revenue : 0
-            };
-
             if (app.user.get('id') != this.selectedUser.id) {
-                specificCaseModel.revenue = app.math.sub(data.amount, data.includedClosedAmount);
-                specificCaseModel.opportunities = app.math.sub(data.included_opp_count, data.includedClosedCount);
+                data.revenue = app.math.sub(data.likely, data.includedClosedAmount);
+                data.opportunities = app.math.sub(data.included_opp_count, data.includedClosedCount);
             } else {
-                specificCaseModel.revenue = app.math.sub(data.overall_amount, app.math.add(data.lost_amount, data.won_amount));
-                specificCaseModel.opportunities = app.math.sub(data.total_opp_count, app.math.add(data.lost_count, data.won_count));
+                data.revenue = app.math.sub(data.overall_amount, app.math.add(data.lost_amount, data.won_amount));
+                data.opportunities = app.math.sub(data.total_opp_count, app.math.add(data.lost_count, data.won_count));
             }
-
-            specificCaseModel.revenue_str = app.currency.formatAmountLocale(specificCaseModel.revenue);
         }
 
-        // merge in the model for the specific cases back into dataObj
-        _.extend(dataObj, specificCaseModel);
+        data.quota_amount_str = app.currency.formatAmountLocale(data.quota_amount);
+        data.closed_amount_str = app.currency.formatAmountLocale(data.closed_amount);
+        data.revenue_str = app.currency.formatAmountLocale(data.revenue)
 
         if(this.model) {
-            this.model.set(dataObj);
-            this.recalculateModel();
+            this.model.set(data);
+            this.recalculateDataIntoModel();
         }
     },
 
     /**
      * Recalculates most all the values for the template model
      */
-    recalculateModel: function () {
+    recalculateDataIntoModel: function () {
         var closedAmt = this.model.get('closed_amount'),
             quotaAmt = this.model.get('quota_amount');
 
@@ -431,7 +473,14 @@
      * @return {Boolean}
      */
     isManagerView: function () {
-        return this.selectedUser.is_manager == true && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false);
+        var isMgrView = false;
+        if(this.currentModule == 'Forecasts' && this.selectedUser.is_manager == true
+            && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false))
+        {
+            isMgrView = true;
+        }
+
+        return isMgrView;
     },
 
     /**
