@@ -57,7 +57,7 @@ class CountConditionalRelatedExpression extends SumRelatedExpression
      */
     public static function getJSEvaluate()
     {
-        return "";
+        return false;
     }
 
     /**
