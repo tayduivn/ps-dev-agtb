@@ -77,7 +77,7 @@
      */
     _disableSubpanelToggleButton: function(allowedComponents) {
         if (!allowedComponents || !allowedComponents.length) {
-            this.layout.trigger('filterpanel:change', 'activitystream', true);
+            this.layout.trigger('filterpanel:change', 'activitystream', true, true);
             this.layout.trigger('filterpanel:toggle:button', 'subpanels', false);//disable subpanels toggle button
         }
     },

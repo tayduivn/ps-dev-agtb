@@ -127,11 +127,12 @@
     },
 
     /**
-     * handles filter panel changes between actvity and subpanels
-     * @param name
-     * @param silent
+     * Handles filter panel changes between activity and subpanels
+     * @param {String} name Name of panel
+     * @param {Boolean} silent Whether to trigger filter events
+     * @param {Boolean} setLastViewed Whether to set last viewed to `name` panel
      */
-    handleFilterPanelChange: function(name, silent) {
+    handleFilterPanelChange: function(name, silent, setLastViewed) {
         this.showingActivities = name === 'activitystream';
         var module = this.showingActivities ? "Activities" : this.module;
         var link;
@@ -147,6 +148,10 @@
         if (!silent) {
             this.trigger("filter:render:module");
             this.trigger("filter:change:module", module, link);
+        }
+        if (setLastViewed) {
+            // Asks filterpanel to update user.lastState with new panel name as last viewed
+            this.layout.trigger('filterpanel:lastviewed:set', name);
         }
     },
     /**
