@@ -12,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
+require_once('include/Expressions/Expression/Numeric/SumRelatedExpression.php');
 /**
  * <b>countConditional(Relate <i>link</i>, Field <i>string</i>, Values <i>list</i>)</b><br>
  * Returns the number of records related to this record by <i>link</i> and that matches the values for a specific field
@@ -39,7 +39,7 @@ class CountConditionalRelatedExpression extends SumRelatedExpression
         if (!is_array($values)) {
             $values = array($values);
         }
-        $GLOBALS["log"]->fatal($params);
+        
         $count = 0;
         foreach ($linkField as $link) {
             if (in_array($link->$field, $values)) {

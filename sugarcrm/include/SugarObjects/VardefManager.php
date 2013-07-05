@@ -229,9 +229,6 @@ class VardefManager{
         if(isset(self::$inReload[$guard_name])) {
             self::$inReload[$guard_name]++;
             if(self::$inReload[$guard_name] > 2) {
-                $GLOBALS['log']->fatal("Loop in refreshVardefs: $guard_name");
-                //echo "<pre>";
-                //debug_print_backtrace();
                 return;
             }
         } else {
