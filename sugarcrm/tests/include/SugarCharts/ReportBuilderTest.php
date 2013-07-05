@@ -28,7 +28,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * Override setUpBeforeClass to instantiate global beanFile and beanList variables
      */
-    public static function setUpBeforeClass()
+    /*public static function setUpBeforeClass()
     {
         global $beanList, $beanFiles;
         require('include/modules.php');
@@ -37,7 +37,14 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name = 'TestReport'");
+    }*/
+
+    public function setUp()
+    {
+        $this->markTestIncomplete('SFA-1308, This test is invalid and should be removed before 7.0 Ships');
     }
+
+
 
     /**
      * @group ReportBuilder

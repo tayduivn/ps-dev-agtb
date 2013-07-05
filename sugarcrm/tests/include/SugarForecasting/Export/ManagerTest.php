@@ -174,12 +174,12 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
     {
         return array
         (
-            array('show_worksheet_best', '1', 'assertRegExp', '/Best Case/'),
-            array('show_worksheet_best', '0', 'assertNotRegExp', '/Best Case/'),
-            array('show_worksheet_likely', '1', 'assertRegExp', '/Likely Case/'),
-            array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely Case/'),
-            array('show_worksheet_worst', '1', 'assertRegExp', '/Worst Case/'),
-            array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst Case/'),
+            array('show_worksheet_best', '1', 'assertRegExp', '/Best/'),
+            array('show_worksheet_best', '0', 'assertNotRegExp', '/Best/'),
+            array('show_worksheet_likely', '1', 'assertRegExp', '/Likely/'),
+            array('show_worksheet_likely', '0', 'assertNotRegExp', '/Likely/'),
+            array('show_worksheet_worst', '1', 'assertRegExp', '/Worst/'),
+            array('show_worksheet_worst', '0', 'assertNotRegExp', '/Worst/'),
         );
     }
 
