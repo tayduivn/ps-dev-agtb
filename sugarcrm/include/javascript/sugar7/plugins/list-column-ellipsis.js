@@ -61,7 +61,7 @@
                 if(this.visibleFieldsLastStateKey) {
                     app.user.lastState.set(this.visibleFieldsLastStateKey, _.pluck(this._fields.visible, 'name'));
                 }
-                // trigger an even to let the view that this is mixed-into that a column has been toggled
+                // trigger an event to let the view that this is mixed-into that a column has been toggled
                 this.trigger('list:toggle:column', column, changedColumn.selected, changedColumn);
             },
             /**

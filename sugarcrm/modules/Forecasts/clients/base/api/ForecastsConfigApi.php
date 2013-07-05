@@ -200,6 +200,10 @@ class ForecastsConfigApi extends ConfigModuleApi
      */
     public function setWorksheetColumns(ServiceBase $api, $worksheetColumns, $forecastBy)
     {
+        if (!is_array($worksheetColumns)) {
+            return false;
+        }
+
         require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
         $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, 'ForecastWorksheets', null, null, $api->platform);
         $listDefsParser->resetPanelFields();
