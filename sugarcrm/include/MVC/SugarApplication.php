@@ -806,10 +806,6 @@ class SugarApplication
         $_COOKIE[$name] = $value;
     }
 
-    protected $redirectVars = array('module', 'action', 'record', 'token', 'oauth_token', 'mobile',
-                                    'view', /* Reports */
-                                    'return_module', 'import_module'); /* Import */
-
     /**
      * Create string to attach to login URL with vars to preserve post-login
      *
@@ -818,14 +814,12 @@ class SugarApplication
     public function createLoginVars()
     {
         $ret = array();
-        foreach ($this->redirectVars as $var) {
-            if (!empty($this->controller->$var)) {
+        foreach (array_keys($_REQUEST) as $var) {
+            if(!empty($this->controller->$var)){
                 $ret["login_" . $var] = $this->controller->$var;
                 continue;
             }
-            if (!empty($_REQUEST[$var])) {
-                $ret["login_" . $var] = $_REQUEST[$var];
-            }
+            $ret["login_" . $var] = $_REQUEST[$var];
         }
         if (isset($_REQUEST['mobile'])) {
             $ret['mobile'] = $_REQUEST['mobile'];
@@ -848,10 +842,13 @@ class SugarApplication
      */
     public function getLoginVars($add_empty = true)
     {
+        $prefix = 'login_';
         $ret = array();
-        foreach ($this->redirectVars as $var) {
-            if (!empty($_REQUEST['login_' . $var]) || $add_empty) {
-                $ret["login_" . $var] = isset($_REQUEST['login_' . $var]) ? $_REQUEST['login_' . $var] : '';
+        foreach (array_keys($_REQUEST) as $var) {
+            if(strpos($var, $prefix) === 0){
+                if (!empty($_REQUEST[$var]) || $add_empty) {
+                    $ret[substr($var, strlen($prefix))] = isset($_REQUEST[$var]) ? $_REQUEST[$var] : '';
+                }
             }
         }
         return $ret;
@@ -864,10 +861,13 @@ class SugarApplication
      */
     public function getLoginRedirect()
     {
+        $prefix = 'login_';
         $vars = array();
-        foreach ($this->redirectVars as $var) {
-            if (!empty($_REQUEST['login_' . $var])) {
-                $vars[$var] = $_REQUEST['login_' . $var];
+        foreach (array_keys($_REQUEST) as $var) {
+            if(strpos($var, $prefix) === 0){
+                if (!empty($_REQUEST[$var])) {
+                    $vars[substr($var, strlen($prefix))] = $_REQUEST[$var];
+                }
             }
         }
         if (isset($_REQUEST['mobile'])) {
