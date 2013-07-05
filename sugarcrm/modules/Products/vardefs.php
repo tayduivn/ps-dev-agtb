@@ -597,7 +597,8 @@ $dictionary['Product'] = array(
             'len' => '255',
             'vname' => 'LBL_QUOTE_NAME',
             'source' => 'non-db',
-            'comment' => 'Quote Name'
+            'comment' => 'Quote Name',
+            'required' => true
         ),
         'manufacturer_name' =>  array(
             'name' => 'manufacturer_name',
