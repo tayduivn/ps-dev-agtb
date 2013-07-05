@@ -118,9 +118,9 @@
         _.each(toggleButtons, function(btn) {
             if($(btn).data('view') === toggleDataView) {
                 if(on) {
-                    $(btn).removeAttr('disabled');
+                    $(btn).removeAttr('disabled').removeClass('disabled');
                 } else {
-                    $(btn).attr('disabled', 'disabled');
+                    $(btn).attr('disabled', 'disabled').addClass('disabled');
                 }
             }
         });
