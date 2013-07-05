@@ -22,7 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['CampaignLog'] = array ('audited'=>false,
 	'comment' => 'Tracks items of interest that occurred after you send an email campaign',
 	'table' => 'campaign_log',
-
 	'fields' => array (
 		'id' => array (
 			'name' => 'id',
@@ -233,6 +232,13 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
             'relationship' => 'campaignlog_targeted_users',
             'source'       => 'non-db',
         ),
+        'account_campaign_log' => array(
+            'name' => 'account_campaign_log',
+            'vname'=>'LBL_CAMPAIGNLOG',
+            'type' => 'link',
+            'relationship' => 'account_campaign_log',
+            'source'=>'non-db',
+        ),
         'sent_email'    => array(
             'name'         => 'sent_email',
             'vname'        => 'LBL_SENT_EMAIL',
@@ -254,14 +260,12 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
 			'type' =>'index',
 			'fields'=>array('target_tracker_key')
 		),
-
 		array (
 			'name' =>'idx_camp_campaign_id',
 
 			'type' =>'index',
 			'fields'=>array('campaign_id')
 		),
-
 		array (
 			'name' =>'idx_camp_more_info',
 
@@ -280,8 +284,6 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
 			'type' =>'index',
 			'fields'=>array('target_id','deleted')
 		),
-
-
 	),
 	'relationships' => array (
         'campaignlog_contact' => array( 'lhs_module'=> 'CampaignLog',
@@ -325,6 +327,15 @@ $dictionary['CampaignLog'] = array ('audited'=>false,
             'rhs_key' => 'id',
             'relationship_type'=>'one-to-many'
         ),
+        'account_campaign_log' => array(
+            'lhs_module' => 'Accounts',
+            'lhs_table'=> 'accounts',
+            'lhs_key'=> 'id',
+            'rhs_module'=> 'CampaignLog',
+            'rhs_table'=>'campaign_log',
+            'rhs_key'=> 'target_id',
+            'relationship_type'   =>'one-to-many'
+        ),
     )
 );
-?>
+
