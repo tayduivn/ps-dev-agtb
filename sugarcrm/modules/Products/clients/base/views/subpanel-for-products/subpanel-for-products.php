@@ -20,23 +20,10 @@ $viewdefs['Products']['base']['view']['subpanel-for-products'] = array(
       'label' => 'LBL_PANEL_1',
       'fields' => array(
         array(
-          'name' => 'full_name',
-          'type' => 'fieldset',
-          'fields' => array(
-              array(
-                  'name' => 'first_name',
-                  'link' => true,
-              ),
-              array(
-                  'name' => 'last_name',
-                  'link' => true,
-              )
-          ),
-          'css_class' => 'full-name',
-          'width' =>  49,
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'name' => 'name',
           'link' => 'true',
         ),
         array(

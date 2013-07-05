@@ -308,6 +308,22 @@
             },
 
             /**
+             * Returns TRUE if any of the related fields associated with this link are required,
+             * which would make this link required.  Returns FALSE otherwise.
+             *
+             * @param {String} module Parent module name
+             * @param {String} link Link name
+             * @return {Boolean}
+             */
+            isRequiredLink: function(module, link){
+                var relatedFields = app.data.getRelateFields(module, link);
+                var requiredField = _.some(relatedFields, function(field){
+                    return field.required === true;
+                }, this);
+                return requiredField;
+            },
+
+            /**
              * Get the Datasets for the specified app list string that are only present via the specified config key list string combination
              *
              * @param app_list_dataset_name {String} variable to pull from app list strings for the datasets needed

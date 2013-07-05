@@ -34,6 +34,9 @@
         app.view.invokeParent(this, {type: 'field', name: 'button', method: 'initialize', args:[options]});
     },
     rowActionSelect: function(evt) {
+        if(this.isDisabled()){
+            return;
+        }
         // make sure that we are not disabled first
         if(this.preventClick(evt) !== false) {
             if ($(evt.currentTarget).data('event')) {

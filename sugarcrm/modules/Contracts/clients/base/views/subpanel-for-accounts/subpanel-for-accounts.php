@@ -18,13 +18,14 @@ $viewdefs['Contracts']['base']['view']['subpanel-for-accounts'] = array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'name' => 'name',
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
+          'link' => true,
         ),
         array(
           'name' => 'start_date',

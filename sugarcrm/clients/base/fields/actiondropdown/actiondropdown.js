@@ -43,7 +43,7 @@
         this.setPlaceholder = _.throttle(actiondropdownField.prototype.setPlaceholder, 100);
     },
     renderDropdown: function() {
-        if(_.isEmpty(this.dropdownFields)) {
+        if(_.isEmpty(this.dropdownFields) || this.isDisabled()) {
             return;
         }
 
@@ -55,6 +55,9 @@
         this.dropdownFields = null;
     },
     dropdownSelected: function(evt) {
+        if(this.isDisabled()){
+            return;
+        }
         var $el = this.$(evt.currentTarget),
             selectedIndex = $el.val();
         if(!selectedIndex) {
@@ -74,7 +77,6 @@
             caretClass = this.def.primary ? 'btn btn-primary dropdown-toggle' : 'btn dropdown-toggle',
             caret = '<a class="' + caretClass + '" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>',
             dropdown = '<ul class="dropdown-menu">';
-
         if(app.utils.isTouchDevice()) {
             caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
         }
@@ -115,6 +117,31 @@
     _render: function() {
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_render'});
         this.setPlaceholder();
+        this._updateCaret();
+    },
+    /**
+     * Enable or disable caret depending on if there are any enabled actions in the dropdown list
+     * @private
+     */
+    _updateCaret: function(){
+        if(_.isEmpty(this.dropdownFields)){
+            return;
+        }
+        var caretEnabled = _.some(this.dropdownFields, function(field){
+            if(field.hasAccess()){
+                if(field.def.css_class.indexOf("disabled") > -1){ //If action disabled in metadata
+                    return false;
+                } else if (field.isDisabled()) { //Or disabled via field controller
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            return false;
+        });
+        if(!caretEnabled){
+            this.$(".icon-caret-down").closest("a").addClass('disabled');
+        }
     },
     setPlaceholder: function() {
         if(this.disposed) {

@@ -26,11 +26,11 @@
  ********************************************************************************/
 ({
     /**
-     * Unlink row action used in Subpanels.
-     * Triggers 'list:unlinkrow:fire' event on context on click.
+     * Sticky Rowaction does not disappear when user does not have access.  It becomes
+     * disabled instead.  This allows us to keep things lined up nicely in Subpanel.
      *
-     * @class View.Fields.UnlinkActionField
-     * @alias SUGAR.App.view.fields.UnlinkActionField
+     * @class View.Fields.StickyRowactionField
+     * @alias SUGAR.App.view.fields.StickyRowactionField
      * @extends View.Fields.RowactionField
      */
     extendsFrom: 'RowactionField',
@@ -39,24 +39,39 @@
      * @override
      */
     initialize: function(options) {
-        options.def.event =  options.def.event || 'list:unlinkrow:fire';  // default event
-        options.def.acl_action =  options.def.acl_action || 'delete';  // default ACL
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args:[options]});
-        this.type = 'rowaction';
+        this.type = 'rowaction';  //TODO Hack that loads rowaction templates.  I hope to remove this when SP-966 is fixed.
     },
     /**
-     * We cannot unlink one-to-many relationships where the relationship is a required field.
-     * Returns false if relationship is required otherwise calls parent for additional ACL checks
-     * @return {Boolean} true if allow access, false otherwise
-     * @override
+     * We always render StickyRowactions and instead set disable class when the user has no access
+     * @private
      */
-    hasAccess: function() {
-        var link = this.context.get("link");
-        var parentModule = this.context.get("parentModule");
-        var required = app.utils.isRequiredLink(parentModule, link);
-        if(required){
-            return false;
+    _render: function() {
+        if(this.isDisabled()){
+            if(_.isUndefined(this.def.css_class) || this.def.css_class.indexOf('disabled') === -1){
+                this.def.css_class = (this.def.css_class) ? this.def.css_class + " disabled" : "disabled";
+            }
+            //Remove event listeners on this action since it is disabled
+            this.undelegateEvents();
         }
-        return app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'hasAccess'});
+        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+    },
+    /**
+     * Essentially the replacement of 'hasAccess' method for implementors of StickyRowactionField.
+     * Used to determine if this rowaction should be rendered in a disabled state because the user lacks permission, etc.
+     *
+     * This is a default implementation disables when the user lacks access.
+     * @return {boolean}
+     */
+    isDisabled: function(){
+        return !app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'hasAccess'});
+    },
+    /**
+     * Forces StickyRowaction to be rendered and visible in Actiondropdowns.
+     * @returns {boolean} TRUE always
+     */
+    hasAccess: function(){
+        return true;
     }
+
 })

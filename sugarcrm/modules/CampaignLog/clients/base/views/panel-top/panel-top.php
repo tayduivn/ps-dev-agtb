@@ -24,7 +24,7 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
             'css_class' => 'pull-right',
             'buttons' => array(
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'sticky-rowaction',
                     'icon' => 'icon-plus',
                     'name' => 'create_button',
                     'label' => ' ',
@@ -32,7 +32,7 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
                     'css_class' => 'disabled',
                 ),
                 array(
-                    'type' => 'rowaction',
+                    'type' => 'sticky-rowaction',
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                     'icon' => 'icon-pencil',
@@ -42,4 +42,5 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
             ),
         ),
     ),
+
 );

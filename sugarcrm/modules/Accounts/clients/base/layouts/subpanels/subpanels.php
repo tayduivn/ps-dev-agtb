@@ -56,13 +56,6 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
     ),
     array (
       'layout' => 'subpanel',
-      'label' => 'LBL_NOTES_SUBPANEL_TITLE',
-      'context' => array (
-        'link' => 'notes',
-      ),
-    ),
-    array (
-      'layout' => 'subpanel',
       'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'documents',
@@ -81,6 +74,21 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
       'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
       'context' => array (
           'link' => 'campaigns',
+      ),
+    ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
+      'override_subpanel_list_view' => 'subpanel-for-accounts',
+      'context' => array (
+          'link' => 'contracts',
+      ),
+    ),
+    array (
+      'layout' => 'subpanel',
+      'label' => 'LBL_PROJECT_SUBPANEL_TITLE',
+      'context' => array (
+          'link' => 'project',
       ),
     ),
   ),
