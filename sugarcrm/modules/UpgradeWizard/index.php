@@ -26,12 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: index.php 53409 2010-01-04 03:31:15Z roger $
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
+sugar_die($app_strings['ERR_UW_RETIRED']);
 
 if(!is_admin($current_user)) {
 	sugar_die($app_strings['ERR_NOT_ADMIN']);

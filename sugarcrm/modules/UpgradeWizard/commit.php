@@ -27,12 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry)
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright(C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: commit.php 58188 2010-09-16 03:20:33Z kjing $
- * Description:
- * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- * *******************************************************************************/
+sugar_die($app_strings['ERR_UW_RETIRED']);
 require_once('include/SugarLogger/SugarLogger.php');
 
 $trackerManager = TrackerManager::getInstance();
