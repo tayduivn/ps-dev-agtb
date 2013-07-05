@@ -197,7 +197,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         return $this->getFiscalYearFilter($layout_def, '+3 month', '+6 month');
     }
 
-	function queryFilterNot_Equals_str($layout_def, $layout_def)
+    public function queryFilterNot_Equals_str($layout_def)
 	{
 		global $timedate;
 
