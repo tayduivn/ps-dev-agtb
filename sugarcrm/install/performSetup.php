@@ -332,7 +332,7 @@ echo "<br>";
     $api->platform = 'base';
     require_once('modules/Forecasts/clients/base/api/ForecastsConfigApi.php');
     $client = new ForecastsConfigApi();
-    $client->setWorksheetColumns($api, $forecast_config['worksheet_columns']);
+    $client->setWorksheetColumns($api, $forecast_config['worksheet_columns'], $forecast_config['forecast_by']);
 
     unset($api, $client, $forecast_config);
     //END SUGARCRM flav=pro ONLY

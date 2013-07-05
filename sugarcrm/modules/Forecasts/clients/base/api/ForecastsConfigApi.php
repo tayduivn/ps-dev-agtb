@@ -127,7 +127,7 @@ class ForecastsConfigApi extends ConfigModuleApi
 
         // did this change?
         if ($prior_forecasts_settings['worksheet_columns'] !== $args['worksheet_columns']) {
-            $this->setWorksheetColumns($api, $args['worksheet_columns']);
+            $this->setWorksheetColumns($api, $args['worksheet_columns'], $current_forecasts_settings['forecast_by']);
         }
 
         //if primary settings for timeperiods have changed, then rebuild them
@@ -198,7 +198,7 @@ class ForecastsConfigApi extends ConfigModuleApi
      * @param ServiceBase $api
      * @param $worksheetColumns
      */
-    public function setWorksheetColumns(ServiceBase $api, $worksheetColumns)
+    public function setWorksheetColumns(ServiceBase $api, $worksheetColumns, $forecastBy)
     {
         require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
         $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, 'ForecastWorksheets', null, null, $api->platform);
@@ -234,11 +234,24 @@ class ForecastsConfigApi extends ConfigModuleApi
             if (!in_array($field['name'], $worksheetColumns)) {
                 continue;
             }
+
             $column = $field['name'];
             $additionalDefs = array();
 
+            // set the label for the parent_name field, depending on what we are forecasting by
+            if ($column == 'parent_name') {
+                $label = $forecastBy == 'Opportunities' ? 'LBL_OPPORTUNITY_NAME' : 'LBL_REVENUELINEITEM_NAME';
+                $additionalDefs = array_merge(
+                    $additionalDefs,
+                    array('label' => $label)
+                );
+            }
+
             if (in_array($column, $cteable)) {
-                $additionalDefs = array('click_to_edit' => true);
+                $additionalDefs = array_merge(
+                    $additionalDefs,
+                    array('click_to_edit' => true)
+                );
             }
             if (in_array($column, $currency_fields)) {
                 $additionalDefs = array_merge(

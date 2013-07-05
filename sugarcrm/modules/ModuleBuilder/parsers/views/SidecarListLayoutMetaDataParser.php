@@ -427,7 +427,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         $field = $this->generateFieldDef($field);
 
         if (!empty($additionalDefs)) {
-            $field = array_merge($additionalDefs, $field);
+            $field = array_merge($field, $additionalDefs);
         }
 
         if (is_null($placementIndex)) {
