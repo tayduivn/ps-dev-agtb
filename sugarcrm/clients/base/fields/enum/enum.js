@@ -75,25 +75,42 @@
     },
     /**
      * Load the options for this field and pass them to callback function.  May be asynchronous.
-     * @param {Boolean} fetch (optional) Force use of Enum API to load options
-     * @param {Function} callback (optional) Called when enum options are available
+     * @param {Boolean} fetch (optional) Force use of Enum API to load options.
+     * @param {Function} callback (optional) Called when enum options are available.
      */
-    loadEnumOptions: function(fetch, callback){
-        var self = this;
-        var items = self.def.options;
+    loadEnumOptions: function(fetch, callback) {
+        var self = this,
+            meta = app.metadata.getModule(this.module, 'fields'),
+            fieldMeta = meta && meta[this.name] ? meta[this.name] : this.def,
+            items = this.def.options || fieldMeta.options;
         fetch = fetch || false;
-        if(fetch || _.isUndefined(items)){
-            app.api['enum'](self.module, self.name, {
-                success: function(o){
-                    if(self.enumOptions !== o){
-                        self.enumOptions = o;
-                        callback.call(self);
+        if (fetch || _.isUndefined(items)) {
+            var _key = 'request:' + this.module + ':' + this.name;
+            //if previous request is existed, ignore the duplicate request
+            if (this.context.get(_key)) {
+                var request = this.context.get(_key);
+                request.xhr.done(_.bind(function(o) {
+                    if (this.enumOptions !== o) {
+                        this.enumOptions = o;
+                        callback.call(this);
                     }
-                }
-                // Use Sugar7's default error handler
-            });
+                }, this));
+            } else {
+                var request = app.api['enum'](self.module, self.name, {
+                    success: function(o) {
+                        if (self.enumOptions !== o) {
+                            self.enumOptions = o;
+                            fieldMeta.options = self.enumOptions;
+                            self.context.unset(_key);
+                            callback.call(self);
+                        }
+                    }
+                    // Use Sugar7's default error handler
+                });
+                this.context.set(_key, request);
+            }
         } else {
-            if(_.isString(items)) {
+            if (_.isString(items)) {
                 items = app.lang.getAppListStrings(items);
             }
             self.enumOptions = items;
@@ -188,5 +205,11 @@
     unbindDom: function() {
         this.$(this.fieldTag).select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
+    },
+
+    unbindData: function() {
+        var _key = 'request:' + this.module + ':' + this.name;
+        this.context.unset(_key);
+        app.view.Field.prototype.unbindData.call(this);
     }
 })

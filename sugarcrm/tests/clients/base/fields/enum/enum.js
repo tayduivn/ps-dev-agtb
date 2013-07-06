@@ -1,5 +1,6 @@
 describe("enum field", function() {
     var app, field, stub_appListStrings,
+        module = 'Contacts',
         fieldName = 'test_enum';
 
     beforeEach(function() {
@@ -9,6 +10,9 @@ describe("enum field", function() {
         SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'edit');
         SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'list');
         SugarTest.testMetadata.set();
+        SugarTest.testMetadata._addDefinition(fieldName, 'fields', {
+        }, module);
+
         stub_appListStrings = sinon.stub(app.lang, 'getAppListStrings', function() {
             return {"":"","Defect":"DefectValue","Feature":"FeatureValue"};
         });
@@ -26,11 +30,13 @@ describe("enum field", function() {
     });
 
     afterEach(function() {
+        if (field) {
+            field.dispose();
+        }
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
         field = null;
-        multiEnumField = null;
         stub_appListStrings.restore();
     });
 
@@ -63,21 +69,51 @@ describe("enum field", function() {
         expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
         loadEnumSpy.restore();
     });
-
-    it("should load options from enum API if options is undefined", function(){
-        var callStub = sinon.stub(app.api,"enum", function(module, field, callbacks){
-            expect(field).toEqual("test_enum");
-            //Call success callback
-            callbacks.success(app.lang.getAppListStrings());
+    describe('enum API', function() {
+        it('should load options from enum API if options is undefined', function() {
+            var callStub = sinon.stub(app.api, 'enum', function(module, field, callbacks) {
+                expect(field).toEqual('test_enum');
+                //Call success callback
+                callbacks.success(app.lang.getAppListStrings());
+            });
+            field = SugarTest.createField('base', fieldName, 'enum', 'detail', {/* no options */});
+            var renderSpy = sinon.spy(field, '_render');
+            field.render();
+            expect(callStub).toHaveBeenCalled();
+            expect(renderSpy.calledTwice).toBe(true);
+            expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+            callStub.restore();
+            renderSpy.restore();
         });
-        field = SugarTest.createField("base", fieldName, "enum", "detail", {/* no options */});
-        var renderSpy = sinon.spy(field, "_render");
-        field.render();
-        expect(callStub).toHaveBeenCalled();
-        expect(renderSpy.calledTwice).toBe(true);
-        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
-        callStub.restore();
-        renderSpy.restore();
+        it('should avoid duplicate enum api call', function() {
+            var apiSpy = sinon.spy(app.api, 'enum');
+            field = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module);
+            var field2 = SugarTest.createField('base', fieldName, 'enum', 'detail', {}, module, null, field.context),
+                expected = {
+                    aaa: 'bbb',
+                    fake1: 'fvalue1',
+                    fake2: 'fvalue2'
+                };
+            //setup fake REST end-point for enum
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith('GET', /.*rest\/v10\/Contacts\/enum\/test_enum.*/,
+                [200, { 'Content-Type': 'application/json'}, JSON.stringify(expected)]);
+            field.render();
+            SugarTest.server.respond();
+            field2.render();
+            field.render();
+
+            expect(apiSpy.calledOnce).toBe(true);
+            //second field should be ignored, once first ajax called is being called
+            expect(apiSpy.calledTwice).toBe(false);
+            _.each(expected, function(value, key) {
+                expect(field.enumOptions[key]).toBe(value);
+                expect(field2.enumOptions[key]).toBe(value);
+            });
+            apiSpy.restore();
+            field.dispose();
+            field2.dispose();
+        });
     });
 
     describe("multi select enum", function() {
