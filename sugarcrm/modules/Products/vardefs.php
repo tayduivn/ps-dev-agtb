@@ -63,6 +63,7 @@ $dictionary['Product'] = array(
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
             'auto_populate' => true,
             'populate_list' => array(
+                'name' => 'name',
                 'category_id' => 'category_id',
                 'category_name' => 'category_name',
                 'mft_part_num' => 'mft_part_num',
@@ -904,10 +905,7 @@ $dictionary['Product'] = array(
             'filter_template' => array(
                 array('$and' => array(
                     array('opportunity_id' => array('$equals' => '$opportunity_id')),
-                    array('name' => array('$starts' => '$name')),
-                    array('sales_status' => array('$not_equals' => 'Closed Won')),
-                    array('sales_status' => array('$not_equals' => 'Closed Lost')),
-                    array('sales_status' => array('$not_equals' => 'Converted to Quote')),
+                    array('name' => array('$starts' => '$name'))
                 )),
             ),
             'ranking_fields' => array(
