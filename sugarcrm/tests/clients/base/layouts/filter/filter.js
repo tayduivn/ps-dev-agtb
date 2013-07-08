@@ -594,35 +594,6 @@ describe("Base.Layout.Filter", function () {
             expect(meta).toEqual(result);
             metadataStub.restore();
         });
-        it('should get the highest priority field for search', function () {
-            var moduleFilterMetaStub = sinon.stub(layout, 'getModuleFilterMeta', function () {
-                return {
-                    'meta1': {
-                        'meta': {
-                            'quicksearch_field': 'test1',
-                            'quicksearch_priority': 0
-                        }
-                    },
-                    'meta2': {
-                        'meta': {
-                            'quicksearch_field': 'test2',
-                            'quicksearch_priority': 3
-                        }
-                    },
-                    'meta3': {
-                        'meta': {
-                            'quicksearch_field': 'test3',
-                            'quicksearch_priority': 2
-                        }
-                    }
-                }
-            });
-
-            var field = layout.getModuleQuickSearchFields('Accounts');
-
-            expect(field).toEqual('test2');
-            moduleFilterMetaStub.restore();
-        });
         it('should init filter state on render', function () {
             var initStub = sinon.stub(layout, 'initializeFilterState');
 

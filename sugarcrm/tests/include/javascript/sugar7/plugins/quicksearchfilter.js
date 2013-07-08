@@ -130,4 +130,37 @@ describe("Plugins.Quicksearchfilter", function () {
         }, this);
         metadataStub.restore();
     });
+
+    it('should get the highest priority field for search', function () {
+        var layout = SugarTest.createLayout('base', 'Accounts', 'filter', {}, false, false, {layout: new Backbone.View()});
+        var metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+            return {
+                filters: {
+                    'meta1': {
+                        'meta': {
+                            'quicksearch_field': 'test1',
+                            'quicksearch_priority': 0
+                        }
+                    },
+                    'meta2': {
+                        'meta': {
+                            'quicksearch_field': 'test2',
+                            'quicksearch_priority': 3
+                        }
+                    },
+                    'meta3': {
+                        'meta': {
+                            'quicksearch_field': 'test3',
+                            'quicksearch_priority': 2
+                        }
+                    }
+                }
+            }
+        });
+
+        var field = layout.getModuleQuickSearchFields('Accounts');
+
+        expect(field).toEqual('test2');
+        metadataStub.restore();
+    });
 });
