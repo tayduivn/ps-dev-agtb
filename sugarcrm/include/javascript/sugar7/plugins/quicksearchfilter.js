@@ -24,7 +24,7 @@
                 return this._moduleSearchFields[searchModule];
             },
             getFilterDef: function(searchModule, searchTerm) {
-                var searchFilter = [], returnFilter = [], fieldNames;
+                var searchFilter = [], returnFilter = [], fieldNames, terms;
 
                 //Special case where no specific module is selected
                 if (searchModule === 'all_modules') {
@@ -37,10 +37,21 @@
                 fieldNames = this.getModuleQuickSearchFields(searchModule);
 
                 if (searchTerm) {
+                    if (fieldNames.length > 1) {
+                        terms = searchTerm.split(' ');
+                    }
                     _.each(fieldNames, function(name) {
-                        var o = {};
-                        o[name] = {'$starts': searchTerm};
-                        searchFilter.push(o);
+                        if (terms) {
+                            _.each(terms, function(term) {
+                                var o = {};
+                                o[name] = {'$starts': term};
+                                searchFilter.push(o);
+                            });
+                        } else {
+                            var o = {};
+                            o[name] = {'$starts': searchTerm};
+                            searchFilter.push(o);
+                        }
                     });
                     returnFilter.push(searchFilter.length > 1 ? {'$or': searchFilter} : searchFilter[0]);
                 }

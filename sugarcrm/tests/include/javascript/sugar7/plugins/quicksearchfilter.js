@@ -19,7 +19,8 @@ describe("Plugins.Quicksearchfilter", function () {
 
         var singleExpectedField = ['name'],
             multipleExpectedFields = ['first_name', 'last_name', 'title'],
-            expectedSearchTerm = "Foo",
+            expectedSearchTerm = "Foo Bar",
+            expectedSearchTerms = expectedSearchTerm.split(' '),
             singleFilterModule = "Tasks",
             multipleFilterModule = "Contacts",
             metadataStub = sinon.stub(app.metadata, 'getModule', function (module) {
@@ -62,13 +63,13 @@ describe("Plugins.Quicksearchfilter", function () {
         var actualMultiFilter = field.getFilterDef(multipleFilterModule, expectedSearchTerm);
         _.each(actualMultiFilter, function (filter) {
             expect(filter['$or']).toBeDefined();
-            expect(filter['$or'].length).toBe(multipleExpectedFields.length);
+            expect(filter['$or'].length).toBe(multipleExpectedFields.length * expectedSearchTerms.length);
             _.each(filter['$or'], function (search_filter) {
                 _.each(search_filter, function (term, field) {
                     var actualTerm = term['$starts'];
                     expect(_.indexOf(multipleExpectedFields, field) >= 0).toBeTruthy();
                     expect(actualTerm).toBeDefined();
-                    expect(actualTerm).toBe(expectedSearchTerm);
+                    expect(_.indexOf(['Foo', 'Bar'], actualTerm) >= 0).toBeTruthy();
                 });
             });
         }, this);
