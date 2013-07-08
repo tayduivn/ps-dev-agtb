@@ -108,6 +108,7 @@ $dictionary['DBFTS'] = array(
     'relationships' => array(),
     'optimistic_locking' => true,
     'unified_search' => false,
+    'acls' => array('SugarACLStatic' => false),
 );
 if (!class_exists('VardefManager')) {
     require_once('include/SugarObjects/VardefManager.php');
