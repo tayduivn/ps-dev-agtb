@@ -2411,7 +2411,7 @@ private function dir_file_count($path){
 
     public static function handleBaseConfig()
     {
-        sugar_file_put_contents('config.js', self::getJSConfig(self::getBaseConfig()));
+        sugar_file_put_contents(sugar_cached('config.js'), self::getJSConfig(self::getBaseConfig()));
     }
 
     /**

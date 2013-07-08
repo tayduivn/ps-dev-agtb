@@ -17,7 +17,14 @@ require_once('include/SugarTheme/SidecarTheme.php');
 
 class SidecarView extends SugarView
 {
-    protected $configFile = "config.js";
+    protected $configFileName = "config.js";
+    protected $configFile;
+    
+    public function __construct()
+    {
+        $this->configFile = sugar_cached($this->configFileName);
+        parent::SugarView();
+    }
 
     /**
      * This method checks to see if the configuration file exists and, if not, creates one by default
@@ -28,7 +35,7 @@ class SidecarView extends SugarView
         global $app_strings;
 
         //Rebuild config file if it doesn't exist
-        if(!file_exists('config.js')) {
+        if(!file_exists($this->configFile)) {
            require_once('install/install_utils.php');
            handleSidecarConfig();
         }

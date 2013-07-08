@@ -56,9 +56,10 @@ class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHandleSidecarConfig()
     {
+        $file = sugar_cached('config.js');
         handleSidecarConfig();
-        $this->assertFileExists('config.js');
-        $configJSContents = file_get_contents('config.js');
+        $this->assertFileExists($file);
+        $configJSContents = file_get_contents($file);
 
         $this->assertNotEmpty($configJSContents);
         $this->assertRegExp('/\"platform\"\s*?\:\s*?\"base\"/', $configJSContents);
