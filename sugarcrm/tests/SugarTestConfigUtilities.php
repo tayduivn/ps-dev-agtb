@@ -41,11 +41,15 @@ class SugarTestConfigUtilities
      */
     public static function setConfig($category, $key, $value, $platform = 'base')
     {
-        if(!(self::$admin instanceof Administration)) {
+        if (!(self::$admin instanceof Administration)) {
             self::$admin = BeanFactory::getBean('Administration');
         }
-        if(empty(self::$orgConfig)) {
+        if (empty(self::$orgConfig)) {
             self::$orgConfig = self::$admin->getAllSettings();
+        }
+
+        if (is_array($value)) {
+            $value = json_encode($value);
         }
 
         self::$admin->saveSetting($category, $key, $value, $platform);
@@ -56,7 +60,7 @@ class SugarTestConfigUtilities
      */
     public static function resetConfig()
     {
-        foreach(self::$orgConfig as $config) {
+        foreach (self::$orgConfig as $config) {
             self::$admin->saveSetting($config['category'], $config['key'], $config['value'], $config['platform']);
         }
     }
