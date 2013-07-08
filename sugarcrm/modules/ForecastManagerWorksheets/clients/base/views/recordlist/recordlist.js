@@ -470,6 +470,9 @@
             this.layout.hide();
         }
 
+        // empty out the left columns
+        this.leftColumns = [];
+
         return ret;
     },
 
