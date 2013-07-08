@@ -39,11 +39,7 @@ class One2MBeanRelationship extends One2MRelationship
         // test to see if the relationship exist if the relationship between the two beans
         // exist then we just fail out with false as we don't want to re-trigger this
         // the save and such as it causes problems with the related() in sugarlogic
-        if ($this->relationship_exists(
-            $lhs,
-            $rhs
-        ) && !empty($GLOBALS['resavingRelatedBeans'])
-        ) {
+        if ($this->relationship_exists($lhs,$rhs) && $lhs->inOperation('saving_related')) {
             return false;
         }
 
@@ -89,7 +85,7 @@ class One2MBeanRelationship extends One2MRelationship
 
         //One2MBean relationships require that the RHS bean be saved or else the relationship will not be saved.
         //If we aren't already in a relationship save, intitiate a save now.
-        if (empty($GLOBALS['resavingRelatedBeans'])) {
+        if (!$lhs->inOperation('saving_related')) {
             SugarRelationship::resaveRelatedBeans();
         }
 

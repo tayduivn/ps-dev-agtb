@@ -1529,6 +1529,11 @@ class SugarBean
      */
     function delete_linked($id)
     {
+        // Ensure that Activity Messages do not occur in the context of a Delete action (e.g. unlink)
+        // and do so for all nested calls within the Top Level Delete Context
+        $opflag = static::enterOperation('delete');
+        $aflag = Activity::isEnabled();
+        Activity::disable();
         $linked_fields=$this->get_linked_fields();
         foreach ($linked_fields as $name => $value)
         {
@@ -1541,6 +1546,10 @@ class SugarBean
                 $GLOBALS['log']->fatal("error loading relationship $name");
             }
         }
+        if(static::leaveOperation('delete', $opflag) && $aflag) {
+            Activity::enable();
+        }
+
     }
 
     /**
@@ -1745,12 +1754,10 @@ class SugarBean
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 
-        if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']) && empty ($GLOBALS['resavingRelatedBeans']))
-        {
-            $GLOBALS['saving_relationships'] = true;
-        // let subclasses save related field changes
+        if (static::enterOperation('saving_related')) {
+            // let subclasses save related field changes
             $this->save_relationship_changes($isUpdate);
-            $GLOBALS['saving_relationships'] = false;
+            static::leaveOperation('saving_related');
         }
         //BEGIN SUGARCRM flav=pro ONLY
         $this->updateCalculatedFields();
@@ -1818,12 +1825,11 @@ class SugarBean
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($GLOBALS['resavingRelatedBeans'])){
-            $this->updateRelatedCalcFields();
-        }
+        $this->updateRelatedCalcFields();
         //END SUGARCRM flav=pro ONLY
-
-        if (empty($GLOBALS['resavingRelatedBeans'])){
+        // the reason we need to skip this is so that any RelatedBeans that are targeted to be saved
+        // after the delete happens, wait to be saved till them.
+        if (!static::inOperation('delete')) {
             SugarRelationship::resaveRelatedBeans();
         }
 
@@ -1918,18 +1924,15 @@ class SugarBean
             return;
         }
 
-        global $dictionary, $updating_relationships, $sugar_config;
+        global $dictionary, $sugar_config;
 
         if(!empty($sugar_config['disable_related_calc_fields'])){
             return;
         }
 
-        if ($updating_relationships)
-        {
+        if (!static::enterOperation('saving_related')) {
             return;
         }
-
-        $updating_relationships = true;
 
         $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
         if (!empty($dictionary[$this->object_name]['related_calc_fields']))
@@ -1975,7 +1978,7 @@ class SugarBean
             SugarRelationship::addToResaveList($this);
         }
 
-        $updating_relationships = false;
+        static::leaveOperation('saving_related');
     }
 
     protected function addParentRecordsToResave($lname) {
@@ -4978,9 +4981,14 @@ class SugarBean
 		}
 		else
 		{
-			// call the custom business logic
-			$custom_logic_arguments['id'] = $id;
-			$this->call_custom_logic("before_delete", $custom_logic_arguments);
+            // Ensure that Activity Messages do not occur in the context of a Delete action (e.g. unlink)
+            // and do so for all nested calls within the Top Level Delete Context
+            $opflag = static::enterOperation('delete');
+            $aflag = Activity::isEnabled();
+            Activity::disable();
+            // call the custom business logic
+            $custom_logic_arguments['id'] = $id;
+            $this->call_custom_logic("before_delete", $custom_logic_arguments);
             $this->deleted = 1;
             $this->mark_relationships_deleted($id);
             if ( isset($this->field_defs['modified_user_id']) ) {
@@ -5019,6 +5027,9 @@ class SugarBean
 
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
+            if(static::leaveOperation('delete', $opflag) && $aflag) {
+                Activity::enable();
+            }
         }
     }
 
@@ -6761,5 +6772,63 @@ class SugarBean
 	    }
 	    $var = null;
 	    return $var;
+	}
+
+	/**
+	 * Operations status
+	 * Known operations:
+	 * - saving_related - SugarBean is resaving related records
+	 * - delete - Deleting a bean
+	 * @var array
+	 */
+	protected static $opStatus = array();
+
+	/**
+	 * Enter operation
+	 * @param string $opname Operation name
+	 * @return boolean True if operation successfully started, false if we're already in this operation
+	 */
+	public static function enterOperation($opname)
+	{
+	    if (!empty(self::$opStatus[$opname])) {
+	        return false;
+	    }
+	    $GLOBALS['log']->info("Entered operation status: $opname");
+	    self::$opStatus[$opname] = true;
+	    return true;
+	}
+
+	/**
+	 * Leave operation
+	 * @param string $opname Operation name
+	 * @param bool $flag Success flag - if false, don't try do anything. This is for linking with enterOperation() via flag
+	 * @return boolean True if left successfully, false if no changes were made
+	 */
+	public static function leaveOperation($opname, $flag = true)
+	{
+	    if (empty($flag) && empty(self::$opStatus[$opname])) {
+	        return false;
+	    }
+	    $GLOBALS['log']->info("Left operation status: $opname");
+	    unset(self::$opStatus[$opname]);
+	    return true;
+	}
+
+	/**
+	 * Are we inside certain operation?
+	 * @param string $opname
+	 * @return boolean
+	 */
+	public static function inOperation($opname)
+	{
+	    return !empty(self::$opStatus[$opname]);
+	}
+
+	/**
+	 * Clear operation status
+	 */
+	public static function resetOperations()
+	{
+	    self::$opStatus = array();
 	}
 }

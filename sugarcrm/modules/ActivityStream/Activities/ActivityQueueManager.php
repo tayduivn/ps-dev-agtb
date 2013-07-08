@@ -115,12 +115,7 @@ class ActivityQueueManager
      */
     protected function isActivityStreamEnabled()
     {
-        //TODO: The check for mass update will be removed once job queue, asynchronous processing, activity
-        //TODO: Stream performance has been handled after 7.0
-
-        $isMassUpdate = isset($GLOBALS['ACTIVITY_FROM_MASS_UPDATE']) ? $GLOBALS['ACTIVITY_FROM_MASS_UPDATE'] : false;
-
-        return Activity::isEnabled() && !$isMassUpdate;
+        return Activity::isEnabled();
     }
 
     /**
@@ -131,10 +126,13 @@ class ActivityQueueManager
      */
     protected function isValidLink(array $args)
     {
+        if(SugarBean::inOperation('saving_related')) {
+            return false;
+        }
         $blacklist  = in_array($args['link'], self::$linkBlacklist);
         $lhs_module = in_array($args['module'], self::$linkModuleBlacklist);
         $rhs_module = in_array($args['related_module'], self::$linkModuleBlacklist);
-        if ($blacklist || $lhs_module || $rhs_module || !empty($GLOBALS['resavingRelatedBeans'])) {
+        if ($blacklist || $lhs_module || $rhs_module) {
             return false;
         }
         return true;
@@ -149,6 +147,9 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
+        if($bean->deleted || $bean->inOperation('saving_related')) {
+            return;
+        }
         // Subscribe the user that created the record, and the user to whom the
         // record is assigned.
         $subs = BeanFactory::getBeanName('Subscriptions');

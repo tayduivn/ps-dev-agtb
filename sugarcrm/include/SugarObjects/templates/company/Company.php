@@ -50,36 +50,37 @@ class Company extends Basic
  		$this->emailAddress = BeanFactory::getBean('EmailAddresses');
  	}
 
- 	/**
- 	 * @see parent::save()
- 	 */
-	public function save($check_notify=false)
- 	{
- 	    if(!empty($GLOBALS['resavingRelatedBeans']))
- 	    {
- 	        parent::save($check_notify);
- 	        return $this;
- 	    }
-		$this->add_address_streets('billing_address_street');
-		$this->add_address_streets('shipping_address_street');
+    /**
+     *
+     * @see parent::save()
+     */
+    public function save($check_notify = false)
+    {
+        if (static::inOperation('saving_related')) {
+            parent::save($check_notify);
+            return $this;
+        }
+        $this->add_address_streets('billing_address_street');
+        $this->add_address_streets('shipping_address_street');
         $ori_in_workflow = empty($this->in_workflow) ? false : true;
-		$this->emailAddress->handleLegacySave($this, $this->module_dir);
+        $this->emailAddress->handleLegacySave($this, $this->module_dir);
         parent::save($check_notify);
         $override_email = array();
-        if(!empty($this->email1_set_in_workflow)) {
+        if (!empty($this->email1_set_in_workflow)) {
             $override_email['emailAddress0'] = $this->email1_set_in_workflow;
         }
-        if(!empty($this->email2_set_in_workflow)) {
+        if (!empty($this->email2_set_in_workflow)) {
             $override_email['emailAddress1'] = $this->email2_set_in_workflow;
         }
-        if(!isset($this->in_workflow)) {
+        if (!isset($this->in_workflow)) {
             $this->in_workflow = false;
         }
-        if($ori_in_workflow === false || !empty($override_email)){
-            $this->emailAddress->save($this->id, $this->module_dir, $override_email,'','','','',$this->in_workflow);
+        if ($ori_in_workflow === false || !empty($override_email)) {
+            $this->emailAddress->save($this->id, $this->module_dir, $override_email, '', '', '', '',
+                $this->in_workflow);
         }
-		return $this;
-	}
+        return $this;
+    }
 
  	/**
  	 * Populate email address fields here instead of retrieve() so that they are properly available for logic hooks

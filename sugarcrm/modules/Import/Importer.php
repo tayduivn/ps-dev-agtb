@@ -102,6 +102,8 @@ class Importer
 
     public function import()
     {
+        $aflag = Activity::isEnabled();
+        Activity::disable();
         foreach($this->importSource as $row)
         {
             $this->importRow($row);
@@ -114,7 +116,9 @@ class Importer
         }
 
         $this->importSource->writeStatus();
-
+        if($aflag) {
+            Activity::enable();
+        }
         //All done, remove file.
     }
 
@@ -551,7 +555,7 @@ class Importer
         // Bug51192: check if there are any changes in the imported data
         $hasDataChanges = false;
         $dataChanges=$focus->db->getAuditDataChanges($focus);
-        
+
         if(!empty($dataChanges)) {
             foreach($dataChanges as $field=>$fieldData) {
                 if($fieldData['data_type'] != 'date' || strtotime($fieldData['before']) != strtotime($fieldData['after'])) {

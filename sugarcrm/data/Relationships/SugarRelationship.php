@@ -541,7 +541,9 @@ abstract class SugarRelationship
      */
     public static function resaveRelatedBeans()
     {
-        $GLOBALS['resavingRelatedBeans'] = true;
+        if (!SugarBean::enterOperation('saving_related')) {
+            return;
+        }
 
         //Resave any bean not currently in the middle of a save operation
         foreach (self::$beansToResave as $module => $beans) {
@@ -557,7 +559,7 @@ abstract class SugarRelationship
             }
         }
 
-        $GLOBALS['resavingRelatedBeans'] = false;
+        SugarBean::leaveOperation('saving_related');
 
         //Reset the list of beans that will need to be resaved
         self::$beansToResave = array();

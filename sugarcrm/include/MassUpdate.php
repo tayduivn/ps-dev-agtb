@@ -29,7 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/EditView/EditView2.php');
+require_once 'include/EditView/EditView2.php';
+require_once 'modules/ActivityStream/Activities/Activity.php';
 
 /**
  * MassUpdate class for updating multiple records at once
@@ -53,7 +54,7 @@ class MassUpdate
     public function __construct() {
         //TODO: Creation of Activities are turned off for mass update.
         //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
-        $GLOBALS['ACTIVITY_FROM_MASS_UPDATE'] = true;
+        Activity::disable();
     }
 
 	/**
