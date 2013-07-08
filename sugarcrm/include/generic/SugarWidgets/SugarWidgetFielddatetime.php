@@ -125,7 +125,79 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
             $this->queryDateOp($column, $end, "<=", "datetime").")\n";
 	}
 
-	function queryFilterNot_Equals_str($layout_def)
+    /**
+     * Returns SQL WHERE query for previous fiscal year filter
+     * in regard to fiscal start date and current date
+     *
+     * @param $layout_def - filter def
+     * @return string - SQL WHERE query for filter
+     */
+    public function queryFiltertp_previous_fiscal_year($layout_def)
+    {
+        return $this->getFiscalYearFilter($layout_def, '-1 year', '');
+    }
+
+    /**
+     * Returns SQL WHERE query for previous fiscal quarter filter
+     * in regard to fiscal start date and current date
+     *
+     * @param $layout_def - filter def
+     * @return string - SQL WHERE query for filter
+     */
+    public function queryFiltertp_previous_fiscal_quarter($layout_def)
+    {
+        return $this->getFiscalYearFilter($layout_def, '-3 month', '');
+    }
+
+    /**
+     * Returns SQL WHERE query for current fiscal year filter
+     * in regard to fiscal start date and current date
+     *
+     * @param $layout_def - filter def
+     * @return string - SQL WHERE query for filter
+     */
+    public function queryFiltertp_current_fiscal_year($layout_def)
+    {
+        return $this->getFiscalYearFilter($layout_def, '', '+1 year');
+    }
+
+    /**
+     * Returns SQL WHERE query for current fiscal quarter filter
+     * in regard to fiscal start date and current date
+     *
+     * @param $layout_def - filter def
+     * @return string - SQL WHERE query for filter
+     */
+    public function queryFiltertp_current_fiscal_quarter($layout_def)
+    {
+        return $this->getFiscalYearFilter($layout_def, '', '+3 month');
+    }
+
+    /**
+     * Returns SQL WHERE query for next fiscal year filter
+     * in regard to fiscal start date and current date
+     *
+     * @param $layout_def - filter def
+     * @return string - SQL WHERE query for filter
+     */
+    public function queryFiltertp_next_fiscal_year($layout_def)
+    {
+        return $this->getFiscalYearFilter($layout_def, '+1 year', '+2 year');
+    }
+
+    /**
+     * Returns SQL WHERE query for next fiscal quarter filter
+     * in regard to fiscal start date and current date
+     *
+     * @param $layout_def - filter def
+     * @return string - SQL WHERE query for filter
+     */
+    public function queryFiltertp_next_fiscal_quarter($layout_def)
+    {
+        return $this->getFiscalYearFilter($layout_def, '+3 month', '+6 month');
+    }
+
+    public function queryFilterNot_Equals_str($layout_def)
 	{
 		global $timedate;
 
@@ -496,6 +568,242 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		return $display;
 
 	}
+
+    /**
+     * Returns the fiscal start date in user TZ if it exists
+     * otherwise uses 01-01 of current year
+     *
+     * @return DateTime - Fiscal start date in user TZ
+     */
+    private function getFiscalStartDate()
+    {
+        // Pick fiscal start date
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts', 'base');
+
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->getNow(true);
+
+        if (!empty($config['timeperiod_start_date'])) {
+            $fiscalDate = $timedate->fromDbDate($config['timeperiod_start_date'])->setTime(0, 0, 0);
+            $fiscalDate = $timedate->tzUser($fiscalDate);
+        } else {
+            // If there is no fiscal start date, use 1st of January
+            // Probably because of reseting the forecast settings, while running an old report
+            $GLOBALS['log']->error('Fiscal start date not set. Using 1st January.');
+            $fiscalDate = $now->setDate($now->year, 1, 1)->setTime(0, 0, 0);
+        }
+
+        return $fiscalDate;
+    }
+
+    /**
+     * Normalizes the date field, so we can group by year/quarter
+     * in regard to fiscal start date
+     *
+     * @param $column - DB column name
+     * @return string - date field normalized in regard to fiscal start date
+     */
+    private function getNormalizedDate($column)
+    {
+        $fiscalDate = $this->getFiscalStartDate();
+        // Convert fiscal date to UTC timezone, for day_of_year
+        $timedate = TimeDate::getInstance();
+        $timedate->tzGMT($fiscalDate);
+
+        // Need to add tz offset for grouping
+        $column = $this->reporter->db->convert($column, 'add_tz_offset');
+
+        if ($fiscalDate->day_of_year > 0) {
+            $column = $this->reporter->db->convert(
+                $column,
+                'add_date',
+                array('-' . $fiscalDate->day_of_year, 'DAY')
+            );
+        }
+
+        return $column;
+    }
+
+    /**
+     * Return the between WHERE query for Fiscal Year/Quarter queries
+     *
+     * Both begin/end dates use the same fiscal date, but are updated
+     * by the $modifyBegin/$modifyEnd parameters
+     *
+     * @param $layout_def - Filter layout_def
+     * @param string $modifyStart - Modification to fiscal start date
+     * @param string $modifyEnd - Modification to fiscal start date
+     * @param string $date - Date for which to find fiscal quarter/year, if not set uses current date
+     * @return string - BETWEEN WHERE query for Fiscal filter
+     */
+    protected function getFiscalYearFilter($layout_def, $modifyStart, $modifyEnd, $date = '')
+    {
+        $timedate = TimeDate::getInstance();
+
+        // Get Fiscal Start Date
+        $fiscalDate = $this->getFiscalStartDate();
+
+        // We need to make changes to fiscal date, depending on current date
+        // See if date is set, if not, use current date
+        if (empty($date)) {
+            $date = $timedate->getNow(true);
+        } else {
+            $date = $timedate->fromString($date);
+        }
+
+        // Use Year from the date we're checking
+        $fiscalDate->setDate($date->year, $fiscalDate->month, $fiscalDate->day);
+
+        // If we're dealing with year filter, we need to set the year
+        if (strpos($layout_def['qualifier_name'], 'year') !== false) {
+            // Set year for the fiscal period, depending on current date
+            if ($fiscalDate > $date) {
+                $fiscalDate->modify("-1 year");
+            }
+        } elseif (strpos($layout_def['qualifier_name'], 'quarter') !== false) {
+            // If we're dealing with quarter filter, we need to set the month
+
+            $currentMonth = $date->format("m");
+            $tempFiscalMonth = $fiscalDate->format("m");
+
+            // Find the quarter in regard to the fiscal month
+            $monthDiff = $currentMonth - $tempFiscalMonth;
+            if ($monthDiff < 0) {
+                $monthDiff -= 1;
+            }
+            $monthDiff = 3 * floor($monthDiff / 3);
+
+            // Update the month
+            if ($monthDiff != 0) {
+                $fiscalDate->modify($monthDiff . " month");
+            }
+        }
+
+        // Modify the start date
+        $start = clone $fiscalDate;
+        if (!empty($modifyStart)) {
+            $start->modify($modifyStart);
+        }
+
+        // Modify the end date
+        $end = clone $fiscalDate;
+        if (!empty($modifyEnd)) {
+            $end->modify($modifyEnd);
+        }
+
+        $column = $this->_get_column_select($layout_def);
+
+        $startTime = $timedate->getDayStartEndGMT($start);
+        $startTime = $startTime['start'];
+        $endTime = $timedate->getDayStartEndGMT($end);
+        $endTime = $endTime['start'];
+
+        // Return the WHERE statement
+        return "(" . $this->queryDateOp($column, $startTime, ">=", "datetime")
+            . " AND " . $this->queryDateOp($column, $endTime, "<", "datetime") . ")\n";
+    }
+
+    /**
+     * Returns the select query used for displaying the group data
+     *
+     * @param $layout_def - group by layout def
+     * @return string - Select query used for display
+     */
+    public function querySelectfiscalQuarter($layout_def)
+    {
+        return $this->queryGroupByFiscalQuarter($layout_def) . " " . $this->_get_column_alias($layout_def) . "\n";
+    }
+
+    /**
+     * Returns the value to be displayed for the group by
+     *
+     * @param $layout_def - group by layout def
+     * @return string - string for display
+     */
+    public function displayListfiscalQuarter($layout_def)
+    {
+        $match = array();
+        if (preg_match('/(\d{4})-(\d)/', $this->displayListPlain($layout_def), $match)) {
+
+            return 'Q' . $match[2] .' ' . $match[1];
+        }
+        return '';
+    }
+
+    /**
+     * Returns the group by part of the query for
+     * grouping by fiscal quarter
+     *
+     * @param $layout_def - group by layout def
+     * @return string - fiscal quarter group by query
+     */
+    public function queryGroupByFiscalQuarter($layout_def)
+    {
+        $column = $this->_get_column_select($layout_def);
+
+        $date = $this->getNormalizedDate($column);
+
+        $query = $this->reporter->db->convert(
+            $this->reporter->db->convert(
+                $date,
+                "date_format",
+                array('%Y')
+            ),
+            'CONCAT',
+            array("'-'",
+                $this->reporter->db->convert(
+                    $date,
+                    "quarter"
+                )
+            )
+        );
+
+        return $query;
+    }
+
+    /**
+     * Returns the select query used for displaying the group data
+     *
+     * @param $layout_def - group by layout def
+     * @return string - Select query used for display
+     */
+    public function querySelectfiscalYear($layout_def)
+    {
+        return $this->queryGroupByFiscalYear($layout_def) . " " . $this->_get_column_alias($layout_def) . "\n";
+    }
+
+    /**
+     * Returns the value to be displayed for the group by
+     *
+     * @param $layout_def - group by layout def
+     * @return string - string for display
+     */
+    public function displayListfiscalYear($layout_def)
+    {
+        global $app_list_strings;
+        $value = parent::displayListPlain($layout_def);
+
+        return $value;
+    }
+
+    /**
+     * Returns the group by part of the query for
+     * grouping by fiscal year
+     *
+     * @param $layout_def - group by layout def
+     * @return string - fiscal year group by query
+     */
+    public function queryGroupByFiscalYear($layout_def)
+    {
+        $column = $this->_get_column_select($layout_def);
+
+        $date = $this->getNormalizedDate($column);
+
+        $query = $this->reporter->db->convert($date, "date_format", array('%Y'));
+
+        return $query;
+    }
 
     /**
      * Returns part of query for select

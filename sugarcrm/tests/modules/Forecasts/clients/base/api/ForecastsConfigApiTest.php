@@ -25,7 +25,7 @@
 require_once 'include/api/RestService.php';
 require_once 'modules/Forecasts/clients/base/api/ForecastsConfigApi.php';
 
-class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
+class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $createdBeans = array();
 
@@ -65,7 +65,10 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "Forecasts",
             "testSetting" => "testValue",
         );
-        $apiClass = new ForecastsConfigApi();
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+        $apiClass->expects($this->once())
+            ->method('timePeriodSettingsChanged')
+            ->will($this->returnValue(false));
         $result = $apiClass->forecastsConfigSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], "testValue");
@@ -119,7 +122,10 @@ class ForecastsConfigModuleApiTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "Forecasts",
             "testSetting" => strrev($testSetting),
         );
-        $apiClass = new ForecastsConfigApi();
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
+        $apiClass->expects($this->once())
+            ->method('timePeriodSettingsChanged')
+            ->will($this->returnValue(false));
         $result = $apiClass->forecastsConfigSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
         $this->assertEquals($result['testSetting'], strrev($testSetting));

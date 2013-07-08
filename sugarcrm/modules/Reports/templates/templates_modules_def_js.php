@@ -34,7 +34,7 @@ require_once('modules/Reports/config.php');
 // THIS TEMPLATE IS NOW USED TO CREATE A JAVASCRIPT CACHED FILE
 // THE FILE IS LOCATED IN cache/modules/modules_def_<lang>_<md5>.js
 //////////////////////////////////////////////
-function template_module_defs_js(&$args) {
+function template_module_defs_js() {
 global $report_modules,$current_language;
 $mod_strings = return_module_language($current_language,'Reports');
 $currentModule = 'Reports';
@@ -355,10 +355,19 @@ module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes(
 	$day = translate('LBL_DAY');
 	$month = translate('LBL_MONTH');
 	$year = translate('LBL_YEAR');
-	$quarter = translate('LBL_QUARTER');
+    $quarter = translate('LBL_QUARTER');
+    $fiscalYear = translate('LBL_FISCAL_YEAR');
+    $fiscalQuarter = translate('LBL_FISCAL_QUARTER');
 ?>
 var summary_types = {sum:'<?php echo $sum; ?>',avg:'<?php echo $avg; ?>',max:'<?php echo $max; ?>',min:'<?php echo $min; ?>'};
-var date_summary_types = {day:'<?php echo $day; ?>',month:'<?php echo $month; ?>',year:'<?php echo $year; ?>',quarter:'<?php echo $quarter; ?>'};
+    var date_summary_types = {
+        day:'<?php echo $day; ?>',
+        month:'<?php echo $month; ?>',
+        year:'<?php echo $year; ?>',
+        quarter:'<?php echo $quarter; ?>',
+        fiscalYear:'<?php echo $fiscalYear; ?>',
+        fiscalQuarter:'<?php echo $fiscalQuarter; ?>'
+    };
 
 // create summary_defs_field and group_by_field_defs for every module
 
@@ -514,6 +523,7 @@ qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_s
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
+
 filter_defs['date'] = qualifiers;
 filter_defs['datetime'] = qualifiers;
 
@@ -539,6 +549,7 @@ qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_s
 qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
+
 filter_defs['datetimecombo'] = qualifiers;
 
 var qualifiers =  new Array();
@@ -607,6 +618,14 @@ date_group_defs[date_group_defs.length] = {name:'day', value:'<?php echo $mod_st
 date_group_defs[date_group_defs.length] = {name:'month', value:'<?php echo $mod_strings['LBL_BY_MONTH']; ?>'};
 date_group_defs[date_group_defs.length] = {name:'year', value:'<?php echo $mod_strings['LBL_BY_YEAR']; ?>'};
 date_group_defs[date_group_defs.length] = {name:'quarter', value:'<?php echo $mod_strings['LBL_BY_QUARTER']; ?>'};
+    date_group_defs[date_group_defs.length] = {
+        name:'fiscalYear',
+        value:'<?php echo $mod_strings['LBL_BY_FISCAL_YEAR']; ?>'
+    };
+    date_group_defs[date_group_defs.length] = {
+        name:'fiscalQuarter',
+        value:'<?php echo $mod_strings['LBL_BY_FISCAL_QUARTER']; ?>'
+    };
 
 var qualifiers = new Array();
 qualifiers[qualifiers.length] = {name:'any',value:'<?php echo $mod_strings['LBL_ANY']; ?>'};
@@ -630,4 +649,49 @@ for(i in module_defs) {
 }
 <?php
 } //End of the PHP function template_module_defs_js
+
+/**
+ * Used for creating fiscal filters .js cache file
+ * but since this file is dependent on whether the fiscal start date is set
+ * we create it in a separate file and include if needed
+ */
+function template_module_defs_fiscal_js()
+{
+    global $current_language;
+    $mod_strings = return_module_language($current_language,'Reports');
+?>
+
+var qualifiers = [
+    {
+        name : "tp_previous_fiscal_year",
+        value : "<?php echo $mod_strings['LBL_PREVIOUS_FISCAL_YEAR']; ?>"
+    },
+    {
+        name : "tp_previous_fiscal_quarter",
+        value : "<?php echo $mod_strings['LBL_PREVIOUS_FISCAL_QUARTER']; ?>"
+    },
+    {
+        name : "tp_current_fiscal_year",
+        value : "<?php echo $mod_strings['LBL_CURRENT_FISCAL_YEAR']; ?>"
+    },
+    {
+        name : "tp_current_fiscal_quarter",
+        value : "<?php echo $mod_strings['LBL_CURRENT_FISCAL_QUARTER']; ?>"
+    },
+    {
+        name : "tp_next_fiscal_year",
+        value : "<?php echo $mod_strings['LBL_NEXT_FISCAL_YEAR']; ?>"
+    },
+    {
+        name : "tp_next_fiscal_quarter",
+        value : "<?php echo $mod_strings['LBL_NEXT_FISCAL_QUARTER']; ?>"
+    }
+];
+
+filter_defs['date'] = filter_defs['date'].concat(qualifiers);
+filter_defs['datetime'] = filter_defs['datetime'].concat(qualifiers);
+filter_defs['datetimecombo'] = filter_defs['datetimecombo'].concat(qualifiers);
+
+<?php
+}
 ?>

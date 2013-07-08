@@ -2359,23 +2359,37 @@ return str_replace(' > ','_',
     function cache_modules_def_js()
     {
         global $current_language, $current_user;
-        $cache = sugar_cached('modules/modules_def_' . $current_language . '_' . md5($current_user->id) . '.js');
-        if (!isset($_SESSION['reports_cache']) || !file_exists($cache)) {
-            require_once('modules/Reports/templates/templates_modules_def_js.php');
-            ob_start();
-            template_module_defs_js($args);
+        $cacheDefsJs = sugar_cached('modules/modules_def_' . $current_language . '_' . md5($current_user->id) . '.js');
+        $cacheFiscalJs = sugar_cached('modules/modules_def_fiscal_' . $current_language . '_' . md5($current_user->id) . '.js');
 
-            $contents = ob_get_clean();
-            if (is_writable(sugar_cached('modules/'))) {
-                file_put_contents($cache, $contents);
+        $files = array(
+            array($cacheDefsJs, 'template_module_defs_js'),
+            array($cacheFiscalJs, 'template_module_defs_fiscal_js'),
+        );
+
+        foreach ($files as $file) {
+            $fileName = $file[0];
+            $function = $file[1];
+
+            if (!isset($_SESSION['reports_cache']) || !file_exists($fileName)) {
+                require_once('modules/Reports/templates/templates_modules_def_js.php');
+
+                ob_start();
+                $function();
+                $data = ob_get_clean();
+
+                if (is_writable(sugar_cached('modules/'))) {
+                    file_put_contents($fileName, $data);
+                }
+
+                // Only set this if we're not being called from the home page.
+                // Charts on the home page go through this code as well and
+                // _SESSION hasn't been initialized completely and this causes errors with global vars.
+                if (!isset($_REQUEST['module']) || $_REQUEST['module'] != 'Home') {
+                    $_SESSION['reports_cache'] = true;
+                }
             }
-            // Only set this if we're not being called from the home page.
-            // Charts on the home page go through this code as well and
-            // _SESSION hasn't been initialized completely and this causes errors with global vars.
-            if (!isset($_REQUEST['module']) || $_REQUEST['module'] != 'Home')
-                $_SESSION['reports_cache'] = true;
         }
-
     }
 
     function is_old_content($content)

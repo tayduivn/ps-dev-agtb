@@ -60,6 +60,13 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
+        SugarTestForecastUtilities::setUpForecastConfig(
+            array(
+                'forecast_by' => 'Opportunities',
+                'sales_stage_won' => 'won'
+            )
+        );
+
         $this->hasWorkflowFile = SugarAutoLoader::fileExists('custom/modules/Opportunities/workflow/workflow.php');
 
         $wf = new WorkFlow();
@@ -113,6 +120,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestForecastUtilities::tearDownForecastConfig();
 
         rmdir_recursive('custom/modules/Opportunities/workflow');
         $this->db->query("delete from workflow where id = '$this->workFlowId'");
