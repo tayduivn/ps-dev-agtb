@@ -1890,6 +1890,7 @@ $app_list_strings = array (
 $app_strings = array (
   'LBL_RECORD_HEADER' => 'Record Header', // Studio editing of record views
   'LBL_RECORD_BODY' => 'Business Card', // Studio editing of record views
+  'LBL_RECORD_SHOWMORE' => 'Show More', // Studio editing of record views
   'LBL_FAVORITE' => 'Favorite', // Record view header panel element
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',

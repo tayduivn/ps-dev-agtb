@@ -58,7 +58,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     protected $panelLabels = array(
         'panel_header' => 'LBL_RECORD_HEADER',
         'panel_body' => 'LBL_RECORD_BODY',
-        'panel_hidden' => 'LBL_SHOW_MORE',
+        'panel_hidden' => 'LBL_RECORD_SHOWMORE',
     );
         
     /**
