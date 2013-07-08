@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['ProspectList'] = array (
     //BEGIN SUGARCRM flav=pro ONLY
-    'favorites'=>true, 
+    'favorites'=>true,
     //END SUGARCRM flav=pro ONLY
 	'table' => 'prospect_lists',
 	'unified_search' => true,
@@ -42,6 +42,7 @@ $dictionary['ProspectList'] = array (
 			'importable' => 'required',
 			'unified_search' => true,
 			'full_text_search' => array('boost' => 3),
+            'required' => true,
 		),
 		'list_type' => array (
 		    'name' => 'list_type',
@@ -156,7 +157,7 @@ $dictionary['ProspectList'] = array (
     		'type' => 'link',
     		'relationship' => 'prospect_list_accounts',
     		'source'=>'non-db',
-  		),  		
+  		),
   		'campaigns'=> array (
   			'name' => 'campaigns',
     		'type' => 'link',
