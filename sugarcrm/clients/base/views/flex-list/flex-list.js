@@ -41,6 +41,8 @@
 
         this.addPreviewEvents();
 
+        //add debounce in initialize so that subclasses will not all use the same prototype function
+        this.resize = _.bind(_.debounce(this.resize, 300), this);
         this.bindResize();
     },
     addPreviewEvents: function () {
@@ -234,16 +236,14 @@
     },
     /**
      * Updates the class of this flex list as scrollable or not.
-     *
-     * Runs debunced to postpone the execution when the window is resized.
      */
-    resize: _.debounce(function() {
+    resize: function() {
         var $content = this.$('.flex-list-view-content');
         if (!$content.length) {
             return;
         }
         var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
-    }, 300)
+    }
 
 })
