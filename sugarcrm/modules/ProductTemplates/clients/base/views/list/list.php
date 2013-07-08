@@ -43,11 +43,30 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'link' => true),
-                'type_name',
-                'category_name',
-                'status',
-                'qty_in_stock',
+                    'link' => true,
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'type_name',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'category_name',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'status',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'qty_in_stock',
+                    'enabled' => true,
+                    'default' => true,
+                ),
                 array(
                     'name' => 'cost_price',
                     'type' => 'currency',
@@ -58,6 +77,8 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                     ),
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
+                    'enabled' => true,
+                    'default' => true,
                 ),
                 array(
                     'name' => 'list_price',
@@ -69,6 +90,8 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                     ),
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
+                    'enabled' => true,
+                    'default' => true,
                 ),
                 array(
                     'name' => 'discount_price',
@@ -80,6 +103,8 @@ $viewdefs['ProductTemplates']['base']['view']['list'] = array(
                     ),
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
+                    'enabled' => true,
+                    'default' => true,
                 )
             ),
         ),

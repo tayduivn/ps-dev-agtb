@@ -32,45 +32,55 @@ $viewdefs['Bugs']['base']['view']['list'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                  'name'=>  'bug_number',
-                   'default'=>true,
+                    'name'=>  'bug_number',
+                    'enabled' => true,
+                    'default'=>true,
                 ),
                 array(
                     'name'=>  'name',
+                    'enabled' => true,
                     'default'=>true,
                 ),
                 array(
                     'name'=>  'status',
+                    'enabled' => true,
                     'default'=>true,
                 ),
                 array(
                     'name'=>  'type',
+                    'enabled' => true,
                     'default'=>true
                 ),
                 array(
                     'name'=>  'priority',
+                    'enabled' => true,
                     'default'=>true,
                 ),
                 array(
                     'name'=>  'fixed_in_release',
+                    'enabled' => true,
                     'default'=>true,
                 ),
                 array(
                     'name'=>  'assigned_user_name',
+                    'enabled' => true,
                     'default'=>true,
                     'sortable' => false,
                 ),
                 array(
                     'name'=>  'found_in_release',
+                    'enabled' => true,
                     'default'=>false,
                 ),
                 array(
                     'name'=>  'resolution',
+                    'enabled' => true,
                     'default'=>false,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name'=>  'team_name',
+                    'enabled' => true,
                     'default'=>false,
                     'sortable' => false,
                 ),

@@ -30,7 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['ProspectLists']['base']['view']['list'] = array(
     'panels' => array(
-        0 => array(
+        array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
@@ -60,6 +60,7 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'width' => '10%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'id' => 'ASSIGNED_USER_ID',
+                    'enabled' => true,
                     'default' => true,
                 ),
                 array(
