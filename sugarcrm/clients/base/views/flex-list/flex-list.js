@@ -41,7 +41,7 @@
 
         this.addPreviewEvents();
 
-        $(window).on("resize.flexlist-" + this.cid, _.bind(this.resize, this));
+        this.bindResize();
     },
     addPreviewEvents: function () {
         //When clicking on eye icon, we need to trigger preview:render with model&collection
@@ -221,12 +221,17 @@
         if (this.rightColumns.length) {
             this.$el.addClass('right-actions');
         }
+
+        this.resize();
     },
     unbind: function() {
         $(window).off("resize.flexlist-" + this.cid);
         app.view.invokeParent(this, {type: 'view', name: 'list', method: 'unbind'});
     },
 
+    bindResize: function() {
+        $(window).on("resize.flexlist-" + this.cid, _.bind(this.resize, this));
+    },
     /**
      * Updates the class of this flex list as scrollable or not.
      *
@@ -237,7 +242,7 @@
         if (!$content.length) {
             return;
         }
-        var toggle = $content.get(0).scrollWidth > $content.width();
+        var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
     }, 300)
 
