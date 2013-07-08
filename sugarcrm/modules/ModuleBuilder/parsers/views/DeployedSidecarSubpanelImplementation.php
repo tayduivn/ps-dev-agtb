@@ -120,7 +120,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 if (empty($component['override_subpanel_list_view'])) {
                     continue;
                 }
-                if ($component['override_subpanel_list_view']['link'] == $this->linkName) {
+                if (is_array($component['override_subpanel_list_view']) && $component['override_subpanel_list_view']['link'] == $this->linkName) {
                     $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
                     $this->loadedSupbanelName = $component['override_subpanel_list_view']['view'];
                     $this->loadedSubpanelFileName = file_exists("custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php") ? "custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php" : "{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php";
