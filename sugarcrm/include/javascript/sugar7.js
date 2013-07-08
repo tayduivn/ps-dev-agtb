@@ -1,6 +1,13 @@
 (function(app) {
     app.events.on("app:init", function() {
-        var routes;
+        var routes,
+            homeOptions = {
+                dashboard: 'dashboard',
+                activities: 'activities'
+            },
+            getLastHomeKey = function() {
+                return app.user.lastState.buildKey('last-home', 'app-header');
+            };
 
         routes = [
             {
@@ -16,9 +23,28 @@
                 route: "logout"
             },
             {
+                name: "home",
+                route: "Home",
+                callback: function() {
+                    var lastHomeKey = getLastHomeKey(),
+                        lastHome = app.user.lastState.get(lastHomeKey);
+
+                    if (lastHome === homeOptions.dashboard) {
+                        app.router.list("Home");
+                    } else if (lastHome === homeOptions.activities) {
+                        app.router.navigate('#activities', {trigger: true});
+                    }
+                }
+            },
+            {
                 name: "activities",
                 route: "activities",
                 callback: function(){
+                    //when visiting activity stream, save last state of activities
+                    //so future Home routes go back to activities
+                    var lastHomeKey = getLastHomeKey();
+                    app.user.lastState.set(lastHomeKey, homeOptions.activities);
+
                     app.controller.loadView({
                         layout: "activities",
                         module: "Activities",
@@ -134,6 +160,19 @@
                         module: module,
                         layout: 'config'
                     });
+                }
+            },
+            {
+                name: "homeRecord",
+                route: "Home/:id",
+                callback: function(id) {
+                    //when visiting a dashboard, save last state of dashboard
+                    //so future Home routes go back to dashboard
+                    var lastHomeKey = getLastHomeKey();
+                    app.user.lastState.set(lastHomeKey, homeOptions.dashboard);
+
+                    //then continue on with default record routing
+                    app.router.record("Home", id);
                 }
             },
             {
