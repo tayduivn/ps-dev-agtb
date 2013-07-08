@@ -67,8 +67,6 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $themesToRemove = array($this->_themeObject->__toString(),$this->_themeObjectChild->__toString());
-
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
 
         if ( $this->_olddeveloperMode )
