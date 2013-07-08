@@ -128,7 +128,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'list_type',
-                    'displayParams' => array('required' => true),
                     'span' => 12,
                 ),
                 'assigned_user_name',
