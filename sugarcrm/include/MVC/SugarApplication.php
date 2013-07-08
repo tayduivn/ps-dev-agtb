@@ -712,52 +712,39 @@ class SugarApplication
     }
 
     /**
-     * Redirect to another URL
+     * Redirect to another URL.
      *
-     * @access    public
+     * If the module is not in BWC it will try to map to sidecar url.
+     * If it loads only temporarily, please check if the module is pointing to
+     * a layout/view in BWC.
      *
-     * @param    string    $url    The URL to redirect to
+     * This function writes session data, ends the session and exists the app.
+     *
+     * @param string $url The URL to redirect to.
      */
-    function redirect(
-        $url
-    )
+    public function redirect($url)
     {
-        // FIXME need to review this code to redirect to sidecar modules
         /*
-           * If the headers have been sent, then we cannot send an additional location header
-           * so we will output a javascript redirect statement.
-           */
-//        if (!empty($_REQUEST['ajax_load'])) {
-//            ob_get_clean();
-//            $ajax_ret = array(
-//                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-//                'menu' => array(
-//                    'module' => $_REQUEST['module'],
-//                    'label' => translate($_REQUEST['module']),
-//                ),
-//            );
-//            $json = getJSONobj();
-//            echo $json->encode($ajax_ret);
-//        } else {
-//            if (headers_sent()) {
-//                echo "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n";
-//            } else {
-                //@ob_end_clean(); // clear output buffer
-                session_write_close();
-                header('HTTP/1.1 301 Moved Permanently');
-                header("Location: " . $url);
-//            }
-//        }
+         * Parse the module from the URL first using regular expression.
+         * This is faster than parse_url + parse_str in first place and most of
+         * our redirects won't go to sidecar (at least for now).
+         */
+        if (preg_match('/module=([^&]+)/', $url, $matches) && !isModuleBWC($matches[1])) {
+            parse_str(parse_url($url, PHP_URL_QUERY), $params);
+            $script = navigateToSidecar(
+                buildSidecarRoute($params['module'], $params['record'], translateToSidecarAction($params['action']))
+            );
+            echo "<script>$script</script>";
+            exit();
+        }
+
+        session_write_close();
+        header('HTTP/1.1 301 Moved Permanently');
+        header("Location: $url");
+
         exit();
     }
 
-    /**
-     * Redirect to another URL
-     *
-     * @access    public
-     *
-     * @param    string    $url    The URL to redirect to
-     */
     public static function appendErrorMessage($error_message)
     {
         if (empty($_SESSION['user_error_message']) || !is_array($_SESSION['user_error_message'])) {

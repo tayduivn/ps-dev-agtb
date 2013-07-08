@@ -81,13 +81,6 @@ if(isset($_REQUEST['record'])){
 } else {
     $this->ss->assign("RECORD", '');
 }
-if(isset($_REQUEST['sidecar_return'])){
-    $this->ss->assign("SIDECAR_RETURN", $_REQUEST['sidecar_return']);
-    $cancelButtonClick = "top.App.router.navigate('".$_REQUEST['sidecar_return']."', {trigger:true});";
-} else {
-    $this->ss->assign("SIDECAR_RETURN", '');
-    $cancelButtonClick = "this.form.action.value='".$this->ss->get_template_vars('RETURN_ACTION')."';this.form.module.value='".$this->ss->get_template_vars('RETURN_MODULE')."';";
-}
 
 //if subsaction has been set, then process subscriptions
 if(isset($_REQUEST['subs_action'])){manageSubscriptions($focus);}
@@ -101,14 +94,30 @@ $title = getClassicModuleTitle($focus->module_dir, $params, true);
 $orig_vals_str = printOriginalValues($focus);
 $orig_vals_array = constructDDSubscriptionList($focus);
 
-$this->ss->assign('APP', $app_strings);
-$this->ss->assign('MOD', $mod_strings);
 $this->ss->assign('title',  $title);
 
 $this->ss->assign('enabled_subs', $orig_vals_array[0]);
 $this->ss->assign('disabled_subs', $orig_vals_array[1]);
 $this->ss->assign('enabled_subs_string', $orig_vals_str[0]);
 $this->ss->assign('disabled_subs_string', $orig_vals_str[1]);
+
+// FIXME we are doing this way since this view is going to be removed later
+// this should be with proper buttons from smarty tpls.
+require_once 'include/formbase.php';
+$url = buildRedirectURL();
+$cancelButtonClick = "SUGAR.ajaxUI.loadContent('$url'); return false;";
+/*
+ * Parse the module from the URL first using regular expression.
+ * This is faster than parse_url + parse_str in first place and most of
+ * our redirects won't go to sidecar (at least for now).
+ */
+if (preg_match('/module=([^&]+)/', $url, $matches) && !isModuleBWC($matches[1])) {
+    parse_str(parse_url($url, PHP_URL_QUERY), $params);
+    $script = navigateToSidecar(
+        buildSidecarRoute($params['module'], $params['record'], translateToSidecarAction($params['action']))
+    );
+    $cancelButtonClick = "$script return false;";
+}
 
 $buttons = array(
     '<input id="save_button" title="'.$app_strings['LBL_SAVE_BUTTON_TITLE'].'" accessKey="'.$app_strings['LBL_SAVE_BUTTON_KEY'].'" class="button" onclick="save();this.form.action.value=\'Subscriptions\'; " type="submit" name="button" value="'.$app_strings['LBL_SAVE_BUTTON_LABEL'].'">',

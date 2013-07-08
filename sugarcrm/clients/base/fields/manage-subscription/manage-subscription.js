@@ -22,15 +22,11 @@
      * Event to navigate to the BWC Manage Subscriptions
      */
     rowActionSelect: function() {
-        var params = [
-            {'name': 'sidecar_return', value: app.router.buildRoute(this.module, this.model.id)},
-            {'name': 'return_module', value: this.module},
-            {'name': 'record', value: this.model.id},
-            {'name': 'action', value: 'Subscriptions'},
-            {'name': 'module', value: 'Campaigns'}
-        ];
 
-        var route = '#bwc/index.php?' + $.param(params);
+        var route = app.bwc.buildRoute('Campaigns', this.model.id, 'Subscriptions', {
+            return_module: this.module,
+            return_id: this.model.id
+        });
         app.router.navigate(route, {trigger: true});
     }
 })

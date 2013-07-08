@@ -44,11 +44,11 @@
     <input type="hidden" name="disabled_subs" value="">
     <input type="hidden" name="return_module" value="{$RETURN_MODULE}">
     <input type="hidden" name="return_action" value="{$RETURN_ACTION}">
+    <input type="hidden" name="return_id" value="{$RETURN_ID}">
     <input type="hidden" name="module_tab" value="{$smarty.request.module_tab}">
     <input type="hidden" name="orig_disabled_values" id="orig_disabled_values" value="{$disabled_subs_string}">
     <input type="hidden" name="orig_enabled_values" id="orig_enabled_values" value="{$enabled_subs_string}">
     <input type="hidden" name="record" value="{$RECORD}">
-    <input type="hidden" name="sidecar_return" value="{$SIDECAR_RETURN}">
     <input type="hidden" name="subs_action" value="process">
 
     {sugar_action_menu buttons=$BUTTONS}
