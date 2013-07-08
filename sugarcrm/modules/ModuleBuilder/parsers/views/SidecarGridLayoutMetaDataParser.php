@@ -449,23 +449,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                    $row = array();
                 }
 
-                if (empty($field)) {
-                    $fieldToInsert = $this->FILLER;
-                } elseif(is_array($field)) {
-                    // Handle special fields like fieldset
-                    if (isset($field['type'])) {
-                        if ($field['type'] == 'fieldset' && isset($field['fields'])) {
-                            $fieldToInsert = $field['name'];
-                        } elseif (!empty($field['readonly'])) {
-                            // This handles non-field fields like favorite and follow
-                            $fieldToInsert = $field['type'];
-                        }
-                    } else {
-                        $fieldToInsert = empty($field['name']) ? $this->FILLER : $field['name'];
-                    }
-                } else {
-                    $fieldToInsert = $field;
-                }
+                // Gets the proper field name to insert from the field def
+                $fieldToInsert = $this->getFieldToInsert($field);
+                
                 // add field to row + enough (empty) to make it to colspan
                 $row[] = $this->_addInternalCell($fieldToInsert);
                 $this->_packRowWithEmpty($row, $colspan-1);
@@ -638,5 +624,46 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         }
         
         return parent::getViewDefFromFieldname($fieldname);
+    }
+    
+    /**
+     * Gets a proper field name or filler for a field def when inserting rows in
+     * _convertFromCanonicalForm
+     * 
+     * @param  array|string $field The field def or field name to get a value from
+     * @return string A field name or a filler cell
+     */
+    protected function getFieldToInsert($field)
+    {
+        // Empty fields just need to be filler
+        if (empty($field)) {
+            return $this->FILLER;
+        } 
+        
+        // Arrays need to be inspected a little closer
+        if (is_array($field)) {
+            // Handle special fields like fieldset
+            if (isset($field['type'])) {
+                if ($field['type'] == 'fieldset' && isset($field['fields']) && isset($field['name'])) {
+                    return $field['name'];
+                } 
+                
+                // This handles non-field fields like favorite and follow
+                if (!empty($field['readonly'])) {
+                    return $field['type'];
+                }
+            }
+            
+            // This handles normal condition named fields and filler fields
+            if (empty($field['name'])) {
+                $GLOBALS['log']->error("Possible malformed metadata in record view defs for {$this->_moduleName}: " . print_r($field, true));
+                return $this->FILLER;
+            }
+            
+            return $field['name'];
+        } 
+        
+        // Non empty non arrays just return the field
+        return $field;
     }
 }
