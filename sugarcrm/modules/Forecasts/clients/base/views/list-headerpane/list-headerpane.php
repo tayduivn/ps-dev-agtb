@@ -51,6 +51,17 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     'primary' => true
                 ),
                 array(
+                    'name' => 'assign_quota',
+                    'type' => 'assignquota',
+                    'label' => 'LBL_ASSIGN_QUOTA_BUTTON',
+                    'events' => array(
+                        'click' => 'function(e){
+                            this.view.context.trigger("button:assign_quota:click");
+                        }'
+                    ),
+                    'acl_action' => 'manager_current_user',
+                ),
+                array(
                     'name' => 'export_button',
                     'type' => 'rowaction',
                     'label' => 'LBL_EXPORT_CSV',

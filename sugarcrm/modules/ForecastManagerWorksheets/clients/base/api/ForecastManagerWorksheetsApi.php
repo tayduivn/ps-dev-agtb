@@ -20,54 +20,29 @@ class ForecastManagerWorksheetsApi extends SugarApi
     {
         //Extend with test method
         return array(
-            'forecastManagerWorksheetSave' => array(
-                'reqType' => 'PUT',
-                'path' => array('ForecastManagerWorksheets', '?'),
-                'pathVars' => array('module', 'record'),
-                'method' => 'forecastManagerWorksheetSave',
-                'shortHelp' => 'Update a ForecastManagerWorksheet model',
-                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetManagerPut.html',
+            'forecastManagerWorksheetAssignQuota' => array(
+                'reqType' => 'POST',
+                'path' => array('ForecastManagerWorksheets', 'assignQuota'),
+                'pathVars' => array('module', 'action'),
+                'method' => 'assignQuota',
+                'shortHelp' => 'Assign the Quota for Users with out actually committing',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastWorksheetManagerAssignQuota.html',
             )
         );
     }
 
     /**
-     * This method handles saving data for the /ForecastManagerWorksheet REST endpoint
+     * Run the assign Quota Code.
      *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
-     * @return Array of worksheet data entries
-     * @throws SugarApiExceptionNotAuthorized
+     * @param ServiceBase $api          API Service
+     * @param array $args               Args from the XHR Call
+     * @return array
      */
-    public function forecastManagerWorksheetSave($api, $args)
+    public function assignQuota(ServiceBase $api, $args = array())
     {
-        if (!SugarACL::checkAccess('Forecasts', 'edit')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: Forecasts');
-        }
-        $obj = $this->getClass($args);
-        $obj->save();
-
-        return array();
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
+        $mgr_worksheet = BeanFactory::getBean($args['module']);
+        $ret = $mgr_worksheet->assignQuota($args['user_id'], $args['timeperiod_id']);
+        return array('success' => $ret);
     }
-
-    /**
-     * @param $args
-     * @return SugarForecasting_Manager
-     */
-    protected function getClass($args)
-    {
-        // base file and class name
-        $file = 'include/SugarForecasting/Manager.php';
-        $klass = 'SugarForecasting_Manager';
-
-        // check for a custom file exists
-        SugarAutoLoader::requireWithCustom($file);
-        $klass = SugarAutoLoader::customClass($klass);
-        // create the class
-
-        /* @var $obj SugarForecasting_AbstractForecast */
-        $obj = new $klass($args);
-        return $obj;
-    }
-
 }

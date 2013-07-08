@@ -40,7 +40,19 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
         $data['show_history_log'] = 0;
         if (empty($beans) && !empty($bean->fetched_row['date_modified'])) {
             // When reportee has committed but manager has not
-            $data['show_history_log'] = 1;
+            // make sure that the reportee actually has a commit for the timeperiod,
+            // this is to handle the case where the manager saves draft before the reportee can commit
+            $sq = new SugarQuery();
+            $sq->select('id');
+            $sq->from(BeanFactory::getBean('ForecastWorksheets'))->where()
+                ->equals('assigned_user_id', $bean->user_id)
+                ->equals('draft', 0)
+                ->equals('timeperiod_id', $bean->timeperiod_id);
+            $worksheets = $sq->execute();
+
+            if (!empty($worksheets)) {
+                $data['show_history_log'] = 1;
+            }
         } else {
             if (!empty($beans)) {
                 $fBean = $beans[0];
