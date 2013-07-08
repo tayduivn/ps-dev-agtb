@@ -63,7 +63,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestForecastUtilities::setUpForecastConfig(
             array(
                 'forecast_by' => 'Opportunities',
-                'sales_stage_won' => 'won'
+                'sales_stage_won' => array('won')
             )
         );
 
