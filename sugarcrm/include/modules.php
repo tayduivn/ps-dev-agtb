@@ -466,6 +466,7 @@ $GLOBALS['moduleTabMap'] = array(
     'Quotas' => 'Forecasts',
     'TeamNotices' => 'Teams',
 //END SUGARCRM flav=pro ONLY
+    'Activities' => 'Home'
  );
 $beanList['EAPM'] = 'EAPM';
 $beanFiles['EAPM'] = 'modules/EAPM/EAPM.php';
