@@ -25,7 +25,7 @@
             },
 
             dropAttachment: function(event) {
-                var text = $.trim(event.dataTransfer.getData("text/plain")),
+                var text = $.trim(event.dataTransfer.getData("text")),
                     container = this.$(event.currentTarget);
                 this.shrinkNewPost(event);
 
