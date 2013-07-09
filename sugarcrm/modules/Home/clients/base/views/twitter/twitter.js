@@ -56,31 +56,34 @@
                 if (self.disposed) {
                     return;
                 }
+
                 var tweets = [];
 
-                _.each(data, function (tweet) {
-                    var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
-                            "$1 $2 $4 $3 UTC")),
-                        date = app.date.format(time, "Y-m-d H:i:s"),
-                        text = tweet.text,
-                        sourceUrl = tweet.source,
-                        id = tweet.id_str,
-                        name = tweet.user.name,
-                        tokenText = text.split(' '),
-                        screen_name = tweet.user.screen_name,
-                        profile_image_url = tweet.user.profile_image_url_https,
-                        j;
+                if (data.success !== false) {
+                    _.each(data, function (tweet) {
+                        var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
+                                "$1 $2 $4 $3 UTC")),
+                            date = app.date.format(time, "Y-m-d H:i:s"),
+                            text = tweet.text,
+                            sourceUrl = tweet.source,
+                            id = tweet.id_str,
+                            name = tweet.user.name,
+                            tokenText = text.split(' '),
+                            screen_name = tweet.user.screen_name,
+                            profile_image_url = tweet.user.profile_image_url_https,
+                            j;
 
-                    // Search for links and turn them into hrefs
-                    for (j = 0; j < tokenText.length; j++) {
-                        if (tokenText[j].charAt(0) == 'h' && tokenText[j].charAt(1) == 't') {
-                            tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
+                        // Search for links and turn them into hrefs
+                        for (j = 0; j < tokenText.length; j++) {
+                            if (tokenText[j].charAt(0) == 'h' && tokenText[j].charAt(1) == 't') {
+                                tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
+                            }
                         }
-                    }
 
-                    text = tokenText.join(' ');
-                    tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date});
-                }, this);
+                        text = tokenText.join(' ');
+                        tweets.push({id: id, name: name, screen_name: screen_name, profile_image_url: profile_image_url, text: text, source: sourceUrl, date: date});
+                    }, this);
+                }
 
                 self.tweets = tweets;
                 self.render();
