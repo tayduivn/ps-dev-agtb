@@ -11,7 +11,10 @@ describe("Base.View.List", function () {
                     "header":true,
                     "fields":["name", "case_number", "type", "created_by", "date_entered", "date_modified", "modified_user_id"]
                 }
-            ]
+            ],
+            last_state: {
+                id: 'record-list'
+            }
         }, "Cases");
         SugarTest.testMetadata.set();
         view = SugarTest.createView("base", "Cases", "list", null, null);
@@ -124,5 +127,74 @@ describe("Base.View.List", function () {
         expect(options2.limit).toEqual(offset);
         expect(options2.offset).toEqual(0);
 
+    });
+    describe('setOrderBy', function() {
+
+        var testElement = $('<th data-orderby="" data-fieldname="name" class="sorting_desc orderByname"><span>Name</span></th>');
+        var event = {
+            currentTarget: testElement
+        };
+
+        beforeEach(function() {
+            view.$el.append(testElement);
+        });
+        afterEach(function() {
+            view.$(testElement).remove();
+        });
+
+        it('should set orderby correctly', function() {
+            view.setOrderBy(event);
+            expect(view.orderBy).toEqual({field: 'name', direction: 'desc'});
+        });
+        it('should change direction when set order by active field', function() {
+            view.setOrderBy(event);
+            expect(view.orderBy.direction).toEqual('desc');
+            view.setOrderBy(event);
+            expect(view.orderBy.direction).toEqual('asc');
+
+        });
+        it('should set orderby correctly to collection', function() {
+            view.setOrderBy(event);
+            expect(view.collection.orderBy).toEqual({field: 'name', direction: 'desc'});
+        });
+    });
+
+    describe('should use last state for store sorting', function() {
+
+        it('should be orderby last state key not empty', function() {
+            expect(view.orderByLastStateKey).not.toBeEmpty();
+        });
+
+        it('should call set last state when set order by', function() {
+            var lastStateSetStub = sinon.stub(app.user.lastState, 'set');
+            var testElement = $('<th data-orderby="" data-fieldname="name" class="sorting_desc orderByname"><span>Name</span></th>');
+            var event = {
+                currentTarget: testElement
+            };
+            view.$el.append(testElement);
+            view.setOrderBy(event);
+
+            expect(lastStateSetStub).toHaveBeenCalled();
+            expect(lastStateSetStub.lastCall.args[1]).toEqual({field: 'name', direction: 'desc'});
+
+            lastStateSetStub.restore();
+        });
+
+        it('should call get last state when initialize view', function() {
+            var orderBy = {
+                field: 'name',
+                direction: 'desc'
+            };
+            var lastStateGetStub = sinon.stub(app.user.lastState, 'get', function(key) {
+                return orderBy;
+            });
+            var testView = SugarTest.createView("base", "Cases", "list", null, null);
+
+            expect(lastStateGetStub).toHaveBeenCalled();
+            expect(testView.orderBy).toEqual(orderBy);
+            expect(testView.collection.orderBy).toEqual(orderBy);
+
+            lastStateGetStub.restore();
+        })
     });
 });
