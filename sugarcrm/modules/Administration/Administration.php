@@ -45,7 +45,7 @@ class Administration extends SugarBean {
             //END SUGARCRM lic=sub ONLY
     );
     var $disable_custom_fields = true;
-    var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'portal_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');
+    var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');
     //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
@@ -122,40 +122,6 @@ class Administration extends SugarBean {
     }
 
     function saveConfig() {
-        //BEGIN SUGARCRM flav=ent ONLY
-        $this->retrieveSettings(false, true);
-        if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
-            if(file_exists($cachefile = sugar_cached('modules/Contacts/EditView.tpl'))) {
-                unlink($cachefile);
-            }
-
-            if(file_exists($cachefile = sugar_cached('modules/Contacts/DetailView.tpl'))) {
-                unlink($cachefile);
-            }
-
-            if(file_exists($cachefile = sugar_cached('modules/Contacts/form_EmailQCView_Contacts.tpl'))) {
-                unlink($cachefile);
-            }
-        }
-        //END SUGARCRM flav!=ent ONLY
-
-        //BEGIN SUGARCRM flav=ent ONLY
-        $this->retrieveSettings(false, true);
-        if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
-            if(file_exists($cachefile = sugar_cached('modules/Contacts/EditView.tpl'))) {
-                unlink($cachefile);
-            }
-
-            if(file_exists($cachefile = sugar_cached('modules/Contacts/DetailView.tpl'))) {
-                unlink($cachefile);
-            }
-
-            if(file_exists($cachefile = sugar_cached('modules/Contacts/form_EmailQCView_Contacts.tpl'))) {
-                unlink($cachefile);
-            }
-        }
-        //END SUGARCRM flav!=ent ONLY
-
         // outbound email settings
         $oe = new OutboundEmail();
 

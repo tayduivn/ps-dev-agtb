@@ -1181,7 +1181,7 @@ function insert_default_settings(){
     */
     $db->query("INSERT INTO config (category, name, value) VALUES ('info', 'sugar_version', '" . $sugar_db_version . "')");
     $db->query("INSERT INTO config (category, name, value) VALUES ('MySettings', 'tab', '')");
-    $db->query("INSERT INTO config (category, name, value) VALUES ('portal', 'on', '0')");
+    $db->query("INSERT INTO config (category, name, value, platform) VALUES ('portal', 'on', '0', 'support')");
 
       //BEGIN SUGARCRM lic=sub ONLY
 
