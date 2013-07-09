@@ -45,7 +45,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
 
         //Elastica client uses own auto-load schema similar to ZF.
-        SugarAutoLoader::addPrefixDirectory('Elastica', 'include/SugarSearchEngine/Elastic/');
+        SugarAutoLoader::addPrefixDirectory('Elastica', 'vendor/');
         if (empty($this->_config['timeout']))
         {
             $this->_config['timeout'] = 15;

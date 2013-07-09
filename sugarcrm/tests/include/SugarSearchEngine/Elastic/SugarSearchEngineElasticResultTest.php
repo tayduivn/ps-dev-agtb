@@ -29,9 +29,9 @@
 
 
 require_once 'include/SugarSearchEngine/Elastic/SugarSeachEngineElasticResult.php';
-require_once 'include/SugarSearchEngine/Elastic/Elastica/ResultSet.php';
-require_once 'include/SugarSearchEngine/Elastic/Elastica/Result.php';
-require_once 'include/SugarSearchEngine/Elastic/Elastica/Response.php';
+require_once 'vendor/Elastica/ResultSet.php';
+require_once 'vendor/Elastica/Result.php';
+require_once 'vendor/Elastica/Response.php';
 
 class SugarSearchEngineElasticResultTest extends Sugar_PHPUnit_Framework_TestCase
 {
