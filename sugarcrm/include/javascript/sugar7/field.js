@@ -124,11 +124,23 @@
                 }
                 if (this.def.required) {
                     this.clearRequiredLabel();
-                    if (this.action === "edit") {
+                    if (this.action === "edit" && this._shouldRenderRequiredPlaceholder()) {
                         this.decorateRequired();
                     }
                 }
             },
+
+            /**
+             * Helper to determine if we should call decorateError. Primarily for pages like Login
+             * where we don't want to have (Required) in the placeholder
+             * @return {Boolean} Whether we should attempt to render required placeholder or not
+             */
+            _shouldRenderRequiredPlaceholder: function () {
+                // Even though we might have no_required_placeholder true in meta, we still need to check that
+                // we're not in an edit context as we DO want the (Required) to show for bad form submissions.
+                return this.tplName === 'edit' || !this.def.no_required_placeholder;
+            },
+
             /**
              * Default implementation of Required decoration
              */
