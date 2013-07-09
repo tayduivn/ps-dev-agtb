@@ -57,17 +57,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'link' => true,
                 ),
-                array(
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'enabled' => true,
-                    'default' => true,
-                    'name' => 'date_modified',
-                ),
             ),
         ),
-    ),
-    'orderBy' => array(
-        'field' => 'date_modified',
-        'direction' => 'desc',
     ),
 );
