@@ -476,7 +476,7 @@ function get_quick_sync_data($session, $module_name, $related_module_name, $star
 	if(empty($related_module_name) || !isset($related_module_name)){
 		$params['include_custom_fields'] = true;
 		
-		$query_list = $seed->create_new_list_query($seed->process_order_by('', null), '', array(), $params, (int)$deleted, '', true, $seed );
+        $query_list = $seed->create_new_list_query('', '', array(), $params, (int)$deleted, '', true, $seed);
 
 		$query = "SELECT " . $seed->table_name . ".*";
 	        

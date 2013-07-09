@@ -42,7 +42,7 @@ class Bug41615Test extends Sugar_PHPUnit_Framework_TestCase
 		$params = array();
 		$params['massupdate'] = 1;
 		
-		$query = $emailMan->create_new_list_query('emailman.date_entered DESC', '', $filter, $params);
+        $query = $emailMan->create_new_list_query('date_entered DESC', '', $filter, $params);
 		$this->assertContains('ORDER BY emailman.date_entered', $query, 'Assert that the ORDER BY clause includes the table name'); 
     }
 }
