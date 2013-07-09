@@ -49,7 +49,7 @@ describe("products_view_record", function() {
             meta: {
                 panels: [{
                     fields: [{
-                        name: "commit_stage"
+                        name: "name"
                     }]
                 }]
             }
@@ -60,57 +60,6 @@ describe("products_view_record", function() {
         app.user.setPreference('decimal_precision', 2);
         SugarTest.loadComponent('base', 'view', 'record');
         view = SugarTest.loadFile("../modules/Products/clients/base/views/record", "record", "js", function(d) { return eval(d); });
-    });
-
-    describe("initialization", function() {
-        beforeEach(function() {
-            sinon.stub(app.view, "invokeParent");
-
-            sinon.stub(app.metadata, "getModule", function () {
-                return {
-                    is_setup: true,
-                    buckets_dom: "commit_stage_binary_dom"
-                }
-            })
-            sinon.stub(view, "_setupCommitStageField");
-
-        });
-
-        afterEach(function() {
-            view._setupCommitStageField.restore();
-            app.metadata.getModule.restore();
-            app.view.invokeParent.restore();
-        });
-
-        it("should set up the commit_stage field for products", function () {
-            view.initialize(options);
-            expect(view._setupCommitStageField).toHaveBeenCalled();//With(options.meta.panels);
-        });
-    });
-
-    describe("_setupCommitStageField method", function() {
-        it("should remove the commit_stage field if forecasts is not setup", function() {
-            sinon.stub(app.metadata, "getModule", function () {
-                return {
-                    is_setup: false
-                }
-            });
-            view._setupCommitStageField(options.meta.panels);
-            expect(options.meta.panels[0].fields).toEqual([]);
-            app.metadata.getModule.restore();
-        });
-
-        it("should set the proper options on the commit_stage field if forecasts has been setup", function() {
-            sinon.stub(app.metadata, "getModule", function () {
-                return {
-                    is_setup: true,
-                    buckets_dom: "something_testable"
-                }
-            });
-            view._setupCommitStageField(options.meta.panels);
-            expect(options.meta.panels[0].fields[0].options).toEqual("something_testable");
-            app.metadata.getModule.restore();
-        });
     });
 
     describe("convertCurrencyFields", function() {

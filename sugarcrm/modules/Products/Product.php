@@ -20,6 +20,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 // Product is used to store customer information.
@@ -88,15 +89,6 @@ class Product extends SugarBean
     public $commit_stage;
     public $opportunity_id;
     public $product_type;
-
-    /**
-     * @public String      The Current Sales Stage
-     */
-    public $sales_stage;
-    /**
-     * @public String      The Current Sales Status
-     */
-    public $sales_status;
 
     // These are for related fields
     public $assigned_user_id;
@@ -598,13 +590,7 @@ class Product extends SugarBean
         if ($this->deal_calc == '') {
             $this->deal_calc = '0';
         }
-        if (empty($this->best_case)) {
-            $this->best_case = $this->likely_case;
-        }
-        if (empty($this->worst_case)) {
-            $this->worst_case = $this->likely_case;
-        }
-        
+
         if ($this->quantity == '') {
             $this->quantity = 1;
         }
@@ -802,6 +788,7 @@ class Product extends SugarBean
             /* @var $pt ProductTemplate */
             $pt = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
 
+            $this->name = $pt->name;
             $this->category_id = $pt->category_id;
             $this->mft_part_num = $pt->mft_part_num;
             $this->list_price = SugarCurrency::convertAmount($pt->list_price, $pt->currency_id, $this->currency_id);

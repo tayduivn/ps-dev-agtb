@@ -63,6 +63,7 @@ $dictionary['Product'] = array(
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
             'auto_populate' => true,
             'populate_list' => array(
+                'name' => 'name',
                 'category_id' => 'category_id',
                 'category_name' => 'category_name',
                 'mft_part_num' => 'mft_part_num',
@@ -229,7 +230,7 @@ $dictionary['Product'] = array(
         ),
         'discount_amount' =>  array(
             'name' => 'discount_amount',
-            'vname' => 'LBL_DISCOUNT_RATE',
+            'vname' => 'LBL_DISCOUNT_TOTAL',
             'type' => 'decimal',
             'options' => 'discount_amount_class_dom',
             'len' => '26,6',
@@ -352,16 +353,6 @@ $dictionary['Product'] = array(
             'len' => 100,
             'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
         ),
-        /*
-          'tax_class' =>
-          array (
-            'name' => 'tax_class',
-            'vname' => 'LBL_TAX_CLASS',
-            'type' => 'varchar',
-            'len' => 100,
-            'comment' => 'Tax classification (ex: Taxable, Non-taxable)'
-          ),
-        */
         'website' =>  array(
             'name' => 'website',
             'vname' => 'LBL_URL',
@@ -497,42 +488,6 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_REVENUELINEITEM',
             'source' => 'non-db',
         ),
-        'best_case' =>  array(
-            'name' => 'best_case',
-            'vname' => 'LBL_BEST',
-            'dbType' => 'decimal',
-            'type' => 'currency',
-            'len' => '26,6',
-           //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'studio' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
-        ),
-        'likely_case' =>  array(
-            'name' => 'likely_case',
-            'vname' => 'LBL_LIKELY',
-            'dbType' => 'decimal',
-            'type' => 'currency',
-            'len' => '26,6',
-            //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'studio' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
-        ),
-        'worst_case' =>  array(
-            'name' => 'worst_case',
-            'vname' => 'LBL_WORST',
-            'dbType' => 'decimal',
-            'type' => 'currency',
-            'len' => '26,6',
-            //END SUGARCRM flav=pro ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'studio' => false,
-            //END SUGARCRM flav=pro && flav!=ent ONLY
-            //BEGIN SUGARCRM flav=pro ONLY
-        ),
         'date_closed' =>  array(
             'name' => 'date_closed',
             'vname' => 'LBL_DATE_CLOSED',
@@ -555,48 +510,6 @@ $dictionary['Product'] = array(
             'type' => 'varchar',
             'len' => '100',
             'comment' => 'The next step in the sales process',
-            'merge_filter' => 'enabled',
-        ),
-        'commit_stage' => array(
-            'name' => 'commit_stage',
-            'vname' => 'LBL_COMMIT_STAGE_FORECAST',
-            'type' => 'enum',
-            'default' => 'exclude',
-            'options' => 'commit_stage_binary_dom',
-            'len' => '50',
-            'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
-        ),
-        'sales_stage' =>  array(
-            'name' => 'sales_stage',
-            'vname' => 'LBL_SALES_STAGE',
-            'type' => 'enum',
-            'options' => 'sales_stage_dom',
-            'len' => '255',
-            'audited' => true,
-            'comment' => 'Indication of progression towards closure',
-            'merge_filter' => 'enabled',
-            'importable' => 'required',
-            'required' => true,
-        ),
-        'probability' =>  array(
-            'name' => 'probability',
-            'vname' => 'LBL_PROBABILITY',
-            'type' => 'int',
-            'dbType' => 'double',
-            'audited' => true,
-            'comment' => 'The probability of closure',
-            'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
-            'merge_filter' => 'enabled',
-            'formula' => 'getDropdownValue("sales_probability_dom",$sales_stage)',
-            'calculated' => true,
-        ),
-        'lead_source' => array(
-            'name' => 'lead_source',
-            'vname' => 'LBL_LEAD_SOURCE',
-            'type' => 'enum',
-            'options' => 'lead_source_dom',
-            'len' => '50',
-            'comment' => 'Source of the product',
             'merge_filter' => 'enabled',
         ),
         'campaign_id' => array(
@@ -685,7 +598,8 @@ $dictionary['Product'] = array(
             'len' => '255',
             'vname' => 'LBL_QUOTE_NAME',
             'source' => 'non-db',
-            'comment' => 'Quote Name'
+            'comment' => 'Quote Name',
+            'required' => true
         ),
         'manufacturer_name' =>  array(
             'name' => 'manufacturer_name',
@@ -991,10 +905,7 @@ $dictionary['Product'] = array(
             'filter_template' => array(
                 array('$and' => array(
                     array('opportunity_id' => array('$equals' => '$opportunity_id')),
-                    array('name' => array('$starts' => '$name')),
-                    array('sales_status' => array('$not_equals' => 'Closed Won')),
-                    array('sales_status' => array('$not_equals' => 'Closed Lost')),
-                    array('sales_status' => array('$not_equals' => 'Converted to Quote')),
+                    array('name' => array('$starts' => '$name'))
                 )),
             ),
             'ranking_fields' => array(
