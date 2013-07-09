@@ -137,14 +137,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'name' => 'favorite',
-                    'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
                 ),
                 array(
-                    'name' => 'follow',
-                    'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
                 ),
