@@ -440,7 +440,7 @@ class SugarBean
             $this->disable_row_level_security =true;
         }
         //END SUGARCRM flav=pro ONLY
-        if((false == $this->disable_vardefs && empty($loaded_defs[$this->object_name])) || !empty($GLOBALS['reload_vardefs']))
+        if (false == $this->disable_vardefs && (empty($loaded_defs[$this->object_name]) || !empty($GLOBALS['reload_vardefs'])))
         {
             //BEGIN SUGARCRM flav=int ONLY
             if(empty($this->module_dir))
