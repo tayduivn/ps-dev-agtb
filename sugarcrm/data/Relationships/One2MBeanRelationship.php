@@ -67,8 +67,8 @@ class One2MBeanRelationship extends One2MRelationship
         }
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
-            $this->callBeforeAdd($lhs, $rhs);
-            $this->callBeforeAdd($rhs, $lhs);
+            $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
+            $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
         }
 
         $this->updateFields($lhs, $rhs, $additionalFields);
@@ -80,8 +80,8 @@ class One2MBeanRelationship extends One2MRelationship
 
             $this->updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName);
 
-            $this->callAfterAdd($lhs, $rhs);
-            $this->callAfterAdd($rhs, $lhs);
+            $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+            $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
         }
 
         //One2MBean relationships require that the RHS bean be saved or else the relationship will not be saved.
@@ -131,8 +131,8 @@ class One2MBeanRelationship extends One2MRelationship
         $rhs->$rhsID = '';
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
-            $this->callBeforeDelete($lhs, $rhs);
-            $this->callBeforeDelete($rhs, $lhs);
+            $this->callBeforeDelete($lhs, $rhs, $this->getLHSLink());
+            $this->callBeforeDelete($rhs, $lhs, $this->getRHSLink());
         }
 
         if ($save && !$rhs->deleted) {
@@ -141,8 +141,8 @@ class One2MBeanRelationship extends One2MRelationship
         }
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
-            $this->callAfterDelete($lhs, $rhs);
-            $this->callAfterDelete($rhs, $lhs);
+            $this->callAfterDelete($lhs, $rhs, $this->getLHSLink());
+            $this->callAfterDelete($rhs, $lhs, $this->getRHSLink());
         }
 
         return true;
