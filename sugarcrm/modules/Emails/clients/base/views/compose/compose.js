@@ -16,10 +16,10 @@
             'click [name=send_button]': 'send',
             'click [name=cancel_button]': 'cancel'
         });
-        this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer);
-        this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer);
-        this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer);
-        this.context.on('attachments:updated', this.toggleAttachmentVisibility);
+        this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer, this);
+        this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
+        this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer, this);
+        this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
 
         this._lastSelectedSignature = app.user.getPreference("signature_default");
     },
