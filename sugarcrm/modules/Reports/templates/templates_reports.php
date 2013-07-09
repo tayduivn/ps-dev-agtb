@@ -432,7 +432,7 @@ EOD
     // Set fiscal start date
     $admin = BeanFactory::getBean('Administration');
     $config = $admin->getConfigForModule('Forecasts', 'base');
-    if (!empty($config['timeperiod_start_date'])) {
+    if (!empty($config['is_setup']) && !empty($config['timeperiod_start_date'])) {
         $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
     }
 
@@ -820,7 +820,7 @@ function template_reports_report(&$reporter,&$args) {
     // Set fiscal start date
     $admin = BeanFactory::getBean('Administration');
     $config = $admin->getConfigForModule('Forecasts', 'base');
-    if (!empty($config['timeperiod_start_date'])) {
+    if (!empty($config['is_setup']) && !empty($config['timeperiod_start_date'])) {
         $smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
     }
 

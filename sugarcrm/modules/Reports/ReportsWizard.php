@@ -115,7 +115,7 @@ $sugar_smarty->assign("sugar_version", $sugar_version);
 // Set fiscal start date
 $admin = BeanFactory::getBean('Administration');
 $config = $admin->getConfigForModule('Forecasts', 'base');
-if (!empty($config['timeperiod_start_date'])) {
+if (!empty($config['is_setup']) && !empty($config['timeperiod_start_date'])) {
     $sugar_smarty->assign("fiscalStartDate", $config['timeperiod_start_date']);
 }
 
