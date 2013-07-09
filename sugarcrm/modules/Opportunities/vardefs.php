@@ -148,6 +148,7 @@ $dictionary['Opportunity'] = array(
             'calculated' => true,
             'formula' => 'rollupCurrencySum($revenuelineitems, "likely_case")',
             'enforced' => true,
+            'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
             'validation' => array('type' => 'range', 'min' => 0)
         ),
@@ -232,6 +233,7 @@ $dictionary['Opportunity'] = array(
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
             //BEGIN SUGARCRM flav=ent ONLY
+            'massupdate' => false,
             'calculated' => true,
             'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
             'enforced' => true
@@ -242,7 +244,9 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
             'studio' => false,
+            'reportable' => false,
             //BEGIN SUGARCRM flav=ent ONLY
+            'massupdate' => false,
             'calculated' => true,
             'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")',
             'enforced' => true
@@ -255,6 +259,7 @@ $dictionary['Opportunity'] = array(
             'len' => '100',
             'comment' => 'The next step in the sales process',
             'merge_filter' => 'enabled',
+            'massupdate' => true,
         ),
         'sales_stage' => array(
             'name' => 'sales_stage',
@@ -266,7 +271,13 @@ $dictionary['Opportunity'] = array(
             'comment' => 'Indication of progression towards closure',
             'merge_filter' => 'enabled',
             'importable' => 'required',
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'required' => true,
+            //END SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            'studio' => false,
+            'massupdate' => false,
+            //END SUGARCRM flav=ent ONLY
         ),
         'sales_status' => array(
             'name' => 'sales_status',
@@ -278,6 +289,9 @@ $dictionary['Opportunity'] = array(
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
             //END SUGARCRM flav=pro && flav!=ent ONLY
+            //BEGIN SUGARCRM flav=ent ONLY
+            'massupdate' => false,
+            //END SUGARCRM flav=ent ONLY
         ),
         'probability' => array(
             'name' => 'probability',
@@ -303,6 +317,7 @@ $dictionary['Opportunity'] = array(
             'formula' => 'rollupCurrencySum($revenuelineitems, "best_case")',
             'calculated' => true,
             'enforced' => true,
+            'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
             'audited' => true,
         ),
@@ -317,6 +332,7 @@ $dictionary['Opportunity'] = array(
             'formula' => 'rollupCurrencySum($revenuelineitems, "worst_case")',
             'calculated' => true,
             'enforced' => true,
+            'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
             'audited' => true,
         ),
@@ -327,6 +343,10 @@ $dictionary['Opportunity'] = array(
             'options' => 'commit_stage_dom',
             'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'massupdate' => false,
+            'studio' => false
+            //END SUGARCRM flav=ent ONLY
         ),
         //END SUGARCRM flav=PRO ONLY
         'accounts' => array(
