@@ -298,6 +298,69 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testOrderByDerivedField()
+    {
+        $contact = BeanFactory::getBean('Contacts');
+        $contact->first_name = 'Super';
+        $contact->last_name = 'Awesome';
+        $contact->save();
+        $this->contacts[] = $contact;
+        $contact = BeanFactory::getBean('Contacts');
+        $contact->first_name = 'Super';
+        $contact->last_name = 'Bad';
+        $contact->save();
+        $this->contacts[] = $contact;
+
+        $sq = new SugarQuery();
+        $sq->select(array('last_name'));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->orderBy('full_name', 'DESC');
+
+        $result = $sq->execute();
+
+        $expected = array(
+            array(
+                'last_name' => 'Bad',
+                'first_name' => 'Super',
+                'salutation' => null,
+                'title' => null,
+            ),
+            array(
+                'last_name' => 'Awesome',
+                'first_name' => 'Super',
+                'salutation' => null,
+                'title' => null,
+            ),
+        );
+
+        $this->assertEquals($expected, $result);
+
+
+        $sq = new SugarQuery();
+        $sq->select(array('last_name'));
+        $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->orderBy('full_name', 'ASC');
+
+        $result = $sq->execute();
+
+        $expected = array(
+            array(
+                'last_name' => 'Awesome',
+                'first_name' => 'Super',
+                'salutation' => null,
+                'title' => null,
+            ),
+            array(
+                'last_name' => 'Bad',
+                'first_name' => 'Super',
+                'salutation' => null,
+                'title' => null,
+            ),
+        );
+
+        $this->assertEquals($expected, $result);
+    }
+
     public function testSelectOneToManyWithRole()
     {
         $account = BeanFactory::getBean('Accounts');

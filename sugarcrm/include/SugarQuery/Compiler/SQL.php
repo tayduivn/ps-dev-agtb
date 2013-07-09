@@ -225,12 +225,7 @@ class SugarQuery_Compiler_SQL
         $return = array();
         foreach ($orderBy as $order) {
             list($field, $direction) = $order;
-            try {
-                $field = $this->conditionField($field);
-            } catch(SugarApiExceptionInvalidParameter $ex) {
-                // if we can't resolve it, ignore it
-                continue;
-            }
+
             $defs = $this->getFieldVardef($field);
             if (empty($defs)) {
                 $GLOBALS['log']->error(
@@ -238,6 +233,9 @@ class SugarQuery_Compiler_SQL
                 );
                 continue;
             }
+            // before we make any condition checks we need to see if this is a
+            // derived field so that we can order by the correct field name and not
+            // the derived field name
 
             if (!empty($defs['sort_on'])) {
                 if (strstr($field, '.')) {
@@ -247,6 +245,13 @@ class SugarQuery_Compiler_SQL
                     $field = $defs['sort_on'];
                 }
                 $defs = $this->getFieldVardef($field);
+            }
+
+            try {
+                $field = $this->conditionField($field);
+            } catch(SugarApiExceptionInvalidParameter $ex) {
+                // if we can't resolve it, ignore it
+                continue;
             }
 
             if (!empty($defs['source']) && $defs['source'] === 'non-db') {
