@@ -23,74 +23,68 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 $viewdefs['ProspectLists']['base']['view']['record'] = array(
     'buttons' => array(
         array(
-            'type' => 'button',
-            'name' => 'cancel_button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'type'      => 'button',
+            'name'      => 'cancel_button',
+            'label'     => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
+            'showOn'    => 'edit',
         ),
         array(
-            'type' => 'rowaction',
-            'event' => 'button:save_button:click',
-            'name' => 'save_button',
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn btn-primary',
-            'showOn' => 'edit',
+            'type'       => 'rowaction',
+            'event'      => 'button:save_button:click',
+            'name'       => 'save_button',
+            'label'      => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class'  => 'btn btn-primary',
+            'showOn'     => 'edit',
             'acl_action' => 'edit',
         ),
         array(
-            'type' => 'actiondropdown',
-            'name' => 'main_dropdown',
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
             'primary' => true,
-            'showOn' => 'view',
+            'showOn'  => 'view',
             'buttons' => array(
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:edit_button:click',
-                    'name' => 'edit_button',
-                    'label' => 'LBL_EDIT_BUTTON_LABEL',
+                    'type'       => 'rowaction',
+                    'event'      => 'button:edit_button:click',
+                    'name'       => 'edit_button',
+                    'label'      => 'LBL_EDIT_BUTTON_LABEL',
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'linkbutton',
-                    'name' => 'link_create',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
+                    'type'       => 'linkbutton',
+                    'name'       => 'link_create',
+                    'label'      => 'LBL_CREATE_RELATED_RECORD',
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'linkbutton',
-                    'name' => 'link_exist',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
+                    'type'       => 'linkbutton',
+                    'name'       => 'link_exist',
+                    'label'      => 'LBL_ASSOC_RELATED_RECORD',
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'type'       => 'rowaction',
+                    'event'      => 'button:delete_button:click',
+                    'name'       => 'delete_button',
+                    'label'      => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'type'       => 'rowaction',
+                    'event'      => 'button:duplicate_button:click',
+                    'name'       => 'duplicate_button',
+                    'label'      => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:export_button:click',
-                    'name' => 'export_button',
-                    'label' => 'LBL_EXPORT',
+                    'type'       => 'rowaction',
+                    'event'      => 'button:export_button:click',
+                    'name'       => 'export_button',
+                    'label'      => 'LBL_EXPORT',
                     'acl_action' => 'export',
                 ),
             ),
@@ -100,28 +94,28 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
             'type' => 'sidebartoggle',
         ),
     ),
-    'panels' => array(
+    'panels'  => array(
         array(
-            'name' => 'panel_header',
+            'name'   => 'panel_header',
             'header' => true,
             'fields' => array(
                 'name',
                 array(
-                    'type' => 'favorite',
+                    'type'     => 'favorite',
                     'readonly' => true,
                 ),
                 array(
-                    'type' => 'follow',
+                    'type'     => 'follow',
                     'readonly' => true,
                 ),
-            )
+            ),
         ),
         array(
-            'name' => 'panel_body',
-            'columns' => 2,
-            'labelsOnTop' => true,
+            'name'         => 'panel_body',
+            'columns'      => 2,
+            'labelsOnTop'  => true,
             'placeholders' => true,
-            'fields' => array(
+            'fields'       => array(
                 array(
                     'name' => 'description',
                     'span' => 12,
@@ -132,17 +126,17 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 ),
                 'assigned_user_name',
                 array(
-                    'name' => 'date_modified_by',
+                    'name'     => 'date_modified_by',
                     'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'fields' => array(
+                    'type'     => 'fieldset',
+                    'label'    => 'LBL_DATE_MODIFIED',
+                    'fields'   => array(
                         array(
                             'name' => 'date_modified',
                         ),
                         array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
+                            'type'          => 'label',
+                            'default_value' => 'LBL_BY',
                         ),
                         array(
                             'name' => 'modified_by_name',
@@ -152,28 +146,28 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     "type" => "teamset",
-                    "name" => "team_name"
+                    "name" => "team_name",
                 ),
                 //END SUGARCRM flav=pro ONLY
                 array(
-                    'name' => 'date_entered_by',
+                    'name'     => 'date_entered_by',
                     'readonly' => true,
-                    'type' => 'fieldset',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'fields' => array(
+                    'type'     => 'fieldset',
+                    'label'    => 'LBL_DATE_ENTERED',
+                    'fields'   => array(
                         array(
                             'name' => 'date_entered',
                         ),
                         array(
-                            'type' => 'label',
-                            'default_value' => 'LBL_BY'
+                            'type'          => 'label',
+                            'default_value' => 'LBL_BY',
                         ),
                         array(
                             'name' => 'created_by_name',
                         ),
                     ),
                 ),
-            )
+            ),
         ),
     ),
 );
