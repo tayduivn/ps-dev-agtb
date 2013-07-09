@@ -45,6 +45,11 @@
      */
     hasAccess: true,
 
+    /**
+     * Holds the totals field name
+     */
+    total_field: '',
+
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
 
@@ -118,7 +123,8 @@
         this.context.on('forecasts:worksheet:totals', function(totals, type) {
             var field = this.total_field;
             if (type == "manager") {
-                field += '_adjusted'
+                // split off "_case"
+                field = field.split('_')[0] + '_adjusted'
             }
             this.total = totals[field];
             this.previous_type = type;

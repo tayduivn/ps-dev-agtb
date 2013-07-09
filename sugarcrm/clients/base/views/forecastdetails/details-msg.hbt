@@ -1,0 +1,23 @@
+<div class="span{{spanCSS}} tcenter">
+    <div id="forecast_details_{{case}}_numbers">
+        <span class="forecast_details_label">
+            {{label}}
+        </span>
+
+        <br>
+
+        <span class="forecast_details_amount">
+            {{{amount}}}
+        </span>
+
+        <br>
+    </div>
+
+    <div id="forecast_details_{{case}}_feedback">
+        <span class="forecast_details_feedback">
+            {{{feedbackLn1}}}
+            <br>
+            {{{feedbackLn2}}}
+        </span>
+    </div>
+</div>

@@ -291,10 +291,17 @@ describe("ForecastWorksheets.View.RecordList", function() {
 
         it('should not trigger event when date is undefined and collection is empty', function() {
             view.collection.reset();
+
+            // should be called during reset
+            expect(ctxStub).toHaveBeenCalled();
+
+            ctxStub.restore();
+            ctxStub = sinon.stub(context, 'trigger', function() {});
             view.checkForDraftRows(undefined);
+
+            // should not be called during checkForDraftRows when undefined
             expect(ctxStub).not.toHaveBeenCalled();
         });
-
     });
 
     describe('updateSelectedUser', function() {

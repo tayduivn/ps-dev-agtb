@@ -726,35 +726,7 @@
      */
     calculateTotals: function() {
         if (this.isVisible()) {
-            // add up all the currency fields
-            var fields = _.filter(this._fields.visible, function(field) {
-                    return field.type === 'currency';
-                }),
-                fieldNames = [];
-
-            _.each(fields, function(field) {
-                fieldNames.push(field.name);
-                this.totals[field.name] = 0;
-                this.totals[field.name + "_display"] = true;
-            }, this);
-
-            if (this.collection.length == 0) {
-                // no items, just bail
-                return;
-            }
-
-            this.collection.each(function(model) {
-                _.each(fieldNames, function(field) {
-                    // convert the value to base
-                    var val = model.get(field);
-                    if (_.isUndefined(val) || _.isNaN(val)) {
-                        return;
-                    }
-                    val = app.currency.convertWithRate(val, model.get('base_rate'));
-                    this.totals[field] = app.math.add(this.totals[field], val);
-                }, this)
-            }, this);
-
+            this.totals = this.getCommitTotals();
             var ctx = this.context.parent || this.context;
             // fire an event on the parent context
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);

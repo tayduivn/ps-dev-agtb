@@ -276,23 +276,20 @@
         var forecast = new this.collection.model(),
             forecastType = app.utils.getForecastType(user.isManager, user.showOpps),
             forecastData = {},
-            totalsProperty = 'case',
-            likelyProperty = 'amount';
+            totalsProperty = 'case';
 
         if (forecastType == 'Rollup') {
             totalsProperty = 'adjusted';
-            likelyProperty = 'likely_adjusted';
         }
 
         forecastData.best_case = forecast_totals['best_' + totalsProperty];
-        forecastData.likely_case = forecast_totals[likelyProperty];
+        forecastData.likely_case = forecast_totals['likely_' + totalsProperty];
         forecastData.worst_case = forecast_totals['worst_' + totalsProperty];
 
         // we need a commit_type so we know what to do on the back end.
         forecastData.commit_type = worksheet_type;
         forecastData.timeperiod_id = forecast_totals.timeperiod_id || this.model.get('selectedTimePeriod');
         forecastData.forecast_type = forecastType;
-        forecastData.amount = forecast_totals.amount || forecastData.likely_case;
         forecastData.opp_count = forecast_totals.included_opp_count;
         forecastData.closed_amount = forecast_totals.closed_amount;
         forecastData.closed_count = forecast_totals.closed_count;

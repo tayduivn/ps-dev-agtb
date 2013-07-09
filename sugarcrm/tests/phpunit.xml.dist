@@ -131,6 +131,7 @@
         <testsuite name="Sugar SFA Test Suite">
             <file>./data/acl/SugarACLForecastManagerWorksheets.php</file>
             <file>./data/acl/SugarACLForecastWorksheets.php</file>
+            <directory>./include/SugarForecasting/</directory>
             <directory>./modules/Contracts/</directory>
             <directory>./modules/Currencies/</directory>
             <directory>./modules/ForecastManagerWorksheets/</directory>

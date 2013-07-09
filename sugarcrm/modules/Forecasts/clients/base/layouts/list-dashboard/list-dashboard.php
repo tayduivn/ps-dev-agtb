@@ -25,7 +25,7 @@ $viewdefs['Forecasts']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'forecast-details',
+                                'name' => 'forecastdetails',
                                 'label' => 'Forecast',
                             ),
                             'context' =>
