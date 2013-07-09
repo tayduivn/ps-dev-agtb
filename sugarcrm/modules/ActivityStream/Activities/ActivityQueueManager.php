@@ -142,9 +142,11 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
-        if($bean->deleted || $bean->inOperation('saving_related')) {
+        $noAuditableFieldsUpdated = $args['isUpdate'] && empty($args['dataChanges']);
+        if ($bean->deleted || $bean->inOperation('saving_related') || $noAuditableFieldsUpdated) {
             return false;
         }
+
         // Subscribe the user that created the record, and the user to whom the
         // record is assigned.
         $subs = BeanFactory::getBeanName('Subscriptions');
