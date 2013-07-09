@@ -35,7 +35,6 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
-         strict="true"
          syntaxCheck="false"
          bootstrap="SugarTestHelper.php"
         >
