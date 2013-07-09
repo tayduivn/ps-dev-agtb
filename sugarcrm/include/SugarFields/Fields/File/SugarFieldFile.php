@@ -16,6 +16,12 @@ require_once 'include/SugarFields/Fields/Base/SugarFieldBase.php';
 
 class SugarFieldFile extends SugarFieldBase
 {
+    static $imageFileMimeTypes = array(
+        'image/jpeg',
+        'image/gif',
+        'image/png',
+    );
+
     private function fillInOptions(&$vardef, &$displayParams)
     {
         if ( isset($vardef['allowEapm']) && $vardef['allowEapm'] == true ) {
@@ -102,6 +108,15 @@ class SugarFieldFile extends SugarFieldBase
         }
 
         if (isset($_FILES[$prefix . $field . '_file']) && $upload_file->confirm_upload()) {
+            //verify the image
+            if (in_array($upload_file->get_mime_type(), self::$imageFileMimeTypes) &&
+                !verify_image_file($upload_file->get_temp_file_location())) {
+                $this->error = string_format(
+                    $GLOBALS['app_strings']['LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED'],
+                    array($upload_file->file_ext)
+                );
+                return;
+            }
             $bean->$field = $upload_file->get_stored_file_name();
             $bean->file_mime_type = $upload_file->mime_type;
             $bean->file_ext = $upload_file->file_ext;

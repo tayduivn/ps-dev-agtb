@@ -58,7 +58,12 @@ $viewdefs['Notes']['base']['view']['record'] = array(
                     'rows' => 5,
                 ),
                 'team_name',
-                'filename',
+                array(
+                    'name' => 'filename',
+                    'related_fields' => array(
+                        'file_mime_type',
+                    )
+                ),
                 'assigned_user_name',
             ),
         ),
