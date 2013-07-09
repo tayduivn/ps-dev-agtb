@@ -279,4 +279,14 @@ describe("Leads.Base.Layout.ConvertPanel", function() {
         layout.resetFromDependentModuleChanges('Foo');
         expect(layout.currentState.dupeCount).toEqual(0);
     });
+
+    it("should remove unsaved changes when turnOffUnsavedChanges is called", function() {
+        var hasUnsavedChanges = function(view) {
+            return view.model.isNew() && view.model.hasChanged();
+        };
+        layout.createView.model.set('test', '123'); //add unsaved changes
+        expect(hasUnsavedChanges(layout.createView)).toBeTruthy();
+        layout.turnOffUnsavedChanges(); //happens when lead convert completes successfully
+        expect(hasUnsavedChanges(layout.createView)).toBeFalsy();
+    });
 });
