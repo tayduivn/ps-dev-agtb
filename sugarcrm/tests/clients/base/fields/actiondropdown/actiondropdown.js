@@ -18,16 +18,16 @@ describe('Base.Field.Actiondropdown', function() {
         SugarTest.app.data.declareModels();
 
         field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
-            "name": "main_dropdown",
-            "type": "actiondropdown",
-            "buttons": [
+            'name': 'main_dropdown',
+            'type': 'actiondropdown',
+            'buttons': [
                 {
-                    "type" : "rowaction",
-                    "name" : "test1"
+                    'type' : 'rowaction',
+                    'name' : 'test1'
                 },
                 {
-                    "type" : "rowaction",
-                    "name" : "test2"
+                    'type' : 'rowaction',
+                    'name' : 'test2'
                 }
             ]
         }, moduleName);
@@ -52,7 +52,7 @@ describe('Base.Field.Actiondropdown', function() {
 
     it('should render button html nested on the buttons', function() {
         expect(field.fields.length).toBe(2);
-        _.each(field.fields, function(button){
+        _.each(field.fields, function(button) {
             var actualPlaceholderCount = field.$el.find("span[sfuuid='" + button.sfId + "']").length;
             expect(actualPlaceholderCount).toBe(1);
         });
@@ -64,18 +64,18 @@ describe('Base.Field.Actiondropdown', function() {
 
 
         var button = field.fields[1];
-        var actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
+        var actualPlaceholderCount = field.$('.dropdown-menu').find('span[sfuuid="' + button.sfId + '"]').length;
         expect(actualPlaceholderCount).toBe(1);
 
         //second button should be at the primary position when the first one is hidden
         field.fields[0].hide();
-        expect(field.fields[0].$el.is(":hidden")).toBe(true);
-        actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
+        expect(field.fields[0].$el.is(':hidden')).toBe(true);
+        actualPlaceholderCount = field.$('.dropdown-menu').find('span[sfuuid="' + button.sfId + '"]').length;
         expect(actualPlaceholderCount).toBe(0);
 
         //the button position should be restored when the first one is shown once again
         field.fields[0].show();
-        actualPlaceholderCount = field.$(".dropdown-menu").find("span[sfuuid='" + button.sfId + "']").length;
+        actualPlaceholderCount = field.$('.dropdown-menu').find('span[sfuuid="' + button.sfId + '"]').length;
         expect(actualPlaceholderCount).toBe(1);
     });
 
