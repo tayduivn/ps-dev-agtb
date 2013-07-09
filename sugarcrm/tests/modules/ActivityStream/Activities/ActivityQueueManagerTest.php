@@ -1,6 +1,7 @@
 <?php
 
-require_once('modules/ActivityStream/Activities/ActivityQueueManager.php');
+require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
+require_once 'modules/ActivityStream/Activities/Activity.php';
 
 class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -96,10 +97,60 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $actManager->exec_processParentAttributes($contact);
     }
+
+    public function dataProviderForActivityMessageCreation()
+    {
+        return array(
+            array(true, 'after_save', 'createOrUpdate'),
+            array(false, 'after_save', null),
+            array(true, 'before_save', null),
+            array(true, 'after_relationship_add', 'link'),
+            array(true, 'after_relationship_delete', 'unlink'),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForActivityMessageCreation
+     */
+    public function testEventDispatcher_ActivityMessageCreation($activityEnabled, $event, $expectedAction)
+    {
+        $actions = array(
+            'createOrUpdate',
+            'link',
+            'unlink',
+        );
+        $contact = BeanFactory::getBean('Contacts');
+        $contact->id = create_guid();
+
+        $save_enabled = Activity::$enabled;
+        Activity::enable();
+
+        if (!$activityEnabled) {
+            Activity::disable();
+        }
+        $actManager = self::getMock(
+            "TestActivityQueueManager",
+            array('isValidLink', 'createOrUpdate', 'link', 'unlink', 'processSubscriptions')
+        );
+        $actManager->expects($this->any())->method('isValidLink')->will($this->returnValue(true));
+        foreach ($actions as $action) {
+            if ($action === $expectedAction) {
+                $actManager->expects($this->once())->method($action)->will($this->returnValue(false));
+            } else {
+                $actManager->expects($this->never())->method($action);
+            }
+        }
+        $actManager->eventDispatcher($contact, $event, array());
+
+        Activity::$enabled = $save_enabled;
+    }
 }
 
 class TestActivityQueueManager extends ActivityQueueManager {
     public function exec_processParentAttributes($bean) {
         $this->processParentAttributes($bean);
+    }
+    public function eventDispatcher(SugarBean $bean, $event, $args) {
+        parent::eventDispatcher($bean, $event, $args);
     }
 }

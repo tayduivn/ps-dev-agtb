@@ -74,19 +74,13 @@ class ActivityQueueManager
             }
         } elseif ($this->isActivityStreamEnabled()) {
             $activity       = BeanFactory::getBean('Activities');
-            $eventTriggered = true;
+            $eventTriggered = false;
             if ($event == 'after_save' && self::isAuditable($bean)) {
-                $this->createOrUpdate($bean, $args, $activity);
-            } elseif ($event == 'after_delete' && self::isAuditable($bean)) {
-                $this->delete($bean, $activity);
-            } elseif ($event == 'after_restore' && self::isAuditable($bean)) {
-                $this->undelete($bean, $args, $activity);
+                $eventTriggered = $this->createOrUpdate($bean, $args, $activity);
             } elseif ($event == 'after_relationship_add' && $this->isValidLink($args)) {
-                $this->link($args, $activity);
+                $eventTriggered = $this->link($args, $activity);
             } elseif ($event == 'after_relationship_delete' && $this->isValidLink($args)) {
-                $this->unlink($args, $activity);
-            } else {
-                $eventTriggered = false;
+                $eventTriggered = $this->unlink($args, $activity);
             }
 
             // Add the job queue process to add rows to the activities_users
@@ -144,11 +138,12 @@ class ActivityQueueManager
      * @param SugarBean $bean
      * @param array     $args
      * @param Activity  $act
+     * @return bool     eventProcessed
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
         if($bean->deleted || $bean->inOperation('saving_related')) {
-            return;
+            return false;
         }
         // Subscribe the user that created the record, and the user to whom the
         // record is assigned.
@@ -178,45 +173,7 @@ class ActivityQueueManager
         $act->save();
         $this->processRecord($bean, $act);
         $this->processParentAttributes($bean);
-    }
-
-    /**
-     * Handler for delete actions on a bean.
-     *
-     * @param  SugarBean $bean
-     * @param  Activity  $act
-     */
-    protected function delete(SugarBean $bean, Activity $act)
-    {
-        $data               = array(
-            'object' => self::getBeanAttributes($bean),
-        );
-        $act->activity_type = 'delete';
-        $act->parent_id     = $bean->id;
-        $act->parent_type   = $bean->module_name;
-        $act->data          = $data;
-        $act->save();
-
-        $this->processRecord($bean, $act);
-    }
-
-    /**
-     * Handler for undelete actions on a bean.
-     *
-     * @param  SugarBean $bean
-     * @param  Activity  $act
-     */
-    protected function undelete(SugarBean $bean, Activity $act)
-    {
-        $data               = array(
-            'object' => self::getBeanAttributes($bean),
-        );
-        $act->activity_type = 'undelete';
-        $act->parent_id     = $bean->id;
-        $act->parent_type   = $bean->module_name;
-        $act->data          = $data;
-        $act->save();
-        $this->processRecord($bean, $act);
+        return true;
     }
 
     /**
@@ -224,11 +181,12 @@ class ActivityQueueManager
      *
      * @param  array    $args
      * @param  Activity $act
+     * @return bool     eventProcessed
      */
     protected function link(array $args, Activity $act)
     {
-        if (!$args['id'] || !$args['related_id']) {
-            return;
+        if (empty($args['id']) || empty($args['related_id'])) {
+            return false;
         }
         $lhs                = BeanFactory::getBean($args['module'], $args['id']);
         $rhs                = BeanFactory::getBean($args['related_module'], $args['related_id']);
@@ -245,6 +203,7 @@ class ActivityQueueManager
         $act->save();
         $this->processRecord($lhs, $act);
         $this->processRecord($rhs, $act);
+        return true;
     }
 
     /**
@@ -252,11 +211,12 @@ class ActivityQueueManager
      *
      * @param  array    $args [description]
      * @param  Activity $act  [description]
+     * @return bool     eventProcessed
      */
     protected function unlink(array $args, Activity $act)
     {
-        if (!$args['id'] || !$args['related_id']) {
-            return;
+        if (empty($args['id']) || empty($args['related_id'])) {
+            return false;
         }
         $lhs                = BeanFactory::getBean($args['module'], $args['id']);
         $rhs                = BeanFactory::getBean($args['related_module'], $args['related_id']);
@@ -273,6 +233,7 @@ class ActivityQueueManager
         $act->save();
         $this->processRecord($lhs, $act);
         $this->processRecord($rhs, $act);
+        return true;
     }
 
     /**
