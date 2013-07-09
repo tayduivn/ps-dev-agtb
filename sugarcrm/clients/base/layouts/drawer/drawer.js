@@ -76,6 +76,11 @@
         var self = this,
             args = Array.prototype.slice.call(arguments, 0);
 
+        if (!Modernizr.csstransitions) {
+            this.closeImmediately.apply(this, args);
+            return;
+        }
+
         if (this._components.length > 0) {
             //close the drawer
             this._animateCloseDrawer(function() {
@@ -117,7 +122,7 @@
             }
 
             this._components.pop().dispose(); //dispose top-most drawer
-            (this.onCloseCallback.pop()).apply(this, args); //execute callback
+            (this.onCloseCallback.pop()).apply(window, args); //execute callback
         }
     },
 

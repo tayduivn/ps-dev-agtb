@@ -157,6 +157,20 @@ describe("Drawer Layout", function() {
             expect(spy.calledWith('foo')).toBe(true);
             expect(drawer.onCloseCallback.length).toBe(0);
         });
+
+        it('Should call closeImmediately if browser does not support css transitions', function() {
+            var stub = sinon.stub(drawer, 'closeImmediately'),
+                cssTransitions = Modernizr.csstransitions,
+                animateCloseStub = sinon.stub(drawer, '_animateCloseDrawer');
+
+            Modernizr.csstransitions = false;
+            drawer.close('foo');
+            expect(stub.calledWith('foo')).toBe(true);
+            expect(animateCloseStub.called).toBe(false);
+            Modernizr.csstransitions = cssTransitions;
+            stub.restore();
+            animateCloseStub.restore();
+        });
     });
 
     describe('Close immediately', function() {
