@@ -27,19 +27,19 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $obj;
 
-    public static function setUpBeforeClass()
+    /*public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-    }
+    }*/
 
     public function setUp()
     {
-        $this->obj = new SugarParsers_Filter(new Account());
+        $this->markTestIncomplete('SFA-1308, This test is invalid and should be removed before 7.0 Ships');
     }
 
-    public function tearDown()
+    /*public function tearDown()
     {
         $filterDict = new FilterDictionary();
         $filterDict->resetCache();
@@ -49,7 +49,7 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-    }
+    }*/
 
     /**
      * @group SugarParser

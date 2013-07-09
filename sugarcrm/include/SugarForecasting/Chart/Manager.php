@@ -79,7 +79,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         $currency_id = '-99';
 
         $forecast_strings = $this->getModuleLanguage('Forecasts');
-
+        global $app_strings;
         // get the quota from the data
         $quota = $this->getRollupQuota();
 
@@ -164,17 +164,17 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             {
                 switch ($dataset) {
                     case "best":
-                        $labels[] = $forecast_strings['LBL_BEST_CASE'];
-                        $labels[] = $forecast_strings['LBL_BEST_CASE_VALUE'];
+                        $labels[] = $app_strings['LBL_BEST'];
+                        $labels[] = $app_strings['LBL_BEST_ADJUSTED'];
                         break;
                     case "worst":
-                        $labels[] = $forecast_strings['LBL_WORST_CASE'];
-                        $labels[] = $forecast_strings['LBL_WORST_CASE_VALUE'];
+                        $labels[] = $app_strings['LBL_WORST'];
+                        $labels[] = $app_strings['LBL_WORST_ADJUSTED'];
                         break;
                     case 'likely':
                     default:
-                        $labels[] = $forecast_strings['LBL_LIKELY_CASE'];
-                        $labels[] = $forecast_strings['LBL_LIKELY_CASE_VALUE'];
+                        $labels[] = $app_strings['LBL_LIKELY'];
+                        $labels[] = $app_strings['LBL_LIKELY_ADJUSTED'];
                         break;
                 }
             }

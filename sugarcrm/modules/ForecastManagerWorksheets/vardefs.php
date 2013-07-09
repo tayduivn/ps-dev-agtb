@@ -24,40 +24,40 @@ $dictionary['ForecastManagerWorksheet'] = array(
         'best_case' =>
         array(
             'name' => 'best_case',
-            'vname' => 'LBL_BEST_CASE',
+            'vname' => 'LBL_BEST',
             'type' => 'currency',
             'audited' => true,
         ),
         'best_case_adjusted' =>
         array(
             'name' => 'best_case_adjusted',
-            'vname' => 'LBL_BEST_CASE_VALUE',
+            'vname' => 'LBL_BEST_ADJUSTED',
             'type' => 'currency',
         ),
         'likely_case' =>
         array(
             'name' => 'likely_case',
-            'vname' => 'LBL_LIKELY_CASE',
+            'vname' => 'LBL_LIKELY',
             'type' => 'currency',
             'audited' => true,
         ),
         'likely_case_adjusted' =>
         array(
             'name' => 'likely_case_adjusted',
-            'vname' => 'LBL_LIKELY_CASE_VALUE',
+            'vname' => 'LBL_LIKELY_ADJUSTED',
             'type' => 'currency',
         ),
         'worst_case' =>
         array(
             'name' => 'worst_case',
-            'vname' => 'LBL_WORST_CASE',
+            'vname' => 'LBL_WORST',
             'type' => 'currency',
             'audited' => true,
         ),
         'worst_case_adjusted' =>
         array(
             'name' => 'worst_case_adjusted',
-            'vname' => 'LBL_WORST_CASE_VALUE',
+            'vname' => 'LBL_WORST_ADJUSTED',
             'type' => 'currency',
         ),
         'currency_id' =>

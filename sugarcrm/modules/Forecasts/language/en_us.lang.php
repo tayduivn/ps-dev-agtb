@@ -176,9 +176,6 @@ $mod_strings = array (
     'LBL_FDR_WK_LIKELY_CASE'=>'Est. Likely Case',
     'LBL_FDR_WK_BEST_CASE'=> 'Est. Best Case',
     'LBL_FDR_WK_WORST_CASE'=>'Est. Worst Case',
-    'LBL_BEST_CASE'=>'Best Case',
-    'LBL_LIKELY_CASE'=>'Likely Case',
-    'LBL_WORST_CASE'=>'Worst Case',
     'LBL_FDR_C_BEST_CASE'=>'Best Case',
     'LBL_FDR_C_WORST_CASE'=>'Worst Case',
     'LBL_FDR_C_LIKELY_CASE'=>'Likely Case',
@@ -191,21 +188,11 @@ $mod_strings = array (
     'LBL_QC_COMMIT_BEST_CASE'=>'Commit Amount (Best Case):',
     'LBL_QC_COMMIT_LIKELY_CASE'=>'Commit Amount (Likely Case):',
     'LBL_QC_COMMIT_WORST_CASE'=>'Commit Amount (Worst Case):',
-    'LBL_BEST_CASE_VALUE' => 'Best (Adjusted)',
-    'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
-    'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
     'LBL_CURRENCY' => 'Currency',
     'LBL_CURRENCY_ID' => 'Currency ID',
     'LBL_CURRENCY_RATE' => 'Currency Rate',
     'LBL_BASE_RATE' => 'Base Rate',
 
-    'LBL_INCLUDED_BEST_TOTALS'=>'Best Included Totals',
-    'LBL_INCLUDED_LIKELY_TOTALS'=>'Likely Included Totals',
-    'LBL_INCLUDED_WORST_TOTALS'=>'Worst Included Totals',
-
-    'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
-    'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
-    'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
     'LBL_QUOTA' => 'Quota',
 
     'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
@@ -271,8 +258,6 @@ $mod_strings = array (
 
     //Labels for worksheet items
     'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
-    'LBL_INCLUDED_TOTAL' => 'Included Total',
-    'LBL_OVERALL_TOTAL' => 'Overall Total',
     'LBL_TOTAL' => 'Total',
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {0}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {0} and {1}',
@@ -317,6 +302,7 @@ $mod_strings = array (
     'LBL_PIPELINE_REVENUE' => 'Pipeline Revenue',
     'LBL_PIPELINE_OPPORTUNITIES' => 'Pipeline Opportunities',
     'LBL_LOADING' => 'Loading',
+    'LBL_IN_FORECAST' => 'In Forecast',
 
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',

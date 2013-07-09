@@ -37,18 +37,19 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('beanList');
+        $this->markTestIncomplete('SFA-1308, This test is invalid and should be removed before 7.0 Ships');
+        /*SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         $this->converter = new SugarParsers_Converter_Report($this->createTestReportBuilder());
-        $this->filter = new SugarParsers_Filter(new Account());
+        $this->filter = new SugarParsers_Filter(new Account());*/
     }
 
     public function tearDown()
     {
-        unset($this->filter);
+        /*unset($this->filter);
         unset($this->converter);
         $filterDict = new FilterDictionary();
-        $filterDict->resetCache();
+        $filterDict->resetCache();*/
     }
 
     /**

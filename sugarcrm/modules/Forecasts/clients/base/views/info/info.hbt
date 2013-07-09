@@ -2,16 +2,11 @@
     <div class="span4">
         {{#if this.meta.timeperiod}}
             {{#each this.meta.timeperiod}}
+                <strong>{{str "LBL_IN_FORECAST" "Forecasts"}}</strong>
                 <label for="date_filter" class="control-label">{{str this.label "Forecasts"}}</label>
-
                 <div class="controls">
                     {{field ../this model=../this.model}}
                 </div>
-            {{/each}}
-        {{/if}}
-        {{#if this.meta.last_commit}}
-            {{#each this.meta.last_commit}}
-                {{field ../this model=../this.model}}
             {{/each}}
         {{/if}}
     </div>
@@ -23,6 +18,11 @@
         </div>
     </div>
 </div>
+{{#if this.meta.last_commit}}
+    {{#each this.meta.last_commit}}
+        {{field ../this model=../this.model}}
+    {{/each}}
+{{/if}}
 {{#if this.meta.commitlog}}
     {{#each this.meta.commitlog}}
         {{field ../this model=../this.model}}

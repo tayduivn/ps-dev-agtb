@@ -32,6 +32,11 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
         array(
             'name' => 'lastCommitDate',
             'type' => 'lastcommit',
+            'datapoints' => array(
+                'worst_case',
+                'likely_case',
+                'best_case'
+            )
         )
     ),
     'commitlog' => array(
@@ -43,17 +48,17 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
     'datapoints' => array(
         array(
             'name' => 'worst_case',
-            'label' => 'LBL_INCLUDED_WORST_TOTALS',
+            'label' => 'LBL_WORST',
             'type' => 'datapoint'
         ),
         array(
             'name' => 'likely_case',
-            'label' => 'LBL_INCLUDED_LIKELY_TOTALS',
+            'label' => 'LBL_LIKELY',
             'type' => 'datapoint'
         ),
         array(
             'name' => 'best_case',
-            'label' => 'LBL_INCLUDED_BEST_TOTALS',
+            'label' => 'LBL_BEST',
             'type' => 'datapoint'
         )
     ),

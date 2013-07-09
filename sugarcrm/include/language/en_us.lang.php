@@ -3579,7 +3579,7 @@ $app_strings = array (
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
     'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
-    'LBL_COMMITTED_TIME_RELATIVE' => 'Committed {{relativetime}} at {{time}}',
+    'LBL_COMMITTED_TIME_RELATIVE' => 'Last Commit: {{relativetime}} at {{time}}',
     'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
@@ -3947,8 +3947,8 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     //These are for the timeperiod name formats
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
-    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} ({1} - {2})',
-    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0} - {1}',
+    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} {1}',
+    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0}',
     //END SUGARCRM flav=pro ONLY
 
     //quickcreate modal dialog
@@ -4048,6 +4048,14 @@ $app_strings = array (
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
+    
+    //SFA
+    'LBL_BEST' => 'Best',
+    'LBL_WORST' => 'Worst',
+    'LBL_LIKELY' => 'Likely',
+    'LBL_BEST_ADJUSTED' => 'Best (Adjusted)',
+    'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
+    'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
 );
 
 $app_list_strings['interactions_options'] = array (

@@ -499,7 +499,7 @@ $dictionary['Product'] = array(
         ),
         'best_case' =>  array(
             'name' => 'best_case',
-            'vname' => 'LBL_BEST_CASE',
+            'vname' => 'LBL_BEST',
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
@@ -511,7 +511,7 @@ $dictionary['Product'] = array(
         ),
         'likely_case' =>  array(
             'name' => 'likely_case',
-            'vname' => 'LBL_LIKELY_CASE',
+            'vname' => 'LBL_LIKELY',
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
@@ -523,7 +523,7 @@ $dictionary['Product'] = array(
         ),
         'worst_case' =>  array(
             'name' => 'worst_case',
-            'vname' => 'LBL_WORST_CASE',
+            'vname' => 'LBL_WORST',
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',

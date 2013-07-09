@@ -14,12 +14,26 @@
 
     commit_date: undefined,
 
+    data_points: [],
+
+    points: [],
+
     events: {
         'click' : 'triggerHistoryLog'
     },
 
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
+
+        this.points = [];
+        this.data_points = [];
+
+        // map what points we should display
+        _.each(options.def.datapoints, function(point) {
+            if (app.utils.getColumnVisFromKeyMap(point, 'forecastsWorksheet')) {
+                this.points.push(point);
+            }
+        }, this);
 
         this.on('render', function() {
             if (!_.isUndefined(this.commit_date)) {
@@ -41,6 +55,7 @@
     bindDataChange: function() {
         this.collection.on('reset', function() {
             // get the first line
+            this.data_points = [];
             var model = _.first(this.collection.models)
 
             if (!_.isUndefined(model)) {
@@ -48,6 +63,10 @@
             } else {
                 this.commit_date = undefined;
             }
+
+            _.each(this.points, function(point) {
+                this.data_points.push(model.get(point));
+            }, this);
 
             if (!this.disposed) this.render();
         }, this);

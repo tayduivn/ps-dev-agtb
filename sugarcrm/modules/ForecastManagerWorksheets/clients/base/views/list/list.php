@@ -61,7 +61,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'worst_case',
                     'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE',
+                    'label' => 'LBL_WORST',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
@@ -75,7 +75,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'worst_case_adjusted',
                     'type' => 'currency',
-                    'label' => 'LBL_WORST_CASE_VALUE',
+                    'label' => 'LBL_WORST_ADJUSTED',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
@@ -90,7 +90,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'likely_case',
                     'type' => 'currency',
-                    'label' => 'LBL_LIKELY_CASE',
+                    'label' => 'LBL_LIKELY',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
@@ -104,7 +104,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'likely_case_adjusted',
                     'type' => 'currency',
-                    'label' => 'LBL_LIKELY_CASE_VALUE',
+                    'label' => 'LBL_LIKELY_ADJUSTED',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
@@ -119,7 +119,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'best_case',
                     'type' => 'currency',
-                    'label' => 'LBL_BEST_CASE',
+                    'label' => 'LBL_BEST',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,
@@ -133,7 +133,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'best_case_adjusted',
                     'type' => 'currency',
-                    'label' => 'LBL_BEST_CASE_VALUE',
+                    'label' => 'LBL_BEST_ADJUSTED',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,

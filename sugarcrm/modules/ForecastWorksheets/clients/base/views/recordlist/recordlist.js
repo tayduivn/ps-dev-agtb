@@ -379,6 +379,9 @@
             this.layout.show();
         }
 
+        // empty out the left columns
+        this.leftColumns = [];
+
         return (showOpps || !isManager);
     },
 
@@ -911,8 +914,12 @@
                 var parentTds = this.$el.find('span[data-name^="' + field.name + '"]'),
                     parentWidth = _.max(parentTds.map(function() {
                         return $(this).outerWidth();
-                    }).get());
-                this.$el.find('th[data-fieldname^="' + field.name + '"]').width(parentWidth + 20);
+                    }).get()),
+                    finalTDWidth = parentWidth+20;
+                this.$el.find('th[data-fieldname^="' + field.name + '"]')
+                    .width(finalTDWidth)
+                    .css('maxWidth', finalTDWidth + 'px')
+                    .css('minWidth', finalTDWidth + 'px');
             }
         }, this);
     }

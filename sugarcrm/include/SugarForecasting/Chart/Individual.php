@@ -177,7 +177,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
     {
         // since we are converting everything to base currency, we need to get the base currency id for the formatting
         $currency_id = '-99';
-
+        global $app_strings;
         $forecast_strings = $this->getModuleLanguage('Forecasts');
         $opp_strings = $this->getModuleLanguage('Opportunities');
 
@@ -259,14 +259,14 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         // figure out the label
         switch ($this->dataset) {
             case "best":
-                $label = $forecast_strings['LB_FS_BEST_CASE'];
+                $label = $app_strings['LBL_BEST'];
                 break;
             case "worst":
-                $label = $forecast_strings['LB_FS_WORST_CASE'];
+                $label = $app_strings['LBL_WORST'];
                 break;
             case 'likely':
             default:
-                $label = $forecast_strings['LB_FS_LIKELY_CASE'];
+                $label = $app_strings['LBL_LIKELY'];
                 break;
         }
 

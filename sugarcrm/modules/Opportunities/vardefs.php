@@ -131,7 +131,7 @@ $dictionary['Opportunity'] = array(
         ),
         'amount' => array(
             'name' => 'amount',
-            'vname' => 'LBL_AMOUNT',
+            'vname' => 'LBL_LIKELY',
             //'function'=>array('vname'=>'getCurrencyType'),
             'type' => 'currency',
             //'disable_num_format' => true,
@@ -294,7 +294,7 @@ $dictionary['Opportunity'] = array(
         //BEGIN SUGARCRM flav=PRO ONLY
         'best_case' => array(
             'name' => 'best_case',
-            'vname' => 'LBL_BEST_CASE',
+            'vname' => 'LBL_BEST',
             'dbType' => 'currency',
             'type' => 'currency',
             'len' => '26,6',
@@ -308,7 +308,7 @@ $dictionary['Opportunity'] = array(
         ),
         'worst_case' => array(
             'name' => 'worst_case',
-            'vname' => 'LBL_WORST_CASE',
+            'vname' => 'LBL_WORST',
             'dbType' => 'currency',
             'type' => 'currency',
             'len' => '26,6',
