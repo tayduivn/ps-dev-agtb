@@ -101,7 +101,4 @@ $viewdefs['base']['view']['recordlist'] = array(
             ),
         ),
     ),
-    'last_state' => array(
-        'id' => 'record-list',
-    ),
 );
