@@ -1,8 +1,5 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
