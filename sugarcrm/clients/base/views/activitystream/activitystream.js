@@ -112,6 +112,9 @@
         // Resize video when the browser window is resized
         this.resizeVideo = _.bind(_.throttle(this.resizeVideo, 500), this);
         $(window).on('resize.' + this.cid, this.resizeVideo);
+
+        // Initialize taggable
+        this.taggable(this.model.get('parent_type'), this.model.get('parent_id'));
     },
 
     /**
@@ -177,32 +180,28 @@
     addComment: function(event) {
         var self = this,
             parentId = this.model.id,
-            $el = this.$('div.reply'),
             payload = {
                 parent_id: parentId,
                 data: {}
-        };
+            },
+            bean;
 
-        payload.data.value = this.getText($el);
+        payload.data = this.getComment();
 
-        if (!payload.data.value) {
-            return;
+        if (payload.data.value && (payload.data.value.length > 0)) {
+            bean = app.data.createRelatedBean(this.model, null, 'comments');
+            bean.save(payload, {
+                relate: true,
+                success: function(model) {
+                    self.$('div.reply')
+                        .empty()
+                        .trigger('change');
+                    self.layout.prependPost(self.model);
+                    self.commentsCollection.add(model).trigger('reset');
+                    self.toggleReplyBar();
+                }
+            });
         }
-
-        if (this.getTags) {
-            payload.data.tags = this.getTags($el);
-        }
-
-        var bean = app.data.createRelatedBean(this.model, null, 'comments');
-        bean.save(payload, {
-            relate: true,
-            success: function(model) {
-                $el.html('').trigger('change');
-                self.layout.prependPost(self.model);
-                self.commentsCollection.add(model).trigger('reset');
-                self.toggleReplyBar();
-            }
-        });
     },
 
     deleteRecord: function(event) {
@@ -243,6 +242,7 @@
 
     _renderHtml: function(model) {
         this.processAvatars();
+        this.formatAllTags();
 
         // Save state of the reply bar before rendering
         var isReplyBarOpen = this.$(".comment-btn").hasClass("active") && this.$(".comment-btn").is(":visible"),
@@ -256,6 +256,21 @@
             this.toggleReplyBar();
             this.$(".reply").html(replyVal);
         }
+    },
+
+    /**
+     * Format tags in post and comments.
+     */
+    formatAllTags: function() {
+        var post = this.model.get('data');
+        if (post) {
+            post.value = this.formatTags(post.value);
+        }
+
+        this.commentsCollection.each(function(model) {
+            var data = model.get('data');
+            data.value = this.formatTags(data.value);
+        }, this);
     },
 
     /**
@@ -378,20 +393,14 @@
         this.$(e.currentTarget).tooltip("hide");
     },
 
-    getText: function($el) {
-        return $el.contents().html();
-    },
-
-    getTagList: function() {
-        var tagList = this.model.get('data').tags || [];
-        var childTagLists = this.commentsCollection.map(function(comment) {
-            return comment.get('data').tags || [];
-        });
-        tagList = _.uniq(_.reduce(childTagLists, function(memo, el) {
-            return memo.concat(el);
-        }, tagList));
-
-        return tagList;
+    /**
+     * Retrieve comment entered inside content editable and translate any tags into text format
+     * so that it can be saved in the database as JSON string.
+     *
+     * @returns {String}
+     */
+    getComment: function() {
+        return this.unformatTags(this.$('div.reply'));
     },
 
     checkPlaceholder: function(e) {
@@ -416,6 +425,7 @@
                 this.model.set('comment_count', this.model.get('comment_count') + 1);
             }, this);
         }
+        app.view.View.prototype.bindDataChange.call(this);
     },
 
     unbindData: function() {
