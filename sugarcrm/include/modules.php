@@ -560,6 +560,7 @@ $bwcModules = array(
     //END SUGARCRM flav=ent ONLY
     'DocumentRevisions',
     'Documents',
+    'EAPM',
     'EmailAddresses',
     'EmailMarketing',
     'EmailMan',
