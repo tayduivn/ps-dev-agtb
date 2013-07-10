@@ -95,13 +95,13 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $this->jq->min_interval = 0; // disable throttle
         $this->jq->disable_schedulers = true;
         $this->jq->runCycle();
-
         $this->assertTrue(self::$jobCalled, "Job was not called");
         $this->assertTrue($this->jq->runOk(), "Wrong OK flag");
         $job = new SchedulersJob();
         $job->retrieve($jobid);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+        $this->assertEmpty(session_id(), "Session not destroyed");
     }
 
     public function testQueueFailJob()
@@ -125,6 +125,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job->retrieve($jobid);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+        $this->assertEmpty(session_id(), "Session not destroyed");
     }
 
     public function testJobsCount()
@@ -236,6 +237,7 @@ class CronTest extends Sugar_PHPUnit_Framework_TestCase
         $job->retrieve($jobid1);
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
+        $this->assertEmpty(session_id(), "Session not destroyed");
     }
 
 }
