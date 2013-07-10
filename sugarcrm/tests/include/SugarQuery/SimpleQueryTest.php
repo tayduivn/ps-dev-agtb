@@ -302,31 +302,32 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $contact = BeanFactory::getBean('Contacts');
         $contact->first_name = 'Super';
-        $contact->last_name = 'Awesome';
+        $contact->last_name = 'Awesome-Sauce';
         $contact->save();
         $this->contacts[] = $contact;
         $contact = BeanFactory::getBean('Contacts');
         $contact->first_name = 'Super';
-        $contact->last_name = 'Bad';
+        $contact->last_name = 'Bad-Sauce';
         $contact->save();
         $this->contacts[] = $contact;
 
         $sq = new SugarQuery();
         $sq->select(array('last_name'));
         $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
         $sq->orderBy('full_name', 'DESC');
 
         $result = $sq->execute();
 
         $expected = array(
             array(
-                'last_name' => 'Bad',
+                'last_name' => 'Bad-Sauce',
                 'first_name' => 'Super',
                 'salutation' => null,
                 'title' => null,
             ),
             array(
-                'last_name' => 'Awesome',
+                'last_name' => 'Awesome-Sauce',
                 'first_name' => 'Super',
                 'salutation' => null,
                 'title' => null,
@@ -339,19 +340,20 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq = new SugarQuery();
         $sq->select(array('last_name'));
         $sq->from(BeanFactory::getBean('Contacts'));
+        $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
         $sq->orderBy('full_name', 'ASC');
 
         $result = $sq->execute();
 
         $expected = array(
             array(
-                'last_name' => 'Awesome',
+                'last_name' => 'Awesome-Sauce',
                 'first_name' => 'Super',
                 'salutation' => null,
                 'title' => null,
             ),
             array(
-                'last_name' => 'Bad',
+                'last_name' => 'Bad-Sauce',
                 'first_name' => 'Super',
                 'salutation' => null,
                 'title' => null,

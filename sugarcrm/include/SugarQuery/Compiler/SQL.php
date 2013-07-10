@@ -227,12 +227,7 @@ class SugarQuery_Compiler_SQL
             list($field, $direction) = $order;
 
             $defs = $this->getFieldVardef($field);
-            if (empty($defs)) {
-                $GLOBALS['log']->error(
-                    "Could not find definition for field $field, skipping ORDER BY"
-                );
-                continue;
-            }
+
             // before we make any condition checks we need to see if this is a
             // derived field so that we can order by the correct field name and not
             // the derived field name
@@ -249,8 +244,16 @@ class SugarQuery_Compiler_SQL
 
             try {
                 $field = $this->conditionField($field);
+                $defs = $this->getFieldVardef($field);
             } catch(SugarApiExceptionInvalidParameter $ex) {
                 // if we can't resolve it, ignore it
+                continue;
+            }
+
+            if (empty($defs)) {
+                $GLOBALS['log']->error(
+                    "Could not find definition for field $field, skipping ORDER BY"
+                );
                 continue;
             }
 
