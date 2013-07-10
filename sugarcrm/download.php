@@ -77,12 +77,14 @@ else {
         // See if it is a remote file, if so, send them that direction
         if ( isset($focus->doc_url) && !empty($focus->doc_url) ) {
             header('Location: '.$focus->doc_url);
-            sugar_die("Remote file detected, location header sent.");
+            echo "Remote file detected, location header sent.";
+            sugar_cleanup(true);
         }
 
         if ( isset($focusRevision) && isset($focusRevision->doc_url) && !empty($focusRevision->doc_url) ) {
             header('Location: '.$focusRevision->doc_url);
-            sugar_die("Remote file detected, location header sent.");
+            echo "Remote file detected, location header sent.";
+            sugar_cleanup(true);
         }
 
     } // if
