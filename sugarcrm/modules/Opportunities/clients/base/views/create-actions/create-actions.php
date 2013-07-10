@@ -32,6 +32,7 @@ $viewdefs['Opportunities']['base']['view']['create-actions'] = array(
             'type'    => 'actiondropdown',
             'name'    => 'main_dropdown',
             'primary' => true,
+            'switch_on_click' => true,
             'buttons' => array(
                 array(
                     'type'  => 'rowaction',

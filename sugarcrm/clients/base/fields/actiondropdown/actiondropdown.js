@@ -1,29 +1,37 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+/**
+ * Create a dropdown button that contains multiple rowaction fields
+ * array(
+ *     'type' => 'actiondropdown',
+ *     'primary' => true,
+ *     'switch_on_click' => true,
+ *     'no_default_action' => false,
+ *     'icon' => 'icon-cog',
+ *     'buttons' => array(
+ *         ...
+ *     )
+ * )
+ *     primary: @param {Boolean} true if the entire dropdown group shows as primary.
+ *     icon: @param {String} css icon that places on dropdown caret.
+ *     switch_on_click: @param {Boolean} true if the selected action needs
+ *          to switch against the default action.
+ *     no_default_action: @param {Boolean} true if the default action should be empty
+ *          and all buttons place under the dropdown action.
+ *     buttons: @params {Array} list of actions.
+ *          First action goes to the default action (unless no_default_action set as true)
+ *
+ */
 ({
     extendsFrom: 'FieldsetField',
     fields: null,
@@ -46,13 +54,40 @@
         if (_.isEmpty(this.dropdownFields) || this.isDisabled()) {
             return;
         }
-
         _.each(this.dropdownFields, function(field) {
             this.view.fields[field.sfId] = field;
-            field.setElement(this.$("span[sfuuid='" + field.sfId + "']"));
+            field.setElement(this.$('span[sfuuid="' + field.sfId + '"]'));
+            if (this.def['switch_on_click'] && !this.def['no_default_action']) {
+                field.$el.on('click.' + this.cid, _.bind(this.switchButton, this));
+            }
             field.render();
         }, this);
         this.dropdownFields = null;
+
+        if (!this.def['switch_on_click'] || this.def['no_default_action']) {
+            return;
+        }
+        var firstField = _.first(this.fields);
+        firstField.$el.on('click.' + this.cid, _.bind(this.switchButton, this));
+    },
+    switchButton: function(evt) {
+        var sfId = parseInt(this.$(evt.currentTarget).attr('sfuuid'), 10),
+            index = -1;
+        _.some(this.fields, function(field, idx) {
+            if (field.sfId === sfId) {
+                index = idx;
+                return true;
+            }
+            return false;
+        }, this);
+        if (index <= 0) {
+            return;
+        }
+        //switch the selected button against the first button
+        var firstField = this.fields.shift(),
+            selectedField = this.fields.splice(index - 1, 1, firstField).pop();
+        this.fields.splice(0, 0, selectedField);
+        this.setPlaceholder();
     },
     dropdownSelected: function(evt) {
         if (this.isDisabled()) {
@@ -73,17 +108,26 @@
         // Actiondropdown will be rendered empty if viewName equals to list-header.
         if (this.options.viewName === 'list-header') return app.view.Field.prototype.getPlaceholder.call(this);
 
+        var caretCss = 'btn dropdown-toggle';
+        if (this.def['no_default_action']) {
+            caretCss += ' btn-link btn-invisible';
+        } else if (this.def['primary']) {
+            caretCss += ' btn-primary';
+        }
         var cssClass = [],
             container = '',
-            caretClass = this.def.primary ? 'btn btn-primary dropdown-toggle' : 'btn dropdown-toggle',
-            caret = '<a class="' + caretClass + '" data-toggle="dropdown" href="javascript:void(0);">' +
-                '<span class="icon-caret-down"></span></a>',
+            caretIcon = this.def['icon'] ? this.def['icon'] : 'icon-caret-down',
+            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);">' +
+                '<span class="' + caretIcon + '"></span>' +
+                '</a>',
             dropdown = '<ul class="dropdown-menu">';
         if (app.utils.isTouchDevice()) {
             caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
         }
-
-        _.each(this.def.buttons, function(fieldDef, index) {
+        //Since zero-index points to the default action placeholder,
+        //assigning the beginning index to one will skip the default action placeholder
+        var index = this.def['no_default_action'] ? 1 : 0;
+        _.each(this.def.buttons, function(fieldDef) {
             var field = app.view.createField({
                 def: fieldDef,
                 view: this.view,
@@ -108,7 +152,7 @@
                 }
                 container += '<li>' + field.getPlaceholder() + '</li>';
             }
-
+            index++;
         }, this);
         var cssName = cssClass.join(' '),
             placeholder = '<span sfuuid="' + this.sfId + '" class="' + cssName + '">' + container;
@@ -149,8 +193,9 @@
         if (this.disposed) {
             return;
         }
-
-        var index = 0,
+        //Since zero-index points to the default action placeholder,
+        //assigning the beginning index to one will skip the default action placeholder
+        var index = this.def['no_default_action'] ? 1 : 0,
             //Using document fragment to reduce calculating dom tree
             visibleEl = document.createDocumentFragment(),
             hiddenEl = document.createDocumentFragment(),
@@ -230,6 +275,7 @@
 
     _dispose: function() {
         _.each(this.fields, function(field) {
+            field.$el.off('click.' + this.cid);
             field.off('show hide', this.setPlaceholder, this);
         }, this);
         this.dropdownFields = null;
