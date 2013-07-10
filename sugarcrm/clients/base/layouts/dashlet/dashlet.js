@@ -1,4 +1,9 @@
 ({
+    className: 'thumbnail widget',
+    attributes: {
+        'data-action': 'droppable'
+    },
+
     initialize: function(options) {
         this.index = options.meta.index;
         app.view.Layout.prototype.initialize.call(this, options);
