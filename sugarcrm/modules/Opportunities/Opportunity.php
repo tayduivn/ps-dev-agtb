@@ -582,29 +582,6 @@ class Opportunity extends SugarBean
         }
         return $ret_array;
     }
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * getProducts
-     *
-     * This is a convenience function to return the revenue Lines entries associated with the opportunity
-     *
-     */
-    public function getProducts()
-    {
-        return $this->get_linked_beans('products', BeanFactory::getBean('Products'));
-    }
-
-    /**
-     * deleteProducts
-     *
-     */
-    public function deleteProducts()
-    {
-        $query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
-        $this->db->query($query);
-    }
-    //END SUGARCRM flav=pro ONLY
 }
 
 

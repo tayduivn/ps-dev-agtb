@@ -15,6 +15,8 @@
 
 class OpportunityHooks
 {
+    public static $settings;
+
     /**
      * Utility Method to make sure Forecast is setup and usable
      *
@@ -23,9 +25,11 @@ class OpportunityHooks
     public static function isForecastSetup()
     {
         /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        return $settings['is_setup'] == 1;
+        if (empty(static::$settings)) {
+            $admin = BeanFactory::getBean('Administration');
+            static::$settings = $admin->getConfigForModule('Forecasts');
+        }
+        return static::$settings['is_setup'] == 1;
     }
 
     /**
@@ -61,6 +65,60 @@ class OpportunityHooks
             $rlis = $bean->get_linked_beans('revenuelineitems', 'RevenueLineItems');
             foreach ($rlis as $rli) {
                 $rli->mark_deleted($rli->id);
+            }
+        }
+    }
+
+    /**
+     * Set the Sales Status based on the associated RLI's sales_stage
+     *
+     * @param Opportunity $bean
+     * @param string $event
+     * @param array $args
+     */
+    public static function setSalesStatus(Opportunity $bean, $event, $args)
+    {
+        if (static::isForecastSetup()) {
+            $closed_won = static::$settings['sales_stage_won'];
+            $closed_lost = static::$settings['sales_stage_lost'];
+
+            $won_rlis = count(
+                $bean->get_linked_beans(
+                    'revenuelineitems',
+                    'RevenueLineItems',
+                    array(),
+                    0,
+                    -1,
+                    0,
+                    'sales_stage in ("' . join('","', $closed_won) . '")'
+                )
+            );
+
+            $lost_rlis = count(
+                $bean->get_linked_beans(
+                    'revenuelineitems',
+                    'RevenueLineItems',
+                    array(),
+                    0,
+                    -1,
+                    0,
+                    'sales_stage in ("' . join('","', $closed_lost) . '")'
+                )
+            );
+
+            $total_rlis = count($bean->get_linked_beans('revenuelineitems', 'RevenueLineItems'));
+
+            if ($total_rlis > ($won_rlis + $lost_rlis) || $total_rlis === 0) {
+                // still in progress
+                $bean->sales_status = Opportunity::STATUS_IN_PROGRESS;
+            } else {
+                // they are equal so if the total lost == total rlis then it's closed lost,
+                // otherwise it's always closed won
+                if ($lost_rlis == $total_rlis) {
+                    $bean->sales_status = Opportunity::STATUS_CLOSED_LOST;
+                } else {
+                    $bean->sales_status = Opportunity::STATUS_CLOSED_WON;
+                }
             }
         }
     }

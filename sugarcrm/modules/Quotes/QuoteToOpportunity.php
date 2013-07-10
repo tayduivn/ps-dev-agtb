@@ -2,37 +2,23 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: QuoteToOpportunity.php 51719 2009-10-22 17:18:00Z mitani $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+
 global $beanFiles;
-
-
+Activity::disable();
 $db = DBManagerFactory::getInstance();
-global $app_strings;
+global $app_strings, $app_list_strings;
 if (!ACLController::checkAccess('Opportunities', 'edit', true)) {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
@@ -94,6 +80,7 @@ function generate_name_form(&$var)
     echo $retval;
 }
 
+/* @var $quote Quote */
 $quote = BeanFactory::getBean('Quotes', $_REQUEST['record']);
 
 if ($quote->getRelatedOpportunityCount() > 0) {
@@ -114,32 +101,45 @@ if ($quote->getRelatedOpportunityCount() > 0) {
     generate_name_form($_REQUEST);
 } else {
 
+    /* @var $opp Opportunity */
     $opp = BeanFactory::getBean('Opportunities');
+    $opp->id = create_guid();
+    $opp->new_with_id = true;
     printf("%s<br><br>", $opp->id);
-    $opp->assigned_user_id = $_REQUEST["user_id"];
-    $opp->date_closed = $_REQUEST["valid_until"];
-    $opp->name = $_REQUEST["opportunity_subject"];
-    $opp->assigned_user_name = $_REQUEST["user_name"];
+    $opp->assigned_user_id = $quote->assigned_user_id;
+    $opp->date_closed = $quote->date_quote_expected_closed;
+    $opp->name = $_REQUEST['opportunity_subject'];
+    $opp->assigned_user_name = $quote->assigned_user_name;
     $opp->lead_source = isset($app_list_strings['lead_source_dom']['Self Generated']) ? 'Self Generated' : null; //'Self Generated';
-    $opp->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null; //'Proposal/Price Quote';
-    $opp->probability = isset($app_list_strings['sales_probability_dom']['Proposal/Price Quote']) ? $app_list_strings['sales_probability_dom']['Proposal/Price Quote'] : null; //'Proposal/Price Quote';
     $opp->opportunity_type = isset($app_list_strings['opportunity_type_dom']['New Business']) ? $app_list_strings['opportunity_type_dom']['New Business'] : null; //'New Business';
     //BEGIN SUGARCRM flav=pro ONLY
-    $opp->team_id = $_REQUEST["team_id"];
+    $opp->team_id = $quote->team_id;
     //END SUGARCRM flav=pro ONLY
-    if (empty($_REQUEST["amount"])) {
-        $amount = (float)0;
-    } else {
-        // We need to unformat the amount before we try and stick it in a bean
-        $amount = (float)$_REQUEST["amount"];
-    }
-    $account_id = $_REQUEST["opportunity_id"];
-    $opp->amount = $amount;
-    $opp->quote_id = $_REQUEST['record'];
-    $opp->currency_id = $_REQUEST['currency_id'];
-    $opp->account_id = $account_id;
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    $opp->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null; //'Proposal/Price Quote';
+    $opp->probability = isset($app_list_strings['sales_probability_dom']['Proposal/Price Quote']) ? $app_list_strings['sales_probability_dom']['Proposal/Price Quote'] : null; //'Proposal/Price Quote';
+    $opp->amount = $quote->total;
+    //END SUGARCRM flav=pro && flav!=ent ONLY
+    $opp->quote_id = $quote->id;
+    $opp->currency_id = $quote->currency_id;
+    $opp->account_id = $quote->billing_account_id;
     $opp->save();
 
+    // load the relationship up
+    $opp->load_relationship('revenuelineitems');
+
+    $products = $quote->get_linked_beans('products', 'Products');
+    /* @var $product Product */
+    foreach ($products as $product) {
+        $rli = $product->convertToRevenueLineItem();
+        $rli->date_closed = $quote->date_quote_expected_closed;
+        $rli->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null;
+        $rli->assigned_user_id = $quote->assigned_user_id;
+        $rli->save();
+
+        // save the RLI to the relationship
+        $opp->revenuelineitems->add($rli);
+    }
 
     //link quote contracts with the opportunity.
     $quote->load_relationship('contracts');
@@ -152,19 +152,9 @@ if ($quote->getRelatedOpportunityCount() > 0) {
         }
     }
 
-    //link quote products with the opportunity.
-    $quote->load_relationship('products');
-    $products = $quote->products->get();
-
-    if (is_array($products)) {
-        $opp->load_relationship('products');
-        foreach ($products as $id) {
-            $opp->products->add($id);
-        }
-    }
+    // just run a save again just to make sure
+    $opp->save();
 
     $redirect_Url = "Opportunities/" . $opp->id;
     send_to_url($redirect_Url);
 }
-
-?>

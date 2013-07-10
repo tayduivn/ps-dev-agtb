@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/formbase.php');
 require_once('modules/Quotes/config.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
-
+Activity::disable();
 $focus = BeanFactory::getBean('Quotes');
 $focus = populateFromPost('', $focus);
 
@@ -227,6 +227,7 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
         $product->contact_id=$focus->billing_contact_id;
 		//SM: removed as per Bug 15305 $product->status=$focus->quote_type;
 		// if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
+            $product->ignoreQuoteSave = true;
     		$product->save();
     		$pb->set_productbundle_product_relationship($product->id,$_POST['parent_group_position'][$i], $product_bundels[$_REQUEST['parent_group'][$i]] );
 		}
