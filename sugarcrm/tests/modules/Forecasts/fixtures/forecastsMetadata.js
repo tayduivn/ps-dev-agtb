@@ -130,3 +130,34 @@ fixtures.metadata.modules.Forecasts.config = {
     "show_projected_worst":1,
     "show_print_button":1
 }
+
+if(!_.has(fixtures.metadata.modules, "RevenueLineItems")) {
+    fixtures.metadata.modules.RevenueLineItems = {
+        "_hash": "123456asdfaasdgae",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                "name": {
+                    "name": "name",
+                    "vname": "LBL_NAME",
+                    "dbType": "varchar",
+                    "type": "name",
+                    "len": "50",
+                    "comment": "Name of the product",
+                    "reportable": true,
+                    "importable": "required"
+                },
+                "commit_stage": {
+                    "name": "commit_stage",
+                    "vname": "LBL_COMMIT_STAGE_FORECAST",
+                    "type": "enum",
+                    "default": "exclude",
+                    "options": "commit_stage_binary_dom",
+                    "len": "50",
+                    "comment": "Forecast commit category: Include, Likely, Omit etc."
+                },
+            }
+    }
+}

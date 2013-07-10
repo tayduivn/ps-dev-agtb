@@ -20,5 +20,24 @@
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push("disable-delete");
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
+        this.context.on("record:deleted", function(){
+            this.deleteCommitWarning();
+        }, this);
+    },
+    
+    /**
+     * Shows a warning message if a RLI that is included in a forecast is deleted.
+     * @return string message
+     */
+    deleteCommitWarning: function(){
+        var message = null
+        if (this.model.get("commit_stage") == "include") {
+            message = app.lang.get("WARNING_DELETED_RECORD_RECOMMIT", "RevenueLineItems");
+            app.alert.show("included_delete_warning", {
+                level: "warning",
+                messages: message
+            });
+        }
+        return message;
     }
-});
+})
