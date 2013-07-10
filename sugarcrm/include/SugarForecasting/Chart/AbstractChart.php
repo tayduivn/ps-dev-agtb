@@ -164,7 +164,8 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
      * Returns the module language strings based on whether or not a language is set in the $_SESSION.  If not, it
      * defaults to the global $current_language variable
      *
-     * @param $module String value of the module language to load
+     * @param string $module value of the module language to load
+     * @return string
      */
     public function getModuleLanguage($module) {
         // If the session has a language set, use that
@@ -174,5 +175,25 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
 
         global $current_language;
         return return_module_language($current_language, $module);
+    }
+
+    /**
+     * @return array
+     */
+    public function getForecastConfig()
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        return $admin->getConfigForModule('Forecasts', 'base');
+    }
+
+    /**
+     * @return TimePeriod
+     */
+    public function getTimeperiod()
+    {
+        $config = $this->getForecastConfig();
+        $type = $config['timeperiod_leaf_interval'];
+        return TimePeriod::getByType($type, $this->getArg('timeperiod_id'));
     }
 }

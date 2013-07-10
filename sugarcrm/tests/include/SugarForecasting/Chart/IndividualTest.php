@@ -20,350 +20,185 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/SugarForecasting/Chart/Individual.php');
-require_once("modules/ForecastWorksheets/clients/base/api/ForecastWorksheetsFilterApi.php");
 class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @var array
+     * @var SugarForecasting_Chart_Individual
      */
-    protected static $args = array();
-
-    /**
-     * @var array
-     */
-    protected static $user;
-
-    /*
-     * @var Timeperiod
-     */
-    protected static $timeperiod;
-
-    /**
-     * @var String
-     */
-    protected static $configTimeperiodType;
-
-    /**
-     * @var String
-     */
-    protected static $configTimeperiodLeafType;
-
-    /**
-     * @var array
-     */
-    protected static $dataArray;
-
-    /**
-     * @var ForecastWorksheetsFilterApi
-     */
-    protected static $filterApi;
-
-    /**
-     * @var Currency
-     */
-    protected static $currency;
+    protected $obj;
 
     public static function setUpBeforeClass()
     {
-        parent::setUpBeforeClass();
-        SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setup('mod_strings', array('Forecasts'));
-        SugarTestHelper::setUp('current_user');
-
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-                'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
-                'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
-                'forecast_by' => 'Opportunities'
-            ));
-
-        
-        self::$timeperiod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE);
-        self::$timeperiod->start_date = '2009-01-01';
-        self::$timeperiod->end_date = '2009-03-31';
-        self::$timeperiod->save();
-
-        SugarTestTimePeriodUtilities::$_createdTimePeriods[] = self::$timeperiod;
-        self::$args['timeperiod_id'] = self::$timeperiod->id;
-
-        SugarTestForecastUtilities::setTimePeriod(self::$timeperiod);
-
-        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
-        // set the current user currency to the one we created
-        $GLOBALS['current_user']->setPreference('currency', self::$currency->id);
-
-        self::$user = SugarTestForecastUtilities::createForecastUser(array(
-            'timeperiod_id' => self::$timeperiod->id,
-            'currency_id' => self::$currency->id
-        ));
-        self::$args['user_id'] = self::$user['user']->id;
-        self::$filterApi = new ForecastWorksheetsFilterApi();
-        // get the current data set for use in the processing
-        $dataArray = self::$filterApi->forecastWorksheetsGet(
-            SugarTestRestUtilities::getRestServiceMock(self::$user['user']),
-            array('user_id' => self::$args['user_id'], 'timeperiod_id' => self::$args['timeperiod_id'], 'module' => 'ForecastWorksheets')
-        );
-        self::$args['data_array'] = $dataArray['records'];
-    }
-
-    public function setUp()
-    {
-        $this->markTestIncomplete("All Tests Fail in Strict Mode. SFA Needs to investigate");        
-        $this->_user = self::$user["user"];
-        $GLOBALS["current_user"] = $this->_user;
-        $this->authToken = "";
+        SugarTestHelper::setUp('app_strings');
     }
 
     public static function tearDownAfterClass()
     {
-        SugarTestForecastUtilities::tearDownForecastConfig();
-        self::$filterApi = null;
-        $GLOBALS["current_user"] = null;
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
-        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestHelper::tearDown();
-        parent::tearDown();
     }
 
-    /**
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testQuotaConvertedToBaseRate()
+
+    public function setUp()
     {
-        $obj = new SugarForecasting_Chart_Individual(self::$args);
-        $data = $obj->process();
-
-        $expected = SugarCurrency::convertAmountToBase(self::$user['quota']->amount, self::$user['quota']->currency_id);
-        $actual = doubleval($data['values'][0]['goalmarkervalue'][0]);
-
-        $this->assertEquals($expected, $actual, null, 2);
-    }
-
-    /**
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testQuotaLabelContainsBaseCurrencySymbol()
-    {
-        $obj = new SugarForecasting_Chart_Individual(self::$args);
-        $data = $obj->process();
-
-        $base_currency = SugarCurrency::getBaseCurrency();
-        $this->assertStringStartsWith($base_currency->symbol, $data['values'][0]['goalmarkervaluelabel'][0]);
-    }
-
-    /**
-     * @dataProvider dataProviderDatasets
-     * @param string $dataset
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testChartValuesConvertedToBase($dataset)
-    {
-        $args = self::$args;
-        $args['dataset'] = $dataset;
-        $args['ranges'] = 'include';
-        $obj = new SugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        $actual = 0;
-        foreach($data['values'] as $value) {
-            $actual += $value['gvalue'];
-        }
-
-        $expected = SugarCurrency::convertWithRate(self::$user['included_opps_totals'][$dataset], self::$user['included_opps_totals']['base_rate']);
-        $actual = doubleval($actual);
-
-        $this->assertEquals($expected, $actual, null, 2);
-    }
-
-    /**
-     * @dataProvider dataProviderDatasets
-     * @param string $dataset
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testChartValuesLabelsContainBaseCurrencySymbol($dataset)
-    {
-        $args = self::$args;
-        $args['dataset'] = $dataset;
-        $obj = new SugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        $base_currency = SugarCurrency::getBaseCurrency();
-
-        foreach($data['values'] as $value) {
-            $this->assertStringStartsWith($base_currency->symbol, $value['gvaluelabel']);
-        }
-    }
-
-    /**
-     * @dataProvider dataProviderParetoData
-     * @param string $dataset
-     * @param integer $chart_position
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testChartParetoLineConvertedToBase($dataset, $chart_position)
-    {
-        $args = self::$args;
-        $args['dataset'] = $dataset;
-        $args['ranges'] = 'include';
-        $obj = new MockSugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        // figure out which value to use
-        $dataset_key = $dataset . '_case';
-        if($dataset == "likely") {
-            $dataset_key = "amount";
-        }
-
-        // build out what is expected to be in the pareto lines according to the months
-        $expected = 0;
-        $months = array_keys($obj->convertTimeperiodToChartValues());
-
-        $arrExpected = array_combine($months, array_pad(array(), count($months), 0));
-
-        foreach(self::$user['opportunities'] as $opp) {
-            if($opp->commit_stage == "include") {
-                //$month_value_key = date('m-Y', strtotime($opp->date_closed));
-                $month_value_key = self::$timeperiod->getChartLabelsKey($opp->date_closed);
-                $arrExpected[$month_value_key] += $opp->$dataset_key;
-            }
-        }
-
-        // combine the values for the pareto lines until we hit where we are at on the chart
-        $arrExpected = array_values($arrExpected);
-        foreach($arrExpected as $key => $value) {
-            if($key > $chart_position) {
-                break;
-            }
-            $expected += $value;
-        }
-
-        // convert the expected back to base
-        $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
-        $actual = doubleval($data['values'][$chart_position]['goalmarkervalue'][1]);
-
-        $this->assertEquals($expected, $actual, null, 2);
-    }
-
-    /**
-     * @dataProvider dataProviderParetoData
-     * @param string $dataset
-     * @param integer $chart_position
-     * @group forecasts
-     * @group forecastschart
-     * @outputBuffering disabled
-     */
-    public function testChartParetoLineLabelContainsBaseCurrencySymbol($dataset, $chart_position)
-    {
-        $args = self::$args;
-        $args['dataset'] = $dataset;
-        $obj = new MockSugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        $base_currency = SugarCurrency::getBaseCurrency();
-        $this->assertStringStartsWith($base_currency->symbol, $data['values'][$chart_position]['goalmarkervaluelabel'][1]);
-    }
-
-    /**
-     * @dataProvider dataProviderRanges
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testChartFiltering($ranges)
-    {
-        $this->markTestIncomplete('This needs to be fixed by SFA Team');
-        $args = self::$args;
-        $args['ranges'] = $ranges;
-        $obj = new SugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        foreach ($ranges as $key => $value)
-        {
-            $ranges[$key] = ucfirst($value);
-        }
-
-        if (!empty($ranges))
-        {
-            $categories = $ranges;
-        }
-        else
-        {
-            $opp_ids = SugarTestOpportunityUtilities::getCreatedOpportunityIds();
-            $categories = array();
-            foreach($opp_ids as $id)
-            {
-                $opp = BeanFactory::getBean('Opportunities', $id);
-                $categories[] = ucfirst($opp->commit_stage);
-            }
-            $categories = array_unique($categories);
-        }
-
-        $this->assertEmpty(array_diff($categories, $data['label']));
-    }
-
-    /**
-     * Dataset Provider
-     *
-     * @return array
-     */
-    public function dataProviderRanges()
-    {
-        return array(
-            array(array('include')),
-            array(array('include', 'exclude')),
-            array(array()),
+        $this->obj = $this->getMock(
+            'SugarForecasting_Chart_Individual',
+            array('getForecastConfig', 'getTimeperiod', 'getUserQuota', 'getModuleLanguage'),
+            array(array())
         );
-    }
 
-    /**
-     * Dataset Provider
-     *
-     * @return array
-     */
-    public function dataProviderDatasets()
-    {
-        return array(
-            array('likely'),
-            array('best'),
-            array('worst'),
+        $this->obj->expects($this->atLeastOnce())
+            ->method('getForecastConfig')
+            ->will(
+                $this->returnValue(
+                    array(
+                        'show_worksheet_worst' => 0,
+                        'show_worksheet_best' => 1,
+                        'show_worksheet_likely' => 1,
+                        'buckets_dom' => 'commit_stage_binary_dom'
+                    )
+                )
+            );
+
+        $tp_mock = $this->getMock('TimePeriod', array('save', 'getChartLabels'));
+        $tp_mock->name = 'Q2 2012';
+
+        $tp_mock->expects($this->atLeastOnce())
+            ->method('getChartLabels')
+            ->will(
+                $this->returnValue(
+                    array(
+                        array(
+                            'label' => 'x-axis 1'
+                        ),
+                        array(
+                            'label' => 'x-axis 2'
+                        ),
+                        array(
+                            'label' => 'x-axis 3'
+                        )
+                    )
+                )
+            );
+
+        $this->obj->expects($this->atLeastOnce())
+            ->method('getTimeperiod')
+            ->will($this->returnValue($tp_mock));
+
+        $this->obj->expects($this->atLeastOnce())
+            ->method('getModuleLanguage')
+            ->will(
+                $this->returnValue(
+                    array(
+                        'LBL_CHART_FORECAST_FOR' => 'Test {0}'
+                    )
+                )
+            );
+
+        $this->obj->expects($this->atLeastOnce())
+            ->method('getUserQuota')
+            ->will($this->returnValue(50.00));
+
+
+        $data_array = array(
+            array(
+                'id' => 'wkst_test_1',
+                'name' => 'Test 1',
+                'best_case' => 50.00,
+                'likely_case' => 40.00,
+                'worst_case' => 30.00,
+                'base_rate' => 1,
+                'currency_id' => '-99',
+                'commit_stage' => 'include',
+                'sales_stage' => 'test_1',
+                'probability' => 50,
+                'date_closed_timestamp' => '10000'
+            ),
+            array(
+                'id' => 'wkst_test_2',
+                'user_id' => 'test_2',
+                'name' => 'Test 2',
+                'best_case' => 55.00,
+                'likely_case' => 45.00,
+                'worst_case' => 35.00,
+                'base_rate' => 1,
+                'currency_id' => '-99',
+                'commit_stage' => 'include',
+                'sales_stage' => 'test_1',
+                'probability' => 50,
+                'date_closed_timestamp' => '10000'
+            ),
+            array(
+                'id' => 'wkst_test_3',
+                'user_id' => 'test_3',
+                'name' => 'Test 3',
+                'best_case' => 57.00,
+                'likely_case' => 47.00,
+                'worst_case' => 37.00,
+                'base_rate' => 1,
+                'currency_id' => '-99',
+                'commit_stage' => 'include',
+                'sales_stage' => 'test_1',
+                'probability' => 50,
+                'date_closed_timestamp' => '10000'
+            ),
+            array(
+                'id' => '',
+                'user_id' => 'test_4',
+                'name' => 'Test 4',
+                'best_case' => 0,
+                'likely_case' => 0,
+                'worst_case' => 0,
+                'base_rate' => 1,
+                'currency_id' => '-99',
+                'commit_stage' => 'include',
+                'sales_stage' => 'test_1',
+                'probability' => 50,
+                'date_closed_timestamp' => '10000'
+            ),
         );
+
+        // set the data
+        SugarTestReflection::setProtectedValue($this->obj, 'dataArray', $data_array);
     }
 
-    /**
-     * Dataset Provider
-     *
-     * @return array
-     */
-    public function dataProviderParetoData()
+    public function testDataContainsAllData()
     {
-        return array(
-            array('likely', 0),
-            array('likely', 1),
-            array('likely', 2),
-            array('best', 0),
-            array('best', 1),
-            array('best', 2),
-            array('worst', 0),
-            array('worst', 1),
-            array('worst', 2),
-        );
+        $data = $this->obj->process();
+        $this->assertEquals(4, count($data['data']));
     }
-}
 
-class MockSugarForecasting_Chart_Individual extends SugarForecasting_Chart_Individual
-{
-    public function convertTimeperiodToChartValues()
+    public function testNameIsSet()
     {
-        parent::convertTimeperiodToChartValues();
+        $data = $this->obj->process();
+        $this->assertNotEmpty($data['title']);
+        $this->assertEquals('Test Q2 2012', $data['title']);
+    }
 
-        return $this->values;
+    public function testQuotaIsSet()
+    {
+        $data = $this->obj->process();
+        $this->assertNotEmpty($data['quota']);
+        $this->assertEquals(50.00, $data['quota']);
+    }
+
+    public function testWorstNotInData()
+    {
+        $data = $this->obj->process();
+        $this->assertNotEmpty($data['data']);
+        $this->assertNotContains('worst', array_keys($data['data'][0]));
+    }
+
+    public function testBestInData()
+    {
+        $data = $this->obj->process();
+        $this->assertNotEmpty($data['data']);
+        $this->assertContains('best', array_keys($data['data'][0]));
+    }
+
+    public function testXaxisHasData()
+    {
+        $data = $this->obj->process();
+        $this->assertNotEmpty($data['x-axis'], var_export($data, true));
     }
 }

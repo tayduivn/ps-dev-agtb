@@ -116,12 +116,6 @@ class ForecastsApi extends SugarApi
                 'id' => $tp->id,
                 'label' => $tp->name
             );
-
-            $defaultSelections['timeperiod_chart_x_axis'] = $tp->getChartLabels(array());
-
-            /* @var $quota Quota */
-            $quota = BeanFactory::getBean('Quotas');
-            $returnInitData['initData']['userData']['quota'] = $quota->getRollupQuota($tp->id, $current_user->id);
         } else {
             $defaultSelections["timeperiod_id"]["id"] = '';
             $defaultSelections["timeperiod_id"]["label"] = '';

@@ -52,148 +52,75 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
 
     /**
      * Process the data into the current JIT Chart Format
+     *
      * @return array
      */
     public function process()
     {
-        return $this->formatDataForChart();
+        return $this->generateChartJson();
     }
 
-    /**
-     * Run the Manager Code and set the data in this object
-     *
-     * @deprecated
-     */
-    public function getManagerData()
+    public function generateChartJson()
     {
-    }
-
-    /**
-     * Format the data from the Manager Worksheet into a usable format for the charting engine
-     *
-     * @return array
-     */
-    protected function formatDataForChart()
-    {
-        // since we are converting everything to base currency, we need to get the base currency id for the formatting
-        $currency_id = '-99';
-
-        $forecast_strings = $this->getModuleLanguage('Forecasts');
-        global $app_strings;
-        // get the quota from the data
-        $quota = $this->getRollupQuota();
-
+        $config = $this->getForecastConfig();
         // sort the data so it's in the correct order
         usort($this->dataArray, array($this, 'sortChartColumns'));
 
         // loop variables
         $values = array();
 
-        $dataset_sums = array();
-
-        // load up the data into the chart
         foreach ($this->dataArray as $data) {
-            $val = $this->defaultValueArray;
+            $value = array(
+                'id' => $data['id'],
+                'user_id' => $data['user_id'],
+                'name' => html_entity_decode($data['name'], ENT_QUOTES),
+                'likely' => SugarCurrency::convertWithRate($data['likely_case'], $data['base_rate']),
+                'likely_adjusted' => SugarCurrency::convertWithRate(
+                    $data['likely_case_adjusted'],
+                    $data['base_rate']
+                )
+            );
 
-            $val['chart_id'] = md5($data['id']);
-            $val['label'] = html_entity_decode($data['name'], ENT_QUOTES);
-            $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($quota, $currency_id);
-            $val['goalmarkervalue'][] = number_format($quota, 2, '.', '');
-            $val['links'] = array();
-            //$val['gvalue'] = number_format($data[$this->dataset . '_adjusted'], 2, '.', '');
-            //$val['gvaluelabel'] = number_format($data[$this->dataset . '_adjusted'], 2, '.', '');
-
-            foreach ($this->dataset as $dataset) {
-                if (!isset($dataset_sums[$dataset])) {
-                    $dataset_sums[$dataset] = 0;
-                    $dataset_sums[$dataset . '_case_adjusted'] = 0;
-                }
-
-                // converts the amounts to base
-                $data_case = SugarCurrency::convertWithRate($data[$dataset . '_case'], $data['base_rate']);
-                $data_adjusted = SugarCurrency::convertWithRate(
-                    $data[$dataset . '_case_adjusted'],
+            if ($config['show_worksheet_best']) {
+                $value['best'] = SugarCurrency::convertWithRate($data['best_case'], $data['base_rate']);
+                $value['best_adjusted'] = SugarCurrency::convertWithRate(
+                    $data['best_case_adjusted'],
                     $data['base_rate']
                 );
-
-                $dataset_sums[$dataset] += $data_case;
-                $dataset_sums[$dataset . '_case_adjusted'] += $data_adjusted;
-
-                // set the empty  links
-                $val['links'][] = "";
-                $val['links'][] = "";
-
-                $val['values'][] = number_format($data_case, 2, '.', '');
-                $val['values'][] = number_format($data_adjusted, 2, '.', '');
-                $val['valuelabels'][] = SugarCurrency::formatAmountUserLocale($data_case, $currency_id);
-                $val['valuelabels'][] = SugarCurrency::formatAmountUserLocale($data_adjusted, $currency_id);
-                $val['goalmarkervalue'][] = number_format($dataset_sums[$dataset], 2, '.', '');
-                $val['goalmarkervalue'][] = number_format($dataset_sums[$dataset . '_case_adjusted'], 2, '.', '');
-                $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale(
-                    $dataset_sums[$dataset],
-                    $currency_id
-                );
-                $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale(
-                    $dataset_sums[$dataset . '_case_adjusted'],
-                    $currency_id
+            }
+            if ($config['show_worksheet_worst']) {
+                $value['worst'] = SugarCurrency::convertWithRate($data['worst_case'], $data['base_rate']);
+                $value['worst_adjusted'] = SugarCurrency::convertWithRate(
+                    $data['worst_case_adjusted'],
+                    $data['base_rate']
                 );
             }
-            $values[] = $val;
+            $values[] = $value;
         }
 
-        // fix the properties
-        $properties = $this->defaultPropertiesArray;
-        // remove the pareto lines
-        $properties['goal_marker_label'][0] = $forecast_strings['LBL_QUOTA'];
-        unset($properties['goal_marker_label'][1]);
-        $properties['value_name'] = $forecast_strings['LBL_CHART_AMOUNT'];
-        $properties['label_name'] = $forecast_strings['LBL_CHART_TYPE'];
-        // add a second pareto line
-        $properties['goal_marker_type'][] = "pareto";
-        // set the pareto line colors
-        $properties['goal_marker_color'][1] = $this->defaultColorsArray[0];
-        $properties['goal_marker_color'][2] = $this->defaultColorsArray[1];
-        $timeperiod = BeanFactory::getBean('TimePeriods', $this->getArg('timeperiod_id'));
-        $properties['title'] = string_format($forecast_strings['LBL_CHART_FORECAST_FOR'], array($timeperiod->name));
+        $forecast_strings = $this->getModuleLanguage('Forecasts');
+        global $app_strings;
 
-        // figure out the labels
-        $labels = array();
-        foreach ($this->dataset as $dataset) {
-            if ((isset($dataset_sums[$dataset]) && $dataset_sums[$dataset] != 0) ||
-                (isset($dataset_sums[$dataset . '_case_adjusted']) && $dataset_sums[$dataset . '_case_adjusted'] != 0))
-            {
-                switch ($dataset) {
-                    case "best":
-                        $labels[] = $app_strings['LBL_BEST'];
-                        $labels[] = $app_strings['LBL_BEST_ADJUSTED'];
-                        break;
-                    case "worst":
-                        $labels[] = $app_strings['LBL_WORST'];
-                        $labels[] = $app_strings['LBL_WORST_ADJUSTED'];
-                        break;
-                    case 'likely':
-                    default:
-                        $labels[] = $app_strings['LBL_LIKELY'];
-                        $labels[] = $app_strings['LBL_LIKELY_ADJUSTED'];
-                        break;
-                }
-            }
-        }
+        $tp = $this->getTimeperiod();
 
-        // set the pareto labels
-        $properties['goal_marker_label'] = array_merge($properties['goal_marker_label'], $labels);
-
-        // create the chart array
-        $chart = array(
-            'properties' => array(
-                '0' => $properties
-            ),
-            'color' => $this->defaultColorsArray,
-            'label' => $labels,
-            'values' => $values,
+        return array(
+                'title' => string_format(
+                    $forecast_strings['LBL_CHART_FORECAST_FOR'],
+                    array($tp->name)
+                ),
+                'quota' => $this->getRollupQuota(),
+                'labels' => array(
+                    'dataset' => array(
+                        'likely' => $app_strings['LBL_LIKELY'],
+                        'best' => $app_strings['LBL_BEST'],
+                        'worst' => $app_strings['LBL_WORST'],
+                        'likely_adjusted' => $app_strings['LBL_LIKELY_ADJUSTED'],
+                        'best_adjusted' => $app_strings['LBL_LIKELY_ADJUSTED'],
+                        'worst_adjusted' => $app_strings['LBL_LIKELY_ADJUSTED']
+                    )
+                ),
+            'data' => $values
         );
-
-        return $chart;
     }
 
     /**
@@ -265,6 +192,4 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             }
         }
     }
-
-
 }
