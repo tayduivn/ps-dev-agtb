@@ -72,8 +72,6 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
 
-        error_log(var_export($hr->getStaticProperties(), true));
-
         // generate a map for the get_linked_beans call, the first 7 params are for the method call
         // the final param, it what gets returned  this is used below
         $map = array(
