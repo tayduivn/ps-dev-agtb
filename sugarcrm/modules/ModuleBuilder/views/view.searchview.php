@@ -100,7 +100,12 @@ class ViewSearchView extends ViewListView
  				break;
  			//END SUGARCRM flav=pro ONLY
  			default:
- 				$searchLabel = 'LBL_' . strtoupper ( $this->editLayout) ;
+                if(isModuleBWC($this->editModule)) {
+                    $searchLabel = 'LBL_' . strtoupper($this->editLayout);
+                } else {
+                    $searchLabel = 'LBL_FILTER_SEARCH';
+                }
+                break;
  		}
 
         $layoutLabel = 'LBL_LAYOUTS' ;

@@ -142,9 +142,15 @@ class ParserFactory
                     $client = MB_WIRELESS;
                 }
             //END SUGARCRM flav=pro ONLY
-                require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
+                if (isModuleBWC($moduleName)) {
+                    require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
+                    return new SearchViewMetaDataParser($view, $moduleName, $packageName, $client) ;
+                }
 
-                return new SearchViewMetaDataParser ( $view, $moduleName, $packageName, $client ) ;
+                require_once 'modules/ModuleBuilder/parsers/views/SidecarFilterLayoutMetaDataParser.php';
+                $client = empty($client) ? 'base' : $client;
+                return new SidecarFilterLayoutMetaDataParser($moduleName, $packageName, $client);
+
             case MB_LISTVIEW :
                 if ($subpanelName == null) {
                     if (isModuleBWC($moduleName)) {

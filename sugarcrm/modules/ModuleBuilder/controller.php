@@ -59,6 +59,7 @@ require_once 'modules/ModuleBuilder/parsers/parser.dropdown.php';
 // Used in action_searchViewSave
 // Bug56789 - Without a client, the wrong viewdef file was getting picked up
 require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
+require_once 'modules/ModuleBuilder/parsers/views/SidecarFilterLayoutMetaDataParser.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'modules/DynamicFields/templates/Fields/TemplateRange.php';
 
@@ -920,7 +921,12 @@ class ModuleBuilderController extends SugarController
 
         // Bug 56789 - Set the client from the view to ensure the proper viewdef file
         $client = MetaDataFiles::getClientByView($_REQUEST['view']);
-        $parser = new SearchViewMetaDataParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName, $client);
+        if (isModuleBWC($_REQUEST['view_module'])) {
+            $parser = new SearchViewMetaDataParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName, $client);
+        } else {
+            $client = empty($client) ? 'base' : $client;
+            $parser = new SidecarFilterLayoutMetaDataParser($_REQUEST ['view_module'], $packageName, $client);
+        }
         $parser->handleSave();
 
         //Repair or create a custom SearchFields.php file as needed
