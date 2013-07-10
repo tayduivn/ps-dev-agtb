@@ -1,9 +1,7 @@
-<div class="thumbnail widget" data-action="droppable">
-    {{#if meta.preview}}
-        <h4 data-toggle="widget">{{meta.label}}</h4>
-    {{else}}
-        <div data-dashlet="toolbar"></div>
-    {{/if}}
-    <div data-dashlet="widget" class="widget-content"></div>
-    <div class="swappable-dashlet icon-download-alt"></div>
-</div>
+{{#if meta.preview}}
+    <h4 data-toggle="widget">{{meta.label}}</h4>
+{{else}}
+    <div data-dashlet="toolbar"></div>
+{{/if}}
+<div data-dashlet="widget" class="widget-content"></div>
+<div class="swappable-dashlet icon-download-alt"></div>
