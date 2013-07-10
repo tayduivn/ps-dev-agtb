@@ -68,6 +68,18 @@
         allowedComponents = this._pruneNoAccessComponents(allowedComponents);
         // Call original Layout with pruned components
         app.view.Layout.prototype._addComponentsFromDef.call(this, allowedComponents, context, module);
+        this._disableSubpanelToggleButton(allowedComponents);
+    },
+
+    /**
+     * If no subpanels are left after pruning hidden and ACL prevented subpanels, we disable the filter panel's subpanel toggle button
+     * @param  {Array} allowedComponents pruned subpanels
+     */
+    _disableSubpanelToggleButton: function(allowedComponents) {
+        if (!allowedComponents || !allowedComponents.length) {
+            this.layout.trigger('filterpanel:change', 'activitystream', true, true);
+            this.layout.trigger('filterpanel:toggle:button', 'subpanels', false);//disable subpanels toggle button
+        }
     },
 
     /**

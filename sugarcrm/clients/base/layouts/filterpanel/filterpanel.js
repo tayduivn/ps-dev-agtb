@@ -24,9 +24,18 @@
             this.$(".filter-options").hide();
         }, this);
 
-        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
+        // This is required, for example, if we've disabled the subapanels panel so that app doesn't attempt to render later
+        this.on('filterpanel:lastviewed:set', function(viewed) {
+            this.toggleViewLastStateKey = this.toggleViewLastStateKey || app.user.lastState.key('toggle-view', this);
+            var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
+            if (lastViewed !== viewed) {
+                app.user.lastState.set(this.toggleViewLastStateKey, viewed);
+            }
+        }, this);
+
         app.view.invokeParent(this, {type: 'layout', name: 'togglepanel', method: 'initialize', args: [opts]});
         // Needed to initialize this.currentModule.
+        var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
         this.trigger('filter:change', (lastViewed === "activitystream") ? 'Activities' : this.module);
     }
 })

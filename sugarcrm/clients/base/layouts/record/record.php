@@ -30,7 +30,7 @@ $viewdefs['base']['layout']['record'] = array(
                                 ),
                                 array(
                                     'layout' => array(
-                                        'type' => 'filterpanel',
+                                        'name' => 'filterpanel',
                                         'span' => 12,
                                         'last_state' => array(
                                             'id' => 'record-filterpanel',

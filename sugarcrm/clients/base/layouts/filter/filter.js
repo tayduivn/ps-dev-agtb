@@ -73,8 +73,8 @@
             this.trigger('filter:apply', query, def);
         }, this);
 
-
         this.layout.on('filterpanel:change', this.handleFilterPanelChange, this);
+        this.layout.on('filterpanel:toggle:button', this.toggleFilterButton, this);
 
         //When a filter is saved, update the cache and set the filter to be the currently used filter
         this.layout.on('filter:add', this.addFilter, this);
@@ -106,12 +106,33 @@
         app.cache.set("filters:last:" + this.layout.currentModule + ":" + this.layoutType, model.get("id"));
         this.layout.trigger('filter:reinitialize');
     },
+
     /**
-     * handles filter panel changes between actvity and subpanels
-     * @param name
-     * @param silent
+     * Enables or disables a filter toggle button (e.g. activity or subpanel toggle buttons)
+     * @param {String} toggleDataView the string used in `data-view` attribute for that toggle element (e.g. 'subpanels', 'activitystream')
+     * @param {Boolean} on pass true to enable, false to disable
      */
-    handleFilterPanelChange: function(name, silent) {
+    toggleFilterButton: function (toggleDataView, on) {
+        var toggleButtons = this.layout.$('.toggle-actions button');
+        // Loops toggle buttons for 'data-view' that corresponds to `toggleDataView` and enables/disables per `on`
+        _.each(toggleButtons, function(btn) {
+            if($(btn).data('view') === toggleDataView) {
+                if(on) {
+                    $(btn).removeAttr('disabled').removeClass('disabled');
+                } else {
+                    $(btn).attr('disabled', 'disabled').addClass('disabled');
+                }
+            }
+        });
+    },
+
+    /**
+     * Handles filter panel changes between activity and subpanels
+     * @param {String} name Name of panel
+     * @param {Boolean} silent Whether to trigger filter events
+     * @param {Boolean} setLastViewed Whether to set last viewed to `name` panel
+     */
+    handleFilterPanelChange: function(name, silent, setLastViewed) {
         this.showingActivities = name === 'activitystream';
         var module = this.showingActivities ? "Activities" : this.module;
         var link;
@@ -127,6 +148,10 @@
         if (!silent) {
             this.trigger("filter:render:module");
             this.trigger("filter:change:module", module, link);
+        }
+        if (setLastViewed) {
+            // Asks filterpanel to update user.lastState with new panel name as last viewed
+            this.layout.trigger('filterpanel:lastviewed:set', name);
         }
     },
     /**
