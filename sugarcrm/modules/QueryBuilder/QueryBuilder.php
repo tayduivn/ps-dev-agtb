@@ -77,7 +77,7 @@ class QueryBuilder extends SugarBean {
      */
     public function QueryBuilder()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

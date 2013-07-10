@@ -56,7 +56,7 @@ class EmailMarketing extends SugarBean
      */
     public function EmailMarketing()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct()

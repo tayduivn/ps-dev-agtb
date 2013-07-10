@@ -81,7 +81,7 @@ class CustomQuery extends SugarBean {
      */
     public function CustomQuery()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

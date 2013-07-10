@@ -75,7 +75,7 @@ class TimePeriod extends SugarBean {
      */
     public function TimePeriod()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

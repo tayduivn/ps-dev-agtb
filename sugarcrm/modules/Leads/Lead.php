@@ -133,7 +133,7 @@ class Lead extends Person {
      */
     public function Lead()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

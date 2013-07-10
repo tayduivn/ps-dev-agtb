@@ -95,7 +95,7 @@ class Prospect extends Person {
      */
     public function Prospect()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

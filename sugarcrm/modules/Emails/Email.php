@@ -151,7 +151,7 @@ class Email extends SugarBean {
      */
     public function Email()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	/**

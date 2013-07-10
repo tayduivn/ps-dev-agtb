@@ -50,7 +50,7 @@ class ACLField  extends ACLAction
      */
     public function ACLField()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     /**

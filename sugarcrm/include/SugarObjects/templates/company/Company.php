@@ -38,7 +38,7 @@ class Company extends Basic
      */
     public function Company()
     {
-        $this->__construct();
+        self::__construct();
     }
 
  	/**

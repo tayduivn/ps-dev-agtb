@@ -91,7 +91,7 @@ class CampaignTracker extends SugarBean {
      */
     public function CampaignTracker()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     /*This bean's constructor*/

@@ -35,7 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      */
     public function ConnectorRecord($merge_module = '', $merge_id = '')
     {
-        $this->__construct($merge_module, $merge_id);
+        self::__construct($merge_module, $merge_id);
     }
 
     

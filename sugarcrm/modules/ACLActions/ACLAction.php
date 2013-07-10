@@ -54,7 +54,7 @@ class ACLAction  extends SugarBean
      */
     public function ACLAction()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     /**

@@ -64,7 +64,7 @@ class Team extends SugarBean
      */
     public function Team()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct()

@@ -54,7 +54,7 @@ class Person extends Basic
      */
     public function Person()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

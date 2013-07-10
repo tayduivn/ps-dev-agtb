@@ -54,7 +54,7 @@ class vCal extends SugarBean {
      */
     public function vCal()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct()

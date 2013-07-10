@@ -44,7 +44,7 @@ class CalendarActivity {
      */
     public function CalendarActivity($args)
     {
-        $this->__construct($args);
+        self::__construct($args);
     }
 
 	public function __construct($args){

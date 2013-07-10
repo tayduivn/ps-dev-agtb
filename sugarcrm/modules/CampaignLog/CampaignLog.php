@@ -50,7 +50,7 @@ class CampaignLog extends SugarBean {
      */
     public function CampaignLog()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

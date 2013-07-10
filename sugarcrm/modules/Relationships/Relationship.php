@@ -53,7 +53,7 @@ class Relationship extends SugarBean {
      */
     public function Relationship()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

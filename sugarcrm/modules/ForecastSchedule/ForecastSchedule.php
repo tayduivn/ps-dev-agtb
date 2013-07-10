@@ -71,7 +71,7 @@ class ForecastSchedule extends SugarBean {
      */
     public function ForecastSchedule()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

@@ -80,7 +80,7 @@ class Task extends SugarBean {
      */
     public function Task()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

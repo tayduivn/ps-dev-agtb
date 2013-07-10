@@ -64,7 +64,7 @@ class ContactQuoteRelationship extends SugarBean {
      */
     public function ContactQuoteRelationship()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

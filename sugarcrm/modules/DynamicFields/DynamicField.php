@@ -37,7 +37,7 @@ class DynamicField {
      */
     public function DynamicField($module = '')
     {
-        $this->__construct($module);
+        self::__construct($module);
     }
 
 

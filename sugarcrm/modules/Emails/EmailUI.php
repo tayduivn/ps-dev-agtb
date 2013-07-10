@@ -37,7 +37,7 @@ class EmailUI {
      */
     public function EmailUI()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

@@ -105,7 +105,7 @@ class EmailTemplate extends SugarBean {
      */
     public function EmailTemplate()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

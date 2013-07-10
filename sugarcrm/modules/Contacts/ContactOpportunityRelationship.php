@@ -80,7 +80,7 @@ class ContactOpportunityRelationship extends SugarBean {
      */
     public function ContactOpportunityRelationship()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

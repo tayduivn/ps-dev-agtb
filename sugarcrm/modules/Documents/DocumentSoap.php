@@ -27,7 +27,7 @@ require_once('include/upload_file.php');
 class DocumentSoap{
 var $upload_file;
 	public function DocumentSoap(){
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

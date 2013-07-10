@@ -57,7 +57,7 @@ class CalendarDisplay {
      */
     public function CalendarDisplay(Calendar $cal, $dashlet_id = "")
     {
-        $this->__construct($cal, $dashlet_id);
+        self::__construct($cal, $dashlet_id);
     }
 
 	/**

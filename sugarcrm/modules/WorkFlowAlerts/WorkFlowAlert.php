@@ -122,7 +122,7 @@ class WorkFlowAlert extends SugarBean {
      */
     public function WorkFlowAlert()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

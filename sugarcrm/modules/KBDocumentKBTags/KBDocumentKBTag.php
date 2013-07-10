@@ -75,7 +75,7 @@ class KBDocumentKBTag extends SugarBean {
      */
     public function KBDocumentKBTag()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

@@ -123,7 +123,7 @@ class WorkFlowTriggerShell extends SugarBean {
      */
     public function WorkFlowTriggerShell()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

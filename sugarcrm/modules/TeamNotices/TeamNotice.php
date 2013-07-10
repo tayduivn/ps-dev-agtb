@@ -62,7 +62,7 @@ class TeamNotice extends SugarBean {
      */
     public function TeamNotice()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

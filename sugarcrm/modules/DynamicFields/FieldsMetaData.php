@@ -112,7 +112,7 @@ class FieldsMetaData extends SugarBean {
      */
     public function FieldsMetaData()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

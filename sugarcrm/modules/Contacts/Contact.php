@@ -150,7 +150,7 @@ class Contact extends Person {
      */
     public function Contact()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

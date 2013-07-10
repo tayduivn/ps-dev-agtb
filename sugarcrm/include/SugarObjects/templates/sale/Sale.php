@@ -39,7 +39,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      */
     public function Sale()
     {
-        $this->__construct();
+        self::__construct();
     }
  	public function __construct(){
  		parent::__construct();

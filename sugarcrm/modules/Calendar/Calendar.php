@@ -77,7 +77,7 @@ class Calendar {
      */
     public function Calendar()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	/**

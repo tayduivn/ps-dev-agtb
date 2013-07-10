@@ -55,7 +55,7 @@ class MergeRecord extends SugarBean {
      */
     public function MergeRecord($merge_module = '', $merge_id = '')
     {
-        $this->__construct($merge_module, $merge_id);
+        self::__construct($merge_module, $merge_id);
     }
 
     public function __construct($merge_module = '', $merge_id = '') {
