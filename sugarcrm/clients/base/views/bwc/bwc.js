@@ -1,40 +1,26 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     tagName: 'iframe',
     className: 'bwc-frame',
     // TODO check if we need to support multiple bwc views
     id: 'bwc-frame',
     // Precompiled regex (note-regex literal causes errors but RegExp doesn't)
-    moduleRegex: new RegExp("module=([^&]*)"),
-    idRegex: new RegExp("record=([^&]*)"),
-    actionRegex: new RegExp("action=([^&]*)"),
+    moduleRegex: new RegExp('module=([^&]*)'),
+    idRegex: new RegExp('record=([^&]*)'),
+    actionRegex: new RegExp('action=([^&]*)'),
 
-    initialize: function (options) {
+    initialize: function(options) {
         this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
         app.view.View.prototype.initialize.call(this, options);
     },
@@ -50,12 +36,12 @@
      *
      * @private
      */
-    _renderHtml: function () {
+    _renderHtml: function() {
         var self = this;
 
         app.view.View.prototype._renderHtml.call(this);
 
-        this.$el.load(function () {
+        this.$el.load(function() {
             var module = self.moduleRegex.exec(this.contentWindow.location.search);
             module = (_.isArray(module)) ? module[1] : null;
             if (module) {
@@ -89,7 +75,7 @@
      * @param {String} href the bwc hyperlink.
      * @return {String} the new sidecar hyperlink (empty string if unable to convert).
      */
-    convertToSidecarUrl: function (href) {
+    convertToSidecarUrl: function(href) {
         var module = this.moduleRegex.exec(href),
             id = this.idRegex.exec(href),
             action = this.actionRegex.exec(href);
@@ -127,11 +113,11 @@
      * @param {Window} frame the contentWindow of the frame to rewrite links on.
      * @private
      */
-    _rewriteLinksForSidecar: function (frame) {
+    _rewriteLinksForSidecar: function(frame) {
         var self = this,
             baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
 
-        frame.$('a[href*="module="]').each(function (i, elem) {
+        frame.$('a[href*="module="]').each(function(i, elem) {
             var $elem = $(elem),
                 href = $elem.attr('href'),
                 module = self.moduleRegex.exec(href);
@@ -151,7 +137,7 @@
                 return;
             }
 
-            $elem.click(function (e) {
+            $elem.click(function(e) {
                 if (e.button !== 0 || e.ctrlKey || e.metaKey) {
                     return;
                 }
@@ -173,10 +159,11 @@
      * @param {Window} frame the contentWindow of the frame to rewrite links on.
      * @private
      */
-    _rewriteNewWindowLinks: function (frame) {
-        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
+    _rewriteNewWindowLinks: function(frame) {
+        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname,
+            $links = frame.$('a[target="_blank"]').not('[href^="http"]').not('[href*="entryPoint=download"]');
 
-        frame.$('a[target="_blank"]').not('[href^="http"]').each(function (i, elem) {
+        $links.each(function(i, elem) {
             var $elem = $(elem);
             if ($elem.data('sidecarProcessed')) {
                 return;
