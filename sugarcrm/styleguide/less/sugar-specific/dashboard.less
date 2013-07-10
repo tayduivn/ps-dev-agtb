@@ -3,7 +3,7 @@
   width: 100%;
   height: auto;
   background: url(@textureSecondary);
-  .headerpane {
+  /*.headerpane {
     display: table;
     width: 100%;
     .record-cell {
@@ -23,7 +23,7 @@
         }
       }
     }
-  }
+  }*/
   ul {
     list-style: none;
     margin: 0;
@@ -257,40 +257,33 @@
 .sidebar-content {
   .dashboard {
     .preview-headerbar {
-      border-bottom-color: transparent;
       display: table;
       margin-top: -3px;
-      height: 61px;
-      width: 100%;
-      .btn-toolbar {
-        margin: 0px 7px 0px 0px;
-        padding-left: 8px;
-      }
-      .record-cell { /*unnecessary div, filipe said it cannot be removed from template, doing this for now*/
+      position: fixed;
+      top: 48px;
+      right: 0;
+      width: 34%;
+      z-index: 1;
+      background: url(@textureSecondary);
+      height: 59px;
+      /* middle div is unnecessary, filipe said it cannot
+         be removed from template, doing this for now */
+      .record-cell {
         display: none;
       }
       .record-cell:first-child {
         display: table-cell;
         width: 100%;
         position: relative;
-        padding-left: 1.5%;
+        padding-left: 5%;
         vertical-align: middle;
-        h1 {
-          margin-left: 5%;
-          input {
-            padding-left: 0;
-            padding-right: 0;
-            font-size: inherit;
-            margin-top: -3px;
-            margin-left: 5px;
-            width: 100%;
-            text-indent: 5px;
-            margin-top: -2px;
-          }
-          .input-append.error {
-            vertical-align: baseline;
-          }
-        }
+      }
+      .record-cell:last-child {
+        display: table-cell;
+        white-space: nowrap;
+        width: auto;
+        padding-right: 5%;
+        vertical-align: middle;
       }
       .record-cell:last-child {
         display: table-cell;
@@ -300,15 +293,23 @@
         vertical-align: middle;
       }
       h1 {
-        margin-left: 0;
-        height: 39px;
         width: 90%;
+        margin: 0px 0px 0px 5px;
+        height: 28px;
+        float: none;
+        input {
+          font-size: inherit;
+          margin-top: -10px;
+          margin-left: -6px;
+          width: 100%;
+          line-height: 24px;
+        }
         div.dropdown {
+          line-height: 24px;
           &> a {
             font-size: @fontSizeHeader;
             color: inherit;
             padding-left: 0;
-            padding-top: 8px;
             margin-left: 0;
             text-align: left;
             position: absolute;
@@ -324,6 +325,7 @@
           }
           ul.dropdown-menu {
             min-width: 160px;
+            .border-radius(2px);
             &> li {
               font-size: @baseFontSize;
               .alert-process {
@@ -336,10 +338,9 @@
       .dropdown-menu {
         min-width: auto;
       }
-      input[type=text] {
-        width: 150px;
-        font-size: @fontSizeHeader;
-        line-height: 24px;
+      .btn-toolbar {
+        margin: 0px 5px 0px 0px;
+        padding-left: 8px;
       }
     }
     &.edit {
@@ -347,7 +348,9 @@
         border-bottom-color: #CCC;
       }
       .dashlets {
-        margin-top: 5%;
+        width: 90%;
+        margin-left: 5%;
+        margin-top: 70px;
       }
     }
     .cols {
