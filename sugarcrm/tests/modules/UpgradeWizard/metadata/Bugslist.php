@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: listviewdefs.php 56123 2010-04-26 21:48:19Z asandberg $
-
 
 $listViewDefs['Bugs'] = array(
 	'BUG_NUMBER' => array(
@@ -53,16 +51,20 @@ $listViewDefs['Bugs'] = array(
         'width' => '10',
         'label' => 'LBL_LIST_PRIORITY',
         'default' => true),
-    'RESOLUTION' => array(
+    'RELEASE_NAME' => array(
         'width' => '10',
-        'label' => 'LBL_LIST_RESOLUTION',
-        'default' => false),
-//BEGIN SUGARCRM flav=pro ONLY
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_LIST_TEAM',
-        'default' => false),
-//END SUGARCRM flav=pro ONLY
+        'label' => 'LBL_FOUND_IN_RELEASE',
+        'default' => false,
+        'related_fields' => array('found_in_release'),
+        'module' => 'Releases',
+        'id' => 'FOUND_IN_RELEASE',),
+    'FIXED_IN_RELEASE_NAME' => array(
+        'width' => '10',
+        'label' => 'LBL_LIST_FIXED_IN_RELEASE',
+        'default' => true,
+        'related_fields' => array('fixed_in_release'),
+        'module' => 'Releases',
+        'id' => 'FIXED_IN_RELEASE',),
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '9',
 		'label' => 'LBL_LIST_ASSIGNED_USER',
@@ -70,4 +72,3 @@ $listViewDefs['Bugs'] = array(
         'id' => 'ASSIGNED_USER_ID',
         'default' => false)
 );
-?>
