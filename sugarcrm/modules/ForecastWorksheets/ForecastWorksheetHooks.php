@@ -44,7 +44,6 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
                 $bean->load_relationship('assigned_user_link');
                 $users = $bean->assigned_user_link->getBeans();
                 $user = $users[0];
-                //$user = BeanFactory::getBean('Users', $bean->assigned_user_id);
                 if (!empty($user->reports_to_id)) {
                     $worksheet_strings = static::getLanguageStrings($bean->module_name);
                     $mod_strings = static::getLanguageStrings($bean->parent_type);
