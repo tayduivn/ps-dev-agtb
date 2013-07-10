@@ -225,11 +225,7 @@ class Call extends SugarBean {
 			$this->reminder_time = $current_user->getPreference('reminder_time');
 		}*/
 
-        // Make sure we have an ID so we can build relationships
-        if (!isset($this->id) || empty($this->id)) {
-            $this->id = create_guid();
-            $this->new_with_id = true;
-        }
+        $return_id = parent::save($check_notify);
         // Previously this was handled in both the CallFormBase and the AfterImportSave function, so now it just happens every time you save a record.
         if ($this->parent_type == 'Contacts') {
             if (is_array($this->contacts_arr) && !in_array($this->parent_id, $this->contacts_arr)) {
@@ -258,8 +254,6 @@ class Call extends SugarBean {
                 $this->contacts->add($this->contact_id);
             }
         }
-
-        $return_id = parent::save($check_notify);
 
         $this->setUserInvitees($this->users_arr);
 
