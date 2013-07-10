@@ -549,6 +549,7 @@
             // Display module label in header panel it doesn't contain the picture field
             if (panel.header) {
                 panel.isAvatar = !!_.find(panel.fields, function(field) {
+                    //TODO: compare field.type to 'avatar'?
                     return field.name === 'picture';
                 });
             }
