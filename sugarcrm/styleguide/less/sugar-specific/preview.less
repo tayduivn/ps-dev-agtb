@@ -30,8 +30,14 @@
 }
 
 .preview-headerbar {
+  position: fixed;
+  top: 48px;
+  width: 34%;
   height: 60px;
   border-bottom: 1px solid #CCC;
+  background: url(@textureSecondary);
+  z-index: 1;
+  .box-sizing(border-box);
   h1 {
     float: left;
     margin-top: 11px;
@@ -44,7 +50,7 @@
 }
 .inspector-body,
 .preview-data {
-  padding: 28px 5% 0;
+  padding: 70px 5% 0;
   margin: 8px;
   .row-fluid {
     .span5 {

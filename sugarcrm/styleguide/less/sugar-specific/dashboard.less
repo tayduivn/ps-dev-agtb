@@ -3,27 +3,6 @@
   width: 100%;
   height: auto;
   background: url(@textureSecondary);
-  /*.headerpane {
-    display: table;
-    width: 100%;
-    .record-cell {
-      vertical-align: baseline;
-      h1 {
-        input[placeholder] {
-          line-height: 22px;
-        }
-        .ellipsis_inline {
-          margin-top: 19px;
-        }
-        input[type="text"] {
-          margin-top: -8px;
-        }
-        .btn-group {
-          margin-top: 16px;
-        }
-      }
-    }
-  }*/
   ul {
     list-style: none;
     margin: 0;
@@ -118,6 +97,8 @@
                 font-weight: 900;
                 i {
                   color: lighten(@grayLight,8%);
+                  display: inline-block;
+                  width: auto;
                 }
               }
             }
@@ -253,19 +234,16 @@
   }
 }
 
+:not(.sidebar-content) .dashboard {
+  top: 60px;
+}
+
 /* Dashboard inside right hand side panel */
 .sidebar-content {
   .dashboard {
     .preview-headerbar {
       display: table;
-      margin-top: -3px;
-      position: fixed;
-      top: 48px;
-      right: 0;
-      width: 34%;
-      z-index: 1;
-      background: url(@textureSecondary);
-      height: 59px;
+      top: 49px;
       /* middle div is unnecessary, filipe said it cannot
          be removed from template, doing this for now */
       .record-cell {
@@ -386,12 +364,15 @@
   }
 }
 
+.main-pane.dashboard .headerpane h1 {
+  padding: 19px 0 0 20px;
+}
+
 .widget-container {
   .btn-toolbar .btn {
     margin-left: 0;
   }
 }
-
 
 .swappable-dashlet.icon-download-alt {
   display: none;
