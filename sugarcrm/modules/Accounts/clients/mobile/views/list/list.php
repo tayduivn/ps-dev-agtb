@@ -59,7 +59,7 @@ $viewdefs['Accounts']['mobile']['view']['list'] = array(
                     'default' => true,
                 ),
                 array(
-                    'name' => 'email1',
+                    'name' => 'email',
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,

@@ -39,7 +39,7 @@ $viewdefs[$module_name]['base']['view']['subpanel-list'] = array(
           'sortable' => false,
         ),
         array(
-          'name' => 'email1',
+          'name' => 'email',
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
