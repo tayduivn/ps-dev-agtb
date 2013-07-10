@@ -61,7 +61,6 @@ class SugarSearchEngineElasticMappingTest extends Sugar_PHPUnit_Framework_TestCa
         $this->assertArrayHasKey('first_name', $result);
         $this->assertEquals($expected['first_name'], $result['first_name'], 'result is different from expected array');
     }
-
 }
 
 
