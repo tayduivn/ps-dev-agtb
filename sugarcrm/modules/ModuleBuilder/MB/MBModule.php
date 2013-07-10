@@ -416,12 +416,16 @@ class MBModule
      * Bug 57259
      * 
      * Only copy mobile clients because all clients would include portal clients
+     * 
+     * Adapted for Sugar7 to include base clients as well.
      */
     public function copyClients() {
         $templates = array_reverse($this->config['templates'], true);
         foreach ($templates as $template => $a) {
-            if (file_exists(MB_TEMPLATES . '/' . $template . '/clients/mobile')) {
-                $this->copyMetaRecursive(MB_TEMPLATES . '/' . $template . '/clients/mobile', $this->path . '/clients/mobile');
+            foreach (array('base', 'mobile') as $client) {
+                if (file_exists(MB_TEMPLATES . '/' . $template . '/clients/' . $client)) {
+                    $this->copyMetaRecursive(MB_TEMPLATES . '/' . $template . '/clients/' . $client, $this->path . '/clients/' . $client);
+                }
             }
         }
     }
@@ -579,10 +583,9 @@ class MBModule
 		$popups [] = array('name' => translate('LBL_POPUPSEARCH') , 'type' => 'popupsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popupsearch&view_module=' . $this->name . '&view_package=' . $this->package );
 		
         $layouts = array (
-        	array ( 'name' => translate('LBL_EDITVIEW') , 'type' => 'edit' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_EDITVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	array ( 'name' => translate('LBL_DETAILVIEW') , 'type' => 'detail' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_DETAILVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	array ( 'name' => translate('LBL_LISTVIEW') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_LISTVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
-        	array ( 'name' => translate('LBL_POPUP') , 'type' => 'Folder', 'children' => $popups, 'action' => 'module=ModuleBuilder&MB=true&action=wizard&view=popup&view_module=' . $this->name . '&view_package=' . $this->package  ),
+            array ( 'name' => translate('LBL_RECORDVIEW') , 'type' => 'record' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_RECORDVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
+            array ( 'name' => translate('LBL_LISTVIEW') , 'type' => 'list' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_LISTVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
+            array ( 'name' => translate('LBL_POPUP') , 'type' => 'Folder', 'children' => $popups, 'action' => 'module=ModuleBuilder&MB=true&action=wizard&view=popup&view_module=' . $this->name . '&view_package=' . $this->package  ),
             );
 
         $children = array (
