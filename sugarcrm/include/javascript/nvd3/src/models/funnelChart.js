@@ -16,15 +16,16 @@ nv.models.funnelChart = function() {
     , showLegend = true
     , showTitle = false
     , reduceXTicks = false // if false a tick will show for every data point
+    , tooltip = null
     , tooltips = true
-    , tooltip = function(key, x, y, e, graph) {
+    , tooltipContent = function(key, x, y, e, graph) {
         return '<h3>' + key + " - " + x + '</h3>' +
                '<p>' +  y + '</p>';
       }
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
     , noData = "No Data Available."
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
     ;
 
   //============================================================
@@ -35,13 +36,13 @@ nv.models.funnelChart = function() {
   //------------------------------------------------------------
 
   var showTooltip = function(e, offsetElement, properties) {
-    var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
-        top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0),
+    var left = e.pos[0],
+        top = e.pos[1],
         x = (e.point.y * 100 / properties.total).toFixed(1),
         y = ( yAxis ).tickFormat()( funnel.y()(e.point, e.pointIndex) ),
-        content = tooltip(e.series.key, x, y, e, chart);
+        content = tooltipContent(e.series.key, x, y, e, chart);
 
-    nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
   //============================================================
@@ -307,6 +308,15 @@ nv.models.funnelChart = function() {
     if (tooltips) nv.tooltip.cleanup();
   });
 
+  funnel.dispatch.on('elementMousemove', function(e) {
+    dispatch.tooltipMove(e);
+  });
+  dispatch.on('tooltipMove', function(e) {
+    if (tooltip) {
+      nv.tooltip.position(tooltip,e.pos);
+    }
+  });
+
   //============================================================
 
 
@@ -412,8 +422,8 @@ nv.models.funnelChart = function() {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltip;
-    tooltip = _;
+    if (!arguments.length) return tooltipContent;
+    tooltipContent = _;
     return chart;
   };
 

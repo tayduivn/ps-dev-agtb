@@ -1,4 +1,3 @@
-
 nv.models.multiBar = function() {
 
   //============================================================
@@ -14,17 +13,17 @@ nv.models.multiBar = function() {
     , getX = function(d) { return d.x; }
     , getY = function(d) { return d.y; }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
-    , clipEdge = true
     , stacked = false
     , barColor = null // adding the ability to set the color for each rather than the whole group
     , disabled // used in conjunction with barColor to communicate from multiBarHorizontalChart what series are disabled
-    , delay = 1200
+    , clipEdge = true
+    , delay = 200
     , xDomain
     , yDomain
     , color = nv.utils.defaultColor()
     , fill = color
     , classes = function (d,i) { return 'nv-group nv-series-'+ i; }
-    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     ;
 
   //============================================================
@@ -38,7 +37,6 @@ nv.models.multiBar = function() {
       ;
 
   //============================================================
-
 
   function chart(selection) {
     selection.each(function(data) {
@@ -55,7 +53,6 @@ nv.models.multiBar = function() {
                  (data);
       }
 
-
       //add series index to each data point for reference
       data = data.map(function(series, i) {
         series.values = series.values.map(function(point) {
@@ -65,10 +62,9 @@ nv.models.multiBar = function() {
         return series;
       });
 
-
       //------------------------------------------------------------
       // HACK for negative value stacking
-      if (stacked)
+      if (stacked) {
         data[0].values.map(function (d,i) {
           var posBase = 0, negBase = 0;
           data.map(function (d) {
@@ -83,6 +79,7 @@ nv.models.multiBar = function() {
             }
           });
         });
+      }
 
       //------------------------------------------------------------
       // Setup Scales
@@ -95,25 +92,29 @@ nv.models.multiBar = function() {
               });
             });
 
-      x   .domain(d3.merge(seriesData).map(function (d) { return d.x; }))
-          .rangeBands([0, availableWidth], 0.3);
+      var bw = 48 * (stacked?1:data.length) + 16;
+      var op = Math.max(0.25,(availableWidth - data[0].values.length*bw + 16) / (2*bw));
 
-      //y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0); }).concat(forceY)))
-      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y }).concat(forceY)))
+      x   .domain(xDomain || d3.merge(seriesData).map(function (d) { return d.x; }))
+          .rangeRoundBands([0, availableWidth], 0.25, op);
+
+      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return stacked ? (d.y > 0 ? d.y1 : d.y1 + d.y ) : d.y; }).concat(forceY)))
           .range([availableHeight, 0]);
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
-      if (x.domain()[0] === x.domain()[1] || y.domain()[0] === y.domain()[1]) singlePoint = true;
-      if (x.domain()[0] === x.domain()[1])
+      if (x.domain()[0] === x.domain()[1] || y.domain()[0] === y.domain()[1]) {
+        singlePoint = true;
+      }
+      if (x.domain()[0] === x.domain()[1]) {
         x.domain()[0] ?
             x.domain([x.domain()[0] - x.domain()[0] * 0.01, x.domain()[1] + x.domain()[1] * 0.01])
           : x.domain([-1,1]);
-
-      if (y.domain()[0] === y.domain()[1])
+      }
+      if (y.domain()[0] === y.domain()[1]) {
         y.domain()[0] ?
             y.domain([y.domain()[0] + y.domain()[0] * 0.01, y.domain()[1] - y.domain()[1] * 0.01])
           : y.domain([-1,1]);
-
+      }
 
       x0 = x0 || x;
       y0 = y0 || y;
@@ -141,8 +142,6 @@ nv.models.multiBar = function() {
 
       //------------------------------------------------------------
 
-
-
       defsEnter.append('clipPath')
           .attr('id', 'nv-edge-clip-' + id)
         .append('rect');
@@ -151,7 +150,6 @@ nv.models.multiBar = function() {
           .attr('height', availableHeight);
 
       g   .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
-
 
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
@@ -168,14 +166,13 @@ nv.models.multiBar = function() {
           .attr('height', 0)
           .remove();
       groups
-          //.attr('class', function(d,i) { return 'nv-group nv-series-' + i; })
           .attr('class', function(d,i) { return this.getAttribute('class') || classes(d,i); })
           .classed('hover', function(d) { return d.hover; })
           .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
           .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', 0.85);
+          .style('fill-opacity', 1);
 
 
       var bars = groups.selectAll('rect.nv-bar')
@@ -183,15 +180,13 @@ nv.models.multiBar = function() {
 
       bars.exit().remove();
 
-
       var barsEnter = bars.enter().append('rect')
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
-          .attr('x', function(d,i,j) {
-              return stacked ? 0 : (j * x.rangeBand() / data.length );
-          })
+          .attr('x', function(d,i,j) { return stacked ? 0 : (j * x.rangeBand() / data.length ); })
           .attr('y', function(d) { return y0(stacked ? d.y0 : 0); })
           .attr('height', 0)
           .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
+
       bars
           .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
             d3.select(this).classed('hover', true);
@@ -199,7 +194,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + 0.5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [d3.event.pageX, d3.event.pageY],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -214,6 +209,14 @@ nv.models.multiBar = function() {
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
+            });
+          })
+          .on('mousemove', function(d,i){
+            dispatch.elementMousemove({
+              point: d,
+              pointIndex: i,
+              pos: [d3.event.pageX, d3.event.pageY],
+              id: id
             });
           })
           .on('click', function(d,i) {
@@ -252,10 +255,10 @@ nv.models.multiBar = function() {
           //.style('fill', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(j).toString(); })
           //.style('stroke', function(d,i,j) { return d3.rgb(barColor(d,i)).darker(j).toString(); })
           .style('fill', function(d,i,j) {
-            return d3.rgb(barColor(d,i)).darker(disabled.map(function(d,i) { return i }).filter(function(d,i){ return !disabled[i]  })[j]).toString();
+            return d3.rgb(barColor(d,i)).darker(disabled.map(function(d,i) { return i; }).filter(function(d,i){ return !disabled[i]; })[j]).toString();
           })
           .style('stroke', function(d,i,j) {
-            return d3.rgb(barColor(d,i)).darker(disabled.map(function(d,i) { return i }).filter(function(d,i){ return !disabled[i]  })[j]).toString();
+            return d3.rgb(barColor(d,i)).darker(disabled.map(function(d,i) { return i; }).filter(function(d,i){ return !disabled[i]; })[j]).toString();
           });
       }
 
@@ -263,41 +266,33 @@ nv.models.multiBar = function() {
       if (stacked) {
         d3.transition(bars)
             .delay(function(d,i) { return i * delay / data[0].values.length; })
-            .attr('y', function(d,i) {
-              return y((stacked ? d.y1 : 0));
-            })
+            .attr('y', function(d,i) { return y(d.y1) - 3; })
             .attr('height', function(d,i) {
-              return Math.max(Math.abs(y(d.y + (stacked ? d.y0 : 0)) - y((stacked ? d.y0 : 0))) - 4,0);
+              return Math.max(Math.abs(y(d.y + d.y0) - y(d.y0)),0);
             })
-            .each('end', function() {
-              d3.transition(d3.select(this))
-                .attr('x', function(d,i) {
-                  return stacked ? 0 : (d.series * x.rangeBand() / data.length);
-                })
-                .attr('width', x.rangeBand() / (stacked ? 1 : data.length));
-            });
+            .attr('x', 0)
+            .attr('width', x.rangeBand());
       } else {
         d3.transition(bars)
-          .delay(function(d,i) { return i * delay/ data[0].values.length; })
+          .delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('x', function(d,i) {
-              return d.series * x.rangeBand() / data.length;
+              return (d.series * x.rangeBand() / data.length);
             })
-            .attr('width', x.rangeBand() / data.length)
+            .attr('width', (x.rangeBand() / data.length))
             .each('end', function() {
-              d3.transition(d3.select(this))
+              d3.select(this)
                 .attr('y', function(d,i) {
-                  return getY(d,i) < 0 ?
+                  return (getY(d,i) < 0 ?
                           y(0) :
                           y(0) - y(getY(d,i)) < 1 ?
                             y(0) - 1 :
-                          y(getY(d,i)) || 0;
-              })
-              .attr('height', function(d,i) {
-                  return Math.max(Math.abs(y(getY(d,i)) - y(0))-4,0) || 0;
+                          y(getY(d,i))) - 3 || 0;
+                })
+                .attr('height', function(d,i) {
+                  return Math.max(Math.abs(y(getY(d,i)) - y(0)),0) || 0;
                 });
             });
       }
-
 
       //store old scales for use in transitions on update
       x0 = x.copy();

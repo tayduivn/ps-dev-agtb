@@ -25,7 +25,7 @@ nv.models.pie = function() {
     , color = nv.utils.defaultColor()
     , fill = color
     , classes = function (d,i) { return 'nv-slice nv-series-' + i; }
-    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     ;
 
   //============================================================
@@ -111,6 +111,14 @@ nv.models.pie = function() {
                     point: d.data,
                     index: i,
                     id: id
+                });
+              })
+              .on('mousemove', function(d,i){
+                dispatch.elementMousemove({
+                  point: d,
+                  pointIndex: i,
+                  pos: [d3.event.pageX, d3.event.pageY],
+                  id: id
                 });
               })
               .on('click', function(d,i) {
