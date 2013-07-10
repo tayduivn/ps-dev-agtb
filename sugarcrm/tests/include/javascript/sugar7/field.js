@@ -53,24 +53,12 @@ describe('Sugar7 field extensions', function () {
             reqSpy.restore();
         });
 
-        it("should allow a way to opt-out of calling decorateRequired so Required placeholder only shows up on a submission error", function () {
+        it("should allow a way to opt-out of calling decorateRequired so Required placeholder", function () {
             field = SugarTest.createField("base", "text", "base", "edit", {required: true});
-
-            // Always allow decorate error if it's a submission
-            field.tplName = 'edit';
-            field.def.no_required_placeholder = true;//even though no required placeholder, edit tpl trumps
-            var should = field._shouldRenderRequiredPlaceholder();
-            expect(should).toBeTruthy();
-
-            // All other tpl's will respect no_required_placeholder flag
             field.def.no_required_placeholder = true;
-            field.tplName = 'notedit';
-            should = field._shouldRenderRequiredPlaceholder();
+            var should = field._shouldRenderRequiredPlaceholder();
             expect(should).toBeFalsy();
-
-            // Should render required placeholder for all other tpl's when no_required_placeholder not defined or falsy
             field.def.no_required_placeholder = undefined;
-            field.tplName = 'notedit';
             should = field._shouldRenderRequiredPlaceholder();
             expect(should).toBeTruthy();
         });

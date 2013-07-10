@@ -52,6 +52,11 @@
                 _.defer(function (field) {
                     field._errors = errors;
                     field.setMode('edit');
+                    // As we're now "post form submission", if `no_required_placeholder`, we need to
+                    // manually decorateRequired (as we only omit required on form's initial render)
+                    if (!field._shouldRenderRequiredPlaceholder()) {
+                        field.decorateRequired();
+                    }
                     field.decorateError(errors);
                 }, this);
 
@@ -131,14 +136,15 @@
             },
 
             /**
-             * Helper to determine if we should call decorateError. Primarily for pages like Login
-             * where we don't want to have (Required) in the placeholder
+             * Helper to determine if we should call decorateRequired. Primarily for pages like Login
+             * where we don't want to have (Required) in the placeholder on initial render. This gets
+             * called on `this._render`. Since we DO want required in placeholder "post submission" we
+             * check this again in `this.handleValidationError` and manually add back (Required) if set.
+             *
              * @return {Boolean} Whether we should attempt to render required placeholder or not
              */
             _shouldRenderRequiredPlaceholder: function () {
-                // Even though we might have no_required_placeholder true in meta, we still need to check that
-                // we're not in an edit context as we DO want the (Required) to show for bad form submissions.
-                return this.tplName === 'edit' || !this.def.no_required_placeholder;
+                return !this.def.no_required_placeholder;
             },
 
             /**
