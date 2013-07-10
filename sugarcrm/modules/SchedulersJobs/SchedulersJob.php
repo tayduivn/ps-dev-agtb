@@ -474,7 +474,7 @@ class SchedulersJob extends Basic
      */
     protected function restoreJobUser()
     {
-        if(!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
+        if (!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
             $this->sudo($this->old_user);
         }
     }
@@ -545,7 +545,7 @@ class SchedulersJob extends Basic
                 }
                 $tmpJob->setJob($this);
                 $res = $tmpJob->run($this->data);
-				$this->restoreJobUser();
+                $this->restoreJobUser();
                 if ($this->status == self::JOB_STATUS_RUNNING) {
                     // nobody updated the status yet - job class could do that
                     if ($res) {
@@ -562,7 +562,7 @@ class SchedulersJob extends Basic
                 $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
             }
         } else {
-		    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
+            $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
 		}
 		return false;
     }
