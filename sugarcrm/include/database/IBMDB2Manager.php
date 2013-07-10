@@ -672,6 +672,8 @@ public function convert($string, $type, array $additional_parameters = array())
             $getUserUTCOffset = $GLOBALS['timedate']->getUserUTCOffset();
             $operation = $getUserUTCOffset < 0 ? '-' : '+';
             return $string . ' ' . $operation . ' ' . abs($getUserUTCOffset) . ' minutes';
+        case 'avg':
+            return "avg($string)";
 	}
 
 	return $string;
