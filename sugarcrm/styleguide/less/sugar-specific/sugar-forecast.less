@@ -57,30 +57,51 @@
   }
 }
 
-#guages {
-  margin: 0 0 10px 0;
-  h4 {
-    margin: 0;
-  }
+.forecast-details {
+  margin: 0;
   .row-fluid  {
-    padding: 10px 0 0;
+    padding: 10px;
     border-bottom: 1px solid darken(@grayLighter, 5%);
-    margin: 0 3%;
-    width: 94%;
-    &.column_details {
-      float:left;
-      width: 45%;
+    .box-sizing(border-box);
+    &:not(:last-child) {
+      line-height: 28px;
     }
-    &.column_code {
-      float: left;
-      width: 54%;
+    &.deficitRow {
+      background-color: @grayLighter;
+      font-weight: 600;
+      &.font-green {
+        color: @green;
+      }
+      &.font-red {
+        color: @red;
+      }
     }
-    &.purpose {
-      height: auto;
-      overflow: hidden;
-      padding-bottom: 10px;
-      border-top: 2px solid darken(@grayLighter, 5%);
-      border-bottom: none;
+    &:last-child {
+      background-color: @grayLighter;
+      div[class*="span"] {
+        padding: 0 5px;
+        line-height: 18px;
+        &:first-child {
+          padding-left: 0;
+        }
+        &:last-child {
+          padding-right: 0;
+        }
+        > div:last-child {
+          font-size: @fontSizeSmall;
+          line-height: @fontSizeSmall + 5;
+          padding: 8px;
+          margin-top: 4px;
+          color: @white;
+          .border-radius(3px);
+        }
+      }
+    }
+    .forecast_details_label {
+      font-size: @fontSizeSmall;
+    }
+    .forecast_details_amount {
+      font-size: @fontSizeMedium;
     }
   }
 }
