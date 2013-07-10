@@ -175,8 +175,10 @@
      */
     _rewriteNewWindowLinks: function (frame) {
         var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
+        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname,
+            $links = frame.$('a[target="_blank"]').not('[href^="http"]').not('[href*="entryPoint=download"]');
 
-        frame.$('a[target="_blank"]').not('[href^="http"]').each(function (i, elem) {
+        $links.each(function(i, elem) {
             var $elem = $(elem);
             if ($elem.data('sidecarProcessed')) {
                 return;
