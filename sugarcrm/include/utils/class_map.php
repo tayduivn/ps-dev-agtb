@@ -46,5 +46,6 @@ $class_map = array(
     'ViewFactory' => 'include/MVC/View/ViewFactory.php',
     'BeanFactory' => 'data/BeanFactory.php',
     'Audit' => 'modules/Audit/Audit.php',
+    'Link2' => 'data/Link2.php',
 );
 
