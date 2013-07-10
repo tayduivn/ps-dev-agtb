@@ -6722,7 +6722,6 @@ class SugarBean
             || $expr instanceof MaxRelatedExpression
             || $expr instanceof AverageRelatedExpression
             || $expr instanceof SumRelatedExpression
-            || $expr instanceof CountRelatedExpression
             || $expr instanceof CurrencySumRelatedExpression
         ) {
             /** @var AbstractExpression[] $params */
