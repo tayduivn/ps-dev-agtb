@@ -184,7 +184,8 @@
         ctx.set({
             currentForecastCommitDate: undefined,
             selectedTimePeriod: data.defaultSelections.timeperiod_id.id,
-            selectedRanges: data.defaultSelections.ranges
+            selectedRanges: data.defaultSelections.ranges,
+            initData: data
         }, {silent: true});
 
         ctx.get('model').set({'selectedTimePeriod': data.defaultSelections.timeperiod_id.id}, {silent: true});

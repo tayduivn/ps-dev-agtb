@@ -21,25 +21,64 @@
     className: 'forecasts-chart-wrapper',
 
     /**
+     * Hold the initOptions if we have to call the Forecast/init end point cause we are not on Forecasts
+     */
+    initOptions: null,
+
+    /**
+     * The context of the ForecastManagerWorksheet Module if one exists
+     */
+    forecastManagerWorksheetContext: undefined,
+
+    /**
+     * The context of the ForecastWorksheet Module if one exists
+     */
+    forecastWorksheetContext: undefined,
+
+    /**
+     * Data that is currently in 3d
+     */
+    d3Data: {},
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
         var fieldOptions,
             cfg = app.metadata.getModule('Forecasts', 'config');
-        app.view.View.prototype.initialize.call(this, options);
         this.values.clear({silent: true});
-        app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-            success: _.bind(function(o) {
-                this.values.set({
-                    timeperiod_id: o.defaultSelections.timeperiod_id.id,
-                    timeperiod_label: o.defaultSelections.timeperiod_id.label,
-                    dataset: o.defaultSelections.dataset,
-                    group_by: o.defaultSelections.group_by,
-                    ranges: o.defaultSelections.ranges
-                });
-            }, this),
-            complete: options ? options.complete : null
-        });
+        // after we init, find and bind to the Worksheets Contexts
+        this.on('init', this.findWorksheetContexts, this);
+        if (options.context.parent.get('module') != 'Forecasts') {
+            this.initOptions = options;
+            app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
+                success: _.bind(function(o) {
+                    app.view.View.prototype.initialize.call(this, this.initOptions);
+                    this.values.set({
+                        user_id: this.context.parent.get('selectedUser').id,
+                        display_manager: this.context.parent.get('selectedUser').is_manager,
+                        timeperiod_id: o.defaultSelections.timeperiod_id.id,
+                        timeperiod_label: o.defaultSelections.timeperiod_id.label,
+                        dataset: o.defaultSelections.dataset,
+                        group_by: o.defaultSelections.group_by,
+                        ranges: o.defaultSelections.ranges
+                    });
+                }, this),
+                complete: options ? options.complete : null
+            });
+        } else {
+            app.view.View.prototype.initialize.call(this, options);
+            var ctx = this.context.parent,
+                user = ctx.get('selectedUser');
+            this.values.set({
+                user_id: user.id,
+                display_manager: user.is_manager,
+                ranges: ctx.get('selectedRanges'),
+                timeperiod_id: ctx.get('selectedTimePeriod'),
+                dataset: 'likely',
+                group_by: 'forecast'
+            });
+        }
         fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options);
         this.dashletConfig.dataset.options = {};
 
@@ -55,39 +94,56 @@
             this.dashletConfig.dataset.options['best'] = fieldOptions['best'];
         }
 
+        // after we render the dashlet, fetch and render the chart
+        this.once('render', function() {
+            this.renderChart();
+        }, this);
     },
 
     /**
+     * Loop though the parent context children context to find the worksheet, if they exist
+     */
+    findWorksheetContexts: function() {
+        // loop though the children context looking for the ForecastWorksheet and ForecastManagerWorksheet Modules
+        _.filter(this.context.parent.children, function(item) {
+            if (item.get('module') == 'ForecastWorksheets') {
+                this.forecastWorksheetContext = item;
+                return true;
+            } else if (item.get('module') == 'ForecastManagerWorksheets') {
+                this.forecastManagerWorksheetContext = item;
+                return true;
+            }
+            return false;
+        }, this);
+
+        if (this.forecastWorksheetContext) {
+            // listen for collection change events
+            var collection = this.forecastWorksheetContext.get('collection');
+            collection.on('change', this.repWorksheetChanged, this);
+        }
+
+        if (this.forecastManagerWorksheetContext) {
+            // listen for collection change events
+            var collection = this.forecastManagerWorksheetContext.get('collection');
+            collection.on('change', this.mgrWorksheetChanged, this);
+        }
+    },
+
+    repWorksheetChanged: function(model) {
+
+    },
+
+    mgrWorksheetChanged: function(model) {
+
+    },
+
+    /**
+     * We never want to have the loadData method do anything
+     *
      * {@override}
      */
     loadData: function(options) {
-        if(this.meta.config) {
-            return;
-        }
-
-        this.renderChart();
-    },
-
-    /**
-     * {@inheritdoc}
-     *
-     * @protected
-     */
-    _renderHtml: function(ctx, options) {
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
-
-        this.values.set({
-            user_id: app.user.get('id'),
-            display_manager: app.user.get('isManager')
-        });
-    },
-
-    /**
-     * {@inheritdoc}
-     */
-    _render: function() {
-        app.view.View.prototype._render.call(this);
-        this.toggleRepOptionsVisibility();
+        return;
     },
 
     /**
@@ -117,13 +173,18 @@
      * {@inheritdoc}
      */
     bindDataChange: function() {
-        if(this.meta.config) {
+        if (this.meta.config) {
             return;
         }
+
+        this.on('render', function() {
+            this.toggleRepOptionsVisibility();
+        }, this);
 
         this.context.parent.on('forecasts:worksheet:committed', function() {
             this.renderChart();
         }, this);
+
         this.context.parent.on('forecasts:worksheet:saved', function(totalSaved, worksheet, isDraft) {
             // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
             if (totalSaved > 0 && isDraft == true) {
@@ -163,6 +224,12 @@
         if (ctx) {
             ctx.off(null, null, this);
         }
+        if (this.forecastManagerWorksheetContext) {
+            this.forecastManagerWorksheetContext.get('collection').off(null, null, this);
+        }
+        if (this.forecastWorksheetContext) {
+            this.forecastWorksheetContext.get('collection').off(null, null, this);
+        }
         app.view.View.prototype.unbindData.call(this);
     },
 
@@ -172,107 +239,9 @@
      * @private
      */
     renderChart: function() {
-
         if (this.disposed) {
             return;
         }
-
-        var chart,
-            chartId = 'db620e51-8350-c596-06d1-4f866bfcfd5b',
-            css = {
-                'gridLineColor': '#cccccc',
-                'font-family': 'Arial',
-                'color': '#000000'
-            },
-            chartConfig = {
-                'orientation': 'vertical',
-                'barType': this.values.get('display_manager') ? 'grouped' : 'stacked',
-                'tip': 'name',
-                'chartType': 'd3-barChart',
-                'imageExportType': 'png',
-                'showNodeLabels': false,
-                'showAggregates': false,
-                'saveImageTo': '',
-                'dataPointSize': '5'
-            };
-
-        SUGAR.charts = $.extend(SUGAR.charts,
-            {
-                get: _.bind(function(url, params, success) {
-                    var data = {
-                        r: new Date().getTime()
-                    };
-                    data = $.extend(data, params);
-
-                    url = app.api.buildURL(this.buildChartUrl(params), '', '', data);
-
-                    app.api.call('read', url, data, {
-                        success: _.bind(function(data) {
-                            this.layout.$el.find('h4').html(
-                                this.layout.meta.label + ' ' + data.properties[0].title
-                            );
-                            success(data);
-                        }, this)
-                    });
-                }, this),
-                translateDataToD3: function(json, params) {
-                    return {
-                        'properties': {
-                            'title': json.properties[0].title, 'quota': parseInt(json.values[0].goalmarkervalue[0], 10),
-                            // bar group data (x-axis)
-                            'groupData': (!json.values.filter(function(d) {
-                                return d.values.length;
-                            }).length) ? [] :
-                                json.values.map(function(d, i) {
-                                    return {
-                                        'group': i,
-                                        'l': json.values[i].label,
-                                        't': json.values[i].values.reduce(function(p, c, i, a) {
-                                            return parseInt(p, 10) + parseInt(c, 10);
-                                        })
-                                    };
-                                })
-                        },
-                        // series data
-                        'data': (!json.values.filter(function(d) {
-                            return d.values.length;
-                        }).length) ? [] :
-                            json.label.map(function(d, i) {
-                                return {
-                                    'key': d, 'type': 'bar', 'series': i, 'values': json.values.map(function(e, j) {
-                                        return { 'series': i, 'x': j + 1, 'y': parseInt(e.values[i], 10), y0: 0 };
-                                    }), 'valuesOrig': json.values.map(function(e, j) {
-                                        return { 'series': i, 'x': j + 1, 'y': parseInt(e.values[i], 10), y0: 0 };
-                                    })
-                                };
-                            }).concat(
-                                    json.properties[0].goal_marker_label.filter(function(d, i) {
-                                        return d !== 'Quota';
-                                    }).map(function(d, i) {
-                                            return {
-                                                'key': d,
-                                                'type': 'line',
-                                                'series': i,
-                                                'values': json.values.map(function(e, j) {
-                                                    return {
-                                                        'series': i,
-                                                        'x': j + 1,
-                                                        'y': parseInt(e.goalmarkervalue[i + 1], 10)
-                                                    };
-                                                }), 'valuesOrig': json.values.map(function(e, j) {
-                                                    return {
-                                                        'series': i,
-                                                        'x': j + 1,
-                                                        'y': parseInt(e.goalmarkervalue[i + 1], 10)
-                                                    };
-                                                })
-                                            };
-                                        })
-                                )
-                    };
-                }
-            }
-        );
 
         if (this.values.get('display_manager') === true) {
             this.values.set({ranges: 'include'}, {silent: true});
@@ -281,19 +250,126 @@
         var params = this.values.toJSON() || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
-        params.chartId = chartId;
         params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
-        params.timeperiod_id = this.context.parent.get('selectedTimePeriod');
 
-        chart = new loadSugarChart(
-            chartId,
-            this.buildChartUrl(params),
-            css,
-            chartConfig,
-            params,
-            _.bind(function(chart) {
-                this.chart = chart;
-            }, this));
+        var data = $.extend({
+                r: new Date().getTime()
+            }, params),
+            url = app.api.buildURL(this.buildChartUrl(params), '', '', data);
+
+        app.api.call('read', url, data, {
+            success: _.bind(function(data) {
+                this.layout.$el.find('h4').html(
+                    this.layout.meta.label + ' ' + data.properties[0].title
+                );
+                this.translateDataToD3(data);
+                console.log(this.d3Data);
+                this.generateD3Chart()
+            }, this)
+        });
+    },
+
+    generateD3Chart: function() {
+
+        var params = this.values.toJSON(),
+            chartId = params.chartId || 'db620e51-8350-c596-06d1-4f866bfcfd5b',
+            paretoChart = nv.models.paretoChart()
+            .margin({top: 0, right: 10, bottom: 20, left: 30})
+            .showTitle(false)
+            .tooltips(true)
+            .tooltipLine(function(key, x, y, e, graph) {
+                // Format the value using currency class and user settings
+                var val = App.currency.formatAmountLocale(e.point.y)
+                return '<p>' + key + ': <b>' + val + '</b></p>'
+            })
+            .tooltipBar(function(key, x, y, e, graph) {
+                // Format the value using currency class and user settings
+                var val = App.currency.formatAmountLocale(e.value)
+                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>'
+            })
+            .showControls(false)
+            .colorData('default')
+            .colorFill('default')
+            .stacked(!params.display_manager)
+            .id(chartId);
+
+        d3.select('#' + chartId + ' svg').remove();
+
+        // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
+        // only so we can custom format the Y-Axis values
+        d3.select('#' + chartId)
+            .append('svg')
+            .datum(this.d3Data)
+            .transition().duration(500)
+            .call(paretoChart)
+            .selectAll('.nv-y.nv-axis .tick')
+            .select('text')
+            .text(function(d) {
+                return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
+            });
+
+        nv.utils.windowResize(paretoChart.update);
+    },
+
+    translateDataToD3: function(json) {
+        this.d3Data = {
+            'properties': {
+                'title': json.properties[0].title, 'quota': parseInt(json.values[0].goalmarkervalue[0], 10),
+                // bar group data (x-axis)
+                'groupData': (!json.values.filter(function(d) {
+                    return d.values.length;
+                }).length) ? [] :
+                    json.values.map(function(d, i) {
+                        return {
+                            'group': i,
+                            'l': json.values[i].label,
+                            't': json.values[i].values.reduce(function(p, c, i, a) {
+                                return parseInt(p, 10) + parseInt(c, 10);
+                            }),
+                            'start': json.values[i].start_timestamp,
+                            'end': json.values[i].end_timestamp
+                        };
+                    })
+            },
+            // series data
+            'data': (!json.values.filter(function(d) {
+                return d.values.length;
+            }).length) ? [] :
+                json.label.map(function(d, i) {
+                    return {
+                        'key': d, 'type': 'bar', 'series': i, 'values': json.values.map(function(e, j) {
+                            return { 'series': i, 'x': j + 1, 'y': parseInt(e.values[i], 10), y0: 0 };
+                        }), 'valuesOrig': json.values.map(function(e, j) {
+                            return { 'series': i, 'x': j + 1, 'y': parseInt(e.values[i], 10), y0: 0 };
+                        })
+                    };
+                }).concat(
+                        json.properties[0].goal_marker_label.filter(function(d, i) {
+                            return d !== 'Quota';
+                        }).map(function(d, i) {
+                                return {
+                                    'key': d,
+                                    'type': 'line',
+                                    'series': i,
+                                    'values': json.values.map(function(e, j) {
+                                        return {
+                                            'series': i,
+                                            'x': j + 1,
+                                            'y': parseInt(e.goalmarkervalue[i + 1], 10)
+                                        };
+                                    }), 'valuesOrig': json.values.map(function(e, j) {
+                                        return {
+                                            'series': i,
+                                            'x': j + 1,
+                                            'y': parseInt(e.goalmarkervalue[i + 1], 10)
+                                        };
+                                    })
+                                };
+                            })
+                    )
+        };
     },
 
     /**

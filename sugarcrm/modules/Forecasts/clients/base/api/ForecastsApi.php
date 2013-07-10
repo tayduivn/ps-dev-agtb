@@ -105,23 +105,27 @@ class ForecastsApi extends SugarApi
         $returnInitData["initData"]["userData"]['first_name'] = $current_user->first_name;
         $returnInitData["initData"]["userData"]['last_name'] = $current_user->last_name;
 
+        // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+        $admin = BeanFactory::getBean("Administration");
+        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+
         // TODO: These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
-        $id = TimePeriod::getCurrentId();
-        if(!empty($id)) {
-            $timePeriod = new TimePeriod();
-            $timePeriod->retrieve($id);
+        $tp = TimePeriod::getCurrentTimePeriod($forecastsSettings['timeperiod_leaf_interval']);
+        if (!empty($tp->id)) {
             $defaultSelections["timeperiod_id"] = array(
-                'id' => $id,
-                'label' => $timePeriod->name
+                'id' => $tp->id,
+                'label' => $tp->name
             );
+
+            $defaultSelections['timeperiod_chart_x_axis'] = $tp->getChartLabels(array());
+
+            /* @var $quota Quota */
+            $quota = BeanFactory::getBean('Quotas');
+            $returnInitData['initData']['userData']['quota'] = $quota->getRollupQuota($tp->id, $current_user->id);
         } else {
             $defaultSelections["timeperiod_id"]["id"] = '';
             $defaultSelections["timeperiod_id"]["label"] = '';
         }
-
-        // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        $admin = BeanFactory::getBean("Administration");
-        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
 
         $returnInitData["initData"]['forecasts_setup'] = (isset($forecastsSettings['is_setup'])) ? $forecastsSettings['is_setup'] : 0;
 
@@ -138,18 +142,20 @@ class ForecastsApi extends SugarApi
     /**
      * Retrieves user data for a given user id
      *
-     * @param $api
-     * @param $args
+     * @param ServiceBase $api
+     * @param array $args
      * @return array
      */
-    public function retrieveSelectedUser($api, $args) {
+    public function retrieveSelectedUser(ServiceBase $api, $args)
+    {
         global $locale;
         $uid = $args['user_id'];
+        /* @var $user User */
         $user = BeanFactory::getBean('Users', $uid);
         $data = array();
         $data['id'] = $user->id;
         $data['user_name'] = $user->user_name;
-        $data['full_name'] = $locale->getLocaleFormattedName($user->first_name,$user->last_name);
+        $data['full_name'] = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
         $data['first_name'] = $user->first_name;
         $data['last_name'] = $user->last_name;
         $data['isManager'] = User::isManager($user->id);
