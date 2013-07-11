@@ -1,4 +1,4 @@
-<a class="rowaction" href="{{#if full_route}}#{{full_route}}{{else}}{{#if def.route}}#{{buildRoute context model def.route.action def.route.options}}{{else}}javascript:void(0);{{/if}}{{/if}}"
+<a class="rowaction" href="{{#if fullRoute}}#{{fullRoute}}{{else}}{{#if def.route}}#{{buildRoute context=context model=model action=def.route.action}}{{else}}javascript:void(0);{{/if}}{{/if}}"
 {{#if def.event}}
    data-event="{{def.event}}"
 {{/if}}

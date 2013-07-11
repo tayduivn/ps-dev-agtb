@@ -49,7 +49,7 @@
                                 <img src="{{this.attributes.picture_url}}" alt="{{this.attributes.assigned_user_name}} avatar">
                             </a>
                         {{#eq this.module "Calls"}}
-                        <a href="#{{modelRoute this}}"><span class="label {{this.attributes.labelType}}">{{this.attributes.status}}</span></a>
+                        <a href="#{{buildRoute model=this}}"><span class="label {{this.attributes.labelType}}">{{this.attributes.status}}</span></a>
                             {{{str "TPL_CALL_WITH" "" this}}} {{{str "TPL_INTERACTION_PARENT_OBJECT" "" this}}} {{{str "TPL_FOR_DURATION" null this}}}
                         {{/eq}}
                         {{#eq this.module "Emails"}}

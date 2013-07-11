@@ -94,8 +94,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'quote_name',
                     'label' => 'LBL_ASSOCIATED_QUOTE',
                     'related_fields' => array('quote_id'),
-                    // this is a hack to get the quote_id field loaded
-                    'bwcLink' => true,
                 ),
                 array(
                     'name' => 'opportunity_name',

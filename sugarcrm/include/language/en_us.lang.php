@@ -3999,7 +3999,7 @@ $app_strings = array (
         . '{{this.attributes.assigned_user_name}}</a>',
     'TPL_INTERACTION_PARENT_OBJECT' => '<a href="#{{this.attributes.parent_type}}/{{this.attributes.parent_id}}">'
         . '{{this.attributes.parent_name}}</a>',
-    'TPL_INTERACTION_OBJECT' => '<a href="#{{modelRoute this}}">{{this.attributes.name}}</a>',
+    'TPL_INTERACTION_OBJECT' => '<a href="#{{buildRoute model=this}}">{{this.attributes.name}}</a>',
     'TPL_ADDED_INTERACTION' =>  'Added '
             . '{{{str "TPL_INTERACTION_OBJECT" "" this}}} to {{{str "TPL_INTERACTION_PARENT_OBJECT" "" this}}}',
 

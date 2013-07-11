@@ -11,8 +11,8 @@
                 </a>
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
-                    <li class="profileactions-profile"><a href="{{profileUrl}}">{{str "LBL_PROFILE"}}</a></li>
-                    <li class="profileactions-employees"><a href="{{employeesUrl}}">{{str "LBL_EMPLOYEES"}}</a></li>
+                    <li class="profileactions-profile"><a href="#{{buildRoute module='Users' action='detail' id=userId}}">{{str "LBL_PROFILE"}}</a></li>
+                    <li class="profileactions-employees"><a href="#{{buildRoute module='Employees'}}">{{str "LBL_EMPLOYEES"}}</a></li>
                     {{#if showAdmin}}
                     <li class="administration"><a href="#Administration">{{str "LBL_ADMIN"}}</a></li>
                     {{/if}}

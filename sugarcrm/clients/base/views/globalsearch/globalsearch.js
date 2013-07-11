@@ -194,15 +194,13 @@
                     if (!record.id) {
                         return; // Elastic Search may return records without id and record names.
                     }
-                    var formattedRecord = {id:record.id,name:record.name,module:record._module},
-                        meta = app.metadata.getModule(record._module);
+                    var formattedRecord = {
+                        id: record.id,
+                        name: record.name,
+                        module: record.module,
+                        link: '#' + app.router.buildRoute(record.module, record.id, 'detail')
+                    };
 
-                    if (meta && meta.isBwcEnabled) {
-                        formattedRecord.link = '#' + app.bwc.buildRoute(record._module, record.id, 'DetailView');
-                    }
-                    else {
-                        formattedRecord.link = '#' + app.router.buildRoute(record._module, record.id);
-                    }
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {
                             if (key !== 'name') { // found in a related field

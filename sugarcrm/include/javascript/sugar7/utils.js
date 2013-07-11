@@ -464,6 +464,44 @@
             },
             isTouchDevice: function() {
                 return Modernizr.touch;
+            },
+
+            /**
+             * Builds a route for module in either bwc or new sidecar.
+             *
+             * This overrides the normal router to check first if the module
+             * is in BWC or not. If not, this will fallback to default
+             * {@link Core.Routing#buildRoute}.
+             *
+             * {@inheritDoc}
+             * @param {Boolean} inBwc If `true` it will force bwc, if `false`
+             * it will force sidecar, if not defined, will use metadata
+             * information on module. This is a temporary param (hack) and will
+             * be removed after we change all the views/layouts to be the ones
+             * pointing if it should be loaded in BWC or not.
+             *
+             * @override Core.Routing#buildRoute
+             * @see Bwc#buildRoute()
+             */
+            customBuildRoute: function(moduleOrContext, id, action, inBwc) {
+                var module, moduleMeta;
+
+                if (_.isString(moduleOrContext)) {
+                    module = moduleOrContext;
+                } else {
+                    module = moduleOrContext.get('module');
+                }
+
+                if (_.isEmpty(module) || !app.bwc) {
+                    return '';
+                }
+
+                moduleMeta = app.metadata.getModule(module) || {};
+                if (inBwc === false || (_.isUndefined(inBwc) && !moduleMeta.isBwcEnabled)) {
+                    return '';
+                }
+
+                return app.bwc.buildRoute(module, id, app.bwc.getAction(action));
             }
         });
     });

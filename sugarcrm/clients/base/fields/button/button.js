@@ -51,7 +51,7 @@
         });
     },
     _render:function(){
-        this.full_route = _.isString(this.def.route) ? this.def.route : null;
+        this.fullRoute = _.isString(this.def.route) ? this.def.route : null;
 
         app.view.Field.prototype._render.call(this);
     },

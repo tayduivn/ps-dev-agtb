@@ -38,7 +38,7 @@
             //Show alerts for this request
             showAlerts: true,
             success: _.bind(function(model) {
-                model.set("_module", data.module);
+                model.module = data.module;
                 app.events.trigger("preview:render", model, this.associatedModels);
             }, this)
         });

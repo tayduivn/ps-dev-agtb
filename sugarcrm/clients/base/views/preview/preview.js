@@ -294,7 +294,7 @@
                     //Show alerts for this request
                     showAlerts: true,
                     success: function(model) {
-                        model.set("_module", currModule);
+                        model.module = currModule;
                         self.model = null;
                         //Reset the preview
                         app.events.trigger("preview:render", model, null, false);
