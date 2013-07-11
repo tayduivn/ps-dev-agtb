@@ -63,6 +63,6 @@ class PHPMailerProxy extends PHPMailer
         parent::SetError($msg);
 
         $class = get_class($this);
-        $GLOBALS["log"]->fatal("{$class} encountered an error: {$this->ErrorInfo}");
+        $GLOBALS["log"]->error("{$class} encountered an error: {$this->ErrorInfo}");
     }
 }
