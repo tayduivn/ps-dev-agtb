@@ -3383,6 +3383,7 @@ $app_strings = array (
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
   'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to properly configure Twitter',
   'LBL_MERGE_CONNECTORS' => 'Get Data',
+  'LBL_NO_DATA_AVAILABLE' => 'No data available.',
   'LBL_MERGE_CONNECTORS_BUTTON_KEY' => '[D]',
   'LBL_REMOVE_MODULE_ENTRY' => 'Are you sure you want to disable connector integration for this module?',
 

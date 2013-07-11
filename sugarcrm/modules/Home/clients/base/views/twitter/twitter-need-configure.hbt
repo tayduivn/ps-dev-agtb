@@ -1,3 +1,4 @@
+<div class="block-footer">
 {{#if needConnect}}
     <a target='blank' href='index.php?module=EAPM&refreshParentWindow=yesPlease&closeWhenDone=1&action=QuickSave&application=Twitter'>
         {{str 'LBL_CONNECT_TWITTER'}}
@@ -5,3 +6,4 @@
 {{else}}
     {{str 'LBL_CONFIGURE_TWITTER'}}
 {{/if}}
+</div>

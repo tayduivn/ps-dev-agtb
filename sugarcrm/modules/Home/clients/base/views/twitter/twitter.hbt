@@ -51,4 +51,6 @@
             </div>
         {{/each}}
     </div>
+{{else}}
+    <div class="block-footer">{{str "LBL_NO_DATA_AVAILABLE"}}</div>
 {{/if}}
