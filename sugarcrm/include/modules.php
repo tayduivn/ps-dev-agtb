@@ -44,11 +44,13 @@ $moduleList[] = 'ProspectLists';
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
-$moduleList[] = 'RevenueLineItems';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
 $moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+$moduleList[] = 'RevenueLineItems';
+//END SUGARCRM flav=ent ONLY
 
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
@@ -355,7 +357,10 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'ACLActions', 'ACLRoles',
     'DocumentRevisions',
     'ProjectTask',
-    'Empty', 'UserSignature'
+    'Empty', 'UserSignature',
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    'RevenueLineItems'
+    //END SUGARCRM flav=pro && flav!=ent ONLY
     );
 $adminOnlyList = array(
                     //module => list of actions  (all says all actions are admin only)
