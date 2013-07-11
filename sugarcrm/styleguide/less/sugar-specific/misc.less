@@ -29,10 +29,9 @@ ul.list {
 .more, .less {
     border: none !important;
   &.padded {
-    padding: 8px 20px;
+    padding: 8px 6px;
     display: inline-block;
   }
-  //color: @linkMore;
   &:hover {
     .box-shadow(none);
     color: @linkMore;
@@ -47,8 +46,6 @@ ul.list {
     text-decoration: none;
   }
 }
-
-//from nutmeg. to be removed??
 
 .drag:hover {
   cursor: move;
@@ -222,68 +219,7 @@ hr.soften {
 }
 
 .filter.controls {margin-left: 0 !important;}
-.subpanel {
-    #gradient > .vertical(lighten(@grayLighter, 3%), @grayLighter);
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    border-top: 1px solid @white;
 
-}
-.subpanel.out {
-  background: @white;
-}
-.subpanel.out .subpanel-list {
-  display: none;
-}
-
-.subpanel.out i.icon-chevron-down::before {
-  content: "\f077";
-}
-
-.subpanel-header {
-  border-bottom: 1px solid #eee;
-  height: 44px;
-  display: block;
-  cursor: pointer;
-}
-
-.subpanel-header:hover {
-  #gradient > .vertical(lighten(@grayLighter, 3%), darken(@grayLighter, 3%));
-}
-.subpanel-header h4 {
-  line-height: 26px;
-  font-weight: normal;
-}
-
-.subpanel-header .label-module-sm {
-  width: 26px;
-  height: 26px;
-  margin: 7px 10px;
-}
-
-.subpanel-header a.btn {
-  width: 28px;
-  .box-sizing(border-box);
-}
-
-.subpanel-header .btn-toolbar > .btn-group {
-  margin-left: 16px;
-  margin-right: 10px;
-}
-
-.subpanel tbody {
-  border-bottom: 1px solid #ddd;
-}
-.subpanel .more{
-  height: 32px;
-}
-
-.subpanel .list-view {
-  overflow: visible;
-}
-
-.subpanel-controls {
-    margin-top: 7px;
-}
 
 /* BWC layout and views */
 .bwc-frame {
