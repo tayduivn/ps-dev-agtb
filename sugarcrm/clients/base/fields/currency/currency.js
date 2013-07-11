@@ -54,6 +54,7 @@
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width','8px');
             this.getCurrencyField().render();
+            this.getCurrencyField().setDisabled(false);
             return this;
         }
         return this;
@@ -188,4 +189,4 @@
 
         this.getCurrencyField().setDisabled(disable);
     }
-})
+});
