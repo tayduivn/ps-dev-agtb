@@ -189,4 +189,4 @@
 
         this.getCurrencyField().setDisabled(disable);
     }
-});
+})
