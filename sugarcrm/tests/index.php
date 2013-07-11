@@ -33,8 +33,8 @@ if (file_exists('../config.js')) {
 }
 ?>
     <script type="text/javascript" src="../include/javascript/jquery/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="../styleguide/assets/js/bootstrap-collapse.js"></script>
-    <script type="text/javascript" src="../styleguide/assets/js/bootstrap-dropdown.js"></script>
+    <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-collapse.js"></script>
+    <script type="text/javascript" src="../include/javascript/twitterbootstrap/bootstrap-dropdown.js"></script>
     <script type="text/javascript" src="../include/javascript/select2-release-3.3.2/select2.js"></script>
 
     <!-- jasmine and sinon core files -->
@@ -57,6 +57,9 @@ if (file_exists('../config.js')) {
 
     <!-- Portal extensions -->
     <script type="text/javascript" src='../portal2/user.js'></script>
+
+    <!-- If we are emulating what the real app will see, we need to include our hacks -->
+    <script type="text/javascript" src='../include/javascript/sugar7/hacks.js'></script>
 
     <!-- Begin test files -->
 <?php
