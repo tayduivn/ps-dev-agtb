@@ -212,7 +212,8 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider lotsOData
      */
-    public function testHtmlEntityDecode($array, $expected, $message) {
+    public function testHtmlEntityDecode($array, $expected, $message)
+    {
         $this->mock->htmlEntityDecodeStuff($array);
         $this->assertSame($array, $expected, $message);
     }
@@ -220,11 +221,20 @@ class SugarApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function lotsOData()
     {
         return array(
-                array(array("bool" => true), array("bool"=>true), "True came out wrong"),
-                array(array("bool" => false), array("bool"=>false), "False came out wrong"),
-                array(array("string" => 'Test'), array("string"=>'Test'), "String came out wrong"),
-                array(array("html" => htmlentities("I'll \"walk\" the <b>dog</b> now")), array("html"=>"I'll \"walk\" the <b>dog</b> now"), "HTML came out wrong"),
-            );
+            array(array("bool" => true), array("bool" => true), "True came out wrong"),
+            array(array("bool" => false), array("bool" => false), "False came out wrong"),
+            array(array("string" => 'Test'), array("string" => 'Test'), "String came out wrong"),
+            array(
+                array("html" => htmlentities("I'll \"walk\" the <b>dog</b> now")),
+                array("html" => "I'll \"walk\" the <b>dog</b> now"),
+                "HTML came out wrong"
+            ),
+            array(
+                array("html" => array("nested_result" => array("data" => "def &lt; abc &gt; xyz"))),
+                array("html" => array("nested_result" => array("data" => "def < abc > xyz"))),
+                "HTML came out wrong"
+            ),
+        );
     }
 }
 

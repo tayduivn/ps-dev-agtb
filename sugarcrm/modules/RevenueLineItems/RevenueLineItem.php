@@ -337,6 +337,7 @@ class RevenueLineItem extends SugarBean
             $this->weight = $pt->weight;
         }
     }
+    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * {@inheritdoc}
      */
@@ -348,6 +349,7 @@ class RevenueLineItem extends SugarBean
         }
         return false;
     }
+    //END SUGARCRM flav=ent ONLY
 
     /**
      * {@inheritdoc}
