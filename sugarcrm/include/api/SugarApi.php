@@ -121,6 +121,7 @@ abstract class SugarApi {
         foreach($data AS $key => $value) {
             if((is_object($value) || is_array($value)) && !empty($value)) {
                 $this->htmlDecodeReturn($value);
+                $data[$key] = $value;
             }
             // htmldecode screws up bools..returns '1' for true
             elseif(!is_bool($value) && (!empty($data) && !empty($value))) {

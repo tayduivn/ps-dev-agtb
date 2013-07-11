@@ -126,6 +126,10 @@ class ActivitiesApi extends FilterApi
         foreach ($response['records'] as &$record) {
             $record['comment_count'] = (int)$record['comment_count'];
             $record['data'] = json_decode($record['data'], true);
+            // Decode Json Data which may contain encoded HTML Special Characters
+            if (!empty($record['data']['value'])) {
+                $record['data']['value'] = htmlspecialchars_decode($record['data']['value'], ENT_QUOTES);
+            }
             $record['last_comment'] = json_decode($record['last_comment'], true);
             $date_modified = $timedate->fromDbType($record['date_modified'], 'datetime');
             $record['date_modified'] = $timedate->asIso($date_modified);
