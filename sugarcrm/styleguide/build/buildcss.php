@@ -11,7 +11,7 @@ try {
     $root = $_GET["variables"];
     $variablesLess = file_get_contents($root . 'variables.less');
     $variables = getCustomThemeVars($variablesLess);
-    $variables['baseUrl'] = '"../../assets"';
+    $variables['baseUrl'] = '".."';
     $split_css = (isset($_GET["split_css"]) && $_GET["split_css"]=="true");
     $files = array();
 
@@ -19,24 +19,24 @@ try {
         // Build bootstrap.css and sugar.css.
         $files[] = array(
             'in' => '../less/clients/' . $client . '/bootstrap.less',
-            'out' => '../styleguide/css/bootstrap.css',
+            'out' => '../assets/css/bootstrap.css',
         );
         $files[] = array(
             'in' => '../less/clients/' . $client . '/sugar.less',
-            'out' => '../styleguide/css/sugar.css',
+            'out' => '../assets/css/sugar.css',
         );
     } else {
         // Build bootstrap.css.
         $files[] = array(
             'in' => '../less/clients/' . $client . '/config.less',
-            'out' => '../styleguide/css/bootstrap.css',
+            'out' => '../assets/css/bootstrap.css',
         );
     }
 
     // Build bootstrap-mobile.css.
     $files[] = array(
         'in' => '../less/clients/mobile/config.less',
-        'out' => '../styleguide/css/bootstrap-mobile.css',
+        'out' => '../assets/css/bootstrap-mobile.css',
     );
 
     // Build utility CSS files.
@@ -47,7 +47,7 @@ try {
         if ( substr_count($module,'.less') ) {
             $files[] = array(
                     'in' => $modulesRoot . '/' . $module,
-                    'out' => '../styleguide/css/' . str_replace('.less', '.css', $module),
+                    'out' => '../assets/css/' . str_replace('.less', '.css', $module),
             );
         }
     }
