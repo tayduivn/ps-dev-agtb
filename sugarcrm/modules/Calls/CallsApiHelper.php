@@ -40,34 +40,32 @@ class CallsApiHelper extends SugarBeanApiHelper
         $userInvitees = array();
 
         $userInvitees[] = $bean->assigned_user_id;
-        if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
+        if ($bean->assigned_user_id != $GLOBALS['current_user']->id) {
             $userInvitees[] = $GLOBALS['current_user']->id;
-        }            
+        }
 
         // add current userInvitees to this list as well so they don't get removed
         $users = $bean->get_linked_beans('users', 'User');
-        foreach($users AS $user) {
-            if(!in_array($user->id, $userInvitees)) {
+        foreach ($users as $user) {
+            if (!in_array($user->id, $userInvitees)) {
                 $userInvitees[] = $user->id;
             }
         }
 
-        $leads = $bean->get_linked_beans('leads', 'Lead');
-        foreach($leads AS $lead) {
-            $leadInvitees[] = $lead->id;
+        if ($bean->load_relationship('leads')) {
+            $leadInvitees = $bean->leads->get();
         }
 
-        $contacts = $bean->get_linked_beans('contacts', 'Contact');
-        foreach($contacts AS $contact) {
-            $contactInvitees[] = $contact->id;
+        if ($bean->load_relationship('contacts')) {
+            $contactInvitees = $bean->contacts->get();
         }
 
-        $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
+        $bean->update_vcal = false; // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
 
         $bean->users_arr = $userInvitees;
         $bean->leads_arr = $leadInvitees;
         $bean->contacts_arr = $contactInvitees;
-        
+
         return $data;
     }
 
