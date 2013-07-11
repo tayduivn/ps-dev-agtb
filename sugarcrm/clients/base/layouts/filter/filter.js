@@ -25,7 +25,7 @@
         this.emptyFilter = app.data.createBean('Filters', {
             id: 'all_records',
             name: app.lang.get('LBL_FILTER_ALL_RECORDS'),
-            filter_definition: {},
+            filter_definition: [],
             editable: false
         });
 
@@ -166,7 +166,6 @@
         var filter = this.filters.get(id) || this.emptyFilter,
             ctxList = this.getRelevantContextList();
 
-
         _.each(ctxList, function(ctx) {
             ctx.get('collection').origFilterDef = filter.get('filter_definition');
             ctx.get('collection').resetPagination();
@@ -182,7 +181,6 @@
     applyFilter: function(query, dynamicFilterDef) {
         var self = this,
             ctxList = this.getRelevantContextList();
-
         _.each(ctxList, function(ctx) {
             var ctxCollection = ctx.get('collection'),
                 origFilterDef = dynamicFilterDef || ctxCollection.origFilterDef || [],
