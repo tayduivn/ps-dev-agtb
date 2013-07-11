@@ -24,7 +24,7 @@
         return {
             success: _.bind(function() {
                 if (_.isFunction(origSuccess)) {
-                    origSuccess();
+                    origSuccess.apply(this, arguments);
                 }
 
                 if (!_.isEmpty(this.model.get('quote_id'))) {
