@@ -97,7 +97,7 @@
                     showAlerts: true,
                     relate: true,
                     success: function (model) {
-                        app.drawer.close(self.context, model);
+                        app.drawer.closeImmediately(self.context, model);
                     },
                     error: function (error) {
                         app.alert.show('server-error', {
@@ -133,7 +133,7 @@
             if (!model) {
                 return;
             }
-            app.drawer.close(context, model);
+            app.drawer.closeImmediately(context, model);
         });
     },
     cancelClicked: function () {
