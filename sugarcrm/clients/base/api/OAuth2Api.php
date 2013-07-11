@@ -36,6 +36,7 @@ class OAuth2Api extends SugarApi
                 'longHelp' => 'include/api/help/oauth2_token_post_help.html',
                 'noLoginRequired' => true,
                 'keepSession' => true,
+                'ignoreMetaHash' => true,
             ),
             'oauth_logout' => array(
                 'reqType' => 'POST',
@@ -45,6 +46,7 @@ class OAuth2Api extends SugarApi
                 'shortHelp' => 'OAuth2 logout.',
                 'longHelp' => 'include/api/help/oauth2_logout_post_help.html',
                 'keepSession' => true,
+                'ignoreMetaHash' => true,
             ),
             'oauth_bwc_login' => array(
                 'reqType' => 'POST',
@@ -54,6 +56,7 @@ class OAuth2Api extends SugarApi
                 'shortHelp' => 'Bwc login for bwc modules. Internal usage only.',
                 'longHelp' => 'include/api/help/oauth2_bwc_login_post_help.html',
                 'keepSession' => true,
+                'ignoreMetaHash' => true,
             ),
             'oauth_sudo' => array(
                 'reqType' => 'POST',
@@ -62,6 +65,7 @@ class OAuth2Api extends SugarApi
                 'method' => 'sudo',
                 'shortHelp' => 'Get an access token for another user',
                 'longHelp' => 'include/api/help/oauth2_sudo_post_help.html',
+                'ignoreMetaHash' => true,
             ),
         );
     }
