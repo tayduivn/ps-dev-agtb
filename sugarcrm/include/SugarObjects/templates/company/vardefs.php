@@ -355,23 +355,38 @@ $vardefs= array (
     'comment' => 'The country used for the shipping address',
     'merge_filter' => 'enabled',
   ),
-  
-  
-'email1' => array(
-	'name'		=> 'email1',
-	'vname'		=> 'LBL_EMAIL',
-	'group'=>'email1',
-	'type'		=> 'varchar',
-	'function'	=> array(
-	'name'		=> 'getEmailAddressWidget',
-	   'returns'	=> 'html'
+
+//Bug 62521
+'email'=>
+  array(
+    'name' => 'email',
+    'type' => 'email',
+    'query_type' => 'default',
+    'source' => 'non-db',
+    'operator' => 'subquery',
+    'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address LIKE',
+    'db_field' => array(
+        'id',
     ),
-	'source'	=> 'non-db',
-    'studio' => array('editField' => true, 'searchview' => false),
-    'full_text_search' => array('boost' => 3, 'index' => 'not_analyzed'), //bug 54567
+    'vname' =>'LBL_ANY_EMAIL',
+    'studio' => array('visible'=>false, 'searchview'=>true),
+),
+'email1' =>
+  array(
+    'name'    => 'email1',
+    'vname'   => 'LBL_EMAIL_ADDRESS',
+    'type'    => 'varchar',
+    'function'  => array(
+        'name'    => 'getEmailAddressWidget',
+        'returns' => 'html'),
+    'source'  => 'non-db',
+    'group'=>'email1',
+    'merge_filter' => 'enabled',
+    'studio' => array('editview' => true, 'editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
+    'full_text_search' => array('boost' => 3, 'index' => 'whitespace'), //bug 54567
     'duplicate_on_record_copy' => 'always',
-), 
-  
+),
+
   'email_addresses_primary' => 
   array (
     'name' => 'email_addresses_primary',
