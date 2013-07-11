@@ -62,7 +62,7 @@
     jQuery.noConflict();
 </script>
 <script src='include/javascript/sugarAuthStore.js'></script>
-<script src='styleguide/assets/js/bootstrap-colorpicker.js'></script>
+<script src='include/javascript/twitterbootstrap/bootstrap-colorpicker.js'></script>
 <script src='include/javascript/select2-release-3.3.2/select2.js'></script>
 {* //END SUGARCRM flav=ent ONLY *}
 
