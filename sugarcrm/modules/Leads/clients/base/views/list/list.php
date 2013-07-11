@@ -48,7 +48,6 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                         )
                     ),
                     'css_class' => 'full-name',
-                    'width' => '10%',
                     'label' => 'LBL_LIST_NAME',
                     'orderBy' => 'last_name',
                     'enabled' => true,
@@ -56,14 +55,12 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                 ),
                 array (
                     'name' => 'status',
-                    'width' => '7%',
                     'label' => 'LBL_LIST_STATUS',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array (
                     'name' => 'account_name',
-                    'width' => '15%',
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'enabled' => true,
                     'default' => true,
@@ -75,14 +72,12 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                 ),
                 array (
                     'name'  => 'phone_work',
-                    'width' => '15%',
                     'label' => 'LBL_LIST_PHONE',
                     'enabled' => true,
                     'default' => true,
                 ),
                 array (
                     'name'  => 'email',
-                    'width' => '16%',
                     'label' => 'LBL_LIST_EMAIL_ADDRESS',
                     'sortable' => false,
                     'enabled' => true,
@@ -90,7 +85,6 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                 ),
                 array (
                     'name'  => 'assigned_user_name',
-                    'width' => '5%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'enabled' => true,
                     'default' => true,
@@ -98,7 +92,6 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                 ),
                 array (
                     'name'  => 'date_entered',
-                    'width' => '10%',
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,

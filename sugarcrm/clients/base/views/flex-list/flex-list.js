@@ -21,6 +21,8 @@
     className: 'flex-list-view',
     // Model being previewed (if any)
     _previewed: null,
+    displayFirstNColumns: null,
+
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'view', name: 'list', method: 'initialize', args: [options]});
         this.template = app.template.getView('flex-list');
@@ -39,7 +41,9 @@
 
         this.addPreviewEvents();
 
-        $(window).on("resize.flexlist-" + this.cid, _.bind(this.resize, this));
+        //add debounce in initialize so that subclasses will not all use the same prototype function
+        this.resize = _.bind(_.debounce(this.resize, 300), this);
+        this.bindResize();
     },
     addPreviewEvents: function () {
         //When clicking on eye icon, we need to trigger preview:render with model&collection
@@ -80,6 +84,10 @@
         // no prefs so use viewMeta as default and assign hidden fields
         _.each(this.meta.panels, function (panel) {
             _.each(panel.fields, function (fieldMeta, i) {
+                if (_.isNumber(this.displayFirstNColumns)) {
+                    fieldMeta['default'] = (i < this.displayFirstNColumns);
+                    panel.fields[i] = fieldMeta;
+                }
                 if (fieldMeta['default'] === false) {
                     catalog.available.push(fieldMeta);
                 } else {
@@ -215,24 +223,27 @@
         if (this.rightColumns.length) {
             this.$el.addClass('right-actions');
         }
+
+        this.resize();
     },
     unbind: function() {
         $(window).off("resize.flexlist-" + this.cid);
         app.view.invokeParent(this, {type: 'view', name: 'list', method: 'unbind'});
     },
 
+    bindResize: function() {
+        $(window).on("resize.flexlist-" + this.cid, _.bind(this.resize, this));
+    },
     /**
      * Updates the class of this flex list as scrollable or not.
-     *
-     * Runs debunced to postpone the execution when the window is resized.
      */
-    resize: _.debounce(function() {
+    resize: function() {
         var $content = this.$('.flex-list-view-content');
         if (!$content.length) {
             return;
         }
-        var toggle = $content.get(0).scrollWidth > $content.width();
+        var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
-    }, 300)
+    }
 
 })

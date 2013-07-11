@@ -27,5 +27,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $viewdefs['base']['view']['dupecheck-list'] = array(
-    'template' => 'list'
+    'template' => 'list',
+    'rowactions' => array(
+        'actions' => array(
+            array(
+                'type' => 'rowaction',
+                'css_class' => 'btn',
+                'tooltip' => 'LBL_PREVIEW',
+                'event' => 'list:preview:fire',
+                'icon' => 'icon-eye-open',
+                'acl_action' => 'view',
+            ),
+        ),
+    ),
 );
+

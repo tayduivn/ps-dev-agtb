@@ -12,10 +12,10 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['ForecastManagerWorksheets']['base']['view']['recordlist'] = array(
+    'css_class' => 'forecast-manager-worksheet',
     'favorite' => false,
     'selection' => array(),
     'rowactions' => array(
-        'css_class' => 'pull-right',
         'actions' => array(
             /*array(
                 'type' => 'rowaction',

@@ -37,21 +37,6 @@
     },
 
     /**
-     * Display only the first N number of columns defined by displayFirstNColumns variable.
-     *
-     * @returns {Object}
-     */
-    parseFields: function () {
-        _.each(this.meta.panels, function(panel) {
-            _.each(panel.fields, function(field, index) {
-                panel.fields[index].default = (index < this.displayFirstNColumns);
-            }, this);
-        }, this);
-
-        return app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'parseFields'});
-    },
-    
-    /**
      * Selected from list. Close the drawer.
      *
      * @param context

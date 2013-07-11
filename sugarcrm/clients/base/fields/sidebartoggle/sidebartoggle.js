@@ -41,6 +41,9 @@
     // If toggled from a user clicking on anchor simply trigger toggleSidebar
     toggle: function() {
         this.context.trigger('toggleSidebar');
+        //toggling sidebar can affect the width of content in the same way as a window resize
+        //notify of a window resize so that any content listening for a resize can react in the same way for this sidebar toggle
+        $(window).trigger('resize');
     },
     _dispose: function () {
         app.view.invokeParent(this, {type: 'field', name: 'button', method: '_dispose'});

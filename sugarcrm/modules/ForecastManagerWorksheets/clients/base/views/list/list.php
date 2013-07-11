@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
+    'css_class' => 'forecast-manager-worksheet',
     'panels' =>
     array(
         0 =>
