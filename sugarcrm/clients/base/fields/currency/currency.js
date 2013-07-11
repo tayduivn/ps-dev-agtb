@@ -27,7 +27,9 @@
 ({
 
     'events': {
-        'click': 'updateCss'
+        'click': 'updateCss',
+        'focus input.input-large': 'handleInputFocus',
+        'blur input.input-large': 'handleInputBlur'
     },
     transactionValue: '',
     _currencyField: null,
@@ -72,6 +74,24 @@
             // manually force a change on the base rate in the model when the currency changes
             this.model.set(baseRateField, app.metadata.getCurrency(value).conversion_rate);
         }, this);
+    },
+
+    /**
+     * disable currency dropdown when input is focused
+     *
+     * @param {Object} e element.
+     */
+    handleInputFocus: function(e) {
+        this.getCurrencyField().setDisabled(true);
+    },
+
+    /**
+     * enable currency dropdown when input is blurred
+     *
+     * @param {Object} e element.
+     */
+    handleInputBlur: function(e) {
+        this.getCurrencyField().setDisabled(false);
     },
 
     /**
@@ -162,7 +182,7 @@
         return this._currencyField;
     },
 
-    setDisabled: function (disable) {
+    setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
         app.view.Field.prototype.setDisabled.call(this, disable);
 
