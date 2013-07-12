@@ -49,7 +49,7 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-contacts'] = array(
           'sortable' => false,
         ),
         array(
-          'name' => 'email1',
+          'name' => 'email',
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
