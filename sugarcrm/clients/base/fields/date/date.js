@@ -112,7 +112,7 @@
         if(_.isFunction(this.setRequiredPlaceholder)){
             this.setRequiredPlaceholder(this.$(".datepicker"));
         }
-
+        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane.span8' : 'div#content .main-pane.span8';
         /* TODO: Remove all this once satisfied language injection works properly ;)
         var spanishLangExample = {
             days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
@@ -124,7 +124,8 @@
         this.$(".datepicker").datepicker({
             //languageDictionary: spanishLangExample, // TODO: remove this too!
             languageDictionary: this.datepickerMap,
-            format: (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy'
+            format: (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy',
+            appendTo: appendTarget
         });
 
         // Bind Datepicker to our proxy functions
