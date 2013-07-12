@@ -123,7 +123,6 @@ describe("Record View", function () {
             // The panel grid contains references to the actual fields found in panel.fields, so the fields must
             // be modified to include the field attributes that would be calculated during a normal render
             // operation and then added to the grid in the correct row and column.
-            panels[0].isAvatar  = false;
             panels[0].grid      = [[panels[0].fields[0]]];
             panels[1].grid      = [
                 [panels[1].fields[0]],
@@ -360,43 +359,6 @@ describe("Record View", function () {
 
         afterEach(function() {
             hasAccessToModelStub.restore();
-        });
-
-        describe('Header panel', function () {
-            it('Should set isAvatar to false if the header doesn\'t the picture field', function () {
-                view._buildGridsFromPanelsMetadata(view.meta.panels);
-                expect(view.meta.panels[0].isAvatar).toBeFalsy();
-            });
-
-            it('Should set isAvatar to true if the header contains the picture field', function () {
-                var meta = {
-                    "panels": [
-                        {
-                            "name": "panel_header",
-                            "header": true,
-                            "fields": ["picture", "name"]
-                        },
-                        {
-                            "name": "panel_body",
-                            "label": "LBL_PANEL_2",
-                            "columns": 1,
-                            "labels": true,
-                            "labelsOnTop": false,
-                            "placeholders": true,
-                            "fields": ["description", "case_number", "type"]
-                        },
-                        {
-                            "name": "panel_hidden",
-                            "hide": true,
-                            "labelsOnTop": false,
-                            "placeholders": true,
-                            "fields": ["created_by", "date_entered", "date_modified", "modified_user_id"]
-                        }
-                    ]
-                };
-                view._buildGridsFromPanelsMetadata(meta.panels);
-                expect(meta.panels[0].isAvatar).toBeTruthy();
-            });
         });
 
         it("Should convert string fields to objects", function() {

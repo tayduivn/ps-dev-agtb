@@ -24,35 +24,38 @@ $viewdefs['Notes']['portal']['view']['record'] = array(
         array(
             'label' => 'Details',
             'fields' => array(
-                0 =>
+                array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
                 array(
                     'name' => 'name',
                     'default' => true,
                     'enabled' => true,
                     'width' => 35
                 ),
-                1 =>
                 array(
                     'name' => 'description',
                     'default' => true,
                     'enabled' => true,
                     'width' => 35
                 ),
-                2 =>
                 array(
                     'name' => 'date_entered',
                     'default' => true,
                     'enabled' => true,
                     'width' => 35
                 ),
-                3 =>
                 array(
                     'name' => 'created_by_name',
                     'default' => true,
                     'enabled' => true,
                     'width' => 35
                 ),
-                4 =>
                 array(
                     'name' => 'filename',
                     'default' => true,

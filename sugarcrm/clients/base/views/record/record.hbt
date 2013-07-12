@@ -17,13 +17,6 @@
             {{#each meta.panels}}
                 {{#if header}}
                     <h1>
-                        {{#unless isAvatar}}
-                            <span class="record-cell">
-                                <span class="label label-module label-{{../../../module}}" rel="tooltip" data-title="{{../../../module}}" data-placement="right" data-original-title="">
-                                    {{moduleIconLabel ../../../module}}
-                                </span>
-                            </span>
-                        {{/unless}}
                         {{#each grid}}
                             {{#each this}}
                                 <span class="record-cell" data-type="{{type}}" data-name="{{name}}">

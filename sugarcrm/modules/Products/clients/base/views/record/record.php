@@ -73,6 +73,14 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
+                array(
                     'name' => 'product_template_name',
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
