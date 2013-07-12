@@ -1,8 +1,7 @@
 <?php
 
 $viewdefs['Styleguide']['base']['layout']['field'] = array(
-    'components' =>
-    array(
+    'components' => array(
         array(
             'view' => 'sg-headerpane',
         ),
