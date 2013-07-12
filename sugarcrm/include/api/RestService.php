@@ -190,16 +190,13 @@ class RestService extends ServiceBase
                     } else {
                         throw $loginException;
                     }
-                } else if (empty($route['ignoreMetaHash'])){
-                    // If we are logged in, but the meta hash sent doesn't match whats in cache
-                    // return an error to force a resync so that the new metadata gets picked up.
-                    $mm = new MetaDataManager($this->user, $this->platform);
-                    if ((isset($this->request_headers[self::HEADER_META_HASH]) 
-                        && !$mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform))
-                        || ((isset($this->request_headers[self::USER_META_HASH]) 
-                                && $mm->hasUserMetadataChanged($this->user, $this->request_headers[self::USER_META_HASH])))
-                    ) {
-                        // Mismatch in hashes... Return error so the cleint will resync its metadata and try again.
+                } else if (empty($route['ignoreMetaHash'])) {
+                    // Check metadata hash state and return an error to force a 
+                    // resync so that the new metadata gets picked up if it is
+                    // out of date
+                    if (!$this->isMetadataCurrent()) {
+                        // Mismatch in hashes... Return error so the cleint will
+                        // resync its metadata and try again.
                         throw new SugarApiExceptionInvalidHash();
                     }
                 }
@@ -822,6 +819,52 @@ class RestService extends ServiceBase
         // in the case of REST, get vars are fairly uncommon and pretty explicit, where
         // the posted document is probably the output of a generated form.
         return array_merge($postVars,$getVars,$pathVars);
+    }
+    
+    /**
+     * Verifies state of the metadata so the API can determine if there needs to 
+     * be an invalid metadata response issued
+     * 
+     * @return boolean
+     */
+    protected function isMetadataCurrent()
+    {
+        // Default expectation is that metadata is current. This also covers the 
+        // case of the metadata hash headers not being sent, which would always
+        // assume that the metadata is current.
+        $return = true;
+        
+        // If the metadata hash header was sent in the request, use it to compare
+        // the current metadata hash to see if the current hash is valid
+        if (isset($this->request_headers[self::HEADER_META_HASH])) {
+            $mm = $this->getMetadataManager();
+            $return = $mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform);
+        }
+        
+        // If the user metadata hash header was sent, use it to compare against 
+        // the current user's preferences change state
+        // 
+        // Only check user metadata if system metadata has passed
+        if ($return && isset($this->request_headers[self::USER_META_HASH])) {
+            // Metadata manager may have already been set. If not though, get it
+            if (empty($mm)) {
+                $mm = $this->getMetadataManager();
+            }
+            
+            $return = !$mm->hasUserMetadataChanged($this->user, $this->request_headers[self::USER_META_HASH]);
+        }
+        
+        return $return;
+    }
+    
+    /**
+     * Gets the metadata manager for this user and platform
+     * 
+     * @return MetaDataManager
+     */
+    protected function getMetadataManager()
+    {
+        return new MetaDataManager($this->user, $this->platform);
     }
 }
 

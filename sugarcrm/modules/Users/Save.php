@@ -357,10 +357,6 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
         header("Location: index.php?action=Error&module=Users&error_string=".urlencode($focus->error_string));
         exit;
     } else {
-        $GLOBALS['sugar_config']['disable_team_access_check'] = true;
-        $focus->save();
-        $GLOBALS['sugar_config']['disable_team_access_check'] = false;
-
         // Handle setting of the metadata change for this user
         if (!$refreshMetadata) {
             foreach ($currentReauthPrefs as $key => $val) {
@@ -373,9 +369,13 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 
         // [BR-200] Force reauth so user pref metadata is refreshed
         if ($refreshMetadata) {
-            $mm = new MetaDataManager($current_user);
-            $mm->setUserMetadataHasChanged($focus);
+            // This will more than likely already be true, but force it to be sure
+            $focus->update_date_modified = true;
         }
+        
+        $GLOBALS['sugar_config']['disable_team_access_check'] = true;
+        $focus->save();
+        $GLOBALS['sugar_config']['disable_team_access_check'] = false;
 
         $return_id = $focus->id;
         $ieVerified = true;
