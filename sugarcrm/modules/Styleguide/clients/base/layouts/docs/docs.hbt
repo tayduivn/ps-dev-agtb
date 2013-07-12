@@ -1,7 +1,3 @@
 <link href="styleguide/content/css/styleguide.css" rel="stylesheet">
-{{#loadPrettyPrint}}
-<link href="styleguide/content/js/google-code-prettify/prettify.css" rel="stylesheet">
-<script src="styleguide/content/js/google-code-prettify/prettify.js"></script>
-{{/loadPrettyPrint}}
 <div id="styleguide">
 </div>
