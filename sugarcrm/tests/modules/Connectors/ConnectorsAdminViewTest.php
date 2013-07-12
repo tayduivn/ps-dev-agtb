@@ -36,22 +36,14 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         unset($app_strings);
     }
 
-    protected function withLinkedInWithoutInsideView($output)
+    protected function withTwitter($output)
     {
-        $this->assertRegExp('/ext_rest_linkedin/', $output);
-        $this->assertNotRegExp('/ext_rest_insideview/', $output);
+        $this->assertRegExp('/ext_rest_twitter/', $output);
     }
 
-    protected function withLinkedInAndInsideView($output)
+    protected function withoutTwitter($output)
     {
-        $this->assertRegExp('/ext_rest_linkedin/', $output);
-        $this->assertRegExp('/ext_rest_insideview/', $output);
-    }
-
-    protected function withoutLinkedInAndInsideView($output)
-    {
-        $this->assertNotRegExp('/ext_rest_linkedin/', $output);
-        $this->assertNotRegExp('/ext_rest_insideview/', $output);
+        $this->assertNotRegExp('/ext_rest_twitter/', $output);
     }
 
     public function testMapConnectorFields()
@@ -60,7 +52,7 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifyMapping(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withLinkedInWithoutInsideView'));
+        $this->setOutputCallback(array($this, 'withTwitter'));
     }
 
     public function testEnableConnectors()
@@ -69,7 +61,7 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifyDisplay(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withLinkedInAndInsideView'));
+        $this->setOutputCallback(array($this, 'withTwitter'));
     }
 
     public function testConnectorProperties()
@@ -78,7 +70,7 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifyProperties(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withLinkedInWithoutInsideView'));
+        $this->setOutputCallback(array($this, 'withTwitter'));
     }
 
     public function testConnectorSearchProperties()
@@ -87,6 +79,6 @@ class ConnectorsAdminViewTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $view = new ViewModifySearch(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withoutLinkedInAndInsideView'));
+        $this->setOutputCallback(array($this, 'withoutTwitter'));
     }
 }

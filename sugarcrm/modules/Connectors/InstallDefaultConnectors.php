@@ -16,32 +16,32 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $default_modules_sources = array (
   'Accounts' =>
   array (
-    'ext_rest_linkedin' => 'ext_rest_linkedin',
+    //'ext_rest_linkedin' => 'ext_rest_linkedin',
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
-     'ext_rest_insideview' => 'ext_rest_insideview',
+     //'ext_rest_insideview' => 'ext_rest_insideview',
   ),
   'Contacts' =>
   array (
-    'ext_rest_linkedin' => 'ext_rest_linkedin',
+    //'ext_rest_linkedin' => 'ext_rest_linkedin',
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
-     'ext_rest_insideview' => 'ext_rest_insideview',
+     //'ext_rest_insideview' => 'ext_rest_insideview',
   ),
 
   'Leads' =>
   array (
-    'ext_rest_linkedin' => 'ext_rest_linkedin',
+    //'ext_rest_linkedin' => 'ext_rest_linkedin',
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
-     'ext_rest_insideview' => 'ext_rest_insideview',
+    // 'ext_rest_insideview' => 'ext_rest_insideview',
   ),
   'Prospects' =>
   array (
-    'ext_rest_linkedin' => 'ext_rest_linkedin',
+    ///'//ext_rest_linkedin' => 'ext_rest_linkedin',
 
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
@@ -49,7 +49,7 @@ $default_modules_sources = array (
   ),
   'Opportunities' =>
   array (
-    'ext_rest_insideview' => 'ext_rest_insideview',
+   // 'ext_rest_insideview' => 'ext_rest_insideview',
   ),
 );
 

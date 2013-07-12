@@ -50,7 +50,7 @@ class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
 						'module' => 'Accounts',
 						'connectors' => array
 							(
-								'0' => 'ext_rest_linkedin'
+								'0' => 'ext_rest_twitter'
 							)
 
 					),
@@ -73,7 +73,7 @@ class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
 								'module' => 'Accounts',
 								'connectors' => array
 									(
-										'0' => 'ext_rest_linkedin'
+										'0' => 'ext_rest_twitter'
 									)
 
 							),
@@ -88,7 +88,7 @@ class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
 
     	require_once('include/Sugar_Smarty.php');
     	$ss = new Sugar_Smarty();
-    	include('modules/Connectors/connectors/sources/ext/rest/linkedin/config.php');
+    	include('modules/Connectors/connectors/sources/ext/rest/twitter/config.php');
     	$ss->assign('config', $config);
     	$ss->left_delimiter = '{{';
     	$ss->right_delimiter = '}}';
