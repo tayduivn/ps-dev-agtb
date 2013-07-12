@@ -53,14 +53,14 @@ describe("Base.Layout.Filterpanel", function(){
         it("should initialize", function() {
             var spy = sinon.spy();
             layout.off();
-            layout.on('filter:change', spy);
+            layout.on('filterpanel:change:module', spy);
             layout.initialize(layout.options);
             expect(spy).toHaveBeenCalled();
         });
 
         describe('events', function(){
            it('should update current module and link on filter change', function(){
-               layout.trigger('filter:change','test','testLink');
+               layout.trigger('filterpanel:change:module','test','testLink');
                expect(layout.currentModule).toEqual('test');
                expect(layout.currentLink).toEqual('testLink');
            });

@@ -44,7 +44,7 @@
 
         this.filterNode.select2("val", linkName || linkModuleName);
         if (!silent) {
-            this.layout.layout.trigger("filter:change", linkModuleName, linkName);
+            this.layout.layout.trigger("filterpanel:change:module", linkModuleName, linkName);
             this.layout.trigger("filter:get", linkModuleName, linkName);
         }
     },
@@ -118,13 +118,14 @@
      * @param {Boolean} silent
      */
     handleChange: function(linkModuleName, linkName, silent) {
-        if (linkName !== "all_modules") {
-            this.layout.trigger("filter:create:close");
-            this.layout.trigger("subpanel:change", linkName);
-        } else {
+        if (linkName === "all_modules") {
             this.layout.trigger("subpanel:change");
             // Fixes SP-836; esentially, we need to clear subpanel:last:<module> anytime 'All' selected
             app.cache.cut("subpanels:last:" + this.module);
+        } else if (linkName && linkName !=='all_modules') {
+            this.layout.trigger("filter:create:close");
+            this.layout.trigger("subpanel:change", linkName);
+            app.cache.set("subpanels:last:"+ app.controller.context.get('module'), linkName);
         }
 
         this.filterNode.select2("val", linkName || linkModuleName);

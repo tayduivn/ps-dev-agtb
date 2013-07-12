@@ -29,7 +29,7 @@
         this.filterOperatorMap = app.lang.getAppListStrings("filter_operators_dom");
         app.view.View.prototype.initialize.call(this, opts);
 
-        this.listenTo(this.layout, "filter:change", this.handleFilterChange);
+        this.listenTo(this.layout, "filterpanel:change:module", this.handleFilterChange);
         this.listenTo(this.layout, "filter:create:open", this.openForm);
         this.listenTo(this.layout, "filter:create:close", this.render);
         this.listenTo(this.layout, "filter:create:save", this.saveFilter);
