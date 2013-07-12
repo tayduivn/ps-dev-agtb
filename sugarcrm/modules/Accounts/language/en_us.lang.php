@@ -127,7 +127,6 @@ $mod_strings = array (
 	'LBL_PHONE' => 'Phone:',
 	'LBL_POSTAL_CODE' => 'Postal Code:',
 	'LBL_PRODUCTS_TITLE'=>'Products',
-	'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
 	'LBL_PUSH_BILLING' => 'Push Billing',
 	'LBL_PUSH_CONTACTS_BUTTON_LABEL' => 'Copy to Contacts',
 	'LBL_PUSH_CONTACTS_BUTTON_TITLE' => 'Copy...',
@@ -173,7 +172,6 @@ $mod_strings = array (
 	'LBL_ASSIGNED_USER_NAME' => 'Assigned to:',
     'LBL_PROSPECT_LIST' => 'Prospect List',
     'LBL_ACCOUNTS_SUBPANEL_TITLE'=>'Accounts',
-    'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
 	'LBL_COPY' => 'Copy' /*for 508 compliance fix*/,
     //For export labels
     'LBL_ACCOUNT_TYPE' => 'Account Type',

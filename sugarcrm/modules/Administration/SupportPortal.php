@@ -71,9 +71,6 @@ switch ($_REQUEST['view']) {
 		$send_action = isset($_REQUEST['help_action']) ? $_REQUEST['help_action'] : "";
 		$send_key = isset($_REQUEST['key']) ? $_REQUEST['key'] : "";
 		$send_anchor = '';
-		// awu: Fixes the ProjectTasks pluralization issue -- must fix in later versions.
-		if ($send_module == 'ProjectTasks')
-			$send_module = 'ProjectTask';
         if ($send_module == 'ProductCatalog')
                 $send_module = 'ProductTemplates';
         if ($send_module == 'TargetLists')
@@ -178,9 +175,6 @@ switch ($_REQUEST['view']) {
 								'reportmaker' => array(array('name' => 'Reports')),
 								'customqueries' => array(array('name' => 'Reports')),
 								'quotas' => array(array('name' => 'Forecasts')),
-								'projecttask' => array(array('name' => 'Projects')),
-								'project' => array(array('name' => 'Projects'), array('name' => 'Dashboard', 'action' => 'dashboard'), ),
-								'projecttemplate' => array(array('name' => 'Projects')),
 								'datasets' => array(array('name' => 'Reports')),
 								'dataformat' => array(array('name' => 'Reports')),
 								'employees' => array(array('name' => 'Administration', 'anchor' => '1957677')),

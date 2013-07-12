@@ -149,7 +149,6 @@ $mod_strings = array (
     'LBL_PDF_TAX' => 'Tax:',
     'LBL_PDF_TOTAL' => 'Total:',
     'LBL_POSTAL_CODE' => 'Postal Code:',
-    'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
     'LBL_PROPOSAL'=>'Quote',
     'LBL_PURCHASE_ORDER_NUM' => 'Purchase Order Num:',
     'LBL_QUOTE_NAME' => 'Quote Subject:',

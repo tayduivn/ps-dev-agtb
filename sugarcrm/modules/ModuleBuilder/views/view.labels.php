@@ -176,7 +176,6 @@ class ViewLabels extends ViewModulefields
                              MB_QUICKCREATE => 'QuickCreate');
 
         $hideQuickCreateForModules = array('KBDocuments',
-                                           'ProjectTask',
                                            'Campaigns',
                                            'Quotes',
                                            'ProductTemplates');

@@ -200,7 +200,7 @@ if($db->supports('fulltext') && $db->full_text_indexing_installed()){
  VardefManager::clearVardef();
 installerHook('pre_createAllModuleTables');
 foreach( $beanFiles as $bean => $file ) {
-	$doNotInit = array('Scheduler', 'SchedulersJob', 'ProjectTask');
+	$doNotInit = array('Scheduler', 'SchedulersJob');
 
 	if(in_array($bean, $doNotInit)) {
 		$focus = new $bean(false);
@@ -402,7 +402,6 @@ require_once('include/SubPanel/SubPanelDefinitions.php');
 require_once('modules/MySettings/TabController.php');
 
 $disabledTabs = array(
-    "project",
     "bugs",
     "products",
     "contracts",

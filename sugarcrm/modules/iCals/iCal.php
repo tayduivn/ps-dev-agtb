@@ -334,20 +334,6 @@ class iCal extends vCal {
         $today = gmdate("Y-m-d");
         $today = $timedate->handle_offset($today, $timedate->dbDayFormat, false);
 
-        require_once('modules/ProjectTask/ProjectTask.php');
-        $where = "project_task.assigned_user_id='{$user_bean->id}' ".
-            "AND (project_task.status IS NULL OR (project_task.status!='Deferred')) ".
-            "AND (project_task.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('project_task', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
-        $seedProjectTask = BeanFactory::getBean('ProjectTask');
-        $projectTaskList = $seedProjectTask->get_full_list("", $where);
-        if (is_array($projectTaskList))
-        {
-            foreach($projectTaskList as $projectTask)
-            {
-                $str .= $this->createSugarIcalTodo($user_bean, $projectTask, "ProjectTask", $dtstamp);
-            }
-        }
-
         if ($taskAsVTODO) {
             $where = "tasks.assigned_user_id='{$user_bean->id}' ".
                 "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".

@@ -37,13 +37,8 @@
 <input type="hidden" name="return_action" value="{$REQUEST.return_action}">
 <input type="hidden" name="return_module" value="{$REQUEST.return_module}">
 <input type="hidden" name="return_id" value="{$REQUEST.return_id}">
-{if $PROJECT}
-<input type="hidden" name="related_module_id" value="{$REQUEST.return_id}">
-<input type="hidden" name="related_module" value="{$REQUEST.return_module}">
-{else}
 <input type="hidden" name="person_id" value="{$REQUEST.return_id}">
 <input type="hidden" name="person_type" value="{$REQUEST.return_module}">
-{/if}
 
 <input type="hidden" name="action" value='Save'>
 <input type="hidden" name="duplicate_parent_id" value="{$REQUEST.duplicate_parent_id}">
@@ -69,19 +64,6 @@
 	<td valign="top" scope="row"><slot>{$MOD.LBL_DESCRIPTION}</slot></td>
 	<td><slot><textarea name='description' tabindex='3' cols="50" rows="4">{$DESCRIPTION}</textarea></slot></td>
 	</tr>
-	{if $PROJECT}
-	<tr>
-	<td valign="top" scope="row"><slot>{$MOD.LBL_RESOURCE} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
-	<td id='resourceSelect'>
-		<select name="person_type" id="person_type" onChange="showResourceSelect();">
-			<option value="">{$MOD.LBL_SELECT_RESOURCE_TYPE}</option>
-			<option value="Users">{$MOD.LBL_USER}</option>
-			<option value="Contacts">{$MOD.LBL_CONTACT}</option>
-		</select>
-		<span id="resourceSelector"></span>
-	</td>
-	</tr>
-	{/if}
 	</table>
 	</form>
 <script type="text/javascript">

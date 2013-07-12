@@ -136,7 +136,7 @@ if(isset($_SESSION['MAILMERGE_RECORD']))
 
 
     	if($rModule != 'Contacts'
-    	   && $rModule != 'Leads' && $rModule != 'Products' && $rModule != 'Campaigns' && $rModule != 'Projects'
+    	   && $rModule != 'Leads' && $rModule != 'Products' && $rModule != 'Campaigns'
     	   )
     	{
     		$_SESSION['MAILMERGE_SKIP_REL'] = false;
