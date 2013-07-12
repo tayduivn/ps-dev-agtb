@@ -431,6 +431,7 @@
                         }
                     }
                 });
+                self.context.trigger("record:deleted");
                 app.router.navigate("#" + self.module, {trigger: true});
             }
         });

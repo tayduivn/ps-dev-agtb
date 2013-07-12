@@ -205,6 +205,7 @@
             messages: app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'),
             onConfirm: function() {
                 var massUpdate = self.getMassUpdateModel(self.module);
+                var lastSelectedModels = _.clone(massUpdate.models);
                 if(massUpdate) {
                     massUpdate.fetch({
                         //Don't show alerts for this request
@@ -222,9 +223,9 @@
                             } else if (response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
+                            self.layout.trigger("list:record:deleted", lastSelectedModels);
                         }
                     });
-
                 }
             }
         });

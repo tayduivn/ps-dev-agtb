@@ -27,9 +27,33 @@
      */
     delegateListFireEvents: function() {
         this.layout.on("list:massquote:fire", this.massQuote, this);
+        this.layout.on("list:record:deleted", this.deleteCommitWarning, this);
         app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'delegateListFireEvents'});
     },
-
+    
+    /**
+     * Shows a warning message if a RLI that is included in a forecast is deleted.
+     * @return string message
+     */
+    deleteCommitWarning: function(lastSelectedModels) {
+        var message = null;
+        
+        if (!_.isUndefined(_.find(lastSelectedModels, function(model) {
+            if (model.get("commit_stage") == "include") {
+                return true;
+            }
+            return false;
+        }))) {
+            message = app.lang.get("WARNING_DELETED_RECORD_LIST_RECOMMIT", "RevenueLineItems");
+            app.alert.show("included_list_delete_warning", {
+                level: "warning",
+                messages: message
+            });
+        }
+        
+        return message;
+    },
+    
     /**
      * Logic to convert multiple Revenue Line Items into a Quote
      */

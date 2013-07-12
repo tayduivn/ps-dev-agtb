@@ -150,6 +150,8 @@ $mod_strings = array(
     'SAVE_RLI_QUOTE_NOTICE' => 'This item has already been converted to quote. Your changes will not be updated in the corresponding quote.',
 
     'LBL_QUOTED' => 'Quoted',
-    'LBL_NOT_QUOTED' => 'Not Quoted'
+    'LBL_NOT_QUOTED' => 'Not Quoted',
+    'WARNING_DELETED_RECORD_RECOMMIT' => 'This record was included in a Forecast. It will be removed and you will need to re-commit your Forecast.',
+    'WARNING_DELETED_RECORD_LIST_RECOMMIT' => 'One or more records were included in a Forecast. They will be removed and you will need to re-commit your Forecast.'
 
 );
