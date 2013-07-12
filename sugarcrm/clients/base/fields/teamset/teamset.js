@@ -24,13 +24,6 @@
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
 
-        //Moving primary teams to top on init
-        this.model.set(
-            this.name,
-            _.sortBy(this.model.get(this.name), function (team) {
-                return team.primary ? -1 : 0;
-            })
-        );
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
     _render: function () {
@@ -71,15 +64,19 @@
             }
             this.model.set(this.name, value);
         }
-        if (this.tplName === 'list') {
-            return _.isArray(value) ? value[0].name : value;
-        }
         if (!_.isArray(value)) {
             value = [
                 {
                     name: value
                 }
             ];
+        }
+        if (this.tplName === 'list') {
+            //Display primary team in list view
+            var primaryTeam = _.find(value, function (team) {
+                return team.primary;
+            });
+            return primaryTeam.name;
         }
         // Place the add button as needed
         if (_.isArray(value) && value.length > 0) {
