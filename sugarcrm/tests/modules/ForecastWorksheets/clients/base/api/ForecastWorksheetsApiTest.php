@@ -187,25 +187,6 @@ class ForecastWorksheetsApiTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group forecastapi
      * @group forecasts
-     */
-    public function testForecastWorksheetsChart()
-    {
-
-        $GLOBALS["current_user"] = self::$reportee["user"];
-
-        $response = $this->filterApi->forecastWorksheetsChartGet(
-            SugarTestRestUtilities::getRestServiceMock(self::$reportee['user']),
-            array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
-        );
-
-        $this->assertNotEmpty($response["values"], "Rest reply is empty. Rep chart data should have been returned.");
-
-        return $response['values'];
-    }
-
-    /**
-     * @group forecastapi
-     * @group forecasts
      * @depends testForecastWorksheets
      *
      * @param array $worksheet  The worksheet we want to work with throughout the test
