@@ -64,15 +64,24 @@
         //Extend from an empty object to prevent polution of the base metadata
         options.meta = _.extend({}, listViewMeta, options.meta || {});
         options.meta.type = options.meta.type || 'list';
-
         options.meta.action = 'list';
-
-        options = this.parseFieldMetadata(options)
+        options = this.parseFieldMetadata(options);
 
         app.view.View.prototype.initialize.call(this, options);
 
         this.attachEvents();
 
+        this.orderByLastStateKey = app.user.lastState.key('order-by', this);
+        this.orderBy = _.extend({
+                field : '',
+                direction : 'desc'
+            },
+            listViewMeta.orderBy,
+            app.user.lastState.get(this.orderByLastStateKey) || {});
+
+        if(this.collection) {
+            this.collection.orderBy = this.orderBy;
+        }
         // Dashboard layout injects shared context with limit: 5.
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.has('limit') ? this.context.get('limit') : null;
@@ -204,21 +213,11 @@
      * @param {Object} event jquery event object
      */
     setOrderBy:function (event) {
-        var orderMap, collection, fieldName, nOrder, options, eventTarget, orderBy;
+        var collection, options, eventTarget, orderBy;
         var self = this;
-        //set on this obj and not the prototype
-        self.orderBy = self.orderBy || {};
 
-        //mapping for css
-        orderMap = {
-            "desc":"_desc",
-            "asc":"_asc"
-        };
-
-        //TODO probably need to check if we can sort this field from metadata
         collection = self.collection;
         eventTarget = self.$(event.currentTarget);
-        fieldName = eventTarget.data('fieldname');
 
         // first check if alternate orderby is set for column
         orderBy = eventTarget.data('orderby');
@@ -226,36 +225,20 @@
         if (!orderBy) {
             orderBy = eventTarget.data('fieldname');
         }
-
-        if (!collection.orderBy) {
-            collection.orderBy = {
-                field:"",
-                direction:"",
-                columnName:""
-            };
-        }
-
-        nOrder = "desc";
-
         // if same field just flip
-        if (orderBy === collection.orderBy.field) {
-            if (collection.orderBy.direction === "desc") {
-                nOrder = "asc";
-            }
-            collection.orderBy.direction = nOrder;
+        if (orderBy === self.orderBy.field) {
+            self.orderBy.direction = self.orderBy.direction === 'desc' ? 'asc' : 'desc';
         } else {
-            collection.orderBy.field = orderBy;
-            collection.orderBy.direction = "desc";
+            self.orderBy.field = orderBy;
+            self.orderBy.direction = 'desc';
         }
-        collection.orderBy.columnName = fieldName;
 
-        // set it on the view
-        self.orderBy.field = orderBy;
-        self.orderBy.direction = orderMap[collection.orderBy.direction];
-        self.orderBy.columnName = fieldName;
-
+        collection.orderBy = self.orderBy;
         options = self.getSortOptions(collection);
 
+        if(this.orderByLastStateKey) {
+            app.user.lastState.set(this.orderByLastStateKey, self.orderBy);
+        }
         // refetch the collection
         self.context.resetLoadFlag(false);
         self.context.set('skipFetch', false);

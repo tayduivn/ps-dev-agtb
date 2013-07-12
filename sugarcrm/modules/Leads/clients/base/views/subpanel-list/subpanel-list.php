@@ -59,7 +59,7 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_EMAIL_ADDRESS',
           'enabled' => true,
           'default' => true,
-          'name' => 'email1',
+          'name' => 'email',
           'sortable' => false,
         ),
         array(

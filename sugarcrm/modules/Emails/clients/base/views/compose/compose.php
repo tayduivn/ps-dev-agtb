@@ -101,12 +101,11 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                                     'icon'  => 'icon-paper-clip',
                                     'label' => 'LBL_UPLOAD_ATTACHMENT',
                                 ),
-                                //TODO: Add back once Sugar Documents have been implemented
-                                /*array(
+                                array(
                                     'name'  => 'attach_sugardoc_button',
                                     'type'  => 'rowaction',
                                     'label' => 'LBL_ATTACH_SUGAR_DOC',
-                                ),*/
+                                ),
                             ),
                         ),
                         array(

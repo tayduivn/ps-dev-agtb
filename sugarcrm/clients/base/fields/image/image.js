@@ -347,7 +347,7 @@
         this.$('.image_field').append(this.exclamationMarkTemplate(errorMessages));
         $tooltip = this.$('.error-tooltip');
         if (_.isFunction($tooltip.tooltip)) {
-            var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
+            var tooltipOpts = { container: 'body', placement: 'right', trigger: 'click' };
             $tooltip.tooltip(tooltipOpts);
         }
     },

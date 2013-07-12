@@ -153,7 +153,7 @@ class SMTPProxy extends SMTP
                 if ($hasErrno || $hasSmtpCode) {
                     // the presence of "errno" or "smtp_code" keys seems to indicate that a more serious error occurred
                     // it was likely a failure when attempting to talk with an SMTP server
-                    $level = "fatal";
+                    $level = "error";
                 }
 
                 if ($hasErrno) {

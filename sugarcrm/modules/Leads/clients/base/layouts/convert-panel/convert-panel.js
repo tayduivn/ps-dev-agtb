@@ -37,6 +37,7 @@
         this.context.on('lead:convert:populate', this.handlePopulateRecords, this);
         this.context.on('lead:convert:'+this.meta.module+':enable', this.handleEnablePanel, this);
         this.context.on('lead:convert:'+this.meta.moduleNumber+':open', this.handleOpenRequest, this);
+        this.context.on('lead:convert:exit', this.turnOffUnsavedChanges, this);
 
         //if this panel is dependent on others - listen for changes and react accordingly
         this.addDependencyListeners();
@@ -462,6 +463,10 @@
             }
             this.resetPanel();
         }
+    },
+
+    turnOffUnsavedChanges: function() {
+        this.createView.model.changed = {};
     },
 
     _dispose: function() {

@@ -48,7 +48,7 @@ $viewdefs['Accounts']['base']['view']['subpanel-for-prospectlists'] = array(
           'label' => 'LBL_LIST_EMAIL',
           'enabled' => true,
           'default' => true,
-          'name' => 'email1',
+          'name' => 'email',
           'sortable' => false,
         ),
         array(

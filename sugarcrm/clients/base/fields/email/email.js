@@ -340,7 +340,7 @@
             }
 
             if(changed) {
-                this.updateModel(changed);
+                this.updateModel(emails);
             }
             return emails;
         }
