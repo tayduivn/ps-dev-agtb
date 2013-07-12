@@ -7690,7 +7690,8 @@ nv.models.paretoChart = function () {
       var container = d3.select(this),
           that = this;
 
-      var expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
+      //var expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
+      var expandMode = false;
 
       margin.left = (expandMode) ? 50 : 60;
       margin.bottom = (expandMode) ? 40 : 34;
