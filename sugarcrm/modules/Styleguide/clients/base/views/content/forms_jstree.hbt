@@ -54,7 +54,6 @@ $("#people").jstree({
 })
 .bind("select_node.jstree", function (e, data) {
     // do stuff when a node is selected
-    console.log("load data for id: " + jQuery.data(data.rslt.obj[0], "id"));
     data.inst.toggle_node(data.rslt.obj);
 });</pre>
             <h3>Plugins</h3>

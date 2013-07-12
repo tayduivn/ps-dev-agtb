@@ -133,7 +133,6 @@
             view.$('#people > ul > li > a').addClass('jstree-clicked');
         })
         .bind('select_node.jstree', function (e, data) {
-            console.log('load data for id: ' + jQuery.data(data.rslt.obj[0], 'id'));
             data.inst.toggle_node(data.rslt.obj);
         });
     },
@@ -182,7 +181,6 @@
         view.$('#mySwitch').on('switch-change', function (e, data) {
             var $el = $(data.el),
                 value = data.value;
-            console.log(e, $el, value);
         });
     },
 
@@ -427,7 +425,6 @@
             .on('click.styleguide', function(e){
                 e.preventDefault();
                 e.stopPropagation();
-                console.log(this);
                 $(this).tab('show');
             });
     },

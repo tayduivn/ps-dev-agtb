@@ -40,9 +40,6 @@
               .stacked(false)
               // .barClick( function(data,e,selection) {
               //     //if only one bar series is disabled
-              //     // console.log(data);
-              //     // console.log(e);
-              //     // console.log(selection);
               //     d3.select('#vert2 svg')
               //       .datum(forecast_data_Q1)
               //       .transition().duration(500).call(chart);

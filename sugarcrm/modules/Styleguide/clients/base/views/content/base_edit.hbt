@@ -104,7 +104,6 @@ render_tabs: function(view) {
         .on('click.styleguide', function(e){
             e.preventDefault();
             e.stopPropagation();
-            console.log(this);
             $(this).tab('show');
         });
 },

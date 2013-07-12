@@ -173,7 +173,6 @@
         dateRange = [startDate,endDate];
 
     d3.json("styleguide/content/charts/data/top10_opportunities_preprocessed.json", function(json) {
-      // console.log(json)
       var bubble_data = {
             data: d3.nest()
                     .key(function(d){ return d.assigned_user_name;})
@@ -200,8 +199,6 @@
             properties: { title: "Top 10 Opportunities", value: json.records.length }
       };
 
-      // console.log(bubble_data)
-      // console.log(JSON.stringify(bubble_data, null, '  '))
       //chart.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: bubble_data.data.length} );
 
       var chart = nv.models.bubbleChart()

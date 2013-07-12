@@ -146,7 +146,6 @@
 
     // Get label width so we can make button fluid, 12px default left/right padding
     var lbl_width = $(this).parent().find('span strong').width() + 24;
-    //console.log(lbl_width);
     $(this)
       .parent().find('span').css('width',lbl_width)
       .closest('.upload-field-custom').css('width',lbl_width);
