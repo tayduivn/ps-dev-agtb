@@ -107,8 +107,14 @@ class SugarFieldImage extends SugarFieldBase {
                 }
 			}
             else {
-                // Invalid format
-                $this->error = $GLOBALS['app_strings']["LBL_UPLOAD_IMAGE_FILE_INVALID"];
+                $imgInfo = getimagesize($_FILES[$field]['tmp_name']);
+                // if file is image then this image is no longer supported.
+                if(false !== $imgInfo) {
+                    $ext = end(explode('.', $_FILES[$field]['name']));
+                    $this->error = string_format($GLOBALS['app_strings']['LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED'], array($ext));
+                } else {
+                    $this->error = $GLOBALS['app_strings']["LBL_UPLOAD_IMAGE_FILE_INVALID"];
+                }
             }
 		}
 

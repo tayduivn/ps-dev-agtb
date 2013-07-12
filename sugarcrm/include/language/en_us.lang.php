@@ -2849,6 +2849,7 @@ $app_strings = array (
     'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
+    'LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED' => 'Image format {0} is no longer supported.',
     'LBL_SELECT_BUTTON_KEY' => 'T',
     'LBL_SELECT_BUTTON_LABEL' => 'Select',
     'LBL_SELECT_BUTTON_TITLE' => 'Select',
