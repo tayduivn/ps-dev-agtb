@@ -3,6 +3,7 @@ describe("enum field", function() {
         fieldName = 'test_enum';
 
     beforeEach(function() {
+        delete Handlebars.templates;
         app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('enum', 'field', 'base', 'detail');
@@ -30,7 +31,6 @@ describe("enum field", function() {
         app.view.reset();
         delete Handlebars.templates;
         field = null;
-        multiEnumField = null;
         stub_appListStrings.restore();
     });
 
