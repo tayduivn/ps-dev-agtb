@@ -685,13 +685,13 @@ describe("Emails.Views.Compose", function() {
         it('should populate the send model attachments/documents correctly with both attachments and sugar documents', function() {
             var sendModel,
                 attachment1 = {id:'123',type:'upload'},
-                attachment2 = {id:'123',type:'document'},
+                attachment2 = {id:'123',type:'documents'},
                 attachment3 = {id:'123',type:'foo'};
 
             view.model.set('attachments', [attachment1,attachment2,attachment3]);
             sendModel = view.initializeSendEmailModel();
             expect(sendModel.get('attachments')).toEqual([attachment1]);
-            expect(sendModel.get('documents')).toEqual([attachment2]);
+            expect(sendModel.get('documents')).toEqual([attachment2.id]);
         });
 
         it('should populate the send model attachments/documents as empty when attachments not set', function() {
