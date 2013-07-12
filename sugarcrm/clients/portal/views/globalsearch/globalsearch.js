@@ -62,6 +62,7 @@
         });
         this.render();
     },
+    // TODO if we are extending this, why are we duplicating almost everything on this code?
     fireSearchRequest: function (term) {
         var self = this,
             searchModuleNames = this._getSearchModuleNames(),
@@ -86,11 +87,10 @@
                     var formattedRecord = {
                             id: record.id,
                             name: record.name,
-                            module: record.module
+                            module: record._module
                         },
-                        meta = app.metadata.getModule(record.module);
 
-                    formattedRecord.link = '#' + app.utils.buildRoute(record.module, 'detail', record.id);
+                    formattedRecord.link = '#' + app.utils.buildRoute(record._module, record.id);
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {
                             if (key !== 'name') { // found in a related field
