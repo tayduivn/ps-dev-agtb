@@ -141,7 +141,7 @@ $mod_strings = array (
     'LBL_PORTAL_INFORMATION' => 'Portal Information',
     'LBL_PORTAL_NAME' => 'Portal Name:',
     'LBL_PORTAL_PASSWORD_ISSET' => 'Portal Password is Set:',
-    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{first_name}} {{last_name}} was saved.',
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{full_name}}</a>.',
     'LBL_STREET' => 'Street',
     'LBL_POSTAL_CODE' => 'Postal Code:',
     'LBL_PRIMARY_ADDRESS_CITY' => 'Primary Address City:',

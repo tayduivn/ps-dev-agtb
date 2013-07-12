@@ -4008,7 +4008,7 @@ $app_strings = array (
 
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
-    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{name}} was saved.', // use when a model is available
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
     'LBL_VALIDATING' => 'Validating...',
 
     //for sidecar alert view
