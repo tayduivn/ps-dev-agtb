@@ -47,8 +47,6 @@
      */
     initialize: function(options) {
         this.values.clear({silent: true});
-        // after we init, find and bind to the Worksheets Contexts
-        this.on('init', this.findWorksheetContexts, this);
         if (options.context.parent.get('module') != 'Forecasts') {
             this.initOptions = options;
             app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
@@ -68,6 +66,8 @@
                 complete: options ? options.complete : null
             });
         } else {
+            // after we init, find and bind to the Worksheets Contexts
+            this.on('init', this.findWorksheetContexts, this);
             app.view.View.prototype.initialize.call(this, options);
             if(!this.meta.config) {
                 var ctx = this.context.parent,
@@ -273,16 +273,6 @@
             this.toggleRepOptionsVisibility();
         }, this);
 
-        this.context.parent.on('forecasts:worksheet:committed', function() {
-            this.renderChart();
-        }, this);
-
-        this.context.parent.on('forecasts:worksheet:saved', function(totalSaved, worksheet, isDraft) {
-            // we only want this to run if the totalSaved was greater than zero and we are saving the draft version
-            if (totalSaved > 0 && isDraft == true) {
-                this.renderChart();
-            }
-        }, this);
         this.context.parent.on('change:selectedUser', function(context, user) {
             this.values.set({
                 user_id: user.id,
@@ -338,17 +328,12 @@
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
         params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
+        params.r = new Date().getTime();
 
-        var data = $.extend({
-                r: new Date().getTime()
-            }, params),
-            url = app.api.buildURL(this.buildChartUrl(params), '', '', data);
+        var url = app.api.buildURL(this.buildChartUrl(params), '', '', data);
 
         app.api.call('read', url, data, {
             success: _.bind(function(data) {
-                /*this.layout.$el.find('h4').html(
-                 this.layout.meta.label + ' ' + data.title
-                 );*/
                 this.serverData = data;
                 this.convertDataToChartData();
                 this.generateD3Chart();
