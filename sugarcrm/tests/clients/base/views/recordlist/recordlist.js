@@ -31,12 +31,13 @@ describe("Base.View.RecordList", function () {
     });
 
     afterEach(function () {
+        layout.dispose();
+        view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
         view = null;
-        recordlistview = null;
     });
 
     describe('adding actions to list view', function () {
@@ -49,6 +50,19 @@ describe("Base.View.RecordList", function () {
         it('should have added favorite field', function () {
             view.render();
             expect(view.leftColumns[0].fields[1]).toEqual({type:'favorite'});
+        });
+
+        it('should have added favorite field', function () {
+            view.dispose();
+
+            SugarTest.testMetadata.updateModuleMetadata("Cases", {
+                favoritesEnabled: false
+            });
+            var nofavoriteview = SugarTest.createView("base", "Cases", "recordlist", null, null);
+            nofavoriteview.render();
+            var actualFavoriteField = _.where(nofavoriteview.leftColumns[0].fields, {type: 'favorite'});
+            expect(actualFavoriteField.length).toBe(0);
+            nofavoriteview.dispose();
         });
 
         it('should have added row actions', function () {

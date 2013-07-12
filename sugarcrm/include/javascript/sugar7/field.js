@@ -52,6 +52,11 @@
                 _.defer(function (field) {
                     field._errors = errors;
                     field.setMode('edit');
+                    // As we're now "post form submission", if `no_required_placeholder`, we need to
+                    // manually decorateRequired (as we only omit required on form's initial render)
+                    if (!field._shouldRenderRequiredPlaceholder()) {
+                        field.decorateRequired();
+                    }
                     field.decorateError(errors);
                 }, this);
 
@@ -124,11 +129,24 @@
                 }
                 if (this.def.required) {
                     this.clearRequiredLabel();
-                    if (this.action === "edit") {
+                    if (this.action === "edit" && this._shouldRenderRequiredPlaceholder()) {
                         this.decorateRequired();
                     }
                 }
             },
+
+            /**
+             * Helper to determine if we should call decorateRequired. Primarily for pages like Login
+             * where we don't want to have (Required) in the placeholder on initial render. This gets
+             * called on `this._render`. Since we DO want required in placeholder "post submission" we
+             * check this again in `this.handleValidationError` and manually add back (Required) if set.
+             *
+             * @return {Boolean} Whether we should attempt to render required placeholder or not
+             */
+            _shouldRenderRequiredPlaceholder: function () {
+                return !this.def.no_required_placeholder;
+            },
+
             /**
              * Default implementation of Required decoration
              */

@@ -1,8 +1,23 @@
 describe("Leads ConvertButton", function() {
-    var app, field, context;
+    var app, field, context, hasAccessStub, mockAccess;
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.testMetadata.init();
+        SugarTest.testMetadata.addLayoutDefinition('convert-main', {
+            modules: [
+                {module: 'Foo', required: true},
+                {module: 'Bar', required: false}
+            ]
+        });
+        SugarTest.testMetadata.set();
+        mockAccess = {
+            Foo: true,
+            Bar: true
+        };
+        hasAccessStub = sinon.stub(app.acl, 'hasAccess', function(access, module) {
+            return (_.isUndefined(mockAccess[module])) ? true : mockAccess[module];
+        });
         context = app.context.getContext();
 
         var def = {'name':'record-convert','type':'convertbutton', 'view':'detail'};
@@ -18,6 +33,8 @@ describe("Leads ConvertButton", function() {
     });
 
     afterEach(function() {
+        hasAccessStub.restore();
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -26,7 +43,14 @@ describe("Leads ConvertButton", function() {
         context = null;
     });
 
-    it('should show if not converted', function() {
+    it('should show if not converted and user has access to all convert lead modules', function() {
+        field.model.set('converted', false);
+        field._render();
+        expect(field.isHidden).toBeFalsy();
+    });
+
+    it('should show if not converted and user has access to required convert lead modules', function() {
+        mockAccess.Bar = false;
         field.model.set('converted', false);
         field._render();
         expect(field.isHidden).toBeFalsy();
@@ -34,6 +58,13 @@ describe("Leads ConvertButton", function() {
 
     it('should be hidden if converted', function() {
         field.model.set('converted', true);
+        field._render();
+        expect(field.isHidden).toBeTruthy();
+    });
+
+    it('should be hidden if user does not have access to create a module required by lead convert', function() {
+        field.model.set('converted', false);
+        mockAccess.Foo = false;
         field._render();
         expect(field.isHidden).toBeTruthy();
     });

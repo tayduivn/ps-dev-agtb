@@ -78,13 +78,13 @@ class SMTPProxyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($actual, "Connected returned false so Hello should return false.");
     }
 
-    public function testHello_ConnectedReturnsTrue_SendHelloProducesAnErrorWithAnErrorCode_HandleErrorLogsTheErrorWithLevelFatal()
+    public function testHello_ConnectedReturnsTrue_SendHelloProducesAnErrorWithAnErrorCode_HandleErrorLogsTheErrorWithLevelError()
     {
-        // SMTPProxy::handleError should log a fatal error
+        // SMTPProxy::handleError should log an 'error'
         $GLOBALS["log"] = $this->getMock("SugarMockLogger", array("__call"));
         $GLOBALS["log"]->expects($this->once())
                        ->method("__call")
-                       ->with($this->equalTo("fatal"));
+                       ->with($this->equalTo("error"));
 
         $mockSmtpProxy = $this->getMock(
             "SMTPProxy",

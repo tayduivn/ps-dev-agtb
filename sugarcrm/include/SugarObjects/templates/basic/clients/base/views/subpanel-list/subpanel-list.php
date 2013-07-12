@@ -18,7 +18,7 @@ $viewdefs[$module_name]['base']['view']['subpanel-list'] = array(
     array(
       'name' => 'panel_header',
       'label' => 'LBL_PANEL_1',
-      'fields' => 
+      'fields' =>
       array(
         array(
           'label' => 'LBL_NAME',
@@ -35,4 +35,8 @@ $viewdefs[$module_name]['base']['view']['subpanel-list'] = array(
       ),
     ),
   ),
+    'orderBy' => array(
+        'field' => 'date_modified',
+        'direction' => 'desc',
+    ),
 );

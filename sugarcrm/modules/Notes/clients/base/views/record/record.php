@@ -38,12 +38,15 @@ $viewdefs['Notes']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'contact_name',
+                'parent_name',
                 array(
                     'name' => 'description',
-                    'span' => 12,
                     'rows' => 5,
                 ),
+                'team_name',
                 'filename',
+                'assigned_user_name',
             ),
         ),
         array(
@@ -53,12 +56,8 @@ $viewdefs['Notes']['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'contact_name',
-                'parent_name',
                 'portal_flag',
-                'team_name',
-                'assigned_user_name'
-            )
-        )
+            ),
+        ),
     ),
 );

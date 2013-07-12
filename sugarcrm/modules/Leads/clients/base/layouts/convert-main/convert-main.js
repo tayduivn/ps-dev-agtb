@@ -3,6 +3,7 @@
         this.convertPanels = {};
         this.associatedModels = {};
         this.dependentModules = {};
+        this.noAccessRequiredModules = [];
 
         app.view.Layout.prototype.initialize.call(this, options);
 
@@ -15,6 +16,8 @@
 
         //listen for Save button click in headerpane
         this.context.on('lead:convert:save', this.handleSave, this);
+
+        this.before('render', this.checkRequiredAccess);
     },
 
     /**
@@ -26,7 +29,16 @@
     initializePanels: function(modulesMetadata) {
         var moduleNumber = 1;
 
-        _.each(modulesMetadata, function (moduleMeta) {
+        _.each(modulesMetadata, function (moduleMeta, key, modulesList) {
+            //strip out modules that user does not have create access to
+            if (!app.acl.hasAccess('create', moduleMeta.module)) {
+                if (moduleMeta.required === true) {
+                    this.noAccessRequiredModules.push(moduleMeta.module);
+                }
+                delete modulesList[key];
+                return;
+            }
+
             moduleMeta.moduleNumber = moduleNumber++;
             var view = app.view.createLayout({
                 context: this.context,
@@ -46,6 +58,48 @@
                 this.dependentModules[moduleMeta.module] = moduleMeta.dependentModules;
             }
         }, this);
+    },
+
+    /**
+     * Check if user is missing access to any required modules
+     * @returns {boolean}
+     */
+    checkRequiredAccess: function() {
+        //user is missing access to required modules - kick them out
+        if (this.noAccessRequiredModules.length > 0) {
+            this.denyUserAccess(this.noAccessRequiredModules);
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Close lead convert and notify the user that they are missing required access
+     * @param noAccessRequiredModules
+     */
+    denyUserAccess: function(noAccessRequiredModules) {
+        var translatedModuleNames = [];
+
+        _.each(noAccessRequiredModules, function(module) {
+            translatedModuleNames.push(this.getModuleSingular(module));
+        }, this);
+
+        app.alert.show('convert_access_denied', {
+            level: 'error',
+            messages: app.lang.get('LBL_CONVERT_ACCESS_DENIED', this.module, {requiredModulesMissing:translatedModuleNames.join(', ')}),
+            autoClose: false
+        });
+        app.drawer.close();
+    },
+
+    /**
+     * Retrieve the translated module name
+     * @param module
+     * @returns {string}
+     */
+    getModuleSingular: function(module) {
+        var modulePlural = app.lang.getAppListStrings("moduleList")[module] || module;
+        return (app.lang.getAppListStrings("moduleListSingular")[module] || modulePlural);
     },
 
     _render: function () {
@@ -247,6 +301,7 @@
             autoClose: (level === 'success')
         });
         if (!this.disposed && doClose) {
+            this.context.trigger('lead:convert:exit');
             app.drawer.close();
             app.navigate(this.context, leadsModel, 'record');
         }

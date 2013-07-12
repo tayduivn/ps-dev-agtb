@@ -52,6 +52,16 @@ describe('Sugar7 field extensions', function () {
             clearSpy.restore();
             reqSpy.restore();
         });
+
+        it("should allow a way to opt-out of calling decorateRequired so Required placeholder", function () {
+            field = SugarTest.createField("base", "text", "base", "edit", {required: true});
+            field.def.no_required_placeholder = true;
+            var should = field._shouldRenderRequiredPlaceholder();
+            expect(should).toBeFalsy();
+            field.def.no_required_placeholder = undefined;
+            should = field._shouldRenderRequiredPlaceholder();
+            expect(should).toBeTruthy();
+        });
     });
 
     describe('Edit mode css class', function () {

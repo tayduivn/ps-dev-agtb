@@ -5,6 +5,7 @@
     extendsFrom: 'RecordView',
 
     _lastSelectedSignature: null,
+    sugarDocumentType: 'documents',
 
     initialize: function(options) {
         _.bindAll(this);
@@ -236,7 +237,7 @@
             cc_addresses: this.model.get('cc_addresses'),
             bcc_addresses: this.model.get('bcc_addresses'),
             attachments: this.getAttachmentsByType('upload'),
-            documents: this.getAttachmentsByType('document'),
+            documents: _.pluck(this.getAttachmentsByType(this.sugarDocumentType), 'id'),
             related: {
                 type: this.model.get('parent_type'),
                 id: this.model.get('parent_id')
@@ -457,7 +458,7 @@
                 name: attachment.filename,
                 nameForDisplay: attachment.filename,
                 tag: 'template',
-                type: 'documents'
+                type: this.sugarDocumentType
             });
         }, this);
     },
@@ -481,6 +482,7 @@
      * @param model
      */
     documentDrawerCallback: function(model) {
+
         if (model) {
             var sugarDocument = app.data.createBean('Documents', { id: model.id });
             sugarDocument.fetch({
@@ -488,9 +490,9 @@
                     if (this.disposed === true) return; //if view is already disposed, bail out
                     this.context.trigger("attachment:add", {
                         id:model.id,
-                        name:model.filename,
-                        nameForDisplay:model.filename,
-                        type: 'documents'
+                        name:model.get('filename'),
+                        nameForDisplay:model.get('filename'),
+                        type: this.sugarDocumentType
                     });
                 }, this),
                 error: _.bind(function(error) {

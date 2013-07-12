@@ -69,6 +69,7 @@ $mod_strings = array (
     'LBL_CONVERT_BUTTON_LABEL' => 'Convert',
     'LBL_SAVE_CONVERT_BUTTON_LABEL' => 'Save and Convert',
     'LBL_CONVERT_PANEL_OPTIONAL' => '(optional)',
+    'LBL_CONVERT_ACCESS_DENIED' => 'You are missing edit access to the modules required to convert a lead: {{requiredModulesMissing}}',
     'LBL_CONVERT_FINDING_DUPLICATES' => 'Searching for duplicates...',
     'LBL_CONVERT_IGNORE_DUPLICATES' => 'Ignore and create new',
     'LBL_CONVERT_BACK_TO_DUPLICATES' => 'Back to duplicates',

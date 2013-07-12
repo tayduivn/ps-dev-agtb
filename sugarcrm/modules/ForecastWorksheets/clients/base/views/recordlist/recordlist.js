@@ -203,16 +203,18 @@
                     this.filterCollection();
                 }, this);
 
-                this.collection.on('change', function(model) {
-                    // any time a model in the collection has the commit_stage field changed and the filter is not shown
-                    if(_.contains(_.keys(model.changed), 'commit_stage')    // only when commit_stage changes
-                        && !_.isEmpty(this.filters)  // and we have filters
+                this.collection.on('change:commit_stage', function(model) {
+                    if (!_.isEmpty(this.filters)  // we have filters
                         && _.indexOf(this.filters, model.get('commit_stage')) === -1 // and the commit_stage is not shown
-                       ) {
+                        ) {
                         this.filterCollection();
                         if (!this.disposed) {
                             this.render();
                         }
+                    } else {
+                        // we need to update the data-forecast attribute on the row and the new commit stage is visible
+                        this.$el.find('tr[name=' + model.module + '_' + model.id + ']')
+                            .attr('data-forecast', model.get('commit_stage'));
                     }
                 }, this);
 

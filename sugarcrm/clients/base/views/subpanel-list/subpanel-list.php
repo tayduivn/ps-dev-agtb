@@ -56,4 +56,7 @@ $viewdefs['base']['view']['subpanel-list'] = array(
             ),
         ),
     ),
+    'last_state' => array(
+        'id' => 'subpanel-list',
+    ),
 );
