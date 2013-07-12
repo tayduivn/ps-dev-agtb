@@ -384,26 +384,24 @@ class MetaDataManager
     /**
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *
-     * @param  string      $module     The module we want to fetch the ACL for
-     * @param  object      $userObject The user object for the ACL's we are retrieving.
+     * @param  string $module     The module we want to fetch the ACL for
+     * @param  object $userObject The user object for the ACL's we are retrieving.
      * @param  object|bool $bean       The SugarBean for getting specific ACL's for a module
      * @return array       Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module,$userObject,$bean=false)
+    public function getAclForModule($module, $userObject, $bean = false)
     {
-        $obj = BeanFactory::getObjectName($module);
-
-        $outputAcl = array('fields'=>array());
+        $outputAcl = array('fields' => array());
         $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
 
         if (!SugarACL::moduleSupportsACL($module)) {
-            foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach (array('access', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate') as $action) {
                 $outputAcl[$action] = 'yes';
             }
         } else {
             $context = array(
-                    'user' => $userObject,
-                );
+                'user' => $userObject,
+            );
             if ($bean instanceof SugarBean) {
                 $context['bean'] = $bean;
             }
@@ -417,12 +415,7 @@ class MetaDataManager
             $moduleAcls = SugarACL::getUserAccess($module, array(), $context);
 
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
-            foreach (SugarACL::$all_access AS $action => $bool) {
-                $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
-            }
-
-            // Bug56391 - Use the SugarACL class to determine access to different actions within the module
-            foreach (SugarACL::$all_access AS $action => $bool) {
+            foreach (SugarACL::$all_access as $action => $bool) {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
 
@@ -431,23 +424,22 @@ class MetaDataManager
                 // Currently create just uses the edit permission, but there is probably a need for a separate permission for create
                 $outputAcl['create'] = $outputAcl['edit'];
 
-                // Now time to dig through the fields
-                $fieldsAcl = array();
+                if ($bean === false) {
+                    $bean = BeanFactory::newBean($module);
+                }
+
                 // we cannot use ACLField::getAvailableFields because it limits the fieldset we return.  We need all fields
                 // for instance assigned_user_id is skipped in getAvailableFields, thus making the acl's look odd if Assigned User has ACL's
                 // only assigned_user_name is returned which is a derived ["fake"] field.  We really need assigned_user_id to return as well.
-                if($bean === false) {
-                    $bean = BeanFactory::newBean($module);
-                }
-                if(empty($GLOBALS['dictionary'][$bean->object_name]['fields'])){
-                    if(empty($bean->acl_fields)) {
+                if (empty($GLOBALS['dictionary'][$bean->object_name]['fields'])) {
+                    if (empty($bean->acl_fields)) {
                         $fieldsAcl = array();
                     } else {
                         $fieldsAcl = $bean->field_defs;
                     }
-                } else{
+                } else {
                     $fieldsAcl = $GLOBALS['dictionary'][$bean->object_name]['fields'];
-                    if(isset($GLOBALS['dictionary'][$bean->object_name]['acl_fields']) && $GLOBALS['dictionary'][$bean->object_name]=== false){
+                    if (isset($GLOBALS['dictionary'][$bean->object_name]['acl_fields']) && $GLOBALS['dictionary'][$bean->object_name] === false) {
                         $fieldsAcl = array();
                     }
                 }
@@ -455,8 +447,8 @@ class MetaDataManager
 
                 SugarACL::listFilter($module, $fieldsAcl, $context, array('add_acl' => true));
                 $fieldsAcl = $this->metaDataHacks->fixAcls($fieldsAcl);
-                foreach ( $fieldsAcl as $field => $fieldAcl ) {
-                    switch ( $fieldAcl['acl'] ) {
+                foreach ($fieldsAcl as $field => $fieldAcl) {
+                    switch ($fieldAcl['acl']) {
                         case SugarACL::ACL_READ_WRITE:
                             // Default, don't need to send anything down
                             break;
