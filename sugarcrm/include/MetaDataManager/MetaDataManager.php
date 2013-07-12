@@ -394,9 +394,10 @@ class MetaDataManager
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
+        $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
 
         if (!SugarACL::moduleSupportsACL($module)) {
-            foreach ( array('admin', 'access','view','list','edit','delete','import','export','massupdate') as $action ) {
+            foreach ( array('access','view','list','edit','delete','import','export','massupdate') as $action ) {
                 $outputAcl[$action] = 'yes';
             }
         } else {
@@ -420,8 +421,6 @@ class MetaDataManager
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
             }
 
-            // is the user an admin user for the module
-            $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
             // Bug56391 - Use the SugarACL class to determine access to different actions within the module
             foreach (SugarACL::$all_access AS $action => $bool) {
                 $outputAcl[$action] = ($moduleAcls[$action] == true || !isset($moduleAcls[$action])) ? 'yes' : 'no';
