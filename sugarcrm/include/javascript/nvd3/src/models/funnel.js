@@ -22,7 +22,7 @@ nv.models.funnel = function() {
     , color = nv.utils.defaultColor()
     , fill = color
     , classes = function (d,i) { return 'nv-group nv-series-' + i; }
-    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
   //============================================================
@@ -316,14 +316,6 @@ nv.models.funnel = function() {
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
-            });
-          })
-          .on('mousemove', function(d,i){
-            dispatch.elementMousemove({
-              point: d,
-              pointIndex: i,
-              pos: [d3.event.pageX, d3.event.pageY],
-              id: id
             });
           })
           .on('click', function(d,i) {

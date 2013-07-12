@@ -14,15 +14,14 @@ nv.models.pieChart = function() {
     , showLegend = true
     , showTitle = false
     , hole = false
-    , tooltip = null
     , tooltips = true
-    , tooltipContent = function(key, y, e, graph) {
+    , tooltip = function(key, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + '</p>';
       }
     , state = {}
     , noData = "No Data Available."
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     ;
 
   //============================================================
@@ -34,16 +33,16 @@ nv.models.pieChart = function() {
 
   var showTooltip = function(e, offsetElement, total) {
 
-    var left = e.pos[0]
-      , top = e.pos[1]
+    var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 )
+      , top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0)
       , x = (pie.y()(e.point) * 100 / total).toFixed(1)
       , y = pie.valueFormat()( pie.y()(e.point) )
-      , content = tooltipContent( e.point.key, x, y, e, chart )
+      , content = ( tooltip( e.point.key, x, y, e, chart ) )
       //content = tooltip(pie.x()(e.point), y, e, chart);
     ;
 
     //nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
-    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
+    nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
   //============================================================
@@ -218,9 +217,9 @@ nv.models.pieChart = function() {
         }
       });
 
-      // pie.dispatch.on('elementMouseout.tooltip', function(e) {
-      //   dispatch.tooltipHide(e);
-      // });
+      pie.dispatch.on('elementMouseout.tooltip', function(e) {
+        dispatch.tooltipHide(e);
+      });
 
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function(e) {
@@ -253,20 +252,12 @@ nv.models.pieChart = function() {
     dispatch.tooltipShow(e);
   });
 
-  pie.dispatch.on('elementMouseout.tooltip', function(e) {
-    dispatch.tooltipHide(e);
-  });
+  // dispatch.on('tooltipShow', function(e) {
+  //   if (tooltips) showTooltip(e);
+  // });
+
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
-  });
-
-  pie.dispatch.on('elementMousemove', function(e) {
-    dispatch.tooltipMove(e);
-  });
-  dispatch.on('tooltipMove', function(e) {
-    if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
-    }
   });
 
   //============================================================
@@ -359,8 +350,8 @@ nv.models.pieChart = function() {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltipContent;
-    tooltipContent = _;
+    if (!arguments.length) return tooltip;
+    tooltip = _;
     return chart;
   };
 

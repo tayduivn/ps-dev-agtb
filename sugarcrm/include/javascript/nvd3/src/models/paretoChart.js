@@ -17,7 +17,6 @@ nv.models.paretoChart = function () {
     , reduceYTicks = false // if false a tick will show for every data point
     , rotateLabels = 0
     //, rotateLabels = -15
-    , tooltip = null
     , tooltips = true
     , tooltipBar = function (key, x, y, e, graph) {
         return '<p>Stage: <b>' + key + '</b></p>' +
@@ -32,7 +31,7 @@ nv.models.paretoChart = function () {
     , noData = 'No Data Available.'
     ;
 
-  var multibar = nv.models.paretoMultiBar().stacked(true)
+  var multibar = nv.models.multiBar().stacked(true)
     //, x = d3.scale.linear() // needs to be both line and historicalBar x Axis
     , x = multibar.xScale()
     , lines = nv.models.line()
@@ -43,7 +42,7 @@ nv.models.paretoChart = function () {
     , barLegend = nv.models.paretoLegend()
     , lineLegend = nv.models.paretoLegend()
     , controls = nv.models.legend()
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
     ;
 
   xAxis
@@ -56,13 +55,14 @@ nv.models.paretoChart = function () {
   //------------------------------------------------------------
 
   var showTooltip = function (e, offsetElement, dataGroup, lOffset) {
-    var left = e.pos[0]
-      , top = e.pos[1]
+    var containerPosition = getAbsoluteXY(offsetElement)
+      , left = e.pos[0] + (containerPosition.x || 0) + (e.series.type === 'bar' ? 0 : lOffset)
+      , top = e.pos[1] + (containerPosition.y || 0)
       , per = (e.point.y * 100 / dataGroup[e.pointIndex].t).toFixed(1)
       , amt = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex))
       , content = (e.series.type === 'bar' ? tooltipBar(e.series.key, per, amt, e, chart) : tooltipLine(e.series.key, per, amt, e, chart));
 
-    tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
+    nv.tooltip.show([left, top], content, 's', null, offsetElement);
   };
 
   var barClick = function (data,e,selection) {
@@ -635,10 +635,6 @@ nv.models.paretoChart = function () {
         barClick(data,e,selection);
       });
 
-      multibar.dispatch.on('elementMousemove', function(e) {
-        dispatch.tooltipMove(e);
-      });
-
       if (tooltips) {
         dispatch.on('tooltipShow', function (e) {
           showTooltip(e, that.parentNode, dataGroup, lOffset);
@@ -647,11 +643,6 @@ nv.models.paretoChart = function () {
       if (tooltips) {
         dispatch.on('tooltipHide', nv.tooltip.cleanup);
       }
-      dispatch.on('tooltipMove', function(e) {
-        if (tooltip) {
-          nv.tooltip.position(tooltip,e.pos);
-        }
-      });
 
       //============================================================
 
@@ -822,8 +813,8 @@ nv.models.paretoChart = function () {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) { return tooltipContent; }
-    tooltipContent = _;
+    if (!arguments.length) { return tooltip; }
+    tooltip = _;
     return chart;
   };
 

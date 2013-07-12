@@ -20,17 +20,16 @@ nv.models.multiBarChart = function() {
     , showLegend = true
     , reduceXTicks = true // if false a tick will show for every data point
     , rotateLabels = 0
-    , tooltip = null
     , tooltips = true
-    , tooltipContent = function(key, x, y, e, graph) {
+    , tooltip = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
     , state = { stacked: false }
-    , noData = 'No Data Available.'
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove', 'stateChange', 'changeState')
+    , noData = "No Data Available."
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
     , controlWidth = function(w) { return showControls ? w * 0.3 : 0 }
     ;
 
@@ -56,35 +55,14 @@ nv.models.multiBarChart = function() {
   // Private Variables
   //------------------------------------------------------------
 
-  // var showTooltip = function(e, offsetElement, groupTotals) {
-  //   var offsets = {left:0,right:0};
-  //   if (offsetElement) {
-  //     var svg = d3.select(offsetElement).select('svg'),
-  //         viewBox = svg.attr('viewBox');
-  //     offsets = nv.utils.getAbsoluteXY(offsetElement);
-  //     if (viewBox) {
-  //       viewBox = viewBox.split(' ');
-  //       var ratio = parseInt(svg.style('width'),10) / viewBox[2];
-  //       e.pos[0] = e.pos[0] * ratio;
-  //       e.pos[1] = e.pos[1] * ratio;
-  //     }
-  //   }
-  //   var left = e.pos[0],// + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
-  //       top = e.pos[1],// + ( (offsetElement && offsetElement.offsetTop) || 0 ),
-  //       x = (e.point.y * 100 / groupTotals[e.pointIndex].t).toFixed(1),
-  //       y = yAxis.tickFormat()(multibar.y()(e.point, e.pointIndex)),
-  //       content = tooltip(e.series.key, x, y, e, chart);
-  //   nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
-  // };
-
   var showTooltip = function(e, offsetElement, groupTotals) {
-    //console.log(e.pos)
-    var left = e.pos[0],
-        top = e.pos[1],
+    var left = e.pos[0] + (offsetElement.offsetLeft || 0),
+        top = e.pos[1] + (offsetElement.offsetTop || 0),
         x = (e.point.y * 100 / groupTotals[e.pointIndex].t).toFixed(1),
         y = yAxis.tickFormat()(multibar.y()(e.point, e.pointIndex)),
-        content = tooltipContent(e.series.key, x, y, e, chart);
-    tooltip = nv.tooltip.show( [left, top], content, null, null, offsetElement );
+        content = tooltip(e.series.key, x, y, e, chart);
+
+    nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
   //============================================================
@@ -92,7 +70,6 @@ nv.models.multiBarChart = function() {
 
   function chart(selection) {
     selection.each(function(chartData) {
-
       var properties = chartData.properties
         , data = chartData.data;
 
@@ -110,7 +87,7 @@ nv.models.multiBarChart = function() {
 
 
       //------------------------------------------------------------
-      // Display No Data message if there's nothing to show.
+      // Display noData message if there's nothing to show.
 
       if (!data || !data.length || !data.filter(function(d) { return d.values.length }).length) {
         var noDataText = container.selectAll('.nv-noData').data([noData]);
@@ -192,7 +169,7 @@ nv.models.multiBarChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate(' + controlWidth(availableWidth) + ',' + (-margin.top) + ')');
+            .attr('transform', 'translate(' + controlWidth(availableWidth) + ',' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title ) {
@@ -239,7 +216,6 @@ nv.models.multiBarChart = function() {
         ];
 
         controls.width(controlWidth(availableWidth)).color(['#444']);
-
         g.select('.nv-controlsWrap')
             .datum(controlsData)
             .attr('transform', 'translate(0,' + (-margin.top+titleHeight) + ')')
@@ -274,9 +250,8 @@ nv.models.multiBarChart = function() {
 
       xAxis
         .scale(x)
-        .ticks(availableWidth / 100)
-        //.tickSize(-availableHeight, 0)
-        .tickSize(0)
+        .ticks( availableWidth / 100 )
+        .tickSize(-availableHeight, 0)
         .tickFormat(function(d,i) {
           return groupLabels[i] ? groupLabels[i].l : 'asfd';
         });
@@ -292,20 +267,19 @@ nv.models.multiBarChart = function() {
           .selectAll('line, text')
           .style('opacity', 1);
 
-      if (reduceXTicks) {
+      if (reduceXTicks)
         xTicks
           .filter(function(d,i) {
               return i % Math.ceil(data[0].values.length / (availableWidth / 100)) !== 0;
             })
           .selectAll('text, line')
           .style('opacity', 0);
-      }
 
       if (rotateLabels) {
         xTicks
           .selectAll('text')
           .attr('transform', 'rotate(' + rotateLabels + ' 0,0)')
-          .style('text-anchor', rotateLabels > 0 ? 'start' : 'middle');
+          .attr('text-anchor', rotateLabels > 0 ? 'start' : 'end');
       }
 
       g.select('.nv-x.nv-axis').selectAll('g.nv-axisMaxMin text')
@@ -369,9 +343,7 @@ nv.models.multiBarChart = function() {
       });
 
       dispatch.on('tooltipShow', function(e) {
-        if (tooltips) {
-          showTooltip(e, that.parentNode, groupTotals);
-        }
+        if (tooltips) showTooltip(e, that.parentNode)
       });
 
       // Update chart from a state object passed to event handler
@@ -417,15 +389,6 @@ nv.models.multiBarChart = function() {
   dispatch.on('tooltipHide', function() {
     if (tooltips) {
       nv.tooltip.cleanup();
-    }
-  });
-
-  multibar.dispatch.on('elementMousemove', function(e) {
-    dispatch.tooltipMove(e);
-  });
-  dispatch.on('tooltipMove', function(e) {
-    if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
     }
   });
 
@@ -540,8 +503,8 @@ nv.models.multiBarChart = function() {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltipContent;
-    tooltipContent = _;
+    if (!arguments.length) return tooltip;
+    tooltip = _;
     return chart;
   };
 

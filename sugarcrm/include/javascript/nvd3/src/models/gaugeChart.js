@@ -14,16 +14,15 @@ nv.models.gaugeChart = function() {
     , height = null
     , showLegend = true
     , showTitle = false
-    , tooltip = null
     , tooltips = true
-    , tooltipContent = function(key, y, e, graph) {
+    , tooltip = function(key, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + '</p>';
       }
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
     , noData = "No Data Available."
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
     ;
 
   //============================================================
@@ -34,13 +33,14 @@ nv.models.gaugeChart = function() {
   //------------------------------------------------------------
 
   var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0],
-        top = e.pos[1],
+    var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
+        top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0),
         y = gauge.valueFormat()((e.point.y1-e.point.y0)),
-        content = tooltipContent(e.point.key, y, e, chart);
+        content = tooltip(e.point.key, y, e, chart);
 
-    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
+
   //============================================================
 
 
@@ -211,17 +211,9 @@ nv.models.gaugeChart = function() {
   gauge.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
+
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
-  });
-
-  gauge.dispatch.on('elementMousemove', function(e) {
-    dispatch.tooltipMove(e);
-  });
-  dispatch.on('tooltipMove', function(e) {
-    if (tooltip) {
-      nv.tooltip.position(tooltip,e.pos);
-    }
   });
 
   //============================================================
@@ -311,8 +303,8 @@ nv.models.gaugeChart = function() {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltipContent;
-    tooltipContent = _;
+    if (!arguments.length) return tooltip;
+    tooltip = _;
     return chart;
   };
 
