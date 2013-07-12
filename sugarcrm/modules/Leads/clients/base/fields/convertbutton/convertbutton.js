@@ -33,7 +33,12 @@
     },
 
     _render: function () {
-        if (this.model.get('converted')) {
+        var convertMeta = app.metadata.getLayout('Leads', 'convert-main');
+        var missingRequiredAccess = _.some(convertMeta.modules, function (moduleMeta) {
+            return (moduleMeta.required === true && !app.acl.hasAccess('create', moduleMeta.module));
+        }, this);
+
+        if (this.model.get('converted') || missingRequiredAccess) {
             this.hide();
         } else {
             app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
