@@ -1754,10 +1754,10 @@ class SugarBean
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 
-        if (static::enterOperation('saving_related')) {
+        if (!static::inOperation('saving_related') && static::enterOperation('updating_relationships')) {
             // let subclasses save related field changes
             $this->save_relationship_changes($isUpdate);
-            static::leaveOperation('saving_related');
+            static::leaveOperation('updating_relationships');
         }
         //BEGIN SUGARCRM flav=pro ONLY
         $this->updateCalculatedFields();
@@ -6858,6 +6858,7 @@ class SugarBean
 	 * Operations status
 	 * Known operations:
 	 * - saving_related - SugarBean is resaving related records
+	 * - updating_relationships - SugarBean is updating relationships on Save
 	 * - delete - Deleting a bean
 	 * @var array
 	 */
