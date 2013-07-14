@@ -719,8 +719,8 @@ class MetaDataManager
         // Product Name for Ultimate edition.
         $data['product_name'] = "SugarCRM Ultimate";
         //END SUGARCRM flav=ult ONLY
-        if (is_file("custom_version.php")) {
-            include("custom_version.php");
+        if (file_exists('custom/version.php')) {
+            include 'custom/version.php';
             $data['custom_version'] = $custom_version;
         }
 
