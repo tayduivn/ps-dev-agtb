@@ -47,4 +47,6 @@ $mod_strings = array(
     'LBL_IS_READ' => 'Read',
     'LBL_TYPE' => 'Type',
     'LBL_SHOW_NOTIFICATIONS' => 'Show notifications...',
+    'LBL_TODAYS_NOTIFICATIONS' => 'Today',
+    'LBL_RECENT_NOTIFICATIONS' => 'Recent',
 );
