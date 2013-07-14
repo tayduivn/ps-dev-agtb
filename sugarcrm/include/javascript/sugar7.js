@@ -37,11 +37,11 @@
                 }
             },
             {
-                name: "about",
-                route: "about",
+                name: 'about',
+                route: 'about',
                 callback: function() {
                     app.controller.loadView({
-                        layout: "about",
+                        layout: 'about',
                         module: 'Home',
                         skipFetch: true
                     });

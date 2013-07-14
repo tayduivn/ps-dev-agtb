@@ -187,6 +187,14 @@ $mod_strings = array (
 //ABOUT page
   'LBL_VERSION' => 'Version',
   'LBL_BUILD' => 'Build',
+    'TPL_ABOUT' => 'About {{product_name}}, Version {{version}} (Build {{build}}{{#if custom_version}} - {{custom_version}}{{/if}})',
+    'LBL_RESOURCES' => 'Resources',
+    'LBL_RESOURCES_DOCUMENTATION' => 'Documentation',
+    'LBL_RESOURCES_DEVELOPERS' => 'Developers',
+    'LBL_RESOURCES_SUGAR_INFO' => 'SugarCRM Company Information',
+    'LBL_LANGUAGE_PACKS' => 'Language Packs',
+    'TPL_LANGUAGE_PACKS_PROVIDED_BY' => 'Provided by {{{link}}}',
+
 
 //BEGIN SUGARCRM flav=com  && dep=os ONLY
 

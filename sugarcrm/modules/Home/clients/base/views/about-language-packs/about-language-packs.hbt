@@ -1,0 +1,7 @@
+<h4>{{str "LBL_LANGUAGE_PACKS" module}}</h4>
+<dl class="list">
+    {{#each this.meta.providers}}
+        <dt>{{language}}</dt>
+        <dd>{{{str "TPL_LANGUAGE_PACKS_PROVIDED_BY" ../module this}}}</dd>
+    {{/each}}
+</dl>

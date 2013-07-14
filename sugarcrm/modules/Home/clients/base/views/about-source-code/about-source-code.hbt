@@ -1,0 +1,9 @@
+<h4>{{str "LBL_SOURCE_CODE" module}}</h4>
+<dl class="list">
+    <dt><a target="_blank" href="http://www.sugarcrm.com">Sugar</a> (version {{this.serverInfo.version}})</dt>
+    <dd>Sales force automation application.</dd>
+    {{#each this.meta.external_libs}}
+        <dt>{{#if url}}<a target="_blank" href="{{url}}">{{name}}</a>{{else}}{{name}}{{/if}}</dt>
+        <dd>{{description}}</dd>
+    {{/each}}
+</dl>

@@ -1,9 +1,7 @@
-<?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (ÒMSAÓ), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -12,13 +10,17 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+({
+    extendsFrom: 'HeaderpaneView',
+    /**
+     * {@inheritDoc}
+     *
+     * Override the title to pass the context with the server info.
+     */
+    _renderHtml: function() {
+        var title = this.title || this.module;
+        this.title = app.lang.get(title, this.module, app.metadata.getServerInfo());
 
-$viewdefs['base']['layout']['about'] = array(
-    'type' => 'about',
-    'components' =>
-    array(
-        array(
-            'view' => 'about',
-        ),
-    ),
-);
+        app.view.View.prototype._renderHtml.call(this);
+    }
+})
