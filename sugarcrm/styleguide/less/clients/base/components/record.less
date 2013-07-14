@@ -1,13 +1,6 @@
 .span8 .headerpane {
   width: 66%;
-}
-
-.span12 .headerpane {
-  width: 100%;
-}
-
-.main-content {
-  margin-top: 20px;
+  border-right: 1px solid darken(@grayLighter,10%);
 }
 
 .headerpane {
@@ -16,10 +9,8 @@
   z-index: 1000;
   background: @grayLighter;
   border-bottom: 1px solid darken(@grayLighter,10%);
-  //border-right: 1px solid darken(@grayLighter,10%);
   .box-sizing(border-box);
   display: table;
-  //width: 100%;
   position: fixed;
   top: 48px;
   h1 {
@@ -281,7 +272,7 @@
 //main record edit
 .record {
   clear: both;
-  margin: 70px 20px 10px 5px;
+  margin: 10px 20px 10px 5px;
   .form-horizontal {
     .record-cell,
     .normal {

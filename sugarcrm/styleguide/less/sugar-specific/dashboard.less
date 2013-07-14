@@ -1,8 +1,4 @@
 .dashboard {
-  position: absolute;
-  width: 100%;
-  height: auto;
-  background: url(@textureSecondary);
   ul {
     list-style: none;
     margin: 0;
@@ -206,18 +202,6 @@
     .widget-container {
       padding: 5px;
     }
-  }
-  &.edit {
-    .dashlets {
-      .widget-container {
-        padding-top: 20px;
-      }
-      .rows.well {
-        margin-top: -15px;
-      }
-    }
-  }
-  .dashlets {
     & > li {
       padding-top: 5px;
       &:first-child {
@@ -228,14 +212,22 @@
       }
     }
   }
-
+  &.edit {
+    .dashlets {
+      .widget-container {
+        padding-top: 20px;
+      }
+      .rows.well {
+        //margin-top: -15px;
+      }
+    }
+  }
+  &.main-pane .headerpane h1 {
+    padding: 19px 0 0 20px;
+  }
   .ui-sortable .ui-sortable-placeholder {
     height: auto !important;
   }
-}
-
-:not(.sidebar-content) .dashboard {
-  top: 60px;
 }
 
 /* Dashboard inside right hand side panel */
@@ -243,7 +235,8 @@
   .dashboard {
     .preview-headerbar {
       display: table;
-      top: 49px;
+      height: 61px;
+      width: 34%;
       /* middle div is unnecessary, filipe said it cannot
          be removed from template, doing this for now */
       .record-cell {
@@ -253,14 +246,14 @@
         display: table-cell;
         width: 100%;
         position: relative;
-        padding-left: 5%;
+        padding-left: 1.5%;
         vertical-align: middle;
       }
       .record-cell:last-child {
         display: table-cell;
         white-space: nowrap;
         width: auto;
-        padding-right: 5%;
+        padding-right: 1.5%;
         vertical-align: middle;
       }
       .record-cell:last-child {
@@ -272,7 +265,7 @@
       }
       h1 {
         width: 90%;
-        margin: 0px 0px 0px 5px;
+        margin: 0px 0px 0px 7px;
         height: 28px;
         float: none;
         input {
@@ -317,7 +310,7 @@
         min-width: auto;
       }
       .btn-toolbar {
-        margin: 0px 5px 0px 0px;
+        margin: 0px 7px 0px 0px;
         padding-left: 8px;
       }
     }
@@ -328,7 +321,6 @@
       .dashlets {
         width: 90%;
         margin-left: 5%;
-        margin-top: 70px;
       }
     }
     .cols {
@@ -336,7 +328,7 @@
         width: 97%;
         margin-left: 1.5%;
         .rows.well:not(.well-invisible) {
-          margin: -41px -.5% auto;
+          margin: 0 -0.5% auto;
         }
       }
     }
@@ -362,10 +354,6 @@
       }
     }
   }
-}
-
-.main-pane.dashboard .headerpane h1 {
-  padding: 19px 0 0 20px;
 }
 
 .widget-container {

@@ -11,57 +11,61 @@
   left: 0;
   margin: 0;
   padding: 0;
-  overflow-y: auto;
-  & > div {
+  overflow-y: hidden;
+  /*& > div {
     height: 100%;
-  }
+  }*/
 }
 
-
-/*.row-fluid .main-pane.below-subnav,
-.row-fluid .side.sidebar-content.below-subnav {
-  top: 92px;
-}*/
-
-.row-fluid .main-pane,
-.row-fluid .side.sidebar-content.span4 {
-  position: absolute;
-  height: 100%;
-  top: 0;
-  bottom: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  .rtlFloat(@direction,right);
-}
-
-.row-fluid .side.sidebar-content .dashboard.main-pane {
-  top: 61px;
-}
-
-.touch .row-fluid .main-pane {
-  overflow-x: auto;
-}
-
-.row-fluid .main-pane.span8 {
-  width: 66%;
-  margin-left: 0;
-}
-
-.row-fluid .side.sidebar-content.span4 {
-  width: 34%;
-  right: 1px;
-  margin: 0;
-    .box-shadow(~"inset 4px 0 16px -4px rgba(0, 0, 0, .2)");
-    background-image: url('@{textureSecondary}');
-}
-
-.row-fluid .side.sidebar-content.hide {
-  display: none;
+#content,
+.flex-list {
+  -webkit-overflow-scrolling: touch;
 }
 
 .main-pane {
+  position: absolute;
+  top: 61px;
+  bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid darken(@grayLighter, 10%);
   .list-view {
     overflow-y: auto;
     width: 100%;
   }
+}
+
+.main-pane.span12 {
+  width: 100%;
+}
+
+.main-pane.span8 {
+  width: 66%;
+}
+
+.side.sidebar-content {
+  width: 34%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .rtlFloat(@direction,right);
+  .box-shadow(~"inset 4px 0 16px -4px rgba(0, 0, 0, .2)");
+  background-image: url('@{textureSecondary}');
+  &.hide {
+    display: none;
+  }
+}
+
+.dashboard {
+  width: 100%;
+  background: url(@textureSecondary);
+  .rtlFloat(@direction,right);
+}
+
+.touch .main-pane {
+  overflow-x: auto;
 }
