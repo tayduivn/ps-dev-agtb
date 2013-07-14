@@ -193,7 +193,7 @@ class Scheduler extends SugarBean {
 		$dates	= $ints[2];
 		$hrs	= $ints[1];
 		$mins	= $ints[0];
-		$today	= getdate($timedate->getNow()->ts);
+        $now = $timedate->tzUser($timedate->getNow(), $this->getUser());
 
 		// derive day part
 		if($days == '*') {
@@ -227,7 +227,7 @@ class Scheduler extends SugarBean {
 			}
 
 			// check the day to be in scope:
-			if(!in_array($today['wday'], $dayName)) {
+            if (!in_array($now->day_of_week, $dayName)) {
 				return false;
 			}
 		} else {
@@ -248,7 +248,7 @@ class Scheduler extends SugarBean {
 				$i += $mult;
 			}
 			// this month is not in one of the multiplier months
-			if(!in_array($today['mon'],$compMons)) {
+            if (!in_array($now->month, $compMons)) {
 				return false;
 			}
 		} elseif($mons != '*') {
@@ -274,7 +274,7 @@ class Scheduler extends SugarBean {
 			}
 
 			// check that particular months are in scope
-			if(!in_array($today['mon'], $monName)) {
+            if (!in_array($now->month, $monName)) {
 				return false;
 			}
 		}
@@ -292,7 +292,7 @@ class Scheduler extends SugarBean {
 				$i += $mult;
 			}
 
-			if(!in_array($today['mday'], $dateName)) {
+            if (!in_array($now->day, $dateName)) {
 				return false;
 			}
 		} elseif($dates != '*') {
@@ -318,7 +318,7 @@ class Scheduler extends SugarBean {
 			}
 
 			// check that dates are in scope
-			if(!in_array($today['mday'], $dateName)) {
+            if (!in_array($now->day, $dateName)) {
 				return false;
 			}
 		}
