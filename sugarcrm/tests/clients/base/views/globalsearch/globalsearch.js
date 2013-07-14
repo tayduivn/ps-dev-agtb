@@ -113,8 +113,8 @@ describe("Global Search", function() {
             var data = {
                 next_offset: -1,
                 records: [
-                    {id: 'test1', name: 'test1', module: 'Accounts', _search: {}},
-                    {id: 'test2', name: 'test2', module: 'bwcModule', _search: {}}
+                    {id: 'test1', name: 'test1', _module: 'Accounts', _search: {}},
+                    {id: 'test2', name: 'test2', _module: 'bwcModule', _search: {}}
                 ]
             };
             cb.success(data);
@@ -128,7 +128,7 @@ describe("Global Search", function() {
             }
         });
         expect(buildRouteSpy.calledWith('Accounts', 'test1')).toBe(true);
-        expect(bwcBuildRouteSpy.calledWith('bwcModule', 'test2', 'DetailView')).toBe(true);
+        expect(bwcBuildRouteSpy.calledWith('bwcModule', 'test2')).toBe(true);
     });
 
     it("Should fire search request when 'enter' key is typed", function() {

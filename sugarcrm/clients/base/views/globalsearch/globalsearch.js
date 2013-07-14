@@ -197,8 +197,8 @@
                     var formattedRecord = {
                         id: record.id,
                         name: record.name,
-                        module: record.module,
-                        link: '#' + app.router.buildRoute(record.module, record.id, 'detail')
+                        module: record._module,
+                        link: '#' + app.router.buildRoute(record._module, record.id)
                     };
 
                     if ((record._search.highlighted)) { // full text search
