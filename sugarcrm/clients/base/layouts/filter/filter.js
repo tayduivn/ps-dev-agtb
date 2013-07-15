@@ -258,21 +258,20 @@
         var contextList = [], context;
         if (this.showingActivities) {
             _.each(this.layout._components, function(component) {
-               if (component.name == 'activitystream') {
+               if (component.name == 'activitystream' && component.context.get('collection')) {
                    contextList.push(component.context);
                }
             });
         } else {
             if (this.layoutType === 'records') {
-                if (this.context.parent) {
-                    contextList.push(this.context.parent);
-                } else {
-                    contextList.push(this.context);
+                var ctx = this.context.parent || this.context;
+                if (ctx.get('collection')) {
+                    contextList.push(ctx);
                 }
             } else {
                 //Locate and add subpanel contexts
                 _.each(this.context.children, function(childCtx) {
-                    if (childCtx.get('link') && !childCtx.get('hidden')) {
+                    if (childCtx.get('link') && !childCtx.get('hidden') && childCtx.get('collection')) {
                         contextList.push(childCtx);
                     }
                 });
