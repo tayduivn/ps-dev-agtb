@@ -409,6 +409,9 @@
                 var tpl = app.template.getView('recordlist.totals', this.module);
                 this.$el.find('tbody').after(tpl(this));
             }
+            //adjust width of sales stage column to longest value so cells don't shift when using CTE
+            var sales_stage_width = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width();
+            this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width(sales_stage_width + 20);
 
             // figure out if any of the row actions need to be disabled
             this.setRowActionButtonStates();
