@@ -120,8 +120,11 @@ abstract class SugarApi {
     protected function htmlDecodeReturn(&$data) {
         foreach($data AS $key => $value) {
             if((is_object($value) || is_array($value)) && !empty($value)) {
-                $this->htmlDecodeReturn($value);
-                $data[$key] = $value;
+                if (is_array($data)) {
+                    $this->htmlDecodeReturn($data[$key]);
+                } else {
+                    $this->htmlDecodeReturn($data->$key);
+                }
             }
             // htmldecode screws up bools..returns '1' for true
             elseif(!is_bool($value) && (!empty($data) && !empty($value))) {
