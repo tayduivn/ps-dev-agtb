@@ -78,6 +78,9 @@ class SugarJobQueue
         if(empty($job->execute_time)) {
             $job->execute_time = $GLOBALS['timedate']->nowDb();
         }
+        if(empty($job->assigned_user_id)) {
+            $job->assigned_user_id = $GLOBALS['current_user']->id;
+        }
         $job->save();
 
         return $job->id;
