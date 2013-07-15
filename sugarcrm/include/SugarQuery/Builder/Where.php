@@ -198,15 +198,28 @@ abstract class SugarQuery_Builder_Where
      * @param bool $bean
      * @return SugarQuery_Builder_Where
      */
-    public function in($field, $vals, $bean = false) {
-		$condition = new SugarQuery_Builder_Condition();
-		$condition->setOperator('IN')->setField($field)->setValues($vals);
-        if($bean instanceof SugarBean) {
-            $condition->setBean($bean);
+    public function in($field, $vals, $bean = false)
+    {
+        $isNull = in_array('', $vals);
+        if ($isNull) {
+            $vals = array_filter($vals, 'strlen');
+            if (count($vals) > 0) {
+                $where = $this->queryOr();
+                $where->isNull($field, $bean);
+                $where->in($field, $vals, $bean = false);
+            } else {
+                $this->isNull($field, $bean);
+            }
+        } else {
+            $condition = new SugarQuery_Builder_Condition();
+            $condition->setOperator('IN')->setField($field)->setValues($vals);
+            if ($bean instanceof SugarBean) {
+                $condition->setBean($bean);
+            }
+            $this->conditions[] = $condition;
         }
-		$this->conditions[] = $condition;
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * @param $field
@@ -214,13 +227,26 @@ abstract class SugarQuery_Builder_Where
      * @param bool $bean
      * @return SugarQuery_Builder_Where
      */
-    public function notIn($field, $vals, $bean = false) {
-        $condition = new SugarQuery_Builder_Condition();
-        $condition->setOperator('NOT IN')->setField($field)->setValues($vals);
-        if($bean instanceof SugarBean) {
-            $condition->setBean($bean);
+    public function notIn($field, $vals, $bean = false)
+    {
+        $isNull = in_array('', $vals);
+        if ($isNull) {
+            $vals = array_filter($vals, 'strlen');
+            if (count($vals) > 0) {
+                $where = $this->queryAnd();
+                $where->notNull($field, $bean);
+                $where->notIn($field, $vals, $bean = false);
+            } else {
+                $this->notNull($field, $bean);
+            }
+        } else {
+            $condition = new SugarQuery_Builder_Condition();
+            $condition->setOperator('NOT IN')->setField($field)->setValues($vals);
+            if ($bean instanceof SugarBean) {
+                $condition->setBean($bean);
+            }
+            $this->conditions[] = $condition;
         }
-        $this->conditions[] = $condition;
         return $this;
     }
 
@@ -319,8 +345,7 @@ abstract class SugarQuery_Builder_Where
         $dates = TimeDate::getInstance()->parseDateRange($value, null, true);
 
         if (is_array($dates)) {
-            $where = new SugarQuery_Builder_Andwhere();
-            $this->conditions[] = $where;
+            $where = $this->queryAnd();
             $where->gte($field, TimeDate::getInstance()->asDb($dates[0]), $bean);
             $where->lte($field, TimeDate::getInstance()->asDb($dates[1]), $bean);
         }

@@ -291,6 +291,30 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $sq->execute();
 
         $this->assertEquals(count($result), 6, "Wrong row count, actually received: " . count($result) . " back.");
+
+
+        //With a null value
+        $sq = new SugarQuery();
+
+        $sq->select(array("name", "amount"));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $sq->where()->in('amount',array('', 100,101,102,103,104,105), $this->opportunity_bean);
+
+        $result = $sq->execute();
+
+        $this->assertEquals(count($result), 6, "Wrong row count, actually received: " . count($result) . " back.");
+
+
+        //With only a null value
+        $sq = new SugarQuery();
+
+        $sq->select(array("name", "amount"));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $sq->where()->in('amount',array(''), $this->opportunity_bean);
+
+        $result = $sq->execute();
+
+        $this->assertEquals(count($result), 0, "Wrong row count, actually received: " . count($result) . " back.");
     }
 
     public function testNotIn()
@@ -304,7 +328,32 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $sq->execute();
 
         $this->assertEquals(195, count($result), "Wrong row count, actually received: " . count($result) . " back.");
+
+
+        //With a null value
+        $sq = new SugarQuery();
+
+        $sq->select(array("name", "amount"));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $sq->where()->notIn('amount', array('', 100,101,102,103,104,105));
+
+        $result = $sq->execute();
+
+        $this->assertEquals(195, count($result), "Wrong row count, actually received: " . count($result) . " back.");
+
+
+        //With only a null value
+        $sq = new SugarQuery();
+
+        $sq->select(array("name", "amount"));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $sq->where()->notIn('amount', array(''));
+
+        $result = $sq->execute();
+
+        $this->assertEquals(201, count($result), "Wrong row count, actually received: " . count($result) . " back.");
     }
+
     public function testBetween()
     {
         $sq = new SugarQuery();
