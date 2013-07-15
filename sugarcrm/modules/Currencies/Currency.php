@@ -607,12 +607,6 @@ function format_place_symbol($amount, $symbol, $symbol_space) {
  */
 function unformat_number($string)
 {
-    // Just in case someone passes a number through,
-    // or if the string is a formatted number already
-    if ( !is_string($string) || preg_match('!^[+-]?\d+(\.\d+)?$!', $string) ) {
-        return (float)$string;
-    }
-
     static $currency = null;
     if(!isset($currency)) {
         global $current_user;

@@ -236,12 +236,19 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
 
         $testValue = "0.9";
         $unformattedValue = unformat_number($testValue);
-        $this->assertEquals(0.9, $unformattedValue, "Assert that 0.9 stays 0.9. Unformatted value is: ".$unformattedValue);
+        $this->assertEquals(9, $unformattedValue, "Assert that 0.9 becomes 9. Unformatted value is: ".$unformattedValue);
 
         $testValue = "-0.9";
         $unformattedValue = unformat_number($testValue);
-        $this->assertEquals(-0.9, $unformattedValue, "Assert that -0.9 stays -0.9. Unformatted value is: ".$unformattedValue);
+        $this->assertEquals(-9, $unformattedValue, "Assert that -0.9 becomes -9. Unformatted value is: ".$unformattedValue);
 
+        $testValue = "-3.000";
+        $unformattedValue = unformat_number($testValue);
+        $this->assertEquals(-3000, $unformattedValue, "Assert that -3.000 becomes -3000. Unformatted value is: ".$unformattedValue);
+
+        $testValue = "3.000";
+        $unformattedValue = unformat_number($testValue);
+        $this->assertEquals(3000, $unformattedValue, "Assert that 3.000 becomes 3000. Unformatted value is: ".$unformattedValue);
     }
 
     /**
