@@ -86,7 +86,9 @@
                 }
 
                 self.tweets = tweets;
-                self.render();
+                if (!this.disposed) {
+                    self.render();
+                }
             },
             error: function(xhr,status,error){
                 if (xhr.status == 424) {
