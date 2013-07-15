@@ -677,10 +677,13 @@ class RestService extends ServiceBase
      */
     protected function respond($route, $args)
     {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
+            $this->response->generateETagHeader();
+        }
+        
+        //leaving this logic split out in case more actions on rawreply need added in the future
         if (!empty($route['rawReply'])) {
-            if ($_SERVER['REQUEST_METHOD'] == 'GET' && empty($route['noEtag'])) {
-                $this->response->generateETagHeader();
-            } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $this->response->setPostHeaders();
             }
         } else {
