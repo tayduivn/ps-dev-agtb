@@ -69,6 +69,31 @@ describe("BaseFilterFilterDropdownView", function () {
         });
     });
 
+    describe('handleModuleChange', function(){
+        var getModuleStub;
+
+        afterEach(function(){
+            if(getModuleStub){
+                getModuleStub.restore();
+            }
+        });
+
+        it('should disable filter dropdown when All Records is selected', function(){
+            getModuleStub = sinon.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: false}; });
+            expect(view.filterDropdownEnabled).toBeTruthy();
+            view.layout.trigger("filter:change:module", "ALL_RECORDS", "all_modules");
+            expect(view.filterDropdownEnabled).toBeFalsy();
+        });
+
+        it('should disable filter dropdown when a BWC module is selected', function(){
+            getModuleStub = sinon.stub(app.metadata, 'getModule', function() { return {isBwcEnabled: true}; });
+            expect(view.filterDropdownEnabled).toBeTruthy();
+            view.layout.trigger("filter:change:module", "TEST_MODULE", "test_id");
+            expect(view.filterDropdownEnabled).toBeFalsy();
+        });
+
+    });
+
     describe('filterList', function() {
 
         var expected, filterList, canCreateStub;
@@ -159,7 +184,7 @@ describe("BaseFilterFilterDropdownView", function () {
         });
 
         it('should formatSelection for selected module', function() {
-            var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.enabled },
+            var expected = {label: app.lang.get("LBL_FILTER"), enabled: view.filterDropdownEnabled },
                 html;
 
             //Template replacement
