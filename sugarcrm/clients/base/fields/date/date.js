@@ -109,7 +109,7 @@
     _setupDatepicker: function() {
         this.datepickerMap = this._patchDatepickerMeta(); // converts com_cal_* to languageDictionary
         this.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(this.usersDatePrefs));
-        if(this.def.required && _.isFunction(this.setRequiredPlaceholder)){
+        if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".datepicker"));
         }
         var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane.span8' : 'div#content .main-pane.span8';
