@@ -719,6 +719,14 @@ class MetaDataManager
             );
         }
         //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        //Adds the portal status to the server info collection.
+        $admin = Administration::getSettings();
+        //Property 'on' of category 'portal' must be a boolean.
+        $data['portal_active'] = !empty($admin->settings['portal_on']);
+        //END SUGARCRM flav=ent ONLY
+
         return $data;
     }
 
