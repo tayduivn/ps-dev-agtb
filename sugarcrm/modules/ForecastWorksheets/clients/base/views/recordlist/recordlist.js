@@ -250,13 +250,6 @@
                     }
                 }, this);
 
-                this.context.parent.on('forecasts:worksheet:needs_commit', function(worksheetType) {
-                    if (this.worksheetType == worksheetType && app.metadata.getModule('Forecasts', 'config').show_forecasts_commit_warnings == 1) {
-                        // only set this if they are a manager
-                        this.setNavigationMessage(true, 'LBL_WORKSHEET_COMMIT_CONFIRM', '');
-                    }
-                }, this);
-
                 app.routing.before('route', function() {
                     var ret = this.showNavigationMessage('router');
                     this.processNavigationMessageReturn(ret);
@@ -692,9 +685,6 @@
                     this.collection.fetch();
                 }, this);
                 this.saveWorksheet(true);
-            } else if (message_result.message == 'LBL_WORKSHEET_COMMIT_CONFIRM') {
-                // once the commit happens, it will trigger a new fetch.
-                this.context.parent.trigger('forecasts:worksheet:commit', this.dirtyUser || this.selectedUser, this.worksheetType, this.getCommitTotals());
             }
 
             return false
