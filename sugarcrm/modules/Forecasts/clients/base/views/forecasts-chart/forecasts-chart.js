@@ -330,9 +330,9 @@
         params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
         params.r = new Date().getTime();
 
-        var url = app.api.buildURL(this.buildChartUrl(params), '', '', data);
+        var url = app.api.buildURL(this.buildChartUrl(params));
 
-        app.api.call('read', url, data, {
+        app.api.call('read', url, {}, {
             success: _.bind(function(data) {
                 this.serverData = data;
                 this.convertDataToChartData();
