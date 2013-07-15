@@ -802,6 +802,9 @@ class SugarQuery_Compiler_SQL
                     if ($value == 'NOW()') {
                         return $this->db->now();
                     }
+                    if ($operator == 'STARTS') {
+                        $value = $value . '%';
+                    }
             }
 
             if ($this->db->getTypeClass($dbtype) == 'string') {

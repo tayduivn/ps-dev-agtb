@@ -593,14 +593,16 @@ class FilterApi extends SugarApi
                             case '$gte':
                                 $where->gte($field, $value);
                                 break;
-                            case '$fromDays':
-                                // FIXME: FRM-226, logic for these needs to be moved to SugarQuery
-                                $where->gte(
-                                    $field,
-                                    TimeDate::getInstance()->getNow()->get(
-                                        "-{$value} days"
-                                    )->asDb()
-                                );
+                            case '$dateRange':
+                                $where->dateRange($field, $value);
+                                break;
+                            case '$dateBetween':
+                                if (!is_array($value) || count($value) != 2) {
+                                    throw new SugarApiExceptionInvalidParameter(
+                                        '$dateBetween requires an array with two values.'
+                                    );
+                                }
+                                $where->dateBetween($field, $value);
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: " . $op);
