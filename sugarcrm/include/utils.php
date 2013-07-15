@@ -3846,9 +3846,9 @@ function getPhpInfo($level=-1)
 /**
  * This function will take a string that has tokens like {0}, {1} and will replace
  * those tokens with the args provided
- * @param	$format string to format
- * @param	$args args to replace
- * @return	$result a formatted string
+ * @param string $format string to format
+ * @param array $args args to replace
+ * @return string
  */
 function string_format($format, $args)
 {
