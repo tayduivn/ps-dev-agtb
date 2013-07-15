@@ -23,12 +23,6 @@
 
 @media (max-width: 480px) {
 
-  #folded .tab-pane.active {
-    background: url(@textureSecondary);
-    top: 48px;
-    width: 100% !important;
-  }
-
   .navbar {
     min-width: 320px;
   }
@@ -158,21 +152,11 @@
 
 @media (max-width: 768px) {
 
-  body {
-    padding-top: 30px;
-  }
-
-
-  #folded .tab-pane.active {
-    background: url(@textureSecondary);
-    top: 48px;
-    width: 100% !important;
-  }
-
   // GRID & CONTAINERS
   // -----------------
   // Remove width from containers
-  .container, .container-fluid {
+  .container,
+  .container-fluid {
     width: auto;
     padding: 0;
   }
@@ -196,11 +180,7 @@
   .subnav {
     margin-top: 17px;
   }
-  .thumbnail {
-    .border-radius(0);
-  }
 
-  /*#createList,*/
   #userList {
     display: none !important;
   }
@@ -217,6 +197,7 @@
   }
 
   .thumbnail {
+    .border-radius(0);
     overflow: scroll;
   }
   .thumbnail h1 {
@@ -235,31 +216,49 @@
     display:none !important;
   }
 
-  //from responsive-forecast.less
-  #folded,
-  .row-fluid .span8.main-pane {
+  #content {
+    overflow-y: auto;
+  }
+
+  #content > .row-fluid > .dashboard.main-pane {
+    position: absolute;
+    top: 61px;
+    bottom: 0;
+    overflow-y: auto;
+  }
+
+  .main-pane,
+  .row-fluid .main-pane.span8,
+  .row-fluid .side.sidebar-content.span4 {
     float: none;
     position: relative;
+    top: auto;
+    bottom: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+    border-right: none;
+    width: 100%;
+  }
+
+  .row-fluid .main-pane.span8 {
+    padding-top: 61px;
   }
 
   .headerpane .drawerTrig {
     display: none;
   }
 
-  #folded,
-  .row-fluid .span8.main-pane,
-  .row-fluid .span8.main-pane .headerpane {
-    width:100%;
+  .row-fluid .main-pane.span8 .headerpane {
+    width: 100%;
+  }
+
+  .sidebar-content .dashboard .preview-headerbar {
+    position: relative;
+    width: 100%;
+    top: auto;
   }
 
   .row-fluid .side.sidebar-content.span4 {
-    width: 100%;
-    //float: none;
-    position: relative;
-    //margin: 0;
-    //padding: 8px 20px 0;
-    //margin-bottom: 44px;
-
     .side-pane.active {
       padding: 36px 0 0;
       top: auto;
@@ -276,10 +275,6 @@
       right: 0;
       top: 0;
     }
-  }
-
-  #dashboard.dashboard {
-    position: relative;
   }
 }
 
