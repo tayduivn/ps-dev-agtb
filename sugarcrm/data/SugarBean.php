@@ -4945,7 +4945,9 @@ class SugarBean
             $this->getRelatedFields($this->parent_type, $this->parent_id, array('name'=>'parent_name', 'document_name' => 'parent_document_name', 'first_name'=>'parent_first_name', 'last_name'=>'parent_last_name'));
             if(!empty($this->parent_first_name) || !empty($this->parent_last_name) ){
                 $this->parent_name = $GLOBALS['locale']->getLocaleFormattedName($this->parent_first_name, $this->parent_last_name);
-            } else if(!empty($this->parent_document_name)){
+                //note that the line below uses isset() AND checks for blank instead of using empty() on purpose
+                //expected values could return a 0 which would not pass the empty() check.
+            } else if(isset($this->parent_document_name) && $this->parent_document_name != '') {
                 $this->parent_name = $this->parent_document_name;
             }
         }
