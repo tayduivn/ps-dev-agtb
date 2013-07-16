@@ -34,7 +34,7 @@ describe('Forecasts.Base.Views.ForecastChart', function() {
             config: false
         }
 
-        view = SugarTest.createView('base', 'forecasts', 'forecasts-chart', meta, context, true, null, true);
+        view = SugarTest.createView('base', 'Forecasts', 'forecasts-chart', meta, context, true, null, true);
 
         view.serverData = {
             'title': 'Test',
