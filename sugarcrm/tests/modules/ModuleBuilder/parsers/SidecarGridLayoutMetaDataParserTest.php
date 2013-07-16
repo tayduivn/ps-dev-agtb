@@ -303,6 +303,28 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
             array('panel' => array(array('foo' => 'bar', 'fields' => array())), 'expectation' => 0),
         );
     }
+    
+    /**
+     * Tests parsing of readonly properties of field defs
+     * 
+     * @dataProvider readonlyPropTestProvider
+     * @param array $defs Mock array of vardefs to trim
+     * @param boolean $expectation Assertion to test
+     */
+    public function testReadonlyPropertyIsParsed($defs, $expectation)
+    {
+        $result = $this->_parser->_trimFieldDefs($defs);
+        $actual = !empty($result['readonly']);
+        $this->assertEquals($expectation, $actual, "Assertion of readonly property existence failed");
+    }
+    
+    public function readonlyPropTestProvider()
+    {
+        return array(
+            array('defs' => array('name' => 'test1', 'vname' => 'LBL_TEST1', 'readonly' => true), 'expectation' => true),
+            array('defs' => array('name' => 'test2', 'vname' => 'LBL_TEST2'), 'expectation' => false),
+        );
+    }
 }
 
 
