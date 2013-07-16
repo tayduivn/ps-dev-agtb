@@ -13,26 +13,26 @@
              * @param plugin
              */
             onAttach: function (component, plugin) {
-                component.on('init', function () {
+                this.on('init', function () {
                     var self = this;
                     // was google pretty print script loaded elsewhere?
-                    if (!window.prettyPrint) {
-                        $.getScript(
-                            'styleguide/content/js/google-code-prettify/prettify.js',
-                            function () {
-                                self._scriptReady = true;
-                                if (self._pageReady) {
-                                    // if content has been loaded, run prettify
-                                    prettyPrint();
-                                }
-                            }
-                        );
-                    } else {
+                    if (window.prettyPrint) {
                         this._scriptReady = true;
+                        return;
                     }
+                    $.getScript(
+                        'styleguide/content/js/google-code-prettify/prettify.js',
+                        function () {
+                            self._scriptReady = true;
+                            if (self._pageReady) {
+                                // if content has been loaded, run prettify
+                                prettyPrint();
+                            }
+                        }
+                    );
                 }, null, component);
 
-                component.on('render', function () {
+                this.on('render', function () {
                     this._pageReady = true;
                     if (this._scriptReady) {
                         // if script has been loaded, run prettify
