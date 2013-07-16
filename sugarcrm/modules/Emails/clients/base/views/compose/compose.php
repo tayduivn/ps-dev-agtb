@@ -81,6 +81,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                 ),
                 array(
                     'name'        => 'attachments',
+                    'label'       => 'LBL_ATTACHMENTS',
                     'type'        => 'attachments',
                     'uploadEvent' => 'actionbar:upload_new_button:clicked',
                 ),
