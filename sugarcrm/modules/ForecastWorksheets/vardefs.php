@@ -46,12 +46,17 @@ $dictionary['ForecastWorksheet'] = array(
             'parent_type' => 'record_type_display',
             'type_name' => 'parent_type',
             'id_name' => 'parent_id',
-            'vname' => 'LBL_LIST_RELATED_TO',
+            'vname' => 'LBL_NAME',
             'type' => 'parent',
             'group' => 'parent_name',
             'source' => 'non-db',
             'options' => 'parent_type_display',
             'studio' => true,
+            'related_fields' => array(
+                'parent_id',
+                'parent_type',
+                'parent_deleted',
+            )
         ),
         'opportunity_id' =>
         array(
@@ -65,19 +70,29 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'opportunity_name',
             'id_name' => 'opportunity_id',
+            'module' => 'Opportunities',
             'vname' => 'LBL_OPPORTUNITY_NAME',
-            'type' => 'varchar',
+            'type' => 'relate',
+            'dbType' => 'varchar',
             'len' => '255',
-            'studio' => false
+            'studio' => false,
+            'related_fields' => array(
+                'opportunity_id',
+            )
         ),
         'account_name' =>
         array(
             'name' => 'account_name',
             'id_name' => 'account_id',
+            'module' => 'Accounts',
             'vname' => 'LBL_ACCOUNT_NAME',
-            'type' => 'varchar',
+            'type' => 'relate',
+            'dbType' => 'varchar',
             'len' => '255',
-            'studio' => false
+            'studio' => false,
+            'related_fields' => array(
+                'account_id',
+            )
         ),
         'account_id' =>
         array(
@@ -86,6 +101,63 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'id',
             'audited' => false,
             'studio' => false
+        ),
+        'campaign_id' => array(
+            'name' => 'campaign_id',
+            'vname' => 'LBL_CAMPAIGN_ID',
+            'type' => 'id',
+            'audited' => false,
+            'studio' => false
+        ),
+        'campaign_name' => array(
+            'name' => 'campaign_name',
+            'id_name' => 'campaign_id',
+            'vname' => 'LBL_CAMPAIGN',
+            'type' => 'relate',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'module' => 'Campaigns',
+            'related_fields' => array(
+                'campaign_id',
+            )
+        ),
+        'product_template_id' => array(
+            'name' => 'product_template_id',
+            'vname' => 'LBL_PRODUCT_TEMPLATE_ID',
+            'type' => 'id',
+            'audited' => false,
+            'studio' => false
+        ),
+        'product_template_name' => array(
+            'name' => 'product_template_name',
+            'id_name' => 'product_template_id',
+            'vname' => 'LBL_PRODUCT',
+            'type' => 'relate',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'module' => 'ProductTemplates',
+            'related_fields' => array(
+                'product_template_id',
+            )
+        ),
+        'category_id' =>  array(
+            'name' => 'category_id',
+            'vname' => 'LBL_CATEGORY',
+            'type' => 'id',
+            'required' => false,
+            'reportable' => true,
+        ),
+        'category_name' =>  array(
+            'name' => 'category_name',
+            'id_name' => 'category_id',
+            'vname' => 'LBL_CATEGORY_NAME',
+            'type' => 'relate',
+            'module' => 'ProductCategories',
+            'dbType' => 'varchar',
+            'len' => '255',
+            'related_fields' => array(
+                'category_id'
+            )
         ),
         'sales_status' => array(
             'name' => 'sales_status',
@@ -104,7 +176,12 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'align' => 'right',
+            'related_fields' => array(
+                'base_rate',
+                'currency_id'
+            ),
         ),
         'best_case' =>
         array(
@@ -115,7 +192,12 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'align' => 'right',
+            'related_fields' => array(
+                'base_rate',
+                'currency_id'
+            ),
         ),
         'worst_case' =>
         array(
@@ -126,7 +208,12 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '26,6',
             'validation' => array('type' => 'range', 'min' => 0),
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'align' => 'right',
+            'related_fields' => array(
+                'base_rate',
+                'currency_id'
+            ),
         ),
         'base_rate' =>
         array(
@@ -188,7 +275,7 @@ $dictionary['ForecastWorksheet'] = array(
             'required' => true,
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
-            'studio' => false
+            'studio' => false,
         ),
         'date_closed_timestamp' =>
         array(
@@ -214,7 +301,7 @@ $dictionary['ForecastWorksheet'] = array(
         'probability' =>
         array(
             'name' => 'probability',
-            'vname' => 'LBL_PROBABILITY',
+            'vname' => 'LBL_OW_PROBABILITY',
             'type' => 'int',
             'dbType' => 'double',
             'audited' => false,
@@ -226,7 +313,7 @@ $dictionary['ForecastWorksheet'] = array(
         'commit_stage' =>
         array(
             'name' => 'commit_stage',
-            'vname' => 'LBL_COMMIT_STAGE',
+            'vname' => 'LBL_FORECAST',
             'type' => 'enum',
             'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
@@ -240,6 +327,80 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'int',
             'comment' => 'Is A Draft Version',
             'studio' => false
+        ),
+        'next_step' => array(
+            'name' => 'next_step',
+            'vname' => 'LBL_NEXT_STEP',
+            'type' => 'varchar',
+            'len' => '100',
+            'comment' => 'The next step in the sales process',
+            'merge_filter' => 'enabled',
+        ),
+        'lead_source' => array(
+            'name' => 'lead_source',
+            'vname' => 'LBL_LEAD_SOURCE',
+            'type' => 'enum',
+            'options' => 'lead_source_dom',
+            'len' => '50',
+            'comment' => 'Source of the product',
+            'merge_filter' => 'enabled',
+        ),
+        'product_type' => array(
+            'name' => 'product_type',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'options' => 'opportunity_type_dom',
+            'len' => '255',
+            'audited' => true,
+            'comment' => 'Type of product ( from opportunities opportunity_type ex: Existing, New)',
+            'merge_filter' => 'enabled',
+        ),
+        'list_price' =>  array(
+            'name' => 'list_price',
+            'vname' => 'LBL_LIST_PRICE',
+            'type' => 'currency',
+            'len' => '26,6',
+            'audited' => true,
+            'comment' => 'List price of product ("List" in Quote)'
+        ),
+        'cost_price' =>  array(
+            'name' => 'cost_price',
+            'vname' => 'LBL_COST_PRICE',
+            'type' => 'currency',
+            'len' => '26,6',
+            'audited' => true,
+            'comment' => 'Product cost ("Cost" in Quote)'
+        ),
+        'discount_price' =>  array(
+            'name' => 'discount_price',
+            'vname' => 'LBL_DISCOUNT_PRICE',
+            'type' => 'currency',
+            'len' => '26,6',
+            'audited' => true,
+            'comment' => 'Discounted price ("Unit Price" in Quote)'
+        ),
+        'discount_amount' =>  array(
+            'name' => 'discount_amount',
+            'vname' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
+            'type' => 'currency',
+            'options' => 'discount_amount_class_dom',
+            'len' => '26,6',
+            'precision' => 6,
+            'comment' => 'Discounted amount'
+        ),
+        'quantity' =>  array(
+            'name' => 'quantity',
+            'vname' => 'LBL_QUANTITY',
+            'type' => 'int',
+            'len' => 5,
+            'comment' => 'Quantity in use',
+            'default' => 1
+        ),
+        'total_amount' => array(
+            'name' => 'total_amount',
+            'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
+            'reportable' => false,
+            'type' => 'currency'
         ),
         'parent_deleted' =>
         array(
