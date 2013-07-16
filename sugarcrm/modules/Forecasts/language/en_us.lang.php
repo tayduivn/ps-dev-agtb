@@ -420,6 +420,7 @@ $mod_strings = array (
     'LBL_TEAMS' => 'Teams',
     'LBL_CATEGORY' => 'Category',
     'LBL_COST_PRICE' => 'Cost Price',
+    'LBL_TOTAL_DISCOUNT_AMOUNT' => 'Total Discount Amount',
     'LBL_FORECASTS_CONFIG_WORKSHEET_TEXT' => 'Select which columns should be displayed for the worksheet view. By default, the following fields will be selected:',
 
     // pipline opportunities dashlet

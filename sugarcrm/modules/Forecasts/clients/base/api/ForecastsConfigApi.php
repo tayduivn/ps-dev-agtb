@@ -104,7 +104,7 @@ class ForecastsConfigApi extends ConfigModuleApi
             $json = getJSONobj();
             $_args = array(
                 'dropdown_lang' => isset($_SESSION['authenticated_user_language']) ?
-                        $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
+                    $_SESSION['authenticated_user_language'] : $GLOBALS['current_language'],
                 'dropdown_name' => 'commit_stage_custom_dom',
                 'view_package' => 'studio',
                 'list_value' => $json->encode($args['show_custom_buckets_options'])
@@ -124,6 +124,11 @@ class ForecastsConfigApi extends ConfigModuleApi
 
         //reload the settings to get the current settings
         $current_forecasts_settings = parent::configSave($api, $args);
+
+        // did this change?
+        if ($prior_forecasts_settings['worksheet_columns'] !== $args['worksheet_columns']) {
+            $this->setWorksheetColumns($api, $args['worksheet_columns'], $current_forecasts_settings['forecast_by']);
+        }
 
         //if primary settings for timeperiods have changed, then rebuild them
         if ($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
@@ -187,5 +192,84 @@ class ForecastsConfigApi extends ConfigModuleApi
         }
 
         return false;
+    }
+
+    /**
+     * @param ServiceBase $api
+     * @param $worksheetColumns
+     */
+    public function setWorksheetColumns(ServiceBase $api, $worksheetColumns, $forecastBy)
+    {
+        if (!is_array($worksheetColumns)) {
+            return false;
+        }
+
+        require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
+        $listDefsParser = ParserFactory::getParser(MB_LISTVIEW, 'ForecastWorksheets', null, null, $api->platform);
+        $listDefsParser->resetPanelFields();
+
+        // get the proper order from the admin panel, where we defined what is displayed, in the order that we want it
+        $mm = new MetadataManager($api->user);
+        $views = $mm->getModuleViews('Forecasts');
+        $fields = $views['forecastsConfigWorksheetColumns']['meta']['panels'][0]['fields'];
+
+        $cteable = array(
+            'commit_stage',
+            'worst_case',
+            'likely_case',
+            'best_case',
+            'date_closed',
+            'sales_stage',
+            'probability'
+        );
+
+        $currency_fields = array(
+            'worst_case',
+            'likely_case',
+            'best_case',
+            'list_price',
+            'cost_price',
+            'discount_price',
+            'discount_amount',
+            'total_amount'
+        );
+
+        foreach ($fields as $field) {
+            if (!in_array($field['name'], $worksheetColumns)) {
+                continue;
+            }
+
+            $column = $field['name'];
+            $additionalDefs = array();
+
+            // set the label for the parent_name field, depending on what we are forecasting by
+            if ($column == 'parent_name') {
+                $label = $forecastBy == 'Opportunities' ? 'LBL_OPPORTUNITY_NAME' : 'LBL_REVENUELINEITEM_NAME';
+                $additionalDefs = array_merge(
+                    $additionalDefs,
+                    array('label' => $label)
+                );
+            }
+
+            if (in_array($column, $cteable)) {
+                $additionalDefs = array_merge(
+                    $additionalDefs,
+                    array('click_to_edit' => true)
+                );
+            }
+            if (in_array($column, $currency_fields)) {
+                $additionalDefs = array_merge(
+                    $additionalDefs,
+                    array(
+                        'convertToBase' => true,
+                        'showTransactionalAmount' => true
+                    )
+                );
+            }
+            $listDefsParser->addField($column, $additionalDefs);
+        }
+
+        // save the file, but we don't need to load the the $_REQUEST, so pass false
+        $listDefsParser->handleSave(false);
     }
 }

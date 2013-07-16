@@ -35,12 +35,12 @@
     /**
      * Holds the default/selected items
      */
-    selectedOptions:[],
+    selectedOptions: [],
 
     /**
      * Holds all items
      */
-    allOptions:[],
+    allOptions: [],
 
     /**
      * The field object id/label for likely_case
@@ -92,17 +92,17 @@
             this.allOptions.push(obj);
 
             // If the current field being processed was found in the config fields,
-            if(!_.isUndefined(cField)) {
+            if (!_.isUndefined(cField)) {
                 // push field to defaults
                 this.selectedOptions.push(obj);
             }
 
             // save the field objects
-            if(field.name == 'best_case') {
+            if (field.name == 'best_case') {
                 this.bestFieldObj = obj;
-            } else if(field.name == 'likely_case') {
+            } else if (field.name == 'likely_case') {
                 this.likelyFieldObj = obj;
-            } else if(field.name == 'worst_case') {
+            } else if (field.name == 'worst_case') {
                 this.worstFieldObj = obj;
             }
 
@@ -128,7 +128,7 @@
      * {@inheritdoc}
      */
     bindDataChange: function() {
-        if(this.model) {
+        if (this.model) {
             this.model.on('change:columns', function(model) {
                 var arr = [],
                     cfgFields = this.model.get('worksheet_columns'),
@@ -136,7 +136,7 @@
 
                 _.each(metaFields, function(metaField) {
                     _.each(cfgFields, function(field) {
-                        if(metaField.name == field) {
+                        if (metaField.name == field) {
                             var labelModule = metaField.label_module || 'Forecasts';
                             arr.push(app.lang.get(metaField.label, labelModule));
                         }
@@ -145,7 +145,7 @@
                 this.titleSelectedValues = arr.join(', ');
 
                 // Handle truncating the title string and adding "..."
-                this.titleSelectedValues = this.titleSelectedValues.slice(0,50) + "...";
+                this.titleSelectedValues = this.titleSelectedValues.slice(0, 50) + "...";
 
                 this.updateTitle();
             }, this);
@@ -155,19 +155,19 @@
 
             this.model.on('change:scenarios', function(model) {
                 // check model settings and update select2 options
-                if(this.model.get('show_worksheet_best')) {
+                if (this.model.get('show_worksheet_best')) {
                     this.addOption(this.bestFieldObj);
                 } else {
                     this.removeOption(this.bestFieldObj);
                 }
 
-                if(this.model.get('show_worksheet_likely')) {
+                if (this.model.get('show_worksheet_likely')) {
                     this.addOption(this.likelyFieldObj);
                 } else {
                     this.removeOption(this.likelyFieldObj);
                 }
 
-                if(this.model.get('show_worksheet_worst')) {
+                if (this.model.get('show_worksheet_worst')) {
                     this.addOption(this.worstFieldObj);
                 } else {
                     this.removeOption(this.worstFieldObj);
@@ -175,6 +175,16 @@
 
                 // force render
                 this._render();
+
+                // update the model, since a field was added or removed
+                if (_.isFunction(this.wkstColumnsSelect2.select2)) {
+                    var arr = [];
+                    _.each(this.wkstColumnsSelect2.select2('data'), function(field) {
+                        arr.push(field.id);
+                    }, this)
+                    this.setModelValue(arr);
+                }
+
             }, this);
         }
     },
@@ -185,7 +195,7 @@
      * @param {Object} fieldObj
      */
     addOption: function(fieldObj) {
-        if(!_.contains(this.allOptions, fieldObj)) {
+        if (!_.contains(this.allOptions, fieldObj)) {
             this.allOptions.splice(fieldObj.index, 0, fieldObj);
             this.selectedOptions.splice(fieldObj.index, 0, fieldObj);
         }
@@ -228,7 +238,7 @@
             data: this.allOptions,
             multiple: true,
             containerCssClass: "select2-choices-pills-close",
-            initSelection : _.bind(function (element, callback) {
+            initSelection: _.bind(function(element, callback) {
                 callback(this.selectedOptions);
             }, this)
         });
@@ -248,9 +258,18 @@
             arr.push(field);
         }, this);
 
-        this.model.set('worksheet_columns', arr);
+        this.setModelValue(arr);
+    },
+
+    /**
+     * Set the value for the worksheet_columns on the model and trigger the event
+     * @param value
+     */
+    setModelValue: function(value) {
+        this.model.set('worksheet_columns', value);
         this.model.trigger('change:columns', this.model);
     },
+
 
     /**
      * {@inheritdoc}

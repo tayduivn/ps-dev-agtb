@@ -209,7 +209,7 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'discount_amount' =>  array(
             'name' => 'discount_amount',
-            'vname' => 'LBL_DISCOUNT_RATE',
+            'vname' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
             'type' => 'decimal',
             'options' => 'discount_amount_class_dom',
             'len' => '26,6',
@@ -218,7 +218,7 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
-            'formula' => 'ifElse(isNumeric($discount_price), ifElse(equal($discount_price, 0), 0, multiply(divide($discount_amount, $discount_price), 100)), 0)',
+            'formula' => 'ifElse(isNumeric($discount_amount),ifElse(equal($discount_amount,0),0,multiply(divide($discount_amount,add($discount_amount,$total_amount)),100)),0)',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_DISCOUNT_AS_PERCENT',
@@ -469,14 +469,15 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_QUOTE',
             'source' => 'non-db',
         ),
-//BEGIN SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         'best_case' =>  array(
             'name' => 'best_case',
             'vname' => 'LBL_BEST',
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
-           //END SUGARCRM flav=pro ONLY
+            'audited' => true,
+            //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
             //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -488,6 +489,7 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            'audited' => true,
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
@@ -500,6 +502,7 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'decimal',
             'type' => 'currency',
             'len' => '26,6',
+            'audited' => true,
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
@@ -520,7 +523,8 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'date_closed_timestamp',
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
-            'studio' => false
+            'studio' => false,
+            'audited' => true,
         ),
         'next_step' => array(
             'name' => 'next_step',

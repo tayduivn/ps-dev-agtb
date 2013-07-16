@@ -404,6 +404,151 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         $this->_paneldefs[0]['fields'] = $newPaneldefs;
     }
 
+
+    /**
+     * Add a field to a panel
+     *
+     * @param string $field       The Field we want to add
+     * @param null|int $placementIndex       Where we want to add the field to the panel, if null add to end
+     * @param int $panel                    The panel we want to use
+     * @throws Exception
+     */
+    public function addField($field, $additionalDefs = array(), $placementIndex = null, $panelIndex = 0)
+    {
+        $panel = $this->getPanel($panelIndex);
+
+        if ($panel === false) {
+            throw new Exception('Invalid Panel');
+        }
+        $fieldCount = count($panel['fields']);
+        $fields = $panel['fields'];
+
+        // we just have a field name, make it into an array
+        $field = $this->generateFieldDef($field);
+
+        if (!empty($additionalDefs)) {
+            $field = array_merge($field, $additionalDefs);
+        }
+
+        if (is_null($placementIndex)) {
+            array_push($fields, $field);
+        } elseif ($placementIndex === 0) {
+            array_unshift($fields, $field);
+        } else {
+            $fields_new = array_slice($fields, 0, $placementIndex);
+            array_push($fields_new, $field);
+            array_push($fields_new, array_slice($fields, $placementIndex, $fieldCount - 1));
+
+            $fields = $fields_new;
+        }
+
+        $this->setPanelFields($fields);
+    }
+
+    /**
+     * @param null|integer $panel           Get a specific panel
+     * @return array|bool                   Return all the panels or a specific panel if $panel is set and exist,
+     *                                      If no panels are found or the panel is empty, return boolean false
+     */
+    protected function getPanel($panel = null)
+    {
+        // Start with out current viewdefs
+        if (isset($this->_viewdefs[$this->client]['view'])) {
+            // list, edit or detail
+            $type = key($this->_viewdefs[$this->client]['view']);
+
+            // The current panels, should be the same as $this->_paneldefs
+            $panels = $this->_viewdefs[$this->client]['view'][$type]['panels'];
+
+            if (empty($panels) || !is_array($panels)) {
+                return false;
+            }
+
+            if (!is_null($panel) && is_integer($panel) && isset($panels[$panel])) {
+                return $panels[$panel];
+            }
+
+            return $panels;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string|array $fieldName
+     * @return array
+     * @throws Exception
+     */
+    protected function generateFieldDef($fieldName)
+    {
+        $def = $this->_trimFieldDefs($this->_fielddefs[$fieldName]);
+        $label = isset($def['label']) ? $def['label'] : '';
+        if (empty($label)) {
+            $label = isset($def['vname']) ? $def['vname'] : $def['name'];
+        }
+        $fieldDef = array('name' => $fieldName, 'label' => $label, 'enabled' => true, 'default' => true);
+
+        // set the related fields
+        if (isset($def['related_fields']) && !empty($def['related_fields'])) {
+            $fieldDef['related_fields'] = $def['related_fields'];
+        }
+
+        // set the alignment of column, if one is setup
+        if (isset($this->_fielddefs[$fieldName]['align']) && !empty($this->_fielddefs[$fieldName]['align'])) {
+            $fieldDef['align'] = $this->_fielddefs[$fieldName]['align'];
+        }
+
+        // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
+        // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
+        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'relate') {
+            $fieldDef['id'] = strtoupper($this->_fielddefs[$fieldName]['id_name']);
+            $fieldDef['link'] = true;
+        }
+        // sorting fields of certain types will cause a database engine problems
+        if (isset($this->_fielddefs[$fieldName]['type']) &&
+            isset($this->requestRejectTypes[$this->_fielddefs[$fieldName]['type']])
+        ) {
+            $fieldDef['sortable'] = false;
+        }
+
+        // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
+        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'currency') {
+            $fieldDef['currency_format'] = true;
+        }
+
+        return $fieldDef;
+    }
+
+    /**
+     * Empty out the current Panel Fields so we start with a clean slate
+     */
+    public function resetPanelFields()
+    {
+        $this->setPanelFields();
+    }
+
+    /**
+     * Set the Fields array on the PanelDefs and ViewDefs
+     *
+     * @param array $fieldDefs
+     */
+    protected function setPanelFields($fieldDefs = array())
+    {
+        $panelDefsPath = $this->implementation->getPanelDefsPath();
+        $stack = & $this->_viewdefs;
+        foreach ($panelDefsPath as $path) {
+            if (isset($stack[$path])) {
+                $stack = & $stack[$path];
+            }
+        }
+        if (isset($stack['panels'])) {
+            $stack['panels'][0]['fields'] = $fieldDefs;
+        }
+
+        $this->_paneldefs[0]['fields'] = $fieldDefs;
+    }
+
+
     /*
      * Removes a field from the layout
      *
