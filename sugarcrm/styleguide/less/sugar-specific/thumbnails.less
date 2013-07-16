@@ -78,17 +78,19 @@
     }
   }
 
-  .actions {
-    //color: @white;
-    //navbar.less
-    //position: absolute;
-    top: 3px;
-    //right: 2px;
-    //actions.less
-    //right: 2px !important;
-    //top: 2px !important;
-    //modified for attachment dashlet
-    position: relative;
+  .widget-content
+    .actions {
+      //color: @white;
+      //navbar.less
+      //position: absolute;
+      top: 3px;
+      //right: 2px;
+      //actions.less
+      //right: 2px !important;
+      //top: 2px !important;
+      //modified for attachment dashlet
+      position: relative;
+    }
   }
 
   .actions a:hover {
@@ -104,6 +106,9 @@
     margin: 5px;
     li {
       margin: 10px;
+      .label {
+        margin: 3px 12px 12px 0;
+      }
     }
     li:last-child {
       border-bottom: none;
