@@ -113,7 +113,6 @@ $mod_strings = array(
     'LBL_REVENUELINEITEM_NAME' => 'Revenue Line Item Name:',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
     'LBL_MEMBER_OF' => 'Member of:',
-    'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
     'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',

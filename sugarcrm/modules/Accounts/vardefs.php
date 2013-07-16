@@ -280,17 +280,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity
 
 //END SUGARCRM flav=pro ONLY
 
-
-  'project' =>
-  array (
-    'name' => 'project',
-    'type' => 'link',
-    'relationship' => 'projects_accounts',
-    'module'=>'Project',
-    'bean_name'=>'Project',
-    'source'=>'non-db',
-        'vname'=>'LBL_PROJECTS',
-  ),
   'leads' =>
   array (
     'name' => 'leads',

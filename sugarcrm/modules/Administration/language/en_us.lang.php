@@ -805,7 +805,7 @@ $mod_strings = array (
 	'LBL_WIRELESS_MODULES_ENABLE_DESC2' => 'Drag and Drop the modules below to make them available or hidden in the browser-based mobile view, the Sugar Mobile application, and the SugarCRM Mobile application.',
     'LBL_WIRELESS_LEGACY_ONLY' => '(Sugar Mobile Only)',
     'LBL_WIRELESS_SUPPORTED_MODULES' => '* The following modules are available for SugarCRM Mobile: Accounts, Contacts, Leads, Opportunities, Meetings, Calls, Tasks, Notes, Reports, Cases, Quotes, Employees, and custom modules. All modules apply for Sugar Mobile.',
-    'LBL_WIRELESS_SUPPORTED_MODULES2' => '* The Bug Tracker, Campaigns, Contracts, Documents, Knowledge Base, Products, Projects, and Targets modules are not available for SugarCRM Mobile.',
+    'LBL_WIRELESS_SUPPORTED_MODULES2' => '* The Bug Tracker, Campaigns, Contracts, Documents, Knowledge Base, Products, and Targets modules are not available for SugarCRM Mobile.',
     'LBL_WIRELESS_URL_HELP' => 'Click to configure Sugar Mobile Plus applications',
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=int ONLY
@@ -1089,8 +1089,6 @@ $mod_strings = array (
 	'Manufacturers'  => 'Manufacturer',
 	'ProductBundleNotes' => 'ProductBundleNote',
 	'ProductBundles'   => 'ProductBundle',
-	'ProjectResources' => 'ProjectResource',
-
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',
 	'ReportMaker'  => 'Advanced Reports',

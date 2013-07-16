@@ -174,20 +174,5 @@ $layout_defs['Bugs'] = array(
                 array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
             ),				
 		),
-		'project' => array(
-			'order' => 60,
-			'sort_order' => 'asc',
-			'sort_by' => 'name',
-			'module' => 'Project',
-			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'project',
-			'add_subpanel_data' => 'project_id',
-			'title_key' => 'LBL_PROJECTS_SUBPANEL_TITLE',
-			'top_buttons' => array(
-                array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-                array('widget_class' => 'SubPanelTopSelectButton'),
-            ),
-        ),
 	),
 );
-?>

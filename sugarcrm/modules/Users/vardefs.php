@@ -828,14 +828,6 @@ $dictionary['User'] = array(
         'side' => 'left',
       ),
 //BEGIN SUGARCRM flav=pro ONLY
-        'project_resource'=>
-		array (
-			'name' => 'project_resource',
-			'type' => 'link',
-			'relationship' => 'projects_users_resources',
-			'source' => 'non-db',
-			'vname' => 'LBL_PROJECTS',
-		),
         'quotas' =>
         array (
             'name' => 'quotas',

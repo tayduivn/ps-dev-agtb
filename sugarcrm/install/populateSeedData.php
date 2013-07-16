@@ -755,45 +755,7 @@ if(!empty($sugar_demodata['emailtemplates_seed_data'])) {
 	    $id =$EmailTemp->save();
 	}
 }
-///
-/// SEED DATA FOR PROJECT AND PROJECT TASK
-///
-include_once('modules/Project/Project.php');
-include_once('modules/ProjectTask/ProjectTask.php');
-// Project: Audit Plan
-$project = new Project();
-$project->name = $sugar_demodata['project_seed_data']['audit']['name'];
-$project->description = $sugar_demodata['project_seed_data']['audit']['description'];
-$project->assigned_user_id = 1;
-$project->estimated_start_date = $sugar_demodata['project_seed_data']['audit']['estimated_start_date'];
-$project->estimated_end_date = $sugar_demodata['project_seed_data']['audit']['estimated_end_date'];
-$project->status = $sugar_demodata['project_seed_data']['audit']['status'];
-$project->priority = $sugar_demodata['project_seed_data']['audit']['priority'];
-//BEGIN SUGARCRM flav=pro ONLY
-$project->team_id = 1;
-//END SUGARCRM flav=pro ONLY
-$audit_plan_id = $project->save();
 
-$project_task_id_counter = 1;  // all the project task IDs cannot be 1, so using couter
-foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
-	$project_task = new ProjectTask();
-	$project_task->assigned_user_id = 1;
-	//BEGIN SUGARCRM flav=pro ONLY
-	$project_task->team_id = 1;
-	//END SUGARCRM flav=pro ONLY
-	$project_task->name = $v['name'];
-	$project_task->date_start = $v['date_start'];
-	$project_task->date_finish = $v['date_finish'];
-	$project_task->project_id = $audit_plan_id;
-	$project_task->project_task_id = $project_task_id_counter;
-	$project_task->description = $v['description'];
-	$project_task->duration = $v['duration'];
-	$project_task->duration_unit = $v['duration_unit'];
-	$project_task->percent_complete = $v['percent_complete'];
-	$communicate_stakeholders_id = $project_task->save();
-
-    $project_task_id_counter++;
-}
 //BEGIN SUGARCRM flav=ent ONLY
 //enable portal
 $system_config = new Administration();

@@ -769,13 +769,6 @@ $dictionary['Product'] = array(
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
         ),
-        'projects' =>  array(
-            'name' => 'projects',
-            'type' => 'link',
-            'relationship' => 'projects_products',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECTS',
-        ),
         'product_bundles' =>  array(
             'name' => 'product_bundles',
             'type' => 'link',

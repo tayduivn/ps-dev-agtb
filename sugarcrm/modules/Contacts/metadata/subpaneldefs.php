@@ -258,19 +258,6 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-		'project' => array(
-			'order' => 110,
-			'module' => 'Project',
-			'sort_order' => 'asc',
-			'sort_by' => 'name',
-			'get_subpanel_data' => 'project',
-			'subpanel_name' => 'default',
-			'title_key' => 'LBL_PROJECTS_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
-			),
-		),
         'campaigns' => array(
 			'order' => 70,
 			'module' => 'CampaignLog',

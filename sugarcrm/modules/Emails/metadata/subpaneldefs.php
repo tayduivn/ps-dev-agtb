@@ -153,22 +153,6 @@ $layout_defs['Emails'] = array(
 		    'top_buttons' => array(),
 		),
 //END SUGARCRM flav=pro ONLY
-
-        'project' => array(
-			'order' => 80,
-			'module' => 'Project',
-			'sort_order' => 'asc',
-			'sort_by' => 'name',
-			'subpanel_name' => 'ForEmails',
-			'get_subpanel_data' => 'project',
-			'add_subpanel_data' => 'project_id',
-			'title_key' => 'LBL_PROJECT_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopCreateButton'),
-				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
-			),
-		),
-
 		'meetings' => array(
             'order' => 1,
             'sort_order' => 'desc',

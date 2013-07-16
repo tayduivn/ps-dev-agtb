@@ -374,21 +374,7 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
-        'project' => array(
-            'name' => 'project',
-            'type' => 'link',
-            'relationship' => 'projects_contacts',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECTS',
-        ),
         //BEGIN SUGARCRM flav=pro ONLY
-        'project_resource' => array(
-            'name' => 'project_resource',
-            'type' => 'link',
-            'relationship' => 'projects_contacts_resources',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECTS_RESOURCES',
-        ),
         'quotes' => array(
             'name' => 'quotes',
             'type' => 'link',

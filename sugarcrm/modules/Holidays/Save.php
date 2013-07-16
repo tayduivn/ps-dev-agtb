@@ -30,16 +30,6 @@ $focus->disable_row_level_security = true;
 $focus->retrieve($_POST['record']);
 
 $focus = populateFromPost('', $focus);
-
-if ($_REQUEST['return_module'] != 'Project'){
-	$focus->person_id = $_REQUEST['relate_id'];
-	$focus->person_type = "Users";
-}
-else if ($_REQUEST['return_module'] == 'Project'){
-	$focus->related_module = 'Project';
-	$focus->related_module_id = $_REQUEST['relate_id'];
-}
-
 $check_notify = FALSE;
 
 $focus->save($check_notify);
