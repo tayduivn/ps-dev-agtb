@@ -38,6 +38,7 @@ $viewdefs['base']['view']['news'] = array(
                 'name' => 'limit',
                 'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
                 'type' => 'enum',
+                'searchBarThreshold' => -1,
                 'options' => array(
                     1 => 1,
                     2 => 2,
