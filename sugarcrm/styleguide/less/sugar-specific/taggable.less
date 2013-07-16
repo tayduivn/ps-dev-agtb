@@ -17,6 +17,12 @@ ul.activitystream-tag-dropdown {
 }
 .sugar_tag {
   margin: 0 1px;
+  &[contenteditable=false] {
+    display: inline;
+    a {
+      cursor: default;
+    }
+  }
 }
 .sugar_tagging {
   font-weight: bold;
