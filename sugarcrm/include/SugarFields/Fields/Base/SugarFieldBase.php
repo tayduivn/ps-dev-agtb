@@ -534,6 +534,17 @@ class SugarFieldBase {
         return $this->save($bean, $params, $field, $properties);
     }
 
+    /**
+     * This should be called when the bean is mass updated from the API. Most fields can just use default, which calls the field's individual ->apiSave() function instead
+     *
+     * @param SugarBean $bean - the bean performing the mass update
+     * @param array $params - an array of paramester relevant to the save, which will be an array passed up to the API
+     * @param string $field - The name of the field to save (the vardef name, not the form element name)
+     * @param array $properties - Any properties for this field
+     */
+    public function apiMassUpdate(SugarBean $bean, array $params, $field, $properties) {
+        return $this->apiSave($bean, $params, $field, $properties);
+    }
 
      /**
       * Check if the field is allowed to be trimmed
