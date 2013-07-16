@@ -69,7 +69,8 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'width' => '10',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
+                    'readonly' => true,
                 ),
             ),
         ),

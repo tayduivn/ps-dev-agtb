@@ -201,6 +201,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'vname' => 'LBL_QUOTE_NUM',
     'type' => 'int',
     'auto_increment'=>true,
+    'readonly' => true,
     'required'=>true,
     'unified_search' => true,
     'full_text_search' => array('boost' => 3),

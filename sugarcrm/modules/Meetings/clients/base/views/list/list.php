@@ -90,6 +90,7 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),  
             ),
         ),

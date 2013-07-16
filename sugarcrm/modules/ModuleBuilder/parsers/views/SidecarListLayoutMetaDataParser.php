@@ -332,6 +332,11 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                     }
                     $panelfield = array('name' => $fieldname, 'label' => $label, 'enabled' => true);
 
+                    // Handle readonly flags
+                    if (isset($def['readonly'])) {
+                        $panelfield['readonly'] = $def['readonly'];
+                    }
+
                     // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
                     // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
                     if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'relate') {

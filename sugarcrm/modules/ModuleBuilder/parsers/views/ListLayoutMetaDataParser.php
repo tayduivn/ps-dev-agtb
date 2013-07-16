@@ -450,7 +450,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	{
 		if ( isset ( $def [ 'vname' ] ) )
 			$def [ 'label' ] = $def [ 'vname' ] ;
-		return array_intersect_key ( $def , array ( 'type' => true, 'studio' => true , 'label' => true , 'width' => true , 'sortable' => true , 'related_fields' => true , 'default' => true , 'link' => true , 'align' => true , 'orderBy' => true ,'hideLabel' => true, 'customLable' => true , 'currency_format' => true ) ) ;
+		return array_intersect_key ( $def , array ( 'type' => true, 'studio' => true , 'label' => true , 'width' => true , 'sortable' => true , 'related_fields' => true , 'default' => true , 'link' => true , 'align' => true , 'orderBy' => true ,'hideLabel' => true, 'customLable' => true , 'currency_format' => true, 'readonly' => true, ) ) ;
 	}
 
 }

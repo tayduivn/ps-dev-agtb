@@ -62,6 +62,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'name' => 'date_modified',
+                    'readonly' => true,
                 ),
             ),
         ),

@@ -54,6 +54,7 @@ $viewdefs['KBDocuments']['portal']['view']['list'] = array(
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
+                    'readonly' => true,
                 ),
                 array (
                     'name' => 'kbdocument_revision_number',

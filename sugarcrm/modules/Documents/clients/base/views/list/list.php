@@ -116,6 +116,7 @@ $viewdefs['Documents']['base']['view']['list'] = array(
                     'default' => false,
                     'enabled' => true,
                     'sortable' => false,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'date_entered',
@@ -123,6 +124,7 @@ $viewdefs['Documents']['base']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
             ),
         ),

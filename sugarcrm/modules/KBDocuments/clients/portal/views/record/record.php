@@ -52,6 +52,7 @@ $viewdefs['KBDocuments']['portal']['view']['record'] = array(
                 array (
                     'name' => 'date_modified',
                     'span' => 12,
+                    'readonly' => true,
                 ),
                 array (
                     'name' => 'exp_date',

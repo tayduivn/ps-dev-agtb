@@ -119,6 +119,7 @@ $viewdefs['Users']['mobile']['view']['list'] = array(
                     'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
+                    'readonly' => true,
                 ),
             ),
         ),

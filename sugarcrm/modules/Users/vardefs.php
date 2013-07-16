@@ -230,6 +230,7 @@ $dictionary['User'] = array(
                 'wirelesseditview' => false,
 //END SUGARCRM flav=pro ONLY
             ),
+            'readonly' => true,
         ) ,
         'date_modified' => array(
             'name' => 'date_modified',
@@ -243,6 +244,7 @@ $dictionary['User'] = array(
                 'wirelesseditview' => false,
 //END SUGARCRM flav=pro ONLY
             ),
+            'readonly' => true,
         ),
         'modified_user_id' => array(
             'name' => 'modified_user_id',
@@ -253,6 +255,7 @@ $dictionary['User'] = array(
             'table' => 'users',
             'isnull' => 'false',
             'dbType' => 'id',
+            'readonly' => true,
         ) ,
         'modified_by_name' => array(
             'name' => 'modified_by_name',
@@ -260,6 +263,7 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'source' => 'non-db',
             'studio' => false,
+            'readonly' => true,
         ) ,
         'created_by' => array(
             'name' => 'created_by',
@@ -271,6 +275,7 @@ $dictionary['User'] = array(
             'isnull' => 'false',
             'dbType' => 'id',
             'studio' => false,
+            'readonly' => true,
         ) ,
         'created_by_name' => array(
             'name' => 'created_by_name',
@@ -285,6 +290,7 @@ $dictionary['User'] = array(
                 'rollup' => false,
             ),
             //END SUGARCRM flav=pro ONLY
+            'readonly' => true,
         ) ,
         'title' => array(
             'name' => 'title',

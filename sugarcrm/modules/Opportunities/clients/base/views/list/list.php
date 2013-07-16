@@ -120,6 +120,7 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true,
+        'readonly' => true
     ),
     array(
         'name' => 'team_name',
@@ -146,6 +147,7 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
     array(
         'name' => 'date_entered',
@@ -153,6 +155,7 @@ $fields = array(
         'label' => 'LBL_DATE_ENTERED',
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
 );
 //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -234,6 +237,7 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
     array(
         'name' => 'team_name',
@@ -260,6 +264,7 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
     array(
         'name' => 'date_entered',
@@ -267,6 +272,7 @@ $fields = array(
         'label' => 'LBL_DATE_ENTERED',
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
 );
 //END SUGARCRM flav=ent ONLY

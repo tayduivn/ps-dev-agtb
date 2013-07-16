@@ -45,6 +45,7 @@ $viewdefs['Notes']['mobile']['view']['list'] = array(
                     'enabled' => true,
                     'width' => '10%',
                     'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'filename',

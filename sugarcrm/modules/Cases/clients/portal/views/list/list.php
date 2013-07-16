@@ -42,7 +42,8 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                     'link' => true,
                     'label' => 'LBL_LIST_NUMBER',
                     'enabled' => true,
-                    'default' => true
+                    'default' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'name',
@@ -79,6 +80,7 @@ $viewdefs['Cases']['portal']['view']['list'] = array(
                     'enabled' => true,
                     'width' => 13,
                     'default' => true,
+                    'readonly' => true,
                 ),
             ),
         ),
