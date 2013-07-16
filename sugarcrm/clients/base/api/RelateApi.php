@@ -20,86 +20,93 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('clients/base/api/ListApi.php');
+require_once 'clients/base/api/FilterApi.php';
 
-class RelateApi extends ListApi {
+class RelateApi extends FilterApi {
     public function registerApiRest() {
         return array(
+            'filterRelatedRecords' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', '?', 'link', '?', 'filter'),
+                'pathVars' => array('module', 'record', '', 'link_name', ''),
+                'jsonParams' => array('filter'),
+                'method' => 'filterRelated',
+                'shortHelp' => 'Lists related filtered records.',
+                'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
+            ),
             'listRelatedRecords' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','?','link','?'),
-                'pathVars' => array('module','record','','link_name'),
-                'method' => 'listRelated',
-                'shortHelp' => 'List related records to this module',
-                'longHelp' => 'include/api/help/module_record_link_link_name_get_help.html',
+                'path' => array('<module>', '?', 'link', '?'),
+                'pathVars' => array('module', 'record', '', 'link_name'),
+                'jsonParams' => array('filter'),
+                'method' => 'filterRelated',
+                'shortHelp' => 'Lists related records.',
+                'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
             ),
         );
     }
 
-    public function __construct() {
-        $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_subpanel'];
-    }
-    
-    public function listRelated($api, $args) {
-        // Load up the bean
-        $record = BeanFactory::getBean($args['module'], $args['record']);
+    public function filterRelated(ServiceBase $api, array $args)
+    {
+        // Load the parent bean.
+        $record = BeanFactory::retrieveBean($args['module'], $args['record']);
 
-        if ( empty($record) ) {
-            throw new SugarApiExceptionNotFound('Could not find parent record '.$args['record'].' in module '.$args['module']);
+        if (empty($record)) {
+            throw new SugarApiExceptionNotFound(
+                sprintf(
+                    'Could not find parent record %s in module: %s',
+                    $args['record'],
+                    $args['module']
+                )
+            );
         }
-        if ( ! $record->ACLAccess('view') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        if (!$record->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
-        // Load up the relationship
+
+        // Load the relationship.
         $linkName = $args['link_name'];
-        if ( ! $record->load_relationship($linkName) ) {
-            // The relationship did not load, I'm guessing it doesn't exist
-            throw new SugarApiExceptionNotFound('Could not find a relationship named: '.$args['link_name']);
+        if (!$record->load_relationship($linkName)) {
+            // The relationship did not load.
+            throw new SugarApiExceptionNotFound('Could not find a relationship named: ' . $args['link_name']);
         }
-        // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $record->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::newBean($linkModuleName);
-        if ( ! $linkSeed->ACLAccess('list') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to list records for module: '.$linkModuleName);
+        $linkSeed = BeanFactory::getBean($linkModuleName);
+        if (!$linkSeed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
+        }
+
+        $rf = SugarRelationshipFactory::getInstance();
+        $relObj = $record->$linkName->getRelationshipObject();
+        $relDef = $rf->getRelationshipDef($relObj->name);
+        $tableName = $record->$linkName->getRelatedModuleLinkName();
+
+        if ($record->$linkName->getSide() == REL_LHS) {
+            $column = $relDef['lhs_key'];
+        } else {
+            $column = $relDef['rhs_key'];
         }
 
         $options = $this->parseArguments($api, $args, $linkSeed);
-
-        $linkParams = array(
-            'where' => !empty($options['where']) ? $options['where'] : "",
-            'deleted' => !empty($options['deleted']) ? $options['deleted'] : false,
-            'orderby' => !empty($options['orderBy']) ? $options['orderBy'] : "",
-        );
-
-        $offset = !empty($options['offset']) ? $options['offset'] : 0;
-        $limit = !empty($options['limit']) ? $options['limit'] : $this->defaultLimit;
-
-        // If we want the last page, here is the magic to get there.
-        if($offset === 'end'){
-            $result = $record->$linkName->query($linkParams);
-            $totalCount = sizeof($result['rows']);
-            if ($totalCount > 0)
-                $offset = (floor(($totalCount -1) / $limit)) * $limit;
+        $q = self::getQueryObject($linkSeed, $options);
+        if (!isset($args['filter']) || !is_array($args['filter'])) {
+            $args['filter'] = array();
         }
 
-        $linkParams['offset'] = $offset;
-        //Add one to the limit so we can figure out if there are more pages
-        $linkParams['limit'] = $limit + 1;
-
-        $relatedBeans = $record->$linkName->getBeans($linkParams);
-        $count = sizeof($relatedBeans);
-        if ( $count > $limit ) {
-            $nextOffset = $offset + $limit;
-            //Remove the last entry to keep the result set the correct page size
-            array_pop($relatedBeans);
+        // Some relationships want the role column ignored
+        if (!empty($args['ignore_role'])) {
+            $ignoreRole = true;
         } else {
-            $nextOffset = -1;
+            $ignoreRole = false;
         }
+        $q->join($tableName, array('joinType'=>'INNER','ignoreRole'=>$ignoreRole));
+        $q->where()->equals($tableName. '.' . $column, $record->id);
 
-        $response = array();
-        $response["next_offset"] = $nextOffset;
+        self::addFilters($args['filter'], $q->where(), $q);
+
         $api->action = 'list';
-        $response["records"] = $this->formatBeans($api, $args, $relatedBeans);
-        return $response;
+
+        return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
+
 }

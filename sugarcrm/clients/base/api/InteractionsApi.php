@@ -1,10 +1,10 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'clients/base/api/FilterApi.php';
+require_once 'clients/base/api/RelateApi.php';
 require_once 'data/BeanFactory.php';
 
-class InteractionsApi extends FilterApi
+class InteractionsApi extends RelateApi
 {
     protected $defaultLimit = 5;
 

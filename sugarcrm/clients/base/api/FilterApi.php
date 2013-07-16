@@ -55,16 +55,6 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'Filter records for a module by a predefined filter id.',
                 'longHelp' => 'include/api/help/module_filter_record_get_help.html',
             ),
-            'filterRelatedRecords' => array(
-                'reqType' => 'GET',
-                'path' => array('<module>', '?', 'link', '?', 'filter'),
-                'pathVars' => array('module', 'record', '', 'link_name', ''),
-                'jsonParams' => array('filter'),
-                'method' => 'filterRelated',
-                'shortHelp' => 'Lists related filtered records.',
-                'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
-
-            ),
         );
     }
 
@@ -194,60 +184,6 @@ class FilterApi extends SugarApi
         $api->action = 'list';
 
         return $this->runQuery($api, $args, $q, $options, $seed);
-    }
-
-    public function filterRelated(ServiceBase $api, array $args)
-    {
-        // Load the parent bean.
-        $record = BeanFactory::retrieveBean($args['module'], $args['record']);
-
-        if (empty($record)) {
-            throw new SugarApiExceptionNotFound(
-                sprintf(
-                    'Could not find parent record %s in module: %s',
-                    $args['record'],
-                    $args['module']
-                )
-            );
-        }
-        if (!$record->ACLAccess('view')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
-        }
-
-        // Load the relationship.
-        $linkName = $args['link_name'];
-        if (!$record->load_relationship($linkName)) {
-            // The relationship did not load.
-            throw new SugarApiExceptionNotFound('Could not find a relationship named: ' . $args['link_name']);
-        }
-        $linkModuleName = $record->$linkName->getRelatedModuleName();
-        $linkSeed = BeanFactory::getBean($linkModuleName);
-        if (!$linkSeed->ACLAccess('list')) {
-            throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
-        }
-
-        $rf = SugarRelationshipFactory::getInstance();
-        $relObj = $record->$linkName->getRelationshipObject();
-        $relDef = $rf->getRelationshipDef($relObj->name);
-        $tableName = $record->$linkName->getRelatedModuleLinkName();
-
-        if ($record->$linkName->getSide() == REL_LHS) {
-            $column = $relDef['lhs_key'];
-        } else {
-            $column = $relDef['rhs_key'];
-        }
-
-        $options = $this->parseArguments($api, $args, $linkSeed);
-        $q = self::getQueryObject($linkSeed, $options);
-        if (!isset($args['filter']) || !is_array($args['filter'])) {
-            $args['filter'] = array();
-        }
-        $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
-        self::addFilters($args['filter'], $q->where(), $q);
-
-        $api->action = 'list';
-
-        return $this->runQuery($api, $args, $q, $options, $linkSeed);
     }
 
     protected static function getQueryObject(SugarBean $seed, array $options)

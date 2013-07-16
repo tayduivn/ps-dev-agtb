@@ -334,11 +334,12 @@ class One2MBeanRelationship extends One2MRelationship
             )
             ->equals("{$options['myAlias']}.deleted", "0");
 
-
-        $this->buildSugarQueryRoleWhere(
-            $sugar_query,
-            ($linkIsLHS) ? $targetTable : $startingTable
-        );
+        if (empty($options['ignoreRole'])) {
+            $this->buildSugarQueryRoleWhere(
+                $sugar_query,
+                ($linkIsLHS) ? $targetTable : $startingTable
+                );
+        }
         return $sugar_query->join[$options['myAlias']];
     }
 
