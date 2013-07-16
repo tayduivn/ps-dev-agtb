@@ -3,7 +3,7 @@
     {{#each this.leftColumns}}
         <td>&nbsp;</td>
     {{/each}}
-    <td colspan='{{before_colspan}}'>{{str "LBL_TOTAL" "Forecasts"}}</td>
+    <td colspan='{{totals_colspan}}'>{{str "LBL_TOTAL" "Forecasts"}}</td>
 
     {{#if this.totals.worst_case_display}}
         <td class="tright">{{formatCurrency this.totals.overall_worst_case}}</td>
@@ -16,13 +16,10 @@
     {{#if this.totals.best_case_display}}
         <td class="tright">{{formatCurrency this.totals.overall_best_case}}</td>
     {{/if}}
-    {{#if this.after_colspan}}
-         <td colspan='{{after_colspan}}'>&nbsp;</td>
-    {{/if}}
+
     {{#each this.rightColumns}}
         <td>&nbsp;</td>
     {{/each}}
 </tr>
 </tfoot>
-
 

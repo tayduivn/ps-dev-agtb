@@ -22,7 +22,7 @@ $fields = array(
         'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
     ),
     array(
-        'name' => 'parent_name',
+        'name' => 'opportunity_name',
         'label' => 'LBL_NAME',
         'label_module' => 'Opportunities'
     ),
@@ -104,7 +104,7 @@ $fields = array(
         'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
     ),
     array(
-        'name' => 'parent_name',
+        'name' => 'name',
         'label' => 'LBL_LIST_NAME',
         'label_module' => 'RevenueLineItems'
     ),
@@ -167,7 +167,7 @@ $fields = array(
     ),
     array(
         'name' => 'discount_amount',
-        'label' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
+        'label' => 'LBL_DISCOUNT',
     ),
     array(
         'name' => 'quantity',
@@ -182,6 +182,10 @@ $fields = array(
         'name' => 'total_amount',
         'label' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
         'label_module' => 'RevenueLineItems'
+    ),
+    array(
+        'name' => 'sales_status',
+        'label' => 'LBL_OPPORTUNITY_STATUS',
     ),
     array(
         'name' => 'product_type',

@@ -193,6 +193,21 @@ describe("ForecastWorksheets.View.RecordList", function() {
         });
     });
 
+    describe("parseFields should hide best and worst case", function() {
+        beforeEach(function() {
+            app.metadata.getModule('Forecasts', 'config').show_worksheet_best = 0;
+            app.metadata.getModule('Forecasts', 'config').show_worksheet_worst = 0;
+        });
+        afterEach(function() {
+            app.metadata.getModule('Forecasts', 'config').show_worksheet_best = 1;
+            app.metadata.getModule('Forecasts', 'config').show_worksheet_worst = 1;
+        });
+        it("length of visible fields should equal 2", function() {
+            fields = view.parseFields();
+            expect(fields.visible.length).toEqual(2);
+        })
+    });
+
     describe("filteredCollection", function() {
         beforeEach(function() {
             // add some models

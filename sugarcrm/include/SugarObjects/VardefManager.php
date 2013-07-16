@@ -257,6 +257,14 @@ class VardefManager{
         if(!empty($params['bean'])) {
             $bean = $params['bean'];
         } else {
+            if(!empty($dictionary[$object])) {
+                //BEGIN SUGARCRM flav=pro ONLY
+                // to avoid extra refresh - we'll fill it in later
+                if(!isset($GLOBALS['dictionary'][$object]['related_calc_fields'])) {
+                    $GLOBALS['dictionary'][$object]['related_calc_fields'] = array();
+                }
+                //END SUGARCRM flav=pro ONLY
+            }
             // we will instantiate here even though dictionary may not be there,
             // since in case somebody calls us with wrong module name we need bean
             // to get $module_dir. This may cause a loop but since the second call will

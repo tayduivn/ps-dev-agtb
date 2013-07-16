@@ -30,7 +30,6 @@ class ForecastsDefaults
      * @param bool $isUpgrade if this is being called in an upgrade setting
      * @param string $currentVersion if isUpgrade == true, the current version the user has
      * @param string $targetVersion if isUpgrade == true, the version the user is upgrading to
-     * @return array
      */
     public static function setupForecastSettings($isUpgrade = false, $currentVersion = "670", $targetVersion = "670")
     {
@@ -61,8 +60,6 @@ class ForecastsDefaults
                 $admin->saveSetting('Forecasts', $name, $value, 'base');
             }
         }
-
-        return $forecastConfig;
     }
 
     /**
@@ -149,32 +146,19 @@ class ForecastsDefaults
             // whether or not to show the commit warnings
             'show_forecasts_commit_warnings' => 1,
             // default enabled worksheet columns
-            //BEGIN SUGARCRM flav=ent ONLY
             'worksheet_columns' => array(
                 'commit_stage',
-                'parent_name',  // parent_name is the name of the RLI and the link back to it
-                'opportunity_name',
+                'name',
                 'account_name',
                 'date_closed',
                 'product_template_name',
+                'likely_case',
                 'sales_stage',
                 'probability',
-                'likely_case',
                 'best_case',
-            ),
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-            'worksheet_columns' => array(
-                'commit_stage',
-                'parent_name', // parent_name is the name of the Opportunity and the link back to it
-                'account_name',
-                'date_closed',
-                'sales_stage',
-                'probability',
-                'likely_case',
-                'best_case',
-            ),
-            //END SUGARCRM  flav=pro && flav!=ent ONLY
+                'worst_case',
+                'opportunity_name',
+            )
         );
     }
 
