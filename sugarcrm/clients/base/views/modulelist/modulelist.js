@@ -31,6 +31,12 @@
             route = currentTarget.data("route");
 
         if (route) {
+            if ((!_.isUndefined(event.button) && event.button !== 0) || event.ctrlKey || event.metaKey) {
+                event.stopPropagation();
+                window.open(route, '_blank');
+                // FIXME remove this hack once the drawer doesn't popup even after stopPropagation() is called.
+                return false;
+            }
             event.preventDefault();
             currentFragment = Backbone.history.getFragment();
             if (("#" + currentFragment) === route) {
