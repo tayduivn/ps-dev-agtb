@@ -250,7 +250,7 @@
         this.layout.trigger("filter:create:rowsValid", true);
         _.each($rows, function(row) {
             var data = $(row).data();
-            if (!data.value) {
+            if (!data.value && !data.isDateRange) {
                 this.layout.trigger("filter:create:rowsValid", false);
             }
         }, this);
