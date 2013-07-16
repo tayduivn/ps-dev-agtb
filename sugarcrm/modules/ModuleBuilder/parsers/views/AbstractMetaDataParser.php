@@ -36,13 +36,7 @@ abstract class AbstractMetaDataParser
     public $_viewdefs;
     public $_paneldefs = array();
 	protected $_moduleName;
-
-    /**
-     * object to handle the reading and writing of files and field data
-     *
-     * @var DeployedMetaDataImplementation|UndeployedMetaDataImplementation
-     */
-    protected $implementation;
+    protected $implementation; // the DeployedMetaDataImplementation or UndeployedMetaDataImplementation object to handle the reading and writing of files and field data
 
     function getLayoutAsArray ()
     {
