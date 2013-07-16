@@ -507,6 +507,17 @@ describe("BaseFilterRowsView", function() {
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
         });
+        it('should trigger filter:apply when keyup', function() {
+            $filterField.val('case_number');
+            $operatorField.val('$in');
+            view.handleOperatorSelected({currentTarget: $operatorField});
+            $row.data('valueField').model.set('case_number', 200);
+            var triggerStub = sinon.stub(view.layout, 'trigger');
+            $operatorField.parent('.filter-body').find('.filter-value input').trigger('keyup');
+            expect(triggerStub).toHaveBeenCalled();
+            expect(triggerStub).toHaveBeenCalledWith('filter:apply');
+            triggerStub.restore();
+        });
     });
 
     describe('buildRowFilterDef', function() {

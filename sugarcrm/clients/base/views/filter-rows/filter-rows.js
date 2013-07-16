@@ -441,6 +441,12 @@
                     field.$('input, select, textarea').addClass('inherit-width');
                     // .date makes .inherit-width on input have no effect so we need to remove it.
                     field.$('.input-append').removeClass('date');
+                    field.$('input, textarea').on('keyup', _.debounce(_.bind(function(e) {
+                        this.value = $(e.currentTarget).val();
+                        // We use "silent" update because we don't need re-render the field.
+                        model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
+                        model.trigger('change');
+                    }, field), 400));
                 });
                 this._renderField(field);
             }, this);
@@ -456,6 +462,12 @@
                 field.$('input, select, textarea').addClass('inherit-width');
                 // .date makes .inherit-width on input have no effect so we need to remove it.
                 field.$('.input-append').removeClass('date');
+                field.$('input, textarea').on('keyup', _.debounce(_.bind(function(e) {
+                    this.value = $(e.currentTarget).val();
+                    // We use "silent" update because we don't need re-render the field.
+                    model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
+                    model.trigger('change');
+                }, field), 400));
             });
             this._renderField(field);
         }
