@@ -36,7 +36,8 @@ $viewdefs['Products']['mobile']['view']['detail'] = array(
     'panels' => array(
         array(
             'fields' => array(
-                'name',
+                'product_template_name',
+                'quote_name',
                 'opportunity_name',
                 'account_name',
                 'quantity',
