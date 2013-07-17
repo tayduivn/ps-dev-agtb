@@ -90,17 +90,15 @@ function build_logic_file($hook_array){
 	$hook_contents .= "\$hook_array = Array(); \n";
 	$hook_contents .= "// position, file, function \n";
 
-	foreach($hook_array as $event_array => $event){
-
-	$hook_contents .= "\$hook_array['".$event_array."'] = Array(); \n";
-
-		foreach($event as $second_key => $elements){
-
-			$hook_contents .= "\$hook_array['".$event_array."'][] = ";
-			$hook_contents .= "Array(".$elements[0].", '".$elements[1]."', '".$elements[2]."','".$elements[3]."', '".$elements[4]."'); \n";
-
-		}
-
+    foreach ($hook_array as $event_array => $event) {
+        $hook_contents .= "\$hook_array['".$event_array."'] = Array(); \n";
+        foreach ($event as $second_key => $elements) {
+            $hook_contents .= "\$hook_array['".$event_array."'][] = Array(";
+            foreach ($elements as $el) {
+                $hook_contents .= var_export($el, true) . ',';
+            }
+            $hook_contents .= ");\n";
+        }
 	//end foreach hook_array as event => action_array
 	}
 
