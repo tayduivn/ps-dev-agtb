@@ -36,9 +36,18 @@ $viewdefs['RevenueLineItems']['mobile']['view']['edit'] = array(
     'panels' => array(
         array(
             'fields' => array(
-                'name',
-                'opportunity_name',
-                'account_name',
+                array(
+                    'name' => 'name',
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'opportunity_name',
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'account_name',
+                    'readonly' => true,
+                ),
                 'date_closed',
                 'sales_stage',
                 'probability',
@@ -46,7 +55,10 @@ $viewdefs['RevenueLineItems']['mobile']['view']['edit'] = array(
                 'product_template_name',
                 'quantity',
                 'deal_calc',
-                'likely_case',
+                array(
+                    'name' => 'likely_case',
+                    'required' => true,
+                ),
                 'best_case',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY

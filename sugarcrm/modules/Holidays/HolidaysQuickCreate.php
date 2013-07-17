@@ -37,27 +37,6 @@ class HolidaysQuickCreate extends QuickCreate {
     function process() {
         global $current_user, $timedate, $app_list_strings, $current_language, $mod_strings;
         $mod_strings = return_module_language($current_language, 'Holidays');
-        
-        if ($_REQUEST['return_module'] == 'Project'){
-			
-        	$projectBean = BeanFactory::getBean('Project', $_REQUEST['return_id']);
-        	
-        	$userBean = BeanFactory::getBean('Users');
-        	$contactBean = BeanFactory::getBean('Contacts');
-        	
-        	$projectBean->load_relationship("user_resources");
-        	$userResources = $projectBean->user_resources->getBeans($userBean);
-        	$projectBean->load_relationship("contact_resources");
-        	$contactResources = $projectBean->contact_resources->getBeans($contactBean);
-        	       	
-			ksort($userResources);
-			ksort($contactResources);	
-						
-			$this->ss->assign("PROJECT", true);
-			$this->ss->assign("USER_RESOURCES", $userResources);
-			$this->ss->assign("CONTACT_RESOURCES", $contactResources);		
-        }
-        
         parent::process();
         
         $this->ss->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());

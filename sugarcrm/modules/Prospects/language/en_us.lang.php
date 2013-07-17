@@ -182,7 +182,7 @@ $mod_strings = array (
   'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
   'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   'LBL_EXPORT_EMAIL2'=>'Other Email Address',
-  'LBL_RECORD_SAVED_SUCCESS' => 'Record {{first_name}} {{last_name}} was saved.',
+  'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{full_name}}</a>.',
 
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',

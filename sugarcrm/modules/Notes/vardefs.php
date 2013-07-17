@@ -351,22 +351,6 @@ $dictionary['Note'] = array(
     'relationship'=> 'emails_notes_rel',
     'source'=> 'non-db',
   ),
-  'projects' =>
-  array (
-    'name' => 'projects',
-    'type' => 'link',
-    'relationship' => 'projects_notes',
-    'source'=>'non-db',
-    'vname'=>'LBL_PROJECTS',
-  ),
-  'project_tasks' =>
-  array (
-    'name' => 'project_tasks',
-    'type' => 'link',
-    'relationship' => 'project_tasks_notes',
-    'source'=>'non-db',
-    'vname'=>'LBL_PROJECT_TASKS',
-  ),
   'meetings' =>
   array (
     'name' => 'meetings',

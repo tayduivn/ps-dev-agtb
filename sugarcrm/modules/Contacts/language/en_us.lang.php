@@ -141,7 +141,7 @@ $mod_strings = array (
     'LBL_PORTAL_INFORMATION' => 'Portal Information',
     'LBL_PORTAL_NAME' => 'Portal Name:',
     'LBL_PORTAL_PASSWORD_ISSET' => 'Portal Password is Set:',
-    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{first_name}} {{last_name}} was saved.',
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{full_name}}</a>.',
     'LBL_STREET' => 'Street',
     'LBL_POSTAL_CODE' => 'Postal Code:',
     'LBL_PRIMARY_ADDRESS_CITY' => 'Primary Address City:',
@@ -211,8 +211,6 @@ $mod_strings = array (
 
     'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
     'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
-    'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
-    'LBL_PROJECTS_RESOURCES' => 'Projects Resources',
     'LBL_TARGET_OF_CAMPAIGNS' => 'Campaigns (Target of) :',
     'LBL_CAMPAIGNS'    =>    'Campaigns',
     'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE'=>'Campaigns',
@@ -231,7 +229,6 @@ $mod_strings = array (
     //END SUGARCRM flav=pro ONLY
     'LBL_CHECKOUT_DATE'=>'Checkout Date',
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
-    'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CAMPAIGNS_SUBPANEL_TITLE' => 'Campaigns',
     'LNK_IMPORT_CONTACTS' => 'Import Contacts',
 

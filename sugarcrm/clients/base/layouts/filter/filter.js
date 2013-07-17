@@ -8,6 +8,8 @@
      */
     className: 'filter-view search',
 
+    plugins: ['quicksearchfilter'],
+
     /**
      * @override
      * @param {Object} opts
@@ -279,50 +281,29 @@
 
     /**
      * Builds the filter definition based on preselected filter and module quick search fields
-     * @param {Object} origfilterDef
+     * @param {Object} oSelectedFilter
      * @param {String} searchTerm
      * @param {Context} context
      * @returns {Array} array containing filter def
      */
-    buildFilterDef: function(origfilterDef, searchTerm, context) {
-        var searchFilter,
-            filterDef = app.utils.deepCopy(origfilterDef),
-            moduleQuickSearchFields = this.getModuleQuickSearchFields(context.get('module'));
+    buildFilterDef: function(oSelectedFilter, searchTerm, context) {
+        var selectedFilter = app.utils.deepCopy(oSelectedFilter),
+            isSelectedFilter = _.size(selectedFilter) > 0,
+            module = context.get('module'),
+            searchFilter = this.getFilterDef(module, searchTerm),
+            isSearchFilter = _.size(searchFilter) > 0;
 
-        if (searchTerm) {
-            searchFilter = [];
-            _.each(moduleQuickSearchFields, function(fieldName) {
-                var obj = {};
-                obj[fieldName] = {'$starts': searchTerm};
-                searchFilter.push(obj);
-            });
-
-            if (searchFilter.length > 1) {
-                searchFilter = {'$or' : searchFilter};
-            } else {
-                searchFilter = searchFilter[0];
-            }
-
-            if (_.size(filterDef) === 0) {
-                // Searching on 'all records'.
-                filterDef = [searchFilter];
-            } else {
-                // We have some filter being applied already.
-                // If it's an array, push the searchFilter into the $and filterDef.
-                if (_.isArray(filterDef)) {
-                    filterDef.push(searchFilter);
-                } else {
-                    filterDef = [filterDef, searchFilter];
-                }
-                filterDef = {'$and': filterDef};
-            }
+        if (isSelectedFilter && isSearchFilter) {
+            selectedFilter = _.isArray(selectedFilter) ? selectedFilter : [selectedFilter];
+            selectedFilter.push(searchFilter[0]);
+            return [{'$and': selectedFilter }];
+        } else if (isSelectedFilter) {
+            return selectedFilter;
+        } else if (isSearchFilter) {
+            return searchFilter;
         }
 
-        if(_.isArray(filterDef)) {
-            return filterDef;
-        }
-
-        return [filterDef];
+        return [];
     },
 
     /**
@@ -492,28 +473,6 @@
         }
 
         return meta;
-    },
-
-    /**
-     * Get list of quick search fields from filters metadata.
-     * @param {String} moduleName
-     * @returns {Array} array of field names
-     */
-    getModuleQuickSearchFields: function(moduleName) {
-        var meta = this.getModuleFilterMeta(moduleName),
-            fields,
-            priority = 0;
-
-        if (moduleName !== 'all_modules') {
-            _.each(meta, function(value, key) {
-                if (_.isObject(value) && value.meta.quicksearch_field && priority < value.meta.quicksearch_priority) {
-                    fields = value.meta.quicksearch_field;
-                    priority = value.meta.quicksearch_priority;
-                }
-            });
-        }
-
-        return fields;
     },
 
     /**

@@ -814,13 +814,6 @@ $dictionary['RevenueLineItem'] = array(
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
         ),
-        'projects' =>  array(
-            'name' => 'projects',
-            'type' => 'link',
-            'relationship' => 'projects_revenuelineitems',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECTS',
-        ),
     ),
     'indices' => array(  array('name' => 'idx_revenuelineitem', 'type' => 'index', 'fields' => array('name', 'deleted')),  array(
             'name' => 'idx_user_dateclosed_timestamp',

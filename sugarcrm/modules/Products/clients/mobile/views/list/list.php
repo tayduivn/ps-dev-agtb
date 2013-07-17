@@ -31,12 +31,12 @@ $viewdefs['Products']['mobile']['view']['list'] = array(
         array(
             'fields' => array(
                 array(
-                    'name' => 'name',
+                    'name' => 'product_template_name',
                     'default' => true,
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'opportunity_name',
+                    'name' => 'quote_name',
                     'enabled' => true,
                     'default' => true,
                 ),

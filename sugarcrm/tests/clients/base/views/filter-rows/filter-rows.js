@@ -246,6 +246,13 @@ describe("BaseFilterRowsView", function() {
             expect(triggerStub.secondCall).toBeDefined();
             expect(triggerStub.secondCall.args).toEqual(['filter:create:rowsValid', false]);
         });
+        it('should return true if uses date range instead of value', function() {
+            $rows.push($('<div>').data({ name: 'abc', isDateRange: true}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
 
     });
 

@@ -59,19 +59,6 @@ class iCalTest extends Sugar_PHPUnit_Framework_TestCase
         $task->name = "VeryImportantTask";
         $task->save();
 
-        $this->project = SugarTestProjectUtilities::createProject();
-        $projectId = $this->project->id;
-        $projectTaskData = array (
-            'project_id' => $projectId,
-            'parent_task_id' => '',
-            'project_task_id' => 1,
-            'percent_complete' => 50,
-            'name' => 'VeryImportantProjectTask'
-        );
-        $projectTask = SugarTestProjectTaskUtilities::createProjectTask($projectTaskData);
-        $projectTask->assigned_user_id = $GLOBALS['current_user']->id;
-        $projectTask->save();
-
     }
 
     public function tearDown()
@@ -80,10 +67,7 @@ class iCalTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::removeMeetingUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestTaskUtilities::removeAllCreatedTasks();
-        SugarTestProjectUtilities::removeAllCreatedProjects();
-        SugarTestProjectTaskUtilities::removeAllCreatedProjectTasks();
         unset($this->timedate);
-        unset($this->project);
         unset($GLOBALS['current_user']);
     }
 
@@ -96,7 +80,6 @@ class iCalTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertContains("VeryImportantMeeting", $iCalString, "Cannot find VEVENT: VeryImportantMeeting");
         $this->assertContains("VeryImportantTask", $iCalString, "Cannot find VTODO: VeryImportantTask");
-        $this->assertContains("VeryImportantProjectTask", $iCalString, "Cannot find VTODO: VeryImportantProjectTask");
     }
 
 }

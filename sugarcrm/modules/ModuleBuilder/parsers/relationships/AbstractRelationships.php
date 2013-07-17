@@ -66,7 +66,6 @@ class AbstractRelationships
                                              'quotes_contacts',
                                              'emails_beans',
                                              'linked_documents',
-                                             'project_relation',
                                              'prospect_lists_prospects',
                                              'queues_beans',
                                              'queues_queue',

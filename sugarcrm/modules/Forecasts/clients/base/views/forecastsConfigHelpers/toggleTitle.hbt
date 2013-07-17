@@ -17,6 +17,3 @@
 <span>
     <strong>{{title}}:</strong> {{message}} {{selectedValues}}
 </span>
-<span class="pull-right resetLink">
-    Reset
-</span>

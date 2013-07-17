@@ -41,35 +41,6 @@ class HolidaysViewEdit extends ViewEdit
 		}
 		
 		$this->ev->process();
-
-		if ($_REQUEST['return_module'] == 'Project'){
-			
-        	$projectBean = BeanFactory::getBean('Project', $_REQUEST['return_id']);
-        	
-        	$userBean = BeanFactory::getBean('Users');
-        	$contactBean = BeanFactory::getBean('Contacts');
-        	
-        	$projectBean->load_relationship("user_resources");
-        	$userResources = $projectBean->user_resources->getBeans($userBean);
-        	$projectBean->load_relationship("contact_resources");
-        	$contactResources = $projectBean->contact_resources->getBeans($contactBean);
-        	       	
-			ksort($userResources);
-			ksort($contactResources);	
-						
-			$this->ss->assign("PROJECT", true);
-			$this->ss->assign("USER_RESOURCES", $userResources);
-			$this->ss->assign("CONTACT_RESOURCES", $contactResources);
-			
-			$this->ss->assign("MOD", $mod_strings);
-			
-			$holiday_js = "<script type='text/javascript'>\n";
-			$holiday_js .= $projectBean->resourceSelectJS();
-			$holiday_js .= "\n</script>";
-
-			echo $holiday_js;
-        }
-		
  		echo $this->ev->display();
  	}
 }

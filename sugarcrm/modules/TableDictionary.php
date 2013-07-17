@@ -55,15 +55,8 @@ include("metadata/prospect_list_campaignsMetaData.php");
 include("metadata/prospect_lists_prospectsMetaData.php");
 include("metadata/roles_modulesMetaData.php");
 include("metadata/roles_usersMetaData.php");
-//include("metadata/project_relationMetaData.php");
 include("metadata/outboundEmailMetaData.php");
 include("metadata/addressBookMetaData.php");
-include("metadata/project_bugsMetaData.php");
-include("metadata/project_casesMetaData.php");
-include("metadata/project_productsMetaData.php");
-include("metadata/projects_accountsMetaData.php");
-include("metadata/projects_contactsMetaData.php");
-include("metadata/projects_opportunitiesMetaData.php");
 
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -91,8 +84,6 @@ include("metadata/contracts_contactsMetaData.php");
 include("metadata/contracts_quotesMetaData.php");
 include("metadata/contracts_productsMetaData.php");
 include("metadata/contracts_revenuelineitemsMetaData.php");
-include("metadata/projects_quotesMetaData.php");
-include("metadata/projects_revenuelineitemsMetaData.php");
 include("metadata/kbdocuments_views_ratingsMetaData.php");
 include("metadata/users_holidaysMetaData.php");
 
