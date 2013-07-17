@@ -226,7 +226,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             'width',
         );
         foreach ($this->_viewdefs['panels'] as &$panel) {
-            if (empty($panel['fields'])) {
+            if (empty($panel['fields']) || !is_array($panel['fields'])) {
                 continue;
             }
             foreach ($panel['fields'] as &$field) {
