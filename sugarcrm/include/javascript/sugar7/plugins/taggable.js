@@ -30,19 +30,6 @@
             taggableListLength: 8, //the number of search results that should be returned
 
             /**
-             * Specify which record this tag will be applied. This method is required to be called
-             * before taggable can be used.
-             *
-             * @param {String} module
-             * @param {String} id
-             */
-            taggable: function(module, id) {
-                this._taggableModuleName = module;
-                this._taggableModelId = id;
-                this._taggableEnabled = false;
-            },
-
-            /**
              * Reset typeahead when user clicks anywhere outside the dropdown.
              *
              * @param {Component} component
@@ -120,7 +107,18 @@
                 return $.trim(html);
             },
 
-            _taggableEnabled: null,
+            /**
+             * Specify which record this tag will be applied for record view.
+             *
+             * @param {String} module
+             * @param {String} id
+             */
+            setTaggableRecord: function(module, id) {
+                this._taggableModuleName = module;
+                this._taggableModelId = id;
+            },
+
+            _taggableEnabled: false,
             _taggableModuleName: null,
             _taggableModelId: null,
             _taggableLastSearchTerm: null,
@@ -134,13 +132,8 @@
              * @private
              */
             _onKeydown: function(event) {
-                // Taggable has not been enabled so do nothing.
-                if (this._taggableEnabled === null) {
-                    return;
-                }
-
                 // When taggable is disabled and the shift key has been pressed...
-                if ((this._taggableEnabled === false) && (event.shiftKey === true)) {
+                if (!this._taggableEnabled && (event.shiftKey === true)) {
                     // enable taggable typeahead when @ or # is pressed
                     switch (event.keyCode) {
                         case keycode_2:
@@ -151,7 +144,7 @@
                 }
 
                 // When taggable is enabled but the tag search result list has not been opened...
-                if ((this._taggableEnabled === true) && !this._taggableListOpen) {
+                if (this._taggableEnabled && !this._taggableListOpen) {
                     switch (event.keyCode) {
                         // reset typeahead when escape, enter, or tab is pressed
                         case keycode_esc:
@@ -164,7 +157,7 @@
                 }
 
                 // When taggable is enabled and the tag search result list is open...
-                if ((this._taggableEnabled === true) && (this._taggableListOpen === true)) {
+                if (this._taggableEnabled && (this._taggableListOpen === true)) {
                     switch (event.keyCode) {
                         // remove typeahead when escape key is pressed
                         case keycode_esc:
@@ -202,11 +195,6 @@
                 var selection = window.getSelection(),
                     range, $container, searchTerm;
 
-                // Taggable has not been enabled so do nothing.
-                if (this._taggableEnabled === null) {
-                    return;
-                }
-
                 if (this._taggableEnabled) {
                     // Do not perform search if enter, tab, up arrow, or down arrow has been pressed while tag search
                     // result is open.
@@ -219,9 +207,8 @@
                         $container = $(range.startContainer.parentNode);
                         searchTerm = $.trim($container.text());
 
-                        // Reset taggable if the cursor is outside the tagging span or if user types @ or # character
-                        // immediately followed by a space
-                        if (!$container.hasClass('sugar_tagging') || ((searchTerm.length === 1) && (event.keyCode === 32))) {
+                        // Reset taggable if the cursor is outside the tagging span
+                        if (!$container.hasClass('sugar_tagging')) {
                             this._resetTaggable();
                         } else {
                             if ((searchTerm.indexOf(mention) === 0) || (searchTerm.indexOf(reference) === 0)) {
@@ -440,6 +427,8 @@
                 var $tagList = this._initializeDropdown();
 
                 if (collection.length > 0) {
+                    searchTerm = $.trim(searchTerm);
+
                     // Append search results to the dropdown list
                     collection.each(function(model, index) {
                         var htmlName = model.get('name').replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {

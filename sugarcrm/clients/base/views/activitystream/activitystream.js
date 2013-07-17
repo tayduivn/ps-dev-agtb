@@ -113,8 +113,8 @@
         this.resizeVideo = _.bind(_.throttle(this.resizeVideo, 500), this);
         $(window).on('resize.' + this.cid, this.resizeVideo);
 
-        // Initialize taggable
-        this.taggable(this.model.get('parent_type'), this.model.get('parent_id'));
+        // specify the record that the tags are associated with
+        this.setTaggableRecord(this.model.get('parent_type'), this.model.get('parent_id'));
     },
 
     /**

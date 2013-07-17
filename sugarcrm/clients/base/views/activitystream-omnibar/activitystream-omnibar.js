@@ -34,7 +34,7 @@
                 var moduleName = context.get('module'),
                     modelId = context.get('model').get('id');
 
-                this.taggable(moduleName, modelId);
+                this.setTaggableRecord(moduleName, modelId);
             }, this);
         }
         app.view.View.prototype.bindDataChange.call(this);
