@@ -77,6 +77,12 @@ class OAuth2Api extends SugarApi
 
     public function token($api, $args)
     {
+        $validVersion = $this->isSupportedClientVersion($api, $args);
+
+        if ( !$validVersion ) {
+            throw new SugarApiExceptionClientOutdated();
+        }
+
         $oauth2Server = $this->getOAuth2Server($args);
         try {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'before_login');
@@ -179,4 +185,28 @@ class OAuth2Api extends SugarApi
         return $token;
     }
 
+    /**
+     * This function checks to make sure that if a client version is supplied it is up to date.
+     *
+     * @param ServiceBase $api The service api
+     * @param array $args The arguments passed in to the function
+     * @return bool True if the version was good, false if it wasn't
+     */
+    public function isSupportedClientVersion(ServiceBase $api, array $args)
+    {
+        if (!empty($args['client_info']['app']['name'])
+            && !empty($args['client_info']['app']['version'])) {
+            
+            $name = $args['client_info']['app']['name'];
+            $version = $args['client_info']['app']['version'];
+            
+            if (isset($api->api_settings['minClientVersions'][$name])
+                && version_compare($api->api_settings['minClientVersions'][$name], $args['client_info']['app']['version'],'>') ) {
+                // Version is too old, force them to upgrade.
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
