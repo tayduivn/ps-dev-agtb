@@ -56,9 +56,20 @@
             if (!this.hasAccess) {
                 return false;
             }
-
             // adjust the arrow
             this.arrow = app.utils.getArrowIconColorClass(this.total, this.initial_total);
+
+            return true;
+        }, this);
+
+        this.on('render', function() {
+            if (!this.hasAccess) {
+                return false;
+            }
+            var index = this.$el.index() + 1;
+            var width = this.$el.find("div.datapoint").outerWidth();
+            var sel = '.last-commit .datapoints div.datapoint:nth-child('+index+')';
+            $(sel).width(width);
 
             return true;
         }, this);

@@ -25,10 +25,13 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    className: 'preview-headerbar',
+
     events: {
         'click [data-direction]': 'triggerPagination',
         'click .preview-headerbar .closeSubdetail': 'triggerClose'
     },
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         if (this.layout) {
@@ -46,5 +49,4 @@
         app.events.trigger("list:preview:decorate", null, this);
         app.events.trigger("preview:close");
     }
-
 })

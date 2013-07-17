@@ -394,6 +394,7 @@ class ActivityQueueManager
         $job->name    = "ActivityStream add";
         $job->data    = serialize($data);
         $job->target  = "class::SugarJobAddActivitySubscriptions";
+        $job->assigned_user_id = $GLOBALS['current_user']->id;
 
         if (count($user_partials) < 5) {
             $job->execute_time = TimeDate::getInstance()->nowDb();

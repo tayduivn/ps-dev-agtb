@@ -2159,7 +2159,7 @@ nv.models.bubbleChart = function () {
         scatter
           .size(function (d){ return d.y; }) // default size
           //.sizeDomain([16,256]) //set to speed up calculation, needs to be unset if there is a custom size accessor
-          .sizeRange([256,2048])
+          .sizeRange([256,1024])
           .singlePoint(true)
           .xScale(x)
           .xDomain(xD)

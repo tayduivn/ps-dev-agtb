@@ -13,8 +13,11 @@
                     def.view = opts.def.override_subpanel_list_view;
                 }
             });
+            // override last_state.id with "override_subpanel_list_view" for unique state name.
+            if(opts.meta.last_state.id) {
+                opts.meta.last_state.id = opts.def.override_subpanel_list_view;
+            }
         }
-
         app.view.invokeParent(this, {type: 'layout', name: 'panel', method: 'initialize', args:[opts]});
     }
 })

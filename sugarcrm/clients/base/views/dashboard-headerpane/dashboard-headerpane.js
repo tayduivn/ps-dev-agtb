@@ -2,6 +2,7 @@
     extendsFrom: 'RecordView',
     buttons: null,
     editableFields: null,
+    className: 'preview-headerbar',
     events: {
         'click [name=edit_button]' : 'editClicked',
         'click [name=cancel_button]' : 'cancelClicked',

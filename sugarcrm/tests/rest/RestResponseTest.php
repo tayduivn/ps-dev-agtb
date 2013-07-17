@@ -141,17 +141,32 @@ class RestResponseTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $r = new RestResponse(array());
         $r->setType(RestResponse::JSON);
         $data = "test 134";
+        $dataArray = array("test"=>"data");
         $r->setContent($data);
 
-        // doesn't work with JSON
+        // JSON/array tests
+        $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5(json_encode($dataArray))));
+        $r->setType(RestResponse::JSON);
+        $r->setContent($dataArray);
+        $this->assertTrue($r->generateETagHeader());
+        $this->assertEquals(304, $r->getStatus());
+        
+        $r = new RestResponse(array());
+        $r->setType(RestResponse::JSON);
+        $r->setContent($dataArray);
+        $this->assertFalse($r->generateETagHeader());
+        
+        // text tests
         $this->assertFalse($r->generateETagHeader(""));
         $this->assertFalse($r->generateETagHeader(md5($data)));
 
         $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5($data)));
         $r->setType(RestResponse::JSON);
         $r->setContent($data);
-        $this->assertFalse($r->generateETagHeader());
-
+        $this->assertTrue($r->generateETagHeader());
+        $this->assertEmpty($r->getBody());
+        $this->assertEquals(304, $r->getStatus());
+        
         $r = new RestResponse(array());
         $r->setType(RestResponse::RAW);
         $r->setContent($data);

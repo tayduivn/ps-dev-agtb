@@ -29,6 +29,11 @@
     },
 
     /**
+     * Truthy when filter dropdown is enabled.  Updated whenever the filter module changes.
+     */
+    filterDropdownEnabled: true,
+
+    /**
      * @override
      * @private
      */
@@ -80,7 +85,7 @@
             width: 'off'
         });
 
-        if (!this.enabled) {
+        if (!this.filterDropdownEnabled) {
             this.filterNode.select2("disable");
         }
 
@@ -162,7 +167,7 @@
         this.$('.choice-filter').html(item.text);
 
         ctx.label = app.lang.get("LBL_FILTER");
-        ctx.enabled = this.enabled;
+        ctx.enabled = this.filterDropdownEnabled;
 
         return this._select2formatSelectionTemplate(ctx);
     },
@@ -193,7 +198,7 @@
      * Handler for when the user selects a module in the filter bar.
      */
     handleModuleChange: function(linkModuleName, linkName) {
-        this.enabled = (linkName !== "all_modules");
+        this.filterDropdownEnabled = (linkName !== "all_modules" && !app.metadata.getModule(linkModuleName).isBwcEnabled);
     },
 
     /**

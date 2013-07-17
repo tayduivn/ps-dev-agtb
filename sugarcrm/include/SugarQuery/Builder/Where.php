@@ -306,6 +306,63 @@ abstract class SugarQuery_Builder_Where
 	}
 
     /**
+     * Given a date range expression it builds greater and lower than conditions
+     *
+     * @param string $field
+     * @param string $value
+     * @param $bean
+     *
+     * @return SugarQuery_Builder_Andwhere
+     */
+    public function dateRange($field, $value, $bean = false)
+    {
+        $dates = TimeDate::getInstance()->parseDateRange($value, null, true);
+
+        if (is_array($dates)) {
+            $where = new SugarQuery_Builder_Andwhere();
+            $this->conditions[] = $where;
+            $where->gte($field, TimeDate::getInstance()->asDb($dates[0]), $bean);
+            $where->lte($field, TimeDate::getInstance()->asDb($dates[1]), $bean);
+        }
+        return $this;
+    }
+
+    /**
+     * Between filter for Date fields. We can't use $between because we need to convert the right bound date
+     *
+     * @param string $field
+     * @param array $value
+     * @param $bean
+     *
+     * @return SugarQuery_Builder_Where
+     * @throws SugarApiExceptionInvalidParameter If invalid dates
+     */
+    public function dateBetween($field, $value, $bean = false)
+    {
+        //Skip filter if a value is empty
+        if (empty($value[0]) || empty($value[1])) {
+            return $this;
+        }
+        //The empty value can be a string `null`
+        if ($value[0] === 'null' || $value[1] === 'null') {
+            return $this;
+        }
+        $leftDate = date_parse($value[0]);
+        $rightDate = date_parse($value[1]);
+        if (!empty($leftDate['errors']) || !empty($rightDate['errors'])) {
+            throw new SugarApiExceptionInvalidParameter('$dateBetween requires two valid dates');
+        }
+        //The right date must cover the full day
+        $rightDate = date(
+            "Y-m-d H:i:s",
+            mktime(23, 59, 59, $rightDate['month'], $rightDate['day'], $rightDate['year'])
+        );
+        $this->gte($field, $value[0]);
+        $this->lte($field, $rightDate);
+        return $this;
+    }
+
+    /**
      * @param $sql
      */
     public function addRaw($sql) {

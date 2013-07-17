@@ -47,9 +47,13 @@
         this.$node = this.$(this.fieldSelector);
 
         this.$node.select2({
+            allowClear:          true,
+            multiple:            true,
+            containerCssClass:   'select2-choices-pills-close',
+            containerCss:        {'width':'100%'},
             tags: [],
             formatSelection: this.formatSelection,
-            width: '100%',
+            width: 'off',
             escapeMarkup: function(m) { return m; }
         });
 

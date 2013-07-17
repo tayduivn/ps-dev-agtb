@@ -437,14 +437,6 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_QUOTES',
         ),
         //END SUGARCRM flav=pro ONLY
-
-        'project' => array(
-            'name' => 'project',
-            'type' => 'link',
-            'relationship' => 'projects_opportunities',
-            'source' => 'non-db',
-            'vname' => 'LBL_PROJECTS',
-        ),
         'leads' => array(
             'name' => 'leads',
             'type' => 'link',

@@ -39,8 +39,8 @@
         this.listContext = this.context.parent || this.context;
         this.originalSuccess = options.success;
 
-        var success = _.bind(function() {
-            this.originalSuccess();
+        var success = _.bind(function(model) {
+            this.originalSuccess(model);
             this.showRLIWarningMessage(this.listContext.get('module'));
         }, this);
 
@@ -58,14 +58,13 @@
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
-            messages: app.lang.get('TPL_RLI_CREATE', module)
+            messages: app.lang.get('TPL_RLI_CREATE', module),
+            onLinkClick: _.bind(function() {
+                app.alert.dismiss('opp-rli-create');
+                app.alert.dismiss('create-success');
+                this.openRLICreate();
+            }, this)
         });
-        alert.$el.find('a[href]').on('click.open', _.bind(function() {
-            // remove the event handler
-            alert.$el.find('a[href]').off('click.open');
-            app.alert.dismiss('opp-rli-create');
-            this.openRLICreate();
-        }, this));
     },
 
     /**

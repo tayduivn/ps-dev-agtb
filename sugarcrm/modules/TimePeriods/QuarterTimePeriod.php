@@ -113,9 +113,9 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         $timedate = TimeDate::getInstance();
         $months = array();
-        $startDate = $timedate->fromDbDate($this->start_date);
-        $nextDate = $timedate->fromDbDate($this->start_date);
-        $endDate = $timedate->fromDbDate($this->end_date);
+        $startDate = $timedate->fromDbDate($this->start_date)->setTime(0, 0, 0);
+        $nextDate = $timedate->fromDbDate($this->start_date)->setTime(0, 0, 0);
+        $endDate = $timedate->fromDbDate($this->end_date)->setTime(23, 59, 59);
         $startDay = $startDate->format('j');
         $isFirst = $startDay == 1;
         $isLastDayOfMonth = $startDay == $startDate->format('t');
@@ -148,7 +148,8 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
             } else {
                 $val['label'] = $startDate->format('n/j') . '-' . $timedate->fromDbDate($nextDate->asDbDate())->modify('-1 day')->format('n/j');
             }
-
+            $val['start_timestamp'] = $startDate->getTimestamp();
+            $val['end_timestamp'] = $nextDate->getTimestamp();
             $startDate = $timedate->fromDbDate($nextDate->asDbDate());
             $months[$count++] = $val;
         }

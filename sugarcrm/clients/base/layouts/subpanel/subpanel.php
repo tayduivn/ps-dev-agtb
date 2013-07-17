@@ -15,4 +15,7 @@ $viewdefs['base']['layout']['subpanel']  = array (
         ),
     ),
     'span' => 12,
+    'last_state' => array(
+        'id' => 'subpanel'
+    ),
 );

@@ -170,7 +170,7 @@
      */
     _setupTimepicker: function() {
         this.$(".ui-timepicker-input").attr('placeholder', this.userTimePrefs);
-        if(_.isFunction(this.setRequiredPlaceholder)){
+        if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".ui-timepicker-input"));
         }
         this.$(".ui-timepicker-input").timepicker({

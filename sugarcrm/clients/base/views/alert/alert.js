@@ -35,7 +35,8 @@
 
         events:{
             'click .cancel': 'cancel',
-            'click .confirm': 'confirm'
+            'click .confirm': 'confirm',
+            'click a': 'linkClick'
         },
 
         LEVEL: {
@@ -49,6 +50,7 @@
 
         initialize: function(options) {
             this.onConfirm = options.onConfirm;
+            this.onLinkClick = options.onLinkClick;
             this.alertLevel = options.level;
         },
 
@@ -78,6 +80,12 @@
                 this.onConfirm();
             }
             this.cancel();
+        },
+
+        linkClick: function(event) {
+            if (_.isFunction(this.onLinkClick)) {
+                this.onLinkClick(event);
+            }
         },
 
         /**

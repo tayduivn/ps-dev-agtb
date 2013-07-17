@@ -19,6 +19,16 @@
     filterFields: [],
 
     /**
+     * Map of fields types.
+     *
+     * Specifies correspondence between field types and field operator types.
+     */
+    fieldTypeMap: {
+        'datetime' : 'date',
+        'datetimecombo' : 'date'
+    },
+
+    /**
      * @override
      * @param {Object} opts
      */
@@ -55,7 +65,8 @@
         _.each(this.fieldList, function(value, key) {
             var text = app.lang.get(value.vname, moduleName);
             // Check if we support this field type.
-            if (this.filterOperatorMap[value.type] && !_.isUndefined(text)) {
+            var type = this.fieldTypeMap[value.type] || value.type;
+            if (this.filterOperatorMap[type] && !_.isUndefined(text)) {
                 this.filterFields[key] = text;
             }
         }, this);
@@ -239,7 +250,7 @@
         this.layout.trigger("filter:create:rowsValid", true);
         _.each($rows, function(row) {
             var data = $(row).data();
-            if (!data.value) {
+            if (!data.value && !data.isDateRange) {
                 this.layout.trigger("filter:create:rowsValid", false);
             }
         }, this);
@@ -315,7 +326,7 @@
         }
 
         // Get operators for this filter type
-        var fieldType = this.fieldList[fieldName].type,
+        var fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
             payload = {"": ""},
             types = _.keys(this.filterOperatorMap[fieldType]);
 
@@ -373,7 +384,7 @@
 
         // More patch for some field types
         var fieldName = $row.find('.filter-field select').val(),
-            fieldType = this.fieldList[fieldName].type,
+            fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
             fieldDef = fields[fieldName];
 
         switch (fieldType) {
@@ -392,6 +403,18 @@
             case 'int':
                 fieldDef.auto_increment = false;
                 break;
+            case 'date':
+                fieldDef.type = 'date';
+                //Flag to indicate the value needs to be formatted correctly
+                data.isDate = true;
+                data.isDateRange = false;
+                if (operation.charAt(0) !== '$') {
+                    //Flag to indicate we need to build the date filter definition based on the date operator
+                    data.isDateRange = true;
+                    this.fireSearch();
+                    return;
+                }
+                break;
         }
 
         // Create new model with the value set
@@ -401,7 +424,7 @@
         $fieldValue.removeClass('hide').empty();
 
         //If the operation is $between we need to set two inputs.
-        if (operation === '$between') {
+        if (operation === '$between' || operation === '$dateBetween') {
             var minmax = [],
                 value = $row.data('value') || [];
 
@@ -416,6 +439,8 @@
                 $fieldValue.append(fieldContainer);
                 this.listenTo(field, 'render', function() {
                     field.$('input, select, textarea').addClass('inherit-width');
+                    // .date makes .inherit-width on input have no effect so we need to remove it.
+                    field.$('.input-append').removeClass('date');
                 });
                 this._renderField(field);
             }, this);
@@ -429,6 +454,8 @@
 
             this.listenTo(field, 'render', function() {
                 field.$('input, select, textarea').addClass('inherit-width');
+                // .date makes .inherit-width on input have no effect so we need to remove it.
+                field.$('.input-append').removeClass('date');
             });
             this._renderField(field);
         }
@@ -437,33 +464,39 @@
         this.listenTo(model, "change", (function($row) {
             return function() {
                 var fields = $row.data("valueField"),
-                    result = '';
+                    valueForFilter = '';
+
                 //If we have multiple fields we have to build an array of values
                 if (_.isArray(fields)) {
-                    result = [];
+                    valueForFilter = [];
                     _.each(fields, function(field) {
-                        result.push((field && field.$el) ? (field.unformat(field.value) || _.result(field, 'val')) : '');
+                        var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
+                        value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+                        valueForFilter.push(value);
                     });
                 } else {
-                    // We use _.result here to prevent an undefined method error
-                    // in case the val method is not defined on the field.
-                    // We check field.$el because for some reasons it throws an error on date type fields
-                    result = (field && field.$el) ? (field.unformat(field.value) || _.result(field, 'val')) : '';
+                    var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
+                    valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
                 }
 
-                if (_.isArray(result)) {
+                if (_.isArray(valueForFilter)) {
                     // If we are filtering a multi-enum, strip out the blank value that
                     // is required in the <select><option></option></select> structure.
-                    result = _.without(result, "");
+                    valueForFilter = _.without(valueForFilter, "");
                 }
 
-                $row.data("value", result);
-                // check each row for a valid filter, add to dynamic filter def
-                var dynamicFilterDef = this.buildFilterDef();
-                // trigger the filtering here.
-                this.layout.trigger('filter:apply', null, dynamicFilterDef);
+                $row.data("value", valueForFilter);
+                this.fireSearch();
             };
         })($row));
+    },
+
+    /**
+     * Check each row, builds the filter definition and trigger the filtering
+     */
+    fireSearch: function() {
+        var filterDef = this.buildFilterDef();
+        this.layout.trigger('filter:apply', null, filterDef);
     },
 
     /**
@@ -502,7 +535,7 @@
         if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
             name = this.fieldList[name].id_name;
         }
-        if (value) {
+        if (value || data.isDateRange) {
             if (name.indexOf("$") === 0 && value === "true") {
                 filter[name] = "";
             } else {
@@ -518,6 +551,11 @@
                 } else {
                     if (operator === "$equals") {
                         filter[name] = value;
+                    } else if (data.isDateRange) {
+                        //Once here the value is actually a key of date_range_selector_dom and we need to build a real
+                        //filter definition on it.
+                        filter[name] = {};
+                        filter[name].$dateRange = operator;
                     } else {
                         filter[name] = {};
                         filter[name][operator] = value;
@@ -562,7 +600,8 @@
         $row.data(data);
 
         if (trigger) {
-            model.trigger('change');
+            this.stopListening(model);
+            this.fireSearch();
         }
     }
 })

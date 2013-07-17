@@ -62,7 +62,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
             $opp = BeanFactory::newBean('Opportunities');
             $opp->name = "SugarQuery Unit Test {$x}";
             $opp->amount = $x;
-            $opp->date_modifeid = date('Y-m-d');
+            $opp->date_modified = date('Y-m-d');
             $opp->date_closed = date('Y-m-d');
             $opp->save();
             self::$opportunities[] = $opp;
@@ -216,6 +216,67 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         foreach($result AS $opp) {
             $this->assertGreaterThanOrEqual(200,$opp['amount'], "Wrong amount value detected.");
+        }
+    }
+
+    public function testDateRange()
+    {
+        $sq = new SugarQuery();
+
+        $sq->select(array('name', 'date_modified'));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $sq->where()->dateRange('date_entered', 'last_7_days', $this->opportunity_bean);
+
+        $result = $sq->execute();
+
+        $this->assertGreaterThanOrEqual(
+            1,
+            count($result),
+            'Wrong row count, actually received: ' . count($result) . ' back.'
+        );
+
+        foreach ($result AS $opp) {
+            $this->assertGreaterThanOrEqual(
+                date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - 7, date('Y'))),
+                $opp['date_modified'],
+                'Wrong date detected.'
+            );
+            $this->assertLessThanOrEqual(
+                date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d'), date('Y'))),
+                $opp['date_modified'],
+                'Wrong date detected.'
+            );
+        }
+    }
+
+    public function testDateBetween()
+    {
+        $sq = new SugarQuery();
+
+        $sq->select(array('name', 'date_modified'));
+        $sq->from(BeanFactory::newBean('Opportunities'));
+        $params = array(date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - 1, date('Y'))), date('Y-m-d'));
+        $sq->where()->dateBetween('date_entered', $params, $this->opportunity_bean);
+
+        $result = $sq->execute();
+
+        $this->assertGreaterThanOrEqual(
+            1,
+            count($result),
+            'Wrong row count, actually received: ' . count($result) . ' back.'
+        );
+
+        foreach ($result AS $opp) {
+            $this->assertGreaterThanOrEqual(
+                date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - 1, date('Y'))),
+                $opp['date_modified'],
+                'Wrong date detected.'
+            );
+            $this->assertLessThanOrEqual(
+                date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d'), date('Y'))),
+                $opp['date_modified'],
+                'Wrong date detected.'
+            );
         }
     }
 

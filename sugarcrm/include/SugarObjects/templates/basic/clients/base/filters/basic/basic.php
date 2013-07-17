@@ -40,7 +40,7 @@ $viewdefs['<module_name>']['base']['filter']['basic'] = array(
             'name'              => 'LBL_NEW_RECORDS',
             'filter_definition' => array(
                 'date_entered' => array(
-                    '$fromDays' => '7',
+                    '$dateRange' => 'last_7_days',
                 ),
             ),
             'editable'          => false

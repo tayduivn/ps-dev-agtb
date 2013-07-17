@@ -621,14 +621,6 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     	'vname' => 'LBL_EMAILS',
     	'source'=>'non-db',
   	),
-  'project' =>
-	array (
-  		'name' => 'project',
-    	'type' => 'link',
-    	'relationship' => 'projects_quotes',
-    	'vname' => 'LBL_PROJECTS',
-    	'source'=>'non-db',
-  	),
   'products' =>
 	array (
   		'name' => 'products',

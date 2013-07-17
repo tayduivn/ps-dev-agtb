@@ -246,6 +246,13 @@ describe("BaseFilterRowsView", function() {
             expect(triggerStub.secondCall).toBeDefined();
             expect(triggerStub.secondCall.args).toEqual(['filter:create:rowsValid', false]);
         });
+        it('should return true if uses date range instead of value', function() {
+            $rows.push($('<div>').data({ name: 'abc', isDateRange: true}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
 
     });
 
@@ -354,7 +361,7 @@ describe("BaseFilterRowsView", function() {
                 },
                 searchBarThreshold: 9999
             });
-            expect($operatorField.html()).not.toBeEmpty();
+            expect(_.isEmpty($operatorField.html())).toBeFalsy();
             createFieldSpy.restore();
         });
         it('should dispose previous operator and value fields', function() {
@@ -386,6 +393,9 @@ describe("BaseFilterRowsView", function() {
                 },
                 priority: {
                     type: 'bool'
+                },
+                date_created: {
+                    type: 'datetime'
                 }
             };
             view.filterOperatorMap = { enum: {
@@ -398,67 +408,83 @@ describe("BaseFilterRowsView", function() {
                 '<option value="case_number"></option>' +
                 '<option value="status" selected></option>' +
                 '<option value="priority"></option>' +
+                '<option value="date_created"></option>' +
                 '</select>');
             $('<div>').addClass('filter-field').html($filterField).appendTo($row);
             $operatorField = $('<div>').addClass('filter-operator').val('$in').appendTo($row);
             $valueField = $('<div>').addClass('filter-value').appendTo($row);
         });
-        it('should create an enum field for the filter value', function() {
-            var createFieldSpy = sinon.spy(view, 'createField');
-            view.handleOperatorSelected({currentTarget: $operatorField});
-            expect(createFieldSpy).toHaveBeenCalled();
-            expect(createFieldSpy.lastCall.args[1]).toEqual({
-                type: 'enum',
-                isMultiSelect: true,
-                searchBarThreshold: 9999
+        describe('creating fields for filter value', function() {
+            var createFieldSpy;
+            beforeEach(function() {
+                createFieldSpy = sinon.spy(view, 'createField');
+            })
+            afterEach(function() {
+                createFieldSpy.restore();
             });
-            expect($valueField.html()).not.toBeEmpty();
-            createFieldSpy.restore();
+
+            it('should make enum fields multi selectable', function() {
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalled();
+                expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    type: 'enum',
+                    isMultiSelect: true,
+                    searchBarThreshold: 9999
+                });
+                expect(_.isEmpty($valueField.html())).toBeFalsy();
+            });
+            it('should convert a boolean field into an enum field', function() {
+                $filterField.val('priority');
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalled();
+                expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    type: 'enum',
+                    searchBarThreshold: 9999
+                });
+                expect(_.isEmpty($valueField.html())).toBeFalsy();
+            });
+            it('should set auto_increment to false for an integer field', function() {
+                $filterField.val('case_number');
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalled();
+                expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    type: 'int',
+                    auto_increment: false
+                });
+                expect(_.isEmpty($valueField.html())).toBeFalsy();
+            });
+            it('should create two inputs if the operator is in between', function() {
+                $filterField.val('case_number');
+                $operatorField.val('$between');
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalledTwice();
+                expect(createFieldSpy.firstCall.args[1]).toEqual({
+                    type: 'int',
+                    name: 'case_number_min',
+                    auto_increment: false
+                });
+                expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    type: 'int',
+                    name: 'case_number_max',
+                    auto_increment: false
+                });
+                expect(_.isEmpty($valueField.html())).toBeFalsy();
+                expect(_.size($valueField.find('input'))).toEqual(2);
+            });
+            describe('date type fields', function() {
+                it('should not create a value field for specific date operators', function() {
+                    var buildFilterDefStub = sinon.stub(view, 'buildFilterDef');
+                    $filterField.val('date_created');
+                    $operatorField.val('next_30_days');
+                    view.handleOperatorSelected({currentTarget: $operatorField});
+                    expect(createFieldSpy).not.toHaveBeenCalled();
+                    expect(_.isEmpty($valueField.html())).toBeTruthy();
+                    expect(buildFilterDefStub).toHaveBeenCalled();
+                    buildFilterDefStub.restore();
+                });
+            });
         });
-        it('should convert a boolean field into an enum field', function() {
-            $filterField.val('priority');
-            var createFieldSpy = sinon.spy(view, 'createField');
-            view.handleOperatorSelected({currentTarget: $operatorField});
-            expect(createFieldSpy).toHaveBeenCalled();
-            expect(createFieldSpy.lastCall.args[1]).toEqual({
-                type: 'enum',
-                searchBarThreshold: 9999
-            });
-            expect($valueField.html()).not.toBeEmpty();
-            createFieldSpy.restore();
-        });
-        it('should set auto_increment to false for an integer field', function() {
-            $filterField.val('case_number');
-            var createFieldSpy = sinon.spy(view, 'createField');
-            view.handleOperatorSelected({currentTarget: $operatorField});
-            expect(createFieldSpy).toHaveBeenCalled();
-            expect(createFieldSpy.lastCall.args[1]).toEqual({
-                type: 'int',
-                auto_increment: false
-            });
-            expect($valueField.html()).not.toBeEmpty();
-            createFieldSpy.restore();
-        });
-        it('should create two inputs if the operator is in between', function() {
-            $filterField.val('case_number');
-            $operatorField.val('$between');
-            var createFieldSpy = sinon.spy(view, 'createField');
-            view.handleOperatorSelected({currentTarget: $operatorField});
-            expect(createFieldSpy).toHaveBeenCalledTwice();
-            expect(createFieldSpy.firstCall.args[1]).toEqual({
-                type: 'int',
-                name: 'case_number_min',
-                auto_increment: false
-            });
-            expect(createFieldSpy.lastCall.args[1]).toEqual({
-                type: 'int',
-                name: 'case_number_max',
-                auto_increment: false
-            });
-            expect($valueField.html()).not.toBeEmpty();
-            expect(_.size($valueField.find('input'))).toEqual(2);
-            createFieldSpy.restore();
-        });
+
         it('should dispose previous value field', function() {
             var disposeStub = sinon.stub(view, '_disposeFields');
             view.handleOperatorSelected({currentTarget: $operatorField});
@@ -505,6 +531,10 @@ describe("BaseFilterRowsView", function() {
                     name: 'assigned_user_name',
                     id_name: 'assigned_user_id',
                     type: 'relate'
+                },
+                date_created: {
+                    name: 'date_created',
+                    type: 'datetimecombo'
                 }
             };
         });
@@ -569,6 +599,22 @@ describe("BaseFilterRowsView", function() {
             expected = {
                 assigned_user_id: 'seed_sarah_id'
             };
+            expect(filter).toEqual(expected);
+        });
+
+        it('should format date range filter', function() {
+            SugarTest.loadComponent('base', 'field', 'date');
+            SugarTest.loadComponent('base', 'field', 'datetimecombo');
+            $row = $('<div>').data({
+                isDate: true,
+                isDateRange: true,
+                name: 'date_created'
+            });
+            $row.data({
+                operator: 'last_year'
+            });
+            filter = view.buildRowFilterDef($row);
+            expected = { date_created: { $dateRange: 'last_year' } };
             expect(filter).toEqual(expected);
         });
     });
