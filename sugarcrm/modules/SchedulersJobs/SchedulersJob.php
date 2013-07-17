@@ -438,11 +438,12 @@ class SchedulersJob extends Basic
     {
         $GLOBALS['current_user'] = $user;
         // Reset the session
-        if(session_id()) {
-            session_destroy();
-        }
         if(!headers_sent()) {
-    		session_start();
+            //Hack for php 5.3 where session_status is not availible
+            if(!@session_start()) {
+                session_destroy();
+                session_start();
+            }
             session_regenerate_id();
         }
         $_SESSION['is_valid_session']= true;
