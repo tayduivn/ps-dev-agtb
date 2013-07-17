@@ -210,6 +210,10 @@
                         // Reset taggable if the cursor is outside the tagging span
                         if (!$container.hasClass('sugar_tagging')) {
                             this._resetTaggable();
+                        } else if (this._taggableListOpen && (searchTerm.length <= this.taggableSearchAfter)) {
+                            this._getDropdown().hide();
+                            this._taggableListOpen = false;
+                            this._taggableLastSearchTerm = null;
                         } else {
                             if ((searchTerm.indexOf(mention) === 0) || (searchTerm.indexOf(reference) === 0)) {
                                 // Search for possible matches
@@ -424,10 +428,18 @@
              * @private
              */
             _populateTagList: function(collection, searchTerm) {
-                var $tagList = this._initializeDropdown();
+                var $tagList = this._initializeDropdown(),
+                    currentSearchTerm;
 
                 if (collection.length > 0) {
                     searchTerm = $.trim(searchTerm);
+
+                    // If the current search term differs from what was searched, do not display the dropdown list
+                    currentSearchTerm = $.trim(this._getTaggableInput().find('.sugar_tagging').text());
+                    if ($.trim(currentSearchTerm.substr(1)) !== searchTerm) {
+                        this._taggableLastSearchTerm = null;
+                        return;
+                    }
 
                     // Append search results to the dropdown list
                     collection.each(function(model, index) {

@@ -190,21 +190,26 @@ describe("Taggable Plugin", function() {
     });
 
     describe("_populateTagList", function() {
-        var dropdown, initializeDropdownStub, getDropdownStub;
+        var dropdown, input, initializeDropdownStub, getDropdownStub, getTaggableInputStub;
 
         beforeEach(function() {
             dropdown = $('<ul class="activitystream-tag-dropdown"></ul>');
+            input = $('<div class="taggable"><span class="sugar_tagging"></span></div>');
             initializeDropdownStub = sinon.stub(plugin, '_initializeDropdown', function() {
                 return dropdown;
             });
             getDropdownStub = sinon.stub(plugin, '_getDropdown', function() {
                 return dropdown;
             });
+            getTaggableInputStub = sinon.stub(plugin, '_getTaggableInput', function() {
+                return input;
+            });
         });
 
         afterEach(function() {
             initializeDropdownStub.restore();
             getDropdownStub.restore();
+            getTaggableInputStub.restore();
         });
 
         it("Should have two tags in the dropdown when two matches have been returned from the server", function() {
@@ -218,12 +223,14 @@ describe("Taggable Plugin", function() {
                     name: 'test 123'
                 }]);
 
+            input.find('.sugar_tagging').text('@foo');
             plugin._populateTagList(collection, 'foo');
 
             expect(dropdown.children().length).toBe(2);
         });
 
         it("Should have nothing in the list when there are no matches", function() {
+            input.find('.sugar_tagging').text('@foo');
             plugin._populateTagList(new Backbone.Collection(), 'foo');
 
             expect(dropdown.children().length).toBe(0);
@@ -240,6 +247,7 @@ describe("Taggable Plugin", function() {
                 name: 'test 123'
             }]);
 
+            input.find('.sugar_tagging').text('@foo');
             plugin._populateTagList(collection, 'foo');
 
             expect(dropdown.children().first().hasClass('active')).toBe(true);
@@ -257,15 +265,34 @@ describe("Taggable Plugin", function() {
                 name: 'test 123'
             }]);
 
+            input.find('.sugar_tagging').text('@foo');
             plugin._populateTagList(collection, 'foo');
 
             expect(dropdown.css('display')).not.toBe('none');
         });
 
         it("Should hide the dropdown list when there are no matches", function() {
+            input.find('.sugar_tagging').text('@foo');
             plugin._populateTagList(new Backbone.Collection(), 'foo');
 
             expect(dropdown.css('display')).toBe('none');
+        });
+
+        it("Should display nothing in the dropdown list when the search result doesn't match the current search term", function() {
+            var collection = new Backbone.Collection([{
+                _module: 'Accounts',
+                id: '123',
+                name: 'foo bar'
+            }, {
+                _module: 'Accounts',
+                id: '345',
+                name: 'test 123'
+            }]);
+
+            input.find('.sugar_tagging').text('@foobar');
+            plugin._populateTagList(collection, 'foo');
+
+            expect(dropdown.children().length).toBe(0);
         });
     });
 
