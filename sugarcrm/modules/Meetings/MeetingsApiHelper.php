@@ -56,14 +56,12 @@ class MeetingsApiHelper extends SugarBeanApiHelper
             }
         }
 
-        $leads = $bean->get_linked_beans('leads', 'Lead');
-        foreach($leads AS $lead) {
-            $leadInvitees[] = $lead->id;
+        if ($bean->load_relationship('leads')) {
+            $leadInvitees = $bean->leads->get();
         }
 
-        $contacts = $bean->get_linked_beans('contacts', 'Contact');
-        foreach($contacts AS $contact) {
-            $contactInvitees[] = $contact->id;
+        if ($bean->load_relationship('contacts')) {
+            $contactInvitees = $bean->contacts->get();
         }
 
         $bean->users_arr = $userInvitees;
