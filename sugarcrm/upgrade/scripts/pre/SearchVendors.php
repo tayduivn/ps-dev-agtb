@@ -8,6 +8,7 @@
  */
 class SugarUpgradeSearchVendors extends UpgradeScript
 {
+    public $order = 50;
 
     public $directories = array(
         'include/HTMLPurifier',
