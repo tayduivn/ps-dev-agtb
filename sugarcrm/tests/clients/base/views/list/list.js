@@ -1,5 +1,5 @@
 describe("Base.View.List", function () {
-    var view, layout, app;
+    var view, layout, app, loadDataStub;
 
     beforeEach(function () {
         SugarTest.testMetadata.init();
@@ -21,9 +21,10 @@ describe("Base.View.List", function () {
         layout = SugarTest.createLayout('base', "Cases", "list", null, null);
         view.layout = layout;
         app = SUGAR.App;
+        loadDataStub = sinon.stub(view.context, 'loadData');
     });
-
     afterEach(function () {
+        loadDataStub.restore();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -129,19 +130,16 @@ describe("Base.View.List", function () {
 
     });
     describe('setOrderBy', function() {
-
         var testElement = $('<th data-orderby="" data-fieldname="name" class="sorting_desc orderByname"><span>Name</span></th>');
         var event = {
             currentTarget: testElement
         };
-
         beforeEach(function() {
             view.$el.append(testElement);
         });
         afterEach(function() {
             view.$(testElement).remove();
         });
-
         it('should set orderby correctly', function() {
             view.setOrderBy(event);
             expect(view.orderBy).toEqual({field: 'name', direction: 'desc'});
