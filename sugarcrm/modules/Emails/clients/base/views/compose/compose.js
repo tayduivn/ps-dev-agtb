@@ -511,8 +511,10 @@
         var $row = this.$('.attachments').closest('.row-fluid');
         if (attachments.length > 0) {
             $row.removeClass('hidden');
+            $row.addClass('single');
         } else {
             $row.addClass('hidden');
+            $row.removeClass('single');
         }
     },
 
