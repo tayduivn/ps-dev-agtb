@@ -601,7 +601,6 @@ FP;
     $enabled_tabs[] = 'Notes';
     //BEGIN SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Forecasts';
-    $enabled_tabs[] = 'WebLogicHooks';
     //END SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Cases';
     $enabled_tabs[] = 'Prospects';

@@ -35,4 +35,13 @@ class WebLogicHook extends SugarBean
         parent::__construct();
     }
 
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+        return false;
+    }
+
 }

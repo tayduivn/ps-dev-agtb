@@ -384,6 +384,7 @@ $adminOnlyList = array(
                     'UpgradeWizard' => array('all' => 1),
                     'Studio' => array('all' => 1),
                     'Schedulers' => array('all' => 1),
+                    'WebLogicHooks' => array('all' => 1),
                     );
 
 $apiModuleList = array('Users', 'ActivityStream');
