@@ -37,23 +37,32 @@
                 fieldNames = this.getModuleQuickSearchFields(searchModule);
 
                 if (searchTerm) {
-                    if (fieldNames.length > 1) {
+                    //See SP-1093.
+                    //For Person Type modules, need to split the terms and build a smart filter definition
+                    if (fieldNames.length === 2) {
                         terms = searchTerm.split(' ');
+                        var firstTerm = _.first(terms.splice(0, 1));
+                        var otherTerms = terms.join(' ');
+                        //First field starts with first term, second field starts with other terms
+                        //If only one term, use $or and search for the term on both fields
+                        terms = otherTerms ? [firstTerm, otherTerms] : null;
+                    } else if (fieldNames.length > 2) {
+                        app.logger.fatal('Filtering by 3 quicksearch fields is not yet supported.');
                     }
-                    _.each(fieldNames, function(name) {
+                    _.each(fieldNames, function(name, index) {
+                        var o = {};
                         if (terms) {
-                            _.each(terms, function(term) {
-                                var o = {};
-                                o[name] = {'$starts': term};
-                                searchFilter.push(o);
-                            });
+                            o[name] = {'$starts': terms[index]};
                         } else {
-                            var o = {};
                             o[name] = {'$starts': searchTerm};
-                            searchFilter.push(o);
                         }
+                        searchFilter.push(o);
                     });
-                    returnFilter.push(searchFilter.length > 1 ? {'$or': searchFilter} : searchFilter[0]);
+                    if (terms) {
+                        returnFilter.push(searchFilter.length > 1 ? {'$and': searchFilter} : searchFilter[0]);
+                    } else {
+                        returnFilter.push(searchFilter.length > 1 ? {'$or': searchFilter} : searchFilter[0]);
+                    }
                 }
                 return returnFilter;
             }
