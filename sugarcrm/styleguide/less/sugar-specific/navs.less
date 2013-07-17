@@ -156,3 +156,55 @@
   padding-left: 14px;
   padding-right: 14px;
 }
+
+.dashlet-tabs {
+  display: table;
+  width: 100%;
+  > div {
+    display: table-row;
+    > div {
+      display: table-cell;
+      vertical-align: middle;
+      height: 50px;
+      text-align: center;
+      font-size: 11px;
+      color: @gray;
+      background-color: @tableBackgroundAccent;
+      border: 1px solid darken(@tableBackgroundAccent,5%);
+      &.active {
+        font-weight: bold;
+        border-bottom: transparent;
+      }
+      a {
+        color: @gray;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        padding-top: 5%;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.dashlet-tabs > div > div:not(.active) a:hover {
+  color: @dropdownLinkColorHover;
+  text-decoration: none;
+  background: @dropdownLinkBackgroundHover;
+}
+
+.dashlet-tabs.two > div > div {
+  width: 50%;
+}
+
+.dashlet-tabs.three > div > div {
+  width: 33%;
+}
+
+.dashlet-tabs.four > div > div {
+  width: 25%;
+}
+
+.dashlet-tabs.five > div > div {
+  width: 20%;
+}
