@@ -282,9 +282,10 @@ describe("Base.View.Forecastdetails", function() {
     });
 
     describe("loadData()", function() {
-        var apiCallStub;
+        var getUrlStub, getInitStub;
         beforeEach(function() {
-            apiCallStub = sinon.stub(app.api, 'call', function() {});
+            getUrlStub = sinon.stub(view, 'getProjectedURL', function() {});
+            getInitStub = sinon.stub(view, 'getInitData', function() {});
             view.forecastConfig = {
                 show_worksheet_best: false,
                 show_worksheet_likely: true,
@@ -294,13 +295,21 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         afterEach(function() {
-            apiCallStub.restore();
+            getUrlStub.restore();
+            getInitStub.restore();
         });
 
-        it("app.api.call() should not be called if selectedTimePeriod is not set", function() {
+        it("getInitData should only be called once", function() {
+            view.resetModel();
+            view.initDataLoaded = true;
+            view.loadData();
+            expect(getInitStub).not.toHaveBeenCalled();
+        });
+
+        it("app.api.call() should not be called for the progress endpoint if selectedTimePeriod is not set", function() {
             view.resetModel();
             view.loadData();
-            expect(apiCallStub).not.toHaveBeenCalled();
+            expect(getUrlStub).not.toHaveBeenCalled();
         });
     });
 
@@ -513,7 +522,7 @@ describe("Base.View.Forecastdetails", function() {
 
     describe("isManagerView()", function() {
         it("selectedUser is a manager and showOpps is undefined", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.currentModule = "Forecasts";
 
             result = view.isManagerView();
@@ -522,7 +531,7 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("selectedUser is a manager and showOpps is true", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.selectedUser.showOpps = true;
             view.currentModule = "Forecasts";
 
@@ -532,7 +541,7 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("selectedUser is a manager and showOpps is false", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.selectedUser.showOpps = false;
             view.currentModule = "Forecasts";
 
@@ -542,7 +551,7 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("selectedUser is a manager and but we aren't in Forecasts", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.selectedUser.showOpps = false;
             view.currentModule = "Home";
 
@@ -552,7 +561,7 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("selectedUser is not a manager and showOpps is undefined", function() {
-            view.selectedUser.is_manager = false;
+            view.selectedUser.isManager = false;
             view.currentModule = "Forecasts";
             result = view.isManagerView();
 

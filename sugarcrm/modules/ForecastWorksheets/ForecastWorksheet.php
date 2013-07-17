@@ -624,15 +624,15 @@ class ForecastWorksheet extends SugarBean
             $amount_base = SugarCurrency::convertWithRate($row['likely_case'], $row['base_rate']);
             $best_base = SugarCurrency::convertWithRate($row['best_case'], $row['base_rate']);
 
-            $closed_won = false;
+            $closed = false;
             if ($row['sales_stage'] == Opportunity::STAGE_CLOSED_WON) {
                 $return['won_amount'] = SugarMath::init($return['won_amount'], 6)->add($amount_base)->result();
                 $return['won_count']++;
-                $closed_won = true;
+                $closed = true;
             } elseif ($row['sales_stage'] == Opportunity::STAGE_CLOSED_LOST) {
                 $return['lost_amount'] = SugarMath::init($return['lost_amount'], 6)->add($amount_base)->result();
                 $return['lost_count']++;
-                $closed_won = true;
+                $closed = true;
             }
 
             if ($row['commit_stage'] == "include") {
@@ -640,7 +640,7 @@ class ForecastWorksheet extends SugarBean
                 $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
                 $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
                 $return['included_opp_count']++;
-                if ($closed_won) {
+                if ($closed) {
                     $return['includedClosedCount']++;
                     $return['includedClosedAmount'] = SugarMath::init($return['includedClosedAmount'], 6)
                         ->add($amount_base)->result();

@@ -82,6 +82,11 @@
     spanCSS: '',
 
     /**
+     * Flag for if we've run getInitData yet or not
+     */
+    initDataLoaded: false,
+
+    /**
      * events on the view for which to watch
      */
     events : {
@@ -123,18 +128,6 @@
             this.detailsDataSet = this.setUpShowDetailsDataSet(this.forecastConfig);
 
             this.checkSpanCSS();
-
-            // get the current timeperiod
-            app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
-                success: _.bind(function(o) {
-                    // Make sure the model is here when we get back and this isn't mid-pageload or anything
-                    if(this.model) {
-                        this.model.set({selectedTimePeriod: o.id}, {silent: true});
-                        this.loadData();
-                    }
-                }, this),
-                complete: options ? options.complete : null
-            });
         }
     },
 
@@ -282,6 +275,10 @@
             return;
         }
 
+        if(!this.initDataLoaded) {
+            this.getInitData(options);
+        }
+
         if(!_.isEmpty(this.model.get('selectedTimePeriod'))) {
             var url = this.getProjectedURL(),
                 cb = {
@@ -293,6 +290,27 @@
             app.api.call('read', url, null, null, cb);
         }
     },
+
+    /**
+     * Extensible function for getting initial data
+     *
+     * @param options
+     */
+    getInitData: function(options) {
+        // get the current timeperiod
+        app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
+            success: _.bind(function(o) {
+                // Make sure the model is here when we get back and this isn't mid-pageload or anything
+                if(this.model) {
+                    this.initDataLoaded = true;
+                    this.model.set({selectedTimePeriod: o.id}, {silent: true});
+                    this.loadData();
+                }
+            }, this),
+            complete: options ? options.complete : null
+        });
+    },
+
 
     /**
      * {@inheritdoc}
@@ -440,7 +458,11 @@
      * @return {Object} params for details-msg template
      */
     getDetailsForCase: function (caseStr, caseValue, stageValue, closedAmt) {
-        var params = {};
+        var params = {},
+            // get Number versions of values for comparison
+            caseValueN = parseFloat(caseValue),
+            stageValueN = parseFloat(stageValue);
+
         params.label = app.lang.get('LBL_' + caseStr.toUpperCase(), 'Forecasts');
         params.spanCSS = this.spanCSS;
         params.case = caseStr;
@@ -449,17 +471,22 @@
         params.feedbackLn1 = '';
         params.feedbackLn2 = '';
 
-        if(caseValue == 0 && stageValue == 0) {
+        if(caseValueN == 0 && stageValueN == 0)
+        {
             // if we have no data
             params.amount = app.lang.get('LBL_FORECAST_DETAILS_NO_DATA', "Forecasts");
-        } else if(caseValue != 0 && stageValue != 0 && caseValue == stageValue) {
+        }
+        else if(caseValueN != 0 && stageValueN != 0 && caseValueN == stageValueN)
+        {
             // if the values are equal but we have data
             params.amount = app.currency.formatAmountLocale(caseValue);
             params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_MEETING_QUOTA', "Forecasts");
-        } else {
+        }
+        else
+        {
             params.amount = app.currency.formatAmountLocale(caseValue);
 
-            if(caseValue > stageValue) {
+            if(caseValueN > stageValueN) {
                 params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_EXCEED', "Forecasts");
             } else {
                 params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
@@ -506,6 +533,9 @@
      */
     getClassBasedOnAmount: function (caseValue, stageValue, type) {
         var cssClass = '';
+        // convert values to Numbers for comparison
+        caseValue = parseFloat(caseValue);
+        stageValue = parseFloat(stageValue);
         if(type == 'color') {
             if(caseValue == stageValue) {
                 //
@@ -559,7 +589,7 @@
      */
     isManagerView: function () {
         var isMgrView = false;
-        if(this.currentModule == 'Forecasts' && this.selectedUser.is_manager == true
+        if(this.currentModule == 'Forecasts' && this.selectedUser.isManager == true
             && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false))
         {
             isMgrView = true;
