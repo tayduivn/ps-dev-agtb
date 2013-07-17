@@ -411,7 +411,9 @@
             }
             //adjust width of sales stage column to longest value so cells don't shift when using CTE
             var sales_stage_width = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width();
+            var sales_stage_outerwidth = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').outerWidth();
             this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width(sales_stage_width + 20);
+            this.$el.find('td[data-field-name="sales_stage"] span.isEditable').parent("td").css("min-width",sales_stage_outerwidth + 26 + "px");
 
             // figure out if any of the row actions need to be disabled
             this.setRowActionButtonStates();
