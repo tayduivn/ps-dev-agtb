@@ -39,6 +39,7 @@ $app_list_strings = array (
     'Quotes' => 'Quotes',
     'Products' => 'Quoted Line Items',
     'RevenueLineItems' => 'Revenue Line Items',
+    'WebLogicHooks' => 'Web Logic Hooks',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
@@ -148,6 +149,7 @@ $app_list_strings = array (
     'Products' => 'Quoted Line Item',
     'ProductCategories' => 'Product Category',
     'RevenueLineItems' => 'Revenue Line Item',
+    'WebLogicHooks' => 'Web Logic Hook',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -1829,6 +1831,15 @@ $app_list_strings = array (
         'likely' => 'Likely',
         'best' => 'Best',
         'worst' => 'Worst'
+    ),
+    'webLogicHookList' => array(
+        'after_save' => 'After Save',
+        'after_delete' => 'After Delete',
+        'after_relationship_add' => 'After Relationship Add',
+        'after_relationship_delete' => 'After Relationship Delete',
+        'after_login' => 'After Login',
+        'after_logout' => 'After Logout',
+        'after_login_failed' => 'After Login Failed',
     ),
     //END SUGARCRM flav=pro ONLY
 );
