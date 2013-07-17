@@ -62,9 +62,10 @@ class SugarUpgradeSearchVendors extends UpgradeScript
         if (!empty($this->filesToFix)) {
             // if there are fails to fix, fail the upgrade with a message about the files that need fixed
             $files_to_fix = implode("\r\n", $this->filesToFix);
-            $this->fail(
+            $this->log(
                 "Files found that contain paths to directories that have been moved to vendor:\r\n{$files_to_fix}"
             );
+            $this->fail();
         }
     }
 
