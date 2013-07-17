@@ -36,8 +36,14 @@ $viewdefs['RevenueLineItems']['mobile']['view']['edit'] = array(
     'panels' => array(
         array(
             'fields' => array(
-                'name',
-                'opportunity_name',
+                array(
+                    'name' => 'name',
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'opportunity_name',
+                    'required' => true,
+                ),
                 array(
                     'name' => 'account_name',
                     'readonly' => true,
