@@ -271,11 +271,12 @@ class SidecarTheme
         $baseDefaultThemePaths = $baseDefaultTheme->getPaths();
         $contents = file_get_contents($baseDefaultThemePaths['base'] . 'variables.less');
 
+        if (is_dir($this->paths['cache'])) {
+            rmdir_recursive($this->paths['cache']);
+        }
+
         if ($reset) {
             //In case of reset we just need to delete the theme files.
-            if (is_dir($this->paths['cache'])) {
-                rmdir_recursive($this->paths['cache']);
-            }
             if (is_dir($this->paths['custom'])) {
                 rmdir_recursive($this->paths['custom']);
             }

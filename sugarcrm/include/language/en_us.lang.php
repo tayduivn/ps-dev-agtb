@@ -3641,6 +3641,8 @@ $app_strings = array (
     'LBL_FILE_DELETED' => 'File was successfully deleted',
 
     //theme roller
+    'LBL_THEME_PREVIEW' => 'Theme Preview',
+    'LBL_LOADING_PREVIEW' => 'Loading Preview',
     'LBL_RESET' => 'Reset',
     'LBL_COLORS' => 'Colors',
     'BorderColor' => 'Border Color',
@@ -3648,9 +3650,7 @@ $app_strings = array (
     'PrimaryButton' => 'Primary Button',
     'LBL_SAVE_AND_DEPLOY_BTN' => 'Save & Deploy',
     'LBL_RESET_THEME_LNK' => 'Restore Default Theme',
-    'LBL_RESET_THEME_MODAL_TITLE' => 'Reset default theme',
     'LBL_RESET_THEME_MODAL_INFO' => 'You are about to erase your custom theme with the default theme.',
-    'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
     'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
     'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 

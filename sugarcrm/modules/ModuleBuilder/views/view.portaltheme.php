@@ -57,16 +57,19 @@ class ViewPortalTheme extends SugarView
    	 */
 	function display() 
 	{
-        global $current_user;
+        global $current_user, $app_strings;
 
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod', $GLOBALS['mod_strings']);
         $smarty->assign("token", session_id());
         $smarty->assign("siteURL", $GLOBALS['sugar_config']['site_url']);
 
+        //Loading label
+        $smarty->assign('LBL_LOADING', $app_strings['LBL_ALERT_TITLE_LOADING']);
 
         $theme = new SidecarTheme();
         $smarty->assign("css_url", $theme->getCSSURL());
+
 
         $ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');

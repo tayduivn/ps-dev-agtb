@@ -27,12 +27,12 @@
  ********************************************************************************/
 }}
 <div class="tab-content" id="folded">
-    <div class="active hero-unit">
+    <div class="active well">
         <div class="block">
-            <h4>Theme Preview</h4>
+            <h4>{{str "LBL_THEME_PREVIEW"}}</h4>
 
             <div class="ajaxLoading" style="margin: 1em;">
-                <p style="text-align: center;">Loading Preview</p>
+                <p style="text-align: center;">{{str "LBL_LOADING_PREVIEW"}}</p>
                 <p style="text-align: center;"><img src="./styleguide/assets/img/ajax-loader.gif"></p>
             </div>
             <iframe id="previewTheme" src="./styleguide/themes/theming_preview.html" style="width: 100%; border: 0; height: 500px;" allowtransparency="true"></iframe>
