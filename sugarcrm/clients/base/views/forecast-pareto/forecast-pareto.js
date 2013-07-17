@@ -20,6 +20,8 @@
 
     className: 'forecasts-chart-wrapper',
 
+    displayTimeperiodPivot: true,
+
     /**
      * Hold the initOptions if we have to call the Forecast/init end point cause we are not on Forecasts
      */
@@ -55,17 +57,17 @@
             success: _.bind(function(o) {
                 app.view.View.prototype.initialize.call(this, this.initOptions);
                 this.values.module = 'Forecasts';
-                this.isManager = o.initData.userData.isManager,
-                    this.values.set({
-                        user_id: app.user.get('id'),
-                        display_manager: false, // we always show the rep view by default
-                        selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
-                        timeperiod_id: o.defaultSelections.timeperiod_id.id,
-                        timeperiod_label: o.defaultSelections.timeperiod_id.label,
-                        dataset: o.defaultSelections.dataset,
-                        group_by: o.defaultSelections.group_by,
-                        ranges: o.defaultSelections.ranges
-                    });
+                this.isManager = o.initData.userData.isManager;
+                this.values.set({
+                    user_id: app.user.get('id'),
+                    display_manager: false, // we always show the rep view by default
+                    selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
+                    timeperiod_id: o.defaultSelections.timeperiod_id.id,
+                    timeperiod_label: o.defaultSelections.timeperiod_id.label,
+                    dataset: o.defaultSelections.dataset,
+                    group_by: o.defaultSelections.group_by,
+                    ranges: o.defaultSelections.ranges
+                });
                 this.bindDataChange();
                 this.render();
             }, this),
@@ -116,7 +118,7 @@
         }
 
         if (this.isManager) {
-            this.$el.find('#'+ this.cid + '_mgr_toggle').toggleClass('span3', 'span6');
+            this.$el.find('#' + this.cid + '_mgr_toggle').toggleClass('span3', 'span6');
         }
     },
 
