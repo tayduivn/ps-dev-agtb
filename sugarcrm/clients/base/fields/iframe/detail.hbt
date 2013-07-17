@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{#if value}}<iframe src="{{value}}" height="{{def.height}}" width="{{def.width}}"></iframe>{{/if}}
+{{#if value}}<iframe src="{{value}}" height="{{def.height}}"></iframe>{{/if}}
