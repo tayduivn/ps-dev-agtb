@@ -311,10 +311,22 @@
     saveModel: function (success, error) {
         var self = this,
             options;
-        success = _.wrap(success, function (func) {
+        success = _.wrap(success, function (func, model) {
+            var successMessage = self.buildSuccessMessage(model);
+
             app.file.checkFileFieldsAndProcessUpload(self, {
                     success: function () {
+                        var successKey = 'create-success';
                         func();
+                        app.alert.show(successKey, {
+                            level: 'success',
+                            messages: successMessage,
+                            autoClose: true,
+                            autoCloseDelay: 10000,
+                            onLinkClick: function() {
+                                app.alert.dismiss(successKey);
+                            }
+                        });
                     }
                 },
                 {deleteIfFails: true}
@@ -328,14 +340,39 @@
             //Show alerts for this request
             showAlerts: {
                'process' : true,
-               'success' : {
-                    messages: app.lang.get('LBL_RECORD_SAVED_SUCCESS', self.module, self.model.attributes)
-               }
+               'success' : false
             }
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions(options));
         self.model.save(null, options);
+    },
+
+    /**
+     * Using the model returned from the API call, build the success message
+     * @param model
+     * @returns {*}
+     */
+    buildSuccessMessage: function(model) {
+        var modelAttributes,
+            successLabel = 'LBL_RECORD_SAVED_SUCCESS',
+            successMessageContext;
+
+        //if we have model attributes, use them to build the message, otherwise use a generic message
+        if (model && model.attributes) {
+            modelAttributes = model.attributes;
+        } else {
+            modelAttributes = {};
+            successLabel = 'LBL_RECORD_SAVED';
+        }
+
+        //use the model attributes combined with data from the view to build the success message context
+        successMessageContext = _.extend({
+            module: this.module,
+            moduleSingularLower: this.moduleSingular.toLowerCase()
+        }, modelAttributes);
+
+        return app.lang.get(successLabel, this.module, successMessageContext);
     },
 
     /**

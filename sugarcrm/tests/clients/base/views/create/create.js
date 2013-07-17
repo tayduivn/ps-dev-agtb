@@ -553,6 +553,39 @@ describe("Create View", function() {
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
             ajaxSpy.restore();
         });
+
+        it("Should build correct success message if model is returned from the API", function() {
+            var app = SugarTest.app,
+                moduleName = 'Contacts',
+                labelSpy = sinon.spy(app.lang, 'get'),
+                model = {
+                    attributes: {
+                        id: '123',
+                        name: 'foo'
+                    }
+                },
+                messageContext;
+
+            view.moduleSingular = 'Contact';
+            view.buildSuccessMessage(model);
+            expect(labelSpy.calledWith('LBL_RECORD_SAVED_SUCCESS', moduleName)).toBeTruthy();
+            messageContext = labelSpy.lastCall.args[2];
+            expect(messageContext.id).toEqual(model.attributes.id);
+            expect(messageContext.module).toEqual(moduleName);
+            expect(messageContext.moduleSingularLower).toEqual(view.moduleSingular.toLowerCase());
+            expect(messageContext.name).toEqual(model.attributes.name);
+            labelSpy.restore();
+        });
+
+        it("Should build generic message if model is not returned from the API", function() {
+            var app = SugarTest.app,
+                moduleName = 'Contacts',
+                labelSpy = sinon.spy(app.lang, 'get');
+
+            view.buildSuccessMessage();
+            expect(labelSpy.calledWith('LBL_RECORD_SAVED', moduleName)).toBeTruthy();
+            labelSpy.restore();
+        });
     });
 
     describe('Save', function() {

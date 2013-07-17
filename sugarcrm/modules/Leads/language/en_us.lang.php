@@ -173,7 +173,7 @@ $mod_strings = array (
     'LBL_PRIMARY_ADDRESS_STREET_3'=>'Primary Address Street 3',   
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
-    'LBL_RECORD_SAVED_SUCCESS' => 'Record {{first_name}} {{last_name}} was saved.',
+    'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{full_name}}</a>.',
     'LBL_REFERED_BY' => 'Referred By:',
     'LBL_REPORTS_TO_ID'=>'Reports To ID',
     'LBL_REPORTS_TO' => 'Reports To:',
