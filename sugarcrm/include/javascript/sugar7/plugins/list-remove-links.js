@@ -19,9 +19,15 @@
     app.events.on("app:init", function () {
         app.plugins.register('list-remove-links', ['view'], {
             onAttach: function (component, plugin) {
-                component.on('render', function () {
+                var removeLinks = function() {
                     component.$('a:not(.rowaction)').contents().unwrap();
-                }, null, component);
+                };
+
+                component.on('render', removeLinks, null, component);
+                app.events.on("list:preview:decorate", removeLinks, this);
+            },
+            onDetach: function () {
+                app.events.off("list:preview:decorate", null, this);
             }
         });
     });
