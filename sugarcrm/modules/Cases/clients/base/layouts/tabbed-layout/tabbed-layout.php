@@ -1,4 +1,6 @@
 <?php
-
-$layout = MetaDataManager::getLayout('GenericLayout');
-$viewdefs['Cases']['base']['layout']['tabbed-layout'] = $layout->getLayout();
+$viewdefs['Cases']['base']['layout']['tabbed-layout'] = array (
+  'components' => array (),
+  'type' => 'simple',
+  'span' => 12,
+);
