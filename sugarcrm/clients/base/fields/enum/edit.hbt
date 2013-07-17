@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<select data-placeholder=" " name="{{name}}" {{#if def.isMultiSelect}} multiple="multiple"{{/if}}>
+<select name="{{name}}" {{#if def.isMultiSelect}} multiple="multiple"{{/if}}>
     {{#if hasBlank}}
     <option value=""{{#has "" value}}selected{{/has}}></option>
     {{/if}}
