@@ -234,13 +234,14 @@ class RestResponse extends Zend_Http_Response
      * @param string $etag ETag to use for this content.
      * @return bool Did we have a match?
      */
-    public function generateETagHeader($etag = null, $cache_age=0)
+    public function generateETagHeader($etag = null, $cache_age = 0)
     {
-        if(is_null($etag)) {
-            if($this->type != self::RAW) {
-                return false;
+        if (is_null($etag)) {
+            if (is_array($this->body)) {
+                $etag = md5(json_encode($this->body));
+            } else {
+                $etag = md5($this->body);
             }
-            $etag = md5($this->body);
         }
 
         //Override cache control to ensure the etag is respected by the browser
@@ -248,7 +249,7 @@ class RestResponse extends Zend_Http_Response
         $this->setHeader('Expires', "");
         $this->setHeader('Pragma', "");
 
-        if(isset($this->server_data["HTTP_IF_NONE_MATCH"]) && $etag == $this->server_data["HTTP_IF_NONE_MATCH"]){
+        if (isset($this->server_data["HTTP_IF_NONE_MATCH"]) && $etag == $this->server_data["HTTP_IF_NONE_MATCH"]) {
             // Same data, clean it up and return 304
             $this->body = '';
             $this->code = 304;
