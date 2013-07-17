@@ -14,7 +14,12 @@
 }}
 <div class="dashlet-options">
     <div class="row-fluid">
-        <div class="span3 offset1 groupByOptions">
+        <div class="span3">
+            {{#each dashletConfig.timeperiod}}
+                {{field ../this model=../this.values template="edit"}}
+            {{/each}}
+        </div>
+        <div class="span3 groupByOptions">
             {{#with dashletConfig.group_by}}
                 {{field ../this model=../this.values}}
             {{/with}}
@@ -24,9 +29,17 @@
                 {{field ../this model=../this.values}}
             {{/with}}
         </div>
+        {{#if isManager}}
+        <div id="{{cid}}_mgr_toggle" class="span3">
+            <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+                <button class="btn active" rel="tooltip" data-type="self" data-original-title="My Forecast" data-placement="top"><i class="icon-user"></i></button>
+                <button class="btn" rel="tooltip" data-type="team" data-original-title="My Teams Forecast" data-placement="top"><i class="icon-group"></i></button>
+            </div>
+        </div>
+        {{/if}}
     </div>
 </div>
 {{#with dashletConfig.chart}}
-    {{field ../this model=../this.values}}
+    {{field ../this model=../this.values template=detail}}
 {{/with}}
 
