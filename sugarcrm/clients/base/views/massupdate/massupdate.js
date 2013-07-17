@@ -443,7 +443,7 @@
     unbindData: function() {
         var massModel = this.context.get("mass_collection");
         if (massModel) {
-            massModel.off();
+            massModel.off(null, null, this);
         }
         app.view.View.prototype.unbindData.call(this);
     },

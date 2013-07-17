@@ -75,11 +75,6 @@
             massCollection = this.context.get('mass_collection');
         if (massCollection && this.model.id) { //listeners for each record selection
             var modelId = this.model.id;
-
-            massCollection.off("add", null, modelId);
-            massCollection.off("remove", null, modelId);
-            massCollection.off("reset", null, modelId);
-
             massCollection.on("add", function (model) {
                 if (self.model && model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", true);
@@ -101,11 +96,6 @@
             }
         } else if (massCollection) { //listeners for entire selection
             var cid = this.view.cid;
-            massCollection.off("add", null, cid);
-            massCollection.off("remove", null, cid);
-            massCollection.off("reset", null, cid);
-
-
             var setButtonsDisabled = function (fields) {
                 _.each(fields, function (field) {
                     if (field.def.minSelection || field.def.maxSelection) {
@@ -120,7 +110,6 @@
                 }, self);
             };
             if (this.view.collection) {
-                this.view.collection.off("reset", null, this);
                 this.view.collection.on("reset", function () {
                     if (massCollection.entire) {
                         massCollection.reset();
@@ -128,7 +117,6 @@
                 }, this);
             }
 
-            this.off("render", null, this);
             this.on("render", this.toggleShowSelectAll, this);
 
             massCollection.on("add", function (model) {
@@ -251,12 +239,21 @@
     },
     unbindData: function() {
         var collection = this.context.get('mass_collection');
-        if(collection) {
-            collection.off();
+        if (collection) {
+            var modelId = this.model.id,
+                cid = this.view.cid;
+            collection.off(null, null, this);
+            if (modelId) {
+                collection.off(null, null, modelId);
+            }
+            if (cid) {
+                collection.off(null, null, cid);
+            }
         }
         if(this.view.collection) {
             this.view.collection.off("reset", null, this);
         }
+        this.off("render", null, this);
         app.view.Field.prototype.unbindData.call(this);
     },
     _dispose: function() {
