@@ -12,20 +12,51 @@
  ********************************************************************************/
 
 describe("Base.View.Forecastdetails", function() {
-    var app, view, cfg, result;
+    var app, view, cfg, result, sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
         app.user.setPreference('decimal_precision', 2);
-        view = SugarTest.loadFile("../clients/base/views/forecastdetails", "forecastdetails", "js", function(d) {return eval(d); });
-        view.meta = {};
+
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {
+                is_setup: 1
+            }
+        });
+        sandbox.stub(app.utils, 'checkForecastConfig', function() {
+            return true;
+        });
+        sandbox.stub(app.user, 'getAcls', function() {
+            return {
+                'Forecasts': {
+                    admin: true
+                }
+            };
+        });
+
+        var context = app.context.getContext();
+        context.set({
+            module: 'Forecasts',
+            model: new Backbone.Model()
+        });
+        context.parent = new Backbone.Model();
+        context.parent.set('selectedUser', {id: 'test_user', is_manager: false});
+        context.parent.set('selectedTimePeriod', 'test_timeperiod');
+        context.parent.set('module', 'Forecasts');
+
+        var meta = {
+            config: false
+        }
+        view = SugarTest.createView('base', 'Forecasts', 'forecastdetails', meta, context, false, null, true);
     });
 
     afterEach(function() {
+        sandbox.restore();
         cfg = null;
         result = null;
     });
-
+    
     describe("setUpShowDetailsDataSet()", function() {
         beforeEach(function() {
             sinon.stub(app.metadata, 'getStrings', function() {

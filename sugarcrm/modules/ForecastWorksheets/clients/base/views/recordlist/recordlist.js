@@ -775,7 +775,7 @@
                 includedBest += best_base;
                 includedWorst += worst_base;
                 includedCount++;
-                if (won || lost) {
+                if (won) {
                     includedClosedCount++;
                     includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
                 }
