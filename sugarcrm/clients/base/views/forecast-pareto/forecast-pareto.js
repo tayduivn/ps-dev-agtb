@@ -10,6 +10,7 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+
 /**
  * Dashlet that displays a chart
  */
@@ -44,6 +45,7 @@
         this.forecastsConfigOK = app.utils.checkForecastConfig();
 
         if (this.isForecastSetup && this.forecastsConfigOK) {
+            this.initOptions.meta.template = undefined;
             this.initComponent();
         } else {
             // set the no access template
@@ -52,6 +54,9 @@
         }
     },
 
+    /**
+     * Handle the call to the Forecast/init call so we can get the defaults back
+     */
     initComponent: function() {
         app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
             success: _.bind(function(o) {

@@ -13,6 +13,9 @@
 
 ({
 
+    /**
+     * @{inheritDoc}
+     */
     bindDataChange: function() {
         this.once('render', function() {
             this.renderChart();
@@ -31,6 +34,7 @@
             this.generateD3Chart();
         }, this);
     },
+
     /**
      * Render the chart for the first time
      *
@@ -232,7 +236,6 @@
                     }),
                     axis = this.serverData['x-axis'];
 
-
                 // loop though all the data and map it to the correct x series
                 _.each(td, function(record) {
                     for(var y = 0; y < axis.length; y++) {
@@ -255,7 +258,6 @@
                     values: barVal,
                     valuesOrig: barVal
                 });
-
 
                 // increase the series
                 seriesIdx++;
@@ -291,6 +293,10 @@
         return baseUrl + '/chart/' + params.timeperiod_id + '/' + params.user_id;
     },
 
+    /**
+     * Return the data that was passed back from the server
+     * @returns {Object}
+     */
     getServerData: function() {
         return this.serverData;
     },
