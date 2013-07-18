@@ -834,6 +834,11 @@ $mod_strings = array (
 
     //END SUGARCRM flav=pro ONLY
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_WEB_LOGIC_HOOKS' => 'Web Logic Hooks',
+    'LBL_WEB_LOGIC_HOOKS_DESC' => 'Manage Sugar Web Logic Hooks',
+    //END SUGARCRM flav=pro ONLY
+
 
     'LBL_UW_BTN_BACK_TO_MOD_LOADER'         => 'Back to Module Loader',
     'LBL_UW_BTN_BACK_TO_UW'                     => 'Back to Upgrade Wizard',
