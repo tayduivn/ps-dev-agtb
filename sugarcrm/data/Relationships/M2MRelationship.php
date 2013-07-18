@@ -155,7 +155,12 @@ class M2MRelationship extends SugarRelationship
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-
+        /**
+         * We still need to update the row even if the relationship is not new because there
+         * may be changes to relationship fields that need to be saved.
+         *
+         * See SP-1043 for other details
+         * */
         $this->addRow($dataToInsert);
 
         if ($this->self_referencing) {
