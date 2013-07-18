@@ -53,18 +53,3 @@
 
     </div>
 </div>
-
-<div id="modal-confirm-reset" class="modal hide">
-    <div class="modal-header">
-      <a href="javascript:void(0)" class="close">x</a>
-      <h3>{{str "LBL_RESET_THEME_MODAL_TITLE"}}</h3>
-    </div>
-    <div class="modal-body">
-      <p>{{str "LBL_RESET_THEME_MODAL_INFO"}}</p>
-      <p>{{str "LBL_RESET_THEME_MODAL_CONFIRM"}}</p>
-    </div>
-    <div class="modal-footer">
-      <button href="javascript:void(0)" id="buttonYes" class="button btn-danger">{{str "LBL_YES"}}</button>
-      <button href="javascript:void(0)" id="buttonNo" class="button">{{str "LBL_NO"}}</button>
-    </div>
-</div>

@@ -34,10 +34,7 @@
     events: {
         "click [name=save_button]": "saveTheme",
         "click [name=refresh_button]": "loadTheme",
-        "click [name=reset_button]": "toggleModal",
-        "click #modal-confirm-reset #buttonYes": "resetTheme",
-        "click #modal-confirm-reset #buttonNo": "toggleModal",
-        "click #modal-confirm-reset .close": "toggleModal",
+        "click [name=reset_button]": "resetTheme",
         "blur input": "previewTheme"
     },
     initialize: function(options) {
@@ -84,12 +81,17 @@
         });
     },
     resetTheme: function() {
-        this.toggleModal();
-
-        this.showMessage('LBL_RESET_THEME_PROCESS');
-        this.themeApi('create', {"reset": true}, function(data) {
-            this.showMessage('LBL_REQUEST_PROCESSED', 3000);
-            this.loadTheme();
+        var self = this;
+        app.alert.show('reset_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_RESET_THEME_MODAL_INFO'),
+            onConfirm: function () {
+                self.showMessage('LBL_RESET_THEME_PROCESS');
+                self.themeApi('create', {"reset": true}, function(data) {
+                    self.showMessage('LBL_REQUEST_PROCESSED', 3000);
+                    self.loadTheme();
+                });
+            }
         });
     },
     previewTheme: function() {
@@ -114,9 +116,6 @@
             },
             { context: self }
         );
-    },
-    toggleModal: function() {
-        this.$('#modal-confirm-reset').toggleClass('hide');
     },
     getInputValues: function() {
         var colors = {};
