@@ -385,7 +385,8 @@ class FilterApi extends SugarApi
                 //FIXME: Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
                 $bean = BeanFactory::getBean($options['module'], $row['id']);
             } else {
-                $bean = clone $seed;
+                // Fetch a fresh "bean", even if $seed is a mock.
+                $bean = $seed->getCleanCopy();
                 // convert will happen inside populateFromRow
                 $bean->loadFromRow($row, true);
                 $this->populateRelatedFields($bean, $row);
