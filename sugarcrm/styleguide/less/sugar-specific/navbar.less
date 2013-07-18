@@ -140,11 +140,11 @@
   // Menu position and menu carets
   .dropdown-menu {
     a [class^="icon-"] {
-      position: absolute;
-      left: 12px;
-      text-indent: 0;
+      position: relative;
+      top: -1px;
+      text-indent: -26px;
       color: @grayLight;
-      line-height: 15px;
+      vertical-align: middle;
     }
     .dropdownMinWidth();
     margin-top: 0;
@@ -364,9 +364,6 @@
               }
             }
           }
-          .icon-chevron-down {
-            padding-top: 11px;
-          }
         }
       }
 
@@ -458,10 +455,11 @@
   }
   //fix position and size
   .icon-plus.icon-md {
-      line-height: 14px;
-  }
-  .icon-plus:before {
-      margin: 3px 0 -2px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    left: 1px;
+    top: 1px;
   }
 
   .btn-group:hover > .routeLink {
