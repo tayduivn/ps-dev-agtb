@@ -8,14 +8,6 @@ class AccountsApi extends ListApi
     public function registerApiRest()
     {
         return array(
-            'sales_by_country' => array(
-                'reqType' => 'GET',
-                'path' => array('Accounts','by_country'),
-                'pathVars' => array('', ''),
-                'method' => 'salesByCountry',
-                'shortHelp' => 'Get opportunities won by country',
-                'longHelp' => '',
-            ),
             'opportunity_stats' => array(
                 'reqType' => 'GET',
                 'path' => array('Accounts','?', 'opportunity_stats'),
@@ -25,60 +17,6 @@ class AccountsApi extends ListApi
                 'longHelp' => '',
             ),
         );
-    }
-
-    public function salesByCountry($api, $args)
-    {
-        $data = array();
-
-        // TODO: Fix information leakage if user cannot list or view records not
-        // belonging to them. It's hard to tell if the user has access if we
-        // never get the bean.
-
-        // Check for permissions on both Accounts and opportunities.
-        $seed = BeanFactory::newBean('Accounts');
-        if (!$seed->ACLAccess('view')) {
-            return;
-        }
-
-        // Load up the relationship
-        if (!$seed->load_relationship('opportunities')) {
-            // The relationship did not load, I'm guessing it doesn't exist
-            return;
-        }
-
-        // Figure out what is on the other side of this relationship, check permissions
-        $linkModuleName = $seed->opportunities->getRelatedModuleName();
-        $linkSeed = BeanFactory::newBean($linkModuleName);
-        if (!$linkSeed->ACLAccess('view')) {
-            return;
-        }
-
-        $query = new SugarQuery();
-        $query->select(array('accounts.billing_address_country', 'accounts.billing_address_state', 'amount_usdollar'));
-        $query->from($linkSeed);
-        $query->where()->equals('sales_status', 'Closed Won');
-        $query->join('accounts');
-        // TODO: When we can sum on the database side through SugarQuery, we can
-        // use the group by statement.
-
-        $results = $query->execute();
-        foreach ($results as $row) {
-            if (empty($data[$row['billing_address_country']])) {
-                $data[$row['billing_address_country']] = array(
-                    '_total' => 0
-                );
-            }
-            if (empty($data[$row['billing_address_country']][$row['billing_address_state']])) {
-                $data[$row['billing_address_country']][$row['billing_address_state']] = array(
-                    '_total' => 0
-                );
-            }
-            $data[$row['billing_address_country']]['_total'] += $row['amount_usdollar'];
-            $data[$row['billing_address_country']][$row['billing_address_state']]['_total'] += $row['amount_usdollar'];
-        }
-
-        return $data;
     }
 
     public function opportunityStats($api, $args)
