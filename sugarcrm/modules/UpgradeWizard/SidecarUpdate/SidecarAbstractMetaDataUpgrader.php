@@ -135,6 +135,8 @@ abstract class SidecarAbstractMetaDataUpgrader
         //END SUGARCRM flav=pro ONLY
         'base' => array(
             'list'   => 'listViewDefs',
+            'edit'   => 'viewdefs',
+            'detail' => 'viewdefs',
         ),
     );
 
@@ -155,6 +157,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         'wirelesssearch' => MB_WIRELESSBASICSEARCH,
         //END SUGARCRM flav=pro ONLY
         'baselist'        => MB_SIDECARLISTVIEW,
+        'baserecordview'  => MB_RECORDVIEW,
     );
 
     /**
@@ -173,6 +176,8 @@ abstract class SidecarAbstractMetaDataUpgrader
         'wirelessdetail' => 'DetailView',
         //END SUGARCRM flav=pro ONLY
         'baselist'       => '',
+        'baseedit'       => 'EditView',
+        'basedetail'     => 'DetailView',
     );
 
     /**

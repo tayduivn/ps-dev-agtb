@@ -97,6 +97,8 @@ class SidecarMetaDataUpgrader
         //END SUGARCRM flav=ent ONLY
         'base' => array(
             MB_LISTVIEW               => 'listviewdefs',
+            MB_EDITVIEW               => 'editviewdefs',
+            MB_DETAILVIEW             => 'detailviewdefs',
         )
     );
 
@@ -116,6 +118,7 @@ class SidecarMetaDataUpgrader
         'list'   => 'List',
         'edit'   => 'Grid',
         'detail' => 'Grid',
+        MB_RECORDVIEW => 'MergeGrid',
         'search' => 'Search',
     );
 
@@ -491,18 +494,18 @@ class SidecarMetaDataUpgrader
      * @param string $filename The name of the file to get the view type from
      * @return string
      */
-    protected function getViewTypeFromFilename($filename)
+    protected function getViewTypeFromFilename($filename, $client)
     {
         if (strpos($filename, 'list') !== false) {
             return 'list';
         }
 
         if (strpos($filename, 'edit') !== false) {
-            return 'edit';
+            return $client == 'base'?MB_RECORDVIEW:'edit';
         }
 
         if (strpos($filename, 'detail') !== false) {
-            return 'detail';
+            return $client == 'base'?MB_RECORDVIEW:'detail';
         }
 
         if (strpos($filename, 'search') !== false) {
@@ -693,7 +696,7 @@ class SidecarMetaDataUpgrader
                 'fullpath'  => $file,
                 'package'   => $package,
                 'deployed'  => $deployed,
-                'viewtype'  => $this->getViewTypeFromFilename($filename),
+                'viewtype'  => $this->getViewTypeFromFilename($filename, $client),
             );
         }
 

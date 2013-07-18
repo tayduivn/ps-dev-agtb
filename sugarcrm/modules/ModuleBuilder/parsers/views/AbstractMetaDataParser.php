@@ -26,11 +26,11 @@ abstract class AbstractMetaDataParser
     /**
      * The client making this request for the parser. Default is empty. NOT ALL
      * PARSERS SET THIS.
-     * 
-     * @var string 
+     *
+     * @var string
      */
     public $client;
-    
+
     //Make these properties public for now until we can create some usefull accessors
     public $_fielddefs;
     public $_viewdefs;
@@ -67,7 +67,7 @@ abstract class AbstractMetaDataParser
     public function getPanelDefs() {
         return $this->_paneldefs;
     }
-    
+
     function removeField ($fieldName)
     {
     	return false;
@@ -79,7 +79,7 @@ abstract class AbstractMetaDataParser
 
     /*
      * Is this field something we wish to show in Studio/ModuleBuilder layout editors?
-     * 
+     *
      * @param array $def     Field definition in the standard SugarBean field definition format - name, vname, type and so on
      * @param string $view   The name of the view
      * @return boolean       True if ok to show, false otherwise
@@ -101,13 +101,13 @@ abstract class AbstractMetaDataParser
         }
 
         // bug 19656: this test changed after 5.0.0b - we now remove all ID type fields - whether set as type, or dbtype, from the fielddefs
-        return 
-		( 
-		  ( 
-		    (empty ( $def [ 'source' ] ) || $def [ 'source' ] == 'db' || $def [ 'source' ] == 'custom_fields') 
+        return
+		(
+		  (
+		    (empty ( $def [ 'source' ] ) || $def [ 'source' ] == 'db' || $def [ 'source' ] == 'custom_fields')
 			&& isset($def [ 'type' ]) && $def [ 'type' ] != 'id' && $def [ 'type' ] != 'parent_type'
-			&& (empty ( $def [ 'dbType' ] ) || $def [ 'dbType' ] != 'id') 
-			&& ( isset ( $def [ 'name' ] ) && strcmp ( $def [ 'name' ] , 'deleted' ) != 0 ) 
+			&& (empty ( $def [ 'dbType' ] ) || $def [ 'dbType' ] != 'id')
+			&& ( isset ( $def [ 'name' ] ) && strcmp ( $def [ 'name' ] , 'deleted' ) != 0 )
 		  ) // db and custom fields that aren't ID fields
           ||
 		  // exclude fields named *_name regardless of their type...just convention
@@ -126,7 +126,7 @@ abstract class AbstractMetaDataParser
 	}
 
 	abstract static function _trimFieldDefs ( $def ) ;
-	
+
 	public function getRequiredFields(){
 	    $fieldDefs = $this->implementation->getFielddefs();
 	    $newAry = array();
@@ -161,9 +161,9 @@ abstract class AbstractMetaDataParser
     }
 
     /**
-     * Public accessor for the isTrue method, to allow handlers outside of the 
+     * Public accessor for the isTrue method, to allow handlers outside of the
      * parsers to test truthiness of a value in metadata
-     * 
+     *
      * @static
      * @param mixed $val
      * @return bool
@@ -173,7 +173,7 @@ abstract class AbstractMetaDataParser
     }
 
     /**
-     * Cache killer, to be defined in child classes as needed. 
+     * Cache killer, to be defined in child classes as needed.
      */
     protected function _clearCaches() {}
 }
