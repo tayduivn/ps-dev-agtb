@@ -1,29 +1,4 @@
 .dashboard {
-  position: absolute;
-  width: 100%;
-  height: auto;
-  background: url(@textureSecondary);
-  .headerpane {
-    display: table;
-    width: 100%;
-    .record-cell {
-      vertical-align: baseline;
-      h1 {
-        input[placeholder] {
-          line-height: 22px;
-        }
-        .ellipsis_inline {
-          margin-top: 19px;
-        }
-        input[type="text"] {
-          margin-top: -8px;
-        }
-        .btn-group {
-          margin-top: 16px;
-        }
-      }
-    }
-  }
   ul {
     list-style: none;
     margin: 0;
@@ -118,6 +93,8 @@
                 font-weight: 900;
                 i {
                   color: lighten(@grayLight,8%);
+                  display: inline-block;
+                  width: auto;
                 }
               }
             }
@@ -225,18 +202,6 @@
     .widget-container {
       padding: 5px;
     }
-  }
-  &.edit {
-    .dashlets {
-      .widget-container {
-        padding-top: 20px;
-      }
-      .rows.well {
-        margin-top: -15px;
-      }
-    }
-  }
-  .dashlets {
     & > li {
       padding-top: 5px;
       &:first-child {
@@ -247,7 +212,19 @@
       }
     }
   }
-
+  &.edit {
+    .dashlets {
+      .widget-container {
+        padding-top: 20px;
+      }
+      .rows.well {
+        //margin-top: -15px;
+      }
+    }
+  }
+  &.main-pane .headerpane h1 {
+    padding: 19px 0 0 20px;
+  }
   .ui-sortable .ui-sortable-placeholder {
     height: auto !important;
   }
@@ -257,16 +234,12 @@
 .sidebar-content {
   .dashboard {
     .preview-headerbar {
-      border-bottom-color: transparent;
       display: table;
-      margin-top: -3px;
       height: 61px;
-      width: 100%;
-      .btn-toolbar {
-        margin: 0px 7px 0px 0px;
-        padding-left: 8px;
-      }
-      .record-cell { /*unnecessary div, filipe said it cannot be removed from template, doing this for now*/
+      width: 34%;
+      /* middle div is unnecessary, filipe said it cannot
+         be removed from template, doing this for now */
+      .record-cell {
         display: none;
       }
       .record-cell:first-child {
@@ -275,22 +248,13 @@
         position: relative;
         padding-left: 1.5%;
         vertical-align: middle;
-        h1 {
-          margin-left: 5%;
-          input {
-            padding-left: 0;
-            padding-right: 0;
-            font-size: inherit;
-            margin-top: -3px;
-            margin-left: 5px;
-            width: 100%;
-            text-indent: 5px;
-            margin-top: -2px;
-          }
-          .input-append.error {
-            vertical-align: baseline;
-          }
-        }
+      }
+      .record-cell:last-child {
+        display: table-cell;
+        white-space: nowrap;
+        width: auto;
+        padding-right: 1.5%;
+        vertical-align: middle;
       }
       .record-cell:last-child {
         display: table-cell;
@@ -300,15 +264,23 @@
         vertical-align: middle;
       }
       h1 {
-        margin-left: 0;
-        height: 39px;
         width: 90%;
+        margin: 0px 0px 0px 7px;
+        height: 28px;
+        float: none;
+        input {
+          font-size: inherit;
+          margin-top: -10px;
+          margin-left: -6px;
+          width: 100%;
+          line-height: 24px;
+        }
         div.dropdown {
+          line-height: 24px;
           &> a {
             font-size: @fontSizeHeader;
             color: inherit;
             padding-left: 0;
-            padding-top: 8px;
             margin-left: 0;
             text-align: left;
             position: absolute;
@@ -324,6 +296,7 @@
           }
           ul.dropdown-menu {
             min-width: 160px;
+            .border-radius(2px);
             &> li {
               font-size: @baseFontSize;
               .alert-process {
@@ -336,10 +309,9 @@
       .dropdown-menu {
         min-width: auto;
       }
-      input[type=text] {
-        width: 150px;
-        font-size: @fontSizeHeader;
-        line-height: 24px;
+      .btn-toolbar {
+        margin: 0px 7px 0px 0px;
+        padding-left: 8px;
       }
     }
     &.edit {
@@ -347,7 +319,8 @@
         border-bottom-color: #CCC;
       }
       .dashlets {
-        margin-top: 5%;
+        width: 90%;
+        margin-left: 5%;
       }
     }
     .cols {
@@ -355,7 +328,7 @@
         width: 97%;
         margin-left: 1.5%;
         .rows.well:not(.well-invisible) {
-          margin: -41px -.5% auto;
+          margin: 0 -0.5% auto;
         }
       }
     }
@@ -388,7 +361,6 @@
     margin-left: 0;
   }
 }
-
 
 .swappable-dashlet.icon-download-alt {
   display: none;

@@ -1,6 +1,5 @@
 /* Drawer Layout */
-#drawers > div {
-    position: absolute;
+#drawers > .drawer {
     top: 47px;
 }
 .drawer {
@@ -45,20 +44,36 @@
 body.noscroll {
     overflow: hidden;
 }
+
 //UIUX-808: remove buttons from headerpane when in drawer
-#content .transition.drawer {
+//UIUX-888: remove fixed position of header bar in drawer
+#content .drawer {
+    .side.sidebar-content.span4,
+    .main-pane {
+        position: relative;
+        top: 0;
+    }
     .headerpane,
     .preview-headerbar {
+        position: relative;
+        top: 0;
+        width: 100%;
         .btn-toolbar {
             visibility: hidden;
         }
     }
 }
 
-
-
 @media (max-width: 768px) {
     #drawers .drawer {
-      overflow: auto;
+        overflow: auto;
+    }
+    .drawer {
+        .drawerTrig {
+            display: none;
+        }
+        .headerpane {
+            width: 100%;
+        }
     }
 }
