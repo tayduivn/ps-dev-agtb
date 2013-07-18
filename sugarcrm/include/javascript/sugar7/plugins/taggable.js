@@ -1,376 +1,595 @@
 (function (app) {
     app.events.on("app:init", function () {
+        var tagTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag"><a href="#{{buildRoute module=module id=id}}">{{name}}</a></span>'),
+            tagInEditTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag" contenteditable="false"><a>{{name}}</a></span>'),
+            tagListOptionTemplate = Handlebars.compile('<li{{#if noAccess}} class="disabled"{{/if}}><a><div class="label label-module-mini label-{{module}} pull-left">{{firstChars module 2}}</div>{{{htmlName}}}{{#if noAccess}}<div class="pull-right">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>'),
+            tagTextTemplate = Handlebars.compile('@[{{module}}:{{id}}:{{name}}]'),
+            taggingHtml = '<span class="sugar_tagging">&nbsp;</span>',
+            tagListContainerHtml = '<ul class="dropdown-menu activitystream-tag-dropdown"></ul>',
+            mention = '@',
+            reference = '#',
+            keycode_2 = 50,
+            keycode_3 = 51,
+            keycode_esc = 27,
+            keycode_enter = 13,
+            keycode_tab = 9,
+            keycode_up = 38,
+            keycode_down = 40,
+            tagRegExp = /@\[([\w]+):([\d\w\-]+):(.+?)\]/g,
+            nbspRegExp = /&nbsp;/g;
+
         app.plugins.register('taggable', ['view'], {
             events: {
-                'keyup .taggable': 'getEntities',
-                'blur .taggable': 'hideTypeahead',
-                'mouseover ul.activitystream-tag-dropdown li': 'switchActiveTypeahead',
-                'click ul.activitystream-tag-dropdown li': 'addTag'
+                'keydown .taggable': '_onKeydown',
+                'keyup .taggable': '_onKeyup',
+                'mouseover .activitystream-tag-dropdown li': '_setListOptionAsActive',
+                'click .activitystream-tag-dropdown li': '_insertTag'
             },
 
-            _possibleLeaders: ['@', '#'],
+            taggableSearchAfter: 2, //search after entering this many characters
+            taggableListLength: 8, //the number of search results that should be returned
 
-            // Break parsing when encountering one of the following symbols.
-            _terminators: ['.', ',', '!', '?'],
+            /**
+             * Reset typeahead when user clicks anywhere outside the dropdown.
+             *
+             * @param {Component} component
+             * @param {Plugin} plugin
+             */
+            onAttach: function(component, plugin) {
+                this._searchForTags = _.debounce(this._searchForTags, 300);
 
-            _lastLeaderPosition: function(text) {
-                var leaderIndex = _.max(_.map(this._possibleLeaders, function(leader) {
-                    return text.lastIndexOf(leader);
-                })),
-                    terminatorIndex = _.max(_.map(this._terminators, function(terminator) {
-                    return text.lastIndexOf(terminator);
-                }));
+                $(document).on('click.' + component.cid, function(event) {
+                    var $target = $(event.target),
+                        clickedOutsideDropdown = ($target.parents('.activitystream-tag-dropdown').length === 0),
+                        clickedOutsideTaggingSpan = !$target.hasClass('sugar_tagging');
 
-                return (leaderIndex > terminatorIndex)? leaderIndex : -1;
+                    if (component._taggableEnabled && clickedOutsideDropdown && clickedOutsideTaggingSpan) {
+                        component._resetTaggable();
+                    }
+                });
             },
 
-            _getTerm: function(leader, text) {
-                var word;
-                if (!leader) {
-                    // If there are no leaders, don't do anything.
-                    return;
-                } else {
-                    word = _.last(text.split(leader));
-                }
-
-                if (word.length > 2) {
-                    // Limit the minimum length before calling the FTS.
-                    return word;
-                }
+            /**
+             * Remove click event handler
+             *
+             * @param {Component} component
+             * @param {Plugin} plugin
+             */
+            onDetach: function(component, plugin) {
+                $(document).off('click.' + component.cid);
             },
 
-            _getLeader: function(text) {
-                var leaderIndex = this._lastLeaderPosition(text);
+            /**
+             * Converts HTML tags to a text-based format so that it can be stored in the database.
+             *
+             * @param {JQuery} $input
+             * @returns {Object}
+             */
+            unformatTags: function($input) {
+                var text = '',
+                    tags = [];
 
-                return leaderIndex === -1 ? null : text.charAt(leaderIndex);
-            },
+                $input.contents().each(function() {
+                    var $node = $(this),
+                        data = $node.data();
 
-            _getEntities: _.debounce(function(event) {
-                var self = this,
-                    el = this.$(event.currentTarget),
-                    text = el.text(),
-                    leader = this._getLeader(text),
-                    list,
-                    word,
-                    searchParams,
-                    parentModel;
-
-                el.parent().find('ul.activitystream-tag-dropdown').remove();
-
-                word = this._getTerm(leader, text);
-
-                var callback = function(collection) {
-                    clearTimeout(self._taggingTimeout);
-                    var word = self._getTerm(leader, text);
-                    // Do initial list filtering.
-                    list = collection.filter(function(entity) {
-                        return entity.get('name').toLowerCase().indexOf(word.toLowerCase()) !== -1;
-                    });
-
-                    // Rank the list and trim it to no more than 8 entries.
-                    var begin = [], caseSensitive = [], caseInsensitive = [];
-
-                    _.each(list, function(item) {
-                        var name = item.get('name');
-                        if (name.toLowerCase().indexOf(word.toLowerCase()) === 0) {
-                            begin.push(item);
-                        } else if (name.indexOf(word) !== -1) {
-                            caseSensitive.push(item);
-                        } else {
-                            caseInsensitive.push(item);
-                        }
-                    });
-                    list = _(begin.concat(caseSensitive, caseInsensitive)).first(8);
-
-                    var ulParent = ul.parent();
-                    ul.remove().empty();
-
-                    if (list.length) {
-                        _.each(list, function(el, index) {
-                            var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&'),
-                                htmlName = el.get('name').replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
-                                    return '<strong>' + match + '</strong>';
-                                }),
-                                data = {
-                                    module: el.get('_module'),
-                                    id: el.get('id'),
-                                    name: el.get('name'),
-                                    htmlName: htmlName,
-                                    noAccess: (el.get('has_access') === false) //only if false, undefined does not mean no access
-                                },
-                                i = $(this._tplTagList(data)).data(data);
-
-                            if (index === 0) {
-                                i.addClass('active');
-                            }
-
-                            ul.append(i);
-                        }, this);
+                    if (this.nodeType === Node.TEXT_NODE) {
+                        text += this.nodeValue.replace(nbspRegExp, ' ');
+                    } else if (data && data.module && data.id && data.name) {
+                        text += tagTextTemplate(data);
+                        tags.push(data);
                     } else {
-                        var noResults = app.lang.get('LBL_SEARCH_NO_RESULTS');
-                        var i = $(blankItem).addClass('placeholder active').find('a').html(noResults + word).wrap('emph');
-                        ul.append(i);
-                        self._taggingTimeout = setTimeout(function() {
-                            self.$("ul.activitystream-tag-dropdown").remove();
-                        }, 1500);
+                        text += $node.text();
+                    }
+                });
+
+                return {
+                    value: $.trim(text),
+                    tags: this._filterOutDuplicateTags(tags)
+                };
+            },
+
+            /**
+             * Converts a text-based tags into HTML format.
+             *
+             * @param {String} text
+             * @returns {String}
+             */
+            formatTags: function(text) {
+                var html = '';
+
+                if (text && (text.length > 0)) {
+                    html = text.replace(tagRegExp, function(str, module, id, name) {
+                        return tagTemplate({module: module, id: id, name: name});
+                    });
+                }
+
+                return $.trim(html);
+            },
+
+            /**
+             * Specify which record this tag will be applied for record view.
+             *
+             * @param {String} module
+             * @param {String} id
+             */
+            setTaggableRecord: function(module, id) {
+                this._taggableModuleName = module;
+                this._taggableModelId = id;
+            },
+
+            _taggableEnabled: false,
+            _taggableModuleName: null,
+            _taggableModelId: null,
+            _taggableLastSearchTerm: null,
+            _taggableListOpen: null,
+
+            /**
+             * Listen to keydown events. Perform various actions depending upon what keys have been pressed in
+             * varying states.
+             *
+             * @event keydown
+             * @private
+             */
+            _onKeydown: function(event) {
+                // When taggable is disabled and the shift key has been pressed...
+                if (!this._taggableEnabled && (event.shiftKey === true)) {
+                    // enable taggable typeahead when @ or # is pressed
+                    switch (event.keyCode) {
+                        case keycode_2:
+                        case keycode_3:
+                            this._enableTaggable();
+                            break;
+                    }
+                }
+
+                // When taggable is enabled but the tag search result list has not been opened...
+                if (this._taggableEnabled && !this._taggableListOpen) {
+                    switch (event.keyCode) {
+                        // reset typeahead when escape, enter, or tab is pressed
+                        case keycode_esc:
+                        case keycode_enter:
+                        case keycode_tab:
+                            event.preventDefault();
+                            this._resetTaggable();
+                            break;
+                    }
+                }
+
+                // When taggable is enabled and the tag search result list is open...
+                if (this._taggableEnabled && (this._taggableListOpen === true)) {
+                    switch (event.keyCode) {
+                        // remove typeahead when escape key is pressed
+                        case keycode_esc:
+                            event.preventDefault();
+                            this._resetTaggable();
+                            break;
+                        // select the currently selected tag
+                        case keycode_enter:
+                        case keycode_tab:
+                            event.preventDefault();
+                            this._getCurrentlyActiveOption().click();
+                            break;
+                        // select the option above the currently selected tag
+                        case keycode_up:
+                            event.preventDefault();
+                            this._selectNextListOption(false);
+                            break;
+                        // select the option below the currently selected tag
+                        case keycode_down:
+                            event.preventDefault();
+                            this._selectNextListOption(true);
+                            break;
+                    }
+                }
+            },
+
+            /**
+             * Listen to keyup events. Perform various actions depending upon what keys have been pressed in
+             * varying states.
+             *
+             * @event keyup
+             * @private
+             */
+            _onKeyup: function(event) {
+                var selection = window.getSelection(),
+                    range, $container, searchTerm;
+
+                if (this._taggableEnabled) {
+                    // Do not perform search if enter, tab, up arrow, or down arrow has been pressed while tag search
+                    // result is open.
+                    if (this._taggableListOpen && (event.keyCode === keycode_enter || event.keyCode === keycode_tab || event.keyCode == keycode_up || event.keyCode == keycode_down)) {
+                        return;
                     }
 
-                    ulParent.append(ul);
-                };
+                    if (selection.rangeCount > 0) {
+                        range = selection.getRangeAt(0);
+                        $container = $(range.startContainer.parentNode);
+                        searchTerm = $.trim($container.text());
 
-                var ul = $("<ul/>").addClass('dropdown-menu activitystream-tag-dropdown');
-                var blankItem = this._tplTagList({});
-                var defaultItem = $(blankItem).addClass('placeholder active').find('a').html(word + '&hellip;').wrap('emph');
-
-                ul.css('top', el.outerHeight());
-
-                if (word) {
-                    ul.html(defaultItem).appendTo(el.parent()).show();
-
-                    searchParams = {q: word, limit: 8};
-                    switch (leader) {
-                        case '#':
-                            app.api.search(searchParams, {success: function(response) {
-                                var coll = app.data.createMixedBeanCollection(response.records);
-                                callback.call(self, coll);
-                            }});
-                            break;
-                        case '@':
-                            searchParams.module_list = "Users";
-                            parentModel = this._getParentModel('record', this.context);
-                            if (parentModel) {
-                                searchParams.has_access_module = parentModel.get('_module');
-                                searchParams.has_access_record = parentModel.get('id');
+                        // Reset taggable if the cursor is outside the tagging span
+                        if (!$container.hasClass('sugar_tagging')) {
+                            this._resetTaggable();
+                        } else if (this._taggableListOpen && (searchTerm.length <= this.taggableSearchAfter)) {
+                            this._getDropdown().hide();
+                            this._taggableListOpen = false;
+                            this._taggableLastSearchTerm = null;
+                        } else {
+                            if ((searchTerm.indexOf(mention) === 0) || (searchTerm.indexOf(reference) === 0)) {
+                                // Search for possible matches
+                                this._searchForTags(searchTerm);
+                            } else {
+                                // Reset taggable if user deletes either the beginning @ or # character
+                                this._resetTaggable();
                             }
+                        }
+                    }
+                }
+            },
+
+            /**
+             * Insert a placeholder where tags can be searched.
+             *
+             * @private
+             */
+            _enableTaggable: function() {
+                var selection = window.getSelection(),
+                    range = selection.getRangeAt(0),
+                    tagElement = $(taggingHtml),
+                    textNode = tagElement.contents()[0],
+                    cursorPosition = $.browser.webkit ? 1 : 0;
+
+                if (this._shouldEnableTaggable(range)) {
+                    range.insertNode(tagElement.get(0));
+                    range.setStart(textNode, cursorPosition);
+                    range.setEnd(textNode, cursorPosition);
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
+                    this._taggableEnabled = true;
+                }
+            },
+
+            /**
+             * Checks to see if the cursor is in the right position to enable taggable. If the @ or # is either the
+             * first character or is prefixed by a space, the cursor is in the right position to enable taggable.
+             * If the cursor is at the beginning of a text node, taggable can be enabled.
+             *
+             * @param {Range} range
+             * @returns {boolean}
+             * @private
+             */
+            _shouldEnableTaggable: function(range) {
+                var text = range.startContainer.nodeValue,
+                    charBeforeCursor,
+                    result = false;
+
+                if ((range.startContainer.nodeType === Node.ELEMENT_NODE) || (text.length === 0) || (range.startOffset === 0)) {
+                    result = true;
+                } else {
+                    charBeforeCursor = text.charAt(range.startOffset - 1);
+                    if ((charBeforeCursor === String.fromCharCode(160)) || (charBeforeCursor === String.fromCharCode(32))) {
+                        result = true;
+                    }
+                }
+
+                return result;
+            },
+
+            /**
+             * Remove taggable placeholder, remove search results list, and reset state.
+             *
+             * @private
+             */
+            _resetTaggable: function() {
+                var $taggable = this._getTaggableInput().focus(),
+                    selection = window.getSelection(),
+                    range = selection.getRangeAt(0),
+                    $taggingSpan;
+
+                if (this._taggableEnabled) {
+                    $taggingSpan = $taggable.find('.sugar_tagging');
+
+                    if ($taggingSpan.length > 0) {
+                        range.selectNodeContents($taggingSpan.get(0));
+                        range.collapse(false);
+
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+
+                        $taggingSpan
+                            .before($.trim($taggingSpan.text()))
+                            .remove();
+                    } else {
+                        // Fix bug for Chrome where <b> tag gets inserted when tagging span is the only content inside
+                        // taggable area and a user selects all via keyboard shortcut and presses delete.
+                        $taggable.blur().focus();
+                    }
+
+                    this._removeDropdown();
+
+                    this._taggableEnabled = false;
+                    this._taggableListOpen = null;
+                    this._taggableLastSearchTerm = null;
+                }
+            },
+
+            /**
+             * Insert currently active tag from the search results list into the content editable area.
+             *
+             * @event click
+             * @private
+             */
+            _insertTag: function(event) {
+                var $selected = $(event.currentTarget),
+                    $taggable = this._getTaggableInput(),
+                    taggableData = $selected.data(),
+                    $tagToReplace = $taggable.find('.sugar_tagging'),
+                    selection, range, $tagHtml;
+
+                if (!$selected.hasClass('disabled')) { //do not insert disabled tag option
+                    $taggable.focus();
+
+                    selection = window.getSelection();
+                    range = selection.getRangeAt(0);
+                    $tagHtml = $(tagInEditTemplate(taggableData));
+
+                    range.selectNode($tagToReplace.get(0));
+                    range.insertNode($tagHtml.get(0));
+                    range.selectNode($tagHtml.get(0));
+                    range.collapse(false);
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+
+                    $tagToReplace
+                        .before('&nbsp;')
+                        .remove();
+
+                    $tagHtml.data({
+                        id: taggableData.id,
+                        name: taggableData.name,
+                        module: taggableData.module
+                    });
+
+                    this._removeDropdown();
+
+                    this._taggableEnabled = false;
+                    this._taggableListOpen = null;
+                    this._taggableLastSearchTerm = null;
+                }
+
+                event.preventDefault();
+            },
+
+            /**
+             * Make a server call to search for users and records that match the specified search term.
+             *
+             * @param {String} searchTerm
+             * @private
+             */
+            _searchForTags: function(searchTerm) {
+                var searchParams,
+                    tagAction = searchTerm.charAt(0); // @ or # character
+
+                searchTerm = searchTerm.substr(1);
+
+                // Do not perform search if the number of characters typed so far in typeahead is less than what is
+                // specified in taggableSearchAfter and if search term is the same as the last searched term.
+                if ((searchTerm.length >= this.taggableSearchAfter) && (searchTerm !== this._taggableLastSearchTerm)) {
+                    searchParams = {
+                        q: searchTerm,
+                        max_num: this.taggableListLength,
+                        fields: 'name'
+                    };
+
+                    // Reset taggable if there were no results returned during previous search and the user continues to type
+                    if ((this._taggableListOpen === false) && (searchTerm.indexOf(this._taggableLastSearchTerm) === 0)) {
+                        this._resetTaggable();
+                    } else {
+                        if (tagAction === mention) {
+                            _.extend(searchParams, {
+                                module_list: 'Users',
+                                has_access_module: this._taggableModuleName,
+                                has_access_record: this._taggableModelId
+                            });
 
                             // We cannot use the filter API here as we need to
                             // support users typing in full names, which are not
                             // stored in the database as fields.
-                            app.api.search(searchParams, {success: function(response) {
-                                var coll = app.data.createBeanCollection("Users", response.records);
-                                callback.call(self, coll);
-                            }});
-                            break;
-                    }
-                }
-            }, 250),
+                            app.api.search(searchParams, {
+                                success: _.bind(function(response) {
+                                    if (this._taggableEnabled && response) {
+                                        this._populateTagList(app.data.createBeanCollection("Users", response.records), searchTerm);
+                                    }
+                                }, this)
+                            });
+                        } else if (tagAction === reference) {
+                            app.api.search(searchParams, {
+                                success: _.bind(function(response) {
+                                    if (this._taggableEnabled && response) {
+                                        this._populateTagList(app.data.createMixedBeanCollection(response.records), searchTerm);
+                                    }
+                                }, this)
+                            });
+                        }
 
-            /**
-             * Traverse up the context hierarchy and look for given layout, retrieve the model from the layout's context
-             *
-             * @param layoutName to look for up the context hierarchy
-             * @param context start of context hierarchy
-             * @returns {*}
-             * @private
-             */
-            _getParentModel: function(layoutName, context) {
-                if (context) {
-                    if (context.get('layout') === layoutName) {
-                        return context.get('model');
-                    } else {
-                        return this._getParentModel(layoutName, context.parent);
+                        this._taggableLastSearchTerm = searchTerm;
                     }
-                } else {
-                    return null;
                 }
             },
 
-            getEntities: function(event) {
-                var dropdown = this.$("ul.activitystream-tag-dropdown"),
-                    currentTarget = this.$(event.currentTarget);
-                // Coerce integer to a boolean.
-                var dropdownOpen = !!(dropdown.length);
+            /**
+             * Build the tag search results list with possible matches.
+             *
+             * @param {Collection} collection
+             * @param {String} searchTerm
+             * @private
+             */
+            _populateTagList: function(collection, searchTerm) {
+                var $tagList = this._initializeDropdown(),
+                    currentSearchTerm;
 
-                if (dropdownOpen) {
-                    var active = dropdown.find('.active');
-                    // Enter or tab. Tab doesn't work in some browsers.
-                    if (event.keyCode == 13 || event.keyCode == 9) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        dropdown.find('.active').click();
+                if (collection.length > 0) {
+                    searchTerm = $.trim(searchTerm);
+
+                    // If the current search term differs from what was searched, do not display the dropdown list
+                    currentSearchTerm = $.trim(this._getTaggableInput().find('.sugar_tagging').text());
+                    if ($.trim(currentSearchTerm.substr(1)) !== searchTerm) {
+                        this._taggableLastSearchTerm = null;
+                        return;
                     }
-                    // Up arrow.
-                    if (event.keyCode == 38) {
-                        this.selectNextDropdownOption(active, false);
-                    }
-                    // Down arrow.
-                    if (event.keyCode == 40) {
-                        this.selectNextDropdownOption(active, true);
-                    }
+
+                    // Append search results to the dropdown list
+                    collection.each(function(model, index) {
+                        var htmlName = model.get('name').replace(new RegExp('(' + searchTerm + ')', 'ig'), function($1, match) {
+                                return '<strong>' + match + '</strong>';
+                            }),
+                            data = {
+                                module: model.get('_module'),
+                                id: model.get('id'),
+                                name: model.get('name'),
+                                htmlName: htmlName,
+                                noAccess: (model.get('has_access') === false) //only if false, undefined does not mean no access
+                            },
+                            $tagListOption = $(tagListOptionTemplate(data)).data(data);
+
+                        $tagList.append($tagListOption);
+                    }, this);
+
+                    //mark first on the list as active
+                    this._selectNextListOption(true);
+
+                    this._taggableListOpen = true;
+                    $tagList.show();
+                } else {
+                    this._taggableListOpen = false;
+                    $tagList.hide();
+                }
+            },
+
+            /**
+             * Get a new dropdown list.
+             *
+             * @returns {JQuery}
+             * @private
+             */
+            _initializeDropdown: function() {
+                var $dropdown = this._getDropdown(),
+                    $taggable = this._getTaggableInput();
+
+                if ($dropdown.length === 0) {
+                    // Create new dropdown list and place it below the input box
+                    $dropdown = $(tagListContainerHtml)
+                        .hide()
+                        .appendTo($taggable.parent())
+                        .css('top', $taggable.outerHeight());
+                } else {
+                    // Empty existing dropdown list
+                    $dropdown.empty();
                 }
 
-                currentTarget.find('.label').each(function() {
-                    var el = $(this);
-                    if (el.data('name') !== el.text()) {
-                        el.remove();
-                    }
-                });
+                return $dropdown
+            },
 
-                // If we're typing text.
-                if (event.keyCode > 47) {
-                    this._getEntities(event);
-                }
+            /**
+             * Get current dropdown list.
+             *
+             * @returns {JQuery}
+             * @private
+             */
+            _getDropdown: function() {
+                return this.$('.activitystream-tag-dropdown');
+            },
+
+            /**
+             * Delete dropdown list.
+             *
+             * @private
+             */
+            _removeDropdown: function() {
+                this.$('.activitystream-tag-dropdown').remove();
+            },
+
+            /**
+             * Get the currently selected tag search result in the dropdown list.
+             *
+             * @returns {JQuery}
+             * @private
+             */
+            _getCurrentlyActiveOption: function() {
+                return this._getDropdown().find('.active');
             },
 
             /**
              * Given the currently selected option, select the next option, whether it is
              * by going down or up.
              *
-             * @param {jQuery DOM} $current
              * @param {boolean} down
+             * @param {jQuery} $from (Optional)
+             * @private
              */
-            selectNextDropdownOption: function($current, down) {
-                var next = down ? $current.next() : $current.prev();
+            _selectNextListOption: function(down, $current) {
+                var $next;
 
-                if (next.length > 0) {
+                $current = $current || this._getCurrentlyActiveOption();
+
+                if ($current.length === 0) {
+                    $next = this._getDropdown().children().first();
+                } else {
+                    $next = down ? $current.next() : $current.prev()
+                }
+
+                if ($next.length > 0) {
                     $current.removeClass('active');
 
-                    if (next.hasClass('disabled')) {
-                        this.selectNextDropdownOption(next, down);
+                    if ($next.hasClass('disabled')) {
+                        this._selectNextListOption(down, $next);
                     } else {
-                        next.addClass('active');
+                        $next.addClass('active');
                     }
                 }
-            },
-
-            hideTypeahead: function() {
-                var self = this;
-                setTimeout(function() {
-                    self.$("ul.activitystream-tag-dropdown").remove();
-                }, 150);
             },
 
             /**
              * Make the dropdown option the currently selected option on hover.
-             * @param event
+             *
+             * @event mouseover
+             * @private
              */
-            switchActiveTypeahead: function(event) {
+            _setListOptionAsActive: function(event) {
                 var currentTarget = this.$(event.currentTarget);
 
                 if (!currentTarget.hasClass('disabled')) {
-                    this.$("ul.activitystream-tag-dropdown .active").removeClass('active');
+                    this._getDropdown().find('.active').removeClass('active');
                     currentTarget.addClass('active');
                 }
             },
 
-            addTag: function(event) {
-                var el = this.$(event.currentTarget),
-                    body = this.$('.taggable'),
-                    originalChildren = body.clone(true).children(),
-                    lastIndex = this._lastLeaderPosition(body.html()),
-                    data = el.data();
-
-                if (el.hasClass('placeholder') || el.hasClass('disabled')) {
-                    return;
-                }
-
-                var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
-                tag.data("id", data.id).data("module", data.module).data("name", data.name);
-                var substring = body.html().substring(0, lastIndex);
-                body.html(substring).append(tag).append("&nbsp;");
-
-                if(body.children().length == 1) {
-                    // Fixes issue where a random font tag appears. ABE-128.
-                    body.prepend("&nbsp;");
-                }
-
-                // Since the data is stored as an object, it's not preserved when we add the tag.
-                // For this reason, we need to add it again.
-                body.children().each(function(i) {
-                    if (originalChildren[i]) {
-                        var tagChild = this;
-                        _($.data(originalChildren[i])).each(function(value, key) {
-                            $.data(tagChild, key, value);
-                        });
-                    }
-                });
-                if (document.createRange) {
-                    var range = document.createRange();
-                    range.selectNodeContents(body[0]);
-                    range.collapse(false);
-                    var selection = window.getSelection();
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                }
-                this.hideTypeahead();
-
-                event.stopPropagation();
-                event.preventDefault();
-            },
-
-            _parseTags: function(text, tagList) {
-                var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g),
-                    self = this;
-
-                return (!text || text.length === 0) ? text : text.replace(pattern, function(str, module, id) {
-                    var name = _(tagList).find(function(el) {
-                        return el.id == id;
-                    }).name;
-                    return self._tplTag({module: module, id: id, name: name});
-                });
+            /**
+             * Get the content editable area that has been marked as taggable
+             *
+             * @returns {JQuery}
+             * @private
+             */
+            _getTaggableInput: function() {
+                return this.$('.taggable');
             },
 
             /**
-             * Helper method to convert HTML from tags to a text-based format.
-             * @param  {string} $el
-             * @return {string}
+             * Filter out all duplicate tags based on IDs
+             *
+             * @param {Array} tags
+             * @returns {Array}
+             * @private
              */
-            getText: function($el) {
-                var contents = '';
-                $el.contents().each(function() {
-                    if (this.nodeName == "#text") {
-                        contents += this.data.replace('&nbsp;', ' ', 'g');
-                    } else if (this.nodeName == "SPAN") {
-                        var el = $(this);
-                        var data = el.data();
-
-                        // Check if the span is a tag, else append el text to the post's content
-                        if( data.module && data.id ) {
-                            contents += '@[' + data.module + ':' + data.id + ']';
-                        } else {
-                            contents += el.text();
-                        }
-                    }
-                }).html();
-                return $.trim(contents);
-            },
-
-            getTags: function($el) {
-                var tags = [];
-                $el.contents().each(function() {
-                    if (this.nodeName == "SPAN") {
-                        var data = $(this).data();
-                        tags.push(data);
-                    }
+            _filterOutDuplicateTags: function(tags) {
+                tags = _.uniq(tags, function(tag){
+                    return tag.id;
                 });
+
                 return tags;
-            },
-
-            onAttach: function(component, plugin) {
-                var self = this,
-                    tplTag,
-                    tplTagList;
-
-                if (!_.has(Handlebars.templates, "p.taggable.tag")) {
-                    tplTag = '<span class="label label-{{module}}"><a href="#{{module}}/{{id}}">{{name}}</a></span>';
-                    Handlebars.templates['p.taggable.tag'] = Handlebars.compile(tplTag);
-                }
-                component._tplTag = Handlebars.templates['p.taggable.tag'];
-
-                if (!_.has(Handlebars.templates, "p.taggable.taglist")) {
-                    tplTagList = '<li{{#if noAccess}} class="disabled"{{/if}}>{{#if htmlName}}<a><div class="label label-module-mini label-{{module}} pull-left">{{firstChars module 2}}</div> {{{htmlName}}}{{/if}}{{#if noAccess}}<div class="pull-right">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>';
-                    Handlebars.templates['p.taggable.taglist'] = Handlebars.compile(tplTagList);
-                }
-                component._tplTagList = Handlebars.templates['p.taggable.taglist'];
-
-                component.on('render', function() {
-                    component.$(".tagged").each(function() {
-                        var $el = $(this),
-                            tagList = _.isFunction(component.getTagList)? component.getTagList() : [];
-
-                        $el.html(self._parseTags($el.html(), tagList));
-                    });
-                });
             }
         });
     });

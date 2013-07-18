@@ -227,10 +227,15 @@ class OAuthToken extends SugarBean
     static public function cleanup()
 	{
 	    global $db;
-	    // delete invalidated tokens older than 1 day
-	    $db->query("DELETE FROM oauth_token WHERE status = ".self::INVALID." AND token_ts < ".time()-60*60*24);
-	    // delete request tokens older than 1 day
-	    $db->query("DELETE FROM oauth_token WHERE status = ".self::REQUEST." AND token_ts < ".time()-60*60*24);
+	    $cleanup_start = microtime(true);
+
+	    // delete invalidated/request tokens older than 1 day
+	    $db->query("DELETE FROM oauth_tokens WHERE tstate IN (".self::INVALID.",".self::REQUEST.") AND token_ts < ".(time()-60*60*24));
+	    // delete expired access tokens
+	    $db->query("DELETE FROM oauth_tokens WHERE tstate = ".self::ACCESS." AND expire_ts <> -1 AND expire_ts < ".time());
+
+	    $GLOBALS['log']->info(sprintf("OAuthToken::cleanup() Cleaning up old tokens took: %.03f ms",microtime(true)-$cleanup_start));
+
 	}
 
 	/**

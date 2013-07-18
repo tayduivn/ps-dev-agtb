@@ -253,3 +253,13 @@ class SugarApiExceptionRequestMethodFailure extends SugarApiException
     public $errorLabel = 'request_failure';
     public $messageLabel = 'EXCEPTION_REQUEST_FAILURE';
 }
+/**
+ * The client is out of date for this version
+ */
+class SugarApiExceptionClientOutdated extends SugarApiException
+{
+    public $httpCode = 433;
+    public $errorLabel = 'client_outdated';
+    public $messageLabel = 'EXCEPTION_CLIENT_OUTDATED';
+}
+

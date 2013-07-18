@@ -418,7 +418,8 @@
 
     $('#fts_type').change(function(e)
     {
-        if($('.fts_type').value == 'elasticsearch')
+        var type = $(this).val();
+        if(type == 'Elastic')
         {
             $('.shouldToggle').toggle();
         }
@@ -427,7 +428,7 @@
             $('.shouldToggle').toggle(false);   
         }
 
-        if($(this).val() == '')
+        if(type == '')
         {
             $('.sched_button').attr('disabled', 'disabled');
         }

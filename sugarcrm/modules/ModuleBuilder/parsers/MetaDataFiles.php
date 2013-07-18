@@ -880,7 +880,15 @@ class MetaDataFiles
                                         $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], $results[$fileInfo['subPath']]['meta']);
                                     }
                                 } else {
-                                    $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                                    // For custom modules or if there is no subpanel
+                                    // layout defined and edits are made, we
+                                    // need to capture the changes that all live
+                                    // in one file for subpanels
+                                    if($fileInfo['subPath'] == 'subpanels') {
+                                        $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], array());
+                                    } else {
+                                        $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
+                                    }
                                 }
                             }
                         }

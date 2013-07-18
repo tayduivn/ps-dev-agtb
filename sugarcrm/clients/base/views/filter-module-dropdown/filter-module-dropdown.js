@@ -144,6 +144,7 @@
         filters.push({id: "all_modules", text: app.lang.get("LBL_TABGROUP_ALL")});
 
         var subpanels = this.pullSubpanelRelationships();
+        subpanels = this._pruneHiddenModules(subpanels);
         _.each(subpanels, function(value, key) {
             var module = app.data.getRelatedModule(this.module, value);
             if (app.acl.hasAccess("list", module)) {
@@ -187,6 +188,24 @@
         // subpanel module, therefore we use this.module instead of
         // this.currentModule.
         return app.utils.getSubpanelList(this.module);
+    },
+
+    /**
+     * Prunes hidden modules from related dropdown list
+     * @param {Object} subpanels List of candidate subpanels to display
+     * @return {Object} pruned list of subpanels
+     * @private
+     */
+    _pruneHiddenModules: function(subpanels){
+        var hiddenSubpanels = _.map(app.metadata.getHiddenSubpanels(), function(subpanel) { return subpanel.toLowerCase(); });
+        var pruned = _.reduce(subpanels, function(obj, value, key) {
+            var relatedModule = app.data.getRelatedModule(this.module, value);
+            if (!_.contains(hiddenSubpanels, relatedModule.toLowerCase())) {
+                obj[key] = value;
+            }
+            return obj;
+        }, {}, this);
+        return pruned;
     },
 
     /**

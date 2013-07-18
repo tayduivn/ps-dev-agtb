@@ -25,6 +25,32 @@
     },
 
     /**
+     * Initialize taggable plugin so that it knows which record the tags are
+     * associated with.
+     */
+    bindDataChange: function() {
+        if (this.context.parent) {
+            this.context.parent.on('change', function(context) {
+                var moduleName = context.get('module'),
+                    modelId = context.get('model').get('id');
+
+                this.setTaggableRecord(moduleName, modelId);
+            }, this);
+        }
+        app.view.View.prototype.bindDataChange.call(this);
+    },
+
+    /**
+     * Remove events added in bindDataChange().
+     */
+    unbindData: function() {
+        if (this.context.parent) {
+            this.context.parent.off(null, null, this);
+        }
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Creates a new post.
      */
     addPost: function() {
@@ -38,23 +64,25 @@
                 parent_id: parentId || null,
                 parent_type: parentType !== "Activities" ? parentType : null,
                 data: {}
-            };
+            },
+            bean;
 
         if (!$submitButton.hasClass('disabled')) {
-            $submitButton.addClass('disabled');
+            payload.data = this.getPost();
 
-            payload.data.value = this.getText(this.$('div.sayit'));
-            if (this.getTags) {
-                payload.data.tags = this.getTags(this.$('div.sayit'));
-            }
-
-            if (payload.data.value) {
-                var bean = app.data.createBean('Activities');
+            if (payload.data.value && (payload.data.value.length > 0)) {
+                $submitButton.addClass('disabled');
+                bean = app.data.createBean('Activities');
                 bean.save(payload, {
                     success: function(model) {
-                        self.$('div.sayit').html('').trigger('change').focus();
+                        self.$('div.sayit')
+                            .empty()
+                            .trigger('change')
+                            .focus();
+
                         model.set('picture', app.user.get('picture'));
                         self.collection.add(model);
+
                         self.layout.prependPost(model);
                     },
                     complete: function() {
@@ -63,12 +91,19 @@
                     showAlerts: true
                 });
             }
+
             this.trigger("attachments:process");
         }
     },
 
-    getText: function($el) {
-        return $el.contents().html();
+    /**
+     * Retrieve the post entered inside content editable and translate any tags into text format
+     * so that it can be saved in the database as JSON string.
+     *
+     * @returns {String}
+     */
+    getPost: function() {
+        return this.unformatTags(this.$('div.sayit'));
     },
 
     checkPlaceholder: function(e) {

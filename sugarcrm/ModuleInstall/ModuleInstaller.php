@@ -1980,7 +1980,7 @@ private function dir_file_count($path){
         {
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) )
             {
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW, MB_RECORDVIEW ) as $view )
+                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW, ) as $view )
                 {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
                     $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;

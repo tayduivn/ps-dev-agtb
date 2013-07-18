@@ -390,28 +390,28 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name");
-        $this->assertRegExp('/ORDER BY\s+accounts.name DESC/',$sq->compileSql());
+        $this->assertContains('ORDER BY accounts.name DESC',$sq->compileSql());
 
         // by custom field too
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name")->orderBy("bigname_c", "ASC");
-        $this->assertRegExp('/ORDER BY\s+accounts.name DESC\s*,\s*contacts_cstm.last_name ASC/',$sq->compileSql());
+        $this->assertContains('ORDER BY accounts.name DESC,contacts.last_name ASC',$sq->compileSql());
 
         // by related custom field
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("report_to_bigname");
-        $this->assertRegExp('/ORDER BY\s+jt\d+_cstm.last_name DESC/',$sq->compileSql());
+        $this->assertContains('ORDER BY jt1_cstm.bigname_c DESC',$sq->compileSql());
 
         // skip bad one
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("report_to_name")->orderBy("account_name", "asc");
-        $this->assertRegExp('/ORDER BY\s+accounts.name asc/',$sq->compileSql());
+        $this->assertContains('ORDER BY accounts.name asc',$sq->compileSql());
     }
 
 }

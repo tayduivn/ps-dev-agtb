@@ -154,6 +154,9 @@
      * extend this one from other "link" field
      */
     buildRoute: function (module, id) {
+        if (_.isEmpty(module)) {
+            return;
+        }
         this.href = '#' + app.router.buildRoute(module, id);
     },
     //Derived controllers can override these if related module and id in another place

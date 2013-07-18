@@ -80,7 +80,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     {
         $defaultFields = array();
         foreach ($this->_paneldefs as $def) {
-            if (isset($def['fields'])) {
+            if (isset($def['fields']) && is_array($def['fields'])) {
                 foreach ($def['fields'] as $field) {
                     if (!empty($field['name'])) {
                         if (
@@ -219,7 +219,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         // If there was a passed source, use that for the panel search
         $panels = $src !== null && is_array($src) ? $src : $this->_paneldefs;
         foreach ($panels as $panelix => $def) {
-            if (isset($def['fields'])) {
+            if (isset($def['fields']) && is_array($def['fields'])) {
                 foreach ($def['fields'] as $fieldix => $field) {
                     if (isset($field['name']) && $field['name'] == $name) {
                         return array('field' => $field, 'panelix' => $panelix, 'fieldix' => $fieldix);
@@ -287,7 +287,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         $newPanelFieldMonitor = array();
 
         foreach ($this->_paneldefs as $index => $panel) {
-            if (isset($panel['fields'])) {
+            if (isset($panel['fields']) && is_array($panel['fields'])) {
                 foreach ($panel['fields'] as $field) {
                     // Build out the massive conditional structure
                     $studio  = isset($field['studio']);
@@ -382,9 +382,11 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
 
         // Add in the non named field meta
         foreach ($this->_paneldefs as $panel) {
-            foreach ($panel['fields'] as $field) {
-                if (!isset($field['name'])) {
-                    $newPaneldefs[$newPaneldefIndex++] = $field;
+            if (isset($panel['fields']) && is_array($panel['fields'])) {
+                foreach ($panel['fields'] as $field) {
+                    if (!isset($field['name'])) {
+                        $newPaneldefs[$newPaneldefIndex++] = $field;
+                    }
                 }
             }
         }
