@@ -270,3 +270,14 @@
 {else}
 </div>
 {/if}
+
+<script type="text/javascript">
+/*
+ This might bring issues if the user is editing the profile from another link.
+ For now there is no other use case on editing the profile and we need to put
+ effort on migrating this module to Sidecar, not on making this pretty.
+ */
+// ping sidecar everytime this page is loaded to check for possible http 412 codes (e.g. refreshes the menu)
+var app = parent.SUGAR.App;
+app.api.call('read', app.api.buildURL('ping'));
+</script>
