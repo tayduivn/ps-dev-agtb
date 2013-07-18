@@ -7,7 +7,7 @@
         'click .reply': 'showAddComment',
         'click .reply-btn': 'addComment',
         'click .deleteRecord': 'deleteRecord',
-        'click .preview-btn': 'previewRecord',
+        'click .preview-btn:not(.disabled)': 'previewRecord',
         'click .comment-btn': 'toggleReplyBar',
         'click .more': 'fetchComments',
         'mouseenter [rel="tooltip"]': 'showTooltip',
@@ -48,6 +48,8 @@
                 this.more_tpl += "S";
             }
         }
+
+        this.preview = this.getPreviewData();
 
         var data = this.model.get('data');
         var activity_type = this.model.get('activity_type');
@@ -401,6 +403,58 @@
      */
     getComment: function() {
         return this.unformatTags(this.$('div.reply'));
+    },
+
+    /**
+     * Determine the status and label for the preview button
+     *
+     * @returns {object} preview object
+     */
+    getPreviewData: function () {
+        var parentModel,
+            preview = {
+                enabled: true,
+                label: 'LBL_PREVIEW'
+            };
+
+        if (this.model.get("activity_type") === 'attach') { //no preview for attachments
+            preview.enabled = false;
+            preview.label = 'LBL_PREVIEW_DISABLED_ATTACHMENT';
+        } else if (_.isEmpty(this.model.get('parent_id')) || _.isEmpty(this.model.get('parent_type'))) {  //no related record
+            preview.enabled = false;
+            preview.label = 'LBL_PREVIEW_DISABLED_NO_RECORD';
+        } else if (!app.acl.hasAccess("view", this.model.get('parent_type'))) { //no access to related record
+            preview.enabled = false;
+            preview.label = 'LBL_PREVIEW_DISABLED_NO_ACCESS';
+        } else {
+            parentModel = this._getParentModel('record', this.context);
+            if (parentModel && parentModel.id === this.model.get('parent_id')) { //same record as context
+                preview.enabled = false;
+                preview.label = 'LBL_PREVIEW_DISABLED_SAME_RECORD';
+            }
+        }
+
+        return preview;
+    },
+
+    /**
+     * Traverse up the context hierarchy and look for given layout, retrieve the model from the layout's context
+     *
+     * @param layoutName to look for up the context hierarchy
+     * @param context start of context hierarchy
+     * @returns {*}
+     * @private
+     */
+    _getParentModel: function(layoutName, context) {
+        if (context) {
+            if (context.get('layout') === layoutName) {
+                return context.get('model');
+            } else {
+                return this._getParentModel(layoutName, context.parent);
+            }
+        } else {
+            return null;
+        }
     },
 
     checkPlaceholder: function(e) {
