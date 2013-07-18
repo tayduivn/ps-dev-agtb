@@ -15,31 +15,17 @@
 }}
 {{#if isForecastSetup}}
     {{#if forecastsConfigOK}}
-        <div class="dashlet-options">
-            <div class="row-fluid">
-                <div class="span8">
-                    {{#if showTimeperiod}}
+        {{#if showTimeperiod}}
+            <div class="dashlet-options">
+                <div class="row-fluid">
+                    <div class="span4">
                         {{#each dashletConfig.timeperiod}}
                             {{field ../this model=../this.model template="edit"}}
                         {{/each}}
-                    {{/if}}
-                </div>
-                <div class="span4">
-                    <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                        <form class="dropdown form-horizontal btn-group" id="forecastsProgressDisplayOptions">
-                            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
-                            <div class="datasetOptions">
-                                <ul class="dropdown-menu left carettop" id="progressDisplayOptions">
-                                    {{#eachOptions detailsDataSet}}
-                                        <li><a href="javascript:void(0);"><label data-set="{{this.key}}" class="radio checked"><i class="icon-ok"></i>&nbsp;{{this.value}}</label></a></li>
-                                    {{/eachOptions}}
-                                </ul>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
         <div class="forecast-details"></div>
     {{else}}
         <div class="opportunity-pipeline-wrapper">
