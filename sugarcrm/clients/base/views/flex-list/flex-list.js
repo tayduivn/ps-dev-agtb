@@ -254,6 +254,9 @@
      * Updates the class of this flex list as scrollable or not.
      */
     resize: function() {
+        if (this.disposed) {
+            return;
+        }
         var $content = this.$('.flex-list-view-content');
         if (!$content.length) {
             return;
