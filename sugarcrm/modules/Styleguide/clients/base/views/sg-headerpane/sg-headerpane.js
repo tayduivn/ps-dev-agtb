@@ -18,7 +18,7 @@
 
         this.file = this.context.get('page_name');
         if (this.file && this.file !== '') {
-            keys = this.file.split('.');
+            keys = this.file.split('_');
         }
         this.keys = keys;
 
@@ -39,7 +39,7 @@
                 // section page call
                 this.section = this.pageData[keys[0]];
                 this.page = this.section.pages[keys[1]];
-                this.parent_link = '.' + keys[0];
+                this.parent_link = '_' + keys[0];
             } else {
                 // general page call
                 this.section = this.pageData[keys[0]];
@@ -81,14 +81,13 @@
         function renderSearchOption(section, page, d, optgroup) {
             $('<option>')
                 .appendTo(optgroup)
-                //.addClass('section-link')
                 .attr('value', (d.url ? d.url : fmtLink(section, page)) )
                 .text(d.label);
         }
 
         function fmtLink(section, page) {
             return '#Styleguide/docs/' +
-                (page?'':'index.') + section.replace(/[\s\,]+/g,'-').toLowerCase() + (page?'.'+page:'');
+                (page?'':'index_') + section.replace(/[\s\,]+/g,'-').toLowerCase() + (page?'_'+page:'');
         }
     },
 
