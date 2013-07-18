@@ -53,8 +53,8 @@
 
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width','8px');
-            this.getCurrencyField().render();
             this.getCurrencyField().setDisabled(false);
+            this.getCurrencyField().render();
             return this;
         }
         return this;
