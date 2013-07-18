@@ -91,6 +91,11 @@ class OAuth2Api extends SugarApi
             if (!empty($GLOBALS['current_user'])) {
                 $GLOBALS['current_user']->call_custom_logic('after_login');
             }
+            $cleanupChance = isset($GLOBALS['sugar_config']['token_cleanup_probability'])?(int)$GLOBALS['sugar_config']['token_cleanup_probability']:10;
+            if (mt_rand() % $cleanupChance == 0) {
+                // cleanup based on probability
+                OAuthToken::cleanup();
+            }
         } catch (OAuth2ServerException $e) {
             // failed to get token - something went wrong - list as failed login
             // We catch only OAuth2ServerException exceptions since other ones result from the
