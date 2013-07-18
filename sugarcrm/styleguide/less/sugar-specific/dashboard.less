@@ -260,21 +260,21 @@
       border-bottom-color: transparent;
       display: table;
       margin-top: -3px;
-      .btn-toolbar.pull-right {
-        margin: 16px 5% 0 0;
-        padding-left: 0;
-        display: table-cell;
-        white-space: nowrap;
-        width: auto;
-        height: 47px;
+      height: 61px;
+
+      .btn-toolbar {
+        margin: 0px 7px 0px 0px;
+        padding-left: 8px;
       }
-      .record-cell:not(first-child) { /*unnecessary div, filipe said it cannot be removed from template, doing this for now*/
+      .record-cell { /*unnecessary div, filipe said it cannot be removed from template, doing this for now*/
         display: none;
       }
       .record-cell:first-child {
         display: table-cell;
         width: 100%;
         position: relative;
+        padding-left: 1.5%;
+        vertical-align: middle;
         h1 {
           margin-left: 5%;
           input {
@@ -290,6 +290,13 @@
           .input-append.error {
             vertical-align: baseline;
           }
+        }
+        .record-cell:last-child {
+          display: table-cell;
+          white-space: nowrap;
+          width: auto;
+          padding-right: 1.5%;
+          vertical-align: middle;
         }
       }
       h1 {
