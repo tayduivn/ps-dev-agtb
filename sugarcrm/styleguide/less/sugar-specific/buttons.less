@@ -14,11 +14,13 @@
   /* keeps button widths with icons the same regardless of icon width */
   [class^="icon-"],
   [class*=" icon-"] {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     display: inline-block;
-    line-height: 12px;
-    font-size: @baseFontSize + 1;
+    line-height: 14px;
+    font-size: @baseFontSize + 2;
+    position: relative;
+    top: 1px;
   }
 }
 // Hover state
