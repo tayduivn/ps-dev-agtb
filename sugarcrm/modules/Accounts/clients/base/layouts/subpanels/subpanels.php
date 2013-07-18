@@ -48,10 +48,9 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
     ),
     array (
       'layout' => 'subpanel',
-      'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-      'override_subpanel_list_view' => 'subpanel-for-accounts',
+      'label' => 'LBL_RLI_SUBPANEL_TITLE',
       'context' => array (
-        'link' => 'products',
+        'link' => 'revenuelineitems',
       ),
     ),
     array (

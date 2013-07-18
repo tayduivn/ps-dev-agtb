@@ -202,7 +202,6 @@ $mod_strings = array (
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     'LBL_QUOTES_SHIP_TO' => 'Quotes (Ship To)',
     'LBL_QUOTES_BILL_TO' => 'Quotes (Bill To)',
-    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
     'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
     //END SUGARCRM flav=pro ONLY

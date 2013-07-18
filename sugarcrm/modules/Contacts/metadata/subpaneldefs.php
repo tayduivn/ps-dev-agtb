@@ -196,14 +196,12 @@ $layout_defs['Contacts'] = array(
 		),
 		//END SUGARCRM flav=pro ONLY
 		//BEGIN SUGARCRM flav=pro ONLY
-        'products' => array(
+        'revenuelineitems' => array(
             'order' => 50,
-            'module' => 'Products',
+            'module' => 'RevvenueLineItems',
             'subpanel_name' => 'default',
-            'sort_order' => 'desc',
-            'sort_by' => 'date_purchased',
-            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-            'get_subpanel_data' => 'products',
+            'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'revenuelineitems',
             'top_buttons' => array(
                 array(
                     'widget_class' => 'SubPanelTopButtonQuickCreate',
@@ -213,7 +211,6 @@ $layout_defs['Contacts'] = array(
                     'mode' => 'MultiSelect',
                 ),
             ),
-
         ),
 		//END SUGARCRM flav=pro ONLY
 		'cases' => array(
