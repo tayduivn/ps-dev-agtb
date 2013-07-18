@@ -15,5 +15,12 @@ $viewdefs['RevenueLineItems']['mobile']['layout']['subpanels'] = array(
                 'link' => 'documents',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_NOTES_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'notes',
+            ),
+        ),
     ),
 );
