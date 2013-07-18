@@ -106,4 +106,28 @@ describe("Activity Stream View", function() {
             widthStub.restore();
         });
     });
+
+    describe("formatAllTags()", function() {
+        it('Should format text-based tags in activity post into HTML format', function() {
+            view.model.set('data', {
+                value: 'foo @[Accounts:1234-1234:foo bar] bar'
+            });
+
+            view.formatAllTags();
+
+            expect(view.model.get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar')
+        });
+
+        it('Should format text-based tags in comments into HTML format', function() {
+            view.commentsCollection.add({
+                data: {
+                    value: 'foo @[Accounts:1234-1234:foo bar] bar'
+                }
+            });
+
+            view.formatAllTags();
+
+            expect(view.commentsCollection.at(0).get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar')
+        });
+    });
 });
