@@ -44,27 +44,19 @@ foreach ($themesClientsDir as $platform) {
     <link data-linkcss="bootstrap" href="../assets/css/sugar.css" rel="stylesheet">
 </head>
 <body>
-
-<form method="GET" action="buildcss.php">
-<div class="container">
-    <div class="row">
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="nav-collapse">
-                    <div class="container">
-                        <ul class="nav">
-                            <li>
-                                <a class="brand" href="#">bootstrap.css builder</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+<div id="header">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="brand" href="#" style="margin-left:0">bootstrap.css builder</a>
             </div>
-            <!-- /navbar-inner -->
         </div>
+    </div>
+</div>
+<div id="content">
+    <form method="GET" action="buildcss.php">
         <div class="subnav row-fluid">
             <div class="btn-toolbar pull-left">
-
                 <div>
                     <label style="display: inline;" for="min-false">
                         <input id="min-false" type="radio" name="min" value="false" checked>
@@ -101,11 +93,11 @@ foreach ($themesClientsDir as $platform) {
                 </div>
             </div>
             <div class="btn-toolbar pull-right">
-              <div class="btn-group">
-                <a class="btn btn-primary btn-submit" href="javascript:void(0)">Compile!</a>
-              </div>
+                <div class="btn-group">
+                    <a class="btn btn-primary btn-submit" href="javascript:void(0)">Compile!</a>
+                </div>
             </div>
-          </div>
+        </div>
         <div class="container-fluid">
             <div class="row-fluid">
                 <?php
@@ -139,10 +131,24 @@ foreach ($themesClientsDir as $platform) {
                 ?>
             </div>
         </div>
+    </form>
+</div>
+<div id="build-result" class="modal hide fade in">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Result</h3>
+    </div>
+    <div class="modal-body">
+        <div class="modal-content">
+         <h4></h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a target="_blank" href="../styleguide" class="btn">Open styleguide</a>
+        <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
     </div>
 </div>
-</form>
-<script src="../../include/javascript/jquery/jquery.js"></script>
+<script src="../../include/javascript/jquery/jquery-min.js"></script>
 <script src="../../include/javascript/twitterbootstrap/bootstrap-modal.js"></script>
 <script>
     $('.btn-submit').click(function() {
@@ -150,8 +156,7 @@ foreach ($themesClientsDir as $platform) {
 
         $.get('buildcss.php?' + attrs, function(data){
             $("#build-result .modal-body h4").text(data);
-            $("#build-result").modal();
-
+            $("#build-result").modal('show');
             $('link[data-linkcss=bootstrap]').remove();
             $("head").append("<link>");
                 var css = $("head").children(":last");
@@ -167,7 +172,7 @@ foreach ($themesClientsDir as $platform) {
                   'data-linkcss': 'sugar',
                   rel:  "stylesheet",
                   type: "text/css",
-                  href: '../styleguide/css/sugar.css?t=' + new Date().getTime()
+                  href: '../assets/css/sugar.css?t=' + new Date().getTime()
                 });
         });
     });
@@ -175,20 +180,6 @@ foreach ($themesClientsDir as $platform) {
         $(this).find('input[type=radio]').attr('checked', 'checked');
     });
 </script>
-    <div id="build-result" class="modal hide fade in">
-        <div class="modal-header">
-            <a class="close" data-dismiss="modal">×</a>
-            <h3>Result</h3>
-        </div>
-        <div class="modal-body">
-            <div class="modal-content">
-             <h4></h4>
-            </div>
-            <div class="modal-footer">
-                <a target="_blank" href="../styleguide" class="btn">Open styleguide</a>
-                <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
-            </div>
-        </div>
-    </div>
+
 </body>
 </html>
