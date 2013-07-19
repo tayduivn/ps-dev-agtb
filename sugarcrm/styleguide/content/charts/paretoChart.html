@@ -10,13 +10,13 @@
 </head>
 <body class="full-screen">
 
-<div id="chart1" class="nv-chart">
+<div id="chart1" class="nv-chart nv-pareto">
   <svg></svg>
 </div>
 
-<script src="js/jquery-1.7.2.min.js"></script>
-<script src="js/underscore-min.js"></script>
-<script src="js/backbone-min.js"></script>
+<script src="../js/jquery-1.7.2.min.js"></script>
+<script src="../js/underscore-min.js"></script>
+<script src="../js/backbone-min.js"></script>
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="data/pareto_data.js"></script>
@@ -31,7 +31,7 @@
   var Chart = Backbone.Model.extend({});
   var Charts = Backbone.Collection.extend({ model: Chart });
   charts = new Charts();
-  charts.reset(forecast_data_Q1);
+  charts.reset(forecast_data_Rep);
 
   // The chart view controls the single svg element on the screen
   var ChartsView = Backbone.View.extend({
@@ -51,74 +51,22 @@
       );
     },
 
-    translateDataToD3 : function( json, params )
-    {
-        return {
-            'properties':{
-                'title': json.properties[0].title
-              , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
-              // bar group data (x-axis)
-              , 'groupData': json.values.map( function(d,i){
-                    return {
-                      'group': i
-                    , 'l': json.values[i].label
-                    , 't': (json.values[i].length ? json.values[i].values.reduce( function(p, c, i, a){
-                            return parseInt(p,10) + parseInt(c,10);
-                        }) : 0)
-                    }
-                })
-            }
-            // series data
-          , 'data': ( ! json.values.filter(function(d) { return d.values.length }).length ? [] :
-                json.label.map( function(d,i){
-                    return {
-                        'key': d
-                      , 'type': 'bar'
-                      , 'series': i
-                      , 'values': json.values.map( function(e,j){
-                            return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                        })
-                      , 'valuesOrig': json.values.map( function(e,j){
-                            return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
-                        })
-                    }
-                }).concat(
-                    json.properties[0].goal_marker_label.filter( function(d,i){
-                        return d !== 'Quota';
-                      }).map( function(d,i){
-                        return {
-                            'key': d
-                          , 'type': 'line'
-                          , 'series': i
-                          , 'values': json.values.map( function(e,j){
-                              return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                            })
-                          , 'valuesOrig': json.values.map( function(e,j){
-                              return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                            })
-                        }
-                    })
-                )
-            )
-        };
-    },
-
     render: function() {
       this.$el.empty();
 
       var chartData = this.collection.models.map( function(d,i){return d.attributes} )[0];
 
       this.chart = nv.models.paretoChart()
-            .showTitle(true)
+            .showTitle(false)
             .showLegend(true)
             .tooltips(true)
-            .showControls(true)
-            .stacked(false)
+            .showControls(false)
+            .stacked(true)
             .clipEdge(false)
             .colorData( 'default' );
 
       d3.select(this.el)
-        .datum( this.translateDataToD3(chartData) )
+        .datum( chartData )
         .transition().duration(500).call(this.chart);
 
       nv.utils.windowResize(this.chart.update);

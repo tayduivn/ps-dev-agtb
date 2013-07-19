@@ -1,86 +1,438 @@
-var forecast_data_Q1 = {
-    "properties": [{
-        "gauge_target_list": "Array",
-        "title": "Forecasting 2013 Q1",
-        "subtitle": "",
-        "type": "bar chart",
-        "legend": "on",
-        "labels": "value",
-        "print": "on",
-        "thousands": "",
-        "goal_marker_type": ["group", "pareto", "pareto"],
-        "goal_marker_color": ["#000000", "#8c2b2b", "#468c2b"],
-        "goal_marker_label": ["Quota", "Likely Case", "Likely (Adjusted)"],
-        "label_name": "Type",
-        "value_name": "Amount"
-    }],
-   // "color": ["#8c2b2b", "#468c2b", "#2b5d8c", "#cd5200", "#e6bf00", "#7f3acd", "#00a9b8", "#572323", "#004d00", "#000087", "#e48d30", "#9fba09", "#560066", "#009f92", "#b36262", "#38795c", "#3D3D99", "#99623d", "#998a3d", "#994e78", "#3d6899", "#CC0000", "#00CC00", "#0000CC," "#cc5200", "#ccaa00", "#6600cc", "#005fcc"],
-    "label": ["Likely Case", "Likely (Adjusted)"],
-    "values": [{
-        "label": "Sarah Smith",
-        "gvalue": 0,
-        "gvaluelabel": 0,
-        "values": ["649700.00", "250500.00"],
-        "valuelabels": ["$649,700.00", "$250,500.00"],
-        "links": ["", ""],
-        "goalmarkervalue": ["1368000.00", "649700.00", "250500.00"],
-        "goalmarkervaluelabel": ["$1,368,000.00", "$649,700.00", "$250,500.00"]
-    }, {
-        "label": "Opportunities (Jim Brennan)",
-        "gvalue": 0,
-        "gvaluelabel": 0,
-        "values": ["131200.00", "75000.00"],
-        "valuelabels": ["$131,200.00", "$75,000.00"],
-        "links": ["", ""],
-        "goalmarkervalue": ["1368000.00", "780900.00", "325500.00"],
-        "goalmarkervaluelabel": ["$1,368,000.00", "$780,900.00", "$325,500.00"]
-    }, {
-        "label": "Will Westin",
-        "gvalue": 0,
-        "gvaluelabel": 0,
-        "values": ["270700.00", "50500.00"],
-        "valuelabels": ["$270,700.00", "$50,500.00"],
-        "links": ["", ""],
-        "goalmarkervalue": ["1368000.00", "1051600.00", "376000.00"],
-        "goalmarkervaluelabel": ["$1,368,000.00", "$1,051,600.00", "$376,000.00"]
-    }]
-}
+var forecast_data_Rep = {
+  "properties": {
+    "name": " for Q3 2013",
+    "quota": 137540,
+    "groupData": [
+      {
+        "group": 0,
+        "l": "July 2013",
+        "t": 63619
+      },
+      {
+        "group": 1,
+        "l": "August 2013",
+        "t": 17061
+      },
+      {
+        "group": 2,
+        "l": "September 2013",
+        "t": 33936
+      }
+    ]
+  },
+  "data": [
+    {
+      "key": "Qualification",
+      "series": 0,
+      "type": "bar",
+      "values": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 17061,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 0,
+          "y0": 0
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 17061,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 0,
+          "y0": 0
+        }
+      ]
+    },
+    {
+      "key": "Id. Decision Makers",
+      "series": 1,
+      "type": "bar",
+      "values": [
+        {
+          "series": 1,
+          "x": 1,
+          "y": 10741,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 2,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 3,
+          "y": 0,
+          "y0": 0
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 1,
+          "x": 1,
+          "y": 10741,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 2,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 3,
+          "y": 0,
+          "y0": 0
+        }
+      ]
+    },
+    {
+      "key": "Negotiation/Review",
+      "series": 2,
+      "type": "bar",
+      "values": [
+        {
+          "series": 2,
+          "x": 1,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 2,
+          "x": 2,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 2,
+          "x": 3,
+          "y": 33936,
+          "y0": 0
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 2,
+          "x": 1,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 2,
+          "x": 2,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 2,
+          "x": 3,
+          "y": 33936,
+          "y0": 0
+        }
+      ]
+    },
+    {
+      "key": "Closed Lost",
+      "series": 3,
+      "type": "bar",
+      "values": [
+        {
+          "series": 3,
+          "x": 1,
+          "y": 52878,
+          "y0": 0
+        },
+        {
+          "series": 3,
+          "x": 2,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 3,
+          "x": 3,
+          "y": 0,
+          "y0": 0
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 3,
+          "x": 1,
+          "y": 52878,
+          "y0": 0
+        },
+        {
+          "series": 3,
+          "x": 2,
+          "y": 0,
+          "y0": 0
+        },
+        {
+          "series": 3,
+          "x": 3,
+          "y": 0,
+          "y0": 0
+        }
+      ]
+    },
+    {
+      "key": "Likely",
+      "type": "line",
+      "series": 0,
+      "values": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 63619
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 80680
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 114616
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 63619
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 80680
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 114616
+        }
+      ]
+    }
+  ]
+};
 
-var mark_gibson_Q1 = {
-    "properties": [{
-        "gauge_target_list": "Array",
-        "title": null,
-        "subtitle": "",
-        "type": "bar chart",
-        "legend": "on",
-        "labels": "value",
-        "print": "on",
-        "thousands": "",
-        "goal_marker_type": ["group", "pareto"],
-        "goal_marker_color": ["#000000", "#7D12B2"],
-        // line series labels
-        "goal_marker_label": ["Quota", "Likely Case"],
-        "label_name": "Sales Stage",
-        "value_name": "Likely Case"
-    }],
-    "color": ["#8c2b2b", "#468c2b", "#2b5d8c", "#cd5200", "#e6bf00", "#7f3acd", "#00a9b8", "#572323", "#004d00", "#000087", "#e48d30", "#9fba09", "#560066", "#009f92", "#b36262", "#38795c", "#3D3D99", "#99623d", "#998a3d", "#994e78", "#3d6899", "#CC0000", "#00CC00", "#0000CC", "#cc5200", "#ccaa00", "#6600cc", "#005fcc"],
-    // bar series labels (legend)
-    "label": ["Negotiation/Review", "Value Proposition", "Closed Won"],
-    "values": [{
-        // bar group labels (x-axis)
-        "label": "October 2012",
-        "gvalue": 101500,
-        "values": [50500, 25500, 25500],
-        "goalmarkervalue": ["360000.00", "101500.00"],
-    }, {
-        "label": "November 2012",
-        "gvalue": 50500,
-        "values": [0, 50500, 0],
-        "goalmarkervalue": ["360000.00", "152000.00"],
-    }, {
-        "label": "December 2012",
-        "gvalue": 75500,
-        "values": [75500, 0, 0],
-        "goalmarkervalue": ["360000.00", "227500.00"],
-    }]
+var forecast_data_Manager = {
+  "properties": {
+    "name": " for Q3 2013",
+    "quota": 1823353,
+    "groupData": [
+      {
+        "group": 0,
+        "l": "Sarah Smith",
+        "t": 2617156
+      },
+      {
+        "group": 1,
+        "l": "Will Westin",
+        "t": 357952
+      },
+      {
+        "group": 2,
+        "l": "Jim Brennan",
+        "t": 340156
+      }
+    ]
+  },
+  "data": [
+    {
+      "key": "Likely",
+      "series": 0,
+      "type": "bar",
+      "values": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 1308578,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 178976,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 170078,
+          "y0": 0
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 1308578,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 178976,
+          "y0": 0
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 170078,
+          "y0": 0
+        }
+      ]
+    },
+    {
+      "key": "Likely (Adjusted)",
+      "series": 1,
+      "type": "bar",
+      "values": [
+        {
+          "series": 1,
+          "x": 1,
+          "y": 1308578,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 2,
+          "y": 178976,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 3,
+          "y": 170078,
+          "y0": 0
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 1,
+          "x": 1,
+          "y": 1308578,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 2,
+          "y": 178976,
+          "y0": 0
+        },
+        {
+          "series": 1,
+          "x": 3,
+          "y": 170078,
+          "y0": 0
+        }
+      ]
+    },
+    {
+      "key": "Likely",
+      "series": 0,
+      "type": "line",
+      "values": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 1308578
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 1487554
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 1657632
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 0,
+          "x": 1,
+          "y": 1308578
+        },
+        {
+          "series": 0,
+          "x": 2,
+          "y": 1487554
+        },
+        {
+          "series": 0,
+          "x": 3,
+          "y": 1657632
+        }
+      ]
+    },
+    {
+      "key": "Likely (Adjusted)",
+      "series": 1,
+      "type": "line",
+      "values": [
+        {
+          "series": 1,
+          "x": 1,
+          "y": 1308578
+        },
+        {
+          "series": 1,
+          "x": 2,
+          "y": 1487554
+        },
+        {
+          "series": 1,
+          "x": 3,
+          "y": 1657632
+        }
+      ],
+      "valuesOrig": [
+        {
+          "series": 1,
+          "x": 1,
+          "y": 1308578
+        },
+        {
+          "series": 1,
+          "x": 2,
+          "y": 1487554
+        },
+        {
+          "series": 1,
+          "x": 3,
+          "y": 1657632
+        }
+      ]
+    }
+  ]
 };
