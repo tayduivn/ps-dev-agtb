@@ -45,7 +45,7 @@
                     themeName: this.customTheme
                 };
         _.extend(params, this.context.attributes.colors);
-        var cssLink = app.api.buildURL('css', '', {}, params);
+        var cssLink = app.api.buildURL('css/preview', '', {}, params);
         $('iframe#previewTheme').hide();
         self.$(".ajaxLoading").show();
         $.get(cssLink)

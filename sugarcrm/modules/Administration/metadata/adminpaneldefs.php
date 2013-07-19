@@ -125,6 +125,7 @@ $admin_option_defs['Administration']['offline_client']= array('OfflineClient','L
 //BEGIN SUGARCRM flav=pro ONLY
 // Enable/Disable wireless modules
 $admin_option_defs['Administration']['enable_wireless_modules']=array('icon_AdminMobile','LBL_WIRELESS_MODULES_ENABLE','LBL_WIRELESS_MODULES_ENABLE_DESC','./index.php?module=Administration&action=EnableWirelessModules');
+$admin_option_defs['Administration']['web_logic_hooks']=array('Administration','LBL_WEB_LOGIC_HOOKS','LBL_WEB_LOGIC_HOOKS_DESC','javascript:parent.SUGAR.App.router.navigate("WebLogicHooks", {trigger: true});');
 //END SUGARCRM flav=pro ONLY
 
 
