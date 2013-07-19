@@ -53,10 +53,12 @@
             this.generateD3Chart();
         }, this);
 
-        var params = this.model.toJSON() || {};
-        params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
+        if (!this.triggerBefore('chart:pareto:render')) {
+            return;
+        }
 
-        var url = app.api.buildURL(this.buildChartUrl(params));
+        var params = this.model.toJSON() || {},
+            url = app.api.buildURL(this.buildChartUrl(params));
 
         app.api.call('read', url, {}, options);
     },
@@ -105,6 +107,8 @@
             });
 
         nv.utils.windowResize(paretoChart.update);
+
+        this.trigger('chart:pareto:rendered');
     },
 
     /**

@@ -24,6 +24,9 @@ $fields = array(
     ),
     array(
         'name' => 'date_closed',
+        'related_fields' => array(
+            'date_closed_timestamp'
+        )
     ),
     array(
         'name' => 'sales_stage',
@@ -136,6 +139,9 @@ $fields = array(
     array(
         'name' => 'date_closed',
         'readonly' => true,
+        'related_fields' => array(
+            'date_closed_timestamp'
+        )
     ),
     'sales_status',
     array(

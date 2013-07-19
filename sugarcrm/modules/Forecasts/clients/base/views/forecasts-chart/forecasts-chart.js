@@ -218,6 +218,19 @@
         }
 
         this.on('render', function() {
+            var f = this.getField('paretoChart'),
+                dt = this.layout.getComponent('dashlet-toolbar');
+
+            // if we have a dashlet-toolbar, then make it do the refresh icon while the chart is loading from the
+            // server
+            if (dt) {
+                f.before('chart:pareto:render', function() {
+                    this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh)
+                }, {}, dt);
+                f.on('chart:pareto:rendered', function() {
+                    this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault)
+                }, dt);
+            }
             this.toggleRepOptionsVisibility();
         }, this);
 

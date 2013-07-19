@@ -255,6 +255,9 @@ class ForecastWorksheetsFilterApi extends FilterApi
         // if we didn't find a time period, set the time period to be the current time period
         if ($timeperiod_id == false) {
             $timeperiod_id = TimePeriod::getCurrentId();
+        } elseif (!is_guid($timeperiod_id) && is_numeric($timeperiod_id)) {
+            // we have a timestamp, find timeperiod it belongs in
+            $timeperiod_id = TimePeriod::getIdFromTimestamp($timeperiod_id);
         }
 
         // fix up the timeperiod filter

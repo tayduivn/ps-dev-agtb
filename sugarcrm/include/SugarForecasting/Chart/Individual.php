@@ -66,6 +66,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         foreach ($this->dataArray as $data) {
             $v = array(
                 'id' => $data['id'],
+                'record_id' => $data['parent_id'],
                 'forecast' => $data['commit_stage'],
                 'probability' => $data['probability'],
                 'sales_stage' => $data['sales_stage'],

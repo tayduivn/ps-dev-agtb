@@ -15,11 +15,13 @@
 
 <div class="dashlet-options">
     <div class="row-fluid">
+        {{#if displayTimeperiodPivot}}
         <div class="span3">
             {{#each dashletConfig.timeperiod}}
                 {{field ../this model=../this.values template="edit"}}
             {{/each}}
         </div>
+        {{/if}}
         <div class="span3 groupByOptions">
             {{#with dashletConfig.group_by}}
                 {{field ../this model=../this.values}}
