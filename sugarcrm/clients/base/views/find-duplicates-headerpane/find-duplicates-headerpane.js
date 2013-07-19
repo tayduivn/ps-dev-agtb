@@ -15,6 +15,19 @@
     },
 
     /**
+     * {@inheritDoc}
+     * Dispose safe for mass_collection
+     */
+    unbindData: function() {
+        var massCollection = this.context.get('mass_collection');
+
+        if (massCollection) {
+            massCollection.off(null, null, this);
+        }
+        app.view.View.prototype.unbindData.call(this);
+    },
+
+    /**
      * Set up add/remove listener on the mass_collection so we can enable/disable the merge button
      */
     addMassCollectionListener: function() {
