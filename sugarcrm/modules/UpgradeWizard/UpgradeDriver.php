@@ -884,7 +884,8 @@ abstract class UpgradeDriver
 
         if(!defined('sugarEntry')) define('sugarEntry', true);
         $this->log("Initializig SugarCRM environment");
-        global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale, $installing;
+        global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
+            $sugar_version, $sugar_flavor, $db, $locale, $installing, $bwcModules;
         $installing = true;
         include('include/entryPoint.php');
         $GLOBALS['current_language'] = $this->config['default_language'];
