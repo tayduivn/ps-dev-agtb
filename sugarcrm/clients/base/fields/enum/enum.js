@@ -128,6 +128,12 @@
             }
         }
 
+        /* From http://ivaynberg.github.com/select2/#documentation:
+         * Initial value that is selected if no other selection is made
+         */
+        if(!this.def.isMultiSelect) {
+            select2Options.placeholder = app.lang.get("LBL_SEARCH_SELECT");
+        }
         // Options are being loaded via app.api.enum
         if(_.isEmpty(optionsKeys)){
             select2Options.placeholder = app.lang.get("LBL_LOADING");
