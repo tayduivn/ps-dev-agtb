@@ -15,6 +15,7 @@
 
 $viewdefs['Home']['base']['layout']['about'] = array(
     'type' => 'simple',
+    'css_class' => 'main-pane',
     'components' => array(
         array(
             'view' => 'about-headerpane',
