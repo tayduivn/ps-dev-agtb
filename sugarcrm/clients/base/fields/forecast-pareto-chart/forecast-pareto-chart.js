@@ -68,20 +68,20 @@
         var params = this.model.toJSON(),
             chartId = this.cid + '_chart',
             paretoChart = nv.models.paretoChart()
-                .margin({top: 0, right: 10, bottom: 20, left: 30})
+                .margin({top: 0, right: 10, bottom: 20, left: 50})
                 .showTitle(false)
                 .tooltips(true)
                 .tooltipLine(function(key, x, y, e, graph) {
                     // Format the value using currency class and user settings
-                    var val = App.currency.formatAmountLocale(e.point.y)
-                    return '<p>' + key + ': <b>' + val + '</b></p>'
+                    var val = App.currency.formatAmountLocale(e.point.y);
+                    return '<p>' + key + ': <b>' + val + '</b></p>';
                 })
                 .tooltipBar(function(key, x, y, e, graph) {
                     // Format the value using currency class and user settings
-                    var val = App.currency.formatAmountLocale(e.value)
+                    var val = App.currency.formatAmountLocale(e.value);
                     return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
                         '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
-                        '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>'
+                        '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
                 })
                 .showControls(false)
                 .colorData('default')
@@ -114,7 +114,7 @@
         if (this.model.get('display_manager')) {
             this.convertManagerDataToChartData();
         } else {
-            this.convertRepDataToChartData(this.model.get('group_by'))
+            this.convertRepDataToChartData(this.model.get('group_by'));
         }
     },
 
@@ -133,7 +133,7 @@
                             group: i,
                             l: record.name,
                             t: parseInt(record[dataset], 10) + parseInt(record[dataset + '_adjusted'], 10)
-                        }
+                        };
                     })
                 },
                 'data': []
@@ -145,7 +145,7 @@
                         x: recIdx + 1,
                         y: parseInt(rec[ds], 10),
                         y0: 0
-                    }
+                    };
                 });
 
                 return {
@@ -154,7 +154,7 @@
                     type: 'bar',
                     values: vals,
                     valuesOrig: vals
-                }
+                };
             }, this),
             lineData = [dataset, dataset + '_adjusted'].map(function(ds, seriesIdx) {
                 var vals = records.map(function(rec, recIdx) {
@@ -162,7 +162,7 @@
                         series: seriesIdx,
                         x: recIdx + 1,
                         y: parseInt(rec[ds], 10)
-                    }
+                    };
                 });
 
                 // fix the vals
@@ -178,7 +178,7 @@
                     type: 'line',
                     values: vals,
                     valuesOrig: vals
-                }
+                };
             }, this);
 
         chartData.data = barData.concat(lineData);
@@ -196,7 +196,7 @@
             seriesIdx = 0,
             barData = [],
             lineVals = this.serverData['x-axis'].map(function(axis, i) {
-                return { series: seriesIdx, x: i + 1, y: 0 }
+                return { series: seriesIdx, x: i + 1, y: 0 };
             }),
             line = {
                 'key': this.serverData.labels.dataset[dataset],
@@ -214,14 +214,14 @@
                             'group': i,
                             'l': item.label,
                             't': 0
-                        }
+                        };
                     })
                 },
                 'data': []
             },
             records = this.serverData.data,
             data = (!_.isEmpty(ranges)) ? records.filter(function(rec) {
-                return _.contains(ranges, rec.forecast)
+                return _.contains(ranges, rec.forecast);
             }) : records;
 
         _.each(this.serverData.labels[type], function(label, value) {
@@ -231,7 +231,7 @@
 
             if (!_.isEmpty(td)) {
                 var barVal = this.serverData['x-axis'].map(function(axis, i) {
-                        return { series: seriesIdx, x: i + 1, y: 0, y0: 0 }
+                        return { series: seriesIdx, x: i + 1, y: 0, y0: 0 };
                     }),
                     axis = this.serverData['x-axis'];
 
@@ -275,7 +275,7 @@
             line.valuesOrig = lineVals;
 
             barData.push(line);
-            chartData.data = barData
+            chartData.data = barData;
         }
 
         this.d3Data = chartData;
@@ -327,8 +327,8 @@
         });
 
         probabilities = _.unique(probabilities).sort(function(a, b) {
-            return b - a
-        })
+            return b - a;
+        });
 
         this.serverData.labels.probability = {};
         _.each(probabilities, function(v) {
