@@ -20,11 +20,30 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
      * @group revenuelineitems
      * @covers RevenueLineItem::convertToQuotedLineItem()
      */
-    public function testConvertToQuotedLineItem()
+    public function testConvertToQuotedLineItemWithDiscountPriceSet()
     {
         /* @var $rli RevenueLineItem */
         $rli = $this->getMock('RevenueLineItem', array('save'));
         $rli->likely_case = '100.00';
+        $rli->discount_price = '200.00';
+        $rli->sales_stage = 'Test';
+        $product = $rli->convertToQuotedLineItem();
+
+        $this->assertEquals($rli->discount_price, $product->discount_price);
+        $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not Set');
+        $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
+    }
+
+    /**
+     * @group revenuelineitems
+     * @covers RevenueLineItem::convertToQuotedLineItem()
+     */
+    public function testConvertToQuotedLineItemWithoutDiscountPriceSet()
+    {
+        /* @var $rli RevenueLineItem */
+        $rli = $this->getMock('RevenueLineItem', array('save'));
+        $rli->likely_case = '100.00';
+        $rli->discount_price = '';
         $rli->sales_stage = 'Test';
         $product = $rli->convertToQuotedLineItem();
 
@@ -32,6 +51,7 @@ class RevenueLineItemTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not Set');
         $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
     }
+
 }
 
 
