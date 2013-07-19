@@ -1,5 +1,10 @@
 <?php
-
-$layout = MetaDataManager::getLayout('GenericLayout');
-$layout->push(array('view' => 'createhelp'));
-$viewdefs['Cases']['base']['layout']['new-sidebar'] = $layout->getLayout();
+$viewdefs['Cases']['base']['layout']['new-sidebar'] = array (
+  'components' => array (
+    array (
+      'view' => 'createhelp',
+    ),
+  ),
+  'type' => 'simple',
+  'span' => 12,
+);
