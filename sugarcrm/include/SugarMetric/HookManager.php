@@ -69,7 +69,7 @@ class SugarMetric_HookManager
 
         // Check transaction name was set on endPoints
         if (!$instance->isNamedTransaction()) {
-            if (isset($GLOBALS['log'])) {
+            if (isset($GLOBALS['log']) && !empty($_SERVER['REQUEST_URI'])) {
 
                 // Log REQUEST_URI to debug "dead" entryPoints
                 $GLOBALS['log']->debug('Unregistered Transaction name for URI: ' . $_SERVER['REQUEST_URI']);
