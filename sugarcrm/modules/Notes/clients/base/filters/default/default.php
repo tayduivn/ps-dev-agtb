@@ -25,13 +25,11 @@ $viewdefs['Notes']['base']['filter']['default'] = array(
         'date_entered' => array(),
         'date_modified' => array(),
         '$owner' => array(
-            'options' => 'filter_predefined_dom',
-            'type' => 'bool',
+            'predefined_filter' => true,
             'vname' => 'LBL_CURRENT_USER_FILTER',
         ),
         '$favorite' => array(
-            'options' => 'filter_predefined_dom',
-            'type' => 'bool',
+            'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
     ),

@@ -66,7 +66,8 @@
             var text = app.lang.get(value.vname, moduleName);
             // Check if we support this field type.
             var type = this.fieldTypeMap[value.type] || value.type;
-            if (this.filterOperatorMap[type] && !_.isUndefined(text)) {
+            //Predefined filters don't have operators defined
+            if ((this.filterOperatorMap[type] || value.predefined_filter === true) && !_.isUndefined(text)) {
                 this.filterFields[key] = text;
             }
         }, this);
@@ -250,7 +251,7 @@
         this.layout.trigger("filter:create:rowsValid", true);
         _.each($rows, function(row) {
             var data = $(row).data();
-            if (_.isEmpty(data.value) && !data.isDateRange) {
+            if (_.isEmpty(data.value) && !data.isDateRange && !data.isPredefinedFilter) {
                 this.layout.trigger("filter:create:rowsValid", false);
             }
         }, this);
@@ -322,6 +323,17 @@
 
         data['name'] = fieldName;
         if (!fieldName) {
+            return;
+        }
+
+        //Reset flags
+        data.isDateRange = false;
+        data.isPredefinedFilter = false;
+
+        //Predefined filters don't need operators and value field
+        if (this.fieldList[fieldName].predefined_filter === true) {
+            data.isPredefinedFilter = true;
+            this.fireSearch();
             return;
         }
 
@@ -407,7 +419,6 @@
                 fieldDef.type = 'date';
                 //Flag to indicate the value needs to be formatted correctly
                 data.isDate = true;
-                data.isDateRange = false;
                 if (operation.charAt(0) !== '$') {
                     //Flag to indicate we need to build the date filter definition based on the date operator
                     data.isDateRange = true;
@@ -556,33 +567,31 @@
         if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
             name = this.fieldList[name].id_name;
         }
-        if (!_.isEmpty(value) || data.isDateRange) {
-            if (name.indexOf("$") === 0 && value === "true") {
-                filter[name] = "";
+        if (data.isPredefinedFilter) {
+            filter[name] = "";
+            return filter;
+        } else if (!_.isEmpty(value) || data.isDateRange) {
+            if (_.has(this.fieldList[name], 'dbFields')) {
+                var subfilters = [];
+                _.each(this.fieldList[name].dbFields, function(dbField) {
+                    var filter = {};
+                    filter[dbField] = {};
+                    filter[dbField][operator] = value;
+                    subfilters.push(filter);
+                });
+                filter["$or"] = subfilters;
             } else {
-                if (_.has(this.fieldList[name], 'dbFields')) {
-                    var subfilters = [];
-                    _.each(this.fieldList[name].dbFields, function(dbField) {
-                        var filter = {};
-                        filter[dbField] = {};
-                        filter[dbField][operator] = value;
-                        subfilters.push(filter);
-                    });
-                    filter["$or"] = subfilters;
+                if (operator === "$equals") {
+                    filter[name] = value;
+                } else if (data.isDateRange) {
+                    //Once here the value is actually a key of date_range_selector_dom and we need to build a real
+                    //filter definition on it.
+                    filter[name] = {};
+                    filter[name].$dateRange = operator;
                 } else {
-                    if (operator === "$equals") {
-                        filter[name] = value;
-                    } else if (data.isDateRange) {
-                        //Once here the value is actually a key of date_range_selector_dom and we need to build a real
-                        //filter definition on it.
-                        filter[name] = {};
-                        filter[name].$dateRange = operator;
-                    } else {
-                        filter[name] = {};
-                        filter[name][operator] = value;
-                    }
+                    filter[name] = {};
+                    filter[name][operator] = value;
                 }
-
             }
 
             return filter;

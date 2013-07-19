@@ -25,8 +25,7 @@ $viewdefs['Documents']['base']['filter']['default'] = array(
         'assigned_user_id' => array(),
         'assigned_user_name' => array(),
         '$favorite' => array(
-            'options' => 'filter_predefined_dom',
-            'type' => 'bool',
+            'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
     ),
