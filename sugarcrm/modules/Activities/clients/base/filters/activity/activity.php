@@ -15,7 +15,7 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
         ),
         array(
             'id'                => 'messages_for_create',
-            'name'              => 'Messages for Create',
+            'name'              => 'LBL_ACTIVITY_CREATE',
             'filter_definition' => array(
                 '$or' => array(
                     array('activity_type' => 'create'),
@@ -26,7 +26,7 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
         ),
         array(
             'id'                => 'messages_for_update',
-            'name'              => 'Messages for Update',
+            'name'              => 'LBL_ACTIVITY_UPDATE',
             'filter_definition' => array(
                 'activity_type' => 'update',
             ),
@@ -34,7 +34,7 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
         ),
         array(
             'id'                => 'messages_for_link',
-            'name'              => 'Messages for link',
+            'name'              => 'LBL_ACTIVITY_LINK',
             'filter_definition' => array(
                 'activity_type' => 'link',
             ),
@@ -42,7 +42,7 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
         ),
         array(
             'id'                => 'messages_for_unlink',
-            'name'              => 'Messages for unlink',
+            'name'              => 'LBL_ACTIVITY_UNLINK',
             'filter_definition' => array(
                 'activity_type' => 'unlink',
             ),
@@ -50,7 +50,7 @@ $viewdefs['Activities']['base']['filter']['activity'] = array(
         ),
         array(
             'id'                => 'messages_for_post',
-            'name'              => 'Messages for post',
+            'name'              => 'LBL_ACTIVITY_POST',
             'filter_definition' => array(
                 'activity_type' => 'post',
             ),
