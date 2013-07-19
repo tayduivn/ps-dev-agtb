@@ -194,7 +194,7 @@
             this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
             model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
         }
-        this.model.trigger("change");
+        this.model.trigger("change:" + fieldName);
     },
     _verifyDateString: function(value) {
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
