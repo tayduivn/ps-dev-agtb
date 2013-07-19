@@ -68,7 +68,17 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
-        return !_.isEmpty(this.model.changedAttributes(this.model._syncedAttributes));
+        var changedAttributes = this.model.changedAttributes(this.model._syncedAttributes);
+
+        if (_.isEmpty(changedAttributes)) {
+            return false;
+        }
+        // if model contains changed attributes,
+        // check whether those are among the editable fields or not
+        var formFields = _.compact(_.pluck(this.editableFields, 'name')),
+            unsavedFields = _.intersection(_.keys(changedAttributes), formFields);
+
+        return !_.isEmpty(unsavedFields);
     },
 
     /**

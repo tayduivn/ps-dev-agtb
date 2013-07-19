@@ -733,4 +733,64 @@ describe("Record View", function () {
         });
 
     });
+
+    describe('hasUnsavedChanges', function() {
+        it('should NOT warn unsaved changes when synced values are matched with current model value', function() {
+            var attrs = {
+                name: 'Original',
+                case_number: 456,
+                description: 'Previous description'
+            };
+            view.model._setSyncedAttributes(attrs);
+            view.model.set(attrs);
+            var actual = view.hasUnsavedChanges();
+            expect(actual).toBe(false);
+        });
+        it('should warn unsaved changes among the synced attributes', function() {
+            view.model._setSyncedAttributes({
+                name: 'Original',
+                case_number: 456,
+                description: 'Previous description'
+            });
+            view.model.set({
+                name: 'Name',
+                case_number: 123,
+                description: 'Description'
+            });
+            var actual = view.hasUnsavedChanges();
+            expect(actual).toBe(true);
+        });
+        it('should warn unsaved changes ONLY IF the changes are editable fields', function() {
+            view.model._setSyncedAttributes({
+                name: 'Original',
+                case_number: 456,
+                description: 'Previous description',
+                non_editable: 'system value'
+            });
+            //un-editable field
+            view.model.set({
+                name: 'Original',
+                case_number: 456,
+                description: 'Previous description'
+            });
+            var actual = view.hasUnsavedChanges();
+            expect(actual).toBe(false);
+            //Changed non-editable field
+            view.model.set({
+                non_editable: 'user value'
+            });
+            actual = view.hasUnsavedChanges();
+            var editableFields = _.pluck(view.editableFields, 'name');
+            expect(_.contains(editableFields, 'non_editable')).toBe(false);
+            expect(actual).toBe(false);
+            //Changed editable field
+            view.model.set({
+                description: 'Changed description'
+            });
+            actual = view.hasUnsavedChanges();
+            expect(_.contains(editableFields, 'description')).toBe(true);
+            expect(actual).toBe(true);
+        });
+
+    });
 });
