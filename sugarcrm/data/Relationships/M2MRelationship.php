@@ -99,69 +99,73 @@ class M2MRelationship extends SugarRelationship
         $GLOBALS['log']->error("Unable to determine best appropriate link for relationship {$this->name}");
         return $links[0];
     }
+
     /**
      * @param  $lhs SugarBean left side bean to add to the relationship.
      * @param  $rhs SugarBean right side bean to add to the relationship.
-     * @param  $additionalFields key=>value pairs of fields to save on the relationship
+     * @param array $additionalFields key=>value pairs of fields to save on the relationship
+     * @internal param $ {array} $additionalFields defaults to empty array
      * @return boolean true if successful
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
-        // Test to see if the relationship already exists before attempting to
-        // add it again.
-        if ($this->relationship_exists($lhs, $rhs)) {
-            return false;
-        }
 
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
-        if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName))
-        {
+        if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName)) {
             $lhsClass = get_class($lhs);
             $GLOBALS['log']->fatal("could not load LHS $lhsLinkName in $lhsClass");
             return false;
         }
-        if (empty($rhs->$rhsLinkName) && !$rhs->load_relationship($rhsLinkName))
-        {
+        if (empty($rhs->$rhsLinkName) && !$rhs->load_relationship($rhsLinkName)) {
             $rhsClass = get_class($rhs);
             $GLOBALS['log']->fatal("could not load RHS $rhsLinkName in $rhsClass");
             return false;
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
-        if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
-        {
-            //END SUGARCRM flav=pro ONLY
-            $lhs->$lhsLinkName->addBean($rhs);
-            $rhs->$rhsLinkName->addBean($lhs);
+        // Test to see if the relationship already exists before attempting to
+        // add it again.
+        if (!$this->relationship_exists($lhs, $rhs)) {
 
-            $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
-            $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
             //BEGIN SUGARCRM flav=pro ONLY
+            if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
+                //END SUGARCRM flav=pro ONLY
+                $lhs->$lhsLinkName->addBean($rhs);
+                $rhs->$rhsLinkName->addBean($lhs);
+
+                $this->callBeforeAdd($lhs, $rhs, $lhsLinkName);
+                $this->callBeforeAdd($rhs, $lhs, $rhsLinkName);
+                //BEGIN SUGARCRM flav=pro ONLY
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")) {
+                //END SUGARCRM flav=pro ONLY
+                $lhs->$lhsLinkName->addBean($rhs);
+                $rhs->$rhsLinkName->addBean($lhs);
+
+                $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+                $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+                //BEGIN SUGARCRM flav=pro ONLY
+            }
+            //END SUGARCRM flav=pro ONLY
         }
-        //END SUGARCRM flav=pro ONLY
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = $this->getRowToInsert($lhs, $rhs, $additionalFields);
-
+        /**
+         * We still need to update the row even if the relationship is not new because there
+         * may be changes to relationship fields that need to be saved.
+         *
+         * See SP-1043 for other details
+         * */
         $this->addRow($dataToInsert);
 
-        if ($this->self_referencing)
+        if ($this->self_referencing) {
             $this->addSelfReferencing($lhs, $rhs, $additionalFields);
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        if ((empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes"))
-        {
-        //END SUGARCRM flav=pro ONLY
-            $lhs->$lhsLinkName->addBean($rhs);
-            $rhs->$rhsLinkName->addBean($lhs);
-
-            $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
-            $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
-        //BEGIN SUGARCRM flav=pro ONLY
         }
-        //END SUGARCRM flav=pro ONLY
 
         return true;
     }

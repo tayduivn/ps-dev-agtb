@@ -32,32 +32,27 @@
             this.cancelEdit();
             return;
         }
-
         var self = this,
             options = {
-                success: function() {
-                    self.model.save({}, {
-                        success: function(model) {
-                            self.changed = false;
-                            self.view.toggleRow(model.id, false);
-                        },
-                        //Show alerts for this request
-                        showAlerts: {
-                            'process': true,
-                            'success': {
-                                messages: app.lang.get('LBL_RECORD_SAVED', self.module)
-                            }
-                        },
-                        relate: self.model.link ? true : false
-                    });
-                }
-        };
+                success: function(model) {
+                    self.changed = false;
+                    self.view.toggleRow(model.id, false);
+                },
+                //Show alerts for this request
+                showAlerts: {
+                    'process': true,
+                    'success': {
+                        messages: app.lang.get('LBL_RECORD_SAVED', self.module)
+                    }
+                },
+                relate: self.model.link ? true : false
+            };
 
         options = _.extend({}, options, self.getCustomSaveOptions(options));
 
-        callbacks = {
+        var callbacks = {
             success: function() {
-                self.model.save({}, options);                        
+                self.model.save({}, options);
             }
         };
 
