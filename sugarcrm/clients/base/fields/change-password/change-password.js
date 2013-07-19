@@ -180,15 +180,6 @@
              */
             self.model.set(self.name + '_' + $(this).attr('name'), self.unformat($(this).val()));
         });
-        // Focus doesn't always change when tabbing through inputs on IE9 (Bug54717)
-        // This prevents change events from being fired appropriately on IE9
-        if ($.browser.msie && el.is("input")) {
-            el.on("input", function() {
-                // Set focus on input element receiving user input
-                el.focus();
-            });
-        }
-
     },
 
     /**
