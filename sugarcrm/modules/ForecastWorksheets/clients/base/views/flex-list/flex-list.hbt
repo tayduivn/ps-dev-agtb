@@ -70,7 +70,7 @@
         </td>
         {{/each}}
         {{#each ../../_fields.visible}}
-            <td class="{{#if this.align}} {{this.align}}{{/if}}{{#if click_to_edit}} editableColumn{{/if}}">
+            <td class="{{#if this.align}} {{this.align}}{{/if}}{{#if click_to_edit}} editableColumn{{/if}}" data-field-name="{{name}}">
               {{field ../../../this model=../this template=../../../this.viewName}}
             </td>
         {{/each}}
