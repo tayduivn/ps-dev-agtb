@@ -494,6 +494,10 @@
 
             // set the commit button states to match the models
             this.setCommitLogButtonStates();
+
+            var outerwidth = this.$el.find('span.isEditable').outerWidth();
+            this.$el.find('span.isEditable').parent("td").css("min-width","105px");
+
         } else {
             if (this.layout.isVisible()) {
                 this.layout.hide();
