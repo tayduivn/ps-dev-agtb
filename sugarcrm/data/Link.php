@@ -961,6 +961,7 @@ class Link {
         //Resave records with calculated relate fields to update those fields
         if (!empty($this->_bean->id) && empty($this->_bean->deleted)
                 && VardefManager::modHasCalcFieldsWithLink($this->_bean->module_dir, $this->_bean->object_name, $linkField['name'])
+                && !$this->_bean->inOperation('updating_relationships')
                 && $this->_bean->enterOperation('saving_related'))
         {
             $this->_bean->save();
@@ -982,6 +983,7 @@ class Link {
                 //Resave records with calculated relate fields to update those fields
                 if (!empty($rbean->id) && empty($rbean->deleted)
                         && VardefManager::modHasCalcFieldsWithLink($custom_logic_arguments['related_module'], $class, $linkField['name'])
+                        && !$this->_bean->inOperation('updating_relationships')
                         && $this->_bean->enterOperation('saving_related'))
                 {
                     $rbean->save();
