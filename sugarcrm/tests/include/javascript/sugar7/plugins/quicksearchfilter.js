@@ -13,71 +13,89 @@ describe("Plugins.Quicksearchfilter", function () {
         delete Handlebars.templates;
     });
 
+    describe('Building the filter definition', function() {
+        var quicksearch_field,
+            searchTerm = 'John F Kennedy',
+            metadataStub,
+            filterDef;
 
-    it("Should create quick search terms by retreiving the module filter metadata", function () {
-        field = SugarTest.createField("base", "account_name", "relate", "edit");
+        beforeEach(function() {
+            field = SugarTest.createField("base", "account_name", "relate", "edit");
+            field._moduleSearchFields = {};
+        });
+        afterEach(function() {
+            metadataStub.restore();
+            filterDef = null;
+        });
 
-        var singleExpectedField = ['name'],
-            multipleExpectedFields = ['first_name', 'last_name', 'title'],
-            expectedSearchTerm = "Foo Bar",
-            expectedSearchTerms = expectedSearchTerm.split(' '),
-            singleFilterModule = "Tasks",
-            multipleFilterModule = "Contacts",
-            metadataStub = sinon.stub(app.metadata, 'getModule', function (module) {
-                var filterDef = {
-                    Tasks: {
-                        filters: {
-                            _default: {
-                                meta: {
-                                    quicksearch_field: singleExpectedField,
-                                    quicksearch_priority: 1
-                                }
-                            }
-                        }
-                    },
-                    Contacts: {
-                        filters: {
-                            _default: {
-                                meta: {
-                                    quicksearch_field: multipleExpectedFields,
-                                    quicksearch_priority: 1
-                                }
+        it('should search if one field starts with one term', function() {
+            quicksearch_field = ['name'];
+            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    filters: {
+                        _default: {
+                            meta: {
+                                quicksearch_field: quicksearch_field,
+                                quicksearch_priority: 1
                             }
                         }
                     }
                 };
-
-                return filterDef[module];
             });
-        var actualSingleFilter = field.getFilterDef(singleFilterModule, expectedSearchTerm);
-        _.each(actualSingleFilter, function (filter) {
-            _.each(filter, function (term, field) {
-                var actualTerm = term['$starts'];
-                expect(_.indexOf(singleExpectedField, field) >= 0).toBeTruthy();
-                expect(actualTerm).toBeDefined();
-                expect(actualTerm).toBe(expectedSearchTerm);
+            filterDef = field.getFilterDef('Contacts', searchTerm);
+            expect(filterDef).toEqual([
+                { name: { $starts: searchTerm } }
+            ]);
+        });
+        it('should search if any field starts with the term if multiple fields but only one term', function() {
+            quicksearch_field = ['first_name', 'last_name'];
+            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    filters: {
+                        _default: {
+                            meta: {
+                                quicksearch_field: quicksearch_field,
+                                quicksearch_priority: 1
+                            }
+                        }
+                    }
+                };
             });
-        }, this);
-
-        //Multiple search filter should contain the "OR" clause
-        var actualMultiFilter = field.getFilterDef(multipleFilterModule, expectedSearchTerm);
-        _.each(actualMultiFilter, function (filter) {
-            expect(filter['$or']).toBeDefined();
-            expect(filter['$or'].length).toBe(multipleExpectedFields.length * expectedSearchTerms.length);
-            _.each(filter['$or'], function (search_filter) {
-                _.each(search_filter, function (term, field) {
-                    var actualTerm = term['$starts'];
-                    expect(_.indexOf(multipleExpectedFields, field) >= 0).toBeTruthy();
-                    expect(actualTerm).toBeDefined();
-                    expect(_.indexOf(['Foo', 'Bar'], actualTerm) >= 0).toBeTruthy();
-                });
+            filterDef = field.getFilterDef('Contacts', 'John');
+            expect(filterDef).toEqual([
+                { $or: [
+                    { first_name: { $starts: 'John' } },
+                    { last_name: { $starts: 'John' } }
+                ] }
+            ]);
+        });
+        it('should search if first field starts with first term and second field starts with other terms if multiple fields and multiple terms', function() {
+            quicksearch_field = ['first_name', 'last_name'];
+            metadataStub = sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    filters: {
+                        _default: {
+                            meta: {
+                                quicksearch_field: quicksearch_field,
+                                quicksearch_priority: 1
+                            }
+                        }
+                    }
+                };
             });
-        }, this);
-        metadataStub.restore();
+            filterDef = field.getFilterDef('Contacts', searchTerm);
+            expect(filterDef).toEqual([
+                { $and: [
+                    { first_name: { $starts: 'John' } },
+                    { last_name: { $starts: 'F Kennedy' } }
+                ] }
+            ]);
+        });
     });
 
     it("Highest priority filter should be selected among the multiple quick search filters", function () {
         field = SugarTest.createField("base", "account_name", "relate", "edit");
+        field._moduleSearchFields = {};
 
         var expectedFilterFields = [
                 'first_name',
