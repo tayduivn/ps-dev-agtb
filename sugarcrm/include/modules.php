@@ -56,7 +56,6 @@ $moduleList[] = 'RevenueLineItems';
 $moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
 $moduleList[] = 'Bugs';
-$moduleList[] = 'Styleguide';
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -412,6 +411,7 @@ $modInvisList[] = 'SavedSearch';
 //$modInvisList[] = 'Queues';
 $modInvisList[] = 'Studio';
 $modInvisList[] = 'Connectors';
+$modInvisList[] = 'Styleguide';
 
 $report_include_modules = array();
 $report_include_modules['Currencies']='Currency';
