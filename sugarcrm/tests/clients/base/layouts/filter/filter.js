@@ -342,8 +342,8 @@ describe("Base.Layout.Filter", function () {
                 link:'test1',
                 hidden: false
             });
-
             layout.context.children.push(ctxt);
+
             var ctxt1 = app.context.getContext();
             ctxt1.set({
                 collection: new Backbone.Collection(),
@@ -352,7 +352,6 @@ describe("Base.Layout.Filter", function () {
                 link:'test1',
                 hidden: false
             });
-
             layout.context.children.push(ctxt1);
 
             var ctxtWithoutCollection = app.context.getContext();
@@ -362,8 +361,18 @@ describe("Base.Layout.Filter", function () {
                 link:'testNoCollection',
                 hidden: false
             });
-
             layout.context.children.push(ctxtWithoutCollection);
+
+            var ctxtWithModelId = app.context.getContext();
+            ctxtWithModelId.set({
+                collection: new Backbone.Collection(),
+                modelId: 'model_id',
+                module: 'Accounts',
+                layout: 'filter',
+                link:'testModelId',
+                hidden: false
+            });
+            layout.context.children.push(ctxtWithModelId);
 
             var expectedList = [ctxt, ctxt1];
             var resultList = layout.getRelevantContextList();
