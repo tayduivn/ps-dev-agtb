@@ -13,6 +13,6 @@
         <li><i class="icon-plus icon-3x"></i><a href="#Styleguide/create">Default Record Create View</a></li>
         <li><i class="icon-list-alt icon-3x"></i><a href="#Styleguide/field/all">Example Sugar7 Fields</a></li>
         {{! <li><i class="icon-heart icon-3x"></i><a href="styleguide/tests/global.html">Styleguide Tests</a></li> }}
-        <li><i class="icon-edit icon-3x"></i><a href="#Styleguide/docs/base.edit">Updating Documentation</a></li>
+        <li><i class="icon-edit icon-3x"></i><a href="#Styleguide/docs/base_edit">Updating Documentation</a></li>
     </ul>
 </section>
