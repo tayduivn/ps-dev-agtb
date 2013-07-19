@@ -35,14 +35,13 @@
      * In layout defs, the child component should have a `span` definition corresponding to the bootstrap scaffold.
      * @param {View.View} comp
      * @protected
-     * @method
      */
     _placeComponent: function(comp, def) {
         var compdef = def.layout || def.view,
             size = compdef.span || 4;
 
         if (!this.$el.children()[0]) {
-            this.$el.addClass("container-fluid").append('<div class="row-fluid" style="clear:both"></div>');
+            this.$el.addClass("container-fluid").append('<div class="row-fluid"></div>');
         }
 
         //Create a new td and add the layout to it

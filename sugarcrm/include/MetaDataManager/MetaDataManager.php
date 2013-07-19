@@ -700,22 +700,40 @@ class MetaDataManager
      */
     public function getServerInfo()
     {
-        global $sugar_flavor;
-        global $sugar_version;
-
-        $data['flavor'] = $sugar_flavor;
-        $data['version'] = $sugar_version;
+        $data['flavor'] = $GLOBALS['sugar_flavor'];
+        $data['version'] = $GLOBALS['sugar_version'];
+        $data['build'] = $GLOBALS['sugar_build'];
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Product Name for Professional edition.
+        $data['product_name'] = "SugarCRM Professional";
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        // Product Name for Enterprise edition.
+        $data['product_name'] = "SugarCRM Enterprise";
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=corp ONLY
+        // Product Name for Corp edition.
+        $data['product_name'] = "SugarCRM Corporate";
+        //END SUGARCRM flav=corp ONLY
+        //BEGIN SUGARCRM flav=ult ONLY
+        // Product Name for Ultimate edition.
+        $data['product_name'] = "SugarCRM Ultimate";
+        //END SUGARCRM flav=ult ONLY
+        if (file_exists('custom/version.php')) {
+            include 'custom/version.php';
+            $data['custom_version'] = $custom_version;
+        }
 
         //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if (!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
             $data['fts'] = array(
-                'enabled' =>  true,
-                'type'    =>  $fts_enabled,
+                'enabled' => true,
+                'type' => $fts_enabled,
             );
         } else {
             $data['fts'] = array(
-                'enabled' =>  false,
+                'enabled' => false,
             );
         }
         //END SUGARCRM flav=pro ONLY

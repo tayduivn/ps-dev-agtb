@@ -14,9 +14,9 @@
                     <li class="profileactions-profile"><a href="#{{buildRoute module='Users' action='detail' id=userId}}">{{str "LBL_PROFILE"}}</a></li>
                     <li class="profileactions-employees"><a href="#{{buildRoute module='Employees'}}">{{str "LBL_EMPLOYEES"}}</a></li>
                     {{#if showAdmin}}
-                    <li class="administration"><a href="#Administration">{{str "LBL_ADMIN"}}</a></li>
+                    <li class="administration"><a href="#{{buildRoute module='Administration'}}">{{str "LBL_ADMIN"}}</a></li>
                     {{/if}}
-                    <li class="profileactions-about"><a href="#bwc/index.php?module=Home&action=About">{{str "LNK_ABOUT"}}</a></li>
+                    <li class="profileactions-about"><a href="#{{buildRoute action='about'}}">{{str "LNK_ABOUT"}}</a></li>
                     <li class="profileactions-logout"><a href="#logout/?clear=1">{{str "LBL_LOGOUT"}}</a></li>
                 </ul>
             </div>
