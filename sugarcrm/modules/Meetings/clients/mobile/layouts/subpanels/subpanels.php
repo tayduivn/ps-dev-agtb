@@ -19,7 +19,7 @@ $viewdefs['Meetings']['mobile']['layout']['subpanels'] = array(
             'layout' => 'subpanel',
             'label' => 'LBL_LEADS_SUBPANEL_TITLE',
             'context' => array(
-                'link' => 'contacts',
+                'link' => 'leads',
             ),
         ),
         array(
