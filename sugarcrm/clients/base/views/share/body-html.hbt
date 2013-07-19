@@ -1,0 +1,5 @@
+{{!--
+Define this empty to fallback to the body.hbt (that that doesn't use html tags).
+--}}
+<p>{{str "TPL_RECORD_SHARE_BODY" module this}}</p>
+<a href="{{url}}">{{url}}</a>
