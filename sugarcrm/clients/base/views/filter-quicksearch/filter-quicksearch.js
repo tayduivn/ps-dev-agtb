@@ -7,17 +7,18 @@
      * @extends View
      */
 
-    tagName: 'input',
-
-    className: 'search-name',
-
-    attributes: {
-        'type': 'text'
+    events: {
+        'keyup': 'throttledSearch',
+        'paste': 'throttledSearch'
     },
 
-    events: {
-        "keyup": "throttledSearch",
-        "paste": "throttledSearch"
+    plugins: ['quicksearchfilter'],
+
+    // Defining tagName, className and attributes allows us to avoid a template and an extra element
+    tagName: 'input',
+    className: 'search-name',
+    attributes: {
+        'type': 'text'
     },
 
     /**
@@ -25,13 +26,9 @@
      * @param {Object} opts
      */
     initialize: function(opts) {
-        // We cannot set the placeholder in the attributes hash, as we may not
-        // have SUGAR.App when the constructor is called. We can't add it to the
-        // attributes hash here since Backbone.View._ensureElement() is called
-        // before initialize.
-        this.$el.attr('placeholder', app.lang.get('LBL_BASIC_QUICK_SEARCH'));
         app.view.View.prototype.initialize.call(this, opts);
-        this.layout.on("filter:clear:quicksearch", this.clearInput, this);
+        this.listenTo(this.layout, 'filter:clear:quicksearch', this.clearInput);
+        this.listenTo(this.layout, 'filter:change:module', this.updatePlaceholder);
     },
 
     /**
@@ -42,16 +39,59 @@
         var newSearch = this.$el.val();
         if(this.currentSearch !== newSearch) {
             this.currentSearch = newSearch;
-            this.layout.trigger("filter:apply", newSearch);
+            this.layout.trigger('filter:apply', newSearch);
         }
     }, 400),
+
+    /**
+     * Retrieve the field labels
+     *
+     * @param {String} moduleName
+     * @param {Array} field names
+     * @returns {Array} field labels
+     */
+    getFieldLabels: function(moduleName, fields) {
+        var moduleMeta = app.metadata.getModule(moduleName);
+        var labels = [];
+        _.each(fields, function(fieldName) {
+            var fieldMeta = moduleMeta.fields[fieldName];
+            labels.push(app.lang.get(fieldMeta.vname, moduleName).toLowerCase());
+        });
+        return labels;
+    },
+
+    /**
+     * Update quick search placeholder to Search by Field1, Field2, Field3 when the module changes
+     * @param string linkModuleName
+     * @param string linkModule
+     */
+    updatePlaceholder: function(linkModuleName, linkModule) {
+        var label;
+        this.toggleInput();
+        if (!this.$el.hasClass('hide') && linkModule !== 'all_modules') {
+            var fields = this.getModuleQuickSearchFields(linkModuleName),
+                fieldLabels = this.getFieldLabels(linkModuleName, fields);
+            label = app.lang.get('LBL_SEARCH_BY') + ' ' + fieldLabels.join(', ') + '...';
+        } else {
+            label = app.lang.get('LBL_BASIC_QUICK_SEARCH');
+        }
+        this.$el.attr('placeholder', label);
+    },
+
+    /**
+     * Hide input if on Activities
+     */
+    toggleInput: function() {
+        this.$el.toggleClass('hide', !!this.layout.showingActivities);
+    },
 
     /**
      * Clear input
      */
     clearInput: function() {
-        this.$el.val("").toggleClass('hide', !!this.layout.showingActivities);
-        this.currentSearch = "";
-        this.layout.trigger("filter:apply");
+        this.toggleInput();
+        this.$el.val('');
+        this.currentSearch = '';
+        this.layout.trigger('filter:apply');
     }
 })
