@@ -63,7 +63,7 @@
                     _.each(data, function (tweet) {
                         var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
                                 "$1 $2 $4 $3 UTC")),
-                            date = app.date.format(time, "Y-m-d H:i:s"),
+                            date = app.date.format(time, "Y/m/d H:i:s"),
                             text = tweet.text,
                             sourceUrl = tweet.source,
                             id = tweet.id_str,
