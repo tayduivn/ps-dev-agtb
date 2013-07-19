@@ -27,22 +27,26 @@
  ********************************************************************************/
 //FILE SUGARCRM flav=ent ONLY
 *}
-<link rel="stylesheet" type="text/css" href="{$css_url}" />
+<!-- Sidecar Config -->
+<script type="text/javascript" src="cache/config.js"></script>
+<!-- CSS -->
+{foreach from=$css_url item=url}
+    <link rel="stylesheet" href="{$url}"/>
+{/foreach}
 <style>
     h2{literal}{line-height: 100%;}{/literal}
     body{literal}{padding-top: 0px;}{/literal}
 </style>
-<h1>Customize Theme</h1>
-<div class="themes" style="">
-    <div class="content">
-        <br>
+<div id="portal_themeroller" style="">
+    <div id="alerts" class="alert-top">
         <div class="alert alert-process">
-            <strong>Loading</strong>
-
+            <strong>{$LBL_LOADING}</strong>
             <div class="loading">
                 <span class="l1"></span><span class="l2"></span><span class="l3"></span>
             </div>
         </div>
+    </div>
+    <div class="content">
     </div>
 </div>
 
@@ -52,33 +56,7 @@
 {literal}
 
 <script language="javascript">
-// bootstrap our config
-(function (app) {
-    app.augment("config", {
-        appId:'portal',
-        env:'dev',
-        debugSugarApi:false,
-        logLevel:'FATAL',
-        logWriter:'ConsoleWriter',
-        logFormatter:'SimpleFormatter',
-        serverUrl:'./rest/v10',
-        serverTimeout:30,
-        maxQueryResult:20,
-        maxSearchQueryResult:3,
-        platform:"portal",
-        defaultModule:"Cases",
-        additionalComponents:{
-            alert:{
-                target:'#alert'
-            }
-        },
-        clientID:"sugar",
-        authStore:"sugarAuthStore",
-        loadCss: false,
-        syncConfig: false
-    }, false);
-
-})(SUGAR.App);
+SUGAR.App.config.platform = 'portal';
 
 // set our auth Token
 SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
@@ -90,7 +68,7 @@ SUGAR.App.sugarAuthStore.set('AuthAccessToken', {/literal}'{$token}'{literal});
             app.AUTH_ACCESS_TOKEN = authAccessToken;
             app.AUTH_REFRESH_TOKEN = authAccessToken;
             app.init({
-                el:".themes",
+                el:"#portal_themeroller",
                 contentEl:".content"
             });
             return app;
@@ -115,9 +93,8 @@ App.events.off("app:sync:complete");
 App.sync(
         {
             callback:function (data) {
-                //TODO the module probably shouldnt be cases
+                $('#alerts').empty();
                 App.controller.loadView({
-                    module:'Cases',
                     layout:'themeroller',
                     create:true
                 });

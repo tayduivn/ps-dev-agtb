@@ -64,6 +64,12 @@ class RestService extends ServiceBase
     protected $max_version = 10;
 
     /**
+     * An array of api settings
+     * @var array
+     */
+    public $api_settings = array();
+
+    /**
      * The acl action attempting to be run
      * @var string
      */
@@ -103,6 +109,23 @@ class RestService extends ServiceBase
             $this->response = new RestResponse($_SERVER);
         }
         return $this->response;
+    }
+
+    /**
+     * Creates the RestService object and reads in the metadata for the API
+     */
+    public function __construct()
+    {
+        $apiSettings = array();
+        require 'include/api/metadata.php';
+        if (SugarAutoLoader::fileExists('custom/include/api/metadata.php')) {
+            // Don't use requireWithCustom because we need the data out of it
+            require 'custom/include/api/metadata.php';
+        }
+        
+        $this->min_version = $apiSettings['minVersion'];
+        $this->max_version = $apiSettings['maxVersion'];
+        $this->api_settings = $apiSettings;
     }
 
     /**

@@ -46,6 +46,7 @@ $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
+$moduleList[] = 'WebLogicHooks';
 $moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
@@ -140,6 +141,7 @@ $beanList['TeamSetModules']            = 'TeamSetModule';
 $beanList['Quotes']         = 'Quote';
 $beanList['RevenueLineItems'] = 'RevenueLineItem';
 $beanList['Products']       = 'Product';
+$beanList['WebLogicHooks'] = 'WebLogicHook';
 $beanList['ProductBundles']     = 'ProductBundle';
 $beanList['ProductBundleNotes'] = 'ProductBundleNote';
 $beanList['ProductTemplates']= 'ProductTemplate';
@@ -281,6 +283,7 @@ $beanFiles['Quote']         = 'modules/Quotes/Quote.php';
 $beanFiles['ProductBundleNote'] = 'modules/ProductBundleNotes/ProductBundleNote.php';
 $beanFiles['Product']       = 'modules/Products/Product.php';
 $beanFiles['ProductBundle']     = 'modules/ProductBundles/ProductBundle.php';
+$beanFiles['WebLogicHook'] = 'modules/WebLogicHooks/WebLogicHook.php';
 $beanFiles['RevenueLineItem'] = 'modules/RevenueLineItems/RevenueLineItem.php';
 $beanFiles['Shipper']       = 'modules/Shippers/Shipper.php';
 $beanFiles['TaxRate']       = 'modules/TaxRates/TaxRate.php';
@@ -372,6 +375,7 @@ $adminOnlyList = array(
                     'UpgradeWizard' => array('all' => 1),
                     'Studio' => array('all' => 1),
                     'Schedulers' => array('all' => 1),
+                    'WebLogicHooks' => array('all' => 1),
                     );
 
 $apiModuleList = array('Users', 'ActivityStream');

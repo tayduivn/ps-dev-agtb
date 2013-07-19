@@ -36,7 +36,7 @@ $viewdefs['Products']['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'quote_name',
+                    'name' => 'status',
                     'enabled' => true,
                     'default' => true,
                 ),

@@ -352,7 +352,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                             $source = $cell;
                         }
 
-                        $lastField = $this->getNewRowItem($source, $fielddefs[$fieldName]);
+                        // If the field defs is empty it needs to be an array
+                        $lastField = $this->getNewRowItem($source, (empty($fielddefs[$fieldName]) ? array() : $fielddefs[$fieldName]));
                     }
 
                 }

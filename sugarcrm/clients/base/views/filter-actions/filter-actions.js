@@ -8,6 +8,7 @@
      */
     events: {
         "change input": "toggleDisabled",
+        "keyup input": "toggleDisabled",
         "click a.filter-close": "triggerClose",
         "click a.save_button:not(.disabled)": "triggerSave",
         "click a.delete_button:not(.hide)": "triggerDelete"

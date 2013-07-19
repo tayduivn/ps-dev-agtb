@@ -42,7 +42,7 @@
                 {{/if}}
                 {{#unless isAuthenticated}}
                 <div class="btn-group dropdown" id="languageList">
-                        <a href="javascript:void(0)" title="{{str "LBL_LANGUAGE"}}" class="btn" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i>
+                        <a href="javascript:void(0)" title="{{str "LBL_LANGUAGE"}}" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i>
                             {{str "LBL_LANGUAGE"}}</a>
                         <ul class="dropdown-menu bottom-up">
                             <li class="dropdown-caret right">

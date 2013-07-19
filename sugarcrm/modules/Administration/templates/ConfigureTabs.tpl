@@ -202,5 +202,9 @@
 		}
 		YAHOO.util.Dom.get('disabled_tabs').value = YAHOO.lang.JSON.stringify(modules);
 	}
+
+    // ping sidecar everytime this page is loaded to check for possible http 412 codes (refreshes the menu)
+    var app = parent.SUGAR.App;
+    app.api.call('read', app.api.buildURL('ping'));
 {/literal}
 </script>

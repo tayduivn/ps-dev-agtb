@@ -58,12 +58,16 @@ describe("Theme Roller View", function() {
         expect(themeApiSpy.lastCall.args[2]).toEqual({a: "aaaa", platform: platform, themeName: "default"});
 
         //Describe resetTheme
+        var alertStub = sinon.stub(app.alert, 'show', function(key, args) {
+           args.onConfirm();
+        });
         view.resetTheme();
         expect(themeApiSpy.lastCall.args[0]).toEqual("create");
         expect(themeApiSpy.lastCall.args[1]).toEqual(url);
         expect(themeApiSpy.lastCall.args[2]).toEqual({reset: true, platform: platform, themeName: "default"});
 
         //Restore stubs
+        alertStub.restore();
         themeApiSpy.restore();
         showMessageSpy.restore();
     });

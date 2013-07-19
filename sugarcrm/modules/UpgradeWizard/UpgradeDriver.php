@@ -874,6 +874,12 @@ abstract class UpgradeDriver
         if($this->sugar_initialized) {
             return;
         }
+
+        // BR-385 - This fixes the issues around SugarThemeRegistry fatals.  The cache needs rebuild on stage-post init of sugar
+        if ($this->current_stage == 'post') {
+            $this->cleanCaches();
+        }
+
         if(!defined('sugarEntry')) define('sugarEntry', true);
         $this->log("Initializig SugarCRM environment");
         global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale, $installing;

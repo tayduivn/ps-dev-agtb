@@ -36,8 +36,11 @@
         return value;
     },
     format:function(value){
-        value = value || this.def['default'] || "";
-        if (value && !value.match(/^(http|https):\/\//)) {
+        if(_.isEmpty(value)){
+            // Name conflict with iframe's default value def and the list view's default column flag
+            value = _.isString(this.def['default']) ? this.def['default'] : undefined;
+        }
+        if (_.isString(value) && !value.match(/^(http|https):\/\//)) {
             value = "http://" + value.trim();
         }
         if(this.def.gen == "1"){

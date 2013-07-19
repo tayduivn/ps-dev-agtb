@@ -93,14 +93,36 @@ describe("BaseFilterModuleDropdownView", function () {
 
         it('gets module list for Subpanels', function() {
             var metadataStub = sinon.stub(app.utils, 'getSubpanelList', function(module) {
-                return {"LBL_CONTACTS_SUBPANEL_TITLE":'contacts'};
+                return {"LBL_CONTACTS_SUBPANEL_TITLE":'cases'};
             });
             var dataStub = sinon.stub(app.data, 'getRelatedModule', function(module, link) {
-                return 'Contacts';
+                return 'Cases';
             })
             var expected, filterList;
             expected = [{ id: 'all_modules', text: app.lang.get("LBL_TABGROUP_ALL")},
-                        { id: 'contacts', text: app.lang.get("LBL_CONTACTS_SUBPANEL_TITLE") }];
+                        { id: 'cases', text: app.lang.get("LBL_CONTACTS_SUBPANEL_TITLE") }];
+            filterList = view.getModuleListForSubpanels();
+            expect(filterList).toEqual(expected);
+            metadataStub.restore();
+            dataStub.restore();
+        });
+
+        it('gets module list for Subpanels without hidden subpanels', function() {
+            //Contacts is hidden
+            var metadataStub = sinon.stub(app.utils, 'getSubpanelList', function(module) {
+                return {"LBL_MODULE_NAME":'cases', "LBL_CONTACTS_SUBPANEL_TITLE":'contacts'};
+            });
+            var dataStub = sinon.stub(app.data, 'getRelatedModule', function(module, link) {
+                if(link === 'cases'){
+                    return 'Cases';
+                }
+                if(link === 'contacts'){
+                    return 'Contacts';
+                }
+            })
+            var expected, filterList;
+            expected = [{ id: 'all_modules', text: app.lang.get("LBL_TABGROUP_ALL")},
+                { id: 'cases', text: app.lang.get("LBL_MODULE_NAME") }];
             filterList = view.getModuleListForSubpanels();
             expect(filterList).toEqual(expected);
             metadataStub.restore();

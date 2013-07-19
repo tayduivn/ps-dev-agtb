@@ -486,6 +486,12 @@
             customBuildRoute: function(moduleOrContext, id, action, inBwc) {
                 var module, moduleMeta;
 
+                // Since _.isString(undefined) returns false,
+                // the following block prevent going getter block
+                if (_.isEmpty(moduleOrContext)) {
+                    return '';
+                }
+
                 if (_.isString(moduleOrContext)) {
                     module = moduleOrContext;
                 } else {

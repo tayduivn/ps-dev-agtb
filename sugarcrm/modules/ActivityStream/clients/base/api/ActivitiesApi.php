@@ -139,6 +139,7 @@ class ActivitiesApi extends FilterApi
             if ($record['activity_type'] == 'update') {
                 if (is_null($bean) || empty($bean->id)) {
                     $record['fields'] = json_decode($record['fields'], true);
+                    $changedData      = array();
                     if (!empty($record['fields'])) {
                         $aclBean = null;
                         if (!is_null($bean)) {
@@ -159,12 +160,13 @@ class ActivitiesApi extends FilterApi
                             $aclBean->ACLFilterFieldList($record['data']['changes'], $context);
                         }
                         foreach ($record['data']['changes'] as &$change) {
-                            if (!in_array($change['field_name'], $record['fields'])) {
-                                unset($record['data']['changes'][$change['field_name']]);
+                            if (in_array($change['field_name'], $record['fields'])) {
+                                $changedData[$change['field_name']] = $record['data']['changes'][$change['field_name']];
                             }
                         }
                         unset($record['fields']);
                     }
+                    $record['data']['changes'] = $changedData;
                 } else {
                     $context = array('user' => $api->user);
                     $bean->ACLFilterFieldList($record['data']['changes'], $context);

@@ -1,4 +1,4 @@
-describe('currency field', function() {
+describe('Base.Fields.Currency', function() {
 
     var app;
     var model;
@@ -71,7 +71,7 @@ describe('currency field', function() {
         metadata = null;
     });
 
-    describe('edit view', function() {
+    describe('EditView', function() {
 
         var field;
 
@@ -111,15 +111,17 @@ describe('currency field', function() {
 
         it("should render with currencies selector", function() {
 
-            var currencyRender;
-            var getCurrencyField = sinon.stub(field, 'getCurrencyField', function() {
+            var currencyRender,
+                sandbox = sinon.sandbox.create();
+            var getCurrencyField = sandbox.stub(field, 'getCurrencyField', function() {
                 var currencyField = SugarTest.createField('base', 'amount', 'enum', 'edit', {
                     options: {'-99': '$ USD' }
                 });
                 currencyField.model = model;
-                currencyRender = sinon.stub(currencyField, 'render', function() {
+                currencyRender = sandbox.stub(currencyField, 'render', function() {
                     return null;
                 });
+                sandbox.stub(currencyField, 'setDisabled');
 
                 return currencyField;
             });
@@ -127,8 +129,7 @@ describe('currency field', function() {
             field.render();
             expect(currencyRender).toHaveBeenCalled();
 
-            currencyRender.restore();
-            getCurrencyField.restore();
+            sandbox.restore();
         });
     });
 

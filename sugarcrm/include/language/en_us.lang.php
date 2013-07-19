@@ -39,6 +39,7 @@ $app_list_strings = array (
     'Quotes' => 'Quotes',
     'Products' => 'Quoted Line Items',
     'RevenueLineItems' => 'Revenue Line Items',
+    'WebLogicHooks' => 'Web Logic Hooks',
     'ProductCategories' => 'Product Categories',
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
@@ -148,6 +149,7 @@ $app_list_strings = array (
     'Products' => 'Quoted Line Item',
     'ProductCategories' => 'Product Category',
     'RevenueLineItems' => 'Revenue Line Item',
+    'WebLogicHooks' => 'Web Logic Hook',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
     'ForecastWorksheets' => 'Forecast Worksheet',
@@ -1830,6 +1832,15 @@ $app_list_strings = array (
         'best' => 'Best',
         'worst' => 'Worst'
     ),
+    'webLogicHookList' => array(
+        'after_save' => 'After Save',
+        'after_delete' => 'After Delete',
+        'after_relationship_add' => 'After Relationship Add',
+        'after_relationship_delete' => 'After Relationship Delete',
+        'after_login' => 'After Login',
+        'after_logout' => 'After Logout',
+        'after_login_failed' => 'After Login Failed',
+    ),
     //END SUGARCRM flav=pro ONLY
 );
 
@@ -2455,6 +2466,7 @@ $app_strings = array (
     'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
     'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
     'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',
+    'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
 
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -3566,6 +3578,8 @@ $app_strings = array (
     'LBL_FILE_DELETED' => 'File was successfully deleted',
 
     //theme roller
+    'LBL_THEME_PREVIEW' => 'Theme Preview',
+    'LBL_LOADING_PREVIEW' => 'Loading Preview',
     'LBL_RESET' => 'Reset',
     'LBL_COLORS' => 'Colors',
     'BorderColor' => 'Border Color',
@@ -3573,9 +3587,7 @@ $app_strings = array (
     'PrimaryButton' => 'Primary Button',
     'LBL_SAVE_AND_DEPLOY_BTN' => 'Save & Deploy',
     'LBL_RESET_THEME_LNK' => 'Restore Default Theme',
-    'LBL_RESET_THEME_MODAL_TITLE' => 'Reset default theme',
     'LBL_RESET_THEME_MODAL_INFO' => 'You are about to erase your custom theme with the default theme.',
-    'LBL_RESET_THEME_MODAL_CONFIRM' => 'Do you want to proceed?',
     'LBL_RESET_THEME_PROCESS' => 'Restoring default theme...',
     'LBL_SAVE_THEME_PROCESS' => 'Saving theme...',
 

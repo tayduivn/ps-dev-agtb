@@ -56,6 +56,9 @@ class RestResponse extends Zend_Http_Response
             $this->version = '1.1';
         }
         $this->server_data = $server;
+
+        // Add in some extra sugar-specific HTTP codes
+        self::$messages[433] = "Client Out Of Date";
     }
 
     /**

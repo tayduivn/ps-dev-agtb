@@ -58,7 +58,7 @@
             level: 'warning',
             autoClose: false,
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
-            messages: app.lang.get('TPL_RLI_CREATE', module),
+            messages: app.lang.get('TPL_RLI_CREATE', 'Opportunities'),
             onLinkClick: _.bind(function() {
                 app.alert.dismiss('opp-rli-create');
                 app.alert.dismiss('create-success');
