@@ -115,6 +115,9 @@ class Bug53944Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::tearDown();
     }
 
+    /**
+     * @large
+     */
     public function testRelationOneToOne()
     {
         //Creating new Account

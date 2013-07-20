@@ -166,6 +166,9 @@ class SaveRelationshipChangesTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @large
+     */
     public function testHandleRemainingRelateFields()
     {
         // create a test relationship
