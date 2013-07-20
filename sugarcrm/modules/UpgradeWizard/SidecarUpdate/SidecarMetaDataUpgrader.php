@@ -70,6 +70,7 @@ class SidecarMetaDataUpgrader
         //END SUGARCRM flav=pro ONLY
         'base'        => array(
             'custom'  => 'custom/',
+            'working' => 'custom/working/',
         ),
     );
 
@@ -667,6 +668,11 @@ class SidecarMetaDataUpgrader
         // class to get the correct name of the metadata file
         if ($history && !$deployed && $type == 'base') {
             $type = 'history';
+        }
+
+        if($client == 'base' && isModuleBWC($module)) {
+            // if the module is in BWC, do not upgrade its views in base client
+            return false;
         }
 
         // Only hit history files for history types with a timestamp

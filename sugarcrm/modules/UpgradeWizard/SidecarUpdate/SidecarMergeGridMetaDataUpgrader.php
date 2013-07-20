@@ -18,6 +18,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
 
     /**
      * Composite views
+     * sugar7view => [ 'sugar6view1' => ['metadatadefs1', 'view1'], 'sugar6view2' => ['metadatadefs2', 'view2'] ]
      * @var array
      */
     protected $mergeViews = array(
@@ -27,12 +28,21 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         ),
     );
 
+    /**
+     * Panels where fields from each view are placed
+     * @var array
+     */
     protected $viewPanels = array(
         MB_RECORDVIEW => array(
             MB_DETAILVIEW => 'LBL_RECORD_BODY',
             MB_EDITVIEW => 'LBL_RECORD_SHOWMORE'
         ),
     );
+
+    /**
+     * List of upgraded dir to prevent double upgrades
+     */
+    protected static $upgraded = array();
 
     /**
      * Sets the necessary legacy field defs for use in converting
@@ -44,6 +54,13 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         }
 
         $dirname = dirname($this->fullpath);
+        if(!empty(self::$upgraded[$this->viewtype][$dirname])) {
+            // we already did this path for this viewtype
+            return;
+        } else {
+            self::$upgraded[$this->viewtype][$dirname] = true;
+        }
+
         // Load all views for this combined view
         foreach($this->mergeViews[$this->viewtype] as $view => $data) {
             unset($module_name);
@@ -76,10 +93,26 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
     }
 
     /**
+     * (non-PHPdoc)
+     * @see SidecarAbstractMetaDataUpgrader::handleSave()
+     */
+    public function handleSave()
+    {
+        if(empty($this->sidecarViewdefs)) {
+            // if we didn't create any new defs, nothing to save
+            return true;
+        }
+        return parent::handleSave();
+    }
+
+    /**
      * Converts the legacy Grid metadata to Sidecar style
      */
     public function convertLegacyViewDefsToSidecar()
     {
+        if(empty($this->legacyViewdefs)) {
+            return;
+        }
         $this->logUpgradeStatus('Converting ' . $this->client . ' ' . $this->viewtype . ' view defs for ' . $this->module);
 
         // TODO: if it's a custom module, will throw, we should use template instead
@@ -109,7 +142,12 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         }
 
         $origFields = array();
-        $origData = $parser->getFieldsFromPanels($parser->convertToCanonicalForm($parser->_viewdefs['panels'], $parser->_fielddefs));
+        $defaultDefs = $this->loadDefaultMetadata();
+        // replace viewdefs with defaults, since parser's viewdefs can be already customized by other parts
+        // of the upgrade
+        $parser->_viewdefs['panels'] = $parser->convertFromCanonicalForm($defaultDefs['panels'], $parser->_fielddefs);
+        // get field list
+        $origData = $parser->getFieldsFromPanels($defaultDefs['panels'], $parser->_fielddefs);
         // Go through existing fields and remove those not in the new data
         foreach($origData as $fname => $fielddef) {
             if(isset($fielddef['type'])) {
