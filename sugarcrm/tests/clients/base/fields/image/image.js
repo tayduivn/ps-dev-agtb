@@ -112,8 +112,8 @@ describe("image field", function() {
 
         it("should trigger change with a param for the record view", function() {
             var triggerSpy = sinon.spy(model, "trigger");
-            field.model.uploadFile = function() {
-            };
+            var attrStub = sinon.stub(jQuery, 'attr');
+            field.model.uploadFile = function() {};
             var uploadFileStub = sinon.stub(field.model, "uploadFile", function(fieldName, $files, callbacks, options) {
                 // Force production code's success hook to fire passing our fake meta
                 callbacks.success({
@@ -125,6 +125,7 @@ describe("image field", function() {
             field.selectImage();
             expect(triggerSpy).toHaveBeenCalledWith("change", "image");
             triggerSpy.restore();
+            attrStub.restore();
         });
 
     });

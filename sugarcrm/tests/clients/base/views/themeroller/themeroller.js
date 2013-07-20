@@ -1,17 +1,18 @@
 describe("Theme Roller View", function() {
 
-    var app, view;
+    var app, view, themeApiStub;
 
     beforeEach(function() {
         if (!$.fn.colorpicker) {
             $.fn.colorpicker = function() {};
         }
         app = SugarTest.app;
+        themeApiStub = sinon.stub(app.api, "call");
         var context = app.context.getContext();
         view = SugarTest.createView("base","Cases", "themeroller", null, context);
     });
-    
     afterEach(function() {
+        themeApiStub.restore();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -39,36 +40,33 @@ describe("Theme Roller View", function() {
         var url, platform = app.config.platform;
         $('<input>').attr({type:"text", name:"a", value:"aaaa"}).appendTo(view.$el);
 
-
         //Describe loadTheme
-        var themeApiSpy = sinon.stub(app.api, "call");
         var showMessageSpy = sinon.stub(view, "showMessage");
         view.loadTheme();
 
         url = app.api.buildURL('theme', '', {}, {platform: platform, themeName: "default"});
-        expect(themeApiSpy.lastCall.args[0]).toEqual("read");
-        expect(themeApiSpy.lastCall.args[1]).toEqual(url);
-        expect(themeApiSpy.lastCall.args[2]).toEqual({});
+        expect(themeApiStub.lastCall.args[0]).toEqual("read");
+        expect(themeApiStub.lastCall.args[1]).toEqual(url);
+        expect(themeApiStub.lastCall.args[2]).toEqual({});
 
         //Describe saveTheme
         view.saveTheme();
         url = app.api.buildURL('theme', '', {}, {});
-        expect(themeApiSpy.lastCall.args[0]).toEqual("create");
-        expect(themeApiSpy.lastCall.args[1]).toEqual(url);
-        expect(themeApiSpy.lastCall.args[2]).toEqual({a: "aaaa", platform: platform, themeName: "default"});
+        expect(themeApiStub.lastCall.args[0]).toEqual("create");
+        expect(themeApiStub.lastCall.args[1]).toEqual(url);
+        expect(themeApiStub.lastCall.args[2]).toEqual({a: "aaaa", platform: platform, themeName: "default"});
 
         //Describe resetTheme
         var alertStub = sinon.stub(app.alert, 'show', function(key, args) {
            args.onConfirm();
         });
         view.resetTheme();
-        expect(themeApiSpy.lastCall.args[0]).toEqual("create");
-        expect(themeApiSpy.lastCall.args[1]).toEqual(url);
-        expect(themeApiSpy.lastCall.args[2]).toEqual({reset: true, platform: platform, themeName: "default"});
+        expect(themeApiStub.lastCall.args[0]).toEqual("create");
+        expect(themeApiStub.lastCall.args[1]).toEqual(url);
+        expect(themeApiStub.lastCall.args[2]).toEqual({reset: true, platform: platform, themeName: "default"});
 
         //Restore stubs
         alertStub.restore();
-        themeApiSpy.restore();
         showMessageSpy.restore();
     });
 
