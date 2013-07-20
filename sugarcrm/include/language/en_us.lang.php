@@ -3559,6 +3559,26 @@ $app_strings = array (
     'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
     'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
 
+    //for sugar7 errors
+    'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
+    'LBL_INVALID_CREDS_TITLE' => 'Invalid Credentials',
+    'LBL_INVALID_GRANT' => 'Your token is invalid or has expired. Please login again.',
+    'LBL_INVALID_GRANT_TITLE' => 'Token Expired',
+    'LBL_AUTH_FAILED' => 'Client authentication failed.',
+    'LBL_AUTH_FAILED_TITLE' => 'Invalid Client',
+    'LBL_INVALID_REQUEST' => 'The request made is invalid or malformed. Please contact technical support.',
+    'LBL_INVALID_REQUEST_TITLE' => 'Invalid Request',
+    'LBL_REQUEST_TIMEOUT' => 'The request timed out.',
+    'LBL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
+    'LBL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
+    'LBL_UNAUTHORIZED_TITLE' =>'Unauthorized',
+    'LBL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
+    'LBL_RESOURCE_UNAVAILABLE_TITLE' => 'Forbidden',
+    'LBL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
+    'LBL_METHOD_NOT_ALLOWED_TITLE' => 'Method Not Allowed',
+    'LBL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
+    'LBL_PRECONDITION_MISSING_TITLE' => 'Error: ',
+
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
 
