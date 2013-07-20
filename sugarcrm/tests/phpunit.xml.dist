@@ -35,6 +35,10 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
+         strict="true"
+         timeoutForSmallTests="30"
+         timeoutForMediumTests="40"
+         timeoutForLargeTests="60"
          syntaxCheck="false"
          bootstrap="SugarTestHelper.php"
         >
