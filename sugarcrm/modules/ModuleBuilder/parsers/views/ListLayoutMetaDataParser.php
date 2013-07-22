@@ -446,11 +446,32 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return array();
     }
 
-   static function _trimFieldDefs ( $def )
-	{
-		if ( isset ( $def [ 'vname' ] ) )
-			$def [ 'label' ] = $def [ 'vname' ] ;
-		return array_intersect_key ( $def , array ( 'type' => true, 'studio' => true , 'label' => true , 'width' => true , 'sortable' => true , 'related_fields' => true , 'default' => true , 'link' => true , 'align' => true , 'orderBy' => true ,'hideLabel' => true, 'customLable' => true , 'currency_format' => true ) ) ;
-	}
+    public static function _trimFieldDefs($def)
+    {
+        if (isset($def['vname'])) {
+            $def['label'] = $def['vname'];
+        }
+        
+        $requiredProps = array(
+            'type' => true, 
+            'studio' => true, 
+            'label' => true, 
+            'width' => true, 
+            'sortable' => true, 
+            'related_fields' => true, 
+            'default' => true, 
+            'link' => true, 
+            'align' => true, 
+            'orderBy' => true,
+            'hideLabel' => true, 
+            'customLable' => true, 
+            'currency_format' => true, 
+            'readonly' => true,
+        );
+        
+        $return = array_intersect_key($def, $requiredProps);
+        
+        return $return;
+    }
 
 }

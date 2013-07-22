@@ -46,6 +46,7 @@ $viewdefs['Reports']['base']['view']['list'] = array(
                     'name'  => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => true,
+                    'readonly' => true,
                 ),
             ),
         ),

@@ -29,6 +29,7 @@ $dictionary['Tracker'] = array(
             'len' => '11',
             'isnull' => 'false',
             'auto_increment' => true,
+            'readonly' => true,
             'reportable'=>true,
         ),
 	    'monitor_id'=>array (

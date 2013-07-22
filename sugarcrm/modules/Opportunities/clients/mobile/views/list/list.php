@@ -90,12 +90,14 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'created_by_name',
                     'width' => '10',
                     'label' => 'LBL_CREATED',
                     'default' => false,
+                    'readonly' => true,
                 ),
 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -118,6 +120,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'width' => '5',
                     'label' => 'LBL_MODIFIED',
                     'default' => false,
+                    'readonly' => true,
                 )
             )
         )

@@ -88,6 +88,7 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'enabled' => true,
                     'width' => 13,
                     'default' => true,
+                    'readonly' => true,
                 ),
             ),
 

@@ -28,7 +28,8 @@ $dictionary['Campaign'] = array (
             ),
             'len' => '11',
             'auto_increment' => true,
-            'comment' => 'The internal ID of the tracker used in a campaign; no longer used as of 4.2 (see campaign_trkrs)'
+            'comment' => 'The internal ID of the tracker used in a campaign; no longer used as of 4.2 (see campaign_trkrs)',
+            'readonly' => true,
         ),
         'tracker_count' => array (
             'name' => 'tracker_count',

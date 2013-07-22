@@ -1,6 +1,6 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+//FILE SUGARCRM flav=ent ONLY
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -13,48 +13,37 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Software without first paying applicable fees is strictly prohibited.  You do not have the
  *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id$
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-$viewdefs['Notes']['mobile']['view']['list'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_PANEL_DEFAULT',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'LBL_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
-                    'width' => '10%',
-                ),
-                array(
-                    'name' => 'date_modified',
-                    'label' => 'LBL_DATE_MODIFIED',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'filename',
-                    'label' => 'LBL_FILENAME',
-                    'enabled' => true,
-                    'width' => '10%',
-                    'default' => true,
-                ),
-            ),
-        ),
-    ),
-);
+
+require_once 'modules/ModuleBuilder/parsers/views/SidecarListLayoutMetaDataParser.php';
+
+class SidecarListLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    /**
+     * Tests parsing of readonly properties of field defs
+     * 
+     * @dataProvider readonlyPropTestProvider
+     * @param array $defs Mock array of vardefs to trim
+     * @param boolean $expectation Assertion to test
+     */
+    public function testReadonlyPropertyIsParsed($defs, $expectation)
+    {
+        $result = SidecarListLayoutMetaDataParser::_trimFieldDefs($defs);
+        $actual = !empty($result['readonly']);
+        $this->assertEquals($expectation, $actual, "Assertion of readonly property existence failed");
+    }
+    
+    public function readonlyPropTestProvider()
+    {
+        return array(
+            array('defs' => array('name' => 'test1', 'vname' => 'LBL_TEST1', 'readonly' => true), 'expectation' => true),
+            array('defs' => array('name' => 'test2', 'vname' => 'LBL_TEST2'), 'expectation' => false),
+        );
+    }
+}

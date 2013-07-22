@@ -48,14 +48,16 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'name' => 'date_entered',
 		'vname' => 'LBL_DATE_ENTERED',
 		'type' => 'datetime',
-		'comment' => 'Date record created'
+		'comment' => 'Date record created',
+		'readonly' => true,
 	),
 	'date_modified' =>
 	array (
 		'name' => 'date_modified',
 		'vname' => 'LBL_DATE_MODIFIED',
 		'type' => 'datetime',
-		'comment' => 'Date record last modified'
+		'comment' => 'Date record last modified',
+		'readonly' => true,
 	),
 	'modified_user_id' =>
 	array (
@@ -69,7 +71,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'dbType' => 'id',
 		'reportable'=>true,
 		'importable' => 'true',
-		'comment' => 'User who last modified record'
+		'comment' => 'User who last modified record',
+		'readonly' => true,
 	),
 	'created_by' =>
 	array (
@@ -81,7 +84,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'table' => 'users',
 		'isnull' => 'false',
 		'dbType' => 'id',
-		'comment' => 'User who created record'
+		'comment' => 'User who created record',
+		'readonly' => true,
 	),
 	'type_id' =>
 	array (

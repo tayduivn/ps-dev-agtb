@@ -127,6 +127,7 @@ $viewdefs['Tasks']['base']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'enabled' => true,
                     'default' => true,
+                    'readonly' => true,
                 ),
             ),
         ),

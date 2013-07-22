@@ -898,15 +898,29 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return false;
     }
 
-    static function _trimFieldDefs ( $def )
-	{
-		$ret = array_intersect_key ( $def , 
-            array ( 'studio' => true , 'name' => true , 'label' => true , 'displayParams' => true , 'comment' => true , 
-                    'customCode' => true , 'customLabel' => true , 'tabindex' => true , 'hideLabel' => true) ) ;
-        if (!empty($def['vname']) && empty($def['label']))
+    public static function _trimFieldDefs($def)
+    {
+        $requiredProps = array(
+            'studio' => true,
+            'name' => true,
+            'label' => true,
+            'displayParams' => true,
+            'comment' => true,
+            'customCode' => true,
+            'customLabel' => true,
+            'tabindex' => true,
+            'hideLabel' => true,
+            'readonly' => true,
+        );
+        
+        $ret = array_intersect_key($def, $requiredProps);
+        
+        if (!empty($def['vname']) && empty($def['label'])) {
             $ret['label'] = $def['vname'];
-		return $ret;
-	}
+        }
+        
+        return $ret;
+    }
 	
 	public function getUseTabs(){
         if (isset($this->_viewdefs  [ 'templateMeta' ]['useTabs']))

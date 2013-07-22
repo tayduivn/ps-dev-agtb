@@ -131,6 +131,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => false,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 
                 array(
@@ -139,26 +140,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'label' => 'LBL_CREATED',
                     'default' => false,
                     'enabled' => true,
-                ),
-                array(
-                    'name' => '',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => '',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => '',
-                    'default' => false,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => '',
-                    'default' => false,
-                    'enabled' => true,
+                    'readonly' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

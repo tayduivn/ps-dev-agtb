@@ -31,6 +31,7 @@ $dictionary['Prospect'] = array(
 		'len' => '11',
 		'required'=>true,
 		'auto_increment' => true,
+        'readonly' => true,
 		'importable' => 'false',
 		'studio' => array('editview' => false),
 		),

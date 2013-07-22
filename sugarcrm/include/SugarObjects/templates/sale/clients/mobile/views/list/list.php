@@ -89,11 +89,13 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'name' => 'date_entered',
                     'width' => '10',
                     'label' => 'LBL_DATE_ENTERED',
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'created_by_name',
                     'width' => '10',
                     'label' => 'LBL_CREATED',
+                    'readonly' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -115,6 +117,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'name' => 'modified_by_name',
                     'width' => '5',
                     'label' => 'LBL_MODIFIED',
+                    'readonly' => true,
                 ),
             ),
         ),

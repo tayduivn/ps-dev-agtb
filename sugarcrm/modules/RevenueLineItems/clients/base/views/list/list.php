@@ -82,6 +82,7 @@ $fields = array(
         'name' => 'date_entered',
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
 );
 //END SUGARCRM flav=pro && flav!=ent ONLY

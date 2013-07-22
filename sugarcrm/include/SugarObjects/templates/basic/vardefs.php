@@ -70,6 +70,7 @@ $vardefs = array(
 	        'portaleditview' => false, // Bug58408 - hide from Portal edit layout
 	    ),
         'duplicate_on_record_copy' => 'no',
+        'readonly' => true,
 	  ),
 	  'date_modified' =>
 	  array (
@@ -84,6 +85,7 @@ $vardefs = array(
 	    ),
 	    'options' => 'date_range_search_dom',
         'duplicate_on_record_copy' => 'no',
+        'readonly' => true,
 	  ),
 		'modified_user_id' =>
 	  array (
@@ -100,6 +102,7 @@ $vardefs = array(
 	    'comment' => 'User who last modified record',
         'massupdate' => false,
         'duplicate_on_record_copy' => 'no',
+        'readonly' => true,
 	  ),
 	  'modified_by_name' =>
 	  array (
@@ -116,6 +119,7 @@ $vardefs = array(
 	    'duplicate_merge'=>'disabled',
         'massupdate' => false,
         'duplicate_on_record_copy' => 'no',
+        'readonly' => true,
 	  ),
 	  'created_by' =>
 	  array (
@@ -131,6 +135,7 @@ $vardefs = array(
 	    'comment' => 'User who created record',
         'massupdate' => false,
         'duplicate_on_record_copy' => 'no',
+        'readonly' => true,
 	  ),
 	  	'created_by_name' =>
 	  array (
@@ -148,6 +153,7 @@ $vardefs = array(
         'importable' => 'false',
         'massupdate' => false,
         'duplicate_on_record_copy' => 'no',
+        'readonly' => true,
 	),
 	  'description' =>
 	  array (

@@ -47,6 +47,7 @@ array( 'table' => 'emailman', 'comment' => 'Email campaign queue', 'fields' => a
     	'type' => 'int',
     	'len' => '11',
     	'auto_increment'=>true,
+    	'readonly' => true,
     	'comment' => 'Unique identifier',
   	),	
 	'campaign_id' => array(

@@ -89,6 +89,7 @@ $viewdefs['Contacts']['base']['view']['list'] = array(
                     'name' => 'date_entered',
                     'enabled' => true,
                     'default' => true,
+                    'readonly' => true,
                 ),
             ),
         ),

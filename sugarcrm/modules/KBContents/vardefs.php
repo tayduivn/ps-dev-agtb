@@ -125,6 +125,7 @@ $dictionary['KBContent'] = array(
 			'len' => 11,
 			'required' => true,
 			'auto_increment' => true,
+			'readonly' => true,
 			'comment' => 'Currently used only by instances using sql server.',
 			'duplicate_merge' => 'disabled',
 		),		

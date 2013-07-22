@@ -40,16 +40,28 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
                     'name' => 'bug_number',
                     'span' => 12,
                 ),
-                'date_entered',
+                array(
+                    'name' => 'date_entered',
+                    'readonly' => true,
+                ),
                 'status',
                 'priority',
                 'source',
                 'product_category',
                 'type',
                 'resolution',
-                'date_modified',
-                'modified_by_name',
-                'created_by_name',
+                array(
+                    'name' => 'date_modified',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'modified_by_name',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'created_by_name',
+                    'readonly' => true,
+                ),
                 'assigned_user_name',
                 array(
                     'name' => 'description',

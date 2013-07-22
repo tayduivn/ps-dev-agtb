@@ -40,6 +40,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'width' =>  5,
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 array(
                     'name' => 'name',
@@ -91,6 +92,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'width' => 10,
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
