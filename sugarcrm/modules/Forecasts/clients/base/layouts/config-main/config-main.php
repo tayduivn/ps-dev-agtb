@@ -32,10 +32,10 @@ $viewdefs['Forecasts']['base']['layout']['config-main'] = array(
             'view' => 'forecastsConfigRanges',
         ),
         array(
-            'view' => 'forecastsConfigWorksheetColumns',
+            'view' => 'forecastsConfigScenarios',
         ),
         array(
-            'view' => 'forecastsConfigScenarios',
+            'view' => 'forecastsConfigWorksheetColumns',
         ),
     ),
 );
