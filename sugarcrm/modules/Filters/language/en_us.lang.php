@@ -82,5 +82,10 @@ $mod_strings = array(
     'LBL_NEGLECTED_BUGS' => 'Neglected Bugs',
     'LBL_OPEN_CASES' => 'Urgent Open Cases',
     'LBL_NEGLECTED_CASES' => 'Neglected Cases',
+    'LBL_ACTIVITY_CREATE' => 'Messages for Create',
+    'LBL_ACTIVITY_UPDATE' => 'Messages for Update',
+    'LBL_ACTIVITY_LINK' => 'Messages for Link',
+    'LBL_ACTIVITY_UNLINK' => 'Messages for Unlink',
+    'LBL_ACTIVITY_POST' => 'Messages for Post',
     'LBL_FILTER_NEW_NAME' => 'Enter new filter name',
 );
