@@ -27,11 +27,6 @@
     displayTimeperiodPivot: true,
 
     /**
-     * Should we dynamicly update the chart
-     */
-    dynamicUpdate: false,
-
-    /**
      * Are we on the home page or not?
      */
     isOnHomePage: true,
@@ -81,37 +76,41 @@
             app.view.View.prototype.initialize.call(this, this.initOptions);
         } else {
             app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-                success: _.bind(function(o) {
-                    app.view.View.prototype.initialize.call(this, this.initOptions);
-                    this.values.module = 'Forecasts';
-                    this.isManager = o.initData.userData.isManager;
-                    this.displayTimeperiodPivot = (this.context.get('module') === "Home");
-    
-                    var defaultOptions = {
-                        user_id: app.user.get('id'),
-                        display_manager: false, // we always show the rep view by default
-                        selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
-                        timeperiod_id: o.defaultSelections.timeperiod_id.id,
-                        timeperiod_label: o.defaultSelections.timeperiod_id.label,
-                        dataset: o.defaultSelections.dataset,
-                        group_by: o.defaultSelections.group_by,
-                        ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
-                    }
-    
-                    if (!this.displayTimeperiodPivot) {
-                        this.isOnHomePage = false;
-                        defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
-                        var mdlAssignedUserId = this.model.original_assigned_user_id || this.model.get("assigned_user_id");
-                        this.dynamicUpdate = (mdlAssignedUserId == app.user.get('id'));
-                    }
-    
-                    this.values.set(defaultOptions);
-                    this.bindDataChange();
-                    this.render();
-                }, this),
+                success: _.bind(this.forecastInitCallback, this),
                 complete: this.initOptions ? this.initOptions.complete : null
             });
         }
+    },
+
+    /**
+     * The Callback for the forecast/init xhr call
+     * @param o
+     */
+    forecastInitCallback: function(o) {
+        app.view.View.prototype.initialize.call(this, this.initOptions);
+        this.values.module = 'Forecasts';
+        this.isManager = o.initData.userData.isManager;
+        this.displayTimeperiodPivot = (this.context.get('module') === "Home");
+
+        var defaultOptions = {
+            user_id: app.user.get('id'),
+            display_manager: false, // we always show the rep view by default
+            selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
+            timeperiod_id: o.defaultSelections.timeperiod_id.id,
+            timeperiod_label: o.defaultSelections.timeperiod_id.label,
+            dataset: o.defaultSelections.dataset,
+            group_by: o.defaultSelections.group_by,
+            ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
+        }
+
+        if (!this.displayTimeperiodPivot) {
+            this.isOnHomePage = false;
+            defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
+        }
+
+        this.values.set(defaultOptions);
+        this.bindDataChange();
+        this.render();
     },
 
     /**
@@ -119,9 +118,8 @@
      *
      */
     initDashlet: function() {
-        var fieldOptions,
+        var fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options),
             cfg = app.metadata.getModule('Forecasts', 'config');
-        fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options);
         this.dashletConfig.dataset.options = {};
 
         if (cfg.show_worksheet_worst) {
@@ -214,10 +212,7 @@
 
             if (this.isOnHomePage === false) {
                 this.findModelToListen();
-                if (this.dynamicUpdate) {
-                    this.listenModel.on('change', this.handleDataChange, this);
-                }
-                this.listenModel.on('change:assigned_user_id', this.handleAssignedUserChange, this);
+                this.listenModel.on('change', this.handleDataChange, this);
             }
         }
     },
@@ -233,40 +228,9 @@
             });
             if (ctx && ctx.has('collection')) {
                 this.listenModel = ctx.get('collection');
-                this.dynamicUpdate = this.checkCollectionForDynamicUpdate();
-                // since we have a collection, we need to run the update code once
-                this.listenModel.on('reset', this.checkCollectionForDynamicUpdate, this);
             }
         }
         //END SUGARCRM flav=ent ONLY
-    },
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    checkCollectionForDynamicUpdate: function() {
-        return !_.isEmpty(this.listenModel.find(function(model) {
-            return (model.get('assigned_user_id') === app.user.get('id'));
-        }));
-    },
-    //END SUGARCRM flav=ent ONLY
-
-    /**
-     * How to handle if the assigned_user changes.
-     *
-     * @param {Object} [model]      The model that changed, if not provided, it will use this.model
-     */
-    handleAssignedUserChange: function(model) {
-        var model = model || this.model,
-            canUpdate = model.get("assigned_user_id") === app.user.get('id');
-
-        if (this.dynamicUpdate && canUpdate === false) {
-            this.dynamicUpdate = false;
-            this.removeRowFromChart(model);
-            this.listenModel.off('change', this.handleDataChange, this);
-        } else if (this.dynamicUpdate === false && canUpdate) {
-            this.dynamicUpdate = true;
-            this.addRowToChart(model);
-            this.listenModel.on('change', this.handleDataChange, this);
-        }
     },
 
     /**
@@ -274,20 +238,22 @@
      * @param {Object} [model]      The model that changed, if not provided, it will use this.model
      */
     handleDataChange: function(model) {
-        if (this.values.get('display_manager') === false && this.dynamicUpdate) {
+        model = model || this.model;
+        var changed = model.changed,
+            changedField = _.keys(changed),
+            assigned_user = model.get('assigned_user_id');
+
+        // dump out if it's not a field we are watching
+        if (_.isEmpty(_.intersection(this.validChangedFields, _.keys(changed)))) {
+            return;
+        }
+
+        if (this.values.get('display_manager') === false && assigned_user == app.user.get('id')) {
             // we can update this chart
             // get what we are currently filtered by
             // find the item in the serverData
-            var model = model || this.model,
-                changed = model.changed,
-                changedField = _.keys(changed),
-                field = this.getField('paretoChart'),
+            var field = this.getField('paretoChart'),
                 serverData = field.getServerData();
-
-            // dump out if it's not a field we are watching
-            if (_.isEmpty(_.intersection(this.validChangedFields, _.keys(changed)))) {
-                return;
-            }
 
             // before we do anything, lets make sure that if the date_changed, make sure it's still in this range,
             // if it's not force the chart to update to the new timeperiod that is valid for this row, then add this
@@ -329,7 +295,7 @@
                 delete changed.commit_stage;
             }
 
-            _.find(serverData.data, function(record, i, list) {
+            var record = _.find(serverData.data, function(record, i, list) {
                 if (model.get('id') == record.record_id) {
                     list[i] = _.extend({}, record, changed);
                     return true;
@@ -337,7 +303,18 @@
                 return false;
             });
 
+            // the row was not found, lets add it
+            if (_.isEmpty(record)) {
+                this.addRowToChart(model);
+            }
+
             field.setServerData(serverData, _.contains(changedField, 'probability'));
+        } else if (_.contains(changedField, 'assigned_user_id')) {
+            if (assigned_user === app.user.get('id')) {
+                this.addRowToChart(model)
+            } else {
+                this.removeRowFromChart(model);
+            }
         }
     },
 
@@ -346,24 +323,25 @@
      * @param {Object} [model]      The Model to add, if not passed in, it will use this.model
      */
     addRowToChart: function(model) {
-        var model = model || this.model,
-            field = this.getField('paretoChart'),
-            serverData = field.getServerData(),
-            base_rate = model.get('base_rate'),
-            f = {
-                best: this._convertCurrencyValue(model.get('best_case'), base_rate),
-                likely: this._convertCurrencyValue(model.has('amount') ? model.get('amount') : model.get('likely_case'), base_rate),
-                worst: this._convertCurrencyValue(model.get('worst_case'), base_rate),
-                record_id: model.get('id'),
-                date_closed_timestamp: model.get('date_closed_timestamp'),
-                probability: model.get('probability'),
-                sales_stage: model.get('sales_stage'),
-                forecast: model.get('commit_stage')
-            };
+        model = model || this.model;
+        if (model.get('assigned_user_id') == app.user.get('id')) {
+            var field = this.getField('paretoChart'),
+                serverData = field.getServerData(),
+                base_rate = model.get('base_rate'),
+                f = {
+                    best: this._convertCurrencyValue(model.get('best_case'), base_rate),
+                    likely: this._convertCurrencyValue(model.has('amount') ? model.get('amount') : model.get('likely_case'), base_rate),
+                    worst: this._convertCurrencyValue(model.get('worst_case'), base_rate),
+                    record_id: model.get('id'),
+                    date_closed_timestamp: model.get('date_closed_timestamp'),
+                    probability: model.get('probability'),
+                    sales_stage: model.get('sales_stage'),
+                    forecast: model.get('commit_stage')
+                };
 
-        serverData.data.push(f);
-
-        field.setServerData(serverData, true);
+            serverData.data.push(f);
+            field.setServerData(serverData, true);
+        }
     },
 
     /**
@@ -383,19 +361,21 @@
      * @param {Object} [model]      The Model to add, if not passed in, it will use this.model
      */
     removeRowFromChart: function(model) {
-        var model = model || this.model,
-            field = this.getField('paretoChart'),
-            serverData = field.getServerData();
+        model = model || this.model;
+        if (model.get('assigned_user_id') == app.user.get('id')) {
+            var field = this.getField('paretoChart'),
+                serverData = field.getServerData();
 
-        _.find(serverData.data, function(record, i, list) {
-            if (model.get('id') == record.record_id) {
-                list.splice(i, 1);
-                return true;
-            }
-            return false;
-        });
+            _.find(serverData.data, function(record, i, list) {
+                if (model.get('id') == record.record_id) {
+                    list.splice(i, 1);
+                    return true;
+                }
+                return false;
+            });
 
-        field.setServerData(serverData, true);
+            field.setServerData(serverData, true);
+        }
     },
 
     /**
