@@ -22,6 +22,32 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      * @param array $args
      * @return bool
      */
+    public static function checkRelatedName($bean, $event, $args)
+    {
+
+        if ($event == 'before_save') {
+            if (empty($bean->account_id) && !empty($bean->account_name)) {
+                $bean->account_name = '';
+            }
+
+            if (empty($bean->opportunity_id) && !empty($bean->opportunity_name)) {
+                $bean->opportunity_name = '';
+            }
+
+            // if we are in a delete operation, don't update the date modified
+            if (SugarBean::inOperation('delete')) {
+                $bean->update_date_modified = false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param ForecastWorksheet $bean
+     * @param string $event
+     * @param array $args
+     * @return bool
+     */
     public static function managerNotifyCommitStage($bean, $event, $args)
     {
         /**

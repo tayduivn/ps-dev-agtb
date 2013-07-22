@@ -22,8 +22,7 @@ $dictionary['Account'] = array(
     'duplicate_merge' => true,
     'comment' => 'Accounts are organizations or entities that are the target of selling, support, and marketing activities, or have already purchased products or services',
     'fields' => array(
-        'parent_id' =>
-        array(
+        'parent_id' => array(
             'name' => 'parent_id',
             'vname' => 'LBL_PARENT_ACCOUNT_ID',
             'type' => 'id',
@@ -32,8 +31,7 @@ $dictionary['Account'] = array(
             'audited' => true,
             'comment' => 'Account ID of the parent of this account',
         ),
-        'sic_code' =>
-        array(
+        'sic_code' => array(
             'name' => 'sic_code',
             'vname' => 'LBL_SIC_CODE',
             'type' => 'varchar',
@@ -43,8 +41,7 @@ $dictionary['Account'] = array(
             'merge_filter' => 'enabled',
             //END SUGARCRM flav=pro ONLY
         ),
-        'parent_name' =>
-        array(
+        'parent_name' => array(
             'name' => 'parent_name',
             'rname' => 'name',
             'id_name' => 'parent_id',
@@ -60,8 +57,7 @@ $dictionary['Account'] = array(
             'unified_search' => true,
             'importable' => 'true',
         ),
-        'members' =>
-        array(
+        'members' => array(
             'name' => 'members',
             'type' => 'link',
             'relationship' => 'member_accounts',
@@ -70,8 +66,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_MEMBERS',
         ),
-        'member_of' =>
-        array(
+        'member_of' => array(
             'name' => 'member_of',
             'type' => 'link',
             'relationship' => 'member_accounts',
@@ -82,8 +77,7 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_MEMBER_OF',
             'side' => 'right',
         ),
-        'email_opt_out' =>
-        array(
+        'email_opt_out' => array(
             'name' => 'email_opt_out',
             'vname' => 'LBL_EMAIL_OPT_OUT',
             'source' => 'non-db',
@@ -91,8 +85,7 @@ $dictionary['Account'] = array(
             'massupdate' => false,
             'studio' => 'false',
         ),
-        'invalid_email' =>
-        array(
+        'invalid_email' => array(
             'name' => 'invalid_email',
             'vname' => 'LBL_INVALID_EMAIL',
             'source' => 'non-db',
@@ -100,8 +93,7 @@ $dictionary['Account'] = array(
             'massupdate' => false,
             'studio' => 'false',
         ),
-        'cases' =>
-        array(
+        'cases' => array(
             'name' => 'cases',
             'type' => 'link',
             'relationship' => 'account_cases',
@@ -125,8 +117,7 @@ $dictionary['Account'] = array(
             'studio' => array('visible' => false, 'searchview' => true),
             'len' => 100
         ),
-        'tasks' =>
-        array(
+        'tasks' => array(
             'name' => 'tasks',
             'type' => 'link',
             'relationship' => 'account_tasks',
@@ -135,8 +126,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_TASKS',
         ),
-        'notes' =>
-        array(
+        'notes' => array(
             'name' => 'notes',
             'type' => 'link',
             'relationship' => 'account_notes',
@@ -145,8 +135,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
-        'meetings' =>
-        array(
+        'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',
             'relationship' => 'account_meetings',
@@ -155,8 +144,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_MEETINGS',
         ),
-        'calls' =>
-        array(
+        'calls' => array(
             'name' => 'calls',
             'type' => 'link',
             'relationship' => 'account_calls',
@@ -165,8 +153,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CALLS',
         ),
-        'emails' =>
-        array(
+        'emails' => array(
             'name' => 'emails',
             'type' => 'link',
             'relationship' => 'emails_accounts_rel', /* reldef in emails */
@@ -188,16 +175,14 @@ $dictionary['Account'] = array(
             'link_type' => 'many',
             'relationship' => '',
         ),
-        'documents' =>
-        array(
+        'documents' => array(
             'name' => 'documents',
             'type' => 'link',
             'relationship' => 'documents_accounts',
             'source' => 'non-db',
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
         ),
-        'bugs' =>
-        array(
+        'bugs' => array(
             'name' => 'bugs',
             'type' => 'link',
             'relationship' => 'accounts_bugs',
@@ -206,8 +191,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_BUGS',
         ),
-        'contacts' =>
-        array(
+        'contacts' => array(
             'name' => 'contacts',
             'type' => 'link',
             'relationship' => 'accounts_contacts',
@@ -216,8 +200,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_CONTACTS',
         ),
-        'email_addresses' =>
-        array(
+        'email_addresses' => array(
             'name' => 'email_addresses',
             'type' => 'link',
             'relationship' => 'accounts_email_addresses',
@@ -228,8 +211,7 @@ $dictionary['Account'] = array(
             'rel_fields' => array('primary_address' => array('type' => 'bool')),
             'studio' => array("formula" => false),
         ),
-        'email_addresses_primary' =>
-        array(
+        'email_addresses_primary' => array(
             'name' => 'email_addresses_primary',
             'type' => 'link',
             'relationship' => 'accounts_email_addresses_primary',
@@ -238,8 +220,7 @@ $dictionary['Account'] = array(
             'duplicate_merge' => 'disabled',
             'studio' => array("formula" => false),
         ),
-        'opportunities' =>
-        array(
+        'opportunities' => array(
             'name' => 'opportunities',
             'type' => 'link',
             'relationship' => 'accounts_opportunities',
@@ -249,8 +230,7 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_OPPORTUNITY',
         ),
         //BEGIN SUGARCRM flav=pro ONLY
-        'quotes' =>
-        array(
+        'quotes' => array(
             'name' => 'quotes',
             'type' => 'link',
             'relationship' => 'quotes_billto_accounts',
@@ -260,8 +240,7 @@ $dictionary['Account'] = array(
             'ignore_role' => true,
             'vname' => 'LBL_QUOTES',
         ),
-        'quotes_shipto' =>
-        array(
+        'quotes_shipto' => array(
             'name' => 'quotes_shipto',
             'type' => 'link',
             'relationship' => 'quotes_shipto_accounts',
@@ -271,9 +250,7 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_QUOTES_SHIP_TO',
         ),
 //END SUGARCRM flav=pro ONLY
-
-        'leads' =>
-        array(
+        'leads' => array(
             'name' => 'leads',
             'type' => 'link',
             'relationship' => 'account_leads',
@@ -282,8 +259,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_LEADS',
         ),
-        'campaigns' =>
-        array(
+        'campaigns' => array(
             'name' => 'campaigns',
             'type' => 'link',
             'relationship' => 'account_campaign_log',
@@ -293,16 +269,14 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_CAMPAIGNLOG',
             'studio' => array("formula" => false),
         ),
-        'campaign_accounts' =>
-        array(
+        'campaign_accounts' => array(
             'name' => 'campaign_accounts',
             'type' => 'link',
             'vname' => 'LBL_CAMPAIGNS',
             'relationship' => 'campaign_accounts',
             'source' => 'non-db',
         ),
-        'created_by_link' =>
-        array(
+        'created_by_link' => array(
             'name' => 'created_by_link',
             'type' => 'link',
             'relationship' => 'accounts_created_by',
@@ -312,8 +286,7 @@ $dictionary['Account'] = array(
             'bean_name' => 'User',
             'source' => 'non-db',
         ),
-        'modified_user_link' =>
-        array(
+        'modified_user_link' => array(
             'name' => 'modified_user_link',
             'type' => 'link',
             'relationship' => 'accounts_modified_user',
@@ -323,8 +296,7 @@ $dictionary['Account'] = array(
             'bean_name' => 'User',
             'source' => 'non-db',
         ),
-        'assigned_user_link' =>
-        array(
+        'assigned_user_link' => array(
             'name' => 'assigned_user_link',
             'type' => 'link',
             'relationship' => 'accounts_assigned_user',
@@ -339,6 +311,24 @@ $dictionary['Account'] = array(
             'table' => 'users',
         ),
 //BEGIN SUGARCRM flav=pro ONLY
+        'revenuelineitems' =>  array(
+            'name' => 'revenuelineitems',
+            'type' => 'link',
+            'relationship' => 'revenuelineitems_accounts',
+            'vname' => 'LBL_REVENUELINEITEMS',
+            'module' => 'RevenueLineItems',
+            'bean_name' => 'RevenueLineItem',
+            'source' => 'non-db',
+        ),
+        'forecastworksheets' =>  array(
+            'name' => 'forecastworksheets',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_accounts',
+            'vname' => 'LBL_FORECAST_WORKSHEETS',
+            'module' => 'ForecastWorksheets',
+            'bean_name' => 'ForecastWorksheet',
+            'source' => 'non-db',
+        ),
         'products' => array(
             'name' => 'products',
             'type' => 'link',
@@ -356,9 +346,7 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_CONTRACTS',
         ),
 //END SUGARCRM flav=pro ONLY
-
-        'campaign_id' =>
-        array(
+        'campaign_id' => array(
             'name' => 'campaign_id',
             'comment' => 'Campaign that generated Account',
             'vname' => 'LBL_CAMPAIGN_ID',
@@ -372,8 +360,7 @@ $dictionary['Account'] = array(
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
         ),
-        'campaign_name' =>
-        array(
+        'campaign_name' => array(
             'name' => 'campaign_name',
             'rname' => 'name',
             'vname' => 'LBL_CAMPAIGN',
@@ -387,8 +374,7 @@ $dictionary['Account'] = array(
             'duplicate_merge' => 'disabled',
             'comment' => 'The first campaign name for Account (Meta-data only)',
         ),
-        'prospect_lists' =>
-        array(
+        'prospect_lists' => array(
             'name' => 'prospect_lists',
             'type' => 'link',
             'relationship' => 'prospect_list_accounts',
@@ -486,8 +472,7 @@ $dictionary['Account'] = array(
             'rhs_key' => 'account_id',
             'relationship_type' => 'one-to-many'
         ),
-        'accounts_assigned_user' =>
-        array(
+        'accounts_assigned_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
             'lhs_key' => 'id',
@@ -496,8 +481,7 @@ $dictionary['Account'] = array(
             'rhs_key' => 'assigned_user_id',
             'relationship_type' => 'one-to-many'
         ),
-        'accounts_modified_user' =>
-        array(
+        'accounts_modified_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
             'lhs_key' => 'id',
@@ -506,8 +490,7 @@ $dictionary['Account'] = array(
             'rhs_key' => 'modified_user_id',
             'relationship_type' => 'one-to-many'
         ),
-        'accounts_created_by' =>
-        array(
+        'accounts_created_by' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
             'lhs_key' => 'id',
