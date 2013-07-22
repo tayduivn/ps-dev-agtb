@@ -85,5 +85,12 @@ $viewdefs['Contacts']['mobile']['layout']['subpanels'] = array(
                 'link' => 'quotes',
             ),
         ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'products',
+            ),
+        ),
     ),
 );
