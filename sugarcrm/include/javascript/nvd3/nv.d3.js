@@ -11675,7 +11675,7 @@ nv.models.tree = function() {
 
         // Update the links
         var link = treeChart.selectAll('path.link')
-              .data(tree.links(nodes), function(d) { return d.source.id + '-' + d.target.id; });
+              .data(tree.links(nodes), function(d) { return getId(d.source) + '-' + getId(d.target); });
 
             // Enter any new links at the parent's previous position.
             link.enter().insert('svg:path', 'g')
