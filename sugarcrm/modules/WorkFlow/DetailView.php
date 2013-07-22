@@ -117,7 +117,7 @@ $buttons = array(
 
 $javascript = new javascript();
 
-require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
+require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
 $action_buttons = smarty_function_sugar_action_menu(array(
     'id' => 'ACLRoles_EditView_action_menu',
     'buttons' => $buttons,

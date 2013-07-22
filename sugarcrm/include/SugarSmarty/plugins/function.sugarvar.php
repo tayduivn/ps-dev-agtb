@@ -17,7 +17,7 @@ r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.
 
 r52439 - 2009-11-12 17:05:52 -0800 (Thu, 12 Nov 2009) - clee - Updated to allow Rich Text Editor to resize and render HTML content on detailview.
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -28,7 +28,7 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 r30629 - 2007-12-26 08:01:12 -0800 (Wed, 26 Dec 2007) - clee - Changed SugarFieldText.php to automatically set the smarty modifier url2html to be true for DetailViews.  Changed function.sugarvar.php to check for this modifier and render the appropriate call to the smarty modifier.
 Modified:
 include/SugarFields/Text/SugarFieldText.php
-vendor/Smarty/plugins/function.sugarvar.php
+include/SugarSmarty/plugins/function.sugarvar.php
 
 r23083 - 2007-05-24 16:39:44 -0700 (Thu, 24 May 2007) - clee - Code cleanup.
 
@@ -42,7 +42,7 @@ r22175 - 2007-04-23 16:43:00 -0700 (Mon, 23 Apr 2007) - clee - Latest updates as
 
 r22125 - 2007-04-20 17:02:26 -0700 (Fri, 20 Apr 2007) - majed - makes it so you don't need to pass in as many variables
 
-r22124 - 2007-04-20 16:54:53 -0700 (Fri, 20 Apr 2007) - clee - 
+r22124 - 2007-04-20 16:54:53 -0700 (Fri, 20 Apr 2007) - clee -
 
 */
 

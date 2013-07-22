@@ -68,7 +68,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *      '<a href ...',
  *      ...
  * );
- * require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
+ * require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
  * $action_button = smarty_function_sugar_action_menu(array(
  *     'id' => ...,
  *     'buttons' => $buttons,

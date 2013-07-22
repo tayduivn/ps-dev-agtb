@@ -1007,8 +1007,6 @@ function template_reports_filters(&$smarty, &$args) {
 	if (isset($reporter->report_def['sort_dir'])) {
 		$sort_dir = $reporter->report_def['sort_dir'];
 	} // if
-	//require_once("include/Sugar_Smarty.php");
-	//$smarty = new Sugar_Smarty();
 	$smarty->assign('mod_strings', $mod_strings);
 	$smarty->assign('selectedAnd', $selectedAnd);
 	$smarty->assign('selectedOR', $selectedOR);
@@ -1021,8 +1019,6 @@ function template_reports_filters(&$smarty, &$args) {
 //////////////////////////////////////////////
 function template_reports_group_by(&$smarty, &$args) {
 	global $mod_strings;
-	//require_once("include/Sugar_Smarty.php");
-	//$smarty = new Sugar_Smarty();
 	$smarty->assign('mod_strings', $mod_strings);
 	//echo $smarty->fetch("modules/Reports/templates/_template_reports_group_by.tpl");
 
@@ -1043,8 +1039,6 @@ function template_reports_chart_options(&$smarty, &$args) {
 		'lineF'=>$mod_strings['LBL_LINE'],
 	);
 	$chart_description = htmlentities($reporter->chart_description, ENT_QUOTES, 'UTF-8');
-	//require_once("include/Sugar_Smarty.php");
-	//$smarty = new Sugar_Smarty();
 	$smarty->assign('mod_strings', $mod_strings);
 	$smarty->assign('chart_description', $chart_description);
 	$smarty->assign('chart_types', $chart_types);

@@ -22,10 +22,9 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'vendor/Smarty/plugins/function.sugar_button.php';
-require_once 'vendor/Smarty/plugins/function.sugar_menu.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_button.php';
+require_once 'include/SugarSmarty/plugins/function.sugar_menu.php';
 require_once 'include/SugarHtml/SugarHtml.php';
-require_once 'include/Sugar_Smarty.php';
 
 class FunctionSugarButtonTest extends Sugar_PHPUnit_Framework_TestCase
 {
