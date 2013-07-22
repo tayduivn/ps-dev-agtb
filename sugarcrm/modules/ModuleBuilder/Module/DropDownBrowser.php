@@ -34,6 +34,7 @@ class DropDownBrowser
         'eapm_list_documents',
         'eapm_list_import',
         'extapi_meeting_password',
+        'Elastic_boost_options',
         //BEGIN SUGARCRM flav=pro ONLY
         'commit_stage_dom',
         'commit_stage_custom_dom',
