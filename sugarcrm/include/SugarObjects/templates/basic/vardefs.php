@@ -217,16 +217,16 @@ $vardefs = array(
 'relationships'=>array(
 	strtolower($module).'_modified_user' =>
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-   'rhs_module'=> $module, 'rhs_table'=> strtolower($module), 'rhs_key' => 'modified_user_id',
+   'rhs_module'=> $module, 'rhs_table'=> strtolower($table_name), 'rhs_key' => 'modified_user_id',
    'relationship_type'=>'one-to-many')
    ,strtolower($module).'_created_by' =>
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-   'rhs_module'=> $module, 'rhs_table'=> strtolower($module), 'rhs_key' => 'created_by',
+   'rhs_module'=> $module, 'rhs_table'=> strtolower($table_name), 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many'),
 
     $_object_name . '_activities' => array(
         'lhs_module'=> $module,
-        'lhs_table'=> strtolower($module),
+        'lhs_table'=> strtolower($table_name),
         'lhs_key' => 'id',
         'rhs_module' => 'Activities',
         'rhs_table' => 'activities',
