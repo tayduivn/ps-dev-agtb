@@ -11,11 +11,9 @@ a > [class^="icon-"] {
 a:not(.disabled):hover > [class^="icon-"] {
   color: @gray;
 }
+a:not(.disabled).active > [class^="icon-"],
 a:not(.disabled):active > [class^="icon-"] {
   color: @black;
-}
-a:not(.disabled).active > [class^="icon-"], .btn.active > [class^="icon-"] {
-  color: @grayDark;
 }
 
 .icon-favorite:before {
@@ -34,28 +32,9 @@ a:not(.disabled).active > [class^="icon-"], .btn.active > [class^="icon-"] {
   color: @yellow_favorite !important;
 }
 
-.btn-small .caret {
-  margin-top: 6px;
-}
-
-.btn-fixed {
-  width: 178px;
-  margin-right: 10px;
-}
 .wide {
   width: 98%;
   text-align: center;
-}
-.thumbnav {
-  #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
-  @shadow: inset -2px 0 2px rgba(0,0,0,1),  0 -1px 0 rgba(0,0,0,1);
-  .box-shadow(@shadow);
-  height: 100% !important;
-  position: fixed;
-  z-index: 10;
-  top: 49px;
-  left: 0;
-  width: 72px !important;
 }
 
 .icon {
