@@ -324,7 +324,6 @@ $app_list_strings = array (
   'fts_type' => array (
       '' => '',
       'Elastic' => 'ElasticSearch',
-      'DBFTS'  => 'Basic DBFTS',
   ),
   'sales_stage_dom' =>
   array (
