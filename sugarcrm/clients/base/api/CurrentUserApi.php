@@ -49,6 +49,7 @@ class CurrentUserApi extends SugarApi
                 'shortHelp' => 'Returns current user',
                 'longHelp' => 'include/api/help/me_get_help.html',
                 'ignoreMetaHash' => true,
+                'keepSession' => true,
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -92,6 +93,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferencesSave',
                 'shortHelp' => "Mass Save Updated Preferences For a User",
                 'longHelp' => 'include/api/help/me_preferences_put_help.html',
+                'keepSession' => true,
             ),
 
             'userPreference' =>  array(
@@ -110,6 +112,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Create a preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_post_help.html',
+                'keepSession' => true,
             ),
             'userPreferenceUpdate' =>  array(
                 'reqType' => 'PUT',
@@ -118,6 +121,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceSave',
                 'shortHelp' => "Update a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_put_help.html',
+                'keepSession' => true,
             ),
             'userPreferenceDelete' =>  array(
                 'reqType' => 'DELETE',
@@ -126,6 +130,7 @@ class CurrentUserApi extends SugarApi
                 'method' => 'userPreferenceDelete',
                 'shortHelp' => "Delete a specific preference for the current user",
                 'longHelp' => 'include/api/help/me_preference_preference_name_delete_help.html',
+                'keepSession' => true,
             ),
         );
     }
@@ -177,7 +182,9 @@ class CurrentUserApi extends SugarApi
             }
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
-
+        
+        // Send back a hash of this data for use by the client
+        $user_data['_hash'] = md5($current_user->date_modified);
         //END SUGARCRM flav=pro ONLY
 
         return array('current_user' => $user_data);
@@ -446,6 +453,8 @@ class CurrentUserApi extends SugarApi
     {
         global $current_user;
         
+        $this->forceUserPreferenceReload($current_user);
+        
         $user_data['preferences'] = array();
         foreach ($this->userPrefMeta as $pref => $metaName) {
             // Twitterate this, since long lines are the devil
@@ -668,5 +677,33 @@ class CurrentUserApi extends SugarApi
         }
 
         return $output;
+    }
+    
+    /**
+     * Forces a fresh fetching of user preferences.
+     * 
+     * User preferences are written to the users session, so when an admin changes
+     * a preference for a user, that user won't get the change until they logout.
+     * This forces a fresh fetching of a users preferences from the DB when called.
+     * This shouldn't be too expensive of a hit since user preferences need only
+     * be fetched once and can be stored on the client.
+     * 
+     * @param User $current_user A User bean
+     */
+    public function forceUserPreferenceReload($current_user)
+    {
+        // If there is a unique_key in the session, save it and change it so that
+        // loadPreferences() on the user will be forced to collect a fresh set
+        // of preferences.
+        $uniqueKey = null;
+        if (isset($_SESSION['unique_key'])) {
+            $uniqueKey = $_SESSION['unique_key'];
+            $_SESSION['unique_key'] = 't_' . time();
+        }
+        
+        $current_user->loadPreferences();
+        
+        // Set this back to what it was
+        $_SESSION['unique_key'] = $uniqueKey;
     }
 }
