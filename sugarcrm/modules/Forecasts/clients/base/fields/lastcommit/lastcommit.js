@@ -60,13 +60,12 @@
 
             if (!_.isUndefined(model)) {
                 this.commit_date = model.get('date_modified');
+                _.each(this.points, function(point) {
+                    this.data_points.push(model.get(point));
+                }, this);
             } else {
                 this.commit_date = undefined;
             }
-
-            _.each(this.points, function(point) {
-                this.data_points.push(model.get(point));
-            }, this);
 
             if (!this.disposed) this.render();
         }, this);
