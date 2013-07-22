@@ -152,6 +152,10 @@
                 });
                 this.model.destroy({
                     success: _.bind(function() {
+                        //dispose safe
+                        if (this.disposed) {
+                            return;
+                        }
                         if (this.context.parent) {
                             this.layout.navigateLayout('list');
                         } else {
