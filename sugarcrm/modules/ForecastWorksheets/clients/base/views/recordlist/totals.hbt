@@ -6,15 +6,15 @@
     <td colspan='{{before_colspan}}'>{{str "LBL_TOTAL" "Forecasts"}}</td>
 
     {{#if this.totals.worst_case_display}}
-        <td class="tright">{{formatCurrency this.totals.overall_worst_case}}</td>
+        <td class="tright">{{formatCurrency this.totals.overall_worst}}</td>
     {{/if}}
 
     {{#if this.totals.likely_case_display}}
-        <td class="tright">{{formatCurrency this.totals.overall_likely_case}}</td>
+        <td class="tright">{{formatCurrency this.totals.overall_amount}}</td>
     {{/if}}
 
     {{#if this.totals.best_case_display}}
-        <td class="tright">{{formatCurrency this.totals.overall_best_case}}</td>
+        <td class="tright">{{formatCurrency this.totals.overall_best}}</td>
     {{/if}}
     {{#if this.after_colspan}}
          <td colspan='{{after_colspan}}'>&nbsp;</td>

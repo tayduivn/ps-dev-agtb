@@ -414,7 +414,7 @@
             var sales_stage_width = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width();
             var sales_stage_outerwidth = this.$el.find('td[data-field-name="sales_stage"] span.isEditable').outerWidth();
             this.$el.find('td[data-field-name="sales_stage"] span.isEditable').width(sales_stage_width + 20);
-            this.$el.find('td[data-field-name="sales_stage"] span.isEditable').parent("td").css("min-width",sales_stage_outerwidth + 26 + "px");
+            this.$el.find('td[data-field-name="sales_stage"] span.isEditable').parent("td").css("min-width", sales_stage_outerwidth + 26 + "px");
 
             // figure out if any of the row actions need to be disabled
             this.setRowActionButtonStates();
@@ -495,7 +495,7 @@
             && !_.isEmpty(this.collection.models)) {
 
             this.hasCheckedForDraftRecords = true;
-            if(_.isUndefined(lastCommitDate)) {
+            if (_.isUndefined(lastCommitDate)) {
                 // we have rows but no commit, enable the commit button
                 this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
             } else {
@@ -607,24 +607,30 @@
     calculateTotals: function() {
         // fire an event on the parent context
         if (this.isVisible()) {
-            
+
             this.totals = this.getCommitTotals();
             var calcFields = ['worst_case', 'best_case', 'likely_case'],
-            fields = _.filter(this._fields.visible, function(field) {
-                return _.contains(calcFields, field.name);
-            }),
-            fieldNames = [];
+                fields = _.filter(this._fields.visible, function(field) {
+                    if (_.contains(calcFields, field.name)) {
+                        this.totals[field.name + '_display'] = true;
+                        return true;
+                    }
 
-        // loop though all the fields and find where the worst/likely/best start at
-        for(var x=0; x<this._fields.visible.length; x++){
-            var f = this._fields.visible[x];
-            if (_.contains(calcFields, f.name)) {
-                break;
+                    return false;
+                }, this);
+
+            // loop though all the fields and find where the worst/likely/best start at
+            for(var x = 0; x < this._fields.visible.length; x++) {
+                var f = this._fields.visible[x];
+                if (_.contains(calcFields, f.name)) {
+                    break;
+                }
             }
-        }
 
-        this.before_colspan = x;
-        this.after_colspan = (this._fields.visible.length-(x+fields.length));
+            this.before_colspan = x;
+            this.after_colspan = (this._fields.visible.length - (x + fields.length));
+
+            debugger;
             var ctx = this.context.parent || this.context;
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
@@ -852,7 +858,7 @@
                     parentWidth = _.max(parentTds.map(function() {
                         return $(this).outerWidth();
                     }).get()),
-                    finalTDWidth = parentWidth+20;
+                    finalTDWidth = parentWidth + 20;
                 this.$el.find('th[data-fieldname^="' + field.name + '"]')
                     .width(finalTDWidth)
                     .css('maxWidth', finalTDWidth + 'px')
