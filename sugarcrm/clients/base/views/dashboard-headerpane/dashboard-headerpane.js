@@ -143,24 +143,29 @@
         this.toggleEdit(false);
     },
     handleDelete: function() {
-        var self = this;
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_DELETE_DASHBOARD_CONFIRM', this.module),
-            onConfirm: function() {
-                var message = app.lang.get('LBL_DELETE_DASHBOARD_SUCCESS', self.module, {name: self.model.get("name")});
-
-                self.model.destroy({
-                    success: function() {
-                        if(self.context.parent) {
-                            self.layout.navigateLayout('list');
+            onConfirm: _.bind(function() {
+                var message = app.lang.get('LBL_DELETE_DASHBOARD_SUCCESS', this.module, {
+                    name: this.model.get('name')
+                });
+                this.model.destroy({
+                    success: _.bind(function() {
+                        if (this.context.parent) {
+                            this.layout.navigateLayout('list');
                         } else {
-                            var route = app.router.buildRoute(self.module);
+                            var route = app.router.buildRoute(this.module);
                             app.router.navigate(route, {trigger: true});
                         }
-                    },
+                    }, this),
                     error: function() {
-                        app.alert.show('error_while_save', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                        app.alert.show('error_while_save', {
+                            level: 'error',
+                            title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'),
+                            messages: app.lang.getAppString('ERR_HTTP_500_TEXT'),
+                            autoClose: true
+                        });
                     },
                     //Show alerts for this request
                     showAlerts: {
@@ -170,7 +175,7 @@
                         }
                     }
                 });
-            }
+            }, this)
         });
     },
     bindDataChange: function () {
