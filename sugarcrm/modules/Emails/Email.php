@@ -752,7 +752,7 @@ class Email extends SugarBean {
                                 } // if
                             } // if
                         } else {
-                            $fileGUID     = substr($noteId, 0, 36);
+                            $fileGUID = preg_replace('/[^a-z0-9\-]/', "", substr($noteId, 0, 36));
                             $fileLocation = $this->et->userCacheDir . "/{$fileGUID}";
                             $filename = substr($noteId, 36, strlen($noteId)); // strip GUID	for PHPMailer class to name outbound file
 
