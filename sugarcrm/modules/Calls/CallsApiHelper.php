@@ -35,23 +35,37 @@ class CallsApiHelper extends SugarBeanApiHelper
     {
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
+        $leadInvitees = array();
+        $contactInvitees = array();
+        $userInvitees = array();
+
         $userInvitees[] = $bean->assigned_user_id;
-        if($bean->assigned_user_id != $GLOBALS['current_user']->id) {
+        if ($bean->assigned_user_id != $GLOBALS['current_user']->id) {
             $userInvitees[] = $GLOBALS['current_user']->id;
-        }            
+        }
 
         // add current userInvitees to this list as well so they don't get removed
         $users = $bean->get_linked_beans('users', 'User');
-        foreach($users AS $user) {
-            if(!in_array($user->id, $userInvitees)) {
+        foreach ($users as $user) {
+            if (!in_array($user->id, $userInvitees)) {
                 $userInvitees[] = $user->id;
             }
         }
 
-        $bean->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
+        if ($bean->load_relationship('leads')) {
+            $leadInvitees = $bean->leads->get();
+        }
+
+        if ($bean->load_relationship('contacts')) {
+            $contactInvitees = $bean->contacts->get();
+        }
+
+        $bean->update_vcal = false; // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
 
         $bean->users_arr = $userInvitees;
-        
+        $bean->leads_arr = $leadInvitees;
+        $bean->contacts_arr = $contactInvitees;
+
         return $data;
     }
 
