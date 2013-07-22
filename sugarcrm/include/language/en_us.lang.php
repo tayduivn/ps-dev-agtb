@@ -2917,8 +2917,8 @@ $app_strings = array (
     'LBL_LOGIN_ADMIN_CALL' => 'Please contact the system administrator.',
     'LBL_LOGIN_USERNAME' => 'Username',
     'LBL_LOGIN_PASSWORD' => 'Password',
-    'LBL_LOGGED_OUT' => 'You have been logged out from the application.',
-    'LBL_LOGIN_FORM_LABEL' => 'Show Login Form',
+    'LBL_LOGGED_OUT' => 'You have been logged out.',
+    'LBL_LOGIN_FORM_LABEL' => 'Show log in form',
     // END LOGIN PAGE STRINGS
 
     'LBL_SYNC' => 'Sync',
@@ -4027,7 +4027,7 @@ $app_strings = array (
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
-    
+
     //SFA
     'LBL_BEST' => 'Best',
     'LBL_WORST' => 'Worst',

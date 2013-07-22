@@ -28,12 +28,22 @@
 }}
 <div class="welcome">
     <div class="thumbnail login">
-            <div class="login-footer tcenter">
-            	{{str "LBL_LOGGED_OUT"}}
-				<br/>
+        <div class="tcenter">
+            <h2 class="brand" {{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
+        </div>
+        <form name='{{name}}' class="tcenter">
+        	<p>{{str "LBL_LOGGED_OUT"}}
+        	</p>
+        	<p>&nbsp;</p>
+            <div>
                 {{#each meta.buttons}}
                 {{field ../this model=../model}}
                 {{/each}}
             </div>
+            <p class="wide">
+                    <a class="btn btn-link btn-invisible" name="login_form_button" data-content="{{str "LBL_LOGIN_FORM_LABEL"}}"
+                       data-original-title="{{str "LBL_LOGIN_FORM_LABEL"}}">{{str "LBL_LOGIN_FORM_LABEL"}}</a>
+			</p>
+        </form>
     </div>
 </div>
