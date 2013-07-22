@@ -38,28 +38,27 @@
     /**
      * Render the chart for the first time
      *
-     * @private
+     * @param {Object} [options]        Options from the dashlet loaddata call
      */
-    renderChart: function() {
+    renderChart: function(options) {
         if (this.disposed) {
             return;
         }
 
+        // just on the off chance that no options param is passed in
+        options = options || {};
+        options.success = _.bind(function(data) {
+            this.serverData = data;
+            this.convertDataToChartData();
+            this.generateD3Chart();
+        }, this);
+
         var params = this.model.toJSON() || {};
-        params.contentEl = 'chart';
-        params.minColumnWidth = 120;
         params.type = app.metadata.getModule('Forecasts', 'config').forecast_by;
-        params.r = new Date().getTime();
 
         var url = app.api.buildURL(this.buildChartUrl(params));
 
-        app.api.call('read', url, {}, {
-            success: _.bind(function(data) {
-                this.serverData = data;
-                this.convertDataToChartData();
-                this.generateD3Chart();
-            }, this)
-        });
+        app.api.call('read', url, {}, options);
     },
 
     /**
@@ -310,7 +309,7 @@
         this.serverData = data;
 
         if (adjustLabels === true) {
-           this.adjustProbabilityLabels();
+            this.adjustProbabilityLabels();
         }
 
         this.convertDataToChartData();
