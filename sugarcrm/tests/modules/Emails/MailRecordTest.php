@@ -89,54 +89,88 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual, "Only two recipients should have been added.");
     }
 
-    public function testAddAttachments_ParameterIsNotAnArray_ReturnsABlankString()
+    public function testSplitAttachments_ParameterIsNotAnArray_ReturnsAnEmptyArray()
     {
         $mailRecord = new MailRecordCaller();
 
-        $expected = "";
-        $actual   = $mailRecord->addAttachmentsCaller("not an array");
-        $this->assertEquals($expected, $actual, "No attachments should have been added.");
+        $expected = array();
+        $actual   = $mailRecord->splitAttachmentsCaller("not an array");
+        $this->assertEquals($expected, $actual, "No attachments should have been returned.");
     }
 
-    public function testAddAttachments_ParameterIsAnArrayButArrayIsEmpty_ReturnsABlankString()
+    public function testSplitAttachments_ParameterIsAnArrayButArrayIsEmpty_ReturnsAnEmptyArray()
     {
         $mailRecord = new MailRecordCaller();
 
-        $expected = "";
-        $actual   = $mailRecord->addAttachmentsCaller();
-        $this->assertEquals($expected, $actual, "No attachments should have been added.");
+        $expected = array();
+        $actual   = $mailRecord->splitAttachmentsCaller(array());
+        $this->assertEquals($expected, $actual, "No attachments should have been returned.");
     }
 
-    public function testAddAttachments_ParameterIsAnArrayAndArrayIsNotEmpty_ReturnsADoubleSemiColonSeparatedStringOfAttachments()
+    public function testSplitAttachments_InputContainsUploadTypeOnly_ReturnsOneListOfAttachments()
     {
         $mailRecord  = new MailRecordCaller();
         $attachments = array(
             array(
+                "type" => MailRecord::ATTACHMENT_TYPE_UPLOAD,
                 "id"   => "abcd-1234",
                 "name" => "attachment1",
             ),
             array(
+                "type" => MailRecord::ATTACHMENT_TYPE_UPLOAD,
                 "id"   => "efgh-5678",
                 "name" => "attachment2",
             ),
         );
 
-        $expected = "abcd-1234attachment1::efgh-5678attachment2";
-        $actual   = $mailRecord->addAttachmentsCaller($attachments);
-        $this->assertEquals($expected, $actual, "Two attachments should have been added.");
+        $expected = array(
+            MailRecord::ATTACHMENT_TYPE_UPLOAD => array(
+                "abcd-1234attachment1",
+                "efgh-5678attachment2",
+            ),
+        );
+        $actual   = $mailRecord->splitAttachmentsCaller($attachments);
+        $this->assertEquals($expected, $actual, "Two attachments in one list should have been returned.");
     }
 
-    public function testAddAttachments_ParameterIsAnArrayAndArrayIsNotEmptyAndIsDocumentsIsTrue_ReturnsADoubleSemiColonSeparatedStringOfDocuments()
+    public function testSplitAttachments_InputContainsThreeTypes_ReturnsThreeListsOfAttachments()
     {
         $mailRecord  = new MailRecordCaller();
         $attachments = array(
-            "attachment1",
-            "attachment2",
+            array(
+                "type" => MailRecord::ATTACHMENT_TYPE_DOCUMENT,
+                "id"   => "document-1",
+            ),
+            array(
+                "type" => MailRecord::ATTACHMENT_TYPE_TEMPLATE,
+                "id"   => "template-1",
+            ),
+            array(
+                "type" => MailRecord::ATTACHMENT_TYPE_UPLOAD,
+                "id"   => "upload-1",
+                "name" => "fooUpload.jpg",
+            ),
+            array(
+                "type" => MailRecord::ATTACHMENT_TYPE_DOCUMENT,
+                "id"   => "document-2",
+                "name"   => "ignore-me",
+            ),
         );
 
-        $expected = "attachment1::attachment2";
-        $actual   = $mailRecord->addAttachmentsCaller($attachments, true);
-        $this->assertEquals($expected, $actual, "Two documents should have been added.");
+        $expected = array(
+            MailRecord::ATTACHMENT_TYPE_DOCUMENT => array(
+                "document-1",
+                "document-2",
+            ),
+            MailRecord::ATTACHMENT_TYPE_TEMPLATE => array(
+                "template-1",
+            ),
+            MailRecord::ATTACHMENT_TYPE_UPLOAD => array(
+                "upload-1fooUpload.jpg",
+            ),
+        );
+        $actual   = $mailRecord->splitAttachmentsCaller($attachments, true);
+        $this->assertEquals($expected, $actual, "Four attachments in three lists should have been returned.");
     }
 
     public function dataProviderForSetSendRequest_SetBody()
@@ -189,6 +223,56 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             // the "setEditor" key should not be returned
             $this->assertArrayNotHasKey("setEditor", $actual);
+        }
+    }
+
+    public function dataProviderForSetSendRequest_SetAttachments()
+    {
+        return array(
+            array(
+                array(
+                    MailRecord::ATTACHMENT_TYPE_UPLOAD => array('foo', 'bar'),
+                ),
+                array(
+                    "attachments" => 'foo::bar',
+                ),
+                'Two upload type files should be mapped to attachments request param - other request params not set'
+            ),
+            array(
+                array(
+                    MailRecord::ATTACHMENT_TYPE_UPLOAD => array('abc', 'cba'),
+                    MailRecord::ATTACHMENT_TYPE_DOCUMENT => array('def', 'fed'),
+                    MailRecord::ATTACHMENT_TYPE_TEMPLATE => array('ghi', 'ihg'),
+                    "foo" => array('jkl', 'lkj'),
+                ),
+                array(
+                    "attachments" => 'abc::cba',
+                    "documents" => 'def::fed',
+                    "templateAttachments" => 'ghi::ihg',
+                    "foo" => 'jkl::lkj',
+                ),
+                'All attachment types should be mapped to appropriate request params and array elements imploded'
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForSetSendRequest_SetAttachments
+     * @param $attachments
+     * @param $expected
+     * @param $message
+     */
+    public function testSetSendRequest_SetAttachments($attachments, $expected, $message)
+    {
+        $mailRecord = new MailRecordCaller();
+        $actual = $mailRecord->setSendRequestCaller("ready", null, "", "", "", $attachments);
+
+        foreach(array("attachments", "documents", "templateAttachments", "foo") as $type) {
+            if (isset($expected[$type])) {
+                $this->assertEquals($expected[$type], $actual[$type], $message);
+            } else {
+                $this->assertFalse(isset($actual[$type]), $message);
+            }
         }
     }
 
@@ -416,15 +500,15 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $mailRecord->subject     = "The Funnies";
         // TODO: need input from architecture
-        // Can't test attachments/documents without the ability to either mock the filesystem or a utility for adding
+        // Can't test attachments without the ability to either mock the filesystem or a utility for adding
         // and removing files from the filesystem.
 //        $mailRecord->attachments = array(
 //            array(
+//                "type" => MailRecord::ATTACHMENT_TYPE_UPLOAD,
 //                "name" => "rodgers.tiff",
 //                "id"   => "abcd-1234",
 //            ),
 //        );
-//        $mailRecord->documents   = array("cartoon_doc");
         $mailRecord->html_body   = urlencode("<b>Hello, World!</b>");
         $mailRecord->text_body   = "Hello, World!";
         $mailRecord->related     = array(
@@ -471,7 +555,6 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             "team_id"          => $mailRecord->teams["primary"],
             "assigned_user_id" => $GLOBALS["current_user"]->id,
             // attachments?
-            // documents?
         );
 
         foreach ($valuesInEmail as $key => $value) {
@@ -495,9 +578,9 @@ class MailRecordCaller extends MailRecord
         return $this->addRecipients($recipients);
     }
 
-    public function addAttachmentsCaller($attachments = array(), $isDocuments = false)
+    public function splitAttachmentsCaller($attachments = array())
     {
-        return $this->addAttachments($attachments, $isDocuments);
+        return $this->splitAttachments($attachments);
     }
 
     public function setSendRequestCaller(
@@ -506,9 +589,8 @@ class MailRecordCaller extends MailRecord
         $to = "",
         $cc = "",
         $bcc = "",
-        $attachments = "",
-        $documents = ""
+        $attachments = array()
     ) {
-        return $this->setupSendRequest($status, $from, $to, $cc, $bcc, $attachments, $documents);
+        return $this->setupSendRequest($status, $from, $to, $cc, $bcc, $attachments);
     }
 }

@@ -24,6 +24,12 @@
     initialize: function (options) {
         options.meta = options.meta || {};
         options.meta.selection = {type: 'single', label: 'LBL_LINK_SELECT'};
+
+        //ability to specify a filter when launching the selection list
+        if (options.context && !_.isEmpty(options.context.get('selectionListFilter'))) {
+            options.filter = options.context.get('selectionListFilter');
+        }
+
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
         this.initializeEvents();
     },
@@ -98,6 +104,8 @@
                 event: 'list:preview:fire',
                 icon: 'icon-eye-open'
             });
+        } else {
+            this.rightColumns.push({});
         }
     }
 })

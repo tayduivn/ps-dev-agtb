@@ -58,21 +58,20 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "status" => "draft",
         );
 
-        $expected = array(
+        $mockResult = array(
             "SUCCESS" => true,
         );
 
         $mailRecordMock = $this->getMock("MailRecord", array("saveAsDraft"));
         $mailRecordMock->expects($this->once())
             ->method("saveAsDraft")
-            ->will($this->returnValue($expected));
+            ->will($this->returnValue($mockResult));
 
         $this->mailApi->expects($this->any())
             ->method("initMailRecord")
             ->will($this->returnValue($mailRecordMock));
 
-        $actual = $this->mailApi->createMail($this->api, $args);
-        $this->assertEquals($expected, $actual, "Should have returned the value from the mock MailRecord.");
+        $this->mailApi->createMail($this->api, $args);
     }
 
     public function testCreateMail_StatusIsReady_CallsMailRecordSend()
@@ -82,21 +81,20 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             "email_config" => "foo",
         );
 
-        $expected = array(
+        $mockResult = array(
             "SUCCESS" => true,
         );
 
         $mailRecordMock = $this->getMock("MailRecord", array("send"));
         $mailRecordMock->expects($this->once())
             ->method("send")
-            ->will($this->returnValue($expected));
+            ->will($this->returnValue($mockResult));
 
         $this->mailApi->expects($this->any())
             ->method("initMailRecord")
             ->will($this->returnValue($mailRecordMock));
 
-        $actual = $this->mailApi->createMail($this->api, $args);
-        $this->assertEquals($expected, $actual, "Should have returned the value from the mock MailRecord.");
+        $this->mailApi->createMail($this->api, $args);
     }
 
     public function testCreateMail_StatusIsReadyAndEmailConfigIsEmpty_ThrowsException()
@@ -188,7 +186,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $response = $this->mailApi->createMail($this->api, $args);
         $expected = $email->toArray();
-        $actual   = $response["EMAIL"];
+        $actual   = $response;
         $this->assertEquals($expected, $actual, "Should have returned the Email object serialized as an array.");
     }
 

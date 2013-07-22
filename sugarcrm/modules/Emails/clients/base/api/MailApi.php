@@ -35,7 +35,6 @@ class MailApi extends ModuleApi
         "cc_addresses"  => array(),
         "bcc_addresses" => array(),
         "attachments"   => array(),
-        "documents"     => array(),
         "teams"         => array(),
         "related"       => array(),
         "subject"       => '',
@@ -49,53 +48,30 @@ class MailApi extends ModuleApi
     public function registerApiRest()
     {
         $api = array(
-            'listMail'        => array(
-                'reqType'   => 'GET',
-                'path'      => array('Mail'),
-                'pathVars'  => array(''),
-                'method'    => 'notSupported',
-                'shortHelp' => 'List Mail Items',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#listMail',
-            ),
-            'retrieveMail'    => array(
-                'reqType'   => 'GET',
-                'path'      => array('Mail', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'notSupported',
-                'shortHelp' => 'Retrieve Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#retrieveMail',
-            ),
-            'deleteMail'      => array(
-                'reqType'   => 'DELETE',
-                'path'      => array('Mail', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'notSupported',
-                'shortHelp' => 'Delete Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#deleteMail',
-            ),
-            'updateMail'      => array(
-                'reqType'   => 'PUT',
-                'path'      => array('Mail', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'notSupported', // 'updateMail',
-                'shortHelp' => 'Update Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#updateMail',
-            ),
             'createMail'      => array(
                 'reqType'   => 'POST',
                 'path'      => array('Mail'),
                 'pathVars'  => array(''),
                 'method'    => 'createMail',
                 'shortHelp' => 'Create Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#createMail',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_post_help.html',
             ),
+            //TODO: Implement updateMail fully
+//            'updateMail'      => array(
+//                'reqType'   => 'PUT',
+//                'path'      => array('Mail', '?'),
+//                'pathVars'  => array('', 'email_id'),
+//                'method'    => 'updateMail',
+//                'shortHelp' => 'Update Mail Item',
+//                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_record_put_help.html',
+//            ),
             'recipientLookup' => array(
                 'reqType'   => 'POST',
                 'path'      => array('Mail', 'recipients', 'lookup'),
                 'pathVars'  => array(''),
                 'method'    => 'recipientLookup',
                 'shortHelp' => 'Lookup Email Recipient Info',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#recipientLookup',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_recipients_lookup_post_help.html',
             ),
             'listRecipients'  => array(
                 'reqType'   => 'GET',
@@ -103,7 +79,7 @@ class MailApi extends ModuleApi
                 'pathVars'  => array(''),
                 'method'    => 'findRecipients',
                 'shortHelp' => 'Search For Email Recipients',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#findRecipients',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
             ),
             'validateEmailAddresses'  => array(
                 'reqType'   => 'POST',
@@ -111,21 +87,11 @@ class MailApi extends ModuleApi
                 'pathVars'  => array(''),
                 'method'    => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#validateEmailAddresses',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
             ),
         );
 
         return $api;
-    }
-
-    /**
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function notSupported($api, $args)
-    {
-        throw new SugarApiExceptionNotFound();
     }
 
     /**
@@ -164,8 +130,6 @@ class MailApi extends ModuleApi
 
     protected function handleMail($api, $args)
     {
-        $result = array();
-
         foreach (self::$fields AS $k => $v) {
             if (!isset($args[$k])) {
                 $args[$k] = $v;
@@ -208,12 +172,14 @@ class MailApi extends ModuleApi
         }
 
         if (isset($result["EMAIL"])) {
-            $email           = $result["EMAIL"];
-            $xmail           = clone $email;
-            $result["EMAIL"] = $xmail->toArray();
+            $email  = $result["EMAIL"];
+            $xmail  = clone $email;
+            $response = $xmail->toArray();
+        } else {
+            $response = array();
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -340,7 +306,6 @@ class MailApi extends ModuleApi
         $mailRecord->ccAddresses  = $args["cc_addresses"];
         $mailRecord->bccAddresses = $args["bcc_addresses"];
         $mailRecord->attachments  = $args["attachments"];
-        $mailRecord->documents    = $args["documents"];
         $mailRecord->teams        = $args["teams"];
         $mailRecord->related      = $args["related"];
         $mailRecord->subject      = $args["subject"];

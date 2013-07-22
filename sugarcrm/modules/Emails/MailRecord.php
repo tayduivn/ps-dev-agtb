@@ -2,28 +2,18 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) decodesublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once 'modules/Mailer/EmailIdentity.php';
 require_once 'modules/Mailer/MailerException.php';
@@ -36,6 +26,10 @@ class MailRecord
         "sending", // transient status
         "sent", // final status
     );
+
+    const ATTACHMENT_TYPE_UPLOAD = 'upload';
+    const ATTACHMENT_TYPE_DOCUMENT = 'document';
+    const ATTACHMENT_TYPE_TEMPLATE = 'template';
 
     public $emailBean;
     public $mailConfig;
@@ -102,10 +96,9 @@ class MailRecord
         $cc  = $this->addRecipients($this->ccAddresses);
         $bcc = $this->addRecipients($this->bccAddresses);
 
-        $attachments = $this->addAttachments($this->attachments);
-        $documents   = $this->addAttachments($this->documents, true);
+        $attachments = $this->splitAttachments($this->attachments);
 
-        $request  = $this->setupSendRequest($status, $fromAccount, $to, $cc, $bcc, $attachments, $documents);
+        $request  = $this->setupSendRequest($status, $fromAccount, $to, $cc, $bcc, $attachments);
         $_REQUEST = array_merge($_REQUEST, $request);
 
         $errorData  = null;
@@ -155,8 +148,7 @@ class MailRecord
      * @param string $to
      * @param string $cc
      * @param string $bcc
-     * @param string $attachments
-     * @param string $documents
+     * @param array $attachments
      * @return array
      */
     protected function setupSendRequest(
@@ -165,8 +157,7 @@ class MailRecord
         $to = "",
         $cc = "",
         $bcc = "",
-        $attachments = "",
-        $documents = ""
+        $attachments = array()
     ) {
         $request = array(
             "fromAccount"     => $from,
@@ -185,12 +176,14 @@ class MailRecord
             $request["sendDescription"] = urldecode($this->text_body);
         }
 
-        if (!empty($attachments)) {
-            $request["attachments"] = $attachments;
-        }
-
-        if (!empty($documents)) {
-            $request["documents"] = $documents;
+        $requestKeys = array(
+            self::ATTACHMENT_TYPE_UPLOAD => 'attachments',
+            self::ATTACHMENT_TYPE_DOCUMENT => 'documents',
+            self::ATTACHMENT_TYPE_TEMPLATE => 'templateAttachments',
+        );
+        foreach ($attachments as $key => $value) {
+            $requestKey = isset($requestKeys[$key]) ? $requestKeys[$key] : $key;
+            $request[$requestKey] = implode('::', $attachments[$key]);
         }
 
         if (is_array($this->related) && !empty($this->related["type"]) && !empty($this->related["id"])) {
@@ -275,23 +268,30 @@ class MailRecord
     }
 
     /**
-     * Format attachments or documents for inclusion in the email request.
+     * Split attachment list into separate lists by type
      *
      * @param array $attachments
-     * @param bool  $isDocuments
-     * @return string
+     * @return array
      */
-    protected function addAttachments($attachments = array(), $isDocuments = false)
+    protected function splitAttachments($attachments = array())
     {
         $addedAttachments = array();
 
         if (is_array($attachments)) {
             foreach ($attachments as $attachment) {
-                $addedAttachments[] = ($isDocuments) ? $attachment : $attachment["id"] . $attachment["name"];
+                $type = $attachment['type'];
+                if (!array_key_exists($type, $addedAttachments)) {
+                    $addedAttachments[$type] = array();
+                }
+                if ($type === self::ATTACHMENT_TYPE_UPLOAD) {
+                    $addedAttachments[$type][] = $attachment['id'] . $attachment["name"];
+                } else {
+                    $addedAttachments[$type][] = $attachment['id'];
+                }
             }
         }
 
-        return implode("::", $addedAttachments);
+        return $addedAttachments;
     }
 
     /**
