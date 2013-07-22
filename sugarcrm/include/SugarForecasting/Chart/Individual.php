@@ -82,9 +82,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
             $arrData[] = $v;
 
-            $arrProbabilities[$data['probability']] = $data['probability'];
+            $arrProbabilities[] = $data['probability'];
         }
 
+        $arrProbabilities = array_unique($arrProbabilities);
         asort($arrProbabilities);
 
         $tp = $this->getTimeperiod();
@@ -98,7 +99,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             'labels' => array(
                 'forecast' => $app_list_strings[$config['buckets_dom']],
                 'sales_stage' => $app_list_strings['sales_stage_dom'],
-                'probability' => $arrProbabilities,
+                'probability' => array_combine($arrProbabilities, $arrProbabilities),
                 'dataset' => array(
                     'likely' => $app_strings['LBL_LIKELY'],
                     'best' => $app_strings['LBL_BEST'],

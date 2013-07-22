@@ -1,6 +1,6 @@
 <?php
 
-$viewdefs['Forecasts']['base']['view']['forecast-details'] = array(
+$viewdefs['base']['view']['forecastdetails'] = array(
     'dashlets' => array(
         array(
             'name' => 'LBL_DASHLET_FORECASTS_DETAILS',
@@ -12,10 +12,7 @@ $viewdefs['Forecasts']['base']['view']['forecast-details'] = array(
             'filter' => array(
                 'module' => array(
                     'Home',
-                    'Accounts',
                     'Forecasts',
-                    'Opportunities',
-                    'Products'
                 ),
                 'view' => array(
                     'record',

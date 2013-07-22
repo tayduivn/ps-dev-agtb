@@ -42,6 +42,11 @@
     subDetailsTpl: {},
 
     /**
+     * Holds the detailsMsg template
+     */
+    detailsMsgTpl: {},
+
+    /**
      * Holds the dom values for best/likely/worst show/hide dropdown
      */
     detailsDataSet: {},
@@ -70,6 +75,16 @@
      * The parent module for the dashlet
      */
     currentModule: '',
+
+    /**
+     * The span class number to use span12, span4, etc
+     */
+    spanCSS: '',
+
+    /**
+     * Flag for if we've run getInitData yet or not
+     */
+    initDataLoaded: false,
 
     /**
      * events on the view for which to watch
@@ -107,22 +122,45 @@
             this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
             // set up the subtemplate
-            this.subDetailsTpl = app.template.getView('forecast-details.sub-details', 'Forecasts');
+            this.subDetailsTpl = app.template.getView('forecastdetails.sub-details');
+            this.detailsMsgTpl = app.template.getView('forecastdetails.details-msg');
 
             this.detailsDataSet = this.setUpShowDetailsDataSet(this.forecastConfig);
 
-            // get the current timeperiod
-            app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
-                success: _.bind(function(o) {
-                    // Make sure the model is here when we get back and this isn't mid-pageload or anything
-                    if(this.model) {
-                        this.model.set({selectedTimePeriod: o.id}, {silent: true});
-                        this.loadData();
-                    }
-                }, this),
-                complete: options ? options.complete : null
-            });
+            this.checkSpanCSS();
         }
+    },
+
+    /**
+     * Checks config show_worksheet_ settings for likely/best/worst and sets the spanCSS
+     */
+    checkSpanCSS: function() {
+        var ct = 0;
+        _.each([this.forecastConfig.show_worksheet_likely,
+            this.forecastConfig.show_worksheet_best,
+            this.forecastConfig.show_worksheet_worst], function(val)
+        {
+            if(val) {
+                ct++;
+            }
+        });
+
+        switch(ct) {
+            case 3:
+                this.spanCSS = '3';
+                break;
+            case 2:
+                this.spanCSS = '6';
+                break;
+            case 1:
+                this.spanCSS = '12';
+                break;
+            case 0:
+                this.spanCSS = '';
+                break;
+        }
+
+        this.model.set({spanCSS: this.spanCSS}, {silent: true});
     },
 
     /**
@@ -149,34 +187,20 @@
     resetModel: function() {
         this.model.set({
             opportunities : 0,
-            revenue : 0,
             closed_amount : undefined,
-            closed_likely_amount : 0,
-            closed_likely_percent : 0,
-            closed_likely_distance : 0,
             quota_amount : undefined,
-            quota_likely_amount : 0,
-            quota_likely_percent : 0,
-            quota_likely_distance : 0,
-            closed_best_amount : 0,
-            closed_best_percent : 0,
-            closed_best_distance : 0,
-            quota_best_amount : 0,
-            quota_best_percent : 0,
-            quota_best_distance : 0,
-            closed_worst_amount : 0,
-            closed_worst_percent : 0,
-            closed_worst_distance : 0,
-            quota_worst_amount : 0,
-            quota_worst_percent : 0,
-            quota_worst_distance : 0,
+            deficit_amount: undefined,
+            worst_details: '',
+            likely_details: '',
+            best_details: '',
             show_details_likely: this.forecastConfig.show_worksheet_likely,
             show_details_best: this.forecastConfig.show_worksheet_best,
             show_details_worst: this.forecastConfig.show_worksheet_worst,
-            pipeline : 0,
+            spanCSS: this.spanCSS,
             quota_amount_str: '',
             closed_amount_str: '',
-            revenue_str: '',
+            deficit_class: '',
+            deficit_amount_str: '',
             isForecastSetup: this.isForecastSetup,
             isForecastAdmin: this.isForecastAdmin
         });
@@ -204,7 +228,7 @@
 
         var ctx = this.model;
         if (this.currentModule == 'Forecasts') {
-            ctx = this.context.parent;
+            ctx = this.context.parent || this.context;
             this.showTimeperiod = false;
         }
 
@@ -230,6 +254,9 @@
         }
     },
 
+    /**
+     * {@inheritdoc}
+     */
     unbindData: function() {
         var ctx = this.context.parent;
         if(ctx) {
@@ -248,6 +275,10 @@
             return;
         }
 
+        if(!this.initDataLoaded) {
+            this.getInitData(options);
+        }
+
         if(!_.isEmpty(this.model.get('selectedTimePeriod'))) {
             var url = this.getProjectedURL(),
                 cb = {
@@ -259,6 +290,27 @@
             app.api.call('read', url, null, null, cb);
         }
     },
+
+    /**
+     * Extensible function for getting initial data
+     *
+     * @param options
+     */
+    getInitData: function(options) {
+        // get the current timeperiod
+        app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
+            success: _.bind(function(o) {
+                // Make sure the model is here when we get back and this isn't mid-pageload or anything
+                if(this.model) {
+                    this.initDataLoaded = true;
+                    this.model.set({selectedTimePeriod: o.id}, {silent: true});
+                    this.loadData();
+                }
+            }, this),
+            complete: options ? options.complete : null
+        });
+    },
+
 
     /**
      * {@inheritdoc}
@@ -275,13 +327,44 @@
      */
     renderSubDetails: function() {
         if(this.$el && this.subDetailsTpl) {
-            var subEl = this.$el.find('#guages');
+            var subEl = this.$el.find('.forecast-details');
             // Check if closed or quota is undefined (during opps/rli loading when those numbers aren't available yet)
             if(!_.isUndefined(this.model.get('closed_amount')) && !_.isUndefined(this.model.get('quota_amount'))) {
                 subEl.html(this.subDetailsTpl(this.model.toJSON()));
+                this.renderCSSChanges();
             } else {
                 subEl.html('');
             }
+        }
+    },
+
+    /**
+     * Adds the CSS to elements classes post-render
+     */
+    renderCSSChanges: function() {
+        var isDeficit = this.model.get('is_deficit');
+
+        // using getClassBasedOnAmount and sending 0 or 1 to resolve which class to use so the class names
+        // are only in one place
+        if(isDeficit) {
+            this.$el.find('.deficitRow').addClass(this.getClassBasedOnAmount(0, 1, 'color'));
+        } else {
+            this.$el.find('.deficitRow').addClass(this.getClassBasedOnAmount(1, 0, 'color'));
+        }
+
+        this.checkPropertySetCSS('worst');
+        this.checkPropertySetCSS('likely');
+        this.checkPropertySetCSS('best');
+    },
+
+    /**
+     * Checks a property on the config and sets the background color of an element
+     * @param {String} prop 'likely', 'best', or 'worst'
+     */
+    checkPropertySetCSS: function(prop) {
+        if(this.forecastConfig['show_worksheet_' + prop]) {
+            var css = this.getClassBasedOnAmount(this.serverData[prop], this.model.get('quota_amount'), 'background-color');
+            this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
     },
 
@@ -293,15 +376,9 @@
     mapAllTheThings: function(data, fromModel) {
         if(this.shouldRollup) {
             // Manager View
-            if(fromModel) {
-                data.likely = data.likely_case_adjusted;
-                data.best = data.best_case_adjusted;
-                data.worst = data.worst_case_adjusted;
-            } else {
-                data.likely = data.likely_adjusted;
-                data.best = data.best_adjusted;
-                data.worst = data.worst_adjusted;
-            }
+            data.likely = data.likely_adjusted;
+            data.best = data.best_adjusted;
+            data.worst = data.worst_adjusted;
         } else {
             // Rep View
             if(fromModel) {
@@ -316,7 +393,8 @@
 
             // can happen if data comes fromModel and won_amount isnt there
             if(_.isUndefined(data.closed_amount)) {
-                data.closed_amount = 0;
+                // unset closed_amount so it doesnt impact totals
+                delete data.closed_amount;
             }
         }
 
@@ -348,81 +426,89 @@
         this.bestTotal = data.best;
         this.worstTotal = data.worst;
 
-        if(this.shouldRollup) {
-            // Handle progressManager-specific data
-            data.revenue = data.pipeline_revenue;
-        } else {
-            if (app.user.get('id') != this.selectedUser.id) {
-                data.revenue = app.math.sub(data.likely, data.includedClosedAmount);
-                data.opportunities = app.math.sub(data.included_opp_count, data.includedClosedCount);
-            } else {
-                data.revenue = app.math.sub(data.overall_amount, app.math.add(data.lost_amount, data.won_amount));
-                data.opportunities = app.math.sub(data.total_opp_count, app.math.add(data.lost_count, data.won_count));
-            }
-        }
-
         data.quota_amount_str = app.currency.formatAmountLocale(data.quota_amount);
         data.closed_amount_str = app.currency.formatAmountLocale(data.closed_amount);
-        data.revenue_str = app.currency.formatAmountLocale(data.revenue)
+
+        // handle deficit
+        data.deficit_amount = Math.abs(app.math.sub(data.quota_amount, data.closed_amount));
+        data.deficit_amount_str = app.currency.formatAmountLocale(data.deficit_amount);
+        data.is_deficit = (parseFloat(data.quota_amount) > parseFloat(data.closed_amount));
+
+        var deficitLabelKey = (data.is_deficit) ? 'LBL_FORECAST_DETAILS_DEFICIT' : 'LBL_FORECAST_DETAILS_SURPLUS';
+        data.deficit_label = app.lang.get(deficitLabelKey, 'Forecasts');
+
+        // convert detailsForCase params to html template
+        data.worst_details = this.detailsMsgTpl(this.getDetailsForCase('worst', this.worstTotal, data.quota_amount, data.closed_amount));
+        data.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, data.quota_amount, data.closed_amount));
+        data.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, data.quota_amount, data.closed_amount));
 
         if(this.model) {
             this.model.set(data);
-            this.recalculateDataIntoModel();
+            this.renderSubDetails();
         }
     },
 
     /**
-     * Recalculates most all the values for the template model
-     */
-    recalculateDataIntoModel: function () {
-        var closedAmt = this.model.get('closed_amount'),
-            quotaAmt = this.model.get('quota_amount');
-
-        // We're using the absolute value difference because with the _above vars, if the value was negative
-        // we're still using the positive difference but we're changing the label
-        this.model.set({
-            closed_likely_amount: this.getAbsDifference(this.likelyTotal, closedAmt),
-            closed_likely_percent: this.getPercent(this.likelyTotal, closedAmt),
-            closed_likely_distance: this.getRowLabel('LIKELY', 'CLOSED', this.likelyTotal, closedAmt),
-            closed_best_amount: this.getAbsDifference(this.bestTotal, closedAmt),
-            closed_best_percent: this.getPercent(this.bestTotal, closedAmt),
-            closed_best_distance: this.getRowLabel('BEST', 'CLOSED', this.bestTotal, closedAmt),
-            closed_worst_amount: this.getAbsDifference(this.worstTotal, closedAmt),
-            closed_worst_percent: this.getPercent(this.worstTotal, closedAmt),
-            closed_worst_distance: this.getRowLabel('WORST', 'CLOSED', this.worstTotal, closedAmt),
-            quota_likely_amount: this.getAbsDifference(this.likelyTotal, quotaAmt),
-            quota_likely_percent: this.getPercent(this.likelyTotal, quotaAmt),
-            quota_likely_distance: this.getRowLabel('LIKELY', 'QUOTA', this.likelyTotal, quotaAmt),
-            quota_best_amount: this.getAbsDifference(this.bestTotal, quotaAmt),
-            quota_best_percent: this.getPercent(this.bestTotal, quotaAmt),
-            quota_best_distance: this.getRowLabel('BEST', 'QUOTA', this.bestTotal, quotaAmt),
-            quota_worst_amount: this.getAbsDifference(this.worstTotal, quotaAmt),
-            quota_worst_percent: this.getPercent(this.worstTotal, quotaAmt),
-            quota_worst_distance: this.getRowLabel('WORST', 'QUOTA', this.worstTotal, quotaAmt),
-            pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'))
-        });
-        this.renderSubDetails();
-    },
-
-    /**
-     * Determine if one value is bigger than another then build the language key string to be used
+     * Determine if one value is bigger than another then build the language string to be used
      *
-     * @param caseStr case string "LIKELY", "BEST", or "WORST"
-     * @param stageStr what stage we're looking at: "QUOTA", or "CLOSED"
+     * @param caseStr case string "likely", "best", or "worst"
      * @param caseValue the value of the case
      * @param stageValue the value of the quota or closed amount
-     * @return {String} translated language string
+     * @param closedAmt the value of closed_amount from the model
+     * @return {Object} params for details-msg template
      */
-    getRowLabel: function (caseStr, stageStr, caseValue, stageValue) {
-        var retStr = 'LBL_DISTANCE_';
+    getDetailsForCase: function (caseStr, caseValue, stageValue, closedAmt) {
+        var params = {},
+            // get Number versions of values for comparison
+            caseValueN = parseFloat(caseValue),
+            stageValueN = parseFloat(stageValue);
 
-        if(caseValue > stageValue) {
-            retStr += 'ABOVE_' + caseStr + '_FROM_' + stageStr;
-        } else {
-            retStr += 'LEFT_' + caseStr + '_TO_' + stageStr;
+        params.label = app.lang.get('LBL_' + caseStr.toUpperCase(), 'Forecasts');
+        params.spanCSS = this.spanCSS;
+        params.case = caseStr;
+        params.shortOrExceed = '&nbsp;';
+        params.deficitAmount = '&nbsp;';
+        params.feedbackLn1 = '';
+        params.feedbackLn2 = '';
+
+        if(caseValueN == 0 && stageValueN == 0)
+        {
+            // if we have no data
+            params.amount = app.lang.get('LBL_FORECAST_DETAILS_NO_DATA', "Forecasts");
+        }
+        else if(caseValueN != 0 && stageValueN != 0 && caseValueN == stageValueN)
+        {
+            // if the values are equal but we have data
+            params.amount = app.currency.formatAmountLocale(caseValue);
+            params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_MEETING_QUOTA', "Forecasts");
+        }
+        else
+        {
+            params.amount = app.currency.formatAmountLocale(caseValue);
+
+            if(caseValueN > stageValueN) {
+                params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_EXCEED', "Forecasts");
+            } else {
+                params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
+            }
+
+            var casePlusClosed = app.math.add(caseValue, closedAmt),
+                deficitAmount = Math.abs(app.math.sub(stageValue, casePlusClosed));
+
+            params.percent = this.getPercent(deficitAmount, stageValue);
+            params.deficitAmount = '(' + app.currency.formatAmountLocale(deficitAmount) + ')';
+
         }
 
-        return app.lang.get(retStr, "Forecasts");
+        params.feedbackLn1 = params.shortOrExceed;
+
+        if(params.percent) {
+            params.feedbackLn1 += ' ' + params.percent;
+        }
+
+        params.feedbackLn2 = params.deficitAmount;
+
+        return params;
     },
 
     /**
@@ -435,6 +521,40 @@
      */
     getAbsDifference: function (caseValue, stageValue) {
         return app.currency.formatAmountLocale(Math.abs(stageValue - caseValue));
+    },
+
+    /**
+     * Gets a css class based on the amount relative to stageValue
+     *
+     * @param {Number} caseValue the value to check
+     * @param {Number} stageValue the value to check against
+     * @param {String} type the property to get
+     * @returns {string}
+     */
+    getClassBasedOnAmount: function (caseValue, stageValue, type) {
+        var cssClass = '';
+        // convert values to Numbers for comparison
+        caseValue = parseFloat(caseValue);
+        stageValue = parseFloat(stageValue);
+        if(type == 'color') {
+            if(caseValue == stageValue) {
+                //
+            } else if(caseValue > stageValue) {
+                cssClass = 'font-green';
+            } else {
+                cssClass = 'font-red'
+            }
+        } else if(type == 'background-color') {
+            if(caseValue == stageValue) {
+                cssClass = 'grayLight';
+            } else if(caseValue > stageValue) {
+                cssClass = 'green';
+            } else {
+                cssClass = 'red';
+            }
+        }
+
+        return cssClass;
     },
 
     /**
@@ -460,26 +580,7 @@
                 percent = Math.round(percent*100)/100;
             }
         }
-        return percent + '%';
-    },
-
-    /**
-     * calculates the pipeline size to one significant figure.
-     * @param likelyTotal
-     * @param revenue
-     * @return {Number}
-     */
-    calculatePipelineSize: function (likelyTotal, revenue) {
-        var ps = 0;
-        if (likelyTotal > 0) {
-            ps = revenue / likelyTotal;
-
-            // Round to 1 decimal place
-            ps = Math.round(ps * 10)/10;
-        }
-
-        // This value is used in the template.
-        return ps;
+        return Math.abs(percent) + '%';
     },
 
     /**
@@ -488,7 +589,7 @@
      */
     isManagerView: function () {
         var isMgrView = false;
-        if(this.currentModule == 'Forecasts' && this.selectedUser.is_manager == true
+        if(this.currentModule == 'Forecasts' && this.selectedUser.isManager == true
             && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false))
         {
             isMgrView = true;

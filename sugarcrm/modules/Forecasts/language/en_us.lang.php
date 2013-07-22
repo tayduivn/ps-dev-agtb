@@ -290,7 +290,7 @@ $mod_strings = array (
     'LBL_DISTANCE_LEFT_BEST_TO_QUOTA' => 'Best below Quota',
     'LBL_DISTANCE_ABOVE_WORST_FROM_QUOTA' => 'Worst above Quota',
     'LBL_DISTANCE_LEFT_WORST_TO_QUOTA' => 'Worst below Quota',
-    'LBL_CLOSED' => 'Closed',
+    'LBL_CLOSED' => 'Closed Won',
     'LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED' => 'Likely above Closed',
     'LBL_DISTANCE_LEFT_LIKELY_TO_CLOSED' => 'Likely below Closed',
     'LBL_DISTANCE_ABOVE_BEST_FROM_CLOSED' => 'Best above Closed',
@@ -298,7 +298,6 @@ $mod_strings = array (
     'LBL_DISTANCE_ABOVE_WORST_FROM_CLOSED' => 'Worst above Closed',
     'LBL_DISTANCE_LEFT_WORST_TO_CLOSED' => 'Worst below Closed',
     'LBL_REVENUE' => 'Revenue',
-    'LBL_PIPELINE_SIZE' => 'Pipeline Size',
     'LBL_PIPELINE_REVENUE' => 'Pipeline Revenue',
     'LBL_PIPELINE_OPPORTUNITIES' => 'Pipeline Opportunities',
     'LBL_LOADING' => 'Loading',
@@ -422,9 +421,15 @@ $mod_strings = array (
     'LBL_COST_PRICE' => 'Cost Price',
     'LBL_FORECASTS_CONFIG_WORKSHEET_TEXT' => 'Select which columns should be displayed for the worksheet view. By default, the following fields will be selected:',
 
-    // pipline opportunities dashlet
+    // forecast details dashlet
     'LBL_DASHLET_FORECAST_NOT_SETUP' => 'Forecasts has not been configured and needs to be setup in order to use this widget. Please contact your system administrator.',
     'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/config">Please click here to configure Forecasting</a>.',
+    'LBL_FORECAST_DETAILS_DEFICIT' => 'Deficit',
+    'LBL_FORECAST_DETAILS_SURPLUS' => 'Surplus',
+    'LBL_FORECAST_DETAILS_SHORT' => 'Short by',
+    'LBL_FORECAST_DETAILS_EXCEED' => 'Exceed by',
+    'LBL_FORECAST_DETAILS_NO_DATA' => 'No Data',
+    'LBL_FORECAST_DETAILS_MEETING_QUOTA' => 'Meeting Quota',
 
     'LBL_ASSIGN_QUOTA_BUTTON' => 'Assign Quota',
     'LBL_ASSIGNING_QUOTA' => 'Assigning Quota',

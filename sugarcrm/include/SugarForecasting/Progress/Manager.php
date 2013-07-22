@@ -26,17 +26,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      * @var Opportunity
      */
     protected $opportunity;
-    
-    /**
-     * @var pipelineCount
-     */
-     protected $pipelineCount;
-     
-     /**
-     * @var pipelineRevenue
-     */
-     protected $pipelineRevenue;
-     
+
      /**
       * @var closedAmount
       */
@@ -103,8 +93,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //get data
         $progressData = array(
             "closed_amount"     => $this->closedAmount,
-            "opportunities"     => $this->pipelineCount,
-            "pipeline_revenue"  => $this->pipelineRevenue,
             "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
         );
 
@@ -272,8 +260,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
-        $this->pipelineRevenue = is_numeric($row["amount"]) ? $row["amount"] : 0;
-        $this->pipelineCount = is_numeric($row["recordcount"]) ? $row["recordcount"] : 0;
         $this->closedAmount = is_numeric($row["closed"]) ? $row["closed"] : 0;
     }
 }

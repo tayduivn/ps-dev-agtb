@@ -11,21 +11,52 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-describe("forecast-details", function() {
-    var app, view, cfg, result;
+describe("Base.View.Forecastdetails", function() {
+    var app, view, cfg, result, sandbox;
 
     beforeEach(function() {
         app = SugarTest.app;
         app.user.setPreference('decimal_precision', 2);
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecast-details", "forecast-details", "js", function(d) {return eval(d); });
-        view.meta = {};
+
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.metadata, 'getModule', function() {
+            return {
+                is_setup: 1
+            }
+        });
+        sandbox.stub(app.utils, 'checkForecastConfig', function() {
+            return true;
+        });
+        sandbox.stub(app.user, 'getAcls', function() {
+            return {
+                'Forecasts': {
+                    admin: true
+                }
+            };
+        });
+
+        var context = app.context.getContext();
+        context.set({
+            module: 'Forecasts',
+            model: new Backbone.Model()
+        });
+        context.parent = new Backbone.Model();
+        context.parent.set('selectedUser', {id: 'test_user', is_manager: false});
+        context.parent.set('selectedTimePeriod', 'test_timeperiod');
+        context.parent.set('module', 'Forecasts');
+
+        var meta = {
+            config: false
+        }
+        view = SugarTest.createView('base', 'Forecasts', 'forecastdetails', meta, context, false, null, true);
     });
 
     afterEach(function() {
+        sandbox.restore();
         cfg = null;
         result = null;
     });
-
+    
     describe("setUpShowDetailsDataSet()", function() {
         beforeEach(function() {
             sinon.stub(app.metadata, 'getStrings', function() {
@@ -282,9 +313,10 @@ describe("forecast-details", function() {
     });
 
     describe("loadData()", function() {
-        var apiCallStub;
+        var getUrlStub, getInitStub;
         beforeEach(function() {
-            apiCallStub = sinon.stub(app.api, 'call', function() {});
+            getUrlStub = sinon.stub(view, 'getProjectedURL', function() {});
+            getInitStub = sinon.stub(view, 'getInitData', function() {});
             view.forecastConfig = {
                 show_worksheet_best: false,
                 show_worksheet_likely: true,
@@ -294,13 +326,21 @@ describe("forecast-details", function() {
         });
 
         afterEach(function() {
-            apiCallStub.restore();
+            getUrlStub.restore();
+            getInitStub.restore();
         });
 
-        it("app.api.call() should not be called if selectedTimePeriod is not set", function() {
+        it("getInitData should only be called once", function() {
+            view.resetModel();
+            view.initDataLoaded = true;
+            view.loadData();
+            expect(getInitStub).not.toHaveBeenCalled();
+        });
+
+        it("app.api.call() should not be called for the progress endpoint if selectedTimePeriod is not set", function() {
             view.resetModel();
             view.loadData();
-            expect(apiCallStub).not.toHaveBeenCalled();
+            expect(getUrlStub).not.toHaveBeenCalled();
         });
     });
 
@@ -320,6 +360,7 @@ describe("forecast-details", function() {
             view.worstTotal = -1;
             view.isForecastSetup = true;
             view.isForecastAdmin = false;
+            view.detailsMsgTpl = Handlebars.template;
         });
 
         afterEach(function() {
@@ -385,12 +426,6 @@ describe("forecast-details", function() {
                 view.calculateData(view.mapAllTheThings(dataFromServer, false));
                 expect(view.model.get('closed_amount')).toBe(dataFromServer.closed_amount);
             });
-
-            it("revenue set properly from pipeline_revenue", function() {
-                view.resetModel();
-                view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('revenue')).toBe(dataFromServer.pipeline_revenue);
-            });
         });
 
         describe("Rep Test -- shouldRollup is false", function() {
@@ -444,89 +479,6 @@ describe("forecast-details", function() {
                 view.calculateData(view.mapAllTheThings(dataFromServer, false));
                 expect(view.model.get('closed_amount')).toBe(dataFromServer.won_amount);
             });
-
-            it("opportunities set properly - My data", function() {
-                // Set user values
-                app.user.set({id: 'itsMe'});
-                view.selectedUser.id = 'itsMe';
-
-                var opps = dataFromServer.total_opp_count - (dataFromServer.lost_count + dataFromServer.won_count);
-
-                view.resetModel();
-                view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('opportunities')).toBe(opps);
-            });
-
-            it("opportunities set properly - Another user's data", function() {
-                // Set user values
-                app.user.set({id: 'itsMe'});
-                view.selectedUser.id = 'itsNotMe';
-
-                var opps = dataFromServer.included_opp_count - dataFromServer.includedClosedCount;
-
-                view.resetModel();
-                view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('opportunities')).toBe(opps);
-            });
-
-            it("revenue set properly - My data", function() {
-                // Set user values
-                app.user.set({id: 'itsMe'});
-                view.selectedUser.id = 'itsMe';
-
-                var revenue = dataFromServer.overall_amount - (dataFromServer.lost_amount + dataFromServer.won_amount);
-
-                view.resetModel();
-                view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('revenue')).toBe(revenue);
-            });
-
-            it("revenue set properly - Another user's data", function() {
-                // Set user values
-                app.user.set({id: 'itsMe'});
-                view.selectedUser.id = 'itsNotMe';
-
-                var revenue = dataFromServer.amount - dataFromServer.includedClosedAmount;
-
-                view.resetModel();
-                view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('revenue')).toBe(revenue);
-            });
-        });
-    });
-
-    describe("getRowLabel()", function() {
-        var appLangStub, caseVal, stageVal, caseStr, stageStr;
-        beforeEach(function() {
-            appLangStub = sinon.stub(app.lang, 'get', function(str) { return str; });
-        });
-
-        afterEach(function() {
-            appLangStub.restore();
-            caseVal = null;
-            stageVal = null;
-            caseStr = null;
-            stageStr = null;
-        });
-
-        it("should say ABOVE and FROM", function() {
-            caseVal = 100;
-            stageVal = 50;
-            caseStr = 'LIKELY';
-            stageStr = 'CLOSED';
-            result = view.getRowLabel(caseStr, stageStr, caseVal, stageVal);
-
-            expect(result).toBe('LBL_DISTANCE_ABOVE_LIKELY_FROM_CLOSED');
-        });
-
-        it("should say LEFT and TO", function() {
-            caseVal = 50;
-            stageVal = 100;
-            caseStr = 'LIKELY';
-            stageStr = 'QUOTA';
-            result = view.getRowLabel(caseStr, stageStr, caseVal, stageVal);
-
-            expect(result).toBe('LBL_DISTANCE_LEFT_LIKELY_TO_QUOTA');
         });
     });
 
@@ -599,47 +551,9 @@ describe("forecast-details", function() {
         });
     });
 
-    describe("calculatePipelineSize()", function() {
-        var likelyTotal, revenue;
-        beforeEach(function() {
-        });
-
-        afterEach(function() {
-            likelyTotal = null;
-            revenue = null;
-        });
-
-        it("should return zero since likelyTotal is 0", function() {
-            likelyTotal = 0;
-            revenue = 50;
-
-            result = view.calculatePipelineSize(likelyTotal, revenue);
-
-            expect(result).toEqual(0);
-        });
-
-        it("should return an integer as the numbers divide evenly", function() {
-            likelyTotal = 50;
-            revenue = 100;
-
-            result = view.calculatePipelineSize(likelyTotal, revenue);
-
-            expect(result).toEqual(2);
-        });
-
-        it("should return a decimal truncated to 1 place", function() {
-            likelyTotal = 168;
-            revenue = 100;
-
-            result = view.calculatePipelineSize(likelyTotal, revenue);
-
-            expect(result).toEqual(0.6);
-        });
-    });
-
     describe("isManagerView()", function() {
         it("selectedUser is a manager and showOpps is undefined", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.currentModule = "Forecasts";
 
             result = view.isManagerView();
@@ -648,7 +562,7 @@ describe("forecast-details", function() {
         });
 
         it("selectedUser is a manager and showOpps is true", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.selectedUser.showOpps = true;
             view.currentModule = "Forecasts";
 
@@ -658,7 +572,7 @@ describe("forecast-details", function() {
         });
 
         it("selectedUser is a manager and showOpps is false", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.selectedUser.showOpps = false;
             view.currentModule = "Forecasts";
 
@@ -668,7 +582,7 @@ describe("forecast-details", function() {
         });
 
         it("selectedUser is a manager and but we aren't in Forecasts", function() {
-            view.selectedUser.is_manager = true;
+            view.selectedUser.isManager = true;
             view.selectedUser.showOpps = false;
             view.currentModule = "Home";
 
@@ -678,7 +592,7 @@ describe("forecast-details", function() {
         });
 
         it("selectedUser is not a manager and showOpps is undefined", function() {
-            view.selectedUser.is_manager = false;
+            view.selectedUser.isManager = false;
             view.currentModule = "Forecasts";
             result = view.isManagerView();
 
@@ -694,13 +608,9 @@ describe("forecast-details", function() {
                 amount: 4,
                 likely_case:5,
                 best_case: 6,
-                worst_case_adjusted: 12,
-                likely_case_adjusted: 14,
-                best_case_adjusted: 16,
                 worst_adjusted: 22,
                 likely_adjusted: 24,
-                best_adjusted: 26,
-
+                best_adjusted: 26
             }
         });
 
@@ -721,7 +631,7 @@ describe("forecast-details", function() {
 
                 it("should return the right likely value", function() {
                     result = view.mapAllTheThings(data, fromModel);
-                    expect(result.likely).toEqual(data.likely_case_adjusted);
+                    expect(result.likely).toEqual(data.likely_adjusted);
                 });
 
             });
@@ -764,6 +674,110 @@ describe("forecast-details", function() {
                     result = view.mapAllTheThings(data, fromModel);
                     expect(result.likely).toEqual(data.amount);
                 });
+            });
+        });
+    });
+
+    describe("getDetailsForCase()", function() {
+        var caseStr, caseValue, stageValue, closedAmt;
+        beforeEach(function() {
+            sinon.stub(app.lang, 'get', function(key) {
+                return key;
+            });
+        });
+
+        afterEach(function() {
+            app.lang.get.restore();
+            caseStr = null;
+            caseValue = null;
+            stageValue = null;
+            closedAmt = null;
+        });
+
+        describe("when there is no data", function() {
+            beforeEach(function() {
+                caseStr = 'likely';
+                caseValue = 0;
+                stageValue = 0;
+                closedAmt = 0;
+            });
+
+            it("should return the 'No Data' message for amount", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.amount).toBe('LBL_FORECAST_DETAILS_NO_DATA');
+            });
+        });
+
+        describe("when likely has met quota", function() {
+            beforeEach(function() {
+                caseStr = 'likely';
+                caseValue = 10;
+                stageValue = 10;
+                closedAmt = 0;
+            });
+
+            it("should return the 'Meeting Quota' message for amount", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.shortOrExceed).toBe('LBL_FORECAST_DETAILS_MEETING_QUOTA');
+            });
+        });
+
+        describe("when likely is under quota", function() {
+            beforeEach(function() {
+                caseStr = 'likely';
+                caseValue = 10;
+                stageValue = 100;
+                closedAmt = 50;
+            });
+
+            it("should return correct amount", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.amount).toBe('$10.00');
+            });
+
+            it("should return correct shortOrExceed", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.shortOrExceed).toBe('LBL_FORECAST_DETAILS_SHORT');
+            });
+
+            it("should return correct percent", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.percent).toBe('40%');
+            });
+
+            it("should return correct deficitAmount", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.deficitAmount).toBe('($40.00)');
+            });
+
+        });
+
+        describe("when likely is over quota", function() {
+            beforeEach(function() {
+                caseStr = 'likely';
+                caseValue = 115;
+                stageValue = 100;
+                closedAmt = 50;
+            });
+
+            it("should return correct amount", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.amount).toBe('$115.00');
+            });
+
+            it("should return correct shortOrExceed", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.shortOrExceed).toBe('LBL_FORECAST_DETAILS_EXCEED');
+            });
+
+            it("should return correct percent", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.percent).toBe('65%');
+            });
+
+            it("should return correct deficitAmount", function() {
+                result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
+                expect(result.deficitAmount).toBe('($65.00)');
             });
         });
     });

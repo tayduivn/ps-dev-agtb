@@ -47,10 +47,19 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         //Clear config table of Forecasts values before each test, so each test can setup it's own db
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config WHERE category = 'Forecasts' ");
+
+        SugarTestForecastUtilities::setUpForecastConfig(
+            array(
+                'forecast_by' => 'Opportunities',
+                'sales_stage_won' => array('won'),
+                'sales_stage_lost' => array('won')
+            )
+        );
     }
 
     public function tearDown()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         parent::tearDown();
     }
 
@@ -265,7 +274,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $opp2->save();
 
         // force values to be null in db as in a possible upgrade situation.
-        $db->query("update opportunities set base_rate=NULL, amount_usdollar=2000 where id='{$opp2->id}'");
+        $db->query("update opportunities set base_rate=NULL, amount=1000, amount_usdollar=2000 where id='{$opp2->id}'");
 
         // upgrade currency columns
         ForecastsDefaults::upgradeColumns();

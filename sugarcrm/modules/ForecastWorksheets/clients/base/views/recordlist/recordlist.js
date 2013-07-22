@@ -609,58 +609,10 @@
      * Calculate the totals for the visible fields
      */
     calculateTotals: function() {
-        var fields = _.filter(this._fields.visible, function(field) {
-                return field.type === 'currency';
-            }),
-            fieldNames = [];
-
-        this.calculateTotalsColspan();
-        _.each(fields, function(field) {
-            fieldNames.push(field.name);
-            this.totals[field.name] = 0;
-            this.totals["overall_" + field.name] = 0;
-            this.totals[field.name + "_display"] = true;
-        }, this);
-
-        // add up all the currency fields
-        if (this.collection.length == 0) {
-            // no items, just bail and set back the 0 totals
-            return;
-        }
-
-        // set up commit_stages that should be processed in included total
-        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
-            commit_stages_in_included_total = [],
-            ranges;
-
-        if (forecast_ranges == 'show_custom_buckets') {
-            ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
-            _.each(ranges, function(value, key) {
-                if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
-                    commit_stages_in_included_total.push(key);
-                }
-            })
-        } else {
-            commit_stages_in_included_total.push('include');
-        }
-
-        this.collection.each(function(model) {
-            _.each(fieldNames, function(field) {
-                // convert the value to base
-                var val = model.get(field);
-                if (_.isUndefined(val) || _.isNaN(val)) {
-                    return;
-                }
-                val = app.currency.convertWithRate(val, model.get('base_rate'));
-                this.totals["overall_" + field] = app.math.add(this.totals["overall_" + field], val);
-                if (_.include(commit_stages_in_included_total, model.get('commit_stage'))) {
-                    this.totals[field] = app.math.add(this.totals[field], val);
-                }
-            }, this)
-        }, this);
-
         // fire an event on the parent context
         if (this.isVisible()) {
+            this.totals = this.getCommitTotals();
+            this.calculateTotalsColspan();
             var ctx = this.context.parent || this.context;
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
@@ -766,95 +718,91 @@
      * @returns {{amount: number, best_case: number, worst_case: number, overall_amount: number, overall_best: number, overall_worst: number, timeperiod_id: (*|bindDataChange.selectedTimeperiod), lost_count: number, lost_amount: number, won_count: number, won_amount: number, included_opp_count: number, total_opp_count: Number, closed_count: number, closed_amount: number}}
      */
     getCommitTotals: function() {
-        if (this.layout.isVisible()) {
-            var includedAmount = 0,
-                includedBest = 0,
-                includedWorst = 0,
-                overallAmount = 0,
-                overallBest = 0,
-                overallWorst = 0,
-                includedCount = 0,
-                lostCount = 0,
-                lostAmount = 0,
-                wonCount = 0,
-                wonAmount = 0,
-                includedClosedCount = 0,
-                includedClosedAmount = 0;
+        var includedAmount = 0,
+            includedBest = 0,
+            includedWorst = 0,
+            overallAmount = 0,
+            overallBest = 0,
+            overallWorst = 0,
+            includedCount = 0,
+            lostCount = 0,
+            lostAmount = 0,
+            wonCount = 0,
+            wonAmount = 0,
+            includedClosedCount = 0,
+            includedClosedAmount = 0;
 
-            //Get the excluded_sales_stage property.  Default to empty array if not set
-            var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
-            var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
+        //Get the excluded_sales_stage property.  Default to empty array if not set
+        var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
+        var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
 
-            // set up commit_stages that should be processed in included total
-            var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
-                commit_stages_in_included_total = [],
-                ranges;
+        // set up commit_stages that should be processed in included total
+        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
+            commit_stages_in_included_total = [];
 
-            if (forecast_ranges == 'show_custom_buckets') {
-                ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
-                _.each(ranges, function(value, key) {
-                    if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
-                        commit_stages_in_included_total.push(key);
-                    }
-                })
-            } else {
-                commit_stages_in_included_total.push('include');
+        if (forecast_ranges == 'show_custom_buckets') {
+            var ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
+            _.each(ranges, function(value, key) {
+                if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
+                    commit_stages_in_included_total.push(key);
+                }
+            })
+        } else {
+            commit_stages_in_included_total.push('include');
+        }
+
+        this.collection.each(function(model) {
+            var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
+                lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
+                amount = parseFloat(model.get('likely_case')),
+                commit_stage = model.get('commit_stage'),
+                best = parseFloat(model.get('best_case')),
+                base_rate = parseFloat(model.get('base_rate')),
+                worst = parseFloat(model.get('worst_case')),
+                worst_base = app.currency.convertWithRate(worst, base_rate),
+                amount_base = app.currency.convertWithRate(amount, base_rate),
+                best_base = app.currency.convertWithRate(best, base_rate);
+
+            if (won) {
+                wonAmount = app.math.add(wonAmount, amount_base);
+                wonCount++;
+            } else if (lost) {
+                lostAmount = app.math.add(lostAmount, amount_base);
+                lostCount++;
+            }
+            if (_.include(commit_stages_in_included_total, commit_stage)) {
+                includedAmount += amount_base;
+                includedBest += best_base;
+                includedWorst += worst_base;
+                includedCount++;
+                if (won) {
+                    includedClosedCount++;
+                    includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
+                }
             }
 
-            this.collection.each(function(model) {
-                var won = _.include(sales_stage_won_setting, model.get('sales_stage')),
-                    lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
-                    amount = parseFloat(model.get('likely_case')),
-                    commit_stage = model.get('commit_stage'),
-                    best = parseFloat(model.get('best_case')),
-                    base_rate = parseFloat(model.get('base_rate')),
-                    worst = parseFloat(model.get('worst_case')),
-                    worst_base = app.currency.convertWithRate(worst, base_rate),
-                    amount_base = app.currency.convertWithRate(amount, base_rate),
-                    best_base = app.currency.convertWithRate(best, base_rate);
+            overallAmount += amount_base;
+            overallBest += best_base;
+            overallWorst += worst_base;
+        }, this);
 
-                if (won) {
-                    wonAmount = app.math.add(wonAmount, amount_base);
-                    wonCount++;
-                } else if (lost) {
-                    lostAmount = app.math.add(lostAmount, amount_base);
-                    lostCount++;
-                }
-                if (_.include(commit_stages_in_included_total, commit_stage)) {
-                    includedAmount += amount_base;
-                    includedBest += best_base;
-                    includedWorst += worst_base;
-                    includedCount++;
-                    if (won || lost) {
-                        includedClosedCount++;
-                        includedClosedAmount = app.math.add(amount_base, includedClosedAmount);
-                    }
-                }
-
-                overallAmount += amount_base;
-                overallBest += best_base;
-                overallWorst += worst_base;
-            }, this);
-
-            return {
-                'amount': includedAmount,
-                'best_case': includedBest,
-                'worst_case': includedWorst,
-                'overall_amount': overallAmount,
-                'overall_best': overallBest,
-                'overall_worst': overallWorst,
-                'timeperiod_id': this.dirtyTimeperiod || this.selectedTimeperiod,
-                'lost_count': lostCount,
-                'lost_amount': lostAmount,
-                'won_count': wonCount,
-                'won_amount': wonAmount,
-                'included_opp_count': includedCount,
-                'total_opp_count': this.collection.length,
-                'closed_count': includedClosedCount,
-                'closed_amount': includedClosedAmount
-
-            };
-        }
+        return {
+            'likely_case': includedAmount,
+            'best_case': includedBest,
+            'worst_case': includedWorst,
+            'overall_amount': overallAmount,
+            'overall_best': overallBest,
+            'overall_worst': overallWorst,
+            'timeperiod_id': this.dirtyTimeperiod || this.selectedTimeperiod,
+            'lost_count': lostCount,
+            'lost_amount': lostAmount,
+            'won_count': wonCount,
+            'won_amount': wonAmount,
+            'included_opp_count': includedCount,
+            'total_opp_count': this.collection.length,
+            'closed_count': includedClosedCount,
+            'closed_amount': includedClosedAmount
+        };
     },
 
     /**
