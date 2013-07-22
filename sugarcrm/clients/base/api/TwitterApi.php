@@ -94,6 +94,13 @@ class TwitterApi extends SugarApi
         }
 
         $result = $api->getUserTweets($args['twitterId'], 0, $args['count']);
+        if (isset($result['errors'])) {
+            $errorString = '';
+            foreach($result['errors'] as $errorKey => $error) {
+                $errorString .= $error['code'].str_replace(' ', '_', $error['message']);
+            }
+            throw new SugarApiExceptionRequestMethodFailure('errors_from_twitter: '.$errorString, $args);
+        }
         return $result;
     }
 }
