@@ -11,15 +11,19 @@ ul.nav.nav-tabs li.activity > p {
   * Portal Dashboard
   * Overrides normal list view styling to make them 'dashlet-like'
   **/
-.dashboard.main-pane {
+#content > .row-fluid > .dashboard.main-pane  {
+  top: 0px;
   position: relative;
 }
+
 .dashboard {
   padding: 0 20px 0 20px;
   width: auto;
   .thumbnail {
     margin-top: 20px;
     .headerpane{
+      height: auto;
+      position: static;
       min-height: 0;
       .border-radius(3px);
       border-bottom: 0;
