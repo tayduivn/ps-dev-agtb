@@ -144,6 +144,27 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         Activity::$enabled = $save_enabled;
     }
+
+    /**
+     * @dataProvider dataProviderForecastModulesAuditable
+     */
+    public function testForecastModulesAreNotAuditable($module, $expected)
+    {
+        $aqm = new ActivityQueueManager();
+
+        $bean = BeanFactory::getBean($module);
+
+        $this->assertEquals($expected, SugarTestReflection::callProtectedMethod($aqm, 'isAuditable', array($bean)));
+    }
+
+    public static function dataProviderForecastModulesAuditable()
+    {
+        return array(
+            array('Forecasts', false),
+            array('ForecastWorksheets', false),
+            array('ForecastManagerWorksheets', false)
+        );
+    }
 }
 
 class TestActivityQueueManager extends ActivityQueueManager {
