@@ -75,7 +75,7 @@ class HelpApi extends SugarApi {
         require('include/api/help/extras/helpList.php');
         $endpointHtml = ob_get_clean();
 
-        $api->setHeader('Content Type', 'text/html');
+        $api->setHeader('Content-Type', 'text/html');
         return $endpointHtml;
     }
 
