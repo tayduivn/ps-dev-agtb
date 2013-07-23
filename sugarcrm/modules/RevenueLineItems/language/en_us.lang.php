@@ -152,7 +152,7 @@ $mod_strings = array(
 
     'LBL_QUOTED' => 'Quoted',
     'LBL_NOT_QUOTED' => 'Not Quoted',
-    'WARNING_DELETED_RECORD_RECOMMIT' => 'This record was included in a Forecast. It will be removed and you will need to re-commit your Forecast.',
-    'WARNING_DELETED_RECORD_LIST_RECOMMIT' => 'One or more records were included in a Forecast. They will be removed and you will need to re-commit your Forecast.'
+    'WARNING_DELETED_RECORD_RECOMMIT' => 'This record was included in a <a href="#Forecasts">Forecast</a>. It will be removed and you will need to re-commit your <a href="#Forecasts">Forecast</a>.',
+    'WARNING_DELETED_RECORD_LIST_RECOMMIT' => 'One or more records were included in a <a href="#Forecasts">Forecast</a>. They will be removed and you will need to re-commit your <a href="#Forecasts">Forecast</a>.'
 
 );

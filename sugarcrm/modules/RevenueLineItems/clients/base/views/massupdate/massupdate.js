@@ -27,7 +27,7 @@
      */
     delegateListFireEvents: function() {
         this.layout.on("list:massquote:fire", this.massQuote, this);
-        this.layout.on("list:record:deleted", this.deleteCommitWarning, this);
+        this.layout.on("list:records:deleted", this.deleteCommitWarning, this);
         app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'delegateListFireEvents'});
     },
     

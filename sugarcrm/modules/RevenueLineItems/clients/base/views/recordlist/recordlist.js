@@ -14,6 +14,13 @@
 ({
     extendsFrom : 'RecordlistView',
 
+    initialize: function(options) {
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args:[options]});
+        this.layout.on("list:record:deleted", function(deletedModel){
+            this.deleteCommitWarning(deletedModel);
+        }, this);
+    },
+    
     /**
      * We have to overwrite this method completely, since there is currently no way to completely disable
      * a field from being displayed
@@ -42,6 +49,24 @@
             });
         });
         return catalog;
-    }
+    },
+    
+    /**
+     * Shows a warning message if a RLI that is included in a forecast is deleted.
+     * @return string message
+     */
+    deleteCommitWarning: function(deletedModel) {
+        var message = null;
+        
+        if (deletedModel.get("commit_stage") == "include") {
+            message = app.lang.get("WARNING_DELETED_RECORD_RECOMMIT", "RevenueLineItems");
+            app.alert.show("included_list_delete_warning", {
+                level: "warning",
+                messages: message
+            });
+        }
+        
+        return message;
+    },
 })
 

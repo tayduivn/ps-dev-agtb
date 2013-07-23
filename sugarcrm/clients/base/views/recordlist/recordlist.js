@@ -117,7 +117,8 @@
     },
 
     deleteClicked: function(model) {
-        var self = this;
+        var self = this,
+            deletedModel = _.clone(model);
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
@@ -128,7 +129,11 @@
                     success: function() {
                         self.collection.remove(model);
                         app.events.trigger("preview:close");
-                        if(!self.disposed) self.render();
+                        if (!self.disposed) {
+                            self.render();
+                        }
+                        
+                        self.layout.trigger("list:record:deleted", deletedModel);
                     }
                 });
             }

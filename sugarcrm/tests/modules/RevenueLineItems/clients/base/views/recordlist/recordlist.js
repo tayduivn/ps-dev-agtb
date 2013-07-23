@@ -12,10 +12,11 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 describe("revenuelineitems_view_recordlist", function() {
-    var app, view, options;
+    var app, view, options, context, layout;
 
     beforeEach(function() {
         app = SugarTest.app;
+        context = app.context.getContext();
         
         options = {
             meta: {
@@ -33,25 +34,31 @@ describe("revenuelineitems_view_recordlist", function() {
             }
         };
 
-        app.metadata.getModule("Forecasts", "config").is_setup = 1;
+        
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
         SugarTest.testMetadata.set();
-
-        SugarTest.seedMetadata(true, './fixtures');
+        
+        SugarTest.seedMetadata(true);
+        app.metadata.getModule("Forecasts", "config").is_setup = 1;
+        layout = SugarTest.createLayout("base", "RevenueLineItems", "list", null, null);
+        
     });
     
     afterEach(function() {
         app.metadata.getModule("Forecasts", "config").is_setup = null;
         app.metadata.getModule("Forecasts", "config").show_worksheet_best = null;
         app = null;
+        view = null;
+        layout = null;
+        options = null;
     });
 
     it("should not contain best_case field", function() {
         app.metadata.getModule("Forecasts", "config").show_worksheet_best = 0;
-        view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, null, true);
+        view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, context, true, layout);
         expect(view._fields.visible.length).toEqual(3);
         _.each(view._fields.visible, function(field) {
             expect(field.name).not.toEqual('best_case');
@@ -60,10 +67,39 @@ describe("revenuelineitems_view_recordlist", function() {
 
     it("should not contain commit_stage field", function() {
         app.metadata.getModule("Forecasts", "config").is_setup = 0;
-        view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, null, true);
+        view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, context, true, layout);
         expect(view._fields.visible.length).toEqual(3);
         _.each(view._fields.visible, function(field) {
             expect(field.name).not.toEqual('commit_stage');
+        });
+    });
+    
+    describe("when deleteCommitWarning is called", function() {
+        var model;
+        beforeEach(function() {
+            message = null;
+            model = new Backbone.Model({
+                id: "aaa",
+                name: "boo",
+                module: "RevenueLineItems"
+            });
+            view = SugarTest.createView('base', 'RevenueLineItems', 'recordlist', options.meta, context, true, layout);
+        });
+        
+        afterEach(function() {
+            model = null;
+        });
+        
+        it("should should return WARNING_DELETED_RECORD_RECOMMIT when commit_stage = include", function() {
+            model.set("commit_stage", "include");
+            message = view.deleteCommitWarning(model);
+            expect(message).toEqual("WARNING_DELETED_RECORD_RECOMMIT");
+        });
+        
+        it("should should return NULL when commit_stage != include", function() {
+            model.commit_stage = "exclude";
+            message = view.deleteCommitWarning(model);
+            expect(message).toEqual(null);
         });
     });
 });
