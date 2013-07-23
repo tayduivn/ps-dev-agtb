@@ -121,6 +121,7 @@ class SidecarMetaDataUpgrader
         'detail' => 'Grid',
         MB_RECORDVIEW => 'MergeGrid',
         'search' => 'Search',
+        'drop'   => 'Drop',
     );
 
     /**
@@ -495,18 +496,28 @@ class SidecarMetaDataUpgrader
      * @param string $filename The name of the file to get the view type from
      * @return string
      */
-    protected function getViewTypeFromFilename($filename, $client)
+    protected function getViewTypeFromFilename($filename, $client, $type)
     {
         if (strpos($filename, 'list') !== false) {
             return 'list';
         }
 
         if (strpos($filename, 'edit') !== false) {
-            return $client == 'base'?MB_RECORDVIEW:'edit';
+            if($client == 'mobile' || $client == 'wireless') {
+                return 'edit';
+            } else {
+                // history views get dropped
+                return $type == 'history'?'drop':MB_RECORDVIEW;
+            }
         }
 
         if (strpos($filename, 'detail') !== false) {
-            return $client == 'base'?MB_RECORDVIEW:'detail';
+            if($client == 'mobile' || $client == 'wireless') {
+                return 'detail';
+            } else {
+                // history views get dropped
+                return $type == 'history'?'drop':MB_RECORDVIEW;
+            }
         }
 
         if (strpos($filename, 'search') !== false) {
@@ -702,7 +713,7 @@ class SidecarMetaDataUpgrader
                 'fullpath'  => $file,
                 'package'   => $package,
                 'deployed'  => $deployed,
-                'viewtype'  => $this->getViewTypeFromFilename($filename, $client),
+                'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type),
             );
         }
 

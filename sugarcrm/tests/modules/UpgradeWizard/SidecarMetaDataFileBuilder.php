@@ -57,11 +57,10 @@ class SidecarMetaDataFileBuilder
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugslist.php',
             'legacypath'  => 'custom/modules/Bugs/metadata/listviewdefs.php',
             'sidecarpath' => 'custom/modules/Bugs/clients/base/views/list/list.php',
-        )
+        ),
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
         // TODO Change these to a record view when record upgrades are developed
-        /*
         array(
             'module'      => 'Bugs', 'view' => 'list', 'type' => 'portal',
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsportallist.php',
@@ -74,7 +73,6 @@ class SidecarMetaDataFileBuilder
             'legacypath'  => 'custom/portal/modules/Bugs/metadata/searchformdefs.php',
             'sidecarpath' => 'custom/modules/Bugs/clients/portal/views/search/search.php',
         ),
-        */
         //END SUGARCRM flav=ent ONLY
     );
 
