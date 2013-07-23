@@ -37,5 +37,8 @@ $viewdefs['Home']['base']['layout']['record'] = array(
     'type' => 'dashboard',
     'span' => 12,
     'method' => 'record',
+    'last_state' => array(
+        'id' => 'last-visit',
+    )
 );
 
