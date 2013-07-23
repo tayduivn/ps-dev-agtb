@@ -159,12 +159,12 @@
      * @param evt click event
      */
     showSenderOptionField: function(evt) {
-        var ccOption = evt.target,
-            fieldName = ccOption.dataset.ccfield,
+        var ccOption = $(evt.target),
+            fieldName = ccOption.data('ccfield'),
             field = this.getField(fieldName),
             ccSeperator = this.$('.compose-sender-options .cc-seperator');
 
-        this.$(ccOption).addClass('hide');
+        ccOption.addClass('hide');
         ccSeperator.toggleClass('hide', true);
 
         field.$el.closest('.row-fluid.panel_body').removeClass('hide');
