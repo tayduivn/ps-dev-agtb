@@ -3068,19 +3068,21 @@ function check_php_version($sys_php_version = '')
     // versions below $min_considered_php_version considered invalid by default,
     // versions equal to or above this ver will be considered depending
     // on the rules that follow
-    $min_considered_php_version = '5.2.1';
+    $min_considered_php_version = '5.3.0';
 
     // only the supported versions,
     // should be mutually exclusive with $invalid_php_versions
     $supported_php_versions = array (
-        '5.2.1', '5.2.2', '5.2.3', '5.2.4', '5.2.5', '5.2.6', '5.2.8', '5.3.0'
+
     );
 
     // invalid versions above the $min_considered_php_version,
     // should be mutually exclusive with $supported_php_versions
 
     // SugarCRM prohibits install on PHP 5.2.7 on all platforms
-    $invalid_php_versions = array('5.2.7');
+    $invalid_php_versions = array(
+        //'5.2.7'
+    );
 
     // default unsupported
     $retval = 0;
