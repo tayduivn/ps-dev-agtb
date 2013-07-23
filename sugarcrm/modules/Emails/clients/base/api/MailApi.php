@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Emails/MailRecord.php');
 require_once('modules/Emails/EmailRecipientsService.php');
+require_once('modules/Emails/EmailUI.php');
 
 class MailApi extends ModuleApi
 {
@@ -88,6 +89,33 @@ class MailApi extends ModuleApi
                 'method'    => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
                 'longHelp'  => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
+            ),
+            'saveAttachment' => array(
+                'reqType' => 'POST',
+                'path' => array('Mail', 'attachment'),
+                'pathVars' => array('', ''),
+                'method' => 'saveAttachment',
+                'rawPostContents' => true,
+                'shortHelp' => 'Saves a mail attachment.',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_post_help.html',
+            ),
+            'removeAttachment' => array(
+                'reqType' => 'DELETE',
+                'path' => array('Mail', 'attachment', '?'),
+                'pathVars' => array('', '', 'file_guid'),
+                'method' => 'removeAttachment',
+                'rawPostContents' => true,
+                'shortHelp' => 'Removes a mail attachment',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_record_delete_help.html',
+            ),
+            'clearUserCache' => array(
+                'reqType' => 'DELETE',
+                'path' => array('Mail', 'attachment', 'cache'),
+                'pathVars' => array('', '', ''),
+                'method' => 'clearUserCache',
+                'rawPostContents' => true,
+                'shortHelp' => 'Clears the user\'s attachment cache directory',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_cache_delete_help.html',
             ),
         );
 
@@ -171,12 +199,11 @@ class MailApi extends ModuleApi
             }
         }
 
+        $response = array();
         if (isset($result["EMAIL"])) {
             $email  = $result["EMAIL"];
             $xmail  = clone $email;
             $response = $xmail->toArray();
-        } else {
-            $response = array();
         }
 
         return $response;
@@ -344,5 +371,66 @@ class MailApi extends ModuleApi
         }
 
         return $this->emailRecipientsService;
+    }
+
+    /**
+     * Saves an email attachment using the POST method
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args Arguments array built by the service base
+     * @return array metadata about the attachment including name, guid, and nameForDisplay
+     */
+    public function saveAttachment($api, $args)
+    {
+        $email = $this->getEmailBean();
+        $email->email2init();
+        $metadata = $email->email2saveAttachment();
+        return $metadata;
+    }
+
+    /**
+     * Removes an email attachment
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args The request args
+     * @return bool
+     * @throws SugarApiExceptionRequestMethodFailure
+     */
+    public function removeAttachment($api, $args)
+    {
+        $email = $this->getEmailBean();
+        $email->email2init();
+        $fileGUID = $args['file_guid'];
+        $fileName = $email->et->userCacheDir . "/" . $fileGUID;
+        $filePath = clean_path($fileName);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+        return true;
+    }
+
+    /**
+     * Clears the user's attachment cache directory
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args The request args
+     * @return bool
+     * @throws SugarApiExceptionRequestMethodFailure
+     */
+    public function clearUserCache($api, $args)
+    {
+        $em = new EmailUI();
+        $em->preflightUserCache();
+        return true;
+    }
+
+    /**
+     * Returns a new Email bean, used for testing purposes
+     *
+     * @return Email
+     */
+    protected function getEmailBean()
+    {
+        return new Email();
     }
 }

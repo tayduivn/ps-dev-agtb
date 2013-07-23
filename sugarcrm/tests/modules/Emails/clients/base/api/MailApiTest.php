@@ -1,30 +1,16 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 require_once("modules/Emails/clients/base/api/MailApi.php");
 
@@ -35,14 +21,20 @@ require_once("modules/Emails/clients/base/api/MailApi.php");
 class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $api,
-            $mailApi;
+            $mailApi,
+            $emailUI,
+            $userCacheDir;
 
     public function setUp()
     {
         parent::setUp();
         SugarTestHelper::setUp("current_user");
         $this->api     = SugarTestRestUtilities::getRestServiceMock();
-        $this->mailApi = $this->getMock("MailApi", array("initMailRecord", "getEmailRecipientsService"));
+        $this->mailApi = $this->getMock("MailApi", array("initMailRecord", "getEmailRecipientsService", "getEmailBean"));
+
+        $this->emailUI = new EmailUI();
+        $this->emailUI->preflightUserCache();
+        $this->userCacheDir = $this->emailUI->userCacheDir;
     }
 
     public function tearDown()
@@ -50,6 +42,9 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
         parent::tearDown();
+        if (file_exists($this->userCacheDir)) {
+            rmdir_recursive($this->userCacheDir);
+        }
     }
 
     public function testCreateMail_StatusIsSaveAsDraft_CallsMailRecordSaveAsDraft()
@@ -186,8 +181,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $response = $this->mailApi->createMail($this->api, $args);
         $expected = $email->toArray();
-        $actual   = $response;
-        $this->assertEquals($expected, $actual, "Should have returned the Email object serialized as an array.");
+        $this->assertEquals($expected, $response, "Should have returned the Email object serialized as an array.");
     }
 
     public function testRecipientLookup_AttemptToResolveTenRecipients_CallsLookupTenTimes()
@@ -359,5 +353,92 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($emailRecipientsServiceMock));
 
         $response = $this->mailApi->findRecipients($this->api, $args);
+    }
+
+    /**
+     * @group mailattachment
+     */
+    public function testClearUserCache_UserCacheDirDoesNotExist_CreatedSuccessfully()
+    {
+        if (file_exists($this->userCacheDir)) {
+            rmdir_recursive($this->userCacheDir);
+        }
+        $this->mailApi->clearUserCache($this->api, array());
+        $this->_assertCacheDirCreated();
+        $this->_assertCacheDirEmpty();
+    }
+
+    /**
+     * @group mailattachment
+     */
+    public function testClearUserCache_UserCacheDirContainsFiles_ClearedSuccessfully()
+    {
+        sugar_file_put_contents($this->userCacheDir . "/test.txt", create_guid());
+        $this->mailApi->clearUserCache($this->api, array());
+        $this->_assertCacheDirCreated();
+        $this->_assertCacheDirEmpty();
+    }
+
+    /**
+     * @group mailattachment
+     */
+    public function testSaveAttachment_CallsAppropriateEmailFunction()
+    {
+        $mockResult = array('name' => 'foo');
+
+        $emailMock = $this->getMock("Email", array("email2init", "email2saveAttachment"));
+        $emailMock->expects($this->once())
+            ->method("email2init");
+        $emailMock->expects($this->once())
+            ->method("email2saveAttachment")
+            ->will($this->returnValue($mockResult));
+
+        $this->mailApi->expects($this->once())
+            ->method("getEmailBean")
+            ->will($this->returnValue($emailMock));
+
+        $result = $this->mailApi->saveAttachment($this->api, array());
+
+        $this->assertEquals($mockResult, $result, "Should return the response from email2saveAttachment");
+    }
+
+    /**
+     * @group mailattachment
+     */
+    public function testRemoveAttachment_FileExists_RemovedSuccessfully()
+    {
+        //clear the cache first
+        $em = new EmailUI();
+        $em->preflightUserCache();
+
+        //create the test attachment to be removed
+        $fileGuid = create_guid();
+        sugar_file_put_contents($this->userCacheDir . '/' . $fileGuid, create_guid());
+
+        $this->mailApi->expects($this->once())
+            ->method("getEmailBean")
+            ->will($this->returnValue(new Email()));
+
+        $this->mailApi->removeAttachment($this->api, array('file_guid' => $fileGuid));
+
+        //verify it was removed
+        $this->_assertCacheDirEmpty();
+    }
+
+    /**
+     * Check to make sure path is created
+     */
+    protected function _assertCacheDirCreated()
+    {
+        $this->assertTrue(file_exists($this->userCacheDir), "Cache directory should exist");
+    }
+
+    /**
+     * Check to make sure path is empty
+     */
+    protected function _assertCacheDirEmpty()
+    {
+        $files = findAllFiles($this->userCacheDir, array());
+        $this->assertEquals(0, count($files), "Cache directory should be empty");
     }
 }
