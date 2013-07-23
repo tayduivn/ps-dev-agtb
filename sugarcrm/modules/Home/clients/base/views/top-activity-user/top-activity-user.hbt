@@ -13,7 +13,7 @@
         <div class="row-fluid header">
             <div class="span12">
                 <img src="{{getFieldValue this "pictureUrl"}}" class="avatar">
-                <a href="#Users/{{getFieldValue this "user_id"}}">{{getFieldValue this "name"}}</a>
+                <a href="#{{buildRoute module='Users' id=this.attributes.user_id}}">{{getFieldValue this "name"}}</a>
                 <h5>
                     <icon class="{{getFieldValue this "icon"}} icon-large"></icon> {{getFieldValue this "label"}}
                 </h5>
