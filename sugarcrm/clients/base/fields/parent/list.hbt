@@ -28,5 +28,5 @@
 }}
 <div class="ellipsis_inline" data-placement="bottom" data-container="body"
      data-original-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}">
-    <a href="{{href}}">{{value}}</a>
+    {{# if href}}<a href="{{href}}">{{value}}</a>{{else}}{{value}}{{/if}}
 </div>
