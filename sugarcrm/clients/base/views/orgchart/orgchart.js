@@ -94,7 +94,7 @@
      * @protected
      */
     _buildUserUrl: function(id) {
-        return '#' + app.route.buildRoute('Users', id);
+        return '#' + app.router.buildRoute('Users', id);
     },
 
     /**
