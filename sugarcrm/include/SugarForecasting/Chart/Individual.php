@@ -84,6 +84,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
             $arrProbabilities[$data['probability']] = $data['probability'];
         }
+
         asort($arrProbabilities);
 
         $tp = $this->getTimeperiod();
