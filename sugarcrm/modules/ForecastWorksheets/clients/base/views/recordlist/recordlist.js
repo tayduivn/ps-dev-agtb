@@ -630,7 +630,6 @@
             this.before_colspan = x;
             this.after_colspan = (this._fields.visible.length - (x + fields.length));
 
-            debugger;
             var ctx = this.context.parent || this.context;
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
         }
