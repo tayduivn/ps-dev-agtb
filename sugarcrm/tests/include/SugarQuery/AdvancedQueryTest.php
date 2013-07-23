@@ -352,7 +352,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name", "account_name"));
         $sq->from($contact);
-        $sq->where()->equals('report_to_name','Awesome');
+        $sq->where()->equals('email_and_name1','Awesome');
         $sql = $sq->compileSql();
         $this->fail("Exception expected!");
 
@@ -390,7 +390,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
-        $sq->orderBy("report_to_name")->orderBy("account_name", "asc");
+        $sq->orderBy("portal_password1")->orderBy("account_name", "asc");
         $this->assertContains('ORDER BY accounts.name asc',$sq->compileSql());
     }
 
