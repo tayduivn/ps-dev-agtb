@@ -423,11 +423,12 @@ installerHook('post_setHiddenSubpanels');
 // Create the user that will be used by Snip
 require_once ('install/createSnipUser.php');
 //END SUGARCRM flav=pro ONLY
-
+/**
+ * SP-1071 disable unsupported legacy connectors for 7.0
 // Enable the InsideView connector and add all modules
 installLog("Enable InsideView Connector");
 enableInsideViewConnector();
-
+**/
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 

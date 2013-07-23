@@ -36,8 +36,8 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         require_once 'modules/Connectors/controller.php';
         require_once 'include/MVC/Controller/SugarController.php';
 
-        $_REQUEST['display_values'] = "ext_rest_linkedin:Accounts,ext_rest_linkedin:Contacts,ext_rest_linkedin:Leads";
-        $_REQUEST['display_sources'] = 'ext_rest_linkedin';
+        $_REQUEST['display_values'] = "ext_rest_twitter:Accounts,ext_rest_twitter:Leads";
+        $_REQUEST['display_sources'] = 'ext_rest_twitter';
         $_REQUEST['action'] = 'SaveModifyDisplay';
         $_REQUEST['module'] = 'Connectors';
         $_REQUEST['from_unit_test'] = true;
@@ -49,7 +49,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
         foreach ($modules_sources as $module => $entries) {
             if ($module == 'Accounts' || $module == 'Contacts') {
-                $this->assertTrue(in_array('ext_rest_linkedin', $entries));
+                $this->assertTrue(in_array('ext_rest_twitter', $entries));
             }
         }
     }
@@ -61,7 +61,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $controller = new ConnectorsController();
 
         $_REQUEST['display_values'] = '';
-        $_REQUEST['display_sources'] = 'ext_rest_linkedin';
+        $_REQUEST['display_sources'] = 'ext_rest_twitter';
         $_REQUEST['action'] = 'SaveModifyDisplay';
         $_REQUEST['module'] = 'Connectors';
         $_REQUEST['from_unit_test'] = true;
@@ -69,7 +69,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $controller->action_SaveModifyDisplay();
 
         require(CONNECTOR_DISPLAY_CONFIG_FILE);
-        $this->assertTrue(empty($modules_sources['ext_rest_linkedin']));
+        $this->assertTrue(empty($modules_sources['ext_rest_twitter']));
     }
 
     public function testDisableEnableEAPM()
@@ -79,8 +79,8 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $controller = new ConnectorsController();
 
         $_REQUEST['display_values'] = '';
-        $_REQUEST['display_sources'] = 'ext_rest_linkedin,ext_rest_twitter,ext_eapm_webex,ext_eapm_facebook';
-        $_REQUEST['ext_eapm_facebook_external'] = 1;
+        $_REQUEST['display_sources'] = 'ext_rest_twitter,ext_eapm_webex';
+        $_REQUEST['ext_rest_twitter'] = 1;
         $_REQUEST['action'] = 'SaveModifyDisplay';
         $_REQUEST['module'] = 'Connectors';
         $_REQUEST['from_unit_test'] = true;
@@ -88,11 +88,10 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         ConnectorUtils::getConnectors(true);
         $this->assertFalse(ConnectorUtils::eapmEnabled('ext_rest_twitter'), "Failed to disable Twitter");
         $this->assertFalse(ConnectorUtils::eapmEnabled('ext_eapm_webex'), "Failed to disable WebEx");
-        $this->assertTrue(ConnectorUtils::eapmEnabled('ext_eapm_facebook'), "Failed to enable Facebook");
 
         // now reenable them
         $_REQUEST['display_values'] = '';
-        $_REQUEST['display_sources'] = 'ext_rest_linkedin,ext_rest_twitter,ext_eapm_webex';
+        $_REQUEST['display_sources'] = 'ext_rest_twitter,ext_eapm_webex';
         $_REQUEST['ext_rest_twitter_external'] = 1;
         $_REQUEST['ext_eapm_webex_external'] = 1;
         $_REQUEST['action'] = 'SaveModifyDisplay';
@@ -103,6 +102,5 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         ConnectorUtils::getConnectors(true);
         $this->assertTrue(ConnectorUtils::eapmEnabled('ext_rest_twitter'), "Failed to enable Twitter");
         $this->assertTrue(ConnectorUtils::eapmEnabled('ext_eapm_webex'), "Failed to enable WebEx");
-        $this->assertTrue(ConnectorUtils::eapmEnabled('ext_eapm_facebook'), "Failed to enable Facebook");
     }
 }
