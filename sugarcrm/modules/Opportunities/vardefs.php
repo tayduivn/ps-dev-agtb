@@ -488,6 +488,15 @@ $dictionary['Opportunity'] = array(
             'relationship' => 'revenuelineitems_opportunities',
             'source' => 'non-db',
         ),
+        'forecastworksheets' =>  array(
+            'name' => 'forecastworksheets',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_opportunities',
+            'vname' => 'LBL_FORECAST_WORKSHEETS',
+            'module' => 'ForecastWorksheets',
+            'bean_name' => 'ForecastWorksheet',
+            'source' => 'non-db',
+        ),
         'products' => array(
             'name' => 'products',
             'type' => 'link',

@@ -451,6 +451,15 @@ $dictionary['ForecastWorksheet'] = array(
             'rhs_key' => 'account_id',
             'relationship_type' => 'one-to-many'
         ),
+        'forecastworksheets_opportunities' =>  array(
+            'lhs_module' => 'Opportunities',
+            'lhs_table' => 'opportunities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ForecastWorksheets',
+            'rhs_table' => 'forecast_worksheets',
+            'rhs_key' => 'opportunity_id',
+            'relationship_type' => 'one-to-many'
+        ),
     )
 );
 
