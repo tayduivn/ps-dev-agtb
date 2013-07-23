@@ -88,6 +88,8 @@ describe('Base.Views.ForecastPareto', function() {
     });
 
     afterEach(function() {
+        // delete the plug so it doesn't affect other dashlets unless they load the plugin
+        delete app.plugins.plugins['view']['Dashlet'];
         sandbox.restore();
     });
 

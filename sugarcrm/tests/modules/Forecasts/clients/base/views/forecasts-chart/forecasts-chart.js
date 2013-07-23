@@ -104,6 +104,7 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
     });
 
     afterEach(function() {
+        delete app.plugins.plugins['view']['Dashlet'];
         sandbox.restore();
     });
 
