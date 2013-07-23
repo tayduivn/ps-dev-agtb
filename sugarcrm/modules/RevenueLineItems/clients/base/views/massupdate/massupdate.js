@@ -113,8 +113,8 @@
             options.success = _.bind(function(model, data, options) {
                 app.alert.dismiss('info_quote');
                 app.router.navigate(app.bwc.buildRoute('Quotes', data.id, 'EditView', {
-                    return_module: this.module,
-                    return_id: this.model.id
+                    return_module: this.context.parent.get('module'),
+                    return_id: this.context.parent.get('model').get('id')
                 }), {trigger: true});
             }, this);
             options.error = _.bind(function(resp, status, xhr) {
