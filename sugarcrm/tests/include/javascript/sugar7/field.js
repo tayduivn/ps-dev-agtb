@@ -11,11 +11,71 @@ describe('Sugar7 field extensions', function () {
     });
 
     afterEach(function () {
+        sinon.collection.restore();
         SugarTest.testMetadata.dispose();
         if (field) {
             field.dispose();
         }
         field = null;
+    });
+
+    describe('fallback flow', function() {
+        it('should fallback to the detail action if edit acl is failed', function() {
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
+                return action !== 'edit';
+            });
+            field = SugarTest.createField('base', 'name', 'base', 'edit');
+            field._loadTemplate();
+            expect(field.action).toBe('detail');
+        });
+
+        it('should fallback to the noaccess if all acl is failed', function() {
+            field = SugarTest.createField('base', 'name', 'base', 'edit');
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
+                return !_.contains(['edit', 'detail', 'list', 'admin'], action);
+            });
+            sinon.collection.stub(field, 'showNoData', function() {
+                return false;
+            });
+            field._loadTemplate();
+            expect(field.action).toBe('noaccess');
+        });
+
+        it('must fallback to the nodata once showNoData is true', function() {
+            field = SugarTest.createField('base', 'name', 'base', 'edit');
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function() {
+                return true;
+            });
+            sinon.collection.stub(field, 'showNoData', function() {
+                return true;
+            });
+            field._loadTemplate();
+            expect(field.action).toBe('nodata');
+        });
+    });
+
+    describe('nodata', function() {
+        it('should show nodata if field is readonly and has no data', function() {
+            field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: true});
+            field.model = new Backbone.Model({_module: 'Accounts'});
+            var actual = _.result(field, 'showNoData');
+            expect(actual).toBe(true);
+        });
+
+        it('should not show nodata if not readonly', function() {
+            field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: false});
+            field.model = new Backbone.Model({_module: 'Accounts'});
+            var actual = _.result(field, 'showNoData');
+            expect(actual).toBe(false);
+        });
+
+        it('should not show nodata if readonly but fields have data', function() {
+            var field = SugarTest.createField('base', 'name', 'base', 'detail', {readonly: true});
+            field.model = new Backbone.Model();
+            field.model.set('name', 'test');
+            var actual = _.result(field, 'showNoData');
+            expect(actual).toBe(false);
+        });
     });
 
     describe('decorating required fields', function () {

@@ -91,17 +91,79 @@
             },
 
             /**
+             * Returns true if it's readonly and has no data.
+             *
+             * Override this function for special logic or property to
+             * determine nodata property.
+             *
+             * You can also specify that a certain field doesn't support
+             * `showNoData` or always return either `true` or `false`.
+             * Example for controller with `showNoData` always set to false:
+             * <pre><code>
+             * ({
+             *     showNoData: false,
+             *     // ...
+             *     initialize: function(options) {
+             *     // ...
+             * })
+             * </code></pre>
+             *
+             * @return {Boolean} `true` if it is readonly and it has no data
+             * otherwise `false`.
+             */
+            showNoData: function() {
+                return this.def.readonly && this.name && !this.model.has(this.name);
+            },
+
+            /**
+             * {@inheritDoc}
+             * Checks fallback actions first and then follows ACLs checking
+             * after that.
+             *
+             * First, check whether the action belongs to the fallback actions
+             * and no more chaining fallback map.
+             * Second, the field should fallback to 'nodata' if current field
+             * requires to display nodata.
+             * Finally, checks ACLs to see if the current user has access to
+             * action.
+             *
+             * @param {String} action name.
+             * @return {Boolean} true if accessable otherwise false.
+             */
+            _checkAccessToAction: function(action) {
+
+                if (_.contains(this.fallbackActions, action) && _.isUndefined(this.viewFallbackMap[action])) {
+                    return true;
+                }
+
+                if (_.result(this, 'showNoData') === true) {
+                    return action === 'nodata';
+                }
+
+                return app.acl.hasAccessToModel(action, this.model, this.name);
+            },
+
+            /**
              * Defines fallback rules for ACL checking.
              */
             viewFallbackMap: {
                 'edit': 'detail',
-                'detail': 'noaccess'
+                'detail': 'noaccess',
+                'noaccess' : 'nodata'
             },
+            /**
+             * List of view names that directly fallback to base template
+             * instead of 'detail'.
+             */
+            fallbackActions: [
+                'noaccess', 'nodata'
+            ],
+
             /**
              * {@inheritdoc}
              */
             _getFallbackTemplate: function(viewName) {
-                if (viewName === 'noaccess') {
+                if (_.contains(this.fallbackActions, viewName)) {
                     return viewName;
                 }
                 return (this.isDisabled() && viewName === 'disabled') ? 'edit' :
