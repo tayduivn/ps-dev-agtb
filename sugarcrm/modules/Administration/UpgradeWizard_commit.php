@@ -198,6 +198,7 @@ $uh_status      = "";
 $rest_dir = remove_file_extension($install_file)."-restore";
 
 $files_to_handle  = array();
+register_shutdown_function("rmdir_recursive", $unzip_dir);
 
 if(!empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan']) && $install_type != 'patch'){
 	require_once('ModuleInstall/ModuleScanner.php');

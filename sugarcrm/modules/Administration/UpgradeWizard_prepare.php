@@ -93,6 +93,7 @@ if(!empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan']) && $instal
 	$ms = new ModuleScanner();
 	$ms->scanPackage($unzip_dir);
 	if($ms->hasIssues()){
+	    rmdir_recursive($unzip_dir);
 		$ms->displayIssues();
 		sugar_cleanup(true);
 	}

@@ -80,6 +80,11 @@ class ModuleScanner{
         'reflector',
         'reflectionexception',
         'lua',
+	    'ziparchive',
+	    'splfileinfo',
+	    'splfileobject',
+	    'pclzip',
+
     );
 	private $blackList = array(
     'popen',
@@ -383,6 +388,10 @@ class ModuleScanner{
         'xml_set_processing_instruction_handler',
         'xml_set_start_namespace_decl_handler',
         'xml_set_unparsed_entity_decl_handler',
+
+	    // unzip
+	    'unzip',
+	    'unzip_file',
 );
     private $methodsBlackList = array('setlevel');
 
