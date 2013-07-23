@@ -393,6 +393,7 @@ class MetaDataManager
     {
         $outputAcl = array('fields' => array());
         $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
+        $outputAcl['developer'] = ($userObject->isDeveloperForModule($module)) ? 'yes' : 'no';
 
         if (!SugarACL::moduleSupportsACL($module)) {
             foreach (array('access', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate') as $action) {

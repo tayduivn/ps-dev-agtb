@@ -57,6 +57,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
             'create' => 'no',
             'list' => 'no',
             'edit' => 'no',
@@ -90,6 +91,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
             'create' => 'no',
             'edit' => 'no',
             'delete' => 'no',
@@ -120,6 +122,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
             'create' => 'no',
             'edit' => 'no',
             'delete' => 'no',
@@ -153,6 +156,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
             'list' => 'no',
             'delete' => 'no',
             'import' => 'no',
@@ -183,6 +187,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
         );
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
@@ -217,6 +222,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             'admin' => 'no',
+            'developer' => 'no',
         );
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
@@ -243,6 +249,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
             'fields' =>
             array(),
             'admin' => 'no',
+            'developer' => 'no',
         );
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
@@ -269,6 +276,7 @@ class GetAclForModuleTest extends Sugar_PHPUnit_Framework_TestCase
             'fields' =>
             array(),
             'admin' => 'no',
+            'developer' => 'no',
         );
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
