@@ -593,10 +593,36 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      */
     protected function unsetAvailableField(&$availableFields, $field)
     {
+        $remove = '';
         if (is_string($field)) {
-            unset($availableFields[$field]);
+            $remove = $field;
+            
         } elseif (is_array($field) && isset($field['name'])) {
-            unset($availableFields[$field['name']]);
+            $remove = $field['name'];
+        }
+        
+        if ($remove) {
+            // Only remove a field once.
+            if (empty($this->fieldsRemovedFromAvailability[$remove])) {
+                // Remove the field first
+                unset($availableFields[$remove]);
+                
+                // Mark this field as having been removed. This prevents endless
+                // recursion when a combination field is named after an actual
+                // field in the view defs
+                $this->fieldsRemovedFromAvailability[$remove] = true;
+                
+                // Now see if this field is a combination field in the original defs
+                if (isset($this->_originalViewDef[$remove]) 
+                    && is_array($this->_originalViewDef[$remove])
+                    && isset($this->_originalViewDef[$remove]['fields'])
+                    && is_array($this->_originalViewDef[$remove]['fields'])
+                ) {
+                    foreach ($this->_originalViewDef[$remove]['fields'] as $f) {
+                        $this->unsetAvailableField($availableFields, $f);
+                    }
+                }
+            }
         }
     }
     
