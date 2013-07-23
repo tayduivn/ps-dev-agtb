@@ -56,6 +56,10 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
      */
     public function __construct()
     {
+        //TODO: Creation of Activities are turned off for mass update.
+        //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
+        $GLOBALS['ACTIVITY_FROM_MASS_UPDATE'] = true;
+
         if (!empty($GLOBALS['sugar_config']['massupdate_chunk_size'])) {
             $this->chunkSize = $GLOBALS['sugar_config']['massupdate_chunk_size'];
         }
@@ -300,14 +304,21 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
             
         }
 
-        foreach ($prospectLists as $listId) {
-            if ($action == 'save') {
-                $bean->add_prospects_to_prospect_list($module, $listId, $ids);
-            } else {                
-                $bean->remove_prospects_to_prospect_list($module, $listId, $ids);
+        if (count($prospectLists) > 0) {
+
+            $massupdate = new MassUpdate();
+
+            foreach ($prospectLists as $listId) {
+                if ($action == 'save') {
+                    $success = $massupdate->add_prospects_to_prospect_list($module, $listId, $ids);
+                } else {                
+                    $success = $massupdate->remove_prospects_from_prospect_list($module, $listId, $ids);
+                }
+            }
+            if (!$success) {
+                $GLOBALS['log']->error("Could not add prospects to prospect list, could not find a relationship to the ProspectLists module.");
             }
         }
-
     }
 
 }
