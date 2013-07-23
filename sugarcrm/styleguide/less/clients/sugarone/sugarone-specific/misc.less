@@ -1,6 +1,15 @@
 /* Misc
 -------------------------------------------------- */
 
+.headerpane {
+    background: none;
+    border: none;
+}
+
+.label-module-mini {
+    line-height: 16px;
+}
+
 ul.list {
     list-style: none;
     border-top: 2px solid @grayLighter;
@@ -9,10 +18,46 @@ ul.list {
     li {
         list-style: none;
         border-top: 1px solid @grayLighter;
-        padding: 10px 0;
         margin: 0;
+        padding: 10px;
+        position: relative;
+        img.avatar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .description {
+            margin-left: 42px;
+            margin-right: 70px;
+        }
+        .reason {
+            margin-left: 42px;
+            font-size: @fontSizeSmall;
+            color: @grayLight;
+        }
+        img {
+            margin: 0 10px 0 0;
+        }
     }
 }
+.actionNumber {
+    font-weight: normal; 
+    font-size: @fontSizeLarge + 4;
+}
+.actionNumber .label {
+    font-size: @fontSizeLarge + 4 !important;
+    line-height: @fontSizeLarge + 6 !important;
+    margin-bottom: 10px;
+}
+.subActionNumber {
+    font-size: @fontSizeSmall; 
+    color: @gray;
+}
+
+.filters {
+    margin: 0 10px;
+}
+.top .dropdown {margin-right: 5px;}
 .dash h4 {
     font-size: @fontSizeLarge;
     font-weight: normal;
@@ -262,25 +307,6 @@ hr.soften {
     right: 10px;
     font-size: @fontSizeSmall;
     color: @grayLight;
-}
-.list li, .listItem {
-    padding: 10px;
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    position: relative;
-    list-style: none;
-    img.avatar {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-    }
-    .description {
-        margin-left: 42px;
-    }
-    .reason {
-        margin-left: 42px;
-        font-size: @fontSizeSmall;
-        color: @grayLight;
-    }
 }
 
 
@@ -621,6 +647,3 @@ hr.soften {
 @-moz-document url-prefix() {
   .icon-spin { height: .9em; }
 }
-
-
-

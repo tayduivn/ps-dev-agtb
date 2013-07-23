@@ -8,6 +8,9 @@
 }
 
 [data-module="Home"] > .btn-group > .dropdown-toggle {margin-right: 40px;}
+#searchForm {
+    float: none;
+}
 
 // Navbar search
 .navbar-search {
@@ -26,7 +29,9 @@
   .search-query {
     padding: 4px 10px;
     line-height: @baseLineHeight;
+    background: @white;
     .border-radius(4px);
+    .placeholder(@grayLight);
   }
 }
 
@@ -131,40 +136,12 @@
     right: 0;
     top: 0;
     .btn {
-      line-height: 17px;
-      height: 17px;
+      line-height: 16px;
+      height: 16px;
     }
-    //fix advanced drop down position
-    .dropdown-menu {
-      right: 29px;
-      top: 42px;
-      left: auto;
-      padding: 4px 8px;
-      li {
-        padding: 4px 8px;
-        &.divider {
-          padding: 0;
-        }
-      }
-      &:before,
-      &:after {
-        display: none !important;
-      }
-    }
-    &.dropdown-toggle {
-      right: 31px;
-      top: 1px;
-      height: 24px;
-      .border-radius(0px,0px,3px,3px);
-      &:hover {
-        border-color: transparent;
-      }
-    }
-    .caret {
-      margin-top: 10px;
-    }
+
     .btn-group {
-      margin-right: 0;
+      margin-right: 8px;
     }
   }
   .divider-vertical {

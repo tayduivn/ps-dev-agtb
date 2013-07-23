@@ -25,25 +25,27 @@
 
 .alert-success,
 .alert-success .alert-heading {
-  background-color: @successBackground;
-  border-color: @successBorder;
-  color:  darken(@successBackground, 70%);
+  background-color: @successBorder;
+  border-color: darken(@successBackground, 5%);
+  color:  @white;
 }
 .alert-danger,
 .alert-error {
-  background: @errorBackground;
-  border-color: @errorBorder;
+  background: @red;
+  border-color: darken(@red, 5%);
 }
 .alert-danger,
 .alert-error,
 .alert-danger .alert-heading,
 .alert-error .alert-heading {
-  color: darken(@red, 10%);
+  color: @white;
 }
 .alert-warning {
-  border: 1px solid @warningBorder;
-  background-color: @warningBackground;
-  color:  darken(@warningBackground, 70%);
+  border: 1px solid darken(#FFDB3F, 5%);
+  background-color: #FFDB3F;
+}
+.alert-warning .alert-heading {
+    color:  #444;
 }
 .alert-info,
 .alert-info .alert-heading {

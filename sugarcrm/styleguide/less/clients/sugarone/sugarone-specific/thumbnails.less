@@ -1,11 +1,15 @@
+.description {
+    font-size: @fontSizeLarge;
+}
+
+
 .thumbnail {
 
   padding: 0 0 1px 0;
   border: 0;
-  @shadow: 0 2px 1px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4), -1px -1px 2px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.1);
-  .box-shadow(@shadow);
+  .box-shadow(none);
   position: relative;
-  margin-bottom: 20px !important;
+  margin: 10px 0 !important;
   background: @white;
   .transition(0);
 
@@ -21,23 +25,22 @@
   h4,
   h1,
   .dashlet-options {
-    font-size: @baseFontSize;
+    font-size: @fontSizeLarge;
     color: @tableHeader;
     line-height: @baseLineHeight;
-    .border-radius(3px 3px 0 0);
     font-weight: 500;
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    padding: 7px 80px 8px 10px;
+    border-bottom: none;
+    background: @white;
+    padding: 7px 80px 8px 0;
     margin: 0;
-    .rtlPadding(@direction,7px 10px 7px 80px);
+    .rtlPadding(@direction,7px 0px 7px 80px);
     a {
       color: lighten(@gray, 20%);
     }
   }
   .dashlet-options {
     .border-radius(0);
-    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
-    border-bottom: 1px solid darken(@grayLighter, 5%);
+    border-bottom: none;
     padding: 6px 8px;
     .select2-container,
     .btn-group {
@@ -50,7 +53,7 @@
   }
 
   h1 small{
-    font-size: 12px;
+    font-size: @fontSizeSmall;
   }
 
   .btn.loading {

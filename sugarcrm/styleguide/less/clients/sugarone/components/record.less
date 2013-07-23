@@ -93,7 +93,23 @@
   span[data-type="fieldset-with-labels"] {
     font-size: 0;
   }
-
+  // this is all because our layout method for header is a bit difficult
+  span[data-name="subtitle"] {
+    position: absolute;
+    top: 24px;
+    left: 110px;
+  }
+  span .record-edit-link-wrapper[data-name="subtitle"] label {
+      display: none;
+  }
+  span .record-edit-link-wrapper[data-name="subtitle"] {
+      position: absolute;
+      top: 16px;
+      left: 90px;
+  }
+  span .record-edit-link-wrapper[data-name="lastInteractionTime"] {
+    display: none;
+  }
   span[data-type="follow"],
   span[data-type="badge"] {
     padding-top: 16px;
