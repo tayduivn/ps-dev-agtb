@@ -38,7 +38,7 @@
                 {{/each}}
                 <p class="help-block">
                     <a class="btn btn-link btn-invisible" rel="popoverTop" data-content="{{str "LBL_LOGIN_FORGOTPASSWORD"}}"
-                       data-original-title="{{str "LBL_LOGIN_FORGOTPASSWORD_TITLE"}}">{{str "LNK_PORTAL_LOGIN_FORGOTPASSWORD"}}</a>
+                       data-original-title="{{str "LBL_LOGIN_FORGOTPASSWORD_TITLE"}}">{{str "LBL_LOGIN_FORGOT_PASSWORD"}}</a>
                 </p>
             {{/each}}
             <div class="login-footer">
