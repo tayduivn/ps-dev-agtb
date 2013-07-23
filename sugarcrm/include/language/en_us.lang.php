@@ -2445,6 +2445,8 @@ $app_strings = array (
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
     'ERR_DB_QUERY' => '{0}: query failed: {1}',
+    'ERR_UW_RETIRED' => 'Upgrade Wizard is not available in this version.',
+
 
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
     'EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
