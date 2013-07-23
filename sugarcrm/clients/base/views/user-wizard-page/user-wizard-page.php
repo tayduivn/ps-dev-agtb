@@ -28,86 +28,48 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['portal']['view']['signup'] = array(
-    'action' => 'list',
+$viewdefs['base']['view']['user-wizard-page'] = array(
+    'title' => 'LBL_WIZ_USER_PROFILE_TITLE',
     'buttons' =>
     array(
         array(
-            'name' => 'signup_button',
+            'name' => 'previous_button',
             'type' => 'button',
-            'label' => 'LBL_SIGNUP_BUTTON_LABEL',
-            'primary' => true,
+            'label' => 'LNK_LIST_PREVIOUS',
         ),
         array(
-            'name' => 'cancel_button',
+            'name' => 'next_button',
             'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'pull-left',
+            'label' => 'LBL_WIZ_START_SUGAR',
+            'primary' => true,
         ),
     ),
     'panels' =>
     array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
             'fields' =>
             array(
                 array(
                     'name' => 'first_name',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_FIRST_NAME",
-                    'required' => true,
+                    'label' => "LBL_FIRST_NAME",
                 ),
                 array(
                     'name' => 'last_name',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_LAST_NAME",
+                    'label' => "LBL_LAST_NAME",
                     'required' => true,
                 ),
                 array(
-                    'name' => 'hr1',
-                    'type' => 'hr',
-                    'view' => 'default',
-                ),
-                array(
-                    'name' => 'email',
-                    'type' => 'email',
-                    'placeholder' => "LBL_EMAIL",
+                    'name' => 'email1',
+                    'label' => "LBL_EMAIL",
                     'required' => true,
                 ),
-                array(
-                    'name' => 'phone_work',
-                    'type' => 'phone',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_PHONE",
-                ),
-                array(
-                    'name' => 'country',
-                    'type' => 'enum',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_COUNTRY",
-                    "options" => "countries_dom",
-                    'required' => true,
-                ),
-                array(
-                    'name' => 'state',
-                    'type' => 'enum',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_STATE",
-                    "options" => "state_dom",
-                ),
-                array(
-                    'name' => 'hr2',
-                    'type' => 'hr',
-                    'view' => 'default',
-                ),
-                array(
-                    'name' => 'company',
-                    'type' => 'varchar',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_COMPANY",
-                    'required' => true,
-                ),
-                array(
-                    'name' => 'title',
-                    'type' => 'varchar',
-                    'placeholder' => "LBL_PORTAL_SIGNUP_JOBTITLE",
-                ),
+
             ),
         ),
     ),

@@ -3821,9 +3821,9 @@ $app_strings = array (
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
     'LBL_PORTAL_SIGNUP' => 'A customer service representative will contact you shortly to configure your account.',
-    'LBL_PORTAL_SIGNUP_FIRST_NAME' => 'First name',
-    'LBL_PORTAL_SIGNUP_LAST_NAME' => 'Last name',
-    'LBL_PORTAL_SIGNUP_EMAIL' => 'Email',
+    'LBL_FIRST_NAME' => 'First name',
+    'LBL_LAST_NAME' => 'Last name',
+    'LBL_EMAIL' => 'Email',
     'LBL_PORTAL_SIGNUP_PHONE' => '(###) ###-#### (optional)',
     'LBL_PORTAL_SIGNUP_COUNTRY' => 'Country',
     'LBL_PORTAL_SIGNUP_STATE' => 'State',
@@ -3885,6 +3885,10 @@ $app_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     //end portal
     //END SUGARCRM flav=ent ONLY
+
+    //First time login wizard
+    'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
+    'LBL_WIZ_START_SUGAR' => 'Start Sugar',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
