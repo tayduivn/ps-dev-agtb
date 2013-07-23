@@ -22,7 +22,7 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      * @param array $args
      * @return bool
      */
-    public static function checkRelatedName($bean, $event, $args)
+    public static function checkRelatedName(&$bean, $event, $args)
     {
 
         if ($event == 'before_save') {
@@ -35,8 +35,8 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
             }
 
             // if we are in a delete operation, don't update the date modified
-            if (SugarBean::inOperation('delete')) {
-                $bean->update_date_modified = false;
+            if (SugarBean::inOperation('delete') || SugarBean::inOperation('saving_related')) {
+                $bean->date_modified = $bean->fetched_row['date_modified'];
             }
         }
         return true;
