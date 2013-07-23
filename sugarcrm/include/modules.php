@@ -88,6 +88,7 @@ $beanList['EditCustomFields']   = 'FieldsMetaData';
 $beanList['Opportunities']  = 'Opportunity';
 
 $beanList['EmailTemplates']     = 'EmailTemplate';
+$beanList['UserSignatures'] = 'UserSignature';
 $beanList['Notes']          = 'Note';
 $beanList['Calls']          = 'Call';
 $beanList['Emails']         = 'Email';
@@ -189,7 +190,6 @@ $beanList['DataSets']  = 'DataSet';
 $beanList['DataSet_Attribute']  = 'DataSet_Attribute';
 $beanList['ReportMaker']  = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
-$beanList['UserSignatures'] = 'UserSignature';
 $beanList['Empty'] = 'EmptyBean';
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
 
@@ -221,6 +221,7 @@ $beanFiles['Contact']       = 'modules/Contacts/Contact.php';
 $beanFiles['Account']       = 'modules/Accounts/Account.php';
 $beanFiles['Opportunity']   = 'modules/Opportunities/Opportunity.php';
 $beanFiles['EmailTemplate']         = 'modules/EmailTemplates/EmailTemplate.php';
+$beanFiles['UserSignature'] = 'modules/UserSignatures/UserSignature.php';
 $beanFiles['Note']          = 'modules/Notes/Note.php';
 $beanFiles['Call']          = 'modules/Calls/Call.php';
 $beanFiles['Email']         = 'modules/Emails/Email.php';
@@ -330,7 +331,6 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
 $beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
-$beanFiles['UserSignature'] = 'modules/UserSignatures/UserSignature.php';
 
 // added these lists for security settings for tabs
 $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connectors',
@@ -348,12 +348,12 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav=int ONLY
     'TeamHierarchy',
     //END SUGARCRM flav=int ONLY
-    'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates',
+    'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates','UserSignature',
     'CampaignTrackers', 'CampaignLog', 'EmailMan', 'Prospects', 'ProspectLists',
     'Groups','InboundEmail',
     'ACLActions', 'ACLRoles',
     'DocumentRevisions',
-    'Empty', 'UserSignature',
+    'Empty',
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     'RevenueLineItems'
     //END SUGARCRM flav=pro && flav!=ent ONLY
@@ -634,6 +634,7 @@ $bwcModules = array(
     'TrackerQueries',
     //END SUGARCRM flav=pro ONLY
     'UserPreferences',
+    'UserSignatures',
     'Users',
     'vCals',
     'vCards',

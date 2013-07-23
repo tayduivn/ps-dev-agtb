@@ -542,8 +542,15 @@
     _launchSignatureDrawer: function() {
         app.drawer.open(
             {
-                layout: "compose-signatures-selection",
-                context: {module: this.module}
+                layout: "selection-list",
+                context: {
+                    module: 'UserSignatures',
+                    selectionListFilter: {
+                        filter: [
+                            {'user_id': app.user.id}
+                        ]
+                    }
+                }
             },
             this._updateEditorWithSignature
         );
@@ -552,13 +559,14 @@
     /**
      * Fetches the signature content using its ID and updates the editor with the content.
      *
-     * @param signature
+     * @param model
      */
-    _updateEditorWithSignature: function(signature) {
-        if (_.isObject(signature) && signature.id) {
-            var url = app.api.buildURL("Signatures", signature.id);
-            app.api.call("read", url, null, {
-                success: _.bind(function(model) {
+    _updateEditorWithSignature: function(model) {
+        if (model && model.id) {
+            var signature = app.data.createBean('UserSignatures', { id: model.id });
+
+            signature.fetch({
+                success:_.bind(function (model) {
                     if (this.disposed === true) return; //if view is already disposed, bail out
                     if (this._insertSignature(model)) {
                         this._lastSelectedSignature = model;
@@ -579,8 +587,8 @@
      * @private
      */
     _insertSignature: function(signature) {
-        if (_.isObject(signature) && signature.signature_html) {
-            var signatureContent          = this._formatSignature(signature.signature_html),
+        if (_.isObject(signature) && signature.get('signature_html')) {
+            var signatureContent          = this._formatSignature(signature.get('signature_html')),
                 emailBody                 = this.model.get("html_body") || "",
                 signatureOpenTag          = '<br class="signature-begin" />',
                 signatureCloseTag         = '<br class="signature-end" />',

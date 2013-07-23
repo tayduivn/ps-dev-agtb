@@ -116,7 +116,8 @@ $app_list_strings = array (
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
-    'Filters' => 'Filters'
+    'Filters' => 'Filters',
+    'UserSignatures' => 'User Signatures',
   ),
 
     'moduleIconList' =>
