@@ -365,7 +365,7 @@ class StudioModule
         );
 
         $nodes = $this->getSearch();
-        if (!empty($nodes) && $this->bwc) {
+        if (!empty($nodes)) {
             $layouts[translate('LBL_SEARCH')] = array(
                 'name' => translate('LBL_SEARCH'),
                 'type' => 'Folder',
@@ -433,17 +433,17 @@ class StudioModule
      */
     public function getSearch()
     {
-        require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
-
         $nodes = array();
-        foreach (array(MB_BASICSEARCH => 'LBL_BASIC_SEARCH', MB_ADVANCEDSEARCH => 'LBL_ADVANCED_SEARCH') as $view => $label) {
+        $options =  $this->bwc ? array(MB_BASICSEARCH => 'LBL_BASIC_SEARCH', MB_ADVANCEDSEARCH => 'LBL_ADVANCED_SEARCH') : array(MB_BASICSEARCH => 'LBL_FILTER_SEARCH',);
+        foreach ($options as $view => $label) {
             try {
-                $parser = new SearchViewMetaDataParser($view, $this->module);
                 $title = translate($label);
                 if ($label == 'LBL_BASIC_SEARCH') {
                     $name = 'BasicSearch';
                 } elseif ($label == 'LBL_ADVANCED_SEARCH') {
                     $name = 'AdvancedSearch';
+                } elseif ($label == 'LBL_FILTER_SEARCH') {
+                    $name = "Search";
                 } else {
                     $name = str_replace(' ', '', $title);
                 }
