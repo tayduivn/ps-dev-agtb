@@ -173,18 +173,19 @@
         // handle default/un-delete-able scenario
         this.defaultSelect2 = this.$el.find('#scenariosLocked').select2({
             data: this.defaultOption,
-            multiple: false,
+            multiple: true,
             dropdownCss: {width:'auto'},
             dropdownCssClass: 'search-related-dropdown',
             containerCss: "border: none",
-            containerCssClass: 'select2-container-disabled',
-            formatSelection: this.formatCustomSelection,
+            containerCssClass: 'select2-choices-pills-close select2-container-disabled',
             escapeMarkup: function(m) { return m; },
             initSelection : _.bind(function (element, callback) {
                 callback(this.defaultOption);
             }, this)
         });
 
+        this.$el.find('.select2-container-disabled').width('auto');
+        this.$el.find('.select2-search-field').css('display','none');
         // set the default value
         this.defaultSelect2.select2('val', this.defaultOption);
 
@@ -192,14 +193,13 @@
         this.defaultSelect2.select2('disable');
 
         // handle setting up select2 options
+        console.log(this.scenarioOptions);
         this.optionsSelect2 = this.$el.find('#scenariosSelect').select2({
             data: this.scenarioOptions,
             multiple: true,
             dropdownCss: {width:"auto"},
-            dropdownCssClass: "search-filter-dropdown",
             containerCss: "border: none",
             containerCssClass: "select2-choices-pills-close",
-            formatSelection: this.formatCustomSelection,
             escapeMarkup: function(m) { return m; },
             initSelection : _.bind(function (element, callback) {
                 callback(this.selectedOptions);
@@ -248,7 +248,7 @@
      * @param {Object} item selected item
      */
     formatCustomSelection: function(item) {
-        return '<span class="select2-choice-type"> </span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>';
+        return '<a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>';
     },
 
     /**

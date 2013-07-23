@@ -25,8 +25,8 @@
             <div class="control-group">
                 <div class="filter controls controls=two btn-group-fit">
                     <div class="filter-view search">
-                        <input id="scenariosLocked" class="select2 search-filter" type="hidden">
-                        <input id="scenariosSelect" class="select2 search-filter" type="hidden">
+                        <input id="scenariosLocked" class="select2" type="hidden">
+                        <input id="scenariosSelect" class="select2" type="hidden">
                     </div>
                 </div>
             </div>
