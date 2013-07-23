@@ -56,6 +56,14 @@ class AbstractRelationships
     ) ;
     static $activities = array ( 'calls' => 'Calls' , 'meetings' => 'Meetings' , 'notes' => 'Notes' , 'tasks' => 'Tasks' , 'emails' => 'Emails' ) ;
 
+    /**
+     * @var array the Subpanels need overidden in modules that are not in BWC
+     */
+    static $sidecarOverrides = array(
+        'SubpanelDefinitions' => 'sidecarsubpanelbaselayout',
+        'WirelessSubpanelDefinitions' => 'sidecarsubpanelmobilelayout',
+    );
+
     protected $relationships = array ( ) ; // array containing all the AbstractRelationship objects that are in this set of relationships
     protected $moduleName ;
 
@@ -353,7 +361,10 @@ class AbstractRelationships
                         {
                             $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": BUILD is running METHOD $saveMethod" ) ;
                             $installDef = $this->$saveMethod ( $basepath, $installDefPrefix, $name, $metadata ) ;
-
+                            reset($installDef);
+                            if (!empty(self::$sidecarOverrides[$method]) && !isModuleBWC(key($installDef))) {
+                                $key = self::$sidecarOverrides[$method];
+                            }
                             // some save methods (e.g., saveRelateFieldDefinition) handle the installDefs internally and so return null
 
 
@@ -491,10 +502,10 @@ class AbstractRelationships
                             $moduleName,
                             $relationshipName,
                             $definition,
+                            $basepath,
                             'base'
                         ),
                         'to_module' => $moduleName,
-                        'do_not_write' => true,
                     );
                 }
             } else {
@@ -525,12 +536,18 @@ class AbstractRelationships
      * @param $moduleName, the module name
      * @param $relationshipName the relationship name
      * @param array $definition the definitions to be saved
+     * @param string $basepath - the path to save the file to
      * @param string $client base|mobile|portal
      * @return string filename the layout definition is saved to
      */
-    public function saveSidecarSubpanelDefinitions($moduleName, $relationshipName, array $definition, $client = 'base')
+    public function saveSidecarSubpanelDefinitions($moduleName, $relationshipName, array $definition, $basepath, $client = 'base')
     {
-        $layoutPath = "custom/Extension/modules/{$moduleName}/Ext/clients/{$client}/layouts/subpanels";
+        if(strstr($basepath, 'modulebuilder')) {
+            $basepath = str_replace('relationships', "clients/{$client}/layouts", $basepath);
+            $layoutPath = "{$basepath}/subpanels";
+        } else {
+            $layoutPath = "custom/Extension/modules/{$moduleName}/Ext/clients/{$client}/layouts/subpanels";
+        }
 
         if (!is_dir($layoutPath)) {
             mkdir($layoutPath, 0777, true);
@@ -582,9 +599,10 @@ class AbstractRelationships
                             $moduleName,
                             $relationshipName,
                             $definition,
+                            $basepath,
                             'mobile'
                         ),
-                        'to_module' => $moduleName
+                        'to_module' => $moduleName,
                     );
                 }
             } else {
