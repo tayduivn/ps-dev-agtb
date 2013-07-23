@@ -58,26 +58,30 @@
      * Handle the call to the Forecast/init call so we can get the defaults back
      */
     initComponent: function() {
-        app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-            success: _.bind(function(o) {
-                app.view.View.prototype.initialize.call(this, this.initOptions);
-                this.values.module = 'Forecasts';
-                this.isManager = o.initData.userData.isManager;
-                this.values.set({
-                    user_id: app.user.get('id'),
-                    display_manager: false, // we always show the rep view by default
-                    selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
-                    timeperiod_id: o.defaultSelections.timeperiod_id.id,
-                    timeperiod_label: o.defaultSelections.timeperiod_id.label,
-                    dataset: o.defaultSelections.dataset,
-                    group_by: o.defaultSelections.group_by,
-                    ranges: o.defaultSelections.ranges
-                });
-                this.bindDataChange();
-                this.render();
-            }, this),
-            complete: this.initOptions ? this.initOptions.complete : null
-        });
+        if (this.initOptions.meta.config) {
+            app.view.View.prototype.initialize.call(this, this.initOptions);
+        } else {
+            app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
+                success: _.bind(function(o) {
+                    app.view.View.prototype.initialize.call(this, this.initOptions);
+                    this.values.module = 'Forecasts';
+                    this.isManager = o.initData.userData.isManager;
+                    this.values.set({
+                        user_id: app.user.get('id'),
+                        display_manager: false, // we always show the rep view by default
+                        selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
+                        timeperiod_id: o.defaultSelections.timeperiod_id.id,
+                        timeperiod_label: o.defaultSelections.timeperiod_id.label,
+                        dataset: o.defaultSelections.dataset,
+                        group_by: o.defaultSelections.group_by,
+                        ranges: o.defaultSelections.ranges
+                    });
+                    this.bindDataChange();
+                    this.render();
+                }, this),
+                complete: this.initOptions ? this.initOptions.complete : null
+            });
+        }
     },
 
     /**
