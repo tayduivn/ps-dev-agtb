@@ -435,14 +435,18 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'badge',
+                    'name' => 'badge',
                     'readonly' => true,
                     'related_fields' => array(
                         'quote_id',
                     ),
                 ),
                 array(
+                    'name' => 'follow',
+                    'label' => 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             ),
         ),

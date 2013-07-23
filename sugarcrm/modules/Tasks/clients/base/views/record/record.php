@@ -86,12 +86,18 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
             'fields' => array(
                 'name',
                 array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
+                    'name' => 'follow',
+                    'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             )
         ),
