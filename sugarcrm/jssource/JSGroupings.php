@@ -282,6 +282,7 @@
                     //END SUGARCRM flav=ent ONLY
                     'include/javascript/sugar7/plugins/click-to-edit.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/dirty-collection.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY

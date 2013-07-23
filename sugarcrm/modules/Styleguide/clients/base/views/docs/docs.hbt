@@ -1,0 +1,12 @@
+{{#section_page}}
+<section id="index">
+<div class="page-header">
+    <p class="lead">{{{section.description}}}</p>
+</div>
+{{/section_page}}
+
+{{{content}}}
+
+{{#section_page}}
+</section>
+{{/section_page}}

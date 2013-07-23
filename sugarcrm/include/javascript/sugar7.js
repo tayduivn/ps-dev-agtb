@@ -103,6 +103,44 @@
                 }
             },
             {
+                name: "sg_index",
+                route: "Styleguide",
+                callback: function() {
+                    app.controller.loadView({
+                        module: "Styleguide",
+                        layout: "styleguide",
+                        page_name: "home"
+                    });
+                }
+            },
+            {
+                name: "sg_module",
+                route: "Styleguide/:layout/:resource",
+                callback: function(layout, resource) {
+                    var page = '',
+                        field = '';
+                    if (layout === 'field') {
+                        //route: "Styleguide/field/:field"
+                        page = 'field';
+                        field = resource;
+                    } else if (layout === 'docs') {
+                        //route: "Styleguide/docs/:page"
+                        page = resource;
+                    } else if (layout === 'layout') {
+                        //route: "Styleguide/layout/records"
+                        layout = resource;
+                        page = 'module';
+                    }
+                    app.controller.loadView({
+                        module: "Styleguide",
+                        layout: layout,
+                        page_name: page,
+                        field_type: field,
+                        skipFetch: true
+                    });
+                }
+            },
+            {
                 name: "list",
                 route: ":module"
             },

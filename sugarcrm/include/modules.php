@@ -116,6 +116,7 @@ $beanList['Roles']  = 'Role';
 
 $beanList['Audit']  = 'Audit';
 
+$beanList['Styleguide'] = 'Styleguide';
 // deferred
 //$beanList['Queues'] = 'Queue';
 
@@ -328,6 +329,7 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 $beanFiles['EmptyBean'] = 'data/EmptyBean.php';
+$beanFiles['Styleguide'] = 'modules/Styleguide/Styleguide.php';
 $beanFiles['UserSignature'] = 'modules/UserSignatures/UserSignature.php';
 
 // added these lists for security settings for tabs
@@ -409,6 +411,7 @@ $modInvisList[] = 'SavedSearch';
 //$modInvisList[] = 'Queues';
 $modInvisList[] = 'Studio';
 $modInvisList[] = 'Connectors';
+$modInvisList[] = 'Styleguide';
 
 $report_include_modules = array();
 $report_include_modules['Currencies']='Currency';

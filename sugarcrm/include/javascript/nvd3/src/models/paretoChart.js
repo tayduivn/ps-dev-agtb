@@ -106,7 +106,10 @@ nv.models.paretoChart = function () {
       var container = d3.select(this),
           that = this;
 
-      //var expandMode = container.node().parentNode.className.indexOf('expanded') !== -1;
+      //TODO: find solution for adjusting margins based on available size
+      // of chart view port. We can get the classes that are added to the svg
+      // container through container.node().parentNode.className if needed.
+      // Another option is to zoom the viewport.
       var expandMode = false;
 
       margin.left = (expandMode) ? 50 : 60;
