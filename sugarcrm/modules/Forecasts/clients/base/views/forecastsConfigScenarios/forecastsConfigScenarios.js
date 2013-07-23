@@ -193,7 +193,6 @@
         this.defaultSelect2.select2('disable');
 
         // handle setting up select2 options
-        console.log(this.scenarioOptions);
         this.optionsSelect2 = this.$el.find('#scenariosSelect').select2({
             data: this.scenarioOptions,
             multiple: true,
