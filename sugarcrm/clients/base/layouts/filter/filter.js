@@ -149,7 +149,8 @@
      * @param {Boolean} on pass true to enable, false to disable
      */
     toggleFilterButton: function (toggleDataView, on) {
-        var toggleButtons = this.layout.$('.toggle-actions button');
+        var toggleButtons = this.layout.$('.toggle-actions a.btn');
+
         // Loops toggle buttons for 'data-view' that corresponds to `toggleDataView` and enables/disables per `on`
         _.each(toggleButtons, function(btn) {
             if($(btn).data('view') === toggleDataView) {
@@ -157,6 +158,7 @@
                     $(btn).removeAttr('disabled').removeClass('disabled');
                 } else {
                     $(btn).attr('disabled', 'disabled').addClass('disabled');
+                    $(btn).attr('title', app.lang.get('LBL_NO_DATA_AVAILABLE'));
                 }
             }
         });

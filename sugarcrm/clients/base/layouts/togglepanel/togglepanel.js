@@ -7,7 +7,7 @@
      * @extends Layout
      */
     events: {
-        "click .toggle-actions button": "toggleView",
+        "click .toggle-actions a.btn": "toggleView",
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
@@ -112,7 +112,10 @@
      */
     toggleView: function (e) {
         var $el = this.$(e.currentTarget);
-        if ($el.attr('disabled')) {
+        // Hack: With a real <button> with attribute disabled="disabled", events won't fire on the button. However,
+        // since we're using <a> anchor to allow tooltips even if btn disabled, we have to "fudge" disabled behavior
+        // See SP-1055, http://jsfiddle.net/hMQYZ/17/, https://github.com/twitter/bootstrap/issues/2373
+        if ($el.attr('disabled') === 'disabled') {
             e.preventDefault();
             e.stopPropagation();
             return;
@@ -170,6 +173,7 @@
      */
     showTooltip: function (e) {
         var $el = this.$(e.currentTarget);
+
         //Hotfix for the top left checkall (actionmenu) tooltip
         if ($el.hasClass('checkall')) {
             $el.tooltip({container: this.$el, trigger: 'manual'}).tooltip('show');
