@@ -34,6 +34,8 @@ $viewdefs['Reports']['base']['view']['list'] = array(
                 array(
                     'name' => 'report_type',
                     'label' => 'LBL_REPORT_TYPE',
+                    'type' => 'enum',
+                    'options' => 'dom_report_types',
                     'default' => true,
                 ),
                 array (
