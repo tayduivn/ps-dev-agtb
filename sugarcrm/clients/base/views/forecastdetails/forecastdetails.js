@@ -113,7 +113,7 @@
             this.resetModel();
 
             // since we need the timeperiods from 'Forecasts' set the models module to 'Forecasts'
-            this.model.module = 'Forecasts';
+            this.context.get('model').module = 'Forecasts';
 
             // use the object version of user not a Model
             this.selectedUser = app.user.toJSON();

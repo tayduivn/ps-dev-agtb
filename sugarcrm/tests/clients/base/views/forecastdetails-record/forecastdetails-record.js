@@ -115,6 +115,8 @@ describe("Base.View.Forecastdetails-record", function() {
                     likely: 10,
                     worst: 5
                 };
+
+                view.currentModule = 'Opportunities';
             });
 
             it("should make likely_case using amount", function() {

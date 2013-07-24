@@ -12,9 +12,7 @@
     selectedUserId: '',
 
     /**
-     *
-     * @override
-     * @returns {*}
+     * {@inheritdoc}
      */
     initialize: function(options) {
         this.selectedUserId = app.user.get('id');
@@ -24,7 +22,7 @@
     /**
      * Builds widget url
      * @override
-     * @return {*} url to call
+     * @return {String} url to call
      */
     getProjectedURL: function() {
         var method = this.shouldRollup ? "progressManager" : "progressRep",
@@ -89,8 +87,11 @@
             var data = _.clone(model.toJSON()),
                 diff = 0,
                 old = 0;
-            // if amount is not undefined, push amount into likely_case
-            data.likely_case = (!_.isUndefined(data.amount)) ? data.amount : data.likely_case;
+
+            if(this.currentModule == 'Opportunities') {
+                // if amount is not undefined, push amount into likely_case
+                data.likely_case = (!_.isUndefined(data.amount)) ? data.amount : data.likely_case;
+            }
 
             // process numbers before parent calculateData
             if(_.has(model.changed, 'likely_case') || _.has(model.changed, 'amount')) {
