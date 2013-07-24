@@ -200,6 +200,28 @@ describe("Base.Field.Relate", function () {
             confirmStub.restore();
             aclStub.restore();
         });
+        it("should build route using check access", function () {
+            var aclHasAccessStub = sinon.stub(app.acl, "hasAccess").returns(false);
+            var field = SugarTest.createField("base", "account_name", "relate", "edit", fieldDef);
+
+            field.module = 'Accounts';
+            field.model = new Backbone.Model({account_id: "1234", account_name: "bob"});
+            field.buildRoute('Users', 1);
+
+            expect(aclHasAccessStub).toHaveBeenCalled();
+            expect(field.href).toBeUndefined();
+
+            aclHasAccessStub.restore();
+            aclHasAccessStub = sinon.stub(app.acl, "hasAccess").returns(true);
+
+            field.buildRoute('Users', 1);
+            expect(aclHasAccessStub).toHaveBeenCalled();
+            expect(field.href).toBeDefined();
+
+            field.model = null;
+            field = null;
+            aclHasAccessStub.restore();
+        });
     });
 
     describe("alert message", function () {

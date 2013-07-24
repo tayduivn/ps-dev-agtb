@@ -157,7 +157,10 @@
         if (_.isEmpty(module)) {
             return;
         }
-        this.href = '#' + app.router.buildRoute(module, id);
+        var action = (this.def.link && this.def.route)? this.def.route.action :"view";
+        if(app.acl.hasAccess(action, module)) {
+            this.href = '#' + app.router.buildRoute(module, id);
+        }
     },
     //Derived controllers can override these if related module and id in another place
     _buildRoute: function () {
