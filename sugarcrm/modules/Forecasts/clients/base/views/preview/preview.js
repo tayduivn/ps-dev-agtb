@@ -37,10 +37,12 @@
      * @param collection
      * @param fetch
      * @param previewId
+     * @param dontClose overrides triggering preview:close
      * @private
      */
-    _renderPreview: function(model, collection, fetch, previewId){
+    _renderPreview: function(model, collection, fetch, previewId, dontClose){
         var self = this;
+        dontClose = dontClose || false;
 
         // If there are drawers there could be multiple previews, make sure we are only rendering preview for active drawer
         if(app.drawer && !app.drawer.isActive(this.$el)){
@@ -48,7 +50,7 @@
         }
 
         // Close preview if we are already displaying this model
-        if(this.originalModel && model && (this.originalModel.get("id") == model.get("id") && previewId == this.previewId)) {
+        if(!dontClose && this.originalModel && model && (this.originalModel.get("id") == model.get("id") && previewId == this.previewId)) {
             // Remove the decoration of the highlighted row
             app.events.trigger("list:preview:decorate", false);
             // Close the preview panel
