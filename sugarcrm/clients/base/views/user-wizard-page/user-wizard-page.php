@@ -66,6 +66,7 @@ $viewdefs['base']['view']['user-wizard-page'] = array(
                 ),
                 array(
                     'name' => 'email',
+                    'type' => 'email',
                     'label' => "LBL_WIZ_EMAIL",
                     'required' => true,
                 ),
