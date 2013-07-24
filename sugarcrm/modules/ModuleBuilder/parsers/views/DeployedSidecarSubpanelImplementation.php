@@ -47,29 +47,34 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->setViewClient($client);
         $this->setUpSubpanelViewDefFileInfo();
 
-
+        // Handle validation up front that will throw exceptions
         if (empty($this->bean)) {
             throw new Exception("Bean was not provided for {$this->sidecarSubpanelName}");
         }
 
+        if (empty($this->loadedSubpanelFileName)) {
+            throw new Exception("No valid metadata file name found for subpanel {$this->sidecarSubpanelName}");
+        }
+
+        // Load the base/custom metadata file first
+        if (!file_exists($this->loadedSupbanelFileName)) {
+            throw new Exception("Metadata file '{$this->loadedSupbanelFileName}' does not exist for subpanel {$this->sidecarSubpanelName}");
+        }
+        
+        include $this->loadedSubpanelFileName;
+
+        // Prepare to load the history file. This will be available in cases when
+        // a layout is restored.
         $this->historyPathname = 'custom/history/modules/' . $moduleName . '/clients/' . $this->getViewClient(
             ) . '/views/' . $this->sidecarSubpanelName. '/' . self::HISTORYFILENAME;
         $this->_history = new History($this->historyPathname);
-
 
         if (file_exists($this->historyPathname)) {
             // load in the subpanelDefOverride from the history file
             $GLOBALS['log']->debug(get_class($this) . ": loading from history");
             require $this->historyPathname;
         }
-
-
-        if (empty($this->loadedSubpanelFileName)) {
-            throw new Exception(sprintf("No valid file for subpanel '%s'", $this->sidecarSubpanelName));
-        }
-
-        @include $this->loadedSubpanelFileName;
-
+        
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array();
         $this->_fielddefs = $this->bean->field_defs;
         $this->_language = '';
@@ -146,7 +151,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->loadedSubpanelFileName = $defaultSubpanelFile;
             $this->loadedSupbanelName = 'subpanel-list';
         } else {
-            throw new Exception(sprintf("No file found for subpanel: %s", $this->loadedSupbanelName));
+            throw new Exception("No metadata file found for subpanel: {$this->loadedSupbanelName}");
         }
         $this->sidecarFile = "custom/" . $subpanelFile;
     }
@@ -190,11 +195,15 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
 
     public function deploy($defs)
     {
+        // Make a viewdefs variable for saving
+        $varname = "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']";
+        
         // first sort out the historical record...
-        write_array_to_file(self::HISTORYVARIABLENAME, $this->_viewdefs, $this->historyPathname);
+        write_array_to_file($varname, $this->_viewdefs, $this->historyPathname);
         $this->_history->append($this->historyPathname);
         $this->_viewdefs = $defs;
 
+        // Now move on to the viewdefs proper
         if (!is_dir(dirname($this->sidecarFile))) {
             if (!mkdir(dirname($this->sidecarFile), 0755, true)) {
                 throw new Exception(sprintf("Cannot create directory %s", $this->sidecarFile));
@@ -209,7 +218,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $this->stripUnwantedBWCKeys();
 
         write_array_to_file(
-            "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']",
+            $varname,
             $this->_viewdefs,
             $this->sidecarFile
         );
