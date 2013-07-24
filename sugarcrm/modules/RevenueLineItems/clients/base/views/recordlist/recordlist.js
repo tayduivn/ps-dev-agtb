@@ -62,7 +62,10 @@
             message = app.lang.get("WARNING_DELETED_RECORD_RECOMMIT", "RevenueLineItems");
             app.alert.show("included_list_delete_warning", {
                 level: "warning",
-                messages: message
+                messages: message,
+                onLinkClick: function() {
+                    app.alert.dismissAll();
+                }
             });
         }
         
