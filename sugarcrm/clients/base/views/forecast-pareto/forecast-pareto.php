@@ -11,7 +11,8 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$viewdefs['Forecasts']['base']['view']['forecasts-chart'] = array(
+
+$viewdefs['base']['view']['forecast-pareto'] = array(
     'dashlets' => array(
         array(
             'name' => 'LBL_DASHLET_FORECASTS_CHART',
@@ -20,7 +21,7 @@ $viewdefs['Forecasts']['base']['view']['forecasts-chart'] = array(
             'preview' => array(),
             'filter' => array(
                 'module' => array(
-                    'Forecasts'
+                    'Home'
                 )
             )
         )
@@ -29,9 +30,11 @@ $viewdefs['Forecasts']['base']['view']['forecasts-chart'] = array(
         'name' => 'paretoChart',
         'label' => 'Pareto Chart',
         'type' => 'forecast-pareto-chart',
+        'view' => 'detail'
     ),
     'timeperiod' => array(
         array(
+            'module' => 'Forecasts',
             'name' => 'selectedTimePeriod',
             'label' => 'TimePeriod',
             'type' => 'enum',
