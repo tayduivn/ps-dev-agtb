@@ -142,8 +142,9 @@
     app.error.handleServerError = function(error) {
         app.controller.loadView({
             layout: "error",
-            errorType: "500",
+            errorType: error.status || "500",
             module: "Error",
+            error: error, 
             create: true
         });
     };
