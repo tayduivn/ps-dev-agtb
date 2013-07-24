@@ -59,10 +59,10 @@
         }, this);
         if (module === 'Home') {
             this.on("render", this.toggleSidebar, this);
-            
-            if (context.get("modelId")) {
+            if (context.get('modelId')) {
                 // save it as last visit
-                app.user.setPreference('home-last-visit', context.get("modelId"));
+                var lastVisitedStateKey = this.getLastStateKey();
+                app.user.lastState.set(lastVisitedStateKey, context.get('modelId'));
             }
         }
     },
@@ -139,14 +139,24 @@
         }
         var self = this;
         if (this.collection.models.length > 0) {
-            var model = _.first(this.collection.models);
+            var model = _.first(this.collection.models),
+                lastVisitedStateKey = this.getLastStateKey(),
+                lastViewed = app.user.lastState.get(lastVisitedStateKey);
+            if (lastViewed) {
+                var lastVisitedModel = this.collection.get(lastViewed);
+                //if last visited dashboard not in the fetching list,
+                //it should navigate to the first searched dashboard.
+                //And it should clean out the previous last visited dashboard,
+                //since it is no longer existed.
+                if (!_.isEmpty(lastVisitedModel)) {
+                    app.user.lastState.set(lastVisitedStateKey, '');
+                    model = lastVisitedModel;
+                }
+            }
             if (this.context.parent) {
                 //For other modules
                 this.navigateLayout(model.id);
             } else {
-                if (app.user.getPreference('home-last-visit')) {
-                    model = _.findWhere(this.collection.models, {id: app.user.getPreference('home-last-visit')});
-                }
                 //SC-748: Should dispose the dashboard to release the warning listener
                 this.dispose();
                 app.navigate(this.context, model);
@@ -186,13 +196,37 @@
         }
     },
     /**
+     * Build the cache key for last visited dashboard
+     * Combine parent module and view name to build the unique id
+     *
+     * @return {String} hash key.
+     */
+    getLastStateKey: function() {
+        if (this._lastStateKey) {
+            return this._lastStateKey;
+        }
+        var model = this.context.get('model'),
+            view = model.get('view'),
+            module = model.dashboardModule,
+            key = module + '.' + view;
+        this._lastStateKey = app.user.lastState.key(key, this);
+        return this._lastStateKey;
+    },
+    /**
      * For the RHS dashboard, this method loads entire dashboard component
      *
      * @param id {String} - dashboard id
      */
     navigateLayout:function (id) {
-        var layout = this.layout;
+        var layout = this.layout,
+            lastVisitedStateKey = this.getLastStateKey();
         this.dispose();
+
+        //if dashboard layout navigates to the different dashboard,
+        //it should store last visited dashboard id.
+        if (!_.contains(['create', 'list'], id)) {
+            app.user.lastState.set(lastVisitedStateKey, id);
+        }
 
         layout._addComponentsFromDef([
             {
@@ -205,7 +239,10 @@
                         {
                             layout: 'dashlet-main'
                         }
-                    ]
+                    ],
+                    last_state: {
+                        id: 'last-visit'
+                    }
                 },
                 context: _.extend({
                     module: 'Home',
