@@ -104,7 +104,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'picture',
-                    'type' => 'image',
+                    'type' => 'avatar',
                     'width' => 42,
                     'height' => 42,
                     'dismiss_label' => true,

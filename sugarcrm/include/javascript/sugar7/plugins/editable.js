@@ -181,7 +181,7 @@
                         var $el = field.$(field.fieldTag + ":first");
                         $el.focus().val($el.val());
                     }
-                    if (field.type !== 'image' && field.type !== 'file') {
+                    if (field.type !== 'image' && field.type !== 'file' && field.type !== 'avatar') {
                         if (_.isFunction(field.bindKeyDown)) {
                             field.bindKeyDown(this.editableKeyDowned);
                         } else {

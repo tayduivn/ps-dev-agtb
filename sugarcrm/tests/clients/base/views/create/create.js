@@ -340,7 +340,6 @@ describe("Create View", function() {
                     // The panel grid contains references to the actual fields found in panel.fields, so the fields must
                     // be modified to include the field attributes that would be calculated during a normal render
                     // operation and then added to the grid in the correct row and column.
-                    panels[0].isAvatar           = false;
                     panels[0].grid               = [
                         [panels[0].fields[0], panels[0].fields[1]]
                     ];

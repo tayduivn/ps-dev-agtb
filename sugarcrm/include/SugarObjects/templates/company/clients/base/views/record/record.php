@@ -18,6 +18,14 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
+                array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
                 'name',
                 array(
                     'name' => 'favorite',
@@ -43,12 +51,12 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 'phone_office',
                 'ticker_symbol',
                 'phone_fax',
-                'rating', 
+                'rating',
                 'phone_alternate',
-                'ownership', 
+                'ownership',
                 'employees',
                 'industry',
-                $module_name . '_type', 
+                $module_name . '_type',
                 'annual_revenue',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

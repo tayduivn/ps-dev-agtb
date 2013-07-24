@@ -42,8 +42,16 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
+                array(
                     'name' => 'name',
-                    'required' => true                                        
+                    'required' => true
                 )
             )
         ),
@@ -84,8 +92,8 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 'support_description',
                 'support_contact',
                 'support_term',
-                
-               
+
+
             )
         )
     ),

@@ -94,6 +94,14 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
+                array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
                 'name',
                 array(
                     'name' => 'favorite',
