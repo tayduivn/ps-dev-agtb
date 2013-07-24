@@ -97,16 +97,6 @@
             this.model.set('data', data);
             this.model.set('parent_type', 'Files');
             break;
-
-        case 'link':
-        case 'unlink':
-            // Flip the module if we are on any link event so that the event is
-            // more noticeable in the activity stream.
-            if (this.context.parent.get('module') === this.model.get('parent_type')) {
-                this.model.set('parent_type', data.subject.module);
-                this.model.set('parent_id', data.subject.id);
-            }
-            break;
         }
 
         this.processEmbed();
@@ -426,6 +416,9 @@
         } else if (!app.acl.hasAccess("view", this.model.get('parent_type'))) { //no access to related record
             preview.enabled = false;
             preview.label = 'LBL_PREVIEW_DISABLED_NO_ACCESS';
+        } else if (this.model.get('preview_enabled') === false) { //deleted or no team access to related record
+            preview.enabled = false;
+            preview.label = this.model.get('preview_disabled_reason');
         } else {
             parentModel = this._getParentModel('record', this.context);
             if (parentModel && parentModel.id === this.model.get('parent_id')) { //same record as context

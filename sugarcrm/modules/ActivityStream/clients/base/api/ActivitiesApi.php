@@ -4,6 +4,8 @@ require_once 'clients/base/api/FilterApi.php';
 
 class ActivitiesApi extends FilterApi
 {
+    protected static $beanList = array();
+    protected static $previewCheckResults = array();
 
     public function registerApiRest()
     {
@@ -107,7 +109,6 @@ class ActivitiesApi extends FilterApi
 
     protected function formatResult(ServiceBase $api, array $args, SugarQuery $query, SugarBean $bean = null)
     {
-        $beanList = array();
         $response = array();
         $response['records'] = $query->execute('array', false);
         // We add one to it when setting it, so we subtract one now for the true
@@ -146,14 +147,7 @@ class ActivitiesApi extends FilterApi
                             $aclBean = $bean;
                         } elseif (!empty($record['data']['object']['module'])) {
                             $aclModule = $record['data']['object']['module'];
-                            if (isset($beanList[$aclModule])) {
-                                $aclBean = $beanList[$aclModule];
-                            } else {
-                                $aclBean = BeanFactory::getBean($aclModule);
-                                if (!is_null($aclBean)) {
-                                    $beanList[$aclModule] = $aclBean;
-                                }
-                            }
+                            $aclBean = $this->getEmptyBean($aclModule);
                         }
                         if (!is_null($aclBean)) {
                             $context = array('user' => $api->user);
@@ -173,6 +167,13 @@ class ActivitiesApi extends FilterApi
                 }
             }
 
+            //check if parent record preview should be enabled
+            if (!empty($record['parent_type']) && !empty($record['parent_id'])) {
+                $previewCheckResult = $this->checkParentPreviewEnabled($api->user, $record['parent_type'], $record['parent_id']);
+                $record['preview_enabled'] = $previewCheckResult['preview_enabled'];
+                $record['preview_disabled_reason'] = $previewCheckResult['preview_disabled_reason'];
+            }
+
             // Format the name of the user.
             $name = array($record['first_name'], $record['last_name']);
             if ($api->user->showLastNameFirst()) {
@@ -187,6 +188,36 @@ class ActivitiesApi extends FilterApi
         $response['next_offset'] = $nextOffset;
         $response['args'] = $args;
         return $response;
+    }
+
+    protected function checkParentPreviewEnabled($user, $module, $id)
+    {
+        $previewCheckKey = $module . '.' . $id;
+        $previewCheckResult = array();
+        if (array_key_exists($previewCheckKey, self::$previewCheckResults)) {
+            $previewCheckResult = self::$previewCheckResults[$previewCheckKey];
+        } else {
+            $previewCheckBean = $this->getEmptyBean($module);
+            $previewCheckBean->id = $id;
+            //check if user has access - also checks if record is deleted
+            $previewCheckResult['preview_enabled'] = $previewCheckBean->checkUserAccess($user);;
+            //currently only one error reason, but may be others in the future
+            $previewCheckResult['preview_disabled_reason'] = $previewCheckResult['preview_enabled'] ? '' : 'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS';
+        }
+        self::$previewCheckResults[$previewCheckKey] = $previewCheckResult;
+        return $previewCheckResult;
+    }
+
+    protected function getEmptyBean($module) {
+        if (isset(self::$beanList[$module])) {
+            $bean = self::$beanList[$module];
+        } else {
+            $bean = BeanFactory::getBean($module);
+            if (!is_null($bean)) {
+                self::$beanList[$module] = $bean;
+            }
+        }
+        return $bean;
     }
 
     public static function getQueryObject(ServiceBase $api, array $params, SugarBean $record = null)

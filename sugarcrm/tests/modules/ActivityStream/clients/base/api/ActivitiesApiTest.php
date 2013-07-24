@@ -29,6 +29,10 @@
 require_once("modules/ActivityStream/clients/base/api/ActivitiesApi.php");
 require_once("data/SugarACL.php");
 
+/**
+ * @group api
+ * @group activities
+ */
 class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $api;
@@ -588,6 +592,92 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $actual, "Expected Activities Records with all data for Changed Fields");
     }
+
+    public function testCheckParentPreviewEnabled_CheckAlreadyPerformedForRecord_ReturnCachedResults()
+    {
+        $activitiesApi = new TestActivitiesApi();
+        $cachedResults = array(
+            'Foo.123' => array(
+                'preview_enabled' => false,
+                'preview_disabled_reason' => 'Bar!!'
+            )
+        );
+        $activitiesApi->setPreviewCheckResults($cachedResults);
+
+        $actualResult = $activitiesApi->exec_checkParentPreviewEnabled($this->api->user, 'Foo', '123');
+
+        $this->assertEquals($cachedResults['Foo.123'], $actualResult, 'Expected result to be pulled from the cached results');
+    }
+
+    public function testCheckParentPreviewEnabled_UserHasAccess_ReturnPreviewEnabledAndEmptyReason()
+    {
+        $activitiesApi = new TestActivitiesApi();
+        $cachedResults = array(
+            'Foo.123' => array(
+                'preview_enabled' => false,
+                'preview_disabled_reason' => 'Bar!!'
+            )
+        );
+        $activitiesApi->setPreviewCheckResults($cachedResults);
+        $beanList = array(
+            'Foo' => new TestCheckAccessBean()
+        );
+        $activitiesApi->setBeanList($beanList);
+
+        $expectedResult = array(
+            'preview_enabled' => true,
+            'preview_disabled_reason' => ''
+        );
+
+        $actualResult = $activitiesApi->exec_checkParentPreviewEnabled($this->api->user, 'Foo', '456');
+
+        $this->assertEquals($expectedResult, $actualResult, 'Expected result to be preview enabled with empty reason');
+    }
+
+    public function testCheckParentPreviewEnabled_UserNoAccess_ReturnPreviewEnabledAndEmptyReason()
+    {
+        $activitiesApi = new TestActivitiesApi();
+        $cachedResults = array(
+            'Foo.123' => array(
+                'preview_enabled' => false,
+                'preview_disabled_reason' => 'Bar!!'
+            )
+        );
+        $activitiesApi->setPreviewCheckResults($cachedResults);
+        $mockBean = new TestCheckAccessBean();
+        $mockBean->checkUserAccessResult = false;
+        $beanList = array(
+            'Foo' => $mockBean
+        );
+        $activitiesApi->setBeanList($beanList);
+
+        $expectedResult = array(
+            'preview_enabled' => false,
+            'preview_disabled_reason' => 'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS'
+        );
+
+        $actualResult = $activitiesApi->exec_checkParentPreviewEnabled($this->api->user, 'Foo', '789');
+
+        $this->assertEquals($expectedResult, $actualResult, 'Expected result to not be preview enabled with correct reason');
+    }
+
+    public function testCheckParentPreviewEnabled_RecordDeleted_ReturnPreviewEnabledAndEmptyReason()
+    {
+        //full functional test for this to ensure that checkUserAccess returns false for deleted records
+        $lead = SugarTestLeadUtilities::createLead();
+        $lead->mark_deleted($lead->id);
+
+        $expectedResult = array(
+            'preview_enabled' => false,
+            'preview_disabled_reason' => 'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS'
+        );
+
+        $activitiesApi = new TestActivitiesApi();
+        $actualResult = $activitiesApi->exec_checkParentPreviewEnabled($this->api->user, 'Leads', $lead->id);
+
+        $this->assertEquals($expectedResult, $actualResult, 'Expected result to not be preview enabled with correct reason');
+    }
+
 }
 
 class TestActivitiesApi extends ActivitiesApi
@@ -595,6 +685,18 @@ class TestActivitiesApi extends ActivitiesApi
     public function exec_formatResult(ServiceBase $api, array $args, SugarQuery $query, SugarBean $bean = null)
     {
         return $this->formatResult($api, $args, $query, $bean);
+    }
+    public function exec_checkParentPreviewEnabled($user, $module, $id)
+    {
+        return $this->checkParentPreviewEnabled($user, $module, $id);
+    }
+    public function setBeanList($beanList)
+    {
+        self::$beanList = $beanList;
+    }
+    public function setPreviewCheckResults($previewCheckResults)
+    {
+        self::$previewCheckResults = $previewCheckResults;
     }
 }
 
@@ -605,5 +707,14 @@ class TestSugarACLStatic extends SugarACLStatic
     public function checkFieldList($module, $field_list, $action, $context)
     {
         return $this->return_value;
+    }
+}
+
+class TestCheckAccessBean
+{
+    public $checkUserAccessResult = true;
+
+    public function checkUserAccess($user) {
+        return $this->checkUserAccessResult;
     }
 }
