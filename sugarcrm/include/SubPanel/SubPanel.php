@@ -277,6 +277,10 @@ class SubPanel
         //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
         $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
+        
+        // Set a reasonable default value in case we ARE bwc. Without this BWC
+        // $viewName isn't set for BWC modules and throws errors later on.
+        $viewName = $panel->_instance_properties['subpanel_name'];
         if (!isModuleBWC($panel->parent_bean->module_dir)) {
             require_once 'include/MetaDataManager/MetaDataConverter.php';
             $mc = new MetaDataConverter();
