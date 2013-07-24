@@ -653,18 +653,10 @@ class SugarFieldTeamset extends SugarFieldBase {
     public function apiSave(SugarBean $bean, array $params, $fieldName, $properties) {
         // Find the primary team id, or the first one, if nothing is set to primary
         $teamList = $params[$fieldName];
-        if (!is_array($teamList)) {
-            $teamList = array();
-        }
-        $teamIds = array();
-        foreach ( $teamList as $idx => $team ) {
-            //For empty array
-            if(!isset($team['id'])) continue;
-            if ( isset($team['primary']) && $team['primary'] == true ) {
-                $primaryTeamId = $team['id'];
-            }
-            $teamIds[] = $team['id'];
-        }
+        $ret = $this->fixupTeamList($teamList);
+        $teamIds = $ret['teamIds'];
+        $primaryTeamId = $ret['primaryTeamId'];
+        
         if ( count($teamIds) == 0 ) {
             // There are no teams being set, set the defaults and move on
             $bean->setDefaultTeam();
@@ -681,6 +673,42 @@ class SugarFieldTeamset extends SugarFieldBase {
         $bean->teams->replace($teamIds, array(), false);
     }
 
-    
+    public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
+        // Check if we are replacing, if so, just use the normal save
+        if (isset($params[$fieldName.'_type']) && $params[$fieldName.'_type'] == 'replace') {
+            return $this->apiSave($bean, $params, $field, $properties);
+        }
+
+        $teamList = $params[$fieldName];
+        $ret = $this->fixupTeamList($teamList);
+        $teamIds = $ret['teamIds'];
+        $primaryTeamId = $ret['primaryTeamId'];
+
+        if (isset($primaryTeamId)) {
+            $bean->team_id = $primaryTeamId;
+        }
+        $bean->load_relationship('teams');
+        $bean->teams->add($teamIds, array(), false);
+    }
+
+    protected function fixupTeamList($teamList)
+    {
+        $primaryTeamId = null;
+        if (!is_array($teamList)) {
+            $teamList = array();
+        }
+        $teamIds = array();
+        foreach ( $teamList as $idx => $team ) {
+            //For empty array
+            if (!isset($team['id'])) { continue; }
+            if (isset($team['primary']) && $team['primary'] == true) {
+                $primaryTeamId = $team['id'];
+            }
+            $teamIds[] = $team['id'];
+        }
+
+        return array('teamIds'=>$teamIds,'primaryTeamId'=>$primaryTeamId);
+    }
 }
-?>
+
+

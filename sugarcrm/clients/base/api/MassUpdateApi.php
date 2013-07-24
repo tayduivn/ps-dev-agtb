@@ -117,15 +117,8 @@ class MassUpdateApi extends SugarApi {
         $mu_params['module'] = $args['module'];
 
         // should have either uid or entire specified
-        if (empty($mu_params['uid']) && empty($mu_params['entire']))
-        {
+        if (empty($mu_params['uid']) && empty($mu_params['entire'])) {
             throw new SugarApiExceptionMissingParameter("You must mass update at least one record");
-        }
-
-        // special handling for Sync due to front end and back end inconsistency
-        if ($mu_params['module']=='Contacts' && isset($mu_params['sync_contact'])) {
-            $mu_params['Sync'] = $mu_params['sync_contact'];
-            unset($mu_params['sync_contact']);
         }
 
         if (isset($mu_params['entire']) && empty($mu_params['entire'])) {
@@ -150,10 +143,9 @@ class MassUpdateApi extends SugarApi {
         {
             throw new SugarApiExceptionNotAuthorized('No access to mass update records for module: '.$mu_params['module']);
         }
+        $mu_params['action'] = $action;
 
-        // convert params to the format expected by downstream classes
         $uidCount = isset($mu_params['uid']) ? count($mu_params['uid']) : 0;
-        $this->convertParams($mu_params);
 
         global $sugar_config;
         $asyncThreshold = isset($sugar_config['max_mass_update']) ? $sugar_config['max_mass_update'] : self::MAX_MASS_UPDATE;
@@ -166,15 +158,9 @@ class MassUpdateApi extends SugarApi {
             return array('status'=>'queued', 'jobId'=>$this->jobId);
         }
 
-        SugarJobMassUpdate::preProcess($mu_params);
-
-        require_once("include/MassUpdate.php");
-        $mass = new MassUpdate();
-        $mass->setSugarBean($bean);
-
-        // action
-        $mass->handleMassUpdate(false, true);
-
+        $massUpdateJob = new SugarJobMassUpdate();
+        $massUpdateJob->runUpdate($mu_params);
+        
         return array('status'=>'done');
     }
 
@@ -187,68 +173,4 @@ class MassUpdateApi extends SugarApi {
         return $this->jobId;
     }
 
-    /**
-     * This function converts massupdate params to the format expected by downstream classes.
-     * @param $mu_params reference to massupdate parameters
-     */
-    protected function convertParams(&$mu_params)
-    {
-        if (is_array($mu_params)) {
-            $this->convertUID($mu_params);
-            $this->convertTeamArray($mu_params);
-            $this->convertProspectListsArray($mu_params);
-        }
-    }
-
-    /**
-     * This function converts uid to the format expected by downstream classes.
-     * @param $mu_params reference to massupdate parameters
-     */
-    protected function convertUID(&$mu_params)
-    {
-        if (!empty($mu_params['uid'])) {
-            $mu_params['uid'] = implode(',', $mu_params['uid']);
-        } else {
-            //downstream classes do not deal well with empty values for uid
-            unset($mu_params['uid']);
-        }
-    }
-
-    /**
-     * This function converts team_name to the format expected by downstream classes.
-     * @param $mu_params reference to massupdate parameters
-     */
-    protected function convertTeamArray(&$mu_params)
-    {
-        if (!empty($mu_params['team_name']) && is_array($mu_params['team_name']))
-        {
-            foreach ($mu_params['team_name'] as $idx=>$team)
-            {
-                if (is_array($team) && isset($team['id'])) {
-                    $mu_params['team_name_collection_'.$idx] = $team['id'];
-                    $mu_params['id_team_name_collection_'.$idx] = $team['id'];
-                    if (!empty($team['primary'])) {
-                        $mu_params['primary_team_name_collection'] = $idx;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * This function converts team_name to the format expected by downstream classes.
-     * @param $mu_params reference to massupdate parameters
-     */
-    protected function convertProspectListsArray(&$mu_params)
-    {
-        if (!empty($mu_params['prospect_lists'])) {
-            $prospect_lists = implode(',', $mu_params['prospect_lists']);
-            if ($this->delete) {
-                $mu_params['remove_from_prospect_lists'] = $prospect_lists;
-            } else {
-                $mu_params['add_to_prospect_lists'] = $prospect_lists;
-            }
-            unset($mu_params['prospect_lists']);
-        }
-    }
 }

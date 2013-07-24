@@ -1493,9 +1493,9 @@ EOQ;
      * @param $prospect_list_id  - Prospect List Id
      * @param $uids              - Array of records of type '$bean_name' to be added
      */
-    protected function add_prospects_to_prospect_list($bean_name, $prospect_list_id, $uids)
+    public function add_prospects_to_prospect_list($bean_name, $prospect_list_id, $uids)
     {
-        $focus=BeanFactory::getBean($bean_name);
+        $focus = BeanFactory::newBean($bean_name);
 
         $relationship = '';
         foreach($focus->get_linked_fields() as $field => $def) {
@@ -1507,13 +1507,16 @@ EOQ;
             }
         }
 
-        if ( $relationship != '' ) {
-            foreach ( $uids as $id) {
-                $focus->retrieve($id);
-                $focus->load_relationship($relationship);
-                $focus->$relationship->add($prospect_list_id);
-            }
+        if ($relationship == '') {
+            return false;
         }
+        foreach ( $uids as $id) {
+            $focus = BeanFactory::retrieveBean($bean_name, $id);
+            $focus->load_relationship($relationship);
+            $focus->$relationship->add($prospect_list_id);
+        }
+
+        return true;
     }
 
 
@@ -1522,9 +1525,9 @@ EOQ;
      * @param $prospect_list_id  - Prospect List Id
      * @param $uids              - Array of records of type '$bean_name' to be removed from prospect_list
      */
-    function remove_prospects_from_prospect_list($bean_name, $prospect_list_id, $uids)
+    public function remove_prospects_from_prospect_list($bean_name, $prospect_list_id, $uids)
     {
-        $focus=BeanFactory::getBean($bean_name);
+        $focus = BeanFactory::newBean($bean_name);
 
         $relationship = '';
         foreach($focus->get_linked_fields() as $field => $def) {
@@ -1535,14 +1538,18 @@ EOQ;
                 }
             }
         }
-
-        if ( $relationship != '' ) {
-            foreach ($uids as $id) {
-                $focus->retrieve($id);
-                $focus->load_relationship($relationship);
-                $focus->$relationship->delete($id, $prospect_list_id);
-            }
+        
+        if ( $relationship == '' ) {
+            return false;
         }
+
+        foreach ($uids as $id) {
+            $focus = BeanFactory::retrieveBean($bean_name, $id);
+            $focus->load_relationship($relationship);
+            $focus->$relationship->delete($id, $prospect_list_id);
+        }
+        
+        return true;
     }
 
      /**
