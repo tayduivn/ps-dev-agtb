@@ -193,7 +193,7 @@ describe('Base.Views.ForecastPareto', function() {
             var s1 = sandbox.spy(field, 'getServerData'),
                 s2 = sandbox.spy(field, 'setServerData');
 
-            view.addRowToChart(new Backbone.Model({'assigned_user_id': 'jasmine_test'}));
+            view.addRowToChart(new Backbone.Model({'assigned_user_id': 'jasmine_test', id: 'test_1'}));
             expect(getFieldStub).toHaveBeenCalled();
             expect(s1).toHaveBeenCalled();
             expect(s2).toHaveBeenCalled();
@@ -204,7 +204,7 @@ describe('Base.Views.ForecastPareto', function() {
             var s1 = sandbox.spy(field, 'getServerData'),
                 s2 = sandbox.spy(field, 'setServerData');
 
-            view.addRowToChart(new Backbone.Model({'assigned_user_id': 'jasmine_test'}));
+            view.addRowToChart(new Backbone.Model({'assigned_user_id': 'jasmine_test', id: 'test_1'}));
             expect(getFieldStub).toHaveBeenCalled();
             expect(s1).toHaveBeenCalled();
             expect(s2).toHaveBeenCalled();

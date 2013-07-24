@@ -103,6 +103,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $data_array = array(
             array(
                 'id' => 'wkst_test_1',
+                'parent_id' => 'parent_test_1',
                 'name' => 'Test 1',
                 'best_case' => 50.00,
                 'likely_case' => 40.00,
@@ -116,6 +117,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
             ),
             array(
                 'id' => 'wkst_test_2',
+                'parent_id' => 'parent_test_2',
                 'user_id' => 'test_2',
                 'name' => 'Test 2',
                 'best_case' => 55.00,
@@ -130,6 +132,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
             ),
             array(
                 'id' => 'wkst_test_3',
+                'parent_id' => 'parent_test_3',
                 'user_id' => 'test_3',
                 'name' => 'Test 3',
                 'best_case' => 57.00,
@@ -145,6 +148,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
             array(
                 'id' => '',
                 'user_id' => 'test_4',
+                'parent_id' => 'parent_test_4',
                 'name' => 'Test 4',
                 'best_case' => 0,
                 'likely_case' => 0,
