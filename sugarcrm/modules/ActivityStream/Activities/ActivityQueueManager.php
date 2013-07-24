@@ -162,6 +162,7 @@ class ActivityQueueManager
         if ($args['isUpdate']) {
             $act->activity_type = 'update';
             $data['changes']    = $args['dataChanges'];
+            $this->prepareChanges($bean, $data);
         } else {
             // Subscribe the user that created the record.
             if (isset($bean->created_by)) {
@@ -434,5 +435,137 @@ class ActivityQueueManager
             }
         }
         return $result;
+    }
+
+    /**
+     * Prepare the Change Data to be returned by eliminating IDs
+     * @param  $bean
+     * @param  $data
+     */
+    protected function prepareChanges($bean, &$data)
+    {
+        if (!empty($data['changes']) && is_array($data['changes'])) {
+            foreach ($data['changes'] as $fieldName => $changeInfo) {
+                if ($changeInfo['data_type'] === 'id' || $changeInfo['data_type'] === 'relate' || $changeInfo['data_type'] === 'team_list') {
+                    if ($fieldName == 'team_set_id') {
+                        $this->resolveTeamSetReferences($data, $fieldName);
+                    } else {
+                        $referenceModule = null;
+                        if ($fieldName == 'parent_id') {
+                            $def = $bean->getFieldDefinition('parent_type');
+                            if (empty($def)) {
+                                $referenceModule = $data['object']['module'];
+                            } elseif (!empty($def['module'])) {
+                                $referenceModule = $def['module'];
+                            }
+                        } elseif ($fieldName == 'team_id') {
+                            $def = $bean->getFieldDefinition('team_name');
+                            if (!empty($def['module'])) {
+                                $referenceModule = $def['module'];
+                            }
+                        } else {
+                            $def = $bean->getFieldDefinition($fieldName);
+                            if (!empty($def['module'])) {
+                                $referenceModule = $def['module'];
+                            }
+                        }
+
+                        if (!empty($referenceModule)) {
+                            $this->resolveIdReferences($data, $fieldName, $referenceModule);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve ID references in the change set to 'Name' field values
+     *
+     * @param  $data
+     * @param  $fieldName
+     * @param  $referenceModule
+     */
+    protected function resolveIdReferences(&$data, $fieldName, $referenceModule)
+    {
+        $data['changes'][$fieldName]['before'] = $this->getReferenceName(
+            $referenceModule,
+            $data['changes'][$fieldName]['before']
+        );
+        $data['changes'][$fieldName]['after']  = $this->getReferenceName(
+            $referenceModule,
+            $data['changes'][$fieldName]['after']
+        );
+    }
+
+    /**
+     * Get Name Field value for arbitrary Module/Id
+     *
+     * @param  $module
+     * @param  $id
+     *
+     * @return $val -  Name field value
+     */
+    protected function getReferenceName($module, $id)
+    {
+        $val  = null;
+        $bean = BeanFactory::retrieveBean($module, $id);
+        if (!empty($bean)) {
+            $val = $bean->name;
+        }
+        return $val;
+    }
+
+    /**
+     * Resolve team_set_id references in the change set
+     *
+     * @param  $data
+     * @param  $fieldName (team_set_id)
+     */
+    protected function resolveTeamSetReferences(&$data, $fieldName)
+    {
+        $data['changes'][$fieldName]['before'] =
+            $this->getTeamSetInfo($data['changes'][$fieldName]['before']);
+        $data['changes'][$fieldName]['after']  =
+            $this->getTeamSetInfo($data['changes'][$fieldName]['after']);
+    }
+
+    /**
+     * Get Team Ids for supplied Team Set
+     *
+     * @param  $teamSetId
+     * @return $rows  array of team names
+     */
+    protected function getTeamSetInfo($teamSetId)
+    {
+        $info = '';
+        $teamSet = BeanFactory::retrieveBean('TeamSets', $teamSetId);
+        if ($teamSet) {
+            $teamSet->load_relationship('teams');
+            $rows = $teamSet->getTeamIds($teamSetId);
+            $teams = array();
+            if (!empty($rows)) {
+                foreach($rows as $teamId) {
+                    $teams[] = $this->getTeamNameFromId($teamId);
+                }
+            }
+            $info = implode(", ", $teams);
+        }
+        return $info;
+    }
+
+    /**
+     * Get Team Name given a team_id
+     *
+     * @param  $teamId
+     * @return $name
+     */
+    protected function getTeamNameFromId($teamId)
+    {
+        $bean = BeanFactory::retrieveBean('Teams', $teamId);
+        if (!empty($bean)) {
+            return $bean->name;
+        }
+        return '';
     }
 }
