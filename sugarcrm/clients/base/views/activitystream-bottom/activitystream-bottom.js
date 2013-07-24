@@ -10,19 +10,18 @@
 
         options.limit = this.limit;
         options.success = function() {
-            self.render();
+            if (!self.disposed) {
+                self.render();
+            }
         };
         this.collection.paginate(options);
     },
 
     bindDataChange: function() {
-        var func = function() {
-            this.context._dataFetched = true;
-            this.render();
-        };
         if (this.collection) {
-            this.listenTo(this.collection, "reset", func);
-            this.listenTo(this.collection, "add", func);
+            this.listenTo(this.collection, "add reset sync", function() {
+                this.render();
+            });
         }
     }
 })

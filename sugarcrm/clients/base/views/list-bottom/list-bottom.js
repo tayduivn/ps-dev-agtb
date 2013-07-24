@@ -36,7 +36,6 @@
     events: {
         'click [data-action="show-more"]': 'showMoreRecords'
     },
-    _dataFetched : false,
 
     initialize: function(opts) {
         opts.meta = _.extend({}, {showMoreLabel: "LBL_SHOW_MORE_MODULE"}, opts.meta || {});
@@ -48,9 +47,6 @@
         });
 
         this.layout.on("hide", this.toggleVisibility, this);
-        this.context.get("collection").once("reset", function(){
-            this._dataFetched = true;
-        }, this);
     },
 
     _renderHtml: function() {
@@ -135,7 +131,9 @@
 
     bindDataChange: function() {
         if(this.collection) {
-            this.collection.on("reset", this.render, this);
+            this.collection.on("reset sync", function() {
+                this.render();
+            }, this);
         }
     },
 
