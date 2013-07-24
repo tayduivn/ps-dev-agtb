@@ -145,6 +145,17 @@
 
         if (!_.isUndefined(f)) {
             f.renderChart(options);
+            f.once('chart:pareto:rendered', function() {
+                //BEGIN SUGARCRM flav=ent ONLY
+                if (this.forecastConfig.forecast_by == 'RevenueLineItems' &&
+                    this.context.get('module') == 'RevenueLineItems') {
+                    this.addRowToChart();
+                }
+                //END SUGARCRM flav=ent ONLY
+                //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+                this.addRowToChart();
+                //END SUGARCRM flav=pro && flav!=ent ONLY
+            }, this);
         }
     },
 
@@ -264,7 +275,7 @@
 
                     field.once('chart:pareto:rendered', function() {
                         this.addRowToChart();
-                    }, this);
+                    }, model);
                     this.values.set('timeperiod_id', model.get('date_closed_timestamp'));
                     return;
                 }
@@ -327,8 +338,14 @@
         if (model.get('assigned_user_id') == app.user.get('id')) {
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData(),
-                base_rate = model.get('base_rate'),
-                f = {
+                // make sure it doesn't exist in the serverdata
+                found = _.find(serverData.data, function(record) {
+                    return (record.record_id == model.get('id'));
+                }),
+                base_rate = model.get('base_rate');
+
+            if (_.isEmpty(found)) {
+                serverData.data.push({
                     best: this._convertCurrencyValue(model.get('best_case'), base_rate),
                     likely: this._convertCurrencyValue(model.has('amount') ? model.get('amount') : model.get('likely_case'), base_rate),
                     worst: this._convertCurrencyValue(model.get('worst_case'), base_rate),
@@ -337,10 +354,9 @@
                     probability: model.get('probability'),
                     sales_stage: model.get('sales_stage'),
                     forecast: model.get('commit_stage')
-                };
-
-            serverData.data.push(f);
-            field.setServerData(serverData, true);
+                });
+                field.setServerData(serverData, true);
+            }
         }
     },
 
