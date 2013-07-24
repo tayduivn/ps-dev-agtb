@@ -159,7 +159,7 @@
                 }, this);
                 this.on('render', function() {
                     this.renderCallback();
-                    if(this.previewVisible) {
+                    if (this.previewVisible) {
                         this.decorateRow(this.previewModel);
                     }
                 }, this);
@@ -582,9 +582,9 @@
                         saveCount++;
 
                         // Make sure the preview panel gets updated model info
-                        if(this.previewVisible) {
+                        if (this.previewVisible) {
                             var previewId = this.previewModel.get('parent_id') || this.previewModel.get('id');
-                            if(model.get('parent_id') == previewId) {
+                            if (model.get('parent_id') == previewId) {
                                 var previewCollection = new Backbone.Collection();
                                 this.filteredCollection.each(function(model) {
                                     if (model.get('parent_deleted') !== "1") {
@@ -855,7 +855,7 @@
                 }
             }, this);
 
-            if(_.isUndefined(this.previewModel) || model.get('id') != this.previewModel.get('id')) {
+            if (_.isUndefined(this.previewModel) || model.get('id') != this.previewModel.get('id')) {
                 this.previewModel = model;
                 app.events.trigger("preview:render", model, previewCollection, true);
             } else {
