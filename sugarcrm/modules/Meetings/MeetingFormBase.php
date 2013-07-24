@@ -348,14 +348,16 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
             $this->processRecurring($focus);
 		}
 	}
-	if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Home'){
-		header("Location: index.php?module=Home&action=index");
-	}
-	else if($redirect) {
-		handleRedirect($return_id, 'Meetings');
-	} else {
-		return $focus;
-	}
+
+    if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] === 'Home') {
+        SugarApplication::redirect(buildRedirectURL('', 'Home'));
+
+    } else if ($redirect) {
+        handleRedirect($return_id, 'Meetings');
+
+    } else {
+        return $focus;
+    }
 
 } // end handleSave();
 
