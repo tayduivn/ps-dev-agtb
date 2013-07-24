@@ -11,6 +11,13 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
+    /**
+     * {@inheritDoc}
+     *
+     * This field doesn't support `showNoData`.
+     */
+    showNoData: false,
+
     events: {
         "click .delete": "delete",
         "change input[type=file]": "selectImage"
