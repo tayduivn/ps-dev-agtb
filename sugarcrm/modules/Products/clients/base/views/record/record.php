@@ -102,13 +102,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'quote_name',
-                    'label' => 'LBL_ASSOCIATED_QUOTE',
-                    'related_fields' => array('quote_id'),
+                    'name' => 'account_name',
+                    'label' => 'LBL_ACCOUNT_NAME',
+                    'related_fields' => array('account_id'),
                 ),
                 array(
-                    'name' => 'opportunity_name',
-                    'required' => true
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
                 ),
                 'quantity',
                 array(
