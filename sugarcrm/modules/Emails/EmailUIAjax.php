@@ -11,6 +11,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
   require_once("include/OutboundEmail/OutboundEmail.php");
   require_once("vendor/ytree/Tree.php");
   require_once("vendor/ytree/ExtNode.php");
+  global $mod_strings;
 
   $email = BeanFactory::getBean('Emails');
   $email->email2init();
@@ -701,10 +702,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 $ie->deleteMessageFromCache($_REQUEST['uid']);
             } else {
                 $GLOBALS['log']->debug("*** ERROR: tried to delete an email for an account for which {$current_user->full_name} is not the owner!");
-                echo "NOOP: error see log";
+                echo $mod_strings['LBL_SEE_LOG'];
             }
         } else {
-            echo "error: missing credentials";
+            echo $mod_strings['ERR_MISSING_CREDENTIALS'];
         }
         break;
 
@@ -717,7 +718,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
             echo $json->encode($out);
         } else {
-            echo "error: no UID";
+            echo $mod_strings['ERR_NO_UID'];
         }
         break;
 
@@ -772,7 +773,7 @@ eoq;
                 echo $json->encode($out);
             }
         } else {
-            echo "error: no UID";
+            $mod_strings['ERR_NO_UID'];
         }
         break;
 
@@ -797,7 +798,7 @@ eoq;
             }
             echo $json->encode($out);
         } else {
-            echo "error: no UID";
+            echo $mod_strings['ERR_NO_UID'];
         }
         break;
 
@@ -855,7 +856,7 @@ eoq;
             ob_end_flush();
             //die();
         } else {
-            echo "error: no ieID";
+            echo $mod_strings['ERR_NO_IEID'];
         }
         break;
 
@@ -911,7 +912,7 @@ eoq;
             echo $out;
             ob_end_flush();
         } else {
-            echo "error: no ieID";
+            echo $mod_strings['ERR_NO_IEID'];
         }
         break;
         ////    END LIST VIEW
@@ -989,7 +990,7 @@ eoq;
                     break;
             }
         } else {
-            echo "NOOP: no folderType defined";
+            echo $mod_strings['LBL_NO_FOLDER_TYPE'];
         }
         break;
 
@@ -1038,7 +1039,7 @@ eoq;
             }
         } else {
         	$return['status'] = false;
-        	$return['errorMessage'] =  "NOOP: no folderType defined";
+        	$return['errorMessage'] =  $mod_strings['LBL_NO_FOLDER_TYPE'];
         }
         $out = $json->encode($return);
         echo $out;
@@ -1056,7 +1057,7 @@ eoq;
                 $email->et->folder->name = $_REQUEST['newFolderName'];
                 $email->et->folder->save();
             } else {
-                echo "NOOP - not a Sugar Folder";
+                echo $mod_strings['LBL_NOT_SUGAR_FOLDER'];
             }
         }
     case "moveFolder":
@@ -1072,7 +1073,7 @@ eoq;
                     "team_set_id"       => $email->et->folder->team_set_id,
                 ));
             } else {
-                echo "NOOP - not a Sugar Folder";
+                echo $mod_strings['LBL_NOT_SUGAR_FOLDER'];
             }
         }
         break;
@@ -1388,7 +1389,7 @@ eoq;
 
             $out = $json->encode($ret);
         } else {
-            $out = "NOOP: ID mismatch";
+            $out = $mod_strings['LBL_ID_MISMATCH'];
         }
         echo $out;
         break;
@@ -1415,7 +1416,7 @@ eoq;
             ob_end_flush();
             die();
         } else {
-            echo "NOOP: no search criteria found";
+            echo $mod_strings['LBL_NO_SEARCH_CRITERIA'];
         }
         break;
 

@@ -143,6 +143,8 @@ $mod_strings = array (
 	'LBL_YAHOO_MAIL_LOGO' => 'Yahoo Mail' /*for 508 compliance fix*/,
 	'LBL_EXCHANGE_LOGO' => 'Exchange' /*for 508 compliance fix*/,
 	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,
+    'LBL_UNAUTH_ACCESS' => 'Unauthorized access to administration.',
+    'LBL_INVALID_ENTRY_POINT' => 'Not a Valid Entry Point',
 );
 
 ?>

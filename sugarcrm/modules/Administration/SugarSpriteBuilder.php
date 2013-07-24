@@ -233,7 +233,8 @@ class SugarSpriteBuilder
 					$result['type'] = $info[2];
 				}
 			} else {
-                $msg = "Skipping unsupported image file type ({$info[2]}) for file {$file}";
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'Administration');
+                $msg = string_format($mod_strings['LBL_SPRITE_BUILDER_SKIP'], array($info[2], $file));
                 $GLOBALS['log']->error($msg);
                 $this->logMessage($msg."\n");
             }

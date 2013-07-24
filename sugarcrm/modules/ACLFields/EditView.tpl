@@ -65,7 +65,7 @@
 						{if !empty($OPTIONS[$DEF.aclaccess])}
 							{$OPTIONS[$DEF.aclaccess]}
 						{else}
-							Not Defined
+							{$MOD.LBL_NOT_DEFINED}
 						{/if}
 					</div>
 		</td>

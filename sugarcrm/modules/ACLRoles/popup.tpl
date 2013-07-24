@@ -50,7 +50,7 @@
 </tr>
 {foreachelse}
         <tr>
-            <td colspan="2">No Roles</td>
+            <td colspan="2">{$MOD.LBL_NO_ROLES}</td>
         </tr>
 {/foreach}
 

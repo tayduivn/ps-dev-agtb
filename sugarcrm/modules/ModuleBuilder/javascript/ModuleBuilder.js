@@ -402,7 +402,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						}
 					}
 					else {
-						alert("Could not find the save action for this view.");
+						alert(SUGAR.language.get('ModuleBuilder', 'LBL_NO_SAVE_ACTION'));
 					}
 				}
 				if (saveBtn) {

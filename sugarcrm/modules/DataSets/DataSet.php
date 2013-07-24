@@ -441,7 +441,9 @@ class DataSet extends SugarBean {
 
 
 	function export_csv(){
-		global $current_user;
+		global $current_user, $current_language, $mod_strings;
+		$mod_strings = return_module_language($current_language, $this->module_dir);
+
 		//outputs CSV content
 		$query_object = BeanFactory::getBean('CustomQueries', $this->query_id);
 		//check for query running error
@@ -492,7 +494,7 @@ class DataSet extends SugarBean {
 
 		//end if the query is a valid query
 		} else {
-			return "Invalid Query.";
+			return $mod_strings['LBL_INVALID_QUERY'];
 		}
 
 	//end function scheduled_export

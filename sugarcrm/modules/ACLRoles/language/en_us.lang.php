@@ -41,5 +41,9 @@ $mod_strings = array (
 //BEGIN SUGARCRM flav!=com
 'LBL_USER_NAME_FOR_ROLE'=>'Users/Teams/Roles',
 //END SUGARCRM flav!=com
+'LBL_NO_MODULES_AVAILABLE' => 'No Modules Available',
+'LBL_NO_ROLES' => 'No Roles',
+'LBL_DONE' => 'Done',
+'LBL_COULD_NOT_CONNECT' => 'Could Not Connect',
 )
 ?>

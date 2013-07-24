@@ -50,11 +50,11 @@ class ViewCampaignconfig extends SugarView
 	 */
 	public function preDisplay()
  	{
- 	    global $current_user;
+ 	    global $current_user, $mod_strings;
  	    
  	    if ( !is_admin($current_user)
  	            && !is_admin_for_module($GLOBALS['current_user'],'Campaigns') ) 
- 	        sugar_die("Unauthorized access to administration.");       
+ 	        sugar_die($mod_strings['LBL_UNAUTH_ACCESS']);
     }
     
     /**

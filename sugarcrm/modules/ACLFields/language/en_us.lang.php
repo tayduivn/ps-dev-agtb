@@ -27,8 +27,6 @@ $mod_strings = array (
 'LBL_OWNER_READ_WRITE'=>'Owner Read/Owner Write',
 'LBL_ALLOW_NONE'=>'None',
 'LBL_FIELDS'=>'Field Permissions',
-
-
-
+'LBL_NOT_DEFINED' => 'Not Defined',
 )
 ?>

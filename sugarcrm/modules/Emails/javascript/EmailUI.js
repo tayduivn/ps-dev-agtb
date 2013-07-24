@@ -56,7 +56,7 @@ SE.accounts = {
     deleteOutbound : function(obi) {
 
         if(obi.match(/^(add|line|sendmail)+/)) {
-            alert('Invalid Operation');
+            alert(mod_strings.LBL_INVALID_OPS);
         } else {
         	SUGAR.showMessageBox(app_strings.LBL_EMAIL_DELETING_OUTBOUND, app_strings.LBL_EMAIL_ONE_MOMENT);
             AjaxObject.startRequest(AjaxObject.accounts.callbackDeleteOutbound, urlStandard + "&emailUIAction=deleteOutbound&outbound_email=" + obi);

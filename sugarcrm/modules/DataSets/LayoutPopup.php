@@ -153,7 +153,7 @@ $form->out("embeded");
 
 /////////////////Head Attribute Information/////////////////////////
 
-		$form->assign('HEAD_TITLE', "<h3> Add/Edit Header Attributes: </h3><BR>");
+		$form->assign('HEAD_TITLE', "<h3>" . $mod_strings['LBL_MODIFY_HEAD_HEADER'] . "</h3><BR>");
 
 		$form->assign('HEAD_FONT_SIZE', get_select_options_with_id($app_list_strings['font_size_dom'],$head_object->font_size));
 		$form->assign("HEAD_BG_COLOR", get_select_options_with_id($app_list_strings['report_color_dom'],$head_object->bg_color));
@@ -176,7 +176,7 @@ $form->parse("main.attribute_head");
 /////////////////Body Attribute Information/////////////////////////
 
 
-		$form->assign('BODY_TITLE', "<h3> Add/Edit Body Attributes: </h3><BR>");
+		$form->assign('BODY_TITLE', "<h3>" . $mod_strings['LBL_MODIFY_BODY_HEADER'] . "</h3><BR>");
 
 		$form->assign('BODY_FONT_SIZE', get_select_options_with_id($app_list_strings['font_size_dom'],$body_object->font_size));
 		$form->assign("BODY_BG_COLOR", get_select_options_with_id($app_list_strings['report_color_dom'],$body_object->bg_color));
