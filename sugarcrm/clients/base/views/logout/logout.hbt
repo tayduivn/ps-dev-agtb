@@ -35,13 +35,12 @@
         	<p>{{str "LBL_LOGGED_OUT"}}
         	</p>
         	<p>&nbsp;</p>
-            <div>
-                {{#each meta.buttons}}
-                {{field ../this model=../model}}
-                {{/each}}
-            </div>
             <p class="wide">
-                    <a class="btn btn-link btn-invisible" name="login_form_button" data-content="{{str "LBL_LOGIN_FORM_LABEL"}}"
+                    <a class="btn btn-block btn-primary" name="login_button" 
+                       data-original-title="{{str "LBL_LOGIN_BUTTON_LABEL"}}">{{str "LBL_LOGIN_BUTTON_LABEL"}}</a>
+			</p>
+            <p class="wide">
+                    <a class="btn btn-link btn-invisible" name="login_form_button" 
                        data-original-title="{{str "LBL_LOGIN_FORM_LABEL"}}">{{str "LBL_LOGIN_FORM_LABEL"}}</a>
 			</p>
         </form>
