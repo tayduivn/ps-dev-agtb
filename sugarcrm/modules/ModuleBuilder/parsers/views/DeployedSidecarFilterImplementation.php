@@ -63,7 +63,6 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
         }
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array('fields' => array());
         $this->_fielddefs = $this->bean->field_defs;
-        $this->_language = '';
 
         // Make sure the paneldefs are proper if there are any
         $this->_paneldefs = isset($this->_viewdefs) ? $this->_viewdefs : array();
@@ -98,7 +97,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->_moduleName;
     }
 
     /*
