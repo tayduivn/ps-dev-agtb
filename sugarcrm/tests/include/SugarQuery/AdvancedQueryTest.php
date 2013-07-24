@@ -104,48 +104,28 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $account->name = 'Awesome';
         $account->save();
 
+        $sqWhere = new SugarQuery();
+        $sqWhere->select("name");
+        $sqWhere->from(BeanFactory::newBean('Accounts'));
+        $sqWhere->where()->equals('name','Awesome')->equals('id', $account->id);
+        $sqWhereResult = $sqWhere->execute();
+        $sqWhereResult = reset($sqWhereResult);
+        $this->assertEquals($sqWhereResult['name'], 'Awesome', 'The name Did Not Match it was ' . $sqWhereResult['name']);
+
         // create a new contact
         $case = BeanFactory::newBean('Cases');
         $case->name = 'Test Case';
         $case->account_id = $account->id;
         $case->save();
 
-
         $this->accounts[] = $account;
         $this->cases[] = $case;
 
-        $sqWhere = new SugarQuery();
-        $sqWhere->select("id");
-        $sqWhere->from(BeanFactory::newBean('Accounts'));
-        $sqWhere->where()->equals('name','Awesome')->equals('id', $account->id);
-
         $sq = new SugarQuery();
         $sq->select(array("name"));
         $sq->from(BeanFactory::newBean('Cases'));
-        $sq->where()->in('account_id', $sqWhere);
-
-
+        $sq->where()->in('account_id', array($account->id));
         $result = $sq->execute();
-
-
-        // only 1 record
-        $result = reset($result);
-
-        $this->assertEquals($result['name'], 'Test Case', 'The name Did Not Match it was ' . $result['name']);
-
-        $sqWhere = new SugarQuery();
-        $sqWhere->select("id");
-        $sqWhere->from(BeanFactory::newBean('Accounts'));
-        $sqWhere->where()->equals('name','Awesome')->equals('id', $account->id);
-
-        $sq = new SugarQuery();
-        $sq->select(array("name"));
-        $sq->from(BeanFactory::newBean('Cases'));
-        $sq->where()->equals('account_id', $sqWhere);
-
-
-        $result = $sq->execute();
-
 
         // only 1 record
         $result = reset($result);

@@ -3,6 +3,7 @@ describe("BaseFilterRowsView", function() {
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'field', 'enum');
         SugarTest.loadComponent('base', 'view', 'filter-rows');
         SugarTest.testMetadata.set();
         layout = SugarTest.createLayout('base', "Cases", "filter", {}, null, null, { layout: new Backbone.View() });
@@ -389,10 +390,12 @@ describe("BaseFilterRowsView", function() {
                     type: 'int'
                 },
                 status: {
-                    type: 'enum'
+                    type: 'enum',
+                    options: 'status_dom'
                 },
                 priority: {
-                    type: 'bool'
+                    type: 'bool',
+                    options: 'boolean_dom'
                 },
                 date_created: {
                     type: 'datetime'
@@ -428,10 +431,23 @@ describe("BaseFilterRowsView", function() {
                 expect(createFieldSpy).toHaveBeenCalled();
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
                     type: 'enum',
+                    options: 'status_dom',
                     isMultiSelect: true,
                     searchBarThreshold: 9999
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
+            });
+            it('should format the blank value', function() {
+                var langStub = sinon.stub(app.lang, 'getAppListStrings', function() {
+                    return {
+                        '' : '',
+                        'a_key' : 'a_value'
+                    };
+                });
+                view.handleOperatorSelected({currentTarget: $operatorField});
+                expect(createFieldSpy).toHaveBeenCalled();
+                expect($row.data('valueField').items).toEqual({'' : 'LBL_BLANK_VALUE', 'a_key' : 'a_value'});
+                langStub.restore();
             });
             it('should convert a boolean field into an enum field', function() {
                 $filterField.val('priority');
@@ -439,6 +455,7 @@ describe("BaseFilterRowsView", function() {
                 expect(createFieldSpy).toHaveBeenCalled();
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
                     type: 'enum',
+                    options: 'boolean_dom',
                     searchBarThreshold: 9999
                 });
                 expect(_.isEmpty($valueField.html())).toBeFalsy();
