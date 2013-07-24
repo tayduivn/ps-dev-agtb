@@ -54,13 +54,13 @@ $viewdefs['portal']['view']['signup'] = array(
                 array(
                     'name' => 'first_name',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_FIRST_NAME",
+                    'placeholder' => "LBL_PORTAL_SIGNUP_FIRST_NAME",
                     'required' => true,
                 ),
                 array(
                     'name' => 'last_name',
                     'type' => 'varchar',
-                    'placeholder' => "LBL_LAST_NAME",
+                    'placeholder' => "LBL_PORTAL_SIGNUP_LAST_NAME",
                     'required' => true,
                 ),
                 array(
@@ -71,7 +71,7 @@ $viewdefs['portal']['view']['signup'] = array(
                 array(
                     'name' => 'email',
                     'type' => 'email',
-                    'placeholder' => "LBL_EMAIL",
+                    'placeholder' => "LBL_PORTAL_SIGNUP_EMAIL",
                     'required' => true,
                 ),
                 array(

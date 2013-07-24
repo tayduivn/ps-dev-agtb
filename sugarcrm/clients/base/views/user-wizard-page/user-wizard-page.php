@@ -56,17 +56,17 @@ $viewdefs['base']['view']['user-wizard-page'] = array(
                 array(
                     'name' => 'first_name',
                     'type' => 'varchar',
-                    'label' => "LBL_FIRST_NAME",
+                    'label' => "LBL_WIZ_FIRST_NAME",
                 ),
                 array(
                     'name' => 'last_name',
                     'type' => 'varchar',
-                    'label' => "LBL_LAST_NAME",
+                    'label' => "LBL_WIZ_LAST_NAME",
                     'required' => true,
                 ),
                 array(
-                    'name' => 'email1',
-                    'label' => "LBL_EMAIL",
+                    'name' => 'email',
+                    'label' => "LBL_WIZ_EMAIL",
                     'required' => true,
                 ),
 

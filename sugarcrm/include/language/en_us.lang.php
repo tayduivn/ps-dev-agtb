@@ -3821,9 +3821,9 @@ $app_strings = array (
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
     'LBL_PORTAL_SIGNUP' => 'A customer service representative will contact you shortly to configure your account.',
-    'LBL_FIRST_NAME' => 'First name',
-    'LBL_LAST_NAME' => 'Last name',
-    'LBL_EMAIL' => 'Email',
+    'LBL_PORTAL_SIGNUP_FIRST_NAME' => 'First name',
+    'LBL_PORTAL_SIGNUP_LAST_NAME' => 'Last name',
+    'LBL_PORTAL_SIGNUP_EMAIL' => 'Email',
     'LBL_PORTAL_SIGNUP_PHONE' => '(###) ###-#### (optional)',
     'LBL_PORTAL_SIGNUP_COUNTRY' => 'Country',
     'LBL_PORTAL_SIGNUP_STATE' => 'State',
@@ -3889,6 +3889,9 @@ $app_strings = array (
     //First time login wizard
     'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
     'LBL_WIZ_START_SUGAR' => 'Start Sugar',
+    'LBL_WIZ_FIRST_NAME' => 'First name',
+    'LBL_WIZ_LAST_NAME' => 'Last name',
+    'LBL_WIZ_EMAIL' => 'Email',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',

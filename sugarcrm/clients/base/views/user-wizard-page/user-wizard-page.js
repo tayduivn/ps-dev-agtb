@@ -25,6 +25,5 @@
      * @override
      */
     finish: function(){
-
     }
 })

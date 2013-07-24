@@ -13,13 +13,13 @@
      */
     _currentIndex: 0,
     /**
-     * Place only first wizard page at first
+     * Place only initial wizard page at first
      * @param component Wizard page component
      * @override
      * @private
      */
     _placeComponent: function(component){
-        if(component == this._components[this._currentIndex]){
+        if (component == this._components[this._currentIndex]) {
             this.$el.append(component.el);
         }
     },
@@ -32,7 +32,7 @@
      * @override
      */
     addComponent: function(component, def) {
-        if(component.showPage()){
+        if (component.showPage()) {
             app.view.Layout.prototype.addComponent.call(this, component, def);
         }
     },
@@ -43,8 +43,8 @@
      * last page number
      */
     setPage: function(newIndex){
-        if(_.isNumber(newIndex) && newIndex != this._currentIndex
-                && (newIndex >= 0 && newIndex < this._components.length)){
+        if (newIndex !== this._currentIndex
+                && (newIndex >= 0 && newIndex < this._components.length)) {
             //detach preserves jQuery event listeners, etc.
             this._components[this._currentIndex].$el.detach();
             this._currentIndex = newIndex;

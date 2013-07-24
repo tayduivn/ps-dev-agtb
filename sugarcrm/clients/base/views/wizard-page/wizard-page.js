@@ -72,15 +72,15 @@
      */
     updateButtons: function(){
         var prevBtn = this.getField("previous_button");
-        if(prevBtn){
-            if(this.progress && this.progress.page > 1){
+        if (prevBtn) {
+            if (this.progress && this.progress.page > 1) {
                 prevBtn.show();
             } else {
                 prevBtn.hide();
             }
         }
         var nextBtn = this.getField("next_button");
-        if(nextBtn){
+        if (nextBtn) {
             nextBtn.setDisabled(!this.isPageComplete());
         }
     },
@@ -109,7 +109,7 @@
      * Next button pressed
      */
     next: function() {
-        if(this.progress.page !== this.progress.lastPage){
+        if (this.progress.page !== this.progress.lastPage) {
             this.progress = this.layout.nextPage();
         } else {
             this.finish();
@@ -128,7 +128,6 @@
      * override this and are responsible for removing Wizard layout.
      */
     finish: function(){
-
     }
 
 })

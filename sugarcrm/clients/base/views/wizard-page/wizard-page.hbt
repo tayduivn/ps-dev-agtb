@@ -35,10 +35,10 @@
             {{#each meta.panels}}
                 {{#each fields}}
                     <div class="record-cell">
-                    <div class="record-label" data-name="{{name}}">{{#if label}}{{str label module}}{{/if}}</div>
-                    <span class="normal{{#if css}} {{css}}{{/if}}" data-fieldname="{{name}}">
-                        {{field ../../this model=../../model template="edit"}}
-                    </span>
+                        <div class="record-label" data-name="{{name}}">{{#if label}}{{str label module}}{{/if}}</div>
+                        <span class="normal{{#if css}} {{css}}{{/if}}" data-fieldname="{{name}}">
+                            {{field ../../this model=../../model template="edit"}}
+                        </span>
                     </div>
                 {{/each}}
             {{/each}}
