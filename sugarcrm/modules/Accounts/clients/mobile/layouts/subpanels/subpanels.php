@@ -46,6 +46,7 @@ $viewdefs['Accounts']['mobile']['layout']['subpanels'] = array(
         array(
             'layout' => 'subpanel',
             'label' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+            'linkable' => false,
             'context' => array(
                 'link' => 'opportunities',
             ),
