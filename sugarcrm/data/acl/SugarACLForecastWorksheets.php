@@ -64,7 +64,13 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
-        $bean = ucfirst($settings['forecast_by']);
+        // if we don't have the forecast_by from the db, grab the defaults that we use on set.
+        if (empty($settings['forecast_by'])) {
+            require_once('modules/Forecasts/ForecastsDefaults.php');
+            $settings = ForecastsDefaults::getDefaults();
+        }
+
+        $bean = $settings['forecast_by'];
 
         return BeanFactory::getBean($bean);
     }
