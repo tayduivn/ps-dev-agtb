@@ -66,7 +66,7 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
-        var changedAttributes = this.model.changedAttributes(this.model._syncedAttributes);
+        var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
 
         if (_.isEmpty(changedAttributes)) {
             return false;
