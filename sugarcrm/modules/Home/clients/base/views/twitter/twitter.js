@@ -64,7 +64,8 @@
                         var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
                                 "$1 $2 $4 $3 UTC")),
                             date = app.date.format(time, "Y/m/d H:i:s"),
-                            text = tweet.text,
+                            // retweeted tweets are sometimes truncated so use the original as source text
+                            text = tweet.retweeted_status ? 'RT @'+tweet.retweeted_status.user.screen_name+': '+tweet.retweeted_status.text : tweet.text,
                             sourceUrl = tweet.source,
                             id = tweet.id_str,
                             name = tweet.user.name,
