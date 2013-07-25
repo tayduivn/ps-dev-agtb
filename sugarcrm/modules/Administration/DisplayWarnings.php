@@ -179,7 +179,7 @@ if($smtp_error) {
 	         else if( $_SESSION['LICENSE_EXPIRES_IN'] < 0  ){
 	         	if($_SESSION['LICENSE_EXPIRES_IN'] < -30){
 	         			setSystemState('LICENSE_KEY');
-	         			displayAdminError( translate('FATAL_LICENSE_EXPIRED', 'Administration'). " [". abs($_SESSION['LICENSE_EXPIRES_IN']) . " day(s) ] .<br> ". translate('FATAL_LICENSE_EXPIRED2', 'Administration') );
+	         			displayAdminError( translate('FATAL_LICENSE_EXPIRED', 'Administration'). " [". abs($_SESSION['LICENSE_EXPIRES_IN']) . " " . translate('LBL_DAYS', 'Administration') . " ] .<br> ". translate('FATAL_LICENSE_EXPIRED2', 'Administration') );
 	         	}else{
 	         		displayAdminError( translate('ERROR_LICENSE_EXPIRED', 'Administration'). abs($_SESSION['LICENSE_EXPIRES_IN']) . translate('ERROR_LICENSE_EXPIRED2', 'Administration') );
 	         	}

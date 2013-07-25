@@ -104,7 +104,12 @@ $viewdefs['base']['layout']['record'] = array(
                         'layout' => array(
                             'components' => array(
                                 array(
-                                    'layout' => 'dashboard',
+                                    'layout' => array(
+                                        'type' => 'dashboard',
+                                        'last_state' => array(
+                                            'id' => 'last-visit',
+                                        )
+                                    ),
                                     'context' => array(
                                         'forceNew' => true,
                                         'module' => 'Home',

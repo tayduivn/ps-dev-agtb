@@ -392,7 +392,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                     'primary' => true,
                     'acl_action' => 'edit',
-                ),                
+                ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
@@ -429,20 +429,32 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
             'header' => true,
             'fields' => array(
                 array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
+                array(
                     'name' => 'name',
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
                     'type' => 'badge',
+                    'name' => 'badge',
                     'readonly' => true,
                     'related_fields' => array(
                         'quote_id',
                     ),
                 ),
                 array(
+                    'name' => 'follow',
+                    'label' => 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             ),
         ),

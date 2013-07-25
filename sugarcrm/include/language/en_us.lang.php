@@ -325,7 +325,6 @@ $app_list_strings = array (
   'fts_type' => array (
       '' => '',
       'Elastic' => 'ElasticSearch',
-      'DBFTS'  => 'Basic DBFTS',
   ),
   'sales_stage_dom' =>
   array (
@@ -2445,6 +2444,8 @@ $app_strings = array (
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
     'ERR_DB_QUERY' => '{0}: query failed: {1}',
+    'ERR_UW_RETIRED' => 'Upgrade Wizard is not available in this version.',
+
 
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
     'EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED' => 'Current User not authorized to change {moduleName} configuration settings',
@@ -2468,7 +2469,7 @@ $app_strings = array (
     'EXCEPTION_EDIT_CONFLICT'           => 'Edit conflict, please reload the record data.',
     'EXCEPTION_METADATA_CONFLICT'       => 'Metadata conflict, please reload the metadata.',
     'EXCEPTION_CLIENT_OUTDATED'         => 'Your software is out of date, please update your client before attempting to connect again.',
-
+    'EXCEPTION_MAINTENANCE'             => 'SugarCRM is in maintenance mode. Only admins can login. Please contact your administrator for details.',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
@@ -2899,6 +2900,7 @@ $app_strings = array (
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
     'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT_NAME_AND_RIGHTS' => 'SugarCRM Inc. All Rights Reserved.',
 
 
     // LOGIN PAGE STRINGS
@@ -3426,6 +3428,7 @@ $app_strings = array (
     //External API Error Messages
     'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
 
+    'LBL_BLANK_VALUE' => '<Blank>',
     'LBL_EMPTY' => 'Empty',
     'LBL_IS_EMPTY' => 'Is empty',
     'LBL_IS_NOT_EMPTY' => 'Is not empty',
@@ -3551,6 +3554,10 @@ $app_strings = array (
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
+    'LBL_PREVIEW_DISABLED_NO_RECORD' => 'Preview disabled: No data available',
+    'LBL_PREVIEW_DISABLED_NO_ACCESS' => 'Preview disabled: No access to record',
+    'LBL_PREVIEW_DISABLED_ATTACHMENT' => 'Preview disabled: No data available',
+    'LBL_PREVIEW_DISABLED_SAME_RECORD' => 'Preview disabled: In view as current record',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
@@ -3559,6 +3566,26 @@ $app_strings = array (
     'LBL_TWITTER_TIME_AGO_SECONDS' => 's',
     'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
     'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
+
+    //for sugar7 errors
+    'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
+    'LBL_INVALID_CREDS_TITLE' => 'Invalid Credentials',
+    'LBL_INVALID_GRANT' => 'Your token is invalid or has expired. Please login again.',
+    'LBL_INVALID_GRANT_TITLE' => 'Token Expired',
+    'LBL_AUTH_FAILED' => 'Client authentication failed.',
+    'LBL_AUTH_FAILED_TITLE' => 'Invalid Client',
+    'LBL_INVALID_REQUEST' => 'The request made is invalid or malformed. Please contact technical support.',
+    'LBL_INVALID_REQUEST_TITLE' => 'Invalid Request',
+    'LBL_REQUEST_TIMEOUT' => 'The request timed out.',
+    'LBL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
+    'LBL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
+    'LBL_UNAUTHORIZED_TITLE' =>'Unauthorized',
+    'LBL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
+    'LBL_RESOURCE_UNAVAILABLE_TITLE' => 'Forbidden',
+    'LBL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
+    'LBL_METHOD_NOT_ALLOWED_TITLE' => 'Method Not Allowed',
+    'LBL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
+    'LBL_PRECONDITION_MISSING_TITLE' => 'Error: ',
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',

@@ -43,6 +43,15 @@ $viewdefs['Contacts']['mobile']['layout']['subpanels'] = array(
                 'link' => 'opportunities',
             ),
         ),
+        //BEGIN SUGARCRM flav=ent ONLY
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_RLI_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'revenuelineitems',
+            ),
+        ),
+        //END SUGARCRM flav=ent ONLY
         array(
             'layout' => "subpanel",
             'label' => 'LBL_CASES_SUBPANEL_TITLE',
@@ -83,6 +92,13 @@ $viewdefs['Contacts']['mobile']['layout']['subpanels'] = array(
             'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
             'context' => array(
                 'link' => 'quotes',
+            ),
+        ),
+        array(
+            'layout' => 'subpanel',
+            'label' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'context' => array(
+                'link' => 'products',
             ),
         ),
     ),

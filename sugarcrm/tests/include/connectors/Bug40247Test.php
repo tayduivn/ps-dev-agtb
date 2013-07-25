@@ -125,10 +125,7 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
         		       if(isset($col['displayParams']) && isset($col['displayParams']['connectors'])) {
                        	  foreach($col['displayParams']['connectors'] as $entry)
                        	  {
-                       	  	   if($entry == 'ext_rest_linkedin')
-                       	  	   {
-                       	  	   	 $linkedin_hover_link_set = true;
-                       	  	   } else if($entry == 'ext_rest_twitter') {
+                       	  	    if($entry == 'ext_rest_twitter') {
                        	  	   	 $twitter_hover_link_set = true;
                        	  	   }
                        	  }
@@ -140,7 +137,6 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($twitter_hover_link_set, "Assert that the Twitter hover link is properly set for Accounts.");
-        $this->assertTrue($linkedin_hover_link_set, "Assert that the LinkedIn hover link is properly set for Accounts.");
 
         $person_modules = array ('Contacts', 'Prospects', 'Leads');
 
@@ -168,22 +164,12 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
 	                       	  	   }
 	                       	  }
 	        		       }
-	        		    } else if(is_array($col) && $col['name'] == 'account_name') {
-	        		       if(isset($col['displayParams']) && isset($col['displayParams']['connectors'])) {
-	                       	  foreach($col['displayParams']['connectors'] as $entry)
-	                       	  {
-								   if($entry == 'ext_rest_linkedin') {
-	                       	  	   	 $linkedin_hover_link_set = true;
-	                       	  	   }
-	                       	  }
-	        		       }
-	        			}
+	        		    }
 	        		}
 	        	}
 	        }
 
 	        $this->assertTrue($twitter_hover_link_set, "Assert that the Twitter hover link is properly set for {$mod}.");
-	        $this->assertTrue($linkedin_hover_link_set, "Assert that the LinkedIn hover link is properly set for {$mod}.");
         }
     }
     //END SUGARCRM flav=pro ONLY

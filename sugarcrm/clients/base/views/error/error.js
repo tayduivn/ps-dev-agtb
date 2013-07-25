@@ -55,16 +55,21 @@
                 message: 'ERR_HTTP_404_TEXT'
             };
         } else if(this.context.get('errorType') ==='500') {
-           attributes = {
+            attributes = {
                 title: 'ERR_HTTP_500_TITLE',
                 type: 'ERR_HTTP_500_TYPE',
                 message: 'ERR_HTTP_500_TEXT'
             };
         } else {
+            var error = this.context.get('error') || {};
+	        var title = null;
+            if(error.status && error.errorThrown) {
+            	title = 'HTTP: '+error.status+' '+error.errorThrown
+            }
             attributes = {
-                title: 'ERR_HTTP_DEFAULT_TITLE',
-                type: 'ERR_HTTP_DEFAULT_TYPE',
-                message: 'ERR_HTTP_DEFAULT_TEXT'
+                title: title || 'ERR_HTTP_DEFAULT_TITLE',
+                type: error.status || 'ERR_HTTP_DEFAULT_TYPE',
+                message: error.message || 'ERR_HTTP_DEFAULT_TEXT'
             };
         }
         return attributes;

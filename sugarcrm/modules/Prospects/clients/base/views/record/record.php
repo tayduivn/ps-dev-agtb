@@ -97,7 +97,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'picture',
-                    'type' => 'image',
+                    'type' => 'avatar',
                     'width' => 42,
                     'height' => 42,
                     'dismiss_label' => true,
@@ -108,12 +108,18 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
+                    'name' => 'follow',
+                    'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             ),
         ),

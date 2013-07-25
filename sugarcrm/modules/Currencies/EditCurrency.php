@@ -24,15 +24,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: EditCurrency.php 13782 2006-06-06 17:58:55Z majed $
  ********************************************************************************/
 
-if($current_user->is_admin){
-require_once('modules/Currencies/ListCurrency.php');
-$lc = new ListCurrency();
-$lc->handleDelete();
-$lc->handleAdd();
-$lc->handleUpdate();
-echo $lc->getTable();
-			}else{
-				echo 'Admin\'s Only';	
-			}
+global $mod_strings;
+
+if ($current_user->is_admin)
+{
+    require_once('modules/Currencies/ListCurrency.php');
+    $lc = new ListCurrency();
+    $lc->handleDelete();
+    $lc->handleAdd();
+    $lc->handleUpdate();
+    echo $lc->getTable();
+}
+else
+{
+    echo $mod_strings['LBL_ADMIN_ONLY'];
+}
 
 ?>

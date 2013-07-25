@@ -27,11 +27,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+global $mod_strings;
 
 $focus = BeanFactory::getBean('Emails');
 
 if(!isset($_REQUEST['record']))
-	sugar_die("A record number must be specified to delete the email.");
+	sugar_die($mod_strings['ERR_RCD_NUM_TO_DEL']);
 $focus->retrieve($_REQUEST['record']);
 $email_type = $focus->type;
 if(!$focus->ACLAccess('Delete')){

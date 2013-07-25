@@ -250,7 +250,7 @@
         this.layout.trigger("filter:create:rowsValid", true);
         _.each($rows, function(row) {
             var data = $(row).data();
-            if (!data.value && !data.isDateRange) {
+            if (_.isEmpty(data.value) && !data.isDateRange) {
                 this.layout.trigger("filter:create:rowsValid", false);
             }
         }, this);
@@ -451,7 +451,7 @@
                 this._renderField(field);
             }, this);
         } else {
-            model.set(fieldName, $row.data('value') || '');
+            model.set(fieldName, $row.data('value') || undefined);
             // Render the value field
             var field = this.createField(model, fieldDef),
                 fieldContainer = $(field.getPlaceholder().string);
@@ -469,6 +469,21 @@
                     model.trigger('change');
                 }, field), 400));
             });
+            //Have to format the Blank value
+            //Be careful using fieldType and not fieldDef.type to not mess with converted fields
+            if (fieldType === 'enum') {
+                var _changeBlankLabel = function() {
+                    if (!_.isUndefined(this.items['']) && this.items[''] === '') {
+                        this.items = _.clone(this.items);
+                        this.items[''] = app.lang.getAppString('LBL_BLANK_VALUE');
+                    }
+                };
+                field.items = field.loadEnumOptions(false, function() {
+                    _changeBlankLabel.call(field);
+                });
+                _changeBlankLabel.call(field);
+            }
+
             this._renderField(field);
         }
 
@@ -489,12 +504,6 @@
                 } else {
                     var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
                     valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
-                }
-
-                if (_.isArray(valueForFilter)) {
-                    // If we are filtering a multi-enum, strip out the blank value that
-                    // is required in the <select><option></option></select> structure.
-                    valueForFilter = _.without(valueForFilter, "");
                 }
 
                 $row.data("value", valueForFilter);
@@ -547,7 +556,7 @@
         if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
             name = this.fieldList[name].id_name;
         }
-        if (value || data.isDateRange) {
+        if (!_.isEmpty(value) || data.isDateRange) {
             if (name.indexOf("$") === 0 && value === "true") {
                 filter[name] = "";
             } else {

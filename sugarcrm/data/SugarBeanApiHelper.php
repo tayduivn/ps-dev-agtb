@@ -261,7 +261,11 @@ class SugarBeanApiHelper
             $field = $sfh->getSugarField($type);
 
             if ($field != null) {
-                $field->apiSave($bean, $submittedData, $fieldName, $properties);
+                if (!empty($options['massUpdate'])) {
+                    $field->apiMassUpdate($bean, $submittedData, $fieldName, $properties);
+                } else {
+                    $field->apiSave($bean, $submittedData, $fieldName, $properties);
+                }
             }
         }
 

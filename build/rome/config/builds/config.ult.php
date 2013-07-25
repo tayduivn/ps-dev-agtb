@@ -134,6 +134,13 @@ $config['blackList']['ult'] = array(
 'sugarcrm/styleguide/styleguide'=>1,
 'sugarcrm/styleguide/tests'=>1,
 'sugarcrm/styleguide/build'=>1,
-                            
+
+
+// SP-1071 disable unsupported legacy connectors for 7.0
+'sugarcrm/modules/Connectors/connectors/sources/ext/rest/zoominfocompany'=>1,
+'sugarcrm/modules/Connectors/connectors/sources/ext/rest/zoominfoperson'=>1,
+'sugarcrm/modules/Connectors/connectors/sources/ext/rest/linkedin'=>1,
+'sugarcrm/modules/Connectors/connectors/sources/ext/rest/insideview'=>1,
+'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/facebook'=>1,
 );
 $build = 'ult';

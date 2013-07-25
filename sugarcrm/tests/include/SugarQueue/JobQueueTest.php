@@ -57,6 +57,22 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($now, $job->execute_time_db, "Wrong execute time");
     }
 
+    public function testJobDefaultUser()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $job = new SchedulersJob();
+        $job->status = SchedulersJob::JOB_STATUS_RUNNING;
+        $job->scheduler_id = 'unittest';
+        $now = $GLOBALS['timedate']->nowDb();
+        $job->name = "Unit test Job 1";
+        $job->target = "test::test";
+        $id = $this->jq->submitJob($job);
+        $this->assertNotEmpty($id, "Bad job ID");
+        $job = new SchedulersJob();
+        $job->retrieve($id);
+        $this->assertEquals($GLOBALS['current_user']->id, $job->assigned_user_id);
+    }
+
     public function testGetJob()
     {
         $this->markTestIncomplete('This is not working due to caching of the bean and the check_date_relationships_load method is not called. FRM team will fix');

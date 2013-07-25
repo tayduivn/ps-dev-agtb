@@ -2,5 +2,5 @@
 {{value}}
 {{/eq}}
 {{#notEq value hiddenValue}}
-<a href="{{href}}">{{value}}</a>
+{{# if href}}<a href="{{href}}">{{value}}</a>{{else}}{{value}}{{/if}}
 {{/notEq}}

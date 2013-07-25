@@ -26,6 +26,14 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
+                array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
                 'name',
             ),
         ),
@@ -41,38 +49,60 @@ $viewdefs['Bugs']['portal']['view']['record'] = array(
                     'span' => 12,
                 ),
                 array(
-                    'name' => 'date_entered',
-                    'readonly' => true,
-                ),
-                'status',
-                'priority',
-                'source',
-                'product_category',
-                'type',
-                'resolution',
-                array(
-                    'name' => 'date_modified',
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'modified_by_name',
-                    'readonly' => true,
-                ),
-                array(
-                    'name' => 'created_by_name',
-                    'readonly' => true,
-                ),
-                'assigned_user_name',
-                array(
                     'name' => 'description',
                     'span' => 12,
+                ),
+                'status',
+                'type',
+                'source',
+                'product_category',
+                'priority',
+                array(
+                    'name' => 'resolution',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+                ),
+                array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
                 ),
                 array(
                     'name' => 'work_log',
                     'span' => 12,
+                    'readonly' => true,
                 ),
             ),
         ),
-
     ),
 );

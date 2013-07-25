@@ -56,6 +56,10 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
      */
     public function __construct()
     {
+        //TODO: Creation of Activities are turned off for mass update.
+        //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
+        $GLOBALS['ACTIVITY_FROM_MASS_UPDATE'] = true;
+
         if (!empty($GLOBALS['sugar_config']['massupdate_chunk_size'])) {
             $this->chunkSize = $GLOBALS['sugar_config']['massupdate_chunk_size'];
         }
@@ -146,7 +150,6 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
         {
             // this is the parent job, find out all the records to be updated and create child jobs
             case 'init':
-                self::preProcess($data);
 
                 // if uid is already provided, use them
                 if (isset($data['uid'])) {
@@ -187,15 +190,14 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
                                 $uidArray[] = $record['id'];
                             }
                         }
-                    }
-
-                    // create one child job for each chunk
-                    if (count($uidArray)) {
-                        $uidChunks = array_chunk($uidArray, $this->chunkSize);
-                        foreach ($uidChunks as $chunk) {
-                            $tmpData = $data;
-                            $tmpData['uid'] = $chunk;
-                            $this->workJobIds[] = $this->createJobQueueConsumer($tmpData, 'work');
+                        // create one child job for each chunk
+                        if (count($uidArray)) {
+                            $uidChunks = array_chunk($uidArray, $this->chunkSize);
+                            foreach ($uidChunks as $chunk) {
+                                $tmpData = $data;
+                                $tmpData['uid'] = $chunk;
+                                $this->workJobIds[] = $this->createJobQueueConsumer($tmpData, 'work');
+                            }
                         }
                     }
                 } else {
@@ -210,7 +212,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
 
             // this is the child job, do update
             case 'work':
-                return $this->updateRecords($this->job, $data);
+                return $this->workJob($this->job, $data);
 
             default:
                 break;
@@ -220,12 +222,12 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
     }
 
     /**
-     *  Update records.
+     *  Update records and mark 
      *
      * @param $job SchedulersJob object associated with this job
      * @param $data array of job data
      */
-    protected function updateRecords($job, $data)
+    protected function workJob($job, $data)
     {
         if (!isset($data['uid'])) {
             $job->failJob('No uid found.');
@@ -238,20 +240,85 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
             unset($newData['entire']);
         }
 
-        self::preProcess($newData);
-
-        $bean = BeanFactory::newBean($data['module']);
-        if (!$bean instanceof SugarBean) {
-            $job->failJob('Invalid bean');
+        try {
+            $this->runUpdate($data);
+        } catch (Exception $e) {
+            $job->failJob($e->getMessage());
             return false;
         }
-        $mass = new MassUpdate();
-        $mass->setSugarBean($bean);
-        $mass->handleMassUpdate(false, true);
 
         $job->succeedJob('All records processed for this chunk.');
 
         return true;
+    }
+
+    /**
+     *  Update records.
+     *
+     * @param $data array of job data
+     */
+    public function runUpdate($data)
+    {
+        // Get the data down to just the list of fields
+        $module = $data['module'];
+        unset($data['module']);
+        $action = $data['action'];
+        unset($data['action']);
+        $ids = is_array($data['uid'])?$data['uid']:array();
+        unset($data['uid']);
+        unset($data['filter']);
+        unset($data['entire']);
+        $prospectLists = isset($data['prospect_lists'])?$data['prospect_lists']:array();
+        unset($data['prospect_lists']);
+
+        $seed = BeanFactory::newBean($module);
+        $fakeApi = new RestService();
+        $fakeApi->user = $GLOBALS['current_user'];
+        $helper = ApiHelper::getHelper($fakeApi, $seed);
+        
+        foreach ($ids as $id) {
+            // Doing a full retrieve because we are writing we may need dependent fields for workflow that we don't know about
+            $bean = BeanFactory::retrieveBean($module,$id);
+            if ($bean == null) {
+                // Team permissions may have changed, or a deletion, we won't hold it against them
+                continue;
+            }
+
+            if (!$bean->aclAccess($action)) {
+                // ACL's might not let them modify this bean, but we should still do the rest
+                continue;
+            }
+            
+            if ($action == 'delete') {
+                $bean->mark_deleted($id);
+                continue;
+            }
+
+            try {
+                $errors = $helper->populateFromApi($bean, $data, array('massUpdate'=>true));
+                $bean->save();
+            } catch ( SugarApiExceptionNotAuthorized $e ) {
+                // ACL's might not let them modify this bean, but we should still do the rest
+                continue;
+            }
+            
+        }
+
+        if (count($prospectLists) > 0) {
+
+            $massupdate = new MassUpdate();
+
+            foreach ($prospectLists as $listId) {
+                if ($action == 'save') {
+                    $success = $massupdate->add_prospects_to_prospect_list($module, $listId, $ids);
+                } else {                
+                    $success = $massupdate->remove_prospects_from_prospect_list($module, $listId, $ids);
+                }
+            }
+            if (!$success) {
+                $GLOBALS['log']->error("Could not add prospects to prospect list, could not find a relationship to the ProspectLists module.");
+            }
+        }
     }
 
 }

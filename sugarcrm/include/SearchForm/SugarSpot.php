@@ -636,7 +636,7 @@ class SugarSpot
             $data = array();
             $count = 0;
             while ($count < $limit && ($row = $seed->db->fetchByAssoc($result))) {
-                $temp = clone $seed;
+                $temp = $seed->getCleanCopy();
                 $temp->setupCustomFields($temp->module_dir);
                 $temp->loadFromRow($row);
                 // need to reload the seed because not all the fields will be filled in, for instance in bugs, all fields are wanted but the query does

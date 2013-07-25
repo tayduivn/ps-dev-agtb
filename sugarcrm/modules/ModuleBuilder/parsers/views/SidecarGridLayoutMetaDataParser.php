@@ -43,6 +43,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     );
 
     protected $extraPanelMeta = array();
+    
+    protected $headerPanelMeta = array();
 
     protected $maxSpan = 12;
 
@@ -287,8 +289,20 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 unset($this->_originalViewDef[$originalKey]['span']);
             }
         }
-
+        
+        // Set up the panel index so we know where the header panel meta needs to
+        // be injected if there is header panel meta to be injected
+        $panelIndex = 0;
         foreach ($panels as $pName => $panel) {
+            // This will only happen for record views at the moment. The header
+            // panel index is set in _convertFromCanonicalForm.
+            if (isset($this->headerPanelIndex) && !empty($this->headerPanelMeta) && $panelIndex == $this->headerPanelIndex) {
+                // Inject the header panel where it belongs and increment the panel
+                // index so that the other panels are added where they need to be
+                $canonicalPanels[$panelIndex] = $this->headerPanelMeta;
+                $panelIndex++;
+            }
+            
             $fields = array();
             // get number of panel columns default to 2
             $panelColumns = 2;
@@ -370,8 +384,12 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
 
             $newPanel['fields'] = $fields;
-            $canonicalPanels[] = $newPanel;
+            $canonicalPanels[$panelIndex] = $newPanel;
+            
+            // Increment the panel index
+            $panelIndex++;
         }
+        
         return $canonicalPanels;
     }
 
@@ -392,7 +410,19 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // $panels[label for panel] = fields of panel in rows,cols format
 
         $internalPanels = array();
+        
+        // Get the header panel index for use in removing and injecting the header
+        // panel meta when editing record views
+        $this->headerPanelIndex = $this->getHeaderPanelIndex($panels);
+        
         foreach ($panels as $n => $panel) {
+            // If we are on a record view we need to hide the header panel from
+            // studio. This is to prevent breaking the client side application.
+            if ($this->_view == MB_RECORDVIEW && $n == $this->headerPanelIndex) {
+                $this->headerPanelMeta = $panel;
+                continue;
+            }
+            
             // Handle panel labeling...
             $pLabel = $n;
             if (!empty($panel['label'])) {
@@ -666,5 +696,45 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         
         // Non empty non arrays just return the field
         return $field;
+    }
+    
+    /**
+     * Gets the index for the panel that is the header panel. Used in record
+     * view since header panels in record view are not editable in studio.
+     * 
+     * @param array $panels The panels array
+     * @return string
+     */
+    public function getHeaderPanelIndex($panels)
+    {
+        // Default value is assumed to be the first panel unless there is a panel
+        // named as the header panel
+        $panelIndex = key($panels);
+        foreach ($panels as $n => $panel) {
+            if (isset($panel['name']) && $panel['name'] == $this->panelLabels['panel_header']) {
+                $panelIndex = $n;
+                break;
+            }
+        }
+        
+        return $panelIndex;
+    }
+    
+    /**
+     * Checks any hidden panels (panels that should not be editable) and removes
+     * any fields from the available fields array that are in the hidden panels.
+     * 
+     * NOTE: This is called in getAvailableFields, which is defined
+     * in the parent class.
+     * 
+     * @param array $availableFields Current array of available fields
+     */
+    protected function unsetHiddenPanelFields(&$availableFields)
+    {
+        if (!empty($this->headerPanelMeta['fields']) && is_array($this->headerPanelMeta['fields'])) {
+            foreach ($this->headerPanelMeta['fields'] as $field) {
+                $this->unsetAvailableField(&$availableFields, $field);
+            }
+        }
     }
 }

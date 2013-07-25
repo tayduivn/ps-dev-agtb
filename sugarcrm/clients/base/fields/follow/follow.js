@@ -1,4 +1,11 @@
 ({
+    /**
+     * {@inheritDoc}
+     *
+     * This field doesn't support `showNoData`.
+     */
+    showNoData: false,
+
     events: {
         'click [data-event="list:follow:fire"]': 'toggleFollowing'
     },

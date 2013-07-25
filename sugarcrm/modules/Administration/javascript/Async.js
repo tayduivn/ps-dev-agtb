@@ -37,7 +37,7 @@ var AjaxObject = {
 		this.forceAbort = false;
 	},
     handleFailure : function(o) {
-    	alert('asynchronous call failed.');
+    	alert(SUGAR.language.get('Administration', 'LBL_ASYNC_CALL_FAILED'));
     	//BEGIN SUGARCRM flav=int ONLY
 		debugger;
 		//END SUGARCRM flav=int ONLY

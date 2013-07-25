@@ -20,11 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
-
-
-
-
-
 set_time_limit(3600);
 ini_set('default_socket_timeout', 360);
 function ConvertDiscClient(){
@@ -60,7 +55,7 @@ function ConvertDiscClient(){
         if( isset($_REQUEST['server_url']) ){
             $server_url = $_REQUEST['server_url'];
             if( $server_url == "" ){
-                $errors[] = "Server URL cannot be empty.";
+                $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_SERVER_URL_EMPTY_ERROR'];
             }
         }
     }
@@ -71,60 +66,59 @@ function ConvertDiscClient(){
     if( isset($_REQUEST['user_name']) ){
         $user_name = $_REQUEST['user_name'];
         if( $user_name == "" ){
-            $errors[] = "User Name cannot be empty.";
+            $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_USER_NAME_EMPTY_ERROR'];
         }
     }
     if( isset($_REQUEST['password']) ){
         if( $_REQUEST['password'] == "" ){
-            $errors[] = "Password cannot be empty.";
+            $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_PASSWORD_EMPTY_ERROR'];
         }
     }
      if( isset($_REQUEST['admin_name']) ){
      	$admin_name = $_REQUEST['admin_name'];
         if( $_REQUEST['admin_name'] == "" ){
-            $errors[] = "Admin Name cannot be empty.";
+            $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_ADMIN_NAME_EMPTY'];
         }
     }
 
     if( $run == "convert" ){
         if( !is_writable( "config.php" ) ){
-            $errors[] = "Please make your config.php writable in order to continue.";
+            $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_CONFIG_WRITABLE_ERROR'];
         }
     }
 
     if( isset( $_REQUEST['submitted'] ) && sizeof( $errors ) == 0 ){
           if(empty($server_url) || $server_url == 'http://'){
-        	 $errors[] = "Server URL is required";
+        	 $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_SERVER_URL_REQUIRED'];
         }else{
 
         $soapclient = new nusoapclient( "$server_url/soap.php" );
         $soapclient->response_timeout = 360;
 		if($soapclient->call('is_loopback', array())){
-			$errors[] = "Server and Client must be on separate machines with unique ip addresses";
+			$errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_SERVER_CLIENT_IP_ERROR'];
 		}
 		if(!$soapclient->call('offline_client_available', array())){
-			$errors[] = "No licenses available for offline client";
+			$errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_NO_LICENSE'];
 		}
         $result = $soapclient->call( 'login', array('user_auth'=>array('user_name'=>$admin_name,'password'=>md5($_REQUEST['password']), 'version'=>'.01'), 'application_name'=>'Disconnected Client Setup'));
         if( $soapclient->error_str ){
-            $errors[] = "Login failed with error: " . $soapclient->error_str;
+            $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_LOGIN_FAILED_ERROR'] . $soapclient->error_str;
         }
 
         if( $result['error']['number'] != 0 ){
-        	 $errors[] = "Login failed with error: " . $result['error']['name'] . ' ' . $result['error']['description'];
-
+        	 $errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_LOGIN_FAILED_ERROR'] . $result['error']['name'] . ' ' . $result['error']['description'];
         }
-
 
         $session = $result['id'];
         if(empty($errors)){
+            $data = array($user_name);
         	$result = $soapclient->call( 'sudo_user', array('session'=>$session, 'user_name'=>$user_name));
          if( $soapclient->error_str ){
-            $errors[] = "switch to $user_name failed with error: " . $soapclient->error_str;
+            $errors[] = string_format($mod_strings['LBL_CONVERT_DISC_CLIENT_SWITCH_TO_USER_ERROR'], $data) . $soapclient->error_str;
         }
 
         if(isset($result['error']) &&  $result['error']['number'] != 0 ){
-        	 $errors[] = "switch to $user_namewith error: " . $result['error']['name'] . ' ' . $result['error']['description'];
+        	 $errors[] = string_format($mod_strings['LBL_CONVERT_DISC_CLIENT_SWITCH_TO_USER_ERROR'], $data) . $result['error']['name'] . ' ' . $result['error']['description'];
 
         }
         }
@@ -149,7 +143,7 @@ function ConvertDiscClient(){
                	//attempt to obtain the system_id from the server
         		$result = $soapclient->call('get_unique_system_id', array('session'=>$session, 'unique_key'=>$sugar_config['unique_key']));
          		if( $soapclient->error_str ){
-            		$errors[] = "Unable to obtain unique system id from server: " . $soapclient->error_str;
+            		$errors[] = $mod_strings['LBL_CONVERT_DISC_CLIENT_UNIQUE_SYSTEM_ID_ERROR'] . $soapclient->error_str;
         		}
         		else{
 
@@ -172,17 +166,17 @@ function ConvertDiscClient(){
             require_once("modules/Sync/SyncHelper.php");
             sync_users($soapclient, $session, true);
              ksort( $sugar_config );
-			echo 'Updating Local Information<br>';
+			echo $mod_strings['LBL_CONVERT_DISC_CLIENT_UPDATE_LOCAL_INFO'];
              if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ){
-                   $xtpl->assign("COMPLETED_MESSAGE","Failed to write your config.php file, please make it writable and try again (it was writable before the submit)." );
+                   $xtpl->assign("COMPLETED_MESSAGE", $mod_strings['LBL_CONVERT_DISC_CLIENT_CONFIG_WRITABLE_AGAIN_ERROR'] );
                    $xtpl->parse("main.complete");
                    return;
                 }
-			 	echo 'Done - will auto logout in <div id="seconds_left">10</div> seconds<script> function logout_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php?module=Users&action=Logout";}else{left--; setTimeout("logout_countdown("+ left+")", 1000)}};setTimeout("logout_countdown(10)", 1000)</script>';
+			 	echo $mod_strings['LBL_CONVERT_DISC_CLIENT_DONE_LOGOUT'] . '<script> function logout_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php?module=Users&action=Logout";}else{left--; setTimeout("logout_countdown("+ left+")", 1000)}};setTimeout("logout_countdown(10)", 1000)</script>';
             // done with soap calls
             $result = $soapclient->call( 'logout', array('session'=>$session) );
 
-            $xtpl->assign("COMPLETED_MESSAGE","Synchronization complete." );
+            $xtpl->assign("COMPLETED_MESSAGE", $mod_strings['LBL_CONVERT_DISC_CLIENT_SYNC_COMPLETE'] );
             $xtpl->parse("main.complete");
 
             return;
@@ -195,7 +189,7 @@ function ConvertDiscClient(){
     }
 
     if(!empty($errorString)){
-         $xtpl->assign("COMPLETED_MESSAGE",$errorString);
+         $xtpl->assign("COMPLETED_MESSAGE", $errorString);
          $xtpl->parse("main.complete");
     }
 
@@ -213,10 +207,10 @@ function ConvertDiscClient(){
             $xtpl->assign("RUN", $run);
 
         if( $run == "convert" ){
-            $xtpl->assign("SUBMIT_MESSAGE", "Clicking Submit will convert this installation to a disconnected client.  Any existing data will be lost.");
+            $xtpl->assign("SUBMIT_MESSAGE", $mod_strings['LBL_CONVERT_DISC_CLIENT_SUBMIT']);
         }
         else if( $run == "sync" ){
-            $xtpl->assign("SUBMIT_MESSAGE","Clicking Submit will sycnhronize you with the master server." );
+            $xtpl->assign("SUBMIT_MESSAGE", $mod_strings['LBL_CONVERT_DISC_CLIENT_SYNC_SUBMIT'] );
         }
        $xtpl->parse("main.convert");
     }

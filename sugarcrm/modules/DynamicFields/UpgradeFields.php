@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/DynamicFields/FieldCases.php');
 require_once('modules/DynamicFields/DynamicField.php');
 
+global $mod_strings;
 $db = DBManagerFactory::getInstance();
 $result = $db->query( 'SELECT * FROM fields_meta_data WHERE deleted = 0 ORDER BY custom_module');
 $modules = array();
@@ -39,11 +40,11 @@ $modules = array();
  $simulate = false;
  if(!isset($_REQUEST['run'])){
  	$simulate = true;
- 	echo "SIMULATION MODE - NO CHANGES WILL BE MADE EXCEPT CLEARING CACHE";
+ 	echo $mod_strings['LBL_SIMULATION_MODE'];
  }
 
  foreach($modules as $the_module=>$fields){
- 	echo "<br><br>Scanning $the_module <br>";
+ 	echo "<br><br>".$mod_strings['LBL_SCAN_MODULE']." $the_module <br>";
  	    $mod = BeanFactory::getBean($the_module);
 
 		if(!$db->tableExists($mod->table_name . "_cstm")){
@@ -66,11 +67,11 @@ $modules = array();
 				    $db->query("ALTER TABLE $mod->table_name" . "_cstm DROP COLUMN $col");
 				}
 				unset($fields[$col]);
-				echo "Dropping Column $col from $mod->table_name" . "_cstm for module $the_module<br>";
+				echo string_format($mod_strings['LBL_DROPPING_COLUMN'], array($col, $mod->table_name . "_cstm"))." $the_module<br>";
 			} else {
 				if($col != 'id_c') {
 				    if(trim($the_field->get_db_type()) != trim($type)){
-    					echo "Fixing Column Type for $col changing $type to ". $the_field->get_db_type() . "<br>";
+    					echo string_format($mod_strings['LBL_FIX_COLUMN_TYPE'], array($col, $type)). $the_field->get_db_type() . "<br>";
 					    if(!$simulate) {
 					        $db->query($the_field->get_db_modify_alter_table($mod->table_name . '_cstm'));
 					    }
@@ -81,9 +82,9 @@ $modules = array();
 
 		}
 
-		echo sizeof($fields) . " field(s) missing from $mod->table_name" . "_cstm<br>";
+		echo sizeof($fields) .  $mod_strings['LBL_FIX_COLUMN_TYPE'] .  $mod->table_name . "_cstm<br>";
 		foreach($fields as $field){
-		    echo "Adding Column $field to $mod->table_name" . "_cstm<br>";
+		    echo string_format($mod_strings['LBL_ADDING_COLUMN'], array($field)). $mod->table_name . "_cstm<br>";
 			if(!$simulate){
 				$the_field = $mod->getFieldDefinition($field);
 				$field = get_widget($the_field['type']);
@@ -99,7 +100,7 @@ $modules = array();
 
 
 	DynamicField::deleteCache();
-	echo '<br>Done<br>';
+	echo '<br>'.$mod_strings['LBL_DONE'].'<br>';
 	if($simulate){
-		echo '<a href="index.php?module=Administration&action=UpgradeFields&run=true">Execute non-simulation mode</a>';
+		echo '<a href="index.php?module=Administration&action=UpgradeFields&run=true">'.$mod_strings['LBL_EXE_NON_SIM_MODE'].'</a>';
 	}

@@ -273,7 +273,7 @@
      success:function(r) {
 	     alert(r.responseText);
 	     if(r.responseText == 1){
-	        alert('Article already exists');
+	        alert(SUGAR.language.get('KBDocuments', 'LBL_ARTICLE_EXISTS'));
 	     }
      }
 	}

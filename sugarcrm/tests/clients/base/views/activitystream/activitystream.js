@@ -1,7 +1,8 @@
 describe("Activity Stream View", function() {
     var view, viewName = 'activitystream',
         createRelatedCollectionStub,
-        processAvatarsStub;
+        processAvatarsStub,
+        getPreviewDataStub;
 
     beforeEach(function() {
         createRelatedCollectionStub = sinon.stub(SugarTest.app.data, 'createRelatedCollection', function() {
@@ -33,11 +34,13 @@ describe("Activity Stream View", function() {
         view = SugarTest.createView('base', 'Cases', viewName, null, context);
 
         processAvatarsStub = sinon.stub(view, 'processAvatars');
+        getPreviewDataStub = sinon.stub(view, 'getPreviewData');
     });
 
     afterEach(function() {
         createRelatedCollectionStub.restore();
         processAvatarsStub.restore();
+        getPreviewDataStub.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
     });
@@ -104,6 +107,95 @@ describe("Activity Stream View", function() {
 
             expect(view.$('.embed iframe').prop('height')).toBe('200');
             widthStub.restore();
+        });
+    });
+
+    describe("getPreviewData", function(){
+        var previewData,
+            aclStub,
+            getParentModelStub;
+
+        beforeEach(function() {
+            getPreviewDataStub.restore();
+        });
+
+        it('Should load preview enabled with default message', function() {
+            var previewId = "3be4-2be4-49bcc-dcbc-cccaf35c5bb1";
+
+            view.model.set({
+                parent_id: "5asdfgg-2be4-49bcc-dcbc-cccaf35c5bb1",
+                parent_type: "Contacts"
+            });
+
+            getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: previewId});
+
+            previewData = view.getPreviewData();
+
+            expect(previewData.enabled).toBeTruthy();
+            expect(previewData.label).toBe('LBL_PREVIEW');
+
+            getParentModelStub.restore();
+        });
+
+        it('Should return preview disabled with correct message when no user has no read access to related record', function() {
+            aclStub = sinon.stub(SugarTest.app.acl,'hasAccess', function(){
+                return false;
+            });
+
+            view.model.set({
+                parent_id: "5asdfgg-2be4-49bcc-dcbc-cccaf35c5bb1",
+                parent_type: "Contacts"
+            });
+
+            previewData = view.getPreviewData();
+
+            expect(previewData.enabled).toBeFalsy();
+            expect(previewData.label).toBe('LBL_PREVIEW_DISABLED_NO_ACCESS');
+
+            aclStub.restore();
+        });
+
+        it('Should return preview disabled with correct message when related record is same as context model', function() {
+            aclStub = sinon.stub(SugarTest.app.acl,'hasAccess', function(){
+                return true;
+            });
+
+            var moduleId = "3be4-2be4-49bcc-dcbc-cccaf35c5bb1";
+
+            view.model.set({
+                parent_id: moduleId,
+                parent_type: "Contacts"
+            });
+
+            getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: moduleId});
+
+            previewData = view.getPreviewData();
+
+            expect(previewData.enabled).toBeFalsy();
+            expect(previewData.label).toBe('LBL_PREVIEW_DISABLED_SAME_RECORD');
+
+            aclStub.restore();
+            getParentModelStub.restore();
+        });
+
+        it('Should return preview disabled with correct message when no related record', function() {
+            previewData = view.getPreviewData();
+
+            expect(previewData.enabled).toBeFalsy();
+            expect(previewData.label).toBe('LBL_PREVIEW_DISABLED_NO_RECORD');
+        });
+
+        it('Should return preview disabled with correct message when attachment', function() {
+            view.model.set({
+                activity_type: "attach"
+            });
+
+            view.model.unset("data");
+
+            previewData = view.getPreviewData();
+
+            expect(previewData.enabled).toBeFalsy();
+            expect(previewData.label).toBe('LBL_PREVIEW_DISABLED_ATTACHMENT');
         });
     });
 

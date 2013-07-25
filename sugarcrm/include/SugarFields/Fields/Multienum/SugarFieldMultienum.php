@@ -146,4 +146,27 @@ class SugarFieldMultienum extends SugarFieldEnum
         
         return $value;
     }
+
+    public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
+        // Check if we are replacing, if so, just use the normal save
+        if (isset($params[$fieldName.'_type']) && $params[$fieldName.'_type'] == 'replace') {
+            return $this->apiSave($bean, $params, $fieldName, $properties);
+        }
+
+        if (!empty($bean->$fieldName)) {
+            $start = explode('^,^', trim($bean->$fieldName, '^'));
+        } else {
+            $start = array();  // Blank array
+        }
+
+        if (!is_array($params[$fieldName])) {
+            $params[$fieldName] = array();
+        }
+        
+        $params[$fieldName] = array_unique(array_merge($start,$params[$fieldName]));
+        
+        return $this->apiSave($bean, $params, $fieldName, $properties);
+    }
+
+
 }

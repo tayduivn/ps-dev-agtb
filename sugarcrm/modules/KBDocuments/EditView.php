@@ -462,7 +462,7 @@ $xtpl->parse("main.htmlarea");
         inst.execCommand('mceInsertRawHTML', false, text);
 	  }
 	  function insert_variable_html_link(text) {
-	  	var thelink="<a href='" + text + "''" + ">'Default link text.'</a>";
+	  	var thelink="<a href='" + text + "''" + ">'" + SUGAR.language.get('KBDocuments', 'LBL_DEFAULT_LINK_TEXT') + "'</a>";
 	  	insert_variable_html(thelink);
 	  }
 	  </SCRIPT>

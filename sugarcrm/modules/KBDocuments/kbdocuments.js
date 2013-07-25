@@ -53,7 +53,7 @@ SUGAR.kb = function() {
         },
         displayNodeMessage:function() {
             document.getElementById('CreateNodeMessage').style.display = '';
-            document.getElementById('CreateNodeMessage').innerHTML = 'Please select a node';
+            document.getElementById('CreateNodeMessage').innerHTML = SUGAR.language.get('KBDocuments', 'LBL_SELECT_NODE');
 
             //document.getElementById('tags_search').type='hidden';
             // document.getElementById('search').type='hidden';
@@ -149,7 +149,7 @@ SUGAR.kb = function() {
             var root = tagsTree.getRoot();
             if (root != null && root.children.length > 0) {
                 document.getElementById('CreateNodeMessage').style.display = '';
-                document.getElementById('CreateNodeMessage').innerHTML = 'Please select a node';
+                document.getElementById('CreateNodeMessage').innerHTML = SUGAR.language.get('KBDocuments', 'LBL_SELECT_NODE');
                 document.getElementById('CreateNode').style.display = '';
                 document.getElementById('tag_base').checked = true;
                 document.getElementById('tagsCreate').style.display = '';
@@ -204,7 +204,7 @@ SUGAR.kb = function() {
         rootChecked:function() {
             if (document.getElementById('tag_base').checked == false) {
                 document.getElementById('CreateNodeMessage').style.display = '';
-                document.getElementById('CreateNodeMessage').innerHTML = 'Please select a node';
+                document.getElementById('CreateNodeMessage').innerHTML = SUGAR.language.get('KBDocuments', 'LBL_SELECT_NODE');
                 //document.getElementById('newSave').style.display='none';
                 //alert(document.getElementById('newSave').style.display);
                 //document.getElementById('tag_new').type='hidden';

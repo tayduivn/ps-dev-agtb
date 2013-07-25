@@ -97,7 +97,9 @@ $mod_strings = array (
   'LBL_LAYOUT_LIST_ORDER_X' => 'List Order X:',
   'LBL_LAYOUT_LIST_ORDER_Z' => 'List Order Z:',
   'LBL_MODIFY_HEAD' => 'Modify Header Attributes:',
+  'LBL_MODIFY_HEAD_HEADER' => 'Add/Edit Header Attributes:',
   'LBL_MODIFY_BODY' => 'Modify Body Attributes:',
+  'LBL_MODIFY_BODY_HEADER' => 'Add/Edit Body Attributes:',
   
   'LBL_BG_COLOR' => 'Background Color:',
   'LBL_WRAP' => 'Wrap Text:',
@@ -113,8 +115,8 @@ $mod_strings = array (
   'CONFIRM_LAYOUT_DISABLE' => 'Disabling the custom layout will remove all existing custom layout properties',
   'LBL_LEFT' => 'Left',
   'LBL_RIGHT' => 'Right',
-	'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_INVALID_QUERY' => 'Invalid Query',
 );
-
 
 ?>

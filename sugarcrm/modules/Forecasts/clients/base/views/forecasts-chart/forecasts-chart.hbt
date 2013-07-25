@@ -14,7 +14,7 @@
 }}
 <div class="dashlet-options">
     <div class="row-fluid">
-        <div class="span4 offset1 groupByOptions">
+        <div class="span3 offset1 groupByOptions">
             {{#with dashletConfig.group_by}}
                 {{field ../this model=../this.values}}
             {{/with}}
@@ -26,4 +26,7 @@
         </div>
     </div>
 </div>
-<div id="db620e51-8350-c596-06d1-4f866bfcfd5b" class="nv-chart nv-pareto"></div>
+{{#with dashletConfig.chart}}
+    {{field ../this model=../this.values}}
+{{/with}}
+

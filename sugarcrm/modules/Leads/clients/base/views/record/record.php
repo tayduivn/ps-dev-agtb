@@ -104,7 +104,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
             'fields' => array(
                 array(
                     'name' => 'picture',
-                    'type' => 'image',
+                    'type' => 'avatar',
                     'width' => 42,
                     'height' => 42,
                     'dismiss_label' => true,
@@ -148,7 +148,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,
@@ -165,7 +164,6 @@ $viewdefs['Leads']['base']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'hide' => true,
-            'label' => 'LBL_PANEL_3',
             'columns' => 2,
             'labels' => true,
             'labelsOnTop' => true,

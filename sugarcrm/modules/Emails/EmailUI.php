@@ -1865,7 +1865,7 @@ EOQ;
 	}
 
 function doAssignment($distributeMethod, $ieid, $folder, $uids, $users) {
-	global $app_strings;
+	global $app_strings, $mod_strings;
 	$users = explode(",", $users);
 	$emailIds = explode($app_strings['LBL_EMAIL_DELIMITER'], $uids);
 	$out = "";
@@ -1894,7 +1894,7 @@ function doAssignment($distributeMethod, $ieid, $folder, $uids, $users) {
 					$ie->mailbox = $folder;
 					$ie->deleteMessageFromCache(($uids[] = $uid));
 				} else {
-					$out = $out . "Message No : " . $messageIndex . " failed. Reason : Message already imported \r\n";
+					$out = $out . string_format($mod_strings['ERR_MSG_FAILED'], array($messageIndex))." \r\n";
 				}
 			}
 			$messageIndex++;
@@ -3038,7 +3038,7 @@ eoq;
 	 * @param string $type Type of message to display
 	 */
 	function displaySuccessMessage($type) {
-		global $app_strings;
+		global $app_strings, $mod_strings;
 
 		switch($type) {
 			case "delete":
@@ -3046,7 +3046,7 @@ eoq;
 			break;
 
 			default:
-				$message = "NOOP: invalid type";
+				$message = $mod_strings['LBL_INVALID_TYPE'];
 			break;
 		}
 

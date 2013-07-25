@@ -100,76 +100,76 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 	{counter assign=source_count}
 	<input type="hidden" name="source{$source_count}" value="{$source.id}">  
 	{/foreach}
-{/if}
-<input type="hidden" name="search_values" value="">
-<input type="hidden" name="search_sources" value="">
-<input type="hidden" name="reset_to_default" value="">
+    <input type="hidden" name="search_values" value="">
+    <input type="hidden" name="search_sources" value="">
+    <input type="hidden" name="reset_to_default" value="">
 
-<table border="0" class="actionsContainer">
-<tr><td>
-<input id="connectors_top_save" title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="calculateValues();" type="submit" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-<input id="connectors_top_cancel" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.ModifySearch.action.value='ConnectorSettings'; document.ModifySearch.module.value='Connectors';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
-</td></tr>
-</table>
-<table cellspacing="0" cellpadding="0" border="0" width="100%">
-<tr><td>
-<div>
-<div id="container" style="height: 465px">
-</div>
-</div>
-</td></tr>
-</table>
-<table border="0" class="actionsContainer">
-<tr><td>
-<input id="connectors_bottom_save" title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" onclick="calculateValues();" type="submit" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
-<input id="connectors_bottom_cancel" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" class="button" onclick="document.ModifySearch.action.value='ConnectorSettings'; document.ModifySearch.module.value='Connectors';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
-</td></tr>
-</table>
+    <table border="0" class="actionsContainer">
+        <tr><td>
+                <input id="connectors_top_save" title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="calculateValues();" type="submit" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
+                <input id="connectors_top_cancel" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.ModifySearch.action.value='ConnectorSettings'; document.ModifySearch.module.value='Connectors';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+            </td></tr>
+    </table>
+    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr><td>
+                <div>
+                    <div id="container" style="height: 465px">
+                    </div>
+                </div>
+            </td></tr>
+    </table>
+    <table border="0" class="actionsContainer">
+        <tr><td>
+                <input id="connectors_bottom_save" title="{$APP.LBL_SAVE_BUTTON_LABEL}" class="button" onclick="calculateValues();" type="submit" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
+                <input id="connectors_bottom_cancel" title="{$APP.LBL_CANCEL_BUTTON_LABEL}" class="button" onclick="document.ModifySearch.action.value='ConnectorSettings'; document.ModifySearch.module.value='Connectors';" type="submit" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+            </td></tr>
+    </table>
 </form>
 
 
-<script type="text/javascript">
-{literal}
-function calculateValues() {
-    tabview = SourceTabs.getTabView();
-    search_vals = ''
-    source_vals = '';
-    sources = new Array();
-    //Get the source divs
-    elements = tabview.getElementsByClassName('sources_table_div', 'div');
-    for(el in elements) {
-        if(typeof elements[el] == 'function') {
-           continue;
-        }
-    
-        div_id = elements[el].getAttribute('id');
-        source_id = div_id.substr(0, div_id.indexOf('_add_tables'));
-        if(sources[source_id] == null) {
-           sources[source_id] = source_id;
-           source_vals += ',' + source_id;
-        }
-    }
-    
-    //Get the enabled div elements
-    elements = tabview.getElementsByClassName('enabled_workarea', 'div');    
-    for(el in elements) {
-        if(typeof elements[el] == 'function') {
-           continue;
-        }
-    
-        //Get the li elements 
- 		enabled_list = YAHOO.util.Dom.getElementsByClassName('noBullet2', 'li', elements[el]);
-        for(li in enabled_list) {
-            if(typeof enabled_list[li] != 'function') {
-                search_vals += ',' + enabled_list[li].getAttribute('id');  	
-            }
-        }
-    }
-    
-    document.ModifySearch.search_values.value = search_vals != '' ? search_vals.substr(1,search_vals.length) : '';
-    document.ModifySearch.search_sources.value = source_vals != '' ? source_vals.substr(1, source_vals.length) : '';
-}
+    <script type="text/javascript">
+        {literal}
+        function calculateValues() {
+            tabview = SourceTabs.getTabView();
+            search_vals = ''
+            source_vals = '';
+            sources = new Array();
+            //Get the source divs
+            elements = tabview.getElementsByClassName('sources_table_div', 'div');
+            for(el in elements) {
+                if(typeof elements[el] == 'function') {
+                    continue;
+                }
 
-YAHOO.util.Event.onDOMReady(SourceTabs.fitContainer);
-{/literal}
-</script>
+                div_id = elements[el].getAttribute('id');
+                source_id = div_id.substr(0, div_id.indexOf('_add_tables'));
+                if(sources[source_id] == null) {
+                    sources[source_id] = source_id;
+                    source_vals += ',' + source_id;
+                }
+            }
+
+            //Get the enabled div elements
+            elements = tabview.getElementsByClassName('enabled_workarea', 'div');
+            for(el in elements) {
+                if(typeof elements[el] == 'function') {
+                    continue;
+                }
+
+                //Get the li elements
+                enabled_list = YAHOO.util.Dom.getElementsByClassName('noBullet2', 'li', elements[el]);
+                for(li in enabled_list) {
+                    if(typeof enabled_list[li] != 'function') {
+                        search_vals += ',' + enabled_list[li].getAttribute('id');
+                    }
+                }
+            }
+
+            document.ModifySearch.search_values.value = search_vals != '' ? search_vals.substr(1,search_vals.length) : '';
+            document.ModifySearch.search_sources.value = source_vals != '' ? source_vals.substr(1, source_vals.length) : '';
+        }
+
+        YAHOO.util.Event.onDOMReady(SourceTabs.fitContainer);
+        {/literal}
+    </script>
+{/if}

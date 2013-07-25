@@ -321,7 +321,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Setup',
 
     'LBL_FORECASTS_MISSING_STAGE_TITLE' => 'Forecasts Configuration Error:',
-    'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES' => 'The Forecasts module has been improperly configured and is no longer available. Sales Stage Won and Sales Stage Lost must contain at least one value found in Sales Stage. Please contact your Administrator.',
+    'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES' => 'The Forecasts module has been improperly configured and is no longer available. Sales Stage Won and Sales Stage Lost are missing from the available Sales Stages values. Please contact your Administrator.',
 
     // Panel and BreadCrumb Labels
     'LBL_FORECASTS_CONFIG_BREADCRUMB_WORKSHEET_LAYOUT' => 'Worksheet Layout',

@@ -122,7 +122,7 @@ var AjaxObject = {
 	 */
     handleFailure : function(o) {
 		// Failure handler
-		SUGAR.showMessageBox('Exception occurred...', o.statusText, 'alert');
+		SUGAR.showMessageBox(mod_strings.LBL_EXCEPTION, o.statusText, 'alert');
 		if(document.getElementById('saveButton')) {
 			document.getElementById('saveButton').disabled = false;
 		}
@@ -1427,7 +1427,7 @@ var callbackAssignmentAction = {
 		SE.listView.refreshGrid();
 		SUGAR.hideMessageBox();
 		if(o.responseText != '') {
-	       SUGAR.showMessageBox('Assignment action result', o.responseText, 'alert');
+	       SUGAR.showMessageBox(mod_strings.LBL_ASSIGNMNT_ACT_RESULT, o.responseText, 'alert');
 	    } // if
 	} ,
 	failure	: AjaxObject.handleFailure,

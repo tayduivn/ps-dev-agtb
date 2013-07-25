@@ -22,5 +22,8 @@ $viewdefs['Home']['base']['layout']['list'] = array(
     ),
     'type' => 'dashboard',
     'span' => 12,
+    'last_state' => array(
+        'id' => 'last-visit',
+    )
 );
 

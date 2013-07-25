@@ -126,47 +126,81 @@
             }
         });
     },
+    /**
+     * {@inheritDoc}
+     * After rendering the template, it activates dataTable plugin.
+     * @private
+     */
     _render: function() {
         app.view.View.prototype._render.call(this);
         var self = this;
-        if(this.context.get("dashlet_collection")) {
-            var parentModule = app.controller.context.get("module"),
-                parentView = app.controller.context.get("layout");
-            this.dataTable = this.$("#dashletList").dataTable({
-                "bFilter": true,
-                "bInfo":false,
-                "bPaginate": false,
-                "aaData": _.pluck(_.filter(this.context.get("dashlet_collection"), function(dashlet) {
-                    var filter = dashlet.filter,
-                        filterViews = _.isUndefined(filter) ? [] : (filter.view || [parentView]);
-
-                    return _.isUndefined(filter) ||
-                        (_.indexOf(filter.module || [parentModule], parentModule) >= 0
-                            && (_.indexOf(_.isString(filterViews) ? [filterViews] : filterViews, parentView) >= 0));
-                }), 'table'),
-                "aoColumns": [
+        if (this.context.get('dashlet_collection')) {
+            this.dataTable = this.$('#dashletList').dataTable({
+                'bFilter': true,
+                'bInfo': false,
+                'bPaginate': false,
+                'aaData': this.getFilteredList(),
+                'aoColumns': [
                     {
-                        sTitle: app.lang.get("LBL_NAME")
+                        sTitle: app.lang.get('LBL_NAME')
                     },
                     {
-                        sTitle: app.lang.get("LBL_DESCRIPTION")
+                        sTitle: app.lang.get('LBL_DESCRIPTION')
                     },
                     {
-                        sTitle: app.lang.get("LBL_LISTVIEW_ACTIONS"),
+                        sTitle: app.lang.get('LBL_LISTVIEW_ACTIONS'),
                         fnRender: function(obj) {
-                            return '<a class="select" data-index="' + obj.aData[obj.iDataColumn] + '" href="javascript:void(0);">' + app.lang.get("LBL_LISTVIEW_SELECT_AND_EDIT") + '</a>';
-                        }
+                            return '<a class="select" href="javascript:void(0);" ' +
+                                'data-index="' + obj.aData[obj.iDataColumn] + '" ' +
+                                '>' + app.lang.get('LBL_LISTVIEW_SELECT_AND_EDIT') + '</a>';
+                        },
+                        bSortable: false
                     },
                     {
-                        sTitle: app.lang.get("LBL_PREVIEW"),
+                        sTitle: app.lang.get('LBL_PREVIEW'),
                         fnRender: function(obj) {
-                            return '<a class="preview" data-index="' + obj.aData[obj.iDataColumn] + '" href="javascript:void(0);"><i class=icon-eye-open></i></a>';
-                        }
+                            return '<a class="preview" href="javascript:void(0);" ' +
+                                'data-index="' + obj.aData[obj.iDataColumn] + '" ' +
+                                '><i class=icon-eye-open></i></a>';
+                        },
+                        bSortable: false
                     }
                 ]
             });
+            //hide default search box
+            this.$('#dashletList_filter').hide();
         }
 
+    },
+    /**
+     * Filtering the available dashlets with the current page's module and layout view
+     *
+     * @return {Array} list of filtered dashlet set.
+     */
+    getFilteredList: function() {
+        var parentModule = app.controller.context.get('module'),
+            parentView = app.controller.context.get('layout');
+
+        return _.chain(this.context.get('dashlet_collection'))
+            .filter(function(dashlet) {
+                var filter = dashlet.filter;
+                if (_.isUndefined(filter)) {
+                    //if filter is undefined, then the dashlet will be in the list
+                    return true;
+                }
+                var filterModules = filter.module || [parentView],
+                    filterViews = filter.view || [parentView];
+                if (_.isString(filterModules)) {
+                    filterModules = [filterModules];
+                }
+                if (_.isString(filterViews)) {
+                    filterViews = [filterViews];
+                }
+                //if the filter is matched, then it returns true
+                return _.contains(filterModules, parentModule) && _.contains(filterViews, parentView);
+            })
+            .pluck('table')
+            .value();
     },
     loadData: function() {
         var dashlet_collection = this.context.get("dashlet_collection");

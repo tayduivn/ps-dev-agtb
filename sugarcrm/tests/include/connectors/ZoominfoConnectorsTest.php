@@ -27,6 +27,9 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
 
     public function setUp()
     {
+        $this->markTestSkipped(
+            'skip legacy connector test'
+        );
         parent::setUp();
         $this->mock = new ZoominfoTestHelper();
 

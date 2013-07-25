@@ -546,13 +546,6 @@
                 this.hiddenPanelExists = true;
             }
 
-            // Display module label in header panel it doesn't contain the picture field
-            if (panel.header) {
-                panel.isAvatar = !!_.find(panel.fields, function(field) {
-                    return field.name === 'picture';
-                });
-            }
-
             // labels: visibility for the label
             if (_.isUndefined(panel.labels)) {
                 panel.labels = true;

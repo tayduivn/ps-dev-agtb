@@ -19,9 +19,26 @@ $viewdefs['Forecasts']['base']['view']['forecasts-chart'] = array(
             'config' => array(),
             'preview' => array(),
             'filter' => array(
-                'module' => array('Forecasts'),
+                'module' => array(
+                    'Forecasts'
+                )
             )
         )
+    ),
+    'chart' => array(
+        'name' => 'paretoChart',
+        'label' => 'Pareto Chart',
+        'type' => 'forecast-pareto-chart',
+    ),
+    'timeperiod' => array(
+        array(
+            'name' => 'selectedTimePeriod',
+            'label' => 'TimePeriod',
+            'type' => 'enum',
+            'default' => true,
+            'enabled' => true,
+            'view' => 'edit',
+        ),
     ),
     'group_by' => array(
         'name' => 'group_by',

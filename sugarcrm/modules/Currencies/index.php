@@ -174,8 +174,10 @@ $sugar_smarty = new Sugar_Smarty();
 	$javascript->addAllFields('',array('iso4217'=>'iso4217'));
 	echo $javascript->getScript();
     echo("<script type='text/javascript'>addToValidateMoreThan('EditView','conversion_rate','float',true,'".$mod_strings['LBL_BELOW_MIN']."',0.000001);</script>");
-			}else{
-				echo 'Admin\'s Only';	
-			}
+}
+else
+{
+    echo $mod_strings['LBL_ADMIN_ONLY'];
+}
 
 ?>

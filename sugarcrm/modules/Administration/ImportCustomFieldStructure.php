@@ -44,7 +44,7 @@ EOQ;
 
 		if(trim($line) == 'DONE'){
 			$fmd->new_with_id  = true;
-			echo 'Adding:'.$fmd->custom_module . '-'. $fmd->name. '<br>';
+			echo $mod_strings['LBL_IMPORT_CUSTOM_FIELDS_ADDING'].':'.$fmd->custom_module . '-'. $fmd->name. '<br>';
 			$fmd->db->query("DELETE FROM $fmd->table_name WHERE id='$fmd->id'");
 			$fmd->save(false);
 			$fmd = BeanFactory::getBean('EditCustomFields');
@@ -64,7 +64,7 @@ EOQ;
 	$_REQUEST['run'] = true;
 	$result = $fmd->db->query("SELECT count(*) field_count FROM $fmd->table_name");
 	$row = $fmd->db->fetchByAssoc($result);
-	echo 'Total Custom Fields :' . $row['field_count'] . '<br>';
+	echo $mod_strings['LBL_IMPORT_CUSTOM_FIELDS_COUNT'].' :' . $row['field_count'] . '<br>';
 	include('modules/Administration/UpgradeFields.php');
 	}
 ?>

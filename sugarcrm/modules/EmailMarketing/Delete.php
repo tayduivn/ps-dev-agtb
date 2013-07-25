@@ -29,12 +29,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-
+global $mod_strings;
 
 $focus = BeanFactory::getBean('EmailMarketing');
 
 if(!isset($_REQUEST['record'])) {
-	sugar_die("A record number must be specified to delete the marketing campaign.");
+	sugar_die($mod_strings['LBL_SPECIFY_RECORD_NUM']);
 }
 $focus->retrieve($_REQUEST['record']);
 if(!$focus->ACLAccess('Delete')){

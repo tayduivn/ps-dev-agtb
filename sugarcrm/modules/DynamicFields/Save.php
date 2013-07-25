@@ -28,7 +28,7 @@ if(!empty($module)){
     $mod = BeanFactory::getBean($module);
 	$custom_fields->setup($mod);
 }else{
-	echo "\nNo Module Included Could Not Save";
+	echo "\n".$mod_strings['ERR_NO_MODULE_INCLUDED'];
 }
 $name = $_REQUEST['field_label'];
 $options = '';

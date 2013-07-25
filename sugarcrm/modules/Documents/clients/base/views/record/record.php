@@ -35,6 +35,14 @@ $viewdefs['Documents']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
+                array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
                 array (
                     'name' => 'filename',
                     'displayParams' =>
@@ -47,12 +55,18 @@ $viewdefs['Documents']['base']['view']['record'] = array(
                     'label' => '',
                 ),
                 array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
+                    'name' => 'follow',
+                    'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             )
         ),

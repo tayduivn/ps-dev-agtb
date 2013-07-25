@@ -66,7 +66,7 @@
         <a class="btn btn-mini comment-btn" rel="tooltip" data-title="{{str 'LBL_COMMENT'}}">
             <i class="icon-comment"></i>
         </a>
-        <a class="btn btn-mini preview-btn" rel="tooltip" data-title="{{str 'LBL_PREVIEW'}}" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
+        <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" data-title="{{str preview.label}}" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
             <i class="icon-eye-open"></i>
         </a>
     </div>

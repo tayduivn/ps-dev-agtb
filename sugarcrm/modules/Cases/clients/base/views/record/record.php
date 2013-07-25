@@ -60,29 +60,6 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
-                /*
-                array(
-                    'type'  => 'rowaction',
-                    'event' => 'button:find_duplicates_button:click',
-                    'name'  => 'find_duplicates_button',
-                    'label' => 'LBL_DUP_MERGE',
-                    'acl_action' => 'edit',
-                ),
-                array(
-                    'type'  => 'rowaction',
-                    'event' => 'button:create_related_button:click',
-                    'name'  => 'create_related_button',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'create',
-                ),
-                array(
-                    'type'  => 'rowaction',
-                    'event' => 'button:link_related_button:click',
-                    'name'  => 'link_related_button',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
-                ),
-                */
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'rowaction',
@@ -117,20 +94,33 @@ $viewdefs['Cases']['base']['view']['record'] = array(
             'name' => 'panel_header',
             'header' => true,
             'fields' => array(
+                array(
+                    'name'          => 'picture',
+                    'type'          => 'avatar',
+                    'width'         => 42,
+                    'height'        => 42,
+                    'dismiss_label' => true,
+                    'readonly'      => true,
+                ),
                 'name',
                 array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
+                    'name' => 'follow',
+                    'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             ),
         ),
         array(
             'name' => 'panel_body',
-            'label' => 'LBL_PANEL_2',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
