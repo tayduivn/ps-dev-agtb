@@ -53,9 +53,29 @@
     editClicked: function(evt) {
         this.layout.editDashlet();
     },
+    /**
+     * Toggle current dashlet frame when user clicks the toolbar action
+     *
+     * @param {Event} mouse event.
+     */
+    toggleClicked: function(evt) {
+        var $btn = $(evt.currentTarget),
+            expanded = $btn.data('expanded') || true,
+            label = expanded ? 'LBL_DASHLET_MINIMIZE' : 'LBL_DASHLET_MAXIMIZE';
+
+        $btn.html(app.lang.get(label, this.module));
+        expanded = !expanded;
+        $btn.data('expanded', expanded);
+        this.layout.collapse(expanded);
+    },
+    /**
+     * Toggle current dashlet frame when user clicks chevron icon
+     *
+     * @param {Window.Event} mouse event.
+     */
     toggleMinify: function(evt) {
-        var $el = this.$(".dashlet-toggle > i"),
-            collapsed = $el.is(".icon-chevron-up");
+        var $el = this.$('.dashlet-toggle > i'),
+            collapsed = $el.is('.icon-chevron-up');
         this.layout.collapse(collapsed);
     }
 })

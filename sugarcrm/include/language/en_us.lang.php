@@ -3163,6 +3163,10 @@ $app_strings = array (
     'LBL_DASHLET_REFRESH_LABEL' => 'Refresh',
     'LBL_DASHLET_REMOVE_LABEL' => 'Remove',
     'LBL_DASHLET_DROP_HERE' => 'Drop here',
+    'LBL_DASHLET_MINIMIZE_ALL' => 'Minimize All',
+    'LBL_DASHLET_MAXIMIZE_ALL' => 'Maximize All',
+    'LBL_DASHLET_MINIMIZE' => 'Minimize',
+    'LBL_DASHLET_MAXIMIZE' => 'Maximize',
 
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',

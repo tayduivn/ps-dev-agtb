@@ -20,13 +20,13 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
                 array(
                     "name"      => "collapse_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_COLLAPSE_ALL",
+                    "label"     => "LBL_DASHLET_MINIMIZE_ALL",
                 ),
 
                 array(
                     "name"      => "expand_button",
                     "type"      => "rowaction",
-                    "label"     => "LBL_EXPAND_ALL",
+                    "label"     => "LBL_DASHLET_MAXIMIZE_ALL",
                 ),
             ),
             "showOn" => "view",
