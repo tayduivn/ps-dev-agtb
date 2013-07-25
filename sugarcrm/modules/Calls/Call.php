@@ -226,34 +226,34 @@ class Call extends SugarBean {
 		}*/
 
         $return_id = parent::save($check_notify);
-        global $current_user;
-
         // Previously this was handled in both the CallFormBase and the AfterImportSave function, so now it just happens every time you save a record.
-	    if ( $this->parent_type == 'Contacts' ) {
-            if ( is_array($this->contacts_arr) ) {
+        if ($this->parent_type == 'Contacts') {
+            if (is_array($this->contacts_arr) && !in_array($this->parent_id, $this->contacts_arr)) {
                 $this->contacts_arr[] = $this->parent_id;
             }
-	        $this->load_relationship('contacts');
-	        if ( !$this->contacts->relationship_exists('contacts',array('id'=>$this->parent_id)) ) {
-	            $this->contacts->add($this->parent_id);
+            $this->load_relationship('contacts');
+            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->parent_id))) {
+                $this->contacts->add($this->parent_id);
             }
-	    }
-	    elseif ( $this->parent_type == 'Leads' ) {
-            if ( is_array($this->leads_arr) ) {
+        } elseif ($this->parent_type == 'Leads') {
+            if (is_array($this->leads_arr) && !in_array($this->parent_id, $this->leads_arr)) {
                 $this->leads_arr[] = $this->parent_id;
             }
-	        $this->load_relationship('leads');
-	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) ) {
-	            $this->leads->add($this->parent_id);
+            $this->load_relationship('leads');
+            if (!$this->leads->relationship_exists('leads', array('id' => $this->parent_id))) {
+                $this->leads->add($this->parent_id);
             }
-	    }
+        }
 
-	    if(!empty($this->contact_id)) {
-	    	$this->load_relationship('contacts');
-	    	if(!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
-	    		$this->contacts->add($this->contact_id);
-	    	}
-	    }
+        if (!empty($this->contact_id)) {
+            if (is_array($this->contacts_arr) && !in_array($this->contact_id, $this->contacts_arr)) {
+                $this->contacts_arr[] = $this->contact_id;
+            }
+            $this->load_relationship('contacts');
+            if (!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
+                $this->contacts->add($this->contact_id);
+            }
+        }
 
         $this->setUserInvitees($this->users_arr);
 
