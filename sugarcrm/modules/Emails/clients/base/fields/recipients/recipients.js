@@ -26,6 +26,13 @@
  ********************************************************************************/
 
 ({
+    /**
+     * {@inheritDoc}
+     *
+     * This field doesn't support `showNoData`.
+     */
+    showNoData: false,
+
     events: {
         "click .btn": "_showAddressBook"
     },
