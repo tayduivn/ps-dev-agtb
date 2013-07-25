@@ -14,15 +14,15 @@
 $viewdefs['UserSignatures']['base']['view']['list'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label'  => 'LBL_PANEL_1',
             'fields' => array(
-                    array(
-                        "name"    => "name",
-                        "label"   => "LBL_NAME",
-                        "link"    => false,
-                        "default" => true,
-                    ),
+                array(
+                    "name"    => "name",
+                    "label"   => "LBL_NAME",
+                    "link"    => false,
+                    "default" => true,
                 ),
             ),
         ),
+    ),
 );

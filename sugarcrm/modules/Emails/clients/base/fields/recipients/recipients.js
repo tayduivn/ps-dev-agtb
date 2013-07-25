@@ -87,7 +87,8 @@
                 formatSelection:     _.bind(this.formatSelection, this),
                 formatResult:        _.bind(this.formatResult, this),
                 formatSearching:     _.bind(this.formatSearching, this),
-                formatInputTooShort: _.bind(this.formatInputTooShort, this)
+                formatInputTooShort: _.bind(this.formatInputTooShort, this),
+                selectOnBlur:        true
             });
 
             if (!!this.def.disabled) {

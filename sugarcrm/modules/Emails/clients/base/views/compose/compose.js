@@ -20,7 +20,7 @@
         });
         this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer, this);
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
-        this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer, this);
+        this.context.on("actionbar:signature_button:clicked", this.launchSignatureDrawer, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
 
         this._lastSelectedSignature = app.user.getPreference("signature_default");
@@ -352,24 +352,7 @@
         app.drawer.open({
                 layout:'selection-list',
                 context:{
-                    module:'EmailTemplates',
-                    selectionListFilter: {
-                        'filter': [
-                            {
-                                '$or': [
-                                    {
-                                        'type': {'$is_null': ''}
-                                    },
-                                    {
-                                        'type': {'$equals': ''}
-                                    },
-                                    {
-                                        'type': {'$equals': 'email'}
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                    module:'EmailTemplates'
                 }
             },
             this.templateDrawerCallback
@@ -539,17 +522,12 @@
      *
      * @private
      */
-    _launchSignatureDrawer: function() {
+    launchSignatureDrawer: function() {
         app.drawer.open(
             {
                 layout: "selection-list",
                 context: {
-                    module: 'UserSignatures',
-                    selectionListFilter: {
-                        filter: [
-                            {'user_id': app.user.id}
-                        ]
-                    }
+                    module: 'UserSignatures'
                 }
             },
             this._updateEditorWithSignature

@@ -13,6 +13,8 @@
  */
 
 $mod_strings = array(
+    'LBL_MODULE_NAME'			=> 'User Signatures',
+    'LBL_MODULE_NAME_SINGULAR'		=> 'User Signature',
     'LBL_EMAIL_SIGNATURE_ERROR1' => 'This signature requires a name.',
     'LBL_SIGNATURE_NAME'         => 'Name',
     'LBL_SIGNATURE'              => 'Signature',
