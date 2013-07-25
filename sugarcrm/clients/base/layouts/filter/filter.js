@@ -237,6 +237,7 @@
 
             ctxCollection.filterDef = filterDef;
             ctxCollection.origFilterDef = origFilterDef;
+            ctxCollection.resetPagination();
 
             options = _.extend(options, ctx.get('collectionOptions'));
 
