@@ -1,88 +1,216 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+/**
+ * View for merge duplicates.
+ *
+ * @class View.Views.BaseMergeDuplicatesView
+ * @alias SUGAR.App.view.views.BaseMergeDuplicatesView
+ * @extends View.Views.BaseListView
+ */
 ({
-    plugins: ['editable', 'error-decoration'],
+    plugins: ['editable', 'error-decoration', 'tooltip', 'ellipsis_inline'],
     extendsFrom: 'ListView',
     events: {
-        'click a[data-action=more]' : 'showMore',
-        'click a[data-mode=preview]' : 'togglePreview'
+        'click [data-action=more]' : 'toggleMoreLess',
+        'click [data-action=less]' : 'toggleMoreLess',
+        'click [data-mode=preview]' : 'togglePreview',
+        'click [data-action=copy]' : 'copy',
     },
-    MAX_RECORDS: 5, // the number of records we can merge, by fiat
-    mergeFields: [], // list of fields to generate the metadata on the fly
+
+    /**
+     * List of fields to generate the metadata on the fly.
+     *
+     * @property {Array} mergeFields
+     */
+    mergeFields: [],
+
+    /**
+     * @property {Object} rowFields
+     */
     rowFields: {},
+
+    /**
+     * @property {Data.Bean} primaryRecord
+     */
     primaryRecord: {},
-    filterDef: [],
+
+    /**
+     * @property {Boolean} [toggled=false]
+     */
     toggled: false,
+
+    /**
+     * @property {Boolean} [isPreviewOpen=false]
+     */
     isPreviewOpen: false,
 
     /**
+     * Array of field defs keys that contain fields to populate.
      *
-     * {@inheritdoc}
+     * For some types of field we should populate additional fields
+     * that can be determined from fields defs. E.g.
+     * 1. if field type is 'relate' and 'parent'
+     *     - def.id_name contains field name for id of related
+     * 2. if field type is 'parent'
+     *     - def.type_name contains field name for type of related
+     *
+     * @property {Array} relatedFieldsMap
+     */
+    relatedFieldsMap: ['id_name', 'type_name'],
+
+    /**
+     * Field names won't be mergeable.
+     *
+     * @property {Array} fieldNameBlacklist
+     */
+    fieldNameBlacklist: [
+        'date_entered', 'date_modified', 'modified_user_id', 'created_by', 'deleted'
+    ],
+
+    /**
+     * Field types won't be mergeable.
+     *
+     * @property {Array} fieldTypesBlacklist
+     *
+     * TODO: remove types that have properly implementation for merge interface
+     */
+    fieldTypesBlacklist: ['image', 'file', 'currency', 'email', 'team_list', 'teamset', 'link', 'id'],
+
+    /**
+     * Attribute combos allowed to merge.
+     *
+     * @property {Array} validArrayAttributes
+     */
+    validArrayAttributes: [
+        { type: 'datetimecombo', source: 'db' },
+        { type: 'datetime', source: 'db' },
+        { type: 'varchar', source: 'db' },
+        { type: 'enum', source: 'db' },
+        { type: 'multienum', source: 'db' },
+        { type: 'text', source: 'db' },
+        { type: 'date', source: 'db' },
+        { type: 'time', source: 'db' },
+        { type: 'int', source: 'db' },
+        { type: 'long', source: 'db' },
+        { type: 'double', source: 'db' },
+        { type: 'float', source: 'db' },
+        { type: 'short', source: 'db' },
+        { dbType: 'varchar', source: 'db' },
+        { dbType: 'double', source: 'db' },
+        { type: 'relate' },
+        { type: 'parent' }
+    ],
+
+    /**
+     * Types of fields that can be processed
+     * in {@link View.Views.BaseMergeDuplicatesView#flattenFieldsets}.
+     * @property {Array} flattenFieldTypes
+     */
+    flattenFieldTypes: ['fieldset', 'fullname'],
+
+    /**
+     * {@inheritDoc}
+     *
+     * Initialize merge collection as collection of selected records and
+     * initialise fields that can be used in merge.
      */
     initialize: function(options) {
-        var meta = app.metadata.getView(options.module, 'record'),
-            fieldDefs = app.metadata.getModule(options.module).fields,
-            mergeCollection = options.context.get('collection'),
-            records = this.checkAccessToModels(options.context.get("selectedDuplicates")),
-            primary,
-            ids;
 
-        // bomb out if we don't have between 2 and MAX_RECORDS
-        if (!records.length || records.length < 2 || records.length > this.MAX_RECORDS) {
-            var msg = app.lang.get(records.length === options.context.get("selectedDuplicates") ?
-                'ERR_MERGE_INVALID_NUMBER_RECORDS' : 'ERR_MERGE_NO_ACCESS', options.module);
-            app.alert.show('invalid-record-count',{
-                level: 'error',
-                messages: msg,
-                autoClose: true
-            });
-            app.drawer.close(false);
-            return false;
-        }
-
-        // standardize primary record from list of records,
-        // and put primary at the beginning of records.
-        // this is useful primarily to know which record will be the primary
-        // in the collection to be pulled later. We do not use the input models
-        primary = (options.context.has("primaryRecord")) ?
-            _.findWhere(records, {id: options.context.get("primaryRecord").id}) :
-            _.first(records);
-        records = [primary].concat(_.without(records, primary));
-
-        // these are the fields we'll need to pull our records
-        this.mergeFields = _.chain(meta.panels)
-            .map(function(panel) {return this.flattenFieldsets(panel.fields);}, this)
-            .flatten()
-            .filter(function(field) {return field.name && this.validMergeField(fieldDefs[field.name]);}, this)
-            .value();
-
-        // enforce the order of the ids so that primaryRecord always appears first
-        // and only retrieve the records specified
-        ids = (_.pluck(records, 'id'));
-        if (mergeCollection) {
-            this.filterDef = mergeCollection.filterDef;
-            mergeCollection.filterDef = mergeCollection.filterDef || [];
-            mergeCollection.filterDef.push({ "id": { "$in" : ids}});
-            mergeCollection.comparator = function (model) {
-                return _.indexOf(ids, model.get('id'));
-            }
-        }
         app.view.View.prototype.initialize.call(this, options);
-        this.setPrimaryRecord(primary);
+
+        this._initializeMergeFields();
+        this._initializeMergeCollection(this._prepareRecords());
+
         this.action = 'list';
-        this.layout.on('mergeduplicates:save:fire', this.save, this);
+        this.layout.on('mergeduplicates:save:fire', this.triggerSave, this);
     },
 
     /**
+     * Standardize primary record from list of records.
      *
-     * @param {Array} models Models to check access for merge.
-     * @return {Array} Model with access
+     * Put primary at the beginning of records.
+     * This is useful primarily to know which record will be the primary
+     * in the collection to be pulled later. We do not use the input models.
+     *
+     * @return {Array} records.
+     * @private
+     */
+    _prepareRecords: function() {
+        var records = this.checkAccessToModels(this.context.get('selectedDuplicates')),
+            primary;
+
+        primary = (this.context.has('primaryRecord')) ?
+            _.findWhere(records, {id: this.context.get('primaryRecord').id}) :
+            _.first(records);
+
+        this.setPrimaryRecord(primary);
+        return [primary].concat(_.without(records, primary));
+    },
+
+    /**
+     * Initialize fields for merge.
+     *
+     * Creates filtered set of model's fields that can be merged.
+     * @private
+     */
+    _initializeMergeFields: function() {
+        var meta = app.metadata.getView(this.module, 'record'),
+            fieldDefs = app.metadata.getModule(this.module).fields;
+
+        this.mergeFields = _.chain(meta.panels)
+            .map(function(panel) {
+                return this.flattenFieldsets(panel.fields);
+            }, this)
+            .flatten()
+            .filter(function(field) {
+                return field.name && this.validMergeField(fieldDefs[field.name]);
+            }, this)
+            .value();
+    },
+
+    /**
+     * Initialize collection for merge.
+     *
+     * Enforce the order of the ids so that primaryRecord always appears first
+     * and only retrieve the records specified.
+     * @param {Array} records
+     * @private
+     */
+    _initializeMergeCollection: function(records) {
+        var ids = (_.pluck(records, 'id'));
+
+        if (this.collection) {
+            this.collection.filterDef = [];
+            this.collection.filterDef.push({ 'id': { '$in' : ids}});
+            this.collection.comparator = function(model) {
+                return _.indexOf(ids, model.get('id'));
+            };
+        }
+    },
+
+    /**
+     * Check access for models selected for merge.
+     *
+     * @param {Data.Bean[]} models Models to check access for merge.
+     * @return {Data.Bean[]} Models with access.
      */
     checkAccessToModels: function(models) {
         var result = [];
         _.each(models, function(model) {
-            if ( app.acl.hasAccessToModel('edit', model) &&
-                app.acl.hasAccessToModel('list', model) &&
-                app.acl.hasAccessToModel('delete', model)
-            ) {
+            var hasAccess = _.every(['view', 'edit', 'delete'], function(acl) {
+                return app.acl.hasAccessToModel(acl, model);
+            });
+            if (hasAccess) {
                 result.push(model);
             }
         }, this);
@@ -90,111 +218,126 @@
     },
 
     /**
-     * Save primary and delete other records
+     * Handler for save merged records event.
+     *
+     * Shows confirmation message and calls
+     * {@link View.Views.BaseMergeDuplicatesView#_savePrimary} on confirm.
      */
-    save: function() {
+    triggerSave: function() {
         var self = this,
             alternativeModels = _.without(this.collection.models, this.primaryRecord),
             alternativeModelNames = [];
+
         _.each(alternativeModels, function(model) {
-            alternativeModelNames.push(model.get('name'));
+            alternativeModelNames.push(model.get('name') || model.get('full_name'));
         });
+
         this.clearValidationErrors(this.getFieldNames());
-        this.primaryRecord.doValidate(this.getFieldNames(), function(isValid) {
-            if (isValid) {
-                app.alert.show('merge_confirmation', {
-                    level: 'confirmation',
-                    messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM')
-                        + " " + alternativeModelNames.join(", ") + ". "+ app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
-                    onConfirm: function () {
-                        self.primaryRecord.save({}, {
-                            success: function() {
-                                _.each(alternativeModels, function (model) {
-                                    self.collection.remove(model);
-                                    model.destroy();
-                                }, self);
-                                // We need to wait untill all models removed from server
-                                _.defer(function() {
-                                    app.drawer.close(true);
-                                }, self);
-                            },
-                            error: function () {
-                                app.alert.show('server-error', {
-                                    level: 'error',
-                                    messages: app.lang.get('ERR_AJAX_LOAD_FAILURE'),
-                                    autoClose: false
-                                });
-                            },
-                            showAlerts: true,
-                            viewed: true
-                        });
-                    }
-                });
-            }
+
+        app.alert.show('merge_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('LBL_MERGE_DUPLICATES_CONFIRM') + ' ' +
+                alternativeModelNames.join(', ') + '. ' +
+                app.lang.get('LBL_MERGE_DUPLICATES_PROCEED'),
+            onConfirm: _.bind(this._savePrimary, this)
         });
     },
+
     /**
-     * Override the standard view's get field names.
-     * @override
-     * @returns {Array} array of field names.
+     * Saves primary record and triggers `mergeduplicates:primary:saved` event on success.
+     *
+     * @private
+     */
+    _savePrimary: function() {
+        var self = this;
+        this.primaryRecord.save({}, {
+            fieldsToValidate: this.getFieldNames(),
+            success: function() {
+                self.primaryRecord.trigger('mergeduplicates:primary:saved');
+            },
+            showAlerts: true,
+            viewed: true
+        });
+    },
+
+    /**
+     * Removes merged models and triggers `mergeduplicates:primary:merged` on success.
+     *
+     * We need to wait until all models are removed from server
+     * to properly reload records view. Runs destroy methods in parallel
+     * and triggers event after all requests have finished.
+     *
+     * @private
+     */
+    _removeMerged: function() {
+        var self = this,
+            models = _.without(this.collection.models, this.primaryRecord);
+
+        async.forEach(models, function(model, callback) {
+            self.collection.remove(model);
+            model.destroy({success: function() {
+                callback.call();
+            }});
+        }, function() {
+            self.primaryRecord.trigger('mergeduplicates:primary:merged');
+        });
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Override fetching fields names. Use fields that are allowed to merge only.
+     *
+     * Add additional fields for cases:
+     * 1. field type is 'relate' and 'parent' (def.id_name)
+     *     - def.id_name contains field name for id of related
+     * 2. field type is 'parent' (def.type_name)
+     *     - def.type_name contains field name for type of related
+     *
+     * @return {Array} array of field names.
      */
     getFieldNames: function() {
         var fields = [],
             fieldDefs = app.metadata.getModule(this.module).fields;
-        _.each(this.mergeFields, function(field) {
-            var def = fieldDefs[field.name];
-            if (!_.isUndefined(def.id_name) && !_.isUndefined((fieldDefs[def.id_name].name))) {
-                fields.push(fieldDefs[def.id_name].name);
-            }
+
+        _.each(this.mergeFields, function(mergeField) {
+            var def = fieldDefs[mergeField.name];
+            _.each(this.relatedFieldsMap, function(relatedField) {
+                if (!_.isUndefined(def[relatedField]) && !_.isUndefined((fieldDefs[def[relatedField]].name))) {
+                    fields.push(fieldDefs[def[relatedField]].name);
+                }
+            });
             fields.push(fieldDefs[def.name].name);
         }, this);
         return fields;
     },
+
     /**
-     * Create a two panel viewdews metadata (visible, hidden) given list of fields
-     * and the collection
-     * @param {Array} fields the list of fields for the module
-     * @param {BeanCollection} collection the collection of records to merge
-     * @param {Model} primaryRecord the primary record
-     * @return {Object} the metadata for the view template
+     * Create metadata for panels.
+     *
+     * Create a two panel viewdews metadata (visible, hidden) given list of fields and the collection
+     * The algorithm for determining field placement:
+     * 1. all fields should be base fields. fieldsets should be broken. no non-editable fields.
+     * 2. if a field is "similar" among all alternatives, it is placed in a hidden panel
+     * 3. if a field is "different" among all alternatives (i.e. there exists two alternatives such
+     * that the field value is not equal), it is placed in a visible panel.
+     *
+     * @param {Array} fields The list of fields for the module.
+     * @param {Data.BeanCollection} collection The collection of records to merge.
+     * @param {Data.Bean} primaryRecord The primary record.
+     * @return {Object} The metadata for the view template.
+     * @private
      */
-    generateMetadata: function(fields, collection, primaryRecord) {
+    _generateMetadata: function(fields, collection, primaryRecord) {
         var hiddenFields = [],
-            visibleFields = [];
-        // the algorithm for determining field placement:
-        // 1. all fields should be base fields. fieldsets should be broken. no non-editable fields.
-        // 2. if a field is "similar" among all alternatives, it is placed in a hidden panel
-        // 3. if a field is "different" among all alternatives (i.e. there exists two alternatives such
-        //    that the field value is not equal), it is placed in a visible panel.
+            visibleFields = [],
+            alternatives = collection.without(primaryRecord);
+
         _.each(fields, function(field) {
-            // internal helper - see if the field is the same among all alternatives.
-            function isSimilar(field, primary, alternatives) {
-                return _.every(alternatives, function(alt) {
-                    return (alt.get(field.name) === primary.get(field.name));
-                });
-            }
-
-            var fieldMeta = {
-                type: 'fieldset',
-                label: field.label,
-                fields: [
-                    {
-                        'name' : field.name,
-                        'type' : 'duplicatecopy'
-                    },
-                    field
-                ]
-            };
-
-            var alternatives = collection.without(primaryRecord);
-
-            if(isSimilar(field, primaryRecord, alternatives)) {
-                fieldMeta.oddEven = (hiddenFields.length + 1) % 2 ? 'odd' : 'even';
-                hiddenFields.push(fieldMeta);
-            }
-            else {
-                fieldMeta.oddEven = (visibleFields.length + 1) % 2 ? 'odd' : 'even';
-                visibleFields.push(fieldMeta);
+            if (this._isSimilar(field, primaryRecord, alternatives)) {
+                hiddenFields.push(field);
+            } else {
+                visibleFields.push(field);
             }
         }, this);
 
@@ -213,88 +356,139 @@
     },
 
     /**
-     * utility method for determining if a field is mergable from its fielddef.
-     * @param fieldDef
-     * @return {Boolean} is this field a valid field to merge?
+     * Checks if the field is the same among all models.
+     *
+     * Compares field value from primary model with values from other models.
+     * @param {Object} field The field to compare.
+     * @param {Data.Bean} primary The model choosed as primary.
+     * @param {Data.Bean[]} models The array of models to compare with.
+     * @return {Boolean} Is field value the same among all models.
+     * @private
      */
-    validMergeField: function(fieldDef) {
-        // these field names won't be mergeable.
-        var fieldNameBlacklist = [
-            'date_entered','date_modified','modified_user_id','created_by','deleted'
-            ],
-            // these attribute combos will be allowed to merge
-            validArrayAttributes = [
-                { type: 'datetimecombo', source: 'db' },
-                { type: 'datetime', source: 'db' },
-                { type: 'varchar', source:'db' },
-                { type: 'enum', source: 'db' },
-                { type: 'multienum', source: 'db' },
-                { type: 'text', source: 'db' },
-                { type: 'date', source: 'db' },
-                { type: 'time', source: 'db' },
-                { type: 'int', source: 'db' },
-                { type: 'long', source: 'db' },
-                { type: 'double', source: 'db' },
-                { type: 'float', source: 'db' },
-                { type: 'short', source: 'db' },
-                { dbType: 'varchar', source: 'db' },
-                { dbType: 'double', source: 'db' },
-                { type: 'relate' }
-            ];
-
-        // need a field def to play.
-        if (!fieldDef) {
-            return false;
-        }
-
-        if (_.contains(fieldNameBlacklist, fieldDef.name)) {
-            return false;
-        }
-
-        // the explicit merge flag
-        if(_.has(fieldDef,'duplicate_merge')) {
-            if (fieldDef.duplicate_merge === 'disabled' || fieldDef.duplicate_merge === false) {
-                return false;
-            }
-
-            if(fieldDef.duplicate_merge === 'enabled' || fieldDef.duplicate_merge === true) {
-                return true;
-            }
-        }
-
-        // no autoincrement field please
-        if(fieldDef.auto_increment === true) {
-            return false;
-        }
-
-        // normalize fields that might not be there
-        fieldDef.dbType = fieldDef.dbType || fieldDef.type;
-        fieldDef.source = fieldDef.source || 'db';
-
-        // compare to values in the list of acceptable attributes
-        return _.some(validArrayAttributes, function(o) {
-            return _.chain(o)
-                    .keys()
-                    .every(function(key) {
-                        return o[key] === fieldDef[key];
-                     })
-                    .value();
+    _isSimilar: function(field, primary, models) {
+        return _.every(models, function(model) {
+            return (primary.get(field.name) === model.get(field.name));
         });
     },
 
     /**
-     * utility method for taking a fieldlist with possible nested fields,
-     * and returning a flat array of fields
+     * Utility method for determining if a field is mergeable from its def.
      *
-     * @param {Array} defs - unprocessed list of fields from metadata
-     * @return {Array} fields - flat list of fields
+     * @param {Object} fieldDef Defs of validated field.
+     * @return {Boolean} Is this field a valid field to merge?
+     */
+    validMergeField: function(fieldDef) {
+
+        if (!fieldDef ||
+            fieldDef.auto_increment === true ||
+            !this._validMergeFieldName(fieldDef) ||
+            !this._validMergeFieldType(fieldDef) ||
+            this._isDuplicateMergeDisabled(fieldDef)
+        ) {
+            return false;
+        }
+
+        if (this._isDuplicateMergeEnabled(fieldDef)) {
+            return true;
+        }
+
+        return this._validMergeFieldAttributes(fieldDef);
+    },
+
+    /**
+     * Validate field to merge by name.
+     *
+     * @param {Object} defs Defs of validated field.
+     * @return {Boolean}
+     * @private
+     */
+    _validMergeFieldName: function(defs) {
+        return !_.contains(this.fieldNameBlacklist, defs.name);
+    },
+
+    /**
+     * Validate field to merge by type.
+     *
+     * @param {Object} defs Defs of validated field.
+     * @return {Boolean}
+     * @private
+     */
+    _validMergeFieldType: function(defs) {
+        return !_.contains(this.fieldTypesBlacklist, defs.type);
+    },
+
+    /**
+     * Checks if duplicate_merge is disabled in field's defs.
+     *
+     * @param {Object} defs Defs of validated field.
+     * @return {Boolean}
+     * @private
+     */
+    _isDuplicateMergeDisabled: function(defs) {
+        if (!_.isUndefined(defs.duplicate_merge) &&
+            (defs.duplicate_merge === 'disabled' ||
+                defs.duplicate_merge === false)
+        ) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Checks if duplicate_merge is enabled in field's defs.
+     *
+     * @param {Object} defs Defs of validated field.
+     * @return {Boolean}
+     * @private
+     */
+    _isDuplicateMergeEnabled: function(defs) {
+        if (!_.isUndefined(defs.duplicate_merge) &&
+            (defs.duplicate_merge === 'enabled' ||
+                defs.duplicate_merge === true)
+        ) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Validate field to merge by attributes.
+     *
+     * @param {Object} defs Defs of validated field.
+     * @return {Boolean}
+     * @private
+     */
+    _validMergeFieldAttributes: function(defs) {
+        // normalize fields that might not be there
+        defs.dbType = defs.dbType || defs.type;
+        defs.source = defs.source || 'db';
+
+        // compare to values in the list of acceptable attributes
+        return _.some(this.validArrayAttributes, function(o) {
+            return _.chain(o)
+                .keys()
+                .every(function(key) {
+                    return o[key] === defs[key];
+                })
+                .value();
+        });
+    },
+
+    /**
+     * Utility method for taking a fieldlist with possible nested fields,
+     * and returning a flat array of fields.
+     *
+     * @param {Array} defs Unprocessed list of fields from metadata.
+     * @return {Array} Fields flat list of fields.
      */
     flattenFieldsets: function(defs) {
         var fieldsetFilter = function(field) {
-                return field.type && field.type === 'fieldset' && _.isArray(field.fields);
+                return (field.type &&
+                    _.isArray(field.fields) &&
+                    _.contains(this.flattenFieldTypes, field.type));
             },
-            fields = _.reject(defs, fieldsetFilter),
-            fieldsets = _.filter(defs, fieldsetFilter),
+            fields = _.reject(defs, fieldsetFilter, this),
+            fieldsets = _.filter(defs, fieldsetFilter, this),
             sort = _.chain(defs).pluck('name').value() || [],
             sortTemp = [];
 
@@ -345,187 +539,310 @@
     },
 
     /**
-     * Toggles a Preview for the primary record
+     * Toggles a Preview for the primary record.
      */
     togglePreview: function() {
-        if(this.isPreviewOpen) {
-            app.events.trigger("preview:close");
+        if (this.isPreviewOpen) {
+            app.events.trigger('preview:close');
             this.isPreviewOpen = false;
-        }
-        else {
+        } else {
             this.updatePreviewRecord(this.primaryRecord);
             this.isPreviewOpen = true;
         }
     },
+
     /**
-     * Create the preview panel for the model in question
-     * @param model
+     * Creates the preview panel for the model in question.
+     *
+     * @param {Data.Bean} model Model to preview.
      */
     updatePreviewRecord: function(model) {
-        var module = model.module || model.get('_module');
+        var module = model.module || model.get('module');
         var previewCollection = app.data.createBeanCollection(module, [model]);
-        app.events.trigger("preview:render", model, previewCollection, false);
+        app.events.trigger('preview:render', model, previewCollection, false);
     },
 
-    showMore: function(evt) {
-        this.toggled = !this.toggled;
-        this.$(".less").toggleClass("hide");
-        this.$(".more").toggleClass("hide");
-        this.$(".col .extra").toggleClass('hide');
-    },
     /**
-     * Update the view's title
-     * @param title
+     * Shows or hides additional fields.
+     *
+     * @param {Event} evt
+     */
+    toggleMoreLess: function(evt) {
+        this.toggled = !this.toggled;
+        this.$('[data-action=less]').toggleClass('hide', !this.toggled);
+        this.$('[data-action=more]').toggleClass('hide', this.toggled);
+        this.$('.col .extra').toggleClass('hide', !this.toggled);
+    },
+
+    /**
+     * Updates the view's title.
+     *
+     * @param {String} title
      */
     updatePrimaryTitle: function(title) {
-        this.recordName = title;
-        this.$('span.record-name').text(title);
+        this.$('[data-container=primary-title]').text(title);
     },
+
     /**
-     * Determine the best title to use for this record
-     * Either the 'name' field, or
-     * @param model
+     * Returns the title for model.
+     *
+     * @param {Data.Bean} model
+     * @return {String} record's title.
      * @private
-     * @return string record's title.
      */
     _getRecordTitle: function(model) {
-        return (model.get('name') ||
-            ((model.get('first_name') || '') + ' ' + (model.get('last_name') || '')) || '').trim();
+        return model.get('name') || model.get('full_name') || '';
     },
-    _render:function () {
-        this.meta = this.generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
+
+    /**
+     * {@inheritDoc}
+     *
+     * Add additional fields for specific types like 'parent' and 'relate'.
+     * Setup primary model editable.
+     * Setup drag-n-drop functionality.
+     */
+    _renderHtml: function() {
+        this.meta = this._generateMetadata(this.mergeFields, this.collection, this.primaryRecord);
 
         app.view.invokeParent(this, {
             type: 'view',
             name: 'list',
-            method: '_render'
+            method: '_renderHtml'
         });
 
-        delete this.rowFields;
         this.rowFields = {};
         _.each(this.fields, function(field) {
-            //TODO: Modified date should not be an editable field
             //TODO: the code should be handled different way instead of checking its type later
-            if(field.model.id && _.isUndefined(field.parent) && field.type !== 'datetimecombo') {
+            if (field.model.id &&
+                _.isUndefined(field.parent) &&
+                field.type !== 'datetimecombo'
+            ) {
                 this.rowFields[field.model.id] = this.rowFields[field.model.id] || [];
                 this.rowFields[field.model.id].push(field);
             }
         }, this);
-        this.setPrimaryEdit(this.primaryRecord.id);
-        this.$('[rel="tooltip"]').tooltip();
+        this.setPrimaryEditable(this.primaryRecord.id);
         this.setDraggable();
         if (this.toggled) {
             this.toggleMoreLess();
         }
     },
 
+    /**
+     * Set ups label of primary record as draggable using jQuery UI Sortable plugin.
+     */
     setDraggable: function() {
         var self = this,
         mergeContainer = this.$('[data-container=merge-container]');
-        mergeContainer.find(".col .primary-lbl").sortable({
-            connectWith: self.$(".col .primary-lbl"),
+        mergeContainer.find('[data-container=primary-label]').sortable({
+            connectWith: self.$('[data-container=primary-label]'),
             appendTo: mergeContainer,
             axis: 'x',
             disableSelection: true,
             cursor: 'move',
             placeholder: 'primary-lbl-placeholder-span',
             start: function(event, ui) {
-                self.$(".col .primary-lbl").addClass('primary-lbl-placeholder');
+                self.$('[data-container=primary-label]').addClass('primary-lbl-placeholder');
             },
-            stop: function(event, ui) {
-                var droppedTo = ui.item.parents('.col');
-                self.$(".col .primary-lbl").removeClass('primary-lbl-placeholder');
-                // short circuit if we didn't land on anything
-                if (droppedTo.length === 0) {
-                    self.$(".col .primary-lbl").sortable('cancel');
-                    return;
-                }
-                self.setPrimaryEdit(droppedTo.data("recordid"));
-            }
+            stop: _.bind(self._onStopSorting, self)
         });
     },
 
     /**
-     * Do what we need to do when the primary record is set
-     * @param {String} id the record representing the new primary model
+     * Handler for jQuery UI Sortable plugin event triggered when sorting has stopped.
+     *
+     * Set ups choosed record as primary and make it editable.
+     * If old primary record is changed shows confirmation message to confirm action.
+     *
+     * @param {Event} event
+     * @param {Object} ui
      */
-    setPrimaryEdit: function(id) {
-        // make sure we get the model in the collection, with all fields in it.
-        var primary_record = this.collection.get(id),
-            old_primary_record = this.primaryRecord;
+    _onStopSorting: function(event, ui) {
+        var self = this,
+            droppedTo = ui.item.parents('[data-record-id]');
 
-        if(primary_record) {
-            this.setPrimaryRecord(primary_record);
-            this.toggleFields(this.rowFields[primary_record.id], true);
+        self.$('[data-container=primary-label]').removeClass('primary-lbl-placeholder');
+        // short circuit if we didn't land on anything
+        if (droppedTo.length === 0) {
+            self.$('[data-container=primary-label]').sortable('cancel');
+            return;
         }
-
-        // revert old primary record to standard record, unless we dropped on the same record.
-        if (old_primary_record && old_primary_record !== primary_record) {
-            this.toggleFields(this.rowFields[old_primary_record.id], false);
-        }
-
-        if (!_.isUndefined(id)) {
-            this.$('.primary-edit-mode').removeClass('primary-edit-mode');
-            this.$('[data-recordid=' + id + ']').addClass('primary-edit-mode');
+        if (self.primaryRecord && self.primaryRecord.id !== droppedTo.data('record-id')) {
+            var changedAttributes = self.primaryRecord.changedAttributes(
+                self.primaryRecord.getSyncedAttributes()
+            );
+            if (!_.isEmpty(changedAttributes)) {
+                app.alert.show('change_primary_confirmation', {
+                    level: 'confirmation',
+                    messages: app.lang.get('LBL_MERGE_UNSAVED_CHANGES'),
+                    onConfirm: function() {
+                        self.primaryRecord.revertAttributes();
+                        self.setPrimaryEditable(droppedTo.data('record-id'));
+                    },
+                    onLinkClick: function(event) {
+                        if ($(event.currentTarget).hasClass('cancel')) {
+                            self.$('[data-record-id=' + self.primaryRecord.get('id') + '] ' +
+                                    '[data-container=primary-label]')
+                                .sortable('cancel');
+                        }
+                    }
+                });
+                return;
+            }
+            self.setPrimaryEditable(droppedTo.data('record-id'));
         }
     },
 
     /**
-     * Set primary record
-     * @param {Model} model primary model
+     * Prepare primary record for edit mode.
+     *
+     * Toggle primary record in edit mode, setup panel title and
+     * update preview panel if it is opened. Make sure we get the model in
+     * the collection, with all fields in it. If id parameter is provided
+     * switch primary record to new model before and revert old primary record
+     * to standard record. If new model is same as primary no action is taken.
+     *
+     * @param {String} [id] The record representing the new primary model.
+     */
+    setPrimaryEditable: function(id) {
+
+        var oldPrimaryRecord = this.primaryRecord,
+            newPrimaryRecord = this.collection.get(id || null);
+
+        if (!_.isUndefined(newPrimaryRecord) && newPrimaryRecord !== oldPrimaryRecord) {
+            this.setPrimaryRecord(newPrimaryRecord);
+        }
+
+        if (!this.primaryRecord) {
+            return;
+        }
+
+        if (oldPrimaryRecord && oldPrimaryRecord !== this.primaryRecord) {
+            this.toggleFields(this.rowFields[oldPrimaryRecord.id], false);
+        }
+
+        this.toggleFields(this.rowFields[this.primaryRecord.id], true);
+        this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
+        if (this.isPreviewOpen) {
+            this.updatePreviewRecord(this.primaryRecord);
+        }
+        this.$('.primary-edit-mode').removeClass('primary-edit-mode');
+        this.$('[data-record-id=' + this.primaryRecord.id + ']').addClass('primary-edit-mode');
+        this.$('[data-record-id=' + this.primaryRecord.id + '] input[type=radio]').attr('checked', true);
+    },
+
+    /**
+     * Set a given model as primary.
+     *
+     * If the given module is already the primary record no action will be taken.
+     * This will toggle off all the events of the old primary record and
+     * setup the events for the new model. It will also setup primary record
+     * 'change' event handler to updates title of panel,
+     * 'mergeduplicates:primary:saved' to remove others models and
+     * 'mergeduplicates:primary:merged' event handler to close drawer.
+     *
+     * @param {Data.Bean} model Primary model.
      */
     setPrimaryRecord: function(model) {
         if (this.primaryRecord === model) {
             return;
         }
 
-        // turn off events on the old primary record if applicable
         if (this.primaryRecord instanceof Backbone.Model) {
-            this.primaryRecord.off('change error:validation', null, this);
+            this.primaryRecord.off(null, null, this);
         }
 
-        // get the new primary record wired up
         this.primaryRecord = model;
-        this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
-        if (this.isPreviewOpen) {
-            this.updatePreviewRecord(this.primaryRecord);
-        }
 
-        this.primaryRecord.on('change', function(model){
-            if (this.isPreviewOpen) {
-                app.events.trigger('preview:close'); // either this or set a previewId on the model
-                this.updatePrimaryTitle(this._getRecordTitle(model));
-                this.updatePreviewRecord(model);
-            }
+        this.primaryRecord.on('change', function(model) {
+            this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
         }, this);
-        this.context.set("primaryRecord", this.primaryRecord);
+
+        this.primaryRecord.on('mergeduplicates:primary:saved', function(model) {
+            this._removeMerged();
+        }, this);
+
+        this.primaryRecord.on('mergeduplicates:primary:merged', function(model) {
+            app.drawer.close(true);
+        }, this);
     },
 
+    /**
+     * Copy value from selected field to primary record.
+     *
+     * Copy additional fields for cases:
+     * 1. field type is 'relate' and 'parent' (def.id_name)
+     *     - def.id_name contains field name for id of related.
+     * 2. field type is 'parent' (def.type_name)
+     *     - def.type_name contains field name for type of related.
+     *
+     * @param {Event} evt
+     */
+    copy: function(evt) {
+        var recordId = this.$(evt.currentTarget).data('record-id'),
+            fieldName = this.$(evt.currentTarget).data('field-name'),
+            fieldDefs = app.metadata.getModule(this.module).fields,
+            model,
+            defs;
+
+        if (_.isUndefined(this.primaryRecord) ||
+            _.isUndefined(this.primaryRecord.id) ||
+            _.isUndefined(recordId) ||
+            _.isUndefined(fieldName) ||
+            _.isUndefined(fieldDefs[fieldName])
+        ) {
+            return;
+        }
+
+        if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName)) {
+            return;
+        }
+
+        model = this.collection.get(recordId);
+        if (_.isUndefined(model)) {
+            return;
+        }
+
+        defs = fieldDefs[fieldName];
+        _.each(this.relatedFieldsMap, function(relatedField) {
+            if (!_.isUndefined(defs[relatedField]) &&
+                !_.isUndefined((fieldDefs[defs[relatedField]].name))
+            ) {
+                this.primaryRecord.set(defs[relatedField], model.get(defs[relatedField]));
+            }
+        }, this);
+        this.primaryRecord.set(fieldName, model.get(fieldName));
+    },
 
     /**
-     * custom bindDataChange
+     * {@inheritDoc}
+     *
+     * Override 'reset' event for collection to setup first model ar primary.
      */
     bindDataChange: function() {
         if (!this.collection) {
             return;
         }
-        this.collection.on('reset', function (coll) {
+        this.collection.on('reset', function(coll) {
             if (coll.length) {
                 this.setPrimaryRecord(coll.at(0));
+            }
+            if (this.disposed) {
+                return;
             }
             this.render();
         }, this);
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Off all events on primary model.
+     */
     _dispose: function() {
-        var mergeCollection = this.context.get('collection');
-        if (this.primaryRecord instanceof Backbone.Model) {
-            this.primaryRecord.off('change', null, this);
+        if (!_.isEmpty(this.primaryRecord)) {
+            this.primaryRecord.off(null, null, this);
         }
-        this.collection.off('reset', null, this);
-        if (!_.isUndefined(mergeCollection)) {
-            mergeCollection.filterDef = this.filterDef;
-        }
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

@@ -30,8 +30,8 @@ $viewdefs['base']['layout']['merge-duplicates'] = array(
                                     'view' => 'merge-duplicates-headerpane',
                                 ),
                                 array(
-                                    'view' => 'merge-duplicates'
-                                )
+                                    'view' => 'merge-duplicates',
+                                ),
                             ),
                             'type' => 'simple',
                             'name' => 'main-pane',
@@ -68,8 +68,8 @@ $viewdefs['base']['layout']['merge-duplicates'] = array(
                             'components' =>
                             array(
                                 array(
-                                    'layout' => 'preview'
-                                )
+                                    'layout' => 'preview',
+                                ),
                             ),
                             'type' => 'simple',
                             'name' => 'preview-pane',

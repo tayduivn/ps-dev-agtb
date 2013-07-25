@@ -1,8 +1,8 @@
-describe("Merge Duplicates", function () {
+describe('View.Views.BaseMergeDuplicatesView', function() {
 
     var view, layout, app;
 
-    beforeEach(function () {
+    beforeEach(function() {
         var module = 'Contacts',
             context = null;
         app = SugarTest.app;
@@ -22,80 +22,77 @@ describe("Merge Duplicates", function () {
         layout.context.set({
             selectedDuplicates: [new Backbone.Model(), new Backbone.Model()]
         });
-        view = SugarTest.createView("base", module, "merge-duplicates", null, layout.context, null, layout);
+        view = SugarTest.createView('base', module, 'merge-duplicates', null, layout.context, null, layout);
     });
 
-    afterEach(function () {
+    afterEach(function() {
         layout.dispose();
         app.view.reset();
         SugarTest.testMetadata.dispose();
     });
 
-    it("Tests fields for merge", function() {
-        var data = [
-            {
-                field: {
-                    type: 'datetime',
-                    source: 'db',
-                    name: 'customDate'
-                },
-                expectedResult: true
+    using('fields on merge view', [
+        {
+            field: {
+                type: 'datetime',
+                source: 'db',
+                name: 'customDate'
             },
-            {
-                field: {
-                    type: 'datetime',
-                    source: 'db',
-                    name: 'date_modified'
-                },
-                expectedResult: false
+            expectedResult: true
+        },
+        {
+            field: {
+                type: 'datetime',
+                source: 'db',
+                name: 'date_modified'
             },
-            {
-                field: {
-                    type: 'text',
-                    source: 'non-db',
-                    name: 'relateText'
-                },
-                expectedResult: false
+            expectedResult: false
+        },
+        {
+            field: {
+                type: 'text',
+                source: 'non-db',
+                name: 'relateText'
             },
-            {
-                field: null,
-                expectedResult: false
+            expectedResult: false
+        },
+        {
+            field: null,
+            expectedResult: false
+        },
+        {
+            field: {
+                type: 'enum',
+                source: 'db',
+                duplicate_merge: 'disabled'
             },
-            {
-                field: {
-                    type: 'enum',
-                    source: 'db',
-                    duplicate_merge: 'disabled'
-                },
-                expectedResult: false
+            expectedResult: false
+        },
+        {
+            field: {
+                type: 'int',
+                source: 'db',
+                name: 'age',
+                auto_increment: true
             },
-            {
-                field: {
-                    type: 'int',
-                    source: 'db',
-                    name: 'age',
-                    auto_increment: true
-                },
-                expectedResult: false
+            expectedResult: false
+        },
+        {
+            field: {
+                type: 'datetimecombo',
+                source: 'db',
+                name: 'birth'
             },
-            {
-                field: {
-                    type: 'datetimecombo',
-                    source: 'db',
-                    name: 'birth'
-                },
-                expectedResult: true
-            }
-        ];
-        _.each(data, function(testData) {
-            expect(view.validMergeField(testData.field)).toBe(testData.expectedResult);
+            expectedResult: true
+        }
+    ], function(data) {
+        it('should show as editable on merge view', function() {
+            expect(view.validMergeField(data.field)).toBe(data.expectedResult);
         });
     });
 
-    describe ("Merge Duplicates Fields", function() {
-        var view, layout, app;
-
-        beforeEach(function () {
+    describe('Test for View.Views.BaseMergeDuplicatesView#flattenFieldsets', function() {
+        beforeEach(function() {
             var module = 'Contacts',
                 context = null,
                 fieldDef = {
@@ -131,7 +128,7 @@ describe("Merge Duplicates", function () {
                         source: 'db'
                     }
                 },
-                meta =  _.extend(fieldDef,
+                meta = _.extend(fieldDef,
                     {
                         sub1Test: {
                             label: 'sub1Test',
@@ -145,12 +142,8 @@ describe("Merge Duplicates", function () {
                             type: 'varchar',
                             source: 'db'
                         }
-
-                    });
-            app = SugarTest.app;
-            SugarTest.testMetadata.init();
-            SugarTest.loadComponent('base', 'view', 'merge-duplicates');
-            SugarTest.loadComponent('base', 'layout', 'list');
+                    }
+                );
             meta = _.extend(app.metadata.getModule(module), {fields: meta});
             SugarTest.testMetadata.updateModuleMetadata(module, meta);
             SugarTest.testMetadata.addViewDefinition('record', {
@@ -166,18 +159,18 @@ describe("Merge Duplicates", function () {
             layout.context.set({
                 selectedDuplicates: [new Backbone.Model(), new Backbone.Model()]
             });
-            view = SugarTest.createView("base", module, "merge-duplicates", null, layout.context, null, layout);
+            view = SugarTest.createView('base', module, 'merge-duplicates', null, layout.context, null, layout);
         });
 
-        it("Should Flatten Fieldsets Properly", function() {
-            var result = _.pluck(view.mergeFields, 'name');
-            expect(result).toEqual(['test1', 'sub1Test', 'sub2Test', 'test3']);
-        });
-
-        afterEach(function () {
+        afterEach(function() {
             layout.dispose();
             app.view.reset();
             SugarTest.testMetadata.dispose();
+        });
+
+        it('should flatten fieldsets properly', function() {
+            var result = _.pluck(view.mergeFields, 'name');
+            expect(result).toEqual(['test1', 'sub1Test', 'sub2Test', 'test3']);
         });
     });
 });

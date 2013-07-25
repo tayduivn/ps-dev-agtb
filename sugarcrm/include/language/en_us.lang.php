@@ -3615,9 +3615,12 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
     'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
     'LBL_MERGE'  => 'Merge',
-    'LBL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
-    'ERR_MERGE_INVALID_NUMBER_RECORDS' => 'Invalid number of records passed.',
-    'ERR_MERGE_NO_ACCESS' => 'You have no access to perform this action',
+    'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
+    'TPL_MERGE_INVALID_NUMBER_RECORDS' =>
+        'Invalid number of records passed. The valid range is from 2 to {{maxRecords}} records.',
+    'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
+    'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
+        'All changes will be lost. Are you sure you want to continue?',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
