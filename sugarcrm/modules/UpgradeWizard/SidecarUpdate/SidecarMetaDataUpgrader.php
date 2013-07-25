@@ -71,7 +71,18 @@ class SidecarMetaDataUpgrader
         'base'        => array(
             'custom'  => 'custom/',
             'working' => 'custom/working/',
+            'history' => 'custom/history/',
         ),
+    );
+
+    protected $sidecarFilePaths = array(
+        //BEGIN SUGARCRM flav=ent ONLY
+        'portal' => array(
+            'custom'  => 'custom/',
+            'history' => 'custom/history/',
+            'working' => 'custom/working/',
+        ),
+        //END SUGARCRM flav=ent ONLY
     );
 
     /**
@@ -94,6 +105,10 @@ class SidecarMetaDataUpgrader
         'portal' => array(
             MB_PORTALLISTVIEW         => 'listviewdefs',
             MB_PORTALSEARCHVIEW       => 'searchformdefs',
+            MB_EDITVIEW               => 'editviewdefs',
+            MB_DETAILVIEW             => 'detailviewdefs',
+            MB_PORTALEDITVIEW         => 'edit',
+            MB_PORTALDETAILVIEW       => 'detail',
         ),
         //END SUGARCRM flav=ent ONLY
         'base' => array(
@@ -116,12 +131,13 @@ class SidecarMetaDataUpgrader
      * @var array
      */
     protected $upgraderClassMap = array(
-        'list'   => 'List',
-        'edit'   => 'Grid',
-        'detail' => 'Grid',
-        MB_RECORDVIEW => 'MergeGrid',
-        'search' => 'Search',
-        'drop'   => 'Drop',
+        'list'               => 'List',
+        'edit'               => 'Grid',
+        'detail'             => 'Grid',
+        MB_RECORDVIEW        => 'MergeGrid',
+        MB_PORTALRECORDVIEW  => 'MergeGrid',
+        'search'             => 'Search',
+        'drop'               => 'Drop',
     );
 
     /**
@@ -157,6 +173,8 @@ class SidecarMetaDataUpgrader
     public function setPortalFilesToUpgrade()
     {
         $this->setUpgradeFiles('portal');
+        // we also upgrade edit/detail -> record views for 6.7
+        $this->setSidecarUpgradeFiles('portal');
     }
 
     /**
@@ -281,7 +299,7 @@ class SidecarMetaDataUpgrader
         $this->setFilesToUpgrade();
 
         // Traverse the files and start parsing and moving
-        $this->logUpgradeStatus('Beginning mobile/portal metadata upgrade process...');
+        $this->logUpgradeStatus('Beginning metadata upgrade process...');
         foreach ($this->files as $file) {
             // Get the appropriate upgrade class name for this view type
             $class = $this->getUpgraderClass($file['viewtype']);
@@ -294,7 +312,7 @@ class SidecarMetaDataUpgrader
                 $upgrader = new $class($this, $file);
 
                 // If the upgrade worked for this file, add it to the remove stack
-                $this->logUpgradeStatus("Delegating upgrade to $class ...");
+                $this->logUpgradeStatus("Delegating upgrade to $class for {$file['fullpath']}...");
                 if ($upgrader->upgrade()) {
                     if (!in_array($file['fullpath'], self::$filesForRemoval)) {
                         self::$filesForRemoval[] = $file['fullpath'];
@@ -305,7 +323,7 @@ class SidecarMetaDataUpgrader
                 $this->logUpgradeStatus("{$class} :: upgrade() complete...");
             }
         }
-        $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
+        $this->logUpgradeStatus('Metadata upgrade process complete.');
 
         // upgrade quickcreate menus
         $this->upgradeQuickCreate();
@@ -419,7 +437,7 @@ class SidecarMetaDataUpgrader
         $count = 0;
 
         // Hit the legacy paths list to start the ball rolling
-        if (isset($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
+        if (!empty($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
             foreach ($this->legacyFilePaths[$client] as $type => $path) {
                 // Get the modules from inside the path
                 $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
@@ -444,6 +462,57 @@ class SidecarMetaDataUpgrader
             }
         }
         $this->logUpgradeStatus("$count $client upgrade files set ...");
+    }
+
+    /**
+     * Gets all sidecar views that need to be upgraded
+     *
+     * @param $client
+     */
+    protected function setSidecarUpgradeFiles($client)
+    {
+        $this->logUpgradeStatus("Getting $client sidecar upgrade files ...");
+
+        // Keep track of how many files were added, for logging
+        $count = 0;
+
+        // Hit the legacy paths list to start the ball rolling
+        if (!empty($this->sidecarFilePaths[$client]) && is_array($this->sidecarFilePaths[$client])) {
+            foreach ($this->sidecarFilePaths[$client] as $type => $path) {
+                // Get the modules from inside the path
+                $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
+                if (!empty($dirs)) {
+                    foreach ($dirs as $dirpath) {
+                        // Get the module to list it in case it needs to be upgraded
+                        $module = basename($dirpath);
+
+                        // Get the metadata directory
+                        $metadatadir = "$dirpath/clients/$client/views";
+                        $views = glob("$metadatadir/*", GLOB_ONLYDIR);
+                        if(empty($views)) continue;
+
+                        foreach($views as $view) {
+                            $filename = basename($view);
+                            if(!in_array($filename, $this->legacyMetaDataFileNames[$client])) {
+                                continue;
+                            }
+                            $files = glob("$view/{$filename}.php*");
+                            if(!empty($files)) {
+                                foreach ($files as $file) {
+                                    if (($data = $this->getUpgradeFileParams($file, $module, $client, $type, null, true, true)) !== false) {
+                                        $this->files[] = $data;
+                                    }
+                                }
+
+                                // Increment the count
+                                $count += count($files);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $this->logUpgradeStatus("$count $client sidecar upgrade files set ...");
     }
 
     /**
@@ -494,7 +563,7 @@ class SidecarMetaDataUpgrader
      * Gets a view type from a filename
      *
      * @param string $filename The name of the file to get the view type from
-     * @return string
+     * @return string The target view type that the upgrade will produce
      */
     protected function getViewTypeFromFilename($filename, $client, $type)
     {
@@ -502,26 +571,27 @@ class SidecarMetaDataUpgrader
             return 'list';
         }
 
-        if (strpos($filename, 'edit') !== false) {
-            if($client == 'mobile' || $client == 'wireless') {
-                return 'edit';
-            } else {
-                // history views get dropped
-                return $type == 'history'?'drop':MB_RECORDVIEW;
-            }
-        }
-
-        if (strpos($filename, 'detail') !== false) {
-            if($client == 'mobile' || $client == 'wireless') {
-                return 'detail';
-            } else {
-                // history views get dropped
-                return $type == 'history'?'drop':MB_RECORDVIEW;
-            }
-        }
-
         if (strpos($filename, 'search') !== false) {
             return 'search';
+        }
+
+        if (strpos($filename, 'edit') !== false) {
+            $viewtype = 'edit';
+        }
+        if (strpos($filename, 'detail') !== false) {
+            $viewtype = 'detail';
+        }
+        if(!empty($viewtype)) {
+            // mobile/wireless keep their views
+            if($client == 'mobile' || $client == 'wireless') {
+                return $viewtype;
+            }
+            // History views get dropped from edit/detail merge
+            if($type == 'history') {
+                return 'drop';
+            }
+
+            return $client == 'portal'?MB_PORTALRECORDVIEW:MB_RECORDVIEW;
         }
 
         return '';
@@ -663,10 +733,12 @@ class SidecarMetaDataUpgrader
      * @param string $type
      * @param string $package
      * @param bool $deployed
+     * @param bool $sidecar Is this a sidecar view?
      * @return array Array of file params if found, false otherwise
      */
-    public function getUpgradeFileParams($file, $module, $client, $type = 'base', $package = null, $deployed = true)
+    public function getUpgradeFileParams($file, $module, $client, $type = 'base', $package = null, $deployed = true, $sidecar = false)
     {
+        $this->logUpgradeStatus("Candidate for upgrade: $file");
         // Timestamp for history files
         $timestamp = null;
 
@@ -683,12 +755,14 @@ class SidecarMetaDataUpgrader
 
         if($client == 'base' && isModuleBWC($module)) {
             // if the module is in BWC, do not upgrade its views in base client
+            $this->logUpgradeStatus("Not upgrading $file: BWC module");
             return false;
         }
 
         // Only hit history files for history types with a timestamp
         // Unless we are looking at undeployed modules
         if (($history && $type != 'history') || (!$history && $type == 'history') && $deployed) {
+            $this->logUpgradeStatus("Not upgrading $file: wrong history format");
             return false;
         }
 
@@ -713,9 +787,11 @@ class SidecarMetaDataUpgrader
                 'fullpath'  => $file,
                 'package'   => $package,
                 'deployed'  => $deployed,
+                'sidecar'   => $sidecar,
                 'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type),
             );
         }
+        $this->logUpgradeStatus("Not upgrading $file: no file name");
 
         return false;
     }

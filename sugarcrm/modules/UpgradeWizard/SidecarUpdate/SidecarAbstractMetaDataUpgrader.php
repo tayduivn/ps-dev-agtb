@@ -95,6 +95,12 @@ abstract class SidecarAbstractMetaDataUpgrader
     protected $viewtype;
 
     /**
+     * Is the legacy view sidecar-type view too?
+     * @var bool
+     */
+    protected $sidecar;
+
+    /**
      * The legacy style view defs
      *
      * @var array
@@ -124,6 +130,8 @@ abstract class SidecarAbstractMetaDataUpgrader
         //BEGIN SUGARCRM flav=ent ONLY
         'portal'   => array(
             'list'   => 'viewdefs',
+            'edit'   => 'viewdefs',
+            'detail' => 'viewdefs',
         ),
         //END SUGARCRM flav=ent ONLY
         //BEGIN SUGARCRM flav=pro ONLY
@@ -149,6 +157,8 @@ abstract class SidecarAbstractMetaDataUpgrader
         //BEGIN SUGARCRM flav=ent ONLY
         'portallist'     => MB_PORTALLISTVIEW,
         'portalsearch'   => MB_PORTALSEARCHVIEW,
+        'portalrecordview' => MB_RECORDVIEW,
+        'portalportalrecordview' => MB_RECORDVIEW,
         //END SUGARCRM flav=ent ONLY
         //BEGIN SUGARCRM flav=pro ONLY
         'wirelessedit'   => MB_WIRELESSEDITVIEW,
@@ -169,6 +179,8 @@ abstract class SidecarAbstractMetaDataUpgrader
     protected $vardefIndexes = array(
         //BEGIN SUGARCRM flav=ent ONLY
         'portallist'     => 'listview',
+        'portaledit'     => 'editview',
+        'portaldetail'   => 'detailview',
         //END SUGARCRM flav=ent ONLY
         //BEGIN SUGARCRM flav=pro ONLY
         'wirelessedit'   => 'EditView',
@@ -214,11 +226,11 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     public function upgrade() {
         // Get our legacy view defs
-        $this->logUpgradeStatus("setting {$this->client} {$this->type} legacy viewdefs for {$this->module}");
+        $this->logUpgradeStatus("setting {$this->client}[{$this->type}] legacy viewdefs for {$this->module}:{$this->viewtype}");
         $this->setLegacyViewdefs();
 
         // Convert them
-        $this->logUpgradeStatus("converting {$this->client} {$this->type} legacy viewdefs for {$this->module} to Sugar 7 format");
+        $this->logUpgradeStatus("converting {$this->client}[{$this->type}] legacy viewdefs for {$this->module}:{$this->viewtype} to Sugar 7 format");
         $this->convertLegacyViewDefsToSidecar();
 
         // Save the new file and report it
@@ -235,10 +247,13 @@ abstract class SidecarAbstractMetaDataUpgrader
         // Get what we need to make our new files
         $viewname = $this->views[$this->client . $this->viewtype];
         $newname = $this->getNewFileName($viewname);
-        $content = $this->getNewFileContents();
-
+        $content = $this->getNewFileContents($viewname);
         // Make the new file
-        $this->logUpgradeStatus("Saving new {$this->client} {$this->type} viewdefs for {$this->module}");
+        $this->logUpgradeStatus("Saving new {$this->client} {$this->type} viewdefs for {$this->module}:{$this->viewtype}");
+        if(empty($content)) {
+            $this->logUpgradeStatus("No content for {$this->client} {$this->type} viewdefs for {$this->module}:{$this->viewtype}");
+            return false;
+        }
         return $this->save($newname, $content);
         //return true;
     }
@@ -323,11 +338,18 @@ abstract class SidecarAbstractMetaDataUpgrader
      * implementations, but without all the extra processing that goes in with
      * them. This is overwritten for search as search is just a content move.
      *
+     * @param string $viewname Target view name
      * @return string
      */
-    public function getNewFileContents() {
+    public function getNewFileContents($viewname)
+    {
         $module = $this->getNormalizedModuleName();
-        $out  = "<?php\n\$viewdefs['{$module}'] = " . var_export($this->sidecarViewdefs[$module], true) . ";\n";
+        $viewname = MetaDataFiles::getName($viewname);
+        $client = $this->client == 'wireless' ? 'mobile' : $this->client;
+        if(empty($this->sidecarViewdefs[$module][$client]['view'][$viewname])) {
+            return '';
+        }
+        $out  = "<?php\n\$viewdefs['{$module}']['{$client}']['view']['{$viewname}'] = " . var_export($this->sidecarViewdefs[$module][$client]['view'][$viewname], true) . ";\n";
         return $out;
     }
 

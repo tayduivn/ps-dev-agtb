@@ -22,10 +22,21 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
      * @var array
      */
     protected $mergeViews = array(
-        MB_RECORDVIEW => array(
-            'detail' => array('detailviewdefs', MB_DETAILVIEW),
-            'edit' => array('editviewdefs', MB_EDITVIEW),
-        ),
+            MB_RECORDVIEW => array(
+                'detail' => array('detailviewdefs', MB_DETAILVIEW),
+                'edit' => array('editviewdefs', MB_EDITVIEW),
+            ),
+            MB_PORTALRECORDVIEW => array(
+                'detail' => array('detailviewdefs', MB_DETAILVIEW),
+                'edit' => array('editviewdefs', MB_EDITVIEW),
+            ),
+    );
+
+    protected $mergeViewsSidecar = array(
+            MB_PORTALRECORDVIEW => array(
+                'detail' => array('detail', MB_PORTALDETAILVIEW),
+                'edit' => array('edit', MB_PORTALEDITVIEW),
+            ),
     );
 
     /**
@@ -34,8 +45,12 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
      */
     protected $viewPanels = array(
         MB_RECORDVIEW => array(
-            MB_DETAILVIEW => 'LBL_RECORD_BODY',
-            MB_EDITVIEW => 'LBL_RECORD_SHOWMORE'
+            MB_DETAILVIEW => 1,
+            MB_EDITVIEW => 2,
+        ),
+        MB_PORTALRECORDVIEW => array(
+            MB_PORTALDETAILVIEW => 1,
+            MB_PORTALEDITVIEW => 1,
         ),
     );
 
@@ -44,32 +59,73 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
      */
     protected static $upgraded = array();
 
+    protected function getOriginalFile($filepath)
+    {
+        $files = explode("/", $filepath);
+        // drop prefixes like custom/
+        while(!empty($files) && $files[0] != 'modules') {
+            array_shift($files);
+        }
+        if(empty($files)) {
+            return $filepath;
+        }
+
+        if($this->client == 'portal' && !$this->sidecar) {
+            // old portal views have prefixes
+            $filename = "portal.".array_pop($files);
+            array_push($files, $filename);
+        }
+        return join("/", $files);
+    }
+
     /**
      * Sets the necessary legacy field defs for use in converting
      */
     public function setLegacyViewdefs()
     {
-        if(empty($this->mergeViews[$this->viewtype])) {
+        $views = $this->sidecar?$this->mergeViewsSidecar:$this->mergeViews;
+        if(empty($views[$this->viewtype])) {
+            $this->logUpgradeStatus("Did not find merge views for {$this->viewtype}");
             return;
         }
 
-        $dirname = dirname($this->fullpath);
+        if($this->sidecar) {
+            // For sidecar it's path/views/edit/edit.php
+            $dirname = dirname(dirname($this->fullpath));
+        } else {
+            // For sugar6 it's path/metadata/editviewdefs.php
+            $dirname = dirname($this->fullpath);
+        }
         if(!empty(self::$upgraded[$this->viewtype][$dirname])) {
             // we already did this path for this viewtype
+            $this->logUpgradeStatus("Already upgraded $dirname {$this->viewtype}");
             return;
         } else {
             self::$upgraded[$this->viewtype][$dirname] = true;
         }
 
+        $foundCustom = false;
         // Load all views for this combined view
-        foreach($this->mergeViews[$this->viewtype] as $view => $data) {
+        foreach($views[$this->viewtype] as $view => $data) {
             unset($module_name);
             list($file, $lViewtype) = $data;
-            $filepath = "$dirname/$file.php";
+            if($this->sidecar) {
+                $filepath = "$dirname/$file/$file.php";
+            } else {
+                $filepath = "$dirname/$file.php";
+            }
             if(!file_exists($filepath)) {
-                continue;
+                // try without custom/, as this is a merge
+                $filepath = $this->getOriginalFile($filepath);
+                if(!file_exists($filepath)) {
+                    $this->logUpgradeStatus("Could not find $filepath for $lViewtype");
+                    continue;
+                }
+            } else {
+                $foundCustom = true;
             }
 
+            $this->logUpgradeStatus("Loading $filepath for $lViewtype");
             include $filepath;
             // There is an odd case where custom modules are pathed without the
             // package name prefix but still use it in the module name for the
@@ -84,11 +140,22 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
             $var = $this->variableMap[$this->client][$view];
             if (isset($$var)) {
                 $defs = $$var;
-                if (isset($this->vardefIndexes[$this->client.$view])) {
-                    $index = $this->vardefIndexes[$this->client.$view];
-                    $this->legacyViewdefs[$lViewtype] = empty($index) ? $defs[$module] : $defs[$module][$index];
+                if($this->sidecar) {
+                    if(!empty($defs[$module][$this->client]['view'][$view])) {
+                        $this->legacyViewdefs[$lViewtype] = $defs[$module][$this->client]['view'][$view];
+                    }
+                } else {
+                    if (isset($this->vardefIndexes[$this->client.$view])) {
+                        $index = $this->vardefIndexes[$this->client.$view];
+                        $this->legacyViewdefs[$lViewtype] = empty($index) ? $defs[$module] : $defs[$module][$index];
+                    }
                 }
             }
+        }
+        // If we didn't find any custom files - we don't need to do anything
+        if(!$foundCustom) {
+            $this->legacyViewdefs = array();
+            $this->logUpgradeStatus("Did not find customizations for {$this->viewtype}");
         }
     }
 
@@ -125,7 +192,11 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
             if(empty($data['panels'])) {
                 continue;
             }
-            $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+            if($this->sidecar) {
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module, null, null, $this->client);
+            } else {
+                $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
+            }
 
             foreach($legacyParser->getFieldsFromPanels($data['panels']) as $fieldname => $fielddef) {
                 if(empty($fieldname) || isset($customFields[$fieldname])) {
@@ -206,7 +277,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
                 continue;
             } else {
                 // TODO: import more data than just name
-                $parser->addField(array('name' => $fieldname), $this->viewPanels[$this->viewtype][$data['source']]);
+                $parser->addField(array('name' => $fieldname), $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
             }
         }
 
@@ -214,5 +285,26 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         $newdefs['panels'] = $parser->convertToCanonicalForm($parser->_viewdefs['panels'] ,$parser->_fielddefs);
 
         $this->sidecarViewdefs[$this->module][$this->client]['view'][MetaDataFiles::getName($this->viewtype)] = $newdefs;
+   }
+
+   /**
+    * Get panel name where new field should be placed
+    * @param array $panels Panel data for viewdef
+    * @param string $source Source view for field
+    * @return string|null
+    */
+   protected function getPanelName($panels, $source)
+   {
+       if(empty($this->viewPanels[$this->viewtype][$source])) {
+           // will use first available panel
+           return null;
+       }
+       $panel_names = array_keys($panels);
+       $panel_id = $this->viewPanels[$this->viewtype][$source];
+       if(!empty($panel_names[$panel_id])) {
+           return $panel_names[$panel_id];
+       }
+
+       return null;
    }
 }

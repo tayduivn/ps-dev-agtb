@@ -279,11 +279,11 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 }
             }
         }
-        
+
         // Record view hides the header panel, but the fields in it need to still
         // be removed
         $this->unsetHiddenPanelFields($availableFields);
-        
+
         //eggsurplus: Bug 10329 - sort on intuitive display labels
         //sort by translatedLabel
         // See cmpLabel() method
@@ -910,17 +910,28 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return false;
     }
 
-    static function _trimFieldDefs ( $def )
+    public static function _trimFieldDefs ($def)
 	{
-		$ret = array_intersect_key ( $def ,
-            array ( 'studio' => true , 'name' => true , 'label' => true , 'displayParams' => true , 'comment' => true ,
-                    'customCode' => true , 'customLabel' => true , 'tabindex' => true , 'hideLabel' => true) ) ;
+        $requiredProps = array(
+            'studio' => true,
+            'name' => true,
+            'label' => true,
+            'displayParams' => true,
+            'comment' => true,
+            'customCode' => true,
+            'customLabel' => true,
+            'tabindex' => true,
+            'hideLabel' => true,
+            'readonly' => true,
+        );
+		$ret = array_intersect_key($def, $requiredProps);
         if (!empty($def['vname']) && empty($def['label']))
             $ret['label'] = $def['vname'];
 		return $ret;
 	}
 
-	public function getUseTabs(){
+	public function getUseTabs()
+	{
         if (isset($this->_viewdefs  [ 'templateMeta' ]['useTabs']))
            return $this->_viewdefs  [ 'templateMeta' ]['useTabs'];
 
@@ -1042,4 +1053,17 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return array("name" => $fieldname, "label" => $fieldname);
     }
 
+    /**
+    * Checks any hidden panels (panels that should not be editable) and removes
+    * any fields from the available fields array that are in the hidden panels.
+    *
+    * NOTE: At the moment this is a Sidecar parser function only. It is declared
+    * here because it is called in getAvailableFields, which is also declared here.
+    *
+    * @param array $availableFields Current array of available fields
+    */
+    protected function unsetHiddenPanelFields(&$availableFields)
+    {
+
+    }
 }

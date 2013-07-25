@@ -43,7 +43,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     );
 
     protected $extraPanelMeta = array();
-    
+
     protected $headerPanelMeta = array();
 
     protected $maxSpan = 12;
@@ -289,7 +289,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 unset($this->_originalViewDef[$originalKey]['span']);
             }
         }
-        
+
         // Set up the panel index so we know where the header panel meta needs to
         // be injected if there is header panel meta to be injected
         $panelIndex = 0;
@@ -302,7 +302,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $canonicalPanels[$panelIndex] = $this->headerPanelMeta;
                 $panelIndex++;
             }
-            
+
             $fields = array();
             // get number of panel columns default to 2
             $panelColumns = 2;
@@ -385,11 +385,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
             $newPanel['fields'] = $fields;
             $canonicalPanels[$panelIndex] = $newPanel;
-            
+
             // Increment the panel index
             $panelIndex++;
         }
-        
+
         return $canonicalPanels;
     }
 
@@ -410,11 +410,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // $panels[label for panel] = fields of panel in rows,cols format
 
         $internalPanels = array();
-        
+
         // Get the header panel index for use in removing and injecting the header
         // panel meta when editing record views
         $this->headerPanelIndex = $this->getHeaderPanelIndex($panels);
-        
+
         foreach ($panels as $n => $panel) {
             // If we are on a record view we need to hide the header panel from
             // studio. This is to prevent breaking the client side application.
@@ -422,7 +422,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $this->headerPanelMeta = $panel;
                 continue;
             }
-            
+
             // Handle panel labeling...
             $pLabel = $n;
             if (!empty($panel['label'])) {
@@ -724,11 +724,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // Non empty non arrays just return the field
         return $field;
     }
-    
+
     /**
      * Gets the index for the panel that is the header panel. Used in record
      * view since header panels in record view are not editable in studio.
-     * 
+     *
      * @param array $panels The panels array
      * @return string
      */
@@ -743,17 +743,17 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 break;
             }
         }
-        
+
         return $panelIndex;
     }
-    
+
     /**
      * Checks any hidden panels (panels that should not be editable) and removes
      * any fields from the available fields array that are in the hidden panels.
-     * 
+     *
      * NOTE: This is called in getAvailableFields, which is defined
      * in the parent class.
-     * 
+     *
      * @param array $availableFields Current array of available fields
      */
     protected function unsetHiddenPanelFields(&$availableFields)
