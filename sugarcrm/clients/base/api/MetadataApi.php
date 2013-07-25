@@ -286,13 +286,14 @@ class MetadataApi extends SugarApi
     {
         $js = "(function(app) {\n SUGAR.jssource = {";
 
+
+        $compJS = $this->buildJSForComponents($data);
         if (!$onlyReturnModuleComponents) {
-            $compJS = $this->buildJSForComponents($data);
             $js .= $compJS;
         }
 
         if (!empty($data['modules'])) {
-            if (!empty($compJS))
+            if (!empty($compJS) && !$onlyReturnModuleComponents)
                 $js .= ",";
 
             $js .= "\n\t\"modules\":{";

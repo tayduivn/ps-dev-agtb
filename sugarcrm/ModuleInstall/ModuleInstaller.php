@@ -2419,8 +2419,6 @@ private function dir_file_count($path){
      */
     public static function getBaseConfig()
     {
-        global $sugar_config;
-
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'dev',
@@ -2446,7 +2444,18 @@ private function dir_file_count($path){
             'unsecureRoutes' => array('login', 'error'),
             'loadCss' => false,
             'themeName' => 'default',
-            'clientID' => 'sugar'
+            'clientID' => 'sugar',
+            'metadataTypes' => array(
+                "currencies",
+                "full_module_list",
+                "hidden_subpanels",
+                "jssource",
+                "labels",
+                "module_tab_map",
+                "modules",
+                "relationships",
+                "server_info",
+            ),
         );
         return $sidecarConfig;
     }
