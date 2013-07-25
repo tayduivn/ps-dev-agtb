@@ -44,10 +44,11 @@
                 module: 'Leads',
                 prospect_id: this.model.get('id')
             }
-        }, function(newModel) {
-            if(newModel && newModel.id) {
-                app.router.navigate(app.router.buildRoute('Leads', newModel.id));
+        }, _.bind(function(context, model) {
+            //if lead is created, grab the new relationship to the target so the convert-results will refresh
+            if (model && model.id && !this.disposed) {
+                this.model.fetch();
             }
-        });
+        }, this));
     }
 })
