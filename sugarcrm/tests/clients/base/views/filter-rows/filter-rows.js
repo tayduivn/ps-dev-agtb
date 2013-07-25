@@ -102,6 +102,12 @@ describe("BaseFilterRowsView", function() {
                             options: 'date_range_search_dom',
                             type: 'datetime',
                             vname: 'LBL_DATE_MODIFIED'
+                        },
+                        number: {
+                            name: 'number',
+                            type: 'varchar',
+                            len: 100,
+                            readonly: true
                         }
                     },
                     filters: {
@@ -114,7 +120,8 @@ describe("BaseFilterRowsView", function() {
                                         type: 'text',
                                         vname: 'LBL_ACCOUNT_NAME'
                                     },
-                                    date_modified: {}
+                                    date_modified: {},
+                                    number: {}
                                 },
                                 filters: [
                                     {
@@ -144,9 +151,15 @@ describe("BaseFilterRowsView", function() {
                     options: 'date_range_search_dom',
                     type: 'datetime',
                     vname: 'LBL_DATE_MODIFIED'
+                },
+                number: {
+                    name: 'number',
+                    type: 'varchar',
+                    len: 100
                 }
             };
             expect(fields).toEqual(expected);
+            expect(fields.number['readonly']).not.toBe(true);
             metadataStub.restore();
         });
     });

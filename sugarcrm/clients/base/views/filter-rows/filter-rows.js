@@ -157,6 +157,7 @@
             } else {
                 fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMeta[fieldName]);
             }
+            delete fields[fieldName]['readonly'];
         });
 
         return fields;
