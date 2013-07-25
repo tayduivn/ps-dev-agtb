@@ -44,9 +44,10 @@ describe('Base.fields.avatar', function() {
         });
 
         it('Should add the image_rounded css class when in detail mode and there is an avatar.', function() {
-            field.model.set('picture', '/path/to/avatar');
+            var stubUnderscoreIsEmpty = sinon.stub(_, 'isEmpty', function() { return false; });
             field.render();
             expect(field.$('.image_field').hasClass('image_rounded')).toBeTruthy();
+            stubUnderscoreIsEmpty.restore();
         });
 
         it('Should render the module icon when in detail mode and there is not an avatar.', function() {
