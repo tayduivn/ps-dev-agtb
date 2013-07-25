@@ -35,41 +35,35 @@ $viewdefs['EmailTemplates']['base']['view']['list'] = array(
             'fields' => array(
                 array (
                     'name' => 'name',
-                    'width' => '20%',
                     'label' => 'LBL_NAME',
                     'link' => true,
                     'default' => true,
                 ),
                 array (
                     'name'  => 'type',
-                    'width' => '20',
                     'label' => 'LBL_TYPE',
                     'link' => false,
                     'default' => true
                 ),
                 array(
                     'name' => 'description',
-                    'width' => '40%',
                     'default' => true,
                     'sortable' => false,
                     'label' => 'LBL_DESCRIPTION'
                 ),
                 array (
                     'name'  => 'assigned_user_name',
-                    'width' => '5%',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'default' => true,
                 ),
                 array(
                     'name' => 'date_modified',
-                    'width' => '10%',
                     'label' => 'LBL_DATE_MODIFIED',
                     'default' => true,
                     'readonly' => true,
                 ),
                 array (
                     'name'  => 'date_entered',
-                    'width' => '10%',
                     'label' => 'LBL_DATE_ENTERED',
                     'default' => true,
                     'readonly' => true,

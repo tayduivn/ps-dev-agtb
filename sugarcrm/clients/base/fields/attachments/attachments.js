@@ -116,7 +116,7 @@
      * Before handling any attachment uploads, need to clear the user's attachment cache.
      */
     clearUserAttachmentCache: function() {
-        var clearCacheUrl = app.api.buildURL('MailAttachment', "cache");
+        var clearCacheUrl = app.api.buildURL('Mail/attachment', "cache");
         app.api.call('delete', clearCacheUrl);
     },
 
@@ -240,7 +240,7 @@
      * @param attachment
      */
     removeUploadedAttachment: function(attachment) {
-        var deleteUrl = app.api.buildURL('MailAttachment', "delete", {id:attachment.id});
+        var deleteUrl = app.api.buildURL('Mail/attachment', "delete", {id:attachment.id});
         app.api.call('delete', deleteUrl);
     },
 
@@ -284,7 +284,7 @@
             showProgress: true
         });
 
-        var myURL = app.api.buildURL('MailAttachment', null, null, {oauth_token:app.api.getOAuthToken()});
+        var myURL = app.api.buildURL('Mail/attachment', null, null, {oauth_token:app.api.getOAuthToken()});
         app.api.call('create', myURL, null,{
                 success: _.bind(function (result) {
                     if (this.disposed === true) return; //if field is already disposed, bail out

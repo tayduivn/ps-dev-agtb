@@ -5,7 +5,8 @@
     extendsFrom: 'RecordView',
 
     _lastSelectedSignature: null,
-    sugarDocumentType: 'documents',
+    ATTACH_TYPE_SUGAR_DOCUMENT: 'document',
+    ATTACH_TYPE_TEMPLATE: 'template',
 
     initialize: function(options) {
         _.bindAll(this);
@@ -209,21 +210,16 @@
     },
 
     /**
-     * Grab an array of attachments with the given type
+     * Get the attachments from the model and format for the API
      *
-     * @param type
      * @returns array of attachments or empty array if none found
      */
-    getAttachmentsByType: function(type) {
+    getAttachmentsForApi: function() {
         var attachments = this.model.get('attachments') || [];
 
         if (!_.isArray(attachments)) {
             attachments = [attachments];
         }
-
-        attachments = _.filter(attachments, function(attachment) {
-            return (attachment.type && attachment.type == type);
-        });
 
         return attachments;
     },
@@ -236,8 +232,7 @@
             to_addresses: this.model.get('to_addresses'),
             cc_addresses: this.model.get('cc_addresses'),
             bcc_addresses: this.model.get('bcc_addresses'),
-            attachments: this.getAttachmentsByType('upload'),
-            documents: _.pluck(this.getAttachmentsByType(this.sugarDocumentType), 'id'),
+            attachments: this.getAttachmentsForApi(),
             related: {
                 type: this.model.get('parent_type'),
                 id: this.model.get('parent_id')
@@ -355,8 +350,27 @@
      */
     launchTemplateDrawer: function() {
         app.drawer.open({
-                layout:'compose-templates',
-                context:{module:'EmailTemplates'}
+                layout:'selection-list',
+                context:{
+                    module:'EmailTemplates',
+                    selectionListFilter: {
+                        'filter': [
+                            {
+                                '$or': [
+                                    {
+                                        'type': {'$is_null': ''}
+                                    },
+                                    {
+                                        'type': {'$equals': ''}
+                                    },
+                                    {
+                                        'type': {'$equals': 'email'}
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
             },
             this.templateDrawerCallback
         );
@@ -453,12 +467,13 @@
     insertTemplateAttachments: function(attachments) {
         this.context.trigger("attachments:remove-by-tag", 'template');
         _.each(attachments, function(attachment) {
+            var filename = attachment.get('filename');
             this.context.trigger("attachment:add", {
                 id: attachment.id,
-                name: attachment.filename,
-                nameForDisplay: attachment.filename,
+                name: filename,
+                nameForDisplay: filename,
                 tag: 'template',
-                type: this.sugarDocumentType
+                type: this.ATTACH_TYPE_TEMPLATE
             });
         }, this);
     },
@@ -492,7 +507,7 @@
                         id:model.id,
                         name:model.get('filename'),
                         nameForDisplay:model.get('filename'),
-                        type: this.sugarDocumentType
+                        type: this.ATTACH_TYPE_SUGAR_DOCUMENT
                     });
                 }, this),
                 error: _.bind(function(error) {

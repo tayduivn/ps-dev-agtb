@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/Emails/MailRecord.php');
 require_once('modules/Emails/EmailRecipientsService.php');
+require_once('modules/Emails/EmailUI.php');
 
 class MailApi extends ModuleApi
 {
@@ -35,7 +36,6 @@ class MailApi extends ModuleApi
         "cc_addresses"  => array(),
         "bcc_addresses" => array(),
         "attachments"   => array(),
-        "documents"     => array(),
         "teams"         => array(),
         "related"       => array(),
         "subject"       => '',
@@ -49,53 +49,30 @@ class MailApi extends ModuleApi
     public function registerApiRest()
     {
         $api = array(
-            'listMail'        => array(
-                'reqType'   => 'GET',
-                'path'      => array('Mail'),
-                'pathVars'  => array(''),
-                'method'    => 'notSupported',
-                'shortHelp' => 'List Mail Items',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#listMail',
-            ),
-            'retrieveMail'    => array(
-                'reqType'   => 'GET',
-                'path'      => array('Mail', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'notSupported',
-                'shortHelp' => 'Retrieve Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#retrieveMail',
-            ),
-            'deleteMail'      => array(
-                'reqType'   => 'DELETE',
-                'path'      => array('Mail', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'notSupported',
-                'shortHelp' => 'Delete Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#deleteMail',
-            ),
-            'updateMail'      => array(
-                'reqType'   => 'PUT',
-                'path'      => array('Mail', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'notSupported', // 'updateMail',
-                'shortHelp' => 'Update Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#updateMail',
-            ),
             'createMail'      => array(
                 'reqType'   => 'POST',
                 'path'      => array('Mail'),
                 'pathVars'  => array(''),
                 'method'    => 'createMail',
                 'shortHelp' => 'Create Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#createMail',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_post_help.html',
             ),
+            //TODO: Implement updateMail fully
+//            'updateMail'      => array(
+//                'reqType'   => 'PUT',
+//                'path'      => array('Mail', '?'),
+//                'pathVars'  => array('', 'email_id'),
+//                'method'    => 'updateMail',
+//                'shortHelp' => 'Update Mail Item',
+//                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_record_put_help.html',
+//            ),
             'recipientLookup' => array(
                 'reqType'   => 'POST',
                 'path'      => array('Mail', 'recipients', 'lookup'),
                 'pathVars'  => array(''),
                 'method'    => 'recipientLookup',
                 'shortHelp' => 'Lookup Email Recipient Info',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#recipientLookup',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_recipients_lookup_post_help.html',
             ),
             'listRecipients'  => array(
                 'reqType'   => 'GET',
@@ -103,7 +80,7 @@ class MailApi extends ModuleApi
                 'pathVars'  => array(''),
                 'method'    => 'findRecipients',
                 'shortHelp' => 'Search For Email Recipients',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#findRecipients',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_recipients_find_get_help.html',
             ),
             'validateEmailAddresses'  => array(
                 'reqType'   => 'POST',
@@ -111,21 +88,38 @@ class MailApi extends ModuleApi
                 'pathVars'  => array(''),
                 'method'    => 'validateEmailAddresses',
                 'shortHelp' => 'Validate One Or More Email Address',
-                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#validateEmailAddresses',
+                'longHelp'  => 'modules/Emails/clients/base/api/help/mail_address_validate_post_help.html',
+            ),
+            'saveAttachment' => array(
+                'reqType' => 'POST',
+                'path' => array('Mail', 'attachment'),
+                'pathVars' => array('', ''),
+                'method' => 'saveAttachment',
+                'rawPostContents' => true,
+                'shortHelp' => 'Saves a mail attachment.',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_post_help.html',
+            ),
+            'removeAttachment' => array(
+                'reqType' => 'DELETE',
+                'path' => array('Mail', 'attachment', '?'),
+                'pathVars' => array('', '', 'file_guid'),
+                'method' => 'removeAttachment',
+                'rawPostContents' => true,
+                'shortHelp' => 'Removes a mail attachment',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_record_delete_help.html',
+            ),
+            'clearUserCache' => array(
+                'reqType' => 'DELETE',
+                'path' => array('Mail', 'attachment', 'cache'),
+                'pathVars' => array('', '', ''),
+                'method' => 'clearUserCache',
+                'rawPostContents' => true,
+                'shortHelp' => 'Clears the user\'s attachment cache directory',
+                'longHelp' => 'modules/Emails/clients/base/api/help/mail_attachment_cache_delete_help.html',
             ),
         );
 
         return $api;
-    }
-
-    /**
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function notSupported($api, $args)
-    {
-        throw new SugarApiExceptionNotFound();
     }
 
     /**
@@ -164,8 +158,6 @@ class MailApi extends ModuleApi
 
     protected function handleMail($api, $args)
     {
-        $result = array();
-
         foreach (self::$fields AS $k => $v) {
             if (!isset($args[$k])) {
                 $args[$k] = $v;
@@ -207,13 +199,14 @@ class MailApi extends ModuleApi
             }
         }
 
+        $response = array();
         if (isset($result["EMAIL"])) {
-            $email           = $result["EMAIL"];
-            $xmail           = clone $email;
-            $result["EMAIL"] = $xmail->toArray();
+            $email  = $result["EMAIL"];
+            $xmail  = clone $email;
+            $response = $xmail->toArray();
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -340,7 +333,6 @@ class MailApi extends ModuleApi
         $mailRecord->ccAddresses  = $args["cc_addresses"];
         $mailRecord->bccAddresses = $args["bcc_addresses"];
         $mailRecord->attachments  = $args["attachments"];
-        $mailRecord->documents    = $args["documents"];
         $mailRecord->teams        = $args["teams"];
         $mailRecord->related      = $args["related"];
         $mailRecord->subject      = $args["subject"];
@@ -379,5 +371,66 @@ class MailApi extends ModuleApi
         }
 
         return $this->emailRecipientsService;
+    }
+
+    /**
+     * Saves an email attachment using the POST method
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args Arguments array built by the service base
+     * @return array metadata about the attachment including name, guid, and nameForDisplay
+     */
+    public function saveAttachment($api, $args)
+    {
+        $email = $this->getEmailBean();
+        $email->email2init();
+        $metadata = $email->email2saveAttachment();
+        return $metadata;
+    }
+
+    /**
+     * Removes an email attachment
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args The request args
+     * @return bool
+     * @throws SugarApiExceptionRequestMethodFailure
+     */
+    public function removeAttachment($api, $args)
+    {
+        $email = $this->getEmailBean();
+        $email->email2init();
+        $fileGUID = $args['file_guid'];
+        $fileName = $email->et->userCacheDir . "/" . $fileGUID;
+        $filePath = clean_path($fileName);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+        return true;
+    }
+
+    /**
+     * Clears the user's attachment cache directory
+     *
+     * @param ServiceBase $api The service base
+     * @param array $args The request args
+     * @return bool
+     * @throws SugarApiExceptionRequestMethodFailure
+     */
+    public function clearUserCache($api, $args)
+    {
+        $em = new EmailUI();
+        $em->preflightUserCache();
+        return true;
+    }
+
+    /**
+     * Returns a new Email bean, used for testing purposes
+     *
+     * @return Email
+     */
+    protected function getEmailBean()
+    {
+        return new Email();
     }
 }

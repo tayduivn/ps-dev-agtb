@@ -113,7 +113,7 @@ describe("Base.Field.Attachments", function() {
             triggerStub.restore();
             field.removeAttachmentsById('42');
             expect(apiCallStub.lastCall.args[0]).toEqual('delete');
-            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/MailAttachment\/42/);
+            expect(apiCallStub.lastCall.args[1]).toMatch(/.*\/Mail\/attachment\/42/);
         });
     });
 

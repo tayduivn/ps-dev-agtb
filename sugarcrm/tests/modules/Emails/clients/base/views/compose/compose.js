@@ -682,16 +682,15 @@ describe("Emails.Views.Compose", function() {
             view.model.off('change');
         });
 
-        it('should populate the send model attachments/documents correctly with both attachments and sugar documents', function() {
+        it('should populate the send model attachments correctly', function() {
             var sendModel,
                 attachment1 = {id:'123',type:'upload'},
-                attachment2 = {id:'123',type:'documents'},
-                attachment3 = {id:'123',type:'foo'};
+                attachment2 = {id:'456',type:'document'},
+                attachment3 = {id:'789',type:'template'};
 
             view.model.set('attachments', [attachment1,attachment2,attachment3]);
             sendModel = view.initializeSendEmailModel();
-            expect(sendModel.get('attachments')).toEqual([attachment1]);
-            expect(sendModel.get('documents')).toEqual([attachment2.id]);
+            expect(sendModel.get('attachments')).toEqual([attachment1,attachment2,attachment3]);
         });
 
         it('should populate the send model attachments/documents as empty when attachments not set', function() {
@@ -699,7 +698,6 @@ describe("Emails.Views.Compose", function() {
             view.model.unset('attachments');
             sendModel = view.initializeSendEmailModel();
             expect(sendModel.get('attachments')).toEqual([]);
-            expect(sendModel.get('documents')).toEqual([]);
         });
 
         it("should populate the related field according to how the Mail API expects it", function () {
