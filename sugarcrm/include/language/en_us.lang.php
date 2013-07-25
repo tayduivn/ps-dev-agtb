@@ -3915,6 +3915,7 @@ $app_strings = array (
 
     //First time login wizard
     'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
+    'LBL_SETUP_USER_INFO' => 'Setup your user information',
     'LBL_WIZ_START_SUGAR' => 'Start Sugar',
     'LBL_WIZ_FIRST_NAME' => 'First name',
     'LBL_WIZ_LAST_NAME' => 'Last name',

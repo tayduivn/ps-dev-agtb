@@ -30,8 +30,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['base']['view']['wizard-page'] = array(
     'action' => 'edit',
-    'buttons' =>
-    array(
+    'buttons' => array(
         array(
             'name' => 'previous_button',
             'type' => 'button',

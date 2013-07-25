@@ -28,25 +28,44 @@
 }}
 <div class="welcome">
     <div class="thumbnail modal">
-        <div class="modal-header">
-            <h3>{{str meta.title module}} <small>({{progress.page}}/{{progress.lastPage}})</small></h3>
+        <div class="modal-header modal-header-firstlogin">
+            <div class="row-fluid">
+                <div class="span1 page-number">
+                    <a class="btn btn-circle">{{progress.page}}/{{progress.lastPage}}</a>
+                </div>
+                <div class="span5 firstlogin-title">
+                    <h3>{{str meta.title module}}</h3>
+                    <span>{{str meta.message module}}</span>
+                </div>
+                <div class="span6 progress-section">
+                    <span>Setup progress</span>
+                    <div class="progress progress-success">
+                        <div class="bar" style="width: {{percentComplete}}%;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
+        <!-- Hack: Adding .record here since .record .record-cell contain styles we need :( -->
+        <div class="modal-body record">
             {{#each meta.panels}}
-                {{#each fields}}
-                    <div class="record-cell">
-                        <div class="record-label" data-name="{{name}}">{{#if label}}{{str label module}}{{/if}}</div>
-                        <span class="normal{{#if css}} {{css}}{{/if}}" data-fieldname="{{name}}">
-                            {{field ../../this model=../../model template="edit"}}
-                        </span>
+                {{#each grid}}
+                    <div class="row-fluid {{../name}}{{#if ../hide}} hide{{/if}}">
+                        {{#each this}}
+                            <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                <div class="record-label" data-type="{{type}}" data-name="{{name}}">{{#if label}}{{str label module}}{{/if}}</div>
+                                <span class="normal{{#if css}} {{css}}{{/if}}" data-fieldname="{{name}}">
+                                    {{field ../../../this model=../../../model template="edit"}}
+                                </span>
+                            </div>
+                        {{/each}}
                     </div>
                 {{/each}}
             {{/each}}
-            <div class="modal-footer">
-                {{#each meta.buttons}}
-                    {{field ../this model=../model template="edit"}}
-                {{/each}}
-            </div>
+        </div>
+        <div class="modal-footer">
+            {{#each meta.buttons}}
+                {{field ../this model=../model template="edit"}}
+            {{/each}}
         </div>
     </div>
 </div>

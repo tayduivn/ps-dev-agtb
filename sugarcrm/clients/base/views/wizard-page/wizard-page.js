@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['GridBuilder'],
 
     /**
      * An abstract WizardPageView.  Wizard pages should extend this and provide
@@ -63,9 +64,39 @@
      * @private
      */
     _render: function(){
+        this._buildGridsFromPanelsMetadata(this.meta.panels);
         this.progress = this.layout.getProgress();
+        this.percentComplete = this._getPercentageComplete();
         app.view.View.prototype._render.call(this);
         this.updateButtons();
+    },
+    /**
+     * Used to build our multi-column grid (user wizard is 2 col panel).
+     * @param  {Object} panels the meta.panels
+     * @protected
+     */
+    _buildGridsFromPanelsMetadata: function(panels) {
+        _.each(panels, function(panel) {
+            if (_.isFunction(this.getGridBuilder)) {
+                var options = {
+                        fields:      panel.fields,
+                        columns:     panel.columns,
+                        labels:      panel.labels,
+                        labelsOnTop: panel.labelsOnTop,
+                    },
+                    gridResults = this.getGridBuilder(options).build();
+                panel.grid   = gridResults.grid;
+            }
+        }, this);
+    },
+    /**
+     * Gets the percentage of pages complete. We consider being on a page as counting towards
+     * completed pages (as this seems to be the norm) e.g. arriving at 1 of 3 results in 33%
+     * @protected
+     * @return {Number} Percentage complete as int
+     */
+    _getPercentageComplete: function() {
+        return Math.floor(this.progress.page / this.progress.lastPage * 100);
     },
     /**
      * Called after render to update status of next/previous buttons.

@@ -19,7 +19,8 @@
      * @returns {boolean}
      */
     isPageComplete: function(){
-        return (Math.random()*2) > 1;
+        // TODO: Only return true when user has filled out all required fields, pre-validation, etc...
+        return true;
     },
     /**
      * @override
