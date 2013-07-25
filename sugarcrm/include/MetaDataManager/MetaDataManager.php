@@ -700,6 +700,7 @@ class MetaDataManager
      */
     public function getServerInfo()
     {
+        global $system_config;
         $data['flavor'] = $GLOBALS['sugar_flavor'];
         $data['version'] = $GLOBALS['sugar_version'];
         $data['build'] = $GLOBALS['sugar_build'];
@@ -724,6 +725,9 @@ class MetaDataManager
             $data['custom_version'] = $custom_version;
         }
 
+        if(isset($system_config->settings['system_skypeout_on']) && $system_config->settings['system_skypeout_on'] == 1){
+            $data['system_skypeout_on'] = true;
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if (!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {
