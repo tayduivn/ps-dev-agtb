@@ -176,6 +176,34 @@ class AuthenticationController
 	}
 
 	/**
+	 * This is called on every page hit.
+	 * It returns true if the current session is authenticated or false otherwise
+	 *
+	 * @return bool
+	 */
+	public function apiSessionAuthenticate()
+	{
+		if (!$this->authenticated) {
+			$this->authenticated = $this->authController->postSessionAuthenticate();
+		}
+		if (!$this->authenticated) {
+			if (session_id()) {
+				session_destroy();
+			}
+			$_SESSION = array();
+		} else {
+			if(!isset($_SESSION['userStats']['pages'])){
+			    $_SESSION['userStats']['loginTime'] = time();
+			    $_SESSION['userStats']['pages'] = 0;
+			}
+			$_SESSION['userStats']['lastTime'] = time();
+			$_SESSION['userStats']['pages']++;
+
+		}
+		return $this->authenticated;
+	}
+
+	/**
 	 * Called when a user requests to logout. Should invalidate the session and redirect
 	 * to the login page.
 	 */

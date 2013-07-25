@@ -194,11 +194,11 @@ function end_session($user_name)
  * @return false -- If the session is not created
  */
 function validate_user($user_name, $password){
-	global $server, $current_user, $sugar_config, $system_config;
+	global $server, $current_user, $sugar_config;
 	$user = BeanFactory::getBean('Users');
 	$user->user_name = $user_name;
-	$system_config = Administration::getSettings('system');
-	$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
+	$authController = AuthenticationController::getInstance();
+
 	// Check to see if the user name and password are consistent.
 	if($user->authenticate_user($password)){
 		// we also need to set the current_user.
