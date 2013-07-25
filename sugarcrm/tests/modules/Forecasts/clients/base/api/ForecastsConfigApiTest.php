@@ -34,12 +34,19 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setup('moduleList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
+        SugarTestForecastUtilities::setUpForecastConfig(
+            array(
+                'worksheet_columns' => array()
+            )
+        );
+
         $GLOBALS['current_user']->is_admin = 1;
         parent::setUp();
     }
 
     public function tearDown()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'testSetting' and category = 'Forecasts'");
         $db->commit();
@@ -64,7 +71,9 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             "module" => "Forecasts",
             "testSetting" => "testValue",
+            'worksheet_columns' => array()
         );
+        /* @var ForecastsConfigApi $apiClass */
         $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
         $apiClass->expects($this->once())
             ->method('timePeriodSettingsChanged')
@@ -121,6 +130,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             "module" => "Forecasts",
             "testSetting" => strrev($testSetting),
+            'worksheet_columns' => array()
         );
         $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
         $apiClass->expects($this->once())

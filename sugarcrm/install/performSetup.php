@@ -321,9 +321,20 @@ echo "<br>";
   //END SUGARCRM lic=sub ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
-    //Intall forecasts configuration
+    //Install forecasts configuration
     require_once('modules/Forecasts/ForecastsDefaults.php');
-    ForecastsDefaults::setupForecastSettings();
+    $forecast_config = ForecastsDefaults::setupForecastSettings();
+
+    // setup the forecast columns based on the config
+    require_once('include/api/RestService.php');
+    $api = new RestService();
+    $api->user = $GLOBALS['current_user'];
+    $api->platform = 'base';
+    require_once('modules/Forecasts/clients/base/api/ForecastsConfigApi.php');
+    $client = new ForecastsConfigApi();
+    $client->setWorksheetColumns($api, $forecast_config['worksheet_columns'], $forecast_config['forecast_by']);
+
+    unset($api, $client, $forecast_config);
     //END SUGARCRM flav=pro ONLY
 
     installerHook('pre_createUsers');
@@ -464,6 +475,12 @@ enableInsideViewConnector();
     $deltaTime = $endTime - $startTime;
 
     //BEGIN SUGARCRM flav=pro ONLY
+    // Force the RevenueLineItem Vardef Cache to update,  This is needed since for some reason the related_calc_fields
+    // don't get set during the install.  Something is off in VardefManager but not sure what yet.
+    // See ENGRD-171 for more details as why this is there.
+    $rli_bean = new RevenueLineItem();
+    VardefManager::loadVardef($rli_bean->module_dir, $rli_bean->object_name, true, array("bean" => $rli_bean));
+
     //////////////////////////////////////////
     /// PERFORM OFFLINE CLIENT INSTALL
     /////////////////////////////////////////
