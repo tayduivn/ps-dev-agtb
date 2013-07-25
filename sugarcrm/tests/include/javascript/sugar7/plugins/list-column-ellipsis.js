@@ -8,8 +8,11 @@ describe("List Column Ellipsis Plugin", function() {
         plugin = app.plugins._get('list-column-ellipsis', 'view');
         plugin._fields = {};
         plugin._fields.visible = [{name: 'email'}];
+        plugin.trigger= function() {};
     });
     afterEach(function() {
+        // delete our fake trigger as to not affect other tests
+        delete plugin.trigger;
         app = null;
     });
 
@@ -25,7 +28,6 @@ describe("List Column Ellipsis Plugin", function() {
     it("Should set fields toggling selected from true to false", function() {
         var opts = [{name: 'no'}, {name: 'no'}, {name: 'yes', selected: true}, {name: 'no'}];
         plugin._fields.options = opts;
-        plugin.trigger = function() {};
         plugin._toggleColumn('yes');
         expect(opts[2].selected).toEqual(false);
         expect(plugin._fields.visible.length).toBeFalsy();
@@ -33,7 +35,6 @@ describe("List Column Ellipsis Plugin", function() {
     it("Should set fields toggling selected from false to true", function() {
         var opts = [{name: 'no'}, {name: 'yes', selected: false}, {name: 'no'}];
         plugin._fields.options = opts;
-        plugin.trigger = function() {};
         plugin._toggleColumn('yes');
         expect(opts[1].selected).toEqual(true);
         expect(plugin._fields.visible.length).toEqual(1);
@@ -67,9 +68,7 @@ describe("List Column Ellipsis Plugin", function() {
                 }
             ]
         };
-        plugin.trigger = function() {};
         plugin._toggleColumn('test2');
-
         expect(lastStateSetStub.lastCall.args[1]).toEqual(['test2']);
         lastStateSetStub.restore();
     });
