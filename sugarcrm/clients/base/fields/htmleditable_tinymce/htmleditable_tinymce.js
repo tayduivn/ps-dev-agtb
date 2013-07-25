@@ -14,13 +14,8 @@
      * @private
      */
     _render: function() {
-        // Clean up existing TinyMCE editor if this field is being re-rendered
-        if(!_.isNull(this._htmleditor)){
-            this._saveEditor(true);
-            this._htmleditor.remove();
-            this._htmleditor.destroy();
-            this._htmleditor = null;
-        }
+        this.destroyTinyMCEEditor();
+
         app.view.Field.prototype._render.call(this);
 
         this._getHtmlEditableField().attr('name', this.name);
@@ -173,13 +168,26 @@
     },
 
     /**
+     * Destroy TinyMCE Editor instance
+     */
+    destroyTinyMCEEditor: function() {
+        // Clean up existing TinyMCE editor
+        if(!_.isNull(this._htmleditor)){
+            this._saveEditor(true);
+            this._htmleditor.remove();
+            this._htmleditor.destroy();
+            this._htmleditor = null;
+        }
+    },
+
+    /**
      * Save the TinyMCE editor's contents to the model
      * @private
      */
     _saveEditor: function(force){
         var save = force | this._isDirty;
         if(save){
-            this.model.set(this.name, this._htmleditor.getContent());
+            this.model.set(this.name, this.getEditorContent(), {silent: true});
             this._isDirty = false;
         }
     },
@@ -215,6 +223,16 @@
      */
     getEditorContent: function() {
         return this._htmleditor.getContent();
+    },
+
+    /**
+     * Destroy TinyMCE Editor on dispose
+     *
+     * @private
+     */
+    _dispose: function() {
+        this.destroyTinyMCEEditor();
+        app.view.Field.prototype._dispose.call(this);
     }
 
 })
