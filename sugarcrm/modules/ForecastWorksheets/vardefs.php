@@ -280,6 +280,17 @@ $dictionary['ForecastWorksheet'] = array(
             'fields' => array('assigned_user_id', 'date_closed_timestamp', 'draft', 'deleted')
         ),
     ),
+    'relationships' => array(
+        'forecastworksheets_accounts' =>  array(
+            'lhs_module' => 'Accounts',
+            'lhs_table' => 'accounts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'ForecastWorksheets',
+            'rhs_table' => 'forecast_worksheets',
+            'rhs_key' => 'account_id',
+            'relationship_type' => 'one-to-many'
+        ),
+    )
 );
 
 VardefManager::createVardef(

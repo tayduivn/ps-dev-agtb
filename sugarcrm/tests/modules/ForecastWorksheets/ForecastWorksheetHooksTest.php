@@ -270,4 +270,38 @@ class ForecastWorksheetHooksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('test1', $notification->assigned_user_id);
         $this->assertEquals('Message One', $notification->name);
     }
+
+    /**
+     * @dataProvider dataProviderCheckRelatedName
+     */
+    public function testCheckRelatedName($field, $value, $isEmpty)
+    {
+        $hook = $this->getMock(
+            'ForecastWorksheetHooks',
+            array('isForecastSetup')
+        );
+
+        $worksheet = $this->getMock('ForecastWorksheet', array('save'));
+
+        $fn = $field . '_name';
+        $fi = $field . '_id';
+
+        $worksheet->$fn = 'Test Value';
+        $worksheet->$fi = $value;
+
+        $hook->checkRelatedName($worksheet, 'before_save', array());
+
+        $this->assertEquals($isEmpty, empty($worksheet->$fn));
+
+    }
+
+    public function dataProviderCheckRelatedName()
+    {
+        return array(
+            array('account', '', true),
+            array('account', 'some_value', false),
+            array('opportunity', '', true),
+            array('opportunity', 'some_value', false),
+        );
+    }
 }

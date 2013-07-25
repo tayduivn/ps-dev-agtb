@@ -62,7 +62,11 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $return = SugarTestReflection::callProtectedMethod($forecast_worksheet, 'getRelatedName', array('Accounts', 'test_id'));
+        $return = SugarTestReflection::callProtectedMethod(
+            $forecast_worksheet,
+            'getRelatedName',
+            array('Accounts', 'test_id')
+        );
         $this->assertEmpty($return);
     }
 
@@ -80,7 +84,11 @@ class ForecastWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $forecast_worksheet = BeanFactory::getBean('ForecastWorksheets');
-        $return = SugarTestReflection::callProtectedMethod($forecast_worksheet, 'getRelatedName', array('Accounts', $acc_id));
+        $return = SugarTestReflection::callProtectedMethod(
+            $forecast_worksheet,
+            'getRelatedName',
+            array('Accounts', $acc_id)
+        );
         $this->assertEquals($acc_name, $return);
     }
 }
