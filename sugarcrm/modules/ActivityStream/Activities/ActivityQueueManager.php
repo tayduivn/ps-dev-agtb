@@ -322,28 +322,26 @@ class ActivityQueueManager
      */
     protected function processSubscriptions(SugarBean $bean, Activity $act, array $args)
     {
-        $subs          = BeanFactory::getBeanName('Subscriptions');
-        $user_partials = $subs::getSubscribedUsers($bean);
-        $data          = array(
+        $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+        $userPartials          = $subscriptionsBeanName::getSubscribedUsers($bean);
+        $data                  = array(
             'act_id'        => $act->id,
             'bean_module'   => $bean->module_name,
             'bean_id'       => $bean->id,
             'args'          => $args,
-            'user_partials' => $user_partials,
+            'user_partials' => $userPartials,
         );
-
-        $job          = BeanFactory::getBean('SchedulersJobs');
-        $job->requeue = 1;
-        $job->name    = "ActivityStream add";
-        $job->data    = serialize($data);
-        $job->target  = "class::SugarJobAddActivitySubscriptions";
-        $job->assigned_user_id = $GLOBALS['current_user']->id;
-
-        if (count($user_partials) < 5) {
-            $job->execute_time = TimeDate::getInstance()->nowDb();
-            $job->runJob();
+        if (count($userPartials) < 5) {
+            $subscription = BeanFactory::newBean('Subscriptions');
+            $subscription->addActivitySubscriptions($data);
         } else {
-            $queue = new SugarJobQueue();
+            $job                   = BeanFactory::getBean('SchedulersJobs');
+            $job->requeue          = 1;
+            $job->name             = "ActivityStream add";
+            $job->data             = serialize($data);
+            $job->target           = "class::SugarJobAddActivitySubscriptions";
+            $job->assigned_user_id = $GLOBALS['current_user']->id;
+            $queue                 = new SugarJobQueue();
             $queue->submitJob($job);
         }
     }
