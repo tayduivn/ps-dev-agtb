@@ -1,4 +1,4 @@
-@fieldHeight: 30px;
+@mergeFieldHeight: 30px;
 h4.merge-interface-header {
 	margin-left: 20px;
 	margin-right: 10px;
@@ -116,12 +116,20 @@ h4.merge-interface-header {
 	input[type=text] {
 		width: 86px;
 	}
-
+    input[type=password] {
+      width: 86px;
+    }
+    input[type=radio] {
+      width: 16px
+    }
+    textarea {
+      display: inline;
+    }
     .merge-row {
       width: auto;
       margin: 0;
-      line-height: @fieldHeight;
-      height: @fieldHeight;
+      line-height: @mergeFieldHeight;
+      height: (@mergeFieldHeight + 5);
       padding: 0 5px;
       white-space: nowrap;
 		&.odd {
@@ -146,7 +154,7 @@ h4.merge-interface-header {
       }
       .controls {
         width: 100%;
-        height: @fieldHeight;
+        height: @mergeFieldHeight;
         padding: 2px 0 2px 0;
         margin: 0;
       }
@@ -154,16 +162,41 @@ h4.merge-interface-header {
         width: 120px;
         overflow: hidden;
         margin: 0;
-        line-height: @fieldHeight;
-        height: @fieldHeight;
+        line-height: (@mergeFieldHeight + 5);
+        height: (@mergeFieldHeight + 5);
         white-space: nowrap;
         position: absolute;
+      }
+      &.control-group {
+        height: (@mergeFieldHeight + 5);
+      }
+      &.merge-row-field-parent {
+        height: 70px;
+        .controls label {
+          height: 75px;
+        }
+        .controls .span4 {
+          width: auto;
+        }
+        .controls .span8 {
+          width: auto;
+          margin-left: 0;
+        }
       }
 	}
 }
 
 .record-merge-interface {
-	//overflow-y:scroll !important;
-	//overflow-x:hidden !important;
+    .merge-interface {
+        .rows-div {
+            position: relative;
+            .row-div-cnt {
+                width: 730px;
+            }
+            .merge-row:nth-child(odd) {
+                background-color: #f8f8f8;
+            }
+        }
+    }
     overflow: hidden;
 }
