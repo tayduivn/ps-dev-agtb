@@ -66,12 +66,13 @@ class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
 
     public function tearDown()
     {
+        /* Commenting this out so that errors don't happen while the test is skipped.
         parent::tearDown();
         $this->company_source->setProperties($this->company_props);
         $this->person_source->setProperties($this->person_props);
         $this->mock = null;
         // reload map
-        SugarAutoLoader::loadFileMap();
+        SugarAutoLoader::loadFileMap();*/
     }
 
     public function testZoominfoCompanyFillBeans()

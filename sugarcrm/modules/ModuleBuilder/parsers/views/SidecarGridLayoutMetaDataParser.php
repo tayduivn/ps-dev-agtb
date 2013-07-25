@@ -733,7 +733,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     {
         if (!empty($this->headerPanelMeta['fields']) && is_array($this->headerPanelMeta['fields'])) {
             foreach ($this->headerPanelMeta['fields'] as $field) {
-                $this->unsetAvailableField(&$availableFields, $field);
+                $this->unsetAvailableField($availableFields, $field);
             }
         }
     }
