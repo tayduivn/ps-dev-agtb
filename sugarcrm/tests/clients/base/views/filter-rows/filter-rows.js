@@ -254,7 +254,13 @@ describe("BaseFilterRowsView", function() {
             expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
             expect(triggerStub.secondCall).toBeNull();
         });
-
+        it('should return true if predefined filter instead of value', function() {
+            $rows.push($('<div>').data({ name: '$favorite', isPredefinedFilter: true}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
     });
 
     describe('populateFilter', function() {
@@ -339,6 +345,9 @@ describe("BaseFilterRowsView", function() {
             view.fieldList = {
                 test: {
                     type: 'enum'
+                },
+                $favorite: {
+                    predefined_filter: true
                 }
             };
             view.filterOperatorMap = { enum: {
@@ -379,6 +388,18 @@ describe("BaseFilterRowsView", function() {
             view.handleFieldSelected({currentTarget: $filterField});
             expect($row.data('name')).toBeDefined();
             expect($row.data('operatorField')).toBeDefined();
+        });
+        it('should not create an operator field for predefined filters', function() {
+            var createFieldSpy = sinon.spy(view, 'createField');
+            var applyFilterStub = sinon.stub(view, 'fireSearch');
+            $filterField.val('$favorite');
+            view.handleFieldSelected({currentTarget: $filterField});
+            expect(createFieldSpy).not.toHaveBeenCalled();
+            expect(_.isEmpty($operatorField.html())).toBeTruthy();
+            expect(applyFilterStub).toHaveBeenCalled();
+            expect($row.data('isPredefinedFilter')).toBeTruthy();
+            applyFilterStub.restore();
+            createFieldSpy.restore();
         });
     });
 
@@ -605,10 +626,10 @@ describe("BaseFilterRowsView", function() {
             };
             expect(filter).toEqual(expected);
         });
-        it('should make an exception for specific $ filters', function() {
+        it('should make an exception for predefined filters', function() {
             $row = $('<div>').data({
                 name: '$favorite',
-                value: 'true'
+                isPredefinedFilter: true
             });
             filter = view.buildRowFilterDef($row);
             expected = {

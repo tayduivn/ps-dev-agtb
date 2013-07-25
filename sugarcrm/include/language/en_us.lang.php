@@ -1804,11 +1804,6 @@ $app_list_strings = array (
         1 => 'True',
     ),
 
-    'filter_predefined_dom' => array(
-        '' => '',
-        'true' => 'True',
-    ),
-
   'opportunity_metrics_dom' => array(
       'won' => 'Won',
       'lost' => 'Lost',
