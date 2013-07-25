@@ -3933,6 +3933,19 @@ $app_strings = array (
     'LBL_WIZ_TIMEFORMAT' => 'Time Format',
     'LBL_WIZ_DATE_FORMAT' => 'Date Format',
     'LBL_WIZ_NAME_FORMAT' => 'Name Format',
+    'LBL_SETUP_PROGRESS' => 'Setup progress',
+    //User wizard links
+    'LBL_WIZ_SUGAR_TRAINING' => 'Sugar Training',
+    'LBL_WIZ_DOCUMENTATION' => 'Documentation',
+    'LBL_WIZ_KNOWLEDGE_BASE' => 'Knowledge Base',
+    'LBL_WIZ_FORUMS' => 'Forums',
+    //Admin wizard links
+    'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'System Locale Settings',
+    'LBL_WIZ_EMAIL_SETTINGS' => 'Email Settings',
+    'LBL_WIZ_IMPORT_DATA' => 'Import Data',
+    'LBL_WIZ_CREATE_USERS' => 'Create Users',
+    'LBL_WIZ_APPLICATION_SETTINGS' => 'View and Manage Application Settings',
+    'LBL_WIZ_CONFIGURE_APPLICATION' => 'Configure the Application',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
