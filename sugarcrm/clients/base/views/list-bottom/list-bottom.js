@@ -45,8 +45,6 @@
         this.showMoreLabel = app.lang.get(this.options.meta.showMoreLabel, this.module, {
             module: app.lang.get('LBL_MODULE_NAME', this.module).toLowerCase()
         });
-
-        this.layout.on("hide", this.toggleVisibility, this);
     },
 
     _renderHtml: function() {
@@ -134,15 +132,6 @@
             this.collection.on("reset sync", function() {
                 this.render();
             }, this);
-        }
-    },
-
-    // For certain layouts that want to trigger
-    toggleVisibility: function(e) {
-        if (e) {
-            this.$el.show();
-        } else {
-            this.$el.hide();
         }
     }
 })
