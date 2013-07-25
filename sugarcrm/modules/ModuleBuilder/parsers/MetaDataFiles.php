@@ -885,7 +885,7 @@ class MetaDataFiles
                                     // need to capture the changes that all live
                                     // in one file for subpanels
                                     if($fileInfo['subPath'] == 'subpanels') {
-                                        $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], array());
+                                        $results[$fileInfo['subPath']]['meta'] = self::mergeSubpanels($viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']], array('components' => array()));
                                     } else {
                                         $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
                                     }
@@ -924,7 +924,16 @@ class MetaDataFiles
                     }
                 }
             } else {
-                $currentComponents[] = $mergeComponent;
+                $linkName = isset($mergeComponent['context']['link']) ? $mergeComponent['context']['link'] : '';
+                $linkExists = false;
+                foreach($currentComponents as $key => $currentComponent) {
+                    if(!empty($currentComponent['context']['link']) && $currentComponent['context']['link'] == $linkName) {
+                        $linkExists = true;
+                    }
+                }
+                if(!$linkExists) {
+                    $currentComponents[] = $mergeComponent;
+                }
             }
         }
 
