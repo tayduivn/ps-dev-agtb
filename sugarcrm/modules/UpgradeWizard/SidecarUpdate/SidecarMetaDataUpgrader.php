@@ -302,9 +302,75 @@ class SidecarMetaDataUpgrader
         }
         $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
 
+        // upgrade quickcreate menus
+        $this->upgradeQuickCreate();
+
         // Add the rest of the OOTB module wireless metadata files to the stack
         $this->cleanupLegacyFiles();
     }
+
+
+    /**
+     * Create the new quick create defs
+     */
+    public function upgradeQuickCreate()
+    {
+        global $app_list_strings;
+        $modules = $app_list_strings['moduleList'];
+        $actions_path = "include/DashletContainer/Containers/DCActions.php";
+        foreach (SugarAutoLoader::existingCustom($actions_path) as $file) {
+            include $file;
+        }
+        $availableModules = $DCActions;
+        foreach ($modules as $module => $modLabel) {
+            if (SugarAutoLoader::existingCustom("modules/$module/metadata/quickcreatedefs.php")) {
+                $availableModules[$module] = $module;
+            }
+        }
+
+        $disabled = array_diff($availableModules, $DCActions);
+
+        foreach ($DCActions as $module) {
+            $this->upgradeQuickCreateFile($module, true);
+        }
+        foreach ($disabled as $module) {
+            $this->upgradeQuickCreateFile($module, false);
+        }
+    }
+
+    /**
+     * Create the quick create def file
+     *
+     * @param $module string - module to create defs
+     * @param bool $enabled - is it enabled or disabled
+     */
+    public function upgradeQuickCreateFile($module, $enabled = true)
+    {
+        $quickCreateFile = "modules/$module/clients/base/menus/quickcreate/quickcreate.php";
+        $arrayName = "viewdefs['{$module}']['base']['menu']['quickcreate']";
+        // require the file
+        if (file_exists("custom/{$quickCreateFile}")) {
+            include "custom/{$quickCreateFile}";
+        } elseif (file_exists($quickCreateFile)) {
+            include $quickCreateFile;
+        } else {
+            $viewdefs[$module]['base']['menu']['quickcreate'] = array(
+                'layout' => 'create',
+                'label' => translate($module),
+            );
+        }
+
+        $viewdefs[$module]['base']['menu']['quickcreate']['visible'] = $enabled;
+
+        sugar_mkdir(dirname("custom/{$quickCreateFile}"), null, true);
+
+        write_array_to_file(
+            $arrayName,
+            $viewdefs[$module]['base']['menu']['quickcreate'],
+            "custom/{$quickCreateFile}"
+        );
+    }
+
 
     /**
      * Gets the list of failed upgrades
