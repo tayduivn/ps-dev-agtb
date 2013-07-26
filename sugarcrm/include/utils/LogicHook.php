@@ -221,8 +221,11 @@ class LogicHook{
 					    $GLOBALS['log']->debug('Creating new instance of hook class '.$hook_class.' without parameters');
                     }
 					$class = new $hook_class();
-					if(!is_null($this->bean))
-						$class->$hook_function($this->bean, $event, $arguments);
+                    if (!is_null($this->bean)) {
+                        $callback = array($class, $hook_function);
+                        $params = array_merge(array($this->bean, $event, $arguments), array_slice($hook_details, 5));
+                        call_user_func_array($callback, $params);
+                    }
 					else
 						$class->$hook_function($event, $arguments);
 				}
