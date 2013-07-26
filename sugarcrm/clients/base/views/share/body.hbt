@@ -1,0 +1,6 @@
+{{!--
+Use body-html.hbt to add html tags. Keep this one clean.
+--}}
+{{str "TPL_RECORD_SHARE_BODY" module this}}
+
+{{url}}
