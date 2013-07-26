@@ -1799,7 +1799,6 @@ $app_list_strings = array (
     ),
 
     'filter_checkbox_dom' => array(
-        '' => '',
         0 => 'False',
         1 => 'True',
     ),
