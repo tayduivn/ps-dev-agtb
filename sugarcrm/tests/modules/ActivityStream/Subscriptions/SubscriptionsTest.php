@@ -1,10 +1,4 @@
 <?php
-
-use SugarTestAccountUtilities as AccountHelper;
-use SugarTestCommentUtilities as CommentHelper;
-use SugarTestActivityUtilities as ActivityHelper;
-use SugarTestUserUtilities as UserHelper;
-
 /**
  * @group ActivityStream
  */
@@ -15,22 +9,20 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->user = UserHelper::createAnonymousUser();
-        // TODO: Hack to avoid ACLController::checkAccessInternal errors. See
-        // https://plus.google.com/101248048527720727791/posts/BNzpE6vwncT?cfem=1.
-        $GLOBALS['current_user'] = $this->user;
-
+        parent::setUp();
+        SugarTestHelper::setUp('current_user');
+        $this->user   = $GLOBALS['current_user'];
         $this->record = self::getUnsavedRecord();
     }
 
     public function tearDown()
     {
-        unset($GLOBALS['current_user']);
-        UserHelper::removeAllCreatedAnonymousUsers();
-        AccountHelper::removeAllCreatedAccounts();
-        ActivityHelper::removeAllCreatedActivities();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestActivityUtilities::removeAllCreatedActivities();
         BeanFactory::setBeanClass('Activities');
         BeanFactory::setBeanClass('Accounts');
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     /**
@@ -41,16 +33,12 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         $kls = BeanFactory::getBeanName('Subscriptions');
         $return = $kls::getSubscribedUsers($this->record);
         $this->assertInternalType('array', $return);
-        // TODO: Change this assertion to use assertCount after upgrading to
-        // PHPUnit 3.6 or above.
-        $this->assertEquals(0, count($return));
+        $this->assertCount(0, $return);
 
         $kls::subscribeUserToRecord($this->user, $this->record);
         $return = $kls::getSubscribedUsers($this->record);
         $this->assertInternalType('array', $return);
-        // TODO: Change this assertion to use assertCount after upgrading to
-        // PHPUnit 3.6 or above.
-        $this->assertEquals(1, count($return));
+        $this->assertCount(1, $return);
         $this->assertEquals($return[0]['created_by'], $this->user->id);
     }
 
@@ -62,16 +50,12 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         $kls = BeanFactory::getBeanName('Subscriptions');
         $return = $kls::getSubscribedRecords($this->user);
         $this->assertInternalType('array', $return);
-        // TODO: Change this assertion to use assertCount after upgrading to
-        // PHPUnit 3.6 or above.
-        $this->assertEquals(0, count($return));
+        $this->assertCount(0, $return);
 
         $kls::subscribeUserToRecord($this->user, $this->record);
         $return = $kls::getSubscribedRecords($this->user);
         $this->assertInternalType('array', $return);
-        // TODO: Change this assertion to use assertCount after upgrading to
-        // PHPUnit 3.6 or above.
-        $this->assertEquals(1, count($return));
+        $this->assertCount(1, $return);
         $this->assertEquals($return[0]['parent_id'], $this->record->id);
     }
 
@@ -110,8 +94,8 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAddActivitySubscriptions_FailedToLoadTheRelationship_ExceptionThrown()
     {
         BeanFactory::setBeanClass('Activities', 'MockActivityForSubscriptionsTest');
-        $activity = ActivityHelper::createActivity();
-        $bean     = AccountHelper::createAccount();
+        $activity = SugarTestActivityUtilities::createActivity();
+        $bean     = SugarTestAccountUtilities::createAccount();
         $data     = array(
             'act_id'        => $activity->id,
             'bean_module'   => $bean->module_name,
@@ -133,8 +117,8 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
     public function testAddActivitySubscriptions_UserDoesNotHaveAccess_UserIsUnsubscribed()
     {
         BeanFactory::setBeanClass('Accounts', 'MockAccountForSubscriptionsTest');
-        $activity               = ActivityHelper::createActivity();
-        $bean                   = AccountHelper::createAccount();
+        $activity               = SugarTestActivityUtilities::createActivity();
+        $bean                   = SugarTestAccountUtilities::createAccount();
         $bean->assigned_user_id = $this->user->id;
         $bean->save();
         $data             = array(
@@ -158,10 +142,10 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddActivitySubscriptions_TypeOfActivityIsDeleteAndSuccessful_RelationshipIsAdded()
     {
-        $activity                = ActivityHelper::createActivity();
+        $activity                = SugarTestActivityUtilities::createActivity();
         $activity->activity_type = 'delete';
         $activity->save();
-        $bean                   = AccountHelper::createAccount();
+        $bean                   = SugarTestAccountUtilities::createAccount();
         $bean->assigned_user_id = $this->user->id;
         $bean->save();
         // simulate deleted bean and associated activity
