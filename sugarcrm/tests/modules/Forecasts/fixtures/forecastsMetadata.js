@@ -99,6 +99,70 @@ if(!_.has(fixtures.metadata.modules, 'ForecastManagerWorksheets')) {
     };
 }
 
+if(!_.has(fixtures.metadata.modules, 'Opportunities')) {
+    fixtures.metadata.modules.Opportunities = {
+        '_hash': '12345678910asdgae',
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "type": "id"
+                },
+                name: {
+                    audited: true,
+                    dbType: "varchar",
+                    full_text_search: {boost: 3},
+                    len: 255,
+                    link: true,
+                    merge_filter: "selected",
+                    name: "name",
+                    type: "name",
+                    unified_search: true,
+                    vname: "LBL_SUBJECT"
+                },
+                "best_case": {
+                    "name": "best_case",
+                    "type": "currency"
+                },
+                "worst_case": {
+                    "name": "worst_case",
+                    "type": "currency"
+                },
+                "amount": {
+                    "name": "amount",
+                    "type": "currency"
+                },
+                "sales_stage": {
+                    "name": "sales_stage",
+                    "vname": "LBL_SALES_STAGE",
+                    "type": "enum",
+                    "options": "sales_stage_dom",
+                    "len": "255",
+                    "audited": true,
+                    "comment": "Indication of progression towards closure",
+                    "merge_filter": "enabled",
+                    "importable": "required",
+                    "required": true,
+                },
+                "sales_status": {
+                    "name": "sales_status",
+                    "vname": "LBL_SALES_STATUS",
+                    "type": "enum",
+                    "options": "sales_status_dom",
+                    "len": "255",
+                    "audited": true,
+                    "studio": false,
+                },
+                "closed_revenue_line_items": {
+                    "name": "closed_revenue_line_items",
+                    "vname": "LBL_CLOSED_RLIS",
+                    "type": "int",
+                    "enforced": true,
+                    "studio": false,
+                },
+            }
+    };
+}
+
 // Add config metadata
 fixtures.metadata.modules.Forecasts.config = {
     "is_setup":1,

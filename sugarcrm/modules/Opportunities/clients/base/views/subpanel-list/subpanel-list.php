@@ -25,6 +25,10 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'link' => true,
+          'related_fields' => array (
+                'sales_status',
+                'closed_revenue_line_items'
+          ),
         ),
         array(
           'target_record_key' => 'account_id',

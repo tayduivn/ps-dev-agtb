@@ -143,6 +143,11 @@ $mod_strings = array(
     'TPL_RLI_CREATE' => 'An opportunity must have an associated Revenue Line Item. <a href="javascript:void(0);" id="createRLI">Create a Revenue Line item</a>.',
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
+
+    'LBL_TOTAL_RLIS' => '# of Total Revenue Line Items',
+    'LBL_CLOSED_RLIS' => '# of Closed Revenue Line Items',
+    'NOTICE_NO_DELETE_CLOSED_RLIS' => 'You cannot delete Opportunities that contain closed Revenue Line Items',
+    'WARNING_NO_DELETE_CLOSED_SELECTED' => 'One or more of the selected records contains closed Revenue Line Items and cannot be deleted.',
     //END SUGARCRM flav=ent ONLY
 
     'LBL_QUOTE_SUBPANEL_TITLE' => 'Quotes',

@@ -266,8 +266,11 @@
                     'include/javascript/sugar7/plugins/dropdown.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ellipsis_inline.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/list-column-ellipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/disable-delete.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/disable-massdelete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    //load SFA specific plugins. Remove this in favor of a custom plugin loader.
+                    'modules/Forecasts/clients/base/plugins/disable-delete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'modules/Forecasts/clients/base/plugins/disable-massdelete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    //END SUGARCRM flav=pro ONLY
                     'include/javascript/sugar7/plugins/taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/error-decoration.js'  => 'include/javascript/sugar_sidecar.min.js',

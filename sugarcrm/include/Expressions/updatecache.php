@@ -94,7 +94,6 @@ function recursiveParse($dir, $silent = false)
 		$op_name     = call_user_func(array($entry, "getOperationName"));
 		$types 		 = call_user_func(array($entry, "getParameterTypes"));
 
-
 		if ( empty($op_name) )	{
 			if ($silent === false) {
 				echo "<i>EMPTY OPERATION NAME $entry</i><br>";
@@ -106,6 +105,10 @@ function recursiveParse($dir, $silent = false)
 
 		$parent_class = get_parent_class($entry);
 		$parent_types = call_user_func(array($parent_class, "getParameterTypes"));
+
+        //This is a workaround for out-of-order filesystem loading.  On some systems, things that extend base
+        //expressions load before what they extend have loaded.
+        if ($js_code !== false) {
 
 		$js_contents .= <<<EOQ
 /**
@@ -167,7 +170,7 @@ EOQ;
 
 
 $js_contents .= "});\n\n";
-
+}
 		foreach ($op_name as $alias)
 		{
 	        //echo the entry

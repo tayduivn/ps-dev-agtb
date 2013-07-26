@@ -21,4 +21,4 @@
         this.plugins.push("disable-delete");
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
     }
-});
+})

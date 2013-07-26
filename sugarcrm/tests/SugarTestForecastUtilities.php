@@ -377,7 +377,7 @@ class SugarTestForecastUtilities
         $tmpForecast->worst_case += $manager['forecast']->worst_case;
         $tmpForecast->likely_case += $manager['forecast']->likely_case;
         $tmpForecast->opp_count += $manager['forecast']->opp_count;
-        $GLOBALS["log"]->log("Pipeline Amounts: " . $pipelineAmount . ", " . $pipelineCount);
+        
         $tmpForecast->pipeline_amount = $pipelineAmount + $manager['forecast']->pipeline_amount;
         $tmpForecast->pipeline_opp_count = $pipelineCount + $manager['forecast']->pipeline_opp_count;
         
