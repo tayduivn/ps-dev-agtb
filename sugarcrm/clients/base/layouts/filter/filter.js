@@ -255,25 +255,25 @@
      * @returns {Array} array of contexts
      */
     getRelevantContextList: function() {
-        var contextList = [], context;
+        var contextList = [];
         if (this.showingActivities) {
             _.each(this.layout._components, function(component) {
-               if (component.name == 'activitystream') {
-                   contextList.push(component.context);
-               }
+                var ctx = component.context;
+                if (component.name == 'activitystream' && !ctx.get('modelId') && ctx.get('collection')) {
+                    contextList.push(component.context);
+                }
             });
         } else {
             if (this.layoutType === 'records') {
-                if (this.context.parent) {
-                    contextList.push(this.context.parent);
-                } else {
-                    contextList.push(this.context);
+                var ctx = this.context.parent || this.context;
+                if (!ctx.get('modelId') && ctx.get('collection')) {
+                    contextList.push(ctx);
                 }
             } else {
                 //Locate and add subpanel contexts
-                _.each(this.context.children, function(childCtx) {
-                    if (childCtx.get('link') && !childCtx.get('hidden')) {
-                        contextList.push(childCtx);
+                _.each(this.context.children, function(ctx) {
+                    if (ctx.get('link') && !ctx.get('hidden') && !ctx.get('modelId') && ctx.get('collection')) {
+                        contextList.push(ctx);
                     }
                 });
             }
