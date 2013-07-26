@@ -107,8 +107,8 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
         $this->setExpectedException('Exception');
-        $subscription = BeanFactory::newBean('Subscriptions');
-        $subscription->addActivitySubscriptions($data);
+        $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+        $subscriptionsBeanName::addActivitySubscriptions($data);
     }
 
     /**
@@ -133,8 +133,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         );
         $mockSubscription = $this->getMockClass('Subscription', array('unsubscribeUserFromRecord'));
         $mockSubscription::staticExpects($this->once())->method('unsubscribeUserFromRecord');
-        $subscription = new $mockSubscription;
-        $subscription->addActivitySubscriptions($data);
+        $mockSubscription::addActivitySubscriptions($data);
     }
 
     /**
@@ -160,8 +159,8 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        $subscription = BeanFactory::newBean('Subscriptions');
-        $subscription->addActivitySubscriptions($data);
+        $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+        $subscriptionsBeanName::addActivitySubscriptions($data);
         $activity->load_relationship('activities_users');
         $expected = array($this->user->id);
         $actual   = $activity->activities_users->get();
