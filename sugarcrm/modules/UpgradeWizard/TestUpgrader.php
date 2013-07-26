@@ -51,13 +51,16 @@ class TestUpgrader extends UpgradeDriver
     public function getScript($stage, $script)
     {
         if(empty($this->scripts[$stage])) {
-            $this->scripts[$stage] = $this->getScripts($stage);
+            $this->scripts[$stage] = $this->getScripts(dirname($script), $stage);
         }
         return $this->scripts[$stage][$script];
     }
 
     public function getTempDir()
     {
+        if (empty($this->context['temp_dir'])) {
+            $this->context['temp_dir'] = '';
+        }
         return $this->context['temp_dir'];
     }
 
