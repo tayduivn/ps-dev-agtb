@@ -166,44 +166,28 @@ class MailApi extends ModuleApi
 
         $mailRecord = $this->initMailRecord($args);
 
-        if ($args["status"] == "ready") {
-            if (empty($args["email_config"])) {
-                throw new SugarApiExceptionRequestMethodFailure('LBL_MISSING_CONFIGURATION', null, 'Emails');
-            }
-
-            $result = $mailRecord->send();
-        } elseif ($args["status"] == "draft") {
-            $result = $mailRecord->saveAsDraft();
-        } else {
-            if (isset($GLOBALS["log"])) {
-                $GLOBALS["log"]->error(
-                    "MailApi: Request Failed - Invalid Request - Property=Status : '{$args["status"]}'"
-                );
-            }
-
-            throw new SugarApiExceptionInvalidParameter('LBL_INVALID_MAILAPI_STATUS', null, 'Emails');
-        }
-
-        if (!isset($result['SUCCESS']) || !($result['SUCCESS'])) {
-            $eMessage = isset($result['ERROR_MESSAGE']) ? $result['ERROR_MESSAGE'] : 'Unknown Request Failure';
-            $eData    = isset($result['ERROR_DATA']) ? $result['ERROR_DATA'] : '';
-
-            if (isset($GLOBALS["log"])) {
-                $GLOBALS["log"]->error("MailApi: Request Failed - Message: {$eMessage}  Data: {$eData}");
-            }
-
-            if (isset($result['ERROR_MESSAGE'])) {
-                throw new SugarApiExceptionRequestMethodFailure($result['ERROR_MESSAGE']);
+        try {
+            if ($args["status"] == "ready") {
+                if (empty($args["email_config"])) {
+                    throw new SugarApiExceptionRequestMethodFailure('LBL_MISSING_CONFIGURATION', null, 'Emails');
+                }
+                $response = $mailRecord->send();
+            } elseif ($args["status"] == "draft") {
+                $response = $mailRecord->saveAsDraft();
             } else {
-                throw new SugarApiExceptionRequestMethodFailure('LBL_INTERNAL_ERROR', null, 'Emails');
+                if (isset($GLOBALS["log"])) {
+                    $GLOBALS["log"]->error(
+                        "MailApi: Request Failed - Invalid Request - Property=Status : '{$args["status"]}'"
+                    );
+                }
+                throw new SugarApiExceptionInvalidParameter('LBL_INVALID_MAILAPI_STATUS', null, 'Emails');
             }
-        }
-
-        $response = array();
-        if (isset($result["EMAIL"])) {
-            $email  = $result["EMAIL"];
-            $xmail  = clone $email;
-            $response = $xmail->toArray();
+        } catch (MailerException $e) {
+            $eMessage = $e->getUserFriendlyMessage();
+            if (isset($GLOBALS["log"])) {
+                $GLOBALS["log"]->error("MailApi: Request Failed - Message: {$eMessage}");
+            }
+            throw new SugarApiExceptionRequestMethodFailure($eMessage, null, 'Emails');
         }
 
         return $response;

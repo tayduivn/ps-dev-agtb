@@ -21,23 +21,29 @@ require_once 'modules/Mailer/MailerException.php';
 class MailRecord
 {
     static private $statuses = array(
-        "draft", // draft
-        "ready", // ready to be sent
+        // Initial Status -  "Create" or "Update"
+        "draft",     // draft
+        "scheduled", // scheduled for future date time
+        "ready",     // ready to be sent
+
+        // Intermediate 'In-Progess' Status
         "sending", // transient status
-        "sent", // final status
+
+        // Terminal Status
+        "sent",
     );
 
     const ATTACHMENT_TYPE_UPLOAD = 'upload';
     const ATTACHMENT_TYPE_DOCUMENT = 'document';
     const ATTACHMENT_TYPE_TEMPLATE = 'template';
 
-    public $emailBean;
+    public $mockEmailBean=null;  // For Testing Purposes Only
+
     public $mailConfig;
     public $toAddresses;
     public $ccAddresses;
     public $bccAddresses;
     public $attachments;
-    public $documents;
     public $teams;
     public $related;
     public $subject;
@@ -70,20 +76,16 @@ class MailRecord
      * Prepares and executes the email request according to the expectations of the status.
      *
      * @param $status
-     * @return array
+     * @return array - Mail API Response Record
      * @throws MailerException
      */
     protected function toEmailBean($status)
     {
-        $result = array();
-        $email  = null;
-
-        if (is_object($this->emailBean)) {
-            $email = $this->emailBean;
+        if (!empty($this->mockEmailBean)) {
+            $email = $this->mockEmailBean; // Testing purposes only
         } else {
             $email = new Email();
         }
-
         $email->email2init();
 
         $fromAccount = null;
@@ -102,42 +104,34 @@ class MailRecord
         $_REQUEST = array_merge($_REQUEST, $request);
 
         $errorData  = null;
-        $sendResult = false;
 
         try {
             $this->startCapturingOutput();
-            $sendResult = $email->email2Send($request);
+            $email->email2Send($request);
             $errorData  = $this->endCapturingOutput();
 
             if (strlen($errorData) > 0) {
                 throw new MailerException('Email2Send returning unexpected output: ' . $errorData);
             }
 
-            $result = array(
-                "SUCCESS" => $sendResult,
-                "EMAIL"   => $email,
-                "REQUEST" => $request,
-            );
+            $response = $this->toApiResponse($status, $email);
+            return $response;
+
         } catch (Exception $e) {
             if (is_null($errorData)) {
                 $errorData = $this->endCapturingOutput();
             }
-
             if (!($e instanceof MailerException)) {
                 $e = new MailerException($e->getMessage());
             }
-            $GLOBALS["log"]->error($e->getLogMessage());
+            if (empty($errorData)) {
+                $GLOBALS["log"]->error("Message: ".$e->getLogMessage());
+            } else {
+                $GLOBALS["log"]->error("Message: ".$e->getLogMessage()."  Data: ".$errorData);
+            }
 
-            $result = array(
-                "SUCCESS"       => false,
-                "EMAIL"         => $email,
-                "REQUEST"       => $request,
-                "ERROR_MESSAGE" => $e->getUserFriendlyMessage(),
-                "ERROR_DATA"    => $errorData,
-            );
+            throw $e;
         }
-
-        return $result;
     }
 
     /**
@@ -316,5 +310,37 @@ class MailRecord
         }
 
         return $recipient;
+    }
+
+    /**
+     * Returns the Api Response Record
+     *
+     * @param $status    - Status that came in on the request
+     * @param $bean      - Email Bean
+     * @return $response - array
+     */
+    protected function toApiResponse($status, $email)
+    {
+        $response = array(
+            "id"               => $email->id,
+            "date_entered"     => $email->date_entered,
+            "date_modified"    => $email->date_modified,
+            "assigned_user_id" => $email->assigned_user_id,
+            "modified_user_id" => $email->modified_user_id,
+            "created_by"       => $email->created_by,
+            "deleted"          => $email->deleted,
+            "to_addresses"     => $this->toAddresses,
+            "cc_addresses"     => $this->ccAddresses,
+            "bcc_addresses"    => $this->bccAddresses,
+            "attachments"      => $this->attachments,
+            "teams"            => $this->teams,
+            "related"          => $this->related,
+            "subject"          => $this->subject,
+            "html_body"        => $this->html_body,
+            "text_body"        => $this->text_body,
+            "status"           => ($status == 'ready') ? 'sent' : $status,
+        );
+
+        return $response;
     }
 }
