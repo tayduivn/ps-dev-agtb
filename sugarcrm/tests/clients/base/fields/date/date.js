@@ -34,7 +34,7 @@ describe("date field", function() {
         });
         it("should format the value", function() {
             var jsDate, unformatedValue;
-            jsDate = new Date("March 13, 2012");
+            jsDate = new Date(Date.UTC(2012, 2, 13, 0, 0, 0));
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue)).toEqual('03/13/2012');
         });

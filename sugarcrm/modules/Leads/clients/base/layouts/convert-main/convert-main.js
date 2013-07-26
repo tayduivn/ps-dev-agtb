@@ -45,7 +45,8 @@
                 name: 'convert-panel',
                 layout: this,
                 meta: moduleMeta,
-                type: 'convert-panel'
+                type: 'convert-panel',
+                platform: this.options.platform
             });
 
             //This is because backbone injects a wrapper element.
