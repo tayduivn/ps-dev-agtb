@@ -52,6 +52,7 @@ $dictionary['ForecastWorksheet'] = array(
             'source' => 'non-db',
             'options' => 'parent_type_display',
             'studio' => true,
+            'sortable' => true,
             'related_fields' => array(
                 'parent_id',
                 'parent_type',
@@ -76,6 +77,7 @@ $dictionary['ForecastWorksheet'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'studio' => false,
+            'sortable' => true,
             'related_fields' => array(
                 'opportunity_id',
             )
@@ -90,6 +92,7 @@ $dictionary['ForecastWorksheet'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'studio' => false,
+            'sortable' => true,
             'related_fields' => array(
                 'account_id',
             )
@@ -117,6 +120,7 @@ $dictionary['ForecastWorksheet'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'module' => 'Campaigns',
+            'sortable' => true,
             'related_fields' => array(
                 'campaign_id',
             )
@@ -136,6 +140,7 @@ $dictionary['ForecastWorksheet'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'module' => 'ProductTemplates',
+            'sortable' => true,
             'related_fields' => array(
                 'product_template_id',
             )
@@ -155,6 +160,7 @@ $dictionary['ForecastWorksheet'] = array(
             'module' => 'ProductCategories',
             'dbType' => 'varchar',
             'len' => '255',
+            'sortable' => true,
             'related_fields' => array(
                 'category_id'
             )
@@ -165,6 +171,7 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'enum',
             'options' => 'sales_status_dom',
             'len' => '255',
+            'sortable' => true,
             'audited' => true,
         ),
         'likely_case' =>
@@ -178,6 +185,7 @@ $dictionary['ForecastWorksheet'] = array(
             'audited' => false,
             'studio' => false,
             'align' => 'right',
+            'sortable' => true,
             'related_fields' => array(
                 'base_rate',
                 'currency_id'
@@ -194,6 +202,7 @@ $dictionary['ForecastWorksheet'] = array(
             'audited' => false,
             'studio' => false,
             'align' => 'right',
+            'sortable' => true,
             'related_fields' => array(
                 'base_rate',
                 'currency_id'
@@ -210,6 +219,7 @@ $dictionary['ForecastWorksheet'] = array(
             'audited' => false,
             'studio' => false,
             'align' => 'right',
+            'sortable' => true,
             'related_fields' => array(
                 'base_rate',
                 'currency_id'
@@ -274,6 +284,7 @@ $dictionary['ForecastWorksheet'] = array(
             'importable' => 'required',
             'required' => true,
             'enable_range_search' => true,
+            'sortable' => true,
             'options' => 'date_range_search_dom',
             'studio' => false,
         ),
@@ -295,6 +306,7 @@ $dictionary['ForecastWorksheet'] = array(
             'comment' => 'Indication of progression towards closure',
             'merge_filter' => 'enabled',
             'importable' => 'required',
+            'sortable' => true,
             'required' => true,
             'studio' => false
         ),
@@ -308,6 +320,7 @@ $dictionary['ForecastWorksheet'] = array(
             'comment' => 'The probability of closure',
             'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
             'merge_filter' => 'enabled',
+            'sortable' => true,
             'studio' => false
         ),
         'commit_stage' =>
@@ -317,6 +330,7 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'enum',
             'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
+            'sortable' => true,
             'studio' => false
         ),
         'draft' =>
@@ -343,6 +357,7 @@ $dictionary['ForecastWorksheet'] = array(
             'options' => 'lead_source_dom',
             'len' => '50',
             'comment' => 'Source of the product',
+            'sortable' => true,
             'merge_filter' => 'enabled',
         ),
         'product_type' => array(
@@ -361,6 +376,7 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
+            'sortable' => true,
             'comment' => 'List price of product ("List" in Quote)'
         ),
         'cost_price' =>  array(
@@ -369,6 +385,7 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
+            'sortable' => true,
             'comment' => 'Product cost ("Cost" in Quote)'
         ),
         'discount_price' =>  array(
@@ -377,6 +394,7 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
+            'sortable' => true,
             'comment' => 'Discounted price ("Unit Price" in Quote)'
         ),
         'discount_amount' =>  array(
@@ -386,6 +404,7 @@ $dictionary['ForecastWorksheet'] = array(
             'options' => 'discount_amount_class_dom',
             'len' => '26,6',
             'precision' => 6,
+            'sortable' => true,
             'comment' => 'Discounted amount'
         ),
         'quantity' =>  array(
@@ -394,12 +413,14 @@ $dictionary['ForecastWorksheet'] = array(
             'type' => 'int',
             'len' => 5,
             'comment' => 'Quantity in use',
+            'sortable' => true,
             'default' => 1
         ),
         'total_amount' => array(
             'name' => 'total_amount',
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
             'reportable' => false,
+            'sortable' => true,
             'type' => 'currency'
         ),
         'parent_deleted' =>
