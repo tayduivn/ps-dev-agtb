@@ -1,17 +1,15 @@
 describe("Emails.Field.Sender", function() {
-    var app, field, drawer, ajaxStub;
+    var app, field, ajaxStub;
 
     beforeEach(function() {
-        var def;
-
         app = SugarTest.app;
-        def = {
-            endpoint:  {
-                module: 'OutboundEmailConfiguration',
-                action: 'list'
-            }
-        };
-        field = SugarTest.createField("base", "email_config", "sender", "edit", def, 'Emails', null, null, true);
+        SugarTest.loadComponent("base", "field", "sender", "Emails");
+
+        field = SugarTest.createField('base', 'email_config', 'sender', 'edit', {}, 'Emails', null, null, true);
+        field.endpoint = {
+            module: 'OutboundEmailConfiguration',
+            action: 'list'
+         };
 
         //used as mock for select2 library
         if (!$.fn.select2) {
@@ -26,10 +24,6 @@ describe("Emails.Field.Sender", function() {
             };
         }
 
-        drawer = SugarTest.app.drawer;
-        SugarTest.app.drawer = {
-            close: function(){}
-        };
         ajaxStub = sinon.stub($, 'ajax', $.noop);
     });
 
@@ -40,7 +34,6 @@ describe("Emails.Field.Sender", function() {
         app.view.reset();
         delete field.model;
         field = null;
-        SugarTest.app.drawer = drawer;
         SugarTest.testMetadata.dispose();
     });
 
