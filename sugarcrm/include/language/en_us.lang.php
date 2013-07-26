@@ -3913,6 +3913,13 @@ $app_strings = array (
     //end portal
     //END SUGARCRM flav=ent ONLY
 
+    //First time login wizard
+    'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
+    'LBL_WIZ_START_SUGAR' => 'Start Sugar',
+    'LBL_WIZ_FIRST_NAME' => 'First name',
+    'LBL_WIZ_LAST_NAME' => 'Last name',
+    'LBL_WIZ_EMAIL' => 'Email',
+
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
     'LBL_CURRENT_PASSWORD'				=> 'Current Password',
