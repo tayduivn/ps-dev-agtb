@@ -185,7 +185,8 @@
      * Resets the model to default data
      */
     resetModel: function() {
-        this.model.set({
+        var model = this.context.get('model') || this.model;
+        model.set({
             opportunities : 0,
             closed_amount : undefined,
             quota_amount : undefined,
@@ -328,10 +329,11 @@
     renderSubDetails: function() {
         if(this.$el && this.subDetailsTpl) {
             var subEl = this.$el.find('.forecast-details');
+            var model = this.context.get('model') || this.model;
             // Check if closed or quota is undefined (during opps/rli loading when those numbers aren't available yet)
-            if(!_.isUndefined(this.model.get('closed_amount')) && !_.isUndefined(this.model.get('quota_amount'))) {
-                subEl.html(this.subDetailsTpl(this.model.toJSON()));
-                this.renderCSSChanges();
+            if(!_.isUndefined(model.get('closed_amount')) && !_.isUndefined(model.get('quota_amount'))) {
+                subEl.html(this.subDetailsTpl(model.toJSON()));
+                this.renderCSSChanges(model);
             } else {
                 subEl.html('');
             }
@@ -340,9 +342,12 @@
 
     /**
      * Adds the CSS to elements classes post-render
+     *
+     * @param {Backbone.Model} [model]          The Model to use
      */
-    renderCSSChanges: function() {
-        var isDeficit = this.model.get('is_deficit');
+    renderCSSChanges: function(model) {
+        model = model || this.context.get('model') || this.model;
+        var isDeficit = model.get('is_deficit');
 
         // using getClassBasedOnAmount and sending 0 or 1 to resolve which class to use so the class names
         // are only in one place
@@ -352,18 +357,20 @@
             this.$el.find('.deficitRow').addClass(this.getClassBasedOnAmount(1, 0, 'color'));
         }
 
-        this.checkPropertySetCSS('worst');
-        this.checkPropertySetCSS('likely');
-        this.checkPropertySetCSS('best');
+        this.checkPropertySetCSS('worst', model);
+        this.checkPropertySetCSS('likely', model);
+        this.checkPropertySetCSS('best', model);
     },
 
     /**
      * Checks a property on the config and sets the background color of an element
      * @param {String} prop 'likely', 'best', or 'worst'
+     * @param {Backbone.Model} [model]      The model to use
      */
-    checkPropertySetCSS: function(prop) {
+    checkPropertySetCSS: function(prop, model) {
+        model = model || this.context.get('model') || this.model;
         if(this.forecastConfig['show_worksheet_' + prop]) {
-            var css = this.getClassBasedOnAmount(this.serverData[prop], this.model.get('quota_amount'), 'background-color');
+            var css = this.getClassBasedOnAmount(this.serverData[prop], model.get('quota_amount'), 'background-color');
             this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
     },
@@ -444,8 +451,9 @@
         d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount));
         d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount));
 
-        if(this.model) {
-            this.model.set(d);
+        var model = this.context.get('model') || this.model;
+        if(model) {
+            model.set(d);
             this.renderSubDetails();
         }
     },
