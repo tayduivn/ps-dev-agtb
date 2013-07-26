@@ -22,6 +22,8 @@
 * All Rights Reserved.
 ********************************************************************************/
 require_once('modules/Users/authentication/AuthenticationController.php');
+require_once('modules/Users/authentication/SAMLAuthenticate/saml.php');
+require_once('modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php');
 
 /**
  * @ticket 57454
@@ -41,10 +43,8 @@ class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSAMLEncoding()
     {
-        require_once('modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml.php');
-        require('modules/Users/authentication/SAMLAuthenticate/settings.php');
-        $authrequest = new SamlAuthRequest($settings);
-        $url = $authrequest->create();
+        $auth = new SAMLAuthenticate();
+        $url = $auth->getLoginUrl();
         $query = parse_url($url, PHP_URL_QUERY);
         $this->assertNotEmpty($query, 'No query part');
         parse_str($query, $components);
@@ -55,6 +55,6 @@ class Bug57454Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($xml, 'XML did not parse');
         $myurl = $xml['AssertionConsumerServiceURL'];
         $this->assertNotEmpty($myurl, 'URL not found');
-        $this->assertEquals(parse_url($GLOBALS['sugar_config']['site_url']. "/index.php", PHP_URL_PATH), parse_url($myurl, PHP_URL_PATH), "Bad URL");
+        $this->assertEquals(parse_url($GLOBALS['sugar_config']['site_url'], PHP_URL_HOST), parse_url($myurl, PHP_URL_HOST), "Bad URL");
     }
 }

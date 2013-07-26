@@ -327,7 +327,7 @@ class XMLSecurityKey {
                 // that think public key is private key. Certificate
                 // should still serve as key for verification purposes
                 // By smalyshev 1 May 2012
-                 // $this->key = openssl_get_publickey($this->key);
+                // $this->key = openssl_get_publickey($this->key);
             } else {
                 $this->key = openssl_get_privatekey($this->key, $this->passphrase);
             }

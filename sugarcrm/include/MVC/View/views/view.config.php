@@ -25,7 +25,7 @@ $view_config = array(
 		 					'show_subpanels' => false,
 		 					'show_search' => false,
 		 					'show_footer' => false,
-		 					'show_javascript' => true,
+		 					'show_javascript' => false,
 		 				),
 		 	'subpanelcreates' => array(
 		 					'show_header' => false,
@@ -34,7 +34,7 @@ $view_config = array(
 		 					'show_footer' => false,
 		 					'show_javascript' => true,
 		 				),
-		 ), 	
+		 ),
     'req_params' => array(
         'print' => array(
             'param_value' => true,
