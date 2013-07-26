@@ -114,6 +114,16 @@
      */
     hasCheckedForDraftRecords: false,
 
+    /**
+     * Holds the model currently being displayed in the preview panel
+     */
+    previewModel: undefined,
+
+    /**
+     * Tracks if the preview panel is visible or not
+     */
+    previewVisible: false,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -154,6 +164,9 @@
                 }, this);
                 this.on('render', function() {
                     this.renderCallback();
+                    if (this.previewVisible) {
+                        this.decorateRow(this.previewModel);
+                    }
                 }, this);
 
                 this.on('list:toggle:column', function(column, isVisible, columnMeta) {
@@ -288,6 +301,14 @@
         }
 
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    unbindData: function() {
+        app.events.off(null, null, this);
+        app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'unbindData'});
     },
 
     /**
@@ -567,6 +588,22 @@
                     // set the correct module on the model since sidecar doesn't support sub-beans yet
                     model.save({}, {success: _.bind(function() {
                         saveCount++;
+
+                        // Make sure the preview panel gets updated model info
+                        if (this.previewVisible) {
+                            var previewId = this.previewModel.get('parent_id') || this.previewModel.get('id');
+                            if (model.get('parent_id') == previewId) {
+                                var previewCollection = new Backbone.Collection();
+                                this.filteredCollection.each(function(model) {
+                                    if (model.get('parent_deleted') !== "1") {
+                                        previewCollection.add(model);
+                                    }
+                                }, this);
+
+                                app.events.trigger("preview:render", model, previewCollection, true, model.get('id'), true);
+                            }
+                        }
+
                         //if this is the last save, go ahead and trigger the callback;
                         if (totalToSave === saveCount) {
                             // we only want to show this when the draft is being saved
@@ -815,9 +852,17 @@
                 }
             }, this);
 
-            app.events.trigger("preview:render", model, previewCollection, true);
+            if (_.isUndefined(this.previewModel) || model.get('id') != this.previewModel.get('id')) {
+                this.previewModel = model;
+                app.events.trigger("preview:render", model, previewCollection, true);
+            } else {
+                // user already has the preview panel open and has clicked the preview icon again
+                // remove row decoration
+                this.decorateRow();
+                // close the preview panel
+                app.events.trigger('preview:close');
+            }
         }, this);
-
 
         //When switching to next/previous record from the preview panel, we need to update the highlighted row
         app.events.on("list:preview:decorate", this.decorateRow, this);
@@ -827,6 +872,16 @@
                 app.events.trigger("preview:close");
             }, this);
         }
+
+        app.events.on('preview:render', function(model) {
+            this.previewModel = model;
+            this.previewVisible = true;
+        },this);
+
+        app.events.on('preview:close', function() {
+            this.previewVisible = false;
+            this.previewModel = undefined;
+        },this);
     },
 
     /**
