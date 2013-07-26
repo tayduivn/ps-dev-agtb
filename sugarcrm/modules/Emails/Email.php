@@ -421,14 +421,8 @@ class Email extends SugarBean {
 	 * Sends Email for Email 2.0
 	 */
 	function email2Send($request) {
-		global $mod_strings;
-		global $app_strings;
 		global $current_user;
-		global $sugar_config;
-		global $locale;
 		global $timedate;
-		global $beanList;
-		global $beanFiles;
 
 		/**********************************************************************
 		 * Sugar Email PREP
@@ -551,59 +545,66 @@ class Email extends SugarBean {
         $this->description_html = $htmlBody;
 
         $mailConfig = null;
-
-        if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
-            $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
-        } else {
-            $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
-        }
-
-        if (is_null($mailConfig)) {
-            throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
+        if ($this->status != 'draft') {
+            if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
+                $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
+            } else {
+                $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
+            }
+            if (is_null($mailConfig)) {
+                throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
+            }
         }
 
         try {
-            $mailerFactoryClass = $this->MockMailerFactoryClass;
-            $mailer = $mailerFactoryClass::getMailer($mailConfig);
-            $mailer->setSubject($subject);
-            $mailer->setHtmlBody($htmlBody);
-            $mailer->setTextBody($textBody);
+            $mailer = null;
+            if ($this->status != 'draft') {
+                $mailerFactoryClass = $this->MockMailerFactoryClass;
+                $mailer = $mailerFactoryClass::getMailer($mailConfig);
+                $mailer->setSubject($subject);
+                $mailer->setHtmlBody($htmlBody);
+                $mailer->setTextBody($textBody);
 
-            $replyTo      = $mailConfig->getReplyTo();
-            if (!empty($replyTo)) {
-                $replyToEmail = $replyTo->getEmail();
-                if (!empty($replyToEmail)) {
-                    $mailer->setHeader(
-                        EmailHeaders::ReplyTo,
-                        new EmailIdentity($replyToEmail, $replyTo->getName())
-                    );
+                $replyTo = $mailConfig->getReplyTo();
+                if (!empty($replyTo)) {
+                    $replyToEmail = $replyTo->getEmail();
+                    if (!empty($replyToEmail)) {
+                        $mailer->setHeader(
+                            EmailHeaders::ReplyTo,
+                            new EmailIdentity($replyToEmail, $replyTo->getName())
+                        );
+                    }
                 }
             }
 
-            foreach ($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
-                try {
-                    $mailer->addRecipientsTo(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
-                } catch (MailerException $me) {
-                    //@todo alert when an invalid recipient is found, like an empty or non-string email address?
-                    //@todo what sort of behavior should occur in these instances?
+            if (!is_null($mailer)) {
+                // Any individual Email Address that is not valid will be logged and skipped
+                // If all email addresses in the request are skipped, an error "No Recipients" is reported for the request
+                foreach ($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
+                    try {
+                        $mailer->addRecipientsTo(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+                    } catch (MailerException $me) {
+                        // Invalid Email Address - Log it and Skip
+                        $GLOBALS["log"]->warning($me->getLogMessage());
+                    }
                 }
-            }
 
-            foreach ($this->email2ParseAddresses($request['sendCc']) as $addr_arr) {
-                try {
-                    $mailer->addRecipientsCc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
-                } catch (MailerException $me) {
-                    //@todo alert when an invalid recipient is found, like an empty or non-string email address?
-                    //@todo what sort of behavior should occur in these instances?
+                foreach ($this->email2ParseAddresses($request['sendCc']) as $addr_arr) {
+                    try {
+                        $mailer->addRecipientsCc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+                    } catch (MailerException $me) {
+                        // Invalid Email Address - Log it and Skip
+                        $GLOBALS["log"]->warning($me->getLogMessage());
+                    }
                 }
-            }
 
-            foreach ($this->email2ParseAddresses($request['sendBcc']) as $addr_arr) {
-                try {
-                    $mailer->addRecipientsBcc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
-                } catch (MailerException $me) {
-                    //@todo alert when an invalid recipient is found, like an empty or non-string email address?
-                    //@todo what sort of behavior should occur in these instances?
+                foreach ($this->email2ParseAddresses($request['sendBcc']) as $addr_arr) {
+                    try {
+                        $mailer->addRecipientsBcc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+                    } catch (MailerException $me) {
+                        // Invalid Email Address - Log it and Skip
+                        $GLOBALS["log"]->warning($me->getLogMessage());
+                    }
                 }
             }
 
@@ -653,7 +654,9 @@ class Email extends SugarBean {
 
                         $attachment = AttachmentPeer::attachmentFromSugarBean($note);
                         //print_r($attachment);
-                        $mailer->addAttachment($attachment);
+                        if (!is_null($mailer)) {
+                            $mailer->addAttachment($attachment);
+                        }
                     }
                 }
             }
@@ -709,7 +712,9 @@ class Email extends SugarBean {
 
                         $attachment = AttachmentPeer::attachmentFromSugarBean($documentRevision);
                         //print_r($attachment);
-                        $mailer->addAttachment($attachment);
+                        if (!is_null($mailer)) {
+                            $mailer->addAttachment($attachment);
+                        }
                     }
                 }
             }
@@ -733,7 +738,9 @@ class Email extends SugarBean {
                             if (!$note->embed_flag) {
                                 $attachment = AttachmentPeer::attachmentFromSugarBean($note);
                                 //print_r($attachment);
-                                $mailer->addAttachment($attachment);
+                                if (!is_null($mailer)) {
+                                    $mailer->addAttachment($attachment);
+                                }
 
                                 // only save attachments if we're archiving or drafting
                                 if ((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
@@ -764,7 +771,9 @@ class Email extends SugarBean {
 
                             $attachment = AttachmentPeer::attachmentFromSugarBean($note);
                             //print_r($attachment);
-                            $mailer->addAttachment($attachment);
+                            if (!is_null($mailer)) {
+                                $mailer->addAttachment($attachment);
+                            }
                         }
                     }
                 }
@@ -784,7 +793,7 @@ class Email extends SugarBean {
                 $forceSave    = true;
             }
 
-            if ($this->type != 'draft') {
+            if (!is_null($mailer)) {
                 $mailer->send();
             }
         }
@@ -834,9 +843,11 @@ class Email extends SugarBean {
 			(isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
 
 			// saving a draft OR saving a sent email
-            $sender = $mailConfig->getFrom();
-			$decodedFromName = mb_decode_mimeheader($sender->getName());
-			$this->from_addr = "{$decodedFromName} <" . $sender->getEmail() . ">";
+            if (!empty($mailConfig)) {
+                $sender = $mailConfig->getFrom();
+                $decodedFromName = mb_decode_mimeheader($sender->getName());
+                $this->from_addr = "{$decodedFromName} <" . $sender->getEmail() . ">";
+            }
 			$this->from_addr_name = $this->from_addr;
 			$this->to_addrs = $_REQUEST['sendTo'];
 			$this->to_addrs_names = $_REQUEST['sendTo'];

@@ -405,63 +405,45 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSend_Email2SendThrowsAnException_ReturnsArrayWithErrorData()
     {
+        self::setExpectedException("MailerException");
+
         $this->mockEmail->expects($this->once())
             ->method("email2Send")
             ->will($this->throwException(new Exception("An exception was thrown from within email2Send.")));
 
-        $this->mailRecord->emailBean = $this->mockEmail;
+        $this->mailRecord->mockEmailBean = $this->mockEmail;
 
-        $actual = $this->mailRecord->send();
-        $this->assertFalse($actual["SUCCESS"], "The send request should have failed.");
-        $this->assertArrayHasKey("ERROR_MESSAGE", $actual, "The error message should have been added to the result.");
-        $this->assertArrayHasKey("ERROR_DATA", $actual, "The error data should have been added to the result.");
+        $this->mailRecord->send();
     }
 
-    public function testSend_Email2SendReturnsTrue_ReturnsArrayForSuccess()
+    public function testSend_Email2SendReturnsTrue_ReturnsArray_NoException()
     {
         $this->mockEmail->expects($this->once())
             ->method("email2Send")
             ->will($this->returnValue(true));
 
-        $this->mailRecord->emailBean = $this->mockEmail;
+        $this->mailRecord->mockEmailBean = $this->mockEmail;
 
-        $actual = $this->mailRecord->send();
-        $this->assertTrue($actual["SUCCESS"], "The send request should have succeeded.");
-        $this->assertArrayNotHasKey("ERROR_MESSAGE", $actual, "The error message should not have been added to the result.");
-        $this->assertArrayNotHasKey("ERROR_DATA", $actual, "The error data should not have been added to the result.");
-    }
-
-    public function testSend_Email2SendReturnsFalse_ReturnsArrayForFailureWithoutExceptions()
-    {
-        $this->mockEmail->expects($this->once())
-            ->method("email2Send")
-            ->will($this->returnValue(false));
-
-        $this->mailRecord->emailBean = $this->mockEmail;
-
-        $actual = $this->mailRecord->send();
-        $this->assertFalse($actual["SUCCESS"], "The send request should have failed.");
-        $this->assertArrayNotHasKey("ERROR_MESSAGE", $actual, "The error message should not have been added to the result.");
-        $this->assertArrayNotHasKey("ERROR_DATA", $actual, "The error data should not have been added to the result.");
+        $this->mailRecord->send();
     }
 
     public function testSend_Email2SendReturnsTrueAndOutputWasCaptured_ExceptionIsThrown_ReturnsArrayWithErrorData()
     {
+        self::setExpectedException("MailerException");
+
         $this->mockEmail->expects($this->once())
             ->method("email2Send")
             ->will($this->returnValue(true));
 
-        $mailRecord            = $this->getMock("MailRecord", array("endCapturingOutput"));
-        $mailRecord->subject   = "MailRecord subject";
-        $mailRecord->emailBean = $this->mockEmail;
+        $mailRecord                = $this->getMock("MailRecord", array("endCapturingOutput"));
+        $mailRecord->subject       = "MailRecord subject";
+        $mailRecord->mockEmailBean = $this->mockEmail;
+
         $mailRecord->expects($this->once())
             ->method("endCapturingOutput")
             ->will($this->returnValue("output to capture"));
 
-        $actual = $mailRecord->send();
-        $this->assertFalse($actual["SUCCESS"], "The send request should have failed.");
-        $this->assertArrayHasKey("ERROR_MESSAGE", $actual, "The error message should have been added to the result.");
-        $this->assertArrayHasKey("ERROR_DATA", $actual, "The error data should have been added to the result.");
+        $mailRecord->send();
     }
 
     /**
@@ -520,15 +502,13 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             "other"   => array("1", "East"),
         );
 
-        $actual = $mailRecord->saveAsDraft();
+        $responseRecord = $mailRecord->saveAsDraft();
+        SugarTestEmailUtilities::setCreatedEmail($responseRecord['id']);
 
-        $email = $actual["EMAIL"];
-        SugarTestEmailUtilities::setCreatedEmail($email->id);
+        $bean = BeanFactory::getBean('Emails', $responseRecord['id']);
+        $this->assertTrue($bean instanceof Email, "The send request should have succeeded and returned the Email SugarBean.");
 
-        $success = (int) $actual["SUCCESS"];
-        $this->assertEquals(1, $success, "The request should have been successful.");
-
-        $emailClone = clone $email;
+        $emailClone = clone $bean;
         $email      = $emailClone->toArray();
         $this->assertEquals(36, strlen($email["id"]), "The EmailId should be 36 characters.");
 

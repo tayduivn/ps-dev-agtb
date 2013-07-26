@@ -54,7 +54,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $mockResult = array(
-            "SUCCESS" => true,
+            "id" => '1234567890',
         );
 
         $mailRecordMock = $this->getMock("MailRecord", array("saveAsDraft"));
@@ -77,7 +77,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $mockResult = array(
-            "SUCCESS" => true,
+            "id" => '1234567890',
         );
 
         $mailRecordMock = $this->getMock("MailRecord", array("send"));
@@ -110,78 +110,6 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->setExpectedException("SugarApiExceptionInvalidParameter");
         $this->mailApi->createMail($this->api, $args);
-    }
-
-    public function testCreateMail_ResultSuccessIsFalse_ThrowsException()
-    {
-        $args = array(
-            "status" => "draft",
-        );
-
-        $result = array(
-            "SUCCESS" => false,
-        );
-
-        $mailRecordMock = $this->getMock("MailRecord", array("saveAsDraft"));
-        $mailRecordMock->expects($this->once())
-            ->method("saveAsDraft")
-            ->will($this->returnValue($result));
-
-        $this->mailApi->expects($this->any())
-            ->method("initMailRecord")
-            ->will($this->returnValue($mailRecordMock));
-
-        $this->setExpectedException("SugarApiExceptionRequestMethodFailure");
-        $this->mailApi->createMail($this->api, $args);
-    }
-
-    public function testCreateMail_SuccessKeyNotFoundInResult_ThrowsException()
-    {
-        $args = array(
-            "status" => "draft",
-        );
-
-        $result = array();
-
-        $mailRecordMock = $this->getMock("MailRecord", array("saveAsDraft"));
-        $mailRecordMock->expects($this->once())
-            ->method("saveAsDraft")
-            ->will($this->returnValue($result));
-
-        $this->mailApi->expects($this->any())
-            ->method("initMailRecord")
-            ->will($this->returnValue($mailRecordMock));
-
-        $this->setExpectedException("SugarApiExceptionRequestMethodFailure");
-        $this->mailApi->createMail($this->api, $args);
-    }
-
-    public function testCreateMail_EmailKeyFoundInResult_EmailIsSerializedToArray()
-    {
-        $args = array(
-            "status" => "draft",
-        );
-
-        $email     = new Email();
-        $email->id = "foo123";
-
-        $result = array(
-            "SUCCESS" => true,
-            "EMAIL"   => $email,
-        );
-
-        $mailRecordMock = $this->getMock("MailRecord", array("saveAsDraft"));
-        $mailRecordMock->expects($this->once())
-            ->method("saveAsDraft")
-            ->will($this->returnValue($result));
-
-        $this->mailApi->expects($this->any())
-            ->method("initMailRecord")
-            ->will($this->returnValue($mailRecordMock));
-
-        $response = $this->mailApi->createMail($this->api, $args);
-        $expected = $email->toArray();
-        $this->assertEquals($expected, $response, "Should have returned the Email object serialized as an array.");
     }
 
     public function testRecipientLookup_AttemptToResolveTenRecipients_CallsLookupTenTimes()
