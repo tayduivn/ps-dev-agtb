@@ -17,6 +17,7 @@ describe('Base.Field.Shareaction', function() {
     });
 
     afterEach(function() {
+        app.drawer = undefined; 
         sinon.collection.restore();
         field.dispose();
         field = null;
