@@ -139,7 +139,6 @@ require_once 'SugarTestManagerWorksheetUtilities.php';
 require_once 'SugarTestProspectUtilities.php';
 require_once 'SugarTestProspectListsUtilities.php';
 require_once 'SugarTestNotificationUtilities.php';
-require_once 'SugarTestWebLogicHookUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestRelationshipUtilities.php';
 require_once 'SugarTestSugarEmailAddressUtilities.php';
