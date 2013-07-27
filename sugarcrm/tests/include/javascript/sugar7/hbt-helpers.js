@@ -4,7 +4,7 @@ describe("Handlebar.Helpers", function() {
     beforeEach(function () {
         app = SugarTest.app;
         savedHelpers = Handlebars.helpers;
-        SugarTest.loadFile("../include/javascript/sugar7", "hbt-helpers", "js", function(d) {
+        SugarTest.loadFile("../include/javascript/sugar7", "hbs-helpers", "js", function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
