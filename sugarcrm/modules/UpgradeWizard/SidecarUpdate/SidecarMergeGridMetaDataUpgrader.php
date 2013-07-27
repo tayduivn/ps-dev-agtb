@@ -51,6 +51,8 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         MB_PORTALRECORDVIEW => array(
             MB_PORTALDETAILVIEW => 1,
             MB_PORTALEDITVIEW => 1,
+            MB_DETAILVIEW => 1,
+            MB_EDITVIEW => 1,
         ),
     );
 
@@ -148,6 +150,11 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
                     if (isset($this->vardefIndexes[$this->client.$view])) {
                         $index = $this->vardefIndexes[$this->client.$view];
                         $this->legacyViewdefs[$lViewtype] = empty($index) ? $defs[$module] : $defs[$module][$index];
+                        if($this->client == 'portal' && !empty($this->legacyViewdefs[$lViewtype]['data'])) {
+                            // Portal views are in 'data', not 'panels'
+                            // Because it'd be boring if all data formats were the same, right?
+                            $this->legacyViewdefs[$lViewtype]['panels'] = array($this->legacyViewdefs[$lViewtype]['data']);
+                        }
                     }
                 }
             }
@@ -197,7 +204,6 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
             } else {
                 $legacyParser = ParserFactory::getParser($lViewtype, $this->module);
             }
-
             foreach($legacyParser->getFieldsFromPanels($data['panels']) as $fieldname => $fielddef) {
                 if(empty($fieldname) || isset($customFields[$fieldname])) {
                     continue;

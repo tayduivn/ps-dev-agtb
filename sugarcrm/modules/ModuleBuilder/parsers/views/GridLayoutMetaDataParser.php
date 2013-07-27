@@ -874,11 +874,13 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	                	continue;
 	                }
 	            	foreach ($fields as $field) {
-	                    if (is_array($field) && !empty($field['name']))
-	                    {
-	                        $ret[$field['name']] = $field;
-	                    }
-	            	    else if(!is_array($field)){
+	                    if (is_array($field)) {
+	                        if(!empty($field['name'])) {
+    	                        $ret[$field['name']] = $field;
+	                        } else if(!empty($field['field'])) {
+	                            $ret[$field['field']] = $field;
+	                        }
+	                    } else {
                             $ret[$field] = $field;
                         }
 	                }

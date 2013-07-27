@@ -258,6 +258,39 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $builder = self::getBuilder();
         return $builder->getFilesToMakeByView('list');
     }
+
+    /**
+     * Test for record-type upgrades
+     * @param string $module
+     * @param string $view
+     * @param string $type
+     * @param string $filepath
+     * @dataProvider _sidecarRecordProvider
+     */
+    public function testSidecarRecordfields($module, $view, $type, $filepath)
+    {
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        $defs = $viewdefs[$module][$type]['view'][$view];
+        $this->assertTrue(isset($defs['panels'][1]['fields']), 'Field array is missing from the upgrade file');
+        $idfield = null;
+        foreach($defs['panels'][1]['fields'] as $field) {
+            // look for ID
+            if($field == 'id'  || (!empty($field['name']) && $field['name'] == 'id')) {
+                $idfield = $field;
+            }
+        }
+//        var_dump($defs['panels'][1]['fields']);
+        $this->assertNotEmpty($idfield, "ID field not found in merged view");
+    }
+
+    public function _sidecarRecordProvider()
+    {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView('record');
+    }
+
 }
 
 class SidecarMetaDataUpgraderForTest extends SidecarMetaDataUpgrader

@@ -86,7 +86,7 @@ class SidecarMetaDataFileBuilder
                 'legacypath'  => 'custom/modules/Cases/clients/portal/views/edit/edit.php',
                 'sidecarpath' => 'custom/modules/Cases/clients/portal/views/record/record.php',
         ),
-        array(
+         array(
                 'module'      => 'Cases', 'view' => 'record', 'type' => 'portal',
                 'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesportaledit.php',
                 'legacypath'  => 'custom/working/portal/modules/Cases/metadata/editviewdefs.php',
