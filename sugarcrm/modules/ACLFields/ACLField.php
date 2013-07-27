@@ -43,17 +43,6 @@ class ACLField  extends ACLAction
     public static $acl_fields = array();
 
     /**
-     * This is a deprecated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function ACLField()
-    {
-        self::__construct();
-    }
-
-    /**
     * static getAvailableFields($module, $object=false)
     * Adds available fields for module
     * @internal
