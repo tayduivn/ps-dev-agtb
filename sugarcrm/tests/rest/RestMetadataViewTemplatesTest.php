@@ -50,16 +50,16 @@ class RestMetadataViewTemplatesTest extends RestTestBase
     /**
      * @group rest
      */
-    public function testMetadataViewTemplatesHbt() {
+    public function testMetadataViewTemplatesHbs() {
         $filesToCheck = array(
             'base' => array(
-                'clients/base/views/edit/edit.hbt',
-                'custom/clients/base/views/edit/edit.hbt',
+                'clients/base/views/edit/edit.hbs',
+                'custom/clients/base/views/edit/edit.hbs',
             ),
             //BEGIN SUGARCRM flav=pro ONLY
             'mobile' => array(
-                'clients/mobile/views/edit/edit.hbt',
-                'custom/clients/mobile/views/edit/edit.hbt',
+                'clients/mobile/views/edit/edit.hbs',
+                'custom/clients/mobile/views/edit/edit.hbs',
             ),
             //END SUGARCRM flav=pro ONLY
         );

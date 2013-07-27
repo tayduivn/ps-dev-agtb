@@ -63,17 +63,17 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdDirs[] = 'clients/base/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
 
-        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbt';
+        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbs';
         SugarAutoLoader::put($this->createdFiles[0],'FO RIZZLE (base)');
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
 
         $this->assertArrayHasKey($this->createdFiles[0],$fileList,"The file list should contain fo rizzle.");
 
-        $fileContents = MetaDataFiles::getClientFileContents(array('fo/rizzle.hbt'=>$fileList[$this->createdFiles[0]]),'field');
+        $fileContents = MetaDataFiles::getClientFileContents(array('fo/rizzle.hbs'=>$fileList[$this->createdFiles[0]]),'field');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
-        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbs was a template");
         $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section");
         $this->assertEquals('FO RIZZLE (base)',$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the contents of the rizzle template");
     }
@@ -85,19 +85,19 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         SugarAutoLoader::ensureDir($this->createdDirs[0]);
         $this->createdDirs[] = 'custom/clients/base/fields/fo';
         SugarAutoLoader::ensureDir($this->createdDirs[1]);
-        
+
         // These have to be in this order, to simulate how they return from getClientFiles
-        $this->createdFiles[] = 'custom/clients/base/fields/fo/rizzle.hbt';
+        $this->createdFiles[] = 'custom/clients/base/fields/fo/rizzle.hbs';
         SugarAutoLoader::put($this->createdFiles[0],'FO RIZZLE (custom)');
-        $this->createdFiles[] = 'custom/clients/base/fields/fo/drizzle.hbt';
+        $this->createdFiles[] = 'custom/clients/base/fields/fo/drizzle.hbs';
         SugarAutoLoader::put($this->createdFiles[1],'FO DRIZZLE (custom)');
-        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbt';
+        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbs';
         SugarAutoLoader::put($this->createdFiles[2],'FO RIZZLE (base)');
-        $this->createdFiles[] = 'clients/base/fields/fo/fizzle.hbt';
+        $this->createdFiles[] = 'clients/base/fields/fo/fizzle.hbs';
         SugarAutoLoader::put($this->createdFiles[3],'FO FIZZLE (base)');
 
         $fileList = MetaDataFiles::getClientFiles(array('base'),'field');
-        
+
         $myFileList = array();
         foreach ( $this->createdFiles as $fileName ) {
             $this->assertArrayHasKey($fileName,$fileList,"The file list should contain: ". $fileName);
@@ -107,7 +107,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $fileContents = MetaDataFiles::getClientFileContents($myFileList,'field');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
-        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbs was a template");
         $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section");
         $this->assertArrayHasKey('fizzle',$fileContents['fo']['templates'],"Didn't correctly put fizzle in the template section");
         $this->assertArrayHasKey('drizzle',$fileContents['fo']['templates'],"Didn't correctly put drizzle in the template section");
@@ -128,7 +128,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $controllerContentsBase = 'console.log("fo"); // (base/controller)';
         SugarAutoLoader::put($this->createdFiles[0],$controllerContentsBase);
 
-        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbt';
+        $this->createdFiles[] = 'clients/base/fields/fo/rizzle.hbs';
         $templateContentsBase = 'FO RIZZLE (base/template)';
         SugarAutoLoader::put($this->createdFiles[1],$templateContentsBase);
 
@@ -137,7 +137,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $controllerContentsMobile = 'console.log("fo"); // (mobile/controller)';
         SugarAutoLoader::put($this->createdFiles[2],$controllerContentsMobile);
 
-        $this->createdFiles[] = 'clients/mobile/fields/fo/rizzle.hbt';
+        $this->createdFiles[] = 'clients/mobile/fields/fo/rizzle.hbs';
         $templateContentsMobile = 'FO RIZZLE (mobile/template)';
         SugarAutoLoader::put($this->createdFiles[3],$templateContentsMobile);
 
@@ -150,7 +150,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $fileContents = MetaDataFiles::getClientFileContents($fileList,'field');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
-        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbs was a template");
         $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section");
         $this->assertEquals($templateContentsMobile,$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the mobile contents of the rizzle template");
 
@@ -171,7 +171,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $fileContents = MetaDataFiles::getClientFileContents($fileList,'field');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section. 2");
-        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template 2");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbs was a template 2");
         $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section 2");
         $this->assertEquals($templateContentsBase,$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the base contents of the rizzle template");
 
@@ -194,7 +194,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $baseController = 'console.log("fo"); // (base/controller)';
         SugarAutoLoader::put($this->createdFiles[0],$baseController);
 
-        $this->createdFiles[] = 'modules/Accounts/clients/base/views/fo/rizzle.hbt';
+        $this->createdFiles[] = 'modules/Accounts/clients/base/views/fo/rizzle.hbs';
         $baseTemplate = 'FO RIZZLE (base)';
         SugarAutoLoader::put($this->createdFiles[1],$baseTemplate);
 
@@ -206,7 +206,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $mobileController = 'console.log("fo"); // (mobile/controller)';
         SugarAutoLoader::put($this->createdFiles[3],$mobileController);
 
-        $this->createdFiles[] = 'modules/Accounts/clients/mobile/views/fo/rizzle.hbt';
+        $this->createdFiles[] = 'modules/Accounts/clients/mobile/views/fo/rizzle.hbs';
         $mobileTemplate = 'FO RIZZLE (mobile)';
         SugarAutoLoader::put($this->createdFiles[4],$mobileTemplate);
 
@@ -223,7 +223,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $fileContents = MetaDataFiles::getClientFileContents($fileList,'view','Accounts');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section.");
-        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbs was a template");
         $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section");
         $this->assertEquals($mobileTemplate,$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the mobile contents of the rizzle template");
 
@@ -250,7 +250,7 @@ class MetaDataFilesTest extends Sugar_PHPUnit_Framework_TestCase
         $fileContents = MetaDataFiles::getClientFileContents($fileList,'view','Accounts');
 
         $this->assertArrayHasKey('fo',$fileContents,"Didn't find the fo section. 2");
-        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbt was a template 2");
+        $this->assertArrayHasKey('templates',$fileContents['fo'],"Didn't figure out that rizzle.hbs was a template 2");
         $this->assertArrayHasKey('rizzle',$fileContents['fo']['templates'],"Didn't correctly put rizzle in the template section 2");
         $this->assertEquals($baseTemplate,$fileContents['fo']['templates']['rizzle'],"Did not correctly read in the base contents of the rizzle template");
 

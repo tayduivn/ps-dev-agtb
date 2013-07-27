@@ -134,7 +134,7 @@ EOQ;
             'php' => 'test.php',
             'htm' => 'test.htm',
             'xml' => 'test.xml',
-            'hbt' => 'test.hbt',
+            'hbs' => 'test.hbs',
         );
 
         // Disallowed file names

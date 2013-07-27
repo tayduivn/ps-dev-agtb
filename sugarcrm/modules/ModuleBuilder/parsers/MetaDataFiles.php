@@ -836,7 +836,7 @@ class MetaDataFiles
                     }
                     $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
                     break;
-                case 'hbt':
+                case 'hbs':
                     $layoutName = substr($fileInfo['file'],0,-4);
                     if ( isset($results[$fileInfo['subPath']]['templates'][$layoutName]) ) {
                         continue;
