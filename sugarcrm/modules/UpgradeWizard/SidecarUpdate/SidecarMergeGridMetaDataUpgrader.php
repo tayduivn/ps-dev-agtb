@@ -12,6 +12,7 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarGridMetaDataUpgrader.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
 {
@@ -179,6 +180,17 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         return parent::handleSave();
     }
 
+    protected function convertFieldData($fieldname, $data)
+    {
+        $newdata = array('name' => $fieldname);
+        if(is_array($data)) {
+            if(!empty($data['readonly']) || !empty($data['readOnly'])) {
+                $newdata['readonly'] = true;
+            }
+        }
+        return $newdata;
+    }
+
     /**
      * Converts the legacy Grid metadata to Sidecar style
      */
@@ -283,7 +295,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
                 continue;
             } else {
                 // TODO: import more data than just name
-                $parser->addField(array('name' => $fieldname), $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
+                $parser->addField($this->convertFieldData($fieldname, $data['data']), $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
             }
         }
 
