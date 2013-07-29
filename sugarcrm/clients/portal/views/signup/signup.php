@@ -64,11 +64,6 @@ $viewdefs['portal']['view']['signup'] = array(
                     'required' => true,
                 ),
                 array(
-                    'name' => 'hr1',
-                    'type' => 'hr',
-                    'view' => 'default',
-                ),
-                array(
                     'name' => 'email',
                     'type' => 'email',
                     'placeholder' => "LBL_PORTAL_SIGNUP_EMAIL",
@@ -91,11 +86,6 @@ $viewdefs['portal']['view']['signup'] = array(
                     'type' => 'enum',
                     'placeholder' => "LBL_PORTAL_SIGNUP_STATE",
                     "options" => "state_dom",
-                ),
-                array(
-                    'name' => 'hr2',
-                    'type' => 'hr',
-                    'view' => 'default',
                 ),
                 array(
                     'name' => 'company',
