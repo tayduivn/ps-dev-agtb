@@ -71,19 +71,6 @@
 /* Reset general styles
 -------------------------------------------------- */
 
-body {
-  padding: 0;
-  overflow: auto;
-  margin-bottom: 30px;
-}
-
-.subnav {
-  z-index: 1020;
-}
-
-.subnav-fixed {
-  top: 0;
-}
 .dropdown-menu-container {
   position:relative;
   display:inline-block;
@@ -96,6 +83,79 @@ body {
   }
 }
 
+.page-content {
+  margin: 20px;
+}
+#styleguide {
+  width: 100%;
+  border-right: none;
+  section {
+    padding-top: 0;
+  }
+  .container-fluid {
+    padding-bottom: 20px;
+  }
+  .page-header {
+    padding-bottom: 0;
+    margin: 0 0 14px;
+  }
+  .page-header h1 {
+    padding-bottom: 0;
+    margin-top: 0;
+  }
+  .headerpane .select2-container .select2-choice {
+    min-width: 200px;
+    font-size: 14px;
+    padding: 4px 0 4px 8px;
+  }
+  .headerpane .btn-toolbar {
+    padding-top: 18px;
+  }
+}
+
+/* Accordion table
+-------------------------------------------------- */
+table.accordion .accordion-toggle,
+table.accordion .accordion-body {
+  padding: 0;
+}
+table.accordion .accordion-body {
+  border-top: none;
+  overflow: visible;
+}
+table.accordion .accordion-inner {
+  border: none;
+  overflow: hidden;
+}
+table.accordion .accordion-inner.in {
+  overflow: hidden;
+  overflow: visible;
+  padding: 12px;
+}
+table.accordion .accordion-heading td,
+table.accordion .accordion-body td {
+  border-right: none;
+  border-left: none;
+}
+
+ul.sg-main {
+  list-style: none;
+}
+ul.sg-main i {
+  margin-right: 12px;
+  margin-bottom: 12px;
+  width: 1.25em;
+  display: inline-block;
+}
+ul.sg-main a {
+  margin-top: 8px;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 16px;
+}
+
+/* Hero unit
+-------------------------------------------------- */
 .hero-unit {
   padding: 20px;
   font-size: 24px;
@@ -115,6 +175,8 @@ body {
   }
 }
 
+/* Headerpane doc search
+-------------------------------------------------- */
 .section-search {
   input {
     width: 100%;
@@ -136,10 +198,61 @@ body {
     width: 26px;
     border: none;
     border-left: 1px solid #CDCCCB;
-    color: @gray;
   }
 }
 
+/* Example page
+------------------------- */
+.bootstrap-examples h4 {
+  margin: 10px 0 5px;
+}
+.bootstrap-examples p {
+  font-size: 13px;
+  line-height: 18px;
+}
+.bootstrap-examples .thumbnail {
+  margin-bottom: 9px;
+  background-color: #fff;
+}
+
+/* Bootstrap code examples
+-------------------------------------------------- */
+
+/* Base class */
+.bs-docs-example {
+  position: relative;
+  margin: 15px 0;
+  padding: 39px 19px 14px;
+  *padding-top: 19px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+}
+
+/* Echo out a label for the example */
+.bs-docs-example:after {
+  content: "Example";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  padding: 3px 7px;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #9da0a4;
+  -webkit-border-radius: 4px 0 4px 0;
+     -moz-border-radius: 4px 0 4px 0;
+          border-radius: 4px 0 4px 0;
+}
+
+/* Remove spacing between an example and it's code */
+.bs-docs-example + .prettyprint {
+  margin-top: -20px;
+  padding-top: 15px;
+}
 
 /* Google Pretty Print
 -------------------------------------------------- */
@@ -173,4 +286,28 @@ ol.linenums li {
   color: #bebec5;
   line-height: 18px;
   text-shadow: 0 1px 0 #fff;
+}
+
+/* Font Awesome icons
+-------------------------------------------------- */
+.the-icons {
+  margin-left: 0;
+  list-style: none;
+  font-size: 14px;
+}
+.the-icons i {
+  font-size: 16px;
+  padding: 4px;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+}
+.the-icons i:hover {
+  background-color: #eee;
+  .border-radius(3px);
+  font-size: 18px;
+  color: #555;
+  padding: 5px 4px 3px;
 }

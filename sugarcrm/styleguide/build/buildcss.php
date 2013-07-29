@@ -44,12 +44,6 @@ try {
         );
     }
 
-    // Build bootstrap-mobile.css.
-    $files[] = array(
-        'in' => '../less/clients/mobile/config.less',
-        'out' => '../assets/css/bootstrap-mobile.css',
-    );
-
     // Build utility CSS files.
     $modulesRoot = '../less/modules';
     $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
