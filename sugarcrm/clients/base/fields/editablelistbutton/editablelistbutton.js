@@ -37,6 +37,7 @@
                 success: function(model) {
                     self.changed = false;
                     self.view.toggleRow(model.id, false);
+                    self._refreshListView();
                 },
                 //Show alerts for this request
                 showAlerts: {
@@ -85,5 +86,22 @@
     },
     cancelClicked: function(evt) {
         this.cancelEdit();
+    },
+    /**
+     * On model save success, this function gets called to refresh the list view
+     * @private
+     */
+    _refreshListView: function() {
+        var filterPanelLayout = this.view;
+        //Try to find the filterpanel layout
+        while (filterPanelLayout && filterPanelLayout.name!=='filterpanel') {
+            filterPanelLayout = filterPanelLayout.layout;
+        }
+        //If filterpanel layout found and not disposed, then pick the value from the quicksearch input and
+        //trigger the filtering
+        if (!filterPanelLayout.disposed && this.collection) {
+            var query = filterPanelLayout.$('.search input.search-name').val();
+            filterPanelLayout.trigger('filter:apply', query, this.collection.origFilterDef);
+        }
     }
 })
