@@ -301,7 +301,9 @@
             }
             _.each(value, function(value, operator) {
                 $row.data('value', value);
-                $row.find('.filter-operator select').select2('val', operator).trigger('change');
+                $row.find('.filter-operator select')
+                    .select2('val', operator === '$dateRange' ? value : operator)
+                    .trigger('change');
             });
         }, this);
     },
@@ -431,9 +433,17 @@
 
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
-        var $fieldValue = $row.find('.filter-value');
 
+        var $fieldValue = $row.find('.filter-value');
         $fieldValue.removeClass('hide').empty();
+
+        //fire the change event as soon as the user start typing
+        var _keyUpCallback = function(e) {
+            this.value = $(e.currentTarget).val();
+            // We use "silent" update because we don't need re-render the field.
+            model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
+            model.trigger('change');
+        };
 
         //If the operation is $between we need to set two inputs.
         if (operation === '$between' || operation === '$dateBetween') {
@@ -453,12 +463,7 @@
                     field.$('input, select, textarea').addClass('inherit-width');
                     // .date makes .inherit-width on input have no effect so we need to remove it.
                     field.$('.input-append').removeClass('date');
-                    field.$('input, textarea').on('keyup', _.debounce(_.bind(function(e) {
-                        this.value = $(e.currentTarget).val();
-                        // We use "silent" update because we don't need re-render the field.
-                        model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
-                        model.trigger('change');
-                    }, field), 400));
+                    field.$('input, textarea').on('keyup', _.debounce(_.bind(_keyUpCallback, field), 400));
                 });
                 this._renderField(field);
             }, this);
@@ -474,12 +479,7 @@
                 field.$('input, select, textarea').addClass('inherit-width');
                 // .date makes .inherit-width on input have no effect so we need to remove it.
                 field.$('.input-append').removeClass('date');
-                field.$('input, textarea').on('keyup', _.debounce(_.bind(function(e) {
-                    this.value = $(e.currentTarget).val();
-                    // We use "silent" update because we don't need re-render the field.
-                    model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
-                    model.trigger('change');
-                }, field), 400));
+                field.$('input, textarea').on('keyup',_.debounce(_.bind(_keyUpCallback, field), 400));
             });
             //Have to format the Blank value
             //Be careful using fieldType and not fieldDef.type to not mess with converted fields
@@ -522,6 +522,12 @@
                 this.fireSearch();
             };
         })($row));
+
+        // Manually trigger the filter request if a value has been selected lately
+        // This is the case for checkbox fields or enum fields that don't have empty values.
+        if (!_.isEmpty(model.get(fieldName))) {
+            model.trigger('change');
+        }
     },
 
     /**
