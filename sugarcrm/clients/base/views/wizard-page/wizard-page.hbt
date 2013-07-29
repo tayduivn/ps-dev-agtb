@@ -30,8 +30,10 @@
     <div class="thumbnail modal">
         <div class="modal-header modal-header-firstlogin">
             <div class="row-fluid">
-                <div class="span1 page-number">
-                    <a class="btn btn-circle">{{progress.page}}/{{progress.lastPage}}</a>
+                <div class="span1">
+                    <span class="pull-left step-circle">
+                        <span>{{progress.page}}</span>
+                    </span>
                 </div>
                 <div class="span5 firstlogin-title">
                     <h3>{{str meta.title module}}</h3>
