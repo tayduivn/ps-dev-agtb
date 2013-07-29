@@ -361,15 +361,11 @@ class AbstractRelationships
                         {
                             $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": BUILD is running METHOD $saveMethod" ) ;
                             $installDef = $this->$saveMethod ( $basepath, $installDefPrefix, $name, $metadata ) ;
-                            reset($installDef);
-                            if (!empty(self::$sidecarOverrides[$method]) && !isModuleBWC(key($installDef))) {
-                                $key = self::$sidecarOverrides[$method];
-                            }
-                            // some save methods (e.g., saveRelateFieldDefinition) handle the installDefs internally and so return null
-
-
-                            if (! is_null ( $installDef ))
-                            {
+                            if (!is_null($installDef)) {
+                                reset($installDef);
+                                if (!empty(self::$sidecarOverrides[$method]) && !isModuleBWC(key($installDef))) {
+                                    $key = self::$sidecarOverrides[$method];
+                                }
                                 foreach ( $installDef as $moduleName => $def )
                                 {
                                     $installDefs [ $key ] [ ] = $def ;
