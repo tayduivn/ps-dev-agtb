@@ -105,7 +105,11 @@
 
         if (!this.displayTimeperiodPivot) {
             this.isOnHomePage = false;
-            defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
+
+            // if we have a timestamp, use it, otherwise just default to the current time period
+            if(this.model.has('date_closed_timestamp')) {
+                defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
+            }
         }
 
         this.values.set(defaultOptions);
