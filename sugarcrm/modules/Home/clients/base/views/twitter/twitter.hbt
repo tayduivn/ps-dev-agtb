@@ -18,7 +18,7 @@
                                     </div>
                                     <div class="span4">
                                         <a class="pull-right" target="_blank" href="https://twitter.com/{{screen_name}}/status/{{id}}">
-                                            {{twitter_timeago date}}
+                                            {{timeago date "LBL_TIME_RELATIVE"}}
                                         </a>
                                     </div>
                                 </div>
