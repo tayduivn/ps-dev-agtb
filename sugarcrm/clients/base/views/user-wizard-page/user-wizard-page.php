@@ -62,8 +62,9 @@ $viewdefs['base']['view']['user-wizard-page'] = array(
                     'label' => "LBL_WIZ_EMAIL",
                     'required' => true,
                 ),
-                array (
-                    'name' => 'phone_office',
+                array(
+                    'name' => 'phone_work',
+                    'type' => 'phone',
                     'label' => 'LBL_LIST_PHONE',
                 ),
             ),

@@ -25,8 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['GridBuilder'],
-
+    plugins: ['GridBuilder', 'error-decoration'],
     /**
      * An abstract WizardPageView.  Wizard pages should extend this and provide
      * field metadata, custom logic, etc.  This view is detached from Wizard
@@ -49,14 +48,27 @@
      */
     events: {
         'click [name=previous_button]': 'previous',
-        'click [name=next_button]': 'next'
+        'click [name=next_button]': 'next',
+        'keyup .modal-body.record .required': 'setPageComplete'
     },
-
     /**
      * Current progress through wizard, updated automatically on each render.
      */
     progress: null,
-
+    /**
+     * Flags if all required fields have at least one character or not. This is
+     * used to determine whether we enable or disable the wizard's next button.
+     * @type {Boolean}
+     */
+    areAllRequiredFieldsNonEmpty: false,
+    /**
+     * Initialize the wizard controller
+     * @param  {options} options the options
+     */
+    initialize: function(options){
+        this.fieldsToValidate = this._fieldsToValidate(options.meta);
+        app.view.View.prototype.initialize.call(this, options);
+    },
     /**
      * Additionally update current progress and button status during a render.
      *
@@ -68,7 +80,18 @@
         this.progress = this.layout.getProgress();
         this.percentComplete = this._getPercentageComplete();
         app.view.View.prototype._render.call(this);
-        this.updateButtons();
+    },
+    /**
+     * We have to check if required fields are pre-filled once we've sync'd. For example,
+     * user might have valid required field values (in which case we enable next button).
+     */
+    bindDataChange: function() {
+        var self = this;
+        if (this.model) {
+            this.listenTo(this.model, "sync", function() {
+                self.setPageComplete();
+            });
+        }
     },
     /**
      * Used to build our multi-column grid (user wizard is 2 col panel).
@@ -131,29 +154,76 @@
      * should override this function to provide custom validation logic.
      *
      * @returns {boolean} TRUE if this page is complete
+     * @override
      */
     isPageComplete: function(){
         return true;
     },
-
+    /**
+     * Listen to changes on required fields. If all required fields contain
+     * 1+ characters we enable the next button. Implementers of wizard pages must
+     * override this method since each form will be different (e.g. some have
+     * just inputs, others have dropdowns, etc.)
+     * @see SUGAR.App.view.views.UserWizardPageView
+     * @param {Object} evt the event
+     */
+    setPageComplete: function(evt) {
+        // Noop: Implementers will need to set `this.areAllRequiredFieldsNonEmpty`
+        // and call `this.updateButtons` if appropriate
+    },
+    /**
+     * Only validate fields pertinent to wizard page
+     * @param  {Object} meta The meta
+     * @return {Object} fields The fields to validate on
+     * @private
+     */
+    _fieldsToValidate: function(meta) {
+        meta = meta || {};
+        var fields = {};
+        _.each(_.flatten(_.pluck(meta.panels, "fields")), function(field) {
+            fields[field.name] = field;
+        });
+        return fields;
+    },
     /**
      * Next button pressed
      */
     next: function() {
+        var self = this;
         if (this.progress.page !== this.progress.lastPage) {
-            this.progress = this.layout.nextPage();
+            this.beforeNext(function(success) {
+                if (success) {
+                    self.progress = self.layout.nextPage();
+                } else {
+                    //If no validation error and this happens throw up a generic error
+                    app.logger.debug("There was an unknown issue after calling beforeNext from wizard");
+                    app.alert.show('server-error', {
+                        level: 'error',
+                        messages: 'ERR_AJAX_LOAD_FAILURE',
+                        autoClose: false
+                    });
+                }
+            });
         } else {
             this.finish();
         }
     },
-
+    /**
+     * Do any actions like http requests, etc., before allowing user to proceed to next
+     * page. Implementers should override this.
+     * @param {Function} callback The callback to call once actions are completed
+     * @returns {Boolean} Whether action was performed successfully or not
+     */
+    beforeNext: function(callback) {
+        app.logger.debug("wizard's beforeNext called directly. Derived controller's should have overriden this!");
+        callback(true);
+    },
     /**
      * Previous button pressed
      */
     previous: function(){
         this.progress = this.layout.previousPage();
     },
-
     /**
      * Next button pressed and this is the last page. Implementers should
      * override this and are responsible for removing Wizard layout.
