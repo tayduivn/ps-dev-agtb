@@ -48,7 +48,10 @@ $viewdefs['RevenueLineItems']['mobile']['view']['edit'] = array(
                     'name' => 'account_name',
                     'readonly' => true,
                 ),
-                'date_closed',
+                array(
+                    'name' => 'date_closed',
+                    'required' => true,
+                ),
                 'sales_stage',
                 'probability',
                 'worst_case',
