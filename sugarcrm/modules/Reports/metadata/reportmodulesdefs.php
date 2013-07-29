@@ -30,5 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // For $exemptModules, set the value to the module name is be exempt
 $exemptModules[] = 'ProspectLists';
 $exemptModules[] = 'Reports';
+$exemptModules[] = 'WebLogicHooks';
 
 // For $additionalModules, set the value to the module name to add
