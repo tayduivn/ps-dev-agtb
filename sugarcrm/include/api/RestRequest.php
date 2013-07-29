@@ -303,7 +303,7 @@ class RestRequest
             $siteUrl = SugarConfig::get('site_url');
 
             // Get the file uri bas
-            $this->resourceURIBase = $siteUrl . $apiBase;
+            $this->resourceURIBase = $siteUrl . $apiBase .'/';
         }
     }
 
