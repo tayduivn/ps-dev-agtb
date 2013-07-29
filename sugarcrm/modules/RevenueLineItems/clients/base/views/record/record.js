@@ -17,19 +17,8 @@
     initialize: function(options) {
         //reinitialize array on each init
         this.currencyFields = [];
-        this._setupCommitStageField(options.meta.panels);
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
-
-        //pull the fields in the panels that are editable currency fields
-        _.each(options.meta.panels, function(panel) {
-                _.each(panel.fields, function(field) {
-                    //if the field is currency and not the known calculated field, add to the array
-                    if (field.type == 'currency') {
-                        this.currencyFields.push(field.name);
-                    }
-                }, this);
-            }, this
-        );
+        this._parsePanelFields(this.meta.panels);
     },
 
     /**
@@ -141,12 +130,12 @@
     },
 
     /**
-     * Set up the commit_stage field based on forecast settings - if forecasts is set up, adds the correct dropdown
-     * elements, if forecasts is not set up, it removes the field.
-     * @param array panels
+     * Parse the fields in the panel for the different requirement that we have
+     *
+     * @param {Array} panels
      * @protected
      */
-    _setupCommitStageField: function(panels) {
+    _parsePanelFields: function(panels) {
         _.each(panels, function(panel) {
             if (!app.metadata.getModule("Forecasts", "config").is_setup) {
                 // use _.every so we can break out after we found the commit_stage field
@@ -163,11 +152,14 @@
                 }, this);
             } else {
                 _.each(panel.fields, function(field) {
+                    if (field.type == 'currency') {
+                        this.currencyFields.push(field.name);
+                    }
                     if (field.name == "commit_stage") {
                         field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
                     }
-                });
+                }, this);
             }
-        });
+        }, this);
     }
 })

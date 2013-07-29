@@ -62,7 +62,9 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
         SugarTest.loadComponent('base', 'view', 'create');
         SugarTest.loadComponent('base', 'view', 'create-actions');
 
-        view = SugarTest.loadFile("../modules/RevenueLineItems/clients/base/views/create-actions", "create-actions", "js", function(d) { return eval(d); });
+        view = SugarTest.createView('base', 'RevenueLineItems', 'create-actions', options.meta, null, true);
+
+        //view = SugarTest.loadFile("../modules/RevenueLineItems/clients/base/views/create-actions", "create-actions", "js", function(d) { return eval(d); });
     });
 
     describe("initialization", function() {
@@ -75,30 +77,30 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
                     buckets_dom: "commit_stage_binary_dom"
                 }
             })
-            sinon.stub(view, "_setupCommitStageField");
+            sinon.stub(view, "_parsePanelFields");
 
         });
 
         afterEach(function() {
-            view._setupCommitStageField.restore();
+            view._parsePanelFields.restore();
             app.metadata.getModule.restore();
             app.view.views.BaseCreateView.prototype.initialize.restore();
         });
 
         it("should set up the commit_stage field for products", function () {
             view.initialize(options);
-            expect(view._setupCommitStageField).toHaveBeenCalled();//With(options.meta.panels);
+            expect(view._parsePanelFields).toHaveBeenCalled();//With(options.meta.panels);
         });
     });
 
-    describe("_setupCommitStageField method", function() {
+    describe("_parsePanelFields method", function() {
         it("should replace commit_stage with a spacer", function() {
             sinon.stub(app.metadata, "getModule", function () {
                 return {
                     is_setup: false
                 }
             });
-            view._setupCommitStageField(options.meta.panels);
+            view._parsePanelFields(options.meta.panels);
             expect(options.meta.panels[0].fields).toEqual([{ name : 'spacer', span : 6, readonly : true }]);
             app.metadata.getModule.restore();
         });
@@ -110,7 +112,7 @@ describe("RevenueLineItems.Base.View.CreateActions", function() {
                     buckets_dom: "something_testable"
                 }
             });
-            view._setupCommitStageField(options.meta.panels);
+            view._parsePanelFields(options.meta.panels);
             expect(options.meta.panels[0].fields[0].options).toEqual("something_testable");
             app.metadata.getModule.restore();
         });
