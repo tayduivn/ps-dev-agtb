@@ -150,6 +150,7 @@
 
                                 activity.save(payload, {
                                     success: function(activityModel) {
+                                        self.collection.add(activityModel);
                                         callback(null, activityModel);
                                     }
                                 });
