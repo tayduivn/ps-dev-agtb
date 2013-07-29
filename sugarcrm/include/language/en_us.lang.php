@@ -3570,10 +3570,6 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
     'LBL_SUCCESS' => 'Success',
 
-    'LBL_TWITTER_TIME_AGO_SECONDS' => 's',
-    'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
-    'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
-
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
     'LBL_INVALID_CREDS_TITLE' => 'Invalid Credentials',
