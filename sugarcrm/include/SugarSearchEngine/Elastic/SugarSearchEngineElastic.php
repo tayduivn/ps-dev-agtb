@@ -602,8 +602,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         foreach ($finalTypes as $module) {
             $moduleFilter = $this->constructModuleLevelFilter($module, $options);
             // if we want myitems add more to the module filter
-            if (isset($options['my_items']) && $options['my_items'] !== false) {
-                $moduleFilter = $this->myItemsSearch($moduleFilter);
+            if(isset($options['my_items']) && $options['my_items'] !== false) {
+                $moduleFilter = $this->constructMyItemsFilter($moduleFilter);
             }
             if (isset($options['filter']) && $options['filter']['type'] == 'range') {
                 $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
@@ -614,8 +614,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             // if the option is 1 that means we want all including favorites,
             // which in FTS is a normal search parameter
             if (isset($options['favorites']) && $options['favorites'] == 2) {
-                $favoritesFilter = $this->constructMyFavoritesFilter();
-                $moduleFilter->addFilter($favoritesFilter);
+                $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
             }
             //END SUGARCRM flav=pro ONLY
 
@@ -635,14 +634,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * @return \Elastica\Filter\Term $moduleFilter
      */
 
-    protected function constructMyFavoritesFilter()
+    protected function constructMyFavoritesFilter($moduleFilter)
     {
         $ownerTermFilter = new \Elastica\Filter\Term();
         // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
 
         $ownerTermFilter->setTerm('user_favorites', $this->formatGuidFields($GLOBALS['current_user']->id));
+        $moduleFilter->addMust($ownerTermFilter);
 
-        return $ownerTermFilter;
+        return $moduleFilter;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -655,7 +655,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function constructRangeFilter($moduleFilter, $filter)
     {
         $filter = new \Elastica\Filter\Range($filter['fieldname'], $filter['range']);
-        $moduleFilter->addFilter($filter);
+        $moduleFilter->addMust($filter);
         return $moduleFilter;
     }
 
@@ -664,10 +664,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * @param object $moduleFilter
      * @return object
      */
-    public function myItemsSearch($moduleFilter)
+    protected function constructMyItemsFilter($moduleFilter)
     {
         $ownerTermFilter = $this->getOwnerTermFilter();
-        $moduleFilter->addFilter($ownerTermFilter);
+        $moduleFilter->addMust($ownerTermFilter);
         return $moduleFilter;
     }
 
