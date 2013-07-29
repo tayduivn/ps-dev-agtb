@@ -31,13 +31,13 @@ $viewdefs['base']['layout']['first-login-wizard'] = array(
     'type' => 'wizard',
     'components' => array(
         0 => array(
-            'view' => "wizard-page"
+            'view' => "user-wizard-page"
         ),
         1 => array(
             'view' => "wizard-page"
         ),
         2 => array(
-            'view' => "user-wizard-page"
+            'view' => "wizard-page"
         ),
     ),
 );

@@ -29,38 +29,30 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['base']['view']['user-wizard-page'] = array(
+    'action' => 'edit',
     'title' => 'LBL_WIZ_USER_PROFILE_TITLE',
-    'buttons' =>
-    array(
-        array(
-            'name' => 'previous_button',
-            'type' => 'button',
-            'label' => 'LNK_LIST_PREVIOUS',
-        ),
+    'message' => 'LBL_SETUP_USER_INFO',
+    'buttons' => array(
         array(
             'name' => 'next_button',
             'type' => 'button',
-            'label' => 'LBL_WIZ_START_SUGAR',
+            'label' => 'LNK_LIST_NEXT',
             'primary' => true,
         ),
     ),
-    'panels' =>
-    array(
+    'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
-            'fields' =>
-            array(
+            'fields' => array(
                 array(
                     'name' => 'first_name',
-                    'type' => 'varchar',
                     'label' => "LBL_WIZ_FIRST_NAME",
                 ),
                 array(
                     'name' => 'last_name',
-                    'type' => 'varchar',
                     'label' => "LBL_WIZ_LAST_NAME",
                     'required' => true,
                 ),
@@ -70,7 +62,10 @@ $viewdefs['base']['view']['user-wizard-page'] = array(
                     'label' => "LBL_WIZ_EMAIL",
                     'required' => true,
                 ),
-
+                array (
+                    'name' => 'phone_office',
+                    'label' => 'LBL_LIST_PHONE',
+                ),
             ),
         ),
     ),
