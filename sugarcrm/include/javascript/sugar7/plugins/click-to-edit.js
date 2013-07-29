@@ -129,7 +129,11 @@
                         if (this.type == 'enum') {
                             this.$("select").select2("close");
                         }
-                        this.setMode('detail');
+
+                        // for the date field, this is handled when the date field gets removed below
+                        if (this.type != 'date') {
+                            this.setMode('detail');
+                        }
                     }
                 }, this);
                 this.context.on('field:editable:error', function(cid) {
@@ -609,8 +613,9 @@
                     // set the field model with the new valid dateValue
                     this.model.set(this.name, this._buildUnformatted(this.dateValue, hrsMins.hours, hrsMins.minutes));
 
+                    // find the date picker and hide it
+                    $('.datepicker').datepicker().hide();
                     // trigger the onBlur function to set the field back to detail view and render
-                    //this.onBlur(ev);
                     this.setMode('detail');
                 } else {
                     var hb = Handlebars.compile("{{str key module context}}"),
