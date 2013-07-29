@@ -139,7 +139,7 @@ describe("Base.View.Forecastdetails", function() {
                 show_worksheet_worst: false
             };
             view.resetModel();
-            expect(view.model.get('show_details_likely')).toBeTruthy();
+            expect(view.context.get('model').get('show_details_likely')).toBeTruthy();
         });
 
         it("should set show_details_best from cfg settings", function() {
@@ -149,7 +149,7 @@ describe("Base.View.Forecastdetails", function() {
                 show_worksheet_worst: false
             };
             view.resetModel();
-            expect(view.model.get('show_details_best')).toBeTruthy();
+            expect(view.context.get('model').get('show_details_best')).toBeTruthy();
         });
 
         it("should set show_details_worst from cfg settings", function() {
@@ -159,7 +159,7 @@ describe("Base.View.Forecastdetails", function() {
                 show_worksheet_worst: true
             };
             view.resetModel();
-            expect(view.model.get('show_details_worst')).toBeTruthy();
+            expect(view.context.get('model').get('show_details_worst')).toBeTruthy();
         });
 
         it("should set isForecastSetup from view.isForecastSetup setting", function() {
@@ -170,7 +170,7 @@ describe("Base.View.Forecastdetails", function() {
             };
             view.isForecastSetup = true;
             view.resetModel();
-            expect(view.model.get('isForecastSetup')).toBeTruthy();
+            expect(view.context.get('model').get('isForecastSetup')).toBeTruthy();
         });
 
         it("should set isForecastAdmin from view.isForecastAdmin setting", function() {
@@ -181,7 +181,7 @@ describe("Base.View.Forecastdetails", function() {
             };
             view.isForecastAdmin = true;
             view.resetModel();
-            expect(view.model.get('isForecastAdmin')).toBeTruthy();
+            expect(view.context.get('model').get('isForecastAdmin')).toBeTruthy();
         });
     });
 
@@ -415,16 +415,10 @@ describe("Base.View.Forecastdetails", function() {
                 expect(view.worstTotal).toBe(dataFromServer.worst_adjusted);
             });
 
-            it("opportunities set properly by opportunities", function() {
-                view.resetModel();
-                view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('opportunities')).toBe(dataFromServer.opportunities);
-            });
-
             it("closed_amount set properly by closed_amount", function() {
                 view.resetModel();
                 view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('closed_amount')).toBe(dataFromServer.closed_amount);
+                expect(view.context.get('model').get('closed_amount')).toBe(dataFromServer.closed_amount);
             });
         });
 
@@ -477,7 +471,7 @@ describe("Base.View.Forecastdetails", function() {
             it("closed_amount set properly by won_amount", function() {
                 view.resetModel();
                 view.calculateData(view.mapAllTheThings(dataFromServer, false));
-                expect(view.model.get('closed_amount')).toBe(dataFromServer.won_amount);
+                expect(view.context.get('model').get('closed_amount')).toBe(dataFromServer.won_amount);
             });
         });
     });

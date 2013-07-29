@@ -127,4 +127,18 @@ class TimePeriodsCurrentApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($tp->id, $return['id']);
     }
+
+    /**
+     * @group timeperiods
+     *
+     * @expectedException SugarApiExceptionNotFound
+     */
+    public function testGetTimePeriodByDateNoDate()
+    {
+        $tp = SugarTestTimePeriodUtilities::createTimePeriod();
+        $args = array();
+
+        $restService = SugarTestRestUtilities::getRestServiceMock();
+        $this->api->getTimePeriodByDate($restService, $args);
+    }
 }

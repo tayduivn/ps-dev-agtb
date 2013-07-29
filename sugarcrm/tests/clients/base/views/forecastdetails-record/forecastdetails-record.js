@@ -105,21 +105,29 @@ describe("Base.View.Forecastdetails-record", function() {
                 model = new Backbone.Model();
                 // letting the sub-tests set likely_case or amount
                 model.set({
+                    id: 'modelId',
                     best_case: 200,
                     worst_case: 50,
                     assigned_user_id: 'userID-1'
                 });
-
-                view.oldTotals = {
-                    best: 20,
-                    likely: 10,
-                    worst: 5
-                };
-
+                view.rliCollection = new Backbone.Collection();
                 view.currentModule = 'Opportunities';
             });
 
             it("should make likely_case using amount", function() {
+                view.oldTotals = {
+                    best: 200,
+                    likely: 100,
+                    worst: 50,
+                    models: new Backbone.Model()
+                };
+
+                view.oldTotals.models.set('modelId', {
+                    best: 20,
+                    likely: 10,
+                    worst: 5
+                });
+
                 model.set({
                     amount: 100
                 });

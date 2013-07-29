@@ -21,15 +21,4 @@ $viewdefs['base']['view']['forecastdetails-record'] = array(
             ),
         ),
     ),
-    'panels' => array(
-        array(
-            'name' => 'panel_body',
-            'columns' => 2,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
-                'selected_time_period'
-            ),
-        ),
-    ),
 );

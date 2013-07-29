@@ -107,7 +107,7 @@
         this.forecastsConfigOK = app.utils.checkForecastConfig();
 
         if(this.isForecastSetup && this.forecastsConfigOK) {
-            this.serverData = {};
+            this.serverData = new Backbone.Model();
 
             // set up the model data
             this.resetModel();
@@ -185,8 +185,7 @@
      * Resets the model to default data
      */
     resetModel: function() {
-        var model = this.context.get('model') || this.model;
-        model.set({
+        var model = {
             opportunities : 0,
             closed_amount : undefined,
             quota_amount : undefined,
@@ -204,7 +203,12 @@
             deficit_amount_str: '',
             isForecastSetup: this.isForecastSetup,
             isForecastAdmin: this.isForecastAdmin
-        });
+        };
+        if(this.context.get('model')) {
+            this.context.get('model').set(model)
+        } else {
+            this.model.set(model);
+        }
     },
 
     /**
@@ -370,7 +374,7 @@
     checkPropertySetCSS: function(prop, model) {
         model = model || this.context.get('model') || this.model;
         if(this.forecastConfig['show_worksheet_' + prop]) {
-            var css = this.getClassBasedOnAmount(this.serverData[prop], model.get('quota_amount'), 'background-color');
+            var css = this.getClassBasedOnAmount(this.serverData.get(prop), model.get('quota_amount'), 'background-color');
             this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
     },
@@ -424,12 +428,12 @@
      */
     calculateData: function(data) {
         // update serverData with changes from data
-        _.extend(this.serverData, data);
+        this.serverData.set(data);
 
         // update data with any values serverData had but data doesn't
         // we create a new variable here, since we don't want to update the data param back on the worksheet table
         // and maybe break something
-        var d = _.extend({}, data, this.serverData);
+        var d = _.extend({}, data, this.serverData.toJSON());
 
         this.likelyTotal = d.likely;
         this.bestTotal = d.best;
@@ -451,10 +455,12 @@
         d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount));
         d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount));
 
-        var model = this.context.get('model') || this.model;
-        if(model) {
-            model.set(d);
-            this.renderSubDetails();
+        if(this.context || this.model) {
+            var model = this.context.get('model') || this.model;
+            if(model) {
+                model.set(d);
+                this.renderSubDetails();
+            }
         }
     },
 
