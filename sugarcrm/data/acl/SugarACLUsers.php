@@ -35,12 +35,12 @@ class SugarACLUsers extends SugarACLStrategy
             'user_name' => true,
             'status' => true,
             'employee_status' => true,
+            'is_admin' => true,
         );
 
     public $no_access_fields = array(
             'show_on_employees' => true,        
             'portal_only' => true,
-            'is_admin' => true,
             'is_group' => true,
             'system_generated_password' => true,
             'external_auth_only' => true,
