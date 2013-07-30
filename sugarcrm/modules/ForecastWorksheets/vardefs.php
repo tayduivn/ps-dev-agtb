@@ -56,7 +56,8 @@ $dictionary['ForecastWorksheet'] = array(
             'related_fields' => array(
                 'parent_id',
                 'parent_type',
-                'parent_deleted'
+                'parent_deleted',
+                'name',
             )
         ),
         'opportunity_id' =>
