@@ -156,7 +156,7 @@
             _filter = [
                 {
                     'date_closed': {
-                        '$gt': self.dateRange.begin
+                        '$gte': self.dateRange.begin
                     }
                 },
                 {
