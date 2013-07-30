@@ -98,7 +98,9 @@
                         self.needConnect = true;
                     }
                     self.template = app.template.get(self.name + '.twitter-need-configure.Home');
-                    app.view.View.prototype._render.call(self);
+                    if (!self.disposed) {
+                        app.view.View.prototype._render.call(self);
+                    }
                 }
             },
             complete: (options) ? options.complete : null
