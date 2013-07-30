@@ -107,7 +107,7 @@
             this.isOnHomePage = false;
 
             // if we have a timestamp, use it, otherwise just default to the current time period
-            if(this.model.has('date_closed_timestamp')) {
+            if (this.model.has('date_closed_timestamp') && this.model.get('date_closed_timestamp') != 0) {
                 defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
             }
         }
@@ -236,6 +236,10 @@
         this.listenModel = this.model;
         //BEGIN SUGARCRM flav=ent ONLY
         if (this.forecastConfig.forecast_by == 'RevenueLineItems' && this.context.get('module') == 'Opportunities') {
+            // we need to watch for when the date changes time periods on the opportunity to re-render the chart
+            this.model.on('change:date_closed_timestamp', function(model, changed) {
+                this.values.set('timeperiod_id', changed);
+            }, this);
             // since we are forecasting by RLI but on the Opp Module, we need to find the subpanel for RLI to watch
             // for the changes there
             var ctx = _.find(this.context.children, function(child) {
@@ -270,6 +274,15 @@
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData();
 
+            // if we only have one changed field and it's the date_closed, lets map it to a timestamp.
+            // this happens on the Opp -> RLI Subpanel since we don't have SugarLogic Support in ListViews
+            if (changedField.length == 1 && changedField[0] == 'date_closed') {
+                // convert this into the timestamp
+                changedField.push('date_closed_timestamp');
+                changed.date_closed_timestamp = Math.round(+app.date.parse(changed.date_closed).getTime() / 1000);
+                model.set('date_closed_timestamp', changed.date_closed_timestamp, {silent: true});
+            }
+
             // before we do anything, lets make sure that if the date_changed, make sure it's still in this range,
             // if it's not force the chart to update to the new timeperiod that is valid for this row, then add this
             // row to the new timeperiod
@@ -277,9 +290,18 @@
                 if (!(model.get('date_closed_timestamp') >= _.first(serverData['x-axis']).start_timestamp &&
                     model.get('date_closed_timestamp') <= _.last(serverData['x-axis']).end_timestamp)) {
 
+                    // lets check to see, if we have a collection as the listenModel, then just remove the row if there
+                    // is more than one record in the collection
+                    if (this.listenModel instanceof Backbone.Collection) {
+                        if (this.listenModel.length > 1) {
+                            this.removeRowFromChart(model);
+                            return;
+                        }
+                    }
+                    // we just have a model, so lets just update it
                     field.once('chart:pareto:rendered', function() {
-                        this.addRowToChart();
-                    }, model);
+                        this[0].addRowToChart(this[1]);
+                    }, [this, model]);
                     this.values.set('timeperiod_id', model.get('date_closed_timestamp'));
                     return;
                 }
@@ -342,7 +364,7 @@
         if (model.get('assigned_user_id') == app.user.get('id')) {
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData(),
-                // make sure it doesn't exist in the serverdata
+            // make sure it doesn't exist in the serverdata
                 found = _.find(serverData.data, function(record) {
                     return (record.record_id == model.get('id'));
                 }),

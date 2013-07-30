@@ -112,7 +112,7 @@
         if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".datepicker"));
         }
-        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane' : 'div#content .main-pane';
+        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane:first' : 'div#content .main-pane:first';
         /* TODO: Remove all this once satisfied language injection works properly ;)
         var spanishLangExample = {
             days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
@@ -194,7 +194,13 @@
             this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
             model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
         }
-        this.model.trigger("change:" + fieldName);
+
+        // manually trigger the change events, we need to trigger the change:fieldName for field specific listeners
+        // this contains what changed on the field as a param
+        model.trigger("change:" + fieldName, model, model.get(fieldName));
+        // now we need to trigger the main model change event, with the model being passed in.  if this model is part
+        // of a collection, it will trigger that collection to send the model up as being changed
+        model.trigger("change", model);
     },
     _verifyDateString: function(value) {
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
