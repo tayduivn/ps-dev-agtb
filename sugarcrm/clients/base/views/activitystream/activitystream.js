@@ -6,7 +6,6 @@
         'input div[data-placeholder]': 'checkPlaceholder',
         'click .reply': 'showAddComment',
         'click .reply-btn': 'addComment',
-        'click .deleteRecord': 'deleteRecord',
         'click .preview-btn:not(.disabled)': 'previewRecord',
         'click .comment-btn': 'toggleReplyBar',
         'click .more': 'fetchComments',
@@ -50,53 +49,52 @@
         }
 
         this.preview = this.getPreviewData();
-
         var data = this.model.get('data');
         var activity_type = this.model.get('activity_type');
         this.tpl = "TPL_ACTIVITY_" + activity_type.toUpperCase();
 
         switch(activity_type) {
-        case 'post':
-            if (!data.value) {
-                this.tpl = null;
-            }
-            break;
-        case 'update':
-            var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
-                parentType = this.model.get("parent_type"),
-                fields = app.metadata.getModule(parentType).fields;
-
-            data.updateStr = _.reduce(data.changes, function(memo, changeObj) {
-                changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
-
-                if(memo) {
-                    return updateTpl(changeObj) + ', ' + memo;
+            case 'post':
+                if (!data.value) {
+                    this.tpl = null;
                 }
-                return updateTpl(changeObj);
-            }, '');
+                break;
+            case 'update':
+                var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
+                    parentType = this.model.get("parent_type"),
+                    fields = app.metadata.getModule(parentType).fields;
 
-            this.model.set('data', data);
-            break;
+                data.updateStr = _.reduce(data.changes, function(memo, changeObj) {
+                    changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
 
-        case 'attach':
-            var url = app.api.buildFileURL({
-                module: 'Notes',
-                id: data.noteId,
-                field: 'filename'
-            });
+                    if(memo) {
+                        return updateTpl(changeObj) + ', ' + memo;
+                    }
+                    return updateTpl(changeObj);
+                }, '');
 
-            if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
-                data.embed = {
-                    type: "image",
-                    src: url
-                };
-            }
+                this.model.set('data', data);
+                break;
 
-            data.url = url;
-            this.$el.data(data);
-            this.model.set('data', data);
-            this.model.set('parent_type', 'Files');
-            break;
+            case 'attach':
+                var url = app.api.buildFileURL({
+                    module: 'Notes',
+                    id: data.noteId,
+                    field: 'filename'
+                });
+
+                if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
+                    data.embed = {
+                        type: "image",
+                        src: url
+                    };
+                }
+
+                data.url = url;
+                this.$el.data(data);
+                this.model.set('data', data);
+                this.model.set('parent_type', 'Files');
+                break;
         }
 
         this.processEmbed();
@@ -142,16 +140,6 @@
         });
     },
 
-    showAllComments: function(event) {
-        var currentTarget = this.$(event.currentTarget);
-
-        currentTarget.closest('li').hide();
-        currentTarget.closest('ul').find('div.extend').show();
-        currentTarget.closest('ul').closest('li').find('.activitystream-comment').show();
-
-        event.preventDefault();
-    },
-
     /**
      * Event handler for clicking comment button -- shows a post's comment box.
      * @param  {Event} e
@@ -169,7 +157,7 @@
      * Creates a new comment on a post.
      * @param {Event} event
      */
-    addComment: function(event) {
+    addComment: function (event) {
         var self = this,
             parentId = this.model.id,
             payload = {
@@ -184,28 +172,38 @@
             bean = app.data.createRelatedBean(this.model, null, 'comments');
             bean.save(payload, {
                 relate: true,
-                success: function(model) {
-                    self.$('div.reply')
-                        .empty()
-                        .trigger('change');
-                    self.layout.prependPost(self.model);
-                    self.commentsCollection.add(model).trigger('reset');
-                    self.toggleReplyBar();
-                }
+                success: _.bind(self.addCommentCallback, self)
             });
         }
     },
 
-    deleteRecord: function(event) {
-        var self = this,
-            currentTarget = this.$(event.currentTarget),
-            recordId = currentTarget.data('id'),
-            recordModule = currentTarget.data('module'),
-            myPostUrl = 'ActivityStream/' + recordModule + '/' + recordId;
+    /**
+     * Callback for rendering a newly added comment into the activity stream view
+     * @param  {Object} model
+     */
+    addCommentCallback: function (model) {
+        var template, data;
 
-        app.api.call('delete', app.api.buildURL(myPostUrl), {}, {success: function() {
-            // self.streamCollection.fetch(self.opts);
-        }});
+        this.$('div.reply').empty().trigger('change');
+        this.commentsCollection.add(model);
+        this.toggleReplyBar();
+
+        template = app.template.getView('activitystream.comment');
+
+        data = model.get('data');
+        data.value = this.formatTags(data.value);
+
+        this.processAvatars();
+        this.$('.comments').prepend(template(model.attributes));
+        if ($.fn.timeago) {
+            this.$("span.relativetime").timeago({
+                logger: SUGAR.App.logger,
+                date: SUGAR.App.date,
+                lang: SUGAR.App.lang,
+                template: SUGAR.App.template
+            });
+        }
+        this.trigger('activitystream:post:prepend', this.model);
     },
 
     /**
@@ -465,10 +463,9 @@
     /**
      * Data change event.
      */
-    bindDataChange: function() {
+    bindDataChange: function () {
         if (this.commentsCollection) {
-            this.commentsCollection.on("reset", this.render, this);
-            this.commentsCollection.on("add", function() {
+            this.commentsCollection.on("add", function () {
                 this.model.set('comment_count', this.model.get('comment_count') + 1);
             }, this);
         }
