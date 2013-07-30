@@ -51,6 +51,7 @@ describe('Base.View.Dashletselect', function() {
             expect(actual[1].type).toBe('piechart');
             expect(actual[1].metadata.module).toBe(customModule);
         });
+
         it('should get all sub dashlets that defines in dashlets array', function() {
             SugarTest.loadComponent('base', 'view', 'alert');
             SugarTest.loadComponent('base', 'view', 'dashablelist');

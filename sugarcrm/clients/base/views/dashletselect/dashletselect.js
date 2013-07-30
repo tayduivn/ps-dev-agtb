@@ -12,20 +12,23 @@
  */
 ({
     events: {
-        "click .select" : "selectClicked",
-        "click .preview" : "previewClicked",
-        "keyup .search" : "searchFired"
+        'click .select' : 'selectClicked',
+        'click .preview' : 'previewClicked',
+        'keyup .search' : 'searchFired'
     },
     dataTable: null,
+
     /**
      * Triggers dataTable filter to search the typed string
      *
      * @param {Event} evt Window event.
      */
+
     searchFired: function(evt) {
         var value = $(evt.currentTarget).val();
         this.dataTable.fnFilter(value, 0);
     },
+
     /**
      * Operation when user clicks preview
      *
@@ -33,9 +36,10 @@
      */
     previewClicked: function(evt) {
         var index = $(evt.currentTarget).data('index');
-        var collection = this.context.get("dashlet_collection");
+        var collection = this.context.get('dashlet_collection');
         this.previewDashlet(collection[index].metadata);
     },
+
     /**
      * Load dashlet preview by passing preview metadata
      *
@@ -43,20 +47,19 @@
      */
     previewDashlet: function(metadata) {
         var layout = this.layout,
-            previewLayout,
-            context = this.context.parent || this.context;
-        while(layout) {
-            if(layout.getComponent('preview-pane')) {
-                previewLayout = layout.getComponent('preview-pane').getComponent("dashlet-preview");
+            previewLayout;
+        while (layout) {
+            if (layout.getComponent('preview-pane')) {
+                previewLayout = layout.getComponent('preview-pane').getComponent('dashlet-preview');
                 previewLayout.showPreviewPanel();
                 break;
             }
             layout = layout.layout;
         }
 
-        if(previewLayout) {
+        if (previewLayout) {
             var previousComponent = _.last(previewLayout._components);
-            if(previousComponent.name !== "dashlet-preview") {
+            if (previousComponent.name !== 'dashlet-preview') {
                 var index = previewLayout._components.length - 1;
                 previewLayout._components[index].dispose();
                 previewLayout.removeComponent(index);
@@ -68,7 +71,7 @@
                     name: metadata.type,
                     preview: true
                 };
-            if(metadata.preview.module || metadata.preview.link) {
+            if (metadata.preview.module || metadata.preview.link) {
                 contextDef = {
                     skipFetch: false,
                     forceNew: true,
@@ -91,7 +94,7 @@
                     layout: {
                         type: 'dashlet',
                         label: app.lang.get(metadata.name, metadata.preview.module),
-                        preview : true,
+                        preview: true,
                         components: [
                             component
                         ]
@@ -102,6 +105,7 @@
             previewLayout.render();
         }
     },
+
     /**
      * Operation when user clicks [Select and Edit]
      *
@@ -109,9 +113,10 @@
      */
     selectClicked: function(evt) {
         var index = $(evt.currentTarget).data('index');
-        var collection = this.context.get("dashlet_collection");
+        var collection = this.context.get('dashlet_collection');
         this.selectDashlet(collection[index].metadata);
     },
+
     /**
      * Load dashlet configuration view by passing configuration metadata
      *
@@ -119,16 +124,18 @@
      */
     selectDashlet: function(metadata) {
         app.drawer.load({
-            layout:{
-                name:'dashletconfiguration',
-                components:[{
-                    view: _.extend({}, metadata.config, {
-                        label:app.lang.get(metadata.name, metadata.config.module),
-                        name:metadata.type,
-                        config:true,
-                        module: metadata.config.module || metadata.module
-                    })
-                }]
+            layout: {
+                name: 'dashletconfiguration',
+                components: [
+                    {
+                        view: _.extend({}, metadata.config, {
+                            label: app.lang.get(metadata.name, metadata.config.module),
+                            name: metadata.type,
+                            config: true,
+                            module: metadata.config.module || metadata.module
+                        })
+                    }
+                ]
             },
             context: {
                 module: metadata.config.module || metadata.module,
@@ -137,6 +144,7 @@
             }
         });
     },
+
     /**
      * {@inheritDoc}
      *
@@ -183,6 +191,7 @@
         }
 
     },
+
     /**
      * Filtering the available dashlets with the current page's module and
      * layout view.
@@ -214,6 +223,7 @@
             .pluck('table')
             .value();
     },
+
     /**
      * Convert the component metadata to match with dataTable format.
      *
@@ -309,6 +319,7 @@
         }, this);
         return components;
     },
+
     /**
      * {@inheritDoc}
      *
