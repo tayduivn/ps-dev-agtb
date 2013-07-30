@@ -439,6 +439,9 @@
 
         //fire the change event as soon as the user start typing
         var _keyUpCallback = function(e) {
+            if ($(e.currentTarget).is(".select2-input")) {
+                return; //Skip select2. Select2 triggers other events.
+            }
             this.value = $(e.currentTarget).val();
             // We use "silent" update because we don't need re-render the field.
             model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
@@ -510,34 +513,48 @@
         }
 
         // When the value change a quicksearch should be fired to update the results
-        this.listenTo(model, "change", (function($row) {
-            return function() {
-                var fields = $row.data("valueField"),
-                    valueForFilter = '';
-
-                //If we have multiple fields we have to build an array of values
-                if (_.isArray(fields)) {
-                    valueForFilter = [];
-                    _.each(fields, function(field) {
-                        var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
-                        value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
-                        valueForFilter.push(value);
-                    });
-                } else {
-                    var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
-                    valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
-                }
-
-                $row.data("value", valueForFilter);
-                this.fireSearch();
-            };
-        })($row));
+        this.listenTo(model, "change", function() {
+            this._updateFilterData($row);
+            this.fireSearch();
+        });
 
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
         if (!_.isEmpty(model.get(fieldName))) {
             model.trigger('change');
         }
+    },
+
+    /**
+     * Update filter data for this row
+     * @param $row Row to update
+     * @private
+     */
+    _updateFilterData: function($row){
+        var data = $row.data(),
+            field = data['valueField'],
+            name = data['name'],
+            valueForFilter;
+
+        //Pick make sure we use ID for relate fields
+        if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
+            name = this.fieldList[name].id_name;
+        }
+
+        //If we have multiple fields we have to build an array of values
+        if (_.isArray(field)) {
+            valueForFilter = [];
+            _.each(field, function(field) {
+                var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
+                value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+                valueForFilter.push(value);
+            });
+        } else {
+            var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
+            valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+        }
+        $row.data("name", name);  // Update name in case we changed it above
+        $row.data("value", valueForFilter); // Update filter value once we've calculated final value
     },
 
     /**
@@ -576,14 +593,11 @@
      */
     buildRowFilterDef: function($row) {
         var data = $row.data(),
-            name = data['name'],
             operator = data['operator'],
             value = data['value'],
+            name = data['name'],
             filter = {};
 
-        if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
-            name = this.fieldList[name].id_name;
-        }
         if (data.isPredefinedFilter) {
             filter[name] = "";
             return filter;

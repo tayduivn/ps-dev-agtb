@@ -203,13 +203,24 @@
         }
         var filter = this.filters.get(id) || this.emptyFilter,
             ctxList = this.getRelevantContextList();
-
+        var clear = false;
+        //Determine if we need to clear the collections
         _.each(ctxList, function(ctx) {
-            ctx.get('collection').origFilterDef = filter.get('filter_definition');
-            ctx.get('collection').resetPagination();
-            ctx.get('collection').reset();
+            var filterDef = filter.get('filter_definition');
+            var orig = ctx.get('collection').origFilterDef;
+            ctx.get('collection').origFilterDef = filterDef;  //Set new filter def on each collection
+            if (_.isUndefined(orig) || !_.isEqual(orig, filterDef)) {
+                clear = true;
+            }
         });
-        this.trigger('filter:clear:quicksearch');
+        //If so, reset collections and trigger quicksearch to repopulate
+        if (clear) {
+            _.each(ctxList, function(ctx) {
+                ctx.get('collection').resetPagination();
+                ctx.get('collection').reset();
+            });
+            this.trigger('filter:clear:quicksearch');
+        }
     },
     /**
      * Applies filter on current contexts

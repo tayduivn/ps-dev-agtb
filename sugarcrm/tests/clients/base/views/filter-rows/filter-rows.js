@@ -652,11 +652,15 @@ describe("BaseFilterRowsView", function() {
         });
 
         it('should pick id_name for relate fields', function() {
+            var filterModel = new Backbone.Model();
+            filterModel.set("assigned_user_id", "seed_sarah_id");
+            var fieldMock = {model: filterModel};
             $row = $('<div>').data({
                 name: 'assigned_user_name',
                 operator: '$equals',
-                value: 'seed_sarah_id'
+                valueField: fieldMock
             });
+            view._updateFilterData($row);
             filter = view.buildRowFilterDef($row);
             expected = {
                 assigned_user_id: 'seed_sarah_id'

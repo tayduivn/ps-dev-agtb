@@ -187,8 +187,10 @@
             return;
         }
         var silent = model.silent || false;
-        this.model.set(this.def.id_name, model.id, {silent: silent});
-        this.model.set(this.def.name, model.value, {silent: silent});
+        var values = {};
+        values[this.def.id_name] = model.id;
+        values[this.def.name] = model.value;
+        this.model.set(values, {silent: silent});
 
         var newData = {},
             self = this;
