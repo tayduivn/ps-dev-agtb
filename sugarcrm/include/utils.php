@@ -825,7 +825,7 @@ function get_user_name($id)
  */
 function get_user_array($add_blank=true, $status="Active", $user_id='', $use_real_name=false, $user_name_filter='', $portal_filter=' AND portal_only=0 ', $from_cache = true)
 {
-    global $locale;
+    global $locale, $current_user;
 
     if (empty($locale)) {
         $locale = Localization::getObject();
@@ -855,7 +855,26 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
     if (!empty($user_id)) {
         $query .= " OR id='{$user_id}'";
     }
-    $query .= ' ORDER BY user_name ASC';
+
+    //get the user preference for name formatting, to be used in order by
+    $order_by_string =' user_name ASC ';
+    if (!empty($current_user) && !empty($current_user->id)) {
+        $formatString = $current_user->getPreference('default_locale_name_format');
+    
+        //create the order by string based on position of first and last name in format string
+        $firstNamePos = strpos( $formatString, 'f');
+        $lastNamePos = strpos( $formatString, 'l');
+        if ($firstNamePos !== false || $lastNamePos !== false) {
+            //its possible for first name to be skipped, check for this
+            if ($firstNamePos===false) {
+                $order_by_string =  'last_name ASC';
+            } else {
+                $order_by_string =  ($lastNamePos < $firstNamePos) ? "last_name, first_name ASC" : "first_name, last_name ASC";
+            }
+        }
+    }
+
+    $query = $query.' ORDER BY '.$order_by_string;
 
     if ($from_cache) {
         $key_name = $query . $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
@@ -865,7 +884,6 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 
     if (empty($user_array)) {
         $temp_result = Array();
-
         $GLOBALS['log']->debug("get_user_array query: $query");
         $result = $db->query($query, true, "Error filling in user array: ");
 
