@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: listviewdefs.php 56123 2010-04-26 21:48:19Z asandberg $
-
 
 $listViewDefs['Bugs'] = array(
 	'BUG_NUMBER' => array(
@@ -67,21 +65,10 @@ $listViewDefs['Bugs'] = array(
         'related_fields' => array('fixed_in_release'),
         'module' => 'Releases',
         'id' => 'FIXED_IN_RELEASE',),
-    'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_RESOLUTION',
-        'default' => false),
-//BEGIN SUGARCRM flav=pro ONLY
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_LIST_TEAM',
-        'default' => false),
-//END SUGARCRM flav=pro ONLY
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '9',
 		'label' => 'LBL_LIST_ASSIGNED_USER',
 		'module' => 'Employees',
         'id' => 'ASSIGNED_USER_ID',
-        'default' => true)
+        'default' => false)
 );
-?>
