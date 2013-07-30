@@ -119,7 +119,7 @@
 
         var caretCss = 'btn dropdown-toggle';
         if (this.def['no_default_action']) {
-            caretCss += ' btn-link btn-invisible';
+            caretCss += ' btn-invisible';
         } else if (this.def['primary']) {
             caretCss += ' btn-primary';
         }
