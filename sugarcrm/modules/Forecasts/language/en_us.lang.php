@@ -436,5 +436,5 @@ $mod_strings = array (
     'LBL_ASSIGNING_QUOTA' => 'Assigning Quota',
     'LBL_QUOTA_ASSIGNED' => 'Quotas have been successfully assigned.',
     'LBL_FORECASTS_NO_ACCESS_TO_CFG_TITLE' => 'Forecasts Access Error',
-    'LBL_FORECASTS_NO_ACCESS_TO_CFG_MSG' => 'User does not have access to Forecasts Configuration. Please contact your Administrator.',
+    'LBL_FORECASTS_NO_ACCESS_TO_CFG_MSG' => 'You do not have access to configure Forecasts. Please contact your Administrator.',
 );
