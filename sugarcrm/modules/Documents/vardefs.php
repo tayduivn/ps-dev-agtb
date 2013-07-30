@@ -40,7 +40,9 @@ $dictionary['Document'] = array('table' => 'documents',
             'name' => 'name',
             'vname' => 'LBL_NAME',
             'source' => 'non-db',
-            'type' => 'varchar'
+            'type' => 'varchar',
+            'fields' => array('document_name'),
+            'sort_on' => 'name',
         ),
         'doc_id' =>
         array(
