@@ -330,23 +330,7 @@
 
         this.setButtonStates(this.STATE.EDIT);
 
-        // TODO: Refactor this for fields to support their own focus handling in future.
-        // Add your own field type handling for focus / editing here.
-        switch (field.type) {
-            case "image":
-            case "file":
-                var self = this;
-                app.file.checkFileFieldsAndProcessUpload(self, {
-                        success: function () {
-                            self.toggleField(field);
-                        }
-                    },
-                    { deleteIfFails: false}
-                );
-                break;
-            default:
-                this.toggleField(field);
-        }
+        this.toggleField(field);
     },
 
     /**
