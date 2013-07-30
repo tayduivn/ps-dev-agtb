@@ -131,13 +131,13 @@
             chartData = {
                 'properties': {
                     'name': this.serverData.title,
-                    'quota': parseInt(this.serverData.quota, 10),
+                    'quota': parseFloat(this.serverData.quota),
                     'groupData': records.map(function(record, i) {
                         return {
                             group: i,
                             l: record.name,
-                            t: parseInt(record[dataset], 10) + parseInt(record[dataset + '_adjusted'], 10)
-                        };
+                            t: parseFloat(record[dataset]) + parseFloat(record[dataset + '_adjusted'])
+                        }
                     })
                 },
                 'data': []
@@ -147,7 +147,7 @@
                     return {
                         series: seriesIdx,
                         x: recIdx + 1,
-                        y: parseInt(rec[ds], 10),
+                        y: parseFloat(rec[ds]),
                         y0: 0
                     };
                 });
@@ -165,8 +165,8 @@
                     return {
                         series: seriesIdx,
                         x: recIdx + 1,
-                        y: parseInt(rec[ds], 10)
-                    };
+                        y: parseFloat(rec[ds])
+                    }
                 });
 
                 // fix the vals
@@ -212,7 +212,7 @@
             chartData = {
                 'properties': {
                     'name': this.serverData.title,
-                    'quota': parseInt(this.serverData.quota, 10),
+                    'quota': parseFloat(this.serverData.quota),
                     'groupData': this.serverData['x-axis'].map(function(item, i) {
                         return {
                             'group': i,
@@ -245,7 +245,7 @@
                         if (record.date_closed_timestamp >= axis[y].start_timestamp &&
                             record.date_closed_timestamp <= axis[y].end_timestamp) {
                             // add the value
-                            var val = parseInt(record[dataset], 10);
+                            var val = parseFloat(record[dataset]);
                             barVal[y].y += val;
                             chartData.properties.groupData[y].t += val;
                             lineVals[y].y += val;
