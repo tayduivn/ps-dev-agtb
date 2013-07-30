@@ -119,6 +119,31 @@
             var params = this._createRelatedRecordUrlParams(parentModel, link);
             var route = app.bwc.buildRoute(module, null, "EditView", params);
             app.router.navigate("#" + route, {trigger: true}); // Set route so that we switch over to BWC mode
+        },
+
+        /**
+         * Enables the ability to share a record from a BWC module.
+         *
+         * This will trigger the sharing action already defined in the
+         * {@link BaseShareactionField#share()}.
+         *
+         * @param {String} module The module that we are sharing.
+         * @param {String} id The record id that we are sharing.
+         * @param {String} name The record name that we are sharing.
+         */
+        shareRecord: function(module, id, name) {
+            var shareField = app.view.createField({
+                def: {
+                    type: 'shareaction'
+                },
+                module: module,
+                model: app.data.createBean(module, {
+                    id: id,
+                    name: name
+                }),
+                view: app.view.createView({})
+            });
+            shareField.share();
         }
     };
     app.augment('bwc', Bwc, false);
