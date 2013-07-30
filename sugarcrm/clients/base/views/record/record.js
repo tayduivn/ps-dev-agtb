@@ -300,12 +300,10 @@
      * @param isEdit
      */
     toggleEdit: function (isEdit) {
-        if (isEdit) {
-            this.$('.record-edit-link-wrapper').hide();
-        } else {
-            this.$('.record-edit-link-wrapper').show();
-        }
+        this.$('.record-edit-link-wrapper').toggle(!isEdit);
+        this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
+        this.toggleViewButtons(isEdit);
     },
 
     /**
@@ -356,11 +354,20 @@
      * @param isEdit
      */
     toggleHeaderLabels: function (isEdit) {
-        if (isEdit) {
-            this.$('.headerpane .record-label').show();
-        } else {
-            this.$('.headerpane .record-label').hide();
-        }
+        this.$('.headerpane .record-label').toggle(isEdit);
+        this.toggleViewButtons(isEdit);
+    },
+
+    /**
+     * Hide view specific button during edit
+     * @param isEdit
+     */
+    toggleViewButtons: function(isEdit) {
+        this.$('.headerpane span[data-type="badge"]').toggle(!isEdit);
+        this.$('.headerpane span[data-type="favorite"]').toggle(!isEdit);
+        this.$('.headerpane span[data-type="follow"]').toggle(!isEdit);
+        this.$('.headerpane .previous-row').toggle(!isEdit);
+        this.$('.headerpane .next-row').toggle(!isEdit);
     },
 
     /**
