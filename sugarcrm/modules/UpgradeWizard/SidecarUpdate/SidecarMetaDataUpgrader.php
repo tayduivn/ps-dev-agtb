@@ -86,6 +86,12 @@ class SidecarMetaDataUpgrader
     );
 
     /**
+     * Specific module to upgrade
+     * @var string
+     */
+    protected $module = "";
+
+    /**
      * Maps of old metadata file names
      *
      * @var array
@@ -227,6 +233,9 @@ class SidecarMetaDataUpgrader
             $count = $deployedcount = $undeployedcount = 0;
             $buildpath = $package->getBuildDir() . '/SugarModules/modules/';
             foreach ($package->modules as $module => $mbmodule) {
+                if($this->module && $package->key . '_' . $module != $this->module) {
+                    continue;
+                }
                 $appModulePath = $modulepath . $package->key . '_' . $module;
                 $mbbModulePath = $buildpath . $package->key . '_' . $module;
                 $packagePath   = $package->getPackageDir() . '/modules/' . $module;
@@ -442,7 +451,7 @@ class SidecarMetaDataUpgrader
         if (!empty($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
             foreach ($this->legacyFilePaths[$client] as $type => $path) {
                 // Get the modules from inside the path
-                $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
+                $dirs = glob($path . "modules/{$this->module}*", GLOB_ONLYDIR);
                 if (!empty($dirs)) {
                     foreach ($dirs as $dirpath) {
                         // Get the module to list it in case it needs to be upgraded
@@ -755,6 +764,12 @@ class SidecarMetaDataUpgrader
             $type = 'history';
         }
 
+        if(empty($GLOBALS['beanList'][$module])) {
+            // if the module is not among active, not upgrading it for now
+            $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules not supported");
+            return false;
+        }
+
         if($client == 'base' && isModuleBWC($module)) {
             // if the module is in BWC, do not upgrade its views in base client
             $this->logUpgradeStatus("Not upgrading $file: BWC module");
@@ -796,5 +811,14 @@ class SidecarMetaDataUpgrader
         $this->logUpgradeStatus("Not upgrading $file: no file name");
 
         return false;
+    }
+
+    /**
+     * Set specific module to upgrade
+     * @param unknown_type $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
     }
 }
