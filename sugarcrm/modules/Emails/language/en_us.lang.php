@@ -426,5 +426,11 @@ $mod_strings = array (
     'ERR_MISSING_CREDENTIALS' => 'error: missing credentials',
     'ERR_NO_UID' => 'error: no UID',
     'ERR_NO_IEID' => 'error: no ieID',
+
+    // Mail API Messages
+    'LBL_MAILAPI_NO_RECIPIENTS'           => 'no recipients specified',
+    'LBL_MAILAPI_INVALID_ARGUMENT_VALUE'  => '{0} argument - invalid or missing',
+    'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT' => '{0} argument - invalid format',
+    'LBL_MAILAPI_INVALID_ARGUMENT_FIELD'  => '{0} argument - invalid or missing field: {1}',
 );
 

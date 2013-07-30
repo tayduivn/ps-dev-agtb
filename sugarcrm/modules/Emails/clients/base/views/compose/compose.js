@@ -225,6 +225,60 @@
     },
 
     /**
+     * Get the individual related object fields from the model and format for the API
+     *
+     * @returns API related argument as array with appropriate fields set
+     */
+    getRelatedForApi: function() {
+        var related = {};
+        var id   = this.model.get('parent_id');
+        var type;
+
+        if (!_.isUndefined(id)) {
+            id = id.toString();
+            if (id.length > 0) {
+                related['id'] = id;
+                type = this.model.get('parent_type');
+                if (!_.isUndefined(type)) {
+                    type = type.toString();
+                }
+                related.type = type;
+            }
+        }
+
+        return related;
+    },
+
+    /**
+     * Get the team information from the model and format for the API
+     *
+     * @returns API teams argument as array with appropriate fields set
+     */
+    getTeamsForApi: function() {
+        var teamName = this.model.get('team_name') || [];
+        var teams = {};
+        teams.others = [];
+
+        if (!_.isArray(teamName)) {
+            teamName = [teamName];
+        }
+
+        _.each(teamName, function(team) {
+            if (team.primary) {
+                teams.primary = team.id.toString();
+            } else if (!_.isUndefined(team.id)) {
+                teams.others.push(team.id.toString());
+            }
+        }, this);
+
+        if (teams.others.length == 0) {
+            delete teams.others;
+        }
+
+        return teams;
+    },
+
+    /**
      * Build a backbone model that will be sent to the Mail API
      */
     initializeSendEmailModel: function() {
@@ -233,10 +287,8 @@
             cc_addresses: this.model.get('cc_addresses'),
             bcc_addresses: this.model.get('bcc_addresses'),
             attachments: this.getAttachmentsForApi(),
-            related: {
-                type: this.model.get('parent_type'),
-                id: this.model.get('parent_id')
-            }
+            related: this.getRelatedForApi(),
+            teams: this.getTeamsForApi()
         }));
         return sendModel;
     },

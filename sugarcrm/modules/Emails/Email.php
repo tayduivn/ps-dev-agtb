@@ -545,7 +545,7 @@ class Email extends SugarBean {
         $this->description_html = $htmlBody;
 
         $mailConfig = null;
-        if ($this->status != 'draft') {
+        if (!isset($request['saveDraft'])) {
             if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
                 $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
             } else {
@@ -558,7 +558,7 @@ class Email extends SugarBean {
 
         try {
             $mailer = null;
-            if ($this->status != 'draft') {
+            if (!isset($request['saveDraft'])) {
                 $mailerFactoryClass = $this->MockMailerFactoryClass;
                 $mailer = $mailerFactoryClass::getMailer($mailConfig);
                 $mailer->setSubject($subject);

@@ -30,18 +30,45 @@ require_once('modules/Emails/EmailUI.php');
 
 class MailApi extends ModuleApi
 {
+    /*-- API Argument Constants --*/
+    const EMAIL_CONFIG  = "email_config";
+    const TO_ADDRESSES  = "to_addresses";
+    const CC_ADDRESSES  = "cc_addresses";
+    const BCC_ADDRESSES = "bcc_addresses";
+    const ATTACHMENTS   = "attachments";
+    const TEAMS         = "teams";
+    const RELATED       = "related";
+    const SUBJECT       = "subject";
+    const HTML_BODY     = "html_body";
+    const TEXT_BODY     = "text_body";
+    const STATUS        = "status";
+
+    /*-- API Fields with default values --*/
     public static $fields = array(
-        "email_config"  => '',
-        "to_addresses"  => array(),
-        "cc_addresses"  => array(),
-        "bcc_addresses" => array(),
-        "attachments"   => array(),
-        "teams"         => array(),
-        "related"       => array(),
-        "subject"       => '',
-        "html_body"     => '',
-        "text_body"     => '',
-        "status"        => "",
+        self::EMAIL_CONFIG  => '',
+        self::TO_ADDRESSES  => array(),
+        self::CC_ADDRESSES  => array(),
+        self::BCC_ADDRESSES => array(),
+        self::ATTACHMENTS   => array(),
+        self::TEAMS         => array(),
+        self::RELATED       => array(),
+        self::SUBJECT       => '',
+        self::HTML_BODY     => '',
+        self::TEXT_BODY     => '',
+        self::STATUS        => '',
+    );
+
+    /*-- Supported API Status values --*/
+    static private $apiStatusValues = array(
+        "draft",     // draft
+        "ready",     // ready to be sent
+    );
+
+    /*-- Supported API Attachment Type values --*/
+    static private $apiAttachmentTypes = array(
+        "document",
+        "template",
+        "upload",
     );
 
     private $emailRecipientsService;
@@ -156,31 +183,24 @@ class MailApi extends ModuleApi
         return $this->handleMail($api, $args);
     }
 
+    /**
+     * @param $api
+     * @param $args
+     * @return array
+     */
     protected function handleMail($api, $args)
     {
-        foreach (self::$fields AS $k => $v) {
-            if (!isset($args[$k])) {
-                $args[$k] = $v;
-            }
-        }
+        // Perform Front End argument validation per the Mail API architecture
+        // Non-compliant arguments will result in an Invalid Parameter Exception Thrown
+        $this->validateArguments($args);
 
         $mailRecord = $this->initMailRecord($args);
 
         try {
-            if ($args["status"] == "ready") {
-                if (empty($args["email_config"])) {
-                    throw new SugarApiExceptionRequestMethodFailure('LBL_MISSING_CONFIGURATION', null, 'Emails');
-                }
-                $response = $mailRecord->send();
-            } elseif ($args["status"] == "draft") {
-                $response = $mailRecord->saveAsDraft();
+            if ($args[self::STATUS] == "ready") {
+                $response = $mailRecord->send();          // send immediately
             } else {
-                if (isset($GLOBALS["log"])) {
-                    $GLOBALS["log"]->error(
-                        "MailApi: Request Failed - Invalid Request - Property=Status : '{$args["status"]}'"
-                    );
-                }
-                throw new SugarApiExceptionInvalidParameter('LBL_INVALID_MAILAPI_STATUS', null, 'Emails');
+                $response = $mailRecord->saveAsDraft();   // save as draft
             }
         } catch (MailerException $e) {
             $eMessage = $e->getUserFriendlyMessage();
@@ -309,19 +329,182 @@ class MailApi extends ModuleApi
         );
     }
 
+    /**
+     * Perform Audit Validation on Input Arguments and normalize
+     *
+     * @param array  - $args
+     */
+    public function validateArguments(&$args)
+    {
+        global $app_list_strings;
+        $relatedToModules = array_keys($app_list_strings['parent_type_display']);
+
+        /*--- Validate status value ---*/
+        if (empty($args[self::STATUS]) || !in_array($args[self::STATUS], self::$apiStatusValues)) {
+            $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::STATUS));
+        }
+
+        /*--- Validate Mail Configuration ---*/
+        if ($args[self::STATUS] !== "draft" && empty($args[self::EMAIL_CONFIG])) {
+            $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_VALUE', array(self::EMAIL_CONFIG));
+        }
+
+        /*--- Validate TO Recipients ---*/
+        $this->validateRecipients($args, self::TO_ADDRESSES);
+
+        /*--- Validate CC Recipients ---*/
+        $this->validateRecipients($args, self::CC_ADDRESSES);
+
+        /*--- Validate BCC Recipients ---*/
+        $this->validateRecipients($args, self::BCC_ADDRESSES);
+
+        /*--- Validate Attachments ---*/
+        if (isset($args[self::ATTACHMENTS])) {
+            if (!is_array($args[self::ATTACHMENTS])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::ATTACHMENTS));
+            }
+            foreach ($args[self::ATTACHMENTS] as $attachment) {
+                if (!is_array($attachment)) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::ATTACHMENTS));
+                }
+                if (empty($attachment['type']) || !in_array($attachment['type'], self::$apiAttachmentTypes)) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::ATTACHMENTS, 'type'));
+                }
+                if (empty($attachment['id']) || !is_string($attachment['id'])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::ATTACHMENTS, 'id'));
+                }
+                if ($attachment['type'] == 'upload' && empty($attachment['name'])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::ATTACHMENTS, 'name'));
+                }
+            }
+        }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        /*--- Validate Teams ---*/
+        if (isset($args[self::TEAMS])) {
+            if (!is_array($args[self::TEAMS])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::TEAMS));
+            }
+            /* Primary is REQUIRED if Teams supplied */
+            if (!isset($args[self::TEAMS]["primary"]) || !is_string($args[self::TEAMS]["primary"]) || empty($args[self::TEAMS]["primary"])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::TEAMS, 'primary'));
+            }
+            if (isset($args[self::TEAMS]["others"])) {
+                if (!is_array($args[self::TEAMS]["others"])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::TEAMS, 'others'));
+                }
+                foreach ($args[self::TEAMS]["others"] as $otherTeam) {
+                    if (!is_string($otherTeam) || empty($otherTeam)) {
+                        $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::TEAMS, 'others'));
+                    }
+                }
+            }
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        /*--- Validate Related ---*/
+        if (isset($args[self::RELATED])) {
+            if (!is_array($args[self::RELATED])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::RELATED));
+            }
+            if (!empty($args[self::RELATED])) {
+                if (empty($args[self::RELATED]["id"]) || !is_string($args[self::RELATED]["id"])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::RELATED, 'id'));
+                }
+                if (empty($args[self::RELATED]["type"]) || !is_string($args[self::RELATED]["type"])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::RELATED, 'type'));
+                }
+                if (!in_array($args[self::RELATED]["type"], $relatedToModules)) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array(self::RELATED, 'type'));
+                }
+            }
+        }
+
+        /*--- Validate Subject ---*/
+        if (isset($args[self::SUBJECT]) && !is_string($args[self::SUBJECT])) {
+            $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::SUBJECT));
+        }
+
+        /*--- Validate html_body ---*/
+        if (isset($args[self::HTML_BODY]) && !is_string($args[self::HTML_BODY])) {
+            $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::HTML_BODY));
+        }
+
+        /*--- Validate text_body ---*/
+        if (isset($args[self::TEXT_BODY]) && !is_string($args[self::TEXT_BODY])) {
+            $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array(self::TEXT_BODY));
+        }
+
+        /*--- Initialize any Unprovided Arguments to their Defaults ---*/
+        foreach (self::$fields AS $k => $v) {
+            if (!isset($args[$k])) {
+                $args[$k] = $v;
+            }
+        }
+
+        /*--- If Sending Mail, make sure there is at least One Recipient specified --*/
+        if (($args[self::STATUS] !== "draft") &&
+            empty($args[self::TO_ADDRESSES]) &&
+            empty($args[self::CC_ADDRESSES]) &&
+            empty($args[self::BCC_ADDRESSES])) {
+            $this->invalidParameter('LBL_MAILAPI_NO_RECIPIENTS');
+        }
+
+    }
+
+    /**
+     * Validate Recipient List
+     *
+     * @param $args - array
+     * @param $argName - string
+     */
+     protected function validateRecipients($args, $argName) {
+        if (isset($args[$argName])) {
+            if (!is_array($args[$argName])) {
+                $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array($argName));
+            }
+            foreach ($args[$argName] as $recipient) {
+                if (!is_array($recipient)) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FORMAT', array($argName));
+                }
+                if (empty($recipient['email'])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array($argName, "email"));
+                }
+                if (!is_string($recipient['email'])) {
+                    $this->invalidParameter('LBL_MAILAPI_INVALID_ARGUMENT_FIELD', array($argName, "email"));
+                }
+            }
+        }
+    }
+
+    /**
+     * Log Audit Errors and Throw Appropriate Exception
+     *
+     * @param $message - string
+     * @param $msgArgs - array
+     */
+    protected function invalidParameter($message, $msgArgs=null) {
+        throw new SugarApiExceptionInvalidParameter($message, $msgArgs, 'Emails');
+    }
+
+    /**
+     * Instantiate and initialize the MaiRecord from the incoming api arguments
+     *
+     * @param string  - $message
+     */
     protected function initMailRecord($args)
     {
         $mailRecord               = new MailRecord();
-        $mailRecord->mailConfig   = $args["email_config"];
-        $mailRecord->toAddresses  = $args["to_addresses"];
-        $mailRecord->ccAddresses  = $args["cc_addresses"];
-        $mailRecord->bccAddresses = $args["bcc_addresses"];
-        $mailRecord->attachments  = $args["attachments"];
-        $mailRecord->teams        = $args["teams"];
-        $mailRecord->related      = $args["related"];
-        $mailRecord->subject      = $args["subject"];
-        $mailRecord->html_body    = $args["html_body"];
-        $mailRecord->text_body    = $args["text_body"];
+        $mailRecord->mailConfig   = $args[self::EMAIL_CONFIG];
+        $mailRecord->toAddresses  = $args[self::TO_ADDRESSES];
+        $mailRecord->ccAddresses  = $args[self::CC_ADDRESSES];
+        $mailRecord->bccAddresses = $args[self::BCC_ADDRESSES];
+        $mailRecord->attachments  = $args[self::ATTACHMENTS];
+        $mailRecord->teams        = $args[self::TEAMS];
+        $mailRecord->related      = $args[self::RELATED];
+        $mailRecord->subject      = $args[self::SUBJECT];
+        $mailRecord->html_body    = $args[self::HTML_BODY];
+        $mailRecord->text_body    = $args[self::TEXT_BODY];
 
         return $mailRecord;
     }
