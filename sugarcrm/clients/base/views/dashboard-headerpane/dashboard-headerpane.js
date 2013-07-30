@@ -60,7 +60,7 @@
         if (this.model.isNew()) {
             return this.model.hasChanged();
         }
-        return !_.isEmpty(this.model.changedAttributes(this.model._syncedAttributes));
+        return !_.isEmpty(this.model.changedAttributes(this.model.getSyncedAttributes()));
     },
     saveClicked: function(evt) {
         this.handleSave();
