@@ -79,7 +79,7 @@ $viewdefs['Forecasts']['base']['layout']['config'] = array(
             ),
         ),
     ),
-    'type' => 'simple',
+    'type' => 'config',
     'name' => 'base',
     'span' => 12,
 );
