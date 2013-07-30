@@ -71,10 +71,7 @@
             // if product template is empty, but category is not, this RLI can not be converted to a quote
             if (_.isEmpty(model.get('product_template_id')) && !_.isEmpty(model.get('category_id'))) {
                 return true;
-            }
-
-            // if the quote_id is NOT empty, we need to stop the process
-            if (!_.isEmpty(model.get('quote_id'))) {
+            } else if (!_.isEmpty(model.get('quote_id'))) {
                 return true;
             }
 
@@ -94,7 +91,10 @@
                 level: 'warning',
                 autoClose: false,
                 title: app.lang.get("LBL_ALERT_TITLE_WARNING", this.module) + ":",
-                messages: messages
+                messages: messages,
+                onLinkClick: function() {
+                    app.alert.dismiss('invalid_items');
+                }
             });
 
             return;
