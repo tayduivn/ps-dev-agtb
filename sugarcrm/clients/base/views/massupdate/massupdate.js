@@ -223,7 +223,7 @@
                             } else if (response.status == 'queued') {
                                 app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
                             }
-                            self.layout.trigger("list:record:deleted", lastSelectedModels);
+                            self.layout.trigger("list:records:deleted", lastSelectedModels);
                         }
                     });
                 }

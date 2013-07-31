@@ -1799,7 +1799,6 @@ $app_list_strings = array (
     ),
 
     'filter_checkbox_dom' => array(
-        '' => '',
         0 => 'False',
         1 => 'True',
     ),
@@ -1906,7 +1905,7 @@ $app_strings = array (
     'LBL_OUTBOUND_EMAIL_ADD_SERVER'         => 'Add Server...',
     'LBL_EMAIL_SMTP_SSL_OR_TLS'         => 'Enable SMTP over SSL or TLS?',
     'LBL_NO_ACTION'                         => 'There is no action by that name.',
-    'LBL_NO_DATA'                           => 'No Data',
+    'LBL_NO_DATA'                           => 'No data',
     'LBL_ROUTING_ADD_RULE'                  => 'Add Rule',
     'LBL_ROUTING_ALL'                       => 'At Least',
     'LBL_ROUTING_ANY'                       => 'Any',
@@ -2915,6 +2914,8 @@ $app_strings = array (
     'LBL_LOGIN_ADMIN_CALL' => 'Please contact the system administrator.',
     'LBL_LOGIN_USERNAME' => 'Username',
     'LBL_LOGIN_PASSWORD' => 'Password',
+    'LBL_LOGGED_OUT' => 'You have been logged out.',
+    'LBL_LOGIN_FORM_LABEL' => 'Show log in form',
     // END LOGIN PAGE STRINGS
 
     'LBL_SYNC' => 'Sync',
@@ -3514,6 +3515,9 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_SHARE_BUTTON_KEY' => 'r',
+    'LBL_SHARE_BUTTON_LABEL' => 'Share',
+    'LBL_SHARE_BUTTON_TITLE' => 'Share',
     'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
@@ -3525,12 +3529,12 @@ $app_strings = array (
     'LBL_FIRST_INPUT_SEARCH_KEY' => '9',
     'LBL_GLOBAL_SEARCH_LNK_KEY' => '0',
     'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'Keyboard Shortcuts',
-    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
+    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> R = Sha<b>R</b>e (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     // Share feature on record
     'LBL_RECORD_SHARE_BUTTON' => 'Share',
-    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{name}} from {{appId}}',
-    'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{name}} from {{appId}}',
+    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{{name}}} from {{appId}}',
+    'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{{name}}} from {{appId}}',
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
     //BEGIN SUGARCRM flav=pro ONLY
@@ -3567,10 +3571,6 @@ $app_strings = array (
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
     'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
     'LBL_SUCCESS' => 'Success',
-
-    'LBL_TWITTER_TIME_AGO_SECONDS' => 's',
-    'LBL_TWITTER_TIME_AGO_MINUTES' => 'm',
-    'LBL_TWITTER_TIME_AGO_HOURS' => 'h',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -3911,6 +3911,14 @@ $app_strings = array (
     //end portal
     //END SUGARCRM flav=ent ONLY
 
+    //First time login wizard
+    'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
+    'LBL_SETUP_USER_INFO' => 'Setup your user information',
+    'LBL_WIZ_START_SUGAR' => 'Start Sugar',
+    'LBL_WIZ_FIRST_NAME' => 'First name',
+    'LBL_WIZ_LAST_NAME' => 'Last name',
+    'LBL_WIZ_EMAIL' => 'Email',
+
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
     'LBL_CURRENT_PASSWORD'				=> 'Current Password',
@@ -4058,7 +4066,7 @@ $app_strings = array (
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
-    
+
     //SFA
     'LBL_BEST' => 'Best',
     'LBL_WORST' => 'Worst',
@@ -4966,4 +4974,11 @@ $app_list_strings['notifications_type_list'] = array(
     'other' => 'Other',
     'success' => 'Success',
     'warning' => 'Warning',
+);
+
+$app_list_strings['web_hook_request_method_list'] = array(
+    'POST' => 'POST',
+    'GET' => 'GET',
+    'PUT' => 'PUT',
+    'DELETE' => 'DELETE',
 );

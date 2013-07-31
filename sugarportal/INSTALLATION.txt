@@ -1,7 +1,0 @@
-See the Installation Guide found on SugarForge.org for installation steps of Sugar Open Source.
-http://www.sugarcrm.com/crm/documentation.html
-
-// BEGIN SUGARCRM flav=pro ONLY 
-For Sugar Professional or Sugar Enterprise customers, please see the documentation available
-in the Download Manager of the Sugar Shop located at http://www.sugarcrm.com.
-// END SUGARCRM flav=pro ONLY 

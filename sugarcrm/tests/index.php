@@ -68,32 +68,42 @@ if (file_exists('../config.js')) {
 /**
  * jasmine test generator. This file will recursively search the test directory for .js test files and include them.
  */
+$exclude = array("jshelpers", "jssource", "PHPUnit", "/ci/");
 
-    $exclude = array("jshelpers", "jssource", "PHPUnit", "/ci/");
+$path = '.';
+if (isset($_GET['module'])) {
+    $module = $_GET['module'];
+    if (is_dir('modules/' . $module)) {
+        $path = 'modules/' . $module;
+    }
+}
+$dirItr = new RecursiveDirectoryIterator($path);
+$itrItr = new RecursiveIteratorIterator($dirItr);
 
-    $path = '.';
-    if(isset($_GET['module'])) {
-        $module = $_GET['module'];
-        if(is_dir('modules/' . $module)) {
-            $path = 'modules/' . $module;
+$files = array();
+foreach ($itrItr as $path => $file) {
+    if (substr(basename($path), -3) != ".js") {
+        continue;
+    }
+    $skip = false;
+    foreach ($exclude as $ex) {
+        if (strpos($path, $ex) !== false) {
+            $skip = true;
+            break;
         }
     }
-    $dirItr = new RecursiveDirectoryIterator($path);
-    $itrItr = new RecursiveIteratorIterator($dirItr);
-    foreach($itrItr as $path => $file) {
-        if (substr(basename($path), -3) != ".js")
-            continue;
-        $skip = false;
-        foreach($exclude as $ex){
-            if (strpos($path, $ex) !== false) {
-                $skip = true;
-                break;
-            }
-        }
-        if ($skip) continue;
-
-        echo "<script type='text/javascript' src='$path'></script>\n";
+    if ($skip) {
+        continue;
     }
+
+    $files[] = $path;
+}
+
+sort($files);
+foreach ($files as $file) {
+    echo "<script type='text/javascript' src='$file'></script>\n";
+}
+
 ?>
     <!-- End test files -->
     <script type="text/javascript">

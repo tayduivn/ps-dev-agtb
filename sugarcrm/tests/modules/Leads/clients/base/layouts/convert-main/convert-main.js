@@ -28,7 +28,7 @@ describe("Leads.Base.Layout.ConvertMain", function() {
             ]
         });
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
+        app.data.declareModels();
 
         mockAccess = {
             Foo: true,

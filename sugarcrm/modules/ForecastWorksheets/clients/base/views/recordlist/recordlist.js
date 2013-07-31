@@ -904,8 +904,9 @@
                     labelWidths = original.map(function() {
                         return $(this).width();
                     }).get();
-
-                converted.width(_.max(widths));
+                
+                // Added 5 to the calculated amount so that FF plays nice.
+                converted.width(_.max(widths) + 5);
                 original.width(_.max(labelWidths));
 
                 var parentTds = this.$el.find('span[data-name^="' + field.name + '"]'),

@@ -297,33 +297,38 @@ describe("Base.Layout.Filter", function () {
         });
         it('should get relevant context lists for activities', function(){
             layout.showingActivities = true;
+            var activityView = new Backbone.View();
+            activityView.name = 'activitystream';
             var ctxt = app.context.getContext();
             ctxt.set({
+                collection: new Backbone.Collection(),
                 module: 'Accounts',
                 layout: 'filter'
             });
             ctxt.prepare();
+            activityView.context = ctxt;
+            layout.layout._components = [activityView];
             var expectedList = [ctxt];
             sinon.mock(parentLayout,'getActivityContext', function(){return ctxt;});
-
-            var resultList = layout.getRelevantContextList;
+            var resultList = layout.getRelevantContextList();
             _.each(expectedList, function(ctx){
-                expect(_.contains(ctx,resultList));
+                expect(_.contains(resultList, ctx)).toBeTruthy();
             });
         });
-        it('should get relevant context lists for record layouts', function(){
+        it('should get relevant context lists for records layouts', function(){
             layout.showingActivities = false;
             layout.layoutType = 'records';
             var ctxt = app.context.getContext();
             ctxt.set({
+                collection: new Backbone.Collection(),
                 module: 'Accounts',
                 layout: 'filter'
             });
             ctxt.prepare();
-            var expectedList = [ctxt, layout.context];
-            var resultList = layout.getRelevantContextList;
+            var expectedList = [layout.context];
+            var resultList = layout.getRelevantContextList();
             _.each(expectedList, function(ctx){
-                expect(_.contains(ctx,resultList));
+                expect(_.contains(resultList, ctx)).toBeTruthy();
             });
         });
         it('should get relevant context lists for any other views', function(){
@@ -331,27 +336,50 @@ describe("Base.Layout.Filter", function () {
             layout.layoutType = 'list';
             var ctxt = app.context.getContext();
             ctxt.set({
+                collection: new Backbone.Collection(),
                 module: 'Accounts',
                 layout: 'filter',
                 link:'test1',
                 hidden: false
             });
-
             layout.context.children.push(ctxt);
+
             var ctxt1 = app.context.getContext();
             ctxt1.set({
+                collection: new Backbone.Collection(),
                 module: 'Accounts',
                 layout: 'filter',
                 link:'test1',
                 hidden: false
             });
-
             layout.context.children.push(ctxt1);
-            var expectedList = [ctxt, ctxt1];
-            var resultList = layout.getRelevantContextList;
-            _.each(expectedList, function(ctx){
-                expect(_.contains(ctx,resultList));
+
+            var ctxtWithoutCollection = app.context.getContext();
+            ctxtWithoutCollection.set({
+                module: 'Accounts',
+                layout: 'filter',
+                link:'testNoCollection',
+                hidden: false
             });
+            layout.context.children.push(ctxtWithoutCollection);
+
+            var ctxtWithModelId = app.context.getContext();
+            ctxtWithModelId.set({
+                collection: new Backbone.Collection(),
+                modelId: 'model_id',
+                module: 'Accounts',
+                layout: 'filter',
+                link:'testModelId',
+                hidden: false
+            });
+            layout.context.children.push(ctxtWithModelId);
+
+            var expectedList = [ctxt, ctxt1];
+            var resultList = layout.getRelevantContextList();
+            _.each(expectedList, function(ctx){
+                expect(_.contains(resultList, ctx)).toBeTruthy();
+            });
+            expect(_.contains(resultList, ctxtWithoutCollection)).toBeFalsy();
         });
         it('should be able to build filter defs', function(){
             var searchTerm = 'test',

@@ -191,13 +191,13 @@
                 }
                 if (this.def.required) {
                     this.clearRequiredLabel();
-                    if (this.action === 'edit' && this._shouldRenderRequiredPlaceholder()) {
+                    if ((this.action === 'edit' || -1 !== _.indexOf(['edit', 'list-edit'], this.tplName)) && this._shouldRenderRequiredPlaceholder()) {
                         this.decorateRequired();
                     }
                 }
                 if (this.def.help) {
                     this.clearHelper();
-                    if (this.action === 'edit') {
+                    if (this.action === 'edit' || -1 !== _.indexOf(['edit', 'list-edit'], this.tplName)) {
                         this.decorateHelper();
                     }
                 }

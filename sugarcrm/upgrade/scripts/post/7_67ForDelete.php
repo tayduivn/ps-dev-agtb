@@ -13,7 +13,24 @@ class SugarUpgrade67ForDelete extends UpgradeScript
         $files = array('themes/Sugar/js',
             //Remove the themes/Sugar/tpls directory
             'themes/Sugar/tpls',
-            'themes/Sugar5');
+            'themes/Sugar5',
+            // remove the files moved to vendor
+            'include/HTMLPurifier',
+            'include/HTTP_WebDAV_Server',
+            'include/Pear',
+            'include/Smarty',
+            'XTemplate',
+            'Zend',
+            'include/lessphp',
+            'log4php',
+            'include/nusoap',
+            'include/oauth2-php',
+            'include/pclzip',
+            'include/reCaptcha',
+            'include/tcpdf',
+            'include/ytree',
+            'include/SugarSearchEngine/Elastic/Elastica',
+        );
         $this->fileToDelete($files);
     }
 }

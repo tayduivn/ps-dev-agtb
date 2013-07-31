@@ -36,6 +36,17 @@
                     }
                 }
             },
+            {   //Route for the "first login" wizard
+                name: "firstlogin",
+                route: "firstlogin",
+                callback: function(){
+                    app.controller.loadView({
+                        layout: "first-login-wizard",
+                        module: "Users",
+                        modelId: app.user.get("id")
+                    });
+                }
+            },
             {
                 name: 'about',
                 route: 'about',

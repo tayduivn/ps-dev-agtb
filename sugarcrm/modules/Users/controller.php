@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id$
@@ -35,23 +35,28 @@ class UsersController extends SugarController
 		if (isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == 1) {
 			$_SESSION['isMobile'] = true;
 			$this->view = 'wirelesslogin';
-		} 
+		}
 		else{
 			$this->view = 'login';
 		}
 	}
-	
-	protected function action_default() 
+
+	protected function action_authenticate()
+	{
+	    $this->view = 'authenticate';
+	}
+
+	protected function action_default()
 	{
 		if (isset($_REQUEST['mobile']) && $_REQUEST['mobile'] == 1){
 			$_SESSION['isMobile'] = true;
 			$this->view = 'wirelesslogin';
-		} 
+		}
 		else{
 			$this->view = 'classic';
 		}
 	}
-    //END SUGARCRM flav=pro ONLY	
+    //END SUGARCRM flav=pro ONLY
 	/**
 	 * bug 48170
 	 * Action resetPreferences gets fired when user clicks on  'Reset User Preferences' button
@@ -66,10 +71,10 @@ class UsersController extends SugarController
 	        }
 	        else{
 	            SugarApplication::redirect("index.php?module=Users&record=".$_REQUEST['record']."&action=DetailView"); //bug 48170]
-	
+
 	        }
 	    }
-	}  
+	}
 	protected function action_delete()
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && ($GLOBALS['current_user']->isAdminForModule('Users')
@@ -85,7 +90,7 @@ class UsersController extends SugarController
             $eapm = BeanFactory::getBean('EAPM');
             $eapm->delete_user_accounts($_REQUEST['record']);
             $GLOBALS['log']->info("Removing user's External Accounts");
-            
+
             //BEGIN SUGARCRM flav=PRO ONLY
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
@@ -98,12 +103,12 @@ class UsersController extends SugarController
             SugarApplication::redirect("index.php?module=Users&action=index");
             //END SUGARCRM flav=COM ONLY
         }
-        else 
+        else
             sugar_die("Unauthorized access to administration.");
 	}
-    //BEGIN SUGARCRM flav=pro ONLY	
+    //BEGIN SUGARCRM flav=pro ONLY
 	/**
-	 * Clear the reassign user records session variables. 
+	 * Clear the reassign user records session variables.
 	 *
 	 */
 	protected function action_clearreassignrecords()
@@ -114,20 +119,20 @@ class UsersController extends SugarController
 	       sugar_die("You cannot access this page.");
 	}
 
-	protected function action_wirelessmain() 
+	protected function action_wirelessmain()
 	{
 		$this->view = 'wirelessmain';
 	}
 	//END SUGARCRM flav=pro ONLY
-	protected function action_wizard() 
+	protected function action_wizard()
 	{
 		$this->view = 'wizard';
 	}
 
-	protected function action_saveuserwizard() 
+	protected function action_saveuserwizard()
 	{
 	    global $current_user, $sugar_config;
-	    
+
 	    // set all of these default parameters since the Users save action will undo the defaults otherwise
 	    $_POST['record'] = $current_user->id;
 	    $_POST['is_admin'] = ( $current_user->is_admin ? 'on' : '' );
@@ -137,7 +142,7 @@ class UsersController extends SugarController
         $_POST['mailmerge_on'] = 'on';
         $_POST['receive_notifications'] = $current_user->receive_notifications;
         $_POST['user_theme'] = (string) SugarThemeRegistry::getDefault();
-	    
+
 	    // save and redirect to new view
 	    $_REQUEST['return_module'] = 'Home';
 	    $_REQUEST['return_action'] = 'index';
@@ -149,5 +154,5 @@ class UsersController extends SugarController
         $this->view = 'fts';
         $GLOBALS['current_user']->setPreference('fts_disabled_modules', $_REQUEST['disabled_modules']);
     }
-}	
+}
 ?>

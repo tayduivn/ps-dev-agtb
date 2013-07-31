@@ -70,9 +70,9 @@ describe("datetimecombo field", function() {
             expect(field.timeValue).toEqual('12:00am');
         });
         it("should unformat to iso 8601 compatible date string", function() {
-            var yr='1999', m='01', d='23', actual;
-            actual = field.unformat(yr+'-'+m+'-'+d);
-            expect(actual.match(/1999\-01\-23T.*Z/)).toBeTruthy();
+            var compareDate = new Date('01/23/1999'),
+                actual = field.unformat('1999-01-23');
+            expect(actual === compareDate.toISOString()).toBeTruthy();
         });
         it("should unformat to same object passed in if falsy", function() {
             var stub;
@@ -86,15 +86,15 @@ describe("datetimecombo field", function() {
         });
 
         it('should build unformatted string per REST API required input', function() {
-            var actual, expected;
-            actual   = field._buildUnformatted('09/12/1970', '02', '00');
-            expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
+            var actual  = field._buildUnformatted('09/12/1970', '02', '00'),
+                compareDate = new Date('09/12/1970 02:00 am');
+            expect(actual === compareDate.toISOString()).toBeTruthy();
 
             // Regardless of user's prefs should still be API formatted
             field.usersDatePrefs = 'Y.m.d';
             field.userTimePrefs  = 'H.i s';
             actual   = field._buildUnformatted('1970.09.12', '02', '00');
-            expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
+            expect(actual === compareDate.toISOString()).toBeTruthy();
         });
         it("should format properly when stripIsoTZ set", function() {
             var stub = sinon.stub(field, "_verifyDateString", function() { return true; });

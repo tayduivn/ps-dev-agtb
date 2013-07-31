@@ -844,6 +844,8 @@ class SugarController
 	        $action = 'list';
 	    }
 
+	    $action = strtolower($action);
+
 	    if((SugarAutoLoader::existing("modules/{$this->module}/{$file}.php") &&
     	    !SugarAutoLoader::existing("modules/{$this->module}/views/view.{$action}.php")) ||
     	    (SugarAutoLoader::existing("custom/modules/{$this->module}/{$file}.php") &&

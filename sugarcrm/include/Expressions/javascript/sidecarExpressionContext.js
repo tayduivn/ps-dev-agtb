@@ -241,8 +241,10 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
 
     },
     _handleRelateExpression : function(link, field){
-        var relContext = this.view.context.getChildContext({link:link}),
-            col = relContext.get("collection"),
+        var relContext = this.view.context.getChildContext({link:link});
+        //Prepares instances of related model and collection.
+        relContext.prepare();
+        var col = relContext.get("collection"),
             fields = relContext.get('fields') || [],
             self = this,
             //First check if there is a relate field availible before loading a rel context.

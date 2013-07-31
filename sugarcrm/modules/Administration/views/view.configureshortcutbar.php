@@ -162,6 +162,11 @@ class ViewConfigureshortcutbar extends SugarView
             $this->ss->assign('description', translate("LBL_CONFIGURE_SHORTCUT_BAR"));
             $this->ss->assign('msg', $msg);
 
+            $returnModule = !empty($_REQUEST['return_module']) ? $_REQUEST['return_module'] : 'Administration';
+            $returnAction = !empty($_REQUEST['return_action']) ? $_REQUEST['return_action'] : 'index';
+            $this->ss->assign('RETURN_MODULE', $returnModule);
+            $this->ss->assign('RETURN_ACTION', $returnAction);
+
             echo $this->ss->fetch('modules/Administration/templates/ShortcutBar.tpl');
         }
     }

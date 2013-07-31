@@ -443,7 +443,7 @@ class StudioModule
                 } elseif ($label == 'LBL_ADVANCED_SEARCH') {
                     $name = 'AdvancedSearch';
                 } elseif ($label == 'LBL_FILTER_SEARCH') {
-                    $name = "Search";
+                    $name = "FilterSearch";
                 } else {
                     $name = str_replace(' ', '', $title);
                 }

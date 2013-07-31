@@ -7,6 +7,11 @@
     populateResults: function() {
         var model;
 
+        //only show related records if lead is converted
+        if (!this.model.get('converted')) {
+            return;
+        }
+
         this.associatedModels.reset();
 
         model = this.buildAssociatedModel('Contacts', 'contact_id', 'contact_name');

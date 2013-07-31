@@ -77,7 +77,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
             {
                 //First load the original defs from the module folder
                 $originalSubpanel = $spd->load_subpanel( $subpanelName , false, true);
-                $this->_fullFielddefs = $originalSubpanel->get_list_fields ();
+                $this->_fullFielddefs = $originalSubpanel ? $originalSubpanel->get_list_fields () : array();
                 $this->_mergeFielddefs ( $this->_fielddefs , $this->_fullFielddefs ) ;
 
                 $this->_aSubPanelObject = $spd->load_subpanel ( $subpanelName ) ;

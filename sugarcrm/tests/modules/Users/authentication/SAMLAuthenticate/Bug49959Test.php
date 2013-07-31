@@ -23,8 +23,7 @@
  ********************************************************************************/
 
 require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticateUser.php';
-require_once 'modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml/settings.php';
-require_once 'modules/Users/authentication/SAMLAuthenticate/lib/onelogin/saml/response.php';
+require_once 'modules/Users/authentication/SAMLAuthenticate/SAMLAuthenticate.php';
 
 /**
  * @ticket 49959
@@ -98,20 +97,21 @@ class Bug49959Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that get_nameid() method of SamlResponse is called by default
+     * Test that get_nameid() method of OneLogin_Saml_Response is called by default
      */
     public function testDefaultNameId()
     {
         // create a mock of SAML response
         $mock = $this->getResponse();
         $mock->expects($this->once())
-            ->method('get_nameid');
+            ->method('getNameId');
 
         // create a default SAML settings object
-        require(get_custom_file_if_exists('modules/Users/authentication/SAMLAuthenticate/settings.php'));
+        self::$auth->settings = SAMLAuthenticate::loadSettings();
+        self::$auth->samlresponse = $mock;
 
         // expect that get_nameid() method of response is used by default
-        self::$auth->get_user_id($mock, $settings);
+        self::$auth->get_user_id();
     }
 
     /**
@@ -126,22 +126,26 @@ class Bug49959Test extends Sugar_PHPUnit_Framework_TestCase
         $mock2->xml = $this->getResponseXml($node_id);
 
         // create SAML settings object with custom name id definition
-        require(get_custom_file_if_exists('modules/Users/authentication/SAMLAuthenticate/settings.php'));
-        $settings->saml_settings['check']['user_name'] = '//root';
+        self::$auth->settings = $settings = SAMLAuthenticate::loadSettings();
+        self::$auth->samlresponse = $mock2;
+
+        $settings->saml2_settings['check']['user_name'] = '//root';
+        $settings->useXML = true;
+        self::$auth->xpath = new DOMXPath($mock2->xml);
 
         // expect that user ID is fetched from the document according to settings
-        $result = self::$auth->get_user_id($mock2, $settings);
+        $result = self::$auth->get_user_id();
         $this->assertEquals($node_id, $result);
     }
 
     /**
      * Returns a mock of SamlResponse object
      *
-     * @return SamlResponse
+     * @return OneLogin_Saml_Response
      */
     protected function getResponse()
     {
-        return $this->getMock('SamlResponse', array(), array(), '', false);
+        return $this->getMock('OneLogin_Saml_Response', array(), array(), 'Bug49959Test_Response', false);
     }
 
     /**
@@ -165,13 +169,15 @@ class Bug49959Test extends Sugar_PHPUnit_Framework_TestCase
  */
 class SAMLAuthenticateUserTest extends SAMLAuthenticateUser
 {
+    public $xpath;
+
     public function fetch_user($id, $field = null)
     {
         return parent::fetch_user($id, $field);
     }
 
-    public function get_user_id($samlresponse, $settings)
+    public function get_user_id()
     {
-        return parent::get_user_id($samlresponse, $settings);
+        return parent::get_user_id();
     }
 }

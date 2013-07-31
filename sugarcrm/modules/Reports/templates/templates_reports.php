@@ -304,7 +304,15 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 EOD
     ;
 
+    $reportName =  $args['reporter']->saved_report->name;
     //BEGIN SUGARCRM flav=pro ONLY
+
+    $shareButtonCode = "parent.SUGAR.App.bwc.shareRecord('Reports', '$report_id', '$reportName');";
+    $buttons[] = <<<EOD
+        <input type="button" class="button" name="shareReportButton" id="shareReportButton" accessKey="{$app_strings['LBL_SHARE_BUTTON_KEY']}" value="{$app_strings['LBL_SHARE_BUTTON_LABEL']}" title="{$app_strings['LBL_SHARE_BUTTON_TITLE']}"
+               onclick="$shareButtonCode">
+EOD;
+
     if ($report_edit_access) {
         $buttons[] = <<<EOD
             <input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings['LBL_EDIT_BUTTON_KEY']}" value="{$app_strings['LBL_EDIT_BUTTON_LABEL']}" title="{$app_strings['LBL_EDIT_BUTTON_TITLE']}"
@@ -347,7 +355,6 @@ EOD
     //END SUGARCRM flav=pro ONLY
     $smarty->assign('action_button', $buttons);
 
-    $reportName =  $args['reporter']->saved_report->name;
     $reportType = ($reporter->report_def['report_type'] == 'tabular' ? $mod_strings['LBL_ROWS_AND_COLUMNS_REPORT'] : $mod_strings['LBL_SUMMATION_REPORT']);
     if (!empty($reporter->report_def['display_columns']) &&
         !empty($reporter->report_def['group_defs'])) {

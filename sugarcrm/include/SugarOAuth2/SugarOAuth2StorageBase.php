@@ -1,23 +1,15 @@
 <?php
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
 require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
@@ -139,7 +131,7 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
         }
 
         // Is just a regular Sugar User
-        $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
+        $auth = AuthenticationController::getInstance();
         // noHooks since we'll take care of the hooks on API level, to make it more generalized
         $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true, 'noHooks'=>true));
         if ( $loginSuccess && !empty($auth->nextStep) ) {
@@ -152,7 +144,12 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
             $this->userBean = $this->loadUserFromName($username);
             return array('user_id' => $this->userBean->id);
         } else {
-            throw new SugarApiExceptionNeedLogin();
+            if(!empty($_SESSION['login_error'])) {
+                $message = $_SESSION['login_error'];
+            } else {
+                $message = null;
+            }
+            throw new SugarApiExceptionNeedLogin($message);
         }
     }
     // END METHODS FROM IOAuth2GrantUser
@@ -167,6 +164,9 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
      */
     public function loadUserFromName($username)
     {
+		if (!empty($GLOBALS['current_user'])) {
+        	return $GLOBALS['current_user'];
+        } 
         $userBean = BeanFactory::newBean('Users');
         $userBean = $userBean->retrieve_by_string_fields(
             array(
@@ -176,7 +176,7 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
                 'portal_only'=>'0',
                 'is_group'=>'0',
             ));
-        if ( $userBean == null ) {
+        if (empty($userBean)) {
             throw new SugarApiExceptionNeedLogin();
         }
         return $userBean;

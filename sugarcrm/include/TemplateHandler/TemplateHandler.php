@@ -75,11 +75,10 @@ class TemplateHandler {
 
         $cacheDir = create_cache_directory($this->templateDir. $module . '/');
         $file = $cacheDir . $view . '.tpl';
-        $string = '{* Create Date: ' . date('Y-m-d H:i:s') . "*}\n";
         $this->ss->left_delimiter = '{{';
         $this->ss->right_delimiter = '}}';
         $this->ss->assign('module', $module);
-        $this->ss->assign('built_in_buttons', array('CANCEL', 'DELETE', 'DUPLICATE', 'EDIT', 'FIND_DUPLICATES', 'SAVE', 'CONNECTOR'));
+        $this->ss->assign('built_in_buttons', array('CANCEL', 'DELETE', 'DUPLICATE', 'EDIT', 'SHARE', 'FIND_DUPLICATES', 'SAVE', 'CONNECTOR'));
         $contents = $this->ss->fetch($tpl);
         //Insert validation and quicksearch stuff here
         if($view == 'EditView' || strpos($view,'QuickCreate') || $ajaxSave || $view == "ConvertLead") {
