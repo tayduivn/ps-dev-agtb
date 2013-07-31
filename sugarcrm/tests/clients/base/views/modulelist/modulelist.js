@@ -5,6 +5,7 @@ describe("Module List", function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'favorites');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
     });
