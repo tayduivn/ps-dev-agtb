@@ -110,6 +110,12 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'status',
                     'label' => 'LBL_STATUS',
                 ),
+                array(
+                    'name' => 'quote_name',
+                    'label' => 'LBL_QUOTE_NAME',
+                    'related_fields' => array('quote_id'),
+                    'span' => 12,
+                ),
                 'quantity',
                 array(
                     'name' => 'discount_price',

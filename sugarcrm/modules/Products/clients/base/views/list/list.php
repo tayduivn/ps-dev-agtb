@@ -36,6 +36,14 @@ $viewdefs['Products']['base']['view']['list'] = array(
                     'name' => 'status',
                     'label' => 'LBL_STATUS',
                 ),
+                array(
+                    'name' => 'quote_name',
+                    'link' => true,
+                    'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),
+                    'enabled' => true,
+                    'default' => true,
+                ),
                 'quantity',
                  array(
                     'name' => 'discount_price',
