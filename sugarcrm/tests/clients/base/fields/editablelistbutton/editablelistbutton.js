@@ -19,20 +19,15 @@ describe("BaseEditablelistbuttonField", function() {
         //Fake layouts
         field.view = new Backbone.View();
         field.view.layout = new Backbone.View();
-        field.view.layout.layout = new Backbone.View();
+        field.view.layout.layout = SugarTest.createLayout("base", "Accounts", "filterpanel");
         field.view.layout.layout.name = 'filterpanel';
-        //Fake quicksearch field
-        var $input = $('<input>').addClass('search-name').val('query test');
-        $('<div>').addClass('search').append($input[0]).appendTo(field.view.layout.layout.$el);
-        //Fake original filter def
-        var origFilterDef = [{field1: { $equals: 'value1'}}, {field2: { $starts: 'value2'}}];
-        field.collection.origFilterDef = origFilterDef;
-        var triggerStub = sinon.stub(field.view.layout.layout, 'trigger');
+        var applyLastFilterStub = sinon.stub(field.view.layout.layout, 'applyLastFilter');
+
         //Call the method
         field._refreshListView();
 
-        expect(triggerStub).toHaveBeenCalled();
-        expect(triggerStub).toHaveBeenCalledWith('filter:apply', 'query test', origFilterDef);
-        triggerStub.restore();
+        expect(applyLastFilterStub).toHaveBeenCalled();
+        expect(applyLastFilterStub).toHaveBeenCalledWith(field.collection);
+        applyLastFilterStub.restore();
     });
 });

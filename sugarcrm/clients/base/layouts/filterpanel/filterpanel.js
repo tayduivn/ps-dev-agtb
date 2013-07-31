@@ -37,5 +37,27 @@
         // Needed to initialize this.currentModule.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
         this.trigger('filterpanel:change:module', (lastViewed === "activitystream") ? 'Activities' : this.module);
+    },
+
+    /**
+     * Applies last filter
+     * @param {Collection} collection the collection to retrieve the filter definition
+     * @param {String} condition(optional) You can specify a condition in order to prevent applying filtering
+     */
+    applyLastFilter: function(collection, condition) {
+        var triggerFilter = true;
+        if (_.size(collection.origFilterDef)) {
+            if (condition === 'favorite') {
+                //Here we are verifying the filter applied contains $favorite otherwise we don't really care about
+                //refreshing the listview
+                triggerFilter = !_.isUndefined(_.find(collection.origFilterDef, function(value, key) {
+                    return key === '$favorite' || (value && !_.isUndefined(value.$favorite));
+                }));
+            }
+            if (triggerFilter) {
+                var query = this.$('.search input.search-name').val();
+                this.trigger('filter:apply', query, collection.origFilterDef);
+            }
+        }
     }
 })

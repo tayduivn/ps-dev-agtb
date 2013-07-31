@@ -71,5 +71,62 @@ describe("Base.Layout.Filterpanel", function(){
                expect(spy).toHaveBeenCalled();
            });
         });
+
+        describe('applying last filter when a change happens on list view', function() {
+            var collection, origFilterDef, triggerStub;
+            beforeEach(function() {
+                collection = new Backbone.Collection();
+                triggerStub = sinon.stub(layout, 'trigger');
+                //Fake quicksearch field
+                var $input = $('<input>').addClass('search-name').val('query test');
+                $('<div>').addClass('search').append($input[0]).appendTo(layout.$el);
+            });
+            afterEach(function() {
+                triggerStub.restore();
+            });
+            it('should trigger filtering if no condition', function() {
+                //Fake original filter def
+                origFilterDef = [{field1: { $equals: 'value1'}}];
+                collection.origFilterDef = origFilterDef;
+
+                //Call the method
+                layout.applyLastFilter(collection);
+
+                expect(triggerStub).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:apply', 'query test', origFilterDef);
+            });
+            it('should trigger filtering because the filter contains $favorites (1)', function() {
+                //Fake original filter def
+                origFilterDef = [{field1: { $equals: 'value1'}}, {$favorite: ''}];
+                collection.origFilterDef = origFilterDef;
+
+                //Call the method
+                layout.applyLastFilter(collection, 'favorite');
+
+                expect(triggerStub).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:apply', 'query test', origFilterDef);
+            });
+            it('should trigger filtering because the filter contains $favorites (1)', function() {
+                //Fake original filter def
+                origFilterDef = {$favorite: ''};
+                collection.origFilterDef = origFilterDef;
+
+                //Call the method
+                layout.applyLastFilter(collection, 'favorite');
+
+                expect(triggerStub).toHaveBeenCalled();
+                expect(triggerStub).toHaveBeenCalledWith('filter:apply', 'query test', origFilterDef);
+            });
+            it('should not trigger filtering because the filter does not contain $favorite', function() {
+                //Fake original filter def
+                origFilterDef = [{field1: { $equals: 'value1'}}, {field2: { $starts: 'value2'}}];
+                collection.origFilterDef = origFilterDef;
+
+                //Call the method
+                layout.applyLastFilter(collection, 'favorite');
+
+                expect(triggerStub).not.toHaveBeenCalled();
+            });
+        });
     });
 });
