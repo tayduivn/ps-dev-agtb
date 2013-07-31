@@ -35,33 +35,33 @@ $viewdefs['Forecasts']['base']['view']['tutorial'] = array(
         'version' =>1,
         'content' => array(
             array(
-                'name' => '.view-forecastsTimeperiod b',
+                'name' => '.topline [for="date_filter"]',
                 'text' => 'LBL_TOUR_FORECASTS_TIMEPERIODS',
                 'full' => true,
                 'horizAdj'=> -15,
                 'vertAdj'=> -15,
             ),
             array(
-                'name' => '.view-forecastsCommitLog .icon-caret-down',
+                'name' => '.topline .last-commit',
                 'text' => 'LBL_TOUR_FORECASTS_COMMITS',
                 'full' => true,
                 'horizAdj'=> -20,
                 'vertAdj'=> -20,
             ),
             array(
-                'name' => '.td-inline-edit',
+                'name' => '.editableColumn',
                 'text' => 'LBL_TOUR_FORECASTS_INLINEEDIT',
                 'full' => true,
             ),
             array(
-                'name' => '.view-forecastsProgress h4',
+                'name' => '.dashlets .forecast-details',
                 'text' => 'LBL_TOUR_FORECASTS_PROGRESS',
                 'full' => true,
                 'horizAdj'=> -1,
                 'vertAdj'=> -5,
             ),
             array(
-                'name' => '.view-forecastsChart h4',
+                'name' => '.dashlets .forecasts-chart-wrapper',
                 'text' => 'LBL_TOUR_FORECASTS_CHART',
                 'full' => true,
                 'horizAdj'=> -1,
