@@ -4975,3 +4975,10 @@ $app_list_strings['notifications_type_list'] = array(
     'success' => 'Success',
     'warning' => 'Warning',
 );
+
+$app_list_strings['web_hook_request_method_list'] = array(
+    'POST' => 'POST',
+    'GET' => 'GET',
+    'PUT' => 'PUT',
+    'DELETE' => 'DELETE',
+);

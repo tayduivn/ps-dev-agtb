@@ -40,12 +40,7 @@ $dictionary['WebLogicHook'] = array(
             'name' => 'request_method',
             'vname' => 'LBL_REQUEST_METHOD',
             'type' => 'enum',
-            'options' => array(
-                'POST' => 'POST',
-                'GET' => 'GET',
-                'PUT' => 'PUT',
-                'DELETE' => 'DELETE',
-            ),
+            'options' => 'web_hook_request_method_list',
             'default' => 'POST',
             'required' => true,
         ),
