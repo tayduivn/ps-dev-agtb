@@ -38,25 +38,31 @@
         // the forecast module
         this.initOptions = options;
 
-        // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
-        if(app.utils.checkForecastConfig()) {
-            // correct config exists, continue with syncInitData
-            this.syncInitData();
+        var acls = app.user.getAcls().Forecasts,
+            hasAccess = (!_.has(acls, 'access') || acls.access == 'yes');
+        if(hasAccess) {
+            // Check to make sure users have proper values in their sales_stage_won/_lost cfg values
+            if(app.utils.checkForecastConfig()) {
+                // correct config exists, continue with syncInitData
+                this.syncInitData();
+            } else {
+                // codeblock this sucka
+                this.codeBlockForecasts('LBL_FORECASTS_MISSING_STAGE_TITLE', 'LBL_FORECASTS_MISSING_SALES_STAGE_VALUES');
+            }
         } else {
-            // codeblock this sucka
-            this.codeBlockForecasts();
+            this.codeBlockForecasts('LBL_FORECASTS_ACLS_NO_ACCESS_TITLE', 'LBL_FORECASTS_ACLS_NO_ACCESS_MSG');
         }
     },
 
     /**
      * Blocks forecasts from continuing to load
      */
-    codeBlockForecasts: function() {
-        var alert = app.alert.show('error_missing_stages', {
+    codeBlockForecasts: function(title, msg) {
+        var alert = app.alert.show('no_access_to_forecasts', {
             level: 'error',
             autoClose: false,
-            title: app.lang.get('LBL_FORECASTS_MISSING_STAGE_TITLE', "Forecasts") + ":",
-            messages: [app.lang.get('LBL_FORECASTS_MISSING_SALES_STAGE_VALUES', "Forecasts")]
+            title: app.lang.get(title, "Forecasts") + ":",
+            messages: [app.lang.get(msg, "Forecasts")]
         });
 
         alert.getCloseSelector().on('click', function() {
