@@ -475,7 +475,6 @@
         this.$el.addClass('error');
 
         this.$el.find(".add-on").remove();
-        console.log(this.$el.find(".add-on"));
         // For each error add to error help block
         _.each(errors, function (errorContext, errorName) {
             errorMessages.push(app.error.getErrorString(errorName, errorContext));

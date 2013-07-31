@@ -23,7 +23,7 @@ if (!(fixtures)) {
 }
 // Make this play nice if fixtures has already been defined for other tests
 // so we dont overwrite data
-if(!_.has(fixtures, 'metadata')) {
+if (!_.has(fixtures, 'metadata')) {
     fixtures.metadata = {};
 }
 fixtures.metadata.currencies = {
@@ -47,11 +47,15 @@ describe("RevenueLineItems.Base.View.Record", function() {
     beforeEach(function() {
         options = {
             meta: {
-                panels: [{
-                    fields: [{
-                        name: "commit_stage"
-                    }]
-                }]
+                panels: [
+                    {
+                        fields: [
+                            {
+                                name: "commit_stage"
+                            }
+                        ]
+                    }
+                ]
             }
         };
 
@@ -60,56 +64,75 @@ describe("RevenueLineItems.Base.View.Record", function() {
         app.user.setPreference('decimal_precision', 2);
         SugarTest.loadComponent('base', 'view', 'record');
 
-        view = SugarTest.loadFile("../modules/RevenueLineItems/clients/base/views/record", "record", "js", function(d) { return eval(d); });
+        view = SugarTest.createView('base', 'RevenueLineItems', 'record', options.meta, null, true);
     });
 
     describe("initialization", function() {
         beforeEach(function() {
             sinon.stub(app.view.views.BaseRecordView.prototype, "initialize");
 
-            sinon.stub(app.metadata, "getModule", function () {
+            sinon.stub(app.metadata, "getModule", function() {
                 return {
                     is_setup: true,
                     buckets_dom: "commit_stage_binary_dom"
                 }
             })
-            sinon.stub(view, "_setupCommitStageField");
+            sinon.stub(view, "_parsePanelFields");
 
         });
 
         afterEach(function() {
-            view._setupCommitStageField.restore();
+            view._parsePanelFields.restore();
             app.metadata.getModule.restore();
             app.view.views.BaseRecordView.prototype.initialize.restore();
         });
 
-        it("should set up the commit_stage field for products", function () {
+        it("should set up the commit_stage field for products", function() {
             view.initialize(options);
-            expect(view._setupCommitStageField).toHaveBeenCalled();//With(options.meta.panels);
+            expect(view._parsePanelFields).toHaveBeenCalled();//With(options.meta.panels);
         });
     });
 
-    describe("_setupCommitStageField method", function() {
+    describe("_parsePanelFields method", function() {
+        var panels;
+        beforeEach(function() {
+            panels = [
+                {
+                    fields: [
+                        {
+                            name: "commit_stage"
+                        }
+                    ]
+                }
+            ];
+        });
+
+        afterEach(function() {
+            panels = undefined;
+        });
+
         it("should replace commit_stage with a spacer", function() {
-            sinon.stub(app.metadata, "getModule", function () {
+            sinon.stub(app.metadata, "getModule", function() {
                 return {
                     is_setup: false
                 }
             });
-            view._setupCommitStageField(options.meta.panels);
-            expect(options.meta.panels[0].fields).toEqual([{ name : 'spacer', span : 6, readonly : true }]);
+            view._parsePanelFields(panels);
+            expect(panels[0].fields).toEqual([
+                { name: 'spacer', span: 6, readonly: true }
+            ]);
             app.metadata.getModule.restore();
         });
 
         it("should set the proper options on the commit_stage field if forecasts has been setup", function() {
-            sinon.stub(app.metadata, "getModule", function () {
+            sinon.stub(app.metadata, "getModule", function() {
                 return {
                     is_setup: true,
                     buckets_dom: "something_testable"
                 }
             });
-            view._setupCommitStageField(options.meta.panels);
-            expect(options.meta.panels[0].fields[0].options).toEqual("something_testable");
+            view._parsePanelFields(panels);
+            expect(panels[0].fields[0].options).toEqual("something_testable");
             app.metadata.getModule.restore();
         });
     });
@@ -123,17 +146,17 @@ describe("RevenueLineItems.Base.View.Record", function() {
         it("should convert fields from USD to our false Euro", function() {
             view.convertCurrencyFields("-99", "abc123");
 
-            expect(view.model.get("likely_case")).toEqual(app.math.mul(app.math.div(25000,1.0),.9));
-            expect(view.model.get("best_case")).toEqual(app.math.mul(app.math.div(30000,1.0),.9));
-            expect(view.model.get("worst_case")).toEqual(app.math.mul(app.math.div(20000,1.0),.9));
+            expect(view.model.get("likely_case")).toEqual(app.math.mul(app.math.div(25000, 1.0), .9));
+            expect(view.model.get("best_case")).toEqual(app.math.mul(app.math.div(30000, 1.0), .9));
+            expect(view.model.get("worst_case")).toEqual(app.math.mul(app.math.div(20000, 1.0), .9));
         });
 
         it("should convert fields from Euro to our false USD", function() {
             view.convertCurrencyFields("abc123", "-99");
 
-            expect(view.model.get("likely_case")).toEqual(app.math.mul(app.math.div(25000,.9), 1.0));
-            expect(view.model.get("best_case")).toEqual(app.math.mul(app.math.div(30000,.9), 1.0));
-            expect(view.model.get("worst_case")).toEqual(app.math.mul(app.math.div(20000,.9), 1.0));
+            expect(view.model.get("likely_case")).toEqual(app.math.mul(app.math.div(25000, .9), 1.0));
+            expect(view.model.get("best_case")).toEqual(app.math.mul(app.math.div(30000, .9), 1.0));
+            expect(view.model.get("worst_case")).toEqual(app.math.mul(app.math.div(20000, .9), 1.0));
         });
 
         it("should not convert anything", function() {
