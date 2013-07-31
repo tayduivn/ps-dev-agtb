@@ -255,6 +255,32 @@ class Meeting extends SugarBean {
 			$this->type = 'Sugar';
 		}
 
+        if ( isset($api) && is_a($api,'WebMeeting') && empty($this->in_relationship_update) ) {
+            // Make sure the API initialized and it supports Web Meetings
+            // Also make sure we have an ID, the external site needs something to reference
+            if (!isset($this->id) || empty($this->id)) {
+                $this->id = create_guid();
+                $this->new_with_id = true;
+            }
+            $response = $api->scheduleMeeting($this);
+            if ( $response['success'] == TRUE ) {
+                // Need to send out notifications
+                if ( $api->canInvite ) {
+                    $notifyList = $this->get_notification_recipients();
+                    foreach($notifyList as $person) {
+                        $api->inviteAttendee($this,$person,$check_notify);
+                    }
+
+                }
+            } else {
+                // Generic Message Provides no value to End User - Log the issue with message detail and continue
+                // SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']);
+                $GLOBALS['log']->warn('ERR_EXTERNAL_API_SAVE_FAIL' . ": " . $this->type . " - " .  $response['errorMessage']);
+            }
+
+            $api->logoff();
+        }
+
         $return_id = parent::save($check_notify);
         // Previously this was handled in both the MeetingFormBase and the AfterImportSave function, so now it just happens every time you save a record.
         if ($this->parent_type == 'Contacts') {
@@ -283,28 +309,6 @@ class Meeting extends SugarBean {
             if (!$this->contacts->relationship_exists('contacts', array('id' => $this->contact_id))) {
                 $this->contacts->add($this->contact_id);
             }
-        }
-
-        if ( isset($api) && is_a($api,'WebMeeting') && empty($this->in_relationship_update) ) {
-            // Make sure the API initialized and it supports Web Meetings
-            // Also make sure we have an ID, the external site needs something to reference
-            $response = $api->scheduleMeeting($this);
-            if ( $response['success'] == TRUE ) {
-                // Need to send out notifications
-                if ( $api->canInvite ) {
-                    $notifyList = $this->get_notification_recipients();
-                    foreach($notifyList as $person) {
-                        $api->inviteAttendee($this,$person,$check_notify);
-                    }
-
-                }
-            } else {
-                // Generic Message Provides no value to End User - Log the issue with message detail and continue
-                // SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']);
-                $GLOBALS['log']->warn('ERR_EXTERNAL_API_SAVE_FAIL' . ": " . $this->type . " - " .  $response['errorMessage']);
-            }
-
-            $api->logoff();
         }
 
         $this->setUserInvitees($this->users_arr);
