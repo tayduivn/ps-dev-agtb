@@ -295,6 +295,11 @@
                 value = _.values(value[0])[0];
             }
 
+            //Make sure we use name for relate fields
+            if (!this.fieldList[key]) {
+                var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
+                key = relate.name;
+            }
             $row.find('.filter-field select').select2('val', key).trigger('change');
             if (_.isString(value)) {
                 value = {"$equals": value};
@@ -332,6 +337,7 @@
         //Reset flags
         data.isDateRange = false;
         data.isPredefinedFilter = false;
+        data.id_name = this.fieldList[fieldName].id_name;
 
         //Predefined filters don't need operators and value field
         if (this.fieldList[fieldName].predefined_filter === true) {
@@ -481,7 +487,7 @@
                 this._renderField(field);
             }, this);
         } else {
-            model.set(fieldName, $row.data('value') || undefined);
+            model.set(fieldDef.id_name || fieldName, $row.data('value') || undefined);
             // Render the value field
             var field = this.createField(model, fieldDef),
                 fieldContainer = $(field.getPlaceholder().string);
@@ -509,7 +515,21 @@
                 _changeBlankLabel.call(field);
             }
 
-            this._renderField(field);
+            if (fieldType === 'relate' && $row.data('value')) {
+                var self = this,
+                    findRelatedName = app.data.createBeanCollection(fieldDef.module);
+                findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': $row.data('value')}]},
+                complete: function() {
+                    if (!self.disposed) {
+                        if (findRelatedName.first()) {
+                            model.set(fieldName, findRelatedName.first().get(fieldDef.rname), { silent: true });
+                        }
+                        self._renderField(field);
+                    }
+                }});
+            } else {
+                this._renderField(field);
+            }
         }
 
         // When the value change a quicksearch should be fired to update the results
@@ -536,8 +556,8 @@
             name = data['name'],
             valueForFilter;
 
-        //Pick make sure we use ID for relate fields
-        if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
+        //Make sure we use ID for relate fields
+        if (this.fieldList[name] && this.fieldList[name].id_name) {
             name = this.fieldList[name].id_name;
         }
 
@@ -545,7 +565,7 @@
         if (_.isArray(field)) {
             valueForFilter = [];
             _.each(field, function(field) {
-                var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
+                var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
                 value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
                 valueForFilter.push(value);
             });
@@ -553,7 +573,6 @@
             var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
             valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
         }
-        $row.data("name", name);  // Update name in case we changed it above
         $row.data("value", valueForFilter); // Update filter value once we've calculated final value
     },
 
@@ -595,14 +614,14 @@
         var data = $row.data(),
             operator = data['operator'],
             value = data['value'],
-            name = data['name'],
+            name = data['id_name'] || data['name'],
             filter = {};
 
         if (data.isPredefinedFilter) {
             filter[name] = "";
             return filter;
         } else if (!_.isEmpty(value) || data.isDateRange) {
-            if (_.has(this.fieldList[name], 'dbFields')) {
+            if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
                 var subfilters = [];
                 _.each(this.fieldList[name].dbFields, function(dbField) {
                     var filter = {};

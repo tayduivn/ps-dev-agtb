@@ -303,6 +303,12 @@ describe("BaseFilterRowsView", function() {
     describe('populateRow', function() {
         var addRowStub, select2Stub, $triggerStub;
         beforeEach(function() {
+            view.fieldList = {
+                first_name: {
+                },
+                last_name: {
+                }
+            };
             addRowStub = sinon.stub(view, 'addRow', function() {
                 return $('<article>').addClass('filter-body').appendTo(view.$el);
             });
@@ -584,11 +590,6 @@ describe("BaseFilterRowsView", function() {
                     dbFields: ['primary_address_street', 'alt_address_street'],
                     type: 'text'
                 },
-                assigned_user_id: {
-                    name: 'assigned_user_id',
-                    id_name: 'assigned_user_id',
-                    type: 'id'
-                },
                 assigned_user_name: {
                     name: 'assigned_user_name',
                     id_name: 'assigned_user_id',
@@ -657,6 +658,7 @@ describe("BaseFilterRowsView", function() {
             var fieldMock = {model: filterModel};
             $row = $('<div>').data({
                 name: 'assigned_user_name',
+                id_name: 'assigned_user_id',
                 operator: '$equals',
                 valueField: fieldMock
             });
