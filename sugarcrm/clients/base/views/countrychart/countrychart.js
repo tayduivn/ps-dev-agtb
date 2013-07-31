@@ -317,7 +317,7 @@
     loadData: function(options) {
         options = options || {};
         var self = this,
-            url = app.api.buildURL('Accounts', 'by_country');
+            url = app.api.buildURL('RevenueLineItems', 'by_country');
 
         app.api.call('GET', url, null, {
             success: function(o) {
