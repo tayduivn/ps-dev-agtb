@@ -3515,6 +3515,9 @@ $app_strings = array (
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+    'LBL_SHARE_BUTTON_KEY' => 'r',
+    'LBL_SHARE_BUTTON_LABEL' => 'Share',
+    'LBL_SHARE_BUTTON_TITLE' => 'Share',
     'LBL_CONFIRM_BUTTON_LABEL' => 'OK',
     'LBL_START_BUTTON_LABEL' => 'Start',
     'LBL_START_BUTTON_TITLE' => 'Start',
@@ -3526,12 +3529,12 @@ $app_strings = array (
     'LBL_FIRST_INPUT_SEARCH_KEY' => '9',
     'LBL_GLOBAL_SEARCH_LNK_KEY' => '0',
     'LBL_KEYBOARD_SHORTCUTS_HELP_TITLE' => 'Keyboard Shortcuts',
-    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
+    'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> R = Sha<b>R</b>e (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     // Share feature on record
     'LBL_RECORD_SHARE_BUTTON' => 'Share',
-    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{name}} from {{appId}}',
-    'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{name}} from {{appId}}',
+    'TPL_RECORD_SHARE_SUBJECT' => 'Shared {{module}} {{{name}}} from {{appId}}',
+    'TPL_RECORD_SHARE_BODY' => 'Please checkout {{module}} {{{name}}} from {{appId}}',
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
     //BEGIN SUGARCRM flav=pro ONLY

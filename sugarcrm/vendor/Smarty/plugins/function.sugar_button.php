@@ -746,6 +746,23 @@ function smarty_function_sugar_button($params, &$smarty)
                 }
                 }
                 break;
+
+          case 'SHARE':
+
+              // TODO we shouldn't rely on the name field only, but we don't
+              // have this information anywhere and this is BWC code...
+              $shareName = htmlspecialchars_decode($params['fields']['name']['value'], ENT_QUOTES);
+              $shareId = $params['fields']['id']['value'];
+
+              $shareButton = '{capture name="shareBtnJsCode" assign="shareBtnJsCode"}';
+              $shareButton .= '{literal}';
+              $shareButton .= "parent.SUGAR.App.bwc.shareRecord('{$params['module']}', '$shareId', '{$shareName}')";
+              $shareButton .= '{/literal}';
+              $shareButton .= '{/capture}';
+              $shareButton .= '<input title="{$APP.LBL_SHARE_BUTTON_TITLE}" accessKey="{$APP.LBL_SHARE_BUTTON_KEY}" class="button" onclick="{$shareBtnJsCode};" type="button" name="button" value="{$APP.LBL_SHARE_BUTTON_LABEL}"> ';
+              $output = $shareButton;
+              break;
+
 				//END SUGARCRM flav=pro ONLY
    	  } //switch
       if(isset($params['appendTo'])) {
