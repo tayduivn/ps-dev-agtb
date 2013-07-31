@@ -455,12 +455,22 @@
             minmax.push(this.createField(model, _.extend({}, fieldDef, {name: fieldName + '_min'})));
             minmax.push(this.createField(model, _.extend({}, fieldDef, {name: fieldName + '_max'})));
 
+            if(operation === '$dateBetween') {
+                minmax[0].label = app.lang.get('LBL_FILTER_DATEBETWEEN_FROM');
+                minmax[1].label = app.lang.get('LBL_FILTER_DATEBETWEEN_TO');
+            } else {
+                minmax[0].label = app.lang.get('LBL_FILTER_BETWEEN_FROM');
+                minmax[1].label = app.lang.get('LBL_FILTER_BETWEEN_TO');
+            }
+
             data['valueField'] = minmax;
             _.each(minmax, function(field) {
                 var fieldContainer = $(field.getPlaceholder().string);
                 $fieldValue.append(fieldContainer);
                 this.listenTo(field, 'render', function() {
                     field.$('input, select, textarea').addClass('inherit-width');
+                    field.$('.input-append').prepend('<span class="add-on">' + field.label + '</span>');
+                    field.$('.input-append').addClass('input-prepend');
                     // .date makes .inherit-width on input have no effect so we need to remove it.
                     field.$('.input-append').removeClass('date');
                     field.$('input, textarea').on('keyup', _.debounce(_.bind(_keyUpCallback, field), 400));
