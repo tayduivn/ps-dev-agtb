@@ -51,6 +51,9 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $mock->expects($this->any())
              ->method('ACLFieldAccess')
              ->will($this->returnValue(true));
+        $mock->expects($this->any())
+             ->method('ACLAccess')
+             ->will($this->returnValue(true));
         $mock->id = 'SugarBeanApiHelperMockBean-1';
         $mock->favorite = false;
         $mock->module_name = 'Test';
@@ -86,6 +89,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $data = $this->beanApiHelper->formatForApi($this->bean);
 
+        $this->assertArrayHasKey($fieldName, $data, $message);
         $this->assertSame($expectedFormattedValue, $data[$fieldName], $message);
     }
 
@@ -109,6 +113,19 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array('testBool', 'true',true , "true string should be true"),
             array('testBool', 'false', false, "false string should be false"),
         );
+    }
+
+    public function testFormatForApiDeleted()
+    {
+        $bean = BeanFactory::newBean('Accounts');
+
+        $bean->deleted = 1;
+        $bean->name = "Mr. Toad";
+        
+        $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted'));
+
+        $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
+        $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
     }
 
     public function testJsonFieldSave()
