@@ -63,30 +63,31 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $config = $this->getForecastConfig();
 
 
-        foreach ($this->dataArray as $data) {
-            $v = array(
-                'id' => $data['id'],
-                'record_id' => $data['parent_id'],
-                'forecast' => $data['commit_stage'],
-                'probability' => $data['probability'],
-                'sales_stage' => $data['sales_stage'],
-                'likely' => SugarCurrency::convertWithRate($data['likely_case'], $data['base_rate']),
-                'date_closed_timestamp' => intval($data['date_closed_timestamp'])
-            );
+        if (!empty($this->dataArray)) {
+            foreach ($this->dataArray as $data) {
+                $v = array(
+                    'id' => $data['id'],
+                    'record_id' => $data['parent_id'],
+                    'forecast' => $data['commit_stage'],
+                    'probability' => $data['probability'],
+                    'sales_stage' => $data['sales_stage'],
+                    'likely' => SugarCurrency::convertWithRate($data['likely_case'], $data['base_rate']),
+                    'date_closed_timestamp' => intval($data['date_closed_timestamp'])
+                );
 
-            if ($config['show_worksheet_best']) {
-                $v['best'] = SugarCurrency::convertWithRate($data['best_case'], $data['base_rate']);
+                if ($config['show_worksheet_best']) {
+                    $v['best'] = SugarCurrency::convertWithRate($data['best_case'], $data['base_rate']);
+                }
+                if ($config['show_worksheet_worst']) {
+                    $v['worst'] = SugarCurrency::convertWithRate($data['worst_case'], $data['base_rate']);
+                }
+
+                $arrData[] = $v;
+
+                $arrProbabilities[$data['probability']] = $data['probability'];
             }
-            if ($config['show_worksheet_worst']) {
-                $v['worst'] = SugarCurrency::convertWithRate($data['worst_case'], $data['base_rate']);
-            }
-
-            $arrData[] = $v;
-
-            $arrProbabilities[$data['probability']] = $data['probability'];
+            asort($arrProbabilities);
         }
-
-        asort($arrProbabilities);
 
         $tp = $this->getTimeperiod();
         $chart_info = array(

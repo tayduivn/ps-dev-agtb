@@ -52,7 +52,8 @@
                 ranges: ctx.get('selectedRanges') || ['include'],
                 timeperiod_id: ctx.get('selectedTimePeriod'),
                 dataset: 'likely',
-                group_by: 'forecast'
+                group_by: 'forecast',
+                no_data: true
             });
         }
     },
@@ -101,6 +102,9 @@
             var collection = this.forecastWorksheetContext.get('collection');
             if (collection) {
                 collection.on('change', this.repWorksheetChanged, this);
+                collection.on('reset', function(collection) {
+                    this.parseCollectionForData(collection);
+                }, this);
             }
         }
 
@@ -109,8 +113,92 @@
             var collection = this.forecastManagerWorksheetContext.get('collection');
             if (collection) {
                 collection.on('change', this.mgrWorksheetChanged, this);
+                collection.on('reset', function(collection) {
+                    if(this.values.get('display_manager')) {
+                        this.parseCollectionForData(collection);
+                    }
+                }, this);
             }
         }
+    },
+
+    /**
+     * Figure out which way we need to parse a collection
+     *
+     * @param {Backbone.Collection} [collection]
+     */
+    parseCollectionForData: function(collection) {
+        // get the field
+        var field = this.getField('paretoChart');
+        if(!field.hasServerData()) {
+            // if the field does not have any data, wait for the xhr call to run and then just call this
+            // method again
+            field.once('chart:pareto:rendered', this.parseCollectionForData, this);
+            return;
+        }
+
+        if (this.values.get('display_manager')) {
+            var collection = collection || this.forecastManagerWorksheetContext.get('collection');
+            this.parseManagerWorksheet(collection);
+        } else {
+            var collection = collection || this.forecastWorksheetContext.get('collection');
+            this.parseRepWorksheet(collection);
+        }
+    },
+
+    parseRepWorksheet: function(collection) {
+        var field = this.getField('paretoChart'),
+            serverData = field.getServerData();
+
+        serverData.data = collection.map(function(item) {
+            var i = {
+                id: item.get('id'),
+                forecast: item.get('commit_stage'),
+                probability: item.get('probability'),
+                sales_stage: item.get('sales_stage'),
+                likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
+                date_closed_timestamp: parseInt(item.get('date_closed_timestamp'))
+            };
+
+            if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
+                i.best = app.currency.convertWithRate(item.get('best_case'), item.get('base_rate'));
+            }
+            if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
+                i.worst = app.currency.convertWithRate(item.get('worst_case'), item.get('base_rate'));
+            }
+
+            return i;
+        }, this);
+
+        field.setServerData(serverData, true);
+    },
+
+    parseManagerWorksheet: function(collection) {
+        var field = this.getField('paretoChart'),
+            serverData = field.getServerData();
+
+        serverData.data = collection.map(function(item) {
+            var i = {
+                id: item.get('id'),
+                user_id: item.get('user_id'),
+                name: item.get('name'),
+                likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
+                likely_adjusted: app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'))
+            };
+
+            if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
+                i.best = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
+                i.best_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+            }
+            if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
+                i.worst = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
+                i.worst_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+            }
+
+            return i;
+        }, this);
+
+        field.setServerData(serverData);
     },
 
     /**
@@ -232,6 +320,7 @@
                 }, dt);
             }
             this.toggleRepOptionsVisibility();
+            this.parseCollectionForData();
         }, this);
 
         var ctx = this.context.parent;

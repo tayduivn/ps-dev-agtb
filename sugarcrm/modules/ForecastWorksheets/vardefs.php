@@ -287,6 +287,9 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'options' => 'date_range_search_dom',
             'studio' => false,
+            'related_fields' => array(
+                'date_closed_timestamp'
+            )
         ),
         'date_closed_timestamp' =>
         array(
@@ -457,9 +460,9 @@ $dictionary['ForecastWorksheet'] = array(
             'fields' => array('deleted', 'assigned_user_id')
         ),
         array(
-            'name' => 'idx_worksheets_assigned_del_time_draft',
+            'name' => 'idx_worksheets_assigned_del_time_draft_parent_type',
             'type' => 'index',
-            'fields' => array('assigned_user_id', 'date_closed_timestamp', 'draft', 'deleted')
+            'fields' => array('deleted','assigned_user_id', 'draft', 'date_closed_timestamp', 'parent_type')
         ),
     ),
     'relationships' => array(

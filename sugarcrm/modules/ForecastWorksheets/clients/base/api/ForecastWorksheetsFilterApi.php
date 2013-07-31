@@ -137,8 +137,12 @@ class ForecastWorksheetsFilterApi extends FilterApi
     public function forecastWorksheetsChartGet(ServiceBase $api, array $args)
     {
 
-        //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
-        $worksheetData = $this->forecastWorksheetsGet($api, $args);
+        if (isset($args['no_data']) && $args['no_data'] == 1) {
+            $worksheetData = array('records' => array());
+        } else {
+            //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
+            $worksheetData = $this->forecastWorksheetsGet($api, $args);
+        }
 
         // default to the Individual Code
         $file = 'include/SugarForecasting/Chart/Individual.php';
@@ -154,6 +158,8 @@ class ForecastWorksheetsFilterApi extends FilterApi
         $obj = new $klass($args);
 
         $chartData = $obj->process();
+
+        generateEtagHeader(md5(serialize($chartData)), 3600);
 
         return $chartData;
     }

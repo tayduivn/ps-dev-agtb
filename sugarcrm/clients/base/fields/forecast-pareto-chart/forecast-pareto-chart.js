@@ -14,6 +14,11 @@
 ({
 
     /**
+     * The data from the server
+     */
+    _serverData: undefined,
+
+    /**
      * @{inheritDoc}
      */
     bindDataChange: function() {
@@ -21,12 +26,11 @@
             this.renderChart();
         }, this);
 
-        this.model.on('change:user_id change:display_manager', function() {
-            this.renderChart();
-        }, this);
-
-        this.model.on('change:timeperiod_id', function() {
-            this.renderChart();
+        this.model.on('change', function(model) {
+            var changed = _.keys(model.changed);
+            if (!_.isEmpty(_.intersection(['user_id', 'display_manager', 'timeperiod_id'], changed))) {
+                this.renderChart();
+            }
         }, this);
 
         this.model.on('change:group_by change:dataset change:ranges', function() {
@@ -45,20 +49,28 @@
             return;
         }
 
-        // just on the off chance that no options param is passed in
-        options = options || {};
-        options.success = _.bind(function(data) {
-            this.serverData = data;
-            this.convertDataToChartData();
-            this.generateD3Chart();
-        }, this);
-
         if (!this.triggerBefore('chart:pareto:render')) {
             return;
         }
 
+        this._serverData = undefined;
+
+        // just on the off chance that no options param is passed in
+        options = options || {};
+        options.success = _.bind(function(data) {
+            this._serverData = data;
+            this.convertDataToChartData();
+            this.generateD3Chart();
+        }, this);
+
+
         var params = this.model.toJSON() || {},
-            url = app.api.buildURL(this.buildChartUrl(params));
+            read_options = {};
+        if (this.model.has('no_data') && this.model.get('no_data') === true) {
+            read_options['no_data'] = 1
+        }
+
+        var url = app.api.buildURL(this.buildChartUrl(params), null, null, read_options);
 
         app.api.call('read', url, {}, options);
     },
@@ -127,11 +139,11 @@
      */
     convertManagerDataToChartData: function() {
         var dataset = this.model.get('dataset'),
-            records = this.serverData.data,
+            records = this._serverData.data,
             chartData = {
                 'properties': {
-                    'name': this.serverData.title,
-                    'quota': parseFloat(this.serverData.quota),
+                    'name': this._serverData.title,
+                    'quota': parseFloat(this._serverData.quota),
                     'groupData': records.map(function(record, i) {
                         return {
                             group: i,
@@ -153,7 +165,7 @@
                 });
 
                 return {
-                    key: this.serverData.labels['dataset'][ds],
+                    key: this._serverData.labels['dataset'][ds],
                     series: seriesIdx,
                     type: 'bar',
                     values: vals,
@@ -177,7 +189,7 @@
                 });
 
                 return {
-                    key: this.serverData.labels['dataset'][ds],
+                    key: this._serverData.labels['dataset'][ds],
                     series: seriesIdx,
                     type: 'line',
                     values: vals,
@@ -199,11 +211,16 @@
             ranges = this.model.get('ranges'),
             seriesIdx = 0,
             barData = [],
+<<<<<<< HEAD
             lineVals = this.serverData['x-axis'].map(function(axis, i) {
                 return { series: seriesIdx, x: i + 1, y: 0 };
+=======
+            lineVals = this._serverData['x-axis'].map(function(axis, i) {
+                return { series: seriesIdx, x: i + 1, y: 0 }
+>>>>>>> SFA-1315: Pull Forecast Data from the Worksheets
             }),
             line = {
-                'key': this.serverData.labels.dataset[dataset],
+                'key': this._serverData.labels.dataset[dataset],
                 'type': 'line',
                 'series': seriesIdx,
                 'values': [],
@@ -211,9 +228,9 @@
             },
             chartData = {
                 'properties': {
-                    'name': this.serverData.title,
-                    'quota': parseFloat(this.serverData.quota),
-                    'groupData': this.serverData['x-axis'].map(function(item, i) {
+                    'name': this._serverData.title,
+                    'quota': parseFloat(this._serverData.quota),
+                    'groupData': this._serverData['x-axis'].map(function(item, i) {
                         return {
                             'group': i,
                             'l': item.label,
@@ -223,21 +240,26 @@
                 },
                 'data': []
             },
-            records = this.serverData.data,
+            records = this._serverData.data,
             data = (!_.isEmpty(ranges)) ? records.filter(function(rec) {
                 return _.contains(ranges, rec.forecast);
             }) : records;
 
-        _.each(this.serverData.labels[type], function(label, value) {
+        _.each(this._serverData.labels[type], function(label, value) {
             var td = data.filter(function(d) {
                 return (d[type] == value);
             });
 
             if (!_.isEmpty(td)) {
+<<<<<<< HEAD
                 var barVal = this.serverData['x-axis'].map(function(axis, i) {
                         return { series: seriesIdx, x: i + 1, y: 0, y0: 0 };
+=======
+                var barVal = this._serverData['x-axis'].map(function(axis, i) {
+                        return { series: seriesIdx, x: i + 1, y: 0, y0: 0 }
+>>>>>>> SFA-1315: Pull Forecast Data from the Worksheets
                     }),
-                    axis = this.serverData['x-axis'];
+                    axis = this._serverData['x-axis'];
 
                 // loop though all the data and map it to the correct x series
                 _.each(td, function(record) {
@@ -297,11 +319,19 @@
     },
 
     /**
+     * Do we have serverData yet?
+     * @returns {boolean}
+     */
+    hasServerData: function() {
+        return !_.isUndefined(this._serverData);
+    },
+
+    /**
      * Return the data that was passed back from the server
      * @returns {Object}
      */
     getServerData: function() {
-        return this.serverData;
+        return this._serverData;
     },
 
     /**
@@ -310,7 +340,7 @@
      * @param {Boolean} [adjustLabels]
      */
     setServerData: function(data, adjustLabels) {
-        this.serverData = data;
+        this._serverData = data;
 
         if (adjustLabels === true) {
             this.adjustProbabilityLabels();
@@ -325,18 +355,10 @@
      * to Account for the potentially new label.
      */
     adjustProbabilityLabels: function() {
-        var probabilities = [];
-        _.each(this.serverData.data, function(record) {
-            probabilities.push(record.probability);
-        });
+        var probabilities = _.unique(_.map(this._serverData.data, function(item) {
+            return item.probability;
+        })).sort();
 
-        probabilities = _.unique(probabilities).sort(function(a, b) {
-            return b - a;
-        });
-
-        this.serverData.labels.probability = {};
-        _.each(probabilities, function(v) {
-            this.serverData.labels.probability[v] = v;
-        }, this);
+        this._serverData.labels.probability = _.object(probabilities, probabilities);
     }
 })

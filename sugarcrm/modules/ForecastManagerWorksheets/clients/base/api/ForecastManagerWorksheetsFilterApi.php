@@ -138,40 +138,44 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
     public function forecastManagerWorksheetsChartGet(ServiceBase $api, array $args)
     {
 
-        //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
-        $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
+        if (isset($args['no_data']) && $args['no_data'] == 1) {
+            $worksheetData = array('records' => array());
+        } else {
+            //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
+            $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
 
-        //get all users in direct hierarchy
-        $usersList = $this->getDirectHierarchyUsers($api, $args);
-        $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
+            //get all users in direct hierarchy
+            $usersList = $this->getDirectHierarchyUsers($api, $args);
+            $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
 
-        //compare users and worksheet data to fill in gaps
-        foreach ($usersList['records'] as $user) {
-            $userExists = false;
-            foreach ($worksheetData['records'] as $worksheet) {
-                if ($worksheet['user_id'] == $user['id']) {
-                    $userExists = true;
-                    break;
+            //compare users and worksheet data to fill in gaps
+            foreach ($usersList['records'] as $user) {
+                $userExists = false;
+                foreach ($worksheetData['records'] as $worksheet) {
+                    if ($worksheet['user_id'] == $user['id']) {
+                        $userExists = true;
+                        break;
+                    }
                 }
-            }
-            if (!$userExists) {
-                $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
-                $blankWorksheet->assigned_user_id = $args['user_id'];
-                $blankWorksheet->user_id = $user['id'];
-                $blankWorksheet->timeperiod_id = $args['timeperiod_id'];
-                $blankWorksheet->assigned_user_name = $assignedUser->user_name;
-                $blankWorksheet->quota = 0;
-                $blankWorksheet->likely_case = 0;
-                $blankWorksheet->likely_case_adjusted = 0;
-                $blankWorksheet->best_case = 0;
-                $blankWorksheet->best_case_adjusted = 0;
-                $blankWorksheet->worst_case = 0;
-                $blankWorksheet->worst_case_adjusted = 0;
-                $blankWorksheet->currency_id = '-99';
-                $blankWorksheet->base_rate = 1.0;
-                $blankWorksheet->id = '';
-                $blankWorksheet->name = $user['full_name'];
-                array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
+                if (!$userExists) {
+                    $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
+                    $blankWorksheet->assigned_user_id = $args['user_id'];
+                    $blankWorksheet->user_id = $user['id'];
+                    $blankWorksheet->timeperiod_id = $args['timeperiod_id'];
+                    $blankWorksheet->assigned_user_name = $assignedUser->user_name;
+                    $blankWorksheet->quota = 0;
+                    $blankWorksheet->likely_case = 0;
+                    $blankWorksheet->likely_case_adjusted = 0;
+                    $blankWorksheet->best_case = 0;
+                    $blankWorksheet->best_case_adjusted = 0;
+                    $blankWorksheet->worst_case = 0;
+                    $blankWorksheet->worst_case_adjusted = 0;
+                    $blankWorksheet->currency_id = '-99';
+                    $blankWorksheet->base_rate = 1.0;
+                    $blankWorksheet->id = '';
+                    $blankWorksheet->name = $user['full_name'];
+                    array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
+                }
             }
         }
 
