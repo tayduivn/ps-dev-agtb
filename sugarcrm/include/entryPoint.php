@@ -186,6 +186,8 @@ if(isset($_GET['PHPSESSID'])){
     }
 }
 
+    LogicHook::initialize()->call_custom_logic('', 'entry_point_variables_setting');
+
 if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
