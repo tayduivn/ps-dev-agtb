@@ -911,7 +911,10 @@ class UploadStream
 
     public function unlink($path)
     {
-        unlink($this->getFSPath($path));
+        $newPath = $this->getFSPath($path);
+        if (file_exists($newPath)) {
+            unlink($newPath);
+        }
         return true;
     }
 
