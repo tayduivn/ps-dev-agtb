@@ -5419,6 +5419,10 @@ class SugarBean
                 }else{
                     $return_array[$cache[$field]] = $this->$field;
                 }
+                // handle "Assigned User Name"
+                if($field == 'assigned_user_name'){
+                    $return_array['ASSIGNED_USER_NAME'] = get_assigned_user_name($this->assigned_user_id);
+                }
             }
         }
         return $return_array;
