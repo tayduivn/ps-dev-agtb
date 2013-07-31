@@ -199,12 +199,12 @@ $layout_defs['Accounts'] = array(
 //BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'order' => 60,
-            'module' => 'Products',
+            'module' => 'RevenueLineItems',
             'subpanel_name' => 'ForAccounts',
             'sort_order' => 'desc',
             'sort_by' => 'date_purchased',
-            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-            'get_subpanel_data' => 'products',
+            'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'revenuelineitems',
             'top_buttons' => array(
                 array(
                     'widget_class' => 'SubPanelTopButtonQuickCreate',

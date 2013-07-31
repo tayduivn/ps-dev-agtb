@@ -62,14 +62,6 @@ $dictionary['Contract'] = array(
 			'link_type' => 'one',
 			'source' => 'non-db',
 		),
-		'products' => array (
-			'name' => 'products',
-			'type' => 'link',
-			'vname' => 'LBL_PRODUCTS',
-			'relationship' => 'contracts_products',
-			'link_type' => 'one',
-			'source' => 'non-db',
-		),
         'revenuelineitems' => array (
             'name' => 'revenuelineitems',
             'type' => 'link',

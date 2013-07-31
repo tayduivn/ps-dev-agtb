@@ -180,14 +180,14 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
-        'products' => array(
+        'revenuelineitems' => array(
             'order' => 80,
-            'module' => 'Products',
+            'module' => 'RevenueLineItems',
             'subpanel_name' => 'default',
             'sort_order' => 'asc',
             'sort_by' => 'id',
-            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-            'get_subpanel_data' => 'products',
+            'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'revenuelineitems',
             'top_buttons' => 
             array (
                 0 => 
