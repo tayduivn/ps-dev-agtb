@@ -142,11 +142,11 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         // General options
                         'theme'                             => 'advanced',
                         'skin'                              => 'sugar7',
-                        'plugins'                           => 'style,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras',
+                        'plugins'                           => 'style,paste,inlinepopups',
                         'entity_encoding'                   => 'raw',
                         'forced_root_block'                 => false,
                         // Theme options
-                        'theme_advanced_buttons1'           => "code,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,spellchecker,seperator,fontsizeselect",
+                        'theme_advanced_buttons1'           => "code,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,fontsizeselect",
                         'theme_advanced_toolbar_location'   => "top",
                         'theme_advanced_toolbar_align'      => "left",
                         'theme_advanced_statusbar_location' => "bottom",
