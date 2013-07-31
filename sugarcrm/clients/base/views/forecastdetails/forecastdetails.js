@@ -147,7 +147,7 @@
 
         switch(ct) {
             case 3:
-                this.spanCSS = '3';
+                this.spanCSS = '4';
                 break;
             case 2:
                 this.spanCSS = '6';
