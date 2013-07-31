@@ -28,8 +28,8 @@
 
     'events': {
         'click': 'updateCss',
-        'focus input.input-large': 'handleInputFocus',
-        'blur input.input-large': 'handleInputBlur'
+        'blur input.input-large': 'handleInputBlur',
+        'keyup input.input-large': 'handleInputChange'
     },
     transactionValue: '',
     _currencyField: null,
@@ -78,15 +78,6 @@
     },
 
     /**
-     * disable currency dropdown when input is focused
-     *
-     * @param {Object} e element.
-     */
-    handleInputFocus: function(e) {
-        this.getCurrencyField().setDisabled(true);
-    },
-
-    /**
      * enable currency dropdown when input is blurred
      *
      * @param {Object} e element.
@@ -94,6 +85,16 @@
     handleInputBlur: function(e) {
         this.getCurrencyField().setDisabled(false);
     },
+
+    /**
+     * disable currency dropdown when input is changed
+     *
+     * @param {Object} e element.
+     */
+    handleInputChange: function(e) {
+        this.getCurrencyField().setDisabled(true);
+    },
+
 
     /**
      * {@inheritdoc}
