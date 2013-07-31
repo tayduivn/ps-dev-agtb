@@ -133,7 +133,7 @@ table.dataTable {
     & > tr[data-forecast="include"] {
       & > td {
         font-weight: bold;
-        &:first-child {
+        &[data-field-name="commit_stage"] {
           & > span:before {
             width: 6px;
             background-color: @blue;
