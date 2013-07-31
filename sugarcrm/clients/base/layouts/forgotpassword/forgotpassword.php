@@ -1,7 +1,8 @@
-{{!
+<?php
+ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +16,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,27 +26,13 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="welcome">
-    <div class="thumbnail login">
-        <div class="tcenter">
-            <h2 class="brand" {{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
-        </div>
-        <form name='{{name}}' class="tcenter">
-            {{#each meta.panels}}
-                {{#each fields}}
-                <div class="control-group">{{field ../../this model=../../model}}</div>
-                {{/each}}
-                <p class="help-block">
-                    <a href="#forgotpassword" class="btn btn-link btn-invisible" rel="popoverTop" data-content="{{str "LBL_LOGIN_FORGOTPASSWORD"}}"
-                       data-original-title="{{str "LBL_LOGIN_FORGOTPASSWORD_TITLE"}}">{{str "LBL_LOGIN_FORGOT_PASSWORD"}}</a>
-                </p>
-            {{/each}}
-            <div class="login-footer">
-                {{#each meta.buttons}}
-                {{field ../this model=../model}}
-                {{/each}}
-            </div>
-        </form>
-    </div>
-</div>
+
+$viewdefs['base']['layout']['forgotpassword'] = array(
+    'type' => 'simple',
+    'components' => array(
+        0 => array(
+            'view' => "forgotpassword"
+        ),
+    ),
+);
+

@@ -2194,7 +2194,7 @@ $app_strings = array (
     'LBL_EMAIL_MULTISELECT'                 => '<b>Ctrl-Click</b> to select multiples<br />(Mac users use <b>CMD-Click</b>)',
 
     'LBL_EMAIL_NO'                          => 'No',
-    'LBL_EMAIL_NOT_SENT'                    => 'System is unable to process your request. Please contact the system administrator.',
+    'LBL_EMAIL_NOT_SENT'                    => 'There was a problem sending the request email. Please contact the system administrator.',
 
     'LBL_EMAIL_OK'                          => 'OK',
     'LBL_EMAIL_ONE_MOMENT'                  => 'One moment please...',
@@ -3938,6 +3938,8 @@ $app_strings = array (
     'LBL_NEW_USER_PASSWORD_1' => 'Your password has been successfully updated.',
     'LBL_CANNOT_SEND_PASSWORD' => 'Cannot send password',
 
+    'LBL_REQUEST_PASSWORD' => 'Request Password',
+
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
@@ -4097,6 +4099,9 @@ $app_strings = array (
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
 
     'LBL_OVERDUE' => 'Overdue',
+
+    'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',
+    'LBL_PASSWORD_REQUEST_ERROR' => 'There was a problem retrieving your username and email combination.',
 );
 
 $app_list_strings['interactions_options'] = array (

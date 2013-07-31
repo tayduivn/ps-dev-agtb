@@ -141,14 +141,8 @@ class ImportFieldSanitize
         $vardef
         )
     {
-        // cache $sea instance
-        static $sea;
         
-        if ( !($sea instanceof SugarEmailAddress) ) {
-            $sea = new SugarEmailAddress;
-        }
-        
-        if ( !empty($value) && !preg_match($sea->regex,$value) ) {
+        if ( !empty($value) && !SugarEmailAddress::isValidEmail($value) ) {
             return false;
         }
 
