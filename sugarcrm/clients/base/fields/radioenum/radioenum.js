@@ -30,7 +30,7 @@
     extendsFrom: 'ListeditableField',
     _render: function(){
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        var options = app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'loadEnumOptions', args: [false,
+        app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'loadEnumOptions', args: [false,
             function() {
                 if(!this.disposed){
                     this.render();
@@ -39,11 +39,8 @@
         });
         app.view.Field.prototype._render.call(this);
         if(this.tplName === 'list-edit') {
-            var optionsKeys = _.isObject(options) ? _.keys(options) : [];
             // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-            var select2Options = app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'getSelect2Options', args: [optionsKeys]});
-            this.$(this.fieldTag).select2(select2Options);
-            this.$(".select2-container").addClass("tleft");
+            app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render'});
         }
     },
     bindDomChange: function() {
@@ -77,13 +74,17 @@
     },
     _loadTemplate: function() {
         app.view.invokeParent(this, {type: 'field', name: 'listeditable', method: '_loadTemplate'});
-
-        //Important to change the fieldTag to bind the dom "change" event
-        if(this.tplName === 'list-edit') {
-            this.fieldTag = 'select';
-        } else {
-            this.fieldTag = 'input';
-        }
+    },
+    getSelect2Options: function(optionKeys){
+        return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'getSelect2Options', args: [optionKeys]});
+    },
+    _query: function(query){
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        return app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_query', args: [query]});
+    },
+    _initSelection: function($ele, callback){
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
+        return app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_initSelection', args: [$ele, callback]});
     },
     decorateError: function(errors) {
         if (this.tplName === 'list-edit') {

@@ -129,8 +129,8 @@ describe("forecasts_view_forecastsConfigTimeperiods", function(){
             testLeafIntervalValue = null;
         });
         it("should add the event handlers to update the selections for the field", function() {
-            expect(intervalField.events["change select"]).toBeDefined();
-            expect(intervalField.events["change select"]).toEqual("_updateIntervals");
+            expect(intervalField.events["change input"]).toBeDefined();
+            expect(intervalField.events["change input"]).toEqual("_updateIntervals");
             expect(intervalField._updateIntervals).toBeDefined();
         });
 

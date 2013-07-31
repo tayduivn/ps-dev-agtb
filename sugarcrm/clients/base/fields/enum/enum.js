@@ -25,12 +25,12 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    fieldTag: "select",
+    fieldTag: "input",
     bindKeyDown: function(callback) {
         this.$('input').on("keydown.record", {field: this}, callback);
     },
     _render: function() {
-        var val;
+        var self = this;
         var options = this.items = this.items || this.enumOptions;
         if(_.isUndefined(options)){
             options = this.items = this.loadEnumOptions(false, function(){
@@ -50,19 +50,37 @@
             }
         }
         app.view.Field.prototype._render.call(this);
-        if(this.tplName === 'edit') {
-            var select2Options = this.getSelect2Options(optionsKeys);
-            this.$(this.fieldTag).select2(select2Options);
-            this.$(".select2-container").addClass("tleft");
-            val = this.$(this.fieldTag).select2('val');
-            if (val) {
-                this.model.set(this.name, val);
+        var select2Options = this.getSelect2Options(optionsKeys);
+        var $el = this.$(this.fieldTag);
+        if (!_.isEmpty(optionsKeys)) {
+            if (this.tplName === 'edit' || this.tplName === 'list-edit') {
+                $el.select2(select2Options);
+                $el.select2("container").addClass("tleft");
+                $el.on('change', function(ev){
+                    var value = ev.val;
+                    self.model.set(self.name, self.unformat(value));
+                });
+                if (this.def.ordered) {
+                    $el.select2("container").find("ul.select2-choices").sortable({
+                        containment: 'parent',
+                        start: function() {
+                            $el.select2("onSortStart");
+                        },
+                        update: function() {
+                            $el.select2("onSortEnd");
+                        }
+                    });
+                }
+            } else if(this.tplName === 'disabled') {
+                $el.select2(select2Options);
+                $el.select2('disable');
             }
-        } else if(this.tplName === 'disabled') {
-            var select2Options = this.getSelect2Options(optionsKeys);
-            this.$(this.fieldTag).select2(select2Options);
-            this.$(this.fieldTag).select2('disable');
-        } else if(_.isEmpty(optionsKeys)){
+            //Setup selected value in Select2 widget
+            var val = this.model.get(this.name);
+            if(val){
+                $el.select2('val', val);
+            }
+        } else {
             // Set loading message in place of empty DIV while options are loaded via API
             this.$el.html(app.lang.get("LBL_LOADING"));
         }
@@ -98,6 +116,7 @@
             } else {
                 var request = app.api.enumOptions(self.module, self.name, {
                     success: function(o) {
+                        if(self.disposed) { return; }
                         if (self.enumOptions !== o) {
                             self.enumOptions = o;
                             fieldMeta.options = self.enumOptions;
@@ -117,6 +136,11 @@
         }
         return items;
     },
+    /**
+     * Helper function for generating Select2 options for this enum
+     * @param {Object} optionsKeys Set of option keys that will be loaded into Select2 widget
+     * @returns {{}} Select2 options, refer to Select2 documentation for what each option means
+     */
     getSelect2Options: function(optionsKeys){
         var select2Options = {};
         var emptyIdx = _.indexOf(optionsKeys, "");
@@ -166,8 +190,67 @@
          * this adds the ability to specify that threshold in metadata.
          */
         select2Options.minimumResultsForSearch = this.def.searchBarThreshold ? this.def.searchBarThreshold : 7;
+
+        /* If is multi-select, set multiple option on Select2 widget.
+         */
+        if (this.def.isMultiSelect) {
+            select2Options.multiple = true;
+        }
+
+        select2Options.initSelection = _.bind(this._initSelection, this);
+        select2Options.query = _.bind(this._query, this);
+
         return select2Options;
     },
+
+    /**
+     * Set the option selection during select2 initialization.
+     * Also used during drag/drop in multiselects.
+     * @param {Element} $ele Select2 element
+     * @param {Function} callback Select2 data callback
+     * @private
+     */
+    _initSelection: function($ele, callback){
+        var data = [];
+        var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
+        var values = $ele.val().split(",");
+        _.each(_.pick(options, values), function(value, key){
+            data.push({id: key, text: value});
+        }, this);
+        if(data.length === 1){
+            callback(data[0]);
+        } else {
+            callback(data);
+        }
+    },
+
+    /**
+     * Adapted from eachOptions helper in hbt-helpers.js
+     * Select2 callback used for loading the Select2 widget option list
+     * @param {Object} query Select2 query object
+     * @private
+     */
+    _query: function(query){
+        var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
+        var data = {
+            results: [],
+            // only show one "page" of results
+            more: false
+        };
+        if (_.isObject(options)) {
+            _.each(options, function(element, index) {
+                var text = "" + element;
+                //additionally filter results based on query term
+                if(query.matcher(query.term, text)){
+                    data.results.push({id: index, text: text});
+                }
+            });
+        } else {
+            options = null;
+        }
+        query.callback(data);
+    },
+
     /**
      *  Convert select2 value into model appropriate value for sync
      *
@@ -206,6 +289,13 @@
             result[key] = value.replace(/\^/g,"");
         });
         return result;
+    },
+
+    /**
+     * Override to remove default DOM change listener, we use Select2 events instead
+     * @override
+     */
+    bindDomChange: function() {
     },
 
     unbindDom: function() {
