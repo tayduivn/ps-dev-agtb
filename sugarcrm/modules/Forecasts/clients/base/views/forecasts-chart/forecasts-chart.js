@@ -97,9 +97,11 @@
             return false;
         }, this);
 
+        var collection;
+
         if (this.forecastWorksheetContext) {
             // listen for collection change events
-            var collection = this.forecastWorksheetContext.get('collection');
+            collection = this.forecastWorksheetContext.get('collection');
             if (collection) {
                 collection.on('change', this.repWorksheetChanged, this);
                 collection.on('reset', function(collection) {
@@ -110,7 +112,7 @@
 
         if (this.forecastManagerWorksheetContext) {
             // listen for collection change events
-            var collection = this.forecastManagerWorksheetContext.get('collection');
+            collection = this.forecastManagerWorksheetContext.get('collection');
             if (collection) {
                 collection.on('change', this.mgrWorksheetChanged, this);
                 collection.on('reset', function(collection) {
@@ -138,11 +140,9 @@
         }
 
         if (this.values.get('display_manager')) {
-            var collection = collection || this.forecastManagerWorksheetContext.get('collection');
-            this.parseManagerWorksheet(collection);
+            this.parseManagerWorksheet(collection || this.forecastManagerWorksheetContext.get('collection'));
         } else {
-            var collection = collection || this.forecastWorksheetContext.get('collection');
-            this.parseRepWorksheet(collection);
+            this.parseRepWorksheet(collection || this.forecastWorksheetContext.get('collection'));
         }
     },
 
@@ -284,6 +284,7 @@
         var f = this.getField('paretoChart');
 
         if (!_.isUndefined(f)) {
+            f.once('chart:pareto:rendered', this.parseCollectionForData, this);
             f.renderChart(options);
         }
     },
@@ -304,6 +305,12 @@
         if (meta.config) {
             return;
         }
+
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                this.parseCollectionForData();
+            }
+        }, this);
 
         this.on('render', function() {
             var f = this.getField('paretoChart'),
@@ -357,6 +364,7 @@
         }
         if (this.context) this.context.off(null, null, this);
         if (this.values) this.values.off(null, null, this);
+        app.events.off('app:toggle:sidebar', null, this);
         app.view.View.prototype.unbindData.call(this);
     }
 })
