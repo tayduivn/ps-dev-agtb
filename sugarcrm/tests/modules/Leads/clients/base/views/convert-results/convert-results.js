@@ -21,6 +21,7 @@ describe("Leads.Views.ConvertResults", function() {
         });
 
         view = SugarTest.createView('base', 'Leads', 'convert-results', null, null, true);
+        view.model.set('converted', true);
     });
 
     afterEach(function() {
@@ -75,4 +76,12 @@ describe("Leads.Views.ConvertResults", function() {
         expect(view.associatedModels.get(opportunityId).get('name')).toEqual(opportunityName);
     });
 
+    it("should not have any models in the collection if lead is not converted, even if contact is related", function() {
+        view.model.set({
+            converted: false,
+            contact_id: contactId,
+            contact_name: contactName
+        });
+        expect(view.associatedModels.length).toEqual(0);
+    });
 });
