@@ -62,6 +62,8 @@ if(!empty($_REQUEST['type'])) {
 // Start the output
 ////////////////////////////////////////////////////////
 	$form =new XTemplate ('modules/WorkFlowTriggerShells/CreateStepFilter.html');
+$js_include = getVersionedScript('cache/include/javascript/sugar_grp1.js')
+    . getVersionedScript('include/workflow/jutils.js');
 	$log->debug("using file modules/WorkFlowTriggerShells/CreateStepFilter.html");
 //Bug 12335: We need to include the javascript language file first. And also the language file in WorkFlow is needed.
         if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
@@ -88,6 +90,7 @@ if(!empty($_REQUEST['type'])) {
 
 	$form->assign("MOD", $mod_strings);
 	$form->assign("APP", $app_strings);
+$form->assign('JS_INCLUDE', $js_include);
 	$form->assign("JAVASCRIPT_LANGUAGE_FILES", $javascript_language_files);
 	$form->assign("MODULE_NAME", $currentModule);
 	$form->assign("GRIDLINE", $gridline);
