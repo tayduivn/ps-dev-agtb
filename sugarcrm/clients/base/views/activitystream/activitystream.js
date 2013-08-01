@@ -20,6 +20,11 @@
     cacheNameExpire: ":expiry",
     expiryTime: 36000000,   //1 hour in milliseconds
 
+    _unformattedPost: null,
+    _unformattedComments: {},
+
+    urlRegExp: /((http|https):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/ig,
+
     initialize: function(options) {
         this.opts = {params: {}};
         this.readonly = !!options.readonly;
@@ -192,6 +197,7 @@
 
         data = model.get('data');
         data.value = this.formatTags(data.value);
+        data.value = this.formatLinks(data.value);
 
         this.processAvatars();
         this.$('.comments').prepend(template(model.attributes));
@@ -231,14 +237,15 @@
     },
 
     _renderHtml: function(model) {
-        this.processAvatars();
-        this.formatAllTags();
-
         // Save state of the reply bar before rendering
         var isReplyBarOpen = this.$(".comment-btn").hasClass("active") && this.$(".comment-btn").is(":visible"),
             replyVal = this.$(".reply").html();
 
+        this.processAvatars();
+        this.formatAllTagsAndLinks();
+
         app.view.View.prototype._renderHtml.call(this);
+
         this.resizeVideo();
 
         // If the reply bar was previously open, keep it open (render hides it by default)
@@ -249,18 +256,61 @@
     },
 
     /**
-     * Format tags in post and comments.
+     * Format all tags and link in post and comments.
      */
-    formatAllTags: function() {
+    formatAllTagsAndLinks: function() {
         var post = this.model.get('data');
+        this.unformatAllTagsAndLinks();
+
         if (post) {
+            this._unformattedPost = post.value;
+            post.value = this.formatLinks(post.value);
             post.value = this.formatTags(post.value);
         }
 
         this.commentsCollection.each(function(model) {
             var data = model.get('data');
+            this._unformattedComments[model.get('id')] = data.value;
+            data.value = this.formatLinks(data.value);
             data.value = this.formatTags(data.value);
         }, this);
+    },
+
+    /**
+     * Revert back to the unformatted version of tags and links
+     */
+    unformatAllTagsAndLinks: function() {
+        var post = this.model.get('data');
+        if (post) {
+            post.value = this._unformattedPost || post.value;
+        }
+
+        this.commentsCollection.each(function(model) {
+            var data = model.get('data');
+            data.value = this._unformattedComments[model.get('id')] || data.value;
+        }, this);
+    },
+
+    /**
+     * Searches the post to identify links and make them as actual links
+     *
+     * @param {String} post
+     * @returns {String}
+     */
+    formatLinks: function(post) {
+        var formattedPost = '';
+
+        if (post.length > 0) {
+            formattedPost = post.replace(this.urlRegExp, function(url, protocol) {
+                var href = url;
+                if (!protocol) {
+                    href = 'http://' + url;
+                }
+                return '<a href="' + href + '" target="_blank">' + url + '</a>';
+            });
+        }
+
+        return formattedPost;
     },
 
     /**
