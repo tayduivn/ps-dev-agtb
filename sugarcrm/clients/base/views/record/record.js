@@ -420,7 +420,7 @@
     },
 
     handleCancel: function () {
-        this.model.revertAttributes({silent: !this.inlineEditMode});
+        this.model.revertAttributes();
         this.toggleEdit(false);
         this.inlineEditMode = false;
     },
