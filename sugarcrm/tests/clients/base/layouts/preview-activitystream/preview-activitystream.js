@@ -29,7 +29,7 @@ describe("Preview Activity Stream", function() {
     describe('fetchActivities()', function() {
         it('Should fetch a collection of activities', function() {
             var collectionStub = sinon.stub(layout.collection, 'fetch');
-            layout.fetchActivities();
+            layout.fetchActivities(new Backbone.Model());
             expect(collectionStub.calledOnce).toBe(true);
             collectionStub.restore();
         });
@@ -44,11 +44,21 @@ describe("Preview Activity Stream", function() {
             layout._previewOpened = false;
         });
 
-        it('Should render two activities when the collection size is two', function() {
+
+        it('Should render two activities when the collection size is two but add event', function() {
+            var renderPostStub = sinon.stub(layout, 'renderPost');
+
+            layout.collection.reset([new Backbone.Model(), new Backbone.Model()]);
+            layout.renderActivities(layout.collection);
+
+            expect(renderPostStub.calledTwice).toBe(true);
+            renderPostStub.restore();
+        });
+
+        it('Should render two activities when the collection size is two but reset event', function() {
             var renderPostStub = sinon.stub(layout, 'renderPost');
 
             layout.collection.add([new Backbone.Model(), new Backbone.Model()]);
-            layout.renderActivities(layout.collection);
 
             expect(renderPostStub.calledTwice).toBe(true);
             renderPostStub.restore();
@@ -87,7 +97,7 @@ describe("Preview Activity Stream", function() {
                 fakeTimer = sinon.useFakeTimers();
 
             layout._previewOpened = false;
-            layout.collection.add(new Backbone.Model());
+            layout.collection.reset(new Backbone.Model());
             layout.renderActivities(layout.collection);
 
             expect(renderPostStub.called).toBe(false);
