@@ -4,36 +4,18 @@
 
 /* Chart colors defined in colors.less */
 
-/*.chart-container {
-  height: 300px;
-  min-width: 100px;
-  min-height: 100px;
-  border: 1px solid #ddd;
-
-    Minimum height and width is a good idea to prevent negative SVG dimensions...
-    For example width should be =< margin.left + margin.right + 1,
-    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-
-}*/
-
-.chartWrap {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
 .nvd3 .nv-background {
   fill: none;
 }
 
 .nvd3.nv-noData {
-  font-size: 18px;
+  font-size: @fontSizeLarge;
   font-weight: bold;
 }
 
 .nv-title {
   margin: .2em .2em .2em .2em;
-  font-size: 1.4em;
+  font-size: @fontSizeLarge;
 }
 
 .nv-labels text {
@@ -41,67 +23,56 @@
   fill: #666;
 }
 
-.nv-chart svg {
-  max-height: none;
+svg {
+  max-height: 500px;
+}
+.nv-chart {
+  height: 400px;
+  min-width: 300px;
+  min-height: 100px;
+  /*
+    Minimum height and width is a good idea to prevent negative SVG dimensions...
+    For example width should be =< margin.left + margin.right + 1,
+    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+  */
+  svg {
+    max-height: none;
+  }
 }
 
-/********************
- * TOOLTIP CSS
- */
+.nv-label-value {
+  font-size: @fontSizeMedium;
+}
 
 .nvtooltip {
-  position: absolute;
-  background-color: rgba(22,22,22,.8);
-  color: rgb(255,255,255);
-  padding: 10px;
-  border: 1px solid #ddd;
-  z-index: 10000;
-
-  font-family: Arial;
-  font-size: 13px;
-  @transition: opacity 10ms linear;
-  .transition(@transition);
-
-  .box-shadow(~"4px 4px 8px rgba(0,0,0,.5)");
-  .border-radius(10px);
-
   pointer-events: none;
-
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
-  h3 {
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
-
-  h4 {
-    color: #fff;
-    text-align: center;
-    margin-bottom:6px
-  }
-
-  p {
-    color: #ddd;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
-
-  span {
-    display: inline-block;
-    margin: 2px 0;
-  }
 }
-
 .nvtooltip-pending-removal {
   position: absolute;
   pointer-events: none;
+}
+
+
+/**********
+* Styleguide
+*/
+
+.nv-demo {
+  padding: 20px;
+}
+
+body.full-screen {
+  .nv-chart {
+    min-width: 100px;
+    min-height: 100px;
+    border: 1px solid black;
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 20px;
+    bottom: 20px;
+    height: auto;
+  }
 }
 
 
@@ -123,11 +94,11 @@ svg {
 }
 
 svg text {
-  font: normal 12px sans-serif;
+  font: normal @chartTextSize sans-serif;
 }
 
 svg .title {
- font: bold 14px Arial;
+ font: bold @fontSizeLarge Arial;
 }
 
 
@@ -163,6 +134,7 @@ svg .title {
 
 .nvd3 .nv-legend .nv-series {
   cursor: pointer;
+  font-size: @chartTextSize;
 }
 
 .nvd3 .nv-legend .disabled circle {
@@ -176,7 +148,8 @@ svg .title {
 
 .nvd3 .nv-axis path {
   fill: none;
-  stroke: #000;
+  stroke: @chartTickColor;
+  stroke-width: @chartTickWidth;
   stroke-opacity: .75;
   shape-rendering: crispEdges;
 }
@@ -187,7 +160,8 @@ svg .title {
 
 .nvd3 .nv-axis line {
   fill: none;
-  stroke: #000;
+  stroke: @chartTickColor;
+  stroke-width: @chartTickWidth;
   stroke-opacity: .25;
   shape-rendering: crispEdges;
 }
@@ -202,8 +176,9 @@ svg .title {
 
 .nvd3 .nv-x.nv-axis text {
   transform: rotate(90);
-  font-size: 10px;
+  font-size: @chartTextSize;
 }
+
 
 /**********
 *  Bars
@@ -247,8 +222,9 @@ svg .title {
 .nvd3 .nv-multibar .nv-groups rect,
 .nvd3 .nv-multibarHorizontal .nv-groups rect,
 .nvd3 .nv-discretebar .nv-groups rect {
-  stroke-opacity: 0;
-
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  stroke: #FFF;
   @transition: fill-opacity 250ms linear;
   .transition(@transition);
 }
@@ -285,7 +261,7 @@ svg .title {
 
 .nvd3.nv-pie path {
   stroke: #fff;
-  stroke-width: 1px;
+  stroke-width: 2px;
   stroke-opacity: 1;
 }
 
@@ -302,6 +278,7 @@ svg .title {
   font-size: 32px;
   font-weight: bold;
 }
+
 
 /**********
 * Lines
@@ -335,7 +312,6 @@ svg .title {
 }
 
 .nvd3 .nv-groups .nv-point {
-
   @transition: stroke-width 250ms linear, stroke-opacity 250ms linear;
   .transition(@transition);
 }
@@ -357,6 +333,13 @@ svg .title {
 .nvd3 .nv-indexLine {
   cursor: ew-resize;
 }
+
+/*.nv-lineChart .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
+  fill-opacity: 1;
+  stroke-opacity: 1;
+  stroke: #FFF;
+  stroke-width: 3px;
+}*/
 
 
 /**********
@@ -481,8 +464,23 @@ svg .title {
 * Funnel
 */
 
-.nv-funnelWithLegend .nv-y .nv-axis path {
-  stroke: none;
+.nv-chart-funnel {
+  .nv-y path {
+    stroke: none;
+  }
+  .nv-label-value text {
+    font-size: 14px;
+    fill: @white;
+  }
+  text.nv-label-group {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .nv-group polygon {
+    stroke: #fff;
+    stroke-width: 2px;
+    stroke-opacity: 1;
+  }
 }
 
 
@@ -491,9 +489,6 @@ svg .title {
 */
 
 .nv-bubbleChart {
-  .nv-axis path {
-    stroke: @gray;
-  }
   .nvd3.nv-scatter.nv-single-point .nv-groups .nv-point {
     fill-opacity: 1;
     stroke-opacity: 1;
@@ -508,14 +503,14 @@ svg .title {
 .nv-multiBarWithLegend .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
   fill-opacity: 1;
   stroke-opacity: 1;
-  stroke-width: 2;
+  stroke-width: 2px;
 }
 
 .nv-pareto {
   .nv-quotaWrap line {
     opacity: .8;
     stroke: #444;
-    stroke-width: 3;
+    stroke-width: 3px;
     /*stroke-dasharray: '20, 5'; dashed lines must be defined in JS*/
   }
   .nv-y.nv-axis .domain {
@@ -526,7 +521,7 @@ svg .title {
     stroke: #bbb;
   }
   .nv-x.nv-axis .domain {
-    stroke-width: 4px;
+    stroke-width: 2px;
     stroke: #bbb;
   }
   svg text {
@@ -535,7 +530,7 @@ svg .title {
   }
   .nvd3 .nv-multibar .nv-groups rect {
     stroke-opacity: 1;
-    stroke-width: 2;
+    stroke-width: 2px;
     stroke: #FFF;
     fill-opacity: 0.85;
   }
@@ -548,6 +543,7 @@ svg .title {
 .nvd3 .nv-lineLegend .nv-series {
   cursor: default;
 }
+
 
 /**********
 * Treemap
@@ -640,9 +636,12 @@ svg .title {
 .stage_needsanalysis{
   fill: darken(@yellow, 10%);
 }
+
+
 /**********
 * Dendrogram
 */
+
 .nv-card {
   fill: #E9EFEF;
   stroke: #AAA;
@@ -663,22 +662,60 @@ svg .title {
   }
 }
 
+// for org chart demo renderer
+.nv-chart-org {
+  .nv-foreign-object body {
+    width: 100px;
+    height: 32px;
+    padding: 5px;
+    margin: 5px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background-color: #E9EFEF;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .nv-foreign-object img.rep-avatar {
+    float: left;
+    margin-right: 4px;
+  }
+  .nv-foreign-object div.rep-name {
+    font-size: 10px;
+    color: steelblue;
+  }
+  .nv-foreign-object div.rep-title {
+    font-size: 8px;
+  }
+}
+
 
 /**********
-* Styleguide
+* Globe
 */
 
-body.full-screen {
-  padding: 20px;
-  .nv-chart {
-    min-width: 100px;
-    min-height: 100px;
-    border: 1px solid black;
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    top: 20px;
-    bottom: 20px;
+.nv-chart-globe {
+  svg {
+    pointer-events: all;
+  }
+  .globe {
+    fill: #6699cc;
+    fill-opacity: .5;
+  }
+  .sphere {
+    fill: #dbe4f0;
+  }
+  .graticule {
+    fill: none;
+    stroke: #777;
+    stroke-width: .5px;
+    stroke-opacity: .5;
+  }
+  .countries path {
+    fill: #AAA;
+    stroke: #fff;
+  }
+  .states path {
+    fill: #CCC;
+    stroke: #fff;
   }
 }
 
@@ -691,9 +728,11 @@ body.full-screen {
   background: url(@textureTertiary);
 }
 
+
 /***********
 * Colors
 */
+
 .nv-fill-green {
   fill: @green;
   background-color: @green;

@@ -1,153 +1,3 @@
-
-.chartContainer {
-	float: left;
-	margin: 8px auto 20px;
-	width: 100%
-}
-
-.chartContainer .scrollBars {
-	overflow: auto;
-	max-height: 600px;
-	position: relative;
-    clear: both;
-}
-
-
-.view-forecastsChart {
-  .dropdown.form-horizontal,
-  .btn-toolbar.pull-right {
-    margin: 1px;
-  }
-  .btn-toolbar .btn {
-    padding: 6px 8px 1px;
-  }
-  .chartContainer {
-    min-width: 400px;
-    margin: 0;
-  }
-  h4 {
-    .rtl(@direction,ltr);
-    .rtlTextAlign(@direction,right);
-  }
-  .dropdown.form-horizontal {
-    margin: 0;
-  }
-  #chart {
-    overflow-x: auto;
-  }
-  .nv-chart {
-    border: none;
-  }
-}
-
-
-.thumbnail.viz {
-  svg {
-    max-height: 350px;
-  }
-  &.expanded {
-    position: fixed;
-    top: 48px;
-    left: 0;
-    right: 0;
-    bottom: 45px;
-    z-index: 1000;
-    margin: 0 !important;
-    .widget-content {
-      position: absolute;
-      top: 60px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 20px;
-    }
-    svg {
-      max-height: none;
-    }
-    svg text {
-      font-size: 14px;
-    }
-    .nvd3 .nv-x.nv-axis text {
-      font-size: 12px;
-    }
-    a[data-toggle="widget"] {
-      display: none;
-    }
-    h4.headerpane {
-      font-size: 24px;
-      padding: 20px 0 0 20px;
-      .box-sizing(border-box);
-    }
-    .btn-toolbar {
-      margin: 16px 20px 0 8px;
-    }
-    &.with-options .widget-content {
-      top: 108px;
-    }
-    .dashlet-options {
-      padding: 10px 20px;
-    }
-  }
-}
-
-// org chart zoom control
-.btn-slider {
-  display: inline-block;
-  padding: 5px;
-  .noUiSlider {
-    width: 50px;
-    height: 4px;
-    display: inline-block;
-    margin: 0;
-    top: -1px;
-  }
-  .noUiSliderEnds {
-    width: 50px;
-    margin: 0 30px 0 0;
-    .zoom-control {
-      position: absolute;
-      top: 1px;
-      font-size: 18px;
-      &.disabled {
-        color: lighten(@grayLight,10%) !important;
-      }
-    }
-    i[data-control="zoom-out"] {
-      left: -26px;
-    }
-    i[data-control="zoom-in"] {
-      right: -26px;
-    }
-    &:before,
-    &:after {
-      top: 6px;
-      height: 4px;
-    }
-    &:before {
-      border-radius: 2px 0 0 2px;
-      left: -6px;
-    }
-    &:after {
-      border-radius: 0 2px 2px 0;
-      right: -6px;
-    }
-  }
-}
-
-
-svg {
-  max-height: 500px;
-}
-.nv-chart {
-  height: 400px;
-  min-width: 300px;
-  min-height: 100px;
-  /*
-    Minimum height and width is a good idea to prevent negative SVG dimensions...
-    For example width should be =< margin.left + margin.right + 1,
-    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-  */
-}
 .dashboard {
   .thumbnail.widget:not(.collapsed) {
     //overflow: hidden;
@@ -212,74 +62,6 @@ svg {
   }
 }
 
-// for org chart demo renderer
-.nv-chart-org {
-  .nv-foreign-object body {
-    width: 100px;
-    height: 32px;
-    padding: 5px;
-    margin: 5px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    background-color: #E9EFEF;
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  }
-  .nv-foreign-object img.rep-avatar {
-    float: left;
-    margin-right: 4px;
-  }
-  .nv-foreign-object div.rep-name {
-    font-size: 10px;
-    color: steelblue;
-  }
-  .nv-foreign-object div.rep-title {
-    font-size: 8px;
-  }
-}
-
-.nv-chart-funnel {
-  .nv-y path {
-    stroke: none;
-  }
-  .nv-label-value text {
-    font-size: 14px;
-    fill: @white;
-  }
-  text.nv-label-group {
-    font-size: 16px;
-    font-weight: bold;
-  }
-}
-
-
-// globe chart
-.nv-chart-globe {
-  svg {
-    pointer-events: all;
-  }
-  .globe {
-    fill: #6699cc;
-    fill-opacity: .5;
-  }
-  .sphere {
-    fill: #dbe4f0;
-  }
-  .graticule {
-    fill: none;
-    stroke: #777;
-    stroke-width: .5px;
-    stroke-opacity: .5;
-  }
-  .countries path {
-    fill: #AAA;
-    stroke: #fff;
-  }
-  .states path {
-    fill: #CCC;
-    stroke: #fff;
-  }
-}
-
 //interactions
 //opportunity-metrics
 //casessummary
@@ -293,42 +75,56 @@ span.count {
     height: 22px;
     line-height: 22px;
     padding: 3px;
-    //position: absolute;
-    //top: -14px;
-    //left: 50%;
-    //margin-left: -14px;
   }
-}
-
-/*TOOLTIPS*/
-.tip {
-  color: #111;
-  width: auto;
-  background-color: white;
-  border:1px solid #ccc;
-  -moz-box-shadow:#555 2px 2px 8px;
-  -webkit-box-shadow:#555 2px 2px 8px;
-  -o-box-shadow:#555 2px 2px 8px;
-  box-shadow:#555 2px 2px 8px;
-  opacity:0.9;
-  filter:alpha(opacity=90);
-  font-size:11px;
-  font-family: Arial, Helvetica, sans-serif;
-  padding:7px;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
 }
 
 .rotatedLabel {
   .rotate(-90deg);
 }
-
 .rotatedLabelReverse {
   .rotate(90deg);
 }
 
-//from navbar.less
-.row-fluid > #charts.span12 {
-  margin-left: 0 !important;
+// org chart zoom control
+.btn-slider {
+  display: inline-block;
+  padding: 5px;
+  .noUiSlider {
+    width: 50px;
+    height: 4px;
+    display: inline-block;
+    margin: 0;
+    top: -1px;
+  }
+  .noUiSliderEnds {
+    width: 50px;
+    margin: 0 30px 0 0;
+    .zoom-control {
+      position: absolute;
+      top: 1px;
+      font-size: 18px;
+      &.disabled {
+        color: lighten(@grayLight,10%) !important;
+      }
+    }
+    i[data-control="zoom-out"] {
+      left: -26px;
+    }
+    i[data-control="zoom-in"] {
+      right: -26px;
+    }
+    &:before,
+    &:after {
+      top: 6px;
+      height: 4px;
+    }
+    &:before {
+      border-radius: 2px 0 0 2px;
+      left: -6px;
+    }
+    &:after {
+      border-radius: 0 2px 2px 0;
+      right: -6px;
+    }
+  }
 }

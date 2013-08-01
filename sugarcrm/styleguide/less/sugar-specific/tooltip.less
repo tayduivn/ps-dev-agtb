@@ -2,10 +2,14 @@
 .tooltip {
   z-index: @zindexTooltip;
   text-shadow: none;
-  &.bottom { margin-top:   8px; }
   font-weight: normal;
   word-wrap: break-word;
-  &.in     { .opacity(100); }
+  &.bottom {
+    margin-top: 8px;
+  }
+  &.in {
+    .opacity(100);
+  }
 }
 
 .tooltip-inner {
@@ -13,5 +17,8 @@
   word-wrap: break-word;
   &> div {
     text-align: left;
+  }
+  &> p {
+    margin: 0;
   }
 }

@@ -1,8 +1,63 @@
 .widget {
-  h4 {
-    cursor: ns-resize;
+
+  padding: 0 0 1px 0;
+  border: 0;
+  @shadow: 0 2px 1px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4), -1px -1px 2px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+  position: relative;
+  margin-bottom: 20px !important;
+  background: @white;
+  .transition(0);
+
+  h4,
+  .dashlet-options {
+    font-size: @baseFontSize;
+    color: @tableHeader;
+    line-height: @baseLineHeight;
+    font-weight: 500;
+    border-bottom: 1px solid darken(@grayLighter, 5%);
     margin: 0;
+    .rtlPadding(@direction,7px 10px 7px 80px);
+    .rtl(@direction,ltr);
+    .rtlTextAlign(@direction,right);
+    a {
+      color: lighten(@gray, 20%);
+    }
   }
+
+  h4 {
+    padding: 7px 80px 8px 10px;
+    .border-radius(3px 3px 0 0);
+    #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
+    cursor: ns-resize;
+  }
+
+  .dashlet-options {
+    .border-radius(0);
+    #gradient > .vertical(@white, lighten(@grayLighter, 1%));
+    padding: 6px 8px;
+    .select2-container,
+    .btn-group {
+      padding: 0;
+      margin: 0;
+    }
+    .btn:first-child {
+      margin: 0;
+    }
+    .btn,
+    .btn-slider,
+    .dropdown {
+      font-size: @baseFontSize;
+    }
+    .dropdown-toggle {
+      margin-left: 0;
+      white-space: nowrap;
+    }
+    .dashlet-group .btn-toolbar .btn.toggle-control {
+      margin-left: 4px;
+    }
+  }
+
   &.out {
     padding: 0;
     h4 {
@@ -17,19 +72,140 @@
       content: "\f077";
     }
   }
-  .dashlet-options {
-    .btn,
-    .btn-slider,
-    .dropdown {
-      font-size: @baseFontSize;
+
+
+  p {
+    padding: 0 5px;
+    margin: 0;
+  }
+
+  .btn.loading {
+    .center-block();
+    .clearfix();
+    width: 200px;
+    float: none;
+    margin-bottom: 20px;
+  }
+
+  .scroll {
+    overflow: auto;
+    min-height: 280px;
+  }
+
+  .btn-toolbar.pull-right {
+    margin: 3px;
+  }
+
+  .btn-toolbar .btn {
+    span {
+      display: inline-block;
     }
-    .dropdown-toggle {
-      margin-left: 0;
-      white-space: nowrap;
+  }
+
+  .actions a:hover {
+    color: @white;
+  }
+
+  .unstyled li .progress,
+  .unstyled li .progress .bar {
+    height: 12px;
+  }
+
+  .unstyled {
+    margin: 5px;
+    li {
+      margin: 10px;
+      .label {
+        margin: 3px 12px 12px 0;
+      }
     }
-    .dashlet-group .btn-toolbar .btn.toggle-control {
-      margin-left: 4px;
+    li:last-child {
+      border-bottom: none;
     }
+  }
+
+  //navbar.less
+  .listed {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      position: relative;
+      border-bottom: 1px solid @grayLighter;
+      margin: 0;
+      padding: 14px;
+      &:last-child {
+        border-bottom: none;
+      }
+      img {
+        margin: 0 12px 12px 0;
+      }
+    }
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+  table.dataTable > tbody > tr:last-child td {
+    border-bottom-width: 0;
+  }
+
+  &.expanded {
+    position: fixed;
+    top: 48px;
+    left: 0;
+    right: 0;
+    bottom: 45px;
+    z-index: 1000;
+    margin: 0 !important;
+    .widget-content {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 20px;
+    }
+    svg {
+      max-height: none;
+    }
+    svg text {
+      font-size: 14px;
+    }
+    .nvd3 .nv-x.nv-axis text {
+      font-size: 12px;
+    }
+    a[data-toggle="widget"] {
+      display: none;
+    }
+    h4.headerpane {
+      font-size: 24px;
+      padding: 20px 0 0 20px;
+      .box-sizing(border-box);
+    }
+    .btn-toolbar {
+      margin: 16px 20px 0 8px;
+    }
+    &.with-options .widget-content {
+      top: 108px;
+    }
+    .dashlet-options {
+      padding: 10px 20px;
+    }
+  }
+}
+
+
+.widget-container {
+  padding: 5px;
+  .btn-toolbar .btn {
+    margin-left: 0;
+  }
+}
+.widget-content {
+  .actions {
+    top: 3px;
+    position: relative;
   }
 }
 .widget-control {
@@ -37,7 +213,6 @@
   right: 5%;
   top: 15px;
 }
-
 
 .widget-content {
   .webpage {
@@ -49,4 +224,9 @@
       .border-radius(0 0 3px 3px);
     }
   }
+}
+
+//navbar.less
+.side .block .listed {
+  margin: -10px 0 0;
 }
