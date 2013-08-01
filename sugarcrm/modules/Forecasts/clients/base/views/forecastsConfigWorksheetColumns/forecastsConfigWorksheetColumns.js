@@ -74,7 +74,8 @@
         this.allOptions = [];
         this.selectedOptions = [];
 
-        var cfgFields = app.metadata.getModule('Forecasts', 'config').worksheet_columns,
+        var config = app.metadata.getModule('Forecasts', 'config'),
+            cfgFields = config.worksheet_columns,
             index = 0;
 
         // set up scenarioOptions
@@ -87,23 +88,29 @@
                 },
                 cField = _.find(cfgFields, function(cfgField) {
                     return cfgField == field.name;
-                }, this);
+                }, this),
+                addFieldToFullList = true;
 
-            this.allOptions.push(obj);
+            // save the field objects
+            if (field.name == 'best_case') {
+                this.bestFieldObj = obj;
+                addFieldToFullList = (config.show_worksheet_best === 1)
+            } else if (field.name == 'likely_case') {
+                this.likelyFieldObj = obj;
+                addFieldToFullList = (config.show_worksheet_likely === 1)
+            } else if (field.name == 'worst_case') {
+                this.worstFieldObj = obj;
+                addFieldToFullList = (config.show_worksheet_worst === 1)
+            }
+
+            if (addFieldToFullList) {
+                this.allOptions.push(obj);
+            }
 
             // If the current field being processed was found in the config fields,
             if (!_.isUndefined(cField)) {
                 // push field to defaults
                 this.selectedOptions.push(obj);
-            }
-
-            // save the field objects
-            if (field.name == 'best_case') {
-                this.bestFieldObj = obj;
-            } else if (field.name == 'likely_case') {
-                this.likelyFieldObj = obj;
-            } else if (field.name == 'worst_case') {
-                this.worstFieldObj = obj;
             }
 
             index++;
@@ -177,13 +184,11 @@
                 this._render();
 
                 // update the model, since a field was added or removed
-                if (_.isFunction(this.wkstColumnsSelect2.select2)) {
-                    var arr = [];
-                    _.each(this.wkstColumnsSelect2.select2('data'), function(field) {
-                        arr.push(field.id);
-                    }, this)
-                    this.setModelValue(arr);
-                }
+                var arr = [];
+                _.each(this.selectedOptions, function(field) {
+                    arr.push(field.id);
+                }, this);
+                this.setModelValue(arr);
 
             }, this);
         }
