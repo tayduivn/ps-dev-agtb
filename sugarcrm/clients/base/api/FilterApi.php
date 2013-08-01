@@ -50,6 +50,14 @@ class FilterApi extends SugarApi
             ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
+                'path' => array('<module>', 'filter'),
+                'pathVars' => array('module', ''),
+                'method' => 'filterList',
+                'shortHelp' => 'Lists filtered records.',
+                'longHelp' => 'include/api/help/module_filter_post_help.html',
+            ),
+            'filterModulePostCount' => array(
+                'reqType' => 'POST',
                 'path' => array('<module>', 'filter', 'count'),
                 'pathVars' => array('module', '', ''),
                 'method' => 'filterListCount',
