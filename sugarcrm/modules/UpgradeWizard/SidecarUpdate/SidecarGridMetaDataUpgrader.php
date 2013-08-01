@@ -107,7 +107,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 END;
                 sugar_file_put_contents($this->defsfile, $data);
             }
-        }
+              }
         return $newdefs;
     }
 
