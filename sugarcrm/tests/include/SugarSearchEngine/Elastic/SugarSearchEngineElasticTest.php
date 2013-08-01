@@ -209,6 +209,74 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $msg = "Expected Account bean id {$this->account->id} to be added to fts_queue table";
         $this->assertEquals($ftsCountBefore['total'], ($ftsCountAfter['total'] - 1), $msg);
     }
+
+    public function constructMainFilterDataProvider()
+    {
+        return array(
+            array(array()),
+            array(
+                array('my_items' => true),
+            ),
+            array(
+                array('favorites' => 2)
+            ),
+            array(
+                array(
+                    'filter' => array(
+                        'type' => 'range',
+                        'fieldname' => 'test',
+                        'range' => array('to' => 3)
+                    )
+                )
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider constructMainFilterDataProvider
+     */
+    public function testConstructMainFilter($options)
+    {
+        $stub = $this->getMockBuilder('SugarSearchEngineElasticTestStub')
+            ->setMethods(array('constructModuleLevelFilter'))
+            ->getMock();
+
+        $stub->expects($this->any())
+            ->method('constructModuleLevelFilter')
+            ->will($this->returnValue(new Elastica_Filter_Bool()));
+
+        $filter = $stub
+            ->constructMainFilter(array('Accounts', 'Opportunities', 'Contacts'), $options)
+            ->toArray();
+
+        $this->assertArrayHasKey('should', $filter['bool']);
+    }
+
+    public function testConstructMainFilterInstanceOf()
+    {
+        $stub = $this->getMockBuilder('SugarSearchEngineElasticTestStub')
+            ->setMethods(array('constructModuleLevelFilter'))
+            ->getMock();
+
+        $stub->expects($this->any())
+            ->method('constructModuleLevelFilter')
+            ->will($this->returnValue(new Elastica_Filter_Bool()));
+
+        $result = $stub->constructMainFilter(array('Accounts', 'Opportunities'));
+
+        $this->assertInstanceOf('Elastica_Filter_Bool', $result);
+    }
+
+    public function testConstructMainFilterNoModules()
+    {
+        $stub = new SugarSearchEngineElasticTestStub();
+
+        $filter = $stub
+            ->constructMainFilter(array())
+            ->toArray();
+
+        $this->assertArrayNotHasKey('should', $filter['bool']);
+    }
 }
 
 
@@ -228,5 +296,10 @@ class SugarSearchEngineElasticTestStub extends SugarSearchEngineElastic
     public function setForceAsyncIndex($state)
     {
         $this->forceAsyncIndex = $state;
+    }
+
+    public function constructMainFilter($finalTypes, $options = array())
+    {
+        return parent::constructMainFilter($finalTypes, $options);
     }
 }
