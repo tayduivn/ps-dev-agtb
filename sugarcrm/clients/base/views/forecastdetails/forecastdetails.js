@@ -420,30 +420,32 @@
         _.extend(this.serverData, data);
 
         // update data with any values serverData had but data doesn't
-        _.extend(data, this.serverData);
+        // we create a new variable here, since we don't want to update the data param back on the worksheet table
+        // and maybe break something
+        var d = _.extend({}, data, this.serverData);
 
-        this.likelyTotal = data.likely;
-        this.bestTotal = data.best;
-        this.worstTotal = data.worst;
+        this.likelyTotal = d.likely;
+        this.bestTotal = d.best;
+        this.worstTotal = d.worst;
 
-        data.quota_amount_str = app.currency.formatAmountLocale(data.quota_amount);
-        data.closed_amount_str = app.currency.formatAmountLocale(data.closed_amount);
+        d.quota_amount_str = app.currency.formatAmountLocale(d.quota_amount);
+        d.closed_amount_str = app.currency.formatAmountLocale(d.closed_amount);
 
         // handle deficit
-        data.deficit_amount = Math.abs(app.math.sub(data.quota_amount, data.closed_amount));
-        data.deficit_amount_str = app.currency.formatAmountLocale(data.deficit_amount);
-        data.is_deficit = (parseFloat(data.quota_amount) > parseFloat(data.closed_amount));
+        d.deficit_amount = Math.abs(app.math.sub(d.quota_amount, d.closed_amount));
+        d.deficit_amount_str = app.currency.formatAmountLocale(d.deficit_amount);
+        d.is_deficit = (parseFloat(d.quota_amount) > parseFloat(d.closed_amount));
 
-        var deficitLabelKey = (data.is_deficit) ? 'LBL_FORECAST_DETAILS_DEFICIT' : 'LBL_FORECAST_DETAILS_SURPLUS';
-        data.deficit_label = app.lang.get(deficitLabelKey, 'Forecasts');
+        var deficitLabelKey = (d.is_deficit) ? 'LBL_FORECAST_DETAILS_DEFICIT' : 'LBL_FORECAST_DETAILS_SURPLUS';
+        d.deficit_label = app.lang.get(deficitLabelKey, 'Forecasts');
 
         // convert detailsForCase params to html template
-        data.worst_details = this.detailsMsgTpl(this.getDetailsForCase('worst', this.worstTotal, data.quota_amount, data.closed_amount));
-        data.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, data.quota_amount, data.closed_amount));
-        data.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, data.quota_amount, data.closed_amount));
+        d.worst_details = this.detailsMsgTpl(this.getDetailsForCase('worst', this.worstTotal, d.quota_amount, d.closed_amount));
+        d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount));
+        d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount));
 
         if(this.model) {
-            this.model.set(data);
+            this.model.set(d);
             this.renderSubDetails();
         }
     },
