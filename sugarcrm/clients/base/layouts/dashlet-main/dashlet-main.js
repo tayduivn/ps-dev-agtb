@@ -164,11 +164,17 @@
         var targetDashlet = targetComponent.layout._components.splice(0),
             sourceDashlet = sourceComponent.layout._components.splice(0);
 
-        _.each(targetDashlet, function (comp) {
+        //switch the metadata
+        var targetMeta = app.utils.deepCopy(targetComponent.layout.meta),
+            sourceMeta = app.utils.deepCopy(sourceComponent.layout.meta);
+        targetComponent.layout.meta = sourceMeta;
+        sourceComponent.layout.meta = targetMeta;
+
+        _.each(targetDashlet, function(comp) {
             sourceComponent.layout._components.push(comp);
             comp.layout = sourceComponent.layout;
         }, this);
-        _.each(sourceDashlet, function (comp) {
+        _.each(sourceDashlet, function(comp) {
             targetComponent.layout._components.push(comp);
             comp.layout = targetComponent.layout;
         }, this);
