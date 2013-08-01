@@ -22,7 +22,7 @@ class ForecastWorksheetHooks extends AbstractForecastHooks
      * @param array $args
      * @return bool
      */
-    public static function checkRelatedName(&$bean, $event, $args)
+    public static function checkRelatedName($bean, $event, $args)
     {
 
         if ($event == 'before_save') {
