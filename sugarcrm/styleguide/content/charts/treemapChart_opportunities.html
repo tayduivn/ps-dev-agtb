@@ -22,14 +22,15 @@
   </style>
 </head>
 <body class="full-screen">
-
-<div id="treemap" class="nv-treemap nv-chart">
-  <svg></svg>
-</div>
+  <div class="nv-demo">
+    <div id="treemap" class="nv-treemap nv-chart">
+      <svg></svg>
+    </div>
+  </div>
 
 <script src="../js/jquery-1.7.2.min.js"></script>
-<script src="js/underscore-min.js"></script>
-<script src="js/backbone-min.js"></script>
+<script src="../js/underscore-min.js"></script>
+<script src="../js/backbone-min.js"></script>
 <script src="../../../include/javascript/nvd3/lib/d3.min.js"></script>
 <script src="../../../include/javascript/nvd3/nv.d3.min.js"></script>
 <script src="data/treemap_data.js"></script>
@@ -77,7 +78,7 @@
                   var rep = (point.assigned_user_name) ? point.assigned_user_name : (point.className) ? point.parent.name : point.name,
                       stage = (point.sales_stage) ? point.sales_stage : (point.className) ? point.name : null,
                       account = (point.account_name) ? point.account_name : null;
-                  var tt = '<h4>Amount: <b>$' + d3.format(',.2s')(point.value) + '</b></h4>' +
+                  var tt = '<p>Amount: <b>$' + d3.format(',.2s')(point.value) + '</b></p>' +
                     '<p>Sales Rep: <b>' + rep + '</b></p>';
                   if (stage) tt += '<p>Stage: <b>' +  stage + '</b></p>';
                   if (account) tt += '<p>Account: <b>' +  account + '</b></p>';
