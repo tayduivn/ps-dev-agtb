@@ -545,30 +545,13 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // Set the return result
         $result = false;
 
-        // Get our original view defs
-        $originalDefs = $this->getImplementation()->getOriginalViewdefs();
-
-        // Get the panel label
-        $nestedDefs = $this->getNestedDefs($originalDefs, $this->_view);
-        $panelKey = key($nestedDefs['panels']);
-
-        // Handle labels the same way that the converter does
-        $label = $panelKey;
-        if (isset($nestedDefs['panels'][$panelKey]['label'])) {
-            $label = $nestedDefs['panels'][$panelKey]['label'];
-        } elseif (isset($nestedDefs['panels'][$panelKey]['name'])) {
-            if (isset($this->panelLabels[$nestedDefs['panels'][$panelKey]['name']])) {
-                $label = $this->panelLabels[$nestedDefs['panels'][$panelKey]['name']];
-            }
-        }
-
         // Loop and find
-        if (isset($this->_viewdefs['panels'][$label]) && is_array($this->_viewdefs['panels'][$label])) {
-            foreach ($this->_viewdefs['panels'][$label] as $rowIndex => $row) {
+        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel ) {
+            foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     foreach ($row as $fieldIndex => $field) {
                         if ($field == $fieldName) {
-                            $this->_viewdefs['panels'][$label][$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
+                            $panel[$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
                             $result = true;
                             break 2;
                         }
@@ -576,10 +559,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 }
             }
 
+            if(!$result) {
+                // we didn't find anything, no need to rearrange panels
+                continue;
+            }
+
             // Now check to see if any of our rows are totally empty, and if they
             // are, pluck them completely
             $newRows = array();
-            foreach ($this->_viewdefs['panels'][$label] as $rowIndex => $row) {
+            foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     $cols = count($row);
                     $empties = 0;
@@ -591,7 +579,6 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                     if ($empties == $cols) {
                         // All empties, remove it and keep looping
-                        //unset($this->_viewdefs['panels'][$label][$rowIndex]);
                         continue;
                     }
 
@@ -599,10 +586,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 }
             }
 
-            $this->_viewdefs['panels'][$label] = $newRows;
+            $this->_viewdefs['panels'][$panelID] = $newRows;
+            return true;
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -627,24 +615,24 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         $remove = '';
         if (is_string($field)) {
             $remove = $field;
-            
+
         } elseif (is_array($field) && isset($field['name'])) {
             $remove = $field['name'];
         }
-        
+
         if ($remove) {
             // Only remove a field once.
             if (empty($this->fieldsRemovedFromAvailability[$remove])) {
                 // Remove the field first
                 unset($availableFields[$remove]);
-                
+
                 // Mark this field as having been removed. This prevents endless
                 // recursion when a combination field is named after an actual
                 // field in the view defs
                 $this->fieldsRemovedFromAvailability[$remove] = true;
-                
+
                 // Now see if this field is a combination field in the original defs
-                if (isset($this->_originalViewDef[$remove]) 
+                if (isset($this->_originalViewDef[$remove])
                     && is_array($this->_originalViewDef[$remove])
                     && isset($this->_originalViewDef[$remove]['fields'])
                     && is_array($this->_originalViewDef[$remove]['fields'])

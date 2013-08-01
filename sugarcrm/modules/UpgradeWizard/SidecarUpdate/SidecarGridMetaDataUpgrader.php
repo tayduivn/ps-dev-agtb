@@ -32,6 +32,17 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     );
 
     /**
+     * File with basic definitions for the view
+     * @var string
+     */
+    protected $defsfile;
+    /**
+     * File with template definitions for the view
+     * @var string
+     */
+    protected $basic_defsfile;
+
+    /**
      * Load current Sugar metadata for this module
      * @return array
      */
@@ -52,9 +63,9 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         // need to get the metadata from the SugarObject type.
         // If there are defs for this module, grab them
         if (in_array($this->module, $GLOBALS['moduleList'])) {
-            $newdefsFile = 'modules/' . $this->module . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
-            if (file_exists($newdefsFile)) {
-                require $newdefsFile;
+            $this->defsfile = 'modules/' . $this->module . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
+            if (file_exists($this->defsfile)) {
+                require $this->defsfile;
                 if (isset($viewdefs[$this->module][$client]['view'][$viewname])) {
                     $newdefs = $viewdefs[$this->module][$client]['view'][$viewname];
                 }
@@ -67,16 +78,17 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
             $sm = StudioModuleFactory::getStudioModule($this->module);
             $moduleType = $sm->getType();
-            $newdefsFile = 'include/SugarObjects/templates/' . $moduleType . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
-            if (file_exists($newdefsFile)) {
-                require $newdefsFile;
+            $this->base_defsfile = 'include/SugarObjects/templates/' . $moduleType . '/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
+            if (file_exists($this->base_defsfile)) {
+                require $this->base_defsfile;
             } else {
-                $newdefsFile = 'include/SugarObjects/templates/basic/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
-                if (file_exists($newdefsFile)) {
-                    require $newdefsFile;
+                $this->base_defsfile = 'include/SugarObjects/templates/basic/clients/' . $client . '/views/' . $viewname . '/' . $viewname . '.php';
+                if (file_exists($this->base_defsfile)) {
+                    require $this->base_defsfile;
+                } else {
+                    $this->logUpgradeStatus("Could not find base for module {$this->module} type $moduleType");
                 }
             }
-
             // See if there are viewdefs defined that we can use
             if (isset($viewdefs['<module_name>'][$client]['view'][$viewname])) {
                 $newdefs = $viewdefs['<module_name>'][$client]['view'][$viewname];

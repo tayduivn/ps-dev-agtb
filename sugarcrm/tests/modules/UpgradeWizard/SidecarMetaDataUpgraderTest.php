@@ -275,13 +275,18 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $defs = $viewdefs[$module][$type]['view'][$view];
         $this->assertTrue(isset($defs['panels'][1]['fields']), 'Field array is missing from the upgrade file');
         $idfield = null;
-        foreach($defs['panels'][1]['fields'] as $field) {
-            // look for ID
-            if($field == 'id'  || (!empty($field['name']) && $field['name'] == 'id')) {
-                $idfield = $field;
+        foreach($defs['panels'] as $panel) {
+            // adding to header is wrong
+            if(!empty($panel['header'])) continue;
+            foreach($panel['fields'] as $field) {
+                // look for ID
+                if($field == 'id'  || (!empty($field['name']) && $field['name'] == 'id')) {
+                    $idfield = $field;
+                    break 2;
+                }
             }
         }
-//        var_dump($defs['panels'][1]['fields']);
+        //        var_dump($defs['panels'][1]['fields']);
         $this->assertNotEmpty($idfield, "ID field not found in merged view");
     }
 
