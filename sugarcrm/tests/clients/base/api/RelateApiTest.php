@@ -37,9 +37,9 @@ require_once ("clients/base/api/RelateApi.php");
  */
 class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
-    public $accounts;
-    public $contacts;
-    public $roles;
+    public $accounts = array();
+    public $contacts = array();
+    public $roles = array();
     public $relateApi;
 
     public function setUp() {
@@ -97,7 +97,7 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $id = $GLOBALS['current_user']->id;
         $GLOBALS['current_user'] = BeanFactory::getBean('Users', $id);
 
-        $result = $this->relateApi->listRelated(new RelateApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, 'link_name' => 'contacts'));
+        $result = $this->relateApi->filterRelated(new RelateApiServiceMockUp, array('module' => 'Accounts','record' => $this->accounts[0]->id, 'link_name' => 'contacts'));
         $this->assertNotEmpty($result['records'], "Records were empty");
         $this->assertEquals($result['records'][0]['id'], $this->contacts[0]->id, "ID Does not match");
     }
@@ -143,6 +143,20 @@ class RelateApiTest extends Sugar_PHPUnit_Framework_TestCase {
         return $role;
     }
 
+    public function testFilteringOnARelationship()
+    {
+        $account_id = $this->accounts[0]->id;
+        $contact_id = $this->contacts[0]->id;
+        $serviceMock = new RelateApiServiceMockUp();
+        $reply = $this->relateApi->filterRelated($serviceMock,
+                array('module' => 'Accounts', 'record' => $account_id,
+                        'link_name' => 'contacts',
+                        'filter' => array(array('first_name' => array('$starts' => "RelateApi"))),
+                        'fields' => 'id,name', 'order_by' => 'name:ASC'));
+
+        $this->assertEquals(1, count($reply['records']));
+        $this->assertEquals($contact_id, $reply['records'][0]['id']);
+    }
 
 }
 

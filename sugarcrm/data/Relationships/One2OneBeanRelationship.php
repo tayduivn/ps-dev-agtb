@@ -123,8 +123,10 @@ class One2OneBeanRelationship extends One2MBeanRelationship
             ->on()->equalsField("{$startingTable}.{$startingKey}","{$options['myAlias']}.{$targetKey}")
             ->equals("{$options['myAlias']}.deleted","0");
 
-        $this->buildSugarQueryRoleWhere($sugar_query, $options['myAlias']);
-
+        if (empty($options['ignoreRole'])) {
+            $this->buildSugarQueryRoleWhere($sugar_query, $options['myAlias']);
+        }
+        
         return $sugar_query->join[$options['myAlias']];
     }
 }

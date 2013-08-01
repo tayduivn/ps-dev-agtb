@@ -536,7 +536,9 @@ class M2MRelationship extends SugarRelationship
                     ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
                     ->equals("{$targetTable_alias}.deleted","0");
 
-        $this->buildSugarQueryRoleWhere($sugar_query,$joinTable_alias);
+        if (empty($options['ignoreRole'])) {
+            $this->buildSugarQueryRoleWhere($sugar_query,$joinTable_alias);
+        }
         return array($joinTable_alias => $sugar_query->join[$joinTable_alias], $targetTable_alias => $sugar_query->join[$targetTable_alias]);
     }
 

@@ -461,6 +461,7 @@ class SugarQuery
         $alias = (!empty($options['alias'])) ? $options['alias'] : $join;
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
         $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
+        $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
         $bean = $this->from;
         if (is_array($bean)) {
@@ -477,7 +478,8 @@ class SugarQuery
             array(
                 'joinTableAlias' => $bean->module_name,
                 'myAlias' => $alias,
-                'joinType' => $joinType
+                'joinType' => $joinType,
+                'ignoreRole' => $ignoreRole,
             )
         );
         $joined = BeanFactory::newBean($bean->$join->getRelatedModuleName());
