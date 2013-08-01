@@ -28,18 +28,41 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['base']['view']['wizard-page'] = array(
-    'buttons' => array(
+$viewdefs['base']['view']['user-locale-wizard-page'] = array(
+    'title' => 'LBL_WIZ_USER_LOCALE_TITLE',
+    'message' => 'LBL_SETUP_USER_LOCALE_INFO',
+    'panels' => array(
         array(
-            'name' => 'previous_button',
-            'type' => 'button',
-            'label' => 'LNK_LIST_PREVIOUS',
-        ),
-        array(
-            'name' => 'next_button',
-            'type' => 'button',
-            'label' => 'LNK_LIST_NEXT',
-            'primary' => true,
+            'label' => 'LBL_PANEL_DEFAULT',
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'timezone',
+                    'type' => 'enum',
+                    'label' => "LBL_WIZ_TIMEZONE",
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'timepref',
+                    'type' => 'enum',
+                    'label' => "LBL_WIZ_TIMEFORMAT",
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'datepref',
+                    'type' => 'enum',
+                    'label' => "LBL_WIZ_DATE_FORMAT",
+                    'required' => true,
+                ),
+                array(
+                    'name' => 'default_locale_name_format',
+                    'type' => 'enum',
+                    'label' => 'LBL_WIZ_NAME_FORMAT',
+                    'required' => true,
+                ),
+            ),
         ),
     ),
 );
