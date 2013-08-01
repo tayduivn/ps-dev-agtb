@@ -162,7 +162,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities'] = ar
             array (
                 'name' => 'quote_button',
                 'type' => 'button',
-                'label' => 'LBL_CREATE_QUOTE',
+                'label' => 'LBL_GENERATE_QUOTE',
                 'primary' => true,
                 'events' => array (
                     'click' => 'function(e) {
