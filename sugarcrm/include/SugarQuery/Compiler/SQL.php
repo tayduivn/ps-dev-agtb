@@ -488,6 +488,11 @@ class SugarQuery_Compiler_SQL
     protected function compileSelect(SugarQuery_Builder_Select $selectObj)
     {
         $return = array();
+
+        if ($selectObj->getCountQuery() === true) {
+            return 'count(0) AS record_count';
+        }
+
         foreach ($selectObj->select as $field) {
             $alias = null;
             $s_alias = '';

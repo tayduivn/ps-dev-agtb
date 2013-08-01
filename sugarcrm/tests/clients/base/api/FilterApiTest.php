@@ -132,7 +132,13 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => 'id,name'));
         $this->assertEquals('TEST 3 Account',$reply['records'][0]['name'],'SimpleJoin: The account name is not set correctly');
         $this->assertEquals(-1,$reply['next_offset'],'SimpleJoin: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['records']),'SimpleJoin: Returned too many results');
+
+        $reply = $this->filterApi->filterListCount($this->serviceMock,
+            array('module' => 'Accounts',
+                'filter' => array(array("notes.name" => "Test 3 Note")),
+                'fields' => 'id,name'));
+
+        $this->assertEquals(1,$reply['record_count'],'SimpleJoin: Returned too many results');
     }
 
     public function testSimpleFilterWithOffset()
@@ -157,6 +163,13 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
                 'fields' => 'id,name', 'max_num' => '5', 'offset' => '10'));
         $this->assertEquals(-1,$reply['next_offset'],'Offset-3: Next offset is not set correctly');
         $this->assertEquals(1,count($reply['records']),'Offset-3: Returned too many results');
+
+        $reply = $this->filterApi->filterListCount($this->serviceMock,
+            array('module' => 'Accounts',
+                'filter' => array(array("name" => array('$starts' => "TEST 1"))),
+                'fields' => 'id,name',));
+
+        $this->assertEquals(11,$reply['record_count'],'SimpleJoin: Returned too many results');
     }
 
     public function testOrFilter()
@@ -174,6 +187,16 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('TEST 7 Account',$reply['records'][1]['name'],'Or-2: The name is not set correctly');
         $this->assertEquals(-1,$reply['next_offset'],'Or: Next offset is not set correctly');
         $this->assertEquals(2,count($reply['records']),'Or: Returned too many results');
+        $reply = $this->filterApi->filterListCount($this->serviceMock,
+            array('module' => 'Accounts',
+                'filter' => array(array('$or' => array(
+                    array('name' => "TEST 7 Account"),
+                    array('name' => "TEST 17 Account"),
+                )
+                )),
+                'fields' => 'id,name', 'order_by' => 'name:ASC'));
+
+        $this->assertEquals(2,$reply['record_count'],'SimpleJoin: Returned too many results');
     }
 
     public function testAndFilter()
@@ -287,7 +310,18 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('TEST 0 Account',$reply['records'][0]['name'],'FavMulRelated: The first name is not set correctly');
         $this->assertEquals('TEST 4 Account',$reply['records'][1]['name'],'FavMulRelated: The second name is not set correctly');
         $this->assertEquals(-1,$reply['next_offset'],'FavMulRelated: Next offset is not set correctly');
-        $this->assertEquals(2,count($reply['records']),'FavMulRelated: Returned too many results');
+
+
+        $reply = $this->filterApi->filterListCount($this->serviceMock,
+            array('module' => 'Accounts',
+                'filter' => array(array('$or' => array(
+                    array('$favorite' => 'opportunities'),
+                    array('$favorite' => 'notes'),
+                ))),
+                'fields' => 'id,name', ));
+
+
+        $this->assertEquals(3, $reply['record_count'], 'FavMulRelated: Returned too many results');
 
     }
     //END SUGARCRM flav=pro ONLY
