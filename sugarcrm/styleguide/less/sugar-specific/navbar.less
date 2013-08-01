@@ -407,11 +407,18 @@
               }
             }
           }
-          #userActions {
-            a {
-
-            }
+        }
+      }
+      &:not(.pull-right) {
+        > li.dropdown div.btn-group {
+          padding-right: 8px;
+          a.btn-invisible.btn-link.dropdown-toggle {
+              margin-right: -8px;
           }
+        }
+
+        > li.dropdown.home > .btn-group {
+          padding-right: 0;
         }
       }
     }
