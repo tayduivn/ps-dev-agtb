@@ -60,13 +60,12 @@
      */
     toggleClicked: function(evt) {
         var $btn = $(evt.currentTarget),
-            expanded = $btn.data('expanded') || true,
-            label = expanded ? 'LBL_DASHLET_MINIMIZE' : 'LBL_DASHLET_MAXIMIZE';
+            expanded = _.isUndefined($btn.data('expanded')) ? true : $btn.data('expanded'),
+            label = expanded ? 'LBL_DASHLET_MAXIMIZE' : 'LBL_DASHLET_MINIMIZE';
 
         $btn.html(app.lang.get(label, this.module));
-        expanded = !expanded;
-        $btn.data('expanded', expanded);
         this.layout.collapse(expanded);
+        $btn.data('expanded', !expanded);
     },
     /**
      * Toggle current dashlet frame when user clicks chevron icon
