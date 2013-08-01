@@ -113,22 +113,25 @@ class SugarPortalBrowser
     {
         global $dictionary;
         
+        // Grab the bean to make sure this is a legit module
         $bean = BeanFactory::getBean($module);
-        $vardef = $dictionary[$bean->object_name];
         
-        // No expectation set, means it does not explicitly disallow studio
-        // Explicit setting to true for the module means the same
-        if (!isset($vardef['studio_enabled']) || $vardef['studio_enabled'] === true) {
-            return true;
+        // Do some simple sanity checking before checking portal status
+        if (is_object($bean) && !empty($bean->object_name) && isset($dictionary[$bean->object_name])) {
+            $vardef = $dictionary[$bean->object_name];
+            
+            // No expectation set, means it does not explicitly disallow studio
+            // Explicit setting to true for the module means the same
+            if (!isset($vardef['studio_enabled']) || $vardef['studio_enabled'] === true) {
+                return true;
+            }
+            
+            // Explicit setting to true for the platform within an array
+            $hasPortal = is_array($vardef['studio_enabled']) && isset($vardef['studio_enabled']['portal']);
+            return $hasPortal && $vardef['studio_enabled']['portal'] === true;
         }
         
-        // Explicit setting to true for the platform within an array
-        $array = is_array($vardef['studio_enabled']);
-        $isset = isset($vardef['studio_enabled']['portal']);
-        $valid = $array && $isset && $vardef['studio_enabled']['portal'] === true;
-        
-        // At this point it's safe to return $valid as it will either be true or
-        // false, which would be the default return
-        return $valid;
+        // Return the default value
+        return false;
     }
 }
