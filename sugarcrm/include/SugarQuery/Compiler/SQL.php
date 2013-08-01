@@ -371,10 +371,16 @@ class SugarQuery_Compiler_SQL
         }
 
         if (!isset($bean->field_defs[$field])) {
-            // FIXME: we don't know about if - how it even ended up here?
-            return false;
+            if ($field == 'id_c') {
+                // id_c will never appear in any vardefs, but exists all the same
+                return array("{$table_name}.id_c", $alias);
+            }
+            // If it's not a field, it could be another custom condition.
+            $GLOBALS['log']->warning("SQLQuery_Compiler_SQL.resolveField, field {$field} does not exist in field_defs");
+            return array("{$field}", $alias);
+        } else {
+            $data = $bean->field_defs[$field];
         }
-        $data = $bean->field_defs[$field];
 
         if (!isset($data['source']) || $data['source'] == 'db') {
             return array("{$table_name}.{$field}", $alias);
@@ -398,7 +404,8 @@ class SugarQuery_Compiler_SQL
             );
         }
 
-        if ($data['type'] == 'relate') {
+        if ($data['type'] == 'relate' 
+            || ($data['source'] == 'non-db' && isset($data['link']) && $data['link'] !== true)) { // For some reason the full_name field has 'link' => true
             // this is a link field
             if (!isset($data['link'])) {
                 // no link specified - bail out
@@ -408,6 +415,7 @@ class SugarQuery_Compiler_SQL
             $bean->load_relationship($data['link']);
             if (empty($bean->$data['link'])) {
                 // failed to load link - bail out
+                $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, could not load link {$data['link']} for field {$field}");
                 return false;
             }
             $this->jtcount++;
@@ -427,11 +435,8 @@ class SugarQuery_Compiler_SQL
                     $fields = array($fields);
                 }
             }
-            if (!empty($data['id_name']) && $data['id_name'] != $field && !in_array(
-                $data['id_name'],
-                $this->sugar_query->select->select
-            )
-            ) {
+            if (!empty($data['id_name']) && $data['id_name'] != $field 
+                && !in_array($data['id_name'], $this->sugar_query->select->select)) {
                 $id_field = $this->resolveField(
                     $data['id_name'],
                     $data['id_name']
@@ -469,6 +474,7 @@ class SugarQuery_Compiler_SQL
             return $sub_fields;
         }
 
+        $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField: Don't know what to do with {$field}, has properties: ".var_export($data,true));
         return false;
     }
 
@@ -629,9 +635,7 @@ class SugarQuery_Compiler_SQL
     {
         $resField = $this->resolveField($cond_field);
         if(empty($resField)) {
-            // right now we assume you know what you're doing here and leave it alone
-            // Filter checks the conditions on input, so wrong filters should be filtered out there
-            return $this->canonicalizeFieldName($cond_field);
+            throw new SugarApiExceptionInvalidParameter("Can not use invalid field $cond_field in condition.");
         } else {
             if(is_array($resField[0]) && count($resField) > 1) {
                 // try to locate our field
@@ -641,7 +645,7 @@ class SugarQuery_Compiler_SQL
                     }
                 }
                 if(empty($field)) {
-                    $GLOBALS['log']->info("Failed to resolve $cond_field against: ".var_export($resField, true));
+                    $GLOBALS['log']->error("Failed to resolve $cond_field against: ".var_export($resField, true));
                     throw new SugarApiExceptionInvalidParameter("Can not use composite field $cond_field in condition");
                 }
             }
@@ -673,6 +677,10 @@ class SugarQuery_Compiler_SQL
         }
 
         $field = $this->conditionField($condition->field);
+        if ($field === false) {
+            $GLOBALS['log']->error("Failed to contdition field: ".var_export($condition->field, true));
+            throw new SugarApiExceptionInvalidParameter("Can not find {$field} in metadata");
+        }
 
         if ($condition->isNull) {
             $sql .= "{$field} IS NULL";
