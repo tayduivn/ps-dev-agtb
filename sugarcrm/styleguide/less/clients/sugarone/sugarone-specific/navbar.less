@@ -8,9 +8,26 @@
 }
 
 [data-module="Home"] > .btn-group > .dropdown-toggle {margin-right: 40px;}
+
 #searchForm {
-    float: none;
+	float: none;
+	display: block;
+	margin: 9px 0 0;
+	padding: 0 160px 0 100px;
+	
+	.input-append {
+		
+		input {
+			width: 100%;
+		}
+		
+		a.btn {
+			margin-left: 1px;	// Respect Bootstrap's.
+			height: 18px;
+		}
+	}
 }
+
 
 // Navbar search
 .navbar-search {
@@ -160,6 +177,8 @@
 
   // Links
   .nav {
+    top: -7px;
+    
     > li {
       > a {
         color: lighten(@black,80%);
