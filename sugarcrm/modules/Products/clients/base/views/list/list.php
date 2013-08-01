@@ -28,15 +28,21 @@ $viewdefs['Products']['base']['view']['list'] = array(
                     'default' => true
                 ),
                 array(
+                    'name' => 'account_name',
+                    'label' => 'LBL_ACCOUNT_NAME',
+                    'related_fields' => array('account_id'),
+                ),
+                array(
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
+                ),
+                array(
                     'name' => 'quote_name',
                     'link' => true,
                     'label' => 'LBL_ASSOCIATED_QUOTE',
+                    'related_fields' => array('quote_id'),
                     'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'opportunity_name',
-                    'sortable' => false
+                    'default' => true,
                 ),
                 'quantity',
                  array(
