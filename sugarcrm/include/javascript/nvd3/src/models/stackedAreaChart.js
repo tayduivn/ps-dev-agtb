@@ -18,8 +18,9 @@ nv.models.stackedAreaChart = function() {
     , showControls = false
     , showLegend = true
     , showTitle = false
+    , tooltip = null
     , tooltips = true
-    , tooltip = function(key, x, y, e, graph) {
+    , tooltipContent = function(key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
@@ -28,7 +29,7 @@ nv.models.stackedAreaChart = function() {
     , yAxisTickFormat = d3.format(',.2f')
     , state = { style: stacked.style() }
     , noData = 'No Data Available.'
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState')
     ;
 
   xAxis
@@ -60,9 +61,9 @@ nv.models.stackedAreaChart = function() {
         top = e.pos[1] + ( offsetElement.offsetTop || 0),
         x = xAxis.tickFormat()(stacked.x()(e.point, e.pointIndex)),
         y = yAxis.tickFormat()(stacked.y()(e.point, e.pointIndex)),
-        content = tooltip(e.series.key, x, y, e, chart);
+        content = tooltipContent(e.series.key, x, y, e, chart);
 
-    nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
   //============================================================
@@ -331,7 +332,9 @@ nv.models.stackedAreaChart = function() {
       });
 
       dispatch.on('tooltipShow', function(e) {
-        if (tooltips) showTooltip(e, that.parentNode);
+        if (tooltips) {
+          showTooltip(e, that.parentNode);
+        }
       });
 
       // Update chart from a state object passed to event handler
@@ -366,12 +369,10 @@ nv.models.stackedAreaChart = function() {
   stacked.dispatch.on('tooltipShow', function(e) {
     //disable tooltips when value ~= 0
     //// TODO: consider removing points from voronoi that have 0 value instead of this hack
-    if (!Math.round(stacked.y()(e.point) * 100)) {  // 100 will not be good for very small numbers... will have to think about making this valu dynamic, based on data range
-      setTimeout(function() { d3.selectAll('.point.hover').classed('hover', false); }, 0);
-      return false;
-    }
-
-    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
+    // if (!Math.round(stacked.y()(e.point) * 100)) {  // 100 will not be good for very small numbers... will have to think about making this valu dynamic, based on data range
+    //   setTimeout(function() { d3.selectAll('.point.hover').classed('hover', false); }, 0);
+    //   return false;
+    // }
     dispatch.tooltipShow(e);
   });
 
@@ -379,8 +380,27 @@ nv.models.stackedAreaChart = function() {
     dispatch.tooltipHide(e);
   });
 
+  stacked.dispatch.on('areaMouseover.tooltip', function (e) {
+    dispatch.tooltipShow(e);
+  });
+
+  stacked.dispatch.on('areaMouseout.tooltip', function (e) {
+    dispatch.tooltipHide(e);
+  });
+
   dispatch.on('tooltipHide', function() {
-    if (tooltips) nv.tooltip.cleanup();
+    if (tooltips) {
+      nv.tooltip.cleanup();
+    }
+  });
+
+  stacked.dispatch.on('areaMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
+  });
+  dispatch.on('tooltipMove', function(e) {
+    if (tooltip) {
+      nv.tooltip.position(tooltip,e.pos);
+    }
   });
 
   //============================================================
@@ -476,6 +496,12 @@ nv.models.stackedAreaChart = function() {
     return chart;
   };
 
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
   chart.tooltips = function(_) {
     if (!arguments.length) return tooltips;
     tooltips = _;
@@ -483,8 +509,8 @@ nv.models.stackedAreaChart = function() {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltip;
-    tooltip = _;
+    if (!arguments.length) return tooltipContent;
+    tooltipContent = _;
     return chart;
   };
 

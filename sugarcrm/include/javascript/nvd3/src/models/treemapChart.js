@@ -16,17 +16,17 @@ nv.models.treemapChart = function() {
     , showLegend = false
     , tooltip = null
     , tooltips = true
-      //create a clone of the d3 array
-    , colorArray = d3.scale.category20().range().map( function(d){ return d; })
     , tooltipContent = function(point) {
         var tt = '<p>Value: <b>' + d3.format(',.2s')(point.value) + '</b></p>' +
           '<p>Name: <b>' + point.name + '</b></p>';
         return tt;
       }
+      //create a clone of the d3 array
+    , colorArray = d3.scale.category20().range().map( function(d){ return d; })
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
     , noData = 'No Data Available.'
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove','elementMousemove')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'elementMousemove')
     ;
 
 
@@ -355,6 +355,12 @@ nv.models.treemapChart = function() {
   chart.showLegend = function(_) {
     if (!arguments.length) { return showLegend; }
     showLegend = _;
+    return chart;
+  };
+
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
     return chart;
   };
 

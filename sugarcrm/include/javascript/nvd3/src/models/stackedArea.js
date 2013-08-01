@@ -22,7 +22,7 @@ nv.models.stackedArea = function() {
     , color = nv.utils.defaultColor()
     , fill = color
     , classes = function (d,i) { return 'nv-area nv-area-'+ i; }
-    , dispatch =  d3.dispatch('tooltipShow', 'tooltipHide', 'areaClick', 'areaMouseover', 'areaMouseout')
+    , dispatch =  d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'areaClick', 'areaMouseover', 'areaMouseout', 'areaMousemove')
     ;
 
   scatter
@@ -108,7 +108,6 @@ nv.models.stackedArea = function() {
 
       //------------------------------------------------------------
 
-
       scatter
         .width(availableWidth)
         .height(availableHeight)
@@ -124,9 +123,6 @@ nv.models.stackedArea = function() {
       scatterWrap.call(scatter);
 
 
-
-
-
       defsEnter.append('clipPath')
           .attr('id', 'nv-edge-clip-' + id)
         .append('rect');
@@ -136,8 +132,6 @@ nv.models.stackedArea = function() {
           .attr('height', availableHeight);
 
       g   .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
-
-
 
 
       var area = d3.svg.area()
@@ -211,7 +205,6 @@ nv.models.stackedArea = function() {
       //============================================================
 
     });
-
 
     return chart;
   }

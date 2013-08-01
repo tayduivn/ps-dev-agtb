@@ -17,6 +17,7 @@ nv.models.paretoChart = function () {
     , reduceYTicks = false // if false a tick will show for every data point
     , rotateLabels = 0
     //, rotateLabels = -15
+    , tooltip = null
     , tooltips = true
     , tooltipBar = function (key, x, y, e, graph) {
         return '<p>Stage: <b>' + key + '</b></p>' +
@@ -42,7 +43,7 @@ nv.models.paretoChart = function () {
     , barLegend = nv.models.paretoLegend()
     , lineLegend = nv.models.paretoLegend()
     , controls = nv.models.legend()
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
     ;
 
   xAxis
@@ -55,14 +56,13 @@ nv.models.paretoChart = function () {
   //------------------------------------------------------------
 
   var showTooltip = function (e, offsetElement, dataGroup, lOffset) {
-    var containerPosition = getAbsoluteXY(offsetElement)
-      , left = e.pos[0] + (containerPosition.x || 0) + (e.series.type === 'bar' ? 0 : lOffset)
-      , top = e.pos[1] + (containerPosition.y || 0)
+    var left = e.pos[0]
+      , top = e.pos[1]
       , per = (e.point.y * 100 / dataGroup[e.pointIndex].t).toFixed(1)
       , amt = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex))
       , content = (e.series.type === 'bar' ? tooltipBar(e.series.key, per, amt, e, chart) : tooltipLine(e.series.key, per, amt, e, chart));
 
-    nv.tooltip.show([left, top], content, 's', null, offsetElement);
+    tooltip = nv.tooltip.show([left, top], content, 's', null, offsetElement);
   };
 
   var barClick = function (data,e,container) {
@@ -106,6 +106,7 @@ nv.models.paretoChart = function () {
   function chart(selection) {
 
     selection.each(function (chartData) {
+
       var properties = chartData.properties
         , data = chartData.data;
 
@@ -114,7 +115,7 @@ nv.models.paretoChart = function () {
 
       var availableWidth = (width  || parseInt(container.style('width'), 10) || 960)
         , availableHeight = (height || parseInt(container.style('height'), 10) || 400)
-        , availableLegend = (width  || parseInt(container.style('width'), 10) || 960);
+        , availableLegend = (width  || parseInt(container.style('width'), 10) || 960) - 20;
 
       chart.update = function () { container.transition().duration(300).call(chart); };
       chart.container = this;
@@ -249,48 +250,90 @@ nv.models.paretoChart = function () {
             .call(lineLegend);
 
 
-        // bar legend data
-        var barWidths = [];
+        // Calculate legend key positions
         var barKeys = g.select('.nv-legendWrap.nv-barLegend').selectAll('.nv-series');
-        barKeys.select('text').each( function (d,i) {
-          barWidths.push(Math.max(d3.select(this).node().getComputedTextLength(),40)); // 28 is ~ the width of the circle plus some padding
-        });
-        var barWidth = d3.max(barWidths);
-        var barTotal = barWidths.length * barWidth;
-
-        // line legend data
-        var lineWidths = [];
         var lineKeys = g.select('.nv-legendWrap.nv-lineLegend').selectAll('.nv-series');
-        lineKeys.select('text').each( function (d,i) {
-          lineWidths.push(Math.max(d3.select(this).node().getComputedTextLength(),50)); // 28 is ~ the width of the circle plus some padding
+
+        var barWidths = [];
+        var lineWidths = [];
+
+        barKeys.select('text').each( function (d,i) {
+          barWidths.push(Math.max(d3.select(this).node().getComputedTextLength() + 10,40)); // 28 is ~ the width of the circle plus some padding
         });
-        var lineWidth = d3.max(lineWidths);
-        var lineTotal = lineWidths.length * lineWidth;
+        lineKeys.select('text').each( function (d,i) {
+          lineWidths.push(Math.max(d3.select(this).node().getComputedTextLength() + 10,50)); // 28 is ~ the width of the circle plus some padding
+        });
 
-        // calculate max keys per legend
-        var barPercent = barTotal / (barTotal+lineTotal);
-        var linePercent = lineTotal / (barTotal+lineTotal);
+        var barTotal = d3.sum(barWidths);
+        var lineTotal = d3.sum(lineWidths);
 
-        var barCols = Math.floor((barPercent * availableLegend) / barWidth);
-        var lineCols = Math.min(Math.floor((availableLegend - barCols*barWidth) / lineWidth), lineWidths.length);
+        var barAvailable = barTotal * availableLegend / (barTotal+lineTotal);
+        var lineAvailable = lineTotal * availableLegend / (barTotal+lineTotal);
+
+        var barCols = [];
+        var lineCols = [];
+
+        var iBars = barWidths.length;
+        var iLines = lineWidths.length;
+
+        var iCols = 0;
+        var columnWidths = [0];
+        while (iCols <= iBars && d3.sum(columnWidths) < barAvailable) {
+          barCols = columnWidths;
+          iCols+=1;
+          columnWidths = [0];
+          for (var i=0; i<iBars; i+=1 ) {
+            if (!columnWidths[i%iCols] || barWidths[i] > columnWidths[i%iCols]) {
+              columnWidths[i%iCols] = barWidths[i];
+            }
+          }
+        }
+
+        iCols = 0;
+        columnWidths = [0];
+        while (iCols <= iLines && d3.sum(columnWidths) < lineAvailable) {
+          lineCols = columnWidths;
+          iCols+=1;
+          columnWidths = [0];
+          for (var i=0; i<iLines; i+=1 ) {
+            if (!columnWidths[i%iCols] || lineWidths[i] > columnWidths[i%iCols]) {
+              columnWidths[i%iCols] = lineWidths[i];
+            }
+          }
+        }
+
+        iBars = barCols.length;
+        iLines = lineCols.length;
+
+        var runningTotal = 0;
+        var barPositions = barCols.map(function(d,i){
+          runningTotal += barCols[i]/2 + (i>0 ? barCols[i-1]/2 : 0);
+          return runningTotal;
+        });
+
+        runningTotal = 0;
+        var linePositions = lineCols.map(function(d,i){
+          runningTotal += lineCols[i]/2 + (i>0 ? lineCols[i-1]/2 : 0);
+          return runningTotal;
+        });
 
         barKeys.attr('transform', function (d,i) {
-          return 'translate(' + barWidth * (i % barCols) + ',' + (Math.floor(i / barCols) * 35) + ')';
+          return 'translate(' + barPositions[i % iBars] + ',' + (Math.floor(i / iBars) * 35) + ')';
         });
         lineKeys.attr('transform', function (d,i) {
-          return 'translate(' + lineWidth * (i % lineCols) + ',' + (Math.floor(i / lineCols) * 35) + ')';
+          return 'translate(' + linePositions[i % iLines] + ',' + (Math.floor(i / iLines) * 35) + ')';
         });
 
-        barLegend.height(Math.ceil(barWidths.length / barCols) * 35);
-        lineLegend.height(Math.ceil(lineWidths.length / lineCols) * 35);
+        barLegend.height(Math.ceil(barWidths.length / iBars) * 35);
+        lineLegend.height(Math.ceil(lineWidths.length / iCols) * 35);
         legendHeight = Math.max(barLegend.height(), lineLegend.height()) + 10;
 
         //calculate position
         g.select('.nv-legendWrap.nv-barLegend')
-            .attr('transform', 'translate('+ (10 + barWidth/2) +','+ (10 + margin.top) +')');
+            .attr('transform', 'translate('+ 10 +','+ (10 + margin.top) +')');
 
         g.select('.nv-legendWrap.nv-lineLegend')
-            .attr('transform', 'translate(' + (availableLegend - lineCols*lineWidth + lineWidth/2 - 10) +','+ (10 + margin.top) +')');
+            .attr('transform', 'translate(' + (10 + availableLegend - d3.sum(lineCols)) +','+ (10 + margin.top) +')');
       }
 
       if (showTitle && properties.title) {
@@ -574,12 +617,7 @@ nv.models.paretoChart = function () {
         container.transition().duration(300).call(chart);
       });
 
-      /*dispatch.on('tooltipShow', function(e) {
-        if (tooltips) showTooltip(e, that.parentNode)
-      });*/
-
       lines.dispatch.on('elementMouseover.tooltip', function (e) {
-        e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
         dispatch.tooltipShow(e);
       });
 
@@ -587,9 +625,12 @@ nv.models.paretoChart = function () {
         dispatch.tooltipHide(e);
       });
 
+      lines.dispatch.on('elementMousemove', function(e) {
+        dispatch.tooltipMove(e);
+      });
+
 
       multibar.dispatch.on('elementMouseover.tooltip', function (e) {
-        e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
         dispatch.tooltipShow(e);
       });
 
@@ -597,17 +638,27 @@ nv.models.paretoChart = function () {
         dispatch.tooltipHide(e);
       });
 
+      multibar.dispatch.on('elementMousemove', function(e) {
+        dispatch.tooltipMove(e);
+      });
+
       multibar.dispatch.on('elementClick', function (e) {
         barClick(data,e,container);
       });
 
+
       if (tooltips) {
         dispatch.on('tooltipShow', function (e) {
           showTooltip(e, that.parentNode, dataGroup, lOffset);
-        }); // TODO: maybe merge with above?
-      }
-      if (tooltips) {
+        });
+
         dispatch.on('tooltipHide', nv.tooltip.cleanup);
+
+        dispatch.on('tooltipMove', function(e) {
+          if (tooltip) {
+            nv.tooltip.position(tooltip,e.pos);
+          }
+        });
       }
 
       //============================================================
@@ -779,8 +830,8 @@ nv.models.paretoChart = function () {
   };
 
   chart.tooltipContent = function(_) {
-    if (!arguments.length) { return tooltip; }
-    tooltip = _;
+    if (!arguments.length) { return tooltipContent; }
+    tooltipContent = _;
     return chart;
   };
 
