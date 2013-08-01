@@ -17,6 +17,26 @@ require_once('data/SugarACLStrategy.php');
 
 class SugarACLForecastWorksheets extends SugarACLStrategy
 {
+    /**
+     * @var RevenueLineItem|Opportunity|SugarBean
+     */
+    protected static $forecastByBean;
+
+    /**
+     * Are we an admin for the current bean?
+     *
+     * @var boolean|null
+     */
+    protected static $isAdminForBean = null;
+
+    /**
+     * Run the check Access for this custom ACL helper.
+     *
+     * @param string $module
+     * @param string $view
+     * @param array $context
+     * @return bool
+     */
     public function checkAccess($module, $view, $context)
     {
         if ($module != 'ForecastWorksheets') {
@@ -33,7 +53,10 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
         $bean = $this->getForecastByBean();
         $current_user = $this->getCurrentUser($context);
 
-        if ($current_user->isAdminForModule($bean->module_name)) {
+        if (static::$isAdminForBean === null) {
+            static::$isAdminForBean = $current_user->isAdminForModule($bean->module_name);
+        }
+        if (static::$isAdminForBean) {
             return true;
         }
 
@@ -56,22 +79,26 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
     /**
      * Return the bean for what we are forecasting by
      *
-     * @return Product|Opportunity|SugarBean
+     * @return RevenueLineItem|Opportunity|SugarBean
      */
     protected function getForecastByBean()
     {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
+        if (!(static::$forecastByBean instanceof SugarBean)) {
+            /* @var $admin Administration */
+            $admin = BeanFactory::getBean('Administration');
+            $settings = $admin->getConfigForModule('Forecasts');
 
-        // if we don't have the forecast_by from the db, grab the defaults that we use on set.
-        if (empty($settings['forecast_by'])) {
-            require_once('modules/Forecasts/ForecastsDefaults.php');
-            $settings = ForecastsDefaults::getDefaults();
+            // if we don't have the forecast_by from the db, grab the defaults that we use on set.
+            if (empty($settings['forecast_by'])) {
+                require_once('modules/Forecasts/ForecastsDefaults.php');
+                $settings = ForecastsDefaults::getDefaults();
+            }
+
+            $bean = $settings['forecast_by'];
+
+            static::$forecastByBean = BeanFactory::getBean($bean);
         }
 
-        $bean = $settings['forecast_by'];
-
-        return BeanFactory::getBean($bean);
+        return static::$forecastByBean;
     }
 }
