@@ -1,0 +1,74 @@
+{{!
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+}}
+<div class="dashlet-options">
+    <div class="row-fluid">
+        <div class="span8">
+            {{#each this.dashletConfig.filter}}
+                {{field ../this model=../this.settings template="edit"}}
+            {{/each}}
+        </div>
+        <div class="span4">
+            <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+                <button class="btn{{#eq this.settings.attributes.visibility "user"}} active{{/eq}}" value="user" data-action="visibility-switcher"><i class="icon-user"></i></button>
+                <button class="btn{{#eq this.settings.attributes.visibility "group"}} active{{/eq}}" value="group" data-action="visibility-switcher"><i class="icon-group"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="history dashlet-unordered-list">
+    <div class="dashlet-tabs four">
+        <div class="dashlet-tabs-row">
+            {{#each this.tabs}}
+                <div class="dashlet-tab{{#eq ../this.settings.attributes.activeTab @index}} active{{/eq}}">
+                    <a data-toggle="tab" data-action="tab-switcher" data-index="{{@index}}">
+                        <span class="count">{{#if ../dataFetched}}{{collection.length}}{{#notEq collection.next_offset "-1"}}+{{/notEq}}{{else}}-{{/if}}</span>
+                        {{#eq collection.length "1"}}
+                            {{#if labels.singular}}{{str labels.singular module}}{{else}}{{str "LBL_MODULE_NAME_SINGULAR" module}}{{/if}}
+                        {{else}}
+                            {{#if labels.plural}}{{str labels.plural module}}{{else}}{{str "LBL_MODULE_NAME" module}}{{/if}}
+                        {{/eq}}
+                    </a>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <ul class="unstyled listed">
+                {{#if this.collection.length}}
+                    {{#each this.collection.models}}
+                        <li>
+                            <a href="#{{buildRoute module="Employees" id=this.attributes.assigned_user_id action="detail"}}"
+                                class="pull-left avatar42"
+                                data-title="{{this.attributes.assigned_user_name}}">
+                                <img src="{{getFieldValue this "picture_url"}}" alt="{{this.attributes.assigned_user_name}}">
+                            </a>
+                            <a href="#{{buildRoute model=this action="detail"}}">{{this.attributes.name}}</a>
+                            <br>
+                            <date class="date">
+                                <a href="#{{buildRoute module="Employees" id=this.attributes.assigned_user_id action="detail"}}">{{this.attributes.assigned_user_name}}</a>&#44;&nbsp{{timeago this.attributes.record_date "TPL_HISTORY_DASHLET_TIME_RELATIVE"}}
+                            </date>
+                        </li>
+                    {{/each}}
+                    {{#notEq ../this.collection.next_offset "-1"}}
+                        <li><a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a></li>
+                    {{/notEq}}
+                {{else}}
+                    <li><em>{{#if ../dataFetched}}{{str "LBL_DASHLET_NO_RECORDS" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</em></li>
+                {{/if}}
+            </ul>
+        </div>
+    </div>
+</div>
