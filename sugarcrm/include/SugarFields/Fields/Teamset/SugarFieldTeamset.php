@@ -662,10 +662,12 @@ class SugarFieldTeamset extends SugarFieldBase {
             $bean->setDefaultTeam();
             return;
         }
-        if ( !isset($primaryTeamId) ) {
+
+        if (empty($primaryTeamId)) {
             // They didn't specify a primary team, so I'm just going to set it to the first one
             $primaryTeamId = $teamIds[0];
         }
+
         $bean->team_id = $primaryTeamId;
         
         $bean->load_relationship('teams');
@@ -676,7 +678,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     public function apiMassUpdate(SugarBean $bean, array $params, $fieldName, $properties) {
         // Check if we are replacing, if so, just use the normal save
         if (isset($params[$fieldName.'_type']) && $params[$fieldName.'_type'] == 'replace') {
-            return $this->apiSave($bean, $params, $field, $properties);
+            return $this->apiSave($bean, $params, $fieldName, $properties);
         }
 
         $teamList = $params[$fieldName];
