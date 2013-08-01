@@ -11,9 +11,6 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    favRowTemplate: Handlebars.compile(
-      '{{#each models}}<li><a tabindex="-1" class="favoriteLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-favorite active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
-    ),
     recentRowTemplate: Handlebars.compile(
         '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
@@ -185,8 +182,12 @@
                         beans.push(app.data.createBean(module, recordData));
                     });
                     var collection = app.data.createBeanCollection(module, beans);
-                   self.$('[data-module=' + module + '] .favoritesAnchor').show();
-                   self.$('[data-module=' + module + '] .favoritesContainer').show().html(self.favRowTemplate(collection));
+                    self.$('[data-module=' + module + '] .favoritesAnchor').show();
+                    var favoritesTemplate = app.template.getView('modulelist.favorites', module) ||
+                        app.template.getView('modulelist.favorites');
+                    self.$('[data-module=' + module + '] .favoritesContainer')
+                        .show()
+                        .html(favoritesTemplate(collection));
                 }
            }
         });
