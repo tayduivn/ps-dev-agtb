@@ -23,20 +23,32 @@
   .border-radius(3px 3px 0 0);
 }
 .modal-header-firstlogin {
-  .firstlogin-title span {
+  .firstlogin-title {
+    margin-left: 0;
     position: relative;
-    top: -5px;
+    top: -4px;
+    span {
+      position: relative;
+      top: -5px;
+    }
   }
   .progress-section {
-    margin-left: 0;
+    margin-left: 20px;
   }
 }
+
 // Hack: Since we've used .record .record-cell, we can't just use record-cell by itself and had
 // to add .record to modal to pick up record styling. But that adds padding which causes overflow.
 // This reduces original span6 from 48.936170208% to 48% to circumnavigate scrollbars
 .modal-body.record .row-fluid .span6 {
   width: 48%;
 }
+
+.modal-wide {
+  width: 700px;
+  margin-left: -350px;
+}
+
 
 .modal-body {
   padding: 0 0 58px 0;
