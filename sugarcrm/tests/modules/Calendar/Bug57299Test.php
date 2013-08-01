@@ -80,8 +80,10 @@ class Bug57299Test extends Sugar_PHPUnit_Framework_OutputTestCase
     {
         $_POST = array();
 
-        $this->bean->db->query("DELETE FROM meetings WHERE id = '". $this->bean->id ."'");
-        $this->bean->db->query("DELETE FROM {$this->bean->rel_users_table} WHERE meeting_id = '". $this->bean->id ."'");
+        // TODO please uncomment when testDisplaysMeetingWithStatusHeldInCalendar is properly fixed
+        // this is not the right way to implement a test tho!
+//        $this->bean->db->query("DELETE FROM meetings WHERE id = '". $this->bean->id ."'");
+//        $this->bean->db->query("DELETE FROM {$this->bean->rel_users_table} WHERE meeting_id = '". $this->bean->id ."'");
 
         parent::tearDown();
         SugarTestHelper::tearDown();
