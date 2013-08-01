@@ -315,20 +315,23 @@ class SidecarMetaDataUpgrader
      */
     public function upgradeQuickCreate()
     {
-        global $app_list_strings;
-        $modules = $app_list_strings['moduleList'];
+        $dirs = glob('modules/*', GLOB_ONLYDIR);
+        if (!empty($dirs)) {
+            foreach ($dirs as $dirpath) {
+                // Get the module to list it in case it needs to be upgraded
+                $modules[] = basename($dirpath);
+            }
+        }
+
         $actions_path = "include/DashletContainer/Containers/DCActions.php";
         foreach (SugarAutoLoader::existingCustom($actions_path) as $file) {
             include $file;
         }
-        $availableModules = $DCActions;
-        foreach ($modules as $module => $modLabel) {
-            if (SugarAutoLoader::existingCustom("modules/$module/metadata/quickcreatedefs.php")) {
-                $availableModules[$module] = $module;
-            }
-        }
 
-        $disabled = array_diff($availableModules, $DCActions);
+        $availableModules = $DCActions;
+
+        $disabled = array_diff($modules, $availableModules);
+
 
         foreach ($DCActions as $module) {
             $this->upgradeQuickCreateFile($module, true);
@@ -354,6 +357,11 @@ class SidecarMetaDataUpgrader
         } elseif (file_exists($quickCreateFile)) {
             include $quickCreateFile;
         } else {
+            if ($enabled == false) {
+                // no need to write out a file for a module that doesn't currently have quickcreate defs and isn't
+                // going to need them
+                return true;
+            }
             $viewdefs[$module]['base']['menu']['quickcreate'] = array(
                 'layout' => 'create',
                 'label' => translate($module),
