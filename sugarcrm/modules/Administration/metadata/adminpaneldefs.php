@@ -115,10 +115,6 @@ $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LB
 $admin_option_defs['Administration']['pdfmanager']= array('icon_PdfManager','LBL_PDFMANAGER_SETTINGS','LBL_PDFMANAGER_SETTINGS_DESC','./index.php?module=PdfManager&action=index');
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=ent ONLY
-$admin_option_defs['Administration']['offline_client']= array('OfflineClient','LBL_MANAGE_OFFLINE_CLIENT','LBL_OFFLINE_CLIENT','./index.php?module=Administration&action=ViewOfflineClients');
-//END SUGARCRM flav=ent ONLY
-
 //BEGIN SUGARCRM flav=pro ONLY
 // Enable/Disable wireless modules
 $admin_option_defs['Administration']['enable_wireless_modules']=array('icon_AdminMobile','LBL_WIRELESS_MODULES_ENABLE','LBL_WIRELESS_MODULES_ENABLE_DESC','./index.php?module=Administration&action=EnableWirelessModules');

@@ -28,7 +28,6 @@ $action_view_map['configurefts'] = 'configurefts';
 $action_view_map['enablewirelessmodules'] = 'enablewirelessmodules';
 //END SUGARCRM flav=pro ONLY
 $action_view_map['configureshortcutbar'] = 'configureshortcutbar';
-$action_view_map['viewofflineclients'] = 'viewofflineclients';
 $action_view_map['backups'] = 'backups';
 $action_view_map['globalsearchsettings'] = 'globalsearchsettings';
 $action_view_map['languages'] = 'languages';
