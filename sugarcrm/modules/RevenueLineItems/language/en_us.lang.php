@@ -92,6 +92,7 @@ $mod_strings = array(
     'LBL_PRICING_FACTOR' => 'Pricing Factor',
     'LBL_ACCOUNT_ID' => 'Account ID',
     'LBL_CONTACT_ID' => 'Contact ID',
+    'LBL_ASSIGNED_USER_ID' => 'Assigned User ID',
     'LBL_CATEGORY_NAME' => 'Category Name:',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
     'LBL_MEMBER_OF' => 'Member of:',
