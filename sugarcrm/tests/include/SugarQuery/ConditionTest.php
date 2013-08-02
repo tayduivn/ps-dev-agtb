@@ -244,12 +244,12 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         foreach ($result AS $opp) {
             $this->assertGreaterThanOrEqual(
-                date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - 7, date('Y'))),
+                gmdate("Y-m-d H:i:s", gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 7, gmdate('Y'))),
                 $opp['date_modified'],
                 'Wrong date detected.'
             );
             $this->assertLessThanOrEqual(
-                date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d'), date('Y'))),
+                gmdate("Y-m-d H:i:s", gmmktime(23, 59, 59, gmdate('m'), gmdate('d'), gmdate('Y'))),
                 $opp['date_modified'],
                 'Wrong date detected.'
             );
@@ -262,7 +262,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sq->select(array('name', 'date_modified'));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $params = array(date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') - 1, date('Y'))), date('Y-m-d'));
+        $params = array(gmdate('Y-m-d', gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 1, gmdate('Y'))), gmdate('Y-m-d'));
         $sq->where()->dateBetween('date_entered', $params, $this->opportunity_bean);
 
         $result = $sq->execute();
@@ -275,12 +275,12 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         foreach ($result AS $opp) {
             $this->assertGreaterThanOrEqual(
-                date("Y-m-d H:i:s", mktime(0, 0, 0, date('m'), date('d') - 1, date('Y'))),
+                gmdate("Y-m-d H:i:s", gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 1, gmdate('Y'))),
                 $opp['date_modified'],
                 'Wrong date detected.'
             );
             $this->assertLessThanOrEqual(
-                date("Y-m-d H:i:s", mktime(23, 59, 59, date('m'), date('d'), date('Y'))),
+                gmdate("Y-m-d H:i:s", gmmktime(23, 59, 59, gmdate('m'), gmdate('d'), gmdate('Y'))),
                 $opp['date_modified'],
                 'Wrong date detected.'
             );
