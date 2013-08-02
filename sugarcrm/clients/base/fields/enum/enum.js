@@ -96,7 +96,7 @@
                     }
                 }, this));
             } else {
-                var request = app.api['enum'](self.module, self.name, {
+                var request = app.api.enumOptions(self.module, self.name, {
                     success: function(o) {
                         if (self.enumOptions !== o) {
                             self.enumOptions = o;

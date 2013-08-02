@@ -241,7 +241,7 @@
             // we need to get our filter cleaned up.
             exportOptions = app.data.parseOptionsForSync("read", massExport).params;
 
-            app.api['export']({
+            app.api.exportRecords({
                     module: this.module,
                     uid: (massExport.entire) ? null : massExport.pluck('id'),
                     entire: massExport.entire,
