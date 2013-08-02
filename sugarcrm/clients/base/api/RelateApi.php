@@ -105,6 +105,15 @@ class RelateApi extends FilterApi {
         $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
         self::addFilters($args['filter'], $q->where(), $q);
 
+        // Some relationships want the role column ignored
+        if (!empty($args['ignore_role'])) {
+            $ignoreRole = true;
+        } else {
+            $ignoreRole = false;
+        }
+        $q->join($tableName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
+        $q->where()->equals($tableName . '.' . $column, $record->id);
+
         return array($args, $q, $options, $linkSeed);
     }
 
