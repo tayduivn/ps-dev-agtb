@@ -151,6 +151,7 @@ $mod_strings = array(
     'LBL_CONVERT_TO_QUOTE_INFO' => 'Please Wait',
     'LBL_CONVERT_TO_QUOTE_INFO_MESSAGE' => 'Generating Quote From Revenue Line Item',
     'LBL_CONVERT_INVALID_RLI' => 'One or more of the Revenue Line Items that you selected can not be converted into a Quote:<br /><br />',
+    'LBL_CONVERT_INVALID_RLI_PRODUCT' => 'Revenue Line Item with product category must have a product associated with it to convert to a Quote.',
 
     'LBL_CONVERT_TO_QUOTE_ERROR' => 'Error:',
     'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE' => 'There was an error converting this Revenue Line Item to a Quote',

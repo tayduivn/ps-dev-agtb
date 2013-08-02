@@ -96,7 +96,22 @@
         }, this);
     },
 
+    /**
+     * convert RLI to quote
+     * @param {Object} e
+     */
     convertToQuote: function(e) {
+        // if product template is empty, but category is not, this RLI can not be converted to a quote
+        if (_.isEmpty(this.model.get('product_template_id')) && !_.isEmpty(this.model.get('category_id'))) {
+            app.alert.show('invalid_items', {
+                level: 'warning',
+                autoClose: false,
+                title: app.lang.get('LBL_ALERT_TITLE_WARNING', this.module) + ":",
+                messages: [app.lang.get('LBL_CONVERT_INVALID_RLI_PRODUCT', this.module)],
+            });
+            return;
+        }
+
         var alert = app.alert.show('info_quote', {
             level: 'info',
             autoClose: false,
