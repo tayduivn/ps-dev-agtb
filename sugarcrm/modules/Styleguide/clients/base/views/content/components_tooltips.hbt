@@ -55,7 +55,7 @@ $('[rel=tooltip]').tooltip();
 
 
           <h2>Sugar7 Implementation</h2>
-          <p>Markup elements (in .hbt):</p>
+          <p>Markup elements (in .hbs):</p>
           <pre class="prettyprint linenums">
 &lt;a class="btn btn-mini comment" rel="tooltip" data-title="Comment"&gt;
     &lt;i class="icon-comment"&gt;&lt;/i&gt;

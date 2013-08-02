@@ -37,7 +37,7 @@
     // This is dynamically detected and represents whether meridien is appropriate
     showAmPm: false,
 
-    // used by hbt template (note we inherit dateValue from basedate)
+    // used by hbs template (note we inherit dateValue from basedate)
     timeValue: '',
 
     serverTimeFormat: 'H:i:s',
@@ -49,7 +49,7 @@
     _render:function(value) {
         var self = this, viewName;
 
-        // Set our internal time and date values so hbt picks up
+        // Set our internal time and date values so hbs picks up
         self._presetDateValues();
         app.view.invokeParent(this, {type: 'field', name: 'date', method: '_render', platform: 'base'});
 
@@ -254,7 +254,7 @@
      */
     _getTimepickerValue: function($timepickerElement) {
         var timeValue  = $timepickerElement.val();
-        this.timeValue = timeValue; // so hbt template will pick up on next render
+        this.timeValue = timeValue; // so hbs template will pick up on next render
 
         return timeValue;
     },
@@ -291,7 +291,7 @@
             }
         }
         $timepickerElement.timepicker('setTime', date);
-        this.timeValue = $timepickerElement.val();// so hbt template will pick up on next render
+        this.timeValue = $timepickerElement.val();// so hbs template will pick up on next render
     },
     /**
      * If the field def has a display_default property, or, is required, this

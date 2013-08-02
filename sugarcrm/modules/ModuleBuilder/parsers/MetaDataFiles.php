@@ -798,7 +798,7 @@ class MetaDataFiles
             foreach ($dirsInPath as $fullSubPath) {
                 $subPath = basename($fullSubPath);
                 // This should find the files in each view/layout
-                // So it should pull up list.js, list.php, list.hbt
+                // So it should pull up list.js, list.php, list.hbs
                 $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
                 foreach ($filesInDir as $fullFile) {
                     $file = basename($fullFile);

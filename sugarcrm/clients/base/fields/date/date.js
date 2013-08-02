@@ -54,7 +54,7 @@
      */
     datepickerVisible: false,
 
-    // used by hbt template
+    // used by hbs template
     dateValue: '',
 
     // date format (for just the date part) that the server expects
@@ -92,7 +92,7 @@
         // NOP -- pass through to prevent base Field's bindDomChange from handling
     },
     /**
-     * Set our internal time and date values so hbt picks up
+     * Set our internal time and date values so hbs picks up
      */
     _presetDateValues: function() {
         this.dateValue = this.$('.datepicker').val();
@@ -224,7 +224,7 @@
         var date  = this.$('input.datepicker'), dateValue;
 
         dateValue = this._getTodayDateStringIfNoDate(date.prop('value'));
-        this.dateValue = dateValue; // so hbt template will pick up on next render
+        this.dateValue = dateValue; // so hbs template will pick up on next render
         return dateValue;
     },
     /**
