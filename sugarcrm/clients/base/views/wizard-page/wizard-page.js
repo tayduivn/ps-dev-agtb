@@ -49,7 +49,7 @@
     events: {
         'click [name=previous_button]': 'previous',
         'click [name=next_button]': 'next',
-        'keyup .modal-body.record .required': 'setPageComplete'
+        'keyup .modal-body.record .required': 'checkIfPageComplete'
     },
     /**
      * Current progress through wizard, updated automatically on each render.
@@ -89,7 +89,7 @@
         var self = this;
         if (this.model) {
             this.listenTo(this.model, "sync", function() {
-                self.setPageComplete();
+                self.checkIfPageComplete();
             });
         }
     },
@@ -167,7 +167,7 @@
      * @see SUGAR.App.view.views.UserWizardPageView
      * @param {Object} evt the event
      */
-    setPageComplete: function(evt) {
+    checkIfPageComplete: function(evt) {
         // Noop: Implementers will need to set `this.areAllRequiredFieldsNonEmpty`
         // and call `this.updateButtons` if appropriate
     },

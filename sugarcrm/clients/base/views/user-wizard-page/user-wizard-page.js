@@ -28,7 +28,7 @@
      * call `this.updateButtons` which will enable/disable next button as appropriate.
      * @param {Object} evt the event
      */
-    setPageComplete: function(evt) {
+    checkIfPageComplete: function(evt) {
         var anyEmpty = false,
             self = this,
             last = this.areAllRequiredFieldsNonEmpty;
