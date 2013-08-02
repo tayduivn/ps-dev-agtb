@@ -185,22 +185,14 @@
             };
         }
         dateValue = this._getDatepickerValue();
-        // If date isn't good we set it raw and let sidecar catch upstream in validation. Also, we don't
-        // want to trigger a re-render so we use silent: true (but still trigger change on the model itself once done)
+        // If date isn't good we set it raw and let sidecar catch upstream in validation.
         if (this._verifyDateString(dateValue)) {
             this.leaveDirty = false;
-            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes));
         } else {
             this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
-            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
+            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes);
         }
-
-        // manually trigger the change events, we need to trigger the change:fieldName for field specific listeners
-        // this contains what changed on the field as a param
-        model.trigger("change:" + fieldName, model, model.get(fieldName));
-        // now we need to trigger the main model change event, with the model being passed in.  if this model is part
-        // of a collection, it will trigger that collection to send the model up as being changed
-        model.trigger("change", model);
     },
     _verifyDateString: function(value) {
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
