@@ -33,7 +33,7 @@ describe("Emails.fields.recipients", function() {
 
     describe("loadOptions", function() {
         var query,
-            apiCallStub;
+            apiSearchStub;
 
         beforeEach(function() {
             jasmine.Clock.useMock();
@@ -42,13 +42,13 @@ describe("Emails.fields.recipients", function() {
 
         afterEach(function() {
             delete query;
-            apiCallStub.restore();
+            apiSearchStub.restore();
         });
 
         it("Should call the query callback with one record when the api call is successful and returns one record.", function() {
             var records = [{email: "will@example.com", name: "Will Westin"}];
 
-            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+            apiSearchStub = sinon.stub(app.api, "search", function(options, callbacks) {
                 callbacks.success({records: records});
                 callbacks.complete();
             });
@@ -61,7 +61,7 @@ describe("Emails.fields.recipients", function() {
         });
 
         it("Should call the query callback with no records when the api call results in an error.", function() {
-            apiCallStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
+            apiSearchStub = sinon.stub(app.api, "search", function(options, callbacks) {
                 callbacks.error();
                 callbacks.complete();
             });
@@ -73,15 +73,14 @@ describe("Emails.fields.recipients", function() {
             expect(actual).toBe(0);
         });
 
-        it("Should make a call to the Mail API with the recipients/find path.", function() {
-            apiCallStub = sinon.stub(app.api, "call");
+        it("Should make a call to the Search API.", function() {
+            apiSearchStub = sinon.stub(app.api, "search");
 
             field.loadOptions(query);
             jasmine.Clock.tick(301);
 
-            var expected = /.*\/Mail\/recipients\/find/,
-                actual   = apiCallStub.lastCall.args[1];
-            expect(actual).toMatch(expected);
+            var actual = apiSearchStub.callCount;
+            expect(actual).toBe(1);
         });
     });
 
