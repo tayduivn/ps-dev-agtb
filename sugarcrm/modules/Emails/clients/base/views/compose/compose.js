@@ -20,7 +20,7 @@
         });
         this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer, this);
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
-        this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer, this);
+        this.context.on("actionbar:signature_button:clicked", this.launchSignatureDrawer, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
 
         this._lastSelectedSignature = app.user.getPreference("signature_default");
@@ -352,24 +352,7 @@
         app.drawer.open({
                 layout:'selection-list',
                 context:{
-                    module:'EmailTemplates',
-                    selectionListFilter: {
-                        'filter': [
-                            {
-                                '$or': [
-                                    {
-                                        'type': {'$is_null': ''}
-                                    },
-                                    {
-                                        'type': {'$equals': ''}
-                                    },
-                                    {
-                                        'type': {'$equals': 'email'}
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                    module:'EmailTemplates'
                 }
             },
             this.templateDrawerCallback
@@ -539,11 +522,13 @@
      *
      * @private
      */
-    _launchSignatureDrawer: function() {
+    launchSignatureDrawer: function() {
         app.drawer.open(
             {
-                layout: "compose-signatures-selection",
-                context: {module: this.module}
+                layout: "selection-list",
+                context: {
+                    module: 'UserSignatures'
+                }
             },
             this._updateEditorWithSignature
         );
@@ -552,13 +537,14 @@
     /**
      * Fetches the signature content using its ID and updates the editor with the content.
      *
-     * @param signature
+     * @param model
      */
-    _updateEditorWithSignature: function(signature) {
-        if (_.isObject(signature) && signature.id) {
-            var url = app.api.buildURL("Signatures", signature.id);
-            app.api.call("read", url, null, {
-                success: _.bind(function(model) {
+    _updateEditorWithSignature: function(model) {
+        if (model && model.id) {
+            var signature = app.data.createBean('UserSignatures', { id: model.id });
+
+            signature.fetch({
+                success:_.bind(function (model) {
                     if (this.disposed === true) return; //if view is already disposed, bail out
                     if (this._insertSignature(model)) {
                         this._lastSelectedSignature = model;
@@ -579,8 +565,8 @@
      * @private
      */
     _insertSignature: function(signature) {
-        if (_.isObject(signature) && signature.signature_html) {
-            var signatureContent          = this._formatSignature(signature.signature_html),
+        if (_.isObject(signature) && signature.get('signature_html')) {
+            var signatureContent          = this._formatSignature(signature.get('signature_html')),
                 emailBody                 = this.model.get("html_body") || "",
                 signatureOpenTag          = '<br class="signature-begin" />',
                 signatureCloseTag         = '<br class="signature-end" />',

@@ -73,6 +73,15 @@ $dictionary['UserSignature'] = array(
             'type'       => 'text',
             'reportable' => false,
         ),
+        'created_by' => array(
+            'name'             => 'created_by',
+            'vname'            => 'LBL_CREATED',
+            'type'             => 'name',
+            'studio'           => false,
+            'source'           => 'non-db',
+            'fields'           => array('user_id'),
+            'db_concat_fields' => array('user_id'),
+        ),
     ),
     'indices' => array(
         array(
