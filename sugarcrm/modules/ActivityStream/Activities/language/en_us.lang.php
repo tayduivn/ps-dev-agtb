@@ -10,7 +10,7 @@ $mod_strings = array(
     'TPL_ACTIVITY_ATTACH' => 'Added file <a class="dragoff" target="sugar_attach" href="{{url}}">{{filename}}</a>{{{str "TPL_ACTIVITY_ON" "Activities" this}}}',
     'TPL_ACTIVITY_DELETE' => 'Deleted {{{str "TPL_ACTIVITY_RECORD" "Activities" object}}} {{object.type}}.',
     'TPL_ACTIVITY_UNDELETE' => 'Restored {{{str "TPL_ACTIVITY_RECORD" "Activities" object}}} {{object.type}}.',
-    'TPL_ACTIVITY_RECORD' => '<a href="#{{module}}/{{id}}">{{name}}</a>',
+    'TPL_ACTIVITY_RECORD' => '<a href="#{{buildRoute module=module id=id}}">{{name}}</a>',
     // We need the trailing space at the end of the next line so that the str
     // handlebars helper isn't confused by a template that returns no text.
     'TPL_ACTIVITY_ON' => '{{#if object}} on {{{str "TPL_ACTIVITY_RECORD" "Activities" object}}}.{{/if}}{{#if object_type}} on {{{str "LBL_MODULE_NAME" object_type}}}.{{/if}} ',
