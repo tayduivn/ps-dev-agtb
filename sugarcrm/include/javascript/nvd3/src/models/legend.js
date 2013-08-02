@@ -93,13 +93,14 @@ nv.models.legend = function() {
           seriesPerRow--;
 
           for (k = 0; k < seriesWidths.length; k++) {
-            if (seriesWidths[k] > (columnWidths[k % seriesPerRow] || 0) )
+            if (seriesWidths[k] > (columnWidths[k % seriesPerRow] || 0) ) {
               columnWidths[k % seriesPerRow] = seriesWidths[k];
+            }
           }
 
           legendWidth = columnWidths.reduce(function(prev, cur, index, array) {
-                          return prev + cur;
-                        });
+            return prev + cur;
+          });
         }
         //console.log(columnWidths, legendWidth, seriesPerRow);
 

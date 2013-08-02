@@ -14,7 +14,7 @@
 }}
 <div class="dashlet-options">
     <div class="row-fluid">
-        <div class="span3 offset1 groupByOptions">
+        <div class="span4 groupByOptions">
             {{#with dashletConfig.group_by}}
                 {{field ../this model=../this.values}}
             {{/with}}

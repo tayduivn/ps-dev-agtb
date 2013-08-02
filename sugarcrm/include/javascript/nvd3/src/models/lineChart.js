@@ -19,8 +19,9 @@ nv.models.lineChart = function () {
     , showTitle = false
     , showControls = false
     , showLegend = true
+    , tooltip = null
     , tooltips = true
-    , tooltip = function (key, x, y, e, graph) {
+    , tooltipContent = function (key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
@@ -28,7 +29,7 @@ nv.models.lineChart = function () {
     , y
     , state = {}
     , noData = 'No Data Available.'
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove', 'stateChange', 'changeState')
     ;
 
   xAxis
@@ -46,27 +47,13 @@ nv.models.lineChart = function () {
   // Private Variables
   //------------------------------------------------------------
 
-  var showTooltip = function (e, offsetElement) {
-
-    // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
-    if (offsetElement) {
-      var svg = d3.select(offsetElement).select('svg');
-      var viewBox = svg.attr('viewBox');
-      if (viewBox) {
-        viewBox = viewBox.split(' ');
-        var ratio = parseInt(svg.style('width'), 10) / viewBox[2];
-        e.pos[0] = e.pos[0] * ratio;
-        e.pos[1] = e.pos[1] * ratio;
-      }
-    }
-
-    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
-        top = e.pos[1] + ( offsetElement.offsetTop || 0),
+  var showTooltip = function(e, offsetElement, groupTotals) {
+    var left = e.pos[0],
+        top = e.pos[1],
         x = xAxis.tickFormat()(lines.x()(e.point, e.pointIndex)),
         y = yAxis.tickFormat()(lines.y()(e.point, e.pointIndex)),
-        content = tooltip(e.series.key, x, y, e, chart);
-
-    nv.tooltip.show([left, top], content, null, null, offsetElement);
+        content = tooltipContent(e.series.key, x, y, e, chart);
+    tooltip = nv.tooltip.show( [left, top], content, null, null, offsetElement );
   };
 
   //============================================================
@@ -237,9 +224,8 @@ nv.models.lineChart = function () {
         .width(availableWidth)
         .height(availableHeight);
 
-
       var linesWrap = g.select('.nv-linesWrap')
-          .datum(data.filter(function (d) { return !d.disabled; }));
+            .datum(data.filter(function (d) { return !d.disabled; }));
 
       linesWrap
         .transition()
@@ -281,7 +267,6 @@ nv.models.lineChart = function () {
 
       legend.dispatch.on('legendClick', function (d,i) {
         d.disabled = !d.disabled;
-
         if (!data.filter(function (d) { return !d.disabled; }).length) {
           data.map(function (d) {
             d.disabled = false;
@@ -289,10 +274,8 @@ nv.models.lineChart = function () {
             return d;
           });
         }
-
         state.disabled = data.map(function(d) { return !!d.disabled; });
         dispatch.stateChange(state);
-
         container.transition().duration(500).call(chart);
       });
 
@@ -347,17 +330,13 @@ nv.models.lineChart = function () {
         }
       });
 
-
       dispatch.on('changeState', function(e) {
-
         if (typeof e.disabled !== 'undefined') {
           data.forEach(function(series,i) {
             series.disabled = e.disabled[i];
           });
-
           state.disabled = e.disabled;
         }
-
         selection.transition().duration(500).call(chart);
       });
 
@@ -385,6 +364,15 @@ nv.models.lineChart = function () {
   dispatch.on('tooltipHide', function () {
     if (tooltips) {
       nv.tooltip.cleanup();
+    }
+  });
+
+  lines.dispatch.on('elementMousemove.tooltip', function(e) {
+    dispatch.tooltipMove(e);
+  });
+  dispatch.on('tooltipMove', function(e) {
+    if (tooltip) {
+      nv.tooltip.position(tooltip,e.pos);
     }
   });
 
@@ -480,6 +468,12 @@ nv.models.lineChart = function () {
     return chart;
   };
 
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
   chart.tooltips = function (_) {
     if (!arguments.length) { return tooltips; }
     tooltips = _;
@@ -487,8 +481,8 @@ nv.models.lineChart = function () {
   };
 
   chart.tooltipContent = function (_) {
-    if (!arguments.length) { return tooltip; }
-    tooltip = _;
+    if (!arguments.length) { return tooltipContent; }
+    tooltipContent = _;
     return chart;
   };
 
