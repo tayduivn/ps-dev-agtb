@@ -48,7 +48,7 @@ ensureCache($minifyUtils, $rootDir);
         <? else: ?>
             <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
         <? endif; ?>
-        
+
         <!-- CSS -->
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
@@ -61,9 +61,9 @@ ensureCache($minifyUtils, $rootDir);
         <script language="javascript" src="../include/javascript/sugar7/field.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/hacks.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/alert.js"></script>
-        <script language="javascript" src="../include/javascript/sugar7/hbt-helpers.js"></script>
+        <script language="javascript" src="../include/javascript/sugar7/hbs-helpers.js"></script>
         <script language="javascript" src="../include/javascript/modernizr.js"></script>
-        
+
         <!-- Portal specific JS -->
         <script src='portal.js'></script>
         <script src='config.js'></script>

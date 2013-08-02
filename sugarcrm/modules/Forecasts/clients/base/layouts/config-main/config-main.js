@@ -74,7 +74,7 @@
 
     /**
      * Used to select a specific panel by name
-     * Correct names can be found in the specific view's hbt
+     * Correct names can be found in the specific view's hbs
      * Specifically found in the id attribute of '.accordion-heading a'
      *
      * @param {String} pName

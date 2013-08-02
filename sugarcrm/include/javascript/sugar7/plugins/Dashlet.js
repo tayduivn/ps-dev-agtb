@@ -34,7 +34,7 @@
                         this.createMode = true;
                         this.action = 'edit';
                         this.model = this.context.parent.get("model");
-                        //needed to allow the record hbt to render our settings rather than the context model
+                        //needed to allow the record hbs to render our settings rather than the context model
                         this.dashModel.set(settings);
                         this.dashModel.set("componentType", (this instanceof app.view.Layout) ? "layout" : "view");
 

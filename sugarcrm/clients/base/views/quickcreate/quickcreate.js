@@ -67,7 +67,7 @@
                 if (_.isUndefined(menuItem.visible) || menuItem.visible === true) {
                     menuItem.module = module;
                     menuItem.type = menuItem.type || 'quickcreate';
-                    //TODO: refactor sidecar field hbt helper so it can accept the module name directly
+                    //TODO: refactor sidecar field hbs helper so it can accept the module name directly
                     menuItem.model = app.data.createBean(module);
                     returnList.push(menuItem);
                 }
