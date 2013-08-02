@@ -23,14 +23,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $module_name = 'PdfManager';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#'.$module_name.'/create',
+        'route' => '#bwc/index.php?' . http_build_query(
+            array(
+                'module' => $module_name,
+                'action' => 'EditView'
+            )
+        ),
         'label' =>'LNK_NEW_RECORD',
         'acl_action'=>'create',
         'acl_module'=>$module_name,
         'icon' => 'icon-plus',
     ),
     array(
-        'route'=>'#'.$module_name,
+        'route' => '#bwc/index.php?' . http_build_query(
+            array(
+                'module' => $module_name,
+                'action' => 'index'
+            )
+        ),
         'label' =>'LNK_LIST',
         'acl_action'=>'list',
         'acl_module'=>$module_name,
