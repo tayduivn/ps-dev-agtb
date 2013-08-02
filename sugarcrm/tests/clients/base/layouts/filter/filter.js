@@ -267,6 +267,8 @@ describe("Base.Layout.Filter", function () {
                 layout: 'filter'
             });
             ctxt.prepare();
+            var _oResetPagination = ctxt.get('collection').resetPagination;
+            ctxt.get('collection').resetPagination = function() {};
             var stub = sinon.stub(ctxt,'loadData', function(options){options.success();});
             var resetLoadFlagSpy = sinon.spy(ctxt,'resetLoadFlag');
             var query = 'test query';
@@ -293,7 +295,7 @@ describe("Base.Layout.Filter", function () {
             expect(resetLoadFlagSpy).toHaveBeenCalled();
             expect(stub).toHaveBeenCalled();
             expect(spy).toHaveBeenCalled();
-
+            ctxt.get('collection').resetPagination = _oResetPagination;
         });
         it('should get relevant context lists for activities', function(){
             layout.showingActivities = true;
