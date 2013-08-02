@@ -209,6 +209,11 @@ input[type=radio] {
 .welcome {
   position: absolute;
   width: 100%;
+  .control-group {
+    &:not(:first-child) {
+      margin: 13px 0 !important;
+    }
+  }
 }
 .thumbnail.signup,
 .thumbnail.login {
@@ -232,14 +237,15 @@ input[type=radio] {
   text-align: right;
   margin-right: 12px;
 }
-
-.welcome {
-  .control-group {
-    &:not(:first-child) {
-      margin: 13px 0 !important;
-    }
-  }
+.modal .brand,
+.thumbnail .brand {
+  background: url('@{baseUrl}/img/sugar-red.png') 50% 50% no-repeat;
+  text-indent: -7000px;
+  margin: 0 auto;
+  width: 220px;
+  height: 42px;
 }
+
 
 .control-group {
   margin-bottom: 0;
