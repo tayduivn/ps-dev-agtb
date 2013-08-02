@@ -236,8 +236,11 @@ $dictionary['Opportunity'] = array(
             'massupdate' => false,
             'calculated' => true,
             'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
-            'enforced' => true
+            'enforced' => true,
             //END SUGARCRM flav=ent ONLY
+            'related_fields' => array(
+                'date_closed_timestamp'
+            )
         ),
         'date_closed_timestamp' => array(
             'name' => 'date_closed_timestamp',

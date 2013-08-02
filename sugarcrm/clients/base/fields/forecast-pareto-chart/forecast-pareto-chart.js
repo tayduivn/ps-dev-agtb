@@ -211,13 +211,8 @@
             ranges = this.model.get('ranges'),
             seriesIdx = 0,
             barData = [],
-<<<<<<< HEAD
-            lineVals = this.serverData['x-axis'].map(function(axis, i) {
-                return { series: seriesIdx, x: i + 1, y: 0 };
-=======
             lineVals = this._serverData['x-axis'].map(function(axis, i) {
                 return { series: seriesIdx, x: i + 1, y: 0 }
->>>>>>> SFA-1315: Pull Forecast Data from the Worksheets
             }),
             line = {
                 'key': this._serverData.labels.dataset[dataset],
@@ -251,13 +246,8 @@
             });
 
             if (!_.isEmpty(td)) {
-<<<<<<< HEAD
-                var barVal = this.serverData['x-axis'].map(function(axis, i) {
-                        return { series: seriesIdx, x: i + 1, y: 0, y0: 0 };
-=======
                 var barVal = this._serverData['x-axis'].map(function(axis, i) {
                         return { series: seriesIdx, x: i + 1, y: 0, y0: 0 }
->>>>>>> SFA-1315: Pull Forecast Data from the Worksheets
                     }),
                     axis = this._serverData['x-axis'];
 

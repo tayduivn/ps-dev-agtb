@@ -31,9 +31,13 @@ class TimestampExpression extends DateExpression
      */
     public function evaluate()
     {
-        $params = DateExpression::parse($this->getParameters()->evaluate());
+        $date = $this->getParameters()->evaluate();
+        $params = DateExpression::parse($date);
         if (!$params) {
             return false;
+        }
+        if (!DateExpression::hasTime($date)) {
+            $params->setTime(0, 0, 0);
         }
         return $params->getTimestamp();
     }

@@ -247,11 +247,6 @@ describe('Base.Views.ForecastPareto', function() {
             app.user.unset('id');
         });
 
-        it('when model is not assigned to current user, not call anything', function() {
-            view.removeRowFromChart(new Backbone.Model({'assigned_user_id': 'jasmine_test'}));
-            expect(getFieldStub).not.toHaveBeenCalled();
-        });
-
         it('when model is assigned, call the field methods', function() {
             app.user.set({'id': 'jasmine_test'});
             var s1 = sandbox.spy(field, 'getServerData'),
@@ -306,6 +301,9 @@ describe('Base.Views.ForecastPareto', function() {
                 },
                 setServerData: function(data) {
                     serverData = data;
+                },
+                hasServerData: function() {
+                    return true;
                 }
             }
             getFieldStub = sandbox.stub(view, 'getField', function() {

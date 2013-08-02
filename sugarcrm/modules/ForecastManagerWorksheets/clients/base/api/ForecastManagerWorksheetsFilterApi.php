@@ -148,16 +148,17 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
             $usersList = $this->getDirectHierarchyUsers($api, $args);
             $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
 
+            // get the list of users we have
+            $worksheet_users = array_map(
+                function ($i) {
+                    return $i['user_id'];
+                },
+                $worksheetData['records']
+            );
+
             //compare users and worksheet data to fill in gaps
             foreach ($usersList['records'] as $user) {
-                $userExists = false;
-                foreach ($worksheetData['records'] as $worksheet) {
-                    if ($worksheet['user_id'] == $user['id']) {
-                        $userExists = true;
-                        break;
-                    }
-                }
-                if (!$userExists) {
+                if (!in_array($user['id'], $worksheet_users)) {
                     $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
                     $blankWorksheet->assigned_user_id = $args['user_id'];
                     $blankWorksheet->user_id = $user['id'];

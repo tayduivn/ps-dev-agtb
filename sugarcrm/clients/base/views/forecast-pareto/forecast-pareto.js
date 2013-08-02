@@ -34,7 +34,7 @@
     /**
      * When on a Record view this are fields we should listen to changes in
      */
-    validChangedFields: ['amount', 'likely_case', 'best_case', 'worst_case',
+    validChangedFields: ['amount', 'likely_case', 'best_case', 'worst_case', 'assigned_user_id',
         'date_closed', 'date_closed_timestamp', 'probability', 'commit_stage', 'sales_stage'],
 
     /**
@@ -260,10 +260,23 @@
         model = model || this.model;
         var changed = model.changed,
             changedField = _.keys(changed),
+            validChangedFields = _.intersection(this.validChangedFields, _.keys(changed)),
+            changedCurrencyFields = _.intersection(['amount', 'best_case', 'likely_case', 'worst_case'], validChangedFields),
             assigned_user = model.get('assigned_user_id');
 
+        // lets make sure that the values actually changed on the currencies,
+        // this is needed because the server will send back the values with out .00 on the end and the model has .00
+        // so it looks like it changed, when in fact it didn't so don't worry about this change
+        if (!_.isEmpty(changedCurrencyFields)) {
+            _.each(changedCurrencyFields, function(field) {
+                if(parseFloat(model.get(field)) == parseFloat(model.previous(field))) {
+                    validChangedFields = _.without(validChangedFields, field);
+                }
+            });
+        }
+
         // dump out if it's not a field we are watching
-        if (_.isEmpty(_.intersection(this.validChangedFields, _.keys(changed)))) {
+        if (_.isEmpty(validChangedFields)) {
             return;
         }
 
@@ -273,6 +286,12 @@
             // find the item in the serverData
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData();
+
+            if (!field.hasServerData()) {
+                // if the field does not have server data, that means it's re-rendering the chart already,
+                // just bail out
+                return;
+            }
 
             // if we only have one changed field and it's the date_closed, lets map it to a timestamp.
             // this happens on the Opp -> RLI Subpanel since we don't have SugarLogic Support in ListViews
@@ -328,7 +347,7 @@
             }
 
             if (_.contains(changedField, 'commit_stage')) {
-                changed.forecast = changed.commit_stage
+                changed.forecast = changed.commit_stage;
                 delete changed.commit_stage;
             }
 
@@ -343,9 +362,9 @@
             // the row was not found, lets add it
             if (_.isEmpty(record)) {
                 this.addRowToChart(model);
+            } else {
+                field.setServerData(serverData, _.contains(changedField, 'probability'));
             }
-
-            field.setServerData(serverData, _.contains(changedField, 'probability'));
         } else if (_.contains(changedField, 'assigned_user_id')) {
             if (assigned_user === app.user.get('id')) {
                 this.addRowToChart(model)
@@ -404,20 +423,18 @@
      */
     removeRowFromChart: function(model) {
         model = model || this.model;
-        if (model.get('assigned_user_id') == app.user.get('id')) {
-            var field = this.getField('paretoChart'),
-                serverData = field.getServerData();
+        var field = this.getField('paretoChart'),
+            serverData = field.getServerData();
 
-            _.find(serverData.data, function(record, i, list) {
-                if (model.get('id') == record.record_id) {
-                    list.splice(i, 1);
-                    return true;
-                }
-                return false;
-            });
+        _.find(serverData.data, function(record, i, list) {
+            if (model.get('id') == record.record_id) {
+                list.splice(i, 1);
+                return true;
+            }
+            return false;
+        });
 
-            field.setServerData(serverData, true);
-        }
+        field.setServerData(serverData, true);
     },
 
     /**

@@ -159,8 +159,6 @@ class ForecastWorksheetsFilterApi extends FilterApi
 
         $chartData = $obj->process();
 
-        generateEtagHeader(md5(serialize($chartData)), 3600);
-
         return $chartData;
     }
 

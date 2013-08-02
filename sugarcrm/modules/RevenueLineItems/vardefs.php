@@ -520,6 +520,9 @@ $dictionary['RevenueLineItem'] = array(
             'importable' => 'required',
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
+            'related_fields' => array(
+                'date_closed_timestamp'
+            )
         ),
         'date_closed_timestamp' => array(
             'name' => 'date_closed_timestamp',
