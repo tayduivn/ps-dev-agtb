@@ -7,8 +7,8 @@
      * @extends View
      */
     events: {
-        "change input": "toggleDisabled",
-        "keyup input": "toggleDisabled",
+        "change input": "filterNameChanged",
+        "keyup input": "filterNameChanged",
         "click a.filter-close": "triggerClose",
         "click a.save_button:not(.disabled)": "triggerSave",
         "click a.delete_button:not(.hide)": "triggerDelete"
@@ -61,6 +61,14 @@
         // We have this.layout.editingFilter if we're setting the name.
         this.toggleDelete(!name);
     },
+
+    /**
+     * Fired when the filter name changed
+     * @param {Event} event
+     */
+    filterNameChanged: _.debounce(function(event) {
+        this.layout.trigger('filter:create:validate');
+    }, 400),
 
     /**
      * Toggle delete button

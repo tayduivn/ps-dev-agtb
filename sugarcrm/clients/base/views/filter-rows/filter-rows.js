@@ -44,6 +44,7 @@
         this.listenTo(this.layout, "filter:create:close", this.render);
         this.listenTo(this.layout, "filter:create:save", this.saveFilter);
         this.listenTo(this.layout, "filter:create:delete", this.deleteFilter);
+        this.listenTo(this.layout, "filter:create:validate", this.validateRows);
     },
 
     /**
@@ -535,7 +536,7 @@
 
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
-        if (!_.isEmpty(model.get(fieldName))) {
+        if (!_.isEmpty(model.get(fieldName)) && model.get(fieldName) !== $row.data('value')) {
             model.trigger('change');
         }
     },
