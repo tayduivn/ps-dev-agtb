@@ -39,7 +39,12 @@
      * @param previewId
      */
     fetchActivities: function(model, collection, fetch, previewId) {
+        this.parentId = model.id;
         this.disposeAllActivities();
+        this.collection.dataFetched = false;
+        this.$el.hide();
+        this.collection.reset();
+        this.collection.resetPagination();
         this.collection.fetch({
             /*
              * Retrieve activities for the model that the user wants to preview
@@ -62,14 +67,19 @@
      */
     renderActivities: function(collection) {
         var self = this;
+        if (this.disposed) {
+            return;
+        }
 
         if (this._previewOpened) {
             if (collection.length === 0) {
                 this.$el.hide();
             } else {
                 this.$el.show();
-                collection.each(function(model) {
-                    self.renderPost(model, true);
+                collection.each(function(activity) {
+                    if (self.parentId === activity.get('parent_id')) {
+                        self.renderPost(activity, true);
+                    }
                 });
             }
         } else {
@@ -77,16 +87,6 @@
                 self.renderActivities(collection);
             }, 500);
         }
-    },
-
-    /**
-     * Dispose all previously rendered activities
-     */
-    disposeAllActivities: function() {
-        _.each(this.renderedActivities, function(view) {
-            view.dispose();
-        });
-        this.renderedActivities = {};
     },
 
     /**
@@ -107,5 +107,11 @@
     /**
      * No need to bind events here because this activity stream is readonly.
      */
-    bindDataChange: function() {}
+    bindDataChange: function() {
+        this.collection.on('add', function(activity) {
+            if (!this.disposed && this.parentId === activity.get('parent_id')) {
+                this.renderPost(activity);
+            }
+        }, this);
+    }
 })

@@ -342,9 +342,9 @@
      * @param {Object} data
      */
     applyPreviousFilter: function (moduleName, linkName, data) {
-        var module = moduleName || (this.showingActivities ? "Activities" : this.module),
+        var module = moduleName || this.module,
             link = linkName || data.link;
-
+        if (this.showingActivities) module = "Activities";
         if (this.layoutType === 'record' && link !== 'all_modules' && !this.showingActivities) {
             var moduleMeta = app.metadata.getModule(module);
             // only switch modules if this link actually exists on the module

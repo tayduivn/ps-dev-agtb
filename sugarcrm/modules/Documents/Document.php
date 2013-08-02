@@ -97,8 +97,24 @@ class Document extends SugarBean {
 		$this->setupCustomFields('Documents'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
+    /**
+     * @see SugarBean::populateFromRow
+     */
+    function populateFromRow($row, $convert = false)
+    {
+        $row = parent::populateFromRow($row, $convert);
+        
+        if (!empty($this->document_name) && empty($this->name)) {
+            $this->name = $this->document_name;
+        }
+
+        return $row;
+    }
 
 	function save($check_notify = false) {
+        if (empty($this->document_name) && !empty($this->name)) {
+            $this->document_name = $this->name;
+        }
 
         if (empty($this->doc_type)) {
 			$this->doc_type = 'Sugar';

@@ -326,17 +326,4 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1,count($reply['records']),'OwnerRelated: Returned too many results');
     }
 
-    public function testFilteringOnARelationship()
-    {
-        $account_id = self::$accounts[0]->id;
-        $oppty_id = self::$opps[0]->id;
-        $reply = $this->filterApi->filterRelated($this->serviceMock,
-                array('module' => 'Accounts', 'record' => $account_id,
-                        'link_name' => 'opportunities',
-                        'filter' => array(array('name' => array('$starts' => "TEST 0 Opportunity"))),
-                        'fields' => 'id,name', 'order_by' => 'name:ASC'));
-
-        $this->assertEquals(1, count($reply['records']));
-        $this->assertEquals($oppty_id, $reply['records'][0]['id']);
-    }
 }

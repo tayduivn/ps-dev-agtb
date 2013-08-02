@@ -59,10 +59,7 @@
                 this.renderPost(model);
             }, this);
             this.collection.on('reset', function() {
-                _.each(this.renderedActivities, function(view) {
-                    view.dispose();
-                });
-                this.renderedActivities = {};
+                this.disposeAllActivities();
                 this.collection.each(function(post) {
                     this.renderPost(post);
                 }, this);
@@ -154,5 +151,21 @@
         }
 
         app.view.Layout.prototype.unbindData.call(this);
+    },
+
+    /**
+     * Dispose all previously rendered activities
+     */
+    disposeAllActivities: function() {
+        var nonActivities = [];
+        _.each(this._components, function(component) {
+            if (component.name !== 'activitystream') {
+                nonActivities.push(component);
+            } else {
+                component.dispose();
+            }
+        });
+        this._components = nonActivities;
+        this.renderedActivities = {};
     }
 })

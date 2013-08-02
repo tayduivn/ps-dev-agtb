@@ -48,7 +48,7 @@
 <div class="row-fluid">
     <div class="btn-toolbar pull-right">
         <a href="javascript:void(0)" name="reset_button">{{str "LBL_RESET_THEME_LNK"}}</a>
-        <button href="javascript:void(0)" class="button btn-primary" name="save_button" style="margin-left: 10px">
+        <button href="javascript:void(0)" class="btn btn-primary" name="save_button" style="margin-left: 10px">
                 <i class="icon-upload"></i> {{str "LBL_SAVE_AND_DEPLOY_BTN"}}</button>
 
     </div>
