@@ -136,5 +136,27 @@ describe("Subpanels layout", function() {
             layout.model = null;//so we don't try to dispose bogus
         });
 
+        it('Should mark components as being subpanels', function() {
+            var components = [
+                {context: {link: "bugs"}, layout: "subpanel"},  //Should be hidden
+                {context: {link: "cases"}, layout: "subpanel"}, //Should be ACL forbidden
+                {context: {link: "accounts"}, layout: "subpanel"}
+            ];
+            layout._components = [];
+            _.each(components, function(component) {
+                layout._components.push(
+                    app.view.createView({
+                        context: new Backbone.Model(component.context),
+                        layout: layout
+                    })
+                );
+            });
+            layout._markComponentsAsSubpanels(components);
+            expect(_.size(layout._components)).toBeGreaterThan(0);
+            _.each(layout._components, function(component) {
+                expect(component.context.get('isSubpanel')).toBeTruthy();
+            });
+        });
+
     });
 });

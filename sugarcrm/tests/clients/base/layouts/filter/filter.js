@@ -283,7 +283,7 @@ describe("Base.Layout.Filter", function () {
             var contextListStub = sinon.stub(layout, 'getRelevantContextList', function () {
                 return [ctxt];
             });
-            var getFilterStub = sinon.stub(layout,'buildFilterDef',function(){return testFilterDef1});
+            var getFilterStub = sinon.stub(layout,'buildFilterDef',function(){return testFilterDef1;});
 
             app.events.on('preview:close', spy);
 
@@ -342,6 +342,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'test1',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxt);
@@ -352,6 +353,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'test1',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxt1);
@@ -361,6 +363,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'testNoCollection',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxtWithoutCollection);
@@ -372,6 +375,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'testModelId',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxtWithModelId);
