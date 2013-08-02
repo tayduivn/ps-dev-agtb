@@ -2869,6 +2869,11 @@ class SugarBean
         {
             $id = $this->id;
         }
+        if (empty($this->table_name)) {
+            // I don't know how to fetch from something without a table
+            return null;
+        }
+
         $custom_join = $this->getCustomJoin();
 
         $query_select = "{$this->table_name}.*";
