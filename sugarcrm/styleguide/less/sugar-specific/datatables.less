@@ -27,11 +27,6 @@ table.dataTable {
       vertical-align: middle;
       text-overflow: ellipsis;
     }
-    /*&:first-child {
-      overflow-x: visible;
-      padding: 8px;
-      text-align: center;
-    }*/
     &:last-child {
       border-right: 0;
     }
@@ -45,7 +40,8 @@ table.dataTable {
       text-align: left;
     }
     .btn input {
-      margin: -2px 0 0 0;
+      position: relative;
+      top: -1px;
     }
     .toggle-all {
       margin: 10px;
@@ -80,7 +76,6 @@ table.dataTable {
 
         white-space: nowrap;
         word-break: break-word;
-        position: relative;
         vertical-align: middle;
         text-overflow: ellipsis;
         max-width: 100px;
@@ -387,112 +382,175 @@ table.dataTable {
 /* ---------
 FLEXLIST GENERIC */
 .flex-list-view {
+
+  /*LEFT ACTIONS ONLY*/
+  &.left-actions table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td {
+      &:first-child {
+        width: 71px;
+        padding: 7px 8px;
+        .box-sizing(border-box);
+        text-align: center;
+        overflow-x: visible;
+        position: absolute;
+        left: 0;
+      }
+      &:nth-child(2) {
+        padding-left: 79px;
+        max-width: 179px;
+      }
+    }
+
+    & > thead > tr > th {
+      &:first-child {
+        height: 42px;
+        background: @white;
+        span {
+          overflow-x: visible;
+        }
+      }
+    }
+    & > tbody > tr > td {
+      &:first-child {
+        border: none;
+        height: 35px;
+        margin: 2px 0;
+        z-index: 10;
+      }
+    }
+  }
+
+  /*RIGHT ACTIONS ONLY*/
+  &.right-actions table.dataTable {
+    & > thead > tr > th,
+    & > tbody > tr > td {
+      &:last-child {
+        width: 71px;
+        .box-sizing(border-box);
+        text-align: center;
+        overflow-x: visible;
+        position: absolute;
+        right: 0;
+      }
+      &:nth-last-child(2) {
+        padding-right: 79px !important;
+        max-width: 179px;
+        background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
+        background-position: ~"-moz-calc(100% - 80px)" 50% !important;
+        background-position: ~"-webkit-calc(100% - 80px)" 50% !important;
+        background-position: ~"calc(100% - 80px)" 50% !important;
+      }
+    }
+
+    & > thead > tr > th {
+      &:last-child {
+        height: 42px;
+        background: @white;
+        border-left: 1px solid darken(@grayLighter,5%);
+        > .dropdown {
+          overflow: visible;
+        }
+      }
+      &:nth-last-child(2) {
+        border-right: none;
+      }
+    }
+    & > tbody > tr > td {
+      &:last-child {
+        padding: 3px 8px;
+        border: none;
+        height: 35px;
+        margin: 2px 0;
+        .list .btn.rowaction {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
   /*DUPLICATES*/
   table.dataTable.duplicates {
-    thead > tr > th:last-child {
-      position: absolute;
-    }
     tbody > tr > td:last-child .list {
       overflow: visible;
+      display: inline-block;
     }
     tbody > tr:last-child > td {
       border-bottom-width: 0;
     }
     /*create record dup check*/
     &.duplicates-selectedit {
-      thead > tr > th:first-child,
-      tbody > tr > td:first-child {
-        padding-left: 20px;
-      }
-      thead > tr > th:last-child,
-      tbody > tr > td:last-child {
-        width: 135px;
-        max-width: 135px;
-        padding-left: 0;
+      border-bottom: 1px solid darken(@grayLighter,5%);
+      thead > tr > th,
+      tbody > tr > td {
+        &:first-child,
+        &:first-child {
+          padding-left: 20px;
+          max-width: 116px;
+        }
+        &:nth-last-child(2) {
+          padding-right: 143px;
+          max-width: 143px;
+        }
+        &:last-child {
+          width: 135px;
+          max-width: 135px;
+          padding-left: 4px;
+        }
       }
     }
     /*convert lead dup check*/
     &.duplicates-singleselect {
-      thead > tr > th:first-child,
-      tbody > tr > td:first-child {
-        width: 59px;
-      }
-      thead > tr > th:last-child,
-      tbody > tr > td:last-child {
-        width: 45px;
+      thead > tr > th,
+      tbody > tr > td {
+        &:first-child,
+        &:first-child {
+          width: 59px;
+          padding: 8px;
+        }
+        &:nth-child(2) {
+          padding-left: 67px;
+          max-width: 167px;
+        }
+        &:nth-last-child(2) {
+          padding-right: 53px;
+          max-width: 153px;
+        }
+        &:last-child,
+        &:last-child {
+          width: 45px;
+        }
       }
     }
     /*lead record view find duplicates*/
     &.duplicates-multiselect {
-      thead > tr > th:first-child,
-      tbody > tr > td:first-child {
-        width: 45px;
+      thead > tr > th,
+      tbody > tr > td {
+        &:first-child,
+        &:first-child {
+          width: 45px;
+        }
+        &:nth-child(2) {
+          padding-left: 53px;
+          max-width: 153px;
+        }
+        &:nth-last-child(2) {
+          padding-right: 53px;
+          max-width: 153px;
+        }
+        &:last-child,
+        &:last-child {
+          width: 45px;
+        }
       }
       thead > tr > th:first-child {
+        //hack fix for messed up button group
         .btn.checkall {
           .border-radius(3px);
         }
         .btn-group span,
         .dropdown-menu {
           display: none;
-        }
-      }
-      thead > tr > th:last-child,
-      tbody > tr > td:last-child {
-        width: 45px;
-      }
-    }
-  }
-
-  /*LEFT ACTIONS ONLY*/
-  &.left-actions table.dataTable {
-    & > thead > tr > th:first-child {
-      width: 71px;
-      height: 42px;
-      padding: 7px 8px;
-      .box-sizing(border-box);
-      background: @white;
-      overflow-x: visible;
-      text-align: center;
-      span {
-        overflow-x: visible;
-      }
-    }
-    & > tbody > tr > td:first-child {
-      width: 71px;
-      height: 38px;
-      padding: 8px 0;
-      .box-sizing(border-box);
-      text-align: center;
-      z-index: 10;
-    }
-  }
-
-  /*RIGHT ACTIONS ONLY*/
-  &.right-actions table.dataTable {
-    & > thead > tr > th:last-child {
-      width: 71px;
-      height: 42px;
-      padding: 4px 8px 0;
-      .box-sizing(border-box);
-      background: @white;
-      overflow-x: visible;
-      text-align: center;
-      line-height: 38px;
-      > .dropdown {
-        overflow: visible;
-      }
-    }
-    & > tbody > tr > td {
-      &:last-child {
-        width: 71px;
-        height: 38px;
-        padding: 4px 8px;
-        .box-sizing(border-box);
-        text-align: center;
-        overflow-x: visible;
-        .list .btn.rowaction {
-          margin-left: 0;
         }
       }
     }
@@ -614,7 +672,7 @@ FLEXLIST GENERIC */
   content: "";
   position: absolute;
   right: -5px;
-  top: -1px;
+  top: -2px;
   bottom: -1px;
   width: 5px;
 
@@ -637,7 +695,7 @@ FLEXLIST GENERIC */
   content: "";
   position: absolute;
   left: -5px;
-  top: -1px;
+  top: -2px;
   bottom: -1px;
   width: 5px;
 
@@ -670,44 +728,14 @@ FLEXLIST GENERIC */
     /*.flex-list.left-actions to fix the first column*/
     &.left-actions.scroll-width table.dataTable {
       & > thead > tr > th:first-child {
-        height: 42px;
+        border-right: none;
+        &:after {
+          .right-shadow;
+        }
       }
       & > tbody > tr > td:first-child {
-        height: 39px;
-      }
-      & > thead > tr > th,
-      & > tbody > tr > td {
-        &:first-child {
-          position: absolute;
-          left: 0;
-          border-right: 0;
-          &:after {
-            .right-shadow;
-          }
-        }
-        &:nth-child(2) {
-          max-width: 188px;
-          padding-left: 80px;
-        }
-      }
-      /*create record dup check*/
-      &.duplicates-multiselect {
-        thead > tr > th,
-        tbody > tr > td {
-          &:nth-child(2) {
-            max-width: 161px;
-            padding-left: 53px;
-          }
-        }
-      }
-      /*convert lead dup check*/
-      &.duplicates-singleselect {
-        thead > tr > th,
-        tbody > tr > td {
-          &:nth-child(2) {
-            max-width: 175px;
-            padding-left: 67px;
-          }
+        &:after {
+          .right-shadow;
         }
       }
     }
@@ -715,59 +743,14 @@ FLEXLIST GENERIC */
     /*.flex-list.right-actions to fix the last column*/
     &.right-actions.scroll-width table.dataTable {
       & > thead > tr > th:last-child {
-        height: 42px;
+        border-left: none;
+        &:before {
+          .left-shadow;
+        }
       }
       & > tbody > tr > td:last-child {
-        height: 39px;
-      }
-      & > thead > tr > th,
-      & > tbody > tr > td {
-        &:last-child {
-          position: absolute;
-          right: 0;
-          border-left: 0;
-          border-right: 0;
-          &:before {
-            .left-shadow;
-          }
-        }
-        &:nth-last-child(2) {
-          max-width: 188px;
-          padding-right: 80px !important;
-          background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
-          background-position: ~"-moz-calc(100% - 80px)" 50% !important;
-          background-position: ~"-webkit-calc(100% - 80px)" 50% !important;
-          background-position: ~"calc(100% - 58px)" 50% !important;
-        }
-      }
-      & > tfoot > tr > td {
-        &:nth-last-child(2) {
-          max-width: 188px;
-          padding-right: 80px;
-        }
-      }
-      /*create record dup check*/
-      &.duplicates-selectedit {
-        thead > tr > th:nth-last-child(2),
-        tbody > tr > td:nth-last-child(2) {
-          max-width: 251px;
-          padding-right: 143px;
-        }
-      }
-      /*convert lead dup check*/
-      &.duplicates-singleselect {
-        thead > tr > th:nth-last-child(2),
-        tbody > tr > td:nth-last-child(2) {
-          max-width: 161px;
-          padding-right: 53px;
-        }
-      }
-      /*lead record view find duplicates*/
-      &.duplicates-multiselect {
-        thead > tr > th:nth-last-child(2),
-        tbody > tr > td:nth-last-child(2) {
-          max-width: 161px;
-          padding-right: 53px;
+        &:before {
+          .left-shadow;
         }
       }
     }
@@ -799,23 +782,9 @@ FLEXLIST GENERIC */
 }
 
 .subpanel .flex-list-view table.dataTable {
-  &> tbody > tr > td {
-    border-bottom-width: 0;
-    &:last-child {
-      //position: absolute;
-    }
-  }
-  .table.dataTable {
-    &> tbody > tr > td {
-      border-bottom-width: 0;
-      &:last-child {
-        //position: absolute;
-      }
-    }
-    &> thead > tr > th:first-child,
-    &> tbody > tr > td:first-child {
-      padding-left: 10px
-    }
+  &> thead > tr > th:first-child,
+  &> tbody > tr > td:first-child {
+    padding: 6px 8px;
   }
 }
 
@@ -878,6 +847,11 @@ table.dataTable th:active {
   .btn {
     margin: 0;
     padding: 4px 0px;
+  }
+  .dropdown {
+    /*position: absolute;
+    top: 4px;
+    width: 54px;*/
   }
   .dropdown-menu {
     text-align: left;

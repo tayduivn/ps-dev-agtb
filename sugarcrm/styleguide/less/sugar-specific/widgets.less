@@ -110,15 +110,6 @@
     }
   }
 
-  .actions a:hover {
-    color: @white;
-  }
-
-  .unstyled li .progress,
-  .unstyled li .progress .bar {
-    height: 12px;
-  }
-
   .unstyled {
     margin: 5px;
     li {
@@ -126,6 +117,10 @@
       .label,
       .filetype-thumbnail {
         margin: 3px 12px 12px 0;
+      }
+      .progress,
+      .progress .bar {
+        height: 12px;
       }
     }
     li:last-child {
@@ -161,6 +156,20 @@
   }
   table.dataTable > tbody > tr:last-child td {
     border-bottom-width: 0;
+  }
+
+  .actions {
+    top: 3px;
+    position: relative;
+    &.btn-group.dashlet-toolbar {
+      top: 0;
+      &.btn-group + .btn-group {
+        margin-left: 0;
+      }
+    }
+    a:hover {
+      color: @white;
+    }
   }
 
   &.expanded {
@@ -206,6 +215,7 @@
       padding: 10px 20px;
     }
   }
+
 }
 .widget-container {
   padding: 5px;

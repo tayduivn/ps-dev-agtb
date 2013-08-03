@@ -92,8 +92,13 @@
         top: -7px;
       }
     }
-    .flex-list-view .morecol .dropdown {
-      width: 28px;
+    .flex-list-view .morecol {
+      z-index: 1;
+      .dropdown {
+        position: fixed;
+        width: 28px;
+        top: auto;
+      }
     }
   }
   .record {
