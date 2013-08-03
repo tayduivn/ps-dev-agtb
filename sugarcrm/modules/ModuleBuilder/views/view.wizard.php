@@ -349,7 +349,7 @@ class ModuleBuilderViewWizard extends SugarView
         $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_RECORDVIEW' ] ] =
           array (
               'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_RECORDVIEW."&view_module={$this->editModule}&view_package={$this->package}" ,
-              'imageTitle' => 'Record',
+              'imageTitle' => 'RecordView',
               'help'=>'viewBtnRecordView'
           ) ;
         $this->buttons [ $GLOBALS [ 'mod_strings' ] [ 'LBL_LISTVIEW' ] ] =

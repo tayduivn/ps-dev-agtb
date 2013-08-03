@@ -612,6 +612,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			
 			return false;
 		},
+		refreshMetadata: function() {
+			// Get the parent api object
+			var api = parent.SUGAR.App.api;
+
+			// Call the ping api
+			api.call('read', api.buildURL('ping'));
+		},
 		submitForm: function(formname, successCall){
 			ajaxStatus.showStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_LOADING'));
 			if (typeof(successCall) == 'undefined') {
@@ -865,6 +872,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			
 			ModuleBuilder.failed = function(){};
             ModuleBuilder.state.hideFailedMesage = true;
+
+			// Reset the metadata on the client so that new modules are shown immediately
+			ModuleBuilder.refreshMetadata();
+			
 			//Reload the page
 			window.setTimeout("window.location.assign(window.location.href.split('#')[0])", 2000);
 			
