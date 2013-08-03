@@ -484,8 +484,9 @@ class StudioModule
     {
         $nodes = array();
         foreach ($this->sources as $file => $def) {
+            $dir = str_replace('viewdefs.php', '', $file);
             $file = str_replace('viewdefs', '', $file);
-            if (file_exists("modules/{$this->module}/metadata/portal/views/$file")) {
+            if (file_exists("modules/{$this->module}/clients/portal/views/$dir/$file")) {
                 $nodes[] = array(
                    'name' => $def['name'],
                    'action' => 'module=ModuleBuilder&action=editPortal&view=' . ucfirst($def['type']) . '&view_module=' . $this->module,

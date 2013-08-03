@@ -307,9 +307,11 @@ class ModuleBuilderViewWizard extends SugarView
     public function generateSugarPortalViewButtons()
     {
         $module = new SugarPortalModule ( $this->editModule ) ;
-        foreach ($module->views as $file => $view) {
-            $viewType = ($view [ 'type' ] == 'list') ? "ListView" : ucfirst ( $view [ 'type' ] ) ;
-            $this->buttons [ $view [ 'name' ] ] = array ( 'action' => "module=ModuleBuilder&action=editPortal&view_module={$this->editModule}&view=$viewType" , 'imageTitle' => $viewType , 'help' => "viewBtn{$viewType}" , 'size' => '48' ) ;
+        if (!empty($module->views) && is_array($module->views)) {
+            foreach ($module->views as $file => $view) {
+                $viewType = ($view [ 'type' ] == 'list') ? "ListView" : ucfirst ( $view [ 'type' ] ) ;
+                $this->buttons [ $view [ 'name' ] ] = array ( 'action' => "module=ModuleBuilder&action=editPortal&view_module={$this->editModule}&view=$viewType" , 'imageTitle' => $viewType , 'help' => "viewBtn{$viewType}" , 'size' => '48' ) ;
+            }
         }
     }
 
