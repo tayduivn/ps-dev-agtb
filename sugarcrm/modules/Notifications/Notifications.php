@@ -66,7 +66,7 @@ class Notifications extends Basic
      */
     public function Notifications()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

@@ -72,7 +72,7 @@ class ContractType extends SugarBean {
      */
     public function ContractType()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	/*This bean's constructor*/

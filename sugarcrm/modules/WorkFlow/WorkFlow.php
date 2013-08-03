@@ -134,7 +134,7 @@ class WorkFlow extends SugarBean
      */
     public function Workflow()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

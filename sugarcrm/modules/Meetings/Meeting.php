@@ -109,7 +109,7 @@ class Meeting extends SugarBean {
      */
     public function Meeting()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	/**

@@ -61,7 +61,7 @@ class Release extends SugarBean {
      */
     public function Release()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

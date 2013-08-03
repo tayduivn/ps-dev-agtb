@@ -38,7 +38,7 @@ class File extends Basic
      */
     public function File()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct(){

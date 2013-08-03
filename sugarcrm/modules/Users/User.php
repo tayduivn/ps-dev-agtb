@@ -106,7 +106,7 @@ class User extends Person {
      */
     public function User()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

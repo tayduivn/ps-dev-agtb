@@ -116,7 +116,7 @@ class ProductTemplate extends SugarBean {
      */
     public function ProductTemplate()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

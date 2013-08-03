@@ -47,17 +47,6 @@ class ACLAction  extends SugarBean
     protected static $acl_map;
 
     /**
-     * This is a deprecated method, please start using __construct() as this method will be removed in a future version
-     *
-     * @see __construct
-     * @deprecated
-     */
-    public function ACLAction()
-    {
-        $this->__construct();
-    }
-
-    /**
     * static addActions($category, $type='module')
     * Adds all default actions for a category/type
     *

@@ -105,7 +105,7 @@ class WorkFlowSchedule extends SugarBean {
      */
     public function WorkFlowSchedule()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

@@ -154,7 +154,7 @@ class InboundEmail extends SugarBean {
      */
     public function InboundEmail()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	/**

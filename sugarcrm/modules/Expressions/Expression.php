@@ -166,7 +166,7 @@ class Expression extends SugarBean {
      */
     public function Expression()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

@@ -33,7 +33,7 @@ class SugarEmailAddress extends SugarBean
      */
     public function SugarEmailAddress()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

@@ -140,7 +140,7 @@ class Account extends Company {
      */
     public function Account()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

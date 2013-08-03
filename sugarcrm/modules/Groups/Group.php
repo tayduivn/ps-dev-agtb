@@ -41,7 +41,7 @@ class Group extends User {
      */
     public function Group()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

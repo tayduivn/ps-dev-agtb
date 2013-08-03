@@ -92,7 +92,7 @@ class KBDocument extends SugarBean {
      */
     public function KBDocument()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

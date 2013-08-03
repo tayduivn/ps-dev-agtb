@@ -42,7 +42,7 @@ class MailMerge
      */
     public function MailMerge($list = null, $fieldList = null, $data_dir = 'data')
     {
-        $this->__construct($list, $fieldList, $data_dir);
+        self::__construct($list, $fieldList, $data_dir);
     }
 
 

@@ -63,7 +63,7 @@ class Currency extends SugarBean
      */
     public function Currency()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

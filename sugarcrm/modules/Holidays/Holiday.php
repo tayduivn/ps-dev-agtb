@@ -59,7 +59,7 @@ class Holiday extends SugarBean {
      */
     public function Holiday()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct()

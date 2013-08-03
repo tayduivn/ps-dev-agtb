@@ -27,7 +27,7 @@
  ********************************************************************************/
 class FieldViewer{
 	public function FieldViewer(){
-        $this->__construct();
+        self::__construct();
     }
     public function __construct() {
 		$this->ss = new Sugar_Smarty();

@@ -61,7 +61,7 @@ class KBDocumentViewsRating extends SugarBean {
      */
     public function KBDocumentViewsRatings()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

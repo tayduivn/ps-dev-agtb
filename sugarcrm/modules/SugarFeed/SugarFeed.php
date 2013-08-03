@@ -63,7 +63,7 @@ class SugarFeed extends Basic {
      */
     public function SugarFeed()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct(){

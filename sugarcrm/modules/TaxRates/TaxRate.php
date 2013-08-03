@@ -63,7 +63,7 @@ class TaxRate extends SugarBean {
      */
     public function TaxRate()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

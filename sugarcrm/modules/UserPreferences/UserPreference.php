@@ -64,7 +64,7 @@ class UserPreference extends SugarBean
      */
     public function UserPreference(User $user = null)
     {
-        $this->__construct($user);
+        self::__construct($user);
     }
 
     // Do not actually declare, use the functions statically

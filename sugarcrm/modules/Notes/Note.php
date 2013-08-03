@@ -84,7 +84,7 @@ class Note extends SugarBean {
      */
     public function Note()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

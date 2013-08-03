@@ -45,7 +45,7 @@ class OpportunitiesViewEdit extends ViewEdit
      */
     public function OpportunitiesViewEdit()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function display()

@@ -116,7 +116,7 @@ class DataSet_Attribute extends SugarBean {
      */
     public function DataSet_Attribute()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

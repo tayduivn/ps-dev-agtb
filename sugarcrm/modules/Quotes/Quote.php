@@ -153,7 +153,7 @@ class Quote extends SugarBean {
      */
     public function Quote()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

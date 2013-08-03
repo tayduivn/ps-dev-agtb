@@ -86,7 +86,7 @@ class Campaign extends SugarBean {
      */
     public function Campaign()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

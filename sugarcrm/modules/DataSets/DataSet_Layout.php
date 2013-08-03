@@ -104,7 +104,7 @@ class DataSet_Layout extends SugarBean {
      */
     public function DataSet_Layout()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {
