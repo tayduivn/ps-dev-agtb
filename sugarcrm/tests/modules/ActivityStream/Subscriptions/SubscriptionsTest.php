@@ -141,6 +141,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddActivitySubscriptions_TypeOfActivityIsDeleteAndSuccessful_RelationshipIsAdded()
     {
+        $GLOBALS['reload_vardefs'] = true;
         $activity                = SugarTestActivityUtilities::createActivity();
         $activity->activity_type = 'delete';
         $activity->save();
@@ -165,6 +166,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array($this->user->id);
         $actual   = $activity->activities_users->get();
         $this->assertEquals($expected, $actual, 'Should have added the user relationship to the activity.');
+        unset($GLOBALS['reload_vardefs']);
     }
 
     private static function getUnsavedRecord()
