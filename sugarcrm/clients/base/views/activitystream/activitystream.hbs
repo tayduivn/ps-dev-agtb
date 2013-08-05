@@ -1,5 +1,5 @@
 {{#eq model.attributes.activity_type "post"}}
-<a href="#{{buildRoute module='Users' id=model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar" rel="tooltip" data-title="{{model.attributes.created_by_name}}" data-placement="right">
+<a href="#Users/{{model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar" rel="tooltip" data-title="{{model.attributes.created_by_name}}" data-placement="right">
     {{#if model.attributes.picture_url}}
         <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}}">
     {{else}}
@@ -21,14 +21,27 @@
         </div>
     {{/if}}
     <date class="date">
-        <a href="#{{buildRoute module='Users' id=model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
+        <a href="#Users/{{model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
     </date>
 </p>
 <ul class="comments">
 {{#if model.attributes.comment_count}}
     {{#each model.attributes.comments.models}}
     {{#with attributes}}
-        {{{subViewTemplate "activitystream.comment" this}}}
+    <li class="comment">
+         <a href="#Users/{{created_by}}" id="avatar-comment-{{id}}" class="pull-left avatar">
+        {{#if picture_url}}
+            <img src="{{picture_url}}" alt="{{created_by_name}}">
+        {{else}}
+            <i class="icon-user"></i>
+        {{/if}}
+        </a>
+        <p>
+            <span class="tagged">{{{str "TPL_COMMENT" "Activities" data}}}</span>
+            <br />
+            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_modified "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
+        </p>
+    </li>
     {{/with}}
     {{/each}}
     {{#if remaining_comments}}

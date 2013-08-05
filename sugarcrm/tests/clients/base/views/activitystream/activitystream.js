@@ -199,13 +199,13 @@ describe("Activity Stream View", function() {
         });
     });
 
-    describe("formatAllTagsAndLinks()", function() {
+    describe("formatAllTags()", function() {
         it('Should format text-based tags in activity post into HTML format', function() {
             view.model.set('data', {
                 value: 'foo @[Accounts:1234-1234:foo bar] bar'
             });
 
-            view.formatAllTagsAndLinks();
+            view.formatAllTags();
 
             expect(view.model.get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar')
         });
@@ -217,84 +217,9 @@ describe("Activity Stream View", function() {
                 }
             });
 
-            view.formatAllTagsAndLinks();
+            view.formatAllTags();
 
             expect(view.commentsCollection.at(0).get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar')
-        });
-
-        it('Should convert URLs into links in posts', function() {
-            view.model.set('data', {
-                value: 'test.com'
-            });
-
-            view.formatAllTagsAndLinks();
-
-            expect(view.model.get('data').value).toBe('<a href="http://test.com" target="_blank">test.com</a>');
-        });
-
-        it('Should convert URLs into links in comments', function() {
-            view.commentsCollection.add({
-                data: {
-                    value: 'test.com'
-                }
-            });
-
-            view.formatAllTagsAndLinks();
-
-            expect(view.commentsCollection.at(0).get('data').value).toBe('<a href="http://test.com" target="_blank">test.com</a>');
-        });
-
-        it('Should convert URLs into links even if it is called twice', function() {
-            view.model.set('data', {
-                value: 'test.com'
-            });
-
-            view.formatAllTagsAndLinks();
-            view.formatAllTagsAndLinks();
-
-            expect(view.model.get('data').value).toBe('<a href="http://test.com" target="_blank">test.com</a>');
-        });
-    });
-
-    describe("formatLinks()", function() {
-        it('Should convert URLs with http and https protocols into links', function() {
-            var input = 'foo http://www.sugarcrm.com bar https://www.test.com',
-                expected = 'foo <a href="http://www.sugarcrm.com" target="_blank">http://www.sugarcrm.com</a> bar <a href="https://www.test.com" target="_blank">https://www.test.com</a>',
-                result = view.formatLinks(input);
-
-            expect(result).toBe(expected);
-        });
-
-        it('Should convert URLs into links when no protocols or "www" is specified', function() {
-            var input = 'foo www.sugarcrm.com bar test.com',
-                expected = 'foo <a href="http://www.sugarcrm.com" target="_blank">www.sugarcrm.com</a> bar <a href="http://test.com" target="_blank">test.com</a>',
-                result = view.formatLinks(input);
-
-            expect(result).toBe(expected);
-        });
-
-        it('Should convert URL with parameters into links', function() {
-            var input = 'http://www.sugarcrm.com/1234/321?q=difa%20fdaf',
-                expected = '<a href="http://www.sugarcrm.com/1234/321?q=difa%20fdaf" target="_blank">http://www.sugarcrm.com/1234/321?q=difa%20fdaf</a>',
-                result = view.formatLinks(input);
-
-            expect(result).toBe(expected);
-        });
-
-        it('Should convert URL with port number into links', function() {
-            var input = 'http://www.sugarcrm.com:8888/ent/sugarcrm/index.php',
-                expected = '<a href="http://www.sugarcrm.com:8888/ent/sugarcrm/index.php" target="_blank">http://www.sugarcrm.com:8888/ent/sugarcrm/index.php</a>',
-                result = view.formatLinks(input);
-
-            expect(result).toBe(expected);
-        });
-
-        it('Should not convert tags into links', function() {
-            var input = '@[Contacts:1234-1234:foo bar]',
-                expected = '@[Contacts:1234-1234:foo bar]',
-                result = view.formatLinks(input);
-
-            expect(result).toBe(expected);
         });
     });
 });
