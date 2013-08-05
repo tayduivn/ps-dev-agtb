@@ -59,14 +59,17 @@ class ViewFts extends SugarView
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 10 );
         $indexOffset = $offset / $limit;
-        $moduleFilter = !empty($_REQUEST['m']) ? $_REQUEST['m'] : FALSE;
-        $filteredModules =  $this->getFilterModules();
+        $moduleFilter = !empty($_REQUEST['m']) ? $_REQUEST['m'] : false;
+        if (!empty($moduleFilter) && is_scalar($moduleFilter)) {
+            $moduleFilter = str_getcsv($moduleFilter);
+        }
+        $disabledModules = !empty($_REQUEST['disabled_modules']) ? str_getcsv($_REQUEST['disabled_modules']) : false;
         //If no modules have been passed in then lets check user preferences.
-        if($moduleFilter === FALSE)
-        {
+        if ($moduleFilter === false) {
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         }
-        $append_wildcard = !empty($_REQUEST['append_wildcard']) ? $_REQUEST['append_wildcard'] : FALSE;
+        $filteredModules =  $this->getFilterModules($moduleFilter, $disabledModules);
+        $append_wildcard = !empty($_REQUEST['append_wildcard']) ? $_REQUEST['append_wildcard'] : false;
         $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => $append_wildcard);
 
         if( $this->fullView || $refreshModuleFilter)
@@ -92,8 +95,10 @@ class ViewFts extends SugarView
         }
         $query_encoded = urlencode($trimmed_query);
 
-
-
+        if (count($filteredModules['enabled']) != count($moduleFilter)) {
+            // if there is a full module list we need to check "Show all"
+            $this->ss->assign('moduleFilter', $moduleFilter);
+        }
         $showMoreDivStyle = ($totalHitsFound > $limit) ? '' : "display:none;";
         $this->ss->assign('showMoreDivStyle', $showMoreDivStyle);
         $this->ss->assign('indexOffset', $indexOffset);
@@ -110,7 +115,10 @@ class ViewFts extends SugarView
 
         if( $this->fullView )
         {
-            $this->ss->assign('filterModules',$this->filterModuleListByTypes($filteredModules['enabled'], $hitsByModule));
+            $this->ss->assign(
+                'filterModules',
+                $this->filterModuleListByTypes($filteredModules['enabled'], $hitsByModule, $moduleFilter)
+            );
             if($resultSetOnly)
             {
                 $out = array('results' => $this->ss->fetch($rsTemplate), 'totalHits' => $totalHitsFound, 'totalTime' => $totalTime);
@@ -135,9 +143,10 @@ class ViewFts extends SugarView
      *
      * @param $modulelist
      * @param $facetResults
+     * @param $moduleFilter array list of searched modules
      * @return mixed
      */
-    protected function filterModuleListByTypes($modulelist, $facetResults )
+    protected function filterModuleListByTypes($modulelist, $facetResults, $moduleFilter)
     {
         if($facetResults === FALSE)
             return $modulelist;
@@ -148,8 +157,7 @@ class ViewFts extends SugarView
                 $moduleEntry['count'] = $facetResults[$moduleEntry['module']];
             else
             {
-                if (empty($_REQUEST['m']) || in_array($moduleEntry['module'], $_REQUEST['m']))
-                {
+                if (empty($moduleFilter) || in_array($moduleEntry['module'], $moduleFilter)) {
                     $moduleEntry['count'] = 0;
                 }
                 else
@@ -176,9 +184,11 @@ class ViewFts extends SugarView
     /**
      * Get the enabled and disabled modules for the datatable
      *
+     * @param $moduleFilter array Requested modules for search
+     * @param $disabledModules array Requested modules for disable in search
      * @return array
      */
-    protected function getFilterModules()
+    protected function getFilterModules($moduleFilter, $disabledModules)
     {
         $filteredEnabled = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();
         $userDisabled = $GLOBALS['current_user']->getPreference('fts_disabled_modules');
@@ -187,6 +197,16 @@ class ViewFts extends SugarView
         $userDisabled = $this->translateModulesList($userDisabled);
         $filteredEnabled = $this->translateModulesList($filteredEnabled);
         sort($filteredEnabled);
+
+        if (!empty($moduleFilter)) {
+            foreach ($filteredEnabled as $key => $info) {
+                if (!in_array($info['module'], $moduleFilter) && in_array($info['module'], $disabledModules)) {
+                    unset($filteredEnabled[$key]);
+                    // its not enabled, its disabled
+                    $userDisabled = $info;
+                }
+            }
+        }
 
         return array('enabled' => $filteredEnabled, 'disabled' => $userDisabled);
     }

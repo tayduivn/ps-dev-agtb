@@ -237,7 +237,9 @@ width:70%;
                         SUGAR.FTS.addModuleFilterHandlers();
                     }
                     SUGAR.FTS.toogleShowMore();
-
+                    if (window.parent.SUGAR !== undefined && window.parent.SUGAR.App.view !== undefined) {
+                        window.parent.SUGAR.App.view.createView({name: 'bwc'})._rewriteLinksForSidecar(window);
+                    }
                 },
                 failure: function(o)
                 {
