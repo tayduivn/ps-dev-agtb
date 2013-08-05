@@ -287,6 +287,9 @@ class RepairAndClear
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARTHEMECACHE']}</h3>";
 		SugarThemeRegistry::clearAllCaches();
+
+        //Clear Sidecar Themes CSS files
+        $this->_clearCache(sugar_cached('themes/clients/'), '.css');
 	}
 	public function clearSugarFeedCache()
 	{
