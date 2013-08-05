@@ -1,57 +1,44 @@
 {{#eq model.attributes.activity_type "post"}}
-<a href="#Users/{{model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar" rel="tooltip" data-title="{{model.attributes.created_by_name}}" data-placement="right">
-    {{#if model.attributes.picture_url}}
-        <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}}">
-    {{else}}
-        <i class="icon-user" alt="{{model.attributes.created_by_name}}"></i>
-    {{/if}}
-</a>
+    <a href="#{{buildRoute module='Users' id=model.attributes.created_by}}" id="avatar-post-{{model.attributes.id}}" class="pull-left avatar" rel="tooltip" data-title="{{model.attributes.created_by_name}}" data-placement="right">
+        {{#if model.attributes.picture_url}}
+            <img src="{{model.attributes.picture_url}}" alt="{{model.attributes.created_by_name}}">
+        {{else}}
+            <i class="icon-user" alt="{{model.attributes.created_by_name}}"></i>
+        {{/if}}
+    </a>
 {{else}}
-<div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-placement="right" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
-    {{moduleIconLabel model.attributes.parent_type}}
-</div>
+    <div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-placement="right" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
+        {{moduleIconLabel model.attributes.parent_type}}
+    </div>
 {{/eq}}
 <p>
-    {{#if tpl}}
-        <div><span class="tagged">{{{str tpl "Activities" model.attributes.data}}}</span></div>
-    {{/if}}
-    {{#if embed}}
-        <div class="embed">
-            {{{embed}}}
-        </div>
-    {{/if}}
-    <date class="date">
-        <a href="#Users/{{model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
-    </date>
+{{#if tpl}}
+    <div><span class="tagged">{{{str tpl "Activities" model.attributes.data}}}</span></div>
+{{/if}}
+{{#if embed}}
+    <div class="embed">
+        {{{embed}}}
+    </div>
+{{/if}}
+<date class="date">
+    <a href="#{{buildRoute module='Users' id=model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
+</date>
 </p>
 <ul class="comments">
-{{#if model.attributes.comment_count}}
-    {{#each model.attributes.comments.models}}
-    {{#with attributes}}
-    <li class="comment">
-         <a href="#Users/{{created_by}}" id="avatar-comment-{{id}}" class="pull-left avatar">
-        {{#if picture_url}}
-            <img src="{{picture_url}}" alt="{{created_by_name}}">
-        {{else}}
-            <i class="icon-user"></i>
+    {{#if model.attributes.comment_count}}
+        {{#each model.attributes.comments.models}}
+            {{#with attributes}}
+                {{{subViewTemplate "activitystream.comment" this}}}
+            {{/with}}
+        {{/each}}
+        {{#if remaining_comments}}
+            <li class="comment more-comments">
+                <a class="more">
+                    {{str more_tpl "Activities" remaining_comments}}
+                </a>
+            </li>
         {{/if}}
-        </a>
-        <p>
-            <span class="tagged">{{{str "TPL_COMMENT" "Activities" data}}}</span>
-            <br />
-            <date class="date"><a href="#Users/{{created_by}}">{{created_by_name}}</a> {{timeago date_modified "LBL_TIME_RELATIVE_ACTIVITIES"}}</date>
-        </p>
-    </li>
-    {{/with}}
-    {{/each}}
-    {{#if remaining_comments}}
-    <li class="comment more-comments">
-        <a class="more">
-            {{str more_tpl "Activities" remaining_comments}}
-        </a>
-    </li>
     {{/if}}
-{{/if}}
     {{#unless readonly}}
         <li class="comment reply-area hide">
             <div class="reply-input">
