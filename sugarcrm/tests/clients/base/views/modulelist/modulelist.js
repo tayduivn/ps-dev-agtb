@@ -64,6 +64,7 @@ describe("Module List", function() {
                     Accounts: {}
                 }
             });
+
         });
 
         afterEach(function() {
@@ -85,7 +86,7 @@ describe("Module List", function() {
 
         it("Should not complete meta on modules missing from the module list", function() {
             var modulesList = SugarTest.app.metadata.getModuleNames();
-             modulesList.test = 'test';
+            modulesList.test = 'test';
             var output = view.completeMenuMeta(modulesList);
             _.each(output, function(module, key) {
                 expect(module.name).not.toEqual('test');
@@ -94,8 +95,8 @@ describe("Module List", function() {
 
         it("Should select Cases module to be currently active module", function() {
             var getModuleStub = sinon.stub(SugarTest.app.controller.context, 'get', function() {
-                    return moduleName;
-                });
+                return moduleName;
+            });
 
             view.activeModule._moduleList = view;
             view.render();
@@ -146,11 +147,28 @@ describe("Module List", function() {
                         ]
                     });
                 }
-            })
+            });
+            var getModuleStub = sinon.stub(SugarTest.app.metadata, 'getModule', function(key) {
+                var data = {
+                    Accounts: {
+                        menu: {
+                            header: {
+                                meta: {
+                                    acl_action: "create",
+                                    acl_module: "Accounts",
+                                    icon: "icon-plus",
+                                    label: "LNK_NEW_ACCOUNT",
+                                    route: "#Accounts/create"
+                                }
+                            }
+                        }
+                    }
+                }
+                return data[key];
+            });
 
             view.activeModule._moduleList = view;
             view.render();
-
 
             view.populateFavorites(module, cbMock);
             expect(apiStub).toHaveBeenCalled();
@@ -159,6 +177,7 @@ describe("Module List", function() {
             beanCreateMock.restore();
             apiStub.restore();
             SugarTest.app.router = oRouter;
+            getModuleStub.restore();
         });
         it("Should populate Recents and call recents populate callback", function() {
             var cbMock = sinon.mock();
@@ -174,7 +193,24 @@ describe("Module List", function() {
                     return 'testRouteString';
                 }
             );
-
+            var getModuleStub = sinon.stub(SugarTest.app.metadata, 'getModule', function(key) {
+                var data = {
+                    Accounts: {
+                        menu: {
+                            header: {
+                                meta: {
+                                    acl_action: "create",
+                                    acl_module: "Accounts",
+                                    icon: "icon-plus",
+                                    label: "LNK_NEW_ACCOUNT",
+                                    route: "#Accounts/create"
+                                }
+                            }
+                        }
+                    }
+                }
+                return data[key];
+            });
             view.activeModule._moduleList = view;
             view.render();
 
@@ -182,17 +218,17 @@ describe("Module List", function() {
             SugarTest.server.respondWith("POST", /.*\/Accounts.*/,
                 [200, {  "Content-Type": "application/json"},
                     JSON.stringify( {
-                        records: [
-                            new Backbone.Model({
-                                id:'model1',
-                                name:'model1'
-                            }),
-                            new Backbone.Model({
-                                id:'model2',
-                                name:'model2'
-                            })
-                        ]
-                    }
+                            records: [
+                                new Backbone.Model({
+                                    id:'model1',
+                                    name:'model1'
+                                }),
+                                new Backbone.Model({
+                                    id:'model2',
+                                    name:'model2'
+                                })
+                            ]
+                        }
                     )]);
 
             view.populateRecents(module, cbMock);
@@ -201,6 +237,7 @@ describe("Module List", function() {
             expect(view.$el.find("[data-module='Accounts']").find('.recentContainer').find('li').length).toEqual(2);
             beanCreateMock.restore();
             SugarTest.app.router = oRouter;
+            getModuleStub.restore();
         });
         it("Should be able to filter menu items by acl", function() {
             sinon.stub(SugarTest.app.acl, 'hasAccess', function(action,module) {
@@ -239,7 +276,7 @@ describe("Module List", function() {
             SugarTest.app.events.register("sugar:app:testEvent", view);
             SugarTest.app.events.on("sugar:app:testEvent", cbspy, view);
             var testEl = $('<li class="dropdown" data-module="testModule"><div><div><div><div data-event="sugar:app:testEvent"></div></div></div></div></li>');
-                view.$el.append(testEl);
+            view.$el.append(testEl);
             var event = {
                 currentTarget:testEl.find('[data-event=\'sugar:app:testEvent\']')
             };
@@ -302,8 +339,8 @@ describe("Module List", function() {
         it("should call navigate when data-route is a new route", function() {
             var link            = $('<a href="#Contacts" data-route="#Contacts">Contacts</a>'),
                 getFragmentStub = sinon.stub(Backbone.history, "getFragment", function() {
-                return "Accounts";
-            });
+                    return "Accounts";
+                });
 
             view.$el.append(link);
             link.click();
