@@ -28,6 +28,14 @@ class TwitterApi extends SugarApi
     public function registerApiRest()
     {
         return array(
+            'getCurrentUser' => array(
+                'reqType' => 'GET',
+                'path' => array('connector','twitter', 'currentUser'),
+                'pathVars' => array('connector','module', 'twitterId'),
+                'method' => 'getCurrentUser',
+                'shortHelp' => 'Gets current tweets for a user',
+                'longHelp' => 'include/api/help/twitter_get_help.html',
+            ),
             'getTweets' => array(
                 'reqType' => 'GET',
                 'path' => array('connector','twitter', '?'),
@@ -45,28 +53,33 @@ class TwitterApi extends SugarApi
      */
     public function getEAPM()
     {
-        $externalAPIList = ExternalAPIFactory::getModuleDropDown('SugarFeed',true);
-        if (!isset($externalAPIList['Twitter'])) {
-            return false;
-        }
-        $twitterEAPM = ExternalAPIFactory::loadAPI('Twitter');
+        // ignore auth and load to just check if connector configured
+        $twitterEAPM = ExternalAPIFactory::loadAPI('Twitter', true);
 
         if (!$twitterEAPM) {
             $source = SourceFactory::getSource('ext_rest_twitter');
             if ($source && $source->hasTestingEnabled()) {
                 try {
                     if (!$source->test()) {
-                        return false;
+                        return array('error' =>'ERROR_NEED_OAUTH');
                     }
                 } catch (Exception $e) {
-                    return false;    
+                    return array('error' =>'ERROR_NEED_OAUTH');
                 }
             }
-            return array('error' =>'oAuth not configured');
+            return array('error' =>'ERROR_NEED_OAUTH');
         }
 
         $twitterEAPM->getConnector();
 
+        $eapmBean = EAPM::getLoginInfo('Twitter');
+
+        if (empty($eapmBean->id)) {
+            return array('error' =>'ERROR_NEED_AUTHORIZE');
+        }
+
+        //return a fully authed EAPM
+        $twitterEAPM = ExternalAPIFactory::loadAPI('Twitter');
         return $twitterEAPM;
     }
 
@@ -95,16 +108,47 @@ class TwitterApi extends SugarApi
             throw new SugarApiExceptionMissingParameter('Error: Missing argument.', $args);
         }
 
-        $api = $this->getEAPM();
-        if (is_array($api) && isset($api['error'])) {
-            throw new SugarApiExceptionRequestMethodFailure('need OAuth', $args);
+        $extApi = $this->getEAPM();
+
+        if (is_array($extApi) && isset($extApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extApi['error']);
         }
 
-        if ($api === false) {
+        if ($extApi === false) {
            throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
         }
 
-        $result = $api->getUserTweets($args['twitterId'], 0, $args['count']);
+        $result = $extApi->getUserTweets($args['twitterId'], 0, $args['count']);
+        if (isset($result['errors'])) {
+            $errorString = '';
+            foreach($result['errors'] as $errorKey => $error) {
+                $errorString .= $error['code'].str_replace(' ', '_', $error['message']);
+            }
+            throw new SugarApiExceptionRequestMethodFailure('errors_from_twitter: '.$errorString, $args);
+        }
+        return $result;
+    }
+
+    /**
+     * Gets Tweets for a user via proxy call to twitter
+     * @param $api
+     * @param $args
+     * @return mixed
+     * @throws SugarApiExceptionRequestMethodFailure
+     * @throws SugarApiExceptionMissingParameter
+     */
+    public function getCurrentUser($api, $args)
+    {
+        $extApi = $this->getEAPM();
+        if (is_array($extApi) && isset($extApi['error'])) {
+            throw new SugarApiExceptionRequestMethodFailure(null, $args, null, 424, $extApi['error']);
+        }
+
+        if ($extApi === false) {
+            throw new SugarApiExceptionRequestMethodFailure($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], $args);
+        }
+
+        $result = $extApi->getCurrentUserInfo();
         if (isset($result['errors'])) {
             $errorString = '';
             foreach($result['errors'] as $errorKey => $error) {
