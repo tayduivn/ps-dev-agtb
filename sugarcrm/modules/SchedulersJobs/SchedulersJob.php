@@ -71,7 +71,7 @@ class SchedulersJob extends Basic
 	var $scheduler; // Scheduler parent
 	public $min_interval = 30; // minimal interval for job reruns
 	protected $job_done = true;
-	protected $old_user;
+    protected $old_user;
 
 	/**
 	 * Job constructor.
@@ -86,13 +86,6 @@ class SchedulersJob extends Basic
             $this->min_interval = $GLOBALS['sugar_config']['jobs']['min_retry_interval'];
         }
 	}
-
-    // TODO: Remove this function after ENGRD-17.
-    public function retrieve($id, $encode = false, $deleted = true)
-    {
-        $encode = false;
-        return parent::retrieve($id, $encode, $deleted);
-    }
 
 	public function check_date_relationships_load()
 	{
@@ -447,9 +440,9 @@ class SchedulersJob extends Basic
             session_regenerate_id();
         }
         $_SESSION['is_valid_session']= true;
-        $_SESSION['user_id'] = $user->id;
-        $_SESSION['type'] = 'user';
-        $_SESSION['authenticated_user_id'] = $user->id;
+    	$_SESSION['user_id'] = $user->id;
+    	$_SESSION['type'] = 'user';
+    	$_SESSION['authenticated_user_id'] = $user->id;
     }
 
     /**
@@ -459,11 +452,11 @@ class SchedulersJob extends Basic
     protected function setJobUser()
     {
         // set up the current user and drop session
-        if(!empty($this->assigned_user_id)) {
+        if (!empty($this->assigned_user_id)) {
             $this->old_user = $GLOBALS['current_user'];
-            if(empty($this->user->id) || $this->assigned_user_id != $this->user->id) {
+            if (empty($this->user->id) || $this->assigned_user_id != $this->user->id) {
                 $this->user = BeanFactory::getBean('Users', $this->assigned_user_id);
-                if(empty($this->user->id)) {
+                if (empty($this->user->id)) {
                     $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_NOSUCHUSER', 'SchedulersJobs'), $this->assigned_user_id));
                     return false;
                 }
@@ -481,7 +474,7 @@ class SchedulersJob extends Basic
      */
     protected function restoreJobUser()
     {
-       if(!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
+        if (!empty($this->old_user->id) && $this->old_user->id != $this->user->id) {
             $this->sudo($this->old_user);
         }
     }
@@ -492,30 +485,31 @@ class SchedulersJob extends Basic
      */
     public function runJob()
     {
+        require_once('modules/Schedulers/_AddJobsHere.php');
+
         $this->errors = "";
         $exJob = explode('::', $this->target, 2);
-        if($exJob[0] == 'function') {
+        if ($exJob[0] == 'function') {
             // set up the current user and drop session
             if(!$this->setJobUser()) {
                 return false;
             }
-    		require_once('modules/Schedulers/_AddJobsHere.php');
     		$func = $exJob[1];
 			$GLOBALS['log']->debug("----->SchedulersJob calling function: $func");
             set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
-			if(!is_callable($func)) {
+			if (!is_callable($func)) {
 			    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_CALL', 'SchedulersJobs'), $func));
 			}
 			$data = array($this);
-			if(!empty($this->data)) {
+			if (!empty($this->data)) {
 			    $data[] = $this->data;
 			}
             $res = call_user_func_array($func, $data);
             restore_error_handler();
             $this->restoreJobUser();
-			if($this->status == self::JOB_STATUS_RUNNING) {
+			if ($this->status == self::JOB_STATUS_RUNNING) {
 			    // nobody updated the status yet - job function could do that
-    			if($res) {
+    			if ($res) {
     			    $this->resolveJob(self::JOB_SUCCESS);
     				return true;
     			} else {
@@ -525,11 +519,11 @@ class SchedulersJob extends Basic
 			} else {
 			    return $this->resolution != self::JOB_FAILURE;
 			}
-        } elseif($exJob[0] == 'url') {
-			if(function_exists('curl_init')) {
+		} elseif ($exJob[0] == 'url') {
+			if (function_exists('curl_init')) {
 				$GLOBALS['log']->debug('----->SchedulersJob firing URL job: '.$exJob[1]);
                 set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
-				if($this->fireUrl($exJob[1])) {
+				if ($this->fireUrl($exJob[1])) {
                     restore_error_handler();
                     $this->resolveJob(self::JOB_SUCCESS);
 					return true;
@@ -541,26 +535,34 @@ class SchedulersJob extends Basic
 			} else {
 			    $this->resolveJob(self::JOB_FAILURE, translate('ERR_CURL', 'SchedulersJobs'));
 			}
-        } elseif ($exJob[0] == 'class') {
-            // autoloader will look for this class and include it
+		} elseif ($exJob[0] == 'class') {
             $tmpJob = new $exJob[1]();
-            if($tmpJob instanceof RunnableSchedulerJob)
+            if ($tmpJob instanceof RunnableSchedulerJob)
             {
                 // set up the current user and drop session
-                if(!$this->setJobUser()) {
+                if (!$this->setJobUser()) {
                     return false;
                 }
                 $tmpJob->setJob($this);
                 $res = $tmpJob->run($this->data);
                 $this->restoreJobUser();
-                return $res;
-            }
-            else {
+                if ($this->status == self::JOB_STATUS_RUNNING) {
+                    // nobody updated the status yet - job class could do that
+                    if ($res) {
+                        $this->resolveJob(self::JOB_SUCCESS);
+                        return true;
+                    } else {
+                        $this->resolveJob(self::JOB_FAILURE);
+                        return false;
+                    }
+                } else {
+                    return $this->resolution != self::JOB_FAILURE;
+                }
+            } else {
                 $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
             }
-        }
-        else {
-		    $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
+        } else {
+            $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));
 		}
 		return false;
     }
