@@ -11,11 +11,9 @@
             </a>
             <div class="dropdown-menu scroll pull-right">
                 <ul role="menu">
-                    <li class="profileactions-profile"><a href="#{{buildRoute module='Users' action='detail' id=userId}}">{{#if pictureUrl}}
-                        <img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">
-                    {{else}}
-                        <i class="icon-user"></i>
-                    {{/if}}{{str "LBL_PROFILE"}}</a></li>
+                    <li class="profileactions-profile"><a href="#{{buildRoute module='Users' action='detail' id=userId}}">
+                        {{#if pictureUrl}}<img src="{{pictureUrl}}" alt="{{userName}}" class="avatar">{{else}}<i class="icon-user"></i>{{/if}}{{str "LBL_PROFILE"}}</a>
+                    </li>
                     <li class="profileactions-employees"><a href="#{{buildRoute module='Employees'}}"><i class="icon-group"></i>{{str "LBL_EMPLOYEES"}}</a></li>
                     {{#if showAdmin}}
                         <li class="administration"><a href="#{{buildRoute module='Administration'}}"><i class="icon-cogs"></i>{{str "LBL_ADMIN"}}</a></li>
