@@ -62,7 +62,7 @@ $viewdefs['RevenueLineItems']['mobile']['view']['edit'] = array(
                 'probability',
                 'product_template_name',
                 'quantity',
-                'deal_calc',
+                'discount_amount',
                 array(
                     'name' => 'quote_name',
                     'readonly' => true,
