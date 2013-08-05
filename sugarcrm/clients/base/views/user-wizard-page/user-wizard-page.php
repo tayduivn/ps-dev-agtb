@@ -29,7 +29,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['base']['view']['user-wizard-page'] = array(
-    'action' => 'edit',
     'title' => 'LBL_WIZ_USER_PROFILE_TITLE',
     'message' => 'LBL_SETUP_USER_INFO',
     'buttons' => array(
