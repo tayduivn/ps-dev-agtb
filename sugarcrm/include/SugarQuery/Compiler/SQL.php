@@ -70,6 +70,9 @@ class SugarQuery_Compiler_SQL
     public function compile(SugarQuery $sugar_query)
     {
         $this->sugar_query = $sugar_query;
+        if (empty($this->sugar_query->select)) {
+            $this->sugar_query->select = new SugarQuery_Builder_Select($this->sugar_query, array('*'));
+        }
         return $this->compileSelectQuery();
     }
 

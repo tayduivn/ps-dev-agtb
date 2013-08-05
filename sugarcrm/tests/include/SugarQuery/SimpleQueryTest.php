@@ -312,7 +312,7 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->contacts[] = $contact;
 
         $sq = new SugarQuery();
-        $sq->select(array('last_name'));
+
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
         $sq->orderBy('full_name', 'DESC');
