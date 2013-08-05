@@ -17,6 +17,7 @@ $mod_strings = array(
     'LBL_MODULE_NAME' => 'Revenue Line Items',
     'LBL_MODULE_NAME_SINGULAR' => 'Revenue Line Item',
     'LBL_MODULE_TITLE' => 'Products: Home',
+    'LNK_NEW_REVENUELINEITEM'=> 'Create Revenue Line Item',
     'LBL_SEARCH_FORM_TITLE' => 'Product Search',
     'LBL_LIST_FORM_TITLE' => 'Product List',
     'LBL_NEW_FORM_TITLE' => 'Create Product',
