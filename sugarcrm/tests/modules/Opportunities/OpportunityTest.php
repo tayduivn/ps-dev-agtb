@@ -34,8 +34,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
 
         SugarTestForecastUtilities::setUpForecastConfig(array(
+                'sales_stage_won' => array('Closed Won'),
+                'sales_stage_lost' => array('Closed Lost'),
                 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-                'forecast_by' => 'opportunities'
+                'forecast_by' => 'opportunities',
                 //END SUGARCRM flav=pro && flav!=ent ONLY
             ));
     }
@@ -339,6 +341,17 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals(1, $p->deleted);
         }
     }
+
+    /**
+     * @group opportunities
+     */
+    public function testGetClosedStages()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $closedStages = $opp->getClosedStages();
+        $this->assertTrue(is_array($closedStages));
+    }
+
     //END SUGARCRM flav=pro && flav!=ent ONLY
 }
 

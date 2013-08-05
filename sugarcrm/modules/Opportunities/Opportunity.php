@@ -448,12 +448,17 @@ class Opportunity extends SugarBean
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();
             $this->currency_id = $currency->id;
-        } else {
-            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+            $this->base_rate = $currency->conversion_rate;
         }
-        $this->base_rate = $currency->conversion_rate;
-        // backward compatibility, amount_usdollar is deprecated
-        $this->amount_usdollar = $this->amount * $this->base_rate;
+
+        // if stage is not closed won/lost, update base_rate with currency rate
+        if (!in_array($this->sales_stage, $this->getClosedStages()) || !isset($this->base_rate)) {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+            $this->base_rate = $currency->conversion_rate;
+        }
+
+        // backward compatibility, set usdollar amount with base_rate
+        $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
 
         //if probablity isn't set, set it based on the sales stage
         if (!isset($this->probability) && !empty($this->sales_stage)) {
@@ -585,6 +590,33 @@ class Opportunity extends SugarBean
         }
         return $ret_array;
     }
+
+    /**
+     * getClosedStages
+     *
+     * Return an array of closed stage names from the admin bean.
+     *
+     * @access public
+     * @return array array of closed stage values
+     */
+    public function getClosedStages()
+    {
+        // TODO: move closed stages to a global setting.
+        // For now, get them from forecasting.
+        static $stages;
+        if (!isset($stages)) {
+            $admin = BeanFactory::getBean('Administration');
+            $settings = $admin->getConfigForModule('Forecasts');
+
+            // get all possible closed stages
+            $stages = array_merge(
+                isset($settings['sales_stage_won']) ? (array)$settings['sales_stage_won'] : array(),
+                isset($settings['sales_stage_lost']) ? (array)$settings['sales_stage_lost'] : array()
+            );
+        }
+        return $stages;
+    }
+
 }
 
 

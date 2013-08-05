@@ -39,9 +39,9 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     public function __construct()
     {
         // set rate field definitions
-        $this->addRateColumnDefinition('opportunities','base_rate');
+        $this->addRateColumnDefinition('opportunities', 'base_rate');
         // set usdollar field definitions
-        $this->addUsDollarColumnDefinition('opportunities','amount','amount_usdollar');
+        $this->addUsDollarColumnDefinition('opportunities', 'amount', 'amount_usdollar');
     }
 
     /**
@@ -65,19 +65,26 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         $stages = $this->getClosedStages();
 
         // setup SQL statement
-        $query = sprintf("UPDATE %s SET %s = %d
+        $query = sprintf("UPDATE %s SET %s = '%s'
         WHERE sales_stage NOT IN ('%s')
         AND currency_id = '%s'",
             $table,
             $column,
             $rate,
-            implode("','",$stages),
+            implode("','", $stages),
             $currencyId
         );
         // execute
-        $this->db->query($query, true,
-string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurrencyRateUpdate',$query)));
-        return true;
+        $result = $this->db->query(
+            $query,
+            true,
+            string_format(
+                $GLOBALS['app_strings']['ERR_DB_QUERY'],
+                array('OpportunitiesCurrencyRateUpdate',$query
+                )
+            )
+        );
+        return !empty($result);
     }
 
     /**
@@ -100,21 +107,25 @@ string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurren
         $stages = $this->getClosedStages();
 
         // setup SQL statement
-        $query = sprintf("UPDATE %s SET %s = base_rate * %s
+        $query = sprintf("UPDATE %s SET %s = %s / base_rate
             WHERE sales_stage NOT IN ('%s')
             AND currency_id = '%s'",
             $tableName,
             $usDollarColumn,
             $amountColumn,
-            implode("','",$stages),
+            implode("','", $stages),
             $currencyId
         );
         // execute
-        $result = $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurrencyRateUpdate',$query)));
-        if(empty($result)) {
-            return false;
-        }
-        return true;
+        $result = $this->db->query(
+            $query,
+            true,
+            string_format(
+                $GLOBALS['app_strings']['ERR_DB_QUERY'],
+                array('OpportunitiesCurrencyRateUpdate', $query)
+            )
+        );
+        return !empty($result);
     }
 
     /**
@@ -122,24 +133,16 @@ string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurren
      *
      * Return an array of closed stage names from the admin bean.
      *
-     * @access protected
+     * @access public
      * @return array array of closed stage values
      */
-    protected function getClosedStages()
+    public function getClosedStages()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-
-        // get all possible closed stages
-        $stages = array_merge(
-            (array)$settings['sales_stage_won'],
-            (array)$settings['sales_stage_lost']
-        );
-        // db quote values
-        foreach($stages as $stage_key => $stage_value) {
-            $stages[$stage_key] = $this->db->quote($stage_value);
+        static $opp;
+        if (!isset($opp)) {
+            $opp = BeanFactory::getBean('Opportunities');
         }
-        return $stages;
+        return $opp->getClosedStages();
     }
 
 

@@ -72,6 +72,12 @@ class SugarTestDatabaseMock extends DBManager
         
     }
 
+    public function getOne($sql, $dieOnError = false, $msg = '')
+    {
+        $response = $this->query($sql, $dieOnError, $msg);
+        return isset($response[0]) ? array_shift($response[0]) : false;
+    }
+
     public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
         return $this->query($sql." LIMIT ${start},${count}");
