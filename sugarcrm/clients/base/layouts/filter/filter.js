@@ -423,8 +423,8 @@
         if (lastFilter && !(this.filters.get(lastFilter))){
             this.clearLastFilter(app.controller.context.get('module'), moduleName, this.layoutType);
         }
-        this.trigger('filter:render:filter');
         this.layout.trigger('filterpanel:change:module', moduleName);
+        this.trigger('filter:render:filter');
         this.trigger('filter:change:filter', this.getLastFilter(app.controller.context.get('module'), moduleName, this.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
     },
 
