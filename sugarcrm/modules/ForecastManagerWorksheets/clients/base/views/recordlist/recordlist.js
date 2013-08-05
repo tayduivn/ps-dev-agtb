@@ -270,7 +270,7 @@
                 }, {}, this);
 
                 $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
-                    if(!this.disposed) {
+                    if (!this.disposed) {
                         var ret = this.showNavigationMessage('window');
                         if (_.isString(ret)) {
                             return ret;
@@ -496,7 +496,7 @@
             this.setCommitLogButtonStates();
 
             var outerwidth = this.$el.find('span.isEditable').outerWidth();
-            this.$el.find('span.isEditable').parent("td").css("min-width","105px");
+            this.$el.find('span.isEditable').parent("td").css("min-width", "105px");
 
         } else {
             if (this.layout.isVisible()) {
@@ -727,6 +727,15 @@
     calculateTotals: function() {
         if (this.isVisible()) {
             this.totals = this.getCommitTotals();
+            var calcFields = ['worst_case', 'best_case', 'likely_case'];
+            _.filter(this._fields.visible, function(field) {
+                if (_.contains(calcFields, field.name)) {
+                    this.totals[field.name + '_display'] = true;
+                    return true;
+                }
+
+                return false;
+            }, this);
             var ctx = this.context.parent || this.context;
             // fire an event on the parent context
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
@@ -805,8 +814,8 @@
             name: 'recordlist',
             method: 'parseFields'
         });
-        _.each(catalog, function (group, i) {
-            catalog[i] = _.filter(group, function (fieldMeta) {
+        _.each(catalog, function(group, i) {
+            catalog[i] = _.filter(group, function(fieldMeta) {
                 return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');
             });
         });
