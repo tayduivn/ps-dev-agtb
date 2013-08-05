@@ -59,7 +59,6 @@ class UserViewHelper {
         $this->setupUserTypeDropdown();
         $this->setupPasswordTab();
         $this->setupEmailSettings();
-        $this->setupThemeTab();
         $this->setupAdvancedTab();
 
     }
@@ -315,44 +314,6 @@ class UserViewHelper {
                 $this->ss->assign('HIDE_STATIC_USERTYPE','none');
             }
         }
-
-    }
-
-    protected function setupThemeTab() {
-        $user_theme = $this->bean->getPreference('user_theme');
-        if(isset($user_theme)) {
-            $this->ss->assign("THEMES", get_select_options_with_id(SugarThemeRegistry::availableThemes(), $user_theme));
-        } else {
-            $this->ss->assign("THEMES", get_select_options_with_id(SugarThemeRegistry::availableThemes(), $GLOBALS['sugar_config']['default_theme']));
-        }
-        $this->ss->assign("SHOW_THEMES",count(SugarThemeRegistry::availableThemes()) > 1);
-        $this->ss->assign("USER_THEME_COLOR", $this->bean->getPreference('user_theme_color'));
-        $this->ss->assign("USER_THEME_FONT", $this->bean->getPreference('user_theme_font'));
-        $this->ss->assign("USER_THEME", $user_theme);
-
-// Build a list of themes that support group modules
-        $this->ss->assign("DISPLAY_GROUP_TAB", 'none');
-
-        $selectedTheme = $user_theme;
-        if(!isset($user_theme)) {
-            $selectedTheme = $GLOBALS['sugar_config']['default_theme'];
-        }
-
-        $themeList = SugarThemeRegistry::availableThemes();
-        $themeGroupList = array();
-
-        foreach ( $themeList as $themeId => $themeName ) {
-            $currThemeObj = SugarThemeRegistry::get($themeId);
-            if ( isset($currThemeObj->group_tabs) && $currThemeObj->group_tabs == 1 ) {
-                $themeGroupList[$themeId] = true;
-                if ( $themeId == $selectedTheme ) {
-                    $this->ss->assign("DISPLAY_GROUP_TAB", '');
-                }
-            } else {
-                $themeGroupList[$themeId] = false;
-            }
-        }
-        $this->ss->assign("themeGroupListJSON",json_encode($themeGroupList));
 
     }
 
