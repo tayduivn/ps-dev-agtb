@@ -16,6 +16,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
+            'label' => 'LBL_RECORD_HEADER',
             'header' => true,
             'fields' => array(
                 array(
@@ -32,39 +33,63 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
                     'name' => 'follow',
                     'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             )
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
-                'currency_id',
-                $module_name.'_type',
+                array(
+                    'name' => 'date_closed',
+                    'span' => 12,
+                ),
                 'amount',
+                'sales_stage',
+            ),
+        ),
+        array(
+            'columns' => 2,
+            'name' => 'panel_hidden',
+            'label' => 'LBL_SHOW_MORE',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                $module_name.'_type',
                 'lead_source',
-                'date_closed',
+                //BEGIN SUGARCRM flav=com ONLY
+                '',
+                //END SUGARCRM flav=com ONLY
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'team_name',
                     'required' => true,
                 ),
                 //END SUGARCRM flav=pro ONLY
-                'sales_stage',
                 array(
                     'name' => 'assigned_user_name',
                     'required' => true,
                 ),
+                'date_entered',
                 'next_step',
-                'probability',
+                '',
+                'date_modified',
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
             ),
         ),
     ),

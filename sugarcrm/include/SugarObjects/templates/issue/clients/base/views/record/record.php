@@ -16,6 +16,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
+            'label' => 'LBL_RECORD_HEADER',
             'header' => true,
             'fields' => array(
                 array(
@@ -32,17 +33,20 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
                     'name' => 'follow',
                     'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             )
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
@@ -51,11 +55,37 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'name' => $module_name . '_number',
                     'readonly' => true,
                 ),
-                'assigned_user_name',
                 'priority',
+                'status',
+                'type',
+                'resolution',
+                'assigned_user_name',
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+            ),
+        ),
+        array(
+            'name' => 'panel_hidden',
+            'label' => 'LBL_SHOW_MORE',
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
                 //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
+                array(
+                    'name' => 'team_name',
+                    'span' => 12,
+                ),
                 //END SUGARCRM flav=pro ONLY
+                'date_entered',
+                'date_modified',
+                array(
+                    'name' => 'work_log',
+                    'span' => 12,
+                ),
             ),
         ),
     ),
