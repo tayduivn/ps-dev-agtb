@@ -92,12 +92,39 @@ describe("Base.View.FlexList", function () {
                 fields:[
                     {
                         type:'actionmenu',
-                        buttons:view.meta.selection.actions
+                        buttons:view.meta.selection.actions,
+                        disable_select_all_alert: false
                     }
                 ],
                 value:false,
                 sortable:false
             });
+        });
+
+        it('should add multi selection with the select-all feature disabled', function () {
+            var expected;
+            view.meta = {
+                selection: {
+                    type: 'multi',
+                    actions: [{
+                        name: 'edit_button',
+                        type: 'button'
+                    }],
+                    disable_select_all_alert: true
+                }
+            };
+            view.addActions();
+            expected = {
+                type: 'fieldset',
+                fields: [{
+                    type: 'actionmenu',
+                    buttons: view.meta.selection.actions,
+                    disable_select_all_alert: true
+                }],
+                value: false,
+                sortable: false
+            };
+            expect(view.leftColumns[0]).toEqual(expected);
         });
 
         it('should add row actions', function () {
