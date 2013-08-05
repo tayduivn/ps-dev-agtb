@@ -9,8 +9,6 @@
 
         this.setCollectionOptions();
         this.exposeDataTransfer();
-
-        this.context.on("activitystream:post:prepend", this.prependPost, this);
     },
 
     /**

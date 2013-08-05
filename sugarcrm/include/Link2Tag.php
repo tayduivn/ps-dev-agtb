@@ -1,16 +1,5 @@
 <?php
-/**
- * By installing or using this file, you are confirming on behalf of the entity
- * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
- * http://www.sugarcrm.com/master-subscription-agreement
- *
- * If Company is not bound by the MSA, then by installing or using this file
- * you are agreeing unconditionally that Company will be bound by the MSA and
- * certifying that you have authority to bind Company accordingly.
- *
- * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
- */
+
 class Link2Tag
 {
     private static $urlRegex = ';\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)));';
@@ -38,7 +27,7 @@ class Link2Tag
                 $ret = call_user_func(__CLASS__ . '::process' . $processor, $matches[1]);
                 if (!empty($ret)) {
                     return array(
-                        'value' => $text,
+                        'value' => trim(str_replace($matches[1], '', $text)),
                         'embed' => $ret,
                     );
                 }
@@ -147,10 +136,8 @@ class Link2Tag
                 $property = self::processMetaKey(substr($property, 8));
                 $content = $metaTag->getAttribute('content');
                 $ret[$property] = $content;
-            } else {
-                if (strpos($property, 'og:') === 0) {
-                    $ogTags[] = $metaTag;
-                }
+            } else if (strpos($property, 'og:') === 0) {
+                $ogTags[] = $metaTag;
             }
         }
 
