@@ -760,6 +760,11 @@ AH.getRelatedField = function(link, ftype, field, view){
         currId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
     }
 
+    // Clear the Link cache when the old and new relIds are different
+    if ((linkDef.relId || currId) && linkDef.relId != currId) {
+        AH.clearRelatedFieldCache(link, view);
+    }
+
     if (typeof(linkDef[ftype]) == "undefined"
         || (field && typeof(linkDef[ftype][field]) == "undefined")
 
