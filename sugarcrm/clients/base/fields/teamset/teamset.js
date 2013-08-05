@@ -26,6 +26,23 @@
 
         this.model.on("change:team_name_type", this.appendTeam, this);
     },
+    /**
+     * Changes default behavior when doing inline editing on a List view.  We want to
+     * load 'list' template instead of 'edit' template because this keeps the teamset widget
+     * read-only during inline editing. See SP-1197.
+     * @override
+     * @private
+     */
+    _loadTemplate: function() {
+        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_loadTemplate'});
+        //If we're loading edit template on List view
+        if (this.view.action === 'list' && this.tplName === 'edit') {
+            //Switch to detail template instead
+            this.template = app.template.getField(this.type, 'list', this.module, this.tplName) ||
+                app.template.empty;
+            this.tplName = 'list';
+        }
+    },
     _render: function () {
         var self = this;
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
@@ -71,7 +88,7 @@
                 }
             ];
         }
-        if (this.tplName === 'list') {
+        if (this.view.action === 'list') {
             //Display primary team in list view
             var primaryTeam = _.find(value, function (team) {
                 return team.primary;
