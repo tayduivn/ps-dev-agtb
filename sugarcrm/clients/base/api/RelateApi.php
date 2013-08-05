@@ -89,7 +89,7 @@ class RelateApi extends FilterApi {
         $rf = SugarRelationshipFactory::getInstance();
         $relObj = $record->$linkName->getRelationshipObject();
         $relDef = $rf->getRelationshipDef($relObj->name);
-        $tableName = $record->$linkName->getRelatedModuleLinkName();
+        $relatedLinkName = $record->$linkName->getRelatedModuleLinkName();
 
         if ($record->$linkName->getSide() == REL_LHS) {
             $column = $relDef['lhs_key'];
@@ -102,7 +102,7 @@ class RelateApi extends FilterApi {
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
-        $args['filter'][][$tableName . '.' . $column] = array('$equals' => $record->id);
+        $args['filter'][][$relatedLinkName . '.' . $column] = array('$equals' => $record->id);
         self::addFilters($args['filter'], $q->where(), $q);
 
         // Some relationships want the role column ignored
@@ -111,8 +111,8 @@ class RelateApi extends FilterApi {
         } else {
             $ignoreRole = false;
         }
-        $q->join($tableName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
-        $q->where()->equals($tableName . '.' . $column, $record->id);
+        $q->join($relatedLinkName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
+        $q->where()->equals($relatedLinkName . '.' . $column, $record->id);
 
         return array($args, $q, $options, $linkSeed);
     }
