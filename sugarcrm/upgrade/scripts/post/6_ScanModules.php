@@ -57,8 +57,58 @@ class SugarUpgradeScanModules extends UpgradeScript
      */
     protected function isMBModule($module_dir)
     {
-        // FIXME: right now it's always no
-        return false;
+        $module_name = substr($module_dir, 8); // cut off modules/
+        if(empty($this->beanList[$module_name])) {
+            // if this is not a deployed one, don't bother
+            return false;
+        }
+        $bean = $this->beanList[$module_name];
+        if(empty($this->beanFiles[$bean])) {
+            return false;
+        }
+        $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php");
+        $mbFiles[] = basename($bean);
+        $mbFiles[] = pathinfo($bean, PATHINFO_FILENAME)."_sugar.php";
+
+        // to make checks faster
+        $mbFiles = array_flip($mbFiles);
+        // For now, the check is just checking if we have any files
+        // in the directory that we do not recognize. If we do, we
+        // put the module in BC.
+        foreach(glob("$module_dir/*") as $file) {
+            if(!isset($mbFiles[basename($file)])) {
+                // unknown file, not MB module
+                $this->log("Unknown file $file - $module_name is not MB module");
+                return false;
+            }
+        }
+        // files that are OK for custom:
+        $mbFiles['Ext'] = true;
+        $mbFiles['logic_hooks.php'] = true;
+
+        // now check custom/ for unknown files
+        foreach(glob("custom/$module_dir/*") as $file) {
+            if(!isset($mbFiles[basename($file)])) {
+                // unknown file, not MB module
+                $this->log("Unknown file $file - $module_name is not MB module");
+                return false;
+            }
+        }
+        $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
+            "FileAccessControlMap", "Layoutdefs", "WirelessLayoutdefs", "WirelessModuleRegistry");
+        $badExts = array_flip($badExts);
+        // Check Ext for any "dangerous" extentsions
+        foreach(glob("custom/$module_dir/Ext/*") as $extdir) {
+            if(isset($badExts[$xtdir])) {
+                $extfiles = glob("$extdir/*");
+                if(!empty($extfiles)) {
+                    $this->log("Extension dir $extdir detected - $module_name is not MB module");
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -100,6 +150,7 @@ class SugarUpgradeScanModules extends UpgradeScript
             if($this->isNewModule($module_name)) {
                 if(!$this->isMBModule($module)) {
                     // new and not MB - list as BWC
+                    $this->log("Setting $module_name as BWC module");
                     $this->bwcModules[] = $module_name;
                 }
             }
