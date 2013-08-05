@@ -4,7 +4,7 @@ $viewdefs['Tasks']['base']['filter']['default'] = array(
     'default_filter' => 'assigned_to_me',
     'fields' => array(
         'name' => array(),
-        'contact_name_related' => array(
+        'contact_name' => array(
             'dbFields' => array(
                 'contacts.first_name',
                 'contacts.last_name',
