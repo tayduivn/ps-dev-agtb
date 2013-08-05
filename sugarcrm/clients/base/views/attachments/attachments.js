@@ -1,90 +1,188 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+/**
+ * Attachment dashlet displays Notes and Attachments records that is related to the LHS record.
+ * The following items are configurable.
+ *
+ * - {Integer} limit Limit imposed to the number of records pulled.
+ * - {Integer} auto_refresh How often (minutes) should refresh the data collection.
+ *
+ * @class View.Views.BaseAttachmentsView
+ */
 ({
-
-    plugins: ['Dashlet', 'timeago'],
-    _dataFetched: false,
-    events : {
-        'click a.preview-attachment' : 'previewAttachment',
-        'click a.attachments-refresh' : 'loadData',
+    plugins: ['Dashlet', 'timeago', 'tooltip'],
+    dataFetched: false,
+    events: {
         'click [name=show_more_button]' : 'showMore',
-        'click .btn[name=create_button]': 'openCreateDrawer',
-        "click .btn[name=select_button]": "openSelectDrawer"
+        'click [data-event=create_button]': 'openCreateDrawer',
+        'click [data-event=select_button]': 'openSelectDrawer'
     },
+
+    /**
+     * Default options used when none are supplied through metadata.
+     *
+     * Supported options:
+     * - timer: How often (minutes) should refresh the data collection.
+     * - limit: Limit imposed to the number of records pulled.
+     *
+     * @property {Object}
+     * @protected
+     */
+    _defaultOptions: {
+        limit: 5,
+        timer: 0
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param {String} viewName view name.
+     */
     initDashlet: function(viewName) {
-        if(!this.meta.config && this.context.get("collection")) {
-            this.context.set("skipFetch", false);
-            this.context.set("limit", this.settings.get("limit"));
-            this.context.get("collection").once("reset", function(){
-                this._dataFetched = true;
+        this._initOptions();
+        if (!this.meta.config && this.context.get('collection')) {
+            this.context.set('skipFetch', false);
+            this.context.set('limit', this.limit);
+            this.context.get('collection').once('reset', function() {
+                this.dataFetched = true;
             }, this);
-            this.context.on("link:create:clicked", this.openCreateDrawer, this);
+        }
+        if (!this.meta.config && !this.meta.preview) {
+            this.context.on('attachment:view:fire', this.previewRecord, this);
+            this.context.on('attachment:unlinkrow:fire', this.unlinkClicked, this);
+            if (this.timer > 0) {
+                //disabled previous interval
+                this._disableAutoRefresh();
+                this._enableAutoRefresh(this.timer);
+            }
         }
     },
-    _render : function() {
+
+    /**
+     * Initialize options, default options are used when none are supplied
+     * through metadata.
+     *
+     * @return {Backbone.View} Instance of this view.
+     * @protected
+     */
+    _initOptions: function() {
+        var options = _.extend(this._defaultOptions, this.settings.attributes || {});
+        this.timer = parseInt(options['auto_refresh'], 10) * 60 * 1000;
+        this.limit = options.limit;
+        return this;
+    },
+
+    /**
+     * Disable activated refresh interval
+     * @protected
+     */
+    _disableAutoRefresh: function() {
+        if (this.timerId) {
+            clearInterval(this.timerId);
+            this.timerId = null;
+        }
+        return this;
+    },
+
+    /**
+     * Activate auto refresh data fetch.
+     *
+     * @param {Integer} msec Interval time in milli seconds(msec > 0).
+     * @protected
+     */
+    _enableAutoRefresh: function(msec) {
+        if (msec <= 0) {
+            app.logger.error('Invalid interval timer: ' + msec);
+            return this;
+        }
+
+        if (!_.isEmpty(this.timerId)) {
+            app.logger.error('Trying to enable an already enabled auto-refresh dashlet.');
+            return this;
+        }
+
+        this.timerId = setInterval(_.bind(function() {
+            this.context.resetLoadFlag();
+            this.layout.loadData();
+        }, this), msec);
+        return this;
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Apply svg icon plugin.
+     * @protected
+     */
+    _renderHtml: function() {
         var self = this,
-            svgIconTemplate = app.template.get('attachments.svg-icon');
-        app.view.View.prototype._render.call(this);
-        var mimeType = this.model.get("file_mime_type") || '';
-        this.$('span[class^="filetype-"]').each(function(){
-            var filetype = self._getFileType(mimeType);
+            svgIconTemplate = app.template.get('attachments.svg-icon', this.module) ||
+                app.template.get('attachments.svg-icon');
+        app.view.View.prototype._renderHtml.call(this);
+        this.$('[data-mime]').each(function() {
+            var mimeType = $(this).data('mime'),
+                filetype = self.dashletConfig.supportedImageExtensions[mimeType] || self._getFileType(mimeType);
             $(this).attr('data-filetype', filetype).html(svgIconTemplate());
         });
-
-    },
-    loadData : function(options) {
-        if(this.meta.config) {
-            return;
-        }
-        app.view.View.prototype.loadData.call(this, options);
-    },
-    previewAttachment : function(e) {
-        var $sender = $(e.currentTarget),
-            model = this.collection.where({id: $sender.data('model-id')}).shift();
-
-        if (_.isEmpty(model.get('file_mime_type')) || this._isImage(model.get('file_mime_type'))) {
-            var $modal = this.$('.modal');
-            $('.modal-header h3', $modal).html(model.get('name'));
-            $('.modal-body p.attachment-description', $modal).html(model.get('description'));
-
-            if (model.get('filename')) {
-                $('.modal-body img.attachment-image', $modal).attr('src', app.api.buildFileURL({
-                    module: model.module,
-                    id: model.id,
-                    field: 'filename'
-                })).hide().on('load', function(){
-                    $(this).show();
-                });
-            } else {
-                $('.modal-body img.attachment-image', $modal).attr('src', null).hide();
-            }
-            $modal.modal('show');
-        } else {
-            app.router.navigate(app.router.buildRoute(model.module, model.id), {trigger: true});
-        }
+        return this;
     },
 
+    /**
+     * Convert file mime type to file format
+     *
+     * @param {String} mimeType file mime type.
+     * @return {String} file type.
+     * @private
+     */
     _getFileType: function(mimeType) {
-        var filetype = mimeType.substr(mimeType.lastIndexOf('/')+1).toUpperCase();
+        var filetype = mimeType.substr(mimeType.lastIndexOf('/') + 1).toUpperCase();
         return filetype ? filetype : this.dashletConfig.defaultType.toUpperCase();
     },
 
-    _isImage: function(mimeType) {
-        return _.contains(this.meta.supportedImageExtensions, mimeType);
-    },
+    /**
+     * {@inheritDoc}
+     *
+     * Once collection is reset, the view should be refreshed.
+     */
     bindDataChange: function() {
-        if(this.collection) {
-            this.collection.on("reset", this.render, this);
+        if (this.collection) {
+            this.collection.on('reset', this.render, this);
         }
     },
+
+    /**
+     * Show next offset records.
+     */
     showMore: function() {
-        this.context.set("limit", parseInt(this.context.get("limit"), 10) + parseInt(this.settings.get("limit"), 10));
-        this.context.resetLoadFlag();
-        this.context.set('skipFetch', false);
-        this.layout.loadData();
+        this.collection.paginate({
+            add: true,
+            limit: this.limit,
+            success: _.bind(function() {
+                if (this.disposed) {
+                    return;
+                }
+                this.render();
+            }, this)
+        });
     },
+
+    /**
+     * Choose the attachment from the existing module list
+     */
     openSelectDrawer: function() {
-        var parentModel = this.context.get("parentModel"),
-            linkModule = this.context.get("module"),
-            link = this.context.get("link"),
+        var parentModel = this.context.get('parentModel'),
+            linkModule = this.context.get('module'),
+            link = this.context.get('link'),
             self = this;
 
         app.drawer.open({
@@ -93,7 +191,7 @@
                 module: linkModule
             }
         }, function(model) {
-            if(!model) {
+            if (!model) {
                 return;
             }
             var relatedModel = app.data.createRelatedBean(parentModel, model.id, link),
@@ -117,16 +215,20 @@
             relatedModel.save(null, options);
         });
     },
+
+    /**
+     * Create new attachment record
+     */
     openCreateDrawer: function() {
-        var parentModel = this.context.get("parentModel"),
-            link = this.context.get("link"),
+        var parentModel = this.context.get('parentModel'),
+            link = this.context.get('link'),
             model = app.data.createRelatedBean(parentModel, null, link),
             relatedFields = app.data.getRelateFields(parentModel.module, link);
 
-        if(!_.isUndefined(relatedFields)) {
+        if (!_.isUndefined(relatedFields)) {
             _.each(relatedFields, function(field) {
                 model.set(field.name, parentModel.get(field.rname));
-                model.set(field.id_name, parentModel.get("id"));
+                model.set(field.id_name, parentModel.get('id'));
             }, this);
         }
         var self = this;
@@ -137,8 +239,8 @@
                 module: model.module,
                 model: model
             }
-        }, function(model) {
-            if(!model) {
+        }, function(context, model) {
+            if (!model) {
                 return;
             }
 
@@ -146,5 +248,46 @@
             self.context.set('skipFetch', false);
             self.context.loadData();
         });
+    },
+
+    /**
+     * Unlinks (removes) the selected model from the list view's collection.
+     *
+     * We trigger reset after removing the model in order to update html as well.
+     *
+     * @param {Data.Bean} model Selected model.
+     */
+    unlinkClicked: function(model) {
+        var self = this;
+        app.alert.show('unlink_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('NTC_UNLINK_CONFIRMATION'),
+            onConfirm: function() {
+                model.destroy({
+                    //Show alerts for this request
+                    showAlerts: true,
+                    relate: true,
+                    success: function() {
+                        if (self.disposed) {
+                            return;
+                        }
+                        // We trigger reset after removing the model so that
+                        // the view will re-render and update the list.
+                        self.collection.remove(model).trigger('reset');
+                        self.render();
+                    }
+                });
+            }
+        });
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Dispose the interval timer as well.
+     */
+    _dispose: function() {
+        this._disableAutoRefresh();
+        app.view.View.prototype._dispose.call(this);
     }
 })
