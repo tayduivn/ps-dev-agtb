@@ -144,6 +144,17 @@
                 view: app.view.createView({})
             });
             shareField.share();
+        },
+
+        /**
+         * Revert bwc model attributes in order to skip warning unsaved changes.
+         */
+        revertAttributes: function() {
+            var view = app.controller.layout.getComponent('bwc');
+            if (!view) {
+                return;
+            }
+            view.revertBwcModel();
         }
     };
     app.augment('bwc', Bwc, false);

@@ -318,7 +318,7 @@ function smarty_function_sugar_button($params, &$smarty)
                 $cancelButton .= "parent.SUGAR.App.router.buildRoute('$module')";
                 $cancelButton .= '{/if}';
                 $cancelButton .= '{/capture}';
-                $cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="parent.SUGAR.App.router.navigate({$cancelReturnUrl}, {literal}{trigger: true}{/literal}); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="' . $type . $location . '"> ';
+                $cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="parent.SUGAR.App.bwc.revertAttributes();parent.SUGAR.App.router.navigate({$cancelReturnUrl}, {literal}{trigger: true}{/literal}); return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" id="' . $type . $location . '"> ';
                 $output = $cancelButton;
 			break;
 
