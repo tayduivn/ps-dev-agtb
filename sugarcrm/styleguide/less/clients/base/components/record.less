@@ -305,7 +305,8 @@
     display: inline-block;
     position: relative;
     padding-left: 15px;
-    min-height: 50px;
+    min-height: 40px;
+    padding-bottom: 10px;
     .record-label {
       font-size: @fontSizeSmall;
       color: darken(@grayLight, 5%);
@@ -792,6 +793,9 @@
         margin-right: 4px;
       }
     }
+  }
+  .detail .ellipsis_inline {
+    display: inline-block !important;
   }
   .address_city {
     .ellipsis_inline:empty:after {
