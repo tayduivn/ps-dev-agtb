@@ -1,0 +1,12 @@
+<div class="dashlet-options">
+    <div class="row-fluid">
+        <div class="btn-group dashlet-group" data-toggle="buttons-radio">
+            <button class="btn{{#eq settings.attributes.date "today"}} active{{/eq}}" value="today" data-action="date-switcher">{{str "LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL" this.module}}</button>
+            <button class="btn{{#eq settings.attributes.date "future"}} active{{/eq}}" value="future" data-action="date-switcher">{{str "LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL" this.module}}</button>
+        </div>
+        <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
+            <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}" value="user" data-action="visibility-switcher"><i class="icon-user"></i></button>
+            <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}" value="group" data-action="visibility-switcher"><i class="icon-group"></i></button>
+        </div>
+    </div>
+</div>
