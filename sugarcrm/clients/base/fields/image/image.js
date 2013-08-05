@@ -23,6 +23,8 @@
         "change input[type=file]": "selectImage"
     },
 
+    plugins: ['file'],
+
     /**
      * @override
      */

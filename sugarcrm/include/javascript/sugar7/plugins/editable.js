@@ -171,6 +171,10 @@
                     viewName = (isEdit) ? "edit" : this.action;
                 }
 
+                if (!field.triggerBefore('toggleField', viewName)) {
+                    return false;
+                }
+
                 field.setMode(viewName);
 
                 if (viewName === "edit") {
@@ -181,12 +185,14 @@
                         var $el = field.$(field.fieldTag + ":first");
                         $el.focus().val($el.val());
                     }
-                    if (field.type !== 'image' && field.type !== 'file' && field.type !== 'avatar') {
-                        if (_.isFunction(field.bindKeyDown)) {
-                            field.bindKeyDown(this.editableKeyDowned);
-                        } else {
-                            field.$(field.fieldTag).on("keydown.record", {field: field}, this.editableKeyDowned);
-                        }
+                    if (_.isFunction(field.bindKeyDown)) {
+                        field.bindKeyDown(this.editableKeyDowned);
+                    } else {
+                        field.$(field.fieldTag).on("keydown.record", {field: field}, this.editableKeyDowned);
+                    }
+                    if (_.isFunction(field.bindDocumentMouseDown)) {
+                        field.bindDocumentMouseDown(this.editableMouseClicked);
+                    } else {
                         $(document).on("mousedown.record" + field.name, {field: field}, this.editableMouseClicked);
                     }
                 } else {
