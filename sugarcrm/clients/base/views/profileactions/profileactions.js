@@ -28,7 +28,7 @@
             return;
         }
         this.showAdmin = app.acl.hasAccess('admin', 'Administration');
-        if (!this.showAdmin && _.any(app.user.getAcls(),function(acl){return !acl.admin || !acl.admin != "no" || !acl.developer || acl.developer != "no"})) {
+        if (!this.showAdmin && _.any(app.user.getAcls(),function(acl){return !acl.admin || acl.admin != "no" || !acl.developer || acl.developer != "no"})) {
             this.showAdmin = true;
         }
         app.view.View.prototype._renderHtml.call(this);

@@ -24,7 +24,7 @@ require_once('data/SugarACLStrategy.php');
 /**
  * This class is used to enforce ACLs on modules that are restricted to admins only.
  */
-class SugarACLDeveloper extends SugarACLStrategy
+class SugarACLDeveloperForAny extends SugarACLStrategy
 {
 
     /**
