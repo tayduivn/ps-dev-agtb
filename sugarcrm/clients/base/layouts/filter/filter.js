@@ -284,7 +284,7 @@
             } else {
                 //Locate and add subpanel contexts
                 _.each(this.context.children, function(ctx) {
-                    if (ctx.get('link') && !ctx.get('hidden') && !ctx.get('modelId') && ctx.get('collection')) {
+                    if (ctx.get('isSubpanel') && !ctx.get('hidden') && !ctx.get('modelId') && ctx.get('collection')) {
                         contextList.push(ctx);
                     }
                 });

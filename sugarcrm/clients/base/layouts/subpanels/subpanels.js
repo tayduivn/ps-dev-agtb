@@ -68,6 +68,7 @@
         allowedComponents = this._pruneNoAccessComponents(allowedComponents);
         // Call original Layout with pruned components
         app.view.Layout.prototype._addComponentsFromDef.call(this, allowedComponents, context, module);
+        this._markComponentsAsSubpanels();
         this._disableSubpanelToggleButton(allowedComponents);
     },
 
@@ -101,6 +102,15 @@
                 component.context.set("hidden", true);
                 component.hide();
             }
+        });
+    },
+
+    /**
+     * Mark component context as being subpanels
+     */
+    _markComponentsAsSubpanels: function() {
+        _.each(this._components, function(component) {
+            component.context.set("isSubpanel", true);
         });
     }
 })
