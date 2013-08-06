@@ -39,7 +39,9 @@ $viewdefs['Products']['mobile']['view']['detail'] = array(
                 'product_template_name',
                 'status',
                 'account_name',
+                'quote_name',
                 'quantity',
+                'discount_price',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

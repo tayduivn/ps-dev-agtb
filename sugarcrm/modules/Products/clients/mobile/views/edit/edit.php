@@ -42,6 +42,7 @@ $viewdefs['Products']['mobile']['view']['edit'] = array(
                 ),
                 'status',
                 'account_name',
+                'quote_name',
                 'quantity',
                 'discount_price',
                 'list_price',
