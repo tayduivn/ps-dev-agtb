@@ -28,9 +28,11 @@
 }}
 {{#each value}}
 <div class="control-group email ellipsis-container">
+  <div class="ellipsis-row">
     <span class="ellipsis-cell" data-original-title="{{email_address}} {{flagLabel}}" data-placement="bottom">
         {{#if hasAnchor}}<a class="ellipsis_inline{{#if ../../useSugarEmailClient}} composeEmail{{/if}}" href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>{{else}}<del class="ellipsis_inline">{{email_address}}</del>{{/if}}
     </span>
     <label class="ellipsis-addon">{{flagLabel}}</label>
+  </div>
 </div>
 {{/each}}
