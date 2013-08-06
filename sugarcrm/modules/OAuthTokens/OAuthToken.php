@@ -59,7 +59,7 @@ class OAuthToken extends SugarBean
      */
     public function OAuthToken($token = '', $secret = '')
     {
-        $this->__construct($token, $secret);
+        self::__construct($token, $secret);
     }
 
     public function __construct($token='', $secret='')

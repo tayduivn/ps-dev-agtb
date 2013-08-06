@@ -57,6 +57,12 @@
         this.noEditFields = [];
         // properly namespace SHOW_MORE_KEY key
         this.MORE_LESS_KEY = app.user.lastState.key(this.MORE_LESS_KEY, this);
+
+        $(window).on('resize',function(){
+            var headerPaneHeight = $("#drawers .main-pane div.headerpane").height();
+            $("#drawers .main-pane").css("top",headerPaneHeight+"px");
+        });
+
     },
 
     /**
@@ -151,6 +157,8 @@
             this.toggleMoreLess();
         }
 
+
+
     },
 
     setEditableFields: function () {
@@ -217,6 +225,8 @@
     _renderHtml: function () {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
+        $("#drawers .main-pane").css("top",$("#drawers .main-pane div.headerpane").height()+"px");
+
     },
 
     toggleMoreLess: function () {
@@ -330,23 +340,7 @@
 
         this.setButtonStates(this.STATE.EDIT);
 
-        // TODO: Refactor this for fields to support their own focus handling in future.
-        // Add your own field type handling for focus / editing here.
-        switch (field.type) {
-            case "image":
-            case "file":
-                var self = this;
-                app.file.checkFileFieldsAndProcessUpload(self, {
-                        success: function () {
-                            self.toggleField(field);
-                        }
-                    },
-                    { deleteIfFails: false}
-                );
-                break;
-            default:
-                this.toggleField(field);
-        }
+        this.toggleField(field);
     },
 
     /**

@@ -64,7 +64,7 @@ class Version extends SugarBean {
      */
     public function Version()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

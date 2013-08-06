@@ -104,7 +104,7 @@ class DocumentRevision extends SugarBean {
      */
     public function DocumentRevision()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

@@ -63,7 +63,7 @@ class ProductType extends SugarBean {
      */
     public function ProductType()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

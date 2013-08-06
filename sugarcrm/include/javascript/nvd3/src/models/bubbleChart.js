@@ -22,8 +22,9 @@ nv.models.bubbleChart = function () {
     , reduceXTicks = true // if false a tick will show for every data point
     , reduceYTicks = false // if false a tick will show for every data point
     , rotateLabels = 0
+    , tooltip = null
     , tooltips = true
-    , tooltip = function (key, x, y, e, graph) {
+    , tooltipContent = function (key, x, y, e, graph) {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + ' on ' + x + '</p>';
       }
@@ -52,33 +53,44 @@ nv.models.bubbleChart = function () {
         .highlightZero(false)
         .showMaxMin(false)
     , legend = nv.models.legend()
-    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove')
   ;
 
   //============================================================
 
-  var showTooltip = function (e, offsetElement) {
-    // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
-    var offsets = {left:0,right:0};
-    if (offsetElement) {
-      var svg = d3.select(offsetElement).select('svg'),
-          viewBox = svg.attr('viewBox');
-      offsets = nv.utils.getAbsoluteXY(offsetElement);
-      if (viewBox) {
-        viewBox = viewBox.split(' ');
-        var ratio = parseInt(svg.style('width'),10) / viewBox[2];
-        e.pos[0] = e.pos[0] * ratio;
-        e.pos[1] = e.pos[1] * ratio;
-      }
-    }
+  // TODO: test if new tooltip method is compatible with zoomed viewBox
+  // var showTooltip = function (e, offsetElement) {
+  //   // New addition to calculate position if SVG is scaled with viewBox, may move TODO: consider implementing everywhere else
+  //   var offsets = {left:0,right:0};
+  //   if (offsetElement) {
+  //     var svg = d3.select(offsetElement).select('svg'),
+  //         viewBox = svg.attr('viewBox');
+  //     offsets = nv.utils.getAbsoluteXY(offsetElement);
+  //     if (viewBox) {
+  //       viewBox = viewBox.split(' ');
+  //       var ratio = parseInt(svg.style('width'),10) / viewBox[2];
+  //       e.pos[0] = e.pos[0] * ratio;
+  //       e.pos[1] = e.pos[1] * ratio;
+  //     }
+  //   }
 
-    var left = e.pos[0] + (offsets.left || 0) + margin.left,
-        top = e.pos[1] + (offsets.top || 0) + margin.top,
+  //   var left = e.pos[0] + (offsets.left || 0) + margin.left,
+  //       top = e.pos[1] + (offsets.top || 0) + margin.top,
+  //       x = e.point.x,
+  //       y = e.point.y,
+  //       content = tooltip(e.series.key, x, y, e, chart);
+
+  //   nv.tooltip.show([left, top], content, null, null, offsetElement);
+  // };
+
+  var showTooltip = function(e, offsetElement, properties) {
+    var left = e.pos[0],
+        top = e.pos[1],
         x = e.point.x,
         y = e.point.y,
-        content = tooltip(e.series.key, x, y, e, chart);
+        content = tooltipContent(e.series.key, x, y, e, chart);
 
-    nv.tooltip.show([left, top], content, null, null, offsetElement);
+    tooltip = nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
   };
 
   //============================================================
@@ -453,10 +465,18 @@ nv.models.bubbleChart = function () {
   scatter.dispatch.on('elementMouseout.tooltip', function (e) {
     dispatch.tooltipHide(e);
   });
-
   dispatch.on('tooltipHide', function () {
     if (tooltips) {
       nv.tooltip.cleanup();
+    }
+  });
+
+  scatter.dispatch.on('elementMousemove', function(e) {
+    dispatch.tooltipMove(e);
+  });
+  dispatch.on('tooltipMove', function(e) {
+    if (tooltip) {
+      nv.tooltip.position(tooltip,e.pos);
     }
   });
 
@@ -464,7 +484,6 @@ nv.models.bubbleChart = function () {
     bubbleClick(e);
     nv.tooltip.cleanup();
   });
-
 
   //============================================================
   // Expose Public Variables
@@ -545,6 +564,12 @@ nv.models.bubbleChart = function () {
     return chart;
   };
 
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
   chart.tooltips = function (_) {
     if (!arguments.length) { return tooltips; }
     tooltips = _;
@@ -552,8 +577,8 @@ nv.models.bubbleChart = function () {
   };
 
   chart.tooltipContent = function (_) {
-    if (!arguments.length) { return tooltip; }
-    tooltip = _;
+    if (!arguments.length) { return tooltipContent; }
+    tooltipContent = _;
     return chart;
   };
 
@@ -578,12 +603,6 @@ nv.models.bubbleChart = function () {
   chart.filterBy = function (_) {
     if (!arguments.length) { return filterBy; }
     filterBy = _;
-    return chart;
-  };
-
-  chart.tooltip = function(_) {
-    if (!arguments.length) return tooltip;
-    tooltip = _;
     return chart;
   };
 

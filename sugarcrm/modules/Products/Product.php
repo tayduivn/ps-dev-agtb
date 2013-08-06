@@ -164,7 +164,7 @@ class Product extends SugarBean
      */
     public function Product()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

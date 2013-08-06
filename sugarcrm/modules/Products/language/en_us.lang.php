@@ -123,6 +123,7 @@ $mod_strings = array(
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
     'LBL_PRODUCT_TYPES' => 'Product Types',
     'LBL_ASSIGNED_TO_NAME' => 'Assigned to:',
+    'LBL_ASSIGNED_USER_ID' => 'Assigned User ID:',
     'LBL_PRODUCT_TEMPLATE' => 'Product Tempalte:',
     'LBL_PRODUCT_TEMPLATE_ID' => 'Product Template ID:',
     'LBL_QUOTE_ID' => 'Quote ID',

@@ -111,7 +111,7 @@ class Call extends SugarBean {
      */
     public function Call()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

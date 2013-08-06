@@ -87,7 +87,7 @@ class ProductCategory extends SugarBean
      */
     public function ProductCategory()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     /**

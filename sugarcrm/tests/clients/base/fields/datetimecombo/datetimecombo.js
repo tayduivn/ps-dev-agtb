@@ -52,7 +52,7 @@ describe("datetimecombo field", function() {
             expectedValValue = null;
         });
 
-        it("should set our internal date value so hbt picks up", function() {
+        it("should set our internal date value so hbs picks up", function() {
             field._presetDateValues();
             expect(field.dateValue).toEqual(expectedValValue);
             expect(field.timeValue).toEqual(expectedValValue);

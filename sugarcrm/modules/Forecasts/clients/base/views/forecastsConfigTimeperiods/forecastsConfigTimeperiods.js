@@ -169,7 +169,7 @@
             this.model.set(this.name, value);
         };
 
-        // force value to a string so hbt has helper will match the dropdown correctly
+        // force value to a string so hbs has helper will match the dropdown correctly
         this.model.set(field.name, this.model.get(field.name).toString(), {silent: true});
 
         field.def.value = this.model.get(field.name) || 1;

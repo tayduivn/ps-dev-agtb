@@ -29,13 +29,13 @@ nv.models.scatter = function() {
     , padDataOuter = .1 //outerPadding to imitate ordinal scale outer padding
     , clipEdge     = false // if true, masks points within x and y scale
     , clipVoronoi  = true // if true, masks each point with a circle... can turn off to slightly increase performance
-    , clipRadius   = function() { return 25 } // function to get the radius for voronoi point clips
+    , clipRadius   = function() { return 10 } // function to get the radius for voronoi point clips
     , xDomain      = null // Override x domain (skips the calculation from data)
     , yDomain      = null // Override y domain
     , sizeDomain   = null // Override point size domain
     , sizeRange    = null
     , singlePoint  = false
-    , dispatch     = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout')
+    , dispatch     = d3.dispatch('elementClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
     , useVoronoi   = true
     ;
 
@@ -168,11 +168,8 @@ nv.models.scatter = function() {
           })
         );
 
-
-
         //inject series and point index for reference into voronoi
         if (useVoronoi === true) {
-
           if (clipVoronoi) {
             var pointClipsEnter = wrap.select('defs').selectAll('.nv-point-clips')
                 .data([id])
@@ -194,7 +191,6 @@ nv.models.scatter = function() {
             wrap.select('.nv-point-paths')
                 .attr('clip-path', 'url(#nv-points-clip-' + id + ')');
           }
-
 
           if(vertices.length < 3) {
             // Issue #283 - Adding 2 dummy points to the voronoi b/c voronoi requires min 3 points to work
@@ -219,7 +215,6 @@ nv.models.scatter = function() {
               }
             });
 
-
           var pointPaths = wrap.select('.nv-point-paths').selectAll('path')
               .data(voronoi);
           pointPaths.enter().append('path')
@@ -233,7 +228,6 @@ nv.models.scatter = function() {
                 if (needsUpdate) return 0;
                 var series = data[d.series],
                     point  = series.values[d.point];
-
                 dispatch.elementClick({
                   point: point,
                   series: series,
@@ -246,11 +240,10 @@ nv.models.scatter = function() {
                 if (needsUpdate) return 0;
                 var series = data[d.series],
                     point  = series.values[d.point];
-
                 dispatch.elementMouseover({
                   point: point,
                   series: series,
-                  pos: [x(getX(point, d.point)) + margin.left, y(getY(point, d.point)) + margin.top],
+                  pos: [d3.event.pageX, d3.event.pageY],
                   seriesIndex: d.series,
                   pointIndex: d.point
                 });
@@ -259,16 +252,23 @@ nv.models.scatter = function() {
                 if (needsUpdate) return 0;
                 var series = data[d.series],
                     point  = series.values[d.point];
-
                 dispatch.elementMouseout({
                   point: point,
                   series: series,
                   seriesIndex: d.series,
                   pointIndex: d.point
                 });
+              })
+              .on('mousemove', function(d,i){
+                var series = data[d.series],
+                    point  = series.values[d.point];
+                dispatch.elementMousemove({
+                  point: point,
+                  pointIndex: d.point,
+                  pos: [d3.event.pageX, d3.event.pageY],
+                  id: id
+                });
               });
-
-
         } else {
           /*
           // bring data in form needed for click handlers
@@ -285,13 +285,12 @@ nv.models.scatter = function() {
           wrap.select('.nv-groups').selectAll('.nv-group')
             .selectAll('.nv-point')
               //.data(dataWithPoints)
-              //.style('pointer-events', 'auto') // recativate events, disabled by css
+              .style('pointer-events', 'auto') // recativate events, disabled by css
               .on('click', function(d,i) {
                 //nv.log('test', d, i);
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
                 var series = data[d.series],
                     point  = series.values[i];
-
                 dispatch.elementClick({
                   point: point,
                   series: series,
@@ -304,11 +303,10 @@ nv.models.scatter = function() {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
                 var series = data[d.series],
                     point  = series.values[i];
-
                 dispatch.elementMouseover({
                   point: point,
                   series: series,
-                  pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
+                  pos: [d3.event.pageX, d3.event.pageY],
                   seriesIndex: d.series,
                   pointIndex: i
                 });
@@ -317,12 +315,21 @@ nv.models.scatter = function() {
                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
                 var series = data[d.series],
                     point  = series.values[i];
-
                 dispatch.elementMouseout({
                   point: point,
                   series: series,
                   seriesIndex: d.series,
                   pointIndex: i
+                });
+              })
+              .on('mousemove', function(d,i){
+                var series = data[d.series],
+                    point  = series.values[i];
+                dispatch.elementMousemove({
+                  point: point,
+                  pointIndex: i,
+                  pos: [d3.event.pageX, d3.event.pageY],
+                  id: id
                 });
               });
         }

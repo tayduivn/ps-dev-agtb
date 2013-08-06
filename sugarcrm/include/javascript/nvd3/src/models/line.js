@@ -81,9 +81,6 @@ nv.models.line = function() {
 
       //------------------------------------------------------------
 
-
-
-
       scatter
         .width(availableWidth)
         .height(availableHeight);
@@ -92,7 +89,6 @@ nv.models.line = function() {
           //.datum(data); // Data automatically trickles down from the wrap
 
       d3.transition(scatterWrap).call(scatter);
-
 
 
       defsEnter.append('clipPath')
@@ -106,8 +102,6 @@ nv.models.line = function() {
       g   .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + scatter.id() + ')' : '');
       scatterWrap
           .attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + scatter.id() + ')' : '');
-
-
 
 
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
@@ -127,7 +121,6 @@ nv.models.line = function() {
       d3.transition(groups)
           .style('stroke-opacity', 1)
           .style('fill-opacity', 0.5);
-
 
 
       var areaPaths = groups.selectAll('path.nv-area')
@@ -170,7 +163,6 @@ nv.models.line = function() {
           });
 
 
-
       var linePaths = groups.selectAll('path.nv-line')
           .data(function(d) { return [d.values]; });
       linePaths.enter().append('path')
@@ -198,7 +190,6 @@ nv.models.line = function() {
               .x(function(d,i) { return x(getX(d,i)); })
               .y(function(d,i) { return y(getY(d,i)); })
           );
-
 
 
       //store old scales for use in transitions on update

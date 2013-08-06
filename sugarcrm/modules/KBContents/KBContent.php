@@ -59,7 +59,7 @@ class KBContent extends SugarBean {
      */
     public function KBContent()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

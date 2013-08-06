@@ -17,6 +17,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
     'panels' => array(
         array(
             'name' => 'panel_header',
+            'label' => 'LBL_RECORD_HEADER',
             'header' => true,
             'fields' => array(
                 array(
@@ -36,56 +37,28 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
                 array(
                     'name' => 'follow',
                     'label'=> 'LBL_FOLLOW',
                     'type' => 'follow',
                     'readonly' => true,
+                    'dismiss_label' => true,
                 ),
             ),
         ),
         array(
             'name' => 'panel_body',
+            'label' => 'LBL_RECORD_BODY',
             'columns' => 2,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
                 'title',
-                'phone_work',
-                'department',
                 'phone_mobile',
-                '',
-                'phone_home',
-                'assigned_user_name',
-                'phone_other',
-                '',
-                'phone_fax',
-                '',
+                'department',
                 'do_not_call',
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'span' => 12,
-                ),
-                //END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'description',
-                    'span' => 12,
-                ),
-                array(
-                    'name' => 'email',
-                    'span' => 12,
-                ),
-            ),
-        ),
-        array(
-            'columns' => 2,
-            'name' => 'panel_hidden',
-            'hide' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'fields' => array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
@@ -164,6 +137,28 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+            ),
+        ),
+        array(
+            'columns' => 2,
+            'name' => 'panel_hidden',
+            'label' => 'LBL_SHOW_MORE',
+            'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'phone_home',
+                'phone_work',
+                'phone_other',
+                'email',
+                'phone_fax',
+                'assigned_user_name',
+                'date_modified',
+                'date_entered',
             ),
         ),
     ),

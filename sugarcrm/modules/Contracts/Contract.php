@@ -109,7 +109,7 @@ class Contract extends SugarBean {
      */
     public function Contracts()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

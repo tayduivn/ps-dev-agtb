@@ -113,7 +113,7 @@ class ProductBundle extends SugarBean {
      */
     public function ProductBundle()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

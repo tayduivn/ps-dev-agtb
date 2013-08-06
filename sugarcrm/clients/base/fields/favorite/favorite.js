@@ -51,10 +51,21 @@
      *   change.
      */
     toggle: function(evt) {
+        var self = this,
+            star = $(evt.currentTarget);
 
-        var star = $(evt.currentTarget);
+        var options = {
+            silent: true,
+            alerts: false
+        };
+        //when we toggle favorite icon on list view we need to update the view to actually see the changes
+        if (self.view && self.view.action === 'list') {
+            options.success = function() {
+                self._refreshListView();
+            };
+        }
 
-        if (this.model.favorite(!this.model.isFavorite(), {silent: true, alerts: false}) === false) {
+        if (this.model.favorite(!this.model.isFavorite(), options) === false) {
             app.logger.error("Unable to set '" + this.model.module + "' record '" + this.model.id + "' as favorite");
             return;
         }
@@ -74,5 +85,23 @@
      */
     format: function() {
         return this.model.isFavorite();
+    },
+
+    /**
+     * On model save success, this function gets called to refresh the list view
+     * @see BaseEditablelistbuttonField is using about the same method
+     * @private
+     */
+    _refreshListView: function() {
+        var filterPanelLayout = this.view;
+        //Try to find the filterpanel layout
+        while (filterPanelLayout && filterPanelLayout.name !== 'filterpanel') {
+            filterPanelLayout = filterPanelLayout.layout;
+        }
+        //If filterpanel layout found and not disposed, then pick the value from the quicksearch input and
+        //trigger the filtering
+        if (filterPanelLayout && !filterPanelLayout.disposed && this.collection) {
+            filterPanelLayout.applyLastFilter(this.collection, 'favorite');
+        }
     }
 })

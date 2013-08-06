@@ -54,17 +54,17 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
     public function testMetadataSugarFieldsTemplates() {
         $filesToCheck = array(
             //BEGIN SUGARCRM flav=pro ONLY
-            'clients/mobile/fields/address/editView.hbt',
-            'clients/mobile/fields/address/detailView.hbt',
+            'clients/mobile/fields/address/editView.hbs',
+            'clients/mobile/fields/address/detailView.hbs',
             //END SUGARCRM flav=pro ONLY
-            'clients/base/fields/address/editView.hbt',
-            'clients/base/fields/address/detailView.hbt',
+            'clients/base/fields/address/editView.hbs',
+            'clients/base/fields/address/detailView.hbs',
             //BEGIN SUGARCRM flav=pro ONLY
-            'custom/clients/mobile/fields/address/editView.hbt',
-            'custom/clients/mobile/fields/address/detailView.hbt',
+            'custom/clients/mobile/fields/address/editView.hbs',
+            'custom/clients/mobile/fields/address/detailView.hbs',
             //END SUGARCRM flav=pro ONLY
-            'custom/clients/base/fields/address/editView.hbt',
-            'custom/clients/base/fields/address/detailView.hbt',
+            'custom/clients/base/fields/address/editView.hbs',
+            'custom/clients/base/fields/address/detailView.hbs',
         );
         SugarTestHelper::saveFile($filesToCheck);
 
@@ -88,10 +88,10 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
          * and a portal/date, and the current client id was portal, we'd just get the portal/date. However,
          * we have now moved to returning both of these from within the widget type (e.g. reply.<type>.<platform>.<widget>)
          */
-        SugarAutoLoader::put('clients/base/fields/address/editView.hbt','BASE EDITVIEW', true);
+        SugarAutoLoader::put('clients/base/fields/address/editView.hbs','BASE EDITVIEW', true);
         //BEGIN SUGARCRM flav=pro ONLY
         // Make sure we get it when we ask for mobile
-        SugarAutoLoader::put('clients/mobile/fields/address/editView.hbt','MOBILE EDITVIEW', true);
+        SugarAutoLoader::put('clients/mobile/fields/address/editView.hbs','MOBILE EDITVIEW', true);
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
@@ -112,7 +112,7 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Delete the mobile address and make sure it falls back to base
-        SugarAutoLoader::unlink('clients/mobile/fields/address/editView.hbt', true);
+        SugarAutoLoader::unlink('clients/mobile/fields/address/editView.hbs', true);
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
@@ -120,7 +120,7 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
 
 
         // Make sure the mobile code is loaded before the non-custom base code
-        SugarAutoLoader::put('custom/clients/mobile/fields/address/editView.hbt','CUSTOM MOBILE EDITVIEW', true);
+        SugarAutoLoader::put('custom/clients/mobile/fields/address/editView.hbs','CUSTOM MOBILE EDITVIEW', true);
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
@@ -128,7 +128,7 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
         //END SUGARCRM flav=pro ONLY
 
         // Make sure custom base code works
-        SugarAutoLoader::put('custom/clients/base/fields/address/editView.hbt','CUSTOM BASE EDITVIEW', true);
+        SugarAutoLoader::put('custom/clients/base/fields/address/editView.hbs','CUSTOM BASE EDITVIEW', true);
         $this->_clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');

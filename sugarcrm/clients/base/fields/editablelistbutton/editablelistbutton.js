@@ -89,6 +89,7 @@
     },
     /**
      * On model save success, this function gets called to refresh the list view
+     * @see BaseFavoriteField is using about the same method
      * @private
      */
     _refreshListView: function() {
@@ -99,9 +100,8 @@
         }
         //If filterpanel layout found and not disposed, then pick the value from the quicksearch input and
         //trigger the filtering
-        if (!filterPanelLayout.disposed && this.collection) {
-            var query = filterPanelLayout.$('.search input.search-name').val();
-            filterPanelLayout.trigger('filter:apply', query, this.collection.origFilterDef);
+        if (filterPanelLayout && !filterPanelLayout.disposed && this.collection) {
+            filterPanelLayout.applyLastFilter(this.collection);
         }
     }
 })

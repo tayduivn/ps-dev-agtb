@@ -492,5 +492,10 @@ $redirect = "index.php?action={$return_action}&module={$return_module}&record={$
 $redirect .= isset($_REQUEST['type']) ? "&type={$_REQUEST['type']}" : ''; // cn: bug 6897 - detect redirect to Email compose
 $redirect .= isset($_REQUEST['return_id']) ? "&return_id={$_REQUEST['return_id']}" : '';
 $redirect .= ($new_pwd!='') ? "&pwd_set=".$new_pwd : '';
+// Set the refresh metadata flag for changes that require it. This includes when
+// metadata needs to be refreshed because of a user pref change, but only if its
+// for the current user changing their own profile
+$sameUser = !empty($focus->id) && $focus->id == $GLOBALS['current_user']->id;
+$redirect .= $sameUser && $refreshMetadata ? '&refreshMetadata=1' : '';
 header("Location: {$redirect}");
 ?>

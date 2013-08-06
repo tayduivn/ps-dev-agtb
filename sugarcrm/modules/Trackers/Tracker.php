@@ -67,7 +67,7 @@ class Tracker extends SugarBean
      */
     public function Tracker()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

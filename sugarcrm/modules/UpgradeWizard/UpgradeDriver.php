@@ -171,12 +171,14 @@ abstract class UpgradeDriver
         } else {
             // delete dangerous files manually
             @unlink("cache/file_map.php");
+            @unlink("cache/class_map.php");
         }
         $this->cleanDir($this->cacheDir("smarty"));
         $this->cleanDir($this->cacheDir("modules"));
         $this->cleanDir($this->cacheDir("jsLanguage"));
         $this->cleanDir($this->cacheDir("Expressions"));
         $this->cleanDir($this->cacheDir("themes"));
+        $this->cleanDir($this->cacheDir("include/api"));
     }
 
     /**

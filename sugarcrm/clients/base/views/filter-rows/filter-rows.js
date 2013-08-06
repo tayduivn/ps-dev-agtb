@@ -44,6 +44,7 @@
         this.listenTo(this.layout, "filter:create:close", this.render);
         this.listenTo(this.layout, "filter:create:save", this.saveFilter);
         this.listenTo(this.layout, "filter:create:delete", this.deleteFilter);
+        this.listenTo(this.layout, "filter:create:validate", this.validateRows);
     },
 
     /**
@@ -295,6 +296,11 @@
                 value = _.values(value[0])[0];
             }
 
+            //Make sure we use name for relate fields
+            if (!this.fieldList[key]) {
+                var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
+                key = relate.name;
+            }
             $row.find('.filter-field select').select2('val', key).trigger('change');
             if (_.isString(value)) {
                 value = {"$equals": value};
@@ -332,6 +338,7 @@
         //Reset flags
         data.isDateRange = false;
         data.isPredefinedFilter = false;
+        data.id_name = this.fieldList[fieldName].id_name;
 
         //Predefined filters don't need operators and value field
         if (this.fieldList[fieldName].predefined_filter === true) {
@@ -439,6 +446,9 @@
 
         //fire the change event as soon as the user start typing
         var _keyUpCallback = function(e) {
+            if ($(e.currentTarget).is(".select2-input")) {
+                return; //Skip select2. Select2 triggers other events.
+            }
             this.value = $(e.currentTarget).val();
             // We use "silent" update because we don't need re-render the field.
             model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
@@ -478,7 +488,7 @@
                 this._renderField(field);
             }, this);
         } else {
-            model.set(fieldName, $row.data('value') || undefined);
+            model.set(fieldDef.id_name || fieldName, $row.data('value') || undefined);
             // Render the value field
             var field = this.createField(model, fieldDef),
                 fieldContainer = $(field.getPlaceholder().string);
@@ -506,38 +516,65 @@
                 _changeBlankLabel.call(field);
             }
 
-            this._renderField(field);
+            if (fieldType === 'relate' && $row.data('value')) {
+                var self = this,
+                    findRelatedName = app.data.createBeanCollection(fieldDef.module);
+                findRelatedName.fetch({fields: [fieldDef.rname], params: {filter: [{'id': $row.data('value')}]},
+                complete: function() {
+                    if (!self.disposed) {
+                        if (findRelatedName.first()) {
+                            model.set(fieldName, findRelatedName.first().get(fieldDef.rname), { silent: true });
+                        }
+                        self._renderField(field);
+                    }
+                }});
+            } else {
+                this._renderField(field);
+            }
         }
 
         // When the value change a quicksearch should be fired to update the results
-        this.listenTo(model, "change", (function($row) {
-            return function() {
-                var fields = $row.data("valueField"),
-                    valueForFilter = '';
-
-                //If we have multiple fields we have to build an array of values
-                if (_.isArray(fields)) {
-                    valueForFilter = [];
-                    _.each(fields, function(field) {
-                        var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
-                        value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
-                        valueForFilter.push(value);
-                    });
-                } else {
-                    var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
-                    valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
-                }
-
-                $row.data("value", valueForFilter);
-                this.fireSearch();
-            };
-        })($row));
+        this.listenTo(model, "change", function() {
+            this._updateFilterData($row);
+            this.fireSearch();
+        });
 
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
-        if (!_.isEmpty(model.get(fieldName))) {
+        if (!_.isEmpty(model.get(fieldName)) && model.get(fieldName) !== $row.data('value')) {
             model.trigger('change');
         }
+    },
+
+    /**
+     * Update filter data for this row
+     * @param $row Row to update
+     * @private
+     */
+    _updateFilterData: function($row){
+        var data = $row.data(),
+            field = data['valueField'],
+            name = data['name'],
+            valueForFilter;
+
+        //Make sure we use ID for relate fields
+        if (this.fieldList[name] && this.fieldList[name].id_name) {
+            name = this.fieldList[name].id_name;
+        }
+
+        //If we have multiple fields we have to build an array of values
+        if (_.isArray(field)) {
+            valueForFilter = [];
+            _.each(field, function(field) {
+                var value = !field.disposed && field.model.has(field.name) ? field.model.get(field.name) : '';
+                value = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+                valueForFilter.push(value);
+            });
+        } else {
+            var value = !field.disposed && field.model.has(name) ? field.model.get(name) : '';
+            valueForFilter = $row.data('isDate') ? app.date.stripIsoTimeDelimterAndTZ(value) : value;
+        }
+        $row.data("value", valueForFilter); // Update filter value once we've calculated final value
     },
 
     /**
@@ -576,19 +613,16 @@
      */
     buildRowFilterDef: function($row) {
         var data = $row.data(),
-            name = data['name'],
             operator = data['operator'],
             value = data['value'],
+            name = data['id_name'] || data['name'],
             filter = {};
 
-        if (this.fieldList[name] && this.fieldList[name].id_name && this.fieldList[this.fieldList[name].id_name]) {
-            name = this.fieldList[name].id_name;
-        }
         if (data.isPredefinedFilter) {
             filter[name] = "";
             return filter;
         } else if (!_.isEmpty(value) || data.isDateRange) {
-            if (_.has(this.fieldList[name], 'dbFields')) {
+            if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
                 var subfilters = [];
                 _.each(this.fieldList[name].dbFields, function(dbField) {
                     var filter = {};

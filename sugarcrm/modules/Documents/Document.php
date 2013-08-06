@@ -88,7 +88,7 @@ class Document extends SugarBean {
      */
     public function Document()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

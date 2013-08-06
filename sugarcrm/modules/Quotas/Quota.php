@@ -69,7 +69,7 @@ class Quota extends SugarBean
      */
     public function Quota()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

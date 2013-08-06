@@ -62,7 +62,7 @@ class Shipper extends SugarBean {
      */
     public function Shipper()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

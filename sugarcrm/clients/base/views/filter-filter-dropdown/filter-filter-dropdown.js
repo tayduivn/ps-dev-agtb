@@ -215,7 +215,7 @@
             translatedText = app.lang.get(label, null, {'moduleName': moduleName});
         }
         else {
-            translatedText = app.lang.get(label, 'Filters');
+            translatedText = app.lang.get(label, ['Filters', this.layout.layout.currentModule]);
         }
         return translatedText;
     },

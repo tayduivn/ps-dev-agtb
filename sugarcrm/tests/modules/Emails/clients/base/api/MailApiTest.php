@@ -29,6 +29,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         parent::setUp();
         SugarTestHelper::setUp("current_user");
+        SugarTestHelper::setUp('app_list_strings');
         $this->api     = SugarTestRestUtilities::getRestServiceMock();
         $this->mailApi = $this->getMock("MailApi", array("initMailRecord", "getEmailRecipientsService", "getEmailBean"));
 
@@ -50,7 +51,7 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCreateMail_StatusIsSaveAsDraft_CallsMailRecordSaveAsDraft()
     {
         $args = array(
-            "status" => "draft",
+            MailApi::STATUS => "draft",
         );
 
         $mockResult = array(
@@ -72,8 +73,9 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCreateMail_StatusIsReady_CallsMailRecordSend()
     {
         $args = array(
-            "status"       => "ready",
-            "email_config" => "foo",
+            MailApi::STATUS       => "ready",
+            MailApi::EMAIL_CONFIG => "foo",
+            MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
         );
 
         $mockResult = array(
@@ -89,26 +91,6 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("initMailRecord")
             ->will($this->returnValue($mailRecordMock));
 
-        $this->mailApi->createMail($this->api, $args);
-    }
-
-    public function testCreateMail_StatusIsReadyAndEmailConfigIsEmpty_ThrowsException()
-    {
-        $args = array(
-            "status" => "ready",
-        );
-
-        $this->setExpectedException("SugarApiExceptionRequestMethodFailure");
-        $this->mailApi->createMail($this->api, $args);
-    }
-
-    public function testCreateMail_StatusIsInvalid_ThrowsException()
-    {
-        $args = array(
-            "status" => "foo",
-        );
-
-        $this->setExpectedException("SugarApiExceptionInvalidParameter");
         $this->mailApi->createMail($this->api, $args);
     }
 
@@ -351,6 +333,289 @@ class MailApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         //verify it was removed
         $this->_assertCacheDirEmpty();
+    }
+
+    /**
+     * @dataProvider validationProvider
+     */
+    public function testMailApi_run_validation($args, $exceptionExpected, $exceptionArgs = null)
+    {
+        $mailApiMock = $this->getMock("MailApi", array("invalidParameter"));
+        if (!empty($exceptionExpected)) {
+            $mailApiMock->expects($this->once())
+                ->method("invalidParameter")
+                ->with($exceptionExpected, $exceptionArgs)
+                ->will($this->throwException(new SugarApiExceptionInvalidParameter($exceptionExpected)));
+            $this->setExpectedException("SugarApiExceptionInvalidParameter");
+        } else {
+            $mailApiMock->expects($this->never())
+                ->method("invalidParameter");
+        }
+
+        $data = array(
+            MailApi::STATUS       => "ready",
+            MailApi::EMAIL_CONFIG => "1234567890",
+            MailApi::TO_ADDRESSES => array(array("email" => "a@b.c")),
+        );
+        $arguments = array_merge($data,$args);
+
+        $mailApiMock->validateArguments($arguments);
+    }
+
+    public function validationProvider() {
+        return array(
+            0 => array(
+                array(),
+                false,
+            ),
+            1 => array(
+                array(MailApi::STATUS => 'draft'),
+                false,
+            ),
+            2 => array(
+                array(MailApi::STATUS => 'qwerty'),
+                'LBL_MAILAPI_INVALID_ARGUMENT_VALUE',
+                array(MailApi::STATUS),
+            ),
+            3 => array(
+                array(MailApi::TO_ADDRESSES => array()),
+                'LBL_MAILAPI_NO_RECIPIENTS',
+                null,
+            ),
+            4 => array(
+                array(
+                    MailApi::TO_ADDRESSES => array(),
+                    MailApi::CC_ADDRESSES => array(array("email" => "a@b.c")),
+                ),
+                false,
+            ),
+            5 => array(
+                array(
+                    MailApi::TO_ADDRESSES  => array(),
+                    MailApi::BCC_ADDRESSES => array(array("email" => "a@b.c")),
+                ),
+                false,
+            ),
+            6 => array(
+                array(
+                    MailApi::STATUS       => 'draft',
+                    MailApi::TO_ADDRESSES => array(),
+                ),
+                false,
+            ),
+            7 => array(
+                array(MailApi::TO_ADDRESSES => array(array("email" => null))),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TO_ADDRESSES, 'email'),
+            ),
+            8 => array(
+                array(MailApi::CC_ADDRESSES => array(array("email" => array()))),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::CC_ADDRESSES, 'email'),
+            ),
+            9 => array(
+                array(MailApi::BCC_ADDRESSES => array(array("email" => true))),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::BCC_ADDRESSES, 'email'),
+            ),
+            10 => array(
+                array(MailApi::CC_ADDRESSES => array(array("email" => new stdClass()))),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::CC_ADDRESSES, 'email'),
+            ),
+            11 => array(
+                array(MailApi::ATTACHMENTS => '1234567890'),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
+                array(MailApi::ATTACHMENTS),
+            ),
+            12 => array(
+                array(
+                    MailApi::ATTACHMENTS => array(
+                        array(),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::ATTACHMENTS, 'type'),
+            ),
+            13 => array(
+                array(
+                    MailApi::ATTACHMENTS => array(
+                        array("type" => "document"),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::ATTACHMENTS, 'id'),
+            ),
+            14 => array(
+                array(
+                    MailApi::ATTACHMENTS => array(
+                        array(
+                            "type" => "upload",
+                            "id"   => "1234567890",
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::ATTACHMENTS, 'name'),
+            ),
+            15 => array(
+                array(
+                    MailApi::TEAMS => "1",
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
+                array(MailApi::TEAMS),
+            ),
+            16 => array(
+                array(
+                    MailApi::TEAMS => array(
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'primary'),
+            ),
+            17 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "others"  => array(
+                            array(),
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'primary'),
+            ),
+            18 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "primary" => '',
+                        "others"  => array(
+                            '1234-1234-1234',
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'primary'),
+            ),
+            19 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "primary" => 123,
+                        "others"  => array(
+                            '1234-1234-1234',
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'primary'),
+            ),
+            20 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "primary" => '1234567890',
+                        "others"  => array(
+                            array(),
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'others'),
+            ),
+            21 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "primary" => '1234567890',
+                        "others"  => array(
+                            '',
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'others'),
+            ),
+            22 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "primary" => '1234567890',
+                        "others"  => array(
+                            new stdClass(),
+                        ),
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::TEAMS, 'others'),
+            ),
+            23 => array(
+                array(
+                    MailApi::TEAMS => array(
+                        "primary" => '1234567890',
+                        "others"  => array(
+                            '1234-1234-1234',
+                        ),
+                    ),
+                ),
+                false,
+            ),
+            24 => array(
+                array(MailApi::RELATED => '1234567890'),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
+                array(MailApi::RELATED),
+            ),
+            25 => array(
+                array(
+                    MailApi::RELATED => array(
+                        "type" => "Contacts",
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::RELATED, "id"),
+            ),
+            26 => array(
+                array(
+                    MailApi::RELATED => array(
+                        "type" => "Contacts",
+                        "id"   => "1234567890",
+                    ),
+                ),
+                false,
+            ),
+            27 => array(
+                array(
+                    MailApi::RELATED => array(
+                         "type" => "Widgets",
+                         "id"   => "1234567890",
+                    ),
+                ),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
+                array(MailApi::RELATED, "type"),
+            ),
+            28 => array(
+                array(MailApi::SUBJECT => 'Email Subject'),
+                false,
+            ),
+            29 => array(
+                array(MailApi::SUBJECT => array()),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
+                array(MailApi::SUBJECT),
+            ),
+            30 => array(
+                array(MailApi::HTML_BODY => 'HTML Body'),
+                false,
+            ),
+            31 => array(
+                array(MailApi::HTML_BODY => new stdClass()),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
+                array(MailApi::HTML_BODY),
+            ),
+            32 => array(
+                array(MailApi::TEXT_BODY => 'TEXT Body'),
+                false,
+            ),
+            33 => array(
+                array(MailApi::TEXT_BODY => false),
+                'LBL_MAILAPI_INVALID_ARGUMENT_FORMAT',
+                array(MailApi::TEXT_BODY),
+            ),
+        );
     }
 
     /**

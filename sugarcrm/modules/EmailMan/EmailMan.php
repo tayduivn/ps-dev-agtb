@@ -63,7 +63,7 @@ class EmailMan extends SugarBean{
      */
     public function EmailMan()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

@@ -20,11 +20,51 @@
     idRegex: new RegExp('record=([^&]*)'),
     actionRegex: new RegExp('action=([^&]*)'),
 
+    plugins: ['editable'],
+
+    /**
+     * Enabled actions for warning unsaved changes.
+     *
+     * @property
+     */
+    warnEnabledBwcActions: [
+        'editview', 'config'
+    ],
+
     initialize: function(options) {
         this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
         app.view.View.prototype.initialize.call(this, options);
+        this.bwcModel = app.data.createBean('bwc');
     },
 
+    /**
+     * {@inheritDoc}
+     *
+     * Inspect changes on current HTML input elements with initial values.
+     */
+    hasUnsavedChanges: function() {
+        var bwcWindow = this.$el.get(0).contentWindow;
+        //if bwcModel is empty, then it should return false (since it's not in enabled actions)
+        if (_.isEmpty(this.bwcModel.attributes)) {
+            return false;
+        }
+        var newAttributes = this.serializeObject(bwcWindow.EditView);
+        return !_.isEmpty(this.bwcModel.changedAttributes(newAttributes));
+    },
+
+    /**
+     * Retrieves form's input values in object format
+     *
+     * @param {HTMLElement} theForm form element.
+     * @return {Object} key-value paired object.
+     */
+    serializeObject: function(theForm) {
+        var formArray = $(theForm).serializeArray();
+        return _.reduce(formArray, function(acc, field) {
+            acc[field.name] = field.value;
+            return acc;
+        }, {});
+    },
     /**
      * Render the iFrame and listen for content changes on it.
      *
@@ -33,6 +73,7 @@
      * <li>update our url to match the current iFrame location in bwc way</li>
      * <li>rewrite links for sidecar modules</li>
      * <li>rewrite links that go for new windows</li>
+     * <li>memorize the form input elements in order to warn unsaved changes</li>
      *
      * @private
      */
@@ -42,23 +83,12 @@
         app.view.View.prototype._renderHtml.call(this);
 
         this.$el.load(function() {
-            var module = self.moduleRegex.exec(this.contentWindow.location.search);
-            module = (_.isArray(module)) ? module[1] : null;
-            if (module) {
-                // on BWC import we want to try and take the import module as the module
-                if (module === 'Import') {
-                    var importModule = /import_module=([^&]*)/.exec(this.contentWindow.location.search);
-                    if (!_.isNull(importModule) && !_.isEmpty(importModule[1])) {
-                        module = importModule[1];
-                    }
-                }
-                // update bwc context
-                var app = window.parent.SUGAR.App;
-                app.controller.context.set('module', module);
-                app.events.trigger('app:view:change');
-            }
+            self._setModule(this.contentWindow);
+            self._setBwcModel(this.contentWindow);
 
-            window.parent.location.hash = '#bwc/index.php' + this.contentWindow.location.search;
+            //In order to update current location once bwc link is clicked.
+            var url = '#bwc/index.php' + this.contentWindow.location.search;
+            self._setCurrentUrl(url);
 
             if (this.contentWindow.$ === undefined) {
                 // no jQuery available, graceful fallback
@@ -68,6 +98,86 @@
             self._rewriteNewWindowLinks(this.contentWindow);
 
         });
+    },
+
+    /**
+     * Update the controller context to mach our bwc module.
+     *
+     * @param {HTMLElement} contentWindow iframe window.
+     * @private
+     */
+    _setModule: function(contentWindow) {
+        var module = this.moduleRegex.exec(contentWindow.location.search);
+        module = (_.isArray(module)) ? module[1] : null;
+
+        if (!module) {
+            return;
+        }
+        // on BWC import we want to try and take the import module as the module
+        if (module === 'Import') {
+            var importModule = /import_module=([^&]*)/.exec(contentWindow.location.search);
+            if (!_.isNull(importModule) && !_.isEmpty(importModule[1])) {
+                module = importModule[1];
+            }
+        }
+        // update bwc context
+        var app = window.parent.SUGAR.App;
+        app.controller.context.set('module', module);
+        app.events.trigger('app:view:change');
+    },
+
+    /**
+     * Memorize the form input elements if current page contains edit form.
+     *
+     * @param {HTMLElement} contentWindow iframe window.
+     * @private
+     */
+    _setBwcModel: function(contentWindow) {
+        var action = this.actionRegex.exec(contentWindow.location.search);
+        action = (_.isArray(action)) ? action[1].toLowerCase() : null;
+
+        //once edit page is entered, the page is navigated without action query string.
+        //Therefore, if current page contains 'EditView' form, bind the action as 'editview'.
+        if (contentWindow.EditView) {
+            action = 'editview';
+        }
+
+        var attributes = {};
+        if (_.contains(this.warnEnabledBwcActions, action)) {
+            attributes = this.serializeObject(contentWindow.EditView);
+        }
+        this.resetBwcModel(attributes);
+    },
+
+    /**
+     * Update current window location once bwc link is clicked.
+     *
+     * @param {String} url current hash path.
+     * @private
+     */
+    _setCurrentUrl: function(url) {
+        this._currentUrl = url;
+        window.parent.location.hash = url;
+    },
+
+    /**
+     * Revert model attributes with the current form elements.
+     */
+    revertBwcModel: function() {
+        var bwcWindow = this.$el.get(0).contentWindow;
+        var newAttributes = this.serializeObject(bwcWindow.EditView);
+        this.resetBwcModel(newAttributes);
+    },
+
+    /**
+     * Reset model attributes with the initial attributes.
+     *
+     * @param {Object} key-value pair attributes.
+     */
+    resetBwcModel: function(attr) {
+        this.bwcModel.clear({
+            silent: true
+        }).set(attr);
     },
 
     /**
@@ -170,5 +280,14 @@
             }
             $elem.attr('href', baseUrl + '#bwc/' + $elem.attr('href'));
         });
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    _dispose: function() {
+        this.bwcModel.off();
+        this.bwcModel = null;
+        app.view.View.prototype._dispose.call(this);
     }
 })

@@ -88,7 +88,7 @@ class aCase extends Basic {
      */
     public function aCase()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

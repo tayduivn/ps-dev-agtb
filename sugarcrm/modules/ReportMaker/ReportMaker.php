@@ -82,7 +82,7 @@ class ReportMaker extends SugarBean {
      */
     public function ReportMaker()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

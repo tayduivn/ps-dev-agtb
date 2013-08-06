@@ -51,7 +51,7 @@ class CalendarGrid {
      */
     public function CalendarGrid(Calendar $cal)
     {
-        $this->__construct($cal);
+        self::__construct($cal);
     }
 
 	/**

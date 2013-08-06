@@ -81,7 +81,7 @@ class Queue extends SugarBean {
      */
     public function Queue()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	/**

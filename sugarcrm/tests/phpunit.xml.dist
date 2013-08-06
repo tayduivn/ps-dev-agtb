@@ -49,6 +49,9 @@
     </php>
 
     <testsuites>
+        <testsuite name="Sugar Customization Test Suite">
+            <directory>../custom/tests/</directory>
+        </testsuite>
         <testsuite name="Sugar FRM Test Suite">
             <directory>./modules/ACL/</directory>
             <directory>./modules/Administration/</directory>

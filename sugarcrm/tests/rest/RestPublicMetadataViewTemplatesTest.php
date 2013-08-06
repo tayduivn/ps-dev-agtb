@@ -38,17 +38,17 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMetadataViewTemplatesHbt() {
+    public function testMetadataViewTemplatesHbs() {
         $filesToCheck = array(
             //BEGIN SUGARCRM flav=ent ONLY
             'portal' => array(
-                'clients/portal/views/edit/edit.hbt',
-                'custom/clients/portal/views/edit/edit.hbt',
+                'clients/portal/views/edit/edit.hbs',
+                'custom/clients/portal/views/edit/edit.hbs',
             ),
             //END SUGARCRM flav=ent ONLY
             'base' => array(
-                'clients/base/views/edit/edit.hbt',
-                'custom/clients/base/views/edit/edit.hbt',
+                'clients/base/views/edit/edit.hbs',
+                'custom/clients/base/views/edit/edit.hbs',
             ),
         );
         SugarTestHelper::saveFile($filesToCheck);

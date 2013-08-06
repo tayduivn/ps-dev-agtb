@@ -118,7 +118,7 @@ class ProductBundleNote extends SugarBean {
      */
     public function ProductBundleNote()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

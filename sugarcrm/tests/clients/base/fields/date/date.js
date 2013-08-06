@@ -40,7 +40,7 @@ describe("date field", function() {
         });
 
         it("should format value for display_default", function() {
-            var today = new Date(), 
+            var today = new Date(),
                 actual, stub, parts,
                 originalType = field.view.name;
 
@@ -192,7 +192,7 @@ describe("date field", function() {
 
             jqFn = sinon.stub(field, '$', function() {
                 return {
-                    'val': function() { 
+                    'val': function() {
                         return 'arbitrary_value';
                     },
                     'datepicker': datepickerStub
@@ -206,7 +206,7 @@ describe("date field", function() {
             expectedValValue = null;
         });
 
-        it("should set our internal date value so hbt picks up", function() {
+        it("should set our internal date value so hbs picks up", function() {
             var datetimeComboField;
 
             field.type = 'date';

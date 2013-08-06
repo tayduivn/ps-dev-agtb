@@ -139,7 +139,7 @@
         }
 
         if (_.contains(changedField, 'commit_stage')) {
-            changed.forecast = changed.commit_stage
+            changed.forecast = changed.commit_stage;
             delete changed.commit_stage;
         }
 
@@ -204,11 +204,7 @@
      * Called after _render
      */
     toggleRepOptionsVisibility: function() {
-        if (this.values.get('display_manager') === true) {
-            this.$el.find('div.groupByOptions').hide();
-        } else {
-            this.$el.find('div.groupByOptions').show();
-        }
+        this.$el.find('div.groupByOptions').toggleClass('hide', this.values.get('display_manager') === true);
     },
 
     /**

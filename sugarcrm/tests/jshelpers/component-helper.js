@@ -32,7 +32,7 @@
         var templateName = template || name;
         var path = "/clients/" + client + "/" + type + "s/" + name;
         path = (module) ? "../modules/" + module + path : ".." + path;
-        SugarTest.loadFile(path, templateName, "hbt", function(data) {
+        SugarTest.loadFile(path, templateName, "hbs", function(data) {
             test.testMetadata.addTemplate(name, type, data, templateName, module);
         });
     };

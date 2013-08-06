@@ -115,6 +115,10 @@ class UsersViewDetail extends ViewDetail {
             ob_end_clean();
             $this->ss->assign('ROLE_HTML',$role_html);
         }
+        
+        // Tell the template to render the javascript that requests new metadata
+        // after a user preference change
+        $this->ss->assign('refreshMetadata', !empty($_REQUEST['refreshMetadata']));
 
     }
 

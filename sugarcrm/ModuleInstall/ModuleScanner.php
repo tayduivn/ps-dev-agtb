@@ -62,8 +62,8 @@ class ModuleScanner{
 	private $blackListExempt = array();
 	private $classBlackListExempt = array();
 
-    // Bug 56717 - adding hbt extension to the whitelist - rgonzalez
-	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml', 'hbt');
+    // Bug 56717 - adding hbs extension to the whitelist - rgonzalez
+	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml', 'hbs');
 	private $classBlackList = array(
         // Class names specified here must be in lowercase as the implementation
         // of the tokenizer converts all tokens to lowercase.

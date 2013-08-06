@@ -36,6 +36,7 @@ class FilterApi extends SugarApi
                 'path' => array('<module>'),
                 'pathVars' => array('module'),
                 'method' => 'filterList',
+                'jsonParams' => array('filter'),
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
             ),

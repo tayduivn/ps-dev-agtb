@@ -92,7 +92,7 @@ class Bug extends SugarBean {
      */
     public function Bug()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

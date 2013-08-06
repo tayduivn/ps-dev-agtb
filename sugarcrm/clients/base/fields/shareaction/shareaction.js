@@ -57,12 +57,12 @@
      *
      * Please define your templates on:
      *
-     * - `custom/clients/{platform}/view/share/subject.hbt`
-     * - `custom/clients/{platform}/view/share/body.hbt`
-     * - `custom/clients/{platform}/view/share/body-html.hbt`
-     * - `{custom/,}modules/{module}/clients/{platform}/view/share/subject.hbt`
-     * - `{custom/,}modules/{module}/clients/{platform}/view/share/body.hbt`
-     * - `{custom/,}modules/{module}/clients/{platform}/view/share/body-html.hbt`
+     * - `custom/clients/{platform}/view/share/subject.hbs`
+     * - `custom/clients/{platform}/view/share/body.hbs`
+     * - `custom/clients/{platform}/view/share/body-html.hbs`
+     * - `{custom/,}modules/{module}/clients/{platform}/view/share/subject.hbs`
+     * - `{custom/,}modules/{module}/clients/{platform}/view/share/body.hbs`
+     * - `{custom/,}modules/{module}/clients/{platform}/view/share/body-html.hbs`
      *
      * @template
      * @protected

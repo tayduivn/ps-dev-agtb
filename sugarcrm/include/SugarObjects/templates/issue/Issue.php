@@ -36,7 +36,7 @@ class Issue extends Basic{
      */
     public function Issue()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct(){

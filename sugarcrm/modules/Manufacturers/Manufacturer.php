@@ -63,7 +63,7 @@ class Manufacturer extends SugarBean {
      */
     public function Manufacturer()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 	public function __construct() {

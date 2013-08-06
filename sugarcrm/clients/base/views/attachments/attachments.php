@@ -56,56 +56,59 @@ $viewdefs['base']['view']['attachments'] = array(
     'custom_toolbar' => array(
         'buttons' => array(
             array(
-                "type" => "dashletaction",
-                "css_class" => "dashlet-toggle btn btn-invisible minify",
-                "icon" => "icon-chevron-up",
-                "action" => "toggleMinify",
+                'type' => 'actiondropdown',
+                'icon' => 'icon-plus',
+                'no_default_action' => true,
+                'buttons' => array(
+                    array(
+                        'type' => 'dashletaction',
+                        'css_class' => '',
+                        'label' => 'LBL_CREATE_RELATED_RECORD',
+                        'action' => 'openCreateDrawer',
+                    ),
+                    array(
+                        'type' => 'dashletaction',
+                        'css_class' => '',
+                        'label' => 'LBL_ASSOC_RELATED_RECORD',
+                        'action' => 'openSelectDrawer',
+                    ),
+                ),
             ),
             array(
-                "dropdown_buttons" => array(
+                'dropdown_buttons' => array(
                     array(
-                        "type" => "dashletaction",
-                        "action" => "editClicked",
-                        "label" => "LBL_DASHLET_CONFIG_EDIT_LABEL",
+                        'type' => 'dashletaction',
+                        'action' => 'editClicked',
+                        'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
                     ),
                     array(
-                        "type" => "dashletaction",
-                        "label" => "LBL_CREATE_RELATED_RECORD",
-                        "action" => "openCreateDrawer",
+                        'type' => 'dashletaction',
+                        'action' => 'refreshClicked',
+                        'label' => 'LBL_DASHLET_REFRESH_LABEL',
                     ),
                     array(
-                        "type" => "dashletaction",
-                        "label" => "LBL_ASSOC_RELATED_RECORD",
-                        "action" => "openSelectDrawer",
+                        'type' => 'dashletaction',
+                        'action' => 'toggleClicked',
+                        'label' => 'LBL_DASHLET_MINIMIZE',
+                        'event' => 'minimize',
                     ),
                     array(
-                        "type" => "dashletaction",
-                        "action" => "refreshClicked",
-                        "label" => "LBL_DASHLET_REFRESH_LABEL",
-                    ),
-                    array(
-                        "type" => "dashletaction",
-                        "action" => "removeClicked",
-                        "label" => "LBL_DASHLET_REMOVE_LABEL",
+                        'type' => 'dashletaction',
+                        'action' => 'removeClicked',
+                        'label' => 'LBL_DASHLET_REMOVE_LABEL',
                     ),
                 )
             )
         )
     ),
-    'buttons' => array(
+    'rowactions' => array(
         array(
-            'type' => 'button',
-            'icon' => 'icon-plus',
-            'name' => 'create_button',
-            'label' => ' ',
-            'acl_action' => 'create',
-        ),
-        array(
-            'type' => 'button',
-            'name' => 'select_button',
-            'label' => 'LBL_ASSOC_RELATED_RECORD',
-            'icon' => 'icon-pencil',
-            'acl_action' => 'view',
+            'type' => 'rowaction',
+            'icon' => 'icon-unlink',
+            'css_class' => 'btn',
+            'event' => 'attachment:unlinkrow:fire',
+            'tooltip' => 'LBL_UNLINK_BUTTON',
+            'acl_action' => 'edit',
         ),
     ),
     'panels' => array(
@@ -136,9 +139,9 @@ $viewdefs['base']['view']['attachments'] = array(
         ),
     ),
 	'supportedImageExtensions' => array(
-		'jpg' => 'image/jpeg', 
-		'jpeg' => 'image/jpeg',
-		'png' => 'image/png',
+        'image/jpeg' => 'JPG',
+        'image/gif' => 'GIF',
+        'image/png' => 'PNG',
 	),
 	'defaultType' => 'txt',
 );

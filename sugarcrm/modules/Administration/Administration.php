@@ -58,7 +58,7 @@ class Administration extends SugarBean {
      */
     public function Administration()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct() {

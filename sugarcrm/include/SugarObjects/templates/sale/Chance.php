@@ -39,7 +39,7 @@ class Chance extends Basic
      */
     public function Chance()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct()

@@ -1,16 +1,37 @@
 describe("Emails.Views.Compose", function() {
     var app,
         view,
-        dataProvider;
+        dataProvider,
+        moduleName,
+        metadata;
 
     beforeEach(function() {
         app = SugarTest.app;
+
+        moduleName = 'UserSignatures';
+        metadata = {
+            fields: {
+                name: {
+                    name: "name",
+                    vname: "LBL_NAME",
+                    type: "varchar",
+                    len: 255,
+                    comment: "Name of this bean"
+                }
+            },
+            favoritesEnabled: true,
+            views: [],
+            layouts: [],
+            _hash: "bc6fc50d9d0d3064f5d522d9e15968fa"
+        };
+
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
         SugarTest.loadComponent('base', 'view', 'compose', 'Emails');
+        SugarTest.testMetadata.updateModuleMetadata(moduleName, metadata);
         SugarTest.testMetadata.set();
-
+        SugarTest.app.data.declareModels();
         var context = app.context.getContext();
         context.set({
             module: 'Emails',
@@ -480,30 +501,35 @@ describe("Emails.Views.Compose", function() {
     });
 
     describe("Signatures", function() {
+        var ajaxSpy;
+
         beforeEach(function() {
+            ajaxSpy = sinon.spy($, 'ajax');
             view.model.off('change');
         });
 
-        it("should retrieve a signature from the SignaturesApi when the signature ID is present", function() {
-            var apiStub   = sinon.stub(app.api, "call"),
-                id        = "abcd", // the actual ID doesn't matter
-                signature = new app.Bean({id: id}), // no other attributes are needed for this test
-                regex     = new RegExp(".*/Signatures/" + id + "$", "gi");
-
-            view._updateEditorWithSignature(signature);
-            expect(apiStub.lastCall.args[1]).toMatch(regex);
-
-            apiStub.restore();
+        afterEach(function() {
+            ajaxSpy.restore();
         });
 
-        it("should not retrieve a signature from the SignaturesApi when the signature ID is not present", function() {
-            var apiStub   = sinon.stub(app.api, "call"),
-                signature = new app.Bean();
+        it("should retrieve a signature when the signature ID is present", function() {
+            var id        = "abcd",
+                signature = new app.Bean({id: id});
 
             view._updateEditorWithSignature(signature);
-            expect(apiStub.callCount).toBe(0);
 
-            apiStub.restore();
+            SugarTest.seedFakeServer();
+            SugarTest.server.respondWith("GET", /.*rest\/v10\/UserSignatures\/.*/,
+                [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
+
+            expect(ajaxSpy.getCall(0).args[0].url).toContain("rest/v10/UserSignatures");
+        });
+
+        it("should not retrieve a signature when the signature ID is not present", function() {
+            var signature = new app.Bean();
+
+            view._updateEditorWithSignature(signature);
+            expect(ajaxSpy.callCount).toBe(0);
         });
 
         it("should change the last selected signature, on success, to the one that is retrieved", function() {
@@ -517,7 +543,7 @@ describe("Emails.Views.Compose", function() {
                 };
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Signatures\/" + id + ".*"), [
+            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/UserSignatures\/" + id + ".*"), [
                 200,
                 {"Content-Type": "application/json"},
                 JSON.stringify(results)
@@ -527,7 +553,7 @@ describe("Emails.Views.Compose", function() {
             view._updateEditorWithSignature(signature);
             SugarTest.server.respond();
 
-            expect(view._lastSelectedSignature).toEqual(results);
+            expect(view._lastSelectedSignature.attributes).toEqual(results);
         });
 
         it("should not change the last selected signature, on success, when no signature is returned", function() {
@@ -536,7 +562,7 @@ describe("Emails.Views.Compose", function() {
                 results   = [];
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Signatures\/" + id + ".*"), [
+            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/UserSignatures\/" + id + ".*"), [
                 200,
                 {"Content-Type": "application/json"},
                 JSON.stringify(results)
@@ -552,18 +578,15 @@ describe("Emails.Views.Compose", function() {
         it("should not change the last selected signature on error", function() {
             var id        = "abcd",
                 signature = new app.Bean({id: id});
-                //alertStub = sinon.stub(app.alert);
 
             SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/Signatures\/" + id + ".*"), [404, {}, ""]);
+            SugarTest.server.respondWith("GET", new RegExp(".*rest\/v10\/UserSignatures\/" + id + ".*"), [404, {}, ""]);
 
             view._lastSelectedSignature = null;
             view._updateEditorWithSignature(signature);
             SugarTest.server.respond();
 
             expect(view._lastSelectedSignature).toBeNull();
-
-            //alertStub.restore();
         });
 
         describe("signature helpers", function() {
@@ -668,7 +691,7 @@ describe("Emails.Views.Compose", function() {
             _.each(dataProvider, function(data) {
                 it(data.message, function() {
                     view.model.set("html_body", data.body);
-                    var actualReturn = view._insertSignature(data.signature),
+                    var actualReturn = view._insertSignature(new app.Bean(data.signature)),
                         actualBody   = view.model.get("html_body");
                     expect(actualReturn).toBe(data.expectedReturn);
                     expect(actualBody).toBe(data.expectedBody);

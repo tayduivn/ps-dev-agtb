@@ -131,7 +131,7 @@ class Opportunity extends SugarBean
      */
     public function Opportunity()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

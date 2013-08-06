@@ -100,7 +100,7 @@ class KBDocumentRevision extends SugarBean {
      */
     public function KBDocumentRevision()
     {
-        $this->__construct();
+        self::__construct();
     }
 
 

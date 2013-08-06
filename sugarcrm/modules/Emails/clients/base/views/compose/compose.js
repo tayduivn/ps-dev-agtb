@@ -20,7 +20,7 @@
         });
         this.context.on('actionbar:template_button:clicked', this.launchTemplateDrawer, this);
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
-        this.context.on("actionbar:signature_button:clicked", this._launchSignatureDrawer, this);
+        this.context.on("actionbar:signature_button:clicked", this.launchSignatureDrawer, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
 
         this._lastSelectedSignature = app.user.getPreference("signature_default");
@@ -225,6 +225,60 @@
     },
 
     /**
+     * Get the individual related object fields from the model and format for the API
+     *
+     * @returns API related argument as array with appropriate fields set
+     */
+    getRelatedForApi: function() {
+        var related = {};
+        var id   = this.model.get('parent_id');
+        var type;
+
+        if (!_.isUndefined(id)) {
+            id = id.toString();
+            if (id.length > 0) {
+                related['id'] = id;
+                type = this.model.get('parent_type');
+                if (!_.isUndefined(type)) {
+                    type = type.toString();
+                }
+                related.type = type;
+            }
+        }
+
+        return related;
+    },
+
+    /**
+     * Get the team information from the model and format for the API
+     *
+     * @returns API teams argument as array with appropriate fields set
+     */
+    getTeamsForApi: function() {
+        var teamName = this.model.get('team_name') || [];
+        var teams = {};
+        teams.others = [];
+
+        if (!_.isArray(teamName)) {
+            teamName = [teamName];
+        }
+
+        _.each(teamName, function(team) {
+            if (team.primary) {
+                teams.primary = team.id.toString();
+            } else if (!_.isUndefined(team.id)) {
+                teams.others.push(team.id.toString());
+            }
+        }, this);
+
+        if (teams.others.length == 0) {
+            delete teams.others;
+        }
+
+        return teams;
+    },
+
+    /**
      * Build a backbone model that will be sent to the Mail API
      */
     initializeSendEmailModel: function() {
@@ -233,10 +287,8 @@
             cc_addresses: this.model.get('cc_addresses'),
             bcc_addresses: this.model.get('bcc_addresses'),
             attachments: this.getAttachmentsForApi(),
-            related: {
-                type: this.model.get('parent_type'),
-                id: this.model.get('parent_id')
-            }
+            related: this.getRelatedForApi(),
+            teams: this.getTeamsForApi()
         }));
         return sendModel;
     },
@@ -352,24 +404,7 @@
         app.drawer.open({
                 layout:'selection-list',
                 context:{
-                    module:'EmailTemplates',
-                    selectionListFilter: {
-                        'filter': [
-                            {
-                                '$or': [
-                                    {
-                                        'type': {'$is_null': ''}
-                                    },
-                                    {
-                                        'type': {'$equals': ''}
-                                    },
-                                    {
-                                        'type': {'$equals': 'email'}
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                    module:'EmailTemplates'
                 }
             },
             this.templateDrawerCallback
@@ -539,11 +574,13 @@
      *
      * @private
      */
-    _launchSignatureDrawer: function() {
+    launchSignatureDrawer: function() {
         app.drawer.open(
             {
-                layout: "compose-signatures-selection",
-                context: {module: this.module}
+                layout: "selection-list",
+                context: {
+                    module: 'UserSignatures'
+                }
             },
             this._updateEditorWithSignature
         );
@@ -552,13 +589,14 @@
     /**
      * Fetches the signature content using its ID and updates the editor with the content.
      *
-     * @param signature
+     * @param model
      */
-    _updateEditorWithSignature: function(signature) {
-        if (_.isObject(signature) && signature.id) {
-            var url = app.api.buildURL("Signatures", signature.id);
-            app.api.call("read", url, null, {
-                success: _.bind(function(model) {
+    _updateEditorWithSignature: function(model) {
+        if (model && model.id) {
+            var signature = app.data.createBean('UserSignatures', { id: model.id });
+
+            signature.fetch({
+                success:_.bind(function (model) {
                     if (this.disposed === true) return; //if view is already disposed, bail out
                     if (this._insertSignature(model)) {
                         this._lastSelectedSignature = model;
@@ -579,8 +617,8 @@
      * @private
      */
     _insertSignature: function(signature) {
-        if (_.isObject(signature) && signature.signature_html) {
-            var signatureContent          = this._formatSignature(signature.signature_html),
+        if (_.isObject(signature) && signature.get('signature_html')) {
+            var signatureContent          = this._formatSignature(signature.get('signature_html')),
                 emailBody                 = this.model.get("html_body") || "",
                 signatureOpenTag          = '<br class="signature-begin" />',
                 signatureCloseTag         = '<br class="signature-end" />',

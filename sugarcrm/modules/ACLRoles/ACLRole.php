@@ -41,7 +41,7 @@ class ACLRole extends SugarBean{
      */
     public function ACLRole()
     {
-        $this->__construct();
+        self::__construct();
     }
 
     public function __construct(){
