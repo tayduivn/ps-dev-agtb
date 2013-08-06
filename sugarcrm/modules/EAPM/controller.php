@@ -78,6 +78,8 @@ class EAPMController extends SugarController
 
     protected function post_save()
     {
+        global $current_user;
+
         if(!$this->bean->deleted) {
             // do not load bean here since password is already encoded
             if ( $this->api->authMethod != 'oauth' ) {
@@ -100,7 +102,7 @@ class EAPMController extends SugarController
             $this->set_redirect("index.php?module=Import&action=Step1&import_module=". $this->return_action . "&application=" . $this->bean->application);
         }
         if($this->module == 'EAPM') {
-            $this->set_redirect('index.php?module=Users&action=EditView&record=' . $_POST['assigned_user_id']);
+            $this->set_redirect('index.php?module=Users&action=EditView&record=' . $current_user->id);
         }
         // Override the redirect location to add the hash
         $this->redirect_url = $this->redirect_url.'#tab5';
