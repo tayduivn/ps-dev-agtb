@@ -254,52 +254,53 @@ hr.soften {
     margin: 0;
     padding: 0;
   }
+
   .news-article {
-    &.news-article {
-      .row-fluid {
-        &.header {
-          h5 {
-            margin: 0;
-            padding: 0;
-            &> a {
-              color: darken(@grayLight, 10%);
-              font-weight: 200;
-            }
-            &> a:first-child {
-              float: left;
-              padding: 0 6px 0 0;
-            }
-          }
-          .follow-button {
-            padding-top: 8px;
-          }
-          a {
+    .row-fluid {
+      &.header {
+        h5 {
+          margin: 0;
+          padding: 0;
+          font-weight: normal;
+          font-size: @fontSizeSmall;
+          &> a {
             color: darken(@grayLight, 10%);
             font-weight: 200;
           }
+          &> a:first-child {
+            float: left;
+            padding: 0 6px 0 0;
+          }
         }
-        &.body {
-          margin: 0 0 6px 0;
+        .follow-button {
+          padding-top: 8px;
         }
-        &.footer {
-          display: none;
-          timestamp {
-            font-size: @fontSizeMini;
-            display: inline-block;
+        a {
+          color: darken(@grayLight, 10%);
+          font-weight: 200;
+        }
+      }
+      &.body {
+        margin: 0 0 6px 0;
+      }
+      &.footer {
+        display: none;
+        timestamp {
+          font-size: @fontSizeMini;
+          display: inline-block;
+        }
+        timestamp,
+        a {
+          color: darken(@grayLight, 10%);
+          &:hover, &:active {
+            color: darken(@grayLight, 20%) !important;
+            text-decoration: none;
           }
-          timestamp,
-          a {
-            color: darken(@grayLight, 10%);
-            &:hover, &:active {
-              color: darken(@grayLight, 20%) !important;
-              text-decoration: none;
-            }
-          }
-          .btn-mini {
-            margin-left: 0;
-            padding-right: 0;
-            margin-top: -3px;
-          }
+        }
+        .btn-mini {
+          margin-left: 0;
+          padding-right: 0;
+          margin-top: -3px;
         }
       }
     }

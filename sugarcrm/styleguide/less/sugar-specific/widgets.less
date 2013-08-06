@@ -135,11 +135,15 @@
       border-bottom: 1px solid @grayLighter;
       margin: 0;
       padding: 14px;
+      font-size: @baseFontSize + 2px;
       &:last-child {
         border-bottom: none;
       }
       img {
         margin: 0 12px 12px 0;
+      }
+      .date {
+        font-size: @fontSizeSmall;
       }
     }
   }
@@ -214,8 +218,8 @@
   right: 5%;
   top: 15px;
 }
-
 .widget-content {
+  font-size: @baseFontSize + 2px;
   .webpage {
     display: block;
     line-height: 0;
@@ -224,6 +228,9 @@
       width: 100%;
       .border-radius(0 0 3px 3px);
     }
+  }
+  table {
+    font-size: @baseFontSize;
   }
 }
 
