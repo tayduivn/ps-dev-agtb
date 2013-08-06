@@ -1,5 +1,16 @@
 <?php
-
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 class Subscription extends Basic
 {
     public $table_name = 'subscriptions';
@@ -177,5 +188,48 @@ class Subscription extends Basic
     {
         $this->deleted = 1;
         $this->save();
+    }
+
+    /**
+     * Adds an activity subscription relationship between the activity and all users who are subscribed to the record
+     * on which the activity took place.
+     * @param array $data
+     * @throws Exception
+     */
+    public static function addActivitySubscriptions(array $data)
+    {
+        $act           = BeanFactory::retrieveBean('Activities', $data['act_id']);
+        $ignoreDeleted = true;
+        $beanParams    = array();
+        if ($act->activity_type === 'delete') {
+            $ignoreDeleted = false;
+            $beanParams['disable_row_level_security'] = true;
+        }
+        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id'], $beanParams, $ignoreDeleted);
+        if (!$act->load_relationship('activities_users')) {
+            throw new Exception('Could not load the relationship.');
+        }
+        foreach ($data['user_partials'] as $userPartial) {
+            $user = BeanFactory::retrieveBean('Users', $userPartial['created_by']);
+            if ($user && $bean) {
+                if (!$ignoreDeleted || $bean->checkUserAccess($user)) {
+                    $context = array('user' => $user);
+                    // if we have access to the bean, we allow the user to see the activity on the home page and the
+                    // records list page
+                    $fields = array();
+                    if ($act->activity_type === 'update') {
+                        foreach ($data['args']['dataChanges'] as $field) {
+                            $fields[$field['field_name']] = 1;
+                        }
+                        $bean->ACLFilterFieldList($fields, $context);
+                        $fields = array_keys($fields);
+                    }
+                    $act->activities_users->add($user, array('fields' => json_encode($fields)));
+                } else {
+                    // if we don't have access to the bean, we remove the user's subscription to the bean.
+                    static::unsubscribeUserFromRecord($user, $bean);
+                }
+            }
+        }
     }
 }

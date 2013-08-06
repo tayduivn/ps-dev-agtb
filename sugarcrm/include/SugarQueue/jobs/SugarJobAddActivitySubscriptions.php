@@ -28,48 +28,22 @@ class SugarJobAddActivitySubscriptions implements RunnableSchedulerJob
         $this->job = $job;
     }
 
+    /**
+     * Executes a job to add activity subscriptions.
+     * @param $data
+     * @return bool
+     */
     public function run($data)
     {
-        $data = unserialize($data);
-        $act = BeanFactory::retrieveBean('Activities', $data['act_id']);
-        $ignoreDeleted = true;
-        $beanParams = array();
-        if ($act->activity_type === 'delete') {
-            $ignoreDeleted = false;
-            $beanParams = array('disable_row_level_security' => true);
+        try {
+            $data                  = unserialize($data);
+            $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+            $subscriptionsBeanName::addActivitySubscriptions($data);
+            $this->job->succeedJob();
+            return true;
+        } catch (Exception $e) {
+            $this->job->failJob($e->getMessage());
+            return false;
         }
-        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id'], $beanParams, $ignoreDeleted);
-        $subs = BeanFactory::getBeanName('Subscriptions');
-        if (!$act->load_relationship("activities_users")) {
-            $this->job->failJob("Could not load the relationship.");
-        }
-
-        foreach ($data['user_partials'] as $user_partial) {
-            $user = BeanFactory::retrieveBean('Users', $user_partial['created_by']);
-
-            if ($user && $bean && (!$ignoreDeleted || $bean->checkUserAccess($user))) {
-                $context = array('user' => $user);
-
-                // If we have access to the bean, we allow the user to see
-                // the activity on the home page and the records list page.
-                $fields = array();
-
-                if ($act->activity_type == 'update') {
-                    foreach ($data['args']['dataChanges'] as $field) {
-                        $fields[$field['field_name']] = 1;
-                    }
-                    $bean->ACLFilterFieldList($fields, $context);
-                    $fields = array_keys($fields);
-                }
-
-                $act->activities_users->add($user, array('fields' => json_encode($fields)));
-            } else {
-                // If we don't have access to the bean, we remove the user's
-                // subscription to the bean.
-                $subs::unsubscribeUserFromRecord($user, $bean);
-            }
-        }
-        $this->job->succeedJob();
-        return true;
     }
 }

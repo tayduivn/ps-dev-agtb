@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Accounts/Account.php';
 
 class SugarTestAccountUtilities
@@ -33,7 +33,7 @@ class SugarTestAccountUtilities
     public static function createAccount($id = '', $accountValues = array())
     {
         $time = mt_rand();
-        $account = new Account();
+        $account = BeanFactory::newBean('Accounts');
 
         if (isset($accountValues['name'])) {
             $account->name = $accountValues['name'];
@@ -60,19 +60,19 @@ class SugarTestAccountUtilities
 
     public static function setCreatedAccount($account_ids) {
     	foreach($account_ids as $account_id) {
-    		$account = new Account();
+    		$account = BeanFactory::newBean('Accounts');
     		$account->id = $account_id;
         	self::$_createdAccounts[] = $account;
     	} // foreach
     } // fn
-    
-    public static function removeAllCreatedAccounts() 
+
+    public static function removeAllCreatedAccounts()
     {
         $account_ids = self::getCreatedAccountIds();
         $GLOBALS['db']->query('DELETE FROM accounts WHERE id IN (\'' . implode("', '", $account_ids) . '\')');
     }
-        
-    public static function getCreatedAccountIds() 
+
+    public static function getCreatedAccountIds()
     {
         $account_ids = array();
         foreach (self::$_createdAccounts as $account) {
