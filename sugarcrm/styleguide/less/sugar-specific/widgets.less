@@ -1,5 +1,4 @@
 .widget {
-
   padding: 0 0 1px 0;
   border: 0;
   @shadow: 0 2px 1px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4), -1px -1px 2px rgba(0,0,0,.1), 1px 1px 2px rgba(0,0,0,.1);
@@ -75,8 +74,17 @@
 
 
   p {
-    padding: 0 5px;
     margin: 0;
+  }
+
+  .details {
+    font-size: @fontSizeSmall;
+  }
+
+  /* markup for no records found */
+  li > em,
+  .block-footer em {
+    font-size: @baseFontSize;
   }
 
   .btn.loading {
@@ -142,7 +150,7 @@
       img {
         margin: 0 12px 12px 0;
       }
-      .date {
+      .details {
         font-size: @fontSizeSmall;
       }
     }
@@ -199,18 +207,10 @@
     }
   }
 }
-
-
 .widget-container {
   padding: 5px;
   .btn-toolbar .btn {
     margin-left: 0;
-  }
-}
-.widget-content {
-  .actions {
-    top: 3px;
-    position: relative;
   }
 }
 .widget-control {
@@ -220,6 +220,10 @@
 }
 .widget-content {
   font-size: @baseFontSize + 2px;
+  .actions {
+    top: 3px;
+    position: relative;
+  }
   .webpage {
     display: block;
     line-height: 0;
