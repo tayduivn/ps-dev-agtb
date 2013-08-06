@@ -12,14 +12,27 @@ class UpgradeBWCTest extends UpgradeTestCase
         $data = <<<'END'
 <?php
 $beanList['scantest'] = 'scantest';
-$beanFiles['test_mtstest'] = 'modules/scantest/scantest.php';
+$beanFiles['scantest'] = 'modules/scantest/scantest.php';
 $moduleList[] = 'scantest';
+$beanList['scantestMB'] = 'scantestMB';
+$beanFiles['scantestMB'] = 'modules/scantestMB/scantestMB.php';
+$moduleList[] = 'scantestMB';
+$beanList['scantestExt'] = 'scantestExt';
+$beanFiles['scantestExt'] = 'modules/scantestExt/scantestExt.php';
+$moduleList[] = 'scantestExt';
 END;
         file_put_contents('custom/Extension/application/Ext/Include/scantest.php', $data);
         sugar_mkdir('modules/scantest');
+        sugar_mkdir('modules/scantestMB');
+        sugar_mkdir('modules/scantestExt');
 
-        SugarTestHelper::saveFile('modules/scantest/scantest.php');
         file_put_contents('modules/scantest/scantest.php', "<?php echo 'Hello world!'; ");
+        file_put_contents('modules/scantest/scantest2.php', "<?php echo 'Hello world!'; ");
+        file_put_contents('modules/scantestMB/scantestMB.php', "<?php echo 'Hello world!'; ");
+        file_put_contents('modules/scantestExt/scantestExt.php', "<?php echo 'Hello world!'; ");
+
+        mkdir_recursive('custom/modules/scantestExt/Ext/Layoutdefs');
+        file_put_contents('custom/modules/scantestExt/Ext/Layoutdefs/scantestExt.php', "<?php echo 'Hello world!'; ");
         $this->mi = new ModuleInstaller();
         $this->mi->silent = true;
 
@@ -35,6 +48,9 @@ END;
         parent::tearDown();
         SugarTestHelper::tearDown();
         rmdir_recursive("modules/scantest");
+        rmdir_recursive("modules/scantestMB");
+        rmdir_recursive("modules/scantestExt");
+        rmdir_recursive('custom/modules/scantestExt/');
         $this->mi->rebuild_modules();
     }
 
@@ -50,6 +66,6 @@ END;
         $this->assertFileExists('custom/Extension/application/Ext/Include/upgrade_bwc.php', "custom/Extension/application/Ext/Include/upgrade_bwc.php not created");
         include 'custom/Extension/application/Ext/Include/upgrade_bwc.php';
         // scantest should be in bwc
-        $this->assertEquals(array('scantest'), $bwcModules);
+        $this->assertEquals(array('scantest', 'scantestExt'), $bwcModules);
     }
 }

@@ -49,4 +49,12 @@ class SidecarMetaDataUpgrader2 extends SidecarMetaDataUpgrader
     {
         $this->upgrade->log($msg);
     }
+
+    public function getMBModules()
+    {
+        if(!empty($this->upgrade->state['MBModules'])) {
+            return $this->state['MBModules'];
+        }
+        return array();
+    }
 }

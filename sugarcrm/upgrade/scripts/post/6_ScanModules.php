@@ -99,7 +99,7 @@ class SugarUpgradeScanModules extends UpgradeScript
         $badExts = array_flip($badExts);
         // Check Ext for any "dangerous" extentsions
         foreach(glob("custom/$module_dir/Ext/*") as $extdir) {
-            if(isset($badExts[$extdir])) {
+            if(isset($badExts[basename($extdir)])) {
                 $extfiles = glob("$extdir/*");
                 if(!empty($extfiles)) {
                     $this->log("Extension dir $extdir detected - $module_name is not MB module");
@@ -152,8 +152,13 @@ class SugarUpgradeScanModules extends UpgradeScript
                     // new and not MB - list as BWC
                     $this->log("Setting $module_name as BWC module");
                     $this->bwcModules[] = $module_name;
+                } else {
+                    $mbModules[] = $module_name;
                 }
             }
+        }
+        if(!empty($mbModules)) {
+            $this->upgrader->state['MBModules'] = $mbModules;
         }
 
         if(!empty($this->bwcModules)) {

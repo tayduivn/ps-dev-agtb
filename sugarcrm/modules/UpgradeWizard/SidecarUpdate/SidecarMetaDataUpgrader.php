@@ -191,6 +191,33 @@ class SidecarMetaDataUpgrader
     public function setBaseFilesToUpgrade()
     {
         $this->setUpgradeFiles('base');
+        $this->setUpgradeMBFiles($this->getMBModules());
+    }
+
+    /**
+     * Get the list of modules that need core files to be upgraded
+     */
+    public function getMBModules()
+    {
+        if(!empty($this->module)) {
+            return array($this->module);
+        }
+        return array();
+    }
+
+    /**
+     * Sets the listing of MB modules to upgrade
+     * @param array List of MB modules to upgrade
+     */
+    public function setUpgradeMBFiles($modules)
+    {
+        foreach($modules as $module) {
+            $this->logUpgradeStatus("Checking module $module for core upgrade");
+            $basefiles = $this->getUpgradeableFilesInPath("modules/$module/metadata/", $module, 'base');
+            $this->files = array_merge($this->files, $basefiles);
+            // No need to scan portal here since MB modules are not supported for portal
+            // Mobile part takes care of itself
+        }
     }
 
     /**
@@ -808,14 +835,14 @@ class SidecarMetaDataUpgrader
                 'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type),
             );
         }
-        $this->logUpgradeStatus("Not upgrading $file: no file name");
+        $this->logUpgradeStatus("Not upgrading $file: no file name for $filename");
 
         return false;
     }
 
     /**
      * Set specific module to upgrade
-     * @param unknown_type $module
+     * @param string $module
      */
     public function setModule($module)
     {
