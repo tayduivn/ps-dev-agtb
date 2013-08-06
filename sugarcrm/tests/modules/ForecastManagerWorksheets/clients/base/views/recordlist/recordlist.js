@@ -493,6 +493,28 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
         });
     });
 
+    describe('refreshData', function() {
+        var sbox = sinon.sandbox.create();
+        beforeEach(function() {
+            sbox.stub(view, 'showNavigationMessage', function() {
+                return true;
+            });
+            sbox.stub(view, 'processNavigationMessageReturn', function() {
+                return true;
+            });
+            sbox.stub(view.collection, 'fetch');
+        });
+
+        afterEach(function() {
+            sbox.restore();
+        });
+
+        it('should set hasCheckedForDraftRecords to false', function() {
+            view.refreshData();
+            expect(view.hasCheckedForDraftRecords).toBeFalsy();
+        });
+    });
+
     describe('calculateTotals', function() {
         beforeEach(function() {
             sinon.stub(view, 'getCommitTotals', function() {
