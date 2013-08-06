@@ -124,8 +124,9 @@ function getManifest($version_specific = false, $for_export = false){
 
     // Build an array and use var_export to build this file
     $manifest = array(
-        array('acceptable_sugar_versions' => array($version)),
-        array('acceptable_sugar_flavors' => $flavors),
+        'built_in_version' => $GLOBALS['sugar_version'],
+        'acceptable_sugar_versions' => array($version),
+        'acceptable_sugar_flavors' => $flavors,
         'readme' => $this->readme,
         'key' => $this->key,
         'author' => $this->author,

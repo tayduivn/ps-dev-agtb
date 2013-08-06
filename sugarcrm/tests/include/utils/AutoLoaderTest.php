@@ -57,7 +57,9 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue((bool)SugarAutoLoader::fileExists('config.php'));
         $this->assertTrue((bool)SugarAutoLoader::fileExists('custom/index.html'));
         $this->assertFalse(SugarAutoLoader::fileExists('config.php.dontexist'));
-        $this->assertFalse(SugarAutoLoader::fileExists('cache/file_map.php'));
+        
+        // Tests that a file skipped for caching will read from the file system
+        $this->assertTrue(SugarAutoLoader::fileExists('cache/file_map.php'));
     }
 
     public function testAddMap()

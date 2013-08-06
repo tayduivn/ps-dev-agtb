@@ -1678,7 +1678,7 @@ EOQ;
         }
 
         // These modules don't take kindly to the studio trying to play about with them.
-        static $ignoredModuleList = array('iFrames','Feeds','Home','Dashboard','Calendar','Activities','Reports');
+        static $ignoredModuleList = array('iFrames','Feeds','Home','Dashboard','Calendar','Activities','Reports', 'UpgradeHistory');
 
 
         $actions = ACLAction::getUserActions($this->id);

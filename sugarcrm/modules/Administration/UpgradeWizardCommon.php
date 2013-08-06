@@ -158,20 +158,29 @@ function validate_manifest( $manifest ){
         die($mod_strings['ERROR_PACKAGE_TYPE']. ": '" . $type . "'." );
     }
 
-    if( isset($manifest['acceptable_sugar_versions']) ){
+    $acceptable_sugar_versions = getAcceptableSugarVersions($manifest);
+    if ($acceptable_sugar_versions){
         $version_ok = false;
         $matches_empty = true;
-        if( isset($manifest['acceptable_sugar_versions']['exact_matches']) ){
+        
+        // For cases in which the manifest was written incorrectly we need to create
+        // a comparator. For now we will assume that major and minor version 
+        // matches are acceptable. -rgonzalez
+        if (!isset($acceptable_sugar_versions['exact_matches']) && !isset($acceptable_sugar_versions['regex_matches'])) {
+            $acceptable_sugar_versions = addAcceptableVersionRegex($acceptable_sugar_versions);
+        }
+        
+        if( isset($acceptable_sugar_versions['exact_matches']) ){
             $matches_empty = false;
-            foreach( $manifest['acceptable_sugar_versions']['exact_matches'] as $match ){
+            foreach( $acceptable_sugar_versions['exact_matches'] as $match ){
                 if( $match == $sugar_version ){
                     $version_ok = true;
                 }
             }
         }
-        if( !$version_ok && isset($manifest['acceptable_sugar_versions']['regex_matches']) ){
+        if( !$version_ok && isset($acceptable_sugar_versions['regex_matches']) ){
             $matches_empty = false;
-            foreach( $manifest['acceptable_sugar_versions']['regex_matches'] as $match ){
+            foreach( $acceptable_sugar_versions['regex_matches'] as $match ){
                 if( preg_match( "/$match/", $sugar_version ) ){
                     $version_ok = true;
                 }
@@ -183,9 +192,10 @@ function validate_manifest( $manifest ){
         }
     }
 
-    if( isset($manifest['acceptable_sugar_flavors']) && sizeof($manifest['acceptable_sugar_flavors']) > 0 ){
+    $acceptable_sugar_flavors = getAcceptableSugarFlavors($manifest);
+    if( $acceptable_sugar_flavors && sizeof($acceptable_sugar_flavors) > 0 ){
         $flavor_ok = false;
-        foreach( $manifest['acceptable_sugar_flavors'] as $match ){
+        foreach( $acceptable_sugar_flavors as $match ){
             if( $match == $sugar_flavor ){
                 $flavor_ok = true;
             }
@@ -236,4 +246,75 @@ function getDiffFiles($unzip_dir, $install_file, $is_install = true, $previous_v
 	return $modified_files;
 }
 
-?>
+/**
+ * Accessor function that gets acceptable sugar versions from a manifest. Addresses
+ * an issue since 6.7 in which manifests were written incorrectly.
+ * 
+ * @param array $manifest Array of details for a package
+ * @return Array
+ */
+function getAcceptableSugarVersions($manifest)
+{
+    return getAcceptableSugarValues($manifest, 'acceptable_sugar_versions');
+}
+
+/**
+ * Accessor function that gets acceptable sugar flavors from a manifest. Addresses
+ * an issue since 6.7 in which manifests were written incorrectly.
+ * 
+ * @param array $manifest Array of details for a package
+ * @return Array
+ */
+function getAcceptableSugarFlavors($manifest)
+{
+    return getAcceptableSugarValues($manifest, 'acceptable_sugar_flavors');
+}
+
+/**
+ * Accessor function that gets acceptable sugar properties from a manifest. Addresses
+ * an issue since 6.7 in which manifests were written incorrectly.
+ * 
+ * @param array $manifest Array of details for a package
+ * @return Array
+ */
+function getAcceptableSugarValues($manifest, $property) 
+{
+    if (isset($manifest[$property])) {
+        return $manifest[$property];
+    }
+    
+    foreach ($manifest as $key => $val) {
+        if (isset($val[$property])) {
+            return $val[$property];
+        }
+    }
+    
+    return array();
+}
+
+/**
+ * Adds version regex strings to the acceptable sugar versions array when needed
+ * 
+ * @param array $versions The versions array that was passed in
+ */
+function addAcceptableVersionRegex($versions)
+{
+    $regex = array();
+    foreach ($versions as $index => $version) {
+        $version_parts = explode('.', $version);
+        if (isset($version_parts[1])) {
+            // Major and minor matching
+            $regex[$index] = "{$version_parts[0]}\.{$version_parts[1]}\.([0-9]+)";
+        } elseif (isset($version_parts[0])) {
+            // Major only
+            $regex[$index] = "{$version_parts[0]}\.([0-9]+)\.([0-9]+)";
+        } else {
+            // Full match
+            $regex[$index] = $version;
+        }
+    }
+    
+    $versions['regex_matches'] = $regex;
+    
+    return $versions;
+}
