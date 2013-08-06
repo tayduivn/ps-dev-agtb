@@ -119,12 +119,23 @@ class SugarFieldDatetime extends SugarFieldBase {
             return;
         }
 
-        $offset = strlen(trim($inputData[$prefix.$field])) < 11 ? false : true;
-        if ($timedate->check_matching_format($inputData[$prefix.$field], TimeDate::DB_DATE_FORMAT)) {
-            $bean->$field = $inputData[$prefix.$field];
-        } else {
-            $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);
+        $bean->$field = $this->convertFieldForDB($inputData[$prefix.$field]);
+
+    }
+
+    /**
+     * Convert field for DB
+     * @param $value datetime
+     * @return mixed
+     */
+    public function convertFieldForDB($value)
+    {
+        $timedate = TimeDate::getInstance();
+        $offset = strlen(trim($value)) < 11 ? false : true;
+        if ($timedate->check_matching_format($value, TimeDate::DB_DATE_FORMAT)) {
+            return $value;
         }
+        return $timedate->to_db_date($value, $offset);
     }
 
     /**

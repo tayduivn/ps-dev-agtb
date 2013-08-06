@@ -16,6 +16,7 @@
 require_once 'include/api/SugarApi.php';
 require_once 'include/SugarQuery/SugarQuery.php';
 require_once 'data/Relationships/RelationshipFactory.php';
+require_once 'include/SugarFields/SugarFieldHandler.php';
 
 class FilterApi extends SugarApi
 {
@@ -421,7 +422,7 @@ class FilterApi extends SugarApi
 
         $field_def = $defs[$field];
         if(empty($field_def['source']) || $field_def['source'] == 'db' || $field_def['source'] == 'custom_field') {
-            return true;
+            return array('bean' => $bean, 'def' => $field_def);
         }
 
         if($field_def['source'] == 'relate') {
@@ -430,7 +431,7 @@ class FilterApi extends SugarApi
             return self::verifyField($q, "$link.$relfield");
         }
 
-        return true;
+        return array('bean' => $bean, 'def' => $field_def);
     }
 
     /**
@@ -469,14 +470,17 @@ class FilterApi extends SugarApi
                     self::addTrackerFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
-                    self::verifyField($q, $field);
-
+                    $fieldInfo = self::verifyField($q, $field);
+                    $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] : $fieldInfo['def']['type'];
+                    $sfh = new SugarFieldHandler();
+                    $sugarField = $sfh->getSugarField($fieldType);
                     if (!is_array($filter)) {
                         // This is just simple match
                         $where->equals($field, $filter);
                         continue;
                     }
                     foreach ($filter as $op => $value) {
+                        $value = $sugarField->convertFieldForDB($value);
                         switch ($op) {
                             case '$equals':
                                 $where->equals($field, $value);
