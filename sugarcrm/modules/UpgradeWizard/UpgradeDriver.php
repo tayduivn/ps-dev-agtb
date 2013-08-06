@@ -884,7 +884,8 @@ abstract class UpgradeDriver
 
         if(!defined('sugarEntry')) define('sugarEntry', true);
         $this->log("Initializig SugarCRM environment");
-        global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale, $sugar_version, $sugar_flavor, $db, $locale, $installing;
+        global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
+            $sugar_version, $sugar_flavor, $db, $locale, $installing, $bwcModules, $app_list_strings;
         $installing = true;
         include('include/entryPoint.php');
         $GLOBALS['current_language'] = $this->config['default_language'];
@@ -915,6 +916,7 @@ abstract class UpgradeDriver
         $trackerManager->unsetMonitors();
         $this->sugar_initialized = true;
         $this->loadStrings();
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->log("Done initializig SugarCRM environment");
     }
 

@@ -125,14 +125,14 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
      * @param $input
      * @param $expected
      */
-    public function testConvertFromCanonicalForm($input, $expected) 
+    public function testConvertFromCanonicalForm($input, $expected)
     {
         static $it = 0;
 
         $output = $this->_parser->testConvertFromCanonicalForm($input, array());
 
         $this->assertEquals($expected, $output, "Iteration $it expectation did not match result");
-        
+
         $it++;
     }
 
@@ -157,7 +157,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                             'name' => 'description',
                             'label' => 'Description',
                         ),
-                        ""
+//                        ""
                 ))),
                 // internal fieldlist
                 array(
@@ -173,7 +173,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
                         'name' => 'description',
                         'label' => 'Description',
                     ),
-                    "" => null,
+//                    "" => null,
 
                 )
             ),
@@ -263,29 +263,29 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $this->assertEquals($expected, $output);
 
     }
-    
+
     /**
      * Tests panel label setting
-     * 
+     *
      * @dataProvider panelDefsLabelsProvider
      * @param array $panel A mock panels array
      * @param string $expectation Expected converted value
      */
-    public function testPanelLabelsAreSetByPanelDefs($panel, $expectation) 
+    public function testPanelLabelsAreSetByPanelDefs($panel, $expectation)
     {
         // Convert the panel def
         $converted =  $this->_parser->testConvertFromCanonicalForm($panel, array());
-        
+
         // Get the key from the conversion as this is the label
         $label = key($converted);
-        
+
         // Assert
         $this->assertEquals($expectation, $label, "Expected $expectation but label was returned as $label");
     }
-    
+
     /**
      * Data provider for panel label tester
-     * 
+     *
      * @return array
      */
     public function panelDefsLabelsProvider()
@@ -293,20 +293,20 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         return array(
             // Tests a set label in the defs
             array('panel' => array(array('label' => 'Super Awesome Label', 'fields' => array())), 'expectation' => 'Super Awesome Label'),
-            
+
             // Tests no label set but a panel name set
             array('panel' => array(array('name' => 'panel_hidden', 'fields' => array())), 'expectation' => 'LBL_RECORD_SHOWMORE'),
             array('panel' => array(array('name' => 'panel_header', 'fields' => array())), 'expectation' => 'LBL_RECORD_HEADER'),
             array('panel' => array(array('name' => 'panel_body', 'fields' => array())), 'expectation' => 'LBL_RECORD_BODY'),
-            
+
             // Tests no label or name so uses the array key as the label
             array('panel' => array(array('foo' => 'bar', 'fields' => array())), 'expectation' => 0),
         );
     }
-    
+
     /**
      * Tests parsing of readonly properties of field defs
-     * 
+     *
      * @dataProvider readonlyPropTestProvider
      * @param array $defs Mock array of vardefs to trim
      * @param boolean $expectation Assertion to test
@@ -317,7 +317,7 @@ class SidecarGridLayoutMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCa
         $actual = !empty($result['readonly']);
         $this->assertEquals($expectation, $actual, "Assertion of readonly property existence failed");
     }
-    
+
     public function readonlyPropTestProvider()
     {
         return array(

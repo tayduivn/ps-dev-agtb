@@ -45,8 +45,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
 	protected $FILLER ;
 
-
-    /**
+	/**
      * Constructor
      * @param string $view           The view type, that is, editview, searchview etc
      * @param string $moduleName     The name of the module to which this view belongs
@@ -56,7 +55,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     function __construct ($view , $moduleName , $packageName = '', $client = '')
     {
         $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->__construct( {$view} , {$moduleName} , {$packageName} )" ) ;
-        
+
         // set the client
         $this->client = $client;
 
@@ -120,7 +119,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 
     public function hasViewVariable($viewdefs, $view) {
         $name = MetaDataFiles::getViewDefVar($view);
-        return $name && isset($viewdefs[$name]);    
+        return $name && isset($viewdefs[$name]);
     }
 
     public function getDefsFromArray($viewdefs, $view) {
@@ -134,7 +133,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     {
         if ($populate)
             $this->_populateFromRequest ( $this->_fielddefs ) ;
-        
+
         $viewdefs = $this->_viewdefs ;
         $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm( $this->_viewdefs [ 'panels' ] , $this->_fielddefs );
         $this->implementation->save(MetaDataFiles::mapPathToArray(MetaDataFiles::getViewDefVar($this->_view),$viewdefs));
@@ -166,7 +165,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	$fielddefs = $this->_fielddefs;
     	$fielddefs [ $this->FILLER [ 'name' ] ] = $this->FILLER ;
     	$fielddefs [ MBConstants::$EMPTY [ 'name' ] ] = MBConstants::$EMPTY ;
-    	
+
 		foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel )
         {
             foreach ( $panel as $rowID => $row )
@@ -178,7 +177,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     if ($defs === false) {
                         continue;
                     }
-                    
+
                     $viewdefs[$panelID][$rowID][$colID] = $defs;
                 }
             }
@@ -249,19 +248,19 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     	$availableFields = array () ;
         foreach ( $this->_fielddefs as $key => $def )
         {
-            
+
             if ( $this->isValidField($key, $def) || isset($this->_originalViewDef[$key]) )
             {
                 //If the field original label existing, we should use the original label instead the label in its fielddefs.
             	if(isset($this->_originalViewDef[$key]) && is_array($this->_originalViewDef[$key]) && isset($this->_originalViewDef[$key]['label'])){
-                    $availableFields [ $key ] = array ( 'name' => $key , 'label' => $this->_originalViewDef[$key]['label']) ; 
+                    $availableFields [ $key ] = array ( 'name' => $key , 'label' => $this->_originalViewDef[$key]['label']) ;
                 }else{
                     $availableFields [ $key ] = array ( 'name' => $key , 'label' => isset($def [ 'label' ]) ? $def [ 'label' ] : $def['vname'] ) ; // layouts use 'label' not 'vname' for the label entry
                 }
 
                 $availableFields[$key]['translatedLabel'] = translate( isset($def [ 'label' ]) ? $def [ 'label' ] : $def['vname'], $this->_moduleName);
             }
-			
+
         }
 
 		// Available fields are those that are in the Model and the original layout definition, but not already shown in the View
@@ -280,11 +279,11 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 }
             }
         }
-        
+
         // Record view hides the header panel, but the fields in it need to still
         // be removed
         $this->unsetHiddenPanelFields($availableFields);
-        
+
         //eggsurplus: Bug 10329 - sort on intuitive display labels
         //sort by translatedLabel
         // See cmpLabel() method
@@ -292,14 +291,14 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         usort($availableFields , array($this, 'cmpLabel'));
         return $availableFields ;
     }
-    
+
     /**
      * Compares translated label for sorting. Originally, this function was in
-     * the getAvailableFields() method but was throwing "cannot redefine function" 
+     * the getAvailableFields() method but was throwing "cannot redefine function"
      * errors in some cases. Moved to its own method to eliminate that.
-     * 
+     *
      * eggsurplus: Bug 10329 - sort on intuitive display labels
-     * 
+     *
      * @param array $a The first sort side
      * @param array $b The second sort side
      * @return int -1, 0 or 1 based on result of strcmp() function call
@@ -614,7 +613,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 //next see if the field was on the original layout.
                 else if (isset ($this->_originalViewDef [ $field ]))
                 {
-                    $def = $this->_originalViewDef [ $field ] ;   
+                    $def = $this->_originalViewDef [ $field ] ;
                 }
                 //Otherwise make up a viewdef for it from field_defs
                 else
@@ -676,16 +675,16 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     //next see if the field was on the original layout.
                     else if (isset ($this->_originalViewDef [ $fieldname ]))
                     {
-                        $newRow[$colID - $offset] = $this->getNewRowItem($this->_originalViewDef[$fieldname], $fielddefs[$fieldname]);  
+                        $newRow[$colID - $offset] = $this->getNewRowItem($this->_originalViewDef[$fieldname], $fielddefs[$fieldname]);
                     }
                 	//Otherwise make up a viewdef for it from field_defs
                 	else if (isset ($fielddefs [ $fieldname ]))
                 	{
                 		$newRow [ $colID - $offset ] =  self::_trimFieldDefs( $fielddefs [ $fieldname ] ) ;
-                		
+
                 	}
                 	//No additional info on this field can be found, jsut use the name;
-                	else 
+                	else
                 	{
                         $newRow [ $colID - $offset ] = $fieldname;
                 	}
@@ -695,7 +694,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 			            if (is_array($newRow [ $colID - $offset ]))
 			            {
 			            	$newRow [ $colID - $offset ]['readOnly'] = true;
-			            } else 
+			            } else
 			            {
 			            	$newRow [ $colID - $offset ] = array('name' => $newRow [ $colID - $offset ],  'ReadOnly' => true);
 			            }
@@ -705,13 +704,13 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 $panels [ $panelID ] [ $rowID ] = $newRow ;
             }
         }
-        
+
         return $panels ;
     }
 
     /*
      * fixing bug #44428: Studio | Tab Order causes layout errors
-     * @param string|array $source it can be a string which contain just a name of field 
+     * @param string|array $source it can be a string which contain just a name of field
      *                                  or an array with field attributes including name
      * @param array $fielddef stores field defs from request
      * @return string|array definition of new row item
@@ -846,18 +845,27 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * @param array $viewdef The viewdef array
      * @return array
      */
-    protected function getFieldsFromLayout($viewdef) {
-    	$panels = $this->getPanelsFromViewDef($viewdef);
-    	
+    protected function getFieldsFromLayout($viewdef)
+    {
+        return $this->getFieldsFromPanels($this->getPanelsFromViewDef($viewdef));
+    }
+
+    /**
+     * Get fields from panels in layout
+     * @param array $panels
+     * @return array
+     */
+    public function getFieldsFromPanels($panels)
+    {
         $ret = array();
-        if (is_array($panels)) 
-        {       
+        if (is_array($panels))
+        {
 	        foreach ( $panels as $rows) {
 	            foreach ($rows as $fields) {
 //BEGIN SUGARCRM flav=pro ONLY
 	            	//wireless layouts have one less level of depth
 	                if (is_array($fields) && isset($fields['name'])) {
-	                	$ret[$fields['name']] = $fields;  
+	                	$ret[$fields['name']] = $fields;
 	                	continue;
 	                }
 //END SUGARCRM flav=pro ONLY
@@ -866,24 +874,26 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	                	continue;
 	                }
 	            	foreach ($fields as $field) {
-	                    if (is_array($field) && !empty($field['name']))
-	                    {
-	                        $ret[$field['name']] = $field;  
-	                    }
-	            	    else if(!is_array($field)){
+	                    if (is_array($field)) {
+	                        if(!empty($field['name'])) {
+    	                        $ret[$field['name']] = $field;
+	                        } else if(!empty($field['field'])) {
+	                            $ret[$field['field']] = $field;
+	                        }
+	                    } else {
                             $ret[$field] = $field;
-                        }	                    
+                        }
 	                }
 	            }
 	        }
         }
         return $ret;
     }
-    
+
     protected function fieldIsRequired($def)
     {
     	if (isset($def['studio']))
-    	{ 
+    	{
     		if (is_array($def['studio']))
     		{
     			if (!empty($def['studio'][$this->_view]) && $def['studio'][$this->_view] == "required")
@@ -902,8 +912,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return false;
     }
 
-    public static function _trimFieldDefs($def)
-    {
+    public static function _trimFieldDefs ($def)
+	{
         $requiredProps = array(
             'studio' => true,
             'name' => true,
@@ -916,37 +926,34 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             'hideLabel' => true,
             'readonly' => true,
         );
-        
-        $ret = array_intersect_key($def, $requiredProps);
-        
-        if (!empty($def['vname']) && empty($def['label'])) {
+		$ret = array_intersect_key($def, $requiredProps);
+        if (!empty($def['vname']) && empty($def['label']))
             $ret['label'] = $def['vname'];
-        }
-        
-        return $ret;
-    }
-	
-	public function getUseTabs(){
+		return $ret;
+	}
+
+	public function getUseTabs()
+	{
         if (isset($this->_viewdefs  [ 'templateMeta' ]['useTabs']))
            return $this->_viewdefs  [ 'templateMeta' ]['useTabs'];
-           
+
         return false;
     }
-    
+
     public function setUseTabs($useTabs){
         $this->_viewdefs  [ 'templateMeta' ]['useTabs'] = $useTabs;
     }
-    
+
     /**
      * Return whether the Detail & EditView should be in sync.
      */
 	public function getSyncDetailEditViews(){
         if (isset($this->_viewdefs  [ 'templateMeta' ]['syncDetailEditViews']))
            return $this->_viewdefs  [ 'templateMeta' ]['syncDetailEditViews'];
-           
+
         return false;
     }
-    
+
     /**
      * Sync DetailView & EditView. This should only be set on the EditView
      * @param bool $syncViews
@@ -985,7 +992,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         return $this->_convertToCanonicalForm ( $panels , $fielddefs );
     }
 
-    
+
     /**
      * @return Array list of fields in this module that have the calculated property
      */
@@ -998,7 +1005,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 $ret[] = $field;
             }
         }
-        
+
         return $ret;
     }
 
@@ -1008,10 +1015,10 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     public function getFieldsInPanel($targetPanel) {
         return iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($this->_viewdefs['panels'][$targetPanel])));
     }
-    
+
     /**
      * Utility method that allows delegation of validation to child objects
-     * 
+     *
      * @param stirng $key The name of the field to check - used by child validators
      * @param array $def The field defs
      * @return bool
@@ -1019,10 +1026,10 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     protected function isValidField($key, $def) {
         return GridLayoutMetaDataParser::validField ( $def, $this->_view );
     }
-    
+
     /**
      * Removes a field from the available field array
-     * 
+     *
      * @param array $availableFields The available fields array
      * @param string $field The field name to remove
      */
@@ -1030,10 +1037,10 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     {
         unset($availableFields[$field]);
     }
-    
+
     /**
      * Gets valid field defs for a field name
-     * 
+     *
      * @param  string $fieldname The fieldname to get the defs for
      * @return array
      */
@@ -1043,22 +1050,22 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             return self::_trimFieldDefs($this->_fielddefs[$fieldname]);
         } else if (isset($this->_originalViewDef[$fieldname]) && is_array($this->_originalViewDef[$fieldname])) {
             return self::_trimFieldDefs($this->_originalViewDef[$fieldname]);
-        } 
-        
+        }
+
         return array("name" => $fieldname, "label" => $fieldname);
     }
-    
+
     /**
-     * Checks any hidden panels (panels that should not be editable) and removes
-     * any fields from the available fields array that are in the hidden panels.
-     * 
-     * NOTE: At the moment this is a Sidecar parser function only. It is declared
-     * here because it is called in getAvailableFields, which is also declared here.
-     * 
-     * @param array $availableFields Current array of available fields
-     */
+    * Checks any hidden panels (panels that should not be editable) and removes
+    * any fields from the available fields array that are in the hidden panels.
+    *
+    * NOTE: At the moment this is a Sidecar parser function only. It is declared
+    * here because it is called in getAvailableFields, which is also declared here.
+    *
+    * @param array $availableFields Current array of available fields
+    */
     protected function unsetHiddenPanelFields(&$availableFields)
     {
-        
+
     }
 }

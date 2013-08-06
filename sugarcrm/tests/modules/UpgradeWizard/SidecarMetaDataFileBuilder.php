@@ -35,6 +35,13 @@ class SidecarMetaDataFileBuilder
             'sidecarpath' => 'custom/history/modules/Accounts/clients/mobile/views/edit/edit.php_1341122961',
         ),
         array(
+            'module'      => 'Accounts', 'view' => 'edit', 'type' => 'portal',
+            'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
+            'legacypath'  => 'custom/history/modules/Accounts/clients/portal/views/edit/edit.php_1341122961',
+        // history is deleted for portal/edit
+            'sidecarpath' => '',
+        ),
+        array(
             'module'      => 'Accounts', 'view' => 'detail', 'type' => 'mobile',
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessdetail.php',
             'legacypath'  => 'custom/working/modules/Accounts/metadata/wireless.detailviewdefs.php',
@@ -57,11 +64,9 @@ class SidecarMetaDataFileBuilder
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugslist.php',
             'legacypath'  => 'custom/modules/Bugs/metadata/listviewdefs.php',
             'sidecarpath' => 'custom/modules/Bugs/clients/base/views/list/list.php',
-        )
+        ),
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        // TODO Change these to a record view when record upgrades are developed
-        /*
         array(
             'module'      => 'Bugs', 'view' => 'list', 'type' => 'portal',
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsportallist.php',
@@ -74,8 +79,28 @@ class SidecarMetaDataFileBuilder
             'legacypath'  => 'custom/portal/modules/Bugs/metadata/searchformdefs.php',
             'sidecarpath' => 'custom/modules/Bugs/clients/portal/views/search/search.php',
         ),
-        */
+        // portal record view
+        array(
+                'module'      => 'Cases', 'view' => 'record', 'type' => 'portal',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Cases67portaledit.php',
+                'legacypath'  => 'custom/modules/Cases/clients/portal/views/edit/edit.php',
+                'sidecarpath' => 'custom/modules/Cases/clients/portal/views/record/record.php',
+        ),
+         array(
+                'module'      => 'Cases', 'view' => 'record', 'type' => 'portal',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesportaledit.php',
+                'legacypath'  => 'custom/working/portal/modules/Cases/metadata/editviewdefs.php',
+                'sidecarpath' => 'custom/working/modules/Cases/clients/portal/views/record/record.php',
+        ),
         //END SUGARCRM flav=ent ONLY
+        // record view
+        array(
+                'module'      => 'Accounts', 'view' => 'record', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
+                'legacypath'  => 'custom/modules/Accounts/metadata/editviewdefs.php',
+                'sidecarpath' => 'custom/modules/Accounts/clients/base/views/record/record.php',
+        ),
+
     );
 
     /**
