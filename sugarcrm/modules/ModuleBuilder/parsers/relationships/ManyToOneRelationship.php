@@ -138,5 +138,15 @@ class ManyToOneRelationship extends AbstractRelationship
         parent::setRelationship_only();
         $this->one_to_many->setRelationship_only();
     }
+
+    public function buildSidecarSubpanelDefinitions()
+    {
+        return $this->buildSubpanelDefinitions();
+    }
+
+    public function buildSidecarMobileSubpanelDefinitions()
+    {
+        return $this->buildWirelessSubpanelDefinitions();
+    }
 }
 ?>
