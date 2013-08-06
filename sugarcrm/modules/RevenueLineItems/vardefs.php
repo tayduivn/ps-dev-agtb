@@ -526,6 +526,7 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
             'studio' => false,
+            'reportable' => false,
             'audited' => true,
         ),
         'next_step' => array(
