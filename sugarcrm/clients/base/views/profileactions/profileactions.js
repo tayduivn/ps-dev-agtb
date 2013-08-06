@@ -19,6 +19,24 @@
     },
 
     /**
+     * Returns true if the current user is an admin or developer for any module
+     *
+     * @return {bool}
+     * @private
+     */
+    _isAdminOrDevForAnyModule : function() {
+        return _.any(app.user.getAcls(), function(acl) {
+            if (_.isString(acl.admin) ? acl.admin != "no" : !acl.admin)
+                return true;
+
+            if (_.isString(acl.developer) ? acl.developer != "no" : !acl.developer)
+                return true;
+
+            return false;
+        });
+    },
+
+    /**
      * Render profile actions dropdown menu
      * @private
      */
@@ -27,10 +45,9 @@
         if (!app.router || !app.api.isAuthenticated() || app.config.appStatus === 'offline') {
             return;
         }
-        this.showAdmin = app.acl.hasAccess('admin', 'Administration');
-        if (!this.showAdmin && _.any(app.user.getAcls(),function(acl){return !acl.admin || acl.admin != "no" || !acl.developer || acl.developer != "no"})) {
-            this.showAdmin = true;
-        }
+
+        this.showAdmin = app.acl.hasAccess('admin', 'Administration') || this._isAdminOrDevForAnyModule();
+
         app.view.View.prototype._renderHtml.call(this);
         var $tooltip = this.$('[rel="tooltip"]');
         if (_.isFunction($tooltip.tooltip)) {
