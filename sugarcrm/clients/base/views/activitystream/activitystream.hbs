@@ -12,18 +12,19 @@
     </div>
 {{/eq}}
 <p>
-{{#if tpl}}
-    <div><span class="tagged">{{{str tpl "Activities" model.attributes.data}}}</span></div>
-{{/if}}
-{{#if embed}}
-    <div class="embed">
-        {{{embed}}}
-    </div>
-{{/if}}
-<date class="date">
-    <a href="#{{buildRoute module='Users' id=model.attributes.created_by}}">{{model.attributes.created_by_name}}</a> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
-</date>
+    {{#if tpl}}
+        <div><span class="tagged">{{{str tpl "Activities" model.attributes.data}}}</span></div>
+    {{/if}}
+    {{#if embed}}
+        <div class="embed">
+            {{{embed}}}
+        </div>
+    {{/if}}
 </p>
+<span class="details">
+    <a href="#{{buildRoute module="Employees" id=this.attributes.created_by}}">{{model.attributes.created_by_name}}</a> <date class="date"> {{timeago model.attributes.date_entered "LBL_TIME_RELATIVE_ACTIVITIES"}}
+    </date>
+</span>
 <ul class="comments">
     {{#if model.attributes.comment_count}}
         {{#each model.attributes.comments.models}}
