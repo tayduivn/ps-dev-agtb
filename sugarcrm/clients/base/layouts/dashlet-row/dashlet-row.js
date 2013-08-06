@@ -1,7 +1,9 @@
 ({
     tagName: 'li',
     events: {
-        'click .remove-row': 'removeClicked'
+        'click .remove-row': 'removeClicked',
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
     initialize: function(options) {
         this.index = options.meta.index;
@@ -199,5 +201,23 @@
         this.model.off("applyDragAndDrop", null, this);
         this.model.off("setMode", null, this);
         app.view.Layout.prototype._dispose.call(this);
+    },
+    _renderHtml: function() {
+        app.view.View.prototype._renderHtml.call(this);
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'bottom',
+                trigger:'mouseenter'
+            });
+        }
+    },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     }
 })

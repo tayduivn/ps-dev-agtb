@@ -1,6 +1,8 @@
 ({
     events: {
-        'click [data-event]': 'actionClicked'
+        'click [data-event]': 'actionClicked',
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
     cssIconDefault: 'icon-cog',
     cssIconRefresh: 'icon-refresh icon-spin',
@@ -76,5 +78,12 @@
         var $el = this.$('.dashlet-toggle > i'),
             collapsed = $el.is('.icon-chevron-up');
         this.layout.collapse(collapsed);
+    },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     }
 })

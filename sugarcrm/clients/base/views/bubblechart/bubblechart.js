@@ -14,7 +14,9 @@
     plugins: ['Dashlet'],
 
     events: {
-        'click .toggle-control': 'switchChart'
+        'click .toggle-control': 'switchChart' ,
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
     filterAssigned: null,
@@ -223,5 +225,24 @@
             nv.utils.windowUnResize(this.chart.render);
         }
         app.view.View.prototype._dispose.call(this);
+    },
+    _renderHtml: function() {
+        app.view.View.prototype._renderHtml.call(this);
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'bottom',
+                trigger:'mouseenter'
+            });
+        }
+    },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     }
+
 })
