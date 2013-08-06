@@ -41,11 +41,28 @@ class FilterApi extends SugarApi
                 'shortHelp' => 'List of all records in this module',
                 'longHelp' => 'include/api/help/module_filter_get_help.html',
             ),
+            'filterModuleAllCount' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', 'count'),
+                'pathVars' => array('module', ''),
+                'jsonParams' => array('filter'),
+                'method' => 'filterListCount',
+                'shortHelp' => 'List of all records in this module',
+                'longHelp' => 'include/api/help/module_filter_get_help.html',
+            ),
             'filterModulePost' => array(
                 'reqType' => 'POST',
                 'path' => array('<module>', 'filter'),
                 'pathVars' => array('module', ''),
                 'method' => 'filterList',
+                'shortHelp' => 'Lists filtered records.',
+                'longHelp' => 'include/api/help/module_filter_post_help.html',
+            ),
+            'filterModulePostCount' => array(
+                'reqType' => 'POST',
+                'path' => array('<module>', 'filter', 'count'),
+                'pathVars' => array('module', '', ''),
+                'method' => 'filterListCount',
                 'shortHelp' => 'Lists filtered records.',
                 'longHelp' => 'include/api/help/module_filter_post_help.html',
             ),
@@ -149,7 +166,7 @@ class FilterApi extends SugarApi
         return $options;
     }
 
-    public function filterList(ServiceBase $api, array $args)
+    public function filterListSetup(ServiceBase $api, array $args)
     {
         if ( !empty($args['q']) ) {
             // We need to use unified search for this for compatibilty with Nomad
@@ -183,10 +200,32 @@ class FilterApi extends SugarApi
             self::addFavoriteFilter($q, $q->where(), '_this');
         }
 
+
+        return array($args, $q, $options, $seed);
+    }
+
+    public function filterList(ServiceBase $api, array $args)
+    {
+        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
         $api->action = 'list';
 
         return $this->runQuery($api, $args, $q, $options, $seed);
     }
+
+
+    public function filterListCount(ServiceBase $api, array $args)
+    {
+        list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
+        $api->action = 'list';
+
+        $q->select->selectReset()->setCountQuery();
+        $q->limit = null;
+
+        return reset($q->execute());
+    }
+
+
+
 
     protected static function getQueryObject(SugarBean $seed, array $options)
     {

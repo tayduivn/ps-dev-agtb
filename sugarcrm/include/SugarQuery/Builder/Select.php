@@ -45,6 +45,8 @@ class SugarQuery_Builder_Select
 
     protected $query;
 
+    protected $countQuery = false;
+
     /**
      * Create Select Object
      * @param $columns
@@ -97,6 +99,17 @@ class SugarQuery_Builder_Select
 	{
 		return $this->$name;
 	}
+
+    public function setCountQuery()
+    {
+        $this->countQuery = true;
+        return $this;
+    }
+
+    public function getCountQuery()
+    {
+        return $this->countQuery;
+    }
 
     /**
      * Add bean field to the query

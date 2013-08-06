@@ -34,6 +34,16 @@ class RelateApi extends FilterApi {
                 'shortHelp' => 'Lists related filtered records.',
                 'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
             ),
+            'filterRelatedRecordsCount' => array(
+                'reqType' => 'GET',
+                'path' => array('<module>', '?', 'link', '?', 'filter', 'count'),
+                'pathVars' => array('module', 'record', '', 'link_name', '', ''),
+                'jsonParams' => array('filter'),
+                'method' => 'filterRelatedCount',
+                'shortHelp' => 'Lists related filtered records.',
+                'longHelp' => 'include/api/help/module_record_link_link_name_filter_get_help.html',
+
+            ),
             'listRelatedRecords' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>', '?', 'link', '?'),
@@ -46,7 +56,7 @@ class RelateApi extends FilterApi {
         );
     }
 
-    public function filterRelated(ServiceBase $api, array $args)
+    public function filterRelatedSetup(ServiceBase $api, array $args)
     {
         // Load the parent bean.
         $record = BeanFactory::retrieveBean($args['module'], $args['record']);
@@ -79,7 +89,7 @@ class RelateApi extends FilterApi {
         $rf = SugarRelationshipFactory::getInstance();
         $relObj = $record->$linkName->getRelationshipObject();
         $relDef = $rf->getRelationshipDef($relObj->name);
-        $tableName = $record->$linkName->getRelatedModuleLinkName();
+        $relatedLinkName = $record->$linkName->getRelatedModuleLinkName();
 
         if ($record->$linkName->getSide() == REL_LHS) {
             $column = $relDef['lhs_key'];
@@ -92,6 +102,8 @@ class RelateApi extends FilterApi {
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
+        $args['filter'][][$relatedLinkName . '.' . $column] = array('$equals' => $record->id);
+        self::addFilters($args['filter'], $q->where(), $q);
 
         // Some relationships want the role column ignored
         if (!empty($args['ignore_role'])) {
@@ -99,14 +111,33 @@ class RelateApi extends FilterApi {
         } else {
             $ignoreRole = false;
         }
-        $q->join($tableName, array('joinType'=>'INNER','ignoreRole'=>$ignoreRole));
-        $q->where()->equals($tableName. '.' . $column, $record->id);
+        $q->join($relatedLinkName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
+        $q->where()->equals($relatedLinkName . '.' . $column, $record->id);
 
-        self::addFilters($args['filter'], $q->where(), $q);
+        return array($args, $q, $options, $linkSeed);
+    }
+
+    public function filterRelated(ServiceBase $api, array $args)
+    {
 
         $api->action = 'list';
 
+        list($args, $q, $options, $linkSeed) = $this->filterRelatedSetup($api, $args);
+
         return $this->runQuery($api, $args, $q, $options, $linkSeed);
+    }
+
+    public function filterRelatedCount(ServiceBase $api, array $args)
+    {
+
+        $api->action = 'list';
+
+        list($args, $q, $options, $linkSeed) = $this->filterRelatedSetup($api, $args);
+
+        $q->select->selectReset()->setCountQuery();
+        $q->limit = null;
+
+        return reset($q->execute());
     }
 
 }
