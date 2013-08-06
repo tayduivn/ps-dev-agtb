@@ -181,10 +181,11 @@
      */
     fireSearchRequest: function (term, plugin) {
         var searchModuleNames = this._getSearchModuleNames(),
+            moduleList = searchModuleNames.join(','),
             params = {
                 q: term,
                 fields: 'name, id',
-                module_list: searchModuleNames.join(","),
+                module_list: moduleList,
                 max_num: 5
             };
         app.api.search(params, {
@@ -213,7 +214,7 @@
                     }
                     formattedRecords.push(formattedRecord);
                 });
-                plugin.provide({next_offset: data.next_offset, records: formattedRecords});
+                plugin.provide({next_offset: data.next_offset, records: formattedRecords, module_list: moduleList});
             },
             error:function(error) {
                 app.error.handleHttpError(error, plugin);

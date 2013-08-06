@@ -20,6 +20,11 @@
         </a>
     </li>
     {{/each}}
+    {{#notEq data.next_offset "-1"}}
+        <li>
+            <a href="#bwc/index.php?module=Home&append_wildcard=true&action=spot&full=true&q={{term}}&m={{data.module_list}}">{{str "LNK_SEARCH_FTS_VIEW_ALL"}}</a>
+        </li>
+    {{/notEq}}
 {{else}}
     <li>
     {{str "LNK_SEARCH_NO_RESULTS"}}
