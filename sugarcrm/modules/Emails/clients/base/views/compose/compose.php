@@ -156,7 +156,10 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         'external_link_list_url'            => 'lists/link_list.js',
                         'external_image_list_url'           => 'lists/image_list.js',
                         'media_external_list_url'           => 'lists/media_list.js',
-                        'theme_advanced_path'               => false
+                        'theme_advanced_path'               => false,
+                        'theme_advanced_source_editor_width'=> 500,
+                        'theme_advanced_source_editor_height'=> 400,
+                        'inlinepopups_skin'                 => 'sugar7modal'
                     ),
                 ),
             ),
