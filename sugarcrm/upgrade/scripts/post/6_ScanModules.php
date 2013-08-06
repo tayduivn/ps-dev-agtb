@@ -67,8 +67,8 @@ class SugarUpgradeScanModules extends UpgradeScript
             return false;
         }
         $mbFiles = array("Dashlets", "Menu.php", "language", "metadata", "vardefs.php");
-        $mbFiles[] = basename($bean);
-        $mbFiles[] = pathinfo($bean, PATHINFO_FILENAME)."_sugar.php";
+        $mbFiles[] = basename($this->beanFiles[$bean]);
+        $mbFiles[] = pathinfo($this->beanFiles[$bean], PATHINFO_FILENAME)."_sugar.php";
 
         // to make checks faster
         $mbFiles = array_flip($mbFiles);
@@ -99,7 +99,7 @@ class SugarUpgradeScanModules extends UpgradeScript
         $badExts = array_flip($badExts);
         // Check Ext for any "dangerous" extentsions
         foreach(glob("custom/$module_dir/Ext/*") as $extdir) {
-            if(isset($badExts[$xtdir])) {
+            if(isset($badExts[$extdir])) {
                 $extfiles = glob("$extdir/*");
                 if(!empty($extfiles)) {
                     $this->log("Extension dir $extdir detected - $module_name is not MB module");

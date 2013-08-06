@@ -13,7 +13,7 @@ class SugarUpgradeImportLang extends UpgradeScript
         if(!is_file('install/lang.config.php')){
        	    return;
        	}
-		$this->log('install/lang.config.php exists lets import the file/array insto sugar_config/config.php');
+		$this->log('install/lang.config.php exists, let\'s import the file/array into sugar_config/config.php');
 		include('install/lang.config.php');
 
 		foreach($config['languages'] as $k=>$v){
