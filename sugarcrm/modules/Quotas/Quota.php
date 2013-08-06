@@ -397,27 +397,34 @@ class Quota extends SugarBean
      */
     public function getRollupQuota($timeperiod_id, $user_id = null, $should_rollup = false)
     {
-        global $current_user;
-        $rollup_filter = "AND quotas.quota_type = 'Direct' ";
-
         if (is_null($user_id)) {
+            global $current_user;
             $user_id = $current_user->id;
         }
 
-        if ($should_rollup) {
-            $rollup_filter = "AND quotas.quota_type = 'Rollup' ";
+        // figure out the timeperiod
+        // if we didn't find a time period, set the time period to be the current time period
+        if (!is_guid($timeperiod_id) && is_numeric($timeperiod_id) && $timeperiod_id != 0) {
+            // we have a timestamp, find timeperiod it belongs in
+            $timeperiod_id = TimePeriod::getIdFromTimestamp($timeperiod_id);
         }
 
-        $qry = "SELECT quotas.currency_id, quotas.amount "
-            . "FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods "
-            . "WHERE quotas.timeperiod_id = timeperiods.id "
-            . "AND quotas.user_id = '" . $user_id . "' "
-            . $rollup_filter
-            . "AND timeperiods.id = '" . $timeperiod_id . "' "
-            . "AND quotas.deleted = 0 ORDER BY quotas.date_modified DESC";
+        if (!is_guid($timeperiod_id)) {
+            $timeperiod_id = TimePeriod::getCurrentId();
+        }
 
-        $result = $this->db->limitQuery($qry, 0, 1);
-        $row = $this->db->fetchByAssoc($result);
+        $sq = new SugarQuery();
+        $sq->select(array('quotas.currency_id', 'quotas.amount'));
+        $sq->from(BeanFactory::getBean('Quotas'));
+        $sq->where()
+            ->equals('user_id', $user_id)
+            ->equals('quota_type', ($should_rollup) ? 'Rollup' : 'Direct')
+            ->equals('timeperiod_id', $timeperiod_id);
+        $sq->orderBy('date_modified', 'DESC');
+        $sq->limit(1);
+
+        // since there is only ever one row, just shift the value off the results
+        $row = array_shift($sq->execute());
 
         if (empty($row)) {
             // This is to prevent return value of false when a given timeperiod has no quota.

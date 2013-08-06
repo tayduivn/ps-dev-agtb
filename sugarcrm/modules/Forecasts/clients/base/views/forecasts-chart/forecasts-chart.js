@@ -183,7 +183,8 @@
                 user_id: item.get('user_id'),
                 name: item.get('name'),
                 likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
-                likely_adjusted: app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'))
+                likely_adjusted: app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate')),
+                quota: app.currency.convertWithRate(item.get('quota'), item.get('base_rate'))
             };
 
             if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
@@ -197,6 +198,10 @@
 
             return i;
         }, this);
+
+        serverData.quota = _.reduce(serverData.data, function(memo, item) {
+            return memo + item.quota;
+        }, 0);
 
         field.setServerData(serverData);
     },
