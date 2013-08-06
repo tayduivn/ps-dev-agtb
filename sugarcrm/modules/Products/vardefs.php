@@ -14,6 +14,9 @@
 $dictionary['Product'] = array(
     'table' => 'products',
     'audited' => true,
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => true,
     'comment' => 'The user (not Admin)) view of a Product definition; an instance of a product',
     'fields' => array(
         'revenuelineitem_id' =>  array(

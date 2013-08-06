@@ -13,15 +13,27 @@
  * Copyright 2004-2013 SugarCRM Inc. All rights reserved.
  */
 
-$searchFields['Products'] = array (
+$searchFields['RevenueLineItems'] = array (
     'name' => array (
         'query_type' => 'default',
-        'force_unifiedsearch' => true
+        'force_unifiedsearch'=>true
     ),
-    'status' => array (
+    'best_case' => array (
+        'query_type' => 'default'
+    ),
+    'likely_case' => array (
+        'query_type' => 'default'
+    ),
+    'worst_case' => array (
+        'query_type' => 'default'
+    ),
+    'probability' => array (
+        'query_type' => 'default'
+    ),
+    'sales_stage' => array (
         'query_type' => 'default',
-        'options' => 'product_status_dom',
-        'template_var' => 'STATUS_OPTIONS',
+        'options' => 'sales_stage_dom',
+        'template_var' => 'SALES_STAGE_OPTIONS',
         'options_add_blank' => true
     ),
     'type_id' => array (
@@ -39,31 +51,13 @@ $searchFields['Products'] = array (
         'options' => 'manufacturer_dom',
         'template_var' => 'MANUFACTURER_OPTIONS'
     ),
-    'mft_part_num' => array (
-        'query_type' => 'default'
-    ),
-    'vendor_part_num' => array (
-        'query_type' => 'default'
-    ),
-    'tax_class' => array (
-        'query_type' => 'default',
-        'options' => 'tax_class_dom',
-        'template_var' => 'TAX_CLASS_OPTIONS',
-        'options_add_blank' => true
-    ),
-    'date_available' => array (
-        'query_type' => 'default'
-    ),
-    'support_term' => array (
-        'query_type' => 'default'
-    ),
     //BEGIN SUGARCRM flav=pro ONLY
     'favorites_only' => array (
         'query_type' => 'format',
         'operator' => 'subquery',
         'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
                                         WHERE sugarfavorites.deleted=0 
-                                            and sugarfavorites.module = \'Products\'
+                                            and sugarfavorites.module = \'RevenueLineItems\'
                                             and sugarfavorites.assigned_user_id = \'{0}\'',
         'db_field' => array (
             'id'
@@ -97,6 +91,21 @@ $searchFields['Products'] = array (
         'is_date_field' => true
     ),
     'end_range_date_modified' => array (
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'range_date_closed' => array (
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'start_range_date_closed' => array (
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_date_closed' => array (
         'query_type' => 'default',
         'enable_range_search' => true,
         'is_date_field' => true
