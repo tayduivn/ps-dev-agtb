@@ -279,12 +279,13 @@ class Meeting extends SugarBean {
 
         $this->setUserInvitees($this->users_arr);
 
-        vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $this->assigned_user_id));
-
-
-		if($this->update_vcal && $this->assigned_user_id != $GLOBALS['current_user']->id) {
-			vCal::cache_sugar_vcal($current_user);
-		}
+        if ($this->update_vcal) {
+            $assigned_user = BeanFactory::getBean('Users', $this->assigned_user_id);
+            vCal::cache_sugar_vcal($assigned_user);
+            if ($this->assigned_user_id != $GLOBALS['current_user']->id) {
+                vCal::cache_sugar_vcal($current_user);
+            }
+        }
 
         // CCL - Comment out call to set $current_user as invitee
         // set organizer to auto-accept
