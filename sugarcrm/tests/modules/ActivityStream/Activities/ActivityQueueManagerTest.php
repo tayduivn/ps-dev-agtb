@@ -450,6 +450,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ActivityQueueManager::assignmentChanged
      * @dataProvider dataProviderAssignedUserChanged
      */
     public function testAssignmentChanged($auditedChanges, $allChanges, $expected, $assertMessage)
@@ -498,6 +499,51 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ActivityQueueManager::isLinkDupe
+     * @dataProvider dataProviderIsLinkDupe
+     */
+    public function testIsLinkDupeReturnsValidResult(array $link1, array $link2, $expected)
+    {
+        $aqm = new ActivityQueueManager();
+        $this->assertEquals($expected, SugarTestReflection::callProtectedMethod($aqm, 'isLinkDupe', array($link1, $link2)));
+    }
+
+    public static function dataProviderIsLinkDupe()
+    {
+        $link1 = array(
+            'id' => 'foo',
+            'module' => 'Accounts',
+            'related_module' => 'Leads',
+            'related_id' => 'bar',
+            'link' => 'leads',
+            'relationship' => 'account_leads',
+        );
+
+        $link2 = array(
+            'related_id' => 'foo',
+            'related_module' => 'Accounts',
+            'module' => 'Leads',
+            'id' => 'bar',
+            'link' => 'account',
+            'relationship' => 'account_leads',
+        );
+
+        $link3 = array(
+            'id' => 'baz',
+            'module' => 'Leads',
+            'related_id' => 'bar',
+            'related_module' => 'Accounts',
+            'link' => 'account',
+            'relationship' => 'account_leads',
+        );
+
+        return array(
+            array($link1, $link2, true),
+            array($link1, $link3, false),
+            array($link2, $link3, false),
+        );
+    }
 }
 
 class TestActivityQueueManager extends ActivityQueueManager
