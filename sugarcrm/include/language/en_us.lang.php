@@ -3167,6 +3167,8 @@ $app_strings = array (
     'LBL_DASHLET_MAXIMIZE_ALL' => 'Maximize All',
     'LBL_DASHLET_MINIMIZE' => 'Minimize',
     'LBL_DASHLET_MAXIMIZE' => 'Maximize',
+    'LBL_DASHLET_CONFIGURE' => 'Configure',
+    'LBL_DASHLET_MOVE' => 'Move',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
@@ -4057,6 +4059,8 @@ $app_strings = array (
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => 'My Teams Opportunities',
 
     //News feed
     'LBL_NEWS_FEED_NO_DATA' => 'No data found.',

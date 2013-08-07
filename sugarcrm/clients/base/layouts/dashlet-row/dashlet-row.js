@@ -12,6 +12,14 @@
         this.model.on("setMode", this.setMode, this);
         this.model.on("applyDragAndDrop", this.applyDragAndDrop, this);
         this.setMode(this.model.mode);
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'bottom',
+                trigger:'mouseenter'
+            });
+        }
     },
     setMetadata: function(meta) {
         meta.components = meta.components || [];
@@ -196,22 +204,23 @@
         this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
         this.model.trigger("change:layout");
     },
-    _dispose: function() {
-        this.$el.children(".dashlet-row").sortable("destroy");
-        this.model.off("applyDragAndDrop", null, this);
-        this.model.off("setMode", null, this);
-        app.view.Layout.prototype._dispose.call(this);
-    },
     _renderHtml: function() {
-        app.view.View.prototype._renderHtml.call(this);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
+        console.log('test');
+    app.view.View.prototype._renderHtml.call(this);
+    var $tooltip = this.$('[rel="tooltip"]');
+    if (_.isFunction($tooltip.tooltip)) {
             $tooltip.tooltip({
                 container:'body',
                 placement:'bottom',
                 trigger:'mouseenter'
             });
         }
+    },
+    _dispose: function() {
+        this.$el.children(".dashlet-row").sortable("destroy");
+        this.model.off("applyDragAndDrop", null, this);
+        this.model.off("setMode", null, this);
+        app.view.Layout.prototype._dispose.call(this);
     },
     showTooltip: function(event) {
         this.$(event.currentTarget).tooltip("show");

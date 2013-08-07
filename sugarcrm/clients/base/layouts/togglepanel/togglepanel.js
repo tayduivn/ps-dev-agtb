@@ -20,7 +20,6 @@
         this.toggleComponents = [];
         this.componentsList = {};
         this.processToggles();
-                                     console.log('test');
         app.view.Layout.prototype.initialize.call(this, opts);
         // get the last viewed layout
         this.toggleViewLastStateKey = app.user.lastState.key('toggle-view', this);
