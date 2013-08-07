@@ -2455,6 +2455,7 @@ private function dir_file_count($path){
                 "modules",
                 "relationships",
                 "server_info",
+                "config",
             ),
         );
         $auth = AuthenticationController::getInstance();
