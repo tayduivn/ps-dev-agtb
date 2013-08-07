@@ -2,7 +2,8 @@
     events: {
         'click #tour': 'showTutorial',
         'click #feedback': 'feedback',
-        'click #support': 'support'
+        'click #support': 'support',
+        'click #help': 'help'
     },
     tagName: 'span',
     handleViewChange: function() {
@@ -38,6 +39,12 @@
     support: function() {
         window.open('http://support.sugarcrm.com', '_blank');
     },
+    help: function() {
+         var serverInfo = app.metadata.getServerInfo();
+         var lang = App.lang.getLanguage();
+         var module = App.controller.context.get('module');
+         window.open('http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor + '&version=' + serverInfo.version + '&lang=' + lang+ ' &module=' + module);
+     },
     showTutorial: function() {
         app.tutorial.resetPrefs();
         app.tutorial.show(app.controller.context.get('layout'),{module:app.controller.context.get('module')});
