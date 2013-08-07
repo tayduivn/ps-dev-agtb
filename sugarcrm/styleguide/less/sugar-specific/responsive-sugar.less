@@ -276,6 +276,20 @@
       top: 0;
     }
   }
+  #content > .row-fluid > .dashboard { /* specific selector to avoid applying it to .side-pane dashboard */
+    .dashlets.row-fluid > li {
+      width: 100%;
+      .widget-container {
+        width: 100%;
+      }
+      &:first-child {
+        padding-left: 0;
+      }
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+  }
 }
 
 //from responsive-forecast.less
