@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @group ActivityStream
+ */
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 require_once 'modules/ActivityStream/Activities/Activity.php';
 
@@ -24,6 +26,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_TeamIDsChangedToNames_ChangesOccurredNormally()
     {
         $contact    = SugarTestContactUtilities::createContact();
@@ -70,6 +75,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_AssignedUserIDsChangedToNames_ChangesOccurredNormally()
     {
         $lead         = SugarTestLeadUtilities::createLead();
@@ -115,6 +123,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_AccountParentIdNoParentType_ChangesOccurredNormally()
     {
         $account1 = SugarTestAccountUtilities::createAccount();
@@ -161,6 +172,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_BeanParentIdIncludesParentType_ChangesOccurredNormally()
     {
         $account1 = SugarTestAccountUtilities::createAccount();
@@ -377,6 +391,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ActivityQueueManager::eventDispatcher
      * @dataProvider dataProviderForActivityMessageCreation
      */
     public function testEventDispatcher_ActivityMessageCreation($activityEnabled, $event, $expectedAction)
@@ -413,6 +428,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ActivityQueueManager::isAuditable
      * @dataProvider dataProviderForecastModulesAuditable
      */
     public function testForecastModulesAreNotAuditable($module, $expected)
