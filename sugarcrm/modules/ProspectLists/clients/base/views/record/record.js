@@ -37,7 +37,7 @@
      */
     exportListMembers: function() {
         app.alert.show('export_loading', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
-        app.api['export'](
+        app.api.exportRecords(
             {
                 module: this.module,
                 uid: this.model.id,
