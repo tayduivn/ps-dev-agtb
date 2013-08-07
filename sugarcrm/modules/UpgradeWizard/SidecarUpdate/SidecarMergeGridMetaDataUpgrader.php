@@ -23,21 +23,25 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
      * @var array
      */
     protected $mergeViews = array(
-            MB_RECORDVIEW => array(
-                'detail' => array('detailviewdefs', MB_DETAILVIEW),
-                'edit' => array('editviewdefs', MB_EDITVIEW),
-            ),
-            MB_PORTALRECORDVIEW => array(
-                'detail' => array('detailviewdefs', MB_DETAILVIEW),
-                'edit' => array('editviewdefs', MB_EDITVIEW),
-            ),
+        MB_RECORDVIEW => array(
+            'detail' => array('detailviewdefs', MB_DETAILVIEW),
+            'edit' => array('editviewdefs', MB_EDITVIEW),
+        ),
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALRECORDVIEW => array(
+            'detail' => array('detailviewdefs', MB_DETAILVIEW),
+            'edit' => array('editviewdefs', MB_EDITVIEW),
+        ),
+        //END SUGARCRM flav=ent ONLY
     );
 
     protected $mergeViewsSidecar = array(
-            MB_PORTALRECORDVIEW => array(
-                'detail' => array('detail', MB_PORTALDETAILVIEW),
-                'edit' => array('edit', MB_PORTALEDITVIEW),
-            ),
+        //BEGIN SUGARCRM flav=ent ONLY
+        MB_PORTALRECORDVIEW => array(
+            'detail' => array('detail', MB_PORTALDETAILVIEW),
+            'edit' => array('edit', MB_PORTALEDITVIEW),
+        ),
+        //END SUGARCRM flav=ent ONLY
     );
 
     /**
@@ -49,12 +53,14 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
             MB_DETAILVIEW => 'LBL_RECORD_BODY',
             MB_EDITVIEW => 'LBL_RECORD_SHOWMORE',
         ),
+        //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALRECORDVIEW => array(
             MB_PORTALDETAILVIEW => 'LBL_RECORD_BODY',
             MB_PORTALEDITVIEW => 'LBL_RECORD_BODY',
             MB_DETAILVIEW => 'LBL_RECORD_BODY',
             MB_EDITVIEW => 'LBL_RECORD_BODY',
         ),
+        //END SUGARCRM flav=ent ONLY
     );
 
     /**
