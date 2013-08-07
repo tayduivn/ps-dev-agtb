@@ -18,27 +18,20 @@ h4 i {
 }
 .ellipsis-container {
   display: table;
+  table-layout: fixed;
   width: 100%;
   .ellipsis-row {
-    display:table-cell;
+    display: table-row;
   }
   .ellipsis-cell {
     display: table-cell;
-    position: relative;
-    width: 100%;
-    .ellipsis_inline {
-      display: inline-block !important;
-      width: 100%;
-      position: absolute;
-      top: 0;
-    }
   }
   label.ellipsis-addon {
     display: table-cell;
-    position: relative;
     padding: 0 0 0 4px;
     margin: 0;
     white-space: nowrap;
+    width: 70px;
   }
 }
 
