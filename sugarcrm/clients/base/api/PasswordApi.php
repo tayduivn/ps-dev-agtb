@@ -61,6 +61,12 @@ class PasswordApi extends SugarApi
             'email',
             'username',
         );
+        if (!$GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON']) {
+            throw new SugarApiExceptionRequestMethodFailure(translate(
+                'LBL_FORGOTPASSORD_NOT_ENABLED',
+                'Users'
+            ), $args);
+        }
 
         foreach ($requiredParams as $key => $param) {
             if (!isset($args[$param])) {
