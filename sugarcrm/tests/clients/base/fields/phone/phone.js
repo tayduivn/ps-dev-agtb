@@ -30,9 +30,9 @@ describe("Base.Fields.Phone", function() {
     });
     it("should format values if theyre in the correct format", function() {
         var data = {
-            '+123443asdf':'+123443',
-            '001(234)43asdf':'+00123443',
-            '011(234)43asdf':'+01123443'
+            '+0013443asdf':'+0013443',
+            '001(234)43asdf':'001(234)43',
+            '011(234)43asdf':'011(234)43'
 
         }
         var formatted
@@ -40,7 +40,55 @@ describe("Base.Fields.Phone", function() {
         field.action = 'detail';
         _.each(data, function(value, key){
             formatted = field.format(key);
+            expect(formatted).toEqual(key);
+            expect(field.skypeValue).toEqual(value);
+        });
+    });
+
+    it("should checks if value should be skype formatted + 00 or 011 leading is necessary", function() {
+        var data = {
+            '00123123312': true,
+            '0113434343': true,
+            '+00123123312': true,
+            '+0113434343': true,
+            '+2343543532': true,
+            '27000345435': false
+            },
+            formatted;
+
+        _.each(data, function(value, key){
+            formatted = field.isSkypeFormatted(key);
             expect(formatted).toEqual(value);
+        });
+    });
+
+    it("should format phone to skype phone format", function() {
+        var data = {
+                '00123123312': '00123123312',
+                '01123123312': '01123123312',
+                '+00123123312': '+00123123312',
+
+                '1-345-3423432': '+1-345-3423432',
+                '1(345)3423432': '+1(345)3423432',
+                '1.345.3423432': '+1.345.3423432',
+                '1 345 3423432': '+1 345 3423432',
+                '1/345/3423432': '+1/345/3423432',
+
+                '1-3453423432': '+13453423432',
+                '1(3453423432': '+13453423432',
+                '1345)3423432': '+13453423432',
+                '134.53423432': '+13453423432',
+                '1345 3423432': '+13453423432',
+                '134/53423432': '+13453423432',
+
+                '1-34(5-34)23432': '+1-345-3423432',
+                '1(345)342.3432': '+1(345)3423432',
+                '1.345.34-2 3432': '+1.345.3423432',
+                '1 3-45 34)23432': '+1 345 3423432',
+                '1/345/3(42-3432': '+1/345/3423432'
+            };
+        _.each(data, function(value, key){
+            expect(field.skypeFormat(key)).toEqual(value);
         });
     });
 });
