@@ -28,6 +28,12 @@ class SugarUpgradeSearchVendors extends UpgradeScript
         'include/SugarSearchEngine/Elastic/Elastica',
 
     );
+
+    protected static $excludedScanDirectories = array(
+        'backup',
+        'tmp',
+        'temp',
+    );
     public $filesToFix = array();
 
     /**
@@ -83,7 +89,9 @@ class SugarUpgradeSearchVendors extends UpgradeScript
                 continue;
             }
             $filename = $item->getFilename();
-            if ($item->isDir()) {
+            if ($item->isDir() && in_array($filename, self::$excludedScanDirectories)) {
+                    continue;
+            } elseif ($item->isDir()) {
                 $data[$filename] = self::scanDir($path . $filename . "/");
             } else {
                 $data[$filename] = $path . $filename;
