@@ -33,6 +33,8 @@ if(typeof(SimpleList) == 'undefined'){
         var jstransaction;
         var lastEdit;
         var isIE = isSupportedIE();
+        var requiredOptions;
+        var listName;
         return {
     init: function(editImage, deleteImage) {
         var ul = document.getElementById('ul1', 'drpdwn');
@@ -235,15 +237,58 @@ if(typeof(SimpleList) == 'undefined'){
             ModuleBuilder.handleSave("dropdown_form", ModuleBuilder.refreshGlobalDropDown);
         }
     },
-    deleteDropDownValue : function(id, record){
-        var field = new YAHOO.util.Element(id);
-        if(record){
-            SimpleList.jstransaction.record('deleteDropDown',{'id': id });
+    isRequiredItem: function(name) {
+        var required = false;
+        for (var i in SimpleList.requiredOptions) {
+            if (SimpleList.requiredOptions[i] == name) {
+                required = true;
+                break;
+            }
         }
-        if (field.hasClass('deleted'))
-            field.removeClass('deleted');
-        else
-            field.addClass('deleted');
+        
+        return required;
+    },
+    getDeleteConfirmationMessage: function(id) {
+        // Base key is the always available confirmation lang string index.
+        // Name key is a string that could exist within ModuleBuilder for a
+        // given dropdown name. This allows for customizations of messaging per
+        // dropdown.
+        // Item key is a string that could exist for a given list item. This allows
+        // for very fine control over confirmation messages to the list item level.
+        var baseKey = 'LBL_JS_DELETE_REQUIRED_DDL_ITEM',
+            nameKey = (SimpleList.name) ? baseKey + '_' + SimpleList.name.toUpperCase() : baseKey,
+            itemKey = baseKey + '_' + id.replace(/\s/g, '_').replace(/[^\w]/gi, '').toUpperCase(),
+            message = SUGAR.language.get('ModuleBuilder', itemKey);
+
+        // See if the item key check passed muster. Checking 'undefined' here is
+        // safe, as that is what is returned from get()
+        if (message == 'undefined') {
+            message = SUGAR.language.get('ModuleBuilder', nameKey);
+        }
+
+        // If name key is undefined then we fall back to the base key which is
+        // always there
+        if (message == 'undefined') {
+            message = SUGAR.language.get('ModuleBuilder', baseKey);
+        }
+
+        return message;
+    },
+    deleteDropDownValue : function(id, record){
+        var required = SimpleList.isRequiredItem(id),
+            message  = SimpleList.getDeleteConfirmationMessage(id);
+
+        if (!required || (required && confirm(message))) {
+            var field = new YAHOO.util.Element(id);
+            if(record){
+                SimpleList.jstransaction.record('deleteDropDown',{'id': id });
+            }
+            if (field.hasClass('deleted')) {
+                field.removeClass('deleted');
+            } else {
+                field.addClass('deleted');
+            }
+        }
     },
     editDropDownValue : function(id, record){
         //Close any other dropdown edits

@@ -120,7 +120,8 @@ class ViewDropdown extends SugarView
         $selected_dropdown = array();
 
         $json = getJSONobj();
-
+        
+        $required_items = array();
         if (!empty($_REQUEST['dropdown_name']) && !$new) {
             $name = $_REQUEST['dropdown_name'];
 
@@ -132,6 +133,9 @@ class ViewDropdown extends SugarView
             if (!isset($my_list_strings[$name])) {
                 $my_list_strings[$name] = array();
             }
+            
+            // Handle required elements of a drop down
+            $required_items = getRequiredDropdownListItemsByDDL($name);
 
             $selected_dropdown = (!empty($vardef['options']) && !empty($my_list_strings[$vardef['options']])) ? $my_list_strings[$vardef['options']] : $my_list_strings[$name];
             $smarty->assign('ul_list', 'list = '.$json->encode(array_keys($selected_dropdown)));
@@ -157,6 +161,7 @@ class ViewDropdown extends SugarView
             $smarty->assign('prepopulated_name', $use_name);
         }
 
+        $smarty->assign('required_items', json_encode($required_items));
         $smarty->assign('module_name', $module_name);
         $smarty->assign('APP', $GLOBALS['app_strings']);
         $smarty->assign('MOD', $GLOBALS['mod_strings']);
