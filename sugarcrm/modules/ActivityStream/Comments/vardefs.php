@@ -19,6 +19,16 @@ $dictionary['Comment'] = array(
         ),
 
         // Add relationship fields.
+        'activities' => array(
+            'name' => 'activities',
+            'type' => 'link',
+            'relationship' => 'comments',
+            'link_type' => 'one',
+            'module' => 'Activities',
+            'bean_name' => 'Activity',
+            'source' => 'non-db',
+        ),
+
         'attachments' => array (
             'name' => 'attachments',
             'type' => 'link',
