@@ -55,7 +55,7 @@ $viewdefs['Cases']['editview']  = array(
                            ),
     'data' => array(
         array(array('field' => 'case_number', 'readOnly' => true)),
-        array('priority', 'status'),
+        array('priority', 'status', 'id'),
         array(array('field' => 'name', 'displayParams' => array('size' => 60), 'required'=>true)),
         array(array('field' => 'description', 'displayParams' => array('rows' => '15', 'cols' => '100'))),
     )

@@ -25,7 +25,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  /**
  * Used to call a generic method in a dashlet
  */
-define('ENTRY_POINT_TYPE', 'gui');
+// Only define entry point type if it isnt already defined
+if (!defined('ENTRY_POINT_TYPE')) {
+    define('ENTRY_POINT_TYPE', 'gui');
+}
  require_once('include/entryPoint.php');
  require_once('ModuleInstall/PackageManager/PackageController.php');
 if(!is_admin($GLOBALS['current_user'])){

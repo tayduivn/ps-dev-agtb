@@ -28,5 +28,41 @@
         Handlebars.registerHelper('moduleIconToolTip', function(module) {
             return app.lang.getAppListStrings('moduleListSingular')[module] || module;
         });
+
+        /**
+         * Handlebar helper to retrieve a view template as a sub template
+         * @param {String} key Key for the template to retrieve.
+         * @param {Object} data Data to pass into the compiled template
+         * @param {Object} options (optional) Optional parameters
+         * @return {String} String Template
+         */
+        Handlebars.registerHelper('subViewTemplate', function(key, data, options) {
+            var template =  app.template.getView(key, options.hash.module);
+            return template ? template(data) : '';
+        });
+
+        /**
+         * Handlebar helper to retrieve a field template as a sub template
+         * @param {String} key Key for the template to retrieve.
+         * @param {Object} data Data to pass into the compiled template
+         * @param {Object} options (optional) Optional parameters
+         * @return {String} String Template
+         */
+        Handlebars.registerHelper('subFieldTemplate', function(key, data, options) {
+            var template =  app.template.getField(key, options.hash.module);
+            return template ? template(data) : '';
+        });
+
+        /**
+         * Handlebar helper to retrieve a  ayout template as a sub template
+         * @param {String} key Key for the template to retrieve.
+         * @param {Object} data Data to pass into the compiled template
+         * @param {Object} options (optional) Optional parameters
+         * @return {String} String Template
+         */
+        Handlebars.registerHelper('subLayoutTemplate', function(key, data, options) {
+            var template =  app.template.getLayout(key, options.hash.module);
+            return template ? template(data) : '';
+        });
     });
 })(SUGAR.App);

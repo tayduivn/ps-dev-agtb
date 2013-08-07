@@ -115,7 +115,6 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         // Get legacy file paths
         $builder = self::getBuilder();
         $legacyFiles = $builder->getFilesToMake('legacy');
-
         $expected = array_intersect($removals, $legacyFiles);
         sort($expected);
         sort($legacyFiles);
@@ -129,26 +128,25 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $upgrader = self::getUpgrader();
         $failures = $upgrader->getFailures();
 
-        $this->assertEmpty($failures, 'There were upgrade failures');
+        $this->assertEmpty($failures, 'There were upgrade failures: '.var_export($failures, true));
     }
 
     // BEGIN SUGARCRM flav=ent ONLY
     // Added for Bug 55568 - new OOTB metadata was not included in upgrade
     public function testUpgraderUsedNewViewDefs()
     {
-        $this->markTestIncomplete(
-            "Marking incomplete until a decision is made on a record view upgrader");
         // Bug 55936 - Fixed hardcoded path for testing to pick up metadata
         // changes
-        $filename = 'custom/working/modules/Cases/clients/portal/views/edit/edit.php';
+        $filename = 'custom/working/modules/Cases/clients/portal/views/record/record.php';
         $exists = file_exists($filename);
         $this->assertTrue($exists, 'Cases portal edit metadata did not convert');
 
         require $filename;
-        $this->assertNotEmpty($viewdefs['Cases']['portal']['view']['edit']['buttons'],
+        $this->assertNotEmpty($viewdefs['Cases']['portal']['view']['record']['buttons'],
             'The buttons array from the new metadata was not captured');
     }
     // END SUGARCRM flav=ent ONLY
+
     public function _sidecarFilesInPlaceProvider()
     {
         $builder = self::getBuilder();
@@ -162,6 +160,9 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSidecarFilesInPlace($file)
     {
+        if(empty($file)) {
+            return;
+        }
         $this->assertFileExists($file, "File $file was not upgraded");
     }
 
@@ -181,6 +182,9 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSidecarMetadataFormat($module, $view, $type, $filepath)
     {
+        if(empty($filepath)) {
+            return;
+        }
         $this->assertFileExists($filepath, "$filepath does not exist");
         require $filepath;
 
@@ -254,6 +258,44 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $builder = self::getBuilder();
         return $builder->getFilesToMakeByView('list');
     }
+
+    /**
+     * Test for record-type upgrades
+     * @param string $module
+     * @param string $view
+     * @param string $type
+     * @param string $filepath
+     * @dataProvider _sidecarRecordProvider
+     */
+    public function testSidecarRecordfields($module, $view, $type, $filepath)
+    {
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        $defs = $viewdefs[$module][$type]['view'][$view];
+        $this->assertTrue(isset($defs['panels'][1]['fields']), 'Field array is missing from the upgrade file');
+        $idfield = null;
+        foreach($defs['panels'] as $panel) {
+            // adding to header is wrong
+            if(!empty($panel['header'])) continue;
+            foreach($panel['fields'] as $field) {
+                // look for ID
+                if($field == 'id'  || (!empty($field['name']) && $field['name'] == 'id')) {
+                    $idfield = $field;
+                    break 2;
+                }
+            }
+        }
+        //        var_dump($defs['panels'][1]['fields']);
+        $this->assertNotEmpty($idfield, "ID field not found in merged view");
+    }
+
+    public function _sidecarRecordProvider()
+    {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView('record');
+    }
+
 }
 
 class SidecarMetaDataUpgraderForTest extends SidecarMetaDataUpgrader

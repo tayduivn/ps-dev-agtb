@@ -267,6 +267,8 @@ describe("Base.Layout.Filter", function () {
                 layout: 'filter'
             });
             ctxt.prepare();
+            var _oResetPagination = ctxt.get('collection').resetPagination;
+            ctxt.get('collection').resetPagination = function() {};
             var stub = sinon.stub(ctxt,'loadData', function(options){options.success();});
             var resetLoadFlagSpy = sinon.spy(ctxt,'resetLoadFlag');
             var query = 'test query';
@@ -281,7 +283,7 @@ describe("Base.Layout.Filter", function () {
             var contextListStub = sinon.stub(layout, 'getRelevantContextList', function () {
                 return [ctxt];
             });
-            var getFilterStub = sinon.stub(layout,'buildFilterDef',function(){return testFilterDef1});
+            var getFilterStub = sinon.stub(layout,'buildFilterDef',function(){return testFilterDef1;});
 
             app.events.on('preview:close', spy);
 
@@ -293,7 +295,7 @@ describe("Base.Layout.Filter", function () {
             expect(resetLoadFlagSpy).toHaveBeenCalled();
             expect(stub).toHaveBeenCalled();
             expect(spy).toHaveBeenCalled();
-
+            ctxt.get('collection').resetPagination = _oResetPagination;
         });
         it('should get relevant context lists for activities', function(){
             layout.showingActivities = true;
@@ -340,6 +342,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'test1',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxt);
@@ -350,6 +353,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'test1',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxt1);
@@ -359,6 +363,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'testNoCollection',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxtWithoutCollection);
@@ -370,6 +375,7 @@ describe("Base.Layout.Filter", function () {
                 module: 'Accounts',
                 layout: 'filter',
                 link:'testModelId',
+                isSubpanel:true,
                 hidden: false
             });
             layout.context.children.push(ctxtWithModelId);

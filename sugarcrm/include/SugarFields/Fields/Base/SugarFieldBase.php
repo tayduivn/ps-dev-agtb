@@ -722,4 +722,14 @@ class SugarFieldBase {
         // Just send it back
         return $value;
     }
+
+    /**
+     * Overloaded in field specific classes
+     * @param $value
+     * @return mixed
+     */
+    public function convertFieldForDB($value)
+    {
+        return $value;
+    }
 }

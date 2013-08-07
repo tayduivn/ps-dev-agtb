@@ -708,15 +708,36 @@ class MetadataApi extends SugarApi
         return  sugar_cached("api/metadata/lang_{$language}_{$platform}{$public_key}.json");
     }
 
+    /**
+     * Builds the language javascript file if needed, else returns what is known
+     * 
+     * @param string $platform The client for this file
+     * @param string $language The language for this file
+     * @param array $modules The module list
+     * @param boolean $isPublic Flag that decides if this is a public or private file
+     * @return array Array containing the language file contents and the hash for the data
+     */
     protected function buildLanguageFile($platform, $language, $modules, $isPublic=false)
     {
         $mm = $this->getMetadataManager();
         sugar_mkdir(sugar_cached('api/metadata'), null, true);
         $filePath = $this->getLangUrl($platform, $language, $isPublic);
         if (SugarAutoLoader::fileExists($filePath)) {
-            return file_get_contents($filePath);
-        }
+            // Get the contents of the file so that we can get the hash
+            $data = file_get_contents($filePath);
 
+            // Decode the json and get the hash. The hash should be there but 
+            // check for it just in case something went wrong somewhere.
+            $array = json_decode($data, true);
+            $hash = isset($array['_hash']) ? $array['_hash'] : '';
+
+            // Cleanup
+            unset($array);
+
+            // Return the same thing as would be returned if we had to build the 
+            // file for the first time
+            return array('hash' => $hash, 'data' => $data);
+        }
 
         $stringData = array();
         $stringData['app_list_strings'] = $mm->getAppListStrings($language);

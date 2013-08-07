@@ -1,46 +1,33 @@
 <?php
-
-use SugarTestAccountUtilities as AccountHelper;
-use SugarTestCommentUtilities as CommentHelper;
-use SugarTestActivityUtilities as ActivityHelper;
-use SugarTestUserUtilities as UserHelper;
-
+/**
+ * @group ActivityStream
+ */
 class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $activity;
+
     public function setUp()
     {
         $this->markTestIncomplete('Needs to be fixed by ABE team.');
-        $this->activity = ActivityHelper::createActivity();
-        $this->activityClass = get_class($this->activity);
+        parent::setUp();
+        $this->activity = SugarTestActivityUtilities::createActivity();
     }
 
     public function tearDown()
     {
-        ActivityHelper::removeAllCreatedActivities();
-        CommentHelper::removeAllCreatedComments();
-    }
-
-    public static function setUpBeforeClass()
-    {
-        $GLOBALS['current_user'] = UserHelper::createAnonymousUser();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        AccountHelper::removeAllCreatedAccounts();
-        UserHelper::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestActivityUtilities::removeAllCreatedActivities();
+        SugarTestCommentUtilities::removeAllCreatedComments();
+        parent::tearDown();
     }
 
     /**
      * Tests that modifying a post does not modify the last comment associated
      * with the post.
      * @covers Activity
-     * @group ActivityStream
      */
     public function testThatTouchingAnActivityDoesNotModifyLastComment()
     {
-        CommentHelper::createComment($this->activity);
+        SugarTestCommentUtilities::createComment($this->activity);
 
         $count = $this->activity->comment_count;
         $last = $this->activity->last_comment;
@@ -55,11 +42,10 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * For a saved activity, adding a comment should return the comment object.
      * @covers Activity::addComment
-     * @group ActivityStream
      */
     public function testAddComment()
     {
-        $comment = CommentHelper::createComment($this->activity);
+        $comment = SugarTestCommentUtilities::createComment($this->activity);
         $this->assertInternalType('string', $comment->id);
         $this->assertEquals($comment->id, $this->activity->last_comment_bean->id);
         $this->assertEquals(1, $this->activity->comment_count);
@@ -69,12 +55,11 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * For an unsaved activity, adding a comment should return false.
      * @covers Activity::addComment
-     * @group ActivityStream
      */
     public function testAddComment2()
     {
-        $record = ActivityHelper::createUnsavedActivity();
-        $comment = CommentHelper::createComment($record);
+        $record = SugarTestActivityUtilities::createUnsavedActivity();
+        $comment = SugarTestCommentUtilities::createComment($record);
         $this->assertFalse($record->addComment($comment));
     }
 
@@ -82,13 +67,12 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      * addComment should only work for comments which have a parent of the
      * current activity.
      * @covers Activity::addComment
-     * @group ActivityStream
      */
     public function testAddComment3()
     {
-        $record = ActivityHelper::createActivity();
-        $record2 = ActivityHelper::createActivity();
-        $comment = CommentHelper::createComment($record2);
+        $record = SugarTestActivityUtilities::createActivity();
+        $record2 = SugarTestActivityUtilities::createActivity();
+        $comment = SugarTestCommentUtilities::createComment($record2);
         $this->assertFalse($record->addComment($comment));
     }
 
@@ -96,11 +80,10 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      * For a saved activity and comment, deleting the comment should delete it,
      * and decrements the counter.
      * @covers Activity::deleteComment
-     * @group ActivityStream
      */
     public function testDeleteComment()
     {
-        $comment = CommentHelper::createComment($this->activity);
+        $comment = SugarTestCommentUtilities::createComment($this->activity);
         $this->activity->deleteComment($comment->id);
 
         $this->assertNotEquals($comment->id, $this->activity->last_comment_bean->id);
@@ -111,7 +94,6 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      * On a saved post with no comments, deleting an arbitrary comment should do
      * nothing.
      * @covers Activity::deleteComment
-     * @group ActivityStream
      */
     public function testDeleteComment2()
     {
@@ -125,11 +107,10 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * On an unsaved post, deleting a comment should do nothing.
      * @covers Activity::deleteComment
-     * @group ActivityStream
      */
     public function testDeleteComment3()
     {
-        $record = ActivityHelper::createUnsavedActivity();
+        $record = SugarTestActivityUtilities::createUnsavedActivity();
         $orig_last_comment = $record->last_comment_bean;
         $record->deleteComment('foo');
 
@@ -141,12 +122,11 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      * For a saved activity with multiple comment, deleting the last comment
      * should delete it, and decrements the counter.
      * @covers Activity::deleteComment
-     * @group ActivityStream
      */
     public function testDeleteComment4()
     {
-        $first_comment = CommentHelper::createComment($this->activity);
-        $second_comment = CommentHelper::createComment($this->activity);
+        $first_comment = SugarTestCommentUtilities::createComment($this->activity);
+        $second_comment = SugarTestCommentUtilities::createComment($this->activity);
         $this->activity->deleteComment($second_comment->id);
 
         $this->assertEquals($first_comment->id, $this->activity->last_comment_bean->id);
@@ -158,12 +138,11 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      * should delete it, and decrements the counter, but not change the last
      * comment.
      * @covers Activity::deleteComment
-     * @group ActivityStream
      */
     public function testDeleteComment5()
     {
-        $first_comment = CommentHelper::createComment($this->activity);
-        $second_comment = CommentHelper::createComment($this->activity);
+        $first_comment = SugarTestCommentUtilities::createComment($this->activity);
+        $second_comment = SugarTestCommentUtilities::createComment($this->activity);
         $this->activity->deleteComment($first_comment->id);
 
         $this->assertEquals($second_comment->id, $this->activity->last_comment_bean->id);
@@ -173,18 +152,16 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * For an activity without an ID, adding a comment should return false.
      * @covers Activity::deleteComment
-     * @group ActivityStream
      */
     public function testDeleteComment6()
     {
-        $comment = CommentHelper::createComment($this->activity);
+        $comment = SugarTestCommentUtilities::createComment($this->activity);
     }
 
     /**
      * Test that data and last_comment are valid JSON when getting them from the
      * bean.
      * @covers Activity
-     * @group ActivityStream
      */
     public function testValidJson()
     {
@@ -197,7 +174,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('string', $this->activity->last_comment);
         $this->assertNotEquals(false, json_decode($this->activity->last_comment, true));
 
-        $comment = CommentHelper::createComment($this->activity);
+        $comment = SugarTestCommentUtilities::createComment($this->activity);
         $this->assertInternalType('string', $this->activity->last_comment);
         $this->assertNotEquals(false, json_decode($this->activity->last_comment, true));
     }

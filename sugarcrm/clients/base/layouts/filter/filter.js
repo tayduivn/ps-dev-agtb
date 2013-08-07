@@ -284,7 +284,7 @@
             } else {
                 //Locate and add subpanel contexts
                 _.each(this.context.children, function(ctx) {
-                    if (ctx.get('link') && !ctx.get('hidden') && !ctx.get('modelId') && ctx.get('collection')) {
+                    if (ctx.get('isSubpanel') && !ctx.get('hidden') && !ctx.get('modelId') && ctx.get('collection')) {
                         contextList.push(ctx);
                     }
                 });
@@ -434,8 +434,8 @@
         if (lastFilter && !(this.filters.get(lastFilter))){
             this.clearLastFilter(app.controller.context.get('module'), moduleName, this.layoutType);
         }
-        this.trigger('filter:render:filter');
         this.layout.trigger('filterpanel:change:module', moduleName);
+        this.trigger('filter:render:filter');
         this.trigger('filter:change:filter', this.getLastFilter(app.controller.context.get('module'), moduleName, this.layoutType) ||  _.first(possibleFilters) || 'all_records', true);
     },
 

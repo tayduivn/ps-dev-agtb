@@ -41,8 +41,7 @@ require_once('modules/Audit/Audit.php');
 global $currentModule, $focus, $action, $app_strings, $app_list_strings, $current_language, $timedate, $mod_strings;
 //we don't want the parent module's string file, but rather the string file specific to this subpanel
 
-
-$focus = BeanFactory::getBean($_REQUEST['module_name']);
+$focus = BeanFactory::retrieveBean($_REQUEST['module_name'],$_REQUEST['record']);
 
 class Popup_Picker
 {

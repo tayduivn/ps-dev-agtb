@@ -42,6 +42,8 @@ class ParserFactory
     protected static function _helperConvertToViewConstant($view)
     {
         $map = array(
+            'edit' => MB_PORTALEDITVIEW,
+            'detail' => MB_PORTALDETAILVIEW,
             'record'=> MB_PORTALRECORDVIEW,
             'search' => MB_PORTALSEARCHVIEW,
             'list' => MB_PORTALLISTVIEW
@@ -103,11 +105,13 @@ class ParserFactory
             case MB_WIRELESSDETAILVIEW :
             //BEGIN SUGARCRM flav=ent ONLY
             case MB_PORTALRECORDVIEW:
+            case MB_PORTALDETAILVIEW:
+            case MB_PORTALEDITVIEW:
             //END SUGARCRM flav=ent ONLY
                 if (empty($client)) {
                     $client = MB_WIRELESS;
                     //BEGIN SUGARCRM flav=ent ONLY
-                    if ($lView == MB_PORTALRECORDVIEW) {
+                    if ($lView == MB_PORTALRECORDVIEW || $lView == MB_PORTALDETAILVIEW || $lView == MB_PORTALEDITVIEW) {
                         $client = MB_PORTAL;
                     }
                     //END SUGARCRM flav=ent ONLY

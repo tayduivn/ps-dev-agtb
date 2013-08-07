@@ -488,6 +488,11 @@ class SugarQuery_Compiler_SQL
     protected function compileSelect(SugarQuery_Builder_Select $selectObj)
     {
         $return = array();
+
+        if ($selectObj->getCountQuery() === true) {
+            return 'count(0) AS record_count';
+        }
+
         foreach ($selectObj->select as $field) {
             $alias = null;
             $s_alias = '';
@@ -709,7 +714,7 @@ class SugarQuery_Compiler_SQL
                     if ($condition->values instanceof SugarQuery) {
                         $sql .= "{$field} NOT IN (" . $condition->values->compileSql() . ")";
                     } else {
-                        foreach ($condition->values AS $val) {
+                        foreach ($condition->values as $val) {
                             $valArray[] = $this->quoteValue($condition->field, $val, $condition->bean);
                         }
                         $sql .= "{$field} NOT IN (" . implode(',', $valArray) . ")";

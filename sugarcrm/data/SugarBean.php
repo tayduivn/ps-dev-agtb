@@ -2869,6 +2869,11 @@ class SugarBean
         {
             $id = $this->id;
         }
+        if (empty($this->table_name)) {
+            // I don't know how to fetch from something without a table
+            return null;
+        }
+
         $custom_join = $this->getCustomJoin();
 
         $query_select = "{$this->table_name}.*";
@@ -5171,7 +5176,7 @@ class SugarBean
         $list = Array();
         while($row = $this->db->fetchByAssoc($result))
         {
-            $record = BeanFactory::retrieveBean($template->module_dir, $row['id']
+            $record = BeanFactory::retrieveBean($template->module_name, $row['id']
             //BEGIN SUGARCRM flav=pro ONLY
             , array("disable_row_level_security" => $template->disable_row_level_security)
             //END SUGARCRM flav=pro ONLY

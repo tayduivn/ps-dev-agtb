@@ -192,6 +192,7 @@ $beanList['ReportMaker']  = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
 $beanList['Empty'] = 'EmptyBean';
 $beanList['TeamHierarchy'] = 'TeamHierarchy';
+$beanList['UpgradeHistory'] = 'UpgradeHistory';
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here

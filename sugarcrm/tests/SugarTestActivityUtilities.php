@@ -32,7 +32,7 @@ class SugarTestActivityUtilities
     {
         $time = mt_rand();
         $data = array('value' => 'SugarActivity' . $time);
-        $activity = new Activity();
+        $activity = BeanFactory::newBean('Activities');
         $activity->data = $data;
         if (!empty($new_id)) {
             $activity->new_with_id = true;
@@ -53,7 +53,7 @@ class SugarTestActivityUtilities
     public static function setCreatedActivity($activity_ids)
     {
         foreach ($activity_ids as $activity_id) {
-            $activity = new Activity();
+            $activity = BeanFactory::newBean('Activities');
             $activity->id = $activity_id;
             self::$_createdActivities[] = $activity;
         }

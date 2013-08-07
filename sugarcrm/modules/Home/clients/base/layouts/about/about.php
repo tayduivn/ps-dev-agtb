@@ -15,62 +15,71 @@
 
 $viewdefs['Home']['base']['layout']['about'] = array(
     'type' => 'simple',
-    'css_class' => 'main-pane',
+    'name' => 'about',
+    'css_class' => 'row-fluid',
     'components' => array(
         array(
-            'view' => 'about-headerpane',
-        ),
-        array(
             'layout' => array(
-                'type' => 'fluid',
+                'type' => 'simple',
+                'css_class' => 'main-pane span12',
                 'components' => array(
                     array(
-                        'layout' => array(
-                            'type' => 'simple',
-                            'span' => 12,
-                            'components' => array(
-                                array(
-                                    'view' => 'about-copyright',
-                                ),
-                            ),
-                        ),
+                        'view' => 'about-headerpane',
                     ),
-                ),
-            ),
-        ),
-        array(
-            'layout' => array(
-                'type' => 'fluid',
-                'components' => array(
                     array(
                         'layout' => array(
-                            'type' => 'simple',
-                            'span' => 4,
+                            'type' => 'fluid',
                             'components' => array(
                                 array(
-                                    'view' => 'about-resources',
+                                    'layout' => array(
+                                        'type' => 'simple',
+                                        'span' => 12,
+                                        'components' => array(
+                                            array(
+                                                'view' => 'about-copyright',
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),
                     ),
                     array(
                         'layout' => array(
-                            'type' => 'simple',
-                            'span' => 4,
+                            'type' => 'fluid',
                             'components' => array(
                                 array(
-                                    'view' => 'about-source-code',
+                                    'layout' => array(
+                                        'type' => 'simple',
+                                        'span' => 4,
+                                        'components' => array(
+                                            array(
+                                                'view' => 'about-resources',
+                                            ),
+                                        ),
+                                    ),
                                 ),
-                            ),
-                        ),
-                    ),
-                    array(
-                        'layout' => array(
-                            'type' => 'simple',
-                            'span' => 4,
-                            'components' => array(
                                 array(
-                                    'view' => 'about-language-packs',
+                                    'layout' => array(
+                                        'type' => 'simple',
+                                        'span' => 4,
+                                        'components' => array(
+                                            array(
+                                                'view' => 'about-source-code',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                                array(
+                                    'layout' => array(
+                                        'type' => 'simple',
+                                        'span' => 4,
+                                        'components' => array(
+                                            array(
+                                                'view' => 'about-language-packs',
+                                            ),
+                                        ),
+                                    ),
                                 ),
                             ),
                         ),

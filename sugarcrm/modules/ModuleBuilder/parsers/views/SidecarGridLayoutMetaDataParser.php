@@ -27,9 +27,9 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
      * Invalid field types for various sidecar clients. Format can be either
-     * $client => array('type', 'type') or 
+     * $client => array('type', 'type') or
      * $client => array('edit' => array('type', 'type'), 'detail' => array('type', 'type'))
-     * 
+     *
      * @var array
      * @protected
      */
@@ -43,18 +43,18 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     );
 
     protected $extraPanelMeta = array();
-    
+
     protected $headerPanelMeta = array();
 
     protected $maxSpan = 12;
 
     protected $defaultColumns = 2;
-    
+
     /**
      * Array of named panels for record views. If a panel does not have a label
      * but does have a name and the name is an index of this array, the corresponding
      * label will be used. If a panel has a label the label will be used.
-     * 
+     *
      * @var array
      */
     protected $panelLabels = array(
@@ -62,7 +62,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         'panel_body' => 'LBL_RECORD_BODY',
         'panel_hidden' => 'LBL_RECORD_SHOWMORE',
     );
-        
+
     /**
      * Checks for the existence of the view variable for portal metadata
      *
@@ -135,10 +135,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             sugar_die(get_class($this) . ': missing panels section in layout definition (case sensitive)');
         }
     }
-    
+
     /**
      * Validates a field
-     * 
+     *
      * @param string $key The name of the field
      * @param array $def The defs for this field
      * @return bool
@@ -150,15 +150,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 return $this->$method($key, $def);
             }
         }
-        
+
         return parent::isValidField($key, $def);
     }
-    
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Validates portal only fields. Runs the field through a preliminary check
      * of view type and field type before passing the field on to the parent validator.
-     * 
+     *
      * @param string $key The field
      * @param array $def Teh field def for this field
      * @return bool
@@ -166,22 +166,22 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     public function isValidFieldPortal($key, $def) {
         if (isset($this->invalidTypes['portal'])) {
             $view = str_replace(array('portal', 'view'), '', $this->_view);
-            
+
             if (isset($this->invalidTypes['portal'][$view])) {
                 $blacklist = $this->invalidTypes['portal'][$view];
             } else {
                 $blacklist = $this->invalidTypes['portal'];
             }
-            
+
             if (!isset($def['type']) || in_array($def['type'], $blacklist)) {
                 return false;
             }
-        } 
-        
+        }
+
         return parent::isValidField($key, $def);
     }
     //END SUGARCRM flav=ent ONLY
-    
+
     /**
      * helper to pack a row with $cols members of [empty]
      * @param $row
@@ -207,15 +207,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         if (!is_array($field)) {
             return $field;
         }
-        
+
         if (isset($field['name'])) {
             return $field['name'];
-        } 
-        
+        }
+
         if (isset($field['type'])) {
             return $field['type'];
         }
-        
+
         return $this->FILLER;
     }
 
@@ -243,10 +243,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
     /**
      * Manipulates the amount of space a field takes up in studio based on colspan
-     * 
-     * Returns an array of cells to be appended to the fieldlist. Default span 
+     *
+     * Returns an array of cells to be appended to the fieldlist. Default span
      * units to 6 or half of a 12 unit space with 2 columns
-     * 
+     *
      * @param string|array $field The field to calculate space for
      * @param integer $colspan The colspan for the field
      * @param integer $singleSpanUnit The size of a single field span
@@ -289,7 +289,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 unset($this->_originalViewDef[$originalKey]['span']);
             }
         }
-        
+
         // Set up the panel index so we know where the header panel meta needs to
         // be injected if there is header panel meta to be injected
         $panelIndex = 0;
@@ -302,7 +302,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $canonicalPanels[$panelIndex] = $this->headerPanelMeta;
                 $panelIndex++;
             }
-            
+
             $fields = array();
             // get number of panel columns default to 2
             $panelColumns = 2;
@@ -319,7 +319,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                         $offset++; // count our columns
                         continue;
                     }
-                    
+
                     $fieldCount = count($row);
 
                     // dump out the last field we stored and reset column count
@@ -331,7 +331,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                     // filler => ''
                     if ($this->isFiller($cell)) {
-                        // 58308 - Adjust displayColumns on the last field if it 
+                        // 58308 - Adjust displayColumns on the last field if it
                         // is set and we are an end column
                         if ($panelColumns - $offset === 1) {
                             $lastRowIndex = count($fields) - 1;
@@ -385,11 +385,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
             $newPanel['fields'] = $fields;
             $canonicalPanels[$panelIndex] = $newPanel;
-            
+
             // Increment the panel index
             $panelIndex++;
         }
-        
+
         return $canonicalPanels;
     }
 
@@ -410,11 +410,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // $panels[label for panel] = fields of panel in rows,cols format
 
         $internalPanels = array();
-        
+
         // Get the header panel index for use in removing and injecting the header
         // panel meta when editing record views
         $this->headerPanelIndex = $this->getHeaderPanelIndex($panels);
-        
+
         foreach ($panels as $n => $panel) {
             // If we are on a record view we need to hide the header panel from
             // studio. This is to prevent breaking the client side application.
@@ -422,7 +422,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 $this->headerPanelMeta = $panel;
                 continue;
             }
-            
+
             // Handle panel labeling...
             $pLabel = $n;
             if (!empty($panel['label'])) {
@@ -432,7 +432,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     $pLabel = $this->panelLabels[$panel['name']];
                 }
             }
-            
+
             // Get panel column value
             $panelColumns = 2;
             if (!empty($panel['columns'])) {
@@ -453,7 +453,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 if (is_array($field) && !empty($field['span'])) {
                     $colspan = floor($field['span']/$this->maxSpan*$panelColumns);
                 } else {
-                    // Simple aesthetics... make the name field a full span but 
+                    // Simple aesthetics... make the name field a full span but
                     // only if this is the header panel
                     if (isset($panel['name']) && $panel['name'] == 'panel_header' && $field == 'name') {
                         $colspan = $panelColumns;
@@ -482,7 +482,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
                 // Gets the proper field name to insert from the field def
                 $fieldToInsert = $this->getFieldToInsert($field);
-                
+
                 // add field to row + enough (empty) to make it to colspan
                 $row[] = $this->_addInternalCell($fieldToInsert);
                 $this->_packRowWithEmpty($row, $colspan-1);
@@ -507,13 +507,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      * @param $viewdef
      * @return array array of fields, indexed by field name
      */
-    protected function getFieldsFromLayout($viewdef)
+    public function getFieldsFromPanels($panels)
     {
-        $panels = $this->getPanelsFromViewDef($viewdef);
-
         // not canonical form... try parent method
         if (!isset($panels[0]['fields'])) {
-            return parent::getFieldsFromLayout($viewdef);
+            return parent::getFieldsFromPanels($panels);
         }
 
         $out = array();
@@ -526,8 +524,11 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 } else {
                     $name = '';
                 }
-                
-                $out[$name] = $field;
+                if(empty($name)) {
+                    $out[] = $field;
+                } else {
+                    $out[$name] = $field;
+                }
             }
         }
         return $out;
@@ -535,7 +536,7 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
 
     /*
      * Remove a field from the layout
-     * 
+     *
      * @param string $fieldName Name of the field to remove
      * @return boolean True if the field was removed; false otherwise
      */
@@ -543,42 +544,30 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     {
         // Set the return result
         $result = false;
-        
-        // Get our original view defs
-        $originalDefs = $this->getImplementation()->getOriginalViewdefs();
-        
-        // Get the panel label
-        $nestedDefs = $this->getNestedDefs($originalDefs, $this->_view);
-        $panelKey = key($nestedDefs['panels']);
-        
-        // Handle labels the same way that the converter does
-        $label = $panelKey;
-        if (isset($nestedDefs['panels'][$panelKey]['label'])) {
-            $label = $nestedDefs['panels'][$panelKey]['label'];
-        } elseif (isset($nestedDefs['panels'][$panelKey]['name'])) {
-            if (isset($this->panelLabels[$nestedDefs['panels'][$panelKey]['name']])) {
-                $label = $this->panelLabels[$nestedDefs['panels'][$panelKey]['name']];
-            }
-        }
-        
+
         // Loop and find
-        if (isset($this->_viewdefs['panels'][$label]) && is_array($this->_viewdefs['panels'][$label])) {
-            foreach ($this->_viewdefs['panels'][$label] as $rowIndex => $row) {
+        foreach ( $this->_viewdefs [ 'panels' ] as $panelID => $panel ) {
+            foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     foreach ($row as $fieldIndex => $field) {
                         if ($field == $fieldName) {
-                            $this->_viewdefs['panels'][$label][$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
+                            $panel[$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
                             $result = true;
                             break 2;
                         }
                     }
                 }
             }
-            
+
+            if(!$result) {
+                // we didn't find anything, no need to rearrange panels
+                continue;
+            }
+
             // Now check to see if any of our rows are totally empty, and if they
             // are, pluck them completely
             $newRows = array();
-            foreach ($this->_viewdefs['panels'][$label] as $rowIndex => $row) {
+            foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     $cols = count($row);
                     $empties = 0;
@@ -587,21 +576,21 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                             $empties++;
                         }
                     }
-                    
+
                     if ($empties == $cols) {
                         // All empties, remove it and keep looping
-                        //unset($this->_viewdefs['panels'][$label][$rowIndex]);
                         continue;
                     }
-                    
+
                     $newRows[] = $row;
                 }
             }
-            
-            $this->_viewdefs['panels'][$label] = $newRows;
+
+            $this->_viewdefs['panels'][$panelID] = $newRows;
+            return true;
         }
-        
-        return $result;
+
+        return false;
     }
 
     /**
@@ -614,10 +603,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             MetaDataManager::clearAPICache(false);
         }
     }
-    
+
     /**
      * Removes a field from the available field array
-     * 
+     *
      * @param array $availableFields The available fields array
      * @param string $field The field name to remove
      */
@@ -626,24 +615,24 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         $remove = '';
         if (is_string($field)) {
             $remove = $field;
-            
+
         } elseif (is_array($field) && isset($field['name'])) {
             $remove = $field['name'];
         }
-        
+
         if ($remove) {
             // Only remove a field once.
             if (empty($this->fieldsRemovedFromAvailability[$remove])) {
                 // Remove the field first
                 unset($availableFields[$remove]);
-                
+
                 // Mark this field as having been removed. This prevents endless
                 // recursion when a combination field is named after an actual
                 // field in the view defs
                 $this->fieldsRemovedFromAvailability[$remove] = true;
-                
+
                 // Now see if this field is a combination field in the original defs
-                if (isset($this->_originalViewDef[$remove]) 
+                if (isset($this->_originalViewDef[$remove])
                     && is_array($this->_originalViewDef[$remove])
                     && isset($this->_originalViewDef[$remove]['fields'])
                     && is_array($this->_originalViewDef[$remove]['fields'])
@@ -655,10 +644,10 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             }
         }
     }
-    
+
     /**
      * Gets valid field defs for a field name
-     * 
+     *
      * @param  string $fieldname The fieldname to get the defs for
      * @return array
      */
@@ -670,23 +659,23 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
             } elseif(isset($fieldname['type'])) {
                 $field = $fieldname['type'];
             }
-            
+
             if (isset($field)) {
                 return $this->getViewDefFromFieldname($field);
             }
-            
-            // This indicates an empty or non field field that is not in the 
+
+            // This indicates an empty or non field field that is not in the
             // right format. This should be handled by the code that calls this.
             return false;
         }
-        
+
         return parent::getViewDefFromFieldname($fieldname);
     }
-    
+
     /**
      * Gets a proper field name or filler for a field def when inserting rows in
      * _convertFromCanonicalForm
-     * 
+     *
      * @param  array|string $field The field def or field name to get a value from
      * @return string A field name or a filler cell
      */
@@ -695,39 +684,39 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         // Empty fields just need to be filler
         if (empty($field)) {
             return $this->FILLER;
-        } 
-        
+        }
+
         // Arrays need to be inspected a little closer
         if (is_array($field)) {
             // Handle special fields like fieldset
             if (isset($field['type'])) {
                 if ($field['type'] == 'fieldset' && isset($field['fields']) && isset($field['name'])) {
                     return $field['name'];
-                } 
-                
+                }
+
                 // This handles non-field fields like favorite and follow
                 if (!empty($field['readonly'])) {
                     return $field['type'];
                 }
             }
-            
+
             // This handles normal condition named fields and filler fields
             if (empty($field['name'])) {
                 $GLOBALS['log']->error("Possible malformed metadata in record view defs for {$this->_moduleName}: " . print_r($field, true));
                 return $this->FILLER;
             }
-            
+
             return $field['name'];
-        } 
-        
+        }
+
         // Non empty non arrays just return the field
         return $field;
     }
-    
+
     /**
      * Gets the index for the panel that is the header panel. Used in record
      * view since header panels in record view are not editable in studio.
-     * 
+     *
      * @param array $panels The panels array
      * @return string
      */
@@ -742,17 +731,17 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                 break;
             }
         }
-        
+
         return $panelIndex;
     }
-    
+
     /**
      * Checks any hidden panels (panels that should not be editable) and removes
      * any fields from the available fields array that are in the hidden panels.
-     * 
+     *
      * NOTE: This is called in getAvailableFields, which is defined
      * in the parent class.
-     * 
+     *
      * @param array $availableFields Current array of available fields
      */
     protected function unsetHiddenPanelFields(&$availableFields)

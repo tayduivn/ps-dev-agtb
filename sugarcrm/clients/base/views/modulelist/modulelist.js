@@ -281,7 +281,7 @@
 
     completeMenuMeta: function(module_list) {
         var actions, meta, returnList = [], self = this, listLength,
-            fullModuleList = app.metadata.getFullModuleList()  ;
+            fullModuleList = app.metadata.getFullModuleList();
         _.each(module_list, function(value, key) {
 
             if (!_.isString(fullModuleList[value])) {

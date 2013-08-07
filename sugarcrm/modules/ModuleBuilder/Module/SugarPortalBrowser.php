@@ -99,17 +99,17 @@ class SugarPortalBrowser
 
         return false;
     }
-    
+
     /**
      * Checks to see if a module is studio enabled for portal.
-     * 
+     *
      * The default expectation is false unless a module is explicitly true or
      * does not set an expectation.
-     * 
+     *
      * @param string $module The name of the module
      * @return boolean
      */
-    protected function isStudioEnabled($module) 
+    protected function isStudioEnabled($module)
     {
         global $dictionary;
         

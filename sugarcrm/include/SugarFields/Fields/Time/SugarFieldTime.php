@@ -49,12 +49,21 @@ class SugarFieldTime extends SugarFieldBase {
     }
 
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
-        global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
             $bean->$field = '';
             return;
         }
+        $bean->$field = $this->convertFieldForDB($inputData[$prefix.$field]);
+    }
 
-        $bean->$field = $timedate->to_db_time($inputData[$prefix.$field], false);
+    /**
+     * Convert a field for a DB
+     * @param string $value time
+     * @return string
+     */
+    public function convertFieldForDB($value)
+    {
+        $timedate = TimeDate::getInstance();
+        return $timedate->to_db_time($value, false);
     }
 }
