@@ -237,7 +237,10 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_DISCOUNT_RATE_USDOLLAR',
             'type' => 'decimal',
             'len' => '26,6',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'discount_select' => array(
             'name' => 'discount_select',
@@ -261,7 +264,10 @@ $dictionary['RevenueLineItem'] = array(
             'len' => '26,6',
             'group' => 'deal_calc',
             'comment' => 'deal_calc_usdollar',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'list_price' => array(
             'name' => 'list_price',
@@ -279,7 +285,10 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Cost expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'discount_usdollar' => array(
             'name' => 'discount_usdollar',
@@ -289,7 +298,10 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Discount price expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'list_usdollar' => array(
             'name' => 'list_usdollar',
@@ -299,7 +311,10 @@ $dictionary['RevenueLineItem'] = array(
             'group' => 'list_price',
             'len' => '26,6',
             'comment' => 'List price expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'currency_id' => array(
             'name' => 'currency_id',
@@ -459,7 +474,10 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Book value expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'book_value_date' => array(
             'name' => 'book_value_date',

@@ -219,7 +219,13 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 // to $_REQUEST['view']
                 $view = $this->view;
                 
-            	// fix for removing email1 field from studio popup searchview - bug 42902
+                // Handle client specific studio setting for a field
+                $clientRules = AbstractMetaDataParser::getClientStudioValidation($def['studio'], $view, $this->client);
+                if ($clientRules !== null) {
+                    return $clientRules;
+                }
+                
+                // fix for removing email1 field from studio popup searchview - bug 42902
                 if($view == 'popupsearch' && $key == 'email1')
                 {	
             		return false;

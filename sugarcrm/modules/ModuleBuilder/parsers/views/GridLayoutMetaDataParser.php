@@ -1024,7 +1024,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
      * @return bool
      */
     protected function isValidField($key, $def) {
-        return GridLayoutMetaDataParser::validField ( $def, $this->_view );
+        return GridLayoutMetaDataParser::validField ( $def, $this->_view, $this->client );
     }
 
     /**
