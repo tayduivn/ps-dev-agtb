@@ -404,6 +404,23 @@ class ForecastManagerWorksheet extends SugarBean
 
     }
 
+    /**
+     * Override save so we always set the currency_id and base_rate to the default system currency
+     *
+     * @override
+     * @param bool $check_notify
+     * @return String
+     */
+    public function save($check_notify = false)
+    {
+        // make sure the currency and base_rate are always set to the base currency for the manager worksheets
+        $currency = SugarCurrency::getBaseCurrency();
+        $this->currency_id = $currency->id;
+        $this->base_rate = $currency->conversion_rate;
+
+        return parent::save($check_notify);
+    }
+
     public function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
