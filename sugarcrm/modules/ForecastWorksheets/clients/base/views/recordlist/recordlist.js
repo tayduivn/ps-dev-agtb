@@ -530,6 +530,11 @@
                     return false;
                 }, this);
             }
+        } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
+            // since the layout is not visible, lets wait for it to become visible
+            this.layout.once('show', function() {
+                this.checkForDraftRows(lastCommitDate);
+            }, this);
         }
     },
 
