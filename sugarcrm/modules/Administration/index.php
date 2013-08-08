@@ -33,7 +33,7 @@ global $current_user;
 global $sugar_flavor;
 
 
-if (!is_admin($current_user) && !is_admin_for_any_module($current_user))
+if (!$current_user->isDeveloperForAnyModule())
 {
    sugar_die("Unauthorized access to administration.");
 }

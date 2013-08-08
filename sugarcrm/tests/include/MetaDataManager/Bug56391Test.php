@@ -58,6 +58,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // because the user is not an admin the user should only have view and list access
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
             'create' => 'no',
             'edit' => 'no',
             'delete' => 'no',
@@ -179,6 +180,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'admin' => 'no',
+            'developer' => 'no',
             'create' => 'no',
             'edit' => 'no',
             'delete' => 'no',
@@ -222,6 +224,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             'admin' => 'no',
+            'developer' => 'no',
             'delete' => 'no',
         );
 
@@ -255,6 +258,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $expected_bean_result['access'] = array(
             'admin' => 'no',
+            'developer' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
         );
@@ -297,6 +301,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $expected_bean_result['access'] = array(
             'admin' => 'no',
+            'developer' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
         );
@@ -332,6 +337,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $expected_bean_result['access'] = array(
             'admin' => 'no',
+            'developer' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
         );
@@ -365,6 +371,7 @@ class Bug56391Test extends Sugar_PHPUnit_Framework_TestCase
 
         $expected_bean_result['no_access'] = array(
             'admin' => 'no',
+            'developer' => 'no',
             'delete' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
