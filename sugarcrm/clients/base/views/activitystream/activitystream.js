@@ -348,17 +348,19 @@
         var data = this.model.get('data'),
             $embed = this.$('.embed'),
             $iframes = $embed.find('iframe'),
-            videoCount = 0;
+            videoCount = 0,
+            embedWidth;
 
         if (_.isArray(data.embeds)) {
+            embedWidth = $embed.width();
             _.each(data.embeds, function(embed) {
                 var $iframe, iframeWidth, iframeHeight;
 
-                if ((embed.type === 'video') && ($iframes.length > 0)) {
+                if (((embed.type === 'video') || (embed.type === 'rich')) && ($iframes.length > 0)) {
                     $iframe = $iframes.eq(videoCount);
 
-                    iframeWidth = Math.min($embed.width(), 480);
-                    iframeHeight = parseInt($iframe.prop('height'), 10) * (iframeWidth / parseInt($iframe.prop('width'), 10));
+                    iframeWidth = Math.min(embedWidth, 480);
+                    iframeHeight = parseInt(embed.height, 10) * (iframeWidth / parseInt(embed.width, 10));
 
                     $iframe.prop({
                         width: iframeWidth,

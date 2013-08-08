@@ -106,7 +106,12 @@
      */
     getPost: function() {
         var post = this.unformatTags(this.$('div.sayit'));
-        post.value = post.value.replace(this.nbspRegExp, ' '); //replace all non-breaking spaces with a regular space
+
+        // Need to replace all non-breaking spaces with a regular space because the EmbedLinkService.php
+        // treats spaces and non-breaking spaces differently. Having non-breaking spaces causes to parse
+        // URLs incorrectly.
+        post.value = post.value.replace(this.nbspRegExp, ' ');
+
         return post;
     },
 

@@ -20,6 +20,8 @@ class EmbedLinkService
 
     private static $cache = array(); //cache curl results to prevent retrieving web sites twice
 
+    private static $supportedOEmbedTypes = array('video','rich',);
+
     /**
      * Get all embed data of links in a given string
      *
@@ -148,8 +150,8 @@ class EmbedLinkService
         if ($jsonString && (strlen($jsonString) > 0)) {
             $jsonOEmbed = json_decode($jsonString);
 
-            if ($jsonOEmbed->type === 'video') {
-                $embedData['type'] = 'video';
+            if (in_array($jsonOEmbed->type, self::$supportedOEmbedTypes)) {
+                $embedData['type'] = $jsonOEmbed->type;
                 $embedData['html'] = $jsonOEmbed->html;
                 $embedData['width'] = $jsonOEmbed->width;
                 $embedData['height'] = $jsonOEmbed->height;
@@ -175,8 +177,8 @@ class EmbedLinkService
             $xmlOEmbed->loadXML($xmlString);
 
             $typeElements = $xmlOEmbed->getElementsByTagName('type');
-            if ((count($typeElements) > 0) && ($typeElements->item(0)->nodeValue === 'video')) {
-                $embedData['type'] = 'video';
+            if ((count($typeElements) > 0) && in_array($typeElements->item(0)->nodeValue, self::$supportedOEmbedTypes)) {
+                $embedData['type'] = $typeElements->item(0)->nodeValue;
 
                 $htmlElements = $xmlOEmbed->getElementsByTagName('html');
                 if (count($htmlElements) > 0) {

@@ -11,11 +11,12 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-require_once 'include/EmbedLinkService.php';
-
 class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkInTextButNothingReturnedFromFetch_ReturnsNoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -28,6 +29,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkInTextButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -40,6 +44,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_NoLinksInText_ReturnsNoEmbedData()
     {
         $actual = EmbedLinkService::get('foo bar');
@@ -47,6 +54,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_TwoImageLinksInText_ReturnsTwoImageEmbedData()
     {
         $actual = EmbedLinkService::get('http://www.foo.com/images/bar.jpg https://www.sugarcrm.com/logo/logo.gif');
@@ -58,6 +68,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('https://www.sugarcrm.com/logo/logo.gif', $actual['embeds'][1]['src'], 'Should have the image url');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkWithVideoJsonEmbedLink_ReturnsVideoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -79,6 +92,33 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(100, $actual['embeds'][0]['height'], 'Should return the correct height');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
+    public function testGet_OneLinkWithRichJsonEmbedLink_ReturnsRichEmbedData()
+    {
+        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
+        $mockClass::staticExpects($this->at(0))
+            ->method('fetch')
+            ->with('http://www.sugarcrm.com')
+            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
+        $mockClass::staticExpects($this->at(1))
+            ->method('fetch')
+            ->with('http://www.foo.com')
+            ->will($this->returnValue('{"type":"rich","html":"<embed src=www.foo.com>","width":200,"height":100}'));
+
+        $actual = $mockClass::get('http://www.sugarcrm.com');
+
+        $this->assertEquals(1, count($actual['embeds']), 'Should return one set of embed data');
+        $this->assertEquals('rich', $actual['embeds'][0]['type'], 'Should be video type');
+        $this->assertEquals('<embed src=www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+        $this->assertEquals(200, $actual['embeds'][0]['width'], 'Should return the correct width');
+        $this->assertEquals(100, $actual['embeds'][0]['height'], 'Should return the correct height');
+    }
+
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkWithVideoXmlEmbedLink_ReturnsVideoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -100,6 +140,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('100', $actual['embeds'][0]['height'], 'Should return the correct height');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkInTextButNoEmbedLinks_ReturnsNoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -113,6 +156,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkWithVideoJsonEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -130,6 +176,9 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
     }
 
+    /**
+     * @covers EmbedLinkService::get
+     */
     public function testGet_OneLinkWithVideoXmlEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
@@ -151,11 +200,12 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
      * Test regexp that finds all URLs in an input text
      *
      * @dataProvider findAllUrls_DataProvider
+     * @covers EmbedLinkService::findAllUrls
      */
     public function testFindAllUrls_InputText_ReturnsCorrectResults($input, $count)
     {
-        $testClass = new TestClass();
-        $actual = $testClass::findAllUrlsTestMethod($input);
+        $embedLinkService = new EmbedLinkTestServiceProxy();
+        $actual = $embedLinkService::findAllUrlsTestMethod($input);
 
         $this->assertEquals($count, count($actual));
     }
@@ -182,7 +232,7 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-class TestClass extends EmbedLinkService
+class EmbedLinkTestServiceProxy extends EmbedLinkService
 {
     public static function findAllUrlsTestMethod($text)
     {

@@ -48,6 +48,6 @@ $class_map = array(
     'Audit' => 'modules/Audit/Audit.php',
     'Link2' => 'data/Link2.php',
     'SugarJobQueue' => 'include/SugarQueue/SugarJobQueue.php',
-    'Link2Tag' => 'include/Link2Tag.php',
+    'EmbedLinkService' => 'include/EmbedLinkService.php',
 );
 

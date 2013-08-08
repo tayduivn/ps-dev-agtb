@@ -32,7 +32,9 @@ describe("Activity Stream View", function() {
             data: {
                 embeds: [{
                     type: "video",
-                    html: "<iframe width='200px' height='100px'></iframe>"
+                    html: "<iframe width='200px' height='100px'></iframe>",
+                    width: 200,
+                    height: 100
                 }]
             }
         });
