@@ -10,6 +10,10 @@
 
     plugins: ['quicksearchfilter'],
 
+    events: {
+        'click .add-on.icon-remove': function() { this.trigger('filter:clear:quicksearch'); }
+    },
+
     /**
      * @override
      * @param {Object} opts
@@ -228,6 +232,9 @@
      * @param {Object} dynamicFilterDef(optional)
      */
     applyFilter: function(query, dynamicFilterDef) {
+        //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
+        this._toggleClearQuickSearchIcon(!_.isEmpty(query));
+
         var self = this,
             ctxList = this.getRelevantContextList();
         _.each(ctxList, function(ctx) {
@@ -487,6 +494,18 @@
         }
 
         return meta;
+    },
+
+    /**
+     * Append or remove an icon to the quicksearch input so the user can clear the search easily
+     * @param {Boolean} addIt TRUE if you want to add it, FALSO to remove
+     */
+    _toggleClearQuickSearchIcon: function(addIt) {
+        if (addIt && !this.$('.add-on.icon-remove')[0]) {
+            this.$el.append('<i class="add-on icon-remove"></i>');
+        } else if (!addIt) {
+            this.$('.add-on.icon-remove').remove();
+        }
     },
 
     /**
