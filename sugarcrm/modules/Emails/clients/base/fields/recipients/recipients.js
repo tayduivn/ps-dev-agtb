@@ -89,7 +89,8 @@
      * @param {Object} query Possible attributes can be found in select2's documentation.
      */
     loadOptions: _.debounce(function(query) {
-        var data = {
+        var self = this,
+            data = {
                 results: [],
                 // only show one page of results
                 // if more results are needed, then the address book should be used
@@ -109,8 +110,12 @@
         options.max_num = 10;
         // create the callbacks
         callbacks.success = function(result) {
-            // add the recipients that were found via the select2 callback
-            data.results = result.records;
+            // the api returns objects formatted such that sidecar can convert them to beans
+            // we need the records to be in a standard object format (@see RecipientsField::format) and the records
+            // need to be converted into beans before we can format them
+            var records = app.data.createMixedBeanCollection(result.records);
+            // format and add the recipients that were found via the select2 callback
+            data.results = self.format(records);
         };
         callbacks.error = function() {
             // don't add any recipients via the select2 callback
