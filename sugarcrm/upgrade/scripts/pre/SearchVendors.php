@@ -11,21 +11,21 @@ class SugarUpgradeSearchVendors extends UpgradeScript
     public $order = 50;
 
     public $directories = array(
-        'include/HTMLPurifier',
-        'include/HTTP_WebDAV_Server',
-        'include/Pear',
-        'include/Smarty',
+        'include\/HTMLPurifier',
+        'include\/HTTP_WebDAV_Server',
+        'include\/Pear',
+        'include\/Smarty',
         'XTemplate',
         'Zend',
-        'include/lessphp',
+        'include\/lessphp',
         'log4php',
-        'include/nusoap',
-        'include/oauth2-php',
-        'include/pclzip',
-        'include/reCaptcha',
-        'include/tcpdf',
-        'include/ytree',
-        'include/SugarSearchEngine/Elastic/Elastica',
+        'include\/nusoap',
+        'include\/oauth2-php',
+        'include\/pclzip',
+        'include\/reCaptcha',
+        'include\/tcpdf',
+        'include\/ytree',
+        'include\/SugarSearchEngine\/Elastic\/Elastica',
 
     );
 
@@ -54,10 +54,11 @@ class SugarUpgradeSearchVendors extends UpgradeScript
                 continue;
             }
             // check for any occurrence of the directories and flag them
-            $count = 0;
-            str_replace($this->directories, '', file_get_contents($file), $count);
-            if ($count > 0) {
-                $this->filesToFix[] = $file;
+            $fileContents = file_get_contents($file);
+            foreach ($this->directories AS $directory) {
+                if (preg_match("/(include|require|require_once|include_once)[\s('\"]*({$directory})/",$fileContents) > 0) {
+                    $this->filesToFix[] = $file;
+                }
             }
         }
     }
@@ -88,11 +89,17 @@ class SugarUpgradeSearchVendors extends UpgradeScript
             if ($item->isDot()) {
                 continue;
             }
+
             $filename = $item->getFilename();
+            $fileParts = pathinfo($path . '/' . $filename);
+
+            $extension = !empty($fileParts['extension']) ? $fileParts['extension'] : '';
             if ($item->isDir() && in_array($filename, self::$excludedScanDirectories)) {
-                    continue;
+                continue;
             } elseif ($item->isDir()) {
                 $data[$filename] = self::scanDir($path . $filename . "/");
+            } elseif ($extension != 'php') {
+                continue;
             } else {
                 $data[$filename] = $path . $filename;
             }
