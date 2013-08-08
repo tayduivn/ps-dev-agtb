@@ -28,8 +28,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                                 'name' => 'forecastdetails-record',
                                 'label' => 'Forecast',
                             ),
-                            'context' =>
-                            array(
+                            'context' => array(
                                 'module' => 'Forecasts',
                             ),
                             'width' => 12,
