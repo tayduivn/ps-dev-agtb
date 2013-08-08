@@ -7,8 +7,8 @@
         {{/if}}
     </a>
 {{else}}
-    <div class="label label-module label-{{model.attributes.parent_type}} pull-left" rel="tooltip" data-container="body" data-placement="right" data-title="{{moduleIconToolTip model.attributes.parent_type}}">
-        {{moduleIconLabel model.attributes.parent_type}}
+    <div class="label label-module label-{{model.attributes.display_parent_type}} pull-left" rel="tooltip" data-container="body" data-placement="right" data-title="{{moduleIconToolTip model.attributes.display_parent_type}}">
+        {{moduleIconLabel model.attributes.display_parent_type}}
     </div>
 {{/eq}}
 <p>
