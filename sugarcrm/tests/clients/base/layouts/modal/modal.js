@@ -106,7 +106,8 @@ xdescribe("Base.Layout.Modal", function() {
             layout: parent
         });
         var stub = sinon.stub(layout, "loadData", function(){
-            this._dataFetched = true;
+            var objectToFetch = context.get("modelId") ? context.get("model") : context.get("collection");
+            objectToFetch.dataFetched = false;
         });
 
         //Add one layout component

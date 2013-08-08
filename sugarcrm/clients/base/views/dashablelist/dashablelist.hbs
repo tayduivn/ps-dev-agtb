@@ -41,7 +41,7 @@
 {{/each}}
 {{#unless collection.length}}
     <div class="block-footer">
-        {{#if _dataFetched}}
+        {{#if collection.dataFetched}}
             {{str "LBL_LISTVIEW_NO_RECORDS"}}
         {{else}}
             {{str "LBL_LOADING"}}

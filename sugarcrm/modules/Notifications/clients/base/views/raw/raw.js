@@ -72,15 +72,11 @@
      * {@inheritdoc}
      */
     bindDataChange: function () {
-        if (!this.collection) {
-            return;
+        if (this.collection) {
+            this.collection.on('reset', function() {
+                this.render();
+            }, this);
         }
-
-        this.collection.once('reset', function () {
-            this._dataFetched = true;
-        }, this);
-
-        this.collection.on('reset', this.render, this);
     },
 
     /**
