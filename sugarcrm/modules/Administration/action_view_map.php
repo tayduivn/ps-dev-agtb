@@ -19,7 +19,6 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$action_view_map['themesettings'] = 'themesettings';
 $action_view_map['repair'] = 'repair';
 $action_view_map['configuretabs'] = 'configuretabs';
 //$action_view_map['configureajaxui'] = 'configureajaxui';
