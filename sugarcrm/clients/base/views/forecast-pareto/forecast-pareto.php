@@ -21,7 +21,12 @@ $viewdefs['base']['view']['forecast-pareto'] = array(
             'preview' => array(),
             'filter' => array(
                 'module' => array(
-                    'Home'
+                    'Home',
+                    'Opportunities',
+                    'RevenueLineItems'
+                ),
+                'view' => array(
+                    'record'
                 )
             )
         )

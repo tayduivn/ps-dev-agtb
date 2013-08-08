@@ -40,7 +40,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
 
         field = SugarTest.createField('base', 'paretoChart', 'forecast-pareto-chart', 'def', 'Forecasts', model);
 
-        field.serverData = {
+        field._serverData = {
             'title': 'Test',
             'labels': [],
             'data': [
@@ -63,7 +63,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
 
     describe('adjustProbabilityLabels', function() {
         beforeEach(function() {
-            field.serverData = {
+            field._serverData = {
                 'title': 'Test',
                 'labels': [],
                 'data': [
@@ -113,8 +113,8 @@ describe('Base.Fields.ForecastParetoChart', function() {
         it('should set 3 probability labels in the correct order', function() {
             field.adjustProbabilityLabels();
 
-            expect(_.keys(field.serverData.labels.probability).length).toEqual(3);
-            expect(field.serverData.labels.probability).toEqual({ 10: 10, 15: 15, 20: 20 });
+            expect(_.keys(field._serverData.labels.probability).length).toEqual(3);
+            expect(field._serverData.labels.probability).toEqual({ 10: 10, 15: 15, 20: 20 });
         });
     });
 
@@ -157,7 +157,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             });
 
             field.model.set('dataset', 'likely', {silent: true});
-            field.serverData = {
+            field._serverData = {
                 'title': 'Test',
                 'quota': 5,
                 'labels': {
@@ -235,7 +235,7 @@ describe('Base.Fields.ForecastParetoChart', function() {
             field.model.set('dataset', 'likely', {silent: true});
             field.model.set('group_by', 'forecast');
             field.model.set('ranges', ['include']);
-            field.serverData = {
+            field._serverData = {
                 'title': 'Test',
                 'labels': {
                     forecast: {

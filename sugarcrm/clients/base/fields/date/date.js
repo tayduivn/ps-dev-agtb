@@ -112,7 +112,7 @@
         if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".datepicker"));
         }
-        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane' : 'div#content .main-pane';
+        var appendTarget = this.$el.parents('div#drawers').length ? 'div#drawers .main-pane:first' : 'div#content .main-pane:first';
         /* TODO: Remove all this once satisfied language injection works properly ;)
         var spanishLangExample = {
             days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
@@ -185,16 +185,14 @@
             };
         }
         dateValue = this._getDatepickerValue();
-        // If date isn't good we set it raw and let sidecar catch upstream in validation. Also, we don't
-        // want to trigger a re-render so we use silent: true (but still trigger change on the model itself once done)
+        // If date isn't good we set it raw and let sidecar catch upstream in validation.
         if (this._verifyDateString(dateValue)) {
             this.leaveDirty = false;
-            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+            model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes));
         } else {
             this.leaveDirty = true;//leave invalid date value alone so sidecar can catch on validation
-            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes, {silent: true});
+            model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes);
         }
-        this.model.trigger("change");
     },
     _verifyDateString: function(value) {
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';

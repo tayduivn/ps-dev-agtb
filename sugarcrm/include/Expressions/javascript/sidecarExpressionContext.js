@@ -331,6 +331,9 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     },
     getAppListStrings : function(list) {
         return SUGAR.App.lang.getAppListStrings(list);
+    },
+    parseDate: function(date, type) {
+        return SUGAR.App.date.parse(date);
     }
 });
 

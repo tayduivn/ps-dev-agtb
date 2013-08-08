@@ -52,7 +52,8 @@
                 ranges: ctx.get('selectedRanges') || ['include'],
                 timeperiod_id: ctx.get('selectedTimePeriod'),
                 dataset: 'likely',
-                group_by: 'forecast'
+                group_by: 'forecast',
+                no_data: true
             });
         }
     },
@@ -96,21 +97,113 @@
             return false;
         }, this);
 
+        var collection;
+
         if (this.forecastWorksheetContext) {
             // listen for collection change events
-            var collection = this.forecastWorksheetContext.get('collection');
+            collection = this.forecastWorksheetContext.get('collection');
             if (collection) {
                 collection.on('change', this.repWorksheetChanged, this);
+                collection.on('reset', function(collection) {
+                    this.parseCollectionForData(collection);
+                }, this);
             }
         }
 
         if (this.forecastManagerWorksheetContext) {
             // listen for collection change events
-            var collection = this.forecastManagerWorksheetContext.get('collection');
+            collection = this.forecastManagerWorksheetContext.get('collection');
             if (collection) {
                 collection.on('change', this.mgrWorksheetChanged, this);
+                collection.on('reset', function(collection) {
+                    if(this.values.get('display_manager')) {
+                        this.parseCollectionForData(collection);
+                    }
+                }, this);
             }
         }
+    },
+
+    /**
+     * Figure out which way we need to parse a collection
+     *
+     * @param {Backbone.Collection} [collection]
+     */
+    parseCollectionForData: function(collection) {
+        // get the field
+        var field = this.getField('paretoChart');
+        if(!field.hasServerData()) {
+            // if the field does not have any data, wait for the xhr call to run and then just call this
+            // method again
+            field.once('chart:pareto:rendered', this.parseCollectionForData, this);
+            return;
+        }
+
+        if (this.values.get('display_manager')) {
+            this.parseManagerWorksheet(collection || this.forecastManagerWorksheetContext.get('collection'));
+        } else {
+            this.parseRepWorksheet(collection || this.forecastWorksheetContext.get('collection'));
+        }
+    },
+
+    parseRepWorksheet: function(collection) {
+        var field = this.getField('paretoChart'),
+            serverData = field.getServerData();
+
+        serverData.data = collection.map(function(item) {
+            var i = {
+                id: item.get('id'),
+                forecast: item.get('commit_stage'),
+                probability: item.get('probability'),
+                sales_stage: item.get('sales_stage'),
+                likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
+                date_closed_timestamp: parseInt(item.get('date_closed_timestamp'))
+            };
+
+            if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
+                i.best = app.currency.convertWithRate(item.get('best_case'), item.get('base_rate'));
+            }
+            if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
+                i.worst = app.currency.convertWithRate(item.get('worst_case'), item.get('base_rate'));
+            }
+
+            return i;
+        }, this);
+
+        field.setServerData(serverData, true);
+    },
+
+    parseManagerWorksheet: function(collection) {
+        var field = this.getField('paretoChart'),
+            serverData = field.getServerData();
+
+        serverData.data = collection.map(function(item) {
+            var i = {
+                id: item.get('id'),
+                user_id: item.get('user_id'),
+                name: item.get('name'),
+                likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
+                likely_adjusted: app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate')),
+                quota: app.currency.convertWithRate(item.get('quota'), item.get('base_rate'))
+            };
+
+            if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
+                i.best = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
+                i.best_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+            }
+            if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
+                i.worst = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
+                i.worst_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+            }
+
+            return i;
+        }, this);
+
+        serverData.quota = _.reduce(serverData.data, function(memo, item) {
+            return memo + item.quota;
+        }, 0);
+
+        field.setServerData(serverData);
     },
 
     /**
@@ -196,6 +289,7 @@
         var f = this.getField('paretoChart');
 
         if (!_.isUndefined(f)) {
+            f.once('chart:pareto:rendered', this.parseCollectionForData, this);
             f.renderChart(options);
         }
     },
@@ -217,8 +311,28 @@
             return;
         }
 
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                this.parseCollectionForData();
+            }
+        }, this);
+
         this.on('render', function() {
+            var f = this.getField('paretoChart'),
+                dt = this.layout.getComponent('dashlet-toolbar');
+
+            // if we have a dashlet-toolbar, then make it do the refresh icon while the chart is loading from the
+            // server
+            if (dt) {
+                f.before('chart:pareto:render', function() {
+                    this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh)
+                }, {}, dt);
+                f.on('chart:pareto:rendered', function() {
+                    this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault)
+                }, dt);
+            }
             this.toggleRepOptionsVisibility();
+            this.parseCollectionForData();
         }, this);
 
         var ctx = this.context.parent;
@@ -255,6 +369,7 @@
         }
         if (this.context) this.context.off(null, null, this);
         if (this.values) this.values.off(null, null, this);
+        app.events.off('app:toggle:sidebar', null, this);
         app.view.View.prototype.unbindData.call(this);
     }
 })

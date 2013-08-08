@@ -13,7 +13,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
+$viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
     'metadata' =>
     array(
         'components' =>
@@ -27,34 +27,6 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                             array(
                                 'name' => 'forecast-pareto',
                                 'label' => 'Forecast Pareto Chart',
-                            ),
-                            'width' => 12,
-                        ),
-                    ),
-                    array(
-                        array(
-                            'view' =>
-                            array(
-                                'name' => 'interactions',
-                                'label' => 'Interactions',
-                                'filter_duration' => '7',
-                            ),
-                            'width' => 12,
-                        ),
-                    ),
-                    array(
-                        array(
-                            'view' =>
-                            array(
-                                'name' => 'attachments',
-                                'label' => 'Attachments',
-                                'limit' => '5',
-                                'auto_refresh' => '0',
-                            ),
-                            'context' =>
-                            array(
-                                'module' => 'Notes',
-                                'link' => 'notes',
                             ),
                             'width' => 12,
                         ),

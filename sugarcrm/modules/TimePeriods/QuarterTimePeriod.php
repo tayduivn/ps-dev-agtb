@@ -104,7 +104,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function getChartLabels($chartData)
     {
-        if(!empty($_SESSION['authenticated_user_language'])) {
+        if (!empty($_SESSION['authenticated_user_language'])) {
             $list_strings = return_mod_list_strings_language($_SESSION['authenticated_user_language'], 'Calendar');
         } else {
             global $current_language;
@@ -114,43 +114,28 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         $timedate = TimeDate::getInstance();
         $months = array();
         $startDate = $timedate->fromDbDate($this->start_date)->setTime(0, 0, 0);
-        $nextDate = $timedate->fromDbDate($this->start_date)->setTime(0, 0, 0);
-        $endDate = $timedate->fromDbDate($this->end_date)->setTime(23, 59, 59);
-        $startDay = $startDate->format('j');
-        $isFirst = $startDay == 1;
-        $isLastDayOfMonth = $startDay == $startDate->format('t');
         $count = 0;
 
-        while($count < 3) {
+        while ($count < 3) {
             $val = $chartData;
 
-            $nextDate->modify($this->chart_data_modifier);
-            $startDay = $startDate->format('j');
-            $nextDay = $nextDate->format('j');
-
-            //If the startDay was greater than the 28th and the nextDay is less than the 4th we know we have skipped a month
-            //and so we subtract out the number of days we have gone over
-            if($startDay > 28 && $nextDay < 4) {
-                $nextDate->modify("-{$nextDay} day");
-            } else if($isLastDayOfMonth) {
-                $nextDate->setDate($nextDate->format('Y'), $nextDate->format('n'), $endDate->format('t'));
-            }
-
-            if($isFirst) {
-                $month = $startDate->format('n');
-                if(isset($list_strings['dom_cal_month_long'][$month])) {
-                    $val['label'] = $list_strings['dom_cal_month_long'][$month] . ' ' . $startDate->format('Y');
-                } else {
-                    $val['label'] = $startDate->format($this->chart_label);
-                }
-            } else if ($count == 2) {
-                $val['label'] = $startDate->format('n/j') . '-' . $timedate->fromDbDate($this->end_date)->format('n/j');
+            $month = $startDate->format('n');
+            if (isset($list_strings['dom_cal_month_long'][$month])) {
+                $val['label'] = $list_strings['dom_cal_month_long'][$month] . ' ' . $startDate->format('Y');
             } else {
-                $val['label'] = $startDate->format('n/j') . '-' . $timedate->fromDbDate($nextDate->asDbDate())->modify('-1 day')->format('n/j');
+                $val['label'] = $startDate->format($this->chart_label);
             }
-            $val['start_timestamp'] = $startDate->getTimestamp();
-            $val['end_timestamp'] = $nextDate->getTimestamp();
-            $startDate = $timedate->fromDbDate($nextDate->asDbDate());
+
+            $val['start_timestamp'] = $startDate->setDate($startDate->format('Y'), $startDate->format('m'), 1)
+                ->setTime(0, 0, 0)->getTimestamp();
+            $val['end_timestamp'] = $startDate->setDate(
+                $startDate->format('Y'),
+                $startDate->format('m'),
+                $startDate->format('t')
+            )
+                ->setTime(23, 59, 59)->getTimestamp();
+
+            $startDate->modify('+1 day')->setTime(0, 0, 0);
             $months[$count++] = $val;
         }
         return $months;

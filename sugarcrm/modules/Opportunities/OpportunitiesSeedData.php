@@ -120,9 +120,7 @@ class OpportunitiesSeedData {
             $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
             $amount = rand(1000, 7500);
             $opp->amount = $amount;
-            $probability = array("10", "40", "70", "90");
-            $key = array_rand($probability);
-            $opp->probability = $probability[$key];
+            $opp->probability = $app_list_strings['sales_probability_dom'][$opp->sales_stage];
     
             //BEGIN SUGARCRM flav=pro ONLY
             //Setup forecast seed data
@@ -151,7 +149,7 @@ class OpportunitiesSeedData {
             $opp_amount = 0;
             $opp_units = 0;
     
-            while ($rlis_created < $rlis_to_create) {
+            while($rlis_created < $rlis_to_create) {
                 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
                 $amount = $opp->amount;
                 $rand_best_worst = rand(100, 500);
@@ -194,14 +192,20 @@ class OpportunitiesSeedData {
                 $rli->quantity = rand(1, 100);
                 $rli->currency_id = $opp->currency_id;
                 $rli->base_rate = $opp->base_rate;
+                //BEGIN SUGARCRM flav=pro && flav != ent ONLY
+                $rli->sales_stage = $opp->sales_stage;
                 $rli->probability = $opp->probability;
+                //END SUGARCRM flav=pro && flav != ent ONLY
+                //BEGIN SUGARCRM flav=ent ONLY
+                $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
+                $rli->probability = $app_list_strings['sales_probability_dom'][$rli->sales_stage];
+                //END SUGARCRM flav=ent ONLY
                 $rli->date_closed = $opp->date_closed;
                 $rli->date_closed_timestamp = $opp->date_closed_timestamp;
                 $rli->assigned_user_id = $opp->assigned_user_id;
                 $rli->opportunity_id = $opp->id;
                 $rli->account_id = $account->id;
                 $rli->commit_stage = $opp->commit_stage;
-                $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
                 $rli->lead_source = array_rand($app_list_strings['lead_source_dom']);
                 //BEGIN SUGARCRM flav=pro ONLY
                 // if this is an even number, assign a product template

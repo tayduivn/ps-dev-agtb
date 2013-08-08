@@ -137,8 +137,12 @@ class ForecastWorksheetsFilterApi extends FilterApi
     public function forecastWorksheetsChartGet(ServiceBase $api, array $args)
     {
 
-        //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
-        $worksheetData = $this->forecastWorksheetsGet($api, $args);
+        if (isset($args['no_data']) && $args['no_data'] == 1) {
+            $worksheetData = array('records' => array());
+        } else {
+            //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
+            $worksheetData = $this->forecastWorksheetsGet($api, $args);
+        }
 
         // default to the Individual Code
         $file = 'include/SugarForecasting/Chart/Individual.php';
@@ -253,7 +257,12 @@ class ForecastWorksheetsFilterApi extends FilterApi
         array_push($filter, array('draft' => $draft));
 
         // if we didn't find a time period, set the time period to be the current time period
-        if ($timeperiod_id == false) {
+        if (!is_guid($timeperiod_id) && is_numeric($timeperiod_id) && $timeperiod_id != 0) {
+            // we have a timestamp, find timeperiod it belongs in
+            $timeperiod_id = TimePeriod::getIdFromTimestamp($timeperiod_id);
+        }
+
+        if (!is_guid($timeperiod_id)) {
             $timeperiod_id = TimePeriod::getCurrentId();
         }
 

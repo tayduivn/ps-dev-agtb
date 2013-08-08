@@ -138,40 +138,45 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
     public function forecastManagerWorksheetsChartGet(ServiceBase $api, array $args)
     {
 
-        //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
-        $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
+        if (isset($args['no_data']) && $args['no_data'] == 1) {
+            $worksheetData = array('records' => array());
+        } else {
+            //get data via forecastWorksheetsGet, no need to bother with filter setup, get will do that
+            $worksheetData = $this->ForecastManagerWorksheetsGet($api, $args);
 
-        //get all users in direct hierarchy
-        $usersList = $this->getDirectHierarchyUsers($api, $args);
-        $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
+            //get all users in direct hierarchy
+            $usersList = $this->getDirectHierarchyUsers($api, $args);
+            $assignedUser = BeanFactory::getBean("Users", $args['user_id']);
 
-        //compare users and worksheet data to fill in gaps
-        foreach ($usersList['records'] as $user) {
-            $userExists = false;
-            foreach ($worksheetData['records'] as $worksheet) {
-                if ($worksheet['user_id'] == $user['id']) {
-                    $userExists = true;
-                    break;
+            // get the list of users we have
+            $worksheet_users = array_map(
+                function ($i) {
+                    return $i['user_id'];
+                },
+                $worksheetData['records']
+            );
+
+            //compare users and worksheet data to fill in gaps
+            foreach ($usersList['records'] as $user) {
+                if (!in_array($user['id'], $worksheet_users)) {
+                    $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
+                    $blankWorksheet->assigned_user_id = $args['user_id'];
+                    $blankWorksheet->user_id = $user['id'];
+                    $blankWorksheet->timeperiod_id = $args['timeperiod_id'];
+                    $blankWorksheet->assigned_user_name = $assignedUser->user_name;
+                    $blankWorksheet->quota = 0;
+                    $blankWorksheet->likely_case = 0;
+                    $blankWorksheet->likely_case_adjusted = 0;
+                    $blankWorksheet->best_case = 0;
+                    $blankWorksheet->best_case_adjusted = 0;
+                    $blankWorksheet->worst_case = 0;
+                    $blankWorksheet->worst_case_adjusted = 0;
+                    $blankWorksheet->currency_id = '-99';
+                    $blankWorksheet->base_rate = 1.0;
+                    $blankWorksheet->id = '';
+                    $blankWorksheet->name = $user['full_name'];
+                    array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
                 }
-            }
-            if (!$userExists) {
-                $blankWorksheet = BeanFactory::newBean('ForecastManagerWorksheets');
-                $blankWorksheet->assigned_user_id = $args['user_id'];
-                $blankWorksheet->user_id = $user['id'];
-                $blankWorksheet->timeperiod_id = $args['timeperiod_id'];
-                $blankWorksheet->assigned_user_name = $assignedUser->user_name;
-                $blankWorksheet->quota = 0;
-                $blankWorksheet->likely_case = 0;
-                $blankWorksheet->likely_case_adjusted = 0;
-                $blankWorksheet->best_case = 0;
-                $blankWorksheet->best_case_adjusted = 0;
-                $blankWorksheet->worst_case = 0;
-                $blankWorksheet->worst_case_adjusted = 0;
-                $blankWorksheet->currency_id = '-99';
-                $blankWorksheet->base_rate = 1.0;
-                $blankWorksheet->id = '';
-                $blankWorksheet->name = $user['full_name'];
-                array_push($worksheetData['records'], $this->formatBean($api, $args, $blankWorksheet));
             }
         }
 
@@ -321,7 +326,12 @@ class ForecastManagerWorksheetsFilterApi extends FilterApi
         array_push($filter, array('draft' => $draft));
 
         // if we didn't find a time period, set the time period to be the current time period
-        if ($timeperiod_id == false) {
+        if (!is_guid($timeperiod_id) && is_numeric($timeperiod_id) && $timeperiod_id != 0) {
+            // we have a timestamp, find timeperiod it belongs in
+            $timeperiod_id = TimePeriod::getIdFromTimestamp($timeperiod_id);
+        }
+
+        if (!is_guid($timeperiod_id)) {
             $timeperiod_id = TimePeriod::getCurrentId();
         }
 
