@@ -112,7 +112,7 @@ $dictionary['SchedulersJob'] = array('table' => 'job_queue',
 		'data' => array (
 			'name' => 'data',
 			'vname' => 'LBL_DATA',
-			'type' => 'text',
+			'type' => 'longtext',
 			'required' => false,
 			'reportable' => true,
 		),
