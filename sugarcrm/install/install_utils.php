@@ -886,7 +886,11 @@ function handleSidecarConfig()
 function getHtaccessData($htaccess_file)
 {
     global $sugar_config;
-    $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
+    if(!empty($_SERVER['SERVER_SOFTWARE'])) {
+        $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
+    } else {
+        $ignoreCase = '';
+    }
     $contents = '';
 
     // Adding RewriteBase path for vhost and alias configurations
