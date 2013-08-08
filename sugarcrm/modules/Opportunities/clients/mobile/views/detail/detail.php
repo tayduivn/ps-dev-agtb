@@ -26,6 +26,45 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+$fields = array(
+    array(
+        'name' => 'name',
+        'displayParams' => array(
+            'required' => true,
+            'wireless_edit_only' => true,
+        )
+    ),
+    'amount',
+    'account_name',
+    'date_closed',
+    //'sales_stage',
+    'assigned_user_name',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'team_name',
+    //BEGIN SUGARCRM flav=pro ONLY
+);
+
+// here we add `sales_stage` for all flavors except ent and ult
+//BEGIN SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
+$fields = array(
+    array(
+        'name' => 'name',
+        'displayParams' => array(
+            'required' => true,
+            'wireless_edit_only' => true,
+        )
+    ),
+    'amount',
+    'account_name',
+    'date_closed',
+    'sales_stage',
+    'assigned_user_name',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'team_name',
+    //BEGIN SUGARCRM flav=pro ONLY
+);
+//END SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
+
 $viewdefs['Opportunities']['mobile']['view']['detail'] = array(
     'templateMeta' => array(
         'maxColumns' => '1',
@@ -36,23 +75,7 @@ $viewdefs['Opportunities']['mobile']['view']['detail'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    )
-                ),
-                'amount',
-                'account_name',
-                'date_closed',
-                'sales_stage',
-                'assigned_user_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-                'team_name',
-                //BEGIN SUGARCRM flav=pro ONLY
-            )
+            'fields' => $fields
         )
     ),
 );
