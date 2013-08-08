@@ -30,10 +30,10 @@ describe("Activity Stream View", function() {
             id: "edf88cef-1be4-9bcc-4cbc-51caf35c5bb1",
             activity_type: "post",
             data: {
-                embed: {
+                embeds: [{
                     type: "video",
                     html: "<iframe width='200px' height='100px'></iframe>"
-                }
+                }]
             }
         });
 
@@ -56,9 +56,9 @@ describe("Activity Stream View", function() {
             var appTemplateGetStub = sinon.stub(SugarTest.app.template, 'get');
 
             view.model.set('data', {
-                embed: {
+                embeds: [{
                     type: 'video'
-                }
+                }]
             });
             view.processEmbed();
 
@@ -70,9 +70,9 @@ describe("Activity Stream View", function() {
             var appTemplateGetStub = sinon.stub(SugarTest.app.template, 'get');
 
             view.model.set('data', {
-                embed: {
+                embeds: [{
                     type: 'video.movie'
-                }
+                }]
             });
             view.processEmbed();
 
@@ -230,35 +230,35 @@ describe("Activity Stream View", function() {
 
         it('Should convert URLs into links in posts', function() {
             view.model.set('data', {
-                value: 'test.com'
+                value: 'www.test.com'
             });
 
             view.formatAllTagsAndLinks();
 
-            expect(view.model.get('data').value).toBe('<a href="http://test.com" target="_blank">test.com</a>');
+            expect(view.model.get('data').value).toBe('<a href="http://www.test.com" target="_blank">www.test.com</a>');
         });
 
         it('Should convert URLs into links in comments', function() {
             view.commentsCollection.add({
                 data: {
-                    value: 'test.com'
+                    value: 'www.test.com'
                 }
             });
 
             view.formatAllTagsAndLinks();
 
-            expect(view.commentsCollection.at(0).get('data').value).toBe('<a href="http://test.com" target="_blank">test.com</a>');
+            expect(view.commentsCollection.at(0).get('data').value).toBe('<a href="http://www.test.com" target="_blank">www.test.com</a>');
         });
 
         it('Should convert URLs into links even if it is called twice', function() {
             view.model.set('data', {
-                value: 'test.com'
+                value: 'www.test.com'
             });
 
             view.formatAllTagsAndLinks();
             view.formatAllTagsAndLinks();
 
-            expect(view.model.get('data').value).toBe('<a href="http://test.com" target="_blank">test.com</a>');
+            expect(view.model.get('data').value).toBe('<a href="http://www.test.com" target="_blank">www.test.com</a>');
         });
     });
 
@@ -271,9 +271,33 @@ describe("Activity Stream View", function() {
             expect(result).toBe(expected);
         });
 
-        it('Should convert URLs into links when no protocols or "www" is specified', function() {
-            var input = 'foo www.sugarcrm.com bar test.com',
-                expected = 'foo <a href="http://www.sugarcrm.com" target="_blank">www.sugarcrm.com</a> bar <a href="http://test.com" target="_blank">test.com</a>',
+        it('Should convert URLs into links when other protocols are specified', function() {
+            var input = 'foo ftp://sugarcrm.com bar',
+                expected = 'foo ftp://sugarcrm.com bar',
+                result = view.formatLinks(input);
+
+            expect(result).toBe(expected);
+        });
+
+        it('Should convert URLs into links when no protocols are specified', function() {
+            var input = 'foo www.sugarcrm.com bar',
+                expected = 'foo <a href="http://www.sugarcrm.com" target="_blank">www.sugarcrm.com</a> bar',
+                result = view.formatLinks(input);
+
+            expect(result).toBe(expected);
+        });
+
+        it('Should convert URLs into links when "www" is not specified', function() {
+            var input = 'foo http://test.com bar',
+                expected = 'foo <a href="http://test.com" target="_blank">http://test.com</a> bar',
+                result = view.formatLinks(input);
+
+            expect(result).toBe(expected);
+        });
+
+        it('Should not convert URLs into links when the protocol and "www" are not specified', function() {
+            var input = 'foo test.com bar',
+                expected = 'foo test.com bar',
                 result = view.formatLinks(input);
 
             expect(result).toBe(expected);
