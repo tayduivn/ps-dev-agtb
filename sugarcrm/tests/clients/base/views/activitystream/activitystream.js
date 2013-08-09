@@ -10,9 +10,15 @@ describe("Activity Stream View", function() {
         });
 
         SugarTest.testMetadata.init();
+
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'videoEmbed');
+        SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'activitystream');
+
+        SugarTest.loadComponent('base', 'field', 'base');
+        SugarTest.loadComponent('base', 'field', 'float');
         SugarTest.loadComponent('base', 'view', viewName);
+
         SugarTest.testMetadata.set();
 
         var context = SugarTest.app.context.getContext();
@@ -295,6 +301,68 @@ describe("Activity Stream View", function() {
                 result = view.formatLinks(input);
 
             expect(result).toBe(expected);
+        });
+    });
+
+    describe("processUpdateActivityTypeMessage()", function () {
+        it('Fields should be disposed when the view is disposed', function () {
+            var data = {
+                "name": {
+                    "field_name": "name",
+                    "data_type": "name",
+                    "before": "Calm Sailing Inc",
+                    "after": "Calm Flying"
+                },
+                "case_number": {
+                    "field_name": "case_number",
+                    "data_type": "float",
+                    "before": "1234567",
+                    "after": "09909099"
+                }
+            };
+
+            view.model.set('parent_type', 'Cases');
+            view.processUpdateActivityTypeMessage(data);
+
+            expect(_.size(view.fields)).toBe(2);
+            view.dispose();
+
+            expect(_.size(view.fields)).toBe(0);
+        });
+
+        it('Before and After values injected in update string properly using Field format method', function () {
+            var results, data, preferenceStub, langStub;
+
+            preferenceStub = sinon.collection.stub(SugarTest.app.user, 'getPreference');
+            preferenceStub.withArgs('decimal_separator').returns('.');
+            preferenceStub.withArgs('decimal_precision').returns(4);
+
+            langStub = sinon.stub(SugarTest.app.lang, 'get'),
+            langStub.withArgs('TPL_ACTIVITY_UPDATE_FIELD', 'Activities').returns('{{before}}:{{after}}');
+
+            view.model.set('parent_type', 'Cases');
+            data = {
+                "name": {
+                    "field_name": "name",
+                    "data_type": "name",
+                    "before": "Calm Sailing Inc",
+                    "after": "Calm Flying"
+                },
+                "case_number": {
+                    "field_name": "case_number",
+                    "data_type": "float",
+                    "before": "200",
+                    "after": "100"
+                }
+            };
+
+            results = view.processUpdateActivityTypeMessage(data);
+
+            expect(results).toContain("200.0000:100.0000");
+            expect(results).toContain("Calm Sailing Inc:Calm Flying");
+
+            langStub.restore();
+            preferenceStub.restore();
         });
     });
 });
