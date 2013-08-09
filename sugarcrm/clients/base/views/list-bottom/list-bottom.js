@@ -36,7 +36,6 @@
     events: {
         'click [data-action="show-more"]': 'showMoreRecords'
     },
-    _dataFetched : false,
 
     initialize: function(opts) {
         opts.meta = _.extend({}, {showMoreLabel: "LBL_SHOW_MORE_MODULE"}, opts.meta || {});
@@ -46,11 +45,6 @@
         this.showMoreLabel = app.lang.get(this.options.meta.showMoreLabel, this.module, {
             module: app.lang.get('LBL_MODULE_NAME', this.module).toLowerCase()
         });
-
-        this.layout.on("hide", this.toggleVisibility, this);
-        this.context.get("collection").once("reset", function(){
-            this._dataFetched = true;
-        }, this);
     },
 
     _renderHtml: function() {
@@ -135,16 +129,9 @@
 
     bindDataChange: function() {
         if(this.collection) {
-            this.collection.on("reset", this.render, this);
-        }
-    },
-
-    // For certain layouts that want to trigger
-    toggleVisibility: function(e) {
-        if (e) {
-            this.$el.show();
-        } else {
-            this.$el.hide();
+            this.collection.on("reset sync", function() {
+                this.render();
+            }, this);
         }
     }
 })

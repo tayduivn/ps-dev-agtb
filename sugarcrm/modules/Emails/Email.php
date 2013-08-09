@@ -1,28 +1,19 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
-
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 require_once "modules/Mailer/MailerFactory.php";  // imports all but one of the Mailer classes that are needed
 require_once "modules/Mailer/AttachmentPeer.php"; // AttachmentPeer is needed to factor Attachments and EmbeddedImages
 require_once 'include/upload_file.php';
@@ -253,51 +244,47 @@ class Email extends SugarBean {
 		return $badExtension;
 	} // fn
 
-	/**
-	 * takes output from email 2.0 to/cc/bcc fields and returns appropriate arrays for usage by PHPMailer
-	 * @param string addresses
-	 * @return array
-	 */
-	function email2ParseAddresses($addresses) {
-		$addresses = from_html($addresses);
-        $addresses = $this->et->unifyEmailString($addresses);
-
-		$pattern = '/@.*,/U';
-		preg_match_all($pattern, $addresses, $matchs);
-		if (!empty($matchs[0])){
-			$total = $matchs[0];
-			foreach ($total as $match) {
-				$convertedPattern = str_replace(',', '::;::', $match);
-				$addresses = str_replace($match, $convertedPattern, $addresses);
-			} //foreach
-		}
-
-		$exAddr = explode("::;::", $addresses);
-
-		$ret = array();
-		$clean = array("<", ">");
-		$dirty = array("&lt;", "&gt;");
-
-		foreach($exAddr as $addr) {
-			$name = '';
-
-			$addr = str_replace($dirty, $clean, $addr);
-
-			if((strpos($addr, "<") === false) && (strpos($addr, ">") === false)) {
-				$address = $addr;
-			} else {
-				$address = substr($addr, strpos($addr, "<") + 1, strpos($addr, ">") - 1 - strpos($addr, "<"));
-				$name = substr($addr, 0, strpos($addr, "<"));
-			}
-
-			$addrTemp = array();
-			$addrTemp['email'] = trim($address);
-			$addrTemp['display'] = trim($name);
-			$ret[] = $addrTemp;
-		}
-
-		return $ret;
-	}
+    /**
+     * takes output from email 2.0 to/cc/bcc fields and returns appropriate arrays for usage by PHPMailer
+     *
+     * @param string addresses
+     * @return array
+     */
+    public function email2ParseAddresses($addresses)
+    {
+        $ret = array();
+        if (!empty($addresses)) {
+            $addresses = from_html($addresses);
+            $addresses = $this->et->unifyEmailString($addresses);
+            $pattern   = '/@.*,/U';
+            preg_match_all($pattern, $addresses, $matchs);
+            if (!empty($matchs[0])) {
+                $total = $matchs[0];
+                foreach ($total as $match) {
+                    $convertedPattern = str_replace(',', '::;::', $match);
+                    $addresses        = str_replace($match, $convertedPattern, $addresses);
+                } //foreach
+            }
+            $exAddr = explode("::;::", $addresses);
+            $clean  = array("<", ">");
+            $dirty  = array("&lt;", "&gt;");
+            foreach ($exAddr as $addr) {
+                $name = '';
+                $addr = str_replace($dirty, $clean, $addr);
+                if ((strpos($addr, "<") === false) && (strpos($addr, ">") === false)) {
+                    $address = $addr;
+                } else {
+                    $address = substr($addr, strpos($addr, "<") + 1, strpos($addr, ">") - 1 - strpos($addr, "<"));
+                    $name    = substr($addr, 0, strpos($addr, "<"));
+                }
+                $addrTemp            = array();
+                $addrTemp['email']   = trim($address);
+                $addrTemp['display'] = trim($name);
+                $ret[]               = $addrTemp;
+            }
+        }
+        return $ret;
+    }
 
 	/**
 	 * takes output from email 2.0 to/cc/bcc fields and returns appropriate arrays for usage by PHPMailer

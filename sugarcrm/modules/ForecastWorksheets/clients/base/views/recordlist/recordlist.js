@@ -530,6 +530,11 @@
                     return false;
                 }, this);
             }
+        } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
+            // since the layout is not visible, lets wait for it to become visible
+            this.layout.once('show', function() {
+                this.checkForDraftRows(lastCommitDate);
+            }, this);
         }
     },
 
@@ -673,12 +678,25 @@
     },
 
     /**
+     * Set the loading message and have a way to hide it
+     */
+    displayLoadingMessage: function() {
+        app.alert.show('workshet_loading',
+            {level: 'process', title: app.lang.getAppString('LBL_LOADING')}
+        );
+        this.collection.once('reset', function() {
+            app.alert.dismiss('workshet_loading');
+        }, this);
+    },
+
+    /**
      * Custom Method to handle the refreshing of the worksheet Data
      */
     refreshData: function() {
         var ret = this.showNavigationMessage('forecast');
 
         if (this.processNavigationMessageReturn(ret)) {
+            this.displayLoadingMessage();
             this.collection.fetch();
         }
     },
@@ -693,6 +711,7 @@
         if (_.isObject(message_result) && message_result.run_action === true) {
             if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
                 this.context.parent.once('forecasts:worksheet:saved', function() {
+                    this.displayLoadingMessage();
                     this.collection.fetch();
                 }, this);
                 this.saveWorksheet(true);
@@ -876,12 +895,12 @@
         app.events.on('preview:render', function(model) {
             this.previewModel = model;
             this.previewVisible = true;
-        },this);
+        }, this);
 
         app.events.on('preview:close', function() {
             this.previewVisible = false;
             this.previewModel = undefined;
-        },this);
+        }, this);
     },
 
     /**
@@ -904,7 +923,7 @@
                     labelWidths = original.map(function() {
                         return $(this).width();
                     }).get();
-                
+
                 // Added 5 to the calculated amount so that FF plays nice.
                 converted.width(_.max(widths) + 5);
                 original.width(_.max(labelWidths));

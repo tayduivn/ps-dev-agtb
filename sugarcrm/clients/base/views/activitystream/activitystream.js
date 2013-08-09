@@ -34,7 +34,7 @@
         var lastComment = this.model.get("last_comment");
         this.commentsCollection = app.data.createRelatedCollection(this.model, "comments");
 
-        if(lastComment && !_.isUndefined(lastComment.id)) {
+        if (lastComment && !_.isUndefined(lastComment.id)) {
             this.commentsCollection.reset([lastComment]);
         }
 
@@ -44,7 +44,7 @@
         var count = parseInt(this.model.get('comment_count'), 10);
         this.remaining_comments = 0;
         this.more_tpl = "TPL_MORE_COMMENT";
-        if(count) {
+        if (count) {
             this.remaining_comments = count - 1;
 
             // Pluralize the comment count label
@@ -65,22 +65,9 @@
                 }
                 break;
             case 'update':
-                var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
-                    parentType = this.model.get("parent_type"),
-                    fields = app.metadata.getModule(parentType).fields;
-
-                data.updateStr = _.reduce(data.changes, function(memo, changeObj) {
-                    changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
-
-                    if(memo) {
-                        return updateTpl(changeObj) + ', ' + memo;
-                    }
-                    return updateTpl(changeObj);
-                }, '');
-
+                data.updateStr = this.processUpdateActivityTypeMessage(data.changes);
                 this.model.set('data', data);
                 break;
-
             case 'attach':
                 var url = app.api.buildFileURL({
                     module: 'Notes',
@@ -111,6 +98,40 @@
         // specify the record that the tags are associated with
         this.setTaggableRecord(this.model.get('parent_type'), this.model.get('parent_id'));
     },
+
+     /**
+     * Creates the update message for the activity stream based on the fields changed.
+     * @param {object} changes Object containing the changes for the fields of an update activity message
+     * @return {string} The formatted message for the update
+     */
+     processUpdateActivityTypeMessage: function (changes) {
+         var updateTpl = Handlebars.compile(app.lang.get('TPL_ACTIVITY_UPDATE_FIELD', 'Activities')),
+             parentType = this.model.get("parent_type"),
+             fields = app.metadata.getModule(parentType).fields,
+             self = this,
+             updateStr;
+
+         updateStr = _.reduce(changes, function (memo, changeObj) {
+             var fieldMeta = fields[changeObj.field_name],
+                 field = app.view.createField({
+                     def: fieldMeta,
+                     view: self,
+                     model: self.model,
+                     viewName: 'detail'
+                 });
+
+             changeObj.before = field.format(changeObj.before);
+             changeObj.after = field.format(changeObj.after);
+             changeObj.field_label = app.lang.get(fields[changeObj.field_name].vname, parentType);
+
+             if (memo) {
+                 return updateTpl(changeObj) + ', ' + memo;
+             }
+             return updateTpl(changeObj);
+         }, '');
+
+         return updateStr;
+     },
 
     /**
      * Determine if embeded links exist
@@ -249,7 +270,7 @@
         this.resizeVideo();
 
         // If the reply bar was previously open, keep it open (render hides it by default)
-        if(isReplyBarOpen) {
+        if (isReplyBarOpen) {
             this.toggleReplyBar();
             this.$(".reply").html(replyVal);
         }

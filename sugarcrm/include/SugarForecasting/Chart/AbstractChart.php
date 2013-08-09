@@ -58,7 +58,7 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
      */
     protected $defaultPropertiesArray = array(
         'gauge_target_list' => 'Array',
-        'title' => NULL,
+        'title' => null,
         'subtitle' => '',
         'type' => 'bar chart',
         'legend' => 'on',
@@ -138,11 +138,12 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
 
     /**
      * Class Constructor
+     *
      * @param array $args       Service Arguments
      */
     public function __construct($args)
     {
-        if(!empty($args['dataset'])) {
+        if (!empty($args['dataset'])) {
             $this->dataset = $args['dataset'];
         }
 
@@ -167,9 +168,10 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
      * @param string $module value of the module language to load
      * @return string
      */
-    public function getModuleLanguage($module) {
+    public function getModuleLanguage($module)
+    {
         // If the session has a language set, use that
-        if(!empty($_SESSION['authenticated_user_language'])) {
+        if (!empty($_SESSION['authenticated_user_language'])) {
             return return_module_language($_SESSION['authenticated_user_language'], $module);
         }
 
@@ -194,6 +196,10 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
     {
         $config = $this->getForecastConfig();
         $type = $config['timeperiod_leaf_interval'];
-        return TimePeriod::getByType($type, $this->getArg('timeperiod_id'));
+        $id = $this->getArg('timeperiod_id');
+        if (!is_guid($id) && is_numeric($id)) {
+            $id = TimePeriod::getIdFromTimestamp($id);
+        }
+        return TimePeriod::getByType($type, $id);
     }
 }

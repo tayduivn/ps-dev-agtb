@@ -49,20 +49,33 @@ abstract class DateExpression extends AbstractExpression
         //String dates must be in User format.
         if (is_string($date)) {
             $timedate = TimeDate::getInstance();
-            $split = $timedate->split_date_time($date);
-            if(!empty($split[1])) {
+            if (static::hastime($date)) {
                 // have time
                 $resdate = $timedate->fromUser($date);
             } else {
                 // just date, no time
                 $resdate = $timedate->fromUserDate($date);
             }
-            if(!$resdate) {
+            if (!$resdate) {
                 throw new Exception("attempt to convert invalid value to date: $date");
             }
             return $resdate;
         }
         throw new Exception("attempt to convert invalid value to date: $date");
+    }
+
+    /**
+     * Do we have a time param with the date param
+     *
+     * @param $date
+     * @return bool
+     */
+    public static function hasTime($date)
+    {
+        $timedate = TimeDate::getInstance();
+        $split = $timedate->split_date_time($date);
+
+        return !empty($split[1]);
     }
 
     /**

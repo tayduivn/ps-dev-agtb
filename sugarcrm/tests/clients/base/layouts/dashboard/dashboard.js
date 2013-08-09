@@ -92,7 +92,7 @@ describe("Base.Layout.Dashboard", function(){
                 expectedApiUrl;
             expect(model.apiModule).toBe("Dashboards");
             expect(model.dashboardModule).toBe(parentModule);
-            layout.context.parent._dataFetched = true;
+            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() { return true; });
             var syncStub = sinon.stub(app.api, 'records');
             layout.loadData();
 
@@ -116,9 +116,8 @@ describe("Base.Layout.Dashboard", function(){
         });
 
         it("should navigate RHS panel without replacing document URL", function() {
-
-            var syncStuff, expectedApiUrl;
-            layout.context.parent._dataFetched = true;
+            var syncStub, expectedApiUrl;
+            sinon.collection.stub(layout.context.parent, 'isDataFetched', function() { return true; });
             syncStub = sinon.stub(app.api, 'records');
             layout.navigateLayout('new-fake-id-value');
             expectedApiUrl = "Dashboards";
@@ -128,6 +127,7 @@ describe("Base.Layout.Dashboard", function(){
         });
 
         afterEach(function() {
+            sinon.collection.restore();
             context.clear();
             parentLayout.dispose();
             parentLayout = null;

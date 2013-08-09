@@ -369,7 +369,7 @@ describe("BaseFilterRowsView", function() {
                     predefined_filter: true
                 }
             };
-            view.filterOperatorMap = { enum: {
+            view.filterOperatorMap = { 'enum': {
                 '$in': 'is',
                 '$not_in': 'is not'
             }};
@@ -441,7 +441,7 @@ describe("BaseFilterRowsView", function() {
                     type: 'datetime'
                 }
             };
-            view.filterOperatorMap = { enum: {
+            view.filterOperatorMap = { 'enum': {
                 '$in': 'is',
                 '$not_in': 'is not'
             }};

@@ -44,16 +44,19 @@
             this.getField('commit_button').setDisabled(!is_dirty);
         }, this);
 
-        this.context.on('forecasts:worksheet:saved', function(totalSaved, worksheet_type, wasDraft){
-            // after any save, always disable the draft button
+        this.context.on('button:commit_button:click button:save_draft_button:click', function() {
             this.getField('save_draft_button').setDisabled(true);
-            if(wasDraft !== true) {
-                // only disable the commit button if the save was a commit
-                this.getField('commit_button').setDisabled(true);
+            this.getField('commit_button').setDisabled(true);
+        }, this);
+
+        this.context.on('forecasts:worksheet:saved', function(totalSaved, worksheet_type, wasDraft){
+            if(wasDraft === true) {
+                // re-enable the commit button if we only saved a draft
+                this.getField('commit_button').setDisabled(false);
             }
         }, this);
 
-        this.context.on('forecasts:worksheet:needs_commit button:commit_button:click', function(worksheet_type) {
+        this.context.on('forecasts:worksheet:needs_commit', function(worksheet_type) {
             this.getField('commit_button').setDisabled(false);
         }, this);
 

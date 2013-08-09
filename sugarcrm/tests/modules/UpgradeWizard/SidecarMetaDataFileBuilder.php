@@ -35,13 +35,6 @@ class SidecarMetaDataFileBuilder
             'sidecarpath' => 'custom/history/modules/Accounts/clients/mobile/views/edit/edit.php_1341122961',
         ),
         array(
-            'module'      => 'Accounts', 'view' => 'edit', 'type' => 'portal',
-            'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
-            'legacypath'  => 'custom/history/modules/Accounts/clients/portal/views/edit/edit.php_1341122961',
-        // history is deleted for portal/edit
-            'sidecarpath' => '',
-        ),
-        array(
             'module'      => 'Accounts', 'view' => 'detail', 'type' => 'mobile',
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessdetail.php',
             'legacypath'  => 'custom/working/modules/Accounts/metadata/wireless.detailviewdefs.php',
@@ -67,6 +60,13 @@ class SidecarMetaDataFileBuilder
         ),
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=ent ONLY
+        array(
+            'module'      => 'Accounts', 'view' => 'edit', 'type' => 'portal',
+            'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
+            'legacypath'  => 'custom/history/modules/Accounts/clients/portal/views/edit/edit.php_1341122961',
+        // history is deleted for portal/edit
+            'sidecarpath' => '',
+        ),
         array(
             'module'      => 'Bugs', 'view' => 'list', 'type' => 'portal',
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsportallist.php',

@@ -81,7 +81,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                                 label: 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
                                 view: 'edit',
                                 options: 'forecasts_config_ranges_options_dom',
-                                default: false,
+                                'default': false,
                                 enabled: true,
                                 value: ''
                             },
@@ -241,7 +241,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                                 label: 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
                                 view: 'edit',
                                 options: 'forecasts_config_ranges_options_dom',
-                                default: false,
+                                'default': false,
                                 enabled: true,
                                 value: ''
                             },

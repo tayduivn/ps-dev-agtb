@@ -70,8 +70,8 @@ describe("Emails.Field.Sender", function() {
 
     it("should set the default value if custom endpoint returns data and the model does not yet have a value", function() {
         var results = [
-                {id: "abcd", display: "Configuration A", type: "system", default: true},
-                {id: "efgh", display: "Configuration B", type: "user", default: false}
+                {id: "abcd", display: "Configuration A", type: "system", 'default': true},
+                {id: "efgh", display: "Configuration B", type: "user", 'default': false}
             ];
         field.disposed = false;
         field.model.unset("email_config", {silent: true});

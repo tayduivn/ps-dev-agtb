@@ -102,6 +102,12 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 		}
 	}
 
+    public function testEmail2ParseAddresses_ParameterIsEmpty_EmptyArrayIsReturned()
+    {
+        $actual = $this->email->email2ParseAddresses('');
+        $this->assertCount(0, $actual, 'An empty array should have been returned.');
+    }
+
 	public function testDecodeDuringSend()
 	{
 		$testString = 'Replace sugarLessThan and sugarGreaterThan with &lt; and &gt;';

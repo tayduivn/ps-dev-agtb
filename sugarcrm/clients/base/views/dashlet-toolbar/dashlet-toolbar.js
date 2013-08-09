@@ -15,22 +15,8 @@
     initialize: function (options) {
         _.extend(options.meta, app.metadata.getView(null, 'dashlet-toolbar'), options.meta.toolbar);
         app.view.View.prototype.initialize.call(this, options);
-        this.on("dashletaction", this.actionClicked, this);
     },
-    /**
-     * Handles rowaction's event trigger and propagate the event to the main dashlet
-     */
-    actionClicked: function(action, evt) {
-        if (!action) {
-            return;
-        }
-        var dashlet = _.first(this.layout._components);
-        if (_.isFunction(dashlet[action])) {
-            dashlet[action](evt);
-        } else if (_.isFunction(this[action])) {
-            this[action](evt);
-        }
-    },
+
     /**
      * Change to the spinning icon to indicate that loading process is triggered
      */

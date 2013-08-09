@@ -184,6 +184,9 @@ $fields = array(
     array(
         'name' => 'date_closed',
         'required' => true,
+        'related_fields' => array(
+            'date_closed_timestamp'
+        )
     ),
     'product_template_name',
     array(

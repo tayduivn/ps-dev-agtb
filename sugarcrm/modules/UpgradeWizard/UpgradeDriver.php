@@ -897,6 +897,9 @@ abstract class UpgradeDriver
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
         $locale = new Localization();
+        if (!isset ($_SERVER['REQUEST_URI'])) {
+            $_SERVER['REQUEST_URI'] = '';
+        }
 
         // Load user
         $GLOBALS['current_user'] = new User();

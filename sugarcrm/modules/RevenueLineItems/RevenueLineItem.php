@@ -198,7 +198,6 @@ class RevenueLineItem extends SugarBean
             $this->mapProbabilityFromSalesStage();
         }
         
-        $this->convertDateClosedToTimestamp();
         $this->mapFieldsFromProductTemplate();
         $this->mapFieldsFromOpportunity();
 
@@ -236,24 +235,6 @@ class RevenueLineItem extends SugarBean
         if (!empty($this->opportunity_id) && empty($this->product_type)) {
             $opp = BeanFactory::getBean('Opportunities', $this->opportunity_id);
             $this->product_type = $opp->opportunity_type;
-        }
-    }
-
-    /**
-     * Handle Converting DateClosed to a Timestamp
-     */
-    protected function convertDateClosedToTimestamp()
-    {
-        $timedate = TimeDate::getInstance();
-        if ($timedate->check_matching_format($this->date_closed, TimeDate::DB_DATE_FORMAT)) {
-            $date_close_db = $this->date_closed;
-        } else {
-            $date_close_db = $timedate->to_db_date($this->date_closed);
-        }
-
-        if (!empty($date_close_db)) {
-            $date_close_datetime = $timedate->fromDbDate($date_close_db);
-            $this->date_closed_timestamp = $date_close_datetime->getTimestamp();
         }
     }
 

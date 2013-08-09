@@ -454,7 +454,7 @@
                 sliderType: 'connected',
                 minRange: 0,
                 maxRange: 100,
-                default: true,
+                'default': true,
                 enabled: true
             },
             viewName: 'edit',

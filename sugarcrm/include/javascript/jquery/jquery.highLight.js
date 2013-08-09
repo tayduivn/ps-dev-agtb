@@ -1,4 +1,20 @@
-    jQuery.fn.highlight = function(pat) {
+/*
+
+ highlight v4
+
+ Highlights arbitrary terms.
+
+ <http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html>
+
+ MIT license.
+
+ Johann Burkard
+ <http://johannburkard.de>
+ <mailto:jb@eaio.com>
+
+ */
+
+jQuery.fn.highlight = function(pat) {
         function innerHighlight(node, pat) {
             var skip = 0;
             if (node.nodeType == 3) {

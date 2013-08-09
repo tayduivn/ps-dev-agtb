@@ -884,6 +884,9 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
     },
     getAppListStrings : function(list) {
         return SUGAR.language.get('app_list_strings', list);
+    },
+    parseDate: function(date, type) {
+        return SUGAR.util.DateUtils.parse(date, type);
     }
 });
 

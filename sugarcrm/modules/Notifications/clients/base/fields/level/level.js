@@ -28,7 +28,7 @@
      * @protected
      */
     _styleMapping: {
-        default: 'label',
+        'default': 'label',
         alert: 'label label-important',
         information: 'label label-info',
         other: 'label label-inverse',

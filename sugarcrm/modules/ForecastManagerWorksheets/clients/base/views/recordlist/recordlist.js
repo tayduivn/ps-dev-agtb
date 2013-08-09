@@ -270,7 +270,7 @@
                 }, {}, this);
 
                 $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
-                    if(!this.disposed) {
+                    if (!this.disposed) {
                         var ret = this.showNavigationMessage('window');
                         if (_.isString(ret)) {
                             return ret;
@@ -388,10 +388,22 @@
         var ret = this.showNavigationMessage('forecast');
 
         if (this.processNavigationMessageReturn(ret)) {
+            this.displayLoadingMessage();
             this.collection.fetch();
         }
     },
 
+    /**
+     * Set the loading message and have a way to hide it
+     */
+    displayLoadingMessage: function() {
+        app.alert.show('workshet_loading',
+            {level: 'process', title: app.lang.getAppString('LBL_LOADING')}
+        );
+        this.collection.once('reset', function() {
+            app.alert.dismiss('workshet_loading');
+        }, this);
+    },
     /**
      * Utility to process the return from the Navigation Message
      *
@@ -402,6 +414,7 @@
         if (_.isObject(message_result) && message_result.run_action === true) {
             if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
                 this.context.parent.once('forecasts:worksheet:saved', function() {
+                    this.displayLoadingMessage();
                     this.collection.fetch();
                 }, this);
                 this.saveWorksheet(true);
@@ -496,7 +509,7 @@
             this.setCommitLogButtonStates();
 
             var outerwidth = this.$el.find('span.isEditable').outerWidth();
-            this.$el.find('span.isEditable').parent("td").css("min-width","105px");
+            this.$el.find('span.isEditable').parent("td").css("min-width", "105px");
 
         } else {
             if (this.layout.isVisible()) {
@@ -727,6 +740,15 @@
     calculateTotals: function() {
         if (this.isVisible()) {
             this.totals = this.getCommitTotals();
+            var calcFields = ['worst_case', 'best_case', 'likely_case'];
+            _.filter(this._fields.visible, function(field) {
+                if (_.contains(calcFields, field.name)) {
+                    this.totals[field.name + '_display'] = true;
+                    return true;
+                }
+
+                return false;
+            }, this);
             var ctx = this.context.parent || this.context;
             // fire an event on the parent context
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);
@@ -805,8 +827,8 @@
             name: 'recordlist',
             method: 'parseFields'
         });
-        _.each(catalog, function (group, i) {
-            catalog[i] = _.filter(group, function (fieldMeta) {
+        _.each(catalog, function(group, i) {
+            catalog[i] = _.filter(group, function(fieldMeta) {
                 return app.utils.getColumnVisFromKeyMap(fieldMeta.name, 'forecastsWorksheetManager');
             });
         });

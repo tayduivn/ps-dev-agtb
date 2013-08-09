@@ -57,13 +57,17 @@ describe("when disable-delete plugin is used", function() {
     });
     
     describe("when there are no closed RLIs", function() {
+        var sales_field = 'sales_status'
         beforeEach(function() {
             model.set("closed_revenue_line_items", 0);
+            //BEGIN SUGARCRM flav=pro && flav != ent ONLY
+            sales_field = 'sales_stage'
+            //END SUGARCRM flav=pro && flav != ent ONLY
         });
         
         describe("when status is Closed Won", function() {
             it("message should contain NOTICE_NO_DELETE_CLOSED", function() {
-                model.set("sales_status", "Closed Won");
+                model.set(sales_field, "Closed Won");
                 field = SugarTest.createField("base", "delete_button", "rowaction", "detail", def, moduleName, model, context, true);
                 var message = field.removeDelete();
                 expect(message).toEqual("NOTICE_NO_DELETE_CLOSED");
@@ -72,7 +76,7 @@ describe("when disable-delete plugin is used", function() {
         
         describe("when status is not closed", function() {
             it("message should contain nothing", function() {
-                model.set("sales_status", "In Progress");
+                model.set(sales_field, "In Progress");
                 field = SugarTest.createField("base", "delete_button", "rowaction", "detail", def, moduleName, model, context, true);
                 var message = field.removeDelete();
                 expect(message).toEqual(null);
@@ -81,28 +85,33 @@ describe("when disable-delete plugin is used", function() {
     });
     
     describe("when there are closed RLIs", function() {
+        var sales_field = 'sales_status'
         beforeEach(function() {
             model.set("closed_revenue_line_items", 1);
+            //BEGIN SUGARCRM flav=pro && flav != ent ONLY
+            sales_field = 'sales_stage'
+            //END SUGARCRM flav=pro && flav != ent ONLY
         });
         
         describe("when status is Closed Won", function() {
             it("message should contain NOTICE_NO_DELETE_CLOSED", function() {
-                model.set("sales_status", "Closed Won");
+                model.set(sales_field, "Closed Won");
                 field = SugarTest.createField("base", "delete_button", "rowaction", "detail", def, moduleName, model, context, true);
                 var message = field.removeDelete();
                 expect(message).toEqual("NOTICE_NO_DELETE_CLOSED");
             });
         });
-        
+
+        //BEGIN SUGARCRM flav=ent ONLY
         describe("when status is not closed", function() {
             it("message should contain NOTICE_NO_DELETE_CLOSED_RLIS", function() {
-                model.set("sales_status", "In Progress");
+                model.set(sales_field, "In Progress");
                 field = SugarTest.createField("base", "delete_button", "rowaction", "detail", def, moduleName, model, context, true);
                 var message = field.removeDelete();
-                
                 expect(message).toEqual("NOTICE_NO_DELETE_CLOSED_RLIS");
             });
         });
+        //END SUGARCRM flav=ent ONLY
     });
     
     describe("when sales_stage is used", function() {

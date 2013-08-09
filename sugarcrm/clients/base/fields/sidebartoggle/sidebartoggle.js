@@ -32,8 +32,10 @@
             pointLeftClass = 'icon-double-angle-left';
         if (state === 'open') {
             chevron.removeClass(pointLeftClass).addClass(pointRightClass);
+            app.events.trigger('app:toggle:sidebar', 'open');
         } else if (state === 'close') {
             chevron.removeClass(pointRightClass).addClass(pointLeftClass);
+            app.events.trigger('app:toggle:sidebar', 'close');
         } else {
             app.logger.warn("updateArrowsWithDirection called with invalid state; should be 'open' or 'close', but was: "+state)
         }

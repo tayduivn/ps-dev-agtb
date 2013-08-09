@@ -25,6 +25,16 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
+                                'name' => 'forecast-pareto',
+                                'label' => 'Forecast Pareto Chart',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' =>
+                            array(
                                 'name' => 'interactions',
                                 'label' => 'Interactions',
                                 'filter_duration' => '7',

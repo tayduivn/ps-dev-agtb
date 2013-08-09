@@ -272,7 +272,7 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         else if (rField && relContext.get("model")) {
             return relContext.get("model").get(field);
         }
-        else if (relContext._dataFetched && col.page > 0) {
+        else if (context.isDataFetched() && col.page > 0) {
             if (col.length > 0) {
                 return  col.models[0].get(field);
             }
@@ -311,7 +311,7 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
             //Force skipFetch false if this context had the data we wanted, we wouldn't be here.
             skipFetch : false
         });
-        if (relContext._dataFetched){
+        if (relContext.isDataFetched()){
             relContext.resetLoadFlag();
         }
 
@@ -331,6 +331,9 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     },
     getAppListStrings : function(list) {
         return SUGAR.App.lang.getAppListStrings(list);
+    },
+    parseDate: function(date, type) {
+        return SUGAR.App.date.parse(date);
     }
 });
 

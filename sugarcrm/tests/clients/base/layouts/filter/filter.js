@@ -297,6 +297,15 @@ describe("Base.Layout.Filter", function () {
             expect(spy).toHaveBeenCalled();
             ctxt.get('collection').resetPagination = _oResetPagination;
         });
+        it('should be able to add or remove a clear icon depending on the quicksearch field', function() {
+            var ctxListStub = sinon.stub(layout, 'getRelevantContextList', function() { return []; });
+            layout.$el = $('<div></div>');
+            layout.applyFilter('not empty');
+            expect(layout.$('.add-on.icon-remove')[0]).not.toBeUndefined();
+            layout.applyFilter('');
+            expect(layout.$('.add-on.icon-remove')[0]).toBeUndefined();
+            ctxListStub.restore();
+        });
         it('should get relevant context lists for activities', function(){
             layout.showingActivities = true;
             var activityView = new Backbone.View();

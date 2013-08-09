@@ -135,7 +135,9 @@ class SidecarMetaDataUpgrader
         'edit'               => 'Grid',
         'detail'             => 'Grid',
         MB_RECORDVIEW        => 'MergeGrid',
+        //BEGIN SUGARCRM flav=ent ONLY
         MB_PORTALRECORDVIEW  => 'MergeGrid',
+        //END SUGARCRM flav=ent ONLY
         'search'             => 'Search',
         'drop'               => 'Drop',
     );

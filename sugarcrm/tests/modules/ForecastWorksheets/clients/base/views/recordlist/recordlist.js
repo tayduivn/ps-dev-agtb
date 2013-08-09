@@ -287,6 +287,36 @@ describe("ForecastWorksheets.View.RecordList", function() {
             // should not be called during checkForDraftRows when undefined
             expect(ctxStub).not.toHaveBeenCalled();
         });
+
+        it('should call layout.once when layout not visible but can edit', function() {
+            layoutStub.restore();
+            layoutStub = sinon.stub(view.layout, 'isVisible', function() {
+                return false;
+            });
+            sinon.stub(view.layout, 'once');
+
+            view.checkForDraftRows(undefined);
+
+            expect(view.layout.once).toHaveBeenCalled();
+
+            view.layout.once.restore();
+
+        });
+
+        it('should not call layout.once when layout not visible and can not edit', function() {
+            layoutStub.restore();
+            layoutStub = sinon.stub(view.layout, 'isVisible', function() {
+                return false;
+            });
+            view.canEdit = false;
+            sinon.stub(view.layout, 'once');
+            view.checkForDraftRows(undefined);
+
+            expect(view.layout.once).not.toHaveBeenCalled();
+
+            view.layout.once.restore();
+        });
+
     });
 
     describe('updateSelectedUser', function() {

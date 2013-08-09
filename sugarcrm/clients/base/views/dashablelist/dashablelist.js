@@ -1,7 +1,6 @@
 ({
     extendsFrom: 'ListView',
     plugins: ['Dashlet'],
-    _dataFetched: false, // flag to determine if we tried to get records already
     type : "list",
     initDashlet: function (view) {
         var module = this.context.get("module"),
@@ -44,10 +43,6 @@
             // and collapse them with an $and clause if necessary
             collection.filterDef = (_.size(filterDef) > 1) ? {'$and': filterDef} : filterDef;
 
-            // and bind a flag to the context so we know we have tried to get data
-            collection.once("reset", function () {
-                this._dataFetched = true;
-            }, this);
             var auto_refresh = parseInt(this.settings.get("auto_refresh"), 10);
 
             if (auto_refresh) {
@@ -55,7 +50,7 @@
                     clearInterval(this.timerId);
                 }
                 this.timerId = setInterval(_.bind(function () {
-                    this.context._dataFetched = false;
+                    this.context.resetLoadFlag();
                     this.layout.loadData();
                 }, this), auto_refresh * 1000 * 60);
             }

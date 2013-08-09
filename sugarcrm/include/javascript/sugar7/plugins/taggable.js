@@ -212,7 +212,7 @@
                             this._resetTaggable();
                         } else if (this._taggableListOpen && (searchTerm.length <= this.taggableSearchAfter)) {
                             this._getDropdown().hide();
-                            this._taggableListOpen = false;
+                            this._taggableListOpen = null;
                             this._taggableLastSearchTerm = null;
                         } else {
                             if ((searchTerm.indexOf(mention) === 0) || (searchTerm.indexOf(reference) === 0)) {

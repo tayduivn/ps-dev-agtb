@@ -470,12 +470,26 @@ class RestService extends ServiceBase
                 $oauthServer = SugarOAuth2Server::getOAuth2Server();
                 $oauthServer->verifyAccessToken($token);
 
-                if ( isset($_SESSION['authenticated_user_id']) && $_SESSION['unique_key'] == $GLOBALS['sugar_config']['unique_key']) {
-                    $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'],$oauthServer);
+                if (isset($_SESSION['authenticated_user_id'])) {
+                    $authController = AuthenticationController::getInstance();
+                    // This will return false if anything is wrong with the session
+                    // (mismatched IP, mismatched unique_key, etc)
+                    $valid = $authController->apiSessionAuthenticate();
+                    
+                    if ($valid) {
+                        $valid = $this->userAfterAuthenticate($_SESSION['authenticated_user_id'],$oauthServer);
+                    }
+                    if (!$valid) {
+                        // Need to populate the exception here so later code
+                        // has it and can send the correct status back to the client
+                        $e = new SugarApiExceptionInvalidGrant();
+                    }
                 }
-
             } catch ( OAuth2AuthenticateException $e ) {
                 // This was failing if users were passing an oauth token up to a public url.
+                $valid = false;
+            } catch ( SugarApiException $e ) {
+                // If we get an exception during this we'll assume authentication failed
                 $valid = false;
             }
         }
@@ -567,6 +581,7 @@ class RestService extends ServiceBase
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
             $tokenData = $oauthServer->verifyDownloadToken($token);
             
+            $GLOBALS['current_user'] = BeanFactory::getBean('Users',$tokenData['user_id']);
             $valid = $this->userAfterAuthenticate($tokenData['user_id'],$oauthServer);
         }
 
@@ -582,7 +597,6 @@ class RestService extends ServiceBase
     {
         $valid = false;
 
-        $GLOBALS['current_user'] = BeanFactory::getBean('Users',$userId);
         if(!empty($GLOBALS['current_user'])) {
             $valid = true;
             $GLOBALS['logic_hook']->call_custom_logic('', 'after_load_user');
@@ -592,7 +606,7 @@ class RestService extends ServiceBase
             //BEGIN SUGARCRM flav=pro ONLY
             SugarApplication::trackLogin();
             //END SUGARCRM flav=pro ONLY
-            
+
             // Setup visibility where needed
             $oauthServer->setupVisibility();
             

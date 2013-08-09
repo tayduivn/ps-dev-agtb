@@ -255,4 +255,17 @@ describe("Base.Field.Teamset", function () {
             expect(addTeamStub).not.toHaveBeenCalled();
         });
     });
+    describe("_loadTemplate", function(){
+        it("should load list template when doing inline editing (See SP-1197)", function(){
+            field.view.action = "list";
+            field.action = "edit";
+            field._loadTemplate();
+            expect(field.tplName).toEqual("list");
+
+            field.view.action = "list";
+            field.action = "list";
+            field._loadTemplate();
+            expect(field.tplName).toEqual("list");
+        });
+    });
 });

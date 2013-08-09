@@ -183,11 +183,11 @@ $dictionary['Opportunity'] = array(
             'type' => 'currency_id',
             'dbType' => 'id',
             'group' => 'currency_id',
-            'required'=>true,
+            'required' => true,
             'vname' => 'LBL_CURRENCY',
             'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
             'reportable' => false,
-            'default'=>'-99',
+            'default' => '-99',
             'comment' => 'Currency used for display purposes'
         ),
         'currency_name' => array(
@@ -236,8 +236,11 @@ $dictionary['Opportunity'] = array(
             'massupdate' => false,
             'calculated' => true,
             'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
-            'enforced' => true
+            'enforced' => true,
             //END SUGARCRM flav=ent ONLY
+            'related_fields' => array(
+                'date_closed_timestamp'
+            )
         ),
         'date_closed_timestamp' => array(
             'name' => 'date_closed_timestamp',
@@ -245,12 +248,15 @@ $dictionary['Opportunity'] = array(
             'type' => 'int',
             'studio' => false,
             'reportable' => false,
-            //BEGIN SUGARCRM flav=ent ONLY
             'massupdate' => false,
+            'enforced' => true,
             'calculated' => true,
+            //BEGIN SUGARCRM flav=ent ONLY
             'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")',
-            'enforced' => true
             //END SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'formula' => 'timestamp($date_closed)',
+            //END SUGARCRM flav=pro && flav!=ent ONLY
         ),
         'next_step' => array(
             'name' => 'next_step',
@@ -429,19 +435,19 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS',
         ),
-      'archived_emails' => array(
-        'name' => 'archived_emails',
-        'type' => 'link',
-        'link_file' => 'modules/Emails/ArchivedEmailsBeanLink.php',
-        'link_class' => 'ArchivedEmailsBeanLink',
-        'link' => 'contacts',
-        'source' => 'non-db',
-        'vname' => 'LBL_EMAILS',
-        'module' => 'Emails',
-        'link_type' => 'many',
-        'relationship' => '',
-    ),
-    'documents' => array(
+        'archived_emails' => array(
+            'name' => 'archived_emails',
+            'type' => 'link',
+            'link_file' => 'modules/Emails/ArchivedEmailsBeanLink.php',
+            'link_class' => 'ArchivedEmailsBeanLink',
+            'link' => 'contacts',
+            'source' => 'non-db',
+            'vname' => 'LBL_EMAILS',
+            'module' => 'Emails',
+            'link_type' => 'many',
+            'relationship' => '',
+        ),
+        'documents' => array(
             'name' => 'documents',
             'type' => 'link',
             'relationship' => 'documents_opportunities',
@@ -666,7 +672,7 @@ $dictionary['Opportunity'] = array(
         'opportunities_revenuelineitems' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',
-            'lhs_key' => 'id',  
+            'lhs_key' => 'id',
             'rhs_module' => 'RevenueLineItems',
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'opportunity_id',
@@ -674,24 +680,24 @@ $dictionary['Opportunity'] = array(
         ),
         //END SUGARCRM flav=pro ONLY
     ),
-
     'duplicate_check' => array(
         'enabled' => true,
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
-                array('$and' => array(
-                    array('name' => array('$starts' => '$name')),
-                    array('sales_status' => array('$not_equals' => 'Closed Lost')),
-                    array('sales_status' => array('$not_equals' => 'Closed Won')),
-                    array('accounts.id' => array('$equals' => '$account_id')),
-                )),
+                array(
+                    '$and' => array(
+                        array('name' => array('$starts' => '$name')),
+                        array('sales_status' => array('$not_equals' => 'Closed Lost')),
+                        array('sales_status' => array('$not_equals' => 'Closed Won')),
+                        array('accounts.id' => array('$equals' => '$account_id')),
+                    )
+                ),
             ),
             'ranking_fields' => array(
                 array('in_field_name' => 'name', 'dupe_field_name' => 'name'),
             )
         )
     ),
-
 //This enables optimistic locking for Saves From EditView
     'optimistic_locking' => true,
 );

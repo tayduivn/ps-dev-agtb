@@ -51,14 +51,12 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      */
     public function login($user_auth, $application, $name_value_list = array()){
         $GLOBALS['log']->info("Begin: SugarWebServiceImpl->login({$user_auth['user_name']}, $application, ". print_r($name_value_list, true) .")");
-        global $sugar_config, $system_config;
+        global $sugar_config;
         $error = new SoapError();
         $user = BeanFactory::getBean('Users');
         $success = false;
-        //rrs
-        $system_config = Administration::getSettings('system');
-        $authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
-        //rrs
+        $authController = AuthenticationController::getInstance();
+
         if(!empty($user_auth['encryption']) && $user_auth['encryption'] === 'PLAIN' && $authController->authController->userAuthenticateClass != "LDAPAuthenticateUser")
         {
             $user_auth['password'] = md5($user_auth['password']);

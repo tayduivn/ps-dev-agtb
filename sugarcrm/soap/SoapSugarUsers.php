@@ -79,10 +79,8 @@ function login($user_auth, $application){
 	$error = new SoapError();
 	$user = BeanFactory::getBean('Users');
 	$success = false;
-	//rrs
-		$system_config = Administration::getSettings('system');
-	$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
-	//rrs
+    $authController = AuthenticationController::getInstance();
+
 	$isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
 	$usr_id=$user->retrieve_user_id($user_auth['user_name']);
 	if($usr_id) {
@@ -110,7 +108,7 @@ function login($user_auth, $application){
 			return array('id'=>-1, 'error'=>$error);
 	} else if(function_exists('mcrypt_cbc')){
 		$password = decrypt_string($user_auth['password']);
-		$authController = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
+        $authController = AuthenticationController::getInstance();
 		if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id'])){
 			$success = true;
 		} // if

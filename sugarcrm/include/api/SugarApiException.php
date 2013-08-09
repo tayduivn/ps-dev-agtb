@@ -149,7 +149,7 @@ class SugarApiExceptionIncorrectVersion extends SugarApiException
 
 /**
  * Token not supplied or token supplied is invalid.
- * The client should get a new token and retry.
+ * The client should display the username and password screen
  */
 class SugarApiExceptionNeedLogin extends SugarApiException
 {
@@ -157,6 +157,18 @@ class SugarApiExceptionNeedLogin extends SugarApiException
     public $errorLabel = 'need_login';
     public $messageLabel = 'EXCEPTION_NEED_LOGIN';
 }
+
+/**
+ * The user's session is invalid
+ * The client should get a new token and retry.
+ */
+class SugarApiExceptionInvalidGrant extends SugarApiException
+{
+    public $httpCode = 401;
+    public $errorLabel = 'invalid_grant';
+    public $messageLabel = 'EXCEPTION_INVALID_TOKEN';
+}
+
 /**
  * This action is not allowed for this user.
  */
