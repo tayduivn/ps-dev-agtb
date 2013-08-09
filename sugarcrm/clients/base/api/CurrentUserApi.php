@@ -55,6 +55,7 @@ class CurrentUserApi extends SugarApi
                 'longHelp' => 'include/api/help/me_get_help.html',
                 'ignoreMetaHash' => true,
                 'keepSession' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'update' => array(
                 'reqType' => 'PUT',

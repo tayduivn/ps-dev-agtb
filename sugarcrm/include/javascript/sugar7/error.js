@@ -140,10 +140,18 @@
      * 500 Internal server error handler. 
      */
     app.error.handleServerError = function(error) {
+        if(typeof(error.payload.url) != 'undefined') {
+            // Redirect admins instead of loading the error view.
+            if (app.acl.hasAccess('admin','Administration')) {
+                app.router.navigate(error.payload.url,{trigger: true, replace: true});
+                return;
+            }
+        }
         app.controller.loadView({
             layout: "error",
-            errorType: "500",
+            errorType: error.status || "500",
             module: "Error",
+            error: error, 
             create: true
         });
     };

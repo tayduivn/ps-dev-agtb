@@ -87,5 +87,6 @@ unset($_SESSION['HomeOnly']);
 
   //END SUGARCRM lic=sub ONLY
 
+apiLoadSystemStatus(true);
 header("Location: index.php?action={$_POST['return_action']}&module={$_POST['return_module']}");
 ?>

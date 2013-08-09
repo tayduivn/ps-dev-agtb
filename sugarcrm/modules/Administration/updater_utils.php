@@ -680,7 +680,209 @@ function checkSystemLicenseStatus(){
 
 }
 
+function apiCheckSystemStatus($forceReload = false)
+{
+    global $sugar_config, $sugar_flavor, $db;
 
+    if (!isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == false ){
+        return array(
+            'level'  =>'admin_only',
+            'message'=>'WARN_INSTALLER_LOCKED',
+            'url'    =>'install.php',
+        );
+    }
+    
+    // If they are missing session variables force a reload
+    $sessionCheckNotExists = array(
+        'VALIDATION_EXPIRES_IN',
+        'LICENSE_EXPIRES_IN',
+        'EXCEEDING_OC_LICENSES',
+    );
+    $sessionCheckExists = array(
+        'HomeOnly',
+        'INVALID_LICENSE',
+    );
+    foreach ($sessionCheckNotExists as $key) {
+        if (!isset($_SESSION[$key])) {
+            $forceReload = true;
+        }
+    }
+    foreach ($sessionCheckExists as $key) {
+        if (!empty($_SESSION[$key])) {
+            $forceReload = true;
+        }
+    }
+
+    $systemStatus = apiLoadSystemStatus($forceReload);
+
+    // Don't allow maintenanceMode to override license failures
+    if ($systemStatus === true
+        && !empty($GLOBALS['sugar_config']['maintenanceMode'])) {
+        $url = 'maintenance.php';
+        if ($GLOBALS['sugar_config']['maintenanceMode'] !== true) {
+            $url = $GLOBALS['sugar_config']['maintenanceMode'];
+        }
+
+        return array(
+            'level'  =>'maintenance',
+            'message'=>'EXCEPTION_MAINTENANCE',
+            'url'    =>$url,
+        );
+        
+    }
+
+    return $systemStatus;
+}
+
+function apiLoadSystemStatus($forceReload = false)
+{
+    $systemStatus = null;
+    $oldSystemStatus = null;
+    // First try from SugarCache
+    $systemStatus = sugar_cache_retrieve('api_system_status');
+    if (empty($systemStatus)) {
+        // No luck, try the database
+	    $administration = Administration::getSettings('system');
+        if (!empty($administration->settings['api_system_status'])) {
+            $systemStatus = unserialize(base64_decode($administration->settings));
+        }
+    }
+
+    if (!empty($systemStatus)) {
+        // Save the old system status, so if the new one is the same
+        // even on a force reload, we don't update it.
+        $oldSystemStatus = $systemStatus;
+    }
+    if ($forceReload) {
+        $systemStatus = null;
+    }
+    
+    if (empty($systemStatus)) {
+        $systemStatus = apiActualLoadSystemStatus();
+    }
+
+    if (serialize($systemStatus) != serialize($oldSystemStatus)) {
+        sugar_cache_put('api_system_status',$systemStatus);
+        if (!isset($administration)) {
+            $administration = Administration::getSettings('system');            
+        }
+        $administration->saveSetting('system','api_system_status',base64_encode(serialize($systemStatus)));
+    }
+
+    return $systemStatus;
+}
+
+// No caching, just check the system status
+function apiActualLoadSystemStatus()
+{
+    checkSystemLicenseStatus();
+    if (!isset($_SESSION['LICENSE_EXPIRES_IN'])) {
+        // BEGIN CE-OD License User Limit Enforcement
+        if (isset($sugar_flavor) 
+            && ($sugar_flavor=='CE' || !empty($admin->settings['license_enforce_user_limit']))) {
+            
+            $query = "SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere();
+            $result = $db->query($query, true, "Error filling in user array: ");
+            $row = $db->fetchByAssoc($result);
+            $admin = Administration::getSettings();
+            $license_users = $admin->settings['license_users'];
+            $license_seats_needed = $row['total'] - $license_users;
+            if( $license_seats_needed > 0 ){
+                $_SESSION['EXCEEDS_MAX_USERS'] = 1;
+                return array(
+                    'level'  =>'admin_only',
+                    'message'=>'WARN_LICENSE_SEATS_MAXED',
+                    'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+                );
+            }
+        }
+        // END CE-OD License User Limit Enforcement
+    }
+    
+    if (!empty($_SESSION['HomeOnly'])) {
+        return array(
+            'level'  =>'admin_only',
+            'message'=>'FATAL_LICENSE_ALTERED',
+            'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+        );
+    }
+
+    if (!ocLicense()) {
+        if (!empty($_SESSION['INVALID_LICENSE'])) {
+            return array(
+                'level'  =>'admin_only',
+                'message'=>'ERROR_LICENSE_VALIDATION',
+                'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+            );
+        }
+        if (isset($_SESSION['LICENSE_EXPIRES_IN']) 
+            && $_SESSION['LICENSE_EXPIRES_IN'] != 'valid') {
+            if ($_SESSION['LICENSE_EXPIRES_IN'] < -1) {
+                return array(
+                    'level'  =>'admin_only',
+                    'message'=>'ERROR_LICENSE_EXPIRED',
+                    'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+                    );
+            } else if (isset($GLOBALS['current_user']->id)
+                       && $GLOBALS['current_user']->isAdmin()) {
+                // Not yet expired, but soon enough to warn                
+                return array(
+                    'level'  =>'warning',
+                    'message'=>'WARN_LICENSE_EXPIRED',
+                    'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+                    );
+            }
+        } elseif (isset($_SESSION['VALIDATION_EXPIRES_IN']) 
+                  && $_SESSION['VALIDATION_EXPIRES_IN'] != 'valid') {
+            if ($_SESSION['VALIDATION_EXPIRES_IN'] < -1 ) {
+                return array(
+                    'level'  =>'admin_only',
+                    'message'=>'ERROR_LICENSE_VALIDATION',
+                    'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+                );
+            } else if (isset($GLOBALS['current_user']->id)
+                       && $GLOBALS['current_user']->isAdmin()) {
+                // Not yet expired, but soon enough to warn                
+                return array(
+                    'level'  =>'warning',
+                    'message'=>'WARN_LICENSE_VALIDATION',
+                    'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+                );
+            }
+        }
+    }
+
+    if (!empty($_SESSION['EXCEEDING_OC_LICENSES'])) {
+        return array(
+            'level'  =>'admin_only',
+            'message'=>'ERROR_EXCEEDING_OC_LICENSES',
+            'url'    =>'#bwc/index.php?module=Administration&action=ListViewOfflineClient',
+        );
+    }
+    
+    return true;
+}
+
+function apiCheckLoginStatus()
+{
+    unset($GLOBALS['login_error']);
+
+    // Run loginLicense()
+    loginLicense();
+
+    // The other license check codes are handled by apiCheckSystemLicenseStatus
+    if (!empty($GLOBALS['login_error'])) {
+        return array(
+            'level'  =>'admin_only',
+            'message'=>'ERROR_LICENSE_VALIDATION',
+            'url'    =>'#bwc/index.php?action=LicenseSettings&module=Administration',
+        );
+    }
+
+    // Force it to recheck the system license on login
+    unset($_SESSION['LICENSE_EXPIRES_IN']);
+    return apiCheckSystemStatus();
+}
 
 
 

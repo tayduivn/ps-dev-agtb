@@ -57,6 +57,7 @@ class MetadataApi extends SugarApi
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'getAllMetadataPost' => array(
                 'reqType' => 'POST',
@@ -67,6 +68,7 @@ class MetadataApi extends SugarApi
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'noEtag' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'getAllMetadataHashes' => array(
                 'reqType' => 'GET',
@@ -76,6 +78,7 @@ class MetadataApi extends SugarApi
                 'shortHelp' => 'This method will return the hash of all metadata for the system',
                 'longHelp' => 'include/api/html/metadata_all_help.html',
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'getPublicMetadata' =>  array(
                 'reqType' => 'GET',
@@ -87,6 +90,7 @@ class MetadataApi extends SugarApi
                 'noLoginRequired' => true,
                 'noEtag' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'getLanguage' => array(
                 'reqType' => 'GET',
@@ -99,6 +103,7 @@ class MetadataApi extends SugarApi
                 'rawReply' => true,
                 'noEtag' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'getPublicLanguage' => array(
                 'reqType' => 'GET',
@@ -111,6 +116,7 @@ class MetadataApi extends SugarApi
                 'rawReply' => true,
                 'noEtag' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
         );
     }
@@ -131,7 +137,22 @@ class MetadataApi extends SugarApi
 
         $this->setPlatformList($api);
 
-        $hash = $this->getCachedMetadataHash();
+        // We need to see if we need to send any warnings down to the user
+        $systemStatus = apiCheckSystemStatus();
+        if ($systemStatus !== true) {
+            // Something is up with the system status
+            // We need to tack it on and refresh the hash
+            $data = $this->loadPrivateMetadata($args, $this->platforms[0]);
+            if ($this->getCachedMetadataHash() != $data['_hash']) {
+                $this->cacheMetadataHash($data['_hash']);
+            }
+            $data['config']['system_status'] = $systemStatus;
+            $data['_hash'] = md5($data['_hash'].serialize($systemStatus));
+            $hash = $data['_hash'];
+        } else {
+            $hash = $this->getCachedMetadataHash();
+        }
+
         if (!empty($hash) && $api->generateETagHeader($hash)) {
             return;
         }
@@ -161,6 +182,7 @@ class MetadataApi extends SugarApi
             'config',
             'languages',
         );
+
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -187,23 +209,10 @@ class MetadataApi extends SugarApi
             $onlyHash = true;
         }
 
-        $this->setPlatformList($api);
-
-        $data = $this->getMetadataCache($this->platforms[0],false);
-
-        //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
-            ini_set('max_execution_time', 0);
-            $data = $this->loadMetadata($args);
-            $this->putMetadataCache($data, $this->platforms[0], false);
+            $data = $this->loadPrivateMetadata($args, $this->platforms[0]);
         }
-
-        // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
-        // PHP builds. This was causing metadata to store a different value in the
-        // cache than -99. The fix was to add a space arround the -99 to force it
-        // to string. This trims that value prior to sending it to the client.
-        $data = $this->normalizeCurrencyIds($data);
-
+        
         if (empty($hash) || $hash != $data['_hash']) {
             $this->cacheMetadataHash($data['_hash']);
             if ($api->generateETagHeader($data['_hash'])) {
@@ -232,6 +241,29 @@ class MetadataApi extends SugarApi
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
 
+    // This function loads the metadata from cache, or builds the cache if it doesn't exist
+    protected function loadPrivateMetadata($args, $platform)
+    {
+        $data = $this->getMetadataCache($platform, false);
+
+        //If we failed to load the metadata from cache, load it now the hard way.
+        if (empty($data)) {
+            ini_set('max_execution_time', 0);
+            $data = $this->loadMetadata($args);
+            
+            // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
+            // PHP builds. This was causing metadata to store a different value in the
+            // cache than -99. The fix was to add a space arround the -99 to force it
+            // to string. This trims that value prior to sending it to the client.
+            $data = $this->normalizeCurrencyIds($data);
+
+            $this->putMetadataCache($data, $platform, false);
+        }
+
+        return $data;
+    }
+
+
     // this is the function for the endpoint of the public metadata api.
     public function getPublicMetadata($api, $args)
     {
@@ -241,12 +273,7 @@ class MetadataApi extends SugarApi
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
         $this->setPlatformList($api);
-
-        $hash = $this->getCachedMetadataHash(true);
-        if (!empty($hash) && $api->generateETagHeader($hash)) {
-            return;
-        }
-
+        
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','labels','views', 'layouts', 'config', 'jssource');
 
@@ -264,43 +291,68 @@ class MetadataApi extends SugarApi
             $onlyHash = true;
         }
 
-        $hash = $this->getCachedMetadataHash(true);
+        // We need to see if we need to send any warnings down to the user
+        $systemStatus = apiCheckSystemStatus();
+        if ($systemStatus !== true) {
+            // Something is up with the system status
+            // We need to tack it on and refresh the hash
+            $data = $this->loadPublicMetadata($args);
+            $data['config']['system_status'] = $systemStatus;
+            unset($data['_hash']);
+            $data['_hash'] = md5(serialize($data));
+            $hash = $data['_hash'];
+        } else {
+            $hash = $this->getCachedMetadataHash(true);
+        }
+
         if (!empty($hash) && $api->generateETagHeader($hash)) {
             return;
         }
 
-        $data = $this->getMetadataCache($this->platforms[0],true);
+        if (!isset($data)) {
+            $data = $this->loadPublicMetadata($args);
+        }
 
-        if ( empty($data) ) {
+        if (!empty($data['_hash']) && $api->generateETagHeader($data['_hash'])) {
+            return;
+        }
+
+        $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
+
+        return $this->filterResults($args, $data, $onlyHash, $baseChunks);
+    }
+
+    /**
+     * This function loads public metadata, either from cache, or from building it
+     *
+     * @return array A giant pile of metadata
+     */
+    protected function loadPublicMetadata($args)
+    {
+        $data = $this->getMetadataCache($this->platforms[0],true);
+        
+        if (empty($data)) {
             // since this is a public metadata call pass true to the meta data manager to only get public/
             $mm = $this->getMetadataManager( true );
 
             // Start collecting data
             $data = array();
 
-            $data['fields']  = $mm->getSugarFields();
-            $data['views']   = $mm->getSugarViews();
-            $data['layouts'] = $mm->getSugarLayouts();
-            $data['labels'] = $this->getStringUrls($data, true);
-            $data['modules'] = array("Login" => array("fields" => array()));
-            $data['config'] = $this->getConfigs();
+            $data['fields']   = $mm->getSugarFields();
+            $data['views']    = $mm->getSugarViews();
+            $data['layouts']  = $mm->getSugarLayouts();
+            $data['labels']   = $this->getStringUrls($data,true);
+            $data['modules']  = array("Login" => array("fields" => array()));
+            $data['config']   = $this->getConfigs();
             $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
             $data['_override_values'] = $this->getOverrides($data, $args);
-            $data["_hash"] = md5(serialize($data));
+            $data["_hash"]    = md5(serialize($data));
 
             $this->putMetadataCache($data, $this->platforms[0], true);
-
-        }
-        if (empty($hash) || $hash != $data['_hash']) {
             $this->cacheMetadataHash($data['_hash'], true);
-            if ($api->generateETagHeader($data['_hash'])) {
-                return;
-            }
         }
 
-        $baseChunks = array('fields','labels','views', 'layouts', 'config', 'jssource');
-
-        return $this->filterResults($args, $data, $onlyHash, $baseChunks);
+        return $data;
     }
 
     protected function buildJSFileFromMD(&$data, $platform, $onlyReturnModuleComponents = false)
