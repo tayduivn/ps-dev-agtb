@@ -311,14 +311,24 @@
 											</td>
 										</tr>
 										<tr>
-										{if !empty($settings.captcha_on) || !($VALID_PUBLIC_KEY)}
-											{assign var='captcha_checked' value='CHECKED'}
+                                        <tr>
+                                            {if !empty($settings.captcha_on) || !($VALID_PUBLIC_KEY)}
+                                                {assign var='captcha_checked' value='CHECKED'}
+                                            {else}
+                                                {assign var='captcha_checked' value=''}
+                                            {/if}
+                                            <td width="25%" scope="row">{$MOD.ENABLE_CAPTCHA}:&nbsp{sugar_help text=$MOD.LBL_CAPTCHA_HELP_TEXT WIDTH=400}</td>
+                                            <td scope="row" width="75%"><input type='hidden' name='captcha_on' value='0'><input name="captcha_on" id="captcha_id" value="1" class="checkbox" tabindex='1' type="checkbox" onclick='document.getElementById("captcha_config_display").style.display=this.checked?"":"none";' {$captcha_checked}></td>
+                                        </tr>
+										{if !empty($settings.honeypot_on)}
+											{assign var='honeypot_checked' value='CHECKED'}
 										{else}
-											{assign var='captcha_checked' value=''}
+											{assign var='honeypot_checked' value=''}
 										{/if}
-											<td width="25%" scope="row">{$MOD.ENABLE_CAPTCHA}:&nbsp{sugar_help text=$MOD.LBL_CAPTCHA_HELP_TEXT WIDTH=400}</td>
-											<td scope="row" width="75%"><input type='hidden' name='captcha_on' value='0'><input name="captcha_on" id="captcha_id" value="1" class="checkbox" tabindex='1' type="checkbox" onclick='document.getElementById("captcha_config_display").style.display=this.checked?"":"none";' {$captcha_checked}></td>
+											<td width="25%" scope="row">{$MOD.ENABLE_HONEYPOT}:&nbsp{sugar_help text=$MOD.LBL_HONEYPOT_HELP_TEXT WIDTH=400}</td>
+											<td scope="row" width="75%"><input type='hidden' name='honeypot_on' value='0'><input name="honeypot_on" id="honeypot_id" value="1" class="checkbox" tabindex='1' type="checkbox" {$honeypot_checked}></td>
 										</tr>
+
 									</table>
 									<table width="100%" border="0" cellspacing="0" cellpadding="0">
 										<tr>
@@ -901,10 +911,13 @@ var forgot_password_select=table_fields.getElementsByTagName('select');
 		for (j=0;j<forgot_password_select.length;j++)
 			forgot_password_select[j].disabled='';
 		document.ConfigurePasswordSettings.captcha_on[1].disabled='';
+        document.ConfigurePasswordSettings.honeypot_on[1].disabled='';
 	}else
 		{
 		document.ConfigurePasswordSettings.captcha_on[1].disabled='disabled';
 		document.ConfigurePasswordSettings.captcha_on[1].checked='';
+        document.ConfigurePasswordSettings.honeypot_on[1].disabled='disabled';
+        document.ConfigurePasswordSettings.honeypot_on[1].checked='';
 		document.getElementById("captcha_config_display").style.display='none';
 		for (i=0;i<forgot_password_input.length;i++)
 			forgot_password_input[i].disabled='disabled';

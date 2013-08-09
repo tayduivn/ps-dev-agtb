@@ -534,12 +534,17 @@ class MetadataApi extends SugarApi
     protected function getConfigs()
     {
         global $sugar_config;
-
+        $administration = new Administration();
+        $administration->retrieveSettings();
         // These configs are controlled via System Settings in Administration module
         $configs = array(
             'maxQueryResult' => $sugar_config['list_max_entries_per_page'],
             'maxSubpanelResult' => $sugar_config['list_max_entries_per_subpanel'],
         );
+
+        if (isset($administration->settings['honeypot_on'])) {
+            $configs['honeypot_on'] = true;
+        }
 
         return $configs;
     }

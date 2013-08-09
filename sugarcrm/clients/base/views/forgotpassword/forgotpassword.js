@@ -106,6 +106,11 @@
         self.clearValidationErrors();
         self.model.doValidate(null, function(isValid) {
             if (isValid) {
+
+                // a robot has reached into the honey pot. do not submit
+                if (app.config.honeypot_on && app.config.honeypot_on === true &&
+                    (self.$('input[name="HPTextField"]').val() || self.model.get('HPTextField'))) return;
+
                 app.$contentEl.hide();
                 app.alert.show('forgotPassword', {level: 'process', title: app.lang.getAppString('LOADING'), autoClose: false});
 
