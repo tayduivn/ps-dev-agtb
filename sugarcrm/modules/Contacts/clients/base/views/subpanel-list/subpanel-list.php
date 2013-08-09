@@ -11,54 +11,57 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-$viewdefs['Contacts']['base']['view']['subpanel-list'] = array('panels' => array(
+$viewdefs['Contacts']['base']['view']['subpanel-list'] = array(
+    'type' => 'subpanel-list',
+    'panels' =>
     array(
-      'name' => 'panel_header',
-      'label' => 'LBL_PANEL_1',
-      'fields' => array(
         array(
-            'name' => 'full_name',
-            'type' => 'fieldset',
+            'name' => 'panel_header',
+            'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
-                    'name' => 'first_name',
-                    'link' => true,
+                    'name' => 'full_name',
+                    'type' => 'fieldset',
+                    'fields' => array(
+                        array(
+                            'name' => 'first_name',
+                            'link' => true,
+                        ),
+                        array(
+                            'name' => 'last_name',
+                            'link' => true,
+                        )
+                    ),
+                    'css_class' => 'full-name',
+                    'width' => 49,
+                    'label' => 'LBL_LIST_NAME',
+                    'enabled' => true,
+                    'default' => true,
+                    'sortable' => false,
                 ),
                 array(
-                    'name' => 'last_name',
-                    'link' => true,
-                )
+                    'name' => 'account_name',
+                    'target_record_key' => 'account_id',
+                    'target_module' => 'Accounts',
+                    'label' => 'LBL_LIST_ACCOUNT_NAME',
+                    'enabled' => true,
+                    'default' => true,
+                    'sortable' => false,
+                ),
+                array(
+                    'name' => 'email',
+                    'label' => 'LBL_LIST_EMAIL',
+                    'enabled' => true,
+                    'default' => true,
+                    'sortable' => false,
+                ),
+                array(
+                    'name' => 'phone_work',
+                    'label' => 'LBL_LIST_PHONE',
+                    'enabled' => true,
+                    'default' => true,
+                ),
             ),
-            'css_class' => 'full-name',
-            'width' =>  49,
-            'label' => 'LBL_LIST_CONTACT_NAME',
-            'enabled' => true,
-            'default' => true,
-            'sortable' => false,
         ),
-        array(
-          'name' => 'account_name',
-          'target_record_key' => 'account_id',
-          'target_module' => 'Accounts',
-          'label' => 'LBL_LIST_ACCOUNT_NAME',
-          'enabled' => true,
-          'default' => true,
-          'sortable' => false,
-        ),
-        array(
-          'name' => 'email',
-          'label' => 'LBL_LIST_EMAIL',
-          'enabled' => true,
-          'default' => true,
-          'sortable' => false,
-        ),
-        array(
-          'name' => 'phone_work',
-          'label' => 'LBL_LIST_PHONE',
-          'enabled' => true,
-          'default' => true,
-        ),
-      ),
     ),
-  ),
 );
