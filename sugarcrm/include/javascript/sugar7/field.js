@@ -39,7 +39,7 @@
              * Template for the exclamation mark icon added when decorating errors
              */
             exclamationMarkTemplate: Handlebars.compile(
-                '<span class="error-tooltip  add-on" rel="tooltip" data-original-title="{{arrayJoin this ", "}}"><i class="icon-exclamation-sign"></i></span>'
+                '<span class="error-tooltip  add-on" data-container="body" rel="tooltip" data-original-title="{{arrayJoin this ", "}}"><i class="icon-exclamation-sign"></i></span>'
             ),
 
             /**
@@ -347,10 +347,10 @@
                     });
                 }
                 $ftag.wrap('<div class="input-append error ' + ftag + '">');
-                $ftag.after(this.exclamationMarkTemplate(errorMessages));
-                $tooltip = this.$('.error-tooltip');
+                $tooltip = this.exclamationMarkTemplate(errorMessages);
+                $ftag.after($tooltip);
                 if (_.isFunction($tooltip.tooltip)) {
-                    var tooltipOpts = { container: 'body', placement: 'top', trigger: 'click' };
+                    var tooltipOpts = {placement: 'top', trigger: 'click' };
                     $tooltip.tooltip(tooltipOpts);
                 }
             },
