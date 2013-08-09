@@ -21,12 +21,7 @@
      * @return {Number|undefined} the unformatted value.
      */
     unformat: function(value) {
-
-        var unformattedValue = app.utils.unformatNumberStringLocale(value, true);
-
-        if (_.isFinite(unformattedValue)) {
-            return unformattedValue;
-        }
+        return app.utils.unformatNumberStringLocale(value, true);
     },
 
     /**
@@ -43,11 +38,7 @@
      *   preferences.
      */
     format: function(value) {
-
         var numberGroupSeparator = '', decimalSeparator = '';
-        if (!_.isFinite(value)) {
-            return;
-        }
 
         if (!this.def.disable_num_format) {
             numberGroupSeparator = app.user.getPreference('number_grouping_separator') || ',';
