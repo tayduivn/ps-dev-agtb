@@ -78,6 +78,12 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'showOn' => 'view',
                     'value' => 'edit',
                 ),
+                array(
+                    'type'       => 'vcard',
+                    'name'       => 'vcard_button',
+                    'label'      => 'LBL_VCARD_DOWNLOAD',
+                    'acl_action' => 'edit',
+                ),
             ),
         ),
         array(

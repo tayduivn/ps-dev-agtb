@@ -2594,6 +2594,7 @@ $app_strings = array (
     'LBL_FOLLOWING' => 'Following',
     'LBL_UNFOLLOW' => 'Unfollow',
     'LBL_VCARD' => 'vCard',
+    'LBL_VCARD_DOWNLOAD' => 'Download .vcf',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
     'LBL_IMPORT_VCARD' => 'Import vCard:',

@@ -1,40 +1,40 @@
 describe('vcard field', function() {
-
-    var app;
-    var field;
+    var app, field;
 
     beforeEach(function() {
-
         app = SugarTest.app;
-        app.view.Field.prototype._renderHtml = function() {
-        };
 
-        field = SugarTest.createField('base', 'vcard_contact', 'vcard', 'detail');
+        SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'field', 'button');
+        SugarTest.loadComponent('base', 'field', 'rowaction');
+        SugarTest.testMetadata.set();
+        field = SugarTest.createField("base", 'vcard', "vcard", "vcard");
     });
 
     afterEach(function() {
-
+        SugarTest.testMetadata.dispose();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
+        field.model = null;
         field = null;
     });
 
-    it('should download the vcard of current record and log an error if uri is empty', function() {
+    it('should download the vcard of current record and log an error if uri is empty', function () {
+        var error, buildURLStub, callStub;
 
         sinon.stub(field, '_loadTemplate', function() {
             this.template = function() {
-                return '<i class="icon-download-alt"></i>';
+                return '<a class="btn" href="javascript:void(0);"></a>';
             };
         });
 
-        var error = sinon.spy(app.logger, 'error');
-
-        var buildURLStub = sinon.stub(app.api, 'buildURL', function() {
+        error = sinon.spy(SugarTest.app.logger, 'error');
+        buildURLStub = sinon.stub(SugarTest.app.api, 'buildURL', function () {
             return '';
         });
-        var callStub = sinon.stub(app.api, 'call', function(method, url, data, callbacks, options) {
 
+        callStub = sinon.stub(SugarTest.app.api, 'call', function (method, url, data, callbacks, options) {
             expect(callbacks.success).toBeDefined();
             expect(typeof callbacks.success === 'function').toBeTruthy();
             expect(callbacks.error).toBeDefined();
@@ -45,15 +45,12 @@ describe('vcard field', function() {
             return null;
         });
 
-        field.render();
-        field._renderHtml();
+        field.rowActionSelect();
 
-        field.$('.icon-download-alt').trigger('click');
         expect(buildURLStub.called).toBeTruthy();
         expect(callStub.called).toBeTruthy();
         expect(error.calledOnce).toBeTruthy();
 
-        field._loadTemplate.restore();
         error.restore();
         buildURLStub.restore();
         callStub.restore();
