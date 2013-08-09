@@ -4,7 +4,7 @@ $viewdefs['Products']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'contact_name_related' => array(
+        'contact_name' => array(
             'dbFields' => array(
                 'contact_link.first_name',
                 'contact_link.last_name',
