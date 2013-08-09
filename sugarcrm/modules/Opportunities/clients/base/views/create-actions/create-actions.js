@@ -41,7 +41,9 @@
 
         var success = _.bind(function(model) {
             this.originalSuccess(model);
-            this.showRLIWarningMessage(this.listContext.get('module'));
+            if (options.lastSaveAction != 'saveAndCreate') {
+                this.showRLIWarningMessage(this.listContext.get('module'));
+            }
         }, this);
 
         return {
