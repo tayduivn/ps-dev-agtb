@@ -792,6 +792,7 @@ function get_user_array($add_blank=true, $status="Active", $user_id='', $use_rea
 
     if ($from_cache) {
         $key_name = $add_blank. $status . $user_id . $use_real_name . $user_name_filter . $portal_filter;
+        $key_name = md5($key_name);
         $user_array = get_register_value('user_array', $key_name);
     }
 
