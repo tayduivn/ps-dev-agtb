@@ -7,18 +7,17 @@
         </div>
     </div>
 </div>
-<div class="twitter-widget">
-    {{#each this.collection.models}}
+{{#each this.collection.models}}
     <div class="news-article">
         <div class="row-fluid header">
             <div class="span12">
-                <img src="{{getFieldValue this "pictureUrl"}}" class="avatar">
-                <a href="#{{buildRoute module='Users' id=this.attributes.user_id}}">{{getFieldValue this "name"}}</a>
-                <h5>
+                <p>
+                    <img src="{{getFieldValue this "pictureUrl"}}" class="avatar"> <a href="#{{buildRoute module='Employees' id=this.attributes.user_id}}">{{getFieldValue this "name"}}</a>
+                </p>
+                <span class="details">
                     <icon class="{{getFieldValue this "icon"}} icon-large"></icon> {{getFieldValue this "label"}}
-                </h5>
+                </span>
             </div>
         </div>
     </div>
-    {{/each}}
-</div>
+{{/each}}
