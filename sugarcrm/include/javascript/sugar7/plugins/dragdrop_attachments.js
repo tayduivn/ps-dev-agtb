@@ -160,7 +160,7 @@
                                 var errorMessage = app.lang.getAppString('LBL_EMAIL_ATTACHMENT_UPLOAD_FAILED');
                                 app.alert.show('upload_error', errorMessage);
                             } else {
-                                self.layout.prependPost(activity);
+                                self.context.trigger('activitystream:post:prepend', activity);
                                 self.clearAttachments.call(self);
                             }
                         });

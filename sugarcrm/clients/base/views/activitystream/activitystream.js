@@ -230,7 +230,7 @@
                 template: SUGAR.App.template
             });
         }
-        this.trigger('activitystream:post:prepend', this.model);
+        this.context.trigger('activitystream:post:prepend', this.model);
     },
 
     /**
