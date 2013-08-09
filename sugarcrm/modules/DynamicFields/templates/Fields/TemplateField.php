@@ -90,7 +90,7 @@ class TemplateField{
 		'ext2'=>'ext2',
 		'ext4'=>'ext4',
 	    'ext3'=>'ext3',
-		'label_value'=>'label_value',
+        'labelValue' => 'label_value',
 		'unified_search'=>'unified_search',
         'full_text_search'=>'full_text_search',
         // Bug 58560 - Add a group index here so it gets written to the custom vardefs
