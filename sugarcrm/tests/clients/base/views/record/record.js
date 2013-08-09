@@ -474,26 +474,22 @@ describe("Record View", function () {
         it("Should find previous and next model from list collection", function () {
             var modelIds = createListCollection(5, 3);
             view.showPreviousNextBtnGroup();
-            expect(view.collection.previous).toBeDefined();
-            expect(view.collection.next).toBeDefined();
-            expect(view.collection.previous.get('id')).toEqual(modelIds[2]);
-            expect(view.collection.next.get('id')).toEqual(modelIds[4]);
+            expect(view.showPrevious).toBeTruthy();
+            expect(view.showNext).toBeTruthy();
         });
 
         it("Should find previous model from list collection", function () {
             var modelIds = createListCollection(5, 5);
             view.showPreviousNextBtnGroup();
-            expect(view.collection.previous).toBeDefined();
-            expect(view.collection.next).not.toBeDefined();
-            expect(view.collection.previous.get('id')).toEqual(modelIds[4]);
+            expect(view.showPrevious).toBeTruthy();
+            expect(view.showNext).toBeFalsy();
         });
 
         it("Should find next model from list collection", function () {
             var modelIds = createListCollection(5, 0);
             view.showPreviousNextBtnGroup();
-            expect(view.collection.previous).not.toBeDefined();
-            expect(view.collection.next).toBeDefined();
-            expect(view.collection.next.get('id')).toEqual(modelIds[1]);
+            expect(view.showPrevious).toBeFalsy();
+            expect(view.showNext).toBeTruthy();
         });
     });
 
