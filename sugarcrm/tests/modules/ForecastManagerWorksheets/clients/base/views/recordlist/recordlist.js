@@ -492,4 +492,33 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             });
         });
     });
+
+    describe('calculateTotals', function() {
+        beforeEach(function() {
+            sinon.stub(view, 'getCommitTotals', function() {
+                return {
+                    'likely_case' : 100,
+                    'likely_adjusted' : 150
+                }
+            });
+            sinon.stub(view.context, 'trigger', function() {});
+        });
+
+        afterEach(function() {
+            view.getCommitTotals.restore();
+            view.context.trigger.restore();
+        });
+
+        it('should have likely_case_display', function() {
+            view.calculateTotals();
+            expect(view.totals.likely_case_display).toBeDefined();
+        });
+
+        it('should not have worst_case_display', function() {
+            delete view._fields.visible[6];
+            delete view._fields.visible[7];
+            view.calculateTotals();
+            expect(view.totals.worst_case_display).not.toBeDefined();
+        });
+    });
 });
