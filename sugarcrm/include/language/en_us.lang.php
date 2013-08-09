@@ -1663,6 +1663,20 @@ $app_list_strings = array (
         '15' => 'Every 15 Minutes',
         '30' => 'Every 30 Minutes',
     ),
+    'dashlet_limit_options' =>
+    array(
+        5 => 5,
+        10 => 10,
+        15 => 15,
+        20 => 20,
+    ),
+    'dashlet_webpage_limit_options' =>
+    array(
+        1 => 1,
+        3 => 3,
+        5 => 5,
+        10 => 10,
+    ),
   'date_range_search_dom' =>
   array(
     '=' => 'Equals',
