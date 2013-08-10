@@ -161,7 +161,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("IMPORT_ENCLOSURE_OPTIONS",  $this->getEnclosureOptions($enclosure));
         $this->ss->assign("IMPORT_DELIMETER_OPTIONS",  $this->getDelimeterOptions($delimeter));
         $this->ss->assign("CUSTOM_DELIMITER",  $delimeter);
-        $this->ss->assign("CUSTOM_ENCLOSURE",  htmlentities($enclosure, ENT_QUOTES));
+        $this->ss->assign("CUSTOM_ENCLOSURE", htmlentities($enclosure, ENT_QUOTES, 'utf-8'));
         $hasHeaderFlag = $hasHeader ? " CHECKED" : "";
         $this->ss->assign("HAS_HEADER_CHECKED", $hasHeaderFlag);
 
@@ -214,10 +214,10 @@ class ImportViewConfirm extends ImportView
         $results = array();
         foreach ($GLOBALS['app_list_strings']['import_enclosure_options'] as $k => $v)
         {
-            $results[htmlentities($k, ENT_QUOTES)] = $v;
+            $results[htmlentities($k, ENT_QUOTES, 'utf-8')] = $v;
         }
 
-        return get_select_options_with_id($results, htmlentities($enclosure, ENT_QUOTES));
+        return get_select_options_with_id($results, htmlentities($enclosure, ENT_QUOTES, 'utf-8'));
     }
 
     private function overloadImportFileMapFromRequest($importFileMap)
@@ -605,7 +605,7 @@ EOJAVASCRIPT;
         $ss = new Sugar_Smarty();
         $display_msg = '';
         foreach($message as $m){
-            $display_msg .= '<p>'.htmlentities($m, ENT_QUOTES).'</p><br>';
+            $display_msg .= '<p>'.htmlentities($m, ENT_QUOTES, 'utf-8').'</p><br>';
         }
 		global $mod_strings;
 

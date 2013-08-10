@@ -15,14 +15,14 @@ $viewdefs['RevenueLineItems']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'opportunity_name_related' => array(
+        'opportunity_name' => array(
             'dbFields' => array(
                 'opportunities.name',
             ),
             'type' => 'text',
             'vname' => 'LBL_OPPORTUNITY_NAME',
         ),
-        'account_name_related' => array(
+        'account_name' => array(
             'dbFields' => array(
                 'account_link.name',
             ),
@@ -33,14 +33,14 @@ $viewdefs['RevenueLineItems']['base']['filter']['default'] = array(
         'probability' => array(),
         'date_closed' => array(),
         'commit_stage' => array(),
-        'product_template_name_related' => array(
+        'product_template_name' => array(
             'dbFields' => array(
                 'revenuelineitem_templates_link.name'
             ),
             'type' => 'text',
             'vname' => 'LBL_PRODUCT'
         ),
-        'category_name_related' => array(
+        'category_name' => array(
             'dbFields' => array(
                 'revenuelineitem_categories_link.name'
             ),
