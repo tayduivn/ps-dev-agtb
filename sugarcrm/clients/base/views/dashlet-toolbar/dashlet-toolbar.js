@@ -1,6 +1,5 @@
 ({
     events: {
-        'click [data-event]': 'actionClicked',
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },

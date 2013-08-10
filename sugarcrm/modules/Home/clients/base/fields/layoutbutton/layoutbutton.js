@@ -1,6 +1,8 @@
 ({
     events: {
-        'click .btn.layout' : 'layoutClicked'
+        'click .btn.layout' : 'layoutClicked',
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
     extendsFrom: 'ButtonField',
     getFieldElement: function() {
@@ -9,7 +11,14 @@
     _render: function() {
         var buttonField = app.view._getController({type: 'field', name: 'button', platform: app.config.platform});
         buttonField.prototype._render.call(this);
-        this.$("[rel=tooltip]").tooltip({placement: 'bottom'});
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'bottom',
+                trigger:'mouseenter'
+            });
+        }
     },
     _loadTemplate: function() {
         app.view.Field.prototype._loadTemplate.call(this);
@@ -92,5 +101,13 @@
                 this.model.changed = {};
             }
         }
+    },
+
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     }
 })

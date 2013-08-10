@@ -1,7 +1,7 @@
 ({
     inlineEditMode: false,
     createMode: false,
-    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable', 'tooltip'],
+    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable'],
     enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
