@@ -436,10 +436,6 @@ FLEXLIST GENERIC */
       &:nth-last-child(2) {
         padding-right: 79px !important;
         max-width: 179px;
-        background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
-        background-position: ~"-moz-calc(100% - 80px)" 50% !important;
-        background-position: ~"-webkit-calc(100% - 80px)" 50% !important;
-        background-position: ~"calc(100% - 80px)" 50% !important;
       }
     }
 
@@ -447,7 +443,12 @@ FLEXLIST GENERIC */
       &:last-child {
         height: 42px;
         background: @white;
+        background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
+        background-position: ~"-moz-calc(100% - 80px)" 50% !important;
+        background-position: ~"-webkit-calc(100% - 80px)" 50% !important;
+        background-position: ~"calc(100% - 80px)" 50% !important;
         border-left: 1px solid darken(@grayLighter,5%);
+        z-index: 100;
         > .dropdown {
           overflow: visible;
         }
@@ -462,6 +463,7 @@ FLEXLIST GENERIC */
         border: none;
         height: 35px;
         margin: 2px 0;
+        z-index: 1;
         .list .btn.rowaction {
           margin-left: 0;
         }
@@ -593,9 +595,14 @@ FLEXLIST GENERIC */
         }
       }
     }
-    & > tfoot > tr > td:last-child {
-      border-top: none;
-      position: absolute;
+    & > tfoot > tr > td {
+      &:last-child {
+        border-top: none;
+        position: absolute;
+      }
+      &:nth-last-child(2) {
+        padding-right: 79px !important;
+      }
     }
   }
 
@@ -633,9 +640,14 @@ FLEXLIST GENERIC */
         }
       }
     }
-    & > tfoot > tr > td:last-child {
-      border-top: none;
-      position: absolute;
+    & > tfoot > tr > td {
+      &:last-child {
+        border-top: none;
+        position: absolute;
+      }
+      &:nth-last-child(2) {
+        padding-right: 79px !important;
+      }
     }
     & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
       padding: 0;
@@ -724,6 +736,9 @@ FLEXLIST GENERIC */
       overflow-x: auto;
       width: 100%;
     }
+    table.dataTable {
+      position: static;
+    }
 
     /*.flex-list.left-actions to fix the first column*/
     &.left-actions.scroll-width table.dataTable {
@@ -776,8 +791,10 @@ FLEXLIST GENERIC */
 
 .touch {
   .flex-list-view {
-    position: relative;
     overflow: scroll;
+  }
+  table.dataTable {
+    position: relative;
   }
 }
 
@@ -846,12 +863,13 @@ table.dataTable th:active {
 .morecol {
   .btn {
     margin: 0;
-    padding: 4px 0px;
   }
   .dropdown {
-    /*position: absolute;
-    top: 4px;
-    width: 54px;*/
+    position: relative;
+    /*top: 4px;
+    width: 54px;
+    right: 4px;
+    z-index: 111;*/
   }
   .dropdown-menu {
     text-align: left;
@@ -859,6 +877,8 @@ table.dataTable th:active {
     font-weight: normal;
     color: @grayLight;
     .border-radius(2px);
+    background-color: @white;
+    position: absolute;
     .btn {
       padding-left: 22px;
       width: 100%;
