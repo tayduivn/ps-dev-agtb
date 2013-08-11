@@ -14,7 +14,10 @@
     border-bottom: 0;
     position: relative;
     padding: 10px 8px 10px 16px;
-    height: 28px;
+    min-height: 48px;
+    float: left;
+    width: 100%;
+    .box-sizing(border-box);
     .title {
       line-height: 26px;
     }
@@ -50,6 +53,12 @@
       }
     }
   }
+  .accordion-body {
+    clear: both;
+    &.collapse.in {
+      overflow: visible;
+    }
+  }
   // Inner needs the styles because you can't animate properly with any styles on the element
   .accordion-inner {
     padding: 0;
@@ -60,6 +69,7 @@
   }
   .accordion-group {
     margin-bottom: 0;
+    border: none;
     border-bottom: 1px solid #DCDCDC;
     border-top: 1px solid @white;
     // for record edit view in duplist
@@ -83,9 +93,7 @@
       }
     }
     .flex-list-view .morecol .dropdown {
-      position: fixed;
-      z-index: 1;
-      margin-left: 7px;
+      width: 28px;
     }
   }
   .record {
