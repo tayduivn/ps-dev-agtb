@@ -148,6 +148,29 @@
     bottom: auto;
     left: auto;
   }
+
+  #searchForm {
+    .search-query {
+      position: absolute;
+      right: 0;
+    }
+  }
+
+  #searchForm.minimized {
+    .search-query {
+      display: none;
+    }
+    .advanced {
+      .btn-group {
+        .advanced {
+          display: none;
+        }
+        .btn {
+          .border-radius(3px);
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {
