@@ -62,6 +62,7 @@
                 url += '&action=' + action[1];
             }
         }
+        app.logger.info("help URL: " + url);
         window.open(url);
     },
     showTutorial: function() {
