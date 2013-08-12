@@ -4039,7 +4039,7 @@ $app_strings = array (
     'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'Selected record currently contains the following related values: {{{values}}}. Click "Confirm" to copy these values to this record. Click "Cancel" to retain the current values.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_CONTACTS_ACCOUNTS' => 'Selected Account has related values: {{{values}}}. Click "Confirm" to copy these values to the Contact. Click "Cancel" to retain the current values.',
-    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
+    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" data-container="body" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
 
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No data found.',
