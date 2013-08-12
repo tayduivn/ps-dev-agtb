@@ -220,5 +220,15 @@ class OneToManyRelationship extends AbstractRelationship
         return array( $this->lhs_module => $this->getRelationshipMetaData ( MB_ONETOMANY ) ) ;
     }
 
+    public function buildSidecarSubpanelDefinitions()
+    {
+        return $this->buildSubpanelDefinitions();
+    }
+
+    public function buildSidecarMobileSubpanelDefinitions()
+    {
+        return $this->buildWirelessSubpanelDefinitions();
+    }
+
 }
 ?>

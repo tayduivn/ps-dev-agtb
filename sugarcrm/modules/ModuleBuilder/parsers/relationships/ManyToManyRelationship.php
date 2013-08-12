@@ -98,8 +98,15 @@ class ManyToManyRelationship extends AbstractRelationship
     {
         return array( $this->lhs_module => $this->getRelationshipMetaData ( MB_MANYTOMANY ) ) ;
     }
-    
 
+    public function buildSidecarSubpanelDefinitions()
+    {
+        return $this->buildSubpanelDefinitions();
+    }
 
+    public function buildSidecarMobileSubpanelDefinitions()
+    {
+        return $this->buildWirelessSubpanelDefinitions();
+    }
 
 }
