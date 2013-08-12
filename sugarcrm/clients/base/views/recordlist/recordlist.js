@@ -114,6 +114,15 @@
                 this.rowFields[field.model.id].push(field);
             }
         }, this);
+
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'bottom',
+                trigger:'mouseenter'
+            });
+        }
     },
 
     deleteClicked: function(model) {

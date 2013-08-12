@@ -1845,6 +1845,7 @@ $app_strings = array (
   'LBL_RECORD_SHOWMORE' => 'Show More', // Studio editing of record views
   'LBL_FAVORITE' => 'Favorite', // Record view header panel element
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
+  'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2013 SugarCRM Inc. All Rights Reserved.',
   'LBL_TRADEMARK' => 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
@@ -3167,6 +3168,7 @@ $app_strings = array (
     'LBL_DASHLET_MAXIMIZE_ALL' => 'Maximize All',
     'LBL_DASHLET_MINIMIZE' => 'Minimize',
     'LBL_DASHLET_MAXIMIZE' => 'Maximize',
+    'LBL_DASHLET_TOGGLE' => 'Toggle Dashboard Visibility',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',

@@ -8,6 +8,14 @@
         app.view.Field.prototype._render.call(this);
         // Broadcast when we've fully rendered sidebar toggle
         app.controller.context.trigger("sidebarRendered");
+        var $tooltip = this.$('[rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container:'body',
+                placement:'left',
+                trigger:'mouseenter'
+            });
+        }
     },
     bindDataChange:function () {
         // These corresponding to the toggleSide & openSide events in default layout
