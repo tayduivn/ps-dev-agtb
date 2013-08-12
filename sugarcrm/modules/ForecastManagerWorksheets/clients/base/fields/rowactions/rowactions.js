@@ -19,13 +19,21 @@
  */
 ({
     extendsFrom: 'RowactionsField',
+
+    /**
+     * {@inheritDoc}
+     */
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'field', name: 'rowactions', method: 'initialize', args: [options]});
         this.setPlaceholder = _.throttle(this.customSetPlaceholder, 100);
     },
+
+    /**
+     * {@inheritDoc}
+     */
     getPlaceholder: function() {
-        var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
-        var $container = $(placeholder.toString()),
+        var placeholder = app.view.Field.prototype.getPlaceholder.call(this),
+            $container = $(placeholder.toString()),
             $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>'),
             $dropdown = $('<ul class="dropdown-menu"></ul>');
 
@@ -51,7 +59,7 @@
 
                     if(list.length > 2) {
                         $container.append($caret)
-                                  .append($dropdown);
+                            .append($dropdown);
                     }
                 }
                 if(list.length > 2) {
@@ -64,47 +72,56 @@
         }, this);
         return new Handlebars.SafeString($container.get(0).outerHTML);
     },
-    customSetPlaceholder: function() {
-        var index = 0;
-        _.each(this.fields, function(field, idx, list){
-            var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
-            if(field.isHidden) {
-                fieldPlaceholder.toggleClass('hide', true);
-                //Drop this field out of the dropdown
-                this.$el.append(fieldPlaceholder);
-            } else {
-                fieldPlaceholder.toggleClass('hide', false);
-                if(index == 0 || list.length == 2) {
-                    field.getFieldElement().addClass("btn");
-                    if(this.def.primary) {
-                        field.getFieldElement().addClass("btn-primary");
-                    }
-                    //The first field needs to be out of the dropdown
-                    if(index == 0) {
-                        this.$el.prepend(fieldPlaceholder);
-                    } else {
-                        this.$el.append(fieldPlaceholder);
-                    }
-                } else {
-                    field.getFieldElement().removeClass("btn btn-primary");
-                    //Append field into the dropdown
-                    this.$(".dropdown-menu").append($('<li>').html(fieldPlaceholder));
-                }
-                index++;
-            }
-        }, this);
 
-        if(index <= 1) {
-            this.$(".dropdown-toggle").hide();
-            this.$el.removeClass('btn-group');
-        } else {
-            this.$(".dropdown-toggle").show();
-            this.$el.addClass('btn-group');
-        }
-        this.$(".dropdown-menu").children("li").each(function(index, el){
-            if($(el).html() === '') {
-                $(el).remove();
+    /**
+     * This function will be needed when we implement SFA-165 where there is a preview button
+     * and the history icon both in the same table cell
+     *
+     * todo-sfa clean up this function when we do SFA-165
+     */
+    customSetPlaceholder: function() {
+        if(this.$el) {
+            var index = 0;
+            _.each(this.fields, function(field, idx, list){
+                var fieldPlaceholder = this.$("span[sfuuid='" + field.sfId + "']");
+                if(field.isHidden) {
+                    fieldPlaceholder.toggleClass('hide', true);
+                    //Drop this field out of the dropdown
+                    this.$el.append(fieldPlaceholder);
+                } else {
+                    fieldPlaceholder.toggleClass('hide', false);
+                    if(index == 0 || list.length == 2) {
+                        field.getFieldElement().addClass("btn");
+                        if(this.def.primary) {
+                            field.getFieldElement().addClass("btn-primary");
+                        }
+                        //The first field needs to be out of the dropdown
+                        if(index == 0) {
+                            this.$el.prepend(fieldPlaceholder);
+                        } else {
+                            this.$el.append(fieldPlaceholder);
+                        }
+                    } else {
+                        field.getFieldElement().removeClass("btn btn-primary");
+                        //Append field into the dropdown
+                        this.$(".dropdown-menu").append($('<li>').html(fieldPlaceholder));
+                    }
+                    index++;
+                }
+            }, this);
+
+            if(index <= 1) {
+                this.$(".dropdown-toggle").hide();
+                this.$el.removeClass('btn-group');
+            } else {
+                this.$(".dropdown-toggle").show();
+                this.$el.addClass('btn-group');
             }
-        });
+            this.$(".dropdown-menu").children("li").each(function(index, el){
+                if($(el).html() === '') {
+                    $(el).remove();
+                }
+            });
+        }
     }
 })
