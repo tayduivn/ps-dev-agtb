@@ -141,6 +141,7 @@ class MetadataApi extends SugarApi
             'server_info', 
             'module_tab_map',
             'hidden_subpanels',
+            'config',
         );
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -205,6 +206,7 @@ class MetadataApi extends SugarApi
             'server_info', 
             'module_tab_map',
             'hidden_subpanels',
+            'config',
         );
         $perModuleChunks = array('modules');
 
@@ -440,6 +442,7 @@ class MetadataApi extends SugarApi
         $data['relationships'] = $mm->getRelationshipData();
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0], true);
         $data['server_info'] = $mm->getServerInfo();
+        $data['config'] = $this->getConfigs();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
 
