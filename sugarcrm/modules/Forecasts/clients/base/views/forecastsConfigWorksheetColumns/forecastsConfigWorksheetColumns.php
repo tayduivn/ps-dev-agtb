@@ -20,11 +20,13 @@ $fields = array(
     array(
         'name' => 'commit_stage',
         'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
+        'locked' => true
     ),
     array(
         'name' => 'parent_name',
         'label' => 'LBL_NAME',
-        'label_module' => 'Opportunities'
+        'label_module' => 'Opportunities',
+        'locked' => true
     ),
     array(
         'name' => 'account_name',
@@ -48,14 +50,17 @@ $fields = array(
     array(
         'name' => 'worst_case',
         'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST',
+        'locked' => true
     ),
     array(
         'name' => 'likely_case',
         'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY',
+        'locked' => true
     ),
     array(
         'name' => 'best_case',
         'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST',
+        'locked' => true
     ),
 
     // Non-default-enabled columns
@@ -102,11 +107,13 @@ $fields = array(
     array(
         'name' => 'commit_stage',
         'label' => 'LBL_FORECASTS_CONFIG_TITLE_RANGES',
+        'locked' => true
     ),
     array(
         'name' => 'parent_name',
         'label' => 'LBL_LIST_NAME',
-        'label_module' => 'RevenueLineItems'
+        'label_module' => 'RevenueLineItems',
+        'locked' => true
     ),
     array(
         'name' => 'opportunity_name',
@@ -140,14 +147,17 @@ $fields = array(
     array(
         'name' => 'worst_case',
         'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST',
+        'locked' => true
     ),
     array(
         'name' => 'likely_case',
         'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY',
+        'locked' => true
     ),
     array(
         'name' => 'best_case',
         'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST',
+        'locked' => true
     ),
 
     // Non-default-enabled columns

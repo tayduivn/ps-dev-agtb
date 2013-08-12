@@ -122,6 +122,22 @@ class ForecastsConfigApi extends ConfigModuleApi
             updateOpportunitiesForForecasting();
         }
 
+        // we do the double check here since the front ent will send one one value if the input is empty
+        if (empty($args['worksheet_columns']) || empty($args['worksheet_columns'][0])) {
+            // set the defaults
+            $args['worksheet_columns'] = array(
+                'commit_stage',
+                'parent_name',
+                'likely_case',
+            );
+            if ($args['show_worksheet_best'] == 1) {
+                $args['worksheet_columns'][] = 'best_case';
+            }
+            if ($args['show_worksheet_worst'] == 1) {
+                $args['worksheet_columns'][] = 'worst_case';
+            }
+        }
+
         //reload the settings to get the current settings
         $current_forecasts_settings = parent::configSave($api, $args);
 

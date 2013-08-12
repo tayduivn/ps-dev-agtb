@@ -84,7 +84,8 @@
                 obj = {
                     id: field.name,
                     text: app.lang.get(field.label, labelModule),
-                    index: index
+                    index: index,
+                    locked: field.locked || false
                 },
                 cField = _.find(cfgFields, function(cfgField) {
                     return cfgField == field.name;
