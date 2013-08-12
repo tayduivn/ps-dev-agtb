@@ -247,6 +247,14 @@ input[type=radio] {
   margin-right: 12px;
 }
 
+.welcome {
+  .control-group {
+    &:not(:first-child) {
+      margin: 13px 0 !important;
+    }
+  }
+}
+
 .control-group {
   margin-bottom: 0;
   /*this clear both is preventing two column. Needed for forms.html only. Remove*/
