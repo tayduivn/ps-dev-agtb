@@ -53,7 +53,7 @@
     dropdownSelected: function(evt) {
         var $el = this.$(evt.currentTarget),
             selectedIndex = $el.val();
-        if(!selectedIndex) {
+        if (!selectedIndex) {
             return;
         }
         this.fields[selectedIndex].getFieldElement().trigger("click");
@@ -69,14 +69,14 @@
                 } else {
                     //entire selection
                     massCollection.reset();
-                    massCollection.add(this.view.collection.models);
-                    massCollection.filterDef = this.view.collection.filterDef;
+                    massCollection.add(this.collection.models);
+                    massCollection.filterDef = this.collection.filterDef;
                 }
             } else { //if checkbox is unchecked
                 if (this.model.id) { //each selection
                     if (massCollection.entire) {
                         massCollection.reset();
-                        massCollection.add(this.view.collection.models);
+                        massCollection.add(this.collection.models);
                         massCollection.remove(this.model);
                     } else {
                         massCollection.remove(this.model);
@@ -113,8 +113,8 @@
             }
         } else if (massCollection) { //listeners for entire selection
             var cid = this.view.cid;
-            if (this.view.collection) {
-                this.view.collection.on("reset", function () {
+            if (this.collection) {
+                this.collection.on("reset", function () {
                     if (massCollection.entire) {
                         massCollection.reset();
                     }
@@ -128,13 +128,13 @@
                     self.$(self.actionDropDownTag).removeClass("disabled");
                     self.$(".dropdown-menu-select").removeClass("hide");
                 }
-                if (massCollection.length == self.view.collection.length) {
+                if (massCollection.length === self.collection.length) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
                 self.toggleSelectAll();
             }, cid);
             massCollection.on("remove reset", function (model) {
-                if (massCollection.length == 0) {
+                if (massCollection.length === 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
                     self.$(".dropdown-menu-select").addClass("hide");
                 }
@@ -183,11 +183,12 @@
          */
         var showAlert = function() {
             var alert;
-            if (massCollection && self.view.collection.next_offset > 0) {
+            debugger;
+            if (massCollection && self.collection.next_offset > 0) {
                 //only if the collection contains more records
                 if (massCollection.entire) {
                     alert = buildAlertForReset();
-                } else if (massCollection.length == self.view.collection.models.length) {
+                } else if (massCollection.length === self.collection.length) {
                     alert = buildAlertForEntire();
                 }
             }
@@ -241,7 +242,7 @@
             });
             actionMenu += "</ul>";
             var caret = '';
-            if(app.utils.isTouchDevice()) {
+            if (app.utils.isTouchDevice()) {
                 caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
             }
             self.actionPlaceHolder = new Handlebars.SafeString(caret + actionMenu);
@@ -283,7 +284,7 @@
                 $(el).remove();
             }
         });
-        if(app.utils.isTouchDevice()) {
+        if (app.utils.isTouchDevice()) {
             selectEl.html(html);
         }
     },
@@ -300,8 +301,8 @@
                 collection.off(null, null, cid);
             }
         }
-        if(this.view.collection) {
-            this.view.collection.off("reset", null, this);
+        if (this.collection) {
+            this.collection.off("reset", null, this);
         }
         this.off("render", null, this);
         app.view.Field.prototype.unbindData.call(this);
