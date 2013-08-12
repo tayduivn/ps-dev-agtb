@@ -791,7 +791,7 @@ class SidecarMetaDataUpgrader
             $type = 'history';
         }
 
-        if(empty($GLOBALS['beanList'][$module])) {
+        if(empty($GLOBALS['beanList'][$module]) && $client != 'wireless') {
             // if the module is not among active, not upgrading it for now
             $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules not supported");
             return false;
