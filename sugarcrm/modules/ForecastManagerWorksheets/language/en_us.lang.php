@@ -169,7 +169,12 @@ $mod_strings = array (
     'LBL_QUOTA_ID' => 'Quota ID',
     'LBL_VERSION' => 'Version',
 
-    'LBL_MY_OPPORTUNITIES' => 'Opportunities ({{full_name}})',
+    // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    'LBL_MY_OPPS_RLI' => 'Opportunities ({{full_name}})',
+    // END SUGARCRM flav=pro && flav!=ent ONLY
+    // BEGIN SUGARCRM flav=ent ONLY
+    'LBL_MY_OPPS_RLI' => 'Revenue Line Items ({{full_name}})',
+    // END SUGARCRM flav=ent ONLY
 
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {{field_name}}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {{min}} and {{max}}',
