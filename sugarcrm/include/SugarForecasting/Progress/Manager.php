@@ -27,11 +27,21 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
     protected $opportunity;
 
-     /**
-      * @var closedAmount
-      */
-     protected $closedAmount;     
-     
+    /**
+     * @var pipelineCount
+     */
+    protected $pipelineCount;
+
+    /**
+     * @var pipelineRevenue
+     */
+    protected $pipelineRevenue;
+
+    /**
+     * @var closedAmount
+     */
+    protected $closedAmount;
+
     /**
      * Class Constructor
      * @param array $args       Service Arguments
