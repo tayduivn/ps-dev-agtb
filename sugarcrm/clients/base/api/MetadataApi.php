@@ -26,6 +26,22 @@ require_once 'include/api/SugarApi.php';
 // An API to let the user in to the metadata
 class MetadataApi extends SugarApi
 {
+
+    /**
+     * @var array List of metadata keys for values that should be overriden rather than
+     * merged client side with existing metadata .
+     */
+    protected static $defaultOverrides = array(
+        'fields',
+        'module_list',
+        'relationships',
+        'currencies',
+        'server_info',
+        'module_tab_map',
+        'hidden_subpanels',
+        'config',
+    );
+
     /**
      * @return array
      */
@@ -131,14 +147,15 @@ class MetadataApi extends SugarApi
         $this->typeFilter = array(
             'modules',
             'full_module_list',
-            'fields', 'labels', 
-            'module_list', 
-            'views', 
+            'fields',
+            'labels',
+            'module_list',
+            'views',
             'layouts',
             'relationships',
-            'currencies', 
-            'jssource', 
-            'server_info', 
+            'currencies',
+            'jssource',
+            'server_info',
             'module_tab_map',
             'hidden_subpanels',
             'config',
@@ -264,11 +281,11 @@ class MetadataApi extends SugarApi
             $data['fields']  = $mm->getSugarFields();
             $data['views']   = $mm->getSugarViews();
             $data['layouts'] = $mm->getSugarLayouts();
-            $data['labels'] = $this->getStringUrls($data,true);
-            $data['modules'] = array(
-                "Login" => array("fields" => array()));
-            $data['config']           = $this->getConfigs();
-            $data['jssource']         = $this->buildJSFileFromMD($data, $this->platforms[0]);
+            $data['labels'] = $this->getStringUrls($data, true);
+            $data['modules'] = array("Login" => array("fields" => array()));
+            $data['config'] = $this->getConfigs();
+            $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
+            $data['_override_values'] = $this->getOverrides($data, $args);
             $data["_hash"] = md5(serialize($data));
 
             $this->putMetadataCache($data, $this->platforms[0], true);
@@ -394,7 +411,7 @@ class MetadataApi extends SugarApi
     }
 
     // Helper to insert header comments for controllers
-    private function insertHeaderComment($controller, $mdType, $name, $platform)
+    protected function insertHeaderComment($controller, $mdType, $name, $platform)
     {
         $singularType = substr($mdType, 0, -1);
         $needle = '({';
@@ -440,7 +457,7 @@ class MetadataApi extends SugarApi
         $data['fields']  = $mm->getSugarFields();
         $data['views']   = $mm->getSugarViews();
         $data['layouts'] = $mm->getSugarLayouts();
-        $data['labels'] = $this->getStringUrls($data,false);
+        $data['labels'] = $this->getStringUrls($data, false);
         $data['relationships'] = $mm->getRelationshipData();
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0], true);
         $data['server_info'] = $mm->getServerInfo();
@@ -448,6 +465,7 @@ class MetadataApi extends SugarApi
         
         // BR-470 Handle languages
         $data['languages'] = $mm->getAllLanguages();
+        $data['_override_values'] = $this->getOverrides($data, $args);
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
 
@@ -631,7 +649,7 @@ class MetadataApi extends SugarApi
      * @param  array $data load metadata array
      * @return array
      */
-    private function _relateFields($data, $module, $bean)
+    protected function _relateFields($data, $module, $bean)
     {
         if (isset($data['modules'][$module]['fields'])) {
             $fields = $data['modules'][$module]['fields'];
@@ -896,6 +914,18 @@ class MetadataApi extends SugarApi
         }
 
         return $data;
+    }
+
+    /**
+     * @param Array $data data to be returned to the client
+     * @param Array $args args passed to the API
+     */
+    protected function getOverrides($data, $args) {
+        if (isset($args['override_values']) && is_array($args['override_values'])) {
+            return $args['override_values'];
+        }
+
+        return array_intersect(array_keys($data), self::$defaultOverrides);
     }
 
     protected function cacheMetadataHash($hash, $isPublic = false)
