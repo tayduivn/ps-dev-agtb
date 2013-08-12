@@ -376,7 +376,6 @@ if( $show_files == true ){
 
 
 
-	global $theme;
 
 	echo '<br/><br/>';
 
