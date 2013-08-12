@@ -157,5 +157,11 @@ describe("enum field", function() {
             expect(field.unformat(original)).toEqual(expected);
         });
 
+        it('should format the blank value', function() {
+            field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+            field.render();
+            expect(field.items['']).toEqual('LBL_BLANK_VALUE');
+        });
+
     });
 });

@@ -40,6 +40,11 @@
                 }
             });
         }
+        //Use blank value label for blank values on multiselects
+        if (this.def.isMultiSelect && !_.isUndefined(this.items['']) && this.items[''] === '') {
+            this.items = _.clone(this.items);
+            this.items[''] = app.lang.getAppString('LBL_BLANK_VALUE');
+        }
         var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
@@ -138,7 +143,7 @@
     },
     /**
      * Helper function for generating Select2 options for this enum
-     * @param {Object} optionsKeys Set of option keys that will be loaded into Select2 widget
+     * @param {Array} optionsKeys Set of option keys that will be loaded into Select2 widget
      * @returns {{}} Select2 options, refer to Select2 documentation for what each option means
      */
     getSelect2Options: function(optionsKeys){
@@ -206,7 +211,7 @@
     /**
      * Set the option selection during select2 initialization.
      * Also used during drag/drop in multiselects.
-     * @param {Element} $ele Select2 element
+     * @param {Selector} $ele Select2 element selector
      * @param {Function} callback Select2 data callback
      * @private
      */

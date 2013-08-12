@@ -75,16 +75,34 @@
     _loadTemplate: function() {
         app.view.invokeParent(this, {type: 'field', name: 'listeditable', method: '_loadTemplate'});
     },
+    /**
+     * Load select2 options for radioenum list-edit mode
+     * @param {Array} optionKeys Collection of option keys
+     * @returns {*}
+     */
     getSelect2Options: function(optionKeys){
+        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
         return app.view.invokeParent(this, {type: 'field', name: 'enum', method: 'getSelect2Options', args: [optionKeys]});
     },
+    /**
+     * Select2 function, needed to support radioenum list-edit mode
+     * @param {Object} query Select2 query object
+     * @returns {*} Select2 query results
+     * @private
+     */
     _query: function(query){
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
         return app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_query', args: [query]});
     },
+    /**
+     * Select2 function, needed to support radioenum list-edit mode
+     * @param {Selector} $ele Select2 element selector
+     * @param {Function} callback Select2 callback
+     * @private
+     */
     _initSelection: function($ele, callback){
         // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        return app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_initSelection', args: [$ele, callback]});
+        app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_initSelection', args: [$ele, callback]});
     },
     decorateError: function(errors) {
         if (this.tplName === 'list-edit') {
