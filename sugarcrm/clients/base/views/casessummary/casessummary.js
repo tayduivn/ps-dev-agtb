@@ -8,12 +8,6 @@
         app.view.View.prototype.initialize.call(this, o);
     },
 
-    bindDataChange: function(){
-        if (!this.meta.config) {
-            this.model.on("change", this.loadData, this);
-        }
-    },
-
     _render: function () {
         app.view.View.prototype._render.call(this);
 
