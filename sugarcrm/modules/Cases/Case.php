@@ -55,7 +55,6 @@ class aCase extends Basic {
 	var $call_id;
 	var $email_id;
 	var $assigned_user_name;
-	var $account_name1;
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
 	var $system_id;

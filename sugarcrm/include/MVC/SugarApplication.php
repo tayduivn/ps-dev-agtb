@@ -122,7 +122,7 @@ class SugarApplication
             exit ();
         }
 
-		$authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
+		$authController = AuthenticationController::getInstance();
 		$GLOBALS['current_user'] = BeanFactory::getBean('Users');
 		if(isset($_SESSION['authenticated_user_id'])){
 			// set in modules/Users/Authenticate.php

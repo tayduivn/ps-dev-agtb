@@ -32,6 +32,8 @@
         var useSugarEmailClient = app.user.getPreference("use_sugar_email_client");
         if (useSugarEmailClient !== "true") {
             options.def.href = "mailto:"; // use the user's default mail client instead of email compose view
+        } else {
+            options.def.href = null;
         }
 
         app.view.invokeParent(this, {type: 'field', name: 'quickcreate', method: 'initialize', args:[options]});

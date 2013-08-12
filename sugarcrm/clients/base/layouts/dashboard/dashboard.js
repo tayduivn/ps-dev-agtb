@@ -67,7 +67,7 @@
         }
     },
     loadData: function (options, setFields) {
-        if (this.context.parent && !this.context.parent._dataFetched) {
+        if (this.context.parent && !this.context.parent.isDataFetched()) {
             var parent = this.context.parent.get("modelId") ? this.context.parent.get("model") : this.context.parent.get("collection");
 
             parent.once("sync", function () {

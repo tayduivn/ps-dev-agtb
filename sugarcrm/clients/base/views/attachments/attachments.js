@@ -21,7 +21,6 @@
  */
 ({
     plugins: ['Dashlet', 'timeago', 'tooltip'],
-    dataFetched: false,
     events: {
         'click [name=show_more_button]' : 'showMore',
         'click [data-event=create_button]': 'openCreateDrawer',
@@ -53,9 +52,6 @@
         if (!this.meta.config && this.context.get('collection')) {
             this.context.set('skipFetch', false);
             this.context.set('limit', this.limit);
-            this.context.get('collection').once('reset', function() {
-                this.dataFetched = true;
-            }, this);
         }
         if (!this.meta.config && !this.meta.preview) {
             this.context.on('attachment:view:fire', this.previewRecord, this);

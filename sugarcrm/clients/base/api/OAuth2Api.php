@@ -146,8 +146,22 @@ class OAuth2Api extends SugarApi
      */
     public function bwcLogin($api, $args)
     {
-        // we need to set the domain to '/' in order to work in bwc
-        setcookie(session_name(), session_id(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'), ini_get('session.cookie_secure'), ini_get('session.cookie_httponly'));
+        // Send back session_name so the client can use it for other bwc functions, 
+        // like studio, module builder, etc when sessions expire outside of the
+        // ajax calls
+        $session_name = session_name();
+
+        setcookie(
+            $session_name, 
+            session_id(), 
+            ini_get('session.cookie_lifetime'), 
+            ini_get('session.cookie_path'), 
+            ini_get('session.cookie_domain'), 
+            ini_get('session.cookie_secure'), 
+            ini_get('session.cookie_httponly')
+        );
+
+        return array('name' => $session_name);
     }
 
     /**

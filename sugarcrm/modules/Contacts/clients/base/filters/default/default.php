@@ -7,7 +7,7 @@ $viewdefs['Contacts']['base']['filter']['default'] = array(
         'last_name' => array(),
         'title' => array(),
         // TODO: Update when we support related types.
-        'account_name_related'=> array(
+        'account_name'=> array(
             'dbFields'=>array(
                 'accounts.name',
             ),

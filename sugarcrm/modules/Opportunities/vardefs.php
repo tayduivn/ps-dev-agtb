@@ -249,14 +249,13 @@ $dictionary['Opportunity'] = array(
             'studio' => false,
             'reportable' => false,
             'massupdate' => false,
-            //BEGIN SUGARCRM flav=ent ONLY
-            'calculated' => true,
-            'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")',
             'enforced' => true,
+            'calculated' => true,
+            //BEGIN SUGARCRM flav=ent ONLY
+            'formula' => 'rollupMax($revenuelineitems, "date_closed_timestamp")',
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'formula' => 'timestamp($date_closed)',
-            'calculated' => true,
             //END SUGARCRM flav=pro && flav!=ent ONLY
         ),
         'next_step' => array(

@@ -17,11 +17,38 @@
          * The OAuth token is passed and we do automatic in bwc mode by
          * getting a cookie with the PHPSESSIONID.
          */
-        login: function(redirectUrl) {
+        
+        /**
+         * Logs into sugar in BWC mode. Allows for use of current OAuth token as
+         * a session id for backward compatible modules.
+         * 
+         * @param  {String} redirectUrl A URL to redirect to after logging in
+         * @param  {Function} callback A function to call after logging in
+         * @return {Void}
+         */
+        login: function(redirectUrl, callback) {
             var url = app.api.buildURL('oauth2', 'bwc/login');
             return app.api.call('create', url, {}, {
-                success: function() {
-                    app.router.navigate('#bwc/' + redirectUrl, {trigger: true});
+                success: function(data) {
+                    // Set the session name into the cache so that certain bwc
+                    // modules can access it as needed (studio)
+                    if (data && data.name) {
+                        app.cache.set("SessionName", data.name);
+                    }
+
+                    // If there was a callback, call it. This will almost always
+                    // be used exlusively by studio when trying to refresh the 
+                    // session after it expires.
+                    if (callback) {
+                        callback();
+                    }
+
+                    // If there was a redirectUrl passed, go there. This will 
+                    // almost always be the case, except in studio when a login
+                    // is simply updating the session id
+                    if (redirectUrl) {
+                        app.router.navigate('#bwc/' + redirectUrl, {trigger: true});
+                    }
                 }
             });
         },

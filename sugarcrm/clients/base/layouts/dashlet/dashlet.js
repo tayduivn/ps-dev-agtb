@@ -252,7 +252,7 @@
     reloadDashlet: function(options) {
         var component = _.first(this._components),
             context = component.context;
-        context._dataFetched = false;
+        context.resetLoadFlag();
         component.loadData(options);
     },
     /**

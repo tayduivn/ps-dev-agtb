@@ -4,7 +4,7 @@ $viewdefs['Opportunities']['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
         'name' => array(),
-        'account_name_related' => array(
+        'account_name' => array(
             'dbFields' => array(
                 'accounts.name',
             ),

@@ -62,6 +62,23 @@ function addChildNodes(parentNode, parentData) {
 
 if (typeof(ModuleBuilder) == 'undefined') {
 	ModuleBuilder = {
+		/**
+		 * Elements of the request being sent either through {@see submitForm} or
+		 * {@see asyncRequest}. This holds certain elements of the request for use
+		 * in {@see resendRequest} when studio goes stale and the parent window
+		 * session cookie is refreshed but the system does not expose the session
+		 * cookie name to the client.
+		 * 
+		 * @type {Object}
+		 */
+		requestElements: {},
+		/**
+		 * Flag that indicates to the process whether this is a request that is
+		 * in the process of being resent because of a stale session id.
+		 * 
+		 * @type {Boolean}
+		 */
+		isResend: false,
 	    init: function(){
             // FIXME check if we need to go to parent frame to send to old bwc url
             //Check if we shoudln't be in studio and need to load the normal ajaxUI
@@ -521,11 +538,16 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			try {
 			var ajaxResponse = YAHOO.lang.JSON.parse((o.responseText));
 			} catch (err) {
-				YAHOO.SUGAR.MessageBox.show({
-                    title: SUGAR.language.get('ModuleBuilder', 'ERROR_GENERIC_TITLE'),
-                    msg: o.responseText,
-                    width: 500
-                });
+				// If this is a login redirect and the request is in the process
+				// of resending then we do not want to render the alert box since
+				// the request will eventually finish and render what was asked for.
+				if (!(ModuleBuilder.isResend && ModuleBuilder.isLogoutRedirect(o.responseText))) {
+					YAHOO.SUGAR.MessageBox.show({
+	                    title: SUGAR.language.get('ModuleBuilder', 'ERROR_GENERIC_TITLE'),
+	                    msg: o.responseText,
+	                    width: 500
+	                });
+				}
 				return false;
 			}
 			
@@ -601,12 +623,24 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			if (SUGAR.util.isLoginPage(o.responseText))
 				return true;
 			if (o.responseText.substr(0, 1) == "<") {
-                YAHOO.SUGAR.MessageBox.show({
-					title: SUGAR.language.get('ModuleBuilder', 'ERROR_GENERIC_TITLE'),
-					msg: o.responseText,
-					width: 500
-				});
-				return true;
+				// If the response indicates a login redirect then the session id
+				// has gone stale and needs to be updated. 
+				if (ModuleBuilder.isLogoutRedirect(o.responseText)) {
+					// This means a bwc redirect, so attempt to login and carry on
+					ModuleBuilder.isResend = true;
+					parent.SUGAR.App.bwc.login(null, ModuleBuilder.resendRequest);
+					return false;
+				}
+				
+				// Only show the error alert box if this is not a resend request
+				if (!ModuleBuilder.isResend) {
+	                YAHOO.SUGAR.MessageBox.show({
+						title: SUGAR.language.get('ModuleBuilder', 'ERROR_GENERIC_TITLE'),
+						msg: o.responseText,
+						width: 500
+					});
+					return true;
+				}
             }
 			
 			
@@ -620,6 +654,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			api.call('read', api.buildURL('ping'));
 		},
 		submitForm: function(formname, successCall){
+			// Make sure the session cookie is always fresh
+			ModuleBuilder.ensureSessionCookie();
+			
 			ajaxStatus.showStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_LOADING'));
 			if (typeof(successCall) == 'undefined') {
 				successCall = ModuleBuilder.updateContent;
@@ -627,11 +664,14 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			else {
 				ModuleBuilder.callLock = true;
 			}
-			Connect.setForm(document.getElementById(formname) || document.forms[formname]);
+			
+			// Capture aspects of the request in case the need to resend arises
+			ModuleBuilder.requestElements.fields = Connect.setForm(document.getElementById(formname) || document.forms[formname]);
+			ModuleBuilder.requestElements.callbacks = {success: successCall, failure: ModuleBuilder.failed};
 			Connect.asyncRequest(
 			    Connect.method, 
 			    Connect.url, 
-			    {success: successCall, failure: ModuleBuilder.failed}
+			    ModuleBuilder.requestElements.callbacks
 			);
 		},
 		setMode: function(reqMode){
@@ -1015,18 +1055,99 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 			return url;
 		},
+		/**
+		 * Indicates whether the text presented shows that the request failed and
+		 * is requiring a login via redirect.
+		 * 
+		 * @param {String} text The response text from a previous asyncRequest
+		 * @return {Boolean} True if the provided text string contains a redirect indication
+		 */
+		isLogoutRedirect: function(text) {
+			return text.substr(0,8) == "<script>" && text.indexOf("App.bwc.login") != -1;
+		},
+		/**
+		 * Resends the last request. This will be used in cases where the session 
+		 * id has gone stale and a request through BWC login has fetched a new
+		 * one. 
+		 * 
+		 * @return {Void}
+		 */
+		resendRequest: function() {
+			var method = ModuleBuilder.requestElements.method || Connect.method,
+				url    = ModuleBuilder.requestElements.url || Connect.url;
+			
+			// Reset the isResend flag so that if this request fails it can fail
+			// legitimately
+			ModuleBuilder.isResend = false;
+			
+			// Since this is only set on submitForm, check for it before just
+			// throwing it into the Connect object
+			if (ModuleBuilder.requestElements.fields) {
+				Connect.setForm(ModuleBuilder.requestElements.fields);
+			}
+			
+			Connect.asyncRequest(
+			    method, 
+			    url, 
+			    ModuleBuilder.requestElements.callbacks
+			);
+		},
+		/**
+		 * Makes sure the session cookie is up to date. This supports being in 
+		 * studio and being idle while the main app refreshes the oauth token. 
+		 * This also eliminates the need to a BWC login while in studio.
+		 */
+		ensureSessionCookie: function() {
+			var sessionName = parent.SUGAR.App.cache.get("SessionName"),
+			    cookiePattern = "(" + sessionName + "=)([a-f0-9\-]*)",
+			    matches = document.cookie.match(cookiePattern),
+			    matched = false,
+			    currentSID = parent.SUGAR.App.cache.get("AuthAccessToken");
+			    
+			// If there is a current session id cookie (which would happen for
+			// bwc logins) but it does not match the current auth token then 
+			// update the document cookie to the auth token to allow studio to 
+			// continue to function
+			if (matches) {
+				for (var i in matches) {
+					if (matches[i] == currentSID) {
+						matched = true;
+						break;
+					}
+				}
+				
+				// There is a session cookie but it doesn't match the auth token
+				if (!matched) {
+					document.cookie = sessionName + "=" + currentSID;
+				}
+			}
+		},
 		asyncRequest : function(params, callback) {
-			var url;
+			// Used to normalize request arguments needed for the async request
+			// as well as for setting into the requestElements object
+			var url,
+				cUrl = Connect.url,
+				cMethod = Connect.method;
+			
 			if (typeof params == "object") {
 				url = ModuleBuilder.paramsToUrl(params);
 			} else {
 				url = params;
 			}
+			
+			cUrl += '&' + url;
+			
+			ModuleBuilder.requestElements.method = cMethod;
+			ModuleBuilder.requestElements.url = cUrl;
+			ModuleBuilder.requestElements.callbacks = {success: callback, failure: ModuleBuilder.failed};
+			
+			// Make sure the session cookie is always fresh if that is possible
+			ModuleBuilder.ensureSessionCookie();
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE'));
 			Connect.asyncRequest(
-			    Connect.method, 
-			    Connect.url + '&' + url, 
-			    {success: callback, failure: ModuleBuilder.failed}
+			    ModuleBuilder.requestElements.method, 
+			    ModuleBuilder.requestElements.url, 
+			    ModuleBuilder.requestElements.callbacks
 			);
 		},
 		refreshGlobalDropDown: function(o){

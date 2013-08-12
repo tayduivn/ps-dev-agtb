@@ -165,9 +165,16 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
     public function isValidField($key, $def)
     {
         if (parent::isValidField($key, $def)) {
-            if (!empty($GLOBALS['app_list_strings']['filter_operators_dom'][$def['type']])) {
+            // Predefined filters are valid 'fields'
+            if (!empty($def['predefined_filter'])) {
                 return true;
             }
+            
+            // Ensure there is a type before checking that the type is in the
+            // filters operator dropdown
+            if (!empty($def['type']) && !empty($GLOBALS['app_list_strings']['filter_operators_dom'][$def['type']])) {
+                return true;
+            } 
         }
 
         return false;

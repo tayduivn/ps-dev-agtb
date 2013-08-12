@@ -740,6 +740,15 @@
     calculateTotals: function() {
         if (this.isVisible()) {
             this.totals = this.getCommitTotals();
+            var calcFields = ['worst_case', 'best_case', 'likely_case'];
+            _.filter(this._fields.visible, function(field) {
+                if (_.contains(calcFields, field.name)) {
+                    this.totals[field.name + '_display'] = true;
+                    return true;
+                }
+
+                return false;
+            }, this);
             var ctx = this.context.parent || this.context;
             // fire an event on the parent context
             ctx.trigger('forecasts:worksheet:totals', this.totals, this.worksheetType);

@@ -14,7 +14,7 @@ $viewdefs['Notes']['base']['filter']['default'] = array(
     ),
     'fields' => array(
         'name' => array(),
-        'contact_name_related' => array(
+        'contact_name' => array(
             'dbFields' => array(
                 'contact.first_name',
                 'contact.last_name',
