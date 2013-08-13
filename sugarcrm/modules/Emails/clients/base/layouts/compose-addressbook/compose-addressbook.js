@@ -31,6 +31,7 @@
             query:       term,
             module_list: modules
         };
+        this.collection.resetPagination();
         // the context load state must be reset so that fetch will not be skipped
         this.context.resetLoadFlag(false);
         this.context.set('skipFetch', false);
