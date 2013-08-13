@@ -323,7 +323,7 @@ class MysqliManager extends MysqlManager
 				$dbport=substr($configOptions['db_host_name'],$pos+1);
 			}
 
-			if (ini_get('mysqli.allow_persistent') && !empty($configOptions['persistent'])) {
+			if (ini_get('mysqli.allow_persistent') && $this->getOption('persistent')) {
 				$dbhost = "p:" . $dbhost;
 			}
 			
