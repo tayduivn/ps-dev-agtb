@@ -36,7 +36,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 global $app_list_strings;
 global $app_strings;
-global $theme;
 global $current_user;
 global $currentModule;
 
@@ -131,7 +130,6 @@ switch ($_REQUEST['view']) {
 													array('name' => 'Administration', 'action' => 'backups', 'anchor' => '1111949'),
 													array('name' => 'Administration', 'action' => 'upgrade', 'anchor' => '1111949'),
 													array('name' => 'Administration', 'action' => 'locale', 'anchor' => '1111949'),
-													array('name' => 'Administration', 'action' => 'themesettings', 'anchor' => '1111949'),
 													array('name' => 'Administration', 'action' => 'passwordmanager', 'anchor' => '1446494'),
 													array('name' => 'Administration', 'action' => 'upgradewizard', 'anchor' => '1168410'),
 													array('name' => 'Administration', 'action' => 'configuretabs', 'anchor' => '1168410'),

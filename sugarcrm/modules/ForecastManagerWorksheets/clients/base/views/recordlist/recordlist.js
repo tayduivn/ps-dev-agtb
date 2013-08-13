@@ -388,6 +388,7 @@
         var ret = this.showNavigationMessage('forecast');
 
         if (this.processNavigationMessageReturn(ret)) {
+            this.hasCheckedForDraftRecords = false;
             this.displayLoadingMessage();
             this.collection.fetch();
         }
@@ -529,7 +530,6 @@
         }
 
         this.selectedTimeperiod = changed;
-        this.hasCheckedForDraftRecords = false;
         if (this.layout.isVisible()) {
             this.refreshData();
         }
@@ -562,8 +562,6 @@
 
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
         this.canEdit = (this.selectedUser.id == app.user.get('id'));
-
-        this.hasCheckedForDraftRecords = false;
 
         if (doFetch) {
             this.refreshData();

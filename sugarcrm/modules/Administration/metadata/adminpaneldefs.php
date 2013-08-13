@@ -104,9 +104,6 @@ $admin_option_defs['Administration']['connector_settings']=array('icon_Connector
 $admin_option_defs['Administration']['tracker_settings']=array('Trackers','LBL_TRACKER_SETTINGS','LBL_TRACKER_SETTINGS_DESC','./index.php?module=Trackers&action=TrackerSettings');
 //END SUGARCRM flav=pro ONLY
 
-// Theme Enable/Disable
-$admin_option_defs['Administration']['theme_settings']=array('icon_AdminThemes','LBL_THEME_SETTINGS','LBL_THEME_SETTINGS_DESC','./index.php?module=Administration&action=ThemeSettings');
-
 $admin_option_defs['Administration']['scheduler'] = array('Schedulers','LBL_SUGAR_SCHEDULER_TITLE','LBL_SUGAR_SCHEDULER','./index.php?module=Schedulers&action=index');
 
 //BEGIN SUGARCRM flav=pro ONLY

@@ -170,7 +170,7 @@
                     _.each(entry.children, function(childEntry, index2) {
                         entry.children[index2] = ctx._recursiveReplaceHTMLChars([childEntry]);
                         if (childEntry.attr.rel == "my_opportunities") {
-                            childEntry.data = app.utils.formatString(app.lang.get('LBL_MY_OPPORTUNITIES', 'Forecasts'), [childEntry.data]);
+                            childEntry.data = app.utils.formatString(app.lang.get('LBL_MY_OPPS_RLI', 'Forecasts'), [childEntry.data]);
                         }
                     }, this);
                 }

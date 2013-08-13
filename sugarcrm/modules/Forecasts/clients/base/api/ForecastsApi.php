@@ -1,26 +1,19 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
-require_once('include/api/SugarApi.php');
+require_once 'include/api/SugarApi.php';
+require_once 'modules/Forecasts/ForecastsDefaults.php';
 
 class ForecastsApi extends SugarApi
 {
@@ -106,8 +99,13 @@ class ForecastsApi extends SugarApi
         $returnInitData["initData"]["userData"]['last_name'] = $current_user->last_name;
 
         // INVESTIGATE: these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+        /* @var $admin Administration */
         $admin = BeanFactory::getBean("Administration");
         $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+        // we need to make sure all the default setting are there, if they are not
+        // it should set them to the default value + clear the metadata and kick out a 412 error to force
+        // the metadata to reload
+        $this->compareSettingsToDefaults($admin, $forecastsSettings, $api);
 
         // TODO: These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
         $tp = TimePeriod::getCurrentTimePeriod($forecastsSettings['timeperiod_leaf_interval']);
@@ -224,5 +222,28 @@ class ForecastsApi extends SugarApi
         }
 
         return $reportees;
+    }
+
+    /**
+     * @param Administration $admin
+     * @param array $forecastsSettings
+     * @param RestService $api
+     * @throws SugarApiExceptionInvalidHash
+     */
+    protected function compareSettingsToDefaults(Administration $admin, $forecastsSettings, $api)
+    {
+        $defaultConfig = ForecastsDefaults::getDefaults();
+        $missing_config = array_diff(array_keys($defaultConfig), array_keys($forecastsSettings));
+        if (!empty($missing_config)) {
+            foreach ($missing_config as $config) {
+                $val = $defaultConfig[$config];
+                if (is_array($val)) {
+                    $val = json_encode($val);
+                }
+                $admin->saveSetting('Forecasts', $config, $val, $api->platform);
+            }
+            MetaDataManager::clearAPICache();
+            throw new SugarApiExceptionInvalidHash();
+        }
     }
 }

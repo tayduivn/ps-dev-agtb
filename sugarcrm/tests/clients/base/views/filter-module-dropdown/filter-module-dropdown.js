@@ -21,6 +21,15 @@ describe("BaseFilterModuleDropdownView", function () {
         view = null;
     });
 
+    it('should hide the dropdown for records layout', function() {
+        view.layout.layoutType = 'record';
+        view.render();
+        expect(view.$el.css('display')).toEqual('');
+        view.layout.layoutType = 'records';
+        view.render();
+        expect(view.$el.css('display')).toEqual('none');
+    });
+
     describe('handleChange callback of filter:change:module', function() {
         var layoutStub;
 
@@ -81,13 +90,6 @@ describe("BaseFilterModuleDropdownView", function () {
             view.module = 'Activities';
             expected = [{ id: 'Activities', text: app.lang.get("LBL_TABGROUP_ALL")}];
             filterList = view.getModuleListForActivities();
-            expect(filterList).toEqual(expected);
-        });
-
-        it('gets module list for Records layout', function() {
-            var expected, filterList;
-            expected = [{ id: 'Cases', text: app.lang.get('LBL_MODULE_NAME', 'Cases')}];
-            filterList = view.getModuleListForRecords();
             expect(filterList).toEqual(expected);
         });
 

@@ -60,7 +60,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         global $app_strings;
         global $license;
         global $current_user;
-        global $theme;
         global $currentModule;
 
         $configurator = new Configurator();
@@ -126,7 +125,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         $this->ss->assign('disabled_modules', json_encode($json_disabled));
         $this->ss->assign('mod', $GLOBALS['mod_strings']);
         $this->ss->assign('APP', $GLOBALS['app_strings']);
-        $this->ss->assign('theme', $GLOBALS['theme']);
 
         echo getClassicModuleTitle(
                 "Administration",

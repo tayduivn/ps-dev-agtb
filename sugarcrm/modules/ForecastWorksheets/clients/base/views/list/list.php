@@ -41,11 +41,6 @@ $listDefs = array(
                     'display' => false,
                     'type' => 'parent',
                     'readonly' => true,
-                    'related_fields' => array(
-                        'parent_id',
-                        'parent_type',
-                        'parent_deleted'
-                    )
                 ),
                 array(
                     'name' => 'opportunity_name',
@@ -58,10 +53,7 @@ $listDefs = array(
                     'default' => true,
                     'enabled' => true,
                     'type' => 'relate',
-                    'readonly' => true,
-                    'related_fields' => array(
-                        'opportunity_id',
-                    )
+                    'readonly' => true
                 ),
                 array(
                     'name' => 'account_name',
@@ -74,10 +66,7 @@ $listDefs = array(
                     'default' => true,
                     'enabled' => true,
                     'type' => 'relate',
-                    'readonly' => true,
-                    'related_fields' => array(
-                        'account_id',
-                    )
+                    'readonly' => true
                 ),
                 array(
                     'name' => 'date_closed',
@@ -120,10 +109,6 @@ $listDefs = array(
                     'enabled' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
                     'align' => 'right',
                     'click_to_edit' => true,
                 ),
@@ -135,10 +120,6 @@ $listDefs = array(
                     'enabled' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
                     'align' => 'right',
                     'click_to_edit' => true,
                 ),
@@ -176,18 +157,10 @@ $listDefs = array(
                     'default' => true,
                     'enabled' => true,
                     'type' => 'parent',
-                    'readonly' => true,
-                    'related_fields' => array(
-                        'parent_id',
-                        'parent_type',
-                        'parent_deleted'
-                    )
+                    'readonly' => true
                 ),
                 array(
-                    'name' => 'account_name',
-                    'related_fields' => array(
-                        'account_id'
-                    )
+                    'name' => 'account_name'
                 ),
                 array(
                     'name' => 'date_closed',
@@ -230,10 +203,6 @@ $listDefs = array(
                     'enabled' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
                     'align' => 'right',
                     'click_to_edit' => true,
                     'width' => '22%'
@@ -246,10 +215,6 @@ $listDefs = array(
                     'enabled' => true,
                     'convertToBase'=> true,
                     'showTransactionalAmount'=>true,
-                    'related_fields' => array(
-                        'base_rate',
-                        'currency_id'
-                    ),
                     'align' => 'right',
                     'click_to_edit' => true,
                     'width' => '22%'
