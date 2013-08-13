@@ -12,6 +12,23 @@
  */
 ({
     /**
+     * Front End Javascript Events
+     */
+    events: {
+        'keydown .select2-input': 'disableSelect2KeyPress'
+    },
+
+    /**
+     * Since we don't what the user to be able to type in the filter input
+     * just disable all key press events for the .select2-input boxes
+     *
+     * @param event
+     */
+    disableSelect2KeyPress: function(event) {
+        event.preventDefault();
+    },
+
+    /**
      * Initialize because we need to set the selectedUser variable
      * @param options
      */
@@ -83,8 +100,7 @@
             formatSelection: this.formatCustomSelection,
             dropdownCssClass: "search-filter-dropdown",
             escapeMarkup: function(m) { return m; },
-            width: 'off'
-
+            width: '50%'
         });
 
         //run this to "hard code" the module filter to Forecasts

@@ -107,13 +107,13 @@
         this.forecastsConfigOK = app.utils.checkForecastConfig();
 
         if(this.isForecastSetup && this.forecastsConfigOK) {
-            this.serverData = {};
+            this.serverData = new Backbone.Model();
 
             // set up the model data
             this.resetModel();
 
             // since we need the timeperiods from 'Forecasts' set the models module to 'Forecasts'
-            this.model.module = 'Forecasts';
+            this.context.get('model').module = 'Forecasts';
 
             // use the object version of user not a Model
             this.selectedUser = app.user.toJSON();
@@ -185,7 +185,7 @@
      * Resets the model to default data
      */
     resetModel: function() {
-        this.model.set({
+        var model = {
             opportunities : 0,
             closed_amount : undefined,
             quota_amount : undefined,
@@ -203,7 +203,12 @@
             deficit_amount_str: '',
             isForecastSetup: this.isForecastSetup,
             isForecastAdmin: this.isForecastAdmin
-        });
+        };
+        if(this.context.get('model')) {
+            this.context.get('model').set(model)
+        } else {
+            this.model.set(model);
+        }
     },
 
     /**
@@ -328,10 +333,11 @@
     renderSubDetails: function() {
         if(this.$el && this.subDetailsTpl) {
             var subEl = this.$el.find('.forecast-details');
+            var model = this.context.get('model') || this.model;
             // Check if closed or quota is undefined (during opps/rli loading when those numbers aren't available yet)
-            if(!_.isUndefined(this.model.get('closed_amount')) && !_.isUndefined(this.model.get('quota_amount'))) {
-                subEl.html(this.subDetailsTpl(this.model.toJSON()));
-                this.renderCSSChanges();
+            if(!_.isUndefined(model.get('closed_amount')) && !_.isUndefined(model.get('quota_amount'))) {
+                subEl.html(this.subDetailsTpl(model.toJSON()));
+                this.renderCSSChanges(model);
             } else {
                 subEl.html('');
             }
@@ -340,9 +346,12 @@
 
     /**
      * Adds the CSS to elements classes post-render
+     *
+     * @param {Backbone.Model} [model]          The Model to use
      */
-    renderCSSChanges: function() {
-        var isDeficit = this.model.get('is_deficit');
+    renderCSSChanges: function(model) {
+        model = model || this.context.get('model') || this.model;
+        var isDeficit = model.get('is_deficit');
 
         // using getClassBasedOnAmount and sending 0 or 1 to resolve which class to use so the class names
         // are only in one place
@@ -352,18 +361,20 @@
             this.$el.find('.deficitRow').addClass(this.getClassBasedOnAmount(1, 0, 'color'));
         }
 
-        this.checkPropertySetCSS('worst');
-        this.checkPropertySetCSS('likely');
-        this.checkPropertySetCSS('best');
+        this.checkPropertySetCSS('worst', model);
+        this.checkPropertySetCSS('likely', model);
+        this.checkPropertySetCSS('best', model);
     },
 
     /**
      * Checks a property on the config and sets the background color of an element
      * @param {String} prop 'likely', 'best', or 'worst'
+     * @param {Backbone.Model} [model]      The model to use
      */
-    checkPropertySetCSS: function(prop) {
+    checkPropertySetCSS: function(prop, model) {
+        model = model || this.context.get('model') || this.model;
         if(this.forecastConfig['show_worksheet_' + prop]) {
-            var css = this.getClassBasedOnAmount(this.serverData[prop], this.model.get('quota_amount'), 'background-color');
+            var css = this.getClassBasedOnAmount(this.serverData.get(prop), model.get('quota_amount'), 'background-color');
             this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
     },
@@ -417,12 +428,12 @@
      */
     calculateData: function(data) {
         // update serverData with changes from data
-        _.extend(this.serverData, data);
+        this.serverData.set(data);
 
         // update data with any values serverData had but data doesn't
         // we create a new variable here, since we don't want to update the data param back on the worksheet table
         // and maybe break something
-        var d = _.extend({}, data, this.serverData);
+        var d = _.extend({}, data, this.serverData.toJSON());
 
         this.likelyTotal = d.likely;
         this.bestTotal = d.best;
@@ -444,9 +455,12 @@
         d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount));
         d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount));
 
-        if(this.model) {
-            this.model.set(d);
-            this.renderSubDetails();
+        if(this.context || this.model) {
+            var model = this.context.get('model') || this.model;
+            if(model) {
+                model.set(d);
+                this.renderSubDetails();
+            }
         }
     },
 

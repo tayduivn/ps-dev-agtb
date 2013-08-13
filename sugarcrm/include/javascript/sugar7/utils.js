@@ -508,6 +508,26 @@
                 }
 
                 return app.bwc.buildRoute(module, id, app.bwc.getAction(action));
+            },
+
+            /**
+             * Returns a collection of subpanel models from the LHS context
+             * Only tested in Record View!
+             *
+             * @param ctx the LHS context
+             * @param {String} module the name of the module to look for
+             * @returns {*} returns the collection or undefined
+             */
+            getSubpanelCollection: function(ctx, module) {
+                var retCollection = undefined,
+                    mdl = _.find(ctx.children, function(child) {
+                        return (child.get('module') == module);
+                    });
+                if(mdl && _.has(mdl.attributes, 'collection')) {
+                    retCollection = mdl.get('collection');
+                }
+
+                return retCollection;
             }
         });
     });

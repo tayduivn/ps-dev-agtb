@@ -82,7 +82,7 @@ $dictionary['UpgradeHistory'] = array(
                 'name' => 'type',
                 'type' => 'varchar',
                 'len' => '30',
-    		    'comment' => 'The upgrade type (module, patch, theme, etc)'
+    		    'comment' => 'The upgrade type (module, patch, etc)'
         ),
         'status' => array (
                 'name' => 'status',

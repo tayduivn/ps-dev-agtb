@@ -36,7 +36,7 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestForecastUtilities::setUpForecastConfig(
             array(
-                'worksheet_columns' => array()
+                'worksheet_columns' => array(),
             )
         );
 
@@ -71,7 +71,9 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             "module" => "Forecasts",
             "testSetting" => "testValue",
-            'worksheet_columns' => array()
+            'worksheet_columns' => array(),
+            'show_worksheet_best' => 1,
+            'show_worksheet_worst' => 0
         );
         /* @var ForecastsConfigApi $apiClass */
         $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
@@ -130,7 +132,9 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $args = array(
             "module" => "Forecasts",
             "testSetting" => strrev($testSetting),
-            'worksheet_columns' => array()
+            'worksheet_columns' => array(),
+            'show_worksheet_best' => 1,
+            'show_worksheet_worst' => 0
         );
         $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged'));
         $apiClass->expects($this->once())
@@ -145,6 +149,37 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertArrayHasKey("testSetting", $results);
         $this->assertNotEquals($results['testSetting'], $testSetting);
         $this->assertEquals($results['testSetting'], strrev($testSetting));
+    }
+
+    public function testSetConfigWithEmptyWorksheetColumns()
+    {
+        $testSetting = 'testValue';
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'testSetting', $testSetting, 'base');
+
+        $api = new RestService();
+        //Fake the security
+        $api->user = $GLOBALS['current_user'];
+
+        $args = array(
+            "module" => "Forecasts",
+            'worksheet_columns' => array(),
+            'show_worksheet_best' => 1,
+            'show_worksheet_worst' => 0
+        );
+        $apiClass = $this->getMock('ForecastsConfigApi', array('timePeriodSettingsChanged', 'setWorksheetColumns'));
+        $apiClass->expects($this->once())
+            ->method('timePeriodSettingsChanged')
+            ->will($this->returnValue(false));
+        $apiClass->expects($this->once())
+            ->method('setWorksheetColumns')
+            ->will($this->returnValue(true));
+        $apiClass->forecastsConfigSave($api, $args);
+
+        $results = $admin->getConfigForModule('Forecasts', 'base');
+
+        $this->assertNotEmpty($results['worksheet_columns']);
     }
 
     /**
@@ -188,6 +223,13 @@ class ForecastsConfigApiTest extends Sugar_PHPUnit_Framework_TestCase
 
         $priorSettings = $admin->getConfigForModule('Forecasts', 'base');
         $currentSettings = $admin->getConfigForModule('Forecasts', 'base');
+
+        $currentSettings['worksheet_columns'] = array(
+            0 => 'commit_stage',
+            1 => 'parent_name',
+            2 => 'likely_case',
+            3 => 'best_case'
+        );
 
         $api = new RestService();
         //Fake the security

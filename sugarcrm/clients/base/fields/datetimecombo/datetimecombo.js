@@ -169,7 +169,17 @@
      * Sets up the timepicker.
      */
     _setupTimepicker: function() {
-        this.$(".ui-timepicker-input").attr('placeholder', this.userTimePrefs);
+        var placeholder = this.userTimePrefs,
+            placeholderFormatMap = {
+                'H': 'hh',
+                'h': 'hh',
+                'i': 'mm',
+                'a': '',
+                'A': ''
+            };
+        this.$(".ui-timepicker-input").attr('placeholder', placeholder.replace(/[HhiaA]/g, function(s) {
+            return placeholderFormatMap[s];
+        }));
         if(_.isFunction(this.setRequiredPlaceholder) && this.def.required){
             this.setRequiredPlaceholder(this.$(".ui-timepicker-input"));
         }

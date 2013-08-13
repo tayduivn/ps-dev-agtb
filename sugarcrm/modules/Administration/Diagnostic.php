@@ -34,7 +34,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 global $app_list_strings;
 global $app_strings;
-global $theme;
 
 global $current_user;
 

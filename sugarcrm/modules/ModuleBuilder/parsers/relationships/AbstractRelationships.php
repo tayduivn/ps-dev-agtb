@@ -44,25 +44,20 @@ require_once 'include/MetaDataManager/MetaDataManager.php';
 class AbstractRelationships
 {
 
-    static $methods = array (
-        'Labels' => 'language' ,
-        'RelationshipMetaData' => 'relationships' ,
-        'SubpanelDefinitions' => 'layoutdefs' ,
-        'Vardefs' => 'vardefs' ,
+    static $methods = array(
+        'Labels' => 'language',
+        'RelationshipMetaData' => 'relationships',
+        'SubpanelDefinitions' => 'layoutdefs',
+        'SidecarSubpanelDefinitions' => 'sidecarsubpanelbaselayout',
+        'Vardefs' => 'vardefs',
         'FieldsToLayouts' => 'layoutfields',
         //BEGIN SUGARCRM flav=pro ONLY
-        'WirelessSubpanelDefinitions' => 'wireless_subpanels'
+        'WirelessSubpanelDefinitions' => 'wireless_subpanels',
+        'SidecarMobileSubpanelDefinitions' => 'sidecarsubpanelmobilelayout',
         //END SUGARCRM flav=pro ONLY
-    ) ;
+    );
     static $activities = array ( 'calls' => 'Calls' , 'meetings' => 'Meetings' , 'notes' => 'Notes' , 'tasks' => 'Tasks' , 'emails' => 'Emails' ) ;
 
-    /**
-     * @var array the Subpanels need overidden in modules that are not in BWC
-     */
-    static $sidecarOverrides = array(
-        'SubpanelDefinitions' => 'sidecarsubpanelbaselayout',
-        'WirelessSubpanelDefinitions' => 'sidecarsubpanelmobilelayout',
-    );
 
     protected $relationships = array ( ) ; // array containing all the AbstractRelationship objects that are in this set of relationships
     protected $moduleName ;
@@ -362,10 +357,6 @@ class AbstractRelationships
                             $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": BUILD is running METHOD $saveMethod" ) ;
                             $installDef = $this->$saveMethod ( $basepath, $installDefPrefix, $name, $metadata ) ;
                             if (!is_null($installDef)) {
-                                reset($installDef);
-                                if (!empty(self::$sidecarOverrides[$method]) && !isModuleBWC(key($installDef))) {
-                                    $key = self::$sidecarOverrides[$method];
-                                }
                                 foreach ( $installDef as $moduleName => $def )
                                 {
                                     $installDefs [ $key ] [ ] = $def ;
@@ -487,44 +478,53 @@ class AbstractRelationships
 
         foreach ( $subpanelDefinitions as $moduleName => $definitions )
         {
-            if (!isModuleBWC($moduleName)) {
-                foreach ( $definitions as $definition ) {
-                    // we currently do not support collections in sidecar
-                    if (!empty($definition['collection_list'])) {
-                        continue;
-                    }
-                    $installDefs[$moduleName] = array(
-                        'from' => $this->saveSidecarSubpanelDefinitions(
-                            $moduleName,
-                            $relationshipName,
-                            $definition,
-                            $basepath,
-                            'base'
-                        ),
-                        'to_module' => $moduleName,
-                    );
+            $filename = "$basepath/layoutdefs/{$relationshipName}_{$moduleName}.php" ;
+            $subpanelVarname = 'layout_defs["' . $moduleName . '"]["subpanel_setup"]';
+            $out = "";
+            foreach ( $definitions as $definition )
+            {
+                $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->saveSubpanelDefinitions(): saving the following to {$filename}" . print_r ( $definition, true ) ) ;
+                if (empty($definition ['get_subpanel_data']) || $definition ['subpanel_name'] == 'history' || $definition ['subpanel_name'] == 'activities') {
+                    $definition ['get_subpanel_data'] = $definition ['subpanel_name'];
                 }
-            } else {
-                $filename = "$basepath/layoutdefs/{$relationshipName}_{$moduleName}.php" ;
-                $subpanelVarname = 'layout_defs["' . $moduleName . '"]["subpanel_setup"]';
-                $out = "";
-                foreach ( $definitions as $definition )
-                {
-                    $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->saveSubpanelDefinitions(): saving the following to {$filename}" . print_r ( $definition, true ) ) ;
-                    if (empty($definition ['get_subpanel_data']) || $definition ['subpanel_name'] == 'history' || $definition ['subpanel_name'] == 'activities') {
-                        $definition ['get_subpanel_data'] = $definition ['subpanel_name'];
-                    }
-                    $out .= override_value_to_string($subpanelVarname, strtolower ( $definition [ 'get_subpanel_data' ] ), $definition) . "\n";
-                }
-                if (!empty($out)) {
-                    $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n" . $out;
-                    sugar_file_put_contents($filename, $out);
-                }
-
-                $installDefs [ $moduleName ] = array ( 'from' => "{$installDefPrefix}/relationships/layoutdefs/{$relationshipName}_{$moduleName}.php" , 'to_module' => $moduleName ) ;
+                $out .= override_value_to_string($subpanelVarname, strtolower ( $definition [ 'get_subpanel_data' ] ), $definition) . "\n";
             }
+            if (!empty($out)) {
+                $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n" . $out;
+                sugar_file_put_contents($filename, $out);
+            }
+
+            $installDefs [ $moduleName ] = array ( 'from' => "{$installDefPrefix}/relationships/layoutdefs/{$relationshipName}_{$moduleName}.php" , 'to_module' => $moduleName ) ;
         }
         return $installDefs;
+    }
+
+    /**
+     * @param string $moduleName
+     * @param string $client
+     * @return bool
+     */
+    protected function hasSidecarLayoutDefs($moduleName, $client = 'base')
+    {
+        if (!isModuleBWC($moduleName)) {
+            return true;
+        }
+
+        $checkDirs = array();
+        $checkDirs[] = "modules/{$moduleName}/clients/{$client}/layouts/subpanels";
+        $checkDirs[] = "custom/modules/{$moduleName}/clients/{$client}/layouts/subpanels";
+        if ($client != 'base') {
+            $checkDirs[] = "modules/{$moduleName}/clients/base/layouts/subpanels";
+            $checkDirs[] = "custom/modules/{$moduleName}/clients/base/layouts/subpanels";
+        }
+
+        foreach ($checkDirs as $dir) {
+            if (is_dir($dir)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -536,49 +536,70 @@ class AbstractRelationships
      * @param string $client base|mobile|portal
      * @return string filename the layout definition is saved to
      */
-    public function saveSidecarSubpanelDefinitions($moduleName, $relationshipName, array $definition, $basepath, $client = 'base')
+    public function saveSidecarSubpanelDefinitions($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions, $client='base')
     {
-        if(strstr($basepath, 'modulebuilder')) {
-            $basepath = str_replace('relationships', "clients/{$client}/layouts", $basepath);
-            $layoutPath = "{$basepath}/subpanels";
-        } else {
-            $layoutPath = "custom/Extension/modules/{$moduleName}/Ext/clients/{$client}/layouts/subpanels";
+        $basepath = str_replace('relationships', "clients/{$client}/layouts", $basepath);
+
+        $installDefs = array();
+        foreach ( $subpanelDefinitions as $moduleName => $definitions )
+        {
+            if(!$this->hasSidecarLayoutDefs($moduleName, $client)) {
+                continue;
+            }
+
+            if(strstr($basepath, 'modulebuilder')) {
+                $layoutPath = "{$basepath}/subpanels";
+            } else {
+                $layoutPath = "custom/Extension/modules/{$moduleName}/Ext/clients/{$client}/layouts/subpanels";
+            }
+
+            if (!is_dir($layoutPath)) {
+                sugar_mkdir($layoutPath, null, true);
+            }
+
+            foreach ( $definitions as $definition ) {
+                // we currently do not support collections in sidecar
+                if (!empty($definition['collection_list'])) {
+                    continue;
+                }
+
+                if ($definition['subpanel_name'] !== 'default') {
+                    require_once('include/MetaDataManager/MetaDataConverter.php');
+                    $mc = new MetaDataConverter();
+                    $override_array = array(
+                        'link' => strtolower($definition['module']),
+                        'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
+                    );
+                }
+
+                $fileName = "{$layoutPath}/{$relationshipName}_{$moduleName}.php";
+                $varName = "viewdefs['{$moduleName}']['{$client}']['layout']['subpanels']['components'][]";
+                $layoutDefs = array(
+                    'layout' => "subpanel",
+                    'label' => $definition['title_key'],
+                    'context' => array(
+                        'link' => $definition['get_subpanel_data'],
+                    ),
+                );
+                write_array_to_file($varName, $layoutDefs, $fileName);
+
+                if (!empty($override_array)) {
+                    write_array_to_file(
+                        "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]['override_subpanel_list_view']",
+                        $override_array,
+                        "{$layoutPath}/_overridesubpanel-for-{$relationshipName}.php"
+                    );
+                }
+            }
+            $installDefs[$moduleName] = array('from' => $fileName, 'to_module' => $moduleName);
         }
 
-        if (!is_dir($layoutPath)) {
-            mkdir($layoutPath, 0777, true);
-        }
+        return $installDefs;
+    }
 
-        if ($definition['subpanel_name'] !== 'default') {
-            require_once('include/MetaDataManager/MetaDataConverter.php');
-            $mc = new MetaDataConverter();
-            $override_array = array(
-                'link' => strtolower($definition['module']),
-                'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
-            );
-        }
-
-        $fileName = "{$layoutPath}/{$relationshipName}_{$moduleName}.php";
-        $varName = "viewdefs['{$moduleName}']['{$client}']['layout']['subpanels']['components'][]";
-        $layoutDefs = array(
-            'layout' => "subpanel",
-            'label' => $definition['title_key'],
-            'context' => array(
-                'link' => $definition['get_subpanel_data'],
-            ),
-        );
-
-        write_array_to_file($varName, $layoutDefs, $fileName);
-
-        if (!empty($override_array)) {
-            write_array_to_file(
-                "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]['override_subpanel_list_view']",
-                $override_array,
-                "{$layoutPath}/_overridesubpanel-for-{$relationshipName}.php"
-            );
-        }
-
-        return $fileName;
+    public function saveSidecarMobileSubpanelDefinitions($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions, $client='mobile')
+    {
+        return $this->saveSidecarSubpanelDefinitions($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions, $client);
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -588,38 +609,23 @@ class AbstractRelationships
 
         foreach ( $subpanelDefinitions as $moduleName => $definitions )
         {
-            if(!isModuleBWC($moduleName)) {
-                foreach($definitions AS $definition) {
-                    $installDefs [$moduleName] = array(
-                        'from' => $this->saveSidecarSubpanelDefinitions(
-                            $moduleName,
-                            $relationshipName,
-                            $definition,
-                            $basepath,
-                            'mobile'
-                        ),
-                        'to_module' => $moduleName,
-                    );
+            $filename = "$basepath/wirelesslayoutdefs/{$relationshipName}_{$moduleName}.php" ;
+            $subpanelVarname = 'layout_defs["' . $moduleName . '"]["subpanel_setup"]';
+            $out = "";
+            foreach ( $definitions as $definition )
+            {
+                $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->saveSubpanelDefinitions(): saving the following to {$filename}" . print_r ( $definition, true ) ) ;
+                if (empty($definition ['get_subpanel_data']) || $definition ['subpanel_name'] == 'history' || $definition ['subpanel_name'] == 'activities') {
+                    $definition ['get_subpanel_data'] = $definition ['subpanel_name'];
                 }
-            } else {
-                $filename = "$basepath/wirelesslayoutdefs/{$relationshipName}_{$moduleName}.php" ;
-                $subpanelVarname = 'layout_defs["' . $moduleName . '"]["subpanel_setup"]';
-                $out = "";
-                foreach ( $definitions as $definition )
-                {
-                    $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . "->saveSubpanelDefinitions(): saving the following to {$filename}" . print_r ( $definition, true ) ) ;
-                    if (empty($definition ['get_subpanel_data']) || $definition ['subpanel_name'] == 'history' || $definition ['subpanel_name'] == 'activities') {
-                        $definition ['get_subpanel_data'] = $definition ['subpanel_name'];
-                    }
-                    $out .= override_value_to_string($subpanelVarname, strtolower ( $definition [ 'get_subpanel_data' ] ), $definition) . "\n";
-                }
-                if (!empty($out)) {
-                    $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n" . $out;
-                    sugar_file_put_contents($filename, $out);
-                }
-
-                $installDefs [ $moduleName ] = array ( 'from' => "{$installDefPrefix}/relationships/wirelesslayoutdefs/{$relationshipName}_{$moduleName}.php" , 'to_module' => $moduleName ) ;
+                $out .= override_value_to_string($subpanelVarname, strtolower ( $definition [ 'get_subpanel_data' ] ), $definition) . "\n";
             }
+            if (!empty($out)) {
+                $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n" . $out;
+                sugar_file_put_contents($filename, $out);
+            }
+
+            $installDefs [ $moduleName ] = array ( 'from' => "{$installDefPrefix}/relationships/wirelesslayoutdefs/{$relationshipName}_{$moduleName}.php" , 'to_module' => $moduleName ) ;
         }
         return $installDefs ;
     }
