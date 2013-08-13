@@ -285,11 +285,16 @@
         return value;
     },
     addFlagLabels: function(value) {
-        var flagStr = "", flagArray;
+        var flagStr = "", flagClassStr = "", flagArray, flagClass;
         var flag2Lbl = {
             primary_address:"LBL_EMAIL_PRIMARY",
             opt_out:"LBL_EMAIL_OPT_OUT",
             invalid_email:"LBL_EMAIL_INVALID"
+        };
+        var flag2Cl = {
+            primary_address:"primary",
+            opt_out:"opted-out",
+            invalid_email:"invalid"
         };
         _.each(value, function(emailObj, key) {
             flagStr = "";
@@ -300,11 +305,21 @@
             });
             flagArray = _.without(flagArray, undefined);
             if (flagArray.length > 0) {
-                flagStr = "(" + flagArray.join(", ") + ")";
+                flagStr = flagArray.join(", ");
+            }
+            flagClassStr = "";
+            flagClass = _.map(emailObj, function (flagValue, key) {
+                if (flag2Cl[key] && flagValue == "1") {
+                    return app.lang.get(flag2Cl[key]);
+                }
+            });
+            flagClass = _.without(flagClass, undefined);
+            if (flagClass.length > 0) {
+                flagClassStr = flagClass.join(", ");
             }
             emailObj.flagLabel = flagStr;
+            emailObj.flagClass = flagClassStr;
         })
-
         return value;
     },
     /**
