@@ -68,7 +68,7 @@ class UnifiedSearchApi extends SugarListApi {
         }
 
         $options['searchFields'] = array();
-        if (!empty($args['searchFields'])) {
+        if (!empty($args['search_fields'])) {
             $options['searchFields'] = explode(',', $args['search_fields']);
         }
 
