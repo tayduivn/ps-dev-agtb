@@ -109,7 +109,7 @@
 
                 // a robot has reached into the honey pot. do not submit
                 if (app.config.honeypot_on && app.config.honeypot_on === true &&
-                    (self.$('input[name="HPTextField"]').val() || self.model.get('HPTextField'))) return;
+                    (self.$('input[name="first_name"]').val() || self.model.get('first_name'))) return;
 
                 app.$contentEl.hide();
                 app.alert.show('forgotPassword', {level: 'process', title: app.lang.getAppString('LOADING'), autoClose: false});
