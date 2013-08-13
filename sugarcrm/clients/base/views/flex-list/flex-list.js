@@ -157,21 +157,23 @@
      * Add multi selection field to left column
      */
     addMultiSelectionAction: function () {
-        var _generateMeta = function (buttons) {
+        var _generateMeta = function (buttons, disableSelectAllAlert) {
             return {
                 'type': 'fieldset',
                 'fields': [
                     {
                         'type': 'actionmenu',
-                        'buttons': buttons || []
+                        'buttons': buttons || [],
+                        'disable_select_all_alert': !!disableSelectAllAlert
                     }
                 ],
                 'value': false,
                 'sortable': false
             };
         };
-        var buttons = this.meta.selection.actions;
-        this.leftColumns.push(_generateMeta(buttons));
+        var buttons =               this.meta.selection.actions,
+            disableSelectAllAlert = !!this.meta.selection.disable_select_all_alert;
+        this.leftColumns.push(_generateMeta(buttons, disableSelectAllAlert));
     },
     /**
      * Add fieldset of rowactions to the right column

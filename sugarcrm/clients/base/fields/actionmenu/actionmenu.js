@@ -1,3 +1,19 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
+/**
+ * @class Field.ActionMenuField
+ * @alias SUGAR.App.view.views.ActionMenuField
+ */
 ({
     events: {
         'click .checkall': 'checkAll',
@@ -21,6 +37,7 @@
             massCollection = new MassCollection();
             this.context.set('mass_collection', massCollection);
         }
+        this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
     },
     check: function (evt) {
         this.toggleSelect(this.$(this.fieldTag).is(":checked"));
@@ -36,7 +53,7 @@
     dropdownSelected: function(evt) {
         var $el = this.$(evt.currentTarget),
             selectedIndex = $el.val();
-        if(!selectedIndex) {
+        if (!selectedIndex) {
             return;
         }
         this.fields[selectedIndex].getFieldElement().trigger("click");
@@ -52,14 +69,14 @@
                 } else {
                     //entire selection
                     massCollection.reset();
-                    massCollection.add(this.view.collection.models);
-                    massCollection.filterDef = this.view.collection.filterDef;
+                    massCollection.add(this.collection.models);
+                    massCollection.filterDef = this.collection.filterDef;
                 }
             } else { //if checkbox is unchecked
                 if (this.model.id) { //each selection
                     if (massCollection.entire) {
                         massCollection.reset();
-                        massCollection.add(this.view.collection.models);
+                        massCollection.add(this.collection.models);
                         massCollection.remove(this.model);
                     } else {
                         massCollection.remove(this.model);
@@ -96,78 +113,112 @@
             }
         } else if (massCollection) { //listeners for entire selection
             var cid = this.view.cid;
-            var setButtonsDisabled = function (fields) {
-                _.each(fields, function (field) {
-                    if (field.def.minSelection || field.def.maxSelection) {
-                        var min = field.def.minSelection || 0,
-                            max = field.def.maxSelection || massCollection.length;
-                        if (massCollection.length < min || massCollection.length > max) {
-                            field.setDisabled(true);
-                        } else {
-                            field.setDisabled(false);
-                        }
-                    }
-                }, self);
-            };
-            if (this.view.collection) {
-                this.view.collection.on("reset", function () {
+            if (this.collection) {
+                this.collection.on("reset", function () {
                     if (massCollection.entire) {
                         massCollection.reset();
                     }
                 }, this);
             }
 
-            this.on("render", this.toggleShowSelectAll, this);
+            this.on("render", this.toggleSelectAll, this);
 
             massCollection.on("add", function (model) {
                 if (massCollection.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
                     self.$(".dropdown-menu-select").removeClass("hide");
                 }
-                if (massCollection.length == self.view.collection.length) {
+                if (massCollection.length === self.collection.length) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
-                self.toggleShowSelectAll();
-                setButtonsDisabled(self.fields);
+                self.toggleSelectAll();
             }, cid);
             massCollection.on("remove reset", function (model) {
-                if (massCollection.length == 0) {
+                if (massCollection.length === 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
                     self.$(".dropdown-menu-select").addClass("hide");
                 }
                 self.$(self.fieldTag).attr("checked", false);
-                self.toggleShowSelectAll();
-                setButtonsDisabled(self.fields);
+                self.toggleSelectAll();
             }, cid);
             this.action_enabled = (massCollection.length > 0);
             this.selected = (massCollection.entire);
         }
     },
-    toggleShowSelectAll: function () {
-        var massCollection = (this.context) ? this.context.get('mass_collection') : null;
-        if (massCollection && this.view.collection.next_offset > 0) {
-            //only if the collection contains more records
-            var self = this;
-            if (massCollection.entire) {
-                var allSelected = $('<div>').html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL'));
-                $(allSelected).find('a').on("click", function (evt) {
-                    massCollection.reset();
-                });
-                this.view.layout.trigger("list:alert:show", allSelected);
-            } else if (massCollection.length == this.view.collection.models.length) {
-                var selectAll = $("<div>").html(app.utils.formatString(
-                    app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS'), {
-                        "num": massCollection.length
-                    }));
-                $(selectAll).find('a').on("click", function (evt) {
-                    massCollection.entire = true;
-                    self.toggleShowSelectAll();
-                });
-                this.view.layout.trigger("list:alert:show", selectAll);
-            } else {
-                this.view.layout.trigger("list:alert:hide");
+    /**
+     * Toggles the actionmenu buttons when the min or max rows have been selected. Prevents the "select all" alert from
+     * being shown if the alert is disabled.
+     */
+    toggleSelectAll: function() {
+        var self           = this,
+            massCollection = (this.context) ? this.context.get('mass_collection') : null;
+        /**
+         * Builds the DOM alert with an event for resetting the mass collection.
+         * @returns {*|jQuery}
+         */
+        var buildAlertForReset = function() {
+            var alert = $('<div>').html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL'));
+            $(alert).find('a').on('click', function() {
+                massCollection.reset();
+            });
+            return alert;
+        };
+        /**
+         * Builds the DOM alert with event for selecting all records.
+         * @returns {*|jQuery}
+         */
+        var buildAlertForEntire = function() {
+            var alert = $('<div>').html(app.utils.formatString(
+                app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS'),
+                {num: massCollection.length}
+            ));
+            $(alert).find('a').on('click', function() {
+                massCollection.entire = true;
+                self.toggleSelectAll();
+            });
+            return alert;
+        };
+        /**
+         * Shows or hides the appropriate alert based on the state of the mass collection.
+         */
+        var showAlert = function() {
+            var alert;
+            debugger;
+            if (massCollection && self.collection.next_offset > 0) {
+                //only if the collection contains more records
+                if (massCollection.entire) {
+                    alert = buildAlertForReset();
+                } else if (massCollection.length === self.collection.length) {
+                    alert = buildAlertForEntire();
+                }
             }
+            if (alert) {
+                self.view.layout.trigger('list:alert:show', alert);
+            } else {
+                self.view.layout.trigger('list:alert:hide');
+            }
+        };
+        /**
+         * Toggles the actionmenu buttons based on the state of the mass collection.
+         * @param fields
+         */
+        var setButtonsDisabled = function (fields) {
+            _.each(fields, function (field) {
+                if (field.def.minSelection || field.def.maxSelection) {
+                    var min = field.def.minSelection || 0,
+                        max = field.def.maxSelection || massCollection.length;
+                    if (massCollection.length < min || massCollection.length > max) {
+                        field.setDisabled(true);
+                    } else {
+                        field.setDisabled(false);
+                    }
+                }
+            }, self);
+        };
+        if (!this.def.disable_select_all_alert) {
+            showAlert();
         }
+        setButtonsDisabled(this.fields);
     },
     getPlaceholder: function () {
         var self = this,
@@ -191,7 +242,7 @@
             });
             actionMenu += "</ul>";
             var caret = '';
-            if(app.utils.isTouchDevice()) {
+            if (app.utils.isTouchDevice()) {
                 caret += '<select data-toggle="dropdownmenu" class="hide dropdown-menu-select"></select>';
             }
             self.actionPlaceHolder = new Handlebars.SafeString(caret + actionMenu);
@@ -233,7 +284,7 @@
                 $(el).remove();
             }
         });
-        if(app.utils.isTouchDevice()) {
+        if (app.utils.isTouchDevice()) {
             selectEl.html(html);
         }
     },
@@ -250,8 +301,8 @@
                 collection.off(null, null, cid);
             }
         }
-        if(this.view.collection) {
-            this.view.collection.off("reset", null, this);
+        if (this.collection) {
+            this.collection.off("reset", null, this);
         }
         this.off("render", null, this);
         app.view.Field.prototype.unbindData.call(this);
