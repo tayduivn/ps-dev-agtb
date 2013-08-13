@@ -197,6 +197,46 @@ class EmbedLinkServiceTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers EmbedLinkService::get
+     */
+    public function testGet_OneLinkWithHttpInHtml_ReturnsRelativeProtocolInHtml()
+    {
+        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
+        $mockClass::staticExpects($this->at(0))
+            ->method('fetch')
+            ->with('http://www.sugarcrm.com')
+            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
+        $mockClass::staticExpects($this->at(1))
+            ->method('fetch')
+            ->with('http://www.foo.com')
+            ->will($this->returnValue('{"type":"video","html":"<embed src=http://www.foo.com>","width":200,"height":100}'));
+
+        $actual = $mockClass::get('http://www.sugarcrm.com');
+
+        $this->assertEquals('<embed src=//www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+    }
+
+    /**
+     * @covers EmbedLinkService::get
+     */
+    public function testGet_OneLinkWithHttpsInHtml_ReturnsRelativeProtocolInHtml()
+    {
+        $mockClass = $this->getMockClass('EmbedLinkService', array('fetch'));
+        $mockClass::staticExpects($this->at(0))
+            ->method('fetch')
+            ->with('http://www.sugarcrm.com')
+            ->will($this->returnValue('<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>'));
+        $mockClass::staticExpects($this->at(1))
+            ->method('fetch')
+            ->with('http://www.foo.com')
+            ->will($this->returnValue('{"type":"video","html":"<embed src=https://www.foo.com>","width":200,"height":100}'));
+
+        $actual = $mockClass::get('http://www.sugarcrm.com');
+
+        $this->assertEquals('<embed src=//www.foo.com>', $actual['embeds'][0]['html'], 'Should return the correct embed html');
+    }
+
+    /**
      * Test regexp that finds all URLs in an input text
      *
      * @dataProvider findAllUrls_DataProvider

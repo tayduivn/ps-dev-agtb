@@ -152,7 +152,7 @@ class EmbedLinkService
 
             if (in_array($jsonOEmbed->type, self::$supportedOEmbedTypes)) {
                 $embedData['type'] = $jsonOEmbed->type;
-                $embedData['html'] = $jsonOEmbed->html;
+                $embedData['html'] = static::convertToProtocolRelativeUrl($jsonOEmbed->html);
                 $embedData['width'] = $jsonOEmbed->width;
                 $embedData['height'] = $jsonOEmbed->height;
             }
@@ -182,7 +182,7 @@ class EmbedLinkService
 
                 $htmlElements = $xmlOEmbed->getElementsByTagName('html');
                 if (count($htmlElements) > 0) {
-                    $embedData['html'] = $htmlElements->item(0)->nodeValue;
+                    $embedData['html'] = static::convertToProtocolRelativeUrl($htmlElements->item(0)->nodeValue);
                 }
 
                 $widthElements = $xmlOEmbed->getElementsByTagName('width');
@@ -224,6 +224,19 @@ class EmbedLinkService
         }
 
         return static::$cache[$url];
+    }
+
+    /**
+     * Find http:// and https:// protocol and replace it with protocol agnostic url
+     *
+     * @param string $urlString
+     * @return string
+     */
+    protected static function convertToProtocolRelativeUrl($urlString)
+    {
+        $embedHtmlData = str_replace('http://', '//', $urlString);
+        $embedHtmlData = str_replace('https://', '//', $embedHtmlData);
+        return $embedHtmlData;
     }
 
 }
