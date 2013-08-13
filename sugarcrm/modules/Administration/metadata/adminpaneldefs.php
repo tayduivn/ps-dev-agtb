@@ -266,7 +266,7 @@ foreach ($admin_group_header as $key=>$values) {
 
                 // Unless a user is a system admin, or module admin, they cannot see Forecasts config links
                 if($mod_val == 'Forecasts'
-                    && !($current_user->isAdmin() || $current_user->isAdminForModule('Forecasts'))
+                    && !($current_user->isAdmin() || $current_user->isAdminForModule('Forecasts') || $current_user->isDeveloperForModule('Forecasts'))
                     && isset($values[3]['Forecasts']))
                 {
                     unset($admin_group_header[$key][3][$mod_val]);

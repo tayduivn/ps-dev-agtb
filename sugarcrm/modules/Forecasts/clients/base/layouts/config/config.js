@@ -5,8 +5,10 @@
     initialize: function(options) {
         var acls = app.user.getAcls().Forecasts,
             hasAccess = (!_.has(acls, 'access') || acls.access == 'yes'),
-            isAdmin = (!_.has(acls, 'admin') || acls.admin == 'yes');
-        if(hasAccess && isAdmin) {
+            isAdmin = (!_.has(acls, 'admin') || acls.admin == 'yes'),
+            isDev = (!_.has(acls, 'developer') || acls.developer == 'yes');
+        // if user has access AND has an Admin OR Developer role
+        if(hasAccess && (isAdmin || isDev)) {
             // initialize
             app.view.Layout.prototype.initialize.call(this, options);
             // load the data
