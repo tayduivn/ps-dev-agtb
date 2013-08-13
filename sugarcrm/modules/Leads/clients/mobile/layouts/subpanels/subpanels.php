@@ -7,6 +7,7 @@ $viewdefs['Leads']['mobile']['layout']['subpanels'] = array(
             'context' => array(
                 'link' => 'calls',
             ),
+            'linkable' => false,
         ),
         array(
             'layout' => 'subpanel',
@@ -14,6 +15,7 @@ $viewdefs['Leads']['mobile']['layout']['subpanels'] = array(
             'context' => array(
                 'link' => 'meetings',
             ),
+            'linkable' => false,
         ),
         array(
             'layout' => 'subpanel',
