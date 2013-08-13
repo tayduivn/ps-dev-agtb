@@ -94,6 +94,13 @@
     },
 
     /**
+     * Holds previous totals for math
+     */
+    oldTotals: {},
+
+    quotaCollection: undefined,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -247,6 +254,24 @@
 
         // Home module doesn't have a changing selectedUser
         if(this.currentModule == 'Forecasts') {
+
+            this.quotaCollection = app.utils.getSubpanelCollection(ctx, 'ForecastManagerWorksheets');
+
+            this.quotaCollection.on('reset', this.processQuotaCollection, this);
+
+            this.quotaCollection.on('change:quota', function(data) {
+                var oldQuota = (this.getOldTotalFromCollectionById(data.get('id'))) ? this.getOldTotalFromCollectionById(data.get('id')).quota : 0,
+                    newQuota = data.get('quota'),
+                    diff = app.math.sub(data.get('quota'), oldQuota),
+                    newQuotaTotal = app.math.add(this.serverData.get('quota_amount'), diff);
+                // set the new "oldTotals" value
+                this.setOldTotalFromCollectionById(data.get('id'), {quota: newQuota});
+                // calculate and update the Quota on the frontend
+                this.calculateData({quota_amount: newQuotaTotal});
+            }, this);
+
+            this.processQuotaCollection();
+
             ctx.on('change:selectedUser', function(model) {
                 this.updateDetailsForSelectedUser(model.get('selectedUser'));
                 // reload widget data when the selectedUser changes
@@ -256,6 +281,16 @@
             ctx.on('forecasts:worksheet:totals', function(data) {
                 this.calculateData(this.mapAllTheThings(data, true));
             }, this);
+
+            // Using LHS Model to store the initial values of the LHS model so we don't have
+            // to ping the server every dashlet load for the true original DB values of the LHS model
+            if(!_.has(ctx.attributes, 'lhsData')) {
+                ctx.set({
+                    lhsData: {
+                        quotas: this.oldTotals
+                    }
+                });
+            }
         }
     },
 
@@ -266,6 +301,9 @@
         var ctx = this.context.parent;
         if(ctx) {
             ctx.off(null, null, this);
+        }
+        if(this.currentModule == 'Forecasts' && this.quotaCollection) {
+            this.quotaCollection.off();
         }
         app.view.View.prototype.unbindData.call(this);
     },
@@ -316,6 +354,40 @@
         });
     },
 
+    /**
+     * Processes this.quotaCollection.models to determine which models IDs should be
+     * saved into the closedWonIds array
+     */
+    processQuotaCollection: function() {
+        this.oldTotals.models = new Backbone.Model();
+        _.each(this.quotaCollection.models, function(model) {
+            // save all the initial likely values
+            this.setOldTotalFromCollectionById(model.get('id'), {
+                quota: model.get('quota')
+            });
+        }, this);
+    },
+
+    /**
+     * Gets an object from the oldTotals Model
+     *
+     * @param id the model ID for the Object
+     * @returns {Object}
+     */
+    getOldTotalFromCollectionById: function(id) {
+        return this.oldTotals.models.get(id);
+    },
+
+    /**
+     * Sets a totals Object on the oldTotals Model by id
+     *
+     * @param id model id
+     * @param totals object to set
+     * @returns {*}
+     */
+    setOldTotalFromCollectionById: function(id, totals) {
+        this.oldTotals.models.set(id, totals);
+    },
 
     /**
      * {@inheritdoc}
@@ -418,6 +490,27 @@
      * @param data
      */
     handleNewDataFromServer: function(data) {
+        // since the user might add this dashlet after they have changed the quota models, but before they saved it
+        // we have to check and make sure that we're accounting for any changes in the dashlet totals that come
+        // from the server
+        if(this.currentModule == 'Forecasts' && this.context) {
+            var lhsData = this.context.get('lhsData');
+            if(!lhsData && _.has(this.context, 'parent') && !_.isNull(this.context.parent)) {
+                lhsData = this.context.parent.get('lhsData');
+            }
+
+            if(lhsData) {
+                var lhsTotal = 0;
+                    //ctx = this.context.parent || this.context,
+                    //ctxMdl = ctx.get('model');
+                _.each(lhsData.quotas.models.attributes, function(val, key) {
+                    lhsTotal = app.math.add(lhsTotal, val.quota);
+                }, this);
+                if(lhsTotal != parseFloat(data.quota_amount)) {
+                    data.quota_amount = app.math.sub(data.quota_amount, app.math.sub(data.quota_amount, lhsTotal));
+                }
+            }
+        }
         this.calculateData(this.mapAllTheThings(data, false));
     },
 
