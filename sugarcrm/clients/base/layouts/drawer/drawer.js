@@ -12,9 +12,9 @@
  */
 
 ({
-    expandTabHtml: '<div class="drawer-tab"><a href="#" class="btn"><i class="icon-chevron-up"></i></a></div>',
+    expandTabHtml: '<div class="drawer-tab"><a href="#" class="btn" rel="tooltip" title=""><i class="icon-chevron-up"></i></a></div>',
     backdropHtml: "<div class='drawer-backdrop'></div>",
-
+    plugins: ['tooltip'],
     onCloseCallback: null, //callbacks to be called once drawers are closed
 
     pixelsFromFooter: 60, //how many pixels from the footer the drawer will drop down to
@@ -154,6 +154,8 @@
         layout = _.last(this._components);
         layout.loadData();
         layout.render();
+
+
     },
 
     /**
@@ -242,6 +244,8 @@
                 $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
             }
         }, this));
+
+
     },
 
     /**
@@ -356,6 +360,24 @@
             .append(this.expandTabHtml)
             .append(this.backdropHtml);
 
+        $bottom.find('.drawer-tab [rel="tooltip"]').attr('title',app.lang.get('LBL_TOGGLE_DRAWER'));
+        var $tooltip = $bottom.find('.drawer-tab [rel="tooltip"]');
+        if (_.isFunction($tooltip.tooltip)) {
+            $tooltip.tooltip({
+                container: 'body',
+                placement:'top',
+                trigger:'mouseenter'
+            });
+        }
+
+        $bottom.find('.drawer-tab [rel="tooltip"]')
+            .on('mouseenter', _.bind(function(event) {
+                this.showTooltip(event,$bottom);
+        }, this))
+            .on('mouseleave', _.bind(function(event) {
+                this.hideTooltip(event,$bottom);
+        }, this));
+
         //add expand/collapse tab behavior
         $bottom.find('.drawer-tab').on('click', _.bind(function(event) {
             if ($('i', event.currentTarget).hasClass('icon-chevron-up')) {
@@ -467,7 +489,13 @@
         $(window).off('resize.drawer');
         app.view.View.prototype._dispose.call(this);
     },
+    showTooltip: function(event,$bottom) {
+        $bottom.find('.drawer-tab [rel="tooltip"]').tooltip("show");
+    },
 
+    hideTooltip: function(event,$bottom) {
+        $bottom.find('.drawer-tab [rel="tooltip"]').tooltip("hide");
+    },
     /**
      * Resize the height of the drawer by expanding.
      */

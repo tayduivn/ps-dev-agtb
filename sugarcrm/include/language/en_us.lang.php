@@ -1853,6 +1853,7 @@ $app_strings = array (
   'LBL_INVITEES' => 'Guests',
   'LBL_NEW_WEB_VERSION' => 'A new version of SugarCRM Mobile is available. Do you want to update?',
   'LBL_SELECT_ACTION_LABEL' => 'Select Action',
+  'LBL_TOGGLE_DRAWER' => 'Toggle Drawer',
   'LBL_TOUR_NEXT' => 'Next',
   'LBL_TOUR_SKIP' => 'Skip',
   'LBL_TOUR_BACK' => 'Back',
