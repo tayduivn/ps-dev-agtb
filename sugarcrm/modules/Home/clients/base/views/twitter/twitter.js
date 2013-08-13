@@ -97,6 +97,7 @@
                     if (xhr.message && xhr.message == 'need OAuth') {
                         self.needConnect = true;
                     }
+                    self.showAdmin = app.acl.hasAccess('admin', 'Administration');
                     self.template = app.template.get(self.name + '.twitter-need-configure.Home');
                     if (!self.disposed) {
                         app.view.View.prototype._render.call(self);
