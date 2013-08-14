@@ -86,6 +86,12 @@ class SidecarMetaDataUpgrader
     );
 
     /**
+     * Specific module to upgrade
+     * @var string
+     */
+    protected $module = "";
+
+    /**
      * Maps of old metadata file names
      *
      * @var array
@@ -185,6 +191,33 @@ class SidecarMetaDataUpgrader
     public function setBaseFilesToUpgrade()
     {
         $this->setUpgradeFiles('base');
+        $this->setUpgradeMBFiles($this->getMBModules());
+    }
+
+    /**
+     * Get the list of modules that need core files to be upgraded
+     */
+    public function getMBModules()
+    {
+        if(!empty($this->module)) {
+            return array($this->module);
+        }
+        return array();
+    }
+
+    /**
+     * Sets the listing of MB modules to upgrade
+     * @param array List of MB modules to upgrade
+     */
+    public function setUpgradeMBFiles($modules)
+    {
+        foreach($modules as $module) {
+            $this->logUpgradeStatus("Checking module $module for core upgrade");
+            $basefiles = $this->getUpgradeableFilesInPath("modules/$module/metadata/", $module, 'base');
+            $this->files = array_merge($this->files, $basefiles);
+            // No need to scan portal here since MB modules are not supported for portal
+            // Mobile part takes care of itself
+        }
     }
 
     /**
@@ -227,6 +260,9 @@ class SidecarMetaDataUpgrader
             $count = $deployedcount = $undeployedcount = 0;
             $buildpath = $package->getBuildDir() . '/SugarModules/modules/';
             foreach ($package->modules as $module => $mbmodule) {
+                if($this->module && $package->key . '_' . $module != $this->module) {
+                    continue;
+                }
                 $appModulePath = $modulepath . $package->key . '_' . $module;
                 $mbbModulePath = $buildpath . $package->key . '_' . $module;
                 $packagePath   = $package->getPackageDir() . '/modules/' . $module;
@@ -442,7 +478,7 @@ class SidecarMetaDataUpgrader
         if (!empty($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
             foreach ($this->legacyFilePaths[$client] as $type => $path) {
                 // Get the modules from inside the path
-                $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
+                $dirs = glob($path . "modules/{$this->module}*", GLOB_ONLYDIR);
                 if (!empty($dirs)) {
                     foreach ($dirs as $dirpath) {
                         // Get the module to list it in case it needs to be upgraded
@@ -755,6 +791,12 @@ class SidecarMetaDataUpgrader
             $type = 'history';
         }
 
+        if(empty($GLOBALS['beanList'][$module]) && $client != 'wireless') {
+            // if the module is not among active, not upgrading it for now
+            $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules not supported");
+            return false;
+        }
+
         if($client == 'base' && isModuleBWC($module)) {
             // if the module is in BWC, do not upgrade its views in base client
             $this->logUpgradeStatus("Not upgrading $file: BWC module");
@@ -793,8 +835,17 @@ class SidecarMetaDataUpgrader
                 'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type),
             );
         }
-        $this->logUpgradeStatus("Not upgrading $file: no file name");
+        $this->logUpgradeStatus("Not upgrading $file: no file name for $filename");
 
         return false;
+    }
+
+    /**
+     * Set specific module to upgrade
+     * @param string $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
     }
 }

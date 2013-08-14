@@ -121,7 +121,10 @@ class Call extends SugarBean {
        	$this->setupCustomFields('Calls');
 
 		foreach ($this->field_defs as $field) {
-			$this->field_name_map[$field['name']] = $field;
+			if(empty($field['name'])) {
+		        continue;
+		    }
+		    $this->field_name_map[$field['name']] = $field;
 		}
 
 		//BEGIN SUGARCRM flav=pro ONLY

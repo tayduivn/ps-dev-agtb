@@ -200,7 +200,7 @@ class ModuleInstaller{
 				//clear the unified_search_module.php file
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
 	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
-                
+
                 // Rebuild roles so the ACLs for new modules are fresh immediately
                 $this->updateRoles();
 
@@ -2550,20 +2550,20 @@ private function dir_file_count($path){
             }
         }
     }
-    
+
     /**
-     * Refreshes roles after installation of a module(s). This mimics the call 
+     * Refreshes roles after installation of a module(s). This mimics the call
      * to Repair Roles from the admin main menu.
      */
     protected function updateRoles()
     {
         // Try to maintain state of the request since we need to modify it
         $uw = isset($_REQUEST['upgradeWizard']) ? $_REQUEST['upgradeWizard'] : null;
-        
+
         // This tells the install actions script to NOT output anything
         $_REQUEST['upgradeWizard'] = true;
         require 'modules/ACL/install_actions.php';
-        
+
         // Reset the state of the request
         $_REQUEST['upgradeWizard'] = $uw;
     }
