@@ -48,6 +48,7 @@
     hiddenPanelExists: false,
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.action = 'detail';
         app.events.on("preview:render", this._renderPreview, this);
         app.events.on("preview:collection:change", this.updateCollection, this);
         app.events.on("preview:close", this.closePreview,  this);

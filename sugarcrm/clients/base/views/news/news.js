@@ -27,6 +27,9 @@
         }
         var name = this.model.get("account_name") || this.model.get('name') || this.model.get('full_name'),
             limit = parseInt(this.settings.get('limit') || 5, 10);
+        if (_.isEmpty(name)) {
+            return;
+        }
         $.ajax({
             url: 'https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=' +
                 name.toLowerCase() + '&rsz=' + limit,
