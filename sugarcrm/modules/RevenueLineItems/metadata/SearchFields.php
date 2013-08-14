@@ -18,6 +18,8 @@ $searchFields['RevenueLineItems'] = array (
         'query_type' => 'default',
         'force_unifiedsearch'=>true
     ),
+    'account_name'=> array('query_type'=>'default','db_field'=>array('accounts.name')),
+    'opportunity_name'=> array('query_type'=>'default','db_field'=>array('opportunities.name')),
     'best_case' => array (
         'query_type' => 'default'
     ),
