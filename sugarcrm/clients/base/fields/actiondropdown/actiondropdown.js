@@ -41,7 +41,7 @@
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
         'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
     },
-
+    plugins: ['tooltip'],
 
     /**
      * {@inheritDoc}
@@ -126,7 +126,7 @@
         var cssClass = [],
             container = '',
             caretIcon = this.def['icon'] ? this.def['icon'] : 'icon-caret-down',
-            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" title="Actions">' +
+            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" data-container="body" title="Actions">' +
                 '<span class="' + caretIcon + '"></span>' +
                 '</a>',
             dropdown = '<ul class="dropdown-menu">';
@@ -174,14 +174,6 @@
         app.view.invokeParent(this, {type: 'field', name: 'fieldset', method: '_render'});
         this.setPlaceholder();
         this._updateCaret();
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
     },
     /**
      * Enable or disable caret depending on if there are any enabled actions in the dropdown list

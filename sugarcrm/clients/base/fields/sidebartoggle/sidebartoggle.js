@@ -2,20 +2,15 @@
     extendsFrom: 'button',
 
     events: {
-        'click .drawerTrig': 'toggle'//ensure "hit area" big enough
+        'click .drawerTrig': 'toggle',//ensure "hit area" big enough
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
+    plugins: ['tooltip'],
     _render: function() {
         app.view.Field.prototype._render.call(this);
         // Broadcast when we've fully rendered sidebar toggle
         app.controller.context.trigger("sidebarRendered");
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'left',
-                trigger:'mouseenter'
-            });
-        }
     },
     bindDataChange:function () {
         // These corresponding to the toggleSide & openSide events in default layout
@@ -54,6 +49,13 @@
         //toggling sidebar can affect the width of content in the same way as a window resize
         //notify of a window resize so that any content listening for a resize can react in the same way for this sidebar toggle
         $(window).trigger('resize');
+    },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     },
     _dispose: function () {
         app.view.invokeParent(this, {type: 'field', name: 'button', method: '_dispose'});

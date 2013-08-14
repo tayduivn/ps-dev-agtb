@@ -31,7 +31,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable'],
+    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable','tooltips'],
 
     rowFields: {},
 
@@ -114,15 +114,6 @@
                 this.rowFields[field.model.id].push(field);
             }
         }, this);
-
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
     },
 
     deleteClicked: function(model) {

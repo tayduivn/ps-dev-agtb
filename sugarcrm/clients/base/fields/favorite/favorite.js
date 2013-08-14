@@ -10,7 +10,7 @@
     'events': {
         'click .icon-favorite': 'toggle'
     },
-
+    plugins: ['tooltip'],
     /**
      * {@inheritdoc}
      *
@@ -19,14 +19,6 @@
     initialize: function(options) {
         options.def.readonly = true;
         app.view.Field.prototype.initialize.call(this, options);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
     },
 
     /**
