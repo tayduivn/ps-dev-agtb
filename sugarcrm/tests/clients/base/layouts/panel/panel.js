@@ -20,19 +20,19 @@
 
 describe("Base.Layout.Panel", function () {
 
-    var app, layout, triggerStub;
+    var app, layout, togglePanelStub;
 
     beforeEach(function () {
         app = SugarTest.app;
         layout = SugarTest.createLayout('base', "Cases", "panel", null, null);
-        triggerStub = sinon.stub(layout, 'trigger');
+        togglePanelStub = sinon.stub(layout, 'togglePanel');
     });
 
     afterEach(function () {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
-        triggerStub.restore();
+        togglePanelStub.restore();
         layout.dispose();
         layout.context = null;
         layout = null;
@@ -45,53 +45,53 @@ describe("Base.Layout.Panel", function () {
             expect(lastStateGetStub).toHaveBeenCalled();
             lastStateGetStub.restore();
         });
-        it("should trigger hide when collection reset", function() {
+        it("should toggle panel when collection reset", function() {
             layout.collection.reset([]);
-            expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub.lastCall.args[0]).toBe('hide');
-            expect(triggerStub.lastCall.args[1]).toBe(false);
+            expect(togglePanelStub).toHaveBeenCalled();
+            expect(togglePanelStub.lastCall.args[0]).toBe(false);
+            expect(togglePanelStub.lastCall.args[1]).toBe(false);
 
             layout.collection.reset([{id: 'test'}]);
-            expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub.lastCall.args[0]).toBe('hide');
-            expect(triggerStub.lastCall.args[1]).toBe(true);
+            expect(togglePanelStub).toHaveBeenCalled();
+            expect(togglePanelStub.lastCall.args[0]).toBe(true);
+            expect(togglePanelStub.lastCall.args[1]).toBe(false);
         });
-        it("should trigger hide when last state exists", function() {
+        it("should toggle panel depending on last state", function() {
             var state = 'hide';
             var lastStateGetStub = sinon.stub(app.user.lastState, 'get', function() {
                 return state;
             });
-            layout.collection.reset([]);
+            layout.collection.reset([{id: 'test'}]);
             expect(lastStateGetStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub.lastCall.args[0]).toBe('hide');
-            expect(triggerStub.lastCall.args[1]).toBe(false);
+            expect(togglePanelStub).toHaveBeenCalled();
+            expect(togglePanelStub.lastCall.args[0]).toBe(false);
+            expect(togglePanelStub.lastCall.args[1]).toBe(false);
 
             state = 'show';
 
             layout.collection.reset([]);
             expect(lastStateGetStub).toHaveBeenCalled();
-            expect(triggerStub).toHaveBeenCalled();
-            expect(triggerStub.lastCall.args[0]).toBe('hide');
-            expect(triggerStub.lastCall.args[1]).toBe(true);
+            expect(togglePanelStub).toHaveBeenCalled();
+            expect(togglePanelStub.lastCall.args[0]).toBe(true);
+            expect(togglePanelStub.lastCall.args[1]).toBe(false);
 
             lastStateGetStub.restore();
         });
-        it("should set last state when trigger hide", function() {
-            triggerStub.restore();
+        it("should set last state when toggling panel", function() {
+            togglePanelStub.restore();
             var lastStateSetStub = sinon.stub(app.user.lastState, 'set');
 
-            layout.trigger('hide', true, false);
+            layout.togglePanel(false, false);
             expect(lastStateSetStub).not.toHaveBeenCalled();
 
-            layout.trigger('hide', false, false);
+            layout.togglePanel(true, false);
             expect(lastStateSetStub).not.toHaveBeenCalled();
 
-            layout.trigger('hide', true);
+            layout.togglePanel(true);
             expect(lastStateSetStub).toHaveBeenCalled();
             expect(lastStateSetStub.lastCall.args[1]).toBe('show');
 
-            layout.trigger('hide', false);
+            layout.togglePanel(false);
             expect(lastStateSetStub).toHaveBeenCalled();
             expect(lastStateSetStub.lastCall.args[1]).toBe('hide');
 

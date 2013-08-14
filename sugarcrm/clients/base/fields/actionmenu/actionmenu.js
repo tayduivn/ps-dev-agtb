@@ -183,7 +183,6 @@
          */
         var showAlert = function() {
             var alert;
-            debugger;
             if (massCollection && self.collection.next_offset > 0) {
                 //only if the collection contains more records
                 if (massCollection.entire) {

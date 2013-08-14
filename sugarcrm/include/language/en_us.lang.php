@@ -2195,7 +2195,7 @@ $app_strings = array (
     'LBL_EMAIL_MULTISELECT'                 => '<b>Ctrl-Click</b> to select multiples<br />(Mac users use <b>CMD-Click</b>)',
 
     'LBL_EMAIL_NO'                          => 'No',
-    'LBL_EMAIL_NOT_SENT'                    => 'System is unable to process your request. Please contact the system administrator.',
+    'LBL_EMAIL_NOT_SENT'                    => 'There was a problem sending the request email. Please contact the system administrator.',
 
     'LBL_EMAIL_OK'                          => 'OK',
     'LBL_EMAIL_ONE_MOMENT'                  => 'One moment please...',
@@ -3923,10 +3923,16 @@ $app_strings = array (
     //First time login wizard
     'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
     'LBL_SETUP_USER_INFO' => 'Setup your user information',
+    'LBL_WIZ_USER_LOCALE_TITLE' => 'User Locale Settings',
+    'LBL_SETUP_USER_LOCALE_INFO' => 'Set your time zone, date, and name formats',
     'LBL_WIZ_START_SUGAR' => 'Start Sugar',
     'LBL_WIZ_FIRST_NAME' => 'First name',
     'LBL_WIZ_LAST_NAME' => 'Last name',
     'LBL_WIZ_EMAIL' => 'Email',
+    'LBL_WIZ_TIMEZONE' => 'Time Zone',
+    'LBL_WIZ_TIMEFORMAT' => 'Time Format',
+    'LBL_WIZ_DATE_FORMAT' => 'Date Format',
+    'LBL_WIZ_NAME_FORMAT' => 'Name Format',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
@@ -3941,6 +3947,8 @@ $app_strings = array (
     'ERR_PASSWORD_MISMATCH' => 'Password entered does not match that in our system.',
     'LBL_NEW_USER_PASSWORD_1' => 'Your password has been successfully updated.',
     'LBL_CANNOT_SEND_PASSWORD' => 'Cannot send password',
+
+    'LBL_REQUEST_PASSWORD' => 'Request Password',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
@@ -4101,6 +4109,9 @@ $app_strings = array (
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
 
     'LBL_OVERDUE' => 'Overdue',
+
+    'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',
+    'LBL_PASSWORD_REQUEST_ERROR' => 'There was a problem retrieving your username and email combination.',
 );
 
 $app_list_strings['interactions_options'] = array (

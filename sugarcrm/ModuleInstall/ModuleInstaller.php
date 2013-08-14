@@ -2444,7 +2444,7 @@ private function dir_file_count($path){
             'alertAutoCloseDelay' => 2500,
             'serverUrl' => 'rest/v10',
             'siteUrl' => '',
-            'unsecureRoutes' => array('login', 'error'),
+            'unsecureRoutes' => array('login', 'error', 'forgotpassword'),
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',

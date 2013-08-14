@@ -29,12 +29,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['base']['layout']['first-login-wizard'] = array(
     'type' => 'wizard',
+    'buttons' => array(
+        array(
+            'name' => 'previous_button',
+            'type' => 'button',
+            'label' => 'LNK_LIST_PREVIOUS',
+        ),
+        array(
+            'name' => 'next_button',
+            'type' => 'button',
+            'label' => 'LNK_LIST_NEXT',
+            'primary' => true,
+        ),
+        array(
+            'name' => 'start_sugar_button',
+            'type' => 'button',
+            'label' => 'LBL_WIZ_START_SUGAR',
+            'primary' => true,
+        ),
+    ),
     'components' => array(
         0 => array(
             'view' => "user-wizard-page"
         ),
         1 => array(
-            'view' => "wizard-page"
+            'view' => "user-locale-wizard-page"
         ),
         2 => array(
             'view' => "wizard-page"
