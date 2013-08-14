@@ -14,8 +14,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'include/Link2Tag.php';
 
 /**
  * Queue class for activity stream events.

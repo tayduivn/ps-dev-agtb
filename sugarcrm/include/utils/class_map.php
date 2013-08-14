@@ -47,5 +47,7 @@ $class_map = array(
     'BeanFactory' => 'data/BeanFactory.php',
     'Audit' => 'modules/Audit/Audit.php',
     'Link2' => 'data/Link2.php',
+    'SugarJobQueue' => 'include/SugarQueue/SugarJobQueue.php',
+    'Link2Tag' => 'include/Link2Tag.php',
 );
 
