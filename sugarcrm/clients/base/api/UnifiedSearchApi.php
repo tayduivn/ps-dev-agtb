@@ -316,17 +316,17 @@ class UnifiedSearchApi extends SugarListApi {
 
         if (!empty($options['searchFields'])) {
             $customWhere = array();
-            foreach($options['moduleList'] as $module) {
+            foreach ($options['moduleList'] as $module) {
                 $seed = BeanFactory::getBean($module);
                 $fields = array_keys($seed->field_defs);
                 $existingfields = array_intersect($fields, $options['searchFields']);
                 if (!empty($existingfields)) {
-                    foreach($existingfields as $field) {
-                        if(empty($seed->field_defs[$field]['full_text_search'])) {
+                    foreach ($existingfields as $field) {
+                        if (empty($seed->field_defs[$field]['full_text_search'])) {
                             continue;
                         }
                         $prefix = $seed->module_name;
-                        if(!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
+                        if (!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
                             $customWhere[] = "{$prefix}.{$field}";
                         }
                     }
@@ -443,22 +443,22 @@ class UnifiedSearchApi extends SugarListApi {
 
         if (!empty($options['searchFields'])) {
             $customWhere = array();
-            foreach($options['moduleList'] as $module) {
+            foreach ($options['moduleList'] as $module) {
                 $seed = BeanFactory::getBean($module);
                 $fields = array_keys($seed->field_defs);
                 $existingfields = array_intersect($fields, $options['searchFields']);
                 if (!empty($existingfields)) {
                     $customTable = $seed->get_custom_table_name();
                     $table = $seed->table_name;
-                    foreach($existingfields as $field) {
-                        if($seed->field_defs[$field]['unified_search'] !== true) {
+                    foreach ($existingfields as $field) {
+                        if (!isset($seed->field_defs[$field]['unified_search']) || $seed->field_defs[$field]['unified_search'] !== true) {
                             continue;
                         }
                         $prefix = $table;
-                        if(isset($GLOBALS['dictionary'][$seed->object_name]['custom_fields'][$field])) {
+                        if (isset($GLOBALS['dictionary'][$seed->object_name]['custom_fields'][$field])) {
                             $prefix = $customTable;
                         }
-                        if(!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
+                        if (!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
                             $customWhere[$module][] = "{$prefix}.{$field} LIKE '{$options['query']}%'";
                         }
                     }
