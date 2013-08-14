@@ -83,6 +83,12 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'name' => 'manage_subscription_button',
                     'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
                 ),
+                array(
+                    'type'       => 'vcard',
+                    'name'       => 'vcard_button',
+                    'label'      => 'LBL_VCARD_DOWNLOAD',
+                    'acl_action' => 'edit',
+                ),
             ),
         ),
         array(
