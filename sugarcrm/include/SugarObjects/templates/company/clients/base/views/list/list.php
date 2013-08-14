@@ -186,6 +186,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'width' => '2',
+                    'module' => 'Employees',
                 ),
             ),
         ),

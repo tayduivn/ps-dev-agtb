@@ -117,6 +117,7 @@ $viewdefs['Documents']['base']['view']['list'] = array(
                     'enabled' => true,
                     'sortable' => false,
                     'readonly' => true,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'date_entered',

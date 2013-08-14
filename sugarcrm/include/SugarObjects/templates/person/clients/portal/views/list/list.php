@@ -56,6 +56,7 @@ $viewdefs[$module_name]['portal']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                    'module' => 'Employees',
                 ),
             ),
         ),
