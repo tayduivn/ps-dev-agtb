@@ -291,7 +291,9 @@ hr.soften {
 
 .sugarone {
     font-size: 16px;
-    margin: 12px 10px 0;
+    margin: 12px 8px 0 10px;	// [moey] `margin-right` is reduced from 10px to 8px,
+    							//   to prevent the search form from being pushed down (<480px).
+    
     a {
         color: @white;
         b {
