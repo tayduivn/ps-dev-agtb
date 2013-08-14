@@ -44,8 +44,22 @@ $viewdefs['Products']['mobile']['view']['edit'] = array(
                 'account_name',
                 'quote_name',
                 'quantity',
-                'discount_price',
-                'list_price',
+                array(
+                    'name' => 'discount_price',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'cost_price',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'list_price',
+                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'mft_part_num',
+                    'readonly' => true,
+                ),
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
