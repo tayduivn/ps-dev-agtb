@@ -2,7 +2,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -11,22 +11,8 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 $viewdefs['base']['view']['audit'] = array(
-    'type' => 'audit',
-    'buttons' => array(
-        array(
-            'type' => 'button',
-            'css_class' => 'pull-right btn btn-invisible drawer-close',
-            'icon' => 'icon-remove',
-            'primary' => false,
-            'events' => array(
-                'click' => 'function(e){
-                    this.view.layout.trigger("audit:close_changelog");
-                }',
-            ),
-        ),
-    ),
+    'template' => 'filtered-list',
     'panels' =>
     array(
         array(
@@ -35,30 +21,35 @@ $viewdefs['base']['view']['audit'] = array(
                     'type' => 'base',
                     'name' => 'field_name',
                     'label' => 'LBL_FIELD_NAME',
+                    'sortable' => true,
+                    'filter' => 'startsWith',
                 ),
                 array(
                     'type' => 'base',
-                    'name' => 'before_value_string',
+                    'name' => 'before',
                     'label' => 'LBL_OLD_NAME',
+                    'sortable' => false,
+                    'filter' => 'contains',
                 ),
                 array(
                     'type' => 'base',
-                    'name' => 'after_value_string',
+                    'name' => 'after',
                     'label' => 'LBL_NEW_VALUE',
+                    'sortable' => false,
+                    'filter' => 'contains',
                 ),
                 array(
                     'type' => 'base',
-                    'name' => 'created_by',
+                    'name' => 'created_by_username',
                     'label' => 'LBL_CREATED_BY',
+                    'sortable' => true,
                     ),
                 array(
-                    'type' => 'datetime',
+                    'type' => 'datetimecombo',
                     'name' => 'date_created',
                     'label' => 'LBL_LIST_DATE',
-                ),
-                array(
-                    'type' => 'base',
-                    'name' => 'data_type',
+                    'options' => 'date_range_search_dom',
+                    'sortable' => true,
                 ),
             ),
         ),

@@ -1,7 +1,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -99,7 +99,7 @@
 
     /**
      * Set the current search term and then reload the table.
-     * @param {String} term search term.
+     * @param {String} term Search term.
      */
     setSearchTerm: function(term) {
         this.searchTerm = term;
@@ -108,6 +108,7 @@
 
     /**
      * {@inheritDoc}
+     *
      * Sort the collection based on user input.
      * In order to activate sorting on the field,
      * 'sortable' should be defined in the metadata.

@@ -2,7 +2,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -15,11 +15,12 @@
 <div class="inline-drawer">
     <article class="inline-drawer-header row-fluid">
         <div class="span12">
-            <input type="text"
-                   data-searchfield="true"
-                   placeholder="{{str 'LBL_SEARCH_BY' this.module}}"
-                   class="span4 search"
-                   value="{{searchTerm}}">
+            {{#if auditedFields}}
+                {{str "LBL_AUDITED_FIELDS" this.module}}
+                {{arrayJoin auditedFields ", "}}
+            {{else}}
+                {{str "LBL_NO_AUDITED_FIELDS_TEXT" this.module}}
+            {{/if}}
         </div>
     </article>
 </div>

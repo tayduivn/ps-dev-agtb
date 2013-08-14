@@ -72,6 +72,13 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
                     'acl_action' => 'edit',
                 ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
+                ),
             ),
         ),
         array(

@@ -80,7 +80,7 @@ $viewdefs['base']['view']['record'] = array(
                     'event' => 'button:audit_button:click',
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
-                    'value' => 'edit',
+                    'acl_action' => 'view',
                 ),
             ),
         ),
