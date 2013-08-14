@@ -178,4 +178,25 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('string', $this->activity->last_comment);
         $this->assertNotEquals(false, json_decode($this->activity->last_comment, true));
     }
+
+    /**
+     * @covers Activity::processPostSubscription
+     */
+    public function testProcessPostSubscription()
+    {
+        $relationshipStub = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $relationshipStub->expects($this->once())
+            ->method('add');
+
+        $stub = $this->getMock(BeanFactory::getObjectName('Activities'));
+        $stub->expects($this->once())
+            ->method('load_relationship')
+            ->with('activities_teams')
+            ->will($this->returnValue(true));
+        $stub->activities_teams = $relationshipStub;
+
+        SugarTestReflection::callProtectedMethod($stub, 'processPostSubscription', array());
+    }
 }

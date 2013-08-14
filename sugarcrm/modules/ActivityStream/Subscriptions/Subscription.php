@@ -232,4 +232,36 @@ class Subscription extends Basic
             }
         }
     }
+
+
+    /**
+     * Helper for processing subscriptions on a bean-related activity.
+     *
+     * @param  SugarBean $bean
+     * @param  Activity  $act
+     * @param  array     $args
+     */
+    public function processSubscriptions(SugarBean $bean, Activity $act, array $args)
+    {
+        $userPartials          = self::getSubscribedUsers($bean);
+        $data                  = array(
+            'act_id'        => $act->id,
+            'bean_module'   => $bean->module_name,
+            'bean_id'       => $bean->id,
+            'args'          => $args,
+            'user_partials' => $userPartials,
+        );
+        if (count($userPartials) < 5) {
+            self::addActivitySubscriptions($data);
+        } else {
+            $job                   = BeanFactory::getBean('SchedulersJobs');
+            $job->requeue          = 1;
+            $job->name             = "ActivityStream add";
+            $job->data             = serialize($data);
+            $job->target           = "class::SugarJobAddActivitySubscriptions";
+            $job->assigned_user_id = $GLOBALS['current_user']->id;
+            $queue                 = new SugarJobQueue();
+            $queue->submitJob($job);
+        }
+    }
 }
