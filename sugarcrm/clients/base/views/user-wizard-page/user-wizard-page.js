@@ -23,36 +23,9 @@
         return this.areAllRequiredFieldsNonEmpty;
     },
     /**
-     * Listen to changes on required fields. If all required fields contain one or more characters
-     * we update the `this.areAllRequiredFieldsNonEmpty` flag and, if status changed from before we
-     * call `this.updateButtons` which will enable/disable next button as appropriate.
-     * @param {Object} evt the event
-     */
-    checkIfPageComplete: function(evt) {
-        var anyEmpty = false,
-            self = this,
-            last = this.areAllRequiredFieldsNonEmpty;
-
-        //Check required fields on page to see if they have at least one character. Checks
-        //only required <input> elements since profile page's required fields are such.
-        this.$('[data-fieldname] input').each(function(index, el) {
-            if (self.$(el).hasClass('required')) {
-                var val = $.trim(self.$(el).val());
-                if (!val.length > 0) {
-                    anyEmpty = true;
-                }
-            }
-        });
-        this.areAllRequiredFieldsNonEmpty = !anyEmpty;
-        // Update buttons if applicable and something's actually changed
-        if (!last || last !== this.areAllRequiredFieldsNonEmpty) {
-            this.updateButtons();
-        }
-    },
-    /**
      * Prepares HTTP payload
      * @return {Object} Payload with fields we want to update
-     * @private
+     * @protected
      */
     _prepareRequestPayload: function() {
         var payload = {},
