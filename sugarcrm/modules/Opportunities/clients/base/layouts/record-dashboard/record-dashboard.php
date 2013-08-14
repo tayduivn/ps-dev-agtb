@@ -48,9 +48,17 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'interactions',
-                                'label' => 'Interactions',
-                                'filter_duration' => '7',
+                                'name' => 'planned-activities',
+                                'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' => array(
+                                'name' => 'history',
+                                'label' => 'LBL_HISTORY_DASHLET',
                             ),
                             'width' => 12,
                         ),
