@@ -98,6 +98,9 @@
      */
     oldTotals: {},
 
+    /**
+     * Holds a collection of quota Objects by the quota's record ID
+     */
     quotaCollection: undefined,
 
     /**
