@@ -3994,6 +3994,9 @@ $app_strings = array (
     'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
     'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
+    // tabbed dashlet
+    'TPL_TABBED_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
+
     // history dashlet
     'LBL_HISTORY_DASHLET' => 'History',
     'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
@@ -4001,14 +4004,12 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_EMAIL_INBOUND_PLURAL' => 'Emails (From)',
     'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_SINGULAR' => 'Email (To)',
     'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_PLURAL' => 'Emails (To)',
-    'TPL_HISTORY_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
     'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled meetings and calls.',
     'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
-    'TPL_PLANNED_ACTIVITIES_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
 
     //interactions dashlet
     'LBL_DASHLET_SETTINGS' => 'Settings',
@@ -4126,10 +4127,39 @@ $app_list_strings['activity_user_options'] = array (
     '90' => 'Last Quarter',
 );
 
+$app_list_strings['planned_activities_filter_options'] = array (
+    'today' => 'Today',
+    'future' => 'Future',
+);
+
+$app_list_strings['planned_activities_limit_options'] = array (
+    5 => 5,
+    10 => 10,
+    15 => 15,
+    20 => 20,
+);
+
+$app_list_strings['planned_activities_visibility_options'] = array (
+    'user' => 'Yes',
+    'group' => 'No',
+);
+
 $app_list_strings['history_filter_options'] = array (
-    '7' => 'Last 7 Days',
-    '30' => 'Last 30 Days',
-    '90' => 'Last Quarter',
+    7 => 'Last 7 Days',
+    30 => 'Last 30 Days',
+    90 => 'Last Quarter',
+);
+
+$app_list_strings['history_limit_options'] = array (
+    5 => 5,
+    10 => 10,
+    15 => 15,
+    20 => 20,
+);
+
+$app_list_strings['history_visibility_options'] = array (
+    'user' => 'Yes',
+    'group' => 'No',
 );
 
 //top 10 opportunites chart config options

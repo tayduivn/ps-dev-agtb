@@ -3,7 +3,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ('Company') that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -18,8 +18,16 @@ $viewdefs['base']['view']['planned-activities'] = array(
         array(
             'name' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
             'description' => 'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION',
-            'config' => array(),
-            'preview' => array(),
+            'config' => array(
+                'limit' => '10',
+                'date' => 'today',
+                'visibility' => 'user',
+            ),
+            'preview' => array(
+                'limit' => '10',
+                'date' => 'today',
+                'visibility' => 'user',
+            ),
             'filter' => array(
                 'module' => array(
                     'Accounts',
@@ -41,14 +49,22 @@ $viewdefs['base']['view']['planned-activities'] = array(
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
-                        'action' => 'createMeeting',
+                        'action' => 'createRecord',
+                        'params' => array(
+                            'link' => 'meetings',
+                            'module' => 'Meetings',
+                        ),
                         'label' => 'LBL_SCHEDULE_MEETING',
                         'acl_action' => 'create',
                         'acl_module' => 'Meetings',
                     ),
                     array(
                         'type' => 'dashletaction',
-                        'action' => 'createCall',
+                        'action' => 'createRecord',
+                        'params' => array(
+                            'link' => 'calls',
+                            'module' => 'Calls',
+                        ),
                         'label' => 'LBL_SCHEDULE_CALL',
                         'acl_action' => 'create',
                         'acl_module' => 'Calls',
@@ -85,8 +101,29 @@ $viewdefs['base']['view']['planned-activities'] = array(
     'panels' => array(
         array(
             'name' => 'panel_body',
+            'columns' => 2,
             'labelsOnTop' => true,
-            'fields' => array(),
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'date',
+                    'label' => 'LBL_DASHLET_CONFIGURE_FILTERS',
+                    'type' => 'enum',
+                    'options' => 'planned_activities_filter_options',
+                ),
+                array(
+                    'name' => 'visibility',
+                    'label' => 'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY',
+                    'type' => 'enum',
+                    'options' => 'planned_activities_visibility_options',
+                ),
+                array(
+                    'name' => 'limit',
+                    'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
+                    'type' => 'enum',
+                    'options' => 'planned_activities_limit_options',
+                )
+            ),
         ),
     ),
     'tabs' => array(
