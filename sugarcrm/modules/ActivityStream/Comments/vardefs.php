@@ -29,16 +29,6 @@ $dictionary['Comment'] = array(
             'source' => 'non-db',
         ),
 
-        'attachments' => array (
-            'name' => 'attachments',
-            'type' => 'link',
-            'relationship' => 'comment_attachments',
-            'link_type' => 'many',
-            'module' => 'Notes',
-            'bean_name' => 'Note',
-            'source' => 'non-db',
-        ),
-
         // Add table columns.
         'parent_id' => array(
             'name'     => 'parent_id',
@@ -60,24 +50,6 @@ $dictionary['Comment'] = array(
             'name' => 'comment_activities',
             'type' => 'index',
             'fields' => array('parent_id'),
-        ),
-    ),
-
-    'relationships' => array(
-        // This is called comment_attachments instead of comment_notes because
-        // notes in this relationship do not contain attributes of regular notes
-        // such as name and description. This relationship is solely for
-        // attaching files to a comment on the activity stream.
-        'comment_attachments' => array(
-            'lhs_module' => 'Comments',
-            'lhs_table' => 'comments',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Notes',
-            'rhs_table' => 'notes',
-            'rhs_key' => 'parent_id',
-            'relationship_type' => 'one-to-many',
-            'relationship_role_column' => 'parent_type',
-            'relationship_role_column_value' => 'Comments',
         ),
     ),
 );
