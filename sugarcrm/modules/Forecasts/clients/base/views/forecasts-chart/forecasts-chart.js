@@ -218,6 +218,15 @@
             field = this.getField('paretoChart'),
             serverData = field.getServerData();
 
+        // if the changedField is date_closed, we need to adjust the timestamp as well since SugarLogic doesn't work
+        // on list views yet
+        if (changedField.length == 1 && changedField[0] == 'date_closed') {
+            // convert this into the timestamp
+            changedField.push('date_closed_timestamp');
+            changed.date_closed_timestamp = Math.round(+app.date.parse(changed.date_closed).getTime() / 1000);
+            model.set('date_closed_timestamp', changed.date_closed_timestamp, {silent: true});
+        }
+
         if (_.contains(changedField, 'likely_case')) {
             changed.likely = app.currency.convertWithRate(changed.likely_case, model.get('base_rate'));
             delete changed.likely_case;
