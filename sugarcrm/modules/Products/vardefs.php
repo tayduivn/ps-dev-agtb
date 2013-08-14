@@ -505,8 +505,9 @@ $dictionary['Product'] = array(
             'name' => 'date_closed_timestamp',
             'vname' => 'LBL_DATE_CLOSED_TIMESTAMP',
             'type' => 'int',
+            'reportable' => false,
             'studio' => false
-        ),        
+        ),
         'next_step' => array(
             'name' => 'next_step',
             'vname' => 'LBL_NEXT_STEP',
