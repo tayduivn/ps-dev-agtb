@@ -124,7 +124,6 @@
 
                 // select node only if it is not the already selected node
                 if (this.jsTree.jstree('get_selected').attr('id') != nodeId) {
-                    debugger;
                     this.selectJSTreeNode(nodeId)
                 }
             }
