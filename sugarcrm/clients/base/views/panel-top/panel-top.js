@@ -36,8 +36,8 @@
     },
 
     _toggleSubpanel: function() {
-        var currentlyVisible = this.layout.$(".subpanel").hasClass("out");
-        this.layout.trigger("hide", !currentlyVisible);
+        var isHidden = this.layout.$(".subpanel").hasClass("out");
+        this.layout.trigger("panel:toggle", isHidden);
     },
 
     /**
