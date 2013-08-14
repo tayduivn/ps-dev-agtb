@@ -603,7 +603,7 @@ class Email extends SugarBean {
                     $file = trim(from_html($file));
                     $file = str_replace("\\", "", $file);
                     if (!empty($file)) {
-                        $fileGUID     = substr($file, 0, 36);
+                        $fileGUID = preg_replace('/[^a-z0-9\-]/', "", substr($file, 0, 36));
                         $fileLocation = $this->et->userCacheDir . "/{$fileGUID}";
                         $filename     = substr($file, 36, strlen($file)); // strip GUID	for PHPMailer class to name outbound file
 
@@ -670,7 +670,8 @@ class Email extends SugarBean {
                         //$documentRevision->x_mime_type   = $documentRevision->file_mime_type;
 
                         $filename     = $documentRevision->filename;
-                        $fileLocation = "upload://{$documentRevision->id}";
+                        $docGUID = preg_replace('/[^a-z0-9\-]/', "", $documentRevision->id);
+                        $fileLocation = "upload://{$docGUID}";
 
                         if (empty($documentRevision->id) || !file_exists($fileLocation)) {
                             throw new Exception("Document Revision Id Not Found");
@@ -719,7 +720,8 @@ class Email extends SugarBean {
 
                         if (!empty($note->id)) {
                             $filename     = $note->filename;
-                            $fileLocation = "upload://{$note->id}";
+                            $noteGUID = preg_replace('/[^a-z0-9\-]/', "", $note->id);
+                            $fileLocation = "upload://{$noteGUID}";
                             $mime_type    = $note->file_mime_type;
 
                             if (!$note->embed_flag) {
@@ -737,7 +739,7 @@ class Email extends SugarBean {
                                 } // if
                             } // if
                         } else {
-                            $fileGUID     = substr($noteId, 0, 36);
+                            $fileGUID = preg_replace('/[^a-z0-9\-]/', "", substr($noteId, 0, 36));
                             $fileLocation = $this->et->userCacheDir . "/{$fileGUID}";
                             $filename = substr($noteId, 36, strlen($noteId)); // strip GUID	for PHPMailer class to name outbound file
 
