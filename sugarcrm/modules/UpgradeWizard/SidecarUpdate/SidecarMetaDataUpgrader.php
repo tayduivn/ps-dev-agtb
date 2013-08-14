@@ -121,6 +121,7 @@ class SidecarMetaDataUpgrader
             MB_LISTVIEW               => 'listviewdefs',
             MB_EDITVIEW               => 'editviewdefs',
             MB_DETAILVIEW             => 'detailviewdefs',
+            MB_SEARCHVIEW             => 'searchdefs',
         )
     );
 
@@ -145,6 +146,7 @@ class SidecarMetaDataUpgrader
         MB_PORTALRECORDVIEW  => 'MergeGrid',
         //END SUGARCRM flav=ent ONLY
         'search'             => 'Search',
+        'filter'             => 'Filter',
         'drop'               => 'Drop',
     );
 
@@ -610,6 +612,9 @@ class SidecarMetaDataUpgrader
         }
 
         if (strpos($filename, 'search') !== false) {
+            if($client == 'base') {
+                return 'filter';
+            }
             return 'search';
         }
 
