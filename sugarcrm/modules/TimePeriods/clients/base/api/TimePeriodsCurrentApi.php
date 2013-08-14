@@ -37,6 +37,15 @@ class TimePeriodsCurrentApi extends SugarApi
                 'shortHelp' => 'Return the Current Timeperiod',
                 'longHelp' => 'modules/TimePeriods/clients/base/api/help/TimePeriodsCurrentApi.html',
             ),
+            'getTimePeriodByDate' => array(
+                'reqType' => 'GET',
+                'path' => array('TimePeriods', '?'),
+                'pathVars' => array('module', 'date'),
+                'method' => 'getTimePeriodByDate',
+                'jsonParams' => array(),
+                'shortHelp' => 'Return a Timeperiod by a given date',
+                'longHelp' => 'modules/TimePeriods/clients/base/api/help/TimePeriodsGetByDateApi.html',
+            ),
         );
     }
 
@@ -50,5 +59,17 @@ class TimePeriodsCurrentApi extends SugarApi
         }
 
         return $tp->toArray();
+    }
+
+    public function getTimePeriodByDate(ServiceBase $api, $args)
+    {
+        if(!isset($args["date"]) || $args["date"] == 'undefined') {
+            // return a 404
+            throw new SugarApiExceptionNotFound();
+        }
+
+        $tp = TimePeriod::retrieveFromDate($args["date"]);
+
+        return ($tp) ? $tp->toArray() : $tp;
     }
 }

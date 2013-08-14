@@ -21,8 +21,9 @@
     _selectedModule:   null,
     _currentSearch:    '',
     events: {
-        'keyup .search-name': 'throttledSearch',
-        'paste .search-name': 'throttledSearch'
+        'keyup .search-name':        'throttledSearch',
+        'paste .search-name':        'throttledSearch',
+        'click .add-on.icon-remove': 'clearInput'
     },
     /**
      * Converts the input field to a select2 field and adds the module filter for refining the search.
@@ -163,8 +164,36 @@
      * Triggers an event that makes a call to search the address book and filter the data set.
      */
     applyFilter: function() {
-        // pass an empty array when all modules are being searched
-        var module = (this._selectedModule != this._allModulesId) ? this._selectedModule : [];
+        var searchAllModules = (this._selectedModule !== this._allModulesId),
+            // pass an empty array when all modules are being searched
+            module = searchAllModules ? this._selectedModule : [],
+            // determine if the filter is dirty so the "clearQuickSearchIcon" can be added/removed appropriately
+            isDirty = (!_.isEmpty(this._currentSearch) || searchAllModules);
+        this._toggleClearQuickSearchIcon(isDirty);
         this.context.trigger('compose:addressbook:search', module, this._currentSearch);
+    },
+    /**
+     * Append or remove an icon to the quicksearch input so the user can clear the search easily.
+     * @param {Boolean} addIt TRUE if you want to add it, FALSE to remove
+     */
+    _toggleClearQuickSearchIcon: function(addIt) {
+        if (addIt && !this.$('.add-on.icon-remove')[0]) {
+            this.$('.filter-view.search').append('<i class="add-on icon-remove"></i>');
+        } else if (!addIt) {
+            this.$('.add-on.icon-remove').remove();
+        }
+    },
+    /**
+     * Clear input
+     */
+    clearInput: function() {
+        var $filter          = this.getFilterField();
+        this._currentSearch  = '';
+        this._selectedModule = this._allModulesId;
+        this.$('.search-name').val(this._currentSearch);
+        if ($filter.length > 0) {
+            $filter.select2('val', this._selectedModule);
+        }
+        this.applyFilter();
     }
 })

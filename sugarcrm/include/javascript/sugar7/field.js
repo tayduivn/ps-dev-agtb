@@ -174,9 +174,12 @@
              * and to add view action CSS class.
              */
             _render: function () {
-                // This is hacky but tooltips are appended to body and when the field rerenders we lose control of
-                // shown tooltips.
-                $('body > .tooltip').remove();
+                // Tooltips are appended to body and when the field rerenders we lose control of shown tooltips.
+                var $tooltip = this.$('.error-tooltip');
+                if (_.isFunction($tooltip.tooltip)) {
+                    $tooltip.tooltip('destroy');
+                }
+
                 var isErrorState = this.$('.add-on.error-tooltip').length > 0;
 
                 _fieldProto._render.call(this);

@@ -25,6 +25,20 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
                         array(
                             'view' =>
                             array(
+                                'name' => 'forecastdetails-record',
+                                'label' => 'Forecast',
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Forecasts',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' =>
+                            array(
                                 'name' => 'forecast-pareto',
                                 'label' => 'Forecast Pareto Chart',
                             ),
@@ -38,4 +52,3 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
     ),
     'name' => 'My Dashboard',
 );
-

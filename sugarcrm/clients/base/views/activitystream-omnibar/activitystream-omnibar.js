@@ -82,8 +82,7 @@
 
                         model.set('picture', app.user.get('picture'));
                         self.collection.add(model);
-
-                        self.layout.prependPost(model);
+                        self.context.trigger('activitystream:post:prepend', model);
                     },
                     complete: function() {
                         $submitButton.removeClass('disabled');

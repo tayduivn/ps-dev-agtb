@@ -14,6 +14,11 @@
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
     'audited' => true,
+    //BEGIN SUGARCRM flav=ent ONLY
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => true,
+    //END SUGARCRM flav=ent ONLY
     'comment' => 'The user (not Admin)) view of a RevenueLineItem definition; an instance of a product used in the worksheets and opportunities',
     'fields' => array(
         'product_template_id' => array(

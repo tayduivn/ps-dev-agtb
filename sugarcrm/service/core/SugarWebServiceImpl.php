@@ -182,7 +182,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
         /* @var $seed SugarBean */
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted, false, $select_fields);
+	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted, true, $select_fields);
     } // else
 	$list = $response['list'];
 

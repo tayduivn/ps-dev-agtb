@@ -173,6 +173,20 @@ class ForecastManagerWorksheetTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(self::$user->id, $worksheet->user_id);
         $this->assertEquals(self::$manager->id, $worksheet->assigned_user_id);
         $this->assertEquals(1, $worksheet->draft);
+
+        return $worksheet;
+    }
+
+    /**
+     * @depends testSaveManagerDraft
+     * @group forecasts
+     */
+    public function testSaveManagerDraftHasCurrencyIdAndBaseRate($worksheet)
+    {
+        $this->assertNotEmpty($worksheet->currency_id);
+        $this->assertEquals('-99', $worksheet->currency_id);
+        $this->assertNotEmpty($worksheet->base_rate);
+        $this->assertEquals(1, $worksheet->base_rate);
     }
 
     /**

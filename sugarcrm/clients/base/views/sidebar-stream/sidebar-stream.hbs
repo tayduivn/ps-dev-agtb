@@ -9,7 +9,7 @@
         <em>{{attributes.activity_data.field_name}}</em>
         {{#eq attributes.activity_type "updated"}}
         {{#each attributes.activity_data}}
-        <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
+        <a href="#" rel="tooltip" data-container="body" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
         {{/each}}
         <span>on</span>
         {{/eq}}

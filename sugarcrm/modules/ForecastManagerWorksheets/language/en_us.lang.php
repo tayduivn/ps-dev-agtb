@@ -164,12 +164,17 @@ $mod_strings = array (
     'LBL_SALES_STAGE' => 'Stage',
     'LBL_AMOUNT' => 'Amount',
     'LBL_PERCENT' => 'Percent',
-    'LBL_DATE_CLOSED' => 'Expected Close',
+    'LBL_DATE_CLOSED' => 'Expected Close Date',
     'LBL_PRODUCT_ID' => 'Product ID',
     'LBL_QUOTA_ID' => 'Quota ID',
     'LBL_VERSION' => 'Version',
 
-    'LBL_MY_OPPORTUNITIES' => 'Opportunities ({{full_name}})',
+    // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    'LBL_MY_OPPS_RLI' => 'Opportunities ({{full_name}})',
+    // END SUGARCRM flav=pro && flav!=ent ONLY
+    // BEGIN SUGARCRM flav=ent ONLY
+    'LBL_MY_OPPS_RLI' => 'Revenue Line Items ({{full_name}})',
+    // END SUGARCRM flav=ent ONLY
 
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {{field_name}}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {{min}} and {{max}}',

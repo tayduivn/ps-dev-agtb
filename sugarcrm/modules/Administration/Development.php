@@ -25,7 +25,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $app_strings;
 global $app_list_strings;
 global $mod_strings;
-global $theme;
 global $currentModule;
 global $gridline;
 

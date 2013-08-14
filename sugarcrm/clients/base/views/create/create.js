@@ -336,7 +336,8 @@
             showAlerts: {
                'process' : true,
                'success' : false
-            }
+            },
+            lastSaveAction: this.context.lastSaveAction
         };
 
         options = _.extend({}, options, self.getCustomSaveOptions(options));

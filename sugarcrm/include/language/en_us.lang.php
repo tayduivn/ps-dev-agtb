@@ -2595,6 +2595,7 @@ $app_strings = array (
     'LBL_FOLLOWING' => 'Following',
     'LBL_UNFOLLOW' => 'Unfollow',
     'LBL_VCARD' => 'vCard',
+    'LBL_VCARD_DOWNLOAD' => 'Download .vcf',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
     'LBL_IMPORT_VCARD' => 'Import vCard:',
@@ -3345,6 +3346,7 @@ $app_strings = array (
   'ERROR_UNABLE_TO_RETRIEVE_DATA' => 'Error: Unable to retrieve data for {0} Connector.  The service may currently be inaccessible or the configuration settings may be invalid.  Connector error message: ({1}).',
   'ERROR_CONNECTOR_CONFIGURE' => 'Unable to retrieve data.  The service may currently be inaccessible or the configuration settings may be invalid.',
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
+  'LBL_CONNECT_TWITTER_FOR_ADMIN'=>'Configure Twitter Connector',
   'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to properly configure Twitter',
   'LBL_MERGE_CONNECTORS' => 'Get Data',
   'LBL_NO_DATA_AVAILABLE' => 'No data available.',
@@ -4041,7 +4043,7 @@ $app_strings = array (
     'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'Selected record currently contains the following related values: {{{values}}}. Click "Confirm" to copy these values to this record. Click "Cancel" to retain the current values.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_CONTACTS_ACCOUNTS' => 'Selected Account has related values: {{{values}}}. Click "Confirm" to copy these values to the Contact. Click "Cancel" to retain the current values.',
-    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
+    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" data-container="body" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
 
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No data found.',

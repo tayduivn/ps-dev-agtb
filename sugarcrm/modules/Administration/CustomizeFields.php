@@ -26,7 +26,6 @@ global $app_strings;
 global $app_list_strings;
 global $mod_strings;
 
-global $theme;
 global $currentModule;
 global $gridline;
 
