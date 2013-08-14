@@ -646,8 +646,12 @@ class ForecastWorksheet extends SugarBean
             'timeperiod_id' => $tp->id,
             'lost_count' => '0',
             'lost_amount' => '0',
+            'lost_best' => '0',
+            'lost_worst' => '0',
             'won_count' => '0',
             'won_amount' => '0',
+            'won_best' => '0',
+            'won_worst' => '0',
             'included_opp_count' => 0,
             'total_opp_count' => 0,
             'includedClosedCount' => 0,
@@ -676,10 +680,14 @@ class ForecastWorksheet extends SugarBean
             $closed = false;
             if (in_array($row['sales_stage'], $settings['sales_stage_won'])) {
                 $return['won_amount'] = SugarMath::init($return['won_amount'], 6)->add($amount_base)->result();
+                $return['won_best'] = SugarMath::init($return['won_best'], 6)->add($best_base)->result();
+                $return['won_worst'] = SugarMath::init($return['won_worst'], 6)->add($worst_base)->result();
                 $return['won_count']++;
                 $closed = true;
             } elseif (in_array($row['sales_stage'], $settings['sales_stage_lost'])) {
                 $return['lost_amount'] = SugarMath::init($return['lost_amount'], 6)->add($amount_base)->result();
+                $return['lost_best'] = SugarMath::init($return['lost_best'], 6)->add($best_base)->result();
+                $return['lost_worst'] = SugarMath::init($return['lost_worst'], 6)->add($worst_base)->result();
                 $return['lost_count']++;
                 $closed = true;
             }
