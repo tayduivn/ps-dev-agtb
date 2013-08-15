@@ -47,7 +47,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                                     'title',
                                 ),
                                 'my_items' => '1',
-                                'display_rows' => 15,
+                                'limit' => 15,
                             ),
                             'context' =>
                             array(

@@ -35,7 +35,7 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array (
                   'status',
                 ),
                 'my_items' => '1',
-                'display_rows' => 5,
+                'limit' => 5,
               ),
               'context' => 
               array (
@@ -57,7 +57,7 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array (
                   'status',
                 ),
                 'my_items' => '1',
-                'display_rows' => 5,
+                'limit' => 5,
               ),
               'context' => 
               array (
