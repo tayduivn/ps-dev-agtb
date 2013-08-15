@@ -43,13 +43,14 @@
 
         /**
          * Handlebar helper to retrieve a field template as a sub template
-         * @param {String} key Key for the template to retrieve.
+         * @param {String} fieldName determines which field to use.
+         * @param {String} view determines which template within the field to use.
          * @param {Object} data Data to pass into the compiled template
          * @param {Object} options (optional) Optional parameters
          * @return {String} String Template
          */
-        Handlebars.registerHelper('subFieldTemplate', function(key, data, options) {
-            var template =  app.template.getField(key, options.hash.module);
+        Handlebars.registerHelper('subFieldTemplate', function(fieldName, view, data, options) {
+            var template =  app.template.getField(fieldName, view, options.hash.module);
             return template ? template(data) : '';
         });
 

@@ -258,6 +258,31 @@
 
         app.routing.setRoutes(routes);
     });
+
+    //check module access before navigating to certain routes
+    //redirect to access denied page if user is lacking module access
+    app.routing.before('route', function(options) {
+        var checkAccessRoutes = {
+                'list': 'list',
+                'record': 'view',
+                'create': 'create',
+                'vcardImport': 'create'
+            },
+            options = options || {};
+            route = options.route || '',
+            args = options.args || [],
+            module = args[0],
+            accessCheck = checkAccessRoutes[route];
+
+        if (accessCheck && !app.acl.hasAccess(accessCheck, module)) {
+            app.controller.loadView({
+                layout: 'access-denied'
+            });
+            return false;
+        }
+        return true;
+    });
+
     //template language string for each page
     //i.e. records for listview, record for recordview
     var titles = {
