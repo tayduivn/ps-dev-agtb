@@ -21,6 +21,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/GridBuilder.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-disable-sort.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/editable.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleMoreLess.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-remove-links.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/file.js"></script>
 
