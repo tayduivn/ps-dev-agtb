@@ -60,10 +60,18 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 
             $validModules = array();
             
-            $invalidModules = array('Home','Calendar','Feeds','iFrames','Connectors','Sync','Queues','SNIP','UpgradeWizard','FAQ','Newsletters','Library','Words','Sugar_Favorites');
+            $invalidModules = array(
+                'DynamicFields',
+                'Connectors',
+                'CustomFields',
+                'TeamHierarchy',
+                'Empty',
+                'Audit',
+                'MergeRecords',
+            );
             
             
-            foreach ( array_keys($GLOBALS['app_list_strings']['moduleList']) as $moduleName ) {
+            foreach ( array_keys($GLOBALS['beanList']) as $moduleName ) {
                 if ( in_array($moduleName,$invalidModules) ) {
                     continue;
                 }
@@ -110,14 +118,6 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean = BeanFactory::newBean($moduleName);
         $this->assertNotNull($bean,"Could not load bean: $moduleName");
-        $bean->load_relationships();
-
-        /*
-        if (is_array($bean->field_defs)) {
-            $this->checkFieldDefs($bean);
-            $this->checkLinkFields($bean);
-        }
-        */
     }
 
     /**
@@ -127,10 +127,7 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFieldDefs($moduleName)
     {
         $bean = $this->getSeedBean($moduleName);
-        if (!is_array($bean->field_defs)) {
-            // Not sure if this is really an error
-            return;
-        }
+        $this->assertTrue(is_array($bean->field_defs), "No field defs for {$bean->module_dir}");
 
         foreach ($bean->field_defs as $key => $def) {
             $this->assertArrayHasKey('name', $def, "Def for {$bean->module_dir}/$key is missing a name attribute");
@@ -144,13 +141,17 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             }
 
             if ($def['type'] == 'relate' 
-                || (isset($def['source']) && $def['source'] == 'non-db' && !empty($def['link'])) ) {
+                || (isset($def['source']) 
+                    && $def['source'] == 'non-db' 
+                    && !empty($def['link'])) ) {
                 // These are related items, they get checked differently
                 continue;
             }
 
             if (isset($def['sort_on'])) {
                 $this->assertArrayHasKey($def['sort_on'], $bean->field_defs, "Sort on for {$bean->module_dir}/$key points to an invalid field.");
+                $sortOnDef = $bean->field_defs[$def['sort_on']];
+                $this->assertTrue(!isset($sortOnDef['source'])||$sortOnDef['source']!='non-db',"Sort on for {$bean->module_dir}/$key points to a non-db field.");
             }
 
             if (isset($def['fields'])) {
@@ -162,6 +163,8 @@ class DrPhilTest extends Sugar_PHPUnit_Framework_TestCase
             if (isset($def['db_concat_fields'])) {
                 foreach ($def['db_concat_fields'] as $subField) {
                     $this->assertArrayHasKey($subField, $bean->field_defs, "DB concat field $subField for {$bean->module_dir}/$key points to an invalid field.");
+                    $subDef = $bean->field_defs[$subField];
+                    $this->assertTrue(!isset($subDef['source'])||$subDef['source']!='non-db',"DB concat field $subField for {$bean->module_dir}/$key points to a non-db field.");
                 }
             }
         }
