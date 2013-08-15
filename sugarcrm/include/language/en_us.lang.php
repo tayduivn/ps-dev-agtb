@@ -3715,6 +3715,7 @@ $app_strings = array (
     'LBL_CALL_BUTTON' => 'Call',
     'LBL_SMS_BUTTON' => 'SMS',
     'LBL_EMAIL_BUTTON' => 'Email',
+    'LBL_HONEYPOT' => 'If you are a real person do not fill this out.',
     'LBL_LINK_BUTTON' => 'Link',
     'LBL_UNLINK_BUTTON' => 'Unlink',
     'LBL_MAP_BUTTON' => 'Map',
