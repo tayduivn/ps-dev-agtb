@@ -225,6 +225,8 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileOrderBy($orderBy)
     {
+        // add in ID
+        $orderBy[] = array("id", "DESC");
         $return = array();
         foreach ($orderBy as $order) {
             list($field, $direction) = $order;
