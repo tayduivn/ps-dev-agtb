@@ -103,21 +103,6 @@ table.dataTable {
           overflow-x: visible;
           border-right: 0;
         }
-        .full-name.list {
-          &:hover {
-            color: @linkColorHover;
-            cursor: pointer;
-            &> .list {
-              text-decoration: underline;
-              a {
-                color: @linkColorHover;
-              }
-            }
-          }
-          .ellipsis_inline {
-            display: inline !important;
-          }
-        }
         .label-module {
           width: 32px;
           height: 32px;
@@ -334,9 +319,8 @@ table.dataTable {
     margin: 0 !important;
   }
   span.full-name.edit {
-    span.edit {
-      display: inline-block;
-      width: 50%;
+    span.edit-cell {
+      display: block;
     }
   }
   td.number,
