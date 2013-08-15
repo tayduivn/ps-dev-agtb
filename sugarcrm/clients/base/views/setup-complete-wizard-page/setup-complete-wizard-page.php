@@ -29,6 +29,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $viewdefs['base']['view']['setup-complete-wizard-page'] = array(
-    'title' => 'Setup Complete',
-    'message' => 'Start using Sugar!',
+    'title' => 'LBL_WIZ_COMPLETE_TITLE',
+    'message' => 'LBL_SETUP_COMPLETE_INFO',
 );

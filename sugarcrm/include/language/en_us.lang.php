@@ -3922,6 +3922,8 @@ $app_strings = array (
 
     //First time login wizard
     'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
+    'LBL_WIZ_COMPLETE_TITLE' => 'Setup Complete',
+    'LBL_SETUP_COMPLETE_INFO' => 'Start using Sugar!',
     'LBL_SETUP_USER_INFO' => 'Setup your user information',
     'LBL_WIZ_USER_LOCALE_TITLE' => 'User Locale Settings',
     'LBL_SETUP_USER_LOCALE_INFO' => 'Set your time zone, date, and name formats',
