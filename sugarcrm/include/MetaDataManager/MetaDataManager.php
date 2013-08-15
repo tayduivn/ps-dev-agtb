@@ -388,9 +388,10 @@ class MetaDataManager
      * @param  string $module     The module we want to fetch the ACL for
      * @param  object $userObject The user object for the ACL's we are retrieving.
      * @param  object|bool $bean       The SugarBean for getting specific ACL's for a module
+     * @param bool $showYes Do not unset Yes Results
      * @return array       Array of ACL's, first the action ACL's (access, create, edit, delete) then an array of the field level acl's
      */
-    public function getAclForModule($module, $userObject, $bean = false)
+    public function getAclForModule($module, $userObject, $bean = false, $showYes = false)
     {
         $outputAcl = array('fields' => array());
         $outputAcl['admin'] = ($userObject->isAdminForModule($module)) ? 'yes' : 'no';
@@ -471,10 +472,13 @@ class MetaDataManager
                 }
             }
         }
-        // for brevity, filter out 'yes' fields since UI assumes 'yes'
-        foreach ($outputAcl as $k => $v) {
-            if ($v == 'yes') {
-                unset($outputAcl[$k]);
+        // there are times when we need the yes results, for instance comparing access for a record
+        if ($showYes === false) {
+            // for brevity, filter out 'yes' fields since UI assumes 'yes'
+            foreach ($outputAcl as $k => $v) {
+                if ($v == 'yes') {
+                    unset($outputAcl[$k]);
+                }
             }
         }
         $outputAcl['_hash'] = md5(serialize($outputAcl));
