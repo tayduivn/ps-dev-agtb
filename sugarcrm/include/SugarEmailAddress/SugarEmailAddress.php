@@ -42,6 +42,14 @@ class SugarEmailAddress extends SugarBean
         self::$count++;
     }
 
+    public static function isValidEmail($emailAddress)
+    {
+        //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
+        //allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
+        $regexmail = "/^(?:['\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)@(?:(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+(?:[\.-]*\w+)*(?:\.[\w-]{2,})+)\$/";
+        return preg_match($regexmail, $emailAddress);
+    }
+
     /**
      * Legacy email address handling.  This is to allow support for SOAP or customizations
      * @param string $id
@@ -509,7 +517,7 @@ class SugarEmailAddress extends SugarBean
 
     function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null) {
         $addr = html_entity_decode($addr, ENT_QUOTES);
-        if (preg_match($this->regex, $addr)) {
+        if (SugarEmailAddress::isValidEmail($addr)) {
             $primaryFlag = ($primary) ? '1' : '0';
             $replyToFlag = ($replyTo) ? '1' : '0';
             $invalidFlag = ($invalid) ? '1' : '0';
@@ -567,7 +575,7 @@ class SugarEmailAddress extends SugarBean
     public function splitEmailAddress($addr)
     {
         $email = $this->_cleanAddress($addr);
-        if (!preg_match($this->regex, $email)) {
+        if (!SugarEmailAddress::isValidEmail($email)) {
             $email = ''; // remove bad email addr
         }
         $name = trim(str_replace(array($email, '<', '>', '"', "'"), '', $addr));

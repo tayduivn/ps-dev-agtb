@@ -423,6 +423,8 @@ class ForecastWorksheet extends SugarBean
             ->queryAnd()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
+        $sq->select(array('*'));
+        $sq->orderBy('date_modified', 'DESC');
         $beans = $sq->execute();
 
         if (empty($beans)) {

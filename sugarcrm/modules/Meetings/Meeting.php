@@ -119,6 +119,9 @@ class Meeting extends SugarBean {
 		parent::__construct();
 		$this->setupCustomFields('Meetings');
 		foreach($this->field_defs as $field) {
+		    if(empty($field['name'])) {
+		        continue;
+		    }
 			$this->field_name_map[$field['name']] = $field;
 		}
 		//BEGIN SUGARCRM flav=pro ONLY

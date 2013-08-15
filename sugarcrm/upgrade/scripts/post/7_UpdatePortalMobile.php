@@ -12,6 +12,11 @@ class SugarUpgradeUpdatePortalMobile extends UpgradeScript
 
     public function run()
     {
+        if(version_compare($this->from_version, '7.0.0', '>=')) {
+            // right now there's no need to run this on 7
+            return;
+        }
+
         if(!file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) return;
         // TODO: fix uw_utils references in SidecarMetaDataUpgrader
         $smdUpgrader = new SidecarMetaDataUpgrader2($this);
@@ -43,5 +48,13 @@ class SidecarMetaDataUpgrader2 extends SidecarMetaDataUpgrader
     public function logUpgradeStatus($msg)
     {
         $this->upgrade->log($msg);
+    }
+
+    public function getMBModules()
+    {
+        if(!empty($this->upgrade->state['MBModules'])) {
+            return $this->upgrade->state['MBModules'];
+        }
+        return array();
     }
 }

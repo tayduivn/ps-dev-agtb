@@ -30,6 +30,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
+require_once 'include/SugarObjects/LanguageManager.php';
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
@@ -824,5 +825,37 @@ class MetaDataManager
     public function hasUserMetadataChanged($user, $hash)
     {
         return md5($user->date_modified) != $hash;
+    }
+
+    /**
+     * Gets all enabled and disabled languages. Wraps the util function to allow
+     * for manipulation of the return in the future.
+     * 
+     * @return array Array of enabled and disabled languages
+     */
+    public function getAllLanguages()
+    {
+        $languages = LanguageManager::getEnabledAndDisabledLanguages();
+
+        return array(
+            'enabled' => $this->getLanguageKeys($languages['enabled']), 
+            'disabled' => $this->getLanguageKeys($languages['disabled']),
+        );
+    }
+
+    /**
+     * Gets language keys only. Used by the API in conjunction with language indexes
+     * from app_list_strings.
+     * 
+     * @param array $language An enabled or disabled language array
+     * @return array
+     */
+    protected function getLanguageKeys($language)
+    {
+        $return = array();
+        foreach ($language as $lang) {
+            $return[] = $lang['module'];
+        }
+        return $return;
     }
 }
