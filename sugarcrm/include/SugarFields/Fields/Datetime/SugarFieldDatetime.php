@@ -125,17 +125,25 @@ class SugarFieldDatetime extends SugarFieldBase {
 
     /**
      * Convert field for DB
-     * @param $value datetime
-     * @return mixed
+     * @param array|string $value Can be an array of datetime strings or a single datetime string
+     * @return array|string The converted $value
      */
     public function convertFieldForDB($value)
     {
         $timedate = TimeDate::getInstance();
-        $offset = strlen(trim($value)) < 11 ? false : true;
-        if ($timedate->check_matching_format($value, TimeDate::DB_DATE_FORMAT)) {
-            return $value;
+        $values = array();
+        if (is_array($value)) {
+            $values = $value;
+        } else {
+            $values[] = &$value;
         }
-        return $timedate->to_db_date($value, $offset);
+        foreach ($values as &$curr) {
+            $offset = strlen(trim($curr)) < 11 ? false : true;
+            if (!$timedate->check_matching_format($curr, TimeDate::DB_DATE_FORMAT)) {
+                $curr = $timedate->to_db_date($curr, $offset);
+            }
+        }
+        return $value;
     }
 
     /**
