@@ -21,18 +21,14 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-accounts'] = array(
       'fields' =>
       array(
         array(
-          'name' => 'full_name',
-          'type' => 'fieldset',
-          'fields' => array(
-              array(
-                  'name' => 'first_name',
-                  'link' => true,
-              ),
-              array(
-                  'name' => 'last_name',
-                  'link' => true,
-              )
-          ),
+            'name' => 'full_name',
+            'type' => 'fullname',
+            'fields' => array(
+                'salutation',
+                'first_name',
+                'last_name',
+            ),
+            'link' => true,
           'css_class' => 'full-name',
           'width' =>  49,
           'label' => 'LBL_LIST_NAME',
