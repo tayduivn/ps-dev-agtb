@@ -86,7 +86,6 @@ class Call extends SugarBean {
 	var $object_name = "Call";
 	var $new_schema = true;
 	var $importable = true;
-	var $syncing = false;
 	var $recurring_source;
 
 	// This is used to retrieve related fields from form posts.
@@ -142,42 +141,6 @@ class Call extends SugarBean {
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
 	}
-
-	/**
-	 * Disable edit if call is recurring and source is not Sugar. It should be edited only from Outlook.
-	 * @param $view string
-	 * @param $is_owner bool
-	 */
-	function ACLAccess($view,$is_owner = 'not_set'){
-		// don't check if call is being synced from Outlook
-		if($this->syncing == false){
-			$view = strtolower($view);
-			switch($view){
-				case 'edit':
-				case 'save':
-				case 'editview':
-				case 'delete':
-					if(!empty($this->recurring_source) && $this->recurring_source != "Sugar"){
-						return false;
-					}
-			}
-		}
-		return parent::ACLAccess($view,$is_owner);
-	}
-
-    /**
-   	 * Disable edit if call is recurring and source is not Sugar.
-     * It should be edited only from external source like Outlook.
-   	 */
-   	function canEditRecord() {
-   	    // don't check if call is being synced from Outlook or other external source
-   	    if ($this->syncing == false) {
-           if (!empty($this->recurring_source) && $this->recurring_source != "Sugar") {
-               return false;
-           }
-        }
-        return true;
-   	}
 
     // save date_end by calculating user input
     // this is for calendar
