@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['Team'] = array ( 'table' => 'teams'
                                   , 'fields' => array (
-  'id' => 
+  'id' =>
   array (
     'name' => 'id',
     'vname' => 'LBL_ID',
@@ -29,7 +29,7 @@ $dictionary['Team'] = array ( 'table' => 'teams'
     'required'=>true,
     'reportable'=>true,
   ),
-  'name' => 
+  'name' =>
   array (
     'name' => 'name',
     'vname' => 'LBL_PRIMARY_TEAM_NAME',
@@ -37,7 +37,7 @@ $dictionary['Team'] = array ( 'table' => 'teams'
     'dbType' => 'varchar',
     'len' => '128',
   ),
-  'name_2' => 
+  'name_2' =>
   array (
     'name' => 'name_2',
     'vname' => 'LBL_NAME_2',
@@ -50,23 +50,23 @@ $dictionary['Team'] = array ( 'table' => 'teams'
    array (
 	'name' => 'associated_user_id',
 	'type' => 'id',
-	'reportable'=>false,           
+	'reportable'=>false,
   ),
-  'date_entered' => 
+  'date_entered' =>
   array (
     'name' => 'date_entered',
     'vname' => 'LBL_DATE_ENTERED',
     'type' => 'datetime',
     'required'=>true,
   ),
-  'date_modified' => 
+  'date_modified' =>
   array (
     'name' => 'date_modified',
     'vname' => 'LBL_DATE_MODIFIED',
     'type' => 'datetime',
     'required'=>true,
   ),
-    'modified_user_id' => 
+    'modified_user_id' =>
   array (
     'name' => 'modified_user_id',
     'rname' => 'user_name',
@@ -78,7 +78,7 @@ $dictionary['Team'] = array ( 'table' => 'teams'
     'dbType' => 'id',
     'reportable'=>true,
   ),
-  'created_by' => 
+  'created_by' =>
   array (
     'name' => 'created_by',
     'rname' => 'user_name',
@@ -89,29 +89,29 @@ $dictionary['Team'] = array ( 'table' => 'teams'
     'isnull' => 'false',
     'dbType' => 'id',
     'reportable'=>true,
-  ), 
-  'private' => 
+  ),
+  'private' =>
   array (
     'name' => 'private',
     'vname' => 'LBL_PRIVATE',
     'type' => 'bool',
     'default' => '0',
   ),
-  'description' => 
+  'description' =>
   array (
     'name' => 'description',
     'vname' => 'LBL_DESCRIPTION',
     'type' => 'text',
-  ),  
-  'deleted' => 
+  ),
+  'deleted' =>
   array (
     'name' => 'deleted',
     'vname' => 'LBL_DELETED',
     'type' => 'bool',
     'reportable'=>false,
     'required'=>false,
-  ), 	   
-  'users' => 
+  ),
+  'users' =>
   array (
   	'name' => 'users',
     'type' => 'link',
@@ -131,7 +131,16 @@ $dictionary['Team'] = array ( 'table' => 'teams'
         'studio' => false,
         'duplicate_merge'=> 'disabled',
     ),
-  
+    'activities_teams' => array (
+        'name' => 'activities_teams',
+        'type' => 'link',
+        'relationship' => 'activities_teams',
+        'link_type' => 'many',
+        'module' => 'Activities',
+        'bean_name' => 'Activity',
+        'source' => 'non-db',
+    ),
+
 ),
 'acls' => array('SugarACLAdminOnly' => array('adminFor' => 'Users', 'allowUserRead' => true)),
 'indices' => array (

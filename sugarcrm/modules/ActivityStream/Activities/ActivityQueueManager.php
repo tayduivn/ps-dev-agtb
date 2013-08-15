@@ -288,19 +288,10 @@ class ActivityQueueManager
             $this->processRecord($bean, $act);
             $this->processSubscriptions($bean, $act, array());
         } else {
-            $db     = DBManagerFactory::getInstance();
-            $sql    = 'INSERT INTO activities_users VALUES (';
-            $values = array(
-                '"' . create_guid() . '"',
-                '"' . $act->id . '"',
-                '"Teams"',
-                '"1"',
-                '"[]"',
-                '"' . $act->date_modified . '"',
-                '0',
-            );
-            $sql .= implode(', ', $values) . ')';
-            $db->query($sql);
+            $globalTeam = BeanFactory::getBean('Teams', '1');
+            if ($act->load_relationship('activities_teams')) {
+                $act->activities_teams->add($globalTeam, array('fields' => '[]'));
+            }
         }
     }
 

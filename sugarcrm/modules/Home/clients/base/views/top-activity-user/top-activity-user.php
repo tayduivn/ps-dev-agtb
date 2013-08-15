@@ -13,6 +13,12 @@ $viewdefs['Home']['base']['view']['top-activity-user'] = array(
                 'filter_duration' => '7',
                 'module' => 'Home'
             ),
+            'filter' => array(
+                'module' => array(
+                    'Home',
+                ),
+                'view' => 'record',
+            ),
         ),
     ),
     'panels' => array(
