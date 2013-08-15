@@ -1,6 +1,8 @@
 #searchForm {
     position: relative;
     display: inline-block;
+    width: 80%;
+    
     .btn {
         margin-right: 0;
     }
@@ -23,6 +25,22 @@
             padding: 10px;
           }
         }
+    }
+        
+    .advanced .dropdown-menu {
+    	// [moey] Override sugarspecific/globalsearch.less.
+		//   This is somehow "redundant" because sugarspecific/globalsearch.less actually
+		//   overrides Bootstrap's default style and here we're again override it to
+		//   get back to Bootstrap's default.		
+    	background-color: #fff;
+    	
+    	top: 24px;
+    	border: 1px solid @grayLight;
+    	.border-radius(4px);
+
+		li {
+			border-top: 1px solid #f5f5f5;
+		}
     }
 }
 .navbar-search {

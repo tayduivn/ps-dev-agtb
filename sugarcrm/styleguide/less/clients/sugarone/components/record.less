@@ -786,3 +786,44 @@
     }
   }
 }
+
+//
+// [moey]
+//
+// TODO: A good candidate to move to a new file e.g. sugarone/sugarone-specific/drawer.less?
+//
+#drawers > .drawer {
+	.box-sizing(border-box);
+	padding: 8px;
+	background-color: #f7f7f7;
+}
+
+//
+// [moey] Communication drawer, triggered when you click the small envelope
+//   icon below the search result list as part of the global search at top nav.
+//
+// TODO: A good candidate to move to a new file e.g. sugarone/components/quickmail.less?
+//
+.quickmail {
+
+	.toolbar {
+		margin-bottom: 10px;
+	
+		> ul {
+			margin: 0;
+			list-style-type: none;
+		
+			> li {
+				display: inline-block;
+			
+				> button {
+					margin-left: 0;
+				}
+				
+				&.actions > a {
+					margin-right: 10px;
+				}
+			}
+		}
+	}
+}
