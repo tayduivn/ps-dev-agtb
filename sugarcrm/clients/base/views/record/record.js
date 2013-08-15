@@ -533,9 +533,14 @@
                 if (_.isString(field)) {
                     panel.fields[index] = field = {name: field};
                 }
-
                 // disable the pencil icon if the user doesn't have ACLs
-                if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                if (field.type === "fieldset") {
+                    if (field.readonly || _.every(field.fields, function(field) {
+                        return !app.acl.hasAccessToModel('edit', this.model, field.name);
+                    }, this)) {
+                        this.noEditFields.push(field.name);
+                    }
+                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
                     this.noEditFields.push(field.name);
                 }
             }, this);
