@@ -3181,6 +3181,7 @@ $app_strings = array (
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
+    'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',

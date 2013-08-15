@@ -1,5 +1,5 @@
 {{#eq this.length 0}}
-    <li><a href="javascript:void(0);" data-id="create">{{str "LBL_DASHBOARD_Add" this.module}}</a></li>
+    <li><a href="javascript:void(0);" class="disabled"><em>{{str "LBL_DASHBOARD_NO_RECORDS" this.module}}</em></a></li>
 {{/eq}}
 {{#notEq this.length 0}}
     {{#each this.models}}
