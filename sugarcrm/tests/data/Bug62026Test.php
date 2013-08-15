@@ -58,6 +58,7 @@ class Bug62026Test extends Sugar_PHPUnit_Framework_TestCase
         $mbc = new ModuleBuilderController();
         $_REQUEST = self::$custom_field_def;
         $mbc->action_saveField();
+
         // Update field name, all custom field have _c appended
         self::$custom_field_def['name'] .= '_c';
 

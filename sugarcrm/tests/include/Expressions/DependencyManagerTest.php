@@ -132,6 +132,8 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
         $deps = DependencyManager::getCalculatedFieldDependencies($fields);
         $this->assertFalse(empty($deps));
         $dep = $deps[0];
+        $this->assertFalse($dep->getFireOnLoad());
+        $dep = $deps[1];
         $this->assertTrue($dep->getFireOnLoad());
     }
 
