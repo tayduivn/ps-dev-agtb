@@ -5,6 +5,7 @@
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
+    plugins: ['tooltip'],
     initialize: function(options) {
         this.index = options.meta.index;
         options.meta = this.setMetadata(options.meta);
@@ -12,14 +13,6 @@
         this.model.on("setMode", this.setMode, this);
         this.model.on("applyDragAndDrop", this.applyDragAndDrop, this);
         this.setMode(this.model.mode);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
     },
     setMetadata: function(meta) {
         meta.components = meta.components || [];

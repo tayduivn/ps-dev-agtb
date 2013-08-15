@@ -65,6 +65,10 @@ class AdministrationController extends SugarController
         $cfg->config['disabled_languages'] = join(',', $disabled_langs);
         // TODO: find way to enforce order
         $cfg->handleOverride();
+
+        // Clear the metadata cache so changes to languages are picked up right away
+        MetaDataManager::clearAPICache();
+        
         header("Location: index.php?module=Administration&action=Languages");
     }
 

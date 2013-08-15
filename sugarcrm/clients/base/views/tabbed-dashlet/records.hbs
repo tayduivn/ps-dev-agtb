@@ -1,0 +1,18 @@
+<div class="tab-pane active">
+    <ul class="unstyled listed">
+        {{#if collection.length}}
+            {{#each collection.models}}
+                <li>
+                    <p>
+                        <a href="#{{buildRoute model=this action="detail"}}">{{getFieldValue this "name"}}</a>
+                    </p>
+                </li>
+            {{/each}}
+            {{#notEq ../collection.next_offset "-1"}}
+                <li><a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a></li>
+            {{/notEq}}
+        {{else}}
+            <li><em>{{#if ../collection.dataFetched}}{{str "LBL_DASHLET_NO_RECORDS" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</em></li>
+        {{/if}}
+    </ul>
+</div>

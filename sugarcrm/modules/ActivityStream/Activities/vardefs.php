@@ -29,16 +29,6 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
         ),
 
-        'attachments' => array(
-            'name' => 'attachments',
-            'type' => 'link',
-            'relationship' => 'activity_attachments',
-            'link_type' => 'many',
-            'module' => 'Notes',
-            'bean_name' => 'Note',
-            'source' => 'non-db',
-        ),
-
         'activities_users' => array(
             'name' => 'activities_users',
             'type' => 'link',
@@ -222,22 +212,6 @@ $dictionary['Activity'] = array(
             'rhs_table' => 'comments',
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
-        ),
-
-        // This is called activity_attachments instead of activity_notes because
-        // notes in this relationship do not contain attributes of regular notes
-        // such as name and description. This relationship is solely for
-        // attaching files to a post on the activity stream.
-        'activity_attachments' => array(
-            'lhs_module' => 'Activities',
-            'lhs_table' => 'activities',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Notes',
-            'rhs_table' => 'notes',
-            'rhs_key' => 'parent_id',
-            'relationship_type' => 'one-to-many',
-            'relationship_role_column' => 'parent_type',
-            'relationship_role_column_value' => 'Activities',
         ),
     ),
 );

@@ -1,7 +1,7 @@
 ({
     results: {},
     chart: {},
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet','tooltip'],
 
     /**
      * Is the forecast Module setup??
@@ -105,17 +105,6 @@
                     this.renderChart();
                 }, this),
                 complete: options ? options.complete : null
-            });
-        }
-    },
-    _renderHtml: function() {
-        app.view.View.prototype._renderHtml.call(this);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
             });
         }
     },

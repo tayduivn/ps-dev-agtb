@@ -579,7 +579,6 @@ function clearCurrentRecords()
 
 var allselected = [];
 function updateDivDisplay(multiSelectObj){
-    debugger;
     for(var i = 0; i < multiSelectObj.options.length; i++){
         if(multiSelectObj.options[i].selected != allselected[i]){
             allselected[i] = multiSelectObj.options[i].selected;

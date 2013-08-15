@@ -1,13 +1,10 @@
 ({
-    plugins: ['dropdown'],
+    plugins: ['dropdown', 'tooltip'],
     events: {
-        'click .dropdown-toggle':'toggleDropdown',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click .dropdown-toggle':'toggleDropdown'
     },
     toggleDropdown: function(event) {
         var $currentTarget = this.$(event.currentTarget);
-        this.hideTooltip(event);
         this.toggleDropdownHTML($currentTarget);
     },
     initialize: function(options) {
@@ -49,22 +46,6 @@
         this.showAdmin = app.acl.hasAccess('admin', 'Administration') || this._isAdminOrDevForAnyModule();
 
         app.view.View.prototype._renderHtml.call(this);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
-    },
-
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
     },
 
     /**
@@ -76,8 +57,7 @@
         this.userName = app.user.get("user_name");
         this.userId = app.user.get('id');
 
-        var meta,
-            picture = app.user.get("picture");
+        var picture = app.user.get("picture");
 
         this.pictureUrl = picture ? app.api.buildFileURL({
             module: "Users",

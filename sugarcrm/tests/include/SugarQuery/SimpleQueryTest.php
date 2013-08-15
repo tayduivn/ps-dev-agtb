@@ -312,30 +312,30 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->contacts[] = $contact;
 
         $sq = new SugarQuery();
-        $sq->select(array('last_name'));
+
         $sq->from(BeanFactory::getBean('Contacts'));
         $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
         $sq->orderBy('full_name', 'DESC');
 
+        $sql = $sq->compileSql();
+
+        $this->assertContains("ORDER BY contacts.{$contact->field_defs['full_name']['sort_on']} DESC", $sql);
+
         $result = $sq->execute();
 
-        $expected = array(
-            array(
-                'last_name' => 'Bad-Sauce',
-                'first_name' => 'Super',
-                'salutation' => null,
-                'title' => null,
-            ),
-            array(
-                'last_name' => 'Awesome-Sauce',
-                'first_name' => 'Super',
-                'salutation' => null,
-                'title' => null,
-            ),
+        $expected = array('Bad-Sauce', 'Awesome-Sauce');
+
+        $lastNameResult = array_reduce(
+            $result,
+            function ($out, $val) {
+                if (isset($val['last_name'])) {
+                    $out[] = $val['last_name'];
+                }
+                return $out;
+            }
         );
 
-        $this->assertEquals($expected, $result);
-
+        $this->assertEquals($expected, $lastNameResult);
 
         $sq = new SugarQuery();
         $sq->select(array('last_name'));

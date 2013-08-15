@@ -1,7 +1,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -11,59 +11,50 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 /**
- * Planned Activities dashlet is composed by a highly configurable set of tabs.
+ * Planned Activities dashlet takes advantage of the tabbed dashlet abstraction
+ * by using its metadata driven capabilities to configure its tabs in order to
+ * display planned activities of specific modules.
  *
- * @class View.Views.PlannedActivitiesView
- * @extends View.Views.HistoryView
+ * @class View.Views.BasePlannedActivitiesView
+ * @alias SUGAR.App.view.views.BasePlannedActivitiesView
+ * @extends View.Views.BaseHistoryView
  * @inheritdoc
  */
 ({
     extendsFrom: 'HistoryView',
 
-    events: {
-        'click [data-action=date-switcher]': 'dateSwitcher',
-        'click [data-action=tab-switcher]': 'tabSwitcher',
-        'click [data-action=visibility-switcher]': 'visibilitySwitcher',
-        'click [data-action=show-more]': 'showMore'
-    },
-
     /**
-     * Default options used:
-     *
-     * - {String} date Default value for date switcher, supported
-     *   values are: 'today' and 'future'.
-     * - {Integer} limit Default limit imposed to the number of records
-     *   retrieved per request.
-     * - {String} visibility Default value for visibility switcher,
-     *   supported values are: 'user' and 'group'.
-     * @protected
+     * {@inheritDoc}
      */
-    _defaultOptions: {
-        date: 'today',
-        limit: 5,
-        visibility: 'user'
+    _initEvents: function() {
+        this.events = _.extend(this.events, {
+            'click [data-action=date-switcher]': 'dateSwitcher'
+        });
+
+        return this;
     },
 
     /**
      * {@inheritDoc}
      */
-    initDashlet: function() {
-        if (this.meta.config) {
-            return;
+    _getRecordsTemplate: function(module) {
+        this._recordsTpl = this._recordsTpl || {};
+
+        if (!this._recordsTpl[module]) {
+            this._recordsTpl[module] = app.template.getView(this.name + '.records', module) ||
+                app.template.getView(this.name + '.records', this.module) ||
+                app.template.getView(this.name + '.records') ||
+                app.template.getView('history.records', this.module) ||
+                app.template.getView('history.records') ||
+                app.template.getView('tabbed-dashlet.records', this.module) ||
+                app.template.getView('tabbed-dashlet.records');
         }
 
-        this.collection = null;
-
-        this._initOptions();
-        this._initTabs();
+        return this._recordsTpl[module];
     },
 
     /**
-     * Retrieves dashlet filters.
-     *
-     * @param {Integer} index Tab index.
-     * @return {Array} Dashlet filters.
-     * @protected
+     * {@inheritDoc}
      */
     _getFilters: function(index) {
         var tab = this.tabs[index],
@@ -75,7 +66,7 @@
                 future: {$gt: today + ' 23:59:59'}
             };
 
-        filter[tab.filter_applied_to || 'date_entered'] = defaultFilters[this.settings.get('date')];
+        filter[tab.filter_applied_to] = defaultFilters[this.settings.get('date')];
 
         filters.push(filter);
 
@@ -100,38 +91,31 @@
     /**
      * {@inheritDoc}
      *
-     * If default collection is available, new model related properties are
-     * injected into each model:
+     * New model related properties are injected into each model:
      *
      * - {Boolean} overdue True if record is prior to now.
-     * - {String} picture_url Picture url for model's assigned user.
-     * - {String} record_date Date field to be used to print record
-     *   date, defaults to date_entered, though it can be overridden on
-     *   metadata.
      */
     _renderHtml: function() {
-        if (!_.isObject(this.collection) || _.isUndefined(this.tabs)) {
+        if (this.meta.config) {
             app.view.View.prototype._renderHtml.call(this);
             return;
-        }
+        };
 
-        var index = this.settings.get('activeTab'),
-            recordDate = this.tabs[index].record_date || 'date_entered',
+        var tab = this.tabs[this.settings.get('activeTab')],
             now = new Date();
 
         _.each(this.collection.models, function(model) {
-            var date = new Date(model.get(recordDate)),
-                pictureUrl = app.api.buildFileURL({
-                    module: 'Employees',
-                    id: model.get('assigned_user_id'),
-                    field: 'picture'
-                });
+            var date = new Date(model.get(tab.record_date));
 
-            model.set('picture_url', pictureUrl);
-            model.set('record_date', date);
             model.set('overdue', date < now);
         }, this);
 
-        app.view.View.prototype._renderHtml.call(this);
+        app.view.invokeParent(this, {
+            type: 'view',
+            name: 'history',
+            method: '_renderHtml',
+            platform: 'base'
+        });
+
     }
 })

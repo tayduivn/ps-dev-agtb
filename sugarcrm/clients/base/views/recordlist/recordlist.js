@@ -31,7 +31,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable'],
+    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable','tooltips'],
 
     rowFields: {},
 

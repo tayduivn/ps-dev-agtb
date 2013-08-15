@@ -23,6 +23,17 @@
                 route: "logout"
             },
             {
+                name: "forgotpassword",
+                route: "forgotpassword",
+                callback: function(){
+                    app.controller.loadView({
+                        module: "Forgotpassword",
+                        layout: "forgotpassword",
+                        create: true
+                    });
+                }
+            },
+            {
                 name: "home",
                 route: "Home",
                 callback: function() {

@@ -1845,6 +1845,7 @@ $app_strings = array (
   'LBL_RECORD_SHOWMORE' => 'Show More', // Studio editing of record views
   'LBL_FAVORITE' => 'Favorite', // Record view header panel element
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
+  'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2013 SugarCRM Inc. All Rights Reserved.',
   'LBL_TRADEMARK' => 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
@@ -2194,7 +2195,7 @@ $app_strings = array (
     'LBL_EMAIL_MULTISELECT'                 => '<b>Ctrl-Click</b> to select multiples<br />(Mac users use <b>CMD-Click</b>)',
 
     'LBL_EMAIL_NO'                          => 'No',
-    'LBL_EMAIL_NOT_SENT'                    => 'System is unable to process your request. Please contact the system administrator.',
+    'LBL_EMAIL_NOT_SENT'                    => 'There was a problem sending the request email. Please contact the system administrator.',
 
     'LBL_EMAIL_OK'                          => 'OK',
     'LBL_EMAIL_ONE_MOMENT'                  => 'One moment please...',
@@ -2594,6 +2595,7 @@ $app_strings = array (
     'LBL_FOLLOWING' => 'Following',
     'LBL_UNFOLLOW' => 'Unfollow',
     'LBL_VCARD' => 'vCard',
+    'LBL_VCARD_DOWNLOAD' => 'Download .vcf',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
     'LBL_IMAGE' => 'Image',
     'LBL_IMPORT_VCARD' => 'Import vCard:',
@@ -3169,6 +3171,7 @@ $app_strings = array (
     'LBL_DASHLET_MAXIMIZE' => 'Maximize',
     'LBL_DASHLET_CONFIGURE' => 'Configure',
     'LBL_DASHLET_MOVE' => 'Move',
+    'LBL_DASHLET_TOGGLE' => 'Toggle Dashboard Visibility',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
@@ -3345,6 +3348,7 @@ $app_strings = array (
   'ERROR_UNABLE_TO_RETRIEVE_DATA' => 'Error: Unable to retrieve data for {0} Connector.  The service may currently be inaccessible or the configuration settings may be invalid.  Connector error message: ({1}).',
   'ERROR_CONNECTOR_CONFIGURE' => 'Unable to retrieve data.  The service may currently be inaccessible or the configuration settings may be invalid.',
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
+  'LBL_CONNECT_TWITTER_FOR_ADMIN'=>'Configure Twitter Connector',
   'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to properly configure Twitter',
   'LBL_MERGE_CONNECTORS' => 'Get Data',
   'LBL_NO_DATA_AVAILABLE' => 'No data available.',
@@ -3921,10 +3925,16 @@ $app_strings = array (
     //First time login wizard
     'LBL_WIZ_USER_PROFILE_TITLE' => 'User Profile',
     'LBL_SETUP_USER_INFO' => 'Setup your user information',
+    'LBL_WIZ_USER_LOCALE_TITLE' => 'User Locale Settings',
+    'LBL_SETUP_USER_LOCALE_INFO' => 'Set your time zone, date, and name formats',
     'LBL_WIZ_START_SUGAR' => 'Start Sugar',
     'LBL_WIZ_FIRST_NAME' => 'First name',
     'LBL_WIZ_LAST_NAME' => 'Last name',
     'LBL_WIZ_EMAIL' => 'Email',
+    'LBL_WIZ_TIMEZONE' => 'Time Zone',
+    'LBL_WIZ_TIMEFORMAT' => 'Time Format',
+    'LBL_WIZ_DATE_FORMAT' => 'Date Format',
+    'LBL_WIZ_NAME_FORMAT' => 'Name Format',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
@@ -3939,6 +3949,8 @@ $app_strings = array (
     'ERR_PASSWORD_MISMATCH' => 'Password entered does not match that in our system.',
     'LBL_NEW_USER_PASSWORD_1' => 'Your password has been successfully updated.',
     'LBL_CANNOT_SEND_PASSWORD' => 'Cannot send password',
+
+    'LBL_REQUEST_PASSWORD' => 'Request Password',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
@@ -3986,6 +3998,9 @@ $app_strings = array (
     'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
     'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
+    // tabbed dashlet
+    'TPL_TABBED_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
+
     // history dashlet
     'LBL_HISTORY_DASHLET' => 'History',
     'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
@@ -3993,35 +4008,16 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_EMAIL_INBOUND_PLURAL' => 'Emails (From)',
     'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_SINGULAR' => 'Email (To)',
     'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_PLURAL' => 'Emails (To)',
-    'TPL_HISTORY_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
     'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled meetings and calls.',
     'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
-    'TPL_PLANNED_ACTIVITIES_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
 
-    //interactions dashlet
-    'LBL_DASHLET_SETTINGS' => 'Settings',
-    'LBL_MODULE_INTERACTIONS_TITLE' => '{{str "LBL_MODULE_NAME" attributes._module}} interactions',
-    'LBL_MODULE_NO_INTERACTIONS_FOUND' => 'No {{str "LBL_MODULE_NAME" module}} found',
-    'TPL_FOR_DURATION' => 'for{{#if this.attributes.duration_hours}} {{this.attributes.duration_hours}} hr.{{#if this.attributes.duration_minutes}} {{/if}}{{/if}}'
-                        . '{{#if this.attributes.duration_minutes}} {{this.attributes.duration_minutes}} min.{{/if}}',
-    'LBL_FOR_DURATION_MINUTES' => 'for {{this.attributes.duration_minutes}} min.',
-
+    // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',
     'LBL_EMAIL_RECV' => 'rec',
-    'TPL_CALL_WITH' => 'call {{{str "TPL_INTERACTION_OBJECT" "" this}}} with',
-
-    'TPL_INTERACTION_ASSIGNED_USER' => '<a href="#Users/{{this.attributes.assigned_user_id}}">'
-        . '{{this.attributes.assigned_user_name}}</a>',
-    'TPL_INTERACTION_PARENT_OBJECT' => '<a href="#{{this.attributes.parent_type}}/{{this.attributes.parent_id}}">'
-        . '{{this.attributes.parent_name}}</a>',
-    'TPL_INTERACTION_OBJECT' => '<a href="#{{buildRoute model=this}}">{{this.attributes.name}}</a>',
-    'TPL_ADDED_INTERACTION' =>  'Added '
-            . '{{{str "TPL_INTERACTION_OBJECT" "" this}}} to {{{str "TPL_INTERACTION_PARENT_OBJECT" "" this}}}',
-
 
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
@@ -4041,7 +4037,7 @@ $app_strings = array (
     'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'Selected record currently contains the following related values: {{{values}}}. Click "Confirm" to copy these values to this record. Click "Cancel" to retain the current values.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_CONTACTS_ACCOUNTS' => 'Selected Account has related values: {{{values}}}. Click "Confirm" to copy these values to the Contact. Click "Cancel" to retain the current values.',
-    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
+    'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" data-container="body" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
 
     //interaction chart
     'LBL_CHART_NO_DATA' => 'No data found.',
@@ -4101,6 +4097,9 @@ $app_strings = array (
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
 
     'LBL_OVERDUE' => 'Overdue',
+
+    'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',
+    'LBL_PASSWORD_REQUEST_ERROR' => 'There was a problem retrieving your username and email combination.',
 );
 
 $app_list_strings['interactions_options'] = array (
@@ -4117,10 +4116,39 @@ $app_list_strings['activity_user_options'] = array (
     '90' => 'Last Quarter',
 );
 
+$app_list_strings['planned_activities_filter_options'] = array (
+    'today' => 'Today',
+    'future' => 'Future',
+);
+
+$app_list_strings['planned_activities_limit_options'] = array (
+    5 => 5,
+    10 => 10,
+    15 => 15,
+    20 => 20,
+);
+
+$app_list_strings['planned_activities_visibility_options'] = array (
+    'user' => 'Yes',
+    'group' => 'No',
+);
+
 $app_list_strings['history_filter_options'] = array (
-    '7' => 'Last 7 Days',
-    '30' => 'Last 30 Days',
-    '90' => 'Last Quarter',
+    7 => 'Last 7 Days',
+    30 => 'Last 30 Days',
+    90 => 'Last Quarter',
+);
+
+$app_list_strings['history_limit_options'] = array (
+    5 => 5,
+    10 => 10,
+    15 => 15,
+    20 => 20,
+);
+
+$app_list_strings['history_visibility_options'] = array (
+    'user' => 'Yes',
+    'group' => 'No',
 );
 
 //top 10 opportunites chart config options

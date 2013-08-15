@@ -271,6 +271,11 @@
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
                 email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
             }, this);
+
+            value = _.sortBy(value, function(email) {
+                return !!email.primary_address;
+            });
+
         } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array
             value = [{

@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet','tooltip'],
 
     events: {
         'click .toggle-control': 'switchChart' ,
@@ -225,17 +225,6 @@
             nv.utils.windowUnResize(this.chart.render);
         }
         app.view.View.prototype._dispose.call(this);
-    },
-    _renderHtml: function() {
-        app.view.View.prototype._renderHtml.call(this);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
     },
     showTooltip: function(event) {
         this.$(event.currentTarget).tooltip("show");

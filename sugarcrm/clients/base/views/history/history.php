@@ -18,8 +18,16 @@ $viewdefs['base']['view']['history'] = array(
         array(
             'name' => 'LBL_HISTORY_DASHLET',
             'description' => 'LBL_HISTORY_DASHLET_DESCRIPTION',
-            'config' => array(),
-            'preview' => array(),
+            'config' => array(
+                'limit' => '10',
+                'filter' => '7',
+                'visibility' => 'user',
+            ),
+            'preview' => array(
+                'limit' => '10',
+                'filter' => '7',
+                'visibility' => 'user',
+            ),
             'filter' => array(
                 'module' => array(
                     'Accounts',
@@ -41,21 +49,34 @@ $viewdefs['base']['view']['history'] = array(
                 'buttons' => array(
                     array(
                         'type' => 'dashletaction',
-                        'action' => 'createMeeting',
+                        'action' => 'createRecord',
+                        'params' => array(
+                            'link' => 'meetings',
+                            'module' => 'Meetings',
+                        ),
                         'label' => 'LBL_SCHEDULE_MEETING',
                         'acl_action' => 'create',
                         'acl_module' => 'Meetings',
                     ),
                     array(
                         'type' => 'dashletaction',
-                        'action' => 'createEmail',
+                        'action' => 'createRecord',
+                        'params' => array(
+                            'layout' => 'compose',
+                            'link' => 'emails',
+                            'module' => 'Emails',
+                        ),
                         'label' => 'LBL_COMPOSE_EMAIL_BUTTON_LABEL',
                         'acl_action' => 'create',
                         'acl_module' => 'Emails',
                     ),
                     array(
                         'type' => 'dashletaction',
-                        'action' => 'createCall',
+                        'action' => 'createRecord',
+                        'params' => array(
+                            'link' => 'calls',
+                            'module' => 'Calls',
+                        ),
                         'label' => 'LBL_SCHEDULE_CALL',
                         'acl_action' => 'create',
                         'acl_module' => 'Calls',
@@ -92,14 +113,28 @@ $viewdefs['base']['view']['history'] = array(
     'panels' => array(
         array(
             'name' => 'panel_body',
+            'columns' => 2,
             'labelsOnTop' => true,
+            'placeholders' => true,
             'fields' => array(
                 array(
                     'name' => 'filter',
-                    'label' => 'LBL_FILTER',
+                    'label' => 'LBL_DASHLET_CONFIGURE_FILTERS',
                     'type' => 'enum',
-                    'options' => 'history_filter_options'
+                    'options' => 'history_filter_options',
                 ),
+                array(
+                    'name' => 'visibility',
+                    'label' => 'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY',
+                    'type' => 'enum',
+                    'options' => 'history_visibility_options',
+                ),
+                array(
+                    'name' => 'limit',
+                    'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
+                    'type' => 'enum',
+                    'options' => 'history_limit_options',
+                )
             ),
         ),
     ),

@@ -142,6 +142,7 @@ class MetadataApi extends SugarApi
             'module_tab_map',
             'hidden_subpanels',
             'config',
+            'languages',
         );
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -207,6 +208,7 @@ class MetadataApi extends SugarApi
             'module_tab_map',
             'hidden_subpanels',
             'config',
+            'languages',
         );
         $perModuleChunks = array('modules');
 
@@ -443,6 +445,9 @@ class MetadataApi extends SugarApi
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0], true);
         $data['server_info'] = $mm->getServerInfo();
         $data['config'] = $this->getConfigs();
+        
+        // BR-470 Handle languages
+        $data['languages'] = $mm->getAllLanguages();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;
 

@@ -290,6 +290,36 @@ class LanguageManager
 
         write_array_to_file( "sugar_config", $GLOBALS['sugar_config'], "config.php");
     }
+    
+	/**
+	 * Gets an array of enabled and disabled languages
+	 * 
+	 * @return array Array containing an 'enabled' and 'disabled' set of arrays
+	 */
+	public static function getEnabledAndDisabledLanguages()
+	{
+	    global $sugar_config;
+
+	    $enabled = $disabled = array();
+	    $disabled_list = array();
+	    if (isset($sugar_config['disabled_languages'])) {
+	        if(!is_array($sugar_config['disabled_languages'])){
+	            $disabled_list = array_flip(explode(',', $sugar_config['disabled_languages']));
+	        } else {
+	            $disabled_list = array_flip($sugar_config['disabled_languages']);
+	        }
+	    }
+
+	    foreach ($sugar_config['languages'] as $key=>$value) {
+	        if (isset($disabled_list[$key])) {
+	            $disabled[] = array("module" => $key, 'label' => $value);
+	        } else {
+	            $enabled[] = array("module" => $key, 'label' => $value);
+	        }
+	    }
+
+	    return array('enabled' => $enabled, 'disabled' => $disabled);
+	}
 }
 
 function translated_prefix($key){

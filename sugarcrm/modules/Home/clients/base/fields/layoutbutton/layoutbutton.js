@@ -4,6 +4,7 @@
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
+    plugins: ['tooltip'],
     extendsFrom: 'ButtonField',
     getFieldElement: function() {
         return this.$el;
@@ -11,14 +12,6 @@
     _render: function() {
         var buttonField = app.view._getController({type: 'field', name: 'button', platform: app.config.platform});
         buttonField.prototype._render.call(this);
-        var $tooltip = this.$('[rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container:'body',
-                placement:'bottom',
-                trigger:'mouseenter'
-            });
-        }
     },
     _loadTemplate: function() {
         app.view.Field.prototype._loadTemplate.call(this);
