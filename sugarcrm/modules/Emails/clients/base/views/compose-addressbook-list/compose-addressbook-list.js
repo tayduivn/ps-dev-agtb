@@ -47,22 +47,29 @@
      */
     _render: function() {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_render'});
-        var massCollection = this.context.get('mass_collection');
+        var massCollection              = this.context.get('mass_collection'),
+            selectedRecipientsFieldName = 'compose_addressbook_selected_recipients';
         if (massCollection) {
             // get rid of any old event listeners on the mass collection
             massCollection.off(null, null, this);
             // update the field value as recipients are added to or removed from the mass collection
             massCollection.on('add remove', function(model, collection) {
-                this.model.set('compose_addressbook_selected_recipients', collection);
+                this.model.set(selectedRecipientsFieldName, collection);
             }, this);
             massCollection.on('reset', function(collection) {
-                this.model.set('compose_addressbook_selected_recipients', collection);
+                this.model.set(selectedRecipientsFieldName, collection);
             }, this);
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the
             // corresponding rows are pre-selected
-            var recipients = this.model.get('compose_addressbook_selected_recipients');
-            if (recipients instanceof Backbone.Collection) {
-                massCollection.add(recipients.models);
+            var existingRecipients = this.model.get(selectedRecipientsFieldName);
+            if (existingRecipients instanceof Backbone.Collection && existingRecipients.length > 0) {
+                // only bother with adding, to mass_collection, recipients that are visible in the list view
+                var recipientsToPreselect = existingRecipients.filter(_.bind(function(recipient) {
+                    return (this.collection.where({id: recipient.get('id')}).length > 0);
+                }, this));
+                if (recipientsToPreselect.length > 0) {
+                    massCollection.add(recipientsToPreselect);
+                }
             }
         }
     },
