@@ -3569,6 +3569,7 @@ $app_strings = array (
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
+    'LBL_COLUMNS' => 'Columns',
     'LBL_PREVIEW_DISABLED_NO_RECORD' => 'Preview disabled: No data available',
     'LBL_PREVIEW_DISABLED_NO_ACCESS' => 'Preview disabled: No access to record',
     'LBL_PREVIEW_DISABLED_ATTACHMENT' => 'Preview disabled: No data available',
