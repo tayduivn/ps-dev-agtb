@@ -97,7 +97,10 @@ $vardefs = array(
 		    'disable_num_format' => true,
 		    'audited'=>true,
             'duplicate_on_record_copy' => 'always',
-            'comment' => 'Formatted amount of the sale'
+            'comment' => 'Formatted amount of the sale',
+            'studio' => array(
+                'mobile' => false,
+            ),
 		  ),
           'currency_id' =>
           array (

@@ -112,7 +112,10 @@ $dictionary['Shipper'] = array(
       'vname' => 'LBL_DEFAULT_COST_USDOLLAR',
       'type' => 'decimal',
       'len' => '26,6',
-      'studio' => array('editview' => false)
+      'studio' => array(
+        'editview' => false,
+        'mobile' => false,
+      ),
   ),
   'status' =>
   array (
