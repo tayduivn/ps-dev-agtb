@@ -154,6 +154,13 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_TASKS',
         ),
+        'notes' => array(
+            'name'         => 'notes',
+            'type'         => 'link',
+            'relationship' => 'note_activities',
+            'source'       => 'non-db',
+            'vname'        => 'LBL_NOTES',
+        ),
 
         // Add table columns.
         'parent_id' => array(
