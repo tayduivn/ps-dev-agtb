@@ -3,6 +3,11 @@
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 require_once 'modules/ActivityStream/Activities/Activity.php';
 
+/**
+ * @group activities
+ * @group ActivityStream
+ * @group activities_queue
+ */
 class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     const BOGUS_USER  = '0';
@@ -205,6 +210,75 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $actManager->exec_prepareChanges($account1, $activityData);
 
         $this->assertEquals($expectedData, $activityData);
+    }
+
+    public function testPrepareChanges_FieldChangesIncludeActivityDisabledField_OnlyNonDisabledFieldsReturned()
+    {
+        $contact = BeanFactory::getBean('Contacts');
+
+        //mock out field defs
+        $originalFieldDefs = $contact->field_defs;
+        $contact->field_defs = array(
+            'foo' => array(
+                'name' => 'foo',
+                'activity_enabled' => false,
+            ),
+            'bar' => array(
+                'name' => 'bar',
+                'activity_enabled' => true,
+            ),
+            'baz' => array(
+                'name' => 'baz',
+            ),
+        );
+
+        $activityData = array(
+            'changes' => array(
+                'foo' => array(
+                    'field_name' => 'foo',
+                    'data_type'  => 'varchar',
+                    'before'     => 'fooval1',
+                    'after'      => 'fooval2',
+                ),
+                'bar' => array(
+                    'field_name' => 'bar',
+                    'data_type'  => 'varchar',
+                    'before'     => 'barval1',
+                    'after'      => 'barval2',
+                ),
+                'baz' => array(
+                    'field_name' => 'baz',
+                    'data_type'  => 'varchar',
+                    'before'     => 'bazval1',
+                    'after'      => 'bazval2',
+                ),
+            ),
+        );
+
+        $expectedData = array(
+            'changes' => array(
+                'bar' => array(
+                    'field_name' => 'bar',
+                    'data_type'  => 'varchar',
+                    'before'     => 'barval1',
+                    'after'      => 'barval2',
+                ),
+                'baz' => array(
+                    'field_name' => 'baz',
+                    'data_type'  => 'varchar',
+                    'before'     => 'bazval1',
+                    'after'      => 'bazval2',
+                ),
+            ),
+        );
+
+        $actManager = new TestActivityQueueManager();
+        $actManager->exec_prepareChanges($contact, $activityData);
+
+        $this->assertEquals($expectedData, $activityData);
+
+        //restore contact field defs
+        $contact->field_defs = $originalFieldDefs;
     }
 
     public function dataProviderForAddSubscriptions()
