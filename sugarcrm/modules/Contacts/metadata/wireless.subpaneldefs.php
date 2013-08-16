@@ -40,30 +40,34 @@ $layout_defs['Contacts'] = array(
 			'module' => 'Calls',
 			'get_subpanel_data' => 'calls',
 			'title_key' => 'LBL_CALLS_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'meetings' => array(
 			'order' => 20,
 			'module' => 'Meetings',
 			'get_subpanel_data' => 'meetings',
 			'title_key' => 'LBL_MEETINGS_SUBPANEL_TITLE',		
+			'canLink' => false,
 		),
 		'tasks' => array(
 			'order' => 30,
 			'module' => 'Tasks',
 			'get_subpanel_data' => 'tasks',
 			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',		
+			'canLink' => false,
 		),
-		'accounts'=> array(
-			'order' => 40,
-			'module' => 'Accounts',
-			'get_subpanel_data' => 'accounts',
-			'title_key' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',		
-		),		
-		'contacts'=> array(
+		'notes' => array(
+			'order' => 35,
+			'module' => 'Notes',
+			'get_subpanel_data' => 'notes',
+			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'canLink' => false,
+		),
+		'direct_reports'=> array(
 			'order' => 50,
 			'module' => 'Contacts',
-			'get_subpanel_data' => 'contacts',
-			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',		
+			'get_subpanel_data' => 'direct_reports',
+			'title_key' => 'LBL_DIRECT_REPORTS',
 		),
 		'opportunities'=> array(
 			'order' => 60,
@@ -79,6 +83,25 @@ $layout_defs['Contacts'] = array(
 			'title_key' => 'LBL_CASES_SUBPANEL_TITLE',		
 		),
 		//END SUGARCRM flav=pro ONLY
-	),	
+		'leads'=> array(
+			'order' => 80,
+			'module' => 'Leads',
+			'get_subpanel_data' => 'leads',
+			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
+		),
+		'quotes'=> array(
+			'order' => 90,
+			'module' => 'Quotes',
+			'get_subpanel_data' => 'quotes',
+			'title_key' => 'LBL_QUOTES_SUBPANEL_TITLE',
+			'canLink' => false,			
+		),
+		'documents'=> array(
+			'order' => 100,
+			'module' => 'Documents',
+			'get_subpanel_data' => 'documents',
+			'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+		),
+	),
 );
 ?>
