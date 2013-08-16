@@ -48,10 +48,10 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                     sugar_mkdir($newExtLocation, null, true);
                 }
 
-                sugar_file_put_contents_atomic(
-                    $newExtLocation . "/" . basename($file),
-                    $mc->fromLegacyMenu($module, $module_menu, true)
-                );
+                $newMenu = $mc->fromLegacyMenu($module, $module_menu, true);
+
+                write_array_to_file($newMenu['name'], $newMenu['data'], $newExtLocation . "/" . basename($file));
+
                 unset($module_menu);
             }
 
@@ -67,8 +67,10 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 sugar_mkdir(dirname($newMenuLocation), null, true);
             }
 
+            $newMenu = $mc->fromLegacyMenu($module, $module_menu);
 
-            sugar_file_put_contents_atomic($newMenuLocation, $mc->fromLegacyMenu($module, $module_menu));
+            write_array_to_file($newMenu['name'], $newMenu['data'], $newMenuLocation);
+
             unset($module_menu);
         }
     }

@@ -415,48 +415,37 @@ class MetaDataConverter
      * @param bool $ext is this an Extension
      * @return string new menu layout
      */
-    public function fromLegacyMenu($module, array $menu, $ext = false)
+    public function fromLegacyMenu($moduleName, array $menu, $ext = false)
     {
-        $file = '<?php
-$moduleName = "' . $module . '";
-';
-        if ($ext === true) {
-            $file .= '
-$viewdefs[$moduleName]["base"]["menu"]["header"][] = array(
-';
-        } else {
-            $file .= '
-$viewdefs[$moduleName]["base"]["menu"]["header"] = array(
-';
+
+        $arrayName = "viewdefs['{$moduleName}']['base']['menu']['header']";
+        if ($ext) {
+            $arrayName .= '[]';
         }
+
+        $data = array();
+
         foreach ($menu as $option) {
             // get the menu manip done
             $url = parse_url($option[0]);
             parse_str($url['query'], $menuOptions);
-            $file .= '
-    array(
-        "label" => "' . trim($option[1]) . '",';
+            $data['label'] = trim($option[1]);
             if (isset($this->aclActionList[$menuOptions['action']])) {
-                $file .= '
-        "acl_action" => "' . trim($this->aclActionList[$menuOptions['action']]) . '",
-        "acl_module"=> "' . trim($menuOptions['module']) . '",';
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['action']]);
+                $data['acl_module'] = trim($menuOptions['module']);
             } elseif (isset($this->aclActionList[$menuOptions['module']])) {
-                $file .= '
-        "acl_action" => "' . trim($this->aclActionList[$menuOptions['module']]) . '",
-        "acl_module"=> "' . trim($menuOptions['module']) . '",';
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['module']]);
+                $data['acl_module'] = trim($menuOptions['module']);
             }
-            $file .= '
-        "icon" => "icon-plus",';
-            $file .= $this->buildMenuRoute($menuOptions, $option[0]);
-            $file .= '
-            ),
-            ';
-        }
-        $file .= '
-);
-        ';
 
-        return $file;
+            if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
+                $data['icon'] = "icon-plus";
+            }
+
+            $data['route'] = $this->buildMenuRoute($menuOptions, $option[0]);
+        }
+
+        return array('name' => $arrayName, 'data' => $data);
     }
 
     /**
@@ -473,31 +462,27 @@ $viewdefs[$moduleName]["base"]["menu"]["header"] = array(
 
         // most likely another server, return the URL provided
         if (!empty($url['host']) && $url['host'] != $currSiteUrl['host']) {
-            return '
-            "route" => "' . $link . '",';
+            return $link;
         }
 
         if (in_array($menuOptions['module'], $bwcModules)) {
-            return '
-            "route" => "#bwc/index.php?' . http_build_query(array($menuOptions)) . '",';
+            return "#bwc/index.php?" . http_build_query(array($menuOptions));
         }
 
+        $route = null;
+
         if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
-            $file = '
-            "route" => "#' . $menuOptions['module'] . '/create",';
+            $route = "#{$menuOptions['module']}/create";
         } elseif (($menuOptions['action'] == 'EditView' || $menuOptions['action'] == 'DetailView') &&
             !empty($menuOptions['record'])
         ) {
-            $file = '
-            "route" => "#' . $menuOptions['module'] . '/' . $menuOptions['record'] . '",';
+            $route = "#{$menuOptions['module']}/{$menuOptions['record']}";
         } elseif (empty($menuOptions['action']) || $menuOptions['action'] == 'index') {
-            $file = '
-            "route" => "#' . $menuOptions['module'] . '",';
+            $route = "#{$menuOptions['module']}";
         } else {
-            $file = '
-            "route" => "#bwc/index.php?' . http_build_query(array($menuOptions)) . '",';
+            $route = "#bwc/index.php?" . http_build_query(array($menuOptions));
         }
 
-        return $file;
+        return $route;
     }
 }

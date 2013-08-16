@@ -59,14 +59,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         //BEGIN SUGARCRM flav=pro ONLY
         "sidecarsubpanelmobilelayout" => array("section"=>'sidecarsubpanelmobilelayout', 'extdir' => 'clients/mobile/layouts/subpanels', 'file' => 'subpanels.ext.php'),
 
-        "sidecarbasemenuheader" => array("section" => "sidecarbasemenuheader", "extdir" => "clients/base/menus/header", "file" => "header.ext.php"),
+        "sidecarmenubaseheader" => array("section" => "sidecarmenubaseheader", "extdir" => "clients/base/menus/header", "file" => "header.ext.php"),
 
         //BEGIN SUGARCRM flav=ent ONLY
-        "sidecarportalmenuheader" => array("section" => "sidecarportalmenuheader", "extdir" => "clients/portal/menus/header", "file" => "header.ext.php"),
+        "sidecarmenuportalheader" => array("section" => "sidecarmenuportalheader", "extdir" => "clients/portal/menus/header", "file" => "header.ext.php"),
         //END SUGARCRM flav=ent ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        "sidecarmobilemenuheader" => array("section" => "sidecarmobilemenuheader", "extdir" => "clients/mobile/menus/header", "file" => "header.ext.php"),
+        "sidecarmenumobileheader" => array("section" => "sidecarmenumobileheader", "extdir" => "clients/mobile/menus/header", "file" => "header.ext.php"),
         //END SUGARCRM flav=pro ONLY
 );
 if(SugarAutoLoader::existing("custom/application/Ext/Extensions/extensions.ext.php")) {

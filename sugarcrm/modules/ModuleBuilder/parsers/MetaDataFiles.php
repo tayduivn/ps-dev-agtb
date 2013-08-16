@@ -904,8 +904,11 @@ class MetaDataFiles
                     } else {
                         require $fileInfo['path'];
                         if($fileInfo['subPath'] != 'subpanels') {
-                            $extensionName = "sidecar{$fileInfo['platform']}{$type}{$fileInfo['subPath']}";
-                            @include SugarAutoLoader::loadExtension($extensionName, $module);
+                            $extensionName = "sidecar{$type}{$fileInfo['platform']}{$fileInfo['subPath']}";
+                            $extFile = SugarAutoLoader::loadExtension($extensionName, $module);
+                            if ($extFile !== false) {
+                                @include $extFile;
+                            }
                         }
                         if ( empty($module) ) {
                             if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
