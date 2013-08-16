@@ -90,20 +90,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertEquals($row['type'], 'Sugar');
 	}
 	
-	function testRecurringFromOutlook(){
-		$meeting = new Meeting();
-		$meeting->id = uniqid();
-		$meeting->name = 'Test Meeting Recurring';
-		
-		$meeting->recurring_source = 'Outlook';
-        // can't edit
-		$this->assertFalse($meeting->ACLAccess('edit'));
-		
-		$meeting->recurring_source = '';
-		// can edit
-		$this->assertTrue($meeting->ACLAccess('edit'));
-	}
-	
 	function testEmailReminder(){
 		$meeting = new Meeting();
 		$meeting->email_reminder_time = "20";
