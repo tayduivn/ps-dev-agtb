@@ -31,13 +31,13 @@ class EmbedLinkService
     public static function get($text)
     {
         $embeds = array();
-        $urls = static::findAllUrls($text);
+        $urls   = static::findAllUrls($text);
 
         foreach ($urls as $url) {
             if (static::isImage($url)) {
                 $embed = array(
                     'type' => 'image',
-                    'src' => $url,
+                    'src'  => $url,
                 );
                 array_push($embeds, $embed);
             } else {
@@ -152,7 +152,7 @@ class EmbedLinkService
 
             if (in_array($jsonOEmbed->type, self::$supportedOEmbedTypes)) {
                 $embedData['type'] = $jsonOEmbed->type;
-                $embedData['html'] = static::convertToProtocolRelativeUrl($jsonOEmbed->html);
+                $embedData['html'] = static::convertToProtocolRelativeUrl(static::cleanHtml($jsonOEmbed->html));
                 $embedData['width'] = $jsonOEmbed->width;
                 $embedData['height'] = $jsonOEmbed->height;
             }
@@ -182,7 +182,7 @@ class EmbedLinkService
 
                 $htmlElements = $xmlOEmbed->getElementsByTagName('html');
                 if (count($htmlElements) > 0) {
-                    $embedData['html'] = static::convertToProtocolRelativeUrl($htmlElements->item(0)->nodeValue);
+                    $embedData['html'] = static::convertToProtocolRelativeUrl(static::cleanHtml($htmlElements->item(0)->nodeValue));
                 }
 
                 $widthElements = $xmlOEmbed->getElementsByTagName('width');
@@ -239,4 +239,14 @@ class EmbedLinkService
         return $embedHtmlData;
     }
 
+    /**
+     * Processes the html with HtmlPurifier
+     *
+     * @param string $html
+     * @return string
+     */
+    protected static function cleanHtml($html)
+    {
+        return SugarCleaner::cleanHtml($html);
+    }
 }
