@@ -152,6 +152,12 @@ $mod_strings = array(
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/>'.SugarThemeRegistry::current()->getImage("icon_calculated", '', null, null, ".gif", "Calculated Value").'Indicates a Calculated field whose value will be automatically determined based on a formula.'
     //END SUGARCRM flav=pro ONLY
     ,
+        //this defualt will be used for edit view
+        'defaultrecordview'   => 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>Record View</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/>'.SugarThemeRegistry::current()->getImage("icon_calculated", '', null, null, ".gif", "Calculated Value").'Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
         'saveBtn'	=> 'Click <b>Save</b> to preserve the changes you made to the layout since the last time you saved it.<br><br>The changes will not be displayed in the module until you Deploy the saved changes.',
         'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.<br><br><b>Restore</b> within <b>View History</b> restores the field placement within previously saved layouts. To change field labels, click the Edit icon next to each field.',
         'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.<br><br><b>Restore Default</b> only restores the field placement within the original layout. To change field labels, click the Edit icon next to each field.',
@@ -450,6 +456,11 @@ $mod_strings = array(
 'LBL_DROPDOWN_KEY_EXISTS' => 'Key already exists in list',
 'LBL_NO_SAVE_ACTION' => 'Could not find the save action for this view.',
 'LBL_BADLY_FORMED_DOCUMENT' => 'Studio2:establishLocation: badly formed document',
+// @TODO: Remove this lang string and uncomment out the string below once studio
+// supports removing combo fields if a member field is on the layout already.
+'LBL_INDICATES_COMBO_FIELD' => '** Indicates a combination field. A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>Doubleclick a combination field to see which fields it contains.',
+//'LBL_INDICATES_COMBO_FIELD' => '<b>** Indicates a combination field</b><br>There are both single fields and combination fields available for the record view.<br><br>A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>You can add either a combination field or its individual fields to a layout - but NOT both. For example: if you add "State" to the layout, the combination field "Address" is no longer available to select from the toolbox. Similarly, if you add "Address", the individual field "State" is no longer available in the toolbox.',
+'LBL_COMBO_FIELD_CONTAINS' => 'contains:',
 
 //BEGIN SUGARCRM flav=pro ONLY
 'LBL_WIRELESSLAYOUTS'=>'Mobile Layouts',
