@@ -52,12 +52,26 @@
         if (massCollection) {
             // get rid of any old event listeners on the mass collection
             massCollection.off(null, null, this);
-            // update the field value as recipients are added to or removed from the mass collection
-            massCollection.on('add remove', function(model, collection) {
-                this.model.set(selectedRecipientsFieldName, collection);
+            // add a new recipient to the selected recipients field as recipients are added to the mass collection
+            massCollection.on('add', function(model) {
+                var existingRecipients = this.model.get(selectedRecipientsFieldName);
+                if (model.id && existingRecipients instanceof Backbone.Collection) {
+                    existingRecipients.add(model);
+                }
             }, this);
-            massCollection.on('reset', function(collection) {
-                this.model.set(selectedRecipientsFieldName, collection);
+            // remove a recipient from the selected recipients field as recipients are removed from the mass collection
+            massCollection.on('remove', function(model) {
+                var existingRecipients = this.model.get(selectedRecipientsFieldName);
+                if (model.id && existingRecipients instanceof Backbone.Collection) {
+                    existingRecipients.remove(model);
+                }
+            }, this);
+            // remove from the selected recipients field all recipients found in the current collection
+            massCollection.on('reset', function() {
+                var existingRecipients = this.model.get(selectedRecipientsFieldName);
+                if (existingRecipients instanceof Backbone.Collection) {
+                    existingRecipients.remove(this.collection.models);
+                }
             }, this);
             // find any currently selected recipients and add them to mass_collection so the checkboxes on the
             // corresponding rows are pre-selected
