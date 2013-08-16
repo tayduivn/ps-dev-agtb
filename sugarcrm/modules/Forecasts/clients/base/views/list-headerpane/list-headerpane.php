@@ -78,12 +78,6 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     ),
                     'acl_action' => 'admin'
                 ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:print_button:click',
-                    'name' => 'print_button',
-                    'label' => 'LBL_PRINT',
-                ),
             ),
         ),
         array(
