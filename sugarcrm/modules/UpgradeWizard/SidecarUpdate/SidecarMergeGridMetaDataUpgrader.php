@@ -88,6 +88,38 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
     }
 
     /**
+     * Get data's main directory
+     * @return string
+     */
+    protected function getDir()
+    {
+        if($this->sidecar) {
+            // For sidecar it's path/views/edit/edit.php
+            return dirname(dirname($this->fullpath));
+        } else {
+            // For sugar6 it's path/metadata/editviewdefs.php
+            return dirname($this->fullpath);
+        }
+    }
+
+    /**
+     * Do not upgrade same directory twice
+     * @see SidecarAbstractMetaDataUpgrader::upgradeCheck()
+     */
+    public function upgradeCheck()
+    {
+        $dirname = $this->getDir();
+        if(!empty(self::$upgraded[$this->viewtype][$dirname])) {
+            // we already did this path for this viewtype
+            $this->logUpgradeStatus("Already upgraded $dirname {$this->viewtype}");
+            return false;
+        } else {
+            self::$upgraded[$this->viewtype][$dirname] = true;
+        }
+        return true;
+    }
+
+    /**
      * Sets the necessary legacy field defs for use in converting
      */
     public function setLegacyViewdefs()
@@ -98,20 +130,7 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
             return;
         }
 
-        if($this->sidecar) {
-            // For sidecar it's path/views/edit/edit.php
-            $dirname = dirname(dirname($this->fullpath));
-        } else {
-            // For sugar6 it's path/metadata/editviewdefs.php
-            $dirname = dirname($this->fullpath);
-        }
-        if(!empty(self::$upgraded[$this->viewtype][$dirname])) {
-            // we already did this path for this viewtype
-            $this->logUpgradeStatus("Already upgraded $dirname {$this->viewtype}");
-            return;
-        } else {
-            self::$upgraded[$this->viewtype][$dirname] = true;
-        }
+        $dirname = $this->getDir();
 
         $foundCustom = false;
         // Load all views for this combined view

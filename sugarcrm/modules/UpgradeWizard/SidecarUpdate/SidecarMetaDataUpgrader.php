@@ -354,7 +354,7 @@ class SidecarMetaDataUpgrader
                 // If the upgrade worked for this file, add it to the remove stack
                 $this->logUpgradeStatus("Delegating upgrade to $class for {$file['fullpath']}...");
                 if ($upgrader->upgrade()) {
-                    if (!in_array($file['fullpath'], self::$filesForRemoval)) {
+                    if (!empty($upgrader->deleteOld) && !in_array($file['fullpath'], self::$filesForRemoval)) {
                         self::$filesForRemoval[] = $file['fullpath'];
                     }
                 } else {

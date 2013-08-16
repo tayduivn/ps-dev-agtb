@@ -123,6 +123,12 @@ abstract class SidecarAbstractMetaDataUpgrader
     protected $deployed = true;
 
     /**
+     * Should we delete pre-upgrade files?
+     * @var bool
+     */
+    public $deleteOld = true;
+
+    /**
      * Mapping of viewdef vars for a client and viewtype
      * @var array
      */
@@ -221,6 +227,16 @@ abstract class SidecarAbstractMetaDataUpgrader
     }
 
     /**
+     * Check if we actually want to upgrade this file
+     * @return boolean
+     */
+    public function upgradeCheck()
+    {
+        // by default, it's always OK
+        return true;
+    }
+
+    /**
      * Handles the actual upgrading for list metadata
      *
      * THIS WILL BE REDEFINED FOR SEARCH
@@ -228,6 +244,10 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @return boolean
      */
     public function upgrade() {
+        if(!$this->upgradeCheck()) {
+            $this->logUpgradeStatus("Upgrade declined for $this->fullpath, returning");
+            return true;
+        }
         // Get our legacy view defs
         $this->logUpgradeStatus("setting {$this->client}[{$this->type}] legacy viewdefs for {$this->module}:{$this->viewtype}");
         $this->setLegacyViewdefs();

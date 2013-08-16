@@ -64,9 +64,24 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 }
             }
         }
+        $searchFields = array();
         $module_name = $this->module;
         include $filename;
         return $searchFields[$module_name];
+    }
+
+    /**
+     * Check if we actually want to upgrade this file
+     * @return boolean
+     */
+    public function upgradeCheck()
+    {
+        $target = $this->getNewFileName($this->viewtype);
+        if(file_exists($target)) {
+            // if we already have the target, skip the upgrade
+            return false;
+        }
+        return true;
     }
 
     /**
