@@ -88,6 +88,12 @@ $viewdefs['Products']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'product_template_name',
+                    'label' => 'LBL_MODULE_NAME_SINGULAR'
+                ),
+                // this will only show up if product_template_name
+                // is empty, see vardefs.php for the dependency
+                array(
+                    'name' => 'name',
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
