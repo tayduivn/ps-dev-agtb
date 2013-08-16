@@ -342,9 +342,14 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         {
 
             $panel = $this->_viewdefs [ 'panels' ] [ $panelID ] ;
-            $lastrow = count ( $panel ) - 1 ; // index starts at 0
+            if(!empty($panel)) {
+                $lastrow = count ( $panel ) - 1 ; // index starts at 0
+                $lastRowDef = $this->_viewdefs [ 'panels' ] [ $panelID ] [ $lastrow ];
+            } else {
+                $lastrow = 0;
+                $lastRowDef = array();
+            }
             $maxColumns = $this->getMaxColumns () ;
-            $lastRowDef = $this->_viewdefs [ 'panels' ] [ $panelID ] [ $lastrow ];
             for ( $column = 0 ; $column < $maxColumns ; $column ++ )
             {
                 if (! isset ( $lastRowDef [ $column ] )

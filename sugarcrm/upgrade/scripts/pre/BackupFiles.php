@@ -21,10 +21,10 @@ class SugarUpgradeBackupFiles extends UpgradeScript
         $this->cleanDir($rest_dir);
         $files = $this->findFiles($zip_from_dir);
         foreach($files as $file) {
+            if(!file_exists("{$this->context['source_dir']}/$file")) continue;
             $this->log("Backing up $file");
             $this->ensureDir(dirname("$rest_dir/$file"));
             // backup only existing files
-            if(!file_exists("{$this->context['source_dir']}/$file")) continue;
             if(!copy("{$this->context['source_dir']}/$file", "$rest_dir/$file")) {
                 $this->log("FAILED to back up $file");
             }

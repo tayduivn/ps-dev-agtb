@@ -21,12 +21,7 @@
      * @return {Number|undefined} the unformatted value.
      */
     unformat: function(value) {
-
-        var unformattedValue = app.utils.unformatNumberStringLocale(value, true);
-
-        if (_.isFinite(unformattedValue)) {
-            return unformattedValue;
-        }
+        return app.utils.unformatNumberStringLocale(value, true);
     },
 
     /**
@@ -42,14 +37,9 @@
      *   preferences.
      */
     format: function(value) {
-        if (!_.isFinite(value)) {
-            return;
-        }
-
         if (this.def.disable_num_format) {
             return value;
         }
-
         return app.utils.formatNumberLocale(value);
     }
 })

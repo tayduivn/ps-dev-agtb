@@ -38,6 +38,7 @@ class VisibilityAction extends AbstractAction{
 	 */
 	static function getJavascriptClass() {
 		return "
+		var App = App || null;
 		SUGAR.forms.SetVisibilityAction = function(target, expr, view)
 		{
 			this.afterRender = true;
@@ -79,7 +80,7 @@ class VisibilityAction extends AbstractAction{
 				try {
 					var exp = this.evalExpression(this.expr, context);
 					var hide =  exp == 'none' || exp == 'hidden';
-					var target = context.getElement(this.target);
+					var target = context && context.getElement && context.getElement(this.target) || null;
 					if (target != null) {
 						if (SUGAR.App)
 							this.sidecarExec(context, target, hide);

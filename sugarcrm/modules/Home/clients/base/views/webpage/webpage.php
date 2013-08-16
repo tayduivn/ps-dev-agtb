@@ -8,6 +8,7 @@ $viewdefs['Home']['base']['view']['webpage'] = array(
             'config' => array(
                 'url' => 'http://www.sugarcrm.com',
                 'module' => 'Home',
+                'limit' => 3,
             ),
             'preview' => array(
                 'title' => 'Web Page',
@@ -25,9 +26,10 @@ $viewdefs['Home']['base']['view']['webpage'] = array(
                 'label' => "URL",
             ),
             array(
-                'type' => 'base' ,
-                'name' => 'height',
-                'label' => 'Height',
+                'name' => 'limit',
+                'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
+                'type' => 'enum',
+                'options' => 'dashlet_webpage_limit_options',
             ),
         ),
     ),

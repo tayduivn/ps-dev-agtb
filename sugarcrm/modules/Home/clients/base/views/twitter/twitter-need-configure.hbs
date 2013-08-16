@@ -4,6 +4,12 @@
         {{str 'LBL_CONNECT_TWITTER'}}
     </a>
 {{else}}
+    {{#if showAdmin}}
+        <a href='#bwc/index.php?module=Connectors&action=ModifyProperties'>
+            {{str 'LBL_CONNECT_TWITTER_FOR_ADMIN'}}
+        </a>
+    {{else}}
     <em>{{str 'LBL_CONFIGURE_TWITTER'}}</em>
+    {{/if}}
 {{/if}}
 </div>

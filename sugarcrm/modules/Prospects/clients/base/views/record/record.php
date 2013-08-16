@@ -83,6 +83,12 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'name' => 'manage_subscription_button',
                     'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
                 ),
+                array(
+                    'type'       => 'vcard',
+                    'name'       => 'vcard_button',
+                    'label'      => 'LBL_VCARD_DOWNLOAD',
+                    'acl_action' => 'edit',
+                ),
             ),
         ),
         array(
@@ -104,7 +110,9 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'full_name',
-                    'type' => 'fieldset-with-labels',
+                    'type' => 'fullname',
+                    'label' => 'LBL_NAME',
+                    'dismiss_label' => true,
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(

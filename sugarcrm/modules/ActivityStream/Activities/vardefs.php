@@ -29,20 +29,20 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
         ),
 
-        'attachments' => array(
-            'name' => 'attachments',
-            'type' => 'link',
-            'relationship' => 'activity_attachments',
-            'link_type' => 'many',
-            'module' => 'Notes',
-            'bean_name' => 'Note',
-            'source' => 'non-db',
-        ),
-
         'activities_users' => array(
             'name' => 'activities_users',
             'type' => 'link',
             'relationship' => 'activities_users',
+            'link_type' => 'many',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
+        ),
+
+        'activities_teams' => array(
+            'name' => 'activities_teams',
+            'type' => 'link',
+            'relationship' => 'activities_teams',
             'link_type' => 'many',
             'module' => 'Users',
             'bean_name' => 'User',
@@ -164,6 +164,13 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_TASKS',
         ),
+        'notes' => array(
+            'name'         => 'notes',
+            'type'         => 'link',
+            'relationship' => 'note_activities',
+            'source'       => 'non-db',
+            'vname'        => 'LBL_NOTES',
+        ),
 
         // Add table columns.
         'parent_id' => array(
@@ -222,22 +229,6 @@ $dictionary['Activity'] = array(
             'rhs_table' => 'comments',
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
-        ),
-
-        // This is called activity_attachments instead of activity_notes because
-        // notes in this relationship do not contain attributes of regular notes
-        // such as name and description. This relationship is solely for
-        // attaching files to a post on the activity stream.
-        'activity_attachments' => array(
-            'lhs_module' => 'Activities',
-            'lhs_table' => 'activities',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Notes',
-            'rhs_table' => 'notes',
-            'rhs_key' => 'parent_id',
-            'relationship_type' => 'one-to-many',
-            'relationship_role_column' => 'parent_type',
-            'relationship_role_column_value' => 'Activities',
         ),
     ),
 );

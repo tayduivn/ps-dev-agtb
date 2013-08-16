@@ -21,17 +21,24 @@ $viewdefs['Contacts']['base']['layout']['record-dashboard'] = array (
       array (
         'rows' => 
         array (
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'interactions',
-                'type' => 'Interactions',
-                'filter_duration' => '7',
-              ),
-              'width' => 12,
+            array(
+                array(
+                    'view' => array(
+                        'name' => 'planned-activities',
+                        'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                    ),
+                    'width' => 12,
+                ),
             ),
-          ),
+            array(
+                array(
+                    'view' => array(
+                        'name' => 'history',
+                        'label' => 'LBL_HISTORY_DASHLET',
+                    ),
+                    'width' => 12,
+                ),
+            ),
         ),
         'width' => 12,
       ),

@@ -394,8 +394,8 @@ class RenameModules
             //For each subpanel def, check if they are in our changed modules set.
             foreach ($this->changedModules as $changedModuleName => $renameFields) {
                 if (!(isset($subpanelMetaData['type']) &&  $subpanelMetaData['type'] == 'collection') //Dont bother with collections
-                    && isset($subpanelMetaData['module']) 
-                    && $subpanelMetaData['module'] == $changedModuleName 
+                    && isset($subpanelMetaData['module'])
+                    && $subpanelMetaData['module'] == $changedModuleName
                     && isset($subpanelMetaData['title_key'])
                     ) {
                     $replaceKey = $subpanelMetaData['title_key'];
@@ -892,7 +892,7 @@ class RenameModules
     {
         $tmp = BeanFactory::getBean($moduleName);
         if (empty($tmp)) {
-            $GLOBALS['log']->error("Unable to get module singular key for class: $className");
+            $GLOBALS['log']->error("Unable to get module singular key for class: $moduleName");
             return $moduleName;
         }
 

@@ -41,7 +41,7 @@
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
         'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
     },
-
+    plugins: ['tooltip'],
 
     /**
      * {@inheritDoc}
@@ -126,7 +126,7 @@
         var cssClass = [],
             container = '',
             caretIcon = this.def['icon'] ? this.def['icon'] : 'icon-caret-down',
-            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);">' +
+            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" data-container="body" title="Actions">' +
                 '<span class="' + caretIcon + '"></span>' +
                 '</a>',
             dropdown = '<ul class="dropdown-menu">';

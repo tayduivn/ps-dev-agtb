@@ -36,6 +36,7 @@ class ForecastWorksheetsApiHelper extends SugarBeanApiHelper
                 ->equals('id', $bean->parent_id);
             $beans = $sq->execute();
             if (empty($beans)) {
+                $data['parent_name'] = $data['name'];
                 $data['parent_deleted'] = 1;
             }
         }

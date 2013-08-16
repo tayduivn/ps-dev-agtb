@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,18 +27,12 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['base']['view']['wizard-page'] = array(
-    'buttons' => array(
-        array(
-            'name' => 'previous_button',
-            'type' => 'button',
-            'label' => 'LNK_LIST_PREVIOUS',
-        ),
-        array(
-            'name' => 'next_button',
-            'type' => 'button',
-            'label' => 'LNK_LIST_NEXT',
-            'primary' => true,
+$viewdefs['base']['layout']['forgotpassword'] = array(
+    'type' => 'simple',
+    'components' => array(
+        0 => array(
+            'view' => "forgotpassword"
         ),
     ),
 );
+

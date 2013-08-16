@@ -26,30 +26,6 @@
     },
 
     /**
-     * Trigger events when a change happens
-     * @param {String} linkModuleName
-     * @param {String} linkName
-     * @param {Boolean} silent
-     */
-    handleChange: function(linkModuleName, linkName, silent) {
-        if (linkName === "all_modules") {
-            //Trigger subpanel change
-            this.layout.trigger("subpanel:change");
-        } else {
-            //Trigger closing the Create Filter form
-            this.layout.trigger("filter:create:close");
-            //Trigger subpanel change
-            this.layout.trigger("subpanel:change", linkName);
-        }
-
-        this.filterNode.select2("val", linkName || linkModuleName);
-        if (!silent) {
-            this.layout.layout.trigger("filterpanel:change:module", linkModuleName, linkName);
-            this.layout.trigger("filter:get", linkModuleName, linkName);
-        }
-    },
-
-    /**
      * @override
      * @private
      */
@@ -61,7 +37,8 @@
         } else if (this.layout.layoutType === "record") {
             this.filterList = this.getModuleListForSubpanels();
         } else {
-            this.filterList = this.getModuleListForRecords();
+            this.$el.hide();
+            return this;
         }
 
         this._renderDropdown(this.filterList);
@@ -128,7 +105,9 @@
             app.cache.set("subpanels:last:"+ app.controller.context.get('module'), linkName);
         }
 
-        this.filterNode.select2("val", linkName || linkModuleName);
+        if (this.filterNode) {
+            this.filterNode.select2("val", linkName || linkModuleName);
+        }
         if (!silent) {
             this.layout.layout.trigger("filter:change", linkModuleName, linkName);
             this.layout.trigger("filter:get", linkModuleName, linkName);
@@ -151,16 +130,6 @@
                 filters.push({id: value, text: app.lang.get(key, this.module)});
             }
         }, this);
-        return filters;
-    },
-
-    /**
-     * For records layout,
-     * Populate the module dropdown with a single item
-     */
-    getModuleListForRecords: function() {
-        var filters = [];
-        filters.push({id: this.module, text: app.lang.get('LBL_MODULE_NAME', this.module)});
         return filters;
     },
 

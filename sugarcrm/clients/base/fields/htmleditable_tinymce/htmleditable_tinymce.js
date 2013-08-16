@@ -100,29 +100,34 @@
     getTinyMCEConfig: function(){
         return {
             // Location of TinyMCE script
-            script_url : 'include/javascript/tiny_mce/tiny_mce.js',
+            script_url: 'include/javascript/tiny_mce/tiny_mce.js',
 
             // General options
-            theme : "advanced",
-            skin : "sugar7",
-            plugins : "style,table,advhr,advimage,advlink,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras",
+            theme: "advanced",
+            skin: "sugar7",
+            plugins: "style,table,advhr,advimage,advlink,iespell,inlinepopups,media,searchreplace,print,contextmenu,paste,noneditable,visualchars,nonbreaking,xhtmlxtras",
             entity_encoding: "raw",
 
             // Theme options
-            theme_advanced_buttons1 : "code,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,fontsizeselect,|,insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,iespell,media,advhr,|,print,|",
-            theme_advanced_buttons2 : "cut,copy,paste,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,forecolor,backcolor,tablecontrols,|,",
-            theme_advanced_toolbar_location : "top",
-            theme_advanced_toolbar_align : "left",
-            theme_advanced_statusbar_location : "none",
-            theme_advanced_resizing : true,
+            theme_advanced_buttons1: "code,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,justifyfull,fontsizeselect,|,insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,iespell,media,advhr,|,print,|",
+            theme_advanced_buttons2: "cut,copy,paste,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,|,forecolor,backcolor,tablecontrols,|,",
+            theme_advanced_toolbar_location: "top",
+            theme_advanced_toolbar_align: "left",
+            theme_advanced_statusbar_location: "none",
+            theme_advanced_resizing: true,
             schema: "html5",
 
             // Drop lists for link/image/media/template dialogs
-            template_external_list_url : "lists/template_list.js",
-            external_link_list_url : "lists/link_list.js",
-            external_image_list_url : "lists/image_list.js",
-            media_external_list_url : "lists/media_list.js"
+            template_external_list_url: "lists/template_list.js",
+            external_link_list_url: "lists/link_list.js",
+            external_image_list_url: "lists/image_list.js",
+            media_external_list_url: "lists/media_list.js",
 
+            //plugin theme settings
+            theme_advanced_path: false,
+            theme_advanced_source_editor_width: 500,
+            theme_advanced_source_editor_height: 400,
+            inlinepopups_skin: "sugar7modal"
         };
     },
 

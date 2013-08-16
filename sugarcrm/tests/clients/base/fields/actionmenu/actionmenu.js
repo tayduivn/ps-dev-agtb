@@ -1,8 +1,12 @@
 describe("Base.Field.ActionMenu", function() {
-    var app, field, Account;
+    var app,
+        field,
+        Account,
+        layout;
 
     beforeEach(function() {
         app = SugarTest.app;
+        layout = {trigger: function(){}, off: function(){}};
     });
 
     afterEach(function() {
@@ -20,11 +24,54 @@ describe("Base.Field.ActionMenu", function() {
         expect(field.context.get("mass_collection")).toBeDefined();
     });
 
+    describe('disable the alert when selecting all', function() {
+        var dataProvider = [
+            {
+                message:  'should disable the alert when the disable_select_all_alert option is true',
+                disable:  true,
+                expected: true
+            },
+            {
+                message:  'should not disable the alert when the disable_select_all_alert option is false',
+                disable:  false,
+                expected: false
+            },
+            {
+                message:  'should not disable the alert when the disable_select_all_alert option is undefined',
+                disable:  undefined,
+                expected: false
+            }
+        ];
+
+        _.each(dataProvider, function(data) {
+            it(data.message, function() {
+                var def = {};
+                if (!_.isUndefined(data.disable)) {
+                    def.disable_select_all_alert = data.disable;
+                }
+                field = SugarTest.createField('base', 'actionmenu', 'actionmenu', 'list', def);
+                expect(field.def.disable_select_all_alert).toBe(data.expected);
+            });
+        });
+
+        it('should not trigger "list:alert:*" if the disable_select_all_alert option is true', function() {
+            var spyOnTrigger,
+                def = {disable_select_all_alert: true};
+            field = SugarTest.createField('base', 'actionmenu', 'actionmenu', 'list', def);
+            field.view.layout = layout;
+            spyOnTrigger = sinon.spy(field.view.layout, 'trigger');
+            field.toggleSelectAll();
+            expect(spyOnTrigger).not.toHaveBeenCalled();
+            spyOnTrigger.restore();
+        });
+    });
+
     it('should populate selected model items', function() {
         var def = {};
         SugarTest.loadComponent("base", "view", "list");
         SugarTest.loadComponent("base", "view", "flex-list");
         field = SugarTest.createField("base", "actionmenu", "actionmenu", "recordlist", def);
+        field.view.layout = layout;
         field.view.collection = new Backbone.Collection({
             next_offset: -1
         });

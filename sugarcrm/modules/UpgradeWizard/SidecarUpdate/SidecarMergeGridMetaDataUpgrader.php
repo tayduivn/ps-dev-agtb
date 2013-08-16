@@ -186,12 +186,61 @@ class SidecarMergeGridMetaDataUpgrader extends SidecarGridMetaDataUpgrader
         return parent::handleSave();
     }
 
+    /**
+     * Settings for fields we know how to handle
+     */
+    protected $knownFields = array(
+        "date_entered" => array(
+                    'name' => 'date_entered_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_ENTERED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_entered',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ),
+                        array(
+                            'name' => 'created_by_name',
+                        ),
+                    ),
+        ),
+        "date_modified" => array(
+                    'name' => 'date_modified_by',
+                    'readonly' => true,
+                    'type' => 'fieldset',
+                    'label' => 'LBL_DATE_MODIFIED',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                        ),
+                        array(
+                            'type' => 'label',
+                            'default_value' => 'LBL_BY',
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
+                    ),
+        ),
+    );
+
     protected function convertFieldData($fieldname, $data)
     {
-        $newdata = array('name' => $fieldname);
+        if(!empty($this->knownFields[$fieldname])) {
+            return $this->knownFields[$fieldname];
+        } else {
+            $newdata = array('name' => $fieldname);
+        }
         if(is_array($data)) {
             if(!empty($data['readonly']) || !empty($data['readOnly'])) {
                 $newdata['readonly'] = true;
+            }
+            if(!empty($data['label'])) {
+                $newdata['label'] = $data['label'];
             }
         }
         return $newdata;
@@ -324,8 +373,12 @@ END;
                 // TODO: merge the data such as label, readonly, etc.
                 continue;
             } else {
-                // TODO: import more data than just name
-                $parser->addField($this->convertFieldData($fieldname, $data['data']), $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
+                $fielddata = $this->convertFieldData($fieldname, $data['data']);
+                // FIXME: hack since addField cuts field defs
+                if(!empty($this->knownFields[$fieldname]) && empty($parser->_originalViewDef[$fielddata['name']])) {
+                    $parser->_originalViewDef[$fielddata['name']] = $fielddata;
+                }
+                $parser->addField($fielddata, $this->getPanelName($parser->_viewdefs['panels'], $data['source']));
             }
         }
 

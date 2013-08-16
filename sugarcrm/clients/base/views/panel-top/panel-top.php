@@ -33,7 +33,8 @@ $viewdefs['base']['view']['panel-top'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-down'
+            'icon' => 'icon-chevron-down',
+            'tooltip' => 'LBL_TOGGLE_VISIBILITY',
         ),
         array(
             'type' => 'actiondropdown',
@@ -46,6 +47,7 @@ $viewdefs['base']['view']['panel-top'] = array(
                     'name' => 'create_button',
                     'label' => ' ',
                     'acl_action' => 'create',
+                    'tooltip' => 'Create',
                 ),
                 array(
                     'type' => 'link-action',

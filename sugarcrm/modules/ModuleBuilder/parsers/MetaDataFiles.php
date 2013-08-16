@@ -739,9 +739,9 @@ class MetaDataFiles
                                     ucfirst($view) . "View"),
                                 DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
                             );
-                        if (!empty($deps) && is_array(($moduleResults[$view]['meta']))) {
-                            if (!isset($moduleResults[$view]['meta']['dependencies']) ||
-                                !is_array($moduleResults[$view]['meta']['dependencies'])
+                        if (!empty($deps) && !empty($meta)) {
+                            if (!isset($meta['dependencies']) ||
+                                !is_array($meta['dependencies'])
                             ) {
                                 $moduleResults[$view]['meta']['dependencies'] = array();
                             }

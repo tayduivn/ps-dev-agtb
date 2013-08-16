@@ -90,6 +90,12 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
                     'acl_action' => 'edit',
                 ),
+                array(
+                    'type'       => 'vcard',
+                    'name'       => 'vcard_button',
+                    'label'      => 'LBL_VCARD_DOWNLOAD',
+                    'acl_action' => 'edit',
+                ),
             ),
         ),
         array(
@@ -110,8 +116,10 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'dismiss_label' => true,
                 ),
                 array(
-                    'name' => 'fieldset_name',
-                    'type' => 'fieldset-with-labels',
+                    'name' => 'full_name',
+                    'type' => 'fullname',
+                    'label' => 'LBL_NAME',
+                    'dismiss_label' => true,
                     'fields' => array(
                         array(
                             'name' => 'salutation',

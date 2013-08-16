@@ -161,15 +161,27 @@
     },
     /**
      * Listen to changes on required fields. If all required fields contain
-     * 1+ characters we enable the next button. Implementers of wizard pages must
-     * override this method since each form will be different (e.g. some have
-     * just inputs, others have dropdowns, etc.)
+     * at least one character, we enable the next button. Implementers of
+     * wizard pages may override this method to customize if desired, although
+     * you may be able to just override `requiredTypesToPrevalidate`.
      * @see SUGAR.App.view.views.UserWizardPageView
      * @param {Object} evt the event
      */
     checkIfPageComplete: function(evt) {
-        // Noop: Implementers will need to set `this.areAllRequiredFieldsNonEmpty`
-        // and call `this.updateButtons` if appropriate
+        var self = this,
+            last = this.areAllRequiredFieldsNonEmpty;
+        this.areAllRequiredFieldsNonEmpty = true;
+        _.each(this.fields, function(field) {
+            var value = field.$(field.fieldTag).val();
+            var invalid = app.validation.requiredValidator(field.def, field.name, field.model, value);
+            if (invalid) {
+                self.areAllRequiredFieldsNonEmpty = false;
+            }
+        });
+        // Update buttons if applicable and something's actually changed
+        if (!last || last !== this.areAllRequiredFieldsNonEmpty) {
+            this.updateButtons();
+        }
     },
     /**
      * Only validate fields pertinent to wizard page

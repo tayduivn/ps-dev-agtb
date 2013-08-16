@@ -70,4 +70,42 @@ describe('Sugar7.Routes', function() {
             routerRecordStub.restore();
         });
     });
+
+    describe("Before Route Access Check", function() {
+        var hasAccessStub;
+
+        beforeEach(function() {
+            hasAccessStub = sinon.stub(app.acl, 'hasAccess');
+            hasAccessStub.withArgs('view', 'Foo').returns(true);
+            hasAccessStub.withArgs('view', 'Bar').returns(false);
+        });
+
+        afterEach(function() {
+            hasAccessStub.restore();
+        });
+
+        it("should continue to route if routing to the record view and user has access", function() {
+            var route = 'record',
+                args = ['Foo'];
+            var response = app.routing.triggerBefore("route", {route:route, args:args})
+
+            expect(response).toBe(true);
+        });
+
+        it("should continue to route if routing to a view that is not on the check access list", function() {
+            var route = 'baz',
+                args = ['Foo'];
+            var response = app.routing.triggerBefore("route", {route:route, args:args})
+
+            expect(response).toBe(true);
+        });
+
+        it("should stop route if routing to the record view and user is missing access", function() {
+            var route = 'record',
+                args = ['Bar'];
+            var response = app.routing.triggerBefore("route", {route:route, args:args})
+
+            expect(response).toBe(false);
+        });
+    });
 });

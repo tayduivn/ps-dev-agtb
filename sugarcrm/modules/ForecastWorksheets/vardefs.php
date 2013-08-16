@@ -57,6 +57,7 @@ $dictionary['ForecastWorksheet'] = array(
                 'parent_id',
                 'parent_type',
                 'parent_deleted',
+                'name',
             )
         ),
         'opportunity_id' =>
@@ -188,7 +189,9 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'base_rate',
-                'currency_id'
+                'currency_id',
+                'best_case',
+                'worst_case'
             ),
         ),
         'best_case' =>
