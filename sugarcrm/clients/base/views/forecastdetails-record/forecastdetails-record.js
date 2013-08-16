@@ -2,11 +2,6 @@
     extendsFrom: 'ForecastdetailsView',
 
     /**
-     * Holds previous totals for math
-     */
-    oldTotals: {},
-
-    /**
      * Holds the logged-in user's ID
      */
     selectedUserId: '',
@@ -151,6 +146,8 @@
 
     /**
      * {@inheritdoc}
+     *
+     * @override just calls calculateData on it's own instead of going back to the parent
      */
     handleNewDataFromServer: function(data) {
         // since the user might add this dashlet after they have changed the RLI model, but before they saved it
@@ -169,7 +166,7 @@
                 data.worst_case = data.worst_case - (lhsData.worst - mdl.get('worst_case'));
             }
         }
-        app.view.invokeParent(this, {type: 'view', name: 'forecastdetails', method: 'handleNewDataFromServer', args:[data]});
+        this.calculateData(this.mapAllTheThings(data, false));
     },
 
     /**
@@ -212,27 +209,6 @@
         }
 
         app.view.View.prototype.unbindData.call(this);
-    },
-
-    /**
-     * Gets an object from the oldTotals Model
-     *
-     * @param id the model ID for the Object
-     * @returns {Object}
-     */
-    getOldTotalFromCollectionById: function(id) {
-        return this.oldTotals.models.get(id);
-    },
-
-    /**
-     * Sets a totals Object on the oldTotals Model by id
-     *
-     * @param id model id
-     * @param totals object to set
-     * @returns {*}
-     */
-    setOldTotalFromCollectionById: function(id, totals) {
-        this.oldTotals.models.set(id, totals);
     },
 
     /**

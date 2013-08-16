@@ -299,6 +299,8 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("loadData() should be called on this.model change:selectedUser events", function() {
+            sinon.stub(app.utils, 'getSubpanelCollection', function() { return new Backbone.Collection() });
+
             view.currentModule = 'Forecasts';
             view.context = app.context.getContext();
             view.context.parent = new Backbone.Model({selectedTimePeriod: '1'});
@@ -309,6 +311,8 @@ describe("Base.View.Forecastdetails", function() {
             // just setting any property on the model
             view.context.parent.set({selectedUser: 'abc'});
             expect(loadDataStub).toHaveBeenCalled();
+
+            app.utils.getSubpanelCollection.restore();
         });
     });
 
@@ -773,6 +777,33 @@ describe("Base.View.Forecastdetails", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
                 expect(result.deficitAmount).toBe('($65.00)');
             });
+        });
+    });
+
+    describe("processQuotaCollection()", function() {
+        beforeEach(function() {
+            view.quotaCollection = new Backbone.Collection();
+            view.quotaCollection.add(new Backbone.Model({
+                id: 'id1',
+                quota: 1000
+            }));
+            view.quotaCollection.add(new Backbone.Model({
+                id: 'id2',
+                quota: 500
+            }));
+            view.currentModule = 'Forecasts';
+            view.processQuotaCollection();
+        });
+        afterEach(function() {
+            view.unbindData();
+        });
+
+        it("should build oldTotals properly - id1", function() {
+            expect(view.oldTotals.models.get('id1').quota).toEqual(1000);
+        });
+
+        it("should build oldTotals properly - id2", function() {
+            expect(view.oldTotals.models.get('id2').quota).toEqual(500);
         });
     });
 });
