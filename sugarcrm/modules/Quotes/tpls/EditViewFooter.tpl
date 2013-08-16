@@ -139,7 +139,7 @@ Calendar.setup ({literal} { {/literal}
 <script type="text/javascript" src="{sugar_getjspath file='modules/Quotes/EditView.js'}"></script>
 <script type="text/javascript">
 {literal}
-quotesManager = new QuotesEditManager(YUI().use('node', function(Y){
+quotesManager = new QuotesEditManager(YUI({comboBase:'index.php?entryPoint=getYUIComboFile&'}).use('node', function(Y){
     return Y;
 }));
 if(!document.getElementById('calc_grand_total').checked){
