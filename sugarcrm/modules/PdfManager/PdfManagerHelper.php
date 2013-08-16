@@ -196,14 +196,7 @@ class PdfManagerHelper
             if ($val[1] == "relate" && $focus->load_relationship($name)) {
                 $relatedModule = (!empty($app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()])) ?
                                 $app_list_strings['moduleListSingular'][$focus->$name->getRelatedModuleName()] : $focus->$name->getRelatedModuleName();
-                if (
-                    (isset($def['link_type']) && $def['link_type'] == 'one') ||
-                    ($focus->$name->_relationship->relationship_type == 'one-to-one') ||
-                    ($focus->$name->_relationship->relationship_type == 'one-to-many' && !$focus->$name->_get_bean_position()) ||
-                    ($focus->$name->_relationship->relationship_type == 'many-to-one' && $focus->$name->_get_bean_position()) ||
-                    ($focus->$name->_relationship->relationship_type == 'many-to-many' && !isset($def['side']) && $focus->$name->_get_link_table_definition($focus->$name->_relationship_name, 'true_relationship_type') == 'one-to-many' && !$focus->$name->_get_bean_position()) ||
-                    ($focus->$name->_relationship->relationship_type == 'many-to-many' && !isset($def['side']) && $focus->$name->_get_link_table_definition($focus->$name->_relationship_name, 'true_relationship_type') == 'many-to-one' && $focus->$name->_get_bean_position())
-                ) {
+                if ($focus->$name->getType() == 'one' || $focus->$name == REL_LHS) {
                     //MB will sometimes produce extra link fields that we need to ignore
                     if (!empty($def['side']) && (substr($name, -4) == "_ida" || substr($name, -4) == "_idb")) {
                         continue;
