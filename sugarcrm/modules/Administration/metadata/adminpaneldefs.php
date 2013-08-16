@@ -173,6 +173,13 @@ $admin_option_defs['Administration']['sugarportal']= array('SugarPortal','LBL_SU
 $admin_option_defs['any']['workflow_management']= array('WorkFlow','LBL_MANAGE_WORKFLOW','LBL_WORKFLOW_DESC','./index.php?module=WorkFlow&action=ListView');
 //END SUGARCRM flav=pro ONLY
 
+$admin_option_defs['Administration']['styleguide'] = array(
+    'Documents',
+    'LBL_MANAGE_STYLEGUIDE',
+    'LBL_MANAGE_STYLEGUIDE_TITLE',
+    'javascript:parent.SUGAR.App.router.navigate("Styleguide", {trigger: true});',
+);
+
 $admin_group_header[]= array('LBL_STUDIO_TITLE','',false,$admin_option_defs, 'LBL_TOOLS_DESC');
 
 
