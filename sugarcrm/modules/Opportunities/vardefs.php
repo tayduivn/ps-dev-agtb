@@ -176,6 +176,7 @@ $dictionary['Opportunity'] = array(
                 'editview' => false,
                 'detailview' => false,
                 'quickcreate' => false,
+                'mobile' => false,
             ),
         ),
         'currency_id' => array(
