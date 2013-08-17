@@ -12,7 +12,6 @@
  */
 
 ({
-    expandTabHtml: '<div class="drawer-tab"><a href="#" class="btn" rel="tooltip" title=""><i class="icon-chevron-up"></i></a></div>',
     backdropHtml: "<div class='drawer-backdrop'></div>",
     plugins: ['tooltip'],
     onCloseCallback: null, //callbacks to be called once drawers are closed
@@ -29,6 +28,7 @@
         this.onCloseCallback = [];
 
         //clear out drawers before routing to another page
+        this.name = 'drawer';
         app.routing.before("route", this.reset, this, true);
         app.view.Layout.prototype.initialize.call(this, options);
     },
@@ -154,8 +154,6 @@
         layout = _.last(this._components);
         layout.loadData();
         layout.render();
-
-
     },
 
     /**
@@ -244,8 +242,6 @@
                 $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
             }
         }, this));
-
-
     },
 
     /**
@@ -356,19 +352,13 @@
      */
     _createTabAndBackdrop: function($top, $bottom) {
         //add the expand tab and the backdrop to the top drawer
+        debugger;
+        this.expandTpl = app.template.getLayout(this.name + '.expand');
+        this.expandTabHtml = this.expandTpl();
+
         $bottom
             .append(this.expandTabHtml)
             .append(this.backdropHtml);
-
-        $bottom.find('.drawer-tab [rel="tooltip"]').attr('title',app.lang.get('LBL_TOGGLE_DRAWER'));
-        var $tooltip = $bottom.find('.drawer-tab [rel="tooltip"]');
-        if (_.isFunction($tooltip.tooltip)) {
-            $tooltip.tooltip({
-                container: 'body',
-                placement:'top',
-                trigger:'mouseenter'
-            });
-        }
 
         $bottom.find('.drawer-tab [rel="tooltip"]')
             .on('mouseenter', _.bind(function(event) {
