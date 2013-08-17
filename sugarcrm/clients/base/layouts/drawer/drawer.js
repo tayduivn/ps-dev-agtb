@@ -359,7 +359,6 @@
      */
     _createTabAndBackdrop: function($top, $bottom) {
         //add the expand tab and the backdrop to the top drawer
-        debugger;
         this.expandTpl = app.template.getLayout(this.name + '.expand');
         this.expandTabHtml = this.expandTpl();
 
