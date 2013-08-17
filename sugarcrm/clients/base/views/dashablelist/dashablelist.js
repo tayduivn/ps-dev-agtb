@@ -4,13 +4,36 @@
     type : "list",
     initDashlet: function (view) {
         var module = this.context.get("module"),
-            filterDef = [];
+            filterDef = [],
+            metadata = app.metadata.getView(module, 'list');
+
+        // If there is no display_columns set in the metadata, create the
+        // columns from the list view metadata. This happens when custom
+        // modules are deployed from studio and is required in order to allow
+        // for customization of the dashlet after selection.
+        if (!this.settings.get('display_columns')) {
+            var display_columns = _.chain(metadata.panels)
+                .pluck('fields')
+                .flatten()
+                .filter(function(field) {
+                    return field.name;
+                })
+                .map(function(field) {
+                    return field.name;
+                }, {})
+                .value();
+            this.settings.set('display_columns', display_columns);
+        }
 
         //If we are displaying the configuration view instead of the dashlet itself.
         if(this.meta.config) {
-            module = this.settings.get("module") || module;
-            var metadata = app.metadata.getView(module, 'list');
+            // If there is no defined config metadata, use the base config metadata
+            if (!this.dashletConfig.dashlet_config_panels) {
+                var dashletView = app.metadata.getView(null, "dashablelist");
+                this.dashletConfig.dashlet_config_panels = dashletView.dashlet_config_panels;
+            }
 
+            module = this.settings.get("module") || module;
             var panel_module_metadata = _.find(this.dashletConfig.dashlet_config_panels, function(panel){
                     return panel.name === 'panel_module_metadata';
                 }, this),
@@ -55,8 +78,7 @@
                 }, this), auto_refresh * 1000 * 60);
             }
 
-            var metadata = app.metadata.getView(module, 'list'),
-                display_column = [];
+            var display_column = [];
             _.each(this.settings.get("display_columns"), function (name, index) {
                 var field = _.find(_.flatten(_.pluck(metadata.panels, 'fields')), function (field) {
                     return field.name === name;
