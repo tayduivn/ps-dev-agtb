@@ -301,7 +301,12 @@
      * {@inheritdoc}
      */
     unbindData: function() {
-        var ctx = this.context.parent;
+        var ctx;
+        if(this.currentModule && this.currentModule == 'Forecasts') {
+            ctx = this.context.parent || this.context;
+        } else {
+            ctx = this.model;
+        }
         if(ctx) {
             ctx.off(null, null, this);
         }
@@ -407,8 +412,8 @@
      */
     renderSubDetails: function() {
         if(this.$el && this.subDetailsTpl) {
-            var subEl = this.$el.find('.forecast-details');
-            var model = this.context.get('model') || this.model;
+            var subEl = this.$el.find('.forecast-details'),
+                model = this.context.get('model') || this.model;
             // Check if closed or quota is undefined (during opps/rli loading when those numbers aren't available yet)
             if(!_.isUndefined(model.get('closed_amount')) && !_.isUndefined(model.get('quota_amount'))) {
                 subEl.html(this.subDetailsTpl(model.toJSON()));

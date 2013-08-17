@@ -787,25 +787,18 @@
             wonBest = 0,
             wonWorst = 0,
             includedClosedCount = 0,
-            includedClosedAmount = 0;
+            includedClosedAmount = 0,
+            cfg = app.metadata.getModule('Forecasts', 'config');
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
-        var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
+        var sales_stage_won_setting = cfg.sales_stage_won || [],
+            sales_stage_lost_setting = cfg.sales_stage_lost || [];
 
         // set up commit_stages that should be processed in included total
-        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
-            commit_stages_in_included_total = [];
+        var commit_stages_in_included_total = ['include'];
 
-        if (forecast_ranges == 'show_custom_buckets') {
-            var ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
-            _.each(ranges, function(value, key) {
-                if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
-                    commit_stages_in_included_total.push(key);
-                }
-            })
-        } else {
-            commit_stages_in_included_total.push('include');
+        if (cfg.forecast_ranges == 'show_custom_buckets') {
+            commit_stages_in_included_total = cfg.commit_stages_included;
         }
 
         this.collection.each(function(model) {
