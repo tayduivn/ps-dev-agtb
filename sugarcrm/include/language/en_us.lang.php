@@ -3153,6 +3153,7 @@ $app_strings = array (
     'ERR_SMARTY_MISSING_DISPLAY_PARAMS' => 'Missing index in displayParams Array for: ',
 
     /* MySugar Framework (for Home and Dashboard) */
+    'LBL_DASHLET' => 'Dashlet',
     'LBL_DASHLET_CONFIGURE_GENERAL' => 'General',
     'LBL_DASHLET_CONFIGURE_FILTERS' => 'Filters',
     'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY' => 'Only My Items',
