@@ -269,28 +269,6 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array('ForecastManagerWorksheets', false),
         );
     }
-
-    /**
-     * @covers ActivityQueueManager::processPostSubscription
-     */
-    public function testProcessPostSubscription()
-    {
-        $relationshipStub = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $relationshipStub->expects($this->once())
-            ->method('add');
-
-        $stub = $this->getMock(BeanFactory::getObjectName('Activities'));
-        $stub->expects($this->once())
-            ->method('load_relationship')
-            ->with('activities_teams')
-            ->will($this->returnValue(true));
-        $stub->activities_teams = $relationshipStub;
-
-        $aqm = new TestActivityQueueManager();
-        SugarTestReflection::callProtectedMethod($aqm, 'processPostSubscription', array($stub));
-    }
 }
 
 class TestActivityQueueManager extends ActivityQueueManager

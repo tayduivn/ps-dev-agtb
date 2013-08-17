@@ -190,6 +190,33 @@ class MetaDataFiles
     );
 
     /**
+     * Listing of excluded client file paths. This tells {@see getClientFiles} not
+     * to included files in these paths when getting the list of client files.
+     * 
+     * The structure of this array should be
+     *  - path/to/type/dir => array(files)
+     * 
+     * At present, this will only exclude PHP files.
+     * 
+     * @var array
+     */
+    public static $excludedClientFilePaths = array(
+        'include/SugarObjects/templates/basic/clients/base/views/' => array(
+            'edit',
+            'detail',
+            'dashablelist',
+        ),
+    );
+
+    /**
+     * The compiled list of excluded client files. This is based off 
+     * excludedClientFilePaths.
+     * 
+     * @var array
+     */
+    public static $excludedClientFiles = array();
+
+    /**
      * Gets the file base names array
      *
      * @static
@@ -807,6 +834,11 @@ class MetaDataFiles
                 // So it should pull up list.js, list.php, list.hbs
                 $filesInDir = SugarAutoLoader::getDirFiles($fullSubPath,false);
                 foreach ($filesInDir as $fullFile) {
+                    // If this file is an excluded file, skip it
+                    if (self::isExcludedClientFile($fullFile)) {
+                        continue;
+                    }
+
                     $file = basename($fullFile);
                     $fileIndex = $fullFile;
                     if ( !isset($fileList[$fileIndex]) ) {
@@ -944,5 +976,61 @@ class MetaDataFiles
         }
 
         return $currentDefs;
+    }
+
+    /**
+     * Checks if a client file path should be excluded from the list of files to
+     * be fetched when getting client files for a module
+     * 
+     * @param string $filepath Full path to the file to check
+     * @return boolean 
+     */
+    public static function isExcludedClientFile($filepath)
+    {
+        // If the listing of excluded client files hasn't been built yet then
+        // create it
+        if (empty(self::$excludedClientFiles)) {
+            self::buildExcludedClientFileList();
+        }
+
+        return !empty(self::$excludedClientFiles[$filepath]);
+    }
+
+    /**
+     * Builds the listing of excluded client files.
+     */
+    public static function buildExcludedClientFileList()
+    {
+        foreach (self::$excludedClientFilePaths as $basePath => $files) {
+            foreach ($files as $file) {
+                // Set the path as an index for we can use isset()/empty()
+                // instead of in_array()
+                $path = $basePath . $file . '/' . $file . '.php';
+                $customPath = 'custom/' . $path;
+                self::$excludedClientFiles[$path] = true;
+                self::$excludedClientFiles[$customPath] = true;
+            }
+        }
+    }
+
+    /**
+     * Adds a path => array(files) to the excluded client file path array
+     * 
+     * @param array $pathArray Array of files keyed on a base path
+     */
+    public static function addExcludedClientFilePath(array $pathArray)
+    {
+        self::$excludedClientFilePaths = array_merge(self::$excludedClientFilePaths, $pathArray);
+    }
+
+    /**
+     * Adds an excluded file to a path in the excluded client file path array
+     * 
+     * @param string $path The path to use as the index for the excluded file array
+     * @param string $file the file basename to add
+     */
+    public static function addExcludedClientFileToPath($path, $file)
+    {
+        self::$excludedClientFilePaths[$path][] = $file;
     }
 }

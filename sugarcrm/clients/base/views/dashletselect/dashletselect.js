@@ -58,6 +58,10 @@
         }
 
         if (previewLayout) {
+            // If there is no preview property, use the config property
+            if (!metadata.preview) {
+                metadata.preview = metadata.config;
+            }
             var previousComponent = _.last(previewLayout._components);
             if (previousComponent.name !== 'dashlet-preview') {
                 var index = previewLayout._components.length - 1;

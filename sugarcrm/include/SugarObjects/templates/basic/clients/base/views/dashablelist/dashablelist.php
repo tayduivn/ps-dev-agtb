@@ -1,9 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
- * Layout definition for Accounts
- *
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
@@ -27,37 +23,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$layout_defs['Calls'] = array(
-	// list of what Subpanels to show in the DetailView 
-	'subpanel_setup' => array(		
-		'notes' => array(
-			'order' => 5,
-			'module' => 'Notes',
-			'get_subpanel_data' => 'notes',
-			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
-			'canLink' => false,
-		),
-		'contacts'=> array(
-			'order' => 10,
-			'module' => 'Contacts',
-			'get_subpanel_data' => 'contacts',
-			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',		
-		),
-		'leads' => array(
-			'order' => 30,
-			'module' => 'Leads',
-			'get_subpanel_data' => 'leads',
-			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
-		),
-		'users'=> array(
-			'order' => 40,
-			'module' => 'Users',
-			'get_subpanel_data' => 'users',
-			'title_key' => 'LBL_USERS_SUBPANEL_TITLE',
-		),
-	),
+$module_name = '<module_name>';
+$viewdefs[$module_name]['base']['view']['dashablelist'] = array(
+    'dashlets' => array(
+        array(
+            'name' => 'LBL_DASHLET_NAME',
+            'description' => 'LBL_DASHLET_NAME',
+            'config' => array(
+                'module' => $module_name,
+            ),
+        ),
+    ),
 );
-?>

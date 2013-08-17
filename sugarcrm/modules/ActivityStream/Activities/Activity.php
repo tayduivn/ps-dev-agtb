@@ -11,6 +11,9 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+
+require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
+
 class Activity extends Basic
 {
     public $table_name = 'activities';
@@ -121,12 +124,90 @@ class Activity extends Basic
      */
     public function save($check_notify = false)
     {
+        $isUpdate = !(empty($this->id) || $this->new_with_id);
+
+        if ($this->activity_type == 'post' || $this->activity_type == 'attach') {
+            if (is_string($this->data)) {
+                $this->data = json_decode($this->data, true);
+            }
+
+            if (!isset($this->data['object']) && !empty($this->parent_type)) {
+                $parent = BeanFactory::retrieveBean($this->parent_type, $this->parent_id);
+                if ($parent && !is_null($parent->id)) {
+                    $this->data['object'] = ActivityQueueManager::getBeanAttributes($parent);
+                } else {
+                    $this->data['object_type'] = $this->parent_type;
+                }
+            }
+
+            if (!$isUpdate) {
+                $this->processEmbed();
+            }
+        }
+
         if (!is_string($this->data)) {
             $this->data = json_encode($this->data);
         }
         $this->last_comment = $this->last_comment_bean->toJson();
+
         $return = parent::save($check_notify);
+
+        if (($this->activity_type === 'post' || $this->activity_type === 'attach') && !$isUpdate) {
+            $this->processPostSubscription();
+            $this->processTags();
+        }
+
         return $return;
+    }
+
+    protected function processEmbed()
+    {
+        if (!empty($this->data['value'])) {
+            $val = Link2Tag::convert($this->data['value']);
+            if (!empty($val)) {
+                $this->data = array_merge($this->data, $val);
+            }
+        }
+    }
+
+    protected function processTags()
+    {
+        $data = json_decode($this->data, true);
+        if (!empty($data['tags']) && is_array($data['tags'])) {
+            foreach ($data['tags'] as $tag) {
+                $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
+                $this->processRecord($bean);
+            }
+        }
+    }
+
+    /**
+     * Helper for processing record activities.
+     * @param  SugarBean $bean
+     */
+    public function processRecord(SugarBean $bean)
+    {
+        if ($bean->load_relationship('activities')) {
+            $bean->activities->add($this);
+        }
+    }
+
+    /**
+     * Helper for processing subscriptions on a post activity.
+     */
+    protected function processPostSubscription()
+    {
+        if (isset($this->parent_type) && isset($this->parent_id)) {
+            $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+            $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+            $this->processRecord($bean);
+            $subscriptionsBeanName::processSubscriptions($bean, $this, array());
+        } else {
+            $globalTeam = BeanFactory::getBean('Teams', '1');
+            if ($this->load_relationship('activities_teams')) {
+                $this->activities_teams->add($globalTeam, array('fields' => '[]'));
+            }
+        }
     }
 
     /**
