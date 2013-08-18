@@ -124,7 +124,7 @@ $app_list_strings = array (
     array(
         'Calls' => 'Cl',
         'Cases' => 'Cs',
-        'Campaigns' => 'Cm',
+        'Campaigns' => 'Ca',
         'Notes' => 'Nt',
         'Tasks' => 'Ts'
     ),
