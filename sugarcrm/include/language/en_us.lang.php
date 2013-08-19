@@ -4109,6 +4109,7 @@ $app_strings = array (
     'LBL_BEST_ADJUSTED' => 'Best (Adjusted)',
     'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
+    'LBL_AMOUNT_USDOLLAR' => 'Amount',
 
     'LBL_OVERDUE' => 'Overdue',
 
