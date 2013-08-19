@@ -34,7 +34,7 @@ $viewdefs['Prospects']['base']['layout']['list-dashboard'] = array(
                                     'billing_address_city',
                                 ),
                                 'my_items' => '1',
-                                'display_rows' => 5,
+                                'limit' => 5,
                             ),
                             'context' =>
                             array(

@@ -11,7 +11,7 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-describe("forecasts_view_forecastsConfigWorksheetColumns", function(){
+describe("Forecasts.Base.View.forecastsConfigWorksheetColumns", function(){
     var app, view;
 
     beforeEach(function() {
@@ -22,6 +22,29 @@ describe("forecasts_view_forecastsConfigWorksheetColumns", function(){
     afterEach(function() {
         view = null;
         app = null;
+    });
+
+    describe('handleColumnModelChange', function() {
+        beforeEach(function() {
+            view.selectedOptions = []
+            sinon.stub(view, 'setModelValue', function() {});
+        });
+
+        afterEach(function() {
+            view.selectedOptions = []
+            view.setModelValue.restore();
+        });
+
+        it('should Add to selectedOptions', function() {
+            view.handleColumnModelChange({added: {test: 'test'}});
+            expect(view.selectedOptions.length).toEqual(1);
+        });
+
+        it('should Remove from selectedOptions', function() {
+            view.selectedOptions.push({test: 'test'});
+            view.handleColumnModelChange({removed: view.selectedOptions[0]});
+            expect(view.selectedOptions.length).toEqual(0);
+        });
     });
 
     describe("addOption()", function() {

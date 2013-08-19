@@ -146,14 +146,16 @@
     },
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * Set action name of child fields of this field set.
+     * Reset current focus index to the first item when it switches to different mode.
      * @override
      */
-    setMode: function (name) {
+    setMode: function(name) {
+        this.focusIndex = 0;
         app.view.Field.prototype.setMode.call(this, name);
-        _.each(this.fields, function (field) {
+        _.each(this.fields, function(field) {
             field.setMode(name);
         }, this);
     },

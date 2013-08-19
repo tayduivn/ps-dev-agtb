@@ -225,6 +225,7 @@ class SugarQuery_Compiler_SQL
      */
     protected function compileOrderBy($orderBy)
     {
+        $orderBy[] = array('id', 'DESC');
         $return = array();
         foreach ($orderBy as $order) {
             list($field, $direction) = $order;
@@ -269,7 +270,10 @@ class SugarQuery_Compiler_SQL
             if (strcasecmp($direction, "ASC") !== 0) {
                 $direction = "DESC";
             }
-            $return[] = "{$field} {$direction}";
+
+            if (!isset($return[$field])) {
+                $return[$field] = "{$field} {$direction}";
+            }
         }
 
         return implode(',', $return);

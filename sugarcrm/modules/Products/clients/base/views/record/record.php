@@ -47,6 +47,12 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
+                    'type' => 'shareaction',
+                    'name' => 'share',
+                    'label' => 'LBL_RECORD_SHARE_BUTTON',
+                    'acl_action' => 'view',
+                ),
+                array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',

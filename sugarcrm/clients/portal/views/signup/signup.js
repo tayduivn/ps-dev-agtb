@@ -35,7 +35,7 @@
     events: {
         'click [name=cancel_button]': 'cancel',
         'click [name=signup_button]': 'signup',
-        'change select[name=country]': 'render'
+        'change input[name=country]': 'render'
     },
 
     /**
@@ -98,8 +98,8 @@
         }
         app.view.View.prototype._render.call(this);
 
-        this.stateField = this.$('select[name=state]');
-        this.countryField = this.$('select[name=country]');
+        this.stateField = this.$('input[name=state]');
+        this.countryField = this.$('input[name=country]');
         this.toggleStateField();
         return this;
     },
@@ -108,11 +108,11 @@
      * For USA country only we need to display the State dropdown
      */
     toggleStateField: function() {
-        if (this.countryField.val() == 'USA') {
+        if (this.countryField.select2('val') == 'USA') {
             this.stateField.parent().show();
         } else {
             this.stateField.parent().hide();
-            this.context.get('model').set('state', undefined);
+            this.context.get('model').unset('state');
         }
     },
 

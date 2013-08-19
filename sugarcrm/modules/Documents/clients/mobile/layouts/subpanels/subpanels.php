@@ -29,6 +29,13 @@ $viewdefs['Documents']['mobile']['layout']['subpanels'] = array (
               'link' => 'cases',
           ),
       ),
+      array(
+          'layout' => 'subpanel',
+          'label' => 'LBL_RLI_SUBPANEL_TITLE',
+          'context' => array(
+              'link' => 'revenuelineitems',
+          ),
+      ),
       array (
           'layout' => 'subpanel',
           'label' => 'LBL_QUOTES_SUBPANEL_TITLE',

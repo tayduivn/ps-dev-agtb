@@ -926,6 +926,7 @@ RedirectMatch 403 {$ignoreCase}/+files\.md5$
     RewriteRule ^cache/api/metadata/lang_(.._..)_([^_]*)\.json$ api/rest.php/v10/lang/$1?platform=$2 [L,QSA]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
+    RewriteRule ^portal$ portal/? [R=301,L]
 //END SUGARCRM flav=ent ONLY
 </IfModule>
 

@@ -687,7 +687,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $options['addSearchBoosts'] = true;
                 $fields = $this->getSearchFields($options);
                 $options['addSearchBoosts'] = false;
-                $queryObj->setFields($fields);
+                if (!empty($options['searchFields'])) {
+                    $queryObj->setFields($options['searchFields']);
+                } else {
+                    $queryObj->setFields($fields);
+                }
             }
             $s = new Elastica_Search($this->_client);
             //Only search across our index.

@@ -14,8 +14,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-require_once 'include/SugarQueue/SugarJobQueue.php';
-require_once 'include/Link2Tag.php';
 
 /**
  * Queue class for activity stream events.
@@ -39,30 +37,7 @@ class ActivityQueueManager
      */
     public function eventDispatcher(SugarBean $bean, $event, $args)
     {
-        if ($bean instanceof Activity && ($bean->activity_type == 'post' || $bean->activity_type == 'attach')) {
-            // Posts.
-            if ($event == 'after_save' && !$args['isUpdate']) {
-                $this->processPostSubscription($bean);
-                $this->processTags($bean);
-            } elseif ($event == 'before_save') {
-                $bean->data = json_decode($bean->data, true);
-
-                if (!isset($bean->data['object']) && !empty($bean->parent_type)) {
-                    $parent = BeanFactory::retrieveBean($bean->parent_type, $bean->parent_id);
-                    if ($parent && !is_null($parent->id)) {
-                        $bean->data['object'] = self::getBeanAttributes($parent);
-                    } else {
-                        $bean->data['object_type'] = $bean->parent_type;
-                    }
-                }
-
-                if (!$args['isUpdate']) {
-                    $this->processEmbed($bean);
-                }
-
-                $bean->data = json_encode($bean->data);
-            }
-        } elseif ($this->isActivityStreamEnabled()) {
+        if ($this->isActivityStreamEnabled()) {
             $activity       = BeanFactory::getBean('Activities');
             $eventTriggered = false;
             if ($event == 'after_save' && self::isAuditable($bean)) {
@@ -77,7 +52,8 @@ class ActivityQueueManager
             // join table. This has been moved to the job queue as it's a
             // potentially slow operation.
             if ($eventTriggered) {
-                $this->processSubscriptions($bean, $activity, $args);
+                $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
+                $subscriptionsBeanName::processSubscriptions($bean, $activity, $args);
             }
         }
     }
@@ -164,7 +140,7 @@ class ActivityQueueManager
         $act->parent_type = $bean->module_name;
         $act->data        = $data;
         $act->save();
-        $this->processRecord($bean, $act);
+        $act->processRecord($bean);
         return true;
     }
 
@@ -193,8 +169,8 @@ class ActivityQueueManager
         $act->parent_type   = $lhs->module_name;
         $act->data          = $data;
         $act->save();
-        $this->processRecord($lhs, $act);
-        $this->processRecord($rhs, $act);
+        $act->processRecord($lhs);
+        $act->processRecord($rhs);
         return true;
     }
 
@@ -223,8 +199,8 @@ class ActivityQueueManager
         $act->parent_type   = $lhs->module_name;
         $act->data          = $data;
         $act->save();
-        $this->processRecord($lhs, $act);
-        $this->processRecord($rhs, $act);
+        $act->processRecord($lhs);
+        $act->processRecord($rhs);
         return true;
     }
 
@@ -235,7 +211,7 @@ class ActivityQueueManager
      *
      * @return array     Contains name, type, module and ID of the bean.
      */
-    protected static function getBeanAttributes(SugarBean $bean)
+    public static function getBeanAttributes(SugarBean $bean)
     {
         return array(
             'name'   => $bean->get_summary_text(),
@@ -243,97 +219,6 @@ class ActivityQueueManager
             'module' => $bean->module_name,
             'id'     => $bean->id,
         );
-    }
-
-    /**
-     * Helper for processing record activities.
-     */
-    protected function processRecord(SugarBean $bean, Activity $act)
-    {
-        if ($bean->load_relationship('activities')) {
-            $bean->activities->add($act);
-        }
-    }
-
-    protected function processTags(Activity $act)
-    {
-        $data = json_decode($act->data, true);
-        if (!empty($data['tags']) && is_array($data['tags'])) {
-            foreach ($data['tags'] as $tag) {
-                $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
-                $this->processRecord($bean, $act);
-            }
-        }
-    }
-
-    protected function processEmbed(Activity $act)
-    {
-        if (!empty($act->data['value'])) {
-            $val = Link2Tag::convert($act->data['value']);
-            if (!empty($val)) {
-                $act->data = array_merge($act->data, $val);
-            }
-        }
-    }
-
-    /**
-     * Helper for processing subscriptions on a post activity.
-     *
-     * @param  Activity $act
-     */
-    protected function processPostSubscription(Activity $act)
-    {
-        if (isset($act->parent_type) && isset($act->parent_id)) {
-            $bean = BeanFactory::getBean($act->parent_type, $act->parent_id);
-            $this->processRecord($bean, $act);
-            $this->processSubscriptions($bean, $act, array());
-        } else {
-            $db     = DBManagerFactory::getInstance();
-            $sql    = 'INSERT INTO activities_users VALUES (';
-            $values = array(
-                '"' . create_guid() . '"',
-                '"' . $act->id . '"',
-                '"Teams"',
-                '"1"',
-                '"[]"',
-                '"' . $act->date_modified . '"',
-                '0',
-            );
-            $sql .= implode(', ', $values) . ')';
-            $db->query($sql);
-        }
-    }
-
-    /**
-     * Helper for processing subscriptions on a bean-related activity.
-     *
-     * @param  SugarBean $bean
-     * @param  Activity  $act
-     * @param  array     $args
-     */
-    protected function processSubscriptions(SugarBean $bean, Activity $act, array $args)
-    {
-        $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
-        $userPartials          = $subscriptionsBeanName::getSubscribedUsers($bean);
-        $data                  = array(
-            'act_id'        => $act->id,
-            'bean_module'   => $bean->module_name,
-            'bean_id'       => $bean->id,
-            'args'          => $args,
-            'user_partials' => $userPartials,
-        );
-        if (count($userPartials) < 5) {
-            $subscriptionsBeanName::addActivitySubscriptions($data);
-        } else {
-            $job                   = BeanFactory::getBean('SchedulersJobs');
-            $job->requeue          = 1;
-            $job->name             = "ActivityStream add";
-            $job->data             = serialize($data);
-            $job->target           = "class::SugarJobAddActivitySubscriptions";
-            $job->assigned_user_id = $GLOBALS['current_user']->id;
-            $queue                 = new SugarJobQueue();
-            $queue->submitJob($job);
-        }
     }
 
     /**

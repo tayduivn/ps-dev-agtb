@@ -39,6 +39,16 @@ $dictionary['Activity'] = array(
             'source' => 'non-db',
         ),
 
+        'activities_teams' => array(
+            'name' => 'activities_teams',
+            'type' => 'link',
+            'relationship' => 'activities_teams',
+            'link_type' => 'many',
+            'module' => 'Users',
+            'bean_name' => 'User',
+            'source' => 'non-db',
+        ),
+
         // Relationships for M2M related beans.
         'contacts' => array(
             'name' => 'contacts',
@@ -153,6 +163,13 @@ $dictionary['Activity'] = array(
             'relationship' => 'task_activities',
             'source' => 'non-db',
             'vname' => 'LBL_TASKS',
+        ),
+        'notes' => array(
+            'name'         => 'notes',
+            'type'         => 'link',
+            'relationship' => 'note_activities',
+            'source'       => 'non-db',
+            'vname'        => 'LBL_NOTES',
         ),
 
         // Add table columns.

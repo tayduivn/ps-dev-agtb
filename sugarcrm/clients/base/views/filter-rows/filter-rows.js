@@ -10,8 +10,8 @@
     events: {
         'click a.addme': 'addRow',
         'click a.removeme': 'removeRow',
-        'change .filter-field select': 'handleFieldSelected',
-        'change .filter-operator select': 'handleOperatorSelected'
+        'change .filter-field input[type=hidden]': 'handleFieldSelected',
+        'change .filter-operator input[type=hidden]': 'handleOperatorSelected'
     },
 
     className: 'filter-definition-container',
@@ -301,13 +301,13 @@
                 var relate = _.find(this.fieldList, function(field) { return field.id_name === key; });
                 key = relate.name;
             }
-            $row.find('.filter-field select').select2('val', key).trigger('change');
+            $row.find('.filter-field input[type=hidden]').select2('val', key).trigger('change');
             if (_.isString(value)) {
                 value = {"$equals": value};
             }
             _.each(value, function(value, operator) {
                 $row.data('value', value);
-                $row.find('.filter-operator select')
+                $row.find('.filter-operator input[type=hidden]')
                     .select2('val', operator === '$dateRange' ? value : operator)
                     .trigger('change');
             });
@@ -405,7 +405,7 @@
             fields = app.metadata._patchFields(moduleName, module, app.utils.deepCopy(this.fieldList));
 
         // More patch for some field types
-        var fieldName = $row.find('.filter-field select').val(),
+        var fieldName = $row.find('.filter-field input[type=hidden]').select2('val'),
             fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
             fieldDef = fields[fieldName];
 
@@ -501,20 +501,6 @@
                 field.$('.input-append').removeClass('date');
                 field.$('input, textarea').on('keyup',_.debounce(_.bind(_keyUpCallback, field), 400));
             });
-            //Have to format the Blank value
-            //Be careful using fieldType and not fieldDef.type to not mess with converted fields
-            if (fieldType === 'enum') {
-                var _changeBlankLabel = function() {
-                    if (!_.isUndefined(this.items['']) && this.items[''] === '') {
-                        this.items = _.clone(this.items);
-                        this.items[''] = app.lang.getAppString('LBL_BLANK_VALUE');
-                    }
-                };
-                field.items = field.loadEnumOptions(false, function() {
-                    _changeBlankLabel.call(field);
-                });
-                _changeBlankLabel.call(field);
-            }
 
             if (fieldType === 'relate' && $row.data('value')) {
                 var self = this,

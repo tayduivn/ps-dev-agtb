@@ -33,6 +33,9 @@ class SidecarFilterLayoutMetaDataParser extends SidecarListLayoutMetaDataParser
             throw new \InvalidArgumentException("Client cannot be blank in SidecarFilterLayoutMetaDataParser");
         }
 
+        // Set the client
+        $this->client = $client;
+
         if (empty($packageName)) {
             require_once 'modules/ModuleBuilder/parsers/views/DeployedSidecarFilterImplementation.php';
             $this->implementation = new DeployedSidecarFilterImplementation($moduleName, $client);
