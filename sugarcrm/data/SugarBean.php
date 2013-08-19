@@ -1668,7 +1668,11 @@ class SugarBean
                 $type == 'enum') &&
                 !empty($this->$key)
             ) {
-                $this->$key = SugarCleaner::cleanHtml($this->$key);
+                if(!defined('ENTRY_POINT_TYPE') || constant('ENTRY_POINT_TYPE') != 'api') {
+                    // for API, text fields are not cleaned, only HTML fields are
+                    // since text fields supposed to be encoded by HBS templates when displaying
+                    $this->$key = SugarCleaner::cleanHtml($this->$key);
+                }
             }
         }
     }
