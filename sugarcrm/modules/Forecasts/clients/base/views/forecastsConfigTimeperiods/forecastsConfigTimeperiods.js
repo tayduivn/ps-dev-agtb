@@ -160,11 +160,11 @@
      */
     _setUpTimeperiodShowField: function (field) {
         // ensure Date object gets an additional function
-        field.events = _.extend({"change select":  "_updateSelection"}, field.events);
+        field.events = _.extend({"change input":  "_updateSelection"}, field.events);
         field.bindDomChange = function() {};
 
         field._updateSelection = function(event) {
-            var value =  $(event.target).val();
+            var value =  $(event.currentTarget).val();
             this.def.value = value;
             this.model.set(this.name, value);
         };
@@ -190,7 +190,7 @@
         field.def.value = this.model.get(field.name);
 
         // ensure selected day functions like it should
-        field.events = _.extend({"change select":  "_updateIntervals"}, field.events);
+        field.events = _.extend({"change input":  "_updateIntervals"}, field.events);
         field.bindDomChange = function() {};
 
         if(typeof(field.def.options) == 'string') {
@@ -204,7 +204,7 @@
          */
         field._updateIntervals = function(event) {
             //get the timeperiod interval selector
-            var selected_interval = $(event.target).val();
+            var selected_interval = $(event.currentTarget).val();
             this.def.value = selected_interval;
             this.model.set(this.name, selected_interval);
             this.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
