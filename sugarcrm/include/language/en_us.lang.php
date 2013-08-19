@@ -3204,7 +3204,6 @@ $app_strings = array (
     'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
-    'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
     /* Twitter Dashlet */
@@ -4080,7 +4079,6 @@ $app_strings = array (
     'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 9</li><li>Firefox 22</li><li>Safari 6</li><li>Chrome 27</li></ul>',
 
     //opportunity chart
-    'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'Selected record currently contains the following related values: {{{values}}}. Click "Confirm" to copy these values to this record. Click "Cancel" to retain the current values.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_CONTACTS_ACCOUNTS' => 'Selected Account has related values: {{{values}}}. Click "Confirm" to copy these values to the Contact. Click "Cancel" to retain the current values.',
     'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" data-container="body" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
@@ -4104,9 +4102,6 @@ $app_strings = array (
     'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
     'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => 'My Teams Opportunities',
 
-    //News feed
-    'LBL_NEWS_FEED_NO_DATA' => 'No data found.',
-
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment. Type @ to mention a user. Type # to reference a record.',
@@ -4121,7 +4116,6 @@ $app_strings = array (
 
     //attachments dashlet
     'LBL_MODULE_ATTACHMENTS_TITLE' => '{{module}} attachments',
-    'LBL_NO_ATTACHMENTS_FOUND' => 'No attachments found',
     'LBL_CREATE_ATTACHMENT' => 'Create attachment',
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',
