@@ -40,10 +40,15 @@
      */
     transactionValue: '',
     /**
-     * @type {Object}
-     * cached object for the currency drop-down
+     * @var {Object}
+     * reference to the currency dropdown field object
      */
     _currencyField: null,
+    /**
+     * @var {Boolean}
+     * tracks whether the currency dropdown field is disabled or not
+     */
+    _currencyFieldDisabled: false,
     /**
      * @var {Boolean}
      * whether or not the currency dropdown is hidden from view
@@ -88,7 +93,7 @@
 
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width','8px');
-            this.getCurrencyField().setDisabled(false);
+            this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
             this.getCurrencyField().render();
             return this;
         }
@@ -128,7 +133,8 @@
      * @param {Object} e element.
      */
     handleInputBlur: function(e) {
-        this.getCurrencyField().setDisabled(false);
+        this._currencyFieldDisabled = false;
+        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
     },
 
     /**
@@ -137,7 +143,8 @@
      * @param {Object} e element.
      */
     handleInputChange: function(e) {
-        this.getCurrencyField().setDisabled(true);
+        this._currencyFieldDisabled = true;
+        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
     },
 
 
@@ -232,8 +239,8 @@
     setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
         app.view.Field.prototype.setDisabled.call(this, disable);
-
-        this.getCurrencyField().setDisabled(disable);
+        this._currencyFieldDisabled = disable;
+        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
     },
 
     setMode: function(name) {
