@@ -127,6 +127,9 @@ class RepairAndClear
                 $this->rebuildExtensions();
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
+                //BEGIN SUGARCRM flav=ent ONLY
+                $this->repairPortalConfig();
+                //END SUGARCRM flav=ent ONLY
                 break;
         }
     }
@@ -144,6 +147,17 @@ class RepairAndClear
         $hideModuleMenu = true;
 		include_once('modules/Administration/repairDatabase.php');
 	}
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Rebuild the portal javascript config file.
+     */
+    public function repairPortalConfig()
+    {
+        require_once 'ModuleInstall/ModuleInstaller.php';
+        ModuleInstaller::handlePortalConfig();
+    }
+    //END SUGARCRM flav=ent ONLY
 
 	public function repairDatabaseSelectModules()
 	{

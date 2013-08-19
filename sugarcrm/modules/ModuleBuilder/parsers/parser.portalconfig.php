@@ -125,6 +125,12 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         if (file_exists($cachedPrivateMetadata))
             unlink($cachedPrivateMetadata);
 
+        // Verify the existence of the javascript config file
+        if (!file_exists('portal2/config.js')) {
+            require_once 'ModuleInstall/ModuleInstaller.php';
+            ModuleInstaller::handlePortalConfig();
+        }
+
         // Clear the Contacts file b/c portal flag affects rendering
         if (file_exists($cachedfile = sugar_cached('modules/Contacts/EditView.tpl')))
             unlink($cachedfile);
