@@ -10,7 +10,7 @@ nv.models.funnelChart = function() {
     , legend = nv.models.legend()
     ;
 
-  var margin = {top: 30, right: 20, bottom: 20, left: 20}
+  var margin = {top: 20, right: 10, bottom: 10, left: 10}
     , width = null
     , height = null
     , showLegend = true
@@ -62,7 +62,7 @@ nv.models.funnelChart = function() {
           availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
 
-      chart.update = function() { container.transition().duration(300).call(chart); };
+      chart.update = function() { container.transition().duration(chart.delay()).call(chart); };
       chart.container = this;
 
       //------------------------------------------------------------
@@ -196,7 +196,7 @@ nv.models.funnelChart = function() {
       var funnelWrap = g.select('.nv-funnelWrap')
           .datum( data.filter(function(d) { return !d.disabled; }) );
 
-      funnelWrap.transition().call(funnel);
+      funnelWrap.transition().duration(chart.delay()).call(funnel);
 
       //------------------------------------------------------------
 
@@ -251,7 +251,7 @@ nv.models.funnelChart = function() {
             })
           ;
 
-      g.select('.nv-y.nv-axis').transition()
+      g.select('.nv-y.nv-axis').transition().duration(chart.delay())
         .call(yAxis)
           .style('stroke-width', '1')
           .selectAll('line');
@@ -274,7 +274,7 @@ nv.models.funnelChart = function() {
           });
         }
 
-        container.transition().duration(300).call(chart);
+        container.transition().duration(chart.delay()).call(chart);
       });
 
       dispatch.on('tooltipShow', function(e) {

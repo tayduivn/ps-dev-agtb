@@ -48,20 +48,52 @@ nv.utils.windowResize = function(fun)
   else {
       //The browser does not support Javascript event binding
   }
-}
+};
 
 nv.utils.windowUnResize = function(fun)
 {
-  if(window.detachEvent) {
+  if (window.detachEvent) {
       window.detachEvent('onresize', fun);
   }
-  else if(window.removeEventListener) {
+  else if (window.removeEventListener) {
       window.removeEventListener('resize', fun, true);
   }
   else {
       //The browser does not support Javascript event binding
   }
 }
+
+nv.utils.resizeOnPrint = function(fn) {
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                fn();
+            }
+        });
+    } else if (window.attachEvent) {
+      window.attachEvent("onbeforeprint", fn);
+    } else {
+      window.onbeforeprint = fn;
+    }
+    //TODO: allow for a second call back to undo using
+    //window.attachEvent("onafterprint", fn);
+};
+
+nv.utils.unResizeOnPrint = function(fn) {
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.removeListener(function(mql) {
+            if (mql.matches) {
+                fn();
+            }
+        });
+    } else if (window.detachEvent) {
+      window.detachEvent("onbeforeprint", fn);
+    } else {
+      window.onbeforeprint = null;
+    }
+};
 
 // Backwards compatible way to implement more d3-like coloring of graphs.
 // If passed an array, wrap it in a function which implements the old default

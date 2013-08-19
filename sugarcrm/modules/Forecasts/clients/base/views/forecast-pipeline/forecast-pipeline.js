@@ -81,6 +81,8 @@
         }, this);
 
         nv.utils.windowResize(this.chart.update);
+
+        this.resizeOnPrint(this.chart);
     },
 
     loadData: function(options) {
@@ -119,5 +121,29 @@
 
     hideTooltip: function(event) {
         this.$(event.currentTarget).tooltip("hide");
+    },
+
+    resizeOnPrint: function(chart) {
+
+        var resizeChart = function(){
+            chart.delay(0);
+            chart.update();
+            chart.delay(300);
+        };
+
+        if (window.matchMedia) {
+            var mediaQueryList = window.matchMedia('print');
+            mediaQueryList.addListener(function(mql) {
+                if (mql.matches) {
+                    resizeChart();
+                }
+            });
+        } else if (window.attachEvent) {
+          window.attachEvent("onbeforeprint", resizeChart);
+        } else {
+          window.onbeforeprint = resizeChart;
+        }
+
+        window.onafterprint = resizeChart;
     }
 })
