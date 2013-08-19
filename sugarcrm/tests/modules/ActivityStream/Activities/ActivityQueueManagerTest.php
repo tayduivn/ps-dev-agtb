@@ -65,7 +65,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $actManager = new TestActivityQueueManager();
-        $actManager->exec_prepareChanges($contact, $activityData);
+        $actManager->prepareChanges($contact, $activityData);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -110,7 +110,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $actManager = new TestActivityQueueManager();
-        $actManager->exec_prepareChanges($lead, $activityData);
+        $actManager->prepareChanges($lead, $activityData);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -156,7 +156,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $actManager = new TestActivityQueueManager();
-        $actManager->exec_prepareChanges($account1, $activityData);
+        $actManager->prepareChanges($account1, $activityData);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -207,7 +207,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $actManager = new TestActivityQueueManager();
-        $actManager->exec_prepareChanges($account1, $activityData);
+        $actManager->prepareChanges($account1, $activityData);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -273,7 +273,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $actManager = new TestActivityQueueManager();
-        $actManager->exec_prepareChanges($contact, $activityData);
+        $actManager->prepareChanges($contact, $activityData);
 
         $this->assertEquals($expectedData, $activityData);
 
@@ -341,7 +341,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $args = array(
             'isUpdate'    => $isUpdate,
-            'dataChanges' => array("changes" => array())
+            'dataChanges' => array("assigned_user_id" => array())
         );
 
         $mockActivity = self::getMock('Activity', array('save', 'processRecord'));
@@ -432,16 +432,70 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array('ForecastManagerWorksheets', false),
         );
     }
+
+    /**
+     * @dataProvider dataProviderAssignedUserChanged
+     */
+    public function testAssignmentChanged($auditedChanges, $allChanges, $expected, $assertMessage)
+    {
+        $bean = BeanFactory::getBean('Contacts');
+        $allDataChanges = array(
+            'dataChanges' => $allChanges,
+        );
+
+        //mock out db manager
+        $dbManagerClass = get_class($bean->db);
+        $dbManager = self::getMock($dbManagerClass, array('getDataChanges'));
+        $dbManager->expects($this->any())->method('getDataChanges')->will($this->returnValue($allDataChanges));
+        $bean->db = $dbManager;
+
+        $auditedDataChanges = array(
+            'dataChanges' => $auditedChanges,
+        );
+
+        $actManager = new TestActivityQueueManager();
+        $actual = $actManager->assignmentChanged($bean, $auditedDataChanges);
+        $this->assertEquals($expected, $actual, $assertMessage);
+    }
+
+    public static function dataProviderAssignedUserChanged()
+    {
+        return array(
+            array(
+                array('assigned_user_id' => array()),
+                array('assigned_user_id' => array(), 'foo' => array()),
+                true,
+                'Assignment changed when assigned_user_id is in audited changes',
+            ),
+            array(
+                array(),
+                array('assigned_user_id' => array(), 'foo' => array()),
+                true,
+                'Assignment changed when assigned_user_id is not audited, but still changed',
+            ),
+            array(
+                array(),
+                array('foo' => array()),
+                false,
+                'Assignment did not change when assigned_user_id is not changed at all (audited or otherwise)',
+            ),
+        );
+    }
+
 }
 
 class TestActivityQueueManager extends ActivityQueueManager
 {
-    public function exec_prepareChanges($bean, &$data)
+    public function prepareChanges($bean, &$data)
     {
-        return $this->prepareChanges($bean, $data);
+        parent::prepareChanges($bean, $data);
     }
     public function createOrUpdate($bean, $args, $activity)
     {
         return parent::createOrUpdate($bean, $args, $activity);
+    }
+    public function assignmentChanged($bean, $args)
+    {
+        return parent::assignmentChanged($bean, $args);
     }
 }

@@ -369,6 +369,28 @@ class ActivityQueueManager
     }
 
     /**
+     * Check to see if the assigned user for the given bean has changed
+     *
+     * @param  $bean Bean that was created or updated
+     * @param  $args Array containing audited data changes
+     * @return bool  Was the assigned user changed
+     */
+    protected function assignmentChanged($bean, $args)
+    {
+        //first check the activity enabled data changes
+        $assignmentChanged = isset($args['dataChanges']) && isset($args['dataChanges']['assigned_user_id']);
+
+        //then check the full list of data changes in case the assigned_user_id field is not audited
+        if (!$assignmentChanged) {
+            $assignmentChanges = $bean->db->getDataChanges($bean, array('field_filter'=>array('assigned_user_id')));
+            $assignmentChanged = isset($assignmentChanges['dataChanges'])
+                && isset($assignmentChanges['dataChanges']['assigned_user_id']);
+        }
+
+        return $assignmentChanged;
+    }
+
+    /**
      * Add Record Subscriptions:
      *   (1) Assigned-To User
      *   (2) CreatedBy User if other than AssignedTo User and event is Not an Update
@@ -379,8 +401,8 @@ class ActivityQueueManager
      */
     protected function addRecordSubscriptions($args, SugarBean $bean)
     {
-        // Subscribe the user assigned to this record if an existing non-Portal User
-        if (isset($bean->assigned_user_id)) {
+        // Subscribe the user assigned to this record if an existing non-Portal User and action is create or assignment changed
+        if (isset($bean->assigned_user_id) && (!$args['isUpdate'] || $this->assignmentChanged($bean, $args))) {
             $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id, array('strict_retrieve' => true));
             if (!empty($assigned_user) && !$assigned_user->portal_only) {
                 $this->subscribeUserToRecord($assigned_user, $bean);
