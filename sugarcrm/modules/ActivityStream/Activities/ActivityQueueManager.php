@@ -53,7 +53,7 @@ class ActivityQueueManager
             // potentially slow operation.
             if ($eventTriggered) {
                 $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
-                $subscriptionsBeanName::processSubscriptions($bean, $activity, $args);
+                $subscriptionsBeanName::processSubscriptions($bean, $activity, $args, array('disable_row_level_security' => true));
             }
         }
     }
@@ -113,13 +113,8 @@ class ActivityQueueManager
             return false;
         }
 
-        // Subscribe the user that created the record, and the user to whom the
-        // record is assigned.
-        $subs = BeanFactory::getBeanName('Subscriptions');
-        if (isset($bean->assigned_user_id)) {
-            $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id);
-            $subs::subscribeUserToRecord($assigned_user, $bean);
-        }
+        // Add Appropriate Subscriptions for this Bean
+        $this->addRecordSubscriptions($args, $bean);
 
         $data = array(
             'object' => self::getBeanAttributes($bean),
@@ -129,13 +124,9 @@ class ActivityQueueManager
             $data['changes']    = $args['dataChanges'];
             $this->prepareChanges($bean, $data);
         } else {
-            // Subscribe the user that created the record.
-            if (isset($bean->created_by)) {
-                $created_user = BeanFactory::getBean('Users', $bean->created_by);
-                $subs::subscribeUserToRecord($created_user, $bean);
-            }
             $act->activity_type = 'create';
         }
+
         $act->parent_id   = $bean->id;
         $act->parent_type = $bean->module_name;
         $act->data        = $data;
@@ -351,5 +342,51 @@ class ActivityQueueManager
             return $bean->name;
         }
         return '';
+    }
+
+    /**
+     * Add Record Subscriptions:
+     *   (1) Assigned-To User
+     *   (2) CreatedBy User if other than AssignedTo User and event is Not an Update
+     *
+     * @param  array $args
+     * @param  SugarBean $bean
+     * @return void
+     */
+    protected function addRecordSubscriptions($args, SugarBean $bean)
+    {
+        // Subscribe the user assigned to this record if an existing non-Portal User
+        if (isset($bean->assigned_user_id)) {
+            $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id, array('strict_retrieve' => true));
+            if (!empty($assigned_user) && !$assigned_user->portal_only) {
+                $this->subscribeUserToRecord($assigned_user, $bean);
+            }
+        }
+
+        if (!$args['isUpdate']) {
+            // Subscribe the user that created the record if an existing non-Portal User and
+            // te user is different than the assigned-to user.
+            if (isset($bean->created_by) &&
+                (!isset($bean->assigned_user_id) || ($bean->created_by !== $bean->assigned_user_id))
+            ) {
+                $created_user = BeanFactory::getBean('Users', $bean->created_by, array('strict_retrieve' => true));
+                if (!empty($created_user) && !$created_user->portal_only) {
+                    $this->subscribeUserToRecord($created_user, $bean);
+                }
+            }
+        }
+    }
+
+    /**
+     * Subscribe supplied User to supplied Bean
+     *
+     * @param  User $user
+     * @param  SugarBean $bean
+     * @return void
+     */
+    protected function subscribeUserToRecord(User $user, SugarBean $bean)
+    {
+        $subs = BeanFactory::getBeanName('Subscriptions');
+        $subs::subscribeUserToRecord($user, $bean, array('disable_row_level_security' => true));
     }
 }
