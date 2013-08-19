@@ -57,8 +57,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         }
 
         // Load the base/custom metadata file first
-        if (!file_exists($this->loadedSupbanelFileName)) {
-            throw new Exception("Metadata file '{$this->loadedSupbanelFileName}' does not exist for subpanel {$this->sidecarSubpanelName}");
+        if (!file_exists($this->loadedSubpanelFileName)) {
+            throw new Exception("Metadata file '{$this->loadedSubpanelFileName}' does not exist for subpanel {$this->loadedSubpanelFileName}");
         }
         
         include $this->loadedSubpanelFileName;
