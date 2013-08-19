@@ -343,6 +343,7 @@ class ConnectorsController extends SugarController {
 				    	}
 					}
 					$source = SourceFactory::getSource($source_id);
+
 					if(!empty($properties)) {
 					    $source->setProperties($properties);
 					    $source->saveConfig();
