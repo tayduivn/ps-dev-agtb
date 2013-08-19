@@ -158,6 +158,18 @@ class ActivityQueueManager
         }
         $lhs                = BeanFactory::getBean($args['module'], $args['id']);
         $rhs                = BeanFactory::getBean($args['related_module'], $args['related_id']);
+        if (empty($lhs->name) && !empty($args['name'])) {
+            $lhs->name = $args['name'];
+        }
+        if (empty($lhs->id) && !empty($args['id'])) {
+            $lhs->id = $args['id'];
+        }
+        if (empty($rhs->name) && !empty($args['related_name'])) {
+            $rhs->name = $args['related_name'];
+        }
+        if (empty($rhs->id) && !empty($args['related_id'])) {
+            $rhs->id = $args['related_id'];
+        }
         $data               = array(
             'object'       => self::getBeanAttributes($lhs),
             'subject'      => self::getBeanAttributes($rhs),
