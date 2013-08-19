@@ -743,14 +743,12 @@ $app_list_strings = array (
     'Pending' => 'Pending',
     'Rejected' => 'Rejected',
   ),
-   'bug_type_default_key' => 'Bug',
-  'bug_type_dom' =>
-  array (
+  'bug_type_default_key' => 'Bug',
+  'bug_type_dom' => array (
     'Defect' => 'Defect',
     'Feature' => 'Feature',
   ),
- 'case_type_dom' =>
-  array (
+ 'case_type_dom' => array (
     'Administration' => 'Administration',
     'Product' => 'Product',
     'User' => 'User',
