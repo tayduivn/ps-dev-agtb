@@ -445,6 +445,55 @@ describe("Record View", function () {
                 expect(_.indexOf(expected, noEditField) >= 0).toBeTruthy();
             });
         });
+
+        it("Should add a fieldset to the noEditFields array when user does not have write access to any of the child fields", function () {
+            var fieldset = {
+                name: 'fieldset_field',
+                type: 'fieldset',
+                fields: [{name: 'case_number'}]
+            };
+            var meta = {
+                panels: [{
+                    fields: [fieldset]
+                }]
+            };
+
+            hasAccessToModelStub.restore();
+            sinonSandbox.stub(SugarTest.app.acl, "_hasAccessToField", function (action, acls, field) {
+                return field !== 'case_number';
+            });
+
+            view._buildGridsFromPanelsMetadata(meta.panels);
+
+            var actual = view.noEditFields;
+
+            expect(actual.length).toBe(1);
+            expect(actual[0]).toEqual(fieldset.name);
+        });
+
+        it("Should not add a fieldset to the noEditFields array when user has write access to any child fields", function () {
+            var fieldset = {
+                name: 'fieldset_field',
+                type: 'fieldset',
+                fields: [{name: 'case_number'}, {name: 'blah'}]
+            };
+            var meta = {
+                panels: [{
+                    fields: [fieldset]
+                }]
+            };
+
+            hasAccessToModelStub.restore();
+            sinonSandbox.stub(SugarTest.app.acl, "_hasAccessToField", function (action, acls, field) {
+                return field !== 'case_number';
+            });
+
+            view._buildGridsFromPanelsMetadata(meta.panels);
+
+            var actual = view.noEditFields;
+
+            expect(_.isEmpty(actual)).toBe(true);
+        });
     });
 
     describe('Switching to next and previous record', function () {
