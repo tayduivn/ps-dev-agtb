@@ -259,12 +259,18 @@
      * @param evt change event from the select2 selected values
      */
     handleColumnModelChange: function(evt) {
-        var arr = [];
-        _.each($(evt.target).val().split(','), function(field) {
-            arr.push(field);
-        }, this);
+        // did we add something?  if so, lets add it to the selectedOptions
+        if (!_.isUndefined(evt.added)) {
+            this.selectedOptions.push(evt.added);
+        }
 
-        this.setModelValue(arr);
+        // did we remove something? if so, lets remove it from the selectedOptions
+        if (!_.isUndefined(evt.removed)) {
+            this.selectedOptions = _.without(this.selectedOptions, evt.removed);
+        }
+
+        // pass the val from the evt since it's already a nicly formatted array of the selected values
+        this.setModelValue(evt.val);
     },
 
     /**

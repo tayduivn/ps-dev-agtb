@@ -325,7 +325,7 @@ abstract class source{
  	 * @return result boolean result of the test function
  	 */
     public function test() {
-    	return false;
+    	return true;
     }
 
 

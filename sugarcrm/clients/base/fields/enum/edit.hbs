@@ -26,12 +26,5 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<select name="{{name}}" {{#if def.isMultiSelect}} multiple="multiple"{{/if}}>
-    {{#if hasBlank}}
-    <option value=""{{#has "" value}}selected{{/has}}></option>
-    {{/if}}
-    {{#eachOptions items}}
-        <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
-    {{/eachOptions}}
-</select>
+<input type="hidden" name="{{name}}">
 <p class="help-block"></p>

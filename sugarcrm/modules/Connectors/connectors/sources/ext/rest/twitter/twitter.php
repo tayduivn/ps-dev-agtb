@@ -30,10 +30,43 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/connectors/sources/ext/rest/rest.php');
 
 class ext_rest_twitter extends ext_rest {
+
+    protected $_has_testing_enabled = true;
+
     public function __construct(){
         parent::__construct();
         $this->_enable_in_wizard = false;
         $this->_enable_in_hover = true;
+    }
+
+    /**
+     * test
+     * This method is called from the administration interface to run a test of the service
+     * It is up to subclasses to implement a test and set _has_testing_enabled to true so that
+     * a test button is rendered in the administration interface
+     *
+     * @return result boolean result of the test function
+     */
+    public function test() {
+        require_once 'vendor/Zend/Oauth/Consumer.php';
+
+        $api = ExternalAPIFactory::loadAPI('Twitter', true);
+
+        if ($api) {
+            $properties = $this->getProperties();
+            $config = array(
+                'callbackUrl' => 'http://www.sugarcrm.com',
+                'siteUrl' => $api->getOauthRequestURL(),
+                'consumerKey' => $properties['oauth_consumer_key'],
+                'consumerSecret' => $properties['oauth_consumer_secret']
+            );
+
+            $consumer = new Zend_Oauth_Consumer($config);
+            $consumer->getRequestToken();
+            return true;
+        }
+        
+        return false;
     }
 
     /*

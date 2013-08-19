@@ -49,7 +49,7 @@ class SugarQuery
     /**
      * @var null|array
      */
-    public $order_by = null;
+    public $order_by = array();
 
     /**
      * @var null|integer

@@ -26,9 +26,5 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<select data-placeholder=" " name="{{name}}">
-    {{#eachOptions enumOptions}}
-        <option value="{{{this.key}}}" {{#has this.key ../value}}selected{{/has}}>{{this.value}}</option>
-    {{/eachOptions}}
-</select>
+<input type="hidden" name="{{name}}">
 <p class="help-block"></p>

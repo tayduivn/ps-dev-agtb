@@ -179,6 +179,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'label' => 'Columns',
                     'type' => 'enum',
                     'isMultiSelect' => true,
+                    'ordered' => true,
                     'span' => 12,
                     'hasBlank' => true,
                 ),

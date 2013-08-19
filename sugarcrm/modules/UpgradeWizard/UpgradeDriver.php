@@ -248,8 +248,12 @@ abstract class UpgradeDriver
      */
     public function ensureDir($dir)
     {
+        $mode = 0770;
+        if(!empty($this->config['default_permissions']['dir_mode'])) {
+            $mode = $this->config['default_permissions']['dir_mode'];
+        }
         if(!is_dir($dir)) {
-            mkdir($dir, 0770, true);
+            mkdir($dir, $mode, true);
         }
         if(!is_dir($dir)) {
             throw new Exception("Unable to create directory: $dir");

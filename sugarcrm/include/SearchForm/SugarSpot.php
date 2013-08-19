@@ -372,7 +372,13 @@ class SugarSpot
             $custom_select = isset($options['custom_select']) ? $options['custom_select'] : '';
             $custom_from = isset($options['custom_from']) ? $options['custom_from'] : '';
             $custom_where = isset($options['custom_where']) ? $options['custom_where'] : '';
-
+            if (isset($options['custom_where_module'][$moduleName])) {
+                if (!empty($custom_where)) {
+                    $custom_where .= " AND {$options['custom_where_module'][$moduleName]}";
+                } else {
+                    $custom_where = $options['custom_where_module'][$moduleName];
+                }
+            }
             $allowBlankSearch = false;
             // Add an extra search filter for my items
             // Verify the bean has assigned_user_id before we blindly assume it does
