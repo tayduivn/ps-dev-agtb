@@ -130,8 +130,7 @@
                         self._showSuccess = true;
                         self._showResult = true;
                         self.resultLabel = "LBL_PASSWORD_REQUEST_SENT";
-                        // Replace buttons by a unique Back button
-                        self.options.meta.buttons = self._backButton;
+                        self.model.clear();
                         if (!self.disposed) {
                             self.render();
                         }
@@ -143,8 +142,6 @@
 
                             self.resultLabel = err.message || 'LBL_PASSWORD_REQUEST_ERROR';
 
-                        // Replace buttons by a unique Back button
-                        self.options.meta.buttons = self._backButton;
                         if (!self.disposed) {
                             self.render();
                         }
