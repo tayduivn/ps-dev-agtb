@@ -965,15 +965,6 @@ $dictionary['Product'] = array(
             'relationship_type' => 'one-to-many'
         ),
         //BEGIN SUGARCRM flav=pro ONLY
-        'products_worksheet' =>  array(
-            'lhs_module' => 'Products',
-            'lhs_table' => 'products',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Worksheet',
-            'rhs_table' => 'worksheet',
-            'rhs_key' => 'related_id',
-            'relationship_type' => 'one-to-many'
-        ),
         'products_revenuelineitems' =>  array(
             'rhs_module' => 'Products',
             'rhs_table' => 'products',

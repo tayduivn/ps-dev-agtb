@@ -47,7 +47,6 @@ class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
     public function get_beans()
     {
         return array(
-            array('Worksheet'),
             array('ForecastOpportunities'),
         );
     }

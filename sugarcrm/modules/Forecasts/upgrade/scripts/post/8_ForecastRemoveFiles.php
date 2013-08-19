@@ -23,9 +23,9 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
     public function run()
     {
 
-        // we only need to remove these files if the from_version is less than 7.0.0 but greater or equal than 6.7.0
+        // we only need to remove these files if the from_version is less than 7.0 but greater or equal than 6.7.0
         if (version_compare($this->from_version, '7.0', '<')
-            && version_compare($this->from_version, '6.7', '>=')
+            && version_compare($this->from_version, '6.7.0', '>=')
         ) {
             // files to delete
             $files = array(
@@ -100,8 +100,40 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
                 'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.hbt',
                 'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.js',
                 'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.php',
+                'modules/Forecasts/ForecastManagerWorksheet.php',
+                'modules/Forecasts/ForecastWorksheet.php',
+                'modules/Forecasts/WorksheetSeedData.php',
+                'modules/Forecasts/clients/base/api/ForecastsCommittedApi.php',
+                'modules/Forecasts/clients/base/api/ForecastsCurrentUserApi.php',
+                'modules/Forecasts/clients/base/api/ForecastsFilters.php',
+                'modules/Forecasts/clients/base/api/ForecastsWorksheetApi.php',
+                'modules/Forecasts/clients/base/api/ForecastsWorksheetManagerApi.php',
+                'modules/Forecasts/action_view_map.php',
+                'modules/Forecasts/Chart.tpl',
+                'modules/Forecasts/Charts.php',
+                'modules/Forecasts/DetailView.php',
+                'modules/Forecasts/DetailView.tpl',
+                'modules/Forecasts/Error.php',
+                'modules/Forecasts/forecasts.js',
+                'modules/Forecasts/field_arrays.php',
+                'modules/Forecasts/ListView.html',
+                'modules/Forecasts/ListViewForecast.tpl',
+                'modules/Forecasts/Menu.php',
+                'modules/Forecasts/SearchForm.html',
+                'modules/Forecasts/TreeData.php',
+                'modules/Forecasts/Worksheet.php',
+                'modules/Forecasts/index.php',
+                'modules/Forecasts/views/view.noaccess.php',
                 'clients/base/layouts/inspector',
-                'clients/base/views/inspector-header'
+                'clients/base/views/inspector-header',
+                'modules/Forecasts/clients/base/views/forecastsChart',
+                'modules/Forecasts/views/view.sidecar.php',
+                'modules/Forecasts/clients/base/api/ForecastsCurrentUserApi.php',
+                'modules/Forecasts/clients/base/api/ForecastsCommittedApi.php',
+                'modules/Forecasts/clients/base/api/FiltersApi.php',
+                'modules/Forecasts/clients/base/api/ForecastsWorksheetApi.php',
+                'modules/Forecasts/clients/base/api/ForecastsWorksheetManager.php',
+                'modules/Forecasts/tpls'                
             );
 
             $this->fileToDelete($files);

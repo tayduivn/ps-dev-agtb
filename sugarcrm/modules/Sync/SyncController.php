@@ -74,7 +74,6 @@ $moduleList =  array(
 			
 $read_only_override = array(
 	'Quotas',
-	'Worksheet',
 	'ProductBundles',
 	'ProductBundleNotes',
 	'TeamSets',

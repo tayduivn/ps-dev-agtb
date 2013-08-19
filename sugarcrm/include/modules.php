@@ -162,7 +162,6 @@ $beanList['Forecasts']  = 'Forecast';
 $beanList['ForecastWorksheets']  = 'ForecastWorksheet';
 $beanList['ForecastManagerWorksheets']  = 'ForecastManagerWorksheet';
 $beanList['ForecastSchedule']  = 'ForecastSchedule';
-$beanList['Worksheet']  = 'Worksheet';
 $beanList['ForecastOpportunities']  = 'ForecastOpportunities';
 $beanList['ForecastDirectReports'] = 'ForecastDirectReports';
 $beanList['Quotas']     = 'Quota';
@@ -301,7 +300,6 @@ $beanFiles['ForecastSchedule']  = 'modules/ForecastSchedule/ForecastSchedule.php
 $beanFiles['ForecastOpportunities']  = 'modules/Forecasts/ForecastOpportunities.php';
 $beanFiles['ForecastDirectReports'] = 'modules/Forecasts/ForecastDirectReports.php';
 $beanFiles['Quota']  = 'modules/Quotas/Quota.php';
-$beanFiles['Worksheet']  = 'modules/Forecasts/Worksheet.php';
 $beanFiles['WorkFlow']  = 'modules/WorkFlow/WorkFlow.php';
 $beanFiles['WorkFlowTriggerShell']  = 'modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php';
 $beanFiles['WorkFlowAlertShell']  = 'modules/WorkFlowAlertShells/WorkFlowAlertShell.php';
@@ -339,7 +337,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Manufacturers', 'ProductBundles', 'ProductBundleNotes', 'ProductCategories', 'ProductTemplates', 'ProductTypes',
     'Shippers', 'TaxRates', 'TeamNotices', 'Teams', 'TimePeriods', 'ForecastOpportunities', 'Quotas',
     'KBDocumentRevisions', 'KBDocumentKBTags', 'KBTags', 'KBContents', 'ContractTypes', 'ForecastSchedule',
-    'Worksheet', 'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',
+    'ACLFields', 'Holidays', 'SNIP', 'ForecastDirectReports',
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync', 'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing', 'OptimisticLock',
     'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses', 'EmailText',
@@ -431,7 +429,6 @@ $report_include_modules['TimePeriods'] = 'TimePeriod';
 $report_include_modules['TrackerPerfs']     = 'TrackerPerf';
 $report_include_modules['TrackerSessions']  = 'TrackerSession';
 $report_include_modules['TrackerQueries']   = 'TrackerQuery';
-$report_include_modules['Worksheet']    = 'Worksheet';
 $report_include_modules['Quotas']    = 'Quota';
 //END SUGARCRM flav=pro ONLY
 
