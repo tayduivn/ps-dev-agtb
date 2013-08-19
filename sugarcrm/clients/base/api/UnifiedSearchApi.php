@@ -67,6 +67,11 @@ class UnifiedSearchApi extends SugarListApi {
             $options['limitPerModule'] = (int)$args['max_num_module'];
         }
 
+        $options['searchFields'] = array();
+        if (!empty($args['search_fields'])) {
+            $options['searchFields'] = explode(',', $args['search_fields']);
+        }
+
         $options['selectFields'] = array('id');
         if ( !empty($args['order_by']) ) {
             if ( strpos($args['order_by'],',') !== 0 ) {
@@ -309,6 +314,27 @@ class UnifiedSearchApi extends SugarListApi {
             $options['moduleList'] = $moduleList;
         }
 
+        if (!empty($options['searchFields'])) {
+            $customWhere = array();
+            foreach ($options['moduleList'] as $module) {
+                $seed = BeanFactory::getBean($module);
+                $fields = array_keys($seed->field_defs);
+                $existingfields = array_intersect($fields, $options['searchFields']);
+                if (!empty($existingfields)) {
+                    foreach ($existingfields as $field) {
+                        if (empty($seed->field_defs[$field]['full_text_search'])) {
+                            continue;
+                        }
+                        $prefix = $seed->module_name;
+                        if (!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
+                            $customWhere[] = "{$prefix}.{$field}";
+                        }
+                    }
+                }
+            }
+            $options['searchFields'] = $customWhere;
+        }
+
         $options['moduleFilter'] = $options['moduleList'];
 
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);
@@ -415,6 +441,32 @@ class UnifiedSearchApi extends SugarListApi {
             $searchOptions['modules'] = $options['moduleList'] = $moduleList;
         }
 
+        if (!empty($options['searchFields'])) {
+            $customWhere = array();
+            foreach ($options['moduleList'] as $module) {
+                $seed = BeanFactory::getBean($module);
+                $fields = array_keys($seed->field_defs);
+                $existingfields = array_intersect($fields, $options['searchFields']);
+                if (!empty($existingfields)) {
+                    $customTable = $seed->get_custom_table_name();
+                    $table = $seed->table_name;
+                    foreach ($existingfields as $field) {
+                        if (!isset($seed->field_defs[$field]['unified_search']) || $seed->field_defs[$field]['unified_search'] !== true) {
+                            continue;
+                        }
+                        $prefix = $table;
+                        if (isset($GLOBALS['dictionary'][$seed->object_name]['custom_fields'][$field])) {
+                            $prefix = $customTable;
+                        }
+                        if (!isset($seed->field_defs[$field]['source']) || $seed->field_defs[$field]['source'] != 'non-db') {
+                            $customWhere[$module][] = "{$prefix}.{$field} LIKE '{$options['query']}%'";
+                        }
+                    }
+                    $searchOptions['custom_where_module'][$module] = '(' . implode(' OR ', $customWhere[$module]) . ')';
+                }
+            }
+        }
+
         $offset = $options['offset'];
         // One for luck.
         // Well, actually it's so that we know that there are additional results
@@ -437,7 +489,6 @@ class UnifiedSearchApi extends SugarListApi {
         if(isset($options['custom_from'])) {
             $searchOptions['custom_from'] = $options['custom_from'];
         }
-
 
         if(isset($options['custom_where'])) {
             $searchOptions['custom_where'] = $options['custom_where'];

@@ -13,6 +13,9 @@ describe("Forgotpassword View", function() {
                         },
                         {
                             "name": "email"
+                        },
+                        {
+                            "name": "first_name"
                         }
                     ]
                 }
@@ -72,6 +75,49 @@ describe("Forgotpassword View", function() {
         expect(view._showResult).toBeTruthy();
         expect(view._showSuccess).toBeFalsy();
         expect(view.resultLabel).toEqual('LBL_PASSWORD_REQUEST_ERROR');
+    });
+
+    it("should be able to not make requests if honeypot filled", function() {
+        view.model = new Backbone.Model();
+        view.model.set('username','test');
+        view.model.set('email',[{email_address:'test@test.com'}]);
+
+        var validMock = sinon.mock(view.model,'doValidate', function(arg,callback){
+            callback(true);
+        });
+        var ajaxSpy = sinon.spy(jQuery,'ajax');
+        var oValue = SugarTest.app.config.honeypot_on;
+        SugarTest.app.config.honeypot_on = true;
+        view.$el.append('<input name="first_name" value="bob">');
+        view.forgotPassword();
+
+        expect(ajaxSpy.called).toBeFalsy();
+
+        SugarTest.app.config.honeypot_on = oValue;
+        validMock.restore();
+        ajaxSpy.restore();
+    });
+
+    it("should be able to not make requests if honeypot filled", function() {
+        view.model = new Backbone.Model();
+        view.model.set('username','test');
+        view.model.set('email',[{email_address:'test@test.com'}]);
+        view.model.set('first_name','testName');
+
+        var validMock = sinon.mock(view.model,'doValidate', function(arg,callback){
+            callback(true);
+        });
+        var ajaxSpy = sinon.spy(jQuery,'ajax');
+        var oValue = SugarTest.app.config.honeypot_on;
+        SugarTest.app.config.honeypot_on = true;
+
+        view.forgotPassword();
+
+        expect(ajaxSpy.called).toBeFalsy();
+
+        SugarTest.app.config.honeypot_on = oValue;
+        validMock.restore();
+        ajaxSpy.restore();
     });
 })
 ;

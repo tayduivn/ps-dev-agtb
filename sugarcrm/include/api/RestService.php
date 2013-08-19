@@ -134,6 +134,7 @@ class RestService extends ServiceBase
      */
     public function execute()
     {
+        ob_start();
         $this->response = $this->getResponse();
         try {
             $this->request = $this->getRequest();
@@ -296,6 +297,8 @@ class RestService extends ServiceBase
             $apiClass = $this->loadApiClass($route);
             $apiMethod = $route['method'];
 
+            $this->handleErrorOutput('php_error_before_api');
+
             $this->response->setContent($apiClass->$apiMethod($this,$argArray));
 
             if(!empty($GLOBALS['sugar_config']['maintenanceMode']) && !empty($GLOBALS['current_user']->id)) {
@@ -316,6 +319,10 @@ class RestService extends ServiceBase
             }
 
             $this->respond($route, $argArray);
+            
+            if (empty($route['rawReply'])) {
+                $this->handleErrorOutput('php_error_after_api');
+            }
         } catch ( Exception $e ) {
             $this->handleException($e);
         }

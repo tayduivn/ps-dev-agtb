@@ -64,7 +64,7 @@ describe("radioenum field", function() {
         expect(actual).toEqual(expected);
     });
 
-    it("use enum controller to format a labeled select and have option selected on list edit template", function() {
+    it("use enum controller to have option selected in Select2 widget on list edit template", function() {
         var field = fields.radioenum = SugarTest.createField("base", fieldName, fieldType, "edit", {options: "bugs_type_dom"});
 
         //Fake extendsFrom listeditable
@@ -72,12 +72,10 @@ describe("radioenum field", function() {
 
         field.view.action = 'list';
 
-        original = 'Defect';
-        expected = 'DefectValue';
-        field.model.set(fieldName, original);
+        expected = 'Defect';
+        field.model.set(fieldName, expected);
         field.render();
-        actual = field.$('option[value=Defect]').text();
+        actual = field.$('input').select2('val');
         expect(actual).toEqual(expected);
-        expect(field.$('option[value=Defect]').is(':selected')).toBeTruthy();
     });
 });

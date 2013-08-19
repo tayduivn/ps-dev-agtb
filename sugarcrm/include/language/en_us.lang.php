@@ -743,14 +743,12 @@ $app_list_strings = array (
     'Pending' => 'Pending',
     'Rejected' => 'Rejected',
   ),
-   'bug_type_default_key' => 'Bug',
-  'bug_type_dom' =>
-  array (
+  'bug_type_default_key' => 'Bug',
+  'bug_type_dom' => array (
     'Defect' => 'Defect',
     'Feature' => 'Feature',
   ),
- 'case_type_dom' =>
-  array (
+ 'case_type_dom' => array (
     'Administration' => 'Administration',
     'Product' => 'Product',
     'User' => 'User',
@@ -1662,6 +1660,20 @@ $app_list_strings = array (
         '10' => 'Every 10 Minutes',
         '15' => 'Every 15 Minutes',
         '30' => 'Every 30 Minutes',
+    ),
+    'dashlet_limit_options' =>
+    array(
+        5 => 5,
+        10 => 10,
+        15 => 15,
+        20 => 20,
+    ),
+    'dashlet_webpage_limit_options' =>
+    array(
+        1 => 1,
+        3 => 3,
+        5 => 5,
+        10 => 10,
     ),
   'date_range_search_dom' =>
   array(
@@ -3139,6 +3151,7 @@ $app_strings = array (
     'ERR_SMARTY_MISSING_DISPLAY_PARAMS' => 'Missing index in displayParams Array for: ',
 
     /* MySugar Framework (for Home and Dashboard) */
+    'LBL_DASHLET' => 'Dashlet',
     'LBL_DASHLET_CONFIGURE_GENERAL' => 'General',
     'LBL_DASHLET_CONFIGURE_FILTERS' => 'Filters',
     'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY' => 'Only My Items',
@@ -3717,6 +3730,7 @@ $app_strings = array (
     'LBL_CALL_BUTTON' => 'Call',
     'LBL_SMS_BUTTON' => 'SMS',
     'LBL_EMAIL_BUTTON' => 'Email',
+    'LBL_HONEYPOT' => 'If you are a real person do not fill this out.',
     'LBL_LINK_BUTTON' => 'Link',
     'LBL_UNLINK_BUTTON' => 'Unlink',
     'LBL_MAP_BUTTON' => 'Map',
@@ -3969,6 +3983,8 @@ $app_strings = array (
     'ERR_RENDER_FIELD_FAILED_TITLE' => 'Field Render Failed',
     'ERR_RENDER_FIELD_FAILED_MSG' => 'Unable to render the {0} field.',
     'ERR_NO_VIEW_ACCESS_TITLE' => 'Access Denied',
+    'ERR_NO_VIEW_ACCESS_REASON' => 'You do not have permission to access this page.',
+    'ERR_NO_VIEW_ACCESS_ACTION' => 'Contact your administrator to request access.',
     'ERR_NO_VIEW_ACCESS_MSG' => 'Contact your Support Administrator to get access to this view for {0} module.',
     'ERR_LAYOUT_RENDER_TITLE' => 'Layout render failed',
     'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact support.',

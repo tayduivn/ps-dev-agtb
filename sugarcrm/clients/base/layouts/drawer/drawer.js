@@ -268,6 +268,13 @@
         //start the animation to close the drawer
         drawers.$top.css('top', drawers.$top.offset().top-drawerHeight);
         drawers.$bottom.css('top','');
+
+        //this is a failsafe to ensure that drawer will always close
+        //in Chrome the css change to 'top' sometimes (randomly) doesn't actually change the css value
+        _.delay(function() {
+            drawers.$bottom.trigger('transitionend');
+        }, 400);
+
         if (drawers.$next) {
             drawers.$next.css('top', this._isMainAppContent(drawers.$next) ? drawerHeight : drawers.$next.offset().top - drawerHeight);
         }

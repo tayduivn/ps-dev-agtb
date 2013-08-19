@@ -235,7 +235,7 @@
             if (!_.isArray(module) || _.isEmpty(module[1]) ||
                 _.isUndefined(app.metadata.getModule(module[1])) ||
                 app.metadata.getModule(module[1]).isBwcEnabled
-                ) {
+            ) {
                 return;
             }
 
@@ -283,7 +283,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     _dispose: function() {
         this.bwcModel.off();

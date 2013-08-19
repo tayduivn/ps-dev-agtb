@@ -106,7 +106,8 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 array(
                     'name' => 'full_name',
                     'label' => 'LBL_NAME',
-                    'type' => 'fieldset-with-labels',
+                    'dismiss_label' => true,
+                    'type' => 'fullname',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(

@@ -76,5 +76,19 @@ $dictionary['activities_users'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Users'
         ),
+        'activities_teams' => array(
+            'lhs_module' => 'Activities',
+            'lhs_table' => 'activities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Teams',
+            'rhs_table' => 'teams',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'activities_users',
+            'join_key_lhs' => 'activity_id',
+            'join_key_rhs' => 'parent_id',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Teams'
+        ),
     )
 );

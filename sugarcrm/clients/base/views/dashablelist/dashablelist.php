@@ -155,15 +155,10 @@ $viewdefs['base']['view']['dashablelist'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => 'display_rows',
-                    'label' => 'Display Rows',
+                    'name' => 'limit',
+                    'label' => 'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS',
                     'type' => 'enum',
-                    'options' => array(
-                        5 => 5,
-                        10 => 10,
-                        15 => 15,
-                        20 => 20,
-                    ),
+                    'options' => 'dashlet_limit_options',
                 ),
                 array(
                     'name' => 'auto_refresh',
@@ -184,6 +179,7 @@ $viewdefs['base']['view']['dashablelist'] = array(
                     'label' => 'Columns',
                     'type' => 'enum',
                     'isMultiSelect' => true,
+                    'ordered' => true,
                     'span' => 12,
                     'hasBlank' => true,
                 ),

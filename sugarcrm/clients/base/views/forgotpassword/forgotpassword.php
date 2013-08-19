@@ -63,6 +63,12 @@ $viewdefs['base']['view']['forgotpassword'] = array(
                     'placeholder' => "LBL_EMAIL_BUTTON",
                     'required' => true,
                 ),
+                array(
+                    'name' => 'first_name',
+                    'type' => 'text',
+                    'css_class' => 'hp',
+                    'placeholder' => "LBL_HONEYPOT",
+                ),
             ),
         ),
     ),

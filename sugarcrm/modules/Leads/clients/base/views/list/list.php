@@ -36,17 +36,13 @@ $viewdefs['Leads']['base']['view']['list'] = array(
             'fields' => array(
                 array (
                     'name' => 'full_name',
-                    'type' => 'fieldset',
+                    'type' => 'fullname',
                     'fields' => array(
-                        array(
-                            'name' => 'first_name',
-                            'link' => true,
-                        ),
-                        array(
-                            'name' => 'last_name',
-                            'link' => true,
-                        )
+                        'salutation',
+                        'first_name',
+                        'last_name',
                     ),
+                    'link' => true,
                     'css_class' => 'full-name',
                     'label' => 'LBL_LIST_NAME',
                     'orderBy' => 'last_name',

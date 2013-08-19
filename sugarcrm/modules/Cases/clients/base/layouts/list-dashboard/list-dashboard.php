@@ -15,7 +15,7 @@ $viewdefs['Cases']['base']['layout']['list-dashboard'] = array (
                   'status',
                 ),
                 'my_items' => '1',
-                'display_rows' => 5,
+                'limit' => 5,
                 'status' => 'Assigned',
               ),
               'context' => array (

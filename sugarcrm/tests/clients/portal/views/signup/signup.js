@@ -44,28 +44,36 @@ describe("Portal Signup View", function() {
     describe("signup", function() {
 
         it("should toggle state field", function() {
-            var $countries = $('<select>').attr('name', 'country');
-            $('<option></option>').attr('value', '').appendTo($countries);
-            $('<option></option>').attr('value', 'USA').appendTo($countries);
-            $('<option></option>').attr('value', 'France').appendTo($countries);
+            var value;
+            var $countries = $('<input type="hidden">').attr('name', 'country');
 
-            var $states = $('<select>').attr('name', 'state');
-            $('<option></option>').attr('value', '').appendTo($states);
-            $('<option></option>').attr('value', 'California').appendTo($states);
-            $('<option></option>').attr('value', 'New York').appendTo($states);
+            var $states = $('<input type="hidden">').attr('name', 'state');
 
             $('<div></div>').append($countries).appendTo(view.$el);
             $('<div></div>').append($states).appendTo(view.$el);
 
-            view.stateField = view.$('select[name=state]');
-            view.countryField = view.$('select[name=country]');
-
+            view.stateField = view.$('input[name=state]');
+            view.countryField = view.$('input[name=country]');
+            var stubFn = function(arg1, arg2){
+                if(arg1 === 'val'){
+                    if(_.isUndefined(arg2)){
+                        return value;
+                    } else {
+                        value = arg2;
+                    }
+                }
+            };
+            var stateSelect2Stub = sinon.stub(view.stateField, "select2", stubFn);
+            var countrySelect2Stub = sinon.stub(view.countryField, "select2", stubFn);
+            value = 'NOT_USA';
             view.toggleStateField();
-            expect(view.$('select[name=state]').parent().css('display')).toEqual('none');
-
-            view.countryField.val('USA');
+            expect(view.$('input[name=state]').parent().css('display')).toEqual('none');
+            value = 'USA';
             view.toggleStateField();
-            expect(view.$('select[name=state]').parent().css('display')).not.toEqual('none');
+            expect(view.$('input[name=state]').parent().css('display')).not.toEqual('none');
+
+            stateSelect2Stub.restore();
+            countrySelect2Stub.restore();
         });
     });
 });

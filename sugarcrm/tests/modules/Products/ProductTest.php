@@ -14,7 +14,10 @@
 
 class ProductTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function testConvertProductToRLI()
+    /**
+     * @dataProvider productDataProvider
+     */
+    public function testConvertProductToRLI($amount, $quantity, $discount)
     {
         /* @var $product Product */
         $product = $this->getMock('Product', array('save'));
@@ -24,12 +27,39 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $product->name = 'Hello World';
-        $product->total_amount = '70.00';
+        $product->total_amount = $amount;
+        $product->quantity = $quantity;
+        $product->discount_amount = $discount;
 
         $rli = $product->convertToRevenueLineItem();
 
         $this->assertEquals($product->revenuelineitem_id, $rli->id);
         $this->assertEquals($product->name, $rli->name);
-        $this->assertEquals($product->total_amount, $rli->likely_case);
+        $this->assertEquals(
+            SugarMath::init()
+            ->exp(
+                '(?+?)-(?*?)', 
+                array(
+                    $amount, 
+                    $discount, 
+                    $discount, 
+                    $quantity
+                )
+            )
+            ->result(), 
+            $rli->likely_case
+        );
+    }
+    
+    /**
+     * productDataProvider
+     */
+    public function productDataProvider()
+    {
+        return array(
+           array('100.00', '1', '0'),
+           array('100.00', '10', '0'),
+           array('100.00', '10', '1')
+        );
     }
 }

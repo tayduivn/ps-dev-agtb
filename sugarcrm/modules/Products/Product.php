@@ -604,9 +604,22 @@ class Product extends SugarBean
             }
         }
 
+        //calculate total discount amount
+        $rli->discount_amount = SugarMath::init($rli->discount_amount)->mul($rli->quantity)->result();
+        
         // since we don't have a likely_case on products,
         if ($rli->likely_case == '0.00') {
-            $rli->likely_case = $this->total_amount;
+            //undo bad math from quotes.
+            $rli->likely_case = SugarMath::init()
+                                ->exp(
+                                    '(?+?)-?', 
+                                    array(
+                                        $this->total_amount, 
+                                        $this->discount_amount, 
+                                        $rli->discount_amount
+                                    )
+                                )
+                                ->result();
         }
 
         $this->revenuelineitem_id = $rli->id;

@@ -40,18 +40,28 @@ $layout_defs['Accounts'] = array(
 			'module' => 'Calls',
 			'get_subpanel_data' => 'calls',
 			'title_key' => 'LBL_CALLS_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'meetings' => array(
 			'order' => 20,
 			'module' => 'Meetings',
 			'get_subpanel_data' => 'meetings',
-			'title_key' => 'LBL_MEETINGS_SUBPANEL_TITLE',		
+			'title_key' => 'LBL_MEETINGS_SUBPANEL_TITLE',
+			'canLink' => false,
+		),
+		'notes' => array(
+			'order' => 25,
+			'module' => 'Notes',
+			'get_subpanel_data' => 'notes',
+			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'tasks' => array(
 			'order' => 30,
 			'module' => 'Tasks',
 			'get_subpanel_data' => 'tasks',
-			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',		
+			'title_key' => 'LBL_TASKS_SUBPANEL_TITLE',
+			'canLink' => false,
 		),
 		'contacts'=> array(
 			'order' => 40,
@@ -76,6 +86,7 @@ $layout_defs['Accounts'] = array(
 			'module' => 'Opportunities',
 			'get_subpanel_data' => 'opportunities',
 			'title_key' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',		
+			'canLink' => false,			
 		),
 		'accounts'=> array(
 			'order' => 80,
@@ -83,6 +94,19 @@ $layout_defs['Accounts'] = array(
 			'get_subpanel_data' => 'members',
 			'title_key' => 'LBL_MEMBER_ORG_SUBPANEL_TITLE',		
 		),			
-	),	
+		'quotes'=> array(
+			'order' => 90,
+			'module' => 'Quotes',
+			'get_subpanel_data' => 'quotes',
+			'title_key' => 'LBL_QUOTES_SUBPANEL_TITLE',
+			'canLink' => false,			
+		),
+		'documents'=> array(
+			'order' => 100,
+			'module' => 'Documents',
+			'get_subpanel_data' => 'documents',
+			'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+		),
+	),
 );
 ?>

@@ -13,6 +13,12 @@
             });
 
         app.plugins.register('Dashlet', 'view', {
+
+            /**
+             * Is used to generate max-height for dashlets.
+             */
+            rowHeight: 42,
+
             onAttach: function () {
                 this.on("init", function () {
                     this.dashletConfig = app.metadata.getView(this.module, this.name);
@@ -67,6 +73,10 @@
                     }
                     if (this.initDashlet && _.isFunction(this.initDashlet)) {
                         this.initDashlet(viewName);
+                        var height = this.calculateMaxHeight();
+                        if (_.isNumber(height)) {
+                            this.$el.css('max-height', height + 'px');
+                        }
                     }
                     if (buildGrid) {
                         this._buildGridsFromPanelsMetadata();
@@ -104,6 +114,21 @@
                         panel.grid   = gridResults.grid;
                     }
                 }, this);
+            },
+
+            /**
+             * Default max-height is 466 and placed in css.
+             *
+             * @returns {Number/False/Undefined}
+             */
+            calculateMaxHeight: function() {
+                if (!this.triggerBefore('calculateMaxHeight')) {
+                    return false;
+                }
+
+                if (!this.meta.config && this.settings.has('limit')) {
+                    return this.settings.get('limit') * this.rowHeight;
+                }
             },
             onDetach: function() {
                 this.settings.off();

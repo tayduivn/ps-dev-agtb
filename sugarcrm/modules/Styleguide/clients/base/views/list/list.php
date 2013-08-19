@@ -37,20 +37,16 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
             'fields' => array(
                 array(
                     'name' => 'full_name',
-                    'type' => 'fieldset',
+                    'type' => 'fullname',
                     'fields' => array(
-                        array(
-                            'name' => 'first_name',
-                            'link' => true,
-                        ),
-                        array(
-                            'name' => 'last_name',
-                            'link' => true,
-                        )
+                        'salutation',
+                        'first_name',
+                        'last_name',
                     ),
+                    'link' => true,
                     'css_class' => 'full-name',
                     'width' =>  49,
-                    'label' => 'fieldset',
+                    'label' => 'fullname',
                     'enabled' => true,
                     'default' => true,
                 ),

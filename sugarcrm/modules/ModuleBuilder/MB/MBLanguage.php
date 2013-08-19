@@ -168,6 +168,7 @@ class MBLanguage{
                 'LNK_IMPORT_VCARD' => translate('LBL_IMPORT') . " " . $this->label_singular . ' vCard',
                 'LBL_IMPORT' => translate('LBL_IMPORT') . " " . $this->label_singular,
                 'LBL_IMPORT_VCARDTEXT' => "Automatically create a new {$this->label_singular} record by importing a vCard from your file system.",
+                'LBL_DASHLET_NAME' => $this->label . ' ' . translate('LBL_DASHLET'),
             );
             foreach ($required as $k => $v) {
                 if (empty($values[$k]) || $renameLang) {

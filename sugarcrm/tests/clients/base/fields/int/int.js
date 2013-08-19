@@ -43,8 +43,8 @@ describe('Base.Fields.Int', function() {
         });
 
         it('should not format/unformat a non number string', function() {
-            expect(field.format('Asdt')).toBeUndefined();
-            expect(field.unformat('Asdt')).toBeUndefined();
+            expect(field.format('Asdt')).toEqual('Asdt');
+            expect(field.unformat('Asdt')).toEqual('Asdt');
         });
     });
 

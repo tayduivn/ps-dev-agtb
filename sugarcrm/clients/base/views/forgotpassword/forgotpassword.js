@@ -106,8 +106,13 @@
         self.clearValidationErrors();
         self.model.doValidate(null, function(isValid) {
             if (isValid) {
+
+                // a robot has reached into the honey pot. do not submit
+                if (app.config.honeypot_on && app.config.honeypot_on === true &&
+                    (self.$('input[name="first_name"]').val() || self.model.get('first_name'))) return;
+
                 app.$contentEl.hide();
-                app.alert.show('forgotPassword', {level: 'process', title: app.lang.getAppString('LOADING'), autoClose: false});
+                app.alert.show('forgotPassword', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
 
                 var emails = self.model.get('email');
                 var params = {
@@ -125,8 +130,7 @@
                         self._showSuccess = true;
                         self._showResult = true;
                         self.resultLabel = "LBL_PASSWORD_REQUEST_SENT";
-                        // Replace buttons by a unique Back button
-                        self.options.meta.buttons = self._backButton;
+                        self.model.clear();
                         if (!self.disposed) {
                             self.render();
                         }
@@ -138,8 +142,6 @@
 
                             self.resultLabel = err.message || 'LBL_PASSWORD_REQUEST_ERROR';
 
-                        // Replace buttons by a unique Back button
-                        self.options.meta.buttons = self._backButton;
                         if (!self.disposed) {
                             self.render();
                         }

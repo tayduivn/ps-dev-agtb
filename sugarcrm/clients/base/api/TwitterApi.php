@@ -52,8 +52,19 @@ class TwitterApi extends SugarApi
         $twitterEAPM = ExternalAPIFactory::loadAPI('Twitter');
 
         if (!$twitterEAPM) {
+            $source = SourceFactory::getSource('ext_rest_twitter');
+            if ($source && $source->hasTestingEnabled()) {
+                try {
+                    if (!$source->test()) {
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    return false;    
+                }
+            }
             return array('error' =>'oAuth not configured');
         }
+
         $twitterEAPM->getConnector();
 
         return $twitterEAPM;

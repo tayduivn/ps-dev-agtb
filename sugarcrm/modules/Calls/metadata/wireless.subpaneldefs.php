@@ -33,6 +33,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $layout_defs['Calls'] = array(
 	// list of what Subpanels to show in the DetailView 
 	'subpanel_setup' => array(		
+		'notes' => array(
+			'order' => 5,
+			'module' => 'Notes',
+			'get_subpanel_data' => 'notes',
+			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
+			'canLink' => false,
+		),
 		'contacts'=> array(
 			'order' => 10,
 			'module' => 'Contacts',
@@ -44,6 +51,12 @@ $layout_defs['Calls'] = array(
 			'module' => 'Leads',
 			'get_subpanel_data' => 'leads',
 			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
+		),
+		'users'=> array(
+			'order' => 40,
+			'module' => 'Users',
+			'get_subpanel_data' => 'users',
+			'title_key' => 'LBL_USERS_SUBPANEL_TITLE',
 		),
 	),
 );

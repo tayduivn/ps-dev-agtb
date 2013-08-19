@@ -247,6 +247,8 @@ class ActivitiesApi extends FilterApi
             // Join with cached list of activities to show.
             $columns[] = 'activities_users.fields';
             $join = $join->queryOr();
+            // TODO: Change this to include all teams a user is a member of
+            // for more granular activity stream control.
             $join->queryAnd()->equals('activities_users.parent_type', 'Teams')
                 ->equals('activities_users.parent_id', 1);
             $join->queryAnd()->equals('activities_users.parent_type', 'Users')

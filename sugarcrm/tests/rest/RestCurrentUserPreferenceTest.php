@@ -100,6 +100,24 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testUpdatePreferenceWithSpecificMetaName()
+    {
+        $reply = $this->_restCall('me/preferences',
+            json_encode(array('datepref' => '(y)(m)(d)', 'timepref' => '(h)(i)'))
+            , 'PUT');
+
+        $this->assertEquals('(y)(m)(d)', $reply['reply']['datepref']);
+        $this->assertEquals('(h)(i)', $reply['reply']['timepref']);
+
+        // check updated preferences in current user object
+        $reply = $this->_restCall('me');
+        $this->assertEquals('(y)(m)(d)', $reply['reply']['current_user']['preferences']['datepref']);
+        $this->assertEquals('(h)(i)', $reply['reply']['current_user']['preferences']['timepref']);
+    }
+
+    /**
+     * @group rest
+     */
     public function testCreatePreferenceReturnsCreatedKeyValuePair()
     {
         $reply = $this->_restCall('me/preference/create', json_encode(array('value' => 'preference')), 'POST');
