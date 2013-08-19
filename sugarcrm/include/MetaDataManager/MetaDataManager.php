@@ -1668,6 +1668,10 @@ class MetaDataManager
             $data['system_skypeout_on'] = true;
         }
 
+        if(isset($system_config->settings['system_tweettocase_on']) && $system_config->settings['system_tweettocase_on'] == 1){
+            $data['system_tweettocase_on'] = true;
+        }
+
         //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if (!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine') {

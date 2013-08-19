@@ -37,7 +37,7 @@ class Administration extends SugarBean {
             //END SUGARCRM lic=sub ONLY
     );
     var $disable_custom_fields = true;
-    var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on', 'honeypot_on');
+    var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'tweettocase_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on', 'honeypot_on');
     //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
