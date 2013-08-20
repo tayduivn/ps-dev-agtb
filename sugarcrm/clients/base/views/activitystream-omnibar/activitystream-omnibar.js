@@ -12,6 +12,9 @@
     plugins: ['dragdrop_attachments', 'taggable'],
 
     initialize: function(options) {
+        // regular expression to find all non-breaking spaces
+        this.nbspRegExp = new RegExp(String.fromCharCode(160), 'g');
+
         app.view.View.prototype.initialize.call(this, options);
 
         // Assets for the activity stream post avatar
@@ -102,7 +105,14 @@
      * @returns {String}
      */
     getPost: function() {
-        return this.unformatTags(this.$('div.sayit'));
+        var post = this.unformatTags(this.$('div.sayit'));
+
+        // Need to replace all non-breaking spaces with a regular space because the EmbedLinkService.php
+        // treats spaces and non-breaking spaces differently. Having non-breaking spaces causes to parse
+        // URLs incorrectly.
+        post.value = post.value.replace(this.nbspRegExp, ' ');
+
+        return post;
     },
 
     checkPlaceholder: function(e) {
