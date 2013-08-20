@@ -249,14 +249,30 @@
      * @param {Array} $rows
      */
     validateRows: function($rows) {
+        var isValid = true;
         $rows = $rows ? $rows : this.$('article.filter-body');
-        this.layout.trigger("filter:create:rowsValid", true);
         _.each($rows, function(row) {
             var data = $(row).data();
-            if (_.isEmpty(data.value) && !data.isDateRange && !data.isPredefinedFilter) {
-                this.layout.trigger("filter:create:rowsValid", false);
+            //If there's no value then it's not valid unless it is predefined
+            if (!_.isNumber(data.value) && _.isEmpty(data.value) && !data.isDateRange && !data.isPredefinedFilter) {
+                isValid = false;
+            }
+            //We need 2 values for a $between operator to be valid
+            if (data.operator === "$between" || data.operator === "$dateBetween") {
+                if (!_.isEmpty(data.value) && data.value.length == 2){
+                    if (data.operator === "$between") {
+                        isValid = _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
+                    }
+                    if (data.operator === "$dateBetween") {
+                        isValid = !_.isUndefined(data.value[0]) && !_.isUndefined(data.value[1]);
+                    }
+                } else {
+                    isValid = false;
+                }
             }
         }, this);
+        this.layout.trigger("filter:create:rowsValid", isValid);
+        return isValid;
     },
 
     /**
@@ -451,7 +467,7 @@
             }
             this.value = $(e.currentTarget).val();
             // We use "silent" update because we don't need re-render the field.
-            model.set(fieldName, this.unformat($(e.currentTarget).val()), {silent: true});
+            model.set(this.name, this.unformat($(e.currentTarget).val()), {silent: true});
             model.trigger('change');
         };
 
@@ -490,7 +506,7 @@
         } else {
             model.set(fieldDef.id_name || fieldName, $row.data('value') || undefined);
             // Render the value field
-            var field = this.createField(model, fieldDef),
+            var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
                 fieldContainer = $(field.getPlaceholder().string);
             $fieldValue.append(fieldContainer);
             data['valueField'] = field;
@@ -567,8 +583,12 @@
      * Check each row, builds the filter definition and trigger the filtering
      */
     fireSearch: function() {
-        var filterDef = this.buildFilterDef();
-        this.layout.trigger('filter:apply', null, filterDef);
+        var $rows = this.$('article.filter-body');
+        //Only apply valid filter definitions
+        if(this.validateRows($rows)){
+            var filterDef = this.buildFilterDef();
+            this.layout.trigger('filter:apply', null, filterDef);
+        }
     },
 
     /**
@@ -586,8 +606,6 @@
                 filter.push(rowFilter);
             }
         }, this);
-
-        this.validateRows($rows);
 
         return filter;
     },
@@ -607,7 +625,7 @@
         if (data.isPredefinedFilter) {
             filter[name] = "";
             return filter;
-        } else if (!_.isEmpty(value) || data.isDateRange) {
+        } else if (_.isNumber(value) || !_.isEmpty(value) || data.isDateRange) {
             if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
                 var subfilters = [];
                 _.each(this.fieldList[name].dbFields, function(dbField) {
