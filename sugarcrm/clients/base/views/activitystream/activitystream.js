@@ -507,7 +507,8 @@
             preview.label = this.model.get('preview_disabled_reason');
         } else {
             parentModel = this._getParentModel('record', this.context);
-            if (parentModel && parentModel.id === this.model.get('parent_id')) { //same record as context
+            // Check if the bean to be previewed is the same as the context.
+            if (parentModel.module == this.model.get('display_parent_type') && parentModel.id === this.model.get('display_parent_id')) {
                 preview.enabled = false;
                 preview.label = 'LBL_PREVIEW_DISABLED_SAME_RECORD';
             }

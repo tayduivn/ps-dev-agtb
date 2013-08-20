@@ -170,7 +170,7 @@ class ActivitiesApi extends FilterApi
 
             //check if parent record preview should be enabled
             if (!empty($record['parent_type']) && !empty($record['parent_id'])) {
-                $previewCheckResult = $this->checkParentPreviewEnabled($api->user, $record['parent_type'], $record['parent_id']);
+                $previewCheckResult = $this->checkParentPreviewEnabled($api->user, $record['display_parent_type'], $record['display_parent_id']);
                 $record['preview_enabled'] = $previewCheckResult['preview_enabled'];
                 $record['preview_disabled_reason'] = $previewCheckResult['preview_disabled_reason'];
             }
