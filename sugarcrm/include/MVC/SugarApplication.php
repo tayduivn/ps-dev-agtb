@@ -1,13 +1,16 @@
 <?php
 /*********************************************************************************
- * The contents of this file are subject to
- * *******************************************************************************/
-/*
- * Created on Mar 21, 2007
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
- */
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
 require_once('include/MVC/Controller/ControllerFactory.php');
 require_once('include/MVC/View/ViewFactory.php');
 
@@ -536,8 +539,40 @@ class SugarApplication
     protected $whiteListActions
         = array(
             'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login',
-            'SupportPortal'
+            'SupportPortal', 'LogView'
         );
+
+    /**
+     * Respond to XSF attempt
+     * @param string $http_host HTTP host sent
+     * @param bool $dieIfInvalid
+     * @param bool $inBWC Are we in BWC frame?
+     * @return boolean Returns false
+     */
+    protected function xsrfResponse($http_host, $dieIfInvalid, $inBWC)
+    {
+        $whiteListActions = $this->whiteListActions;
+        $whiteListActions[] = $this->controller->action;
+        $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
+        if ($dieIfInvalid) {
+            if($inBWC) {
+                if(!empty($this->controller->module)) {
+                    header("Location: index.php?module={$this->controller->module}&action=index");
+                } else {
+                    header("Location: index.php?module=Home&action=index");
+                }
+            } else {
+                header("Cache-Control: no-cache, must-revalidate");
+                $ss = new Sugar_Smarty;
+                $ss->assign('host', $http_host);
+                $ss->assign('action', $this->controller->action);
+                $ss->assign('whiteListString', $whiteListString);
+                $ss->display('include/MVC/View/tpls/xsrf.tpl');
+            }
+            sugar_cleanup(true);
+        }
+        return false;
+    }
 
     /**
      *
@@ -561,46 +596,22 @@ class SugarApplication
             $whiteListReferers = array_merge($whiteListReferers, $sugar_config['http_referer']['list']);
         }
 
-        if ($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $this->whiteListActions)
+        $inBWC = !empty($_GET['bwcFrame']);
+        // for BWC iframe, matching referer is not enough
+        if ($strong && (empty($_SERVER['HTTP_REFERER']) || $inBWC)
+            && !in_array($this->controller->action, $this->whiteListActions)
             && $this->isModifyAction()
         ) {
-            $http_host = explode(':', $_SERVER['HTTP_HOST']);
-            $whiteListActions = $this->whiteListActions;
-            $whiteListActions[] = $this->controller->action;
-            $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
-            if ($dieIfInvalid) {
-                header("Cache-Control: no-cache, must-revalidate");
-                $ss = new Sugar_Smarty;
-                $ss->assign('host', $http_host[0]);
-                $ss->assign('action', $this->controller->action);
-                $ss->assign('whiteListString', $whiteListString);
-                $ss->display('include/MVC/View/tpls/xsrf.tpl');
-                sugar_cleanup(true);
-            }
-            return false;
+            $http_host = empty($_SERVER['HTTP_HOST'])?array(''):explode(':',$_SERVER['HTTP_HOST']);
+            return $this->xsrfResponse($http_host[0], $dieIfInvalid, $inBWC);
         } else {
             if (!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])) {
                 $http_ref = parse_url($_SERVER['HTTP_REFERER']);
                 if ($http_ref['host'] !== $_SERVER['SERVER_NAME']
-                    && !in_array(
-                        $this->controller->action, $this->whiteListActions
-                    )
+                    && !in_array($this->controller->action, $this->whiteListActions)
                     && (empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))
                 ) {
-                    if ($dieIfInvalid) {
-                        header("Cache-Control: no-cache, must-revalidate");
-                        $whiteListActions = $this->whiteListActions;
-                        $whiteListActions[] = $this->controller->action;
-                        $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
-
-                        $ss = new Sugar_Smarty;
-                        $ss->assign('host', $http_ref['host']);
-                        $ss->assign('action', $this->controller->action);
-                        $ss->assign('whiteListString', $whiteListString);
-                        $ss->display('include/MVC/View/tpls/xsrf.tpl');
-                        sugar_cleanup(true);
-                    }
-                    return false;
+                    return $this->xsrfResponse($http_ref['host'], $dieIfInvalid, $inBWC);
                 }
             }
         }

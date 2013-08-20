@@ -509,6 +509,37 @@
 
                 return app.bwc.buildRoute(module, id, app.bwc.getAction(action));
             },
+            
+            /**
+             * Add bwcFrame=1 to the URL if it's not there
+             * @param {String} url
+             * @return String 
+             */
+            addIframeMark: function(url) {
+            	var parts = url.split("?");
+            	if(parts[1] && parts[1].indexOf('bwcFrame=1') != -1) return url;
+            	return parts[0] + "?" + (parts[1]?parts[1]+"&bwcFrame=1":"bwcFrame=1"); 
+            },
+            
+            /**
+             * Remove bwcFrame=1 from the URL if it's not there
+             * @param {String} url
+             * @return String 
+             */
+            rmIframeMark: function(url) {
+            	var parts = url.split("?");
+            	if(!parts[1]) {
+            		return url;
+            	}
+            	// scan and drop bwcFrame=1
+            	return parts[0]+"?"+_.reduce(parts[1].split("&"), function(acc, item) {
+            		if(item == 'bwcFrame=1') {
+            			return acc;
+            		} else {
+            			return acc?acc+"&"+item:item;
+            		}
+            	}, '');
+            },
 
             /**
              * Returns a collection of subpanel models from the LHS context
