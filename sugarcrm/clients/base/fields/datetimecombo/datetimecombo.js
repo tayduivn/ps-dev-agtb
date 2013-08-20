@@ -403,5 +403,42 @@
         // Get datepicker value and finally set our model
         dateValue  = this._getDatepickerValue();
         return this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes);
+    },
+    /**
+     * Custom error styling for the datetimecombo field. This field has
+     * both a date input and a time input. Essentially, we need to wrap
+     * both appropriately to have our error styling kick in correctly.
+     * @param {Object} errors
+     * @override BaseField
+     */
+    decorateError: function(errors){
+        var dateInputs;
+        this.$el.closest('.record-cell').addClass("error");
+        // Selects both the date and timepicker inputs
+        dateInputs = this.$('input');
+        dateInputs.closest("span.edit").addClass('error');
+        var parent = dateInputs.parent();
+        var isWrapped = parent.hasClass('input-append error');
+        if (!isWrapped) {
+            parent.children().wrapAll('<div class="input-append error '+this.fieldTag+'">');
+        }
+        _.each(errors, function(errorContext, errorName) {
+            _.each(dateInputs, function(input) {
+                var inp = this.$(input);
+                this._addErrorDecoration(inp, errorName, errorContext);
+            }, this);
+        }, this);
+    },
+    _addErrorDecoration: function(inp, errorName, errorContext) {
+        inp.next('.error-tooltip').remove();
+        inp.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
+        var tooltip = inp.next('.error-tooltip');
+        if (_.isFunction(tooltip.tooltip)) {
+            tooltip.tooltip({
+                container:'body',
+                placement:'top',
+                trigger:'click'
+            });
+        }
     }
 })

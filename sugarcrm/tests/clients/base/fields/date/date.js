@@ -65,6 +65,12 @@ describe("date field", function() {
             expect(field.format(null)).toEqual(null);
             field.view.name = originalType;
         });
+
+        it("should verify date string return false when date is invalid", function() {
+            expect(field._verifyDateString('not date string')).toBeFalsy();
+            expect(field._verifyDateString('30/30/13')).toBeFalsy();
+            expect(field._verifyDateString('12/12/2013')).toBeTruthy();
+        })
     });
     describe("basedatepicker core functions", function() {
 
