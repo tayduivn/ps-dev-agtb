@@ -235,17 +235,20 @@
 }
 .record div[data-name="to_addresses"].controls.btn-fit {
   .select2-container {
-    .select2-choices:before {
-      content: attr(data-content-before);
-      float: right;
-      font-size: 12px;
-      padding: 2px 1px 2px 14px;
-      width: auto;
+    .select2-choices {
+      border-radius: 3px;
+      &:before {
+        content: attr(data-content-before);
+        float: right;
+        font-size: 12px;
+        padding: 2px 1px 2px 14px;
+        width: auto;
+      }
     }
     .select2-search-field input {
       padding: 0 6px;
-      margin-left: 0;
       position: absolute;
+      height: 22px;
       min-height: 22px;
     }
   }
