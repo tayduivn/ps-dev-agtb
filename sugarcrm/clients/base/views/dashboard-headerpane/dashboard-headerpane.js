@@ -45,6 +45,7 @@
     },
     cancelClicked: function(evt) {
         this.changed = false;
+        this.clearValidationErrors();
         this.setButtonStates('view');
         this.handleCancel();
         this.model.trigger("setMode", "view");

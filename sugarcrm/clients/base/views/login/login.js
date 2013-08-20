@@ -106,7 +106,6 @@
      */
     login: function() {
         var self = this;
-        this.clearValidationErrors();
         this.model.doValidate(null,
             _.bind(function(isValid) {
                 if (isValid) {
