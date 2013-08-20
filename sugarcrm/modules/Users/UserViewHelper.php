@@ -506,6 +506,17 @@ class UserViewHelper {
 
         $chooser->args['id'] = 'edit_tabs';
         $chooser->args['values_array'] = $controller->get_tabs($this->bean);
+        //Remove 'Home' module from tab configuration UI (we add it back in at top of display tabs on save)
+        if(isset($chooser->args['values_array'][0]['Home'])){
+            unset($chooser->args['values_array'][0]['Home']);
+        }
+        if(isset($chooser->args['values_array'][1]['Home'])){
+            unset($chooser->args['values_array'][1]['Home']);
+        }
+        if(isset($chooser->args['values_array'][2]['Home'])){
+            unset($chooser->args['values_array'][2]['Home']);
+        }
+
         foreach($chooser->args['values_array'][0] as $key=>$value) {
             $chooser->args['values_array'][0][$key] = $app_list_strings['moduleList'][$key];
         }
