@@ -794,6 +794,15 @@ class SugarApplication
     }
 
     /**
+     * Get combined values of GET and POST
+     * @return array
+     */
+    protected function getRequestVars()
+    {
+        return array_merge($_GET, $_POST);
+    }
+
+    /**
      * Create string to attach to login URL with vars to preserve post-login
      *
      * @return string URL part with login vars
@@ -801,18 +810,19 @@ class SugarApplication
     public function createLoginVars()
     {
         $ret = array();
-        foreach (array_keys($_REQUEST) as $var) {
+        $req = $this->getRequestVars();
+        foreach (array_keys($req) as $var) {
             if(!empty($this->controller->$var)){
                 $ret["login_" . $var] = $this->controller->$var;
                 continue;
             }
-            $ret["login_" . $var] = $_REQUEST[$var];
+            $ret["login_" . $var] = $req[$var];
         }
-        if (isset($_REQUEST['mobile'])) {
-            $ret['mobile'] = $_REQUEST['mobile'];
+        if (isset($req['mobile'])) {
+            $ret['mobile'] = $req['mobile'];
         }
-        if (isset($_REQUEST['no_saml'])) {
-            $ret['no_saml'] = $_REQUEST['no_saml'];
+        if (isset($req['no_saml'])) {
+            $ret['no_saml'] = $req['no_saml'];
         }
         if (empty($ret)) {
             return '';
@@ -831,10 +841,12 @@ class SugarApplication
     {
         $prefix = 'login_';
         $ret = array();
-        foreach (array_keys($_REQUEST) as $var) {
+        $req = $this->getRequestVars();
+
+        foreach (array_keys($req) as $var) {
             if(strpos($var, $prefix) === 0){
-                if (!empty($_REQUEST[$var]) || $add_empty) {
-                    $ret[substr($var, strlen($prefix))] = isset($_REQUEST[$var]) ? $_REQUEST[$var] : '';
+                if (!empty($req[$var]) || $add_empty) {
+                    $ret[substr($var, strlen($prefix))] = isset($_REQUEST[$var]) ? $req[$var] : '';
                 }
             }
         }
@@ -850,19 +862,21 @@ class SugarApplication
     {
         $prefix = 'login_';
         $vars = array();
-        foreach (array_keys($_REQUEST) as $var) {
+        $req = $this->getRequestVars();
+
+        foreach (array_keys($req) as $var) {
             if(strpos($var, $prefix) === 0){
-                if (!empty($_REQUEST[$var])) {
-                    $vars[substr($var, strlen($prefix))] = $_REQUEST[$var];
+                if (!empty($req[$var])) {
+                    $vars[substr($var, strlen($prefix))] = $req[$var];
                 }
             }
         }
-        if (isset($_REQUEST['mobile'])) {
-            $vars['mobile'] = $_REQUEST['mobile'];
+        if (isset($req['mobile'])) {
+            $vars['mobile'] = $req['mobile'];
         }
 
-        if (isset($_REQUEST['mobile'])) {
-            $vars['mobile'] = $_REQUEST['mobile'];
+        if (isset($req['mobile'])) {
+            $vars['mobile'] = $req['mobile'];
         }
         if (empty($vars)) {
             return $this->getAuthenticatedHomeUrl();
