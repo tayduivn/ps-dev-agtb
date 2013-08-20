@@ -43,6 +43,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('RevenueLineItems'));
+        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public function setUp()
@@ -67,6 +68,7 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
