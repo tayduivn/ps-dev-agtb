@@ -5,7 +5,6 @@
      * @alias SUGAR.App.view.views.SetupCompleteWizardPageView
      */
     extendsFrom: "WizardPageView",
-
     /**
      * Name of wizard being displayed
      */
@@ -37,10 +36,21 @@
      * @param ev
      */
     linkClicked: function(ev){
-        if($(ev.currentTarget).attr("target") !== "_blank"){
+        var href, redirectUrl,
+            target = this.$(ev.currentTarget);
+        if(this.$(target).attr("target") !== "_blank") {
             ev.preventDefault();
-            $("#header").show();  //Show the header bar since it is likely hidden
-            app.router.navigate($(ev.currentTarget).attr("href"), {trigger: true});
+            //Show the header bar since it is likely hidden
+            $("#header").show();
+            href = this.$(target).attr("href");
+            // Check if bwc link; if so, we need to do bwc.login first
+            if (href.indexOf('#bwc/') === 0) {
+                redirectUrl = href.split('#bwc/')[1];
+                app.bwc.login(redirectUrl);
+            } else {
+                // Not bwc, so use router navigate instead
+                app.router.navigate($(ev.currentTarget).attr("href"), {trigger: true});
+            }
         }
     },
     /**
