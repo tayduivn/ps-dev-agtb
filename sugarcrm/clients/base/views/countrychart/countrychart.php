@@ -3,8 +3,8 @@
 $viewdefs['base']['view']['countrychart'] = array(
     'dashlets' => array(
         array(
-            'name' => 'Sales by Country',
-            'description' => 'Displays the sales chart by country map.',
+            'name' => 'LBL_DASHLET_COUNTRY_CHART_NAME',
+            'description' => 'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION',
             'config' => array(
             ),
             'preview' => array(
@@ -17,8 +17,8 @@ $viewdefs['base']['view']['countrychart'] = array(
             )
         ),
         array(
-            'name' => 'Sales by Country',
-            'description' => 'Displays the sales chart by country map.',
+            'name' => 'LBL_DASHLET_COUNTRY_CHART_NAME',
+            'description' => 'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION',
             'config' => array(
             ),
             'preview' => array(

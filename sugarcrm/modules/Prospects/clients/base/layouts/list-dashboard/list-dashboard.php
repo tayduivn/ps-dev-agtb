@@ -26,7 +26,7 @@ $viewdefs['Prospects']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'type' => 'My Accounts',
+                                'type' => 'LBL_DASHLET_LISTVIEW_NAME',
                                 'display_columns' =>
                                 array(
                                     'name',
@@ -48,6 +48,6 @@ $viewdefs['Prospects']['base']['layout']['list-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

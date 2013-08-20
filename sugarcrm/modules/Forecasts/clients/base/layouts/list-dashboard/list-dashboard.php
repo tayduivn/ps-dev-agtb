@@ -26,7 +26,7 @@ $viewdefs['Forecasts']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecastdetails',
-                                'label' => 'Forecast',
+                                'label' => 'LBL_DASHLET_FORECAST_NAME',
                             ),
                             'context' =>
                             array(
@@ -40,7 +40,7 @@ $viewdefs['Forecasts']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecasts-chart',
-                                'label' => 'Forecast',
+                                'label' => 'LBL_DASHLET_FORECAST_NAME',
                             ),
                             'context' =>
                             array(
@@ -54,6 +54,6 @@ $viewdefs['Forecasts']['base']['layout']['list-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

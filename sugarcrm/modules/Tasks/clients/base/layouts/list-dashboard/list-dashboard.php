@@ -13,64 +13,64 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Tasks']['base']['layout']['list-dashboard'] = array (
-  'metadata' => 
-  array (
-    'components' => 
-    array (
-      array (
-        'rows' => 
-        array (
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'dashablelist',
-                'label' => 'My Leads',
-                'display_columns' => 
-                array (
-                  'full_name',
-                  'email',
-                  'phone_work',
-                  'status',
+$viewdefs['Tasks']['base']['layout']['list-dashboard'] = array(
+    'metadata' =>
+    array(
+        'components' =>
+        array(
+            array(
+                'rows' =>
+                array(
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'dashablelist',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'display_columns' =>
+                                array(
+                                    'full_name',
+                                    'email',
+                                    'phone_work',
+                                    'status',
+                                ),
+                                'my_items' => '1',
+                                'display_rows' => 5,
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Leads',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'dashablelist',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'display_columns' =>
+                                array(
+                                    'bug_number',
+                                    'name',
+                                    'status',
+                                ),
+                                'my_items' => '1',
+                                'display_rows' => 5,
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Bugs',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
                 ),
-                'my_items' => '1',
-                'limit' => 5,
-              ),
-              'context' => 
-              array (
-                'module' => 'Leads',
-              ),
-              'width' => 12,
+                'width' => 12,
             ),
-          ),
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'dashablelist',
-                'label' => 'My Assigned Bugs',
-                'display_columns' => 
-                array (
-                  'bug_number',
-                  'name',
-                  'status',
-                ),
-                'my_items' => '1',
-                'limit' => 5,
-              ),
-              'context' => 
-              array (
-                'module' => 'Bugs',
-              ),
-              'width' => 12,
-            ),
-          ),
         ),
-        'width' => 12,
-      ),
     ),
-  ),
-  'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

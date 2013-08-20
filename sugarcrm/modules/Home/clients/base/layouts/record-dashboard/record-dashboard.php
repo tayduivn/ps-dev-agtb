@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -12,7 +11,6 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-
 $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
     'metadata' =>
     array(
@@ -26,7 +24,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'twitter',
-                                'label' => 'Recent Tweets - @SugarCRM',
+                                'label' => 'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME',
                                 'twitter' => 'sugarcrm',
                             ),
                             'width' => 12,
@@ -37,7 +35,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'My Contacts',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
                                 'module' => 'Contacts',
                                 'display_columns' =>
                                 array(
@@ -67,7 +65,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecast-pipeline',
-                                'label' => 'Pipeline',
+                                'label' => 'LBL_DASHLET_PIPLINE_NAME',
                                 'display_type' => 'self',
                             ),
                             'context' =>
@@ -80,7 +78,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'countrychart',
-                                'label' => 'Sales By Country',
+                                'label' => 'LBL_DASHLET_COUNTRY_CHART_NAME',
                             ),
                             'width' => 6,
                         ),
@@ -90,7 +88,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'bubblechart',
-                                'label' => 'Top 10 sales opportunities',
+                                'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
                                 'filter_duration' => 0,
                                 'filter_assigned' => 'my',
                             ),
@@ -102,6 +100,5 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
-

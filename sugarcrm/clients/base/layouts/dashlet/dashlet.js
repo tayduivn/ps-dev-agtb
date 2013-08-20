@@ -18,19 +18,22 @@
         if (!(this.meta.preview || this.meta.empty)) {
             var dashletDef = _.first(components),
                 dashletMeta,
+                dashletModule,
                 toolbar = {},
                 pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/,
                 label = this.meta.label;
-            if(pattern.test(this.meta.label)) {
-                label = app.lang.get(label, dashletDef.view ? dashletDef.view.module : dashletDef.layout.module);
-            }
             //try to get the dashlet widget metadata
             if(dashletDef.view) {
                 toolbar = dashletDef.view['custom_toolbar'] || {};
                 dashletMeta = app.metadata.getView(dashletDef.view.module, dashletDef.view.name || dashletDef.view.type);
+                dashletModule = dashletDef.view.module ? dashletDef.view.module : null;
             } else if (dashletDef.layout) {
                 toolbar = dashletDef.view['custom_toolbar'] || {};
                 dashletMeta = app.metadata.getLayout(dashletDef.layout.module, dashletDef.layout.name || dashletDef.layout.type);
+                dashletModule = dashletDef.layout.module ? dashletDef.layout.module : null;
+            }
+            if (pattern.test(this.meta.label)) {
+                label = app.lang.get(label, dashletModule, dashletDef.view || dashletDef.layout);
             }
             //determine whether it contains custom_toolbar or not
             if (_.isEmpty(toolbar) && dashletMeta && dashletMeta['custom_toolbar']) {
@@ -290,6 +293,12 @@
             }
         }, function(model) {
             if(!model) return;
+
+            if (!model.hasChanged('label')) {
+                var dashletMeta = meta.view || meta.layout;
+                model.set('label', dashletMeta.label);
+            }
+
             var conf = model.toJSON(),
                 dash = {
                     context: {
