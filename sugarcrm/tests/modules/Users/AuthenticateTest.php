@@ -27,18 +27,18 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	protected $_user = null;
 
-	public function setUp() 
+	public function setUp()
     {
         $GLOBALS['app'] = new SugarApplication();
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$this->sugar_config_old = $GLOBALS['sugar_config'];
-    	$_REQUEST['user_name'] = 'foo';
-    	$_REQUEST['user_password'] = 'bar';
+    	$_POST['user_name'] = 'foo';
+    	$_POST['user_password'] = 'bar';
     	$_SESSION['authenticated_user_id'] = true;
     	$_SESSION['hasExpiredPassword'] = false;
     	$_SESSION['isMobile'] = null;
 	}
-	
+
 	public function tearDown()
 	{
 	    unset($GLOBALS['current_user']);
@@ -52,111 +52,111 @@ class AuthenticateTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['hasExpiredPassword']);
         unset($_SESSION['isMobile']);
 	}
-	
+
 	public function testLoginRedirectIfAuthenicationFails()
 	{
 	    $_SESSION['authenticated_user_id'] = null;
-	    
+
 	    $authController = $this->getMock('AuthenticationController');
-        
+
 	    $url = '';
         require('modules/Users/Authenticate.php');
-        
+
         $this->assertEquals(
             'Location: index.php?module=Users&action=Login',
             $url
             );
 	}
-	
-	public function testDefaultAuthenicationRedirect() 
+
+	public function testDefaultAuthenicationRedirect()
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
-        unset($_REQUEST['login_module']);
-        unset($_REQUEST['login_action']);
-        unset($_REQUEST['login_record']);
-        
+        unset($_POST['login_module']);
+        unset($_POST['login_action']);
+        unset($_POST['login_record']);
+
         $authController = $this->getMock('AuthenticationController');
-        
+
         $url = '';
         require('modules/Users/Authenticate.php');
-        
+
         $this->assertEquals(
             'Location: index.php?module=Home&action=index',
             $url
             );
     }
-    
-    public function testDefaultAuthenicationRedirectGivenLoginParameters() 
+
+    public function testDefaultAuthenicationRedirectGivenLoginParameters()
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
-        $_REQUEST['login_module'] = 'foo';
-        $_REQUEST['login_action'] = 'bar';
-        $_REQUEST['login_record'] = '123';
-        
+        $_POST['login_module'] = 'foo';
+        $_POST['login_action'] = 'bar';
+        $_POST['login_record'] = '123';
+
         $authController = $this->getMock('AuthenticationController');
-        
+
         $url = '';
         require('modules/Users/Authenticate.php');
-        
+
         $this->assertEquals(
             'Location: index.php?module=foo&action=bar&record=123',
             $url
             );
     }
-    
-    public function testDefaultAuthenicationRedirectGivenDefaultSettings() 
+
+    public function testDefaultAuthenicationRedirectGivenDefaultSettings()
     {
         $GLOBALS['sugar_config']['default_module'] = 'dog';
         $GLOBALS['sugar_config']['default_action'] = 'cat';
-        unset($_REQUEST['login_module']);
-        unset($_REQUEST['login_action']);
-        unset($_REQUEST['login_record']);
-        
+        unset($_POST['login_module']);
+        unset($_POST['login_action']);
+        unset($_POST['login_record']);
+
         $authController = $this->getMock('AuthenticationController');
 
         $url = '';
         require('modules/Users/Authenticate.php');
-        
+
         $this->assertEquals(
             'Location: index.php?module=dog&action=cat',
             $url
             );
     }
-    
+
     //BEGIN SUGARCRM flav=pro ONLY
-    public function testMobileAuthenicationRedirect() 
+    public function testMobileAuthenicationRedirect()
     {
         $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        unset($_REQUEST['login_module']);
-        unset($_REQUEST['login_action']);
-        unset($_REQUEST['login_record']);
+        unset($_POST['login_module']);
+        unset($_POST['login_action']);
+        unset($_POST['login_record']);
         $_SESSION['isMobile'] = true;
         $GLOBALS['current_user']->setPreference('wireless_last_module','dogpoo');
         $authController = $this->getMock('AuthenticationController');
-        
+
         $url = '';
         require('modules/Users/Authenticate.php');
-        
+
         $this->assertEquals(
             'Location: index.php?module=dogpoo&action=wirelessmodule&mobile=1',
             $url
             );
     }
-    
-    public function testMobileAuthenicationRedirectIgnorredIfLoginParameters() 
+
+    public function testMobileAuthenicationRedirectIgnorredIfLoginParameters()
     {
         $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $_REQUEST['login_module'] = 'cat';
-        $_REQUEST['login_action'] = 'mouse';
-        $_REQUEST['login_record'] = '456';
+        $_POST['login_module'] = 'cat';
+        $_POST['login_action'] = 'mouse';
+        $_POST['login_record'] = '456';
         $_SESSION['isMobile'] = true;
         $authController = $this->getMock('AuthenticationController');
-        
+
         $url = '';
         require('modules/Users/Authenticate.php');
-        
+
         $this->assertEquals(
             'Location: index.php?module=cat&action=mouse&record=456&mobile=1',
             $url
