@@ -49,6 +49,11 @@
       color: lighten(@gray, 5%);
     }
   }
+  // Disabled state override bootstrap default
+  &.disabled,
+  &[disabled] {
+    .opacity(35);
+  }
 }
 
 
