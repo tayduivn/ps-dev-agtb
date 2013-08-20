@@ -117,6 +117,9 @@ $dictionary['Styleguide'] = array(
     'relationships' => array (
 
     ),
+    'acls' => array(
+        'SugarACLAdminOnly' => true,
+    ),
 );
 
 if (!class_exists('VardefManager')){
