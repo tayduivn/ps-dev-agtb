@@ -28,13 +28,13 @@
       .border-radius(0 10px 10px 0);
       padding: 4px 6px 4px 4px;
       display: inline-block;
-      height: 13px;
+      height: 12px;
       white-space: nowrap;
       margin-top: 3px;
       margin-left: -6px;
       font-size: @fontSizeSmall;
       font-weight: bold;
-      line-height: 14px;
+      line-height: 12px;
       vertical-align: top;
     }
     div.choice-related {
@@ -49,6 +49,9 @@
 
     // select2 filter pills
     .select2-container {
+      &.related-filter {
+        vertical-align: top;
+      }
       &.select2-container-disabled .select2-choice div {
         background: none;
         .icon-caret-down {
@@ -56,7 +59,7 @@
         }
       }
       .select2-choices {
-        padding: 3px 4px 3px 0;
+        padding: 1px 4px 2px 0;
         border: none;
         background-image: none;
         background-color: transparent;
@@ -75,7 +78,7 @@
         .border-radius(0);
         .box-shadow(none);
         span {
-          display: inline;
+          display: inline-block;
           margin-right: 0;
         }
         div {
@@ -91,7 +94,8 @@
           color: @gray;
           padding: 4px 4px 4px 6px;
           margin-right: 2px;
-          line-height: 14px;
+          line-height: 12px;
+          height: 12px;
           background: @grayLighter;
           i[class^="icon-"] {
             margin-left: 4px;
@@ -106,7 +110,8 @@
         a.select2-choice-filter {
           .border-radius(0 10px 10px 0);
           padding: 4px 6px 4px 4px;
-          display:inline;
+          display: inline-block;
+          line-height: 12px;
         }
         span.select2-choice-related,
         a.select2-choice-related {
@@ -122,9 +127,6 @@
         a:hover {
           text-decoration: none;
         }
-        a.select2-search-choice-close {
-          right: 4px;
-        }
         .filter-disabled a {
           background: @grayLighter;
           color: @gray;
@@ -134,19 +136,17 @@
           }
         }
         &.select2-locked {
-            margin: 0px;
-            padding-right: 0px !important;
+          padding-right: 0px !important;
         }
       }
       &.select2-container-multi.select2-choices-pills-close .select2-search-choice a.select2-choice-filter {
         padding-right: 20px;
       }
-
-        &.select2-container-disabled {
-            .select2-choices {
-                padding-right: 0px;
-            }
+      &.select2-container-disabled {
+        .select2-choices {
+          padding-right: 0px;
         }
+      }
     }
 
     // search input field
@@ -155,9 +155,10 @@
       left: auto;
       width: 100%;
       .box-sizing(border-box);
-      height: 26px;
+      height: 22px;
       border: 0;
       padding: 4px 8px;
+      top: 2px;
       box-shadow: none;
       &.hide {
         display: none;
@@ -173,7 +174,8 @@
     position: absolute;
     right: 0;
     top: 0;
-    padding: 6px 10px;
+    padding: 7px 10px;
+    color: @gray;
     &:hover {
       cursor: pointer;
     }
