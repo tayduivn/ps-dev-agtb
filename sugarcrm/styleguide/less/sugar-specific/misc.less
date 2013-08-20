@@ -470,7 +470,6 @@ hr.soften {
   .icon-spin { height: .9em; }
 }
 
-
 //from activity stream
 ul.unstyled, ol.unstyled {
   margin: 0 !important;
@@ -506,4 +505,13 @@ ul.unstyled, ol.unstyled {
 
 .unstyled.listed .dropdown-menu li a:hover {
   color: @dropdownLinkColorHover;
+}
+
+.noaccess a {
+  i {
+    color: @linkColor;
+  }
+  &:hover i {
+    color: @linkColor !important;
+  }
 }
