@@ -93,8 +93,29 @@
   span[data-type="fieldset-with-labels"] {
     font-size: 0;
   }
+  
+  span[data-name="first_name"],
+  span[data-name="last_name"] {
+	  color: @gray;
+	  font-weight: 600;
+	  line-height: 18px;
+  }
+  
+  span[data-name="title"] {
+	  color: @gray;
+	  font-size: 14px !important;
+	  line-height: 16px;
+  }
+  
+  // [moey] Had to do this because data-name="subtitle" is using absolute-positioning.
+  span.record-cell[data-name="full_name"] {
+	position: absolute;
+	top: 0;
+	left: 110px;	  
+  }
+  
   // this is all because our layout method for header is a bit difficult
-  span[data-name="subtitle"] {
+  span.record-cell[data-name="subtitle"] {
     position: absolute;
     top: 24px;
     left: 110px;
@@ -107,14 +128,15 @@
   span .record-edit-link-wrapper[data-name="subtitle"] label {
       display: none;
   }
-  span .record-edit-link-wrapper[data-name="subtitle"] {
-      position: absolute;
-      top: 16px;
-      left: 90px;
-  }
   span .record-edit-link-wrapper[data-name="lastInteractionTime"] {
     display: none;
   }
+  /*
+  .record-edit-link-wrapper[data-name="subtitle"] {
+    top: 16px;
+    left: 24px;
+  }
+  */
   span[data-type="follow"],
   span[data-type="badge"] {
     padding-top: 16px;
@@ -667,6 +689,11 @@
 
 // labels on left side
 .record {
+
+  .row-fluid.panel_hidden {
+    margin-bottom: 10px;	  
+  }
+  
   .card2 {
     .normal {
       .detail {
