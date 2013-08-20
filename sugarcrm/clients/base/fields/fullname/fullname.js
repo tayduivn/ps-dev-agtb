@@ -47,6 +47,12 @@
             name: 'fieldset',
             method: '_loadTemplate'
         });
+        //Bug: SP-1273 - Fixes Contacts subpanel record links to home page
+        //(where expectation was to go to the corresponding Contact record)
+        if (this.def.link) {
+            var action = this.def.route && this.def.route.action ? this.def.route.action : '';
+            this.href = '#' + app.router.buildRoute(this.module||this.context.get('module'), this.model.id, action, this.def.bwcLink);
+        }
         this.template = app.template.getField(this.type, this.view.name + '-' + this.tplName, this.model.module) ||
                         this.template;
     },
