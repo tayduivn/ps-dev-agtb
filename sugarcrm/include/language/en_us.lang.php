@@ -107,7 +107,6 @@ $app_list_strings = array (
     'TrackerQueries' => 'Tracker Queries',
     'FAQ' => 'FAQ',
     'Newsletters' => 'Newsletters',
-    'SugarFeed'=>'Sugar Feed',
     'KBDocuments' => 'Knowledge Base Documents',
   	'SugarFavorites'=>'Favorites',
 //BEGIN SUGARCRM flav=pro ONLY

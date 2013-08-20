@@ -31,17 +31,20 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
-    public $supportedModules = array('SugarFeed');
+    public $supportedModules = array('Accounts', 'Contacts', 'Home');
     public $connector = "ext_rest_twitter";
 
-	protected $oauthReq = "https://api.twitter.com/oauth/request_token";
+    protected $oauthReq = "https://api.twitter.com/oauth/request_token";
     protected $oauthAuth = 'https://api.twitter.com/oauth/authorize';
     protected $oauthAccess = 'https://api.twitter.com/oauth/access_token';
     protected $oauthParams = array(
-    	'signatureMethod' => 'HMAC-SHA1',
-    );
+            'signatureMethod' => 'HMAC-SHA1',
+        );
 
-	public function getLatestUpdates($maxTime, $maxEntries)
+    /**
+     * @deprecated This is a depreciated method and will be removed in version 7.3.
+     */
+    public function getLatestUpdates($maxTime, $maxEntries)
     {
         $td = $GLOBALS['timedate'];
 
@@ -77,7 +80,7 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
         }
 
 
-        return array('success'=>TRUE,'messages'=>$messages);
+        return array('success'=>true,'messages'=>$messages);
     }
 
     /**
@@ -120,17 +123,17 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
         $rawResponse = $oauth->fetch($url, $urlParams, $requestMethod, $headers);
 
         if ( empty($rawResponse) ) {
-            return array('success'=>FALSE,'errorMessage'=>translate('LBL_ERR_TWITTER', 'EAPM'));
+            return array('success'=>false,'errorMessage'=>translate('LBL_ERR_TWITTER', 'EAPM'));
         }
         $response = json_decode($rawResponse,true);
         if ( empty($response) ) {
-            return array('success'=>FALSE,'errorMessage'=>translate('LBL_ERR_TWITTER', 'EAPM'));
+            return array('success'=>false,'errorMessage'=>translate('LBL_ERR_TWITTER', 'EAPM'));
         }
 
         if ( isset($response['error']) ) {
-            return array('success'=>FALSE,'errorMessage'=>$response['error']);
+            return array('success'=>false,'errorMessage'=>$response['error']);
         }
 
-        return array('success'=>TRUE, 'responseJSON'=>$response);
+        return array('success'=>true, 'responseJSON'=>$response);
     }
 }

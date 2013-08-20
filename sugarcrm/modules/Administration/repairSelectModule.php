@@ -46,7 +46,6 @@ if (!defined('sugarEntry') || !sugarEntry)
 									 'clearVardefs', 
 									 'clearJsLangFiles',
 									 'clearDashlets',
-									 'clearSugarFeedCache',
 									 'clearThemeCache',
 									 'rebuildAuditTables',
 									 'rebuildExtensions',
@@ -60,7 +59,6 @@ if (!defined('sugarEntry') || !sugarEntry)
                                         $mod_strings['LBL_QR_CBOX_CLEARVARDEFS'],
                                         $mod_strings['LBL_QR_CBOX_CLEARJSLANG'],
                                         $mod_strings['LBL_QR_CBOX_CLEARDASHLET'],
-                                        $mod_strings['LBL_QR_CBOX_CLEARSUGARFEEDCACHE'],
                                         $mod_strings['LBL_QR_CBOX_CLEARTHEMECACHE'],
                                         $mod_strings['LBL_QR_CBOX_REBUILDAUDIT'],
                                         $mod_strings['LBL_QR_CBOX_REBUILDEXT'],
@@ -75,7 +73,5 @@ if (!defined('sugarEntry') || !sugarEntry)
 			$smarty->assign('MOD', $mod_strings);
 			$smarty->assign('checkbox_output', $checkbox_output);
 			$smarty->assign('checkbox_values', $checkbox_values);
-			$smarty->display("modules/Administration/templates/QuickRepairAndRebuild.tpl");			
-			
-			
-?>
+			$smarty->display("modules/Administration/templates/QuickRepairAndRebuild.tpl");
+
