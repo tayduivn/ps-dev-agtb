@@ -36,6 +36,16 @@
 
     /**
      * {@inheritdoc}
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+        if (this.model.isNew()) {
+            this.model.set('currency_id', app.user.get('preferences').currency_id);
+        }
+    },
+
+    /**
+     * {@inheritdoc}
      *
      * Setup transactional amount if flag is present and transaction currency
      * is not base.
@@ -46,9 +56,7 @@
      * @private
      */
     _render: function() {
-
         app.view.Field.prototype._render.call(this);
-
         if (this.action === 'edit' || this.action === 'disabled') {
 
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));

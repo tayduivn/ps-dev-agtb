@@ -53,6 +53,7 @@ describe('Base.Fields.Currency', function() {
         app = SugarTest.app;
 
         app.data.declareModel(moduleName, metadata);
+        app.user.setPreference('currency_id', '-99');
 
         model = app.data.createBean(moduleName, {
             amount: 123456789.12,
@@ -131,6 +132,61 @@ describe('Base.Fields.Currency', function() {
 
             sandbox.restore();
         });
+    });
+
+    describe('new record', function() {
+        var field;
+
+        beforeEach(function() {
+            app.user.setPreference('currency_id', 'abc123');
+        });
+
+        it('should make new record default to user preferred currency', function() {
+            model = app.data.createBean(moduleName, {
+                amount: 123456789.12,
+                currency_id: '-99',
+                base_rate: 1.0
+            });
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            expect(field.model.get('currency_id')).toEqual('abc123');
+        });
+
+        it('should leave existing record currency', function() {
+            model = app.data.createBean(moduleName, {
+                id: 'abcdefg9999999',
+                amount: 123456789.12,
+                currency_id: '-99',
+                base_rate: 1.0
+            });
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            expect(field.model.get('currency_id')).toEqual('-99');
+        });
+
+
     });
 
     describe('detail view', function() {
