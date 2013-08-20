@@ -540,6 +540,37 @@ class SugarApplication
         );
 
     /**
+     * Respond to XSF attempt
+     * @param bool $dieIfInvalid
+     * @return boolean Returns false
+     */
+    protected function xsrfResponse($dieIfInvalid, $inBWC)
+    {
+        $http_host = explode(':', $_SERVER['HTTP_HOST']);
+        $whiteListActions = $this->whiteListActions;
+        $whiteListActions[] = $this->controller->action;
+        $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
+        if ($dieIfInvalid) {
+            if($inBWC) {
+                if(!empty($this->controller->module)) {
+                    header("Location: index.php?module={$this->controller->module}&action=index");
+                } else {
+                    header("Location: index.php?module=Home&action=index");
+                }
+            } else {
+                header("Cache-Control: no-cache, must-revalidate");
+                $ss = new Sugar_Smarty;
+                $ss->assign('host', $http_host[0]);
+                $ss->assign('action', $this->controller->action);
+                $ss->assign('whiteListString', $whiteListString);
+                $ss->display('include/MVC/View/tpls/xsrf.tpl');
+            }
+            sugar_cleanup(true);
+        }
+        return false;
+    }
+
+    /**
      *
      * Checks a request to ensure the request is coming from a valid source or it is for one of the white listed actions
      */
@@ -561,46 +592,21 @@ class SugarApplication
             $whiteListReferers = array_merge($whiteListReferers, $sugar_config['http_referer']['list']);
         }
 
-        if ($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $this->whiteListActions)
+        $inBWC = !empty($_GET['bwcFrame']);
+        // for BWC iframe, matching referer is not enough
+        if ($strong && (empty($_SERVER['HTTP_REFERER']) || $inBWC)
+            && !in_array($this->controller->action, $this->whiteListActions)
             && $this->isModifyAction()
         ) {
-            $http_host = explode(':', $_SERVER['HTTP_HOST']);
-            $whiteListActions = $this->whiteListActions;
-            $whiteListActions[] = $this->controller->action;
-            $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
-            if ($dieIfInvalid) {
-                header("Cache-Control: no-cache, must-revalidate");
-                $ss = new Sugar_Smarty;
-                $ss->assign('host', $http_host[0]);
-                $ss->assign('action', $this->controller->action);
-                $ss->assign('whiteListString', $whiteListString);
-                $ss->display('include/MVC/View/tpls/xsrf.tpl');
-                sugar_cleanup(true);
-            }
-            return false;
+            return $this->xsrfResponse($dieIfInvalid, $inBWC);
         } else {
             if (!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])) {
                 $http_ref = parse_url($_SERVER['HTTP_REFERER']);
-                if ($http_ref['host'] !== $_SERVER['SERVER_NAME']
-                    && !in_array(
-                        $this->controller->action, $this->whiteListActions
-                    )
+                if (($http_ref['host'] !== $_SERVER['SERVER_NAME'] || $inBWC)
+                    && !in_array($this->controller->action, $this->whiteListActions)
                     && (empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))
                 ) {
-                    if ($dieIfInvalid) {
-                        header("Cache-Control: no-cache, must-revalidate");
-                        $whiteListActions = $this->whiteListActions;
-                        $whiteListActions[] = $this->controller->action;
-                        $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
-
-                        $ss = new Sugar_Smarty;
-                        $ss->assign('host', $http_ref['host']);
-                        $ss->assign('action', $this->controller->action);
-                        $ss->assign('whiteListString', $whiteListString);
-                        $ss->display('include/MVC/View/tpls/xsrf.tpl');
-                        sugar_cleanup(true);
-                    }
-                    return false;
+                    return $this->xsrfResponse($dieIfInvalid, $inBWC);
                 }
             }
         }
