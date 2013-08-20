@@ -203,7 +203,7 @@
         }
     },
     showPreviousNextBtnGroup: function () {
-        var listCollection = this.context.get('listCollection') || new app.data.beanCollection();
+        var listCollection = this.context.get('listCollection') || new app.data.createBeanCollection(this.module);
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
         if (listCollection && listCollection.models && listCollection.models.length <= 1) {
             this.showPrevNextBtnGroup = false;

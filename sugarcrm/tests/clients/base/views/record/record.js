@@ -500,8 +500,8 @@ describe("Record View", function () {
 
         beforeEach(function () {
             createListCollection = function (nbModels, offsetSelectedModel) {
-                view.context.set('listCollection', new Backbone.Collection());
-                view.collection = new Backbone.Collection();
+                view.context.set('listCollection', new app.data.createBeanCollection(moduleName));
+                view.collection = app.data.createBeanCollection(moduleName);
 
                 var modelIds = [];
                 for (var i = 0; i <= nbModels; i++) {
