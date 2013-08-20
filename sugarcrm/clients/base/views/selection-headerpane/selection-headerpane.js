@@ -32,6 +32,10 @@
             moduleName = app.lang.get("LBL_MODULE_NAME", this.module);
         this.title = titleTemplate({module: moduleName});
         app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: '_renderHtml'});
+
+        this.layout.on('selection:closedrawer:fire', function() {
+            app.drawer.close();
+        }, this);
     },
 
     /**

@@ -24,6 +24,7 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleMoreLess.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListRemoveLinks.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/File.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/MetadataEventDriven.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/LinkedModel.js"></script>
 
     <!-- customized beans -->

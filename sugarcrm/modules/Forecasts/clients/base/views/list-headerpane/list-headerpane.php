@@ -23,9 +23,7 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
         array(
             'name' => 'save_draft_button',
             'events' => array(
-                'click' => 'function(e){
-                    this.view.context.trigger("button:save_draft_button:click");
-                    }'
+                'click' => 'button:save_draft_button:click',
             ),
             'type' => 'button',
             'label' => 'LBL_SAVE_DRAFT',
@@ -41,9 +39,7 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     'type' => 'button',
                     'label' => 'LBL_QC_COMMIT_BUTTON',
                     'events' => array(
-                        'click' => 'function(e){
-                            this.view.context.trigger("button:commit_button:click");
-                        }'
+                        'click' => 'button:commit_button:click',
                     ),
                     'tooltip' => 'LBL_COMMIT_TOOLTIP',
                     'css_class' => 'btn-primary',
@@ -56,9 +52,7 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     'type' => 'assignquota',
                     'label' => 'LBL_ASSIGN_QUOTA_BUTTON',
                     'events' => array(
-                        'click' => 'function(e){
-                            this.view.context.trigger("button:assign_quota:click");
-                        }'
+                        'click' => 'button:assign_quota:click',
                     ),
                     'acl_action' => 'manager_current_user',
                 ),
@@ -75,7 +69,10 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     'acl_action' => 'developer',
                     'route' => array(
                         'action'=>'config'
-                    )
+                    ),
+                    'events' => array(
+                        'click' => 'button:settings_button:click',
+                    ),
                 ),
             ),
         ),
