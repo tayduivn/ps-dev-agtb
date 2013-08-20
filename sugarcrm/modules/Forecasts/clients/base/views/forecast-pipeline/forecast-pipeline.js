@@ -1,7 +1,7 @@
 ({
     results: {},
     chart: {},
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet','tooltip'],
 
     /**
      * Is the forecast Module setup??
@@ -14,7 +14,9 @@
     forecastAdmin: false,
 
     events: {
-        'click button.btn': 'handleTypeButtonClick'
+        'click button.btn': 'handleTypeButtonClick',
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
     initialize: function(options) {
@@ -105,5 +107,12 @@
                 complete: options ? options.complete : null
             });
         }
+    },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     }
 })

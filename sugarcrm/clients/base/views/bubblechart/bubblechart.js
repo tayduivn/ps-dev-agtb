@@ -11,10 +11,12 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet','tooltip'],
 
     events: {
-        'click .toggle-control': 'switchChart'
+        'click .toggle-control': 'switchChart' ,
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
     filterAssigned: null,
@@ -223,5 +225,13 @@
             nv.utils.windowUnResize(this.chart.render);
         }
         app.view.View.prototype._dispose.call(this);
+    },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
+
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
     }
+
 })

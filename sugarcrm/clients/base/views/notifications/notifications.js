@@ -4,11 +4,13 @@
     className: 'nav pull-right megamenu',
 
     // FIXME: dropdown plugin should not be needed when SC-1214 gets fixed
-    plugins: ['dropdown', 'timeago', 'ellipsis_inline'],
+    plugins: ['dropdown', 'timeago', 'ellipsis_inline','tooltip'],
 
     // FIXME: open event should not be needed when SC-1214 gets fixed
     events: {
-        'click [data-action=open]': 'open'
+        'click [data-action=open]': 'open',
+        'mouseenter [rel="tooltip"]': 'showTooltip',
+        'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
 
     /**
@@ -264,7 +266,13 @@
 
         app.view.View.prototype._renderHtml.call(this);
     },
+    showTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("show");
+    },
 
+    hideTooltip: function(event) {
+        this.$(event.currentTarget).tooltip("hide");
+    },
     /**
      * @inheritdoc
      */
