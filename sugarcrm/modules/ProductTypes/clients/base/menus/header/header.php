@@ -62,7 +62,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_PRODUCT_CATEGORIES',
         'acl_action'=>'',
         'acl_module'=>'',
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-upload',
     ),
 
 );
