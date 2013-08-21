@@ -97,7 +97,6 @@
             var collection = this.$el.parent("div.pull-right").children("span");
             var collectionWidth = parseInt(parentMarginLeft) + parseInt(parentMarginRight);
             collection.each(function(index){
-
                 collectionWidth += $(this).children("div.datapoint").outerWidth(true);
             });
 
