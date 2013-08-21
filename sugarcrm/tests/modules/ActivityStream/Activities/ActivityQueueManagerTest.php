@@ -5,6 +5,11 @@ require_once 'modules/ActivityStream/Activities/Activity.php';
 
 class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    const BOGUS_USER  = '0';
+    const USER_ONE    = '1';
+    const USER_TWO    = '2';
+    const PORTAL_USER = '3';
+
     public function tearDown()
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -202,6 +207,90 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    public function dataProviderForAddSubscriptions()
+    {
+        return array(
+            /*  1 */  array(self::USER_ONE,    self::USER_ONE,    false, 1),
+            /*  2 */  array(self::USER_ONE,    self::USER_TWO,    false, 2),
+            /*  3 */  array(self::USER_ONE,    self::USER_TWO,    true,  1),
+            /*  4 */  array(self::USER_ONE,    self::PORTAL_USER, false, 1),
+            /*  5 */  array(self::USER_ONE,    self::BOGUS_USER,  false, 1),
+            /*  6 */  array(self::PORTAL_USER, self::USER_TWO,    false, 1),
+            /*  7 */  array(self::PORTAL_USER, self::USER_TWO,    true,  0),
+            /*  8 */  array(self::BOGUS_USER,  self::USER_TWO,    false, 1),
+            /*  9 */  array(self::BOGUS_USER,  self::USER_TWO,    true,  0),
+            /* 10 */  array(self::BOGUS_USER,  self::BOGUS_USER,  false, 0),
+            /* 11 */  array(self::PORTAL_USER, self::PORTAL_USER, false, 0),
+        );
+    }
+
+    /**
+     * @dataProvider dataProviderForAddSubscriptions
+     */
+    public function testAddSubscribers(
+        $arg_assigned_user,
+        $arg_createdby_user,
+        $isUpdate,
+        $subscriptions
+    ) {
+        $bean = SugarTestContactUtilities::createContact();
+
+        if ($arg_assigned_user == self::BOGUS_USER) {
+            $assignedUser     = new User();
+            $assignedUser->id = '000A';
+        } else {
+            $assignedUser = SugarTestUserUtilities::createAnonymousUser();
+            if ($arg_assigned_user == self::PORTAL_USER) {
+                $assignedUser->portal_only=true;
+                $assignedUser->save();
+            }
+        }
+
+        if ($arg_createdby_user == $arg_assigned_user) {
+            $createdByUser = $assignedUser;
+        } elseif ($arg_createdby_user == self::BOGUS_USER) {
+            $createdByUser     = new User();
+            $createdByUser->id = '000B';
+        } else {
+            $createdByUser = SugarTestUserUtilities::createAnonymousUser();
+            if ($arg_createdby_user == self::PORTAL_USER) {
+                $createdByUser->portal_only=true;
+                $createdByUser->save();
+            }
+        }
+
+        $bean->assigned_user_id = $assignedUser->id;
+        $bean->created_by       = $createdByUser->id;
+
+        $save_enabled = Activity::$enabled;
+        Activity::enable();
+
+        $args = array(
+            'isUpdate'    => $isUpdate,
+            'dataChanges' => array("changes" => array())
+        );
+
+        $mockActivity = self::getMock('Activity', array('save', 'processRecord'));
+        $mockActivity->expects($this->once())
+            ->method('save');
+        $mockActivity->expects($this->once())
+            ->method('processRecord');
+
+        $actManager = self::getMock(
+            'TestActivityQueueManager',
+            array(
+                'subscribeUserToRecord',
+                'prepareChanges'
+            )
+        );
+        $actManager->expects($this->exactly($subscriptions))
+            ->method('subscribeUserToRecord');
+
+        $actManager->createOrUpdate($bean, $args, $mockActivity);
+
+        Activity::$enabled = $save_enabled;
+    }
+
     public function dataProviderForActivityMessageCreation()
     {
         return array(
@@ -276,5 +365,9 @@ class TestActivityQueueManager extends ActivityQueueManager
     public function exec_prepareChanges($bean, &$data)
     {
         return $this->prepareChanges($bean, $data);
+    }
+    public function createOrUpdate($bean, $args, $activity)
+    {
+        return parent::createOrUpdate($bean, $args, $activity);
     }
 }
