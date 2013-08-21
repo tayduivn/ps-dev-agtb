@@ -194,17 +194,42 @@
             model.set(fieldName, dateValue, hrsMins.hours, hrsMins.minutes);
         }
     },
+    /**
+     * Verifies the parts of a date string are valid according to:
+     * 1. formats supported by SugarCRM
+     * 2. the user's current date format
+     * Note that due to several browser limitations, we can only confirm the validity of
+     * the "date parts" in relation to SugarCRM's supported formats and user's current
+     * date format (and cannot guarantee JavaScript Date.parse, etc., can handle this date!)
+     * @param  {String} value The date string
+     * @return {Boolean}       True if valid, false if not.
+     */
     _verifyDateString: function(value) {
-        var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
+        var sep, parsed, parts,
+            dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
         //First try generic date parse (since we might have an ISO). This should generally work with the
         //ISO date strings we get from server.
-        var parsed = Date.parse(value);
+        parsed = Date.parse(value);
         //Firefox for invalid date returns negative value instead NaN.
         if(_.isNaN(parsed) || parsed < 0) {
             //Safari chokes on '.', '-', so retry replacing with '/'
             if(_.isNaN(value.replace(/[\.\-]/g, '/'))) {
                 //Use datepicker plugin to verify datepicker format
                 return $.prototype.DateVerifier(value, dateFormat);
+            }
+            //Date strings starting with day e.g. dd* will fail due to Date.parse limitations
+            //So we artificially convert "date parts" to mm-dd-YYYY format to make date.parse
+            //We use '/' as separator since it seems to be most tolerated. Essentially, we're
+            //only confirming that the date parts are in fact valid.
+            sep = '.';
+            if (dateFormat.indexOf('dd') === 0) {
+                if (dateFormat.indexOf('/') > -1) {
+                    sep = '/';
+                } else if (dateFormat.indexOf('-') > -1) {
+                    sep = '-';
+                }
+                parts = value.split(sep);
+                return !_.isNaN(Date.parse(parts[1]+'/'+parts[0]+'/'+parts[2]));
             }
             return false;
         }
