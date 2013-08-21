@@ -88,27 +88,7 @@ class SugarBeanApiHelper
 
             }
 
-            if (isset($bean->field_defs['email']) && 
-                (empty($fieldList) || in_array('email', $fieldList))
-                //BEGIN SUGARCRM flav=pro ONLY
-                && $bean->ACLFieldAccess('email1', 'access')
-                //END SUGARCRM flav=pro ONLY
-            ) {
-                $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
-                $field = $sfh->getSugarField('Email');
-                array_walk($emailsRaw, array($field, "formatEmails"));
-                if (empty($data['email'])) {
-                    $data['email'] = array();
-                }
-                if (!is_array($data['email'])) {
-                    $data['email'] = array($data['email']);
-                }
-                $data['email'] += $emailsRaw;
-            }
             //BEGIN SUGARCRM flav=pro ONLY
-            elseif(!$bean->ACLFieldAccess('email1', 'access')) {
-                unset($data['email']);
-            }
             // mark if its a favorite
             if (in_array('my_favorite', $fieldList) || empty($fieldList)) {
                 if (isset($bean->my_favorite)) {
@@ -232,6 +212,12 @@ class SugarBeanApiHelper
     {
         if(!empty($bean->id) && !empty($options['optimistic_lock'])) {
             $this->checkOptimisticLocking($bean, $options['optimistic_lock']);
+        }
+
+        // Some of the SugarFields require ID's, so lets set it up
+        if (empty($bean->id)) {
+            $bean->id = create_guid();
+            $bean->new_with_id = true;
         }
 
         $sfh = new SugarFieldHandler();
