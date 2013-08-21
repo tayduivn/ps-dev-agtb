@@ -325,33 +325,23 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
                         continue;
                     }
 
+                    // Get the initial def structure
                     $def = $this->_trimFieldDefs($this->_fielddefs[$fieldname]);
-                    $label = isset($def['label']) ? $def['label'] : '';
-                    if (empty($label)) {
-                        $label = isset($def['vname']) ? $def['vname'] : $def['name'];
-                    }
-                    $panelfield = array('name' => $fieldname, 'label' => $label, 'enabled' => true);
+
+                    // Set the basic default properties of the field def
+                    $panelfield = $this->setDefDefaults($fieldname, $def);
 
                     // Handle readonly flags
-                    if (isset($def['readonly'])) {
-                        $panelfield['readonly'] = $def['readonly'];
-                    }
+                    $panelfield = $this->setDefReadonly($def, $panelfield);
 
-                    // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
-                    // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
-                    if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'relate') {
-                        $panelfield['id'] = strtoupper($this->_fielddefs[$fieldname]['id_name']);
-                        $panelfield['link'] = true;
-                    }
-                    // sorting fields of certain types will cause a database engine problems
-                    if (isset($this->_fielddefs[$fieldname]['type']) && isset($this->requestRejectTypes[$this->_fielddefs[$fieldname]['type']])) {
-                        $panelfield['sortable'] = false;
-                    }
+                    // Handle link setup
+                    $panelfield = $this->setDefLink($fieldname, $panelfield);
 
-                    // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
-                    if (isset($this->_fielddefs[$fieldname]['type']) && $this->_fielddefs[$fieldname]['type'] == 'currency') {
-                        $panelfield['currency_format'] = true;
-                    }
+                    // Handle the sortable flag
+                    $panelfield = $this->setDefSortable($fieldname, $panelfield);
+
+                    // Handle currency formatting
+                    $panelfield = $this->setDefCurrencyFormat($fieldname, $panelfield);
 
                     $newPaneldefs[$newPaneldefIndex] = $panelfield;
                 }
@@ -488,40 +478,26 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
      */
     protected function generateFieldDef($fieldName)
     {
+        // Get the initial def structure
         $def = $this->_trimFieldDefs($this->_fielddefs[$fieldName]);
-        $label = isset($def['label']) ? $def['label'] : '';
-        if (empty($label)) {
-            $label = isset($def['vname']) ? $def['vname'] : $def['name'];
-        }
-        $fieldDef = array('name' => $fieldName, 'label' => $label, 'enabled' => true, 'default' => true);
+
+        // Set the basic default properties of the field def
+        $fieldDef = $this->setDefDefaults($fieldName, $def, true);
 
         // set the related fields
-        if (isset($def['related_fields']) && !empty($def['related_fields'])) {
-            $fieldDef['related_fields'] = $def['related_fields'];
-        }
+        $fieldDef = $this->setDefRelatedFields($def, $fieldDef);
 
         // set the alignment of column, if one is setup
-        if (isset($this->_fielddefs[$fieldName]['align']) && !empty($this->_fielddefs[$fieldName]['align'])) {
-            $fieldDef['align'] = $this->_fielddefs[$fieldName]['align'];
-        }
+        $fieldDef = $this->setDefAlign($fieldName, $fieldDef);
 
-        // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
-        // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
-        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'relate') {
-            $fieldDef['id'] = strtoupper($this->_fielddefs[$fieldName]['id_name']);
-            $fieldDef['link'] = true;
-        }
-        // sorting fields of certain types will cause a database engine problems
-        if (isset($this->_fielddefs[$fieldName]['type']) &&
-            isset($this->requestRejectTypes[$this->_fielddefs[$fieldName]['type']])
-        ) {
-            $fieldDef['sortable'] = false;
-        }
+        // Set the link property
+        $fieldDef = $this->setDefLink($fieldName, $fieldDef);
 
-        // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
-        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'currency') {
-            $fieldDef['currency_format'] = true;
-        }
+        // Handle sortable flag setting
+        $fieldDef = $this->setDefSortable($fieldName, $fieldDef);
+
+        // Handle currency format
+        $fieldDef = $this->setDefCurrencyFormat($fieldName, $fieldDef);
 
         return $fieldDef;
     }
@@ -609,5 +585,138 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             MetaDataFiles::clearModuleClientCache($this->_moduleName,'view');
             MetaDataManager::clearAPICache(false);
         }
+    }
+
+    /**
+     * Sets the currency_format property of the fielddef
+     * 
+     * @param string $fieldName  The name of the field being worked on
+     * @param array $fieldDef The current fielddef collection for a field
+     * @param bool $addDefault Flag that determines whether the default property is added
+     * @return array The modified fielddef collection
+     */
+    public function setDefDefaults($fieldName, $fieldDef, $addDefault = false)
+    {
+        // Set the label
+        $label = isset($fieldDef['label']) ? $fieldDef['label'] : '';
+        if (empty($label)) {
+            $label = isset($fieldDef['vname']) ? $fieldDef['vname'] : $fieldDef['name'];
+        }
+
+        // Generate the basics of all initial def defaults
+        $return = array(
+            'name' => $fieldName,
+            'label' => $label,
+            'enabled' => true,
+        );
+
+        if ($addDefault) {
+            $return['default'] = true;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Sets the id and link properties of the fielddef
+     * 
+     * @param string $fieldName  The name of the field being worked on
+     * @param array $fieldDef The current fielddef collection for a field
+     * @return array The modified fielddef collection
+     */
+    public function setDefLink($fieldName, $fieldDef)
+    {
+        // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
+        // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
+        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'relate') {
+            $fieldDef['id'] = strtoupper($this->_fielddefs[$fieldName]['id_name']);
+            $fieldDef['link'] = true;
+        }
+
+        return $fieldDef;
+    }
+
+    /**
+     * Sets the sortable property of the fielddef
+     * 
+     * @param string $fieldName  The name of the field being worked on
+     * @param array $fieldDef The current fielddef collection for a field
+     * @return array The modified fielddef collection
+     */
+    public function setDefSortable($fieldName, $fieldDef)
+    {
+        // sorting fields of certain types will cause database engine problems
+        $noSortByType = isset($this->_fielddefs[$fieldName]['type']) && isset($this->nonSortableTypes[$this->_fielddefs[$fieldName]['type']]);
+        $noSortDBType = isset($this->_fielddefs[$fieldName]['dbType']) && $this->_fielddefs[$fieldName]['dbType'] == 'id';
+        if ($noSortByType || $noSortDBType) {
+            $fieldDef['sortable'] = false;
+        }
+
+        return $fieldDef;
+    }
+
+    /**
+     * Sets the currency_format property of the fielddef
+     * 
+     * @param string $fieldName  The name of the field being worked on
+     * @param array $fieldDef The current fielddef collection for a field
+     * @return array The modified fielddef collection
+     */
+    public function setDefCurrencyFormat($fieldName, $fieldDef)
+    {
+        // Bug 23728 - Make adding a currency type field default to setting the 'currency_format' to true
+        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'currency') {
+            $fieldDef['currency_format'] = true;
+        }
+
+        return $fieldDef;
+    }
+
+    /**
+     * Sets the align property of the fielddef
+     * 
+     * @param string $fieldName  The name of the field being worked on
+     * @param array $fieldDef The current fielddef collection for a field
+     * @return array The modified fielddef collection
+     */
+    public function setDefAlign($fieldName, $fieldDef)
+    {
+        if (isset($this->_fielddefs[$fieldName]['align']) && !empty($this->_fielddefs[$fieldName]['align'])) {
+            $fieldDef['align'] = $this->_fielddefs[$fieldName]['align'];
+        }
+
+        return $fieldDef;
+    }
+
+    /**
+     * Sets the readonly property of a fielddef
+     * 
+     * @param array $rawDef   The raw field def from an initial def fetch
+     * @param array $fieldDef The current fielddef collection for a field
+     * @return array The modified fielddef collection
+     */
+    public function setDefReadonly($rawDef, $fieldDef)
+    {
+        if (isset($rawDef['readonly'])) {
+            $fieldDef['readonly'] = $rawDef['readonly'];
+        }
+
+        return $fieldDef;
+    }
+
+    /**
+     * Sets the relate_fields property of a fielddef
+     * 
+     * @param array $rawDef   The raw field def from an initial def fetch
+     * @param array $fieldDef The current fielddef collection for a field
+     * @return array The modified fielddef collection
+     */
+    public function setDefRelatedFields($rawDef, $fieldDef)
+    {
+        if (isset($rawDef['related_fields']) && !empty($rawDef['related_fields'])) {
+            $fieldDef['related_fields'] = $rawDef['related_fields'];
+        }
+        
+        return $fieldDef;
     }
 }

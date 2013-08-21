@@ -41,7 +41,22 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_AVAILABLE' => 'getAdditionalFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
     protected $labelIdentifier = 'label' ; // labels in the listviewdefs.php are tagged 'label' =>
     protected $allowParent = false;
-    protected $requestRejectTypes = array('html'=>'html', 'text'=>'text', 'encrypt'=>'encrypt');
+    
+    /**
+     * Listing of field types that are not sortable
+     * 
+     * @var array
+     */
+    protected $nonSortableTypes = array(
+        'html'=>'html',
+        'text'=>'text',
+        'encrypt'=>'encrypt',
+        'iframe' => 'iframe',
+        'image' => 'image',
+        'relate' => 'relate',
+        'email' => 'email',
+    );
+    
     protected $allowedViews = array(
         MB_LISTVIEW,
         MB_DASHLET,
@@ -342,7 +357,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     }
                     // sorting fields of certain types will cause a database engine problems
 	                if ( isset($this->_fielddefs[$fieldname]['type']) &&
-	                		isset ( $this->requestRejectTypes [ $this->_fielddefs [ $fieldname ] [ 'type' ] ] ))
+	                		isset ( $this->nonSortableTypes [ $this->_fielddefs [ $fieldname ] [ 'type' ] ] ))
 	                {
 	                    $newViewdefs [ $fieldname ] [ 'sortable' ] = false ;
 	                }
