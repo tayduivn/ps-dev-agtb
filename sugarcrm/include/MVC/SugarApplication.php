@@ -544,9 +544,8 @@ class SugarApplication
      * @param bool $dieIfInvalid
      * @return boolean Returns false
      */
-    protected function xsrfResponse($dieIfInvalid, $inBWC)
+    protected function xsrfResponse($http_host, $dieIfInvalid, $inBWC)
     {
-        $http_host = explode(':', $_SERVER['HTTP_HOST']);
         $whiteListActions = $this->whiteListActions;
         $whiteListActions[] = $this->controller->action;
         $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
@@ -560,7 +559,7 @@ class SugarApplication
             } else {
                 header("Cache-Control: no-cache, must-revalidate");
                 $ss = new Sugar_Smarty;
-                $ss->assign('host', $http_host[0]);
+                $ss->assign('host', $http_host);
                 $ss->assign('action', $this->controller->action);
                 $ss->assign('whiteListString', $whiteListString);
                 $ss->display('include/MVC/View/tpls/xsrf.tpl');
@@ -598,7 +597,8 @@ class SugarApplication
             && !in_array($this->controller->action, $this->whiteListActions)
             && $this->isModifyAction()
         ) {
-            return $this->xsrfResponse($dieIfInvalid, $inBWC);
+            $http_host = empty($_SERVER['HTTP_HOST'])?array(''):explode(':',$_SERVER['HTTP_HOST']);
+            return $this->xsrfResponse($http_host[0], $dieIfInvalid, $inBWC);
         } else {
             if (!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])) {
                 $http_ref = parse_url($_SERVER['HTTP_REFERER']);
@@ -606,7 +606,7 @@ class SugarApplication
                     && !in_array($this->controller->action, $this->whiteListActions)
                     && (empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))
                 ) {
-                    return $this->xsrfResponse($dieIfInvalid, $inBWC);
+                    return $this->xsrfResponse($http_ref['host'], $dieIfInvalid, $inBWC);
                 }
             }
         }
