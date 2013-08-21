@@ -554,6 +554,7 @@ $dictionary['RevenueLineItem'] = array(
             'studio' => false,
             'reportable' => false,
             'audited' => true,
+            'activity_enabled' => false,
             'formula' => 'timestamp($date_closed)',
             'calculated' => true,
             'studio' => false

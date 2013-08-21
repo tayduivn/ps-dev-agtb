@@ -25,7 +25,7 @@ class ActivityQueueManager
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals', 'KBContents',
-        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets');
+        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications');
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
     /**
@@ -108,8 +108,7 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
-        $noAuditableFieldsUpdated = $args['isUpdate'] && empty($args['dataChanges']);
-        if ($bean->deleted || $bean->inOperation('saving_related') || $noAuditableFieldsUpdated) {
+        if ($bean->deleted || $bean->inOperation('saving_related')) {
             return false;
         }
 
@@ -123,6 +122,11 @@ class ActivityQueueManager
             $act->activity_type = 'update';
             $data['changes']    = $args['dataChanges'];
             $this->prepareChanges($bean, $data);
+
+            //if no field changes to report, do not create the activity
+            if (empty($data['changes'])) {
+                return false;
+            }
         } else {
             $act->activity_type = 'create';
         }
@@ -225,7 +229,8 @@ class ActivityQueueManager
     }
 
     /**
-     * Prepare the Change Data to be returned by eliminating IDs
+     * Prepare the Change Data to be returned
+     * Eliminates IDs and removes fields where activity_enabled is false
      * @param  $bean
      * @param  $data
      */
@@ -233,25 +238,32 @@ class ActivityQueueManager
     {
         if (!empty($data['changes']) && is_array($data['changes'])) {
             foreach ($data['changes'] as $fieldName => $changeInfo) {
+                $def = $bean->getFieldDefinition($fieldName);
+
+                //strip out changes where the field has activity_enabled is false
+                if (isset($def['activity_enabled']) && $def['activity_enabled'] === false) {
+                    unset($data['changes'][$fieldName]);
+                    continue;
+                }
+
                 if ($changeInfo['data_type'] === 'id' || $changeInfo['data_type'] === 'relate' || $changeInfo['data_type'] === 'team_list') {
                     if ($fieldName == 'team_set_id') {
                         $this->resolveTeamSetReferences($data, $fieldName);
                     } else {
                         $referenceModule = null;
                         if ($fieldName == 'parent_id') {
-                            $def = $bean->getFieldDefinition('parent_type');
-                            if (empty($def)) {
+                            $parentTypeDef = $bean->getFieldDefinition('parent_type');
+                            if (empty($parentTypeDef)) {
                                 $referenceModule = $data['object']['module'];
-                            } elseif (!empty($def['module'])) {
-                                $referenceModule = $def['module'];
+                            } elseif (!empty($parentTypeDef['module'])) {
+                                $referenceModule = $parentTypeDef['module'];
                             }
                         } elseif ($fieldName == 'team_id') {
-                            $def = $bean->getFieldDefinition('team_name');
-                            if (!empty($def['module'])) {
-                                $referenceModule = $def['module'];
+                            $teamNameDef = $bean->getFieldDefinition('team_name');
+                            if (!empty($teamNameDef['module'])) {
+                                $referenceModule = $teamNameDef['module'];
                             }
                         } else {
-                            $def = $bean->getFieldDefinition($fieldName);
                             if (!empty($def['module'])) {
                                 $referenceModule = $def['module'];
                             }
