@@ -35,6 +35,11 @@
         'change .newEmail':        'addNewAddress',
         'click  .composeEmail':    'composeEmail'
     },
+    _flag2Deco: {
+        primary_address: {lbl: "LBL_EMAIL_PRIMARY", cl: "primary"},
+        opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
+        invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
+    },
     initialize: function(options) {
         options     = options || {};
         options.def = options.def || {};
@@ -286,40 +291,30 @@
     },
     addFlagLabels: function(value) {
         var flagStr = "", flagClassStr = "", flagArray, flagClass;
-        var flag2Lbl = {
-            primary_address:"LBL_EMAIL_PRIMARY",
-            opt_out:"LBL_EMAIL_OPT_OUT",
-            invalid_email:"LBL_EMAIL_INVALID"
-        };
-        var flag2Cl = {
-            primary_address:"primary",
-            opt_out:"opted-out",
-            invalid_email:"invalid"
-        };
-        _.each(value, function(emailObj, key) {
+        _.each(value, function(emailObj) {
             flagStr = "";
             flagArray = _.map(emailObj, function (flagValue, key) {
-                if (flag2Lbl[key] && flagValue == "1") {
-                    return app.lang.get(flag2Lbl[key]);
+                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].lbl && flagValue == "1") {
+                    return app.lang.get(this._flag2Deco[key].lbl);
                 }
-            });
+            }, this);
             flagArray = _.without(flagArray, undefined);
             if (flagArray.length > 0) {
                 flagStr = flagArray.join(", ");
             }
             flagClassStr = "";
             flagClass = _.map(emailObj, function (flagValue, key) {
-                if (flag2Cl[key] && flagValue == "1") {
-                    return app.lang.get(flag2Cl[key]);
+                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].cl && flagValue == "1") {
+                    return app.lang.get(this._flag2Deco[key].cl);
                 }
-            });
+            }, this);
             flagClass = _.without(flagClass, undefined);
             if (flagClass.length > 0) {
                 flagClassStr = flagClass.join(", ");
             }
             emailObj.flagLabel = flagStr;
             emailObj.flagClass = flagClassStr;
-        })
+        }, this);
         return value;
     },
     /**
