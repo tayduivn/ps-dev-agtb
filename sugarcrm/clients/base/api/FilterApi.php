@@ -113,10 +113,15 @@ class FilterApi extends SugarApi
         $options['limit'] = $this->defaultLimit;
         $options['offset'] = 0;
         $options['order_by'] = array(array('date_modified', 'DESC'));
+        $options['add_deleted'] = true;
 
         if (!empty($args['max_num'])) {
             $options['limit'] = (int) $args['max_num'];
         }
+        if (!empty($args['deleted'])) {
+            $options['add_deleted'] = false;
+        }
+
         if (!empty($args['offset'])) {
             if ($args['offset'] == 'end') {
                 $options['offset'] = 'end';
@@ -229,13 +234,16 @@ class FilterApi extends SugarApi
 
     protected static function getQueryObject(SugarBean $seed, array $options)
     {
-        $q = new SugarQuery();
-        // Just need ID, we need to fetch beans so we can format them later.
-        $q->from($seed);
         if (empty($options['select'])) {
             $options['select'] = self::$mandatory_fields;
         }
+        $queryOptions = array('add_deleted' => (!isset($options['add_deleted'])||$options['add_deleted'])?true:false);
+        if ($queryOptions['add_deleted'] == false) {
+            $options['select'][] = 'deleted';
+        }
 
+        $q = new SugarQuery();
+        $q->from($seed,$queryOptions);
         $fields = array();
         foreach ($options['select'] as $field) {
             // FIXME: convert this to vardefs too?
@@ -360,7 +368,11 @@ class FilterApi extends SugarApi
             }
             if (empty($args['fields'])) {
                 //FIXME: Without a field list, we need to just do a full retrieve to make sure we get the entire bean.
-                $bean = BeanFactory::getBean($options['module'], $row['id']);
+                $getBeanOptions = array();
+                if (!empty($args['deleted'])) {
+                    $getBeanOptions['deleted'] = false;
+                }
+                $bean = BeanFactory::getBean($options['module'], $row['id'],$getBeanOptions);
             } else {
                 // Fetch a fresh "bean", even if $seed is a mock.
                 $bean = $seed->getCleanCopy();
