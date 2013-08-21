@@ -480,11 +480,12 @@ class FilterApi extends SugarApi
      * @param SugarQuery $q
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected static function addFilters(
-        array $filterDefs,
-        SugarQuery_Builder_Where $where,
-        SugarQuery $q
-    ) {
+    protected static function addFilters(array $filterDefs, SugarQuery_Builder_Where $where, SugarQuery $q) {
+        static $sfh;
+        if (!isset($sfh)) {
+            $sfh = new SugarFieldHandler();
+        }
+
         foreach ($filterDefs as $filterDef) {
             if (!is_array($filterDef)) {
                 throw new SugarApiExceptionInvalidParameter(
@@ -511,15 +512,20 @@ class FilterApi extends SugarApi
                     // Looks like just a normal field, parse it's options
                     $fieldInfo = self::verifyField($q, $field);
                     $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] : $fieldInfo['def']['type'];
-                    $sfh = new SugarFieldHandler();
                     $sugarField = $sfh->getSugarField($fieldType);
                     if (!is_array($filter)) {
                         // This is just simple match
-                        $where->equals($field, $filter);
+                        $where->equals($field, $sugarField->convertFieldForDB($filter));
                         continue;
                     }
                     foreach ($filter as $op => $value) {
-                        $value = $sugarField->convertFieldForDB($value);
+                        if (is_array($value)) {
+                            foreach ($value as $i => $val) {
+                                $value[$i] = $sugarField->convertFieldForDB($val);
+                            }
+                        } else {
+                            $value = $sugarField->convertFieldForDB($value);
+                        }
                         switch ($op) {
                             case '$equals':
                                 $where->equals($field, $value);
