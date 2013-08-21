@@ -4,11 +4,10 @@
         'mouseover .news-article': 'onTweetOver',
         'mouseout .news-article': 'onTweetOut'
     },
+    limit : 20,
     initDashlet: function() {
-        if(this.meta.config) {
-            var limit = this.settings.get("limit") || "20";
+        var limit = this.settings.get("limit") || this.limit;
             this.settings.set("limit", limit);
-        }
     },
     onTweetOver: function(event) {
         if ( !_.isUndefined(event.currentTarget) ) {
@@ -41,7 +40,7 @@
                 this.model.get('name') ||
                 this.model.get('account_name') ||
                 this.model.get('full_name'),
-            limit = parseInt(this.settings.get("limit"), 10) || 5,
+            limit = parseInt(this.settings.get("limit"), 10) || this.limit,
             self = this;
         this.screen_name = this.settings.get('twitter') || false;
         if (!twitter || this.viewName === 'config') {
