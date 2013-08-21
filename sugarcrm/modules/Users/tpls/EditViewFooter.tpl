@@ -497,10 +497,11 @@ $(document).ready(function() {
 {$getNameJs}
 {$getNumberJs}
 currencies = {$currencySymbolJSON};
+{{if $themeGroupListJSON}}
 themeGroupList = {$themeGroupListJSON};
+{{/if}}
 
 onUserEditView();
-
 
 </script>
 
