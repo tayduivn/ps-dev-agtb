@@ -125,7 +125,7 @@ class TemplateDatetimecombo extends TemplateRange
     	parent::populateFromPost();
     	if(!empty($_REQUEST['defaultDate']) && !empty($_REQUEST['defaultTime'])){
     		$_REQUEST['default'] = $_REQUEST['defaultDate'].'&'.$_REQUEST['defaultTime'];
-    		
+
     		$defaultTime = $_REQUEST['defaultTime'];
 			$hours = substr($defaultTime, 0, 2); 
 			$minutes = substr($defaultTime, 3, 2);
@@ -140,7 +140,8 @@ class TemplateDatetimecombo extends TemplateRange
   		      } else {
   		      	 $meridiem = 'am';
   		      }
-  		      $_REQUEST['default'] = $_REQUEST['defaultDate'].'&'.$hours.':'.$minutes.''.$meridiem;
+  		      //lets format the string to make sure the leading 0's are added back in for hours and minutes
+  		      $_REQUEST['default'] = $_REQUEST['defaultDate'] . '&' . sprintf('%02d:%02d%s', $hours, $minutes, $meridiem);
     		}
     	}else{
     		$_REQUEST['default'] = '';
