@@ -108,8 +108,18 @@ class SidecarFilterMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // We'll add those later
             if($name == 'favorites_only' || $name == 'current_user_only') continue;
 
-            // We don't know this field - ignore it
-            if(empty($searchFields[$name])) continue;
+            // We don't know this field
+            if(empty($searchFields[$name])) {
+                // may be a custom field
+                if(substr($name, -2) == '_c') {
+                    $fields[$name] = $data;
+                    if(isset($fields[$name]['label']) && !isset($fields[$name]['vname'])) {
+                        $fields[$name]['vname'] = $fields[$name]['label'];
+                        unset($fields[$name]['label']);
+                    }
+                }
+                continue;
+            }
 
             // Subqueries not supported yet
             if(!empty($searchFields[$name]['operator']) && $searchFields[$name]['operator'] == 'subquery') continue;
