@@ -38,8 +38,24 @@
         app.drawer.close();
     },
 
+    /**
+     * {@inheritdoc}
+     *
+     * Translate model label before render using model attributes.
+     * Change label directly b/ when we use `model.set()` method with `{silent: true}`
+     * it doesn't trigger change event but in this case
+     * `model.hasChanged('label')` is true and we cannot check was label
+     * actually changed or not when we save dashlet.
+     */
     _renderHtml: function() {
         this.model = this.layout.context.get("model");
+
+        this.model.attributes.label = app.lang.get(
+            this.model.get('label'),
+            this.module,
+            this.model.attributes
+        );
+
         app.view.View.prototype._renderHtml.call(this);
     }
 })

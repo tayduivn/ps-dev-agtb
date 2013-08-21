@@ -554,6 +554,7 @@ $dictionary['RevenueLineItem'] = array(
             'studio' => false,
             'reportable' => false,
             'audited' => true,
+            'activity_enabled' => false,
             'formula' => 'timestamp($date_closed)',
             'calculated' => true,
             'studio' => false
@@ -723,8 +724,6 @@ $dictionary['RevenueLineItem'] = array(
             'isnull' => 'true',
             'module' => 'Opportunities',
             'source' => 'non-db',
-            'unified_search' => true,
-            'full_text_search' => array('boost' => 1),
             'comment' => 'The opportunity name associated with the opportunity_id',
             'auto_populate' => true,
             'populate_list' => array(
@@ -756,7 +755,7 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'assigned_user_link',
             'type' => 'link',
             'relationship' => 'revenuelineitems_assigned_user',
-            'vname' => 'LBL_USER',
+            'vname' => 'LBL_USERS',
             'link_type' => 'one',
             'module' => 'Users',
             'bean_name' => 'User',
@@ -848,8 +847,6 @@ $dictionary['RevenueLineItem'] = array(
             'table' => 'accounts',
             'module' => 'Accounts',
             'source' => 'non-db',
-            'unified_search' => true,
-            'full_text_search' => array('boost' => 1),
         ),
     ),
     'indices' => array(

@@ -433,6 +433,8 @@ $mod_strings = array (
     'LBL_MANAGE_USERS_TITLE' => 'User Management',
     'LBL_MANAGE_USERS' => 'Manage user accounts and passwords',
     'LBL_MANAGE_WORKFLOW'                   => 'Workflow Management',
+    'LBL_MANAGE_STYLEGUIDE' => 'Styleguide',
+    'LBL_MANAGE_STYLEGUIDE_TITLE' => 'Documentation and samples',
     'LBL_MANUAL_VALIDATION_TXT' => 'Manual Validation',
     'LBL_MANUAL_VALIDATION'=>'
 	If you experience persistent problems with automatic validation, please check your Proxy configuration in the <a href="index.php?module=Configurator&action=EditView">System Settings</a> admin panel.

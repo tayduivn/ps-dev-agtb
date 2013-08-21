@@ -53,64 +53,6 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
-    public function testListActivities_HomePage_PostActivityMessageWithSpecialChars_SpecialCharsReturnedDecoded()
-    {
-        $records   = array(
-            array(
-                'comment_count' => 0,
-                'last_comment'  => json_encode(array()),
-                'date_modified' => "2013-12-25 13:00:00",
-                'date_entered'  => "2013-12-25 13:00:00",
-                'activity_type' => 'post',
-                'first_name'    => 'Davey',
-                'last_name'     => 'Crockett',
-                'data'          => json_encode(
-                    array(
-                        'value' => 'aaa &lt; bbb &gt; ccc',
-                        'tags'  =>
-                        array(),
-                    )
-                ),
-            ),
-        );
-        $records[] = array(); // Need One Bogus Record that Formatter will POP
-
-        $expected = array(
-            'records'     => array(
-                array(
-                    'comment_count'   => 0,
-                    'last_comment'    => array(),
-                    'date_modified'   => '2013-12-25T13:00:00+00:00',
-                    'date_entered'    => '2013-12-25T13:00:00+00:00',
-                    'activity_type'   => 'post',
-                    'first_name'      => 'Davey',
-                    'last_name'       => 'Crockett',
-                    'data'            => array(
-                        'value' => "aaa < bbb > ccc",
-                        'tags'  => array(),
-                    ),
-                    'created_by_name' => 'Davey Crockett',
-                ),
-            ),
-            'next_offset' => -1,
-            'args'        => array(),
-        );
-
-        $sugarQueryMock = $this->getMock("SugarQuery", array("execute"));
-        $sugarQueryMock->expects($this->once())
-            ->method("execute")
-            ->will($this->returnValue($records));
-
-        $activitiesApi = new TestActivitiesApi();
-        $actual        = $activitiesApi->exec_formatResult($this->api, array(), $sugarQueryMock, null);
-
-        $this->assertEquals(
-            $expected,
-            $actual,
-            "Expected Encoded Special Characters in Activity Message to be properly decoded by Result Formatter"
-        );
-    }
-
     public function testListActivities_HomePage_MultipleModuleTypes_UserHasMixedFieldAccess_AppropriateFieldChangesReturned()
     {
         $records = array(

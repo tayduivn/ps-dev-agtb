@@ -16,24 +16,6 @@
     },
 
     /**
-     * Returns true if the current user is an admin or developer for any module
-     *
-     * @return {bool}
-     * @private
-     */
-    _isAdminOrDevForAnyModule : function() {
-        return _.any(app.user.getAcls(), function(acl) {
-            if (_.isString(acl.admin) ? acl.admin != "no" : !acl.admin)
-                return true;
-
-            if (_.isString(acl.developer) ? acl.developer != "no" : !acl.developer)
-                return true;
-
-            return false;
-        });
-    },
-
-    /**
      * Render profile actions dropdown menu
      * @private
      */
@@ -43,7 +25,9 @@
             return;
         }
 
-        this.showAdmin = app.acl.hasAccess('admin', 'Administration') || this._isAdminOrDevForAnyModule();
+        this.showAdmin = app.acl.hasAccess('admin', 'Administration') ||
+            app.acl.hasAccessToAny('admin') ||
+            app.acl.hasAccessToAny('developer');
 
         app.view.View.prototype._renderHtml.call(this);
     },

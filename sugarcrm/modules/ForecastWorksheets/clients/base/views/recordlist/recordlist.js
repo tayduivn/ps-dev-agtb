@@ -123,7 +123,7 @@
      * Tracks if the preview panel is visible or not
      */
     previewVisible: false,
-
+    plugins: ['tooltip'],
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents

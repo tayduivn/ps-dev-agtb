@@ -31,7 +31,7 @@ require_once('modules/DynamicFields/templates/Fields/TemplateDatetimecombo.php')
 function get_body(&$ss, $vardef){
 	$defaultTime = '';
 	$hours = "";
-	$minitues = "";
+	$minutes = "";
 	$meridiem = "";
 	$td = new TemplateDatetimecombo();
 	$ss->assign('default_values', array_flip($td->dateStrings));
@@ -52,21 +52,23 @@ function get_body(&$ss, $vardef){
 		$dt = explode("&", $vardef['display_default']); //+1 day&06:00pm
 		$date = $dt[0];
 		$defaultTime = $dt[1];
-		$hours = substr($defaultTime, 0, 2); 
-		$minitues = substr($defaultTime, 3, 2);
-		$meridiem = substr($defaultTime, 5, 2);
+
+        preg_match('/([\d]+):([\d]{2})(am|pm)$/', $defaultTime, $time); //+1 day&06:00pm
+        $hours = $time[1];
+		$minutes = $time[2];
+		$meridiem = $time[3];
 		if(!$show_meridiem) {
-		   preg_match('/(am|pm)$/i', $meridiem, $matches);
-		   if(strtolower($matches[0]) == 'am' && $hours == 12) {
+		   if($meridiem == 'am' && $hours == 12) {
 		   	  $hours = '00';
-		   } else if (strtolower($matches[0]) == 'pm' && $hours != 12) {
+		   } else if ($meridiem == 'pm' && $hours != 12) {
 		   	  $hours += 12;
 		   }
 		}
+        $hours = strlen($hours) === 1 ? '0'.$hours : $hours;
 		$ss->assign('default_date', $date);
 	}
 	$ss->assign('default_hours', $hours);
-	$ss->assign('default_minutes', $minitues);
+	$ss->assign('default_minutes', $minutes);
 	$ss->assign('default_meridiem', $meridiem);
 	$ss->assign('defaultTime', $defaultTime);
 	return $ss->fetch('modules/DynamicFields/templates/Fields/Forms/datetimecombo.tpl');

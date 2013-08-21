@@ -956,12 +956,12 @@ class SugarBean
     function getFieldValue($name)
     {
         if (!isset($this->$name)){
-            return FALSE;
+            return false;
         }
-        if($this->$name === TRUE){
+        if($this->$name === true){
             return 1;
         }
-        if($this->$name === FALSE){
+        if($this->$name === false){
             return 0;
         }
         return $this->$name;
@@ -1652,23 +1652,28 @@ class SugarBean
     /**
     * Cleans char, varchar, text, etc. fields of XSS type materials
     */
-    function cleanBean() {
-        foreach($this->field_defs as $key => $def) {
+    function cleanBean()
+    {
+        foreach ($this->field_defs as $key => $def) {
 
             if (isset($def['type'])) {
-                $type=$def['type'];
+                $type = $def['type'];
             }
-            if(isset($def['dbType']))
+            if (isset($def['dbType'])) {
                 $type .= $def['dbType'];
+            }
 
-            if($def['type'] == 'html' || $def['type'] == 'longhtml') {
+            if ($def['type'] == 'html' || $def['type'] == 'longhtml') {
                 $this->$key = SugarCleaner::cleanHtml($this->$key, true);
-            } elseif((strpos($type, 'char') !== false ||
-                strpos($type, 'text') !== false ||
-                $type == 'enum') &&
-                !empty($this->$key)
+            } elseif ((strpos($type, 'char') !== false || strpos($type, 'text') !== false || $type == 'enum')
+                && !empty($this->$key)
+                && strpos($type, 'json') === false
             ) {
-                $this->$key = SugarCleaner::cleanHtml($this->$key);
+                if(!defined('ENTRY_POINT_TYPE') || constant('ENTRY_POINT_TYPE') != 'api') {
+                    // for API, text fields are not cleaned, only HTML fields are
+                    // since text fields supposed to be encoded by HBS templates when displaying
+                    $this->$key = SugarCleaner::cleanHtml($this->$key);
+                }
             }
         }
     }
@@ -1682,7 +1687,7 @@ class SugarBean
     * @param boolean $check_notify Optional, default false, if set to true assignee of the record is notified via email.
     * @todo Add support for field type validation and encoding of parameters.
     */
-    function save($check_notify = FALSE)
+    function save($check_notify = false)
     {
         $this->in_save = true;
         // cn: SECURITY - strip XSS potential vectors
@@ -2146,7 +2151,7 @@ class SugarBean
             $notification->name = $subject;
             $notification->description = $body;
             $notification->assigned_user_id = $notify_user->id;
-            $notification->save(FALSE);
+            $notification->save(false);
             //END SUGARCRM flav=notifications ONLY
 
             $mailTransmissionProtocol = "unknown";
@@ -2781,7 +2786,7 @@ class SugarBean
                     break;
                 case 'decimal':
                 case 'currency':
-                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
+                    if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
                         continue;
                     }
                     // always want string for currency/decimal values
@@ -2792,7 +2797,7 @@ class SugarBean
                     break;
                 case 'double':
                 case 'float':
-                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
+                    if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
                         continue;
                     }
                     if ( is_string($this->$field) ) {
@@ -2806,7 +2811,7 @@ class SugarBean
                case 'short':
                case 'tinyint':
                case 'int':
-                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
+                    if ( $this->$field === '' || $this->$field == null || $this->$field == 'NULL') {
                         continue;
                     }
                     if ( is_string($this->$field) ) {

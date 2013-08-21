@@ -18,6 +18,7 @@ $viewdefs["base"]["view"]["dashlet-toolbar"] = array(
             "css_class" => "dashlet-toggle btn btn-invisible minify",
             "icon" => "icon-chevron-up",
             "action" => "toggleMinify",
+            "tooltip" => "LBL_DASHLET_MINIMIZE",
         ),
         array(
             "dropdown_buttons" => array(

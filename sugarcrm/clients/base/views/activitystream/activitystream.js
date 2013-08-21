@@ -23,7 +23,9 @@
     _unformattedPost: null,
     _unformattedComments: {},
 
-    urlRegExp: /((http|https):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/ig,
+    // Based on regular expression from http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+    // It is the JavaScript regular expression version of the one in LinkEmbed.php
+    urlRegExp: /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))/ig,
 
     initialize: function(options) {
         this.opts = {params: {}};
@@ -134,22 +136,27 @@
      },
 
     /**
-     * Determine if embeded links exist
+     * Get embed templates to be processed on render
      */
     processEmbed: function() {
-        var data = this.model.get('data'),
-            embedTpl, typeParts, type;
+        var data = this.model.get('data');
 
-        if (_.isObject(data.embed) && data.embed.type) {
-            typeParts = data.embed.type.split('.');
-            type = typeParts.shift();
+        if (!_.isEmpty(data.embeds)) {
+            this.embeds = [];
+            _.each(data.embeds, function(embed) {
+                var typeParts = embed.type.split('.'),
+                    type = typeParts.shift(),
+                    embedTpl;
 
-            _.each(typeParts, function(part) {
-                type = type + part.charAt(0).toUpperCase() + part.substr(1);
-            });
+                _.each(typeParts, function(part) {
+                    type = type + part.charAt(0).toUpperCase() + part.substr(1);
+                });
 
-            embedTpl = app.template.get(this.name + '.' + type + 'Embed');
-            this.embed = embedTpl ? embedTpl(data.embed) : "No embed partial found for " + data.embed.type;
+                embedTpl = app.template.get(this.name + '.' + type + 'Embed');
+                if (embedTpl) {
+                    this.embeds.push(embedTpl(embed));
+                }
+            }, this);
         }
     },
 
@@ -322,9 +329,9 @@
         var formattedPost = '';
 
         if (post && (post.length > 0)) {
-            formattedPost = post.replace(this.urlRegExp, function(url, protocol) {
+            formattedPost = post.replace(this.urlRegExp, function(url) {
                 var href = url;
-                if (!protocol) {
+                if ((url.indexOf('http://') !== 0) && (url.indexOf('https://') !== 0)) {
                     href = 'http://' + url;
                 }
                 return '<a href="' + href + '" target="_blank">' + url + '</a>';
@@ -340,19 +347,29 @@
     resizeVideo: function() {
         var data = this.model.get('data'),
             $embed = this.$('.embed'),
-            $iframe, iframeWidth, iframeHeight;
+            $iframes = $embed.find('iframe'),
+            videoCount = 0,
+            embedWidth;
 
-        if (data.embed && data.embed.type === 'video') {
-            $iframe = $embed.find('iframe');
-            if ($iframe.length > 0) {
-                iframeWidth = Math.min($embed.width(), 480);
-                iframeHeight = parseInt($iframe.prop('height'), 10) * (iframeWidth / parseInt($iframe.prop('width'), 10));
+        if (_.isArray(data.embeds)) {
+            embedWidth = $embed.width();
+            _.each(data.embeds, function(embed) {
+                var $iframe, iframeWidth, iframeHeight;
 
-                $iframe.prop({
-                    width: iframeWidth,
-                    height: iframeHeight
-                });
-            }
+                if (((embed.type === 'video') || (embed.type === 'rich')) && ($iframes.length > 0)) {
+                    $iframe = $iframes.eq(videoCount);
+
+                    iframeWidth = Math.min(embedWidth, 480);
+                    iframeHeight = parseInt(embed.height, 10) * (iframeWidth / parseInt(embed.width, 10));
+
+                    $iframe.prop({
+                        width: iframeWidth,
+                        height: iframeHeight
+                    });
+
+                    videoCount++;
+                }
+            });
         }
     },
 

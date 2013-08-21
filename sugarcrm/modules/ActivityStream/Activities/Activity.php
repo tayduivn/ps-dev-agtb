@@ -126,11 +126,13 @@ class Activity extends Basic
     {
         $isUpdate = !(empty($this->id) || $this->new_with_id);
 
-        if ($this->activity_type == 'post' || $this->activity_type == 'attach') {
-            if (is_string($this->data)) {
-                $this->data = json_decode($this->data, true);
-            }
+        if (is_string($this->data)) {
+            $this->data = json_decode($this->data, true);
+        }
 
+        $this->data = $this->processDataWithHtmlPurifier($this->activity_type, $this->data);
+
+        if ($this->activity_type == 'post' || $this->activity_type == 'attach') {
             if (!isset($this->data['object']) && !empty($this->parent_type)) {
                 $parent = BeanFactory::retrieveBean($this->parent_type, $this->parent_id);
                 if ($parent && !is_null($parent->id)) {
@@ -163,7 +165,7 @@ class Activity extends Basic
     protected function processEmbed()
     {
         if (!empty($this->data['value'])) {
-            $val = Link2Tag::convert($this->data['value']);
+            $val = EmbedLinkService::get($this->data['value']);
             if (!empty($val)) {
                 $this->data = array_merge($this->data, $val);
             }
@@ -208,6 +210,20 @@ class Activity extends Basic
                 $this->activities_teams->add($globalTeam, array('fields' => '[]'));
             }
         }
+    }
+
+    /**
+     * Removes harmful html tags from data using html purifier
+     * @param $data array
+     * @return array data
+     */
+    public function processDataWithHtmlPurifier($activityType, $data = array())
+    {
+        if ($activityType === 'post' && !empty($data['value'])) {
+            $data['value'] = SugarCleaner::cleanHtml($data['value']);
+        }
+
+        return $data;
     }
 
     /**

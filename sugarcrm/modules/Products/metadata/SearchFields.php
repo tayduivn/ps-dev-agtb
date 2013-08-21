@@ -18,6 +18,8 @@ $searchFields['Products'] = array (
         'query_type' => 'default',
         'force_unifiedsearch' => true
     ),
+    'account_name'=> array('query_type'=>'default','db_field'=>array('accounts.name')),
+    'opportunity_name'=> array('query_type'=>'default','db_field'=>array('opportunities.name')),
     'status' => array (
         'query_type' => 'default',
         'options' => 'product_status_dom',

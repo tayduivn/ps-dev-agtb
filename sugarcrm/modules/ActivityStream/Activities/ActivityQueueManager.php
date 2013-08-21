@@ -25,7 +25,7 @@ class ActivityQueueManager
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals', 'KBContents',
-        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets');
+        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications');
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
     /**
@@ -53,7 +53,7 @@ class ActivityQueueManager
             // potentially slow operation.
             if ($eventTriggered) {
                 $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
-                $subscriptionsBeanName::processSubscriptions($bean, $activity, $args);
+                $subscriptionsBeanName::processSubscriptions($bean, $activity, $args, array('disable_row_level_security' => true));
             }
         }
     }
@@ -108,18 +108,12 @@ class ActivityQueueManager
      */
     protected function createOrUpdate(SugarBean $bean, array $args, Activity $act)
     {
-        $noAuditableFieldsUpdated = $args['isUpdate'] && empty($args['dataChanges']);
-        if ($bean->deleted || $bean->inOperation('saving_related') || $noAuditableFieldsUpdated) {
+        if ($bean->deleted || $bean->inOperation('saving_related')) {
             return false;
         }
 
-        // Subscribe the user that created the record, and the user to whom the
-        // record is assigned.
-        $subs = BeanFactory::getBeanName('Subscriptions');
-        if (isset($bean->assigned_user_id)) {
-            $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id);
-            $subs::subscribeUserToRecord($assigned_user, $bean);
-        }
+        // Add Appropriate Subscriptions for this Bean
+        $this->addRecordSubscriptions($args, $bean);
 
         $data = array(
             'object' => self::getBeanAttributes($bean),
@@ -128,14 +122,15 @@ class ActivityQueueManager
             $act->activity_type = 'update';
             $data['changes']    = $args['dataChanges'];
             $this->prepareChanges($bean, $data);
-        } else {
-            // Subscribe the user that created the record.
-            if (isset($bean->created_by)) {
-                $created_user = BeanFactory::getBean('Users', $bean->created_by);
-                $subs::subscribeUserToRecord($created_user, $bean);
+
+            //if no field changes to report, do not create the activity
+            if (empty($data['changes'])) {
+                return false;
             }
+        } else {
             $act->activity_type = 'create';
         }
+
         $act->parent_id   = $bean->id;
         $act->parent_type = $bean->module_name;
         $act->data        = $data;
@@ -158,6 +153,18 @@ class ActivityQueueManager
         }
         $lhs                = BeanFactory::getBean($args['module'], $args['id']);
         $rhs                = BeanFactory::getBean($args['related_module'], $args['related_id']);
+        if (empty($lhs->name) && !empty($args['name'])) {
+            $lhs->name = $args['name'];
+        }
+        if (empty($lhs->id) && !empty($args['id'])) {
+            $lhs->id = $args['id'];
+        }
+        if (empty($rhs->name) && !empty($args['related_name'])) {
+            $rhs->name = $args['related_name'];
+        }
+        if (empty($rhs->id) && !empty($args['related_id'])) {
+            $rhs->id = $args['related_id'];
+        }
         $data               = array(
             'object'       => self::getBeanAttributes($lhs),
             'subject'      => self::getBeanAttributes($rhs),
@@ -222,7 +229,8 @@ class ActivityQueueManager
     }
 
     /**
-     * Prepare the Change Data to be returned by eliminating IDs
+     * Prepare the Change Data to be returned
+     * Eliminates IDs and removes fields where activity_enabled is false
      * @param  $bean
      * @param  $data
      */
@@ -230,25 +238,32 @@ class ActivityQueueManager
     {
         if (!empty($data['changes']) && is_array($data['changes'])) {
             foreach ($data['changes'] as $fieldName => $changeInfo) {
+                $def = $bean->getFieldDefinition($fieldName);
+
+                //strip out changes where the field has activity_enabled is false
+                if (isset($def['activity_enabled']) && $def['activity_enabled'] === false) {
+                    unset($data['changes'][$fieldName]);
+                    continue;
+                }
+
                 if ($changeInfo['data_type'] === 'id' || $changeInfo['data_type'] === 'relate' || $changeInfo['data_type'] === 'team_list') {
                     if ($fieldName == 'team_set_id') {
                         $this->resolveTeamSetReferences($data, $fieldName);
                     } else {
                         $referenceModule = null;
                         if ($fieldName == 'parent_id') {
-                            $def = $bean->getFieldDefinition('parent_type');
-                            if (empty($def)) {
+                            $parentTypeDef = $bean->getFieldDefinition('parent_type');
+                            if (empty($parentTypeDef)) {
                                 $referenceModule = $data['object']['module'];
-                            } elseif (!empty($def['module'])) {
-                                $referenceModule = $def['module'];
+                            } elseif (!empty($parentTypeDef['module'])) {
+                                $referenceModule = $parentTypeDef['module'];
                             }
                         } elseif ($fieldName == 'team_id') {
-                            $def = $bean->getFieldDefinition('team_name');
-                            if (!empty($def['module'])) {
-                                $referenceModule = $def['module'];
+                            $teamNameDef = $bean->getFieldDefinition('team_name');
+                            if (!empty($teamNameDef['module'])) {
+                                $referenceModule = $teamNameDef['module'];
                             }
                         } else {
-                            $def = $bean->getFieldDefinition($fieldName);
                             if (!empty($def['module'])) {
                                 $referenceModule = $def['module'];
                             }
@@ -351,5 +366,51 @@ class ActivityQueueManager
             return $bean->name;
         }
         return '';
+    }
+
+    /**
+     * Add Record Subscriptions:
+     *   (1) Assigned-To User
+     *   (2) CreatedBy User if other than AssignedTo User and event is Not an Update
+     *
+     * @param  array $args
+     * @param  SugarBean $bean
+     * @return void
+     */
+    protected function addRecordSubscriptions($args, SugarBean $bean)
+    {
+        // Subscribe the user assigned to this record if an existing non-Portal User
+        if (isset($bean->assigned_user_id)) {
+            $assigned_user = BeanFactory::getBean('Users', $bean->assigned_user_id, array('strict_retrieve' => true));
+            if (!empty($assigned_user) && !$assigned_user->portal_only) {
+                $this->subscribeUserToRecord($assigned_user, $bean);
+            }
+        }
+
+        if (!$args['isUpdate']) {
+            // Subscribe the user that created the record if an existing non-Portal User and
+            // te user is different than the assigned-to user.
+            if (isset($bean->created_by) &&
+                (!isset($bean->assigned_user_id) || ($bean->created_by !== $bean->assigned_user_id))
+            ) {
+                $created_user = BeanFactory::getBean('Users', $bean->created_by, array('strict_retrieve' => true));
+                if (!empty($created_user) && !$created_user->portal_only) {
+                    $this->subscribeUserToRecord($created_user, $bean);
+                }
+            }
+        }
+    }
+
+    /**
+     * Subscribe supplied User to supplied Bean
+     *
+     * @param  User $user
+     * @param  SugarBean $bean
+     * @return void
+     */
+    protected function subscribeUserToRecord(User $user, SugarBean $bean)
+    {
+        $subs = BeanFactory::getBeanName('Subscriptions');
+        $subs::subscribeUserToRecord($user, $bean, array('disable_row_level_security' => true));
     }
 }

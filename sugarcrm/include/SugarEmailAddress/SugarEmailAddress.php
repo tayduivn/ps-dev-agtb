@@ -21,6 +21,7 @@ class SugarEmailAddress extends SugarBean
     private $stateBeforeWorkflow;
 
     public $email_address;
+    public $dontLegacySave = false;
 
     static $count = 0;
 
@@ -57,6 +58,9 @@ class SugarEmailAddress extends SugarBean
      */
     function handleLegacySave($bean, $prefix = "")
     {
+        if ($this->dontLegacySave) {
+            return;
+        }
         if (!isset($_REQUEST) || !isset($_REQUEST['useEmailWidget'])) {
             if (empty($this->addresses) || !isset($_REQUEST['massupdate'])) {
                 $this->addresses = array();
@@ -516,14 +520,12 @@ class SugarEmailAddress extends SugarBean
      */
 
     function addAddress($addr, $primary=false, $replyTo=false, $invalid=false, $optOut=false, $email_id = null) {
-        $addr = html_entity_decode($addr, ENT_QUOTES);
+        $addr = trim(html_entity_decode($addr, ENT_QUOTES));
         if (SugarEmailAddress::isValidEmail($addr)) {
             $primaryFlag = ($primary) ? '1' : '0';
             $replyToFlag = ($replyTo) ? '1' : '0';
             $invalidFlag = ($invalid) ? '1' : '0';
             $optOutFlag = ($optOut) ? '1' : '0';
-
-            $addr = trim($addr);
 
             // If we have such address already, remove it and add new one in.
             foreach ($this->addresses as $k => $address) {
@@ -646,6 +648,9 @@ class SugarEmailAddress extends SugarBean
         // sanity checks to avoid SQL injection.
         $invalid = intval($invalid);
         $opt_out = intval($opt_out);
+        
+        // Trim the address
+        $addr = trim($addr);
 
         $address = $this->db->quote($this->_cleanAddress($addr));
         $addressCaps = strtoupper($address);

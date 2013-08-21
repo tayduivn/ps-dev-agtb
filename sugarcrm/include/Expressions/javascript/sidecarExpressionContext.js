@@ -362,6 +362,7 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, co
     this.actions = actions;
 	this.falseActions = falseActions;
 	this.context = context;
+    this.testOnLoad = testOnLoad;
     trigger.setContext(this.context);
     trigger.setDependency(this);
 	this.trigger = trigger;
@@ -422,7 +423,12 @@ SUGAR.forms.Dependency.fromMeta = function(meta, context){
 SUGAR.forms.Dependency.prototype.fire = function(undo)
 {
 	try {
-		var actions = this.actions;
+        var model = this.context.view.context.get("model");
+		//Do not trigger dependencies on models that haven't changed and aren't set to fire on load.
+        if (model.inSync && !this.testOnLoad) {
+            return;
+        }
+        var actions = this.actions;
 		if (undo && this.falseActions != null)
 			actions = this.falseActions;
 

@@ -65,6 +65,33 @@
             return acc;
         }, {});
     },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Override {@link View.View#_render} method to
+     * extend ACL check for Administration module in BWC mode.
+     * Allow access to Administration if user has admin access to any
+     * module only, if not - show error message and navigate to home.
+     */
+    _render: function() {
+        if (this.module === 'Administration' &&
+            !app.acl.hasAccessToAny('admin') &&
+            !app.acl.hasAccessToAny('developer')
+        ) {
+            app.logger.info(
+                'Current user does not have access to this module view. name: ' +
+                    this.name + ' module:' + this.module
+            );
+            app.error.handleRenderError(this, 'view_render_denied');
+            app.router.navigate('#Home', {trigger: true});
+            return;
+        }
+
+        app.view.View.prototype._render.call(this);
+        return this;
+    },
+
     /**
      * Render the iFrame and listen for content changes on it.
      *

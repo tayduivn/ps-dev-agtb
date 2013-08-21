@@ -27,13 +27,83 @@
     tooltips: [], //initialized tooltips
 
     /**
+     * @override
+     * @param {Object} options
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+        // initialize the value to an empty collection
+        this.model.set(this.name, new Backbone.Collection);
+    },
+
+    /**
      * Sets up event handlers for syncing between the model and the recipients field.
      *
      * @see RecipientsField::format() For the acceptable formats for recipients.
      */
     bindDataChange: function() {
+        /**
+         * Sets the value of the Select2 element and rebuilds the tooltips for all recipients.
+         * @param {Array} recipients @see the return value for RecipientsField::format().
+         */
+        var updateTheDom = _.bind(function(recipients) {
+            // put the formatted recipients in the DOM
+            this.getFieldElement().select2('data', recipients);
+            // rebuild the tooltips
+            this._initializeTooltips();
+        }, this);
+        /**
+         * Sets up event handlers that allow external forces to manipulate the contents of the collection, while
+         * maintaining the requirement for storing formatted recipients.
+         */
+        var bindCollectionChange = _.bind(function() {
+            var value = this.model.get(this.name);
+            if (value instanceof Backbone.Collection) {
+                // on "add" we want to force the collection to be reset to guarantee that all models in the collection
+                // have been properly formatted for use in this field
+                value.on('add', function(models, collection) {
+                    // Backbone destroys the models currently in the collection on reset, so we must clone the
+                    // collection in order to add the same models again
+                    collection.reset(collection.clone().models);
+                }, this);
+                // on "remove" the requisite models have already been removed, so we only need to bother updating the
+                // value in the DOM
+                value.on('remove', function(models, collection) {
+                    // format the recipients and put them in the DOM
+                    updateTheDom(this.format(this.model.get(this.name)));
+                }, this);
+                // on "reset" we want to replace all models in the collection with their formatted versions
+                value.on('reset', function(collection) {
+                    var recipients = this.format(collection.models);
+                    // do this silently so we don't trigger another reset event and end up in an infinite loop
+                    collection.reset(recipients, {silent: true});
+                    // put the newly formatted recipients in the DOM
+                    updateTheDom(recipients);
+                }, this);
+            }
+        }, this);
+
+        // set up collection event handlers for the initial collection (initialized during this.initialize)
+        bindCollectionChange();
+
+        // handle the value on the model being changed to something other than the initial collection
         this.model.on("change:" + this.name, function(model, recipients) {
-            this._replaceRecipients(recipients);
+            var value = this.model.get(this.name);
+            if (!(value instanceof Backbone.Collection)) {
+                // whoa! someone changed the value to be something other than a collection
+                // stick that new value inside a collection and reset the value, so we're always dealing with a
+                // collection... another change event will be triggered, so we'll end up in the else block right after
+                // this
+                this.model.set(this.name, new Backbone.Collection(value));
+            } else {
+                // phew! the value is a collection
+                // but it's not the initial collection, so we'll have to set up collection event handlers for this
+                // instance
+                bindCollectionChange();
+                // you never know what data someone sticks on the field, so we better reset the values in the collection
+                // so that the recipients become formatted as we expect
+                value.reset(recipients.clone().models);
+            }
         }, this);
     },
 
@@ -187,16 +257,15 @@
     },
 
     /**
-     * Translates a set of recipients into an array of objects that select2 understands.
+     * Formats a set of recipients into an array of objects that select2 understands.
      *
      * @param {*} data A Backbone collection, a single Backbone model or standard JavaScript object, or an array of
      *                 Backbone models or standard JavaScript objects.
      * @returns {Array}
-     * @see RecipientsField::_translateRecipient() For the acceptable/expected attributes to be found on each recipient.
+     * @see RecipientsField::_formatRecipient() For the acceptable/expected attributes to be found on each recipient.
      */
     format: function(data) {
-        var translatedRecipients = [];
-
+        var formattedRecipients = [];
         // the lowest common denominator of potential inputs is an array of objects
         // force the parameter to be an array of either objects or Backbone models so that we're always dealing with
         // one data-structure type
@@ -206,42 +275,28 @@
         } else if (data instanceof Backbone.Model || (_.isObject(data) && !_.isArray(data))) {
             // wrap the single model in an array so the code below behaves the same whether it's a model or a collection
             data = [data];
-        } else {
-            // it's most likely, and hopefully, an array of objects like:
-            // [
-            //     {email:"foo@bar.com", name:"Foo Bar"},
-            //     {email:"foo@bar.com", name:""},
-            //     {email:"foo@bar.com", name:""}
-            // ]
-            // nothing to do but let the rest of the method iterate over the recipients
         }
-
         if (_.isArray(data)) {
             _.each(data, function(recipient) {
-                var translatedRecipient = this._translateRecipient(recipient);
-
+                var formattedRecipient;
+                if (!(recipient instanceof Backbone.Model)) {
+                    // force the object to be a Backbone.Model to allow for certain assumptions to be made
+                    // there is no harm in this because the recipient will not be added to the return value if no email
+                    // address is found on the model
+                    recipient = new Backbone.Model(recipient);
+                }
+                formattedRecipient = this._formatRecipient(recipient);
                 // only add the recipient if there is an email address
-                if (!_.isEmpty(translatedRecipient.email)) {
-                    translatedRecipients.push(translatedRecipient);
+                if (!_.isEmpty(formattedRecipient.email)) {
+                    formattedRecipients.push(formattedRecipient);
                 }
             }, this);
         }
-
-        return translatedRecipients;
+        return formattedRecipients;
     },
 
     /**
-     * Translates an array of objects into a collection.
-     *
-     * @param data {Array}
-     * @returns {Collection}
-     */
-    unformat: function(data) {
-        return new Backbone.Collection(data);
-    },
-
-    /**
-     * Synchronize recipient field value with the model and setup tooltips for email pills
+     * Synchronize the recipient field value with the model and setup tooltips for email pills.
      *
      * NOTE: In Select2 v3.4.0, the event names are namespaced (prefixed with "select2-"). So it is expected that the
      * event handlers defined in this method for the Select2 field will break upon upgrading.
@@ -251,10 +306,9 @@
         this.getFieldElement()
             .on("change", function() {
                 var value = $(this).select2('data');
-                self.model.set(self.name, self.unformat(value), {silent: true});
+                self.model.get(self.name).reset(value);
             })
             .on("change", function(event) {
-                self._destroyTooltips();
                 self._initializeTooltips();
             }).
             on("selected", _.bind(this._handleEventOnSelected, this));
@@ -304,45 +358,6 @@
     },
 
     /**
-     * Adds the new recipients to the existing recipients.
-     *
-     * @param recipients
-     * @see RecipientsField::format() For the acceptable formats for recipients.
-     * @private
-     */
-    _addRecipients: function(recipients) {
-        var existingRecipients = this.format(this.model.get(this.name)), // get the existing recipients in array format
-            newRecipients      = this.format(recipients), // force the new recipients to array format
-            filteredRecipients = [];
-
-        _.each(newRecipients, function(recipient) {
-            // only add recipients whose id's are not found among the existing recipients
-            if (_.where(existingRecipients, {id: recipient.id}).length === 0) {
-                filteredRecipients.push(recipient);
-            }
-        }, this);
-
-        this.getFieldElement()
-            .select2('data', _.union(existingRecipients, filteredRecipients))
-            .trigger('change');
-    },
-
-    /**
-     * Replaces the current recipients with the new recipients
-     *
-     * @param recipients
-     * @see RecipientsField::format() For the acceptable formats for recipients.
-     * @private
-     */
-    _replaceRecipients: function(recipients) {
-        var newRecipients = this.format(recipients);
-
-        this.getFieldElement()
-            .select2('data', newRecipients)
-            .trigger('change');
-    },
-
-    /**
      * When in edit mode, the field includes an icon button for opening an address book. Clicking the button will
      * trigger an event to open the address book, which calls this method to do the dirty work. The selected recipients
      * are added to this field upon closing the address book.
@@ -350,13 +365,27 @@
      * @private
      */
     _showAddressBook: function() {
-        app.drawer.open({
+        /**
+         * Callback to add recipients, from a closing drawer, to the target Recipients field.
+         * @param {undefined|Backbone.Collection} recipients
+         */
+        var addRecipients = _.bind(function(recipients) {
+            if (recipients && recipients.length > 0) {
+                this.model.get(this.name).add(recipients.models);
+            }
+        }, this);
+        app.drawer.open(
+            {
                 layout:  "compose-addressbook",
                 context: {
                     module: "Emails",
                     mixed:  true
                 }
-            }, _.bind(this._addRecipients, this));
+            },
+            function(recipients) {
+                addRecipients(recipients);
+            }
+        );
     },
 
     /**
@@ -384,6 +413,7 @@
      */
     _initializeTooltips: function() {
         var self = this;
+        this._destroyTooltips();
         this.$('.select2-search-choice').each(function() {
             $(this).tooltip({
                 container: 'body',
@@ -405,116 +435,61 @@
     },
 
     /**
-     * Transpose data from a Backbone model into a standard JavaScript object with the data required by the field.
+     * Format a recipient from a Backbone.Model to a standard JavaScript object with id, module, email, and name
+     * attributes. Only id and email are required for the recipient to be considered valid
+     * (@see RecipientsField::format()).
      *
-     * @param {Backbone.Model} bean
+     * All attributes are optional. However, if the email attribute is not present, then a primary email address should
+     * exist on the bean. Without an email address that can be resolved, the recipient is considered to be invalid. The
+     * bean attribute must be a Backbone.Model and it is likely to be a Bean. Data found in the bean is considered to be
+     * secondary to the attributes found on its parent model. The bean is a mechanism for collecting additional
+     * information about the recipient that may not have been explicitly set when the recipient was passed in.
+     * @param {Backbone.Model} recipient
      * @returns {Object}
      * @private
      */
-    _getDataFromBean: function(bean) {
-        var model = {
-            id:     bean.get("id"),
-            module: bean.module || bean.get("module"),
-            name:   bean.get("name") || bean.get("full_name"),
-            email:  bean.get("email1") || bean.get("email")
-        };
-
-        if (_.isArray(model.email)) {
-            // grab the primary email address
-            var primaryAddress = _.find(model.email, function (emailAddress) {
-                return (emailAddress.primary_address == "1");
-            });
-
-            if (!_.isUndefined(primaryAddress) && !_.isEmpty(primaryAddress.email_address)) {
-                model.email = primaryAddress.email_address;
-            }
-        }
-
-        if (_.isEmpty(model.email) || !_.isString(model.email)) {
-            delete model.email;
-        }
-
-        if (_.isEmpty(model.name) || !_.isString(model.name)) {
-            delete model.name;
-        }
-
-        return model;
-    },
-
-    /**
-     * Translate a recipient to an object that the field can understand.
-     *
-     * @param {*} recipient A Backbone model or standard JavaScript object. If it's a standard object, it may be
-     *                      structured like:
-     *
-     *                          {
-     *                              id: "abcd",
-     *                              module: "Contacts",
-     *                              email: "foo@bar.com",
-     *                              name: "Foo Bar",
-     *                              bean: Backbone.Model
-     *                          }
-     *
-     *                      All attributes are optional. However, if the email attribute is not present, then primary
-     *                      email address should exist on the bean. Without an email address that can be resolved, the
-     *                      recipient is considered to be invalid. The bean attribute must be a Backbone model and it
-     *                      likely will be a Bean. Data found in the bean is considered to be secondary to the first-
-     *                      class attributes found on the object. The bean is a mechanism for collecting additional
-     *                      information about the recipient that may not have been explicitly set when the recipient
-     *                      was passed in.
-     * @returns {Object}
-     * @private
-     */
-    _translateRecipient: function(recipient) {
-        var translatedRecipient = {},
-            bean,
-            id,
-            module,
-            name,
-            email;
-
+    _formatRecipient: function(recipient) {
+        var formattedRecipient = {};
         if (recipient instanceof Backbone.Model) {
-            bean   = this._getDataFromBean(recipient);
-            id     = bean.id || bean.email;
-            module = bean.module;
-            name   = bean.name;
-            email  = bean.email;
-        } else {
-            bean = {};
-
-            // grab values off the bean
-            if (recipient.hasOwnProperty("bean") && recipient.bean instanceof Backbone.Model) {
-                bean = this._getDataFromBean(recipient.bean);
+            var bean = recipient.get('bean');
+            // if there is a bean attribute, then more data can be extracted about the recipient to fill in any holes if
+            // attributes are missing amongst the primary attributes
+            // so follow the trail using recursion
+            if (bean) {
+                formattedRecipient = this._formatRecipient(bean);
             }
-
-            // try to grab values directly first, otherwise use the bean
-            id     = recipient.id || bean.id || recipient.email || bean.email;
-            module = recipient.module || bean.module;
-            name   = recipient.name || bean.name;
-            email  = recipient.email || bean.email;
+            // prioritize any values found on recipient over those already extracted from bean
+            formattedRecipient = {
+                id:     recipient.get('id') || formattedRecipient.id || recipient.get('email'),
+                module: recipient.get('module') || recipient.module || recipient.get('_module') || formattedRecipient.module,
+                email:  recipient.get('email') || formattedRecipient.email,
+                name:   recipient.get('name') || recipient.get('full_name') || formattedRecipient.name
+            };
+            // don't bother with the recipient unless an id is present
+            if (!_.isEmpty(formattedRecipient.id)) {
+                // extract the primary email address for the recipient
+                if (_.isArray(formattedRecipient.email)) {
+                    // grab the primary email address
+                    var primaryEmailAddress = _.find(formattedRecipient.email, function (emailAddress) {
+                        return (emailAddress.primary_address === '1');
+                    });
+                    // use the primary email address
+                    if (!_.isUndefined(primaryEmailAddress) && !_.isEmpty(primaryEmailAddress.email_address)) {
+                        formattedRecipient.email = primaryEmailAddress.email_address;
+                    }
+                }
+                // drop any values that are empty or non-compliant
+                _.each(formattedRecipient, function(val, key) {
+                    if (_.isEmpty(formattedRecipient[key]) || !_.isString(formattedRecipient[key])) {
+                        delete formattedRecipient[key];
+                    }
+                });
+            } else {
+                // drop all values if an id isn't present
+                formattedRecipient = {};
+            }
         }
-
-        // don't bother with the recipient unless an id is present
-        if (!_.isEmpty(id)) {
-            translatedRecipient.id = id;
-
-            if (!_.isEmpty(email)) {
-                // only set the email if it's actually available
-                translatedRecipient.email = email;
-            }
-
-            if (!_.isEmpty(module)) {
-                // only set the module if it's actually available
-                translatedRecipient.module = module;
-            }
-
-            if (!_.isEmpty(name)) {
-                // only set the name if it's actually available
-                translatedRecipient.name = name;
-            }
-        }
-
-        return translatedRecipient;
+        return formattedRecipient;
     },
 
     /**

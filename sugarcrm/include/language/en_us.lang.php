@@ -124,7 +124,7 @@ $app_list_strings = array (
     array(
         'Calls' => 'Cl',
         'Cases' => 'Cs',
-        'Campaigns' => 'Cm',
+        'Campaigns' => 'Ca',
         'Notes' => 'Nt',
         'Tasks' => 'Ts'
     ),
@@ -2596,7 +2596,7 @@ $app_strings = array (
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_FILTER_SELECT_FIELD' => 'Select field...',
     'LBL_FILTER_SELECT_OPERATOR' => 'Select operator...',
-    'LBL_FILTER_CREATE_NEW' => 'Create New',
+    'LBL_FILTER_CREATE_NEW' => 'Create Filter',
     'LBL_FILTER_ALL_RECORDS' => 'All Records',
     'LBL_FILTER_SAVE' => 'You successfully created the filter',
     'LBL_FILTER_BETWEEN_FROM' => 'From',
@@ -3172,6 +3172,7 @@ $app_strings = array (
     'LBL_REMOVED_DASHLET' => 'Sugar Dashlet Removed',
 
     /* Sugar7 Dashboard */
+    'LBL_DEFAULT_DASHBOARD_TITLE' => 'My Dashboard',
     'LBL_COLLAPSE_ALL' => 'Collapse All',
     'LBL_EXPAND_ALL' => 'Expand All',
     'LBL_DASHLET_CONFIG_EDIT_LABEL' => 'Edit',
@@ -3182,6 +3183,8 @@ $app_strings = array (
     'LBL_DASHLET_MAXIMIZE_ALL' => 'Maximize All',
     'LBL_DASHLET_MINIMIZE' => 'Minimize',
     'LBL_DASHLET_MAXIMIZE' => 'Maximize',
+    'LBL_DASHLET_CONFIGURE' => 'Configure',
+    'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_TOGGLE' => 'Toggle Dashboard Visibility',
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
@@ -3192,6 +3195,15 @@ $app_strings = array (
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
+    'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Cases Summary',
+    'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
+    'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
+    'LBL_DASHLET_ATTACHMENTS_NAME' => 'Attachments',
+    'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
+    'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
+    'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
+    'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
 
@@ -3205,6 +3217,10 @@ $app_strings = array (
     'LBL_TWITTER_DISPLAY_ROWS' => 'Display Rows',
     'LBL_TWITTER_MY_ACCOUNT' => 'My Account',
     'LBL_TWITTER_NAME' => 'Twitter',
+
+    /* Country Chart Dashlet */
+    'LBL_DASHLET_COUNTRY_CHART_NAME' => 'Sales by Country',
+    'LBL_DASHLET_COUNTRY_CHART_DESCRIPTION' => 'Displays the sales chart by country map.',
 
     // MySugar Menu Options
     'LBL_ADD_PAGE' => 'Add Page',
@@ -3584,6 +3600,7 @@ $app_strings = array (
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
+    'LBL_COLUMNS' => 'Columns',
     'LBL_PREVIEW_DISABLED_NO_RECORD' => 'Preview disabled: No data available',
     'LBL_PREVIEW_DISABLED_NO_ACCESS' => 'Preview disabled: No access to record',
     'LBL_PREVIEW_DISABLED_ATTACHMENT' => 'Preview disabled: No data available',
@@ -4069,6 +4086,8 @@ $app_strings = array (
     'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => 'My Teams Opportunities',
 
     //News feed
     'LBL_NEWS_FEED_NO_DATA' => 'No data found.',
@@ -4107,6 +4126,7 @@ $app_strings = array (
     'LBL_BEST_ADJUSTED' => 'Best (Adjusted)',
     'LBL_WORST_ADJUSTED' => 'Worst (Adjusted)',
     'LBL_LIKELY_ADJUSTED' => 'Likely (Adjusted)',
+    'LBL_AMOUNT_USDOLLAR' => 'Amount',
 
     'LBL_OVERDUE' => 'Overdue',
 

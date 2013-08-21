@@ -1,14 +1,15 @@
 ({
     inlineEditMode: false,
     createMode: false,
-    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable', 'tooltip'],
+    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable'],
     enableHeaderButtons: true,
     enableHeaderPane: true,
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'click [data-action=scroll]': 'paginateRecord'
     },
     // button fields defined in view definition
     buttons: null,
@@ -202,16 +203,16 @@
         }
     },
     showPreviousNextBtnGroup: function () {
-        var listCollection = this.context.get('listCollection') || new Backbone.Collection();
+        var listCollection = this.context.get('listCollection') || new app.data.createBeanCollection(this.module);
         var recordIndex = listCollection.indexOf(listCollection.get(this.model.id));
         if (listCollection && listCollection.models && listCollection.models.length <= 1) {
             this.showPrevNextBtnGroup = false;
         } else {
             this.showPrevNextBtnGroup = true;
         }
-        if (this.collection) {
-            this.collection.previous = listCollection.models[recordIndex - 1] ? listCollection.models[recordIndex - 1] : undefined;
-            this.collection.next = listCollection.models[recordIndex + 1] ? listCollection.models[recordIndex + 1] : undefined;
+        if (this.collection && listCollection.length !== 0) {
+            this.showPrevious = listCollection.hasPreviousModel(this.model);
+            this.showNext = listCollection.hasNextModel(this.model);
         }
     },
 
@@ -533,9 +534,14 @@
                 if (_.isString(field)) {
                     panel.fields[index] = field = {name: field};
                 }
-
                 // disable the pencil icon if the user doesn't have ACLs
-                if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
+                if (field.type === "fieldset") {
+                    if (field.readonly || _.every(field.fields, function(field) {
+                        return !app.acl.hasAccessToModel('edit', this.model, field.name);
+                    }, this)) {
+                        this.noEditFields.push(field.name);
+                    }
+                } else if (field.readonly || !app.acl.hasAccessToModel('edit', this.model, field.name)) {
                     this.noEditFields.push(field.name);
                 }
             }, this);
@@ -564,5 +570,53 @@
                 lastTabIndex = gridResults.lastTabIndex;
             }
         }, this);
+    },
+
+    /**
+     * Handles click event on next/previous button of record.
+     * @param {Event} evt
+     */
+    paginateRecord: function(evt) {
+        var el = $(evt.currentTarget),
+            data = el.data();
+        if (data.id) {
+            var list = this.context.get('listCollection'),
+                model = list.get(data.id);
+            switch (data.actionType) {
+                case 'next':
+                    list.getNext(model, this.navigateModel);
+                    break;
+                case 'prev':
+                    list.getPrev(model, this.navigateModel);
+                    break;
+                default:
+                    this._disablePagination(el);
+            }
+        }
+    },
+
+    /**
+     * Callback for navigate to new model.
+     * @param model {Data.Bean} model New model to navigate.
+     * @param actionType {String} actionType Side of navigation (prev/next).
+     */
+    navigateModel: function(model, actionType) {
+        if (model && model.id) {
+            app.router.navigate(app.router.buildRoute(this.module, model.id), {trigger: true});
+        } else {
+            var el = this.$el.find('[data-action=scroll][data-action-type=' + actionType + ']');
+            this._disablePagination(el);
+        }
+
+    },
+
+    /**
+     * Disabling pagination if we can't paginate.
+     * @param {Object} el Element to disable pagination on.
+     */
+    _disablePagination: function(el) {
+        app.logger.error('Wrong data for record pagination. Pagination is disabled.');
+        el.addClass('disabled');
+        el.data('id', '');
     }
 })

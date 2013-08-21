@@ -40,11 +40,15 @@ class Subscription extends Basic
      * Gets the subscribed users for the record specified.
      * @param  SugarBean $record
      * @param  string    $type   Return type for data
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return mixed
      */
-    public static function getSubscribedUsers(SugarBean $record, $type = 'array')
+    public static function getSubscribedUsers(SugarBean $record, $type = 'array', $params = array())
     {
-        $query = self::getQueryObject();
+        $query = self::getQueryObject($params);
         $query->select(array('created_by'));
         $query->where()->equals('parent_id', $record->id);
         $query->where()->equals('parent_type', $record->module_name);
@@ -56,11 +60,15 @@ class Subscription extends Basic
      * Gets the subscribed records for the user specified.
      * @param  User   $user
      * @param  string $type Return type for data
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return mixed
      */
-    public static function getSubscribedRecords(User $user, $type = 'array')
+    public static function getSubscribedRecords(User $user, $type = 'array', $params = array())
     {
-        $query = self::getQueryObject();
+        $query = self::getQueryObject($params);
         $query->select(array('parent_id'));
         $query->where()->equals('created_by', $user->id);
 
@@ -71,11 +79,15 @@ class Subscription extends Basic
      * Checks whether the specified user is subscribed to the given record.
      * @param  User      $user
      * @param  SugarBean $record
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return string|null       GUID of subscription or null
      */
-    public static function checkSubscription(User $user, SugarBean $record)
+    public static function checkSubscription(User $user, SugarBean $record, $params = array())
     {
-        $query = self::getQueryObject();
+        $query = self::getQueryObject($params);
         $query->select(array('id'));
         $query->where()->equals('parent_id', $record->id);
         $query->where()->equals('created_by', $user->id);
@@ -90,10 +102,14 @@ class Subscription extends Basic
      * Checks which of the given records the specified user is subscribed to.
      * @param  User  $user
      * @param  array $records An array of associative arrays (not SugarBeans).
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return array Associative array where keys are IDs of the record a user
      * is subscribed to.
      */
-    public static function checkSubscriptionList(User $user, array $records)
+    public static function checkSubscriptionList(User $user, array $records, $params = array())
     {
         $return = array();
         // Plucks IDs of records passed in.
@@ -105,7 +121,7 @@ class Subscription extends Basic
         );
 
         if (!empty($ids)) {
-            $query = self::getQueryObject();
+            $query = self::getQueryObject($params);
             $query->select(array('parent_id'));
             $query->where()->in('parent_id', $ids);
             $query->where()->equals('created_by', $user->id);
@@ -122,11 +138,15 @@ class Subscription extends Basic
      * Retrieve the subscription bean for a user-record relationship.
      * @param  User      $user
      * @param  SugarBean $record
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return Subscription|null
      */
-    public static function getSubscription(User $user, SugarBean $record)
+    public static function getSubscription(User $user, SugarBean $record, $params = array())
     {
-        $guid = self::checkSubscription($user, $record);
+        $guid = self::checkSubscription($user, $record, $params);
         if (!empty($guid)) {
             return BeanFactory::retrieveBean('Subscriptions', $guid);
         }
@@ -137,11 +157,15 @@ class Subscription extends Basic
      * Adds a user subscription to a record if one doesn't already exist.
      * @param  User      $user
      * @param  SugarBean $record
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return string|bool       GUID of the subscription or false.
      */
-    public static function subscribeUserToRecord(User $user, SugarBean $record)
+    public static function subscribeUserToRecord(User $user, SugarBean $record, $params = array())
     {
-        if (!self::checkSubscription($user, $record)) {
+        if (!self::checkSubscription($user, $record, $params)) {
             $seed = BeanFactory::getBean('Subscriptions');
             $seed->parent_type = $record->module_name;
             $seed->parent_id = $record->id;
@@ -170,13 +194,24 @@ class Subscription extends Basic
 
     /**
      * Returns a query object for subscription queries.
+     * @param Array $params
+     * //BEGIN SUGARCRM flav=pro ONLY
+     *        disable_row_level_security
+     * //END SUGARCRM flav=pro ONLY
      * @return SugarQuery
      */
-    protected static function getQueryObject()
+    protected static function getQueryObject($params = array())
     {
-        $seed = BeanFactory::getBean('Subscriptions');
+        $subscription = BeanFactory::getBean('Subscriptions');
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Pro+ versions able to override visibility on subscriptions (Portal)
+        // to allow Contact change activity messages to be linked to subscribers
+        if (!empty($params['disable_row_level_security'])) {
+            $subscription->disable_row_level_security = true;
+        }
+        //END SUGARCRM flav=pro ONLY
         $query = new SugarQuery();
-        $query->from($seed);
+        $query->from($subscription);
         $query->where()->equals('deleted', '0');
         return $query;
     }
@@ -241,9 +276,9 @@ class Subscription extends Basic
      * @param  Activity  $act
      * @param  array     $args
      */
-    public function processSubscriptions(SugarBean $bean, Activity $act, array $args)
+    public function processSubscriptions(SugarBean $bean, Activity $act, array $args, $params = array())
     {
-        $userPartials          = self::getSubscribedUsers($bean);
+        $userPartials          = self::getSubscribedUsers($bean, 'array', $params);
         $data                  = array(
             'act_id'        => $act->id,
             'bean_module'   => $bean->module_name,

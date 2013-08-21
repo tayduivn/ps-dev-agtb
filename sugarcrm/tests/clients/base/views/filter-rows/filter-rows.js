@@ -256,9 +256,7 @@ describe("BaseFilterRowsView", function() {
             $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
             $rows.push($('<div>').data({ name: '123'}));
             view.validateRows($rows);
-            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
-            expect(triggerStub.secondCall).toBeDefined();
-            expect(triggerStub.secondCall.args).toEqual(['filter:create:rowsValid', false]);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
         });
         it('should return true if uses date range instead of value', function() {
             $rows.push($('<div>').data({ name: 'abc', isDateRange: true}));
@@ -269,6 +267,34 @@ describe("BaseFilterRowsView", function() {
         });
         it('should return true if predefined filter instead of value', function() {
             $rows.push($('<div>').data({ name: '$favorite', isPredefinedFilter: true}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
+        it('should return false if $dateBetween operator does not have 2 values', function() {
+            $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12']}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
+        it('should return true if $dateBetween operator has 2 values', function() {
+            $rows.push($('<div>').data({ name: 'abc', operator: '$dateBetween', value: ['12-12-12', '12-13-12']}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
+        it('should return false if $between operator does not have 2 values', function() {
+            $rows.push($('<div>').data({ name: 'abc', operator: '$between', value: [11]}));
+            $rows.push($('<div>').data({ name: '123', value: '123'}));
+            view.validateRows($rows);
+            expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', false]);
+            expect(triggerStub.secondCall).toBeNull();
+        });
+        it('should return true if $between operator has 2 values', function() {
+            $rows.push($('<div>').data({ name: 'abc', operator: '$between', value: [11, 22]}));
             $rows.push($('<div>').data({ name: '123', value: '123'}));
             view.validateRows($rows);
             expect(triggerStub.firstCall.args).toEqual(['filter:create:rowsValid', true]);
@@ -466,6 +492,7 @@ describe("BaseFilterRowsView", function() {
                 view.handleOperatorSelected({currentTarget: $operatorField});
                 expect(createFieldSpy).toHaveBeenCalled();
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    name: 'status',
                     type: 'enum',
                     options: 'status_dom',
                     isMultiSelect: true,
@@ -478,6 +505,7 @@ describe("BaseFilterRowsView", function() {
                 view.handleOperatorSelected({currentTarget: $operatorField});
                 expect(createFieldSpy).toHaveBeenCalled();
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    name: 'priority',
                     type: 'enum',
                     options: 'boolean_dom',
                     searchBarThreshold: 9999
@@ -489,6 +517,7 @@ describe("BaseFilterRowsView", function() {
                 view.handleOperatorSelected({currentTarget: $operatorField});
                 expect(createFieldSpy).toHaveBeenCalled();
                 expect(createFieldSpy.lastCall.args[1]).toEqual({
+                    name: 'case_number',
                     type: 'int',
                     auto_increment: false
                 });
@@ -547,10 +576,13 @@ describe("BaseFilterRowsView", function() {
         it('should trigger filter:apply when value change', function() {
             spyOn($.fn, "select2").andReturn("case_number");
             var triggerStub = sinon.stub(view.layout, 'trigger');
+            var renderStub = sinon.stub(app.view.Field.prototype, 'render', $.noop());
             view.handleOperatorSelected({currentTarget: $operatorField});
             $row.data('valueField').model.set('status', 'firesModelChangeEvent');
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
+            triggerStub.restore();
+            renderStub.restore();
         });
         it('should trigger filter:apply when keyup', function() {
             spyOn($.fn, "select2").andReturn("case_number");
