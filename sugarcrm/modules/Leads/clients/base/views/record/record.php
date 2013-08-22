@@ -96,6 +96,13 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                     'label'      => 'LBL_VCARD_DOWNLOAD',
                     'acl_action' => 'edit',
                 ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
+                ),
             ),
         ),
         array(
