@@ -47,6 +47,15 @@
             name: 'fieldset',
             method: '_loadTemplate'
         });
+        //Bug: SP-1273 - Fixes Contacts subpanel record links to home page
+        //(where expectation was to go to the corresponding Contact record)
+        if (this.def.link) {
+            var action = this.def.route && this.def.route.action ? this.def.route.action : '';
+            //If `this.template` resolves to `base/list.hbs`, that template expects an
+            //initialized `this.href`. That's normally handled by the `base.js` controller,
+            //but, in this case, since `fullname.js` is controller, we must handle here.
+            this.href = '#' + app.router.buildRoute(this.module||this.context.get('module'), this.model.id, action, this.def.bwcLink);
+        }
         this.template = app.template.getField(this.type, this.view.name + '-' + this.tplName, this.model.module) ||
                         this.template;
     },
