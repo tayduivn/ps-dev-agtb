@@ -46,7 +46,6 @@
             }
         }, this);
     },
-
     triggerHistoryLog: function() {
         this.$el.find('i').toggleClass('icon-caret-down icon-caret-up');
         this.context.trigger('forecast:commit_log:trigger');

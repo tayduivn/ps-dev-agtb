@@ -66,12 +66,13 @@
 
             return true;
         }, this);
-        $(window).on('resize.datapoints', _.bind(this.adjustDatapointLayout, this));
+        //if user resizes browser, adjust datapoint layout accordingly
+        $(window).on('resize.datapoints', _.bind(this.resize, this));
         this.on('render', function() {
             if (!this.hasAccess) {
                 return false;
             }
-            this.adjustDatapointLayout();
+            this.resize();
             return true;
         }, this);
     },
@@ -89,46 +90,54 @@
     },
     adjustDatapointLayout: function(){
         if(this.hasAccess) {
-            var parentWidth = this.$el.parents(".datapoints").outerWidth(true);
-            var parentMarginLeft = this.$el.parents(".datapoints").css("margin-left");
-            var parentMarginRight = this.$el.parents(".datapoints").css("margin-right");
-            var timePeriodWidth = this.$el.parents(".topline").children(".span4").outerWidth(true);
-            var toplineWidth = this.$el.parents(".topline").width();
-            var collection = this.$el.parent("div.pull-right").children("span");
+            var parentMarginLeft = this.view.$el.find(".topline .datapoints").css("margin-left");
+            var parentMarginRight = this.view.$el.find(".topline .datapoints").css("margin-right");
+            var timePeriodWidth = this.view.$el.find(".topline .span4").outerWidth(true);
+            var toplineWidth = this.view.$el.find(".topline ").width();
+            var collection = this.view.$el.find(".topline div.pull-right").children("span");
             var collectionWidth = parseInt(parentMarginLeft) + parseInt(parentMarginRight);
             collection.each(function(index){
                 collectionWidth += $(this).children("div.datapoint").outerWidth(true);
             });
+            //change width of datapoint div to span entire row to make room for more numbers
+            if((collectionWidth+timePeriodWidth) > toplineWidth) {
+                this.view.$el.find(".topline div.hr").show();
+                this.view.$el.find(".info .last-commit").find("div.hr").show();
+                this.view.$el.find(".topline .datapoints").removeClass("span8").addClass("span12");
+                this.view.$el.find(".info .last-commit .datapoints").removeClass("span8").addClass("span12");
+                this.view.$el.find(".info .last-commit .commit-date").removeClass("span4").addClass("span12");
 
-            //if datapoints width is greater than parent container then move datapoints to a new line to create more space
-            if(collectionWidth > parentWidth) {
-                this.$el.parents(".topline").find("div.hr").show();
-                $(".last-commit").find("div.hr").show();
-                this.$el.parents(".datapoints").removeClass("span8").addClass("span12");
-                $(".last-commit .datapoints").removeClass("span8").addClass("span12");
-                $(".last-commit .commit-date").removeClass("span4").addClass("span12");
-
-            } else if ((collectionWidth+timePeriodWidth) < toplineWidth) {
-                this.$el.parents(".topline").find("div.hr").hide();
-                $(".last-commit").find("div.hr").hide();
-                this.$el.parents(".datapoints").removeClass("span12").addClass("span8");
-                $(".last-commit .datapoints").removeClass("span12").addClass("span8");
-                $(".last-commit .commit-date").removeClass("span12").addClass("span4");
-                var lastCommitHeight = $('.last-commit .commit-date').height();
-                $('.last-commit .datapoints div.datapoint').height(lastCommitHeight);
+            } else {
+                this.view.$el.find(".topline div.hr").hide();
+                this.view.$el.find(".info .last-commit").find("div.hr").hide();
+                this.view.$el.find(".topline .datapoints").removeClass("span12").addClass("span8");
+                this.view.$el.find(".info .last-commit .datapoints").removeClass("span12").addClass("span8");
+                this.view.$el.find(".info .last-commit .commit-date").removeClass("span12").addClass("span4");
+                var lastCommitHeight = this.view.$el.find(".info .last-commit .commit-date").height();
+                this.view.$el.find(".info .last-commit .datapoints div.datapoint").height(lastCommitHeight);
             }
-
-            //adjust lastcommit  widths to match datapoints
+            //adjust height of last commit datapoints
             var index = this.$el.index() + 1;
             var width = this.$el.find("div.datapoint").outerWidth();
-            var datapointLength = $('.last-commit .datapoints div.datapoint').length;
-            var sel = '.last-commit .datapoints div.datapoint:nth-child('+index+')';
+            var datapointLength = this.view.$el.find(".info .last-commit .datapoints div.datapoint").length;
+            var sel = this.view.$el.find('.last-commit .datapoints div.datapoint:nth-child('+index+')');
             if (datapointLength > 2 && index <= 2 || datapointLength == 2 && index == 1) {
                 $(sel).width(width-18);
             }  else {
                 $(sel).width(width);
             }
         }
+    },
+    resize: function() {
+        var self = this;
+        //The resize event is fired many times during the resize process. We want to be sure the user has finished
+        //resizing the window that's why we set a timer so the code should be executed only once
+        if (self.resizeDetectTimer) {
+            clearTimeout(this.resizeDetectTimer);
+        }
+        self.resizeDetectTimer = setTimeout(function() {
+            self.adjustDatapointLayout();
+        }, 250);
     },
     bindDataChange: function() {
         if (!this.hasAccess) {
