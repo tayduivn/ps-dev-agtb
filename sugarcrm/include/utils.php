@@ -5030,6 +5030,13 @@ function verify_image_file($path, $jpeg = false)
                 if (file_put_contents($path, $image)) {
                     return true;
                 }
+            } elseif ($filetype == "image/gif") {
+                ob_start();
+                imagegif($img);
+                $image = ob_get_clean();
+                if (file_put_contents($path, $image)) {
+                    return true;
+                }
             } elseif ($filetype == "image/png") {
                 // else if the filetype is png, create png
                 imagealphablending($img, true);
