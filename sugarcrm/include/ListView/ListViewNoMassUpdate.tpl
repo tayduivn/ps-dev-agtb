@@ -119,7 +119,34 @@
 {include file='include/ListView/ListViewPagination.tpl'}
 </table>
 <script type='text/javascript'>
-{literal}function lvg_nav(m,id,act,offset,t){if(t.href.search(/#/) < 0){return;}else{if(act=='pte'){act='ProjectTemplatesEditView';}else if(act=='d'){ act='DetailView';}else if( act =='ReportsWizard'){act = 'ReportsWizard';}else{ act='EditView';}{/literal}url = 'index.php?module='+m+'&offset=' + offset + '&stamp={$pageData.stamp}&return_module='+m+'&action='+act+'&record='+id;t.href=url;{literal}}}{/literal}
+{literal}
+    function lvg_nav(m, id, act, offset, t) {
+        t = $(t);
+        if (t.attr('href') !== '#') {
+            return;
+        }
+        switch (act) {
+            case 'pte':
+                act = 'ProjectTemplatesEditView';
+                break;
+            case 'd':
+                act = 'DetailView';
+                break;
+            default:
+                act = 'EditView';
+                break;
+        }
+{/literal}
+        url = 'index.php?module=' + m + '&offset=' + offset + '&stamp={$pageData.stamp}&return_module=' +
+            m +'&action=' + act + '&record=' + id;
+{literal}
+        t.attr('href', url);
+
+        if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
+            window.parent.SUGAR.App.controller.layout.getComponent('bwc').convertToSidecarLink(t);
+        }
+    }
+{/literal}
 {literal}function lvg_dtails(id){{/literal}return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir}',id, 'adspan_'+id);{literal}}{/literal}
 {if $contextMenus}
 	{$contextMenuScript}

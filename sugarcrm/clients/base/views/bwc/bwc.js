@@ -24,8 +24,6 @@
 
     /**
      * Enabled actions for warning unsaved changes.
-     *
-     * @property
      */
     warnEnabledBwcActions: [
         'editview', 'config'
@@ -236,6 +234,44 @@
     },
 
     /**
+     * Rewrites old link element to the new sidecar router.
+     *
+     * @param {HTMLElement} The link `<a>` to rewrite into a sidecar url.
+     */
+    convertToSidecarLink: function(elem) {
+        elem = $(elem);
+        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
+        var href = elem.attr('href');
+        var module = this.moduleRegex.exec(href);
+
+        if (
+            !_.isArray(module) ||
+            _.isEmpty(module[1]) ||
+            _.isUndefined(app.metadata.getModule(module[1])) ||
+            app.metadata.getModule(module[1]).isBwcEnabled
+        ) {
+            return;
+        }
+
+        var sidecarUrl = this.convertToSidecarUrl(href);
+        elem.attr('href', baseUrl + '#' + sidecarUrl);
+        elem.data('sidecarProcessed', true);
+
+        if (elem.attr('target') === '_blank') {
+            return;
+        }
+
+        elem.click(function(e) {
+            if (e.button !== 0 || e.ctrlKey || e.metaKey) {
+                return;
+            }
+            e.stopPropagation();
+            parent.SUGAR.App.router.navigate(sidecarUrl, {trigger: true});
+            return false;
+        });
+    },
+
+    /**
      * Rewrite old links on the frame given to the new sidecar router.
      *
      * This will match all hrefs that contain "module=" on it and if the module
@@ -251,37 +287,10 @@
      * @private
      */
     _rewriteLinksForSidecar: function(frame) {
-        var self = this,
-            baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
+        var self = this;
 
         frame.$('a[href*="module="]').each(function(i, elem) {
-            var $elem = $(elem),
-                href = $elem.attr('href'),
-                module = self.moduleRegex.exec(href);
-
-            if (!_.isArray(module) || _.isEmpty(module[1]) ||
-                _.isUndefined(app.metadata.getModule(module[1])) ||
-                app.metadata.getModule(module[1]).isBwcEnabled
-            ) {
-                return;
-            }
-
-            var sidecarUrl = self.convertToSidecarUrl(href);
-            $elem.attr('href', baseUrl + '#' + sidecarUrl);
-            $elem.data('sidecarProcessed', true);
-
-            if ($elem.attr('target') === '_blank') {
-                return;
-            }
-
-            $elem.click(function(e) {
-                if (e.button !== 0 || e.ctrlKey || e.metaKey) {
-                    return;
-                }
-                e.stopPropagation();
-                parent.SUGAR.App.router.navigate(sidecarUrl, {trigger: true});
-                return false;
-            });
+            self.convertToSidecarLink(elem);
         });
     },
 
