@@ -148,7 +148,7 @@
         // update bwc context
         var app = window.parent.SUGAR.App;
         app.controller.context.set('module', module);
-        app.events.trigger('app:view:change');
+        app.events.trigger('app:view:change', this.layout, {module: module});
     },
 
     /**
