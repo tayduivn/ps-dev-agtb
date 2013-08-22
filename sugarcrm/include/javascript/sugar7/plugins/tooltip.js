@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('tooltip', ['view'], {
+        app.plugins.register('tooltip', ['view', 'field'], {
             events: {
                 'mouseenter [rel="tooltip"]': 'onShowRecordViewTooltip',
                 'mouseleave [rel="tooltip"]': 'onHideRecordViewTooltip'
