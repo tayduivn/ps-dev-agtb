@@ -901,13 +901,13 @@ $dictionary['Product'] = array(
             'relationship_type' => 'one-to-many'
         ),
         'products_revenuelineitems' =>  array(
-            'lhs_module' => 'Products',
-            'lhs_table' => 'products',
-            'lhs_key' => 'revenuelineitem_id',
-            'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenue_line_items',
-            'rhs_key' => 'id',
-            'relationship_type' => 'one-to-many'
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'revenuelineitem_id',
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'relationship_type' => 'one-to-one'
         ),
         //END SUGARCRM flav=pro ONLY
     ),
