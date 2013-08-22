@@ -94,7 +94,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'readonly'      => true,
                 ),
                 array(
-                    'name' => 'product_template_name',
+                    'name' => 'name',
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
@@ -115,19 +115,22 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
+                    'name' => 'product_template_name',
+                    'label' => 'LBL_PRODUCT_TEMPLATE'
+                ),
+                array(
                     'name' => 'account_name',
                     'label' => 'LBL_ACCOUNT_NAME',
                     'related_fields' => array('account_id'),
                 ),
                 array(
-                    'name' => 'status',
-                    'label' => 'LBL_STATUS',
-                ),
-                array(
                     'name' => 'quote_name',
                     'label' => 'LBL_QUOTE_NAME',
                     'related_fields' => array('quote_id'),
-                    'span' => 12,
+                ),
+                array(
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
                 ),
                 'quantity',
                 array(
