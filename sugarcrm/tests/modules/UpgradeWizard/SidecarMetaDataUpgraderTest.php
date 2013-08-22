@@ -296,6 +296,33 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         return $builder->getFilesToMakeByView('record');
     }
 
+    /**
+     *
+     * @param string $module
+     * @param string $view
+     * @param string $type
+     * @param string $filepath
+     * @dataProvider _sidecarSearchProvider
+     */
+    public function testSidecarSearchDefs($module, $view, $type, $filepath)
+    {
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        $defs = $viewdefs[$module][$type]['filter']['default'];
+        $this->assertArrayHasKey("fields", $defs);
+        $this->assertArrayHasKey('$owner', $defs['fields']);
+        $this->assertArrayHasKey('$favorite',  $defs['fields']);
+        $this->assertArrayHasKey('address_city',  $defs['fields']);
+        $this->assertArrayHasKey('dbFields',  $defs['fields']['address_city']);
+    }
+
+    public function _sidecarSearchProvider()
+    {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView('filter');
+    }
+
 }
 
 class SidecarMetaDataUpgraderForTest extends SidecarMetaDataUpgrader
