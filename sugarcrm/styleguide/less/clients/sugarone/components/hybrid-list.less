@@ -7,6 +7,15 @@ li.hybrid-list-item {
 	
 	> .avatar {
 		float: left;
+		.border-radius(3px);
+		background-color: #f1f1f1;
+		text-align: center;
+		
+		i {
+			position: relative;
+			top: 3px;
+		}
+
 	}
 	
 	&:hover {
@@ -17,6 +26,7 @@ li.hybrid-list-item {
 
 .hybrid-list-item-info {
 	margin-left: 45px;
+	min-height: 32px;
 	
 	> div {
 		.clearfix();
