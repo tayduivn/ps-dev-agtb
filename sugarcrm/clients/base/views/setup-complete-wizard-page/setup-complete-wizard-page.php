@@ -1,7 +1,9 @@
-{{!
+<?php
+
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +17,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,23 +27,8 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-{{> wizard-page.header }}
-        <!-- Hack: Adding .record here since .record .record-cell contain styles we need :( -->
-        <div class="modal-body record">
-            {{#each meta.panels}}
-                {{#each grid}}
-                    <div class="row-fluid {{../name}}{{#if ../hide}} hide{{/if}}">
-                        {{#each this}}
-                            <div class="span{{span}} record-cell{{#if cell_css_class}} {{cell_css_class}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                <div class="record-label" data-type="{{type}}" data-name="{{name}}">{{#if label}}{{str label module}}{{/if}}</div>
-                                <span class="normal{{#if css}} {{css}}{{/if}}" data-fieldname="{{name}}">
-                                    {{field ../../../this model=../../../model template="edit"}}
-                                </span>
-                            </div>
-                        {{/each}}
-                    </div>
-                {{/each}}
-            {{/each}}
-        </div>
-{{> wizard-page.footer }}
+
+$viewdefs['base']['view']['setup-complete-wizard-page'] = array(
+    'title' => 'LBL_WIZ_COMPLETE_TITLE',
+    'message' => 'LBL_SETUP_COMPLETE_INFO',
+);

@@ -1133,6 +1133,7 @@ function create_default_users(){
     $user->status = 'Active';
     $user->is_admin = true;
     $user->employee_status = 'Active';
+    $user->is_instance_configured = false;
     $user->user_hash = User::getPasswordHash($setup_site_admin_password);
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);

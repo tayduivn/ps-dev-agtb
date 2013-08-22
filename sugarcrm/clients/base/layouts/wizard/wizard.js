@@ -3,6 +3,16 @@
      * Layout used for Wizards (like the first time login wizard).
      * Extend this layout and provide metadata for your wizard page components.
      *
+     * Default implementation allows you to register a callback on the context
+     * to get notified when Wizard is finished.
+     *
+     * For example,
+     * <pre>
+     * context.set("callbacks", {
+     *     complete: function(){...}
+     * }
+     * </pre>
+     *
      * @class View.Layouts.WizardLayout
      * @alias SUGAR.App.view.layouts.WizardLayout
      */
@@ -111,5 +121,16 @@
      */
     nextPage: function(){
         return this.setPage(this._currentIndex + 1);
+    },
+
+    /**
+     * Disposes of layout then calls finished callback if registered
+     */
+    finished: function(){
+        var callbacks = this.context.get("callbacks"); //save callbacks first
+        this.dispose();
+        if (callbacks && callbacks.complete) {
+            callbacks.complete();
+        }
     }
 })

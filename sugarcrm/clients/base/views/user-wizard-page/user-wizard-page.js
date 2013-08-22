@@ -55,7 +55,6 @@
                             app.logger.debug("Wizard profile update failed: " + err);
                             callback(false);
                         } else {
-                            app.logger.debug("Wizard profile updated successfully!");
                             callback(true);
                         }
                     });

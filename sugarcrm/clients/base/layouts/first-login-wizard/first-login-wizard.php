@@ -50,13 +50,13 @@ $viewdefs['base']['layout']['first-login-wizard'] = array(
     ),
     'components' => array(
         0 => array(
-            'view' => "user-wizard-page"
+            'view' => 'user-wizard-page'
         ),
         1 => array(
             'view' => "user-locale-wizard-page"
         ),
         2 => array(
-            'view' => "wizard-page"
-        ),
+            'view' => 'setup-complete-wizard-page'
+        )
     ),
 );
