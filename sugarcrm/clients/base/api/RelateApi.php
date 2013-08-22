@@ -102,7 +102,6 @@ class RelateApi extends FilterApi {
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
-        $args['filter'][][$relatedLinkName . '.' . $column] = array('$equals' => $record->id);
         self::addFilters($args['filter'], $q->where(), $q);
 
         // Some relationships want the role column ignored
