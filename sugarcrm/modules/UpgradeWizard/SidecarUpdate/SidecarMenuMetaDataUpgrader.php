@@ -35,10 +35,13 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 
             $this->logUpgradeStatus('Converting menu defs for ' . $this->module);
             // needed for Legacy Menus
-            $mod_strings = return_module_language($current_language, $module);
-            $module_menu = null;
+            $GLOBALS['mod_strings'] = return_module_language($current_language, $module);
+
+            // reset ACLs so that ACL checks in menu files won't cause any mess
+            SugarACL::setACL($module, array(new SidecarMenuMetaDataUpgraderACL()));
 
             foreach (glob("custom/Extension/modules/{$module}/Ext/Menus/*.php", GLOB_NOSORT) as $file) {
+                $module_menu = null;
                 include $file;
                 if (empty($module_menu)) {
                     continue;
@@ -50,12 +53,19 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 }
 
                 $newMenu = $mc->fromLegacyMenu($module, $module_menu, true);
+                if(empty($newMenu['data'])) {
+                    continue;
+                }
+                $content = "<?php \n";
+                foreach($newMenu['data'] as $menuItem) {
+                    $content .= "\${$newMenu['name']}[] = ".var_export($menuItem, true).";\n";
+                }
 
-                write_array_to_file($newMenu['name'], $newMenu['data'], $newExtLocation . "/" . basename($file));
+                sugar_file_put_contents($newExtLocation . "/" . basename($file), $content);
                 $this->filesToDelete[] = $file;
-                unset($module_menu);
             }
 
+            $module_menu = null;
             $legacyCustomMenu = "custom/modules/{$module}/Menu.php";
             if(file_exists($legacyCustomMenu)) {
                 include $legacyCustomMenu;
@@ -76,6 +86,7 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             $this->filesToDelete[] = $legacyCustomMenu;
 
             unset($module_menu);
+            SugarACL::resetACLs($module);
         }
     }
 
@@ -86,5 +97,16 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     public function getFilesForRemoval()
     {
         return $this->filesToDelete;
+    }
+}
+
+/**
+ * This is a mock ACL so that Menu files that have ACLs won't do weird things
+ */
+class SidecarMenuMetaDataUpgraderACL extends SugarACLStrategy
+{
+    public function checkAccess($module, $action, $context)
+    {
+        return true;
     }
 }

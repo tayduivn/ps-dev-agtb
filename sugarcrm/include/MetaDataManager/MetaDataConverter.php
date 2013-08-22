@@ -54,6 +54,7 @@ class MetaDataConverter
         '' => 'list',
         'index' => 'list',
         'Import' => 'import',
+        'Reports' => 'list',
         'DetailView' => 'view',
     );
 
@@ -346,7 +347,7 @@ class MetaDataConverter
             foreach ($defs['panels'] as $panels) {
                 // Handle fields if there are any (there should be)
                 if (isset($panels['fields']) && is_array($panels['fields'])) {
-                    // Logic is fairly straight forward... take each member of 
+                    // Logic is fairly straight forward... take each member of
                     // the fields array and make it an array of its own
                     foreach ($panels['fields'] as $field) {
                         $newpanels[] = array($field);
@@ -415,37 +416,39 @@ class MetaDataConverter
      * @param bool $ext is this an Extension
      * @return string new menu layout
      */
-    public function fromLegacyMenu($moduleName, array $menu, $ext = false)
+    public function fromLegacyMenu($moduleName, array $menu)
     {
-
         $arrayName = "viewdefs['{$moduleName}']['base']['menu']['header']";
-        if ($ext) {
-            $arrayName .= '[]';
-        }
 
-        $data = array();
+        $dataItems = array();
 
         foreach ($menu as $option) {
+            $data = array();
             // get the menu manip done
             $url = parse_url($option[0]);
             parse_str($url['query'], $menuOptions);
             $data['label'] = trim($option[1]);
-            if (isset($this->aclActionList[$menuOptions['action']])) {
-                $data['acl_action'] = trim($this->aclActionList[$menuOptions['action']]);
-                $data['acl_module'] = trim($menuOptions['module']);
-            } elseif (isset($this->aclActionList[$menuOptions['module']])) {
+            if (isset($this->aclActionList[$menuOptions['module']])) {
                 $data['acl_action'] = trim($this->aclActionList[$menuOptions['module']]);
+                $data['acl_module'] = $moduleName;
+            } elseif (isset($this->aclActionList[$menuOptions['action']])) {
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['action']]);
                 $data['acl_module'] = trim($menuOptions['module']);
             }
 
             if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
                 $data['icon'] = "icon-plus";
+            } else if($menuOptions['module'] == 'Import') {
+                $data['icon'] = 'icon-upload-alternative';
+            } else if($menuOptions['module'] == 'Reports' && $moduleName != 'Reports') {
+                $data['icon'] = 'icon-bar-chart';
             }
 
             $data['route'] = $this->buildMenuRoute($menuOptions, $option[0]);
+            $dataItems[] = $data;
         }
 
-        return array('name' => $arrayName, 'data' => $data);
+        return array('name' => $arrayName, 'data' => $dataItems);
     }
 
     /**
@@ -466,7 +469,7 @@ class MetaDataConverter
         }
 
         if (in_array($menuOptions['module'], $bwcModules)) {
-            return "#bwc/index.php?" . http_build_query(array($menuOptions));
+            return "#bwc/index.php?" . http_build_query($menuOptions);
         }
 
         $route = null;
@@ -480,7 +483,7 @@ class MetaDataConverter
         } elseif (empty($menuOptions['action']) || $menuOptions['action'] == 'index') {
             $route = "#{$menuOptions['module']}";
         } else {
-            $route = "#bwc/index.php?" . http_build_query(array($menuOptions));
+            $route = "#bwc/index.php?" . http_build_query($menuOptions);
         }
 
         return $route;

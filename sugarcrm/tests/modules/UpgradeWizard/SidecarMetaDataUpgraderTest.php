@@ -115,10 +115,14 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         // Get legacy file paths
         $builder = self::getBuilder();
         $legacyFiles = $builder->getFilesToMake('legacy');
-        $expected = array_intersect($removals, $legacyFiles);
-        sort($expected);
+        $sidecarfiles = $builder->getFilesToMake('sidecar');
+        // don't expect removal if file is the same
+        $legacyFiles = array_diff($legacyFiles, $sidecarfiles);
+        // Upgrader can remove additional files, so drop those that aren't in our file list
+        $removed = array_intersect($removals, $legacyFiles);
+        sort($removed);
         sort($legacyFiles);
-        $this->assertEquals($expected, $legacyFiles,
+        $this->assertEquals($legacyFiles, $removed,
             'Legacy files for removal is not the same as legacy files in build');
     }
 
@@ -286,7 +290,6 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
                 }
             }
         }
-        //        var_dump($defs['panels'][1]['fields']);
         $this->assertNotEmpty($idfield, "ID field not found in merged view");
     }
 
@@ -322,6 +325,73 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
         $builder = self::getBuilder();
         return $builder->getFilesToMakeByView('filter');
     }
+
+    /**
+     *
+     * @param string $module
+     * @param string $view
+     * @param string $type
+     * @param string $filepath
+     * @dataProvider _sidecarMenuProvider
+     */
+    public function testSidecarMenuDefs($module, $view, $type, $filepath)
+    {
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        $_module = strtolower($module);
+        $defs = $viewdefs[$module][$type]['menu']['header'];
+        // create
+        $this->assertEquals('edit', $defs[0]['acl_action']);
+        $this->assertEquals($module, $defs[0]['acl_module']);
+        $this->assertEquals('icon-plus', $defs[0]['icon']);
+        $this->assertEquals("#$module/create", $defs[0]['route']);
+        // list
+        $this->assertEquals('list', $defs[1]['acl_action']);
+        $this->assertEquals($module, $defs[1]['acl_module']);
+        $this->assertEquals("#$module", $defs[1]['route']);
+        // reports
+        $this->assertEquals('list', $defs[2]['acl_action']);
+        $this->assertEquals($module, $defs[2]['acl_module']);
+        $this->assertEquals('icon-bar-chart', $defs[2]['icon']);
+        $this->assertEquals("#bwc/index.php?module=Reports&action=index&view=$_module", $defs[2]['route']);
+        // import
+        $this->assertEquals('import', $defs[3]['acl_action']);
+        $this->assertEquals($module, $defs[3]['acl_module']);
+        $this->assertEquals('icon-upload-alternative', $defs[3]['icon']);
+        $this->assertEquals("#bwc/index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", $defs[3]['route']);
+    }
+
+    public function _sidecarMenuProvider()
+    {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView('menu');
+    }
+
+    /**
+     *
+     * @param string $module
+     * @param string $view
+     * @param string $type
+     * @param string $filepath
+     * @dataProvider _sidecarQuickMenuProvider
+     */
+    public function testSidecarQuickMenuDefs($module, $view, $type, $filepath)
+    {
+        $this->assertFileExists($filepath, "$filepath does not exist");
+        require $filepath;
+
+        $defs = $viewdefs[$module]['base']['menu']['quickcreate'];
+        $this->assertEquals('create', $defs['layout']);
+    }
+
+    public function _sidecarQuickMenuProvider()
+    {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView('quickmenu');
+    }
+
+
 
 }
 
