@@ -34,7 +34,10 @@ class BugsApiHelper extends SugarBeanApiHelper
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
         $data = parent::populateFromApi($bean, $submittedData, $options);
-        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+
+        // Any process that itself needs to be Read-Only such as the DupicateCheckApi can disallow database
+        // update activity by setting the 'database_updates_not_allowed' option to true.
+        if (empty($options['database_updates_not_allowed']) && isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
             if (empty($bean->id)) {
                 $bean->id = create_guid();
                 $bean->new_with_id = true;

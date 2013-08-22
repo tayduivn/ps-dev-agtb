@@ -56,7 +56,7 @@ class SugarBeanApiHelper
         $action = (!empty($options['action']) && $options['action'] == 'list') ? 'list' : 'view';
 
         $data = array();
-        if (!SugarACL::moduleSupportsACL($bean->module_name) || $bean->ACLAccess($action)) {
+        if ($bean->ACLAccess($action) && empty($bean->deleted)) {
             foreach ($bean->field_defs as $fieldName => $properties) {
                 // Prune fields before ACL check because it can be expensive (Bug58133)
                 if ( !empty($fieldList) && !in_array($fieldName,$fieldList) ) {
@@ -106,6 +106,9 @@ class SugarBeanApiHelper
         } else {
             if (isset($bean->id)) {
                 $data['id'] = $bean->id;
+            }
+            if (isset($bean->deleted) && $bean->deleted == true) {
+                $data['deleted'] = (bool)$bean->deleted;
             }
         }
 

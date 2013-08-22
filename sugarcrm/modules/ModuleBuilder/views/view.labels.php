@@ -31,8 +31,10 @@
  * To change the template for this generated file go to
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
-require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
-require_once('modules/ModuleBuilder/views/view.modulefields.php');
+require_once 'modules/ModuleBuilder/MB/AjaxCompose.php';
+require_once 'modules/ModuleBuilder/views/view.modulefields.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
+
 class ViewLabels extends ViewModulefields
 {
     /**
@@ -80,8 +82,7 @@ class ViewLabels extends ViewModulefields
         global $dictionary;
         $vnames = array();
         //jchi 24557 . We should list all the lables in viewdefs(list,detail,edit,quickcreate) that the user can edit them.
-        require_once 'modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php';
-        $parser = new ListLayoutMetaDataParser(MB_LISTVIEW, $editModule);
+        $parser = ParserFactory::getParser(MB_LISTVIEW, $editModule);
         foreach ($parser->getLayout() as $key => $def) {
             if(isset($def['label'])) {
                $vnames[$def['label']] = $def['label'];
@@ -91,7 +92,7 @@ class ViewLabels extends ViewModulefields
         require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php';
         $variableMap = $this->getVariableMap($editModule);
         foreach ($variableMap as $key => $value) {
-            $gridLayoutMetaDataParserTemp = new GridLayoutMetaDataParser($value, $editModule) ;
+            $gridLayoutMetaDataParserTemp = ParserFactory::getParser($key, $editModule);
             foreach ($gridLayoutMetaDataParserTemp->getLayout() as $panel) {
                 foreach ($panel as $row) {
                     foreach ($row as $fieldArray) { // fieldArray is an array('name'=>name,'label'=>label)
@@ -171,23 +172,33 @@ class ViewLabels extends ViewModulefields
     // fixing bug #39749: Quick Create in Studio
     public function getVariableMap($module)
     {
-        $variableMap = array(MB_EDITVIEW => 'EditView',
-                             MB_DETAILVIEW => 'DetailView',
-                             MB_QUICKCREATE => 'QuickCreate');
+        if (isModuleBWC($module)) {
+            $variableMap = array(
+                MB_EDITVIEW => 'EditView',
+                MB_DETAILVIEW => 'DetailView',
+                MB_QUICKCREATE => 'QuickCreate',
+            );
+            
+            $hideQuickCreateForModules = array(
+                'KBDocuments',
+                'Campaigns',
+                'Quotes',
+                'ProductTemplates',
+            );
 
-        $hideQuickCreateForModules = array('KBDocuments',
-                                           'Campaigns',
-                                           'Quotes',
-                                           'ProductTemplates');
-
-        if (in_array($module, $hideQuickCreateForModules)) {
-            if (isset($variableMap['quickcreate'])) {
-                unset($variableMap['quickcreate']);
+            if (in_array($module, $hideQuickCreateForModules)) {
+                if (isset($variableMap['quickcreate'])) {
+                    unset($variableMap['quickcreate']);
+                }
             }
-        }
 
-        if ($module == 'KBDocuments') {
-            $variableMap  = array();
+            if ($module == 'KBDocuments') {
+                $variableMap  = array();
+            }
+        } else {
+            $variableMap = array(
+                MB_RECORDVIEW => 'record',
+            );
         }
 
         return $variableMap;

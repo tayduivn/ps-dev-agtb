@@ -406,6 +406,8 @@
                                 }, this)
                             });
                         } else if (tagAction === reference) {
+                            searchParams.search_fields = 'name';
+
                             app.api.search(searchParams, {
                                 success: _.bind(function(response) {
                                     if (this._taggableEnabled && response) {

@@ -4,7 +4,8 @@ describe("Drawer Layout", function() {
         sinonSandbox,
         $drawers,
         drawer,
-        components;
+        components,
+        app;
 
     beforeEach(function() {
         SugarTest.testMetadata.init();
@@ -57,6 +58,7 @@ describe("Drawer Layout", function() {
 
         drawer = SugarTest.app.drawer;
         components = drawer._components;
+        app = SugarTest.app;
     });
 
     afterEach(function() {
@@ -98,12 +100,29 @@ describe("Drawer Layout", function() {
             expect(components.length).toBe(2);
             expect(components[components.length-1].name).toBe('bar');
         });
+        it('should trigger an app:view:change event', function(){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(callback){
+                callback();
+            });
+            var triggerStub = sinonSandbox.stub(app, "trigger", $.noop());
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            });
+            expect(triggerStub.calledOnce).toBe(true);
+            expect(triggerStub.firstCall.args[0]).toEqual("app:view:change");
+            expect(triggerStub.firstCall.args[1]).toEqual("foo");
+
+        });
     });
 
     describe('Close', function() {
         it('Should remove drawers every time it is called', function() {
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
-            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', $.noop());
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
                 callback();
             });
 
@@ -137,8 +156,8 @@ describe("Drawer Layout", function() {
 
         it('Should call the onClose callback function', function() {
             var spy = sinon.spy();
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
-            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
                 callback();
             });
 
@@ -171,12 +190,34 @@ describe("Drawer Layout", function() {
             stub.restore();
             animateCloseStub.restore();
         });
+
+        it('should trigger an app:view:change event', function(){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
+                callback();
+            });
+
+            drawer.open({
+                layout: {
+                    "name": "foo",
+                    "components":[{"view":"record"}]
+                },
+                context: {create: true}
+            }, $.noop());
+
+            var triggerStub = sinonSandbox.stub(app, "trigger", $.noop());
+
+            drawer.close('foo');
+            expect(triggerStub.calledOnce).toBe(true);
+            expect(triggerStub.firstCall.args[0]).toEqual("app:view:change");
+            triggerStub.restore();
+        });
     });
 
     describe('Close immediately', function() {
         it('Should remove drawers every time it is called', function() {
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
-            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
                 callback();
             });
 
@@ -210,8 +251,8 @@ describe("Drawer Layout", function() {
 
         it('Should call the onClose callback function', function() {
             var spy = sinon.spy();
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
-            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
                 callback();
             });
 
@@ -232,8 +273,8 @@ describe("Drawer Layout", function() {
         });
 
         it('Should still have transition class on the drawer afterwards', function() {
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
-            sinon.stub(drawer, '_animateCloseDrawer', function(callback){
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateCloseDrawer', function(callback){
                 callback();
             });
 
@@ -260,7 +301,7 @@ describe("Drawer Layout", function() {
 
     describe('Load', function() {
         it('Should replace the top-most drawer', function() {
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
 
             drawer.open({
                 layout: {
@@ -288,7 +329,7 @@ describe("Drawer Layout", function() {
 
     describe('Reset', function() {
         it('Should remove all drawers', function() {
-            sinon.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
 
             drawer.open({
                 layout: {"components":[{"view":"record"}]},
