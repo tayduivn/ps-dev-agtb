@@ -218,7 +218,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
    	 'studio' => 'false',
      //END SUGARCRM flav=com ONLY
    	 //BEGIN SUGARCRM flav!=com ONLY
-   	 'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+   	 'studio' => array('wireless_basic_search'=>false),
    	 //END SUGARCRM flav!=com ONLY
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
