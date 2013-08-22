@@ -6,8 +6,8 @@
         'click #help': 'help'
     },
     tagName: 'span',
-    handleViewChange: function() {
-        if (app.tutorial.hasTutorial()) {
+    handleViewChange: function(layout, params) {
+        if (app.tutorial.hasTutorial(layout, params.module)) {
             this.enableTourButton();
         } else {
             this.disableTourButton();
