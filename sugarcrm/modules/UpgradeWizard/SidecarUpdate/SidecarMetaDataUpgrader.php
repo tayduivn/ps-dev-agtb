@@ -375,6 +375,10 @@ class SidecarMetaDataUpgrader
 
         $menuUpgrader = new SidecarMenuMetaDataUpgrader($this, array());
         $menuUpgrader->convertLegacyViewDefsToSidecar();
+        $menuRemove = $menuUpgrader->getFilesForRemoval();
+        if(!empty($menuRemove)) {
+            self::$filesForRemoval = array_merge(self::$filesForRemoval, $menuRemove);
+        }
 
         $this->logUpgradeStatus('Finishing the Menu Upgrader.');
 
@@ -396,9 +400,13 @@ class SidecarMetaDataUpgrader
             }
         }
 
+        $DCActions = array();
         $actions_path = "include/DashletContainer/Containers/DCActions.php";
-        foreach (SugarAutoLoader::existingCustom($actions_path) as $file) {
-            include $file;
+        if(file_exists($actions_path)) {
+            include $actions_path;
+        }
+        if(file_exists("custom/$actions_path")) {
+            include "custom/$actions_path";
         }
 
         $availableModules = $DCActions;
@@ -430,7 +438,7 @@ class SidecarMetaDataUpgrader
         } elseif (file_exists($quickCreateFile)) {
             include $quickCreateFile;
         } else {
-            if ($enabled == false) {
+            if (!$enabled) {
                 // no need to write out a file for a module that doesn't currently have quickcreate defs and isn't
                 // going to need them
                 return true;

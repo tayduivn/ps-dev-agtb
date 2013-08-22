@@ -20,25 +20,26 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     protected $curModStrings;
     protected $curAppStrings;
     protected $curUser;
+    protected $filesToDelete = array();
 
     /**
      *  Converts a Menu.php to a header.php
      */
     public function convertLegacyViewDefsToSidecar()
     {
-        global $moduleList;
         global $current_language;
 
         $mc = new MetaDataConverter();
 
-        foreach ($moduleList as $module) {
+        foreach ($GLOBALS['moduleList'] as $module) {
 
-            $this->logUpgradeStatus('Converting ' . ' menu defs for ' . $this->module);
+            $this->logUpgradeStatus('Converting menu defs for ' . $this->module);
             // needed for Legacy Menus
             $mod_strings = return_module_language($current_language, $module);
+            $module_menu = null;
 
             foreach (glob("custom/Extension/modules/{$module}/Ext/Menus/*.php", GLOB_NOSORT) as $file) {
-                @include $file;
+                include $file;
                 if (empty($module_menu)) {
                     continue;
                 }
@@ -51,27 +52,39 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 $newMenu = $mc->fromLegacyMenu($module, $module_menu, true);
 
                 write_array_to_file($newMenu['name'], $newMenu['data'], $newExtLocation . "/" . basename($file));
-
+                $this->filesToDelete[] = $file;
                 unset($module_menu);
             }
 
             $legacyCustomMenu = "custom/modules/{$module}/Menu.php";
-            @include $legacyCustomMenu;
+            if(file_exists($legacyCustomMenu)) {
+                include $legacyCustomMenu;
+            } else {
+                continue;
+            }
 
             if (empty($module_menu)) {
                 continue;
             }
 
             $newMenuLocation = "custom/modules/{$module}/clients/base/menus/header/header.php";
-            if (!is_dir(dirname($newMenuLocation))) {
-                sugar_mkdir(dirname($newMenuLocation), null, true);
-            }
+            sugar_mkdir(dirname($newMenuLocation), null, true);
 
             $newMenu = $mc->fromLegacyMenu($module, $module_menu);
 
             write_array_to_file($newMenu['name'], $newMenu['data'], $newMenuLocation);
+            $this->filesToDelete[] = $legacyCustomMenu;
 
             unset($module_menu);
         }
+    }
+
+    /**
+     * Get files to be removed
+     * @return array
+     */
+    public function getFilesForRemoval()
+    {
+        return $this->filesToDelete;
     }
 }
