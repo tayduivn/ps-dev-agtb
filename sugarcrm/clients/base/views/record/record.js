@@ -141,6 +141,10 @@
             if (field.$el.closest('.headerpane').length > 0) {
                 field.on('render', toggleLabel);
             }
+            // some fields like 'favorite' is readonly by default, so we need to remove edit-link-wrapper
+            if (field.def.readonly && field.name && -1 ==  _.indexOf(this.noEditFields, field.name)) {
+                this.$('.record-edit-link-wrapper[data-name=' + field.name + ']').remove();
+            }
         }, this);
 
         this.toggleHeaderLabels(this.createMode);

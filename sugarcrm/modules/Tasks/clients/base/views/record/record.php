@@ -97,7 +97,6 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'name' => 'favorite',
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
-                    'readonly' => true,
                     'dismiss_label' => true,
                 ),
                 array(
