@@ -190,7 +190,14 @@ function checkACLForEachColForFilter($filters, $full_table_list, $is_owner, $has
 		else {
 			$col_module = $full_table_list[$current_filter['table_key']]['module'];
 
-			if(!SugarACL::checkField($col_module, $current_filter['name'], $is_owner?array("onwer_override" => true):array())) {
+            if (
+                !SugarACL::checkField(
+                    $col_module,
+                    $current_filter['name'],
+                    'detail',
+                    $is_owner ? array('owner_override' => true) : array()
+                )
+            ) {
 				return false;
 			} // if
 		}

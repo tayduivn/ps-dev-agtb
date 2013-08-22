@@ -438,7 +438,6 @@
                 if (name === "detail") {
                     // remove handlers
                     this.$(this.fieldTag).off("keydown.record" + this.cid);
-                    $(document).off("mousedown.record" + this.cid);
                 }
                 app.view.Field.prototype.setMode.call(this, name);
                 this._isInEdit = (this.action === 'edit');
@@ -471,12 +470,12 @@
 
                 if (field.type === 'int') {
                     // check for percentages
-                    newValue = this._parsePercentage(newValue);
+                    newValue = this._parsePercentage(newValue, 0);
                     if (this._verifyIntValue(newValue)) {
                         return newValue;
                     }
                 } else if (field.type === 'currency') {
-                    newValue = this._parsePercentage(newValue);
+                    newValue = this._parsePercentage(newValue, 2);
                     if (this._verifyCurrencyValue(newValue)) {
                         return newValue;
                     }
@@ -523,18 +522,21 @@
              * @private
              */
             _verifyIntValue: function(value) {
-                var regex = new RegExp("^[+-]?\\d+$");
+                var regex = new RegExp("^\\d+$"),
+                    match = value.toString().match(regex);
 
                 // always make sure that we have a string here, since match only works on strings
-                if (_.isNull(value.toString().match(regex))) {
-                    return {'labelId': 'LBL_EDITABLE_INVALID', 'args': [app.lang.get(this.def.label, 'Forecasts')]};
+                if (_.isNull(match)) {
+                    return false;
                 }
 
-                // we have digits, lets make sure it's int a valid range is one is specified
-                if (!_.isUndefined(this.def.minValue) && !_.isUndefined(this.def.maxValue)) {
-                    // we have a min and max value
-                    if (value < this.def.minValue || value > this.def.maxValue) {
-                        return {'labelId': 'LBL_EDITABLE_INVALID_RANGE', 'args': [this.def.minValue, this.def.maxValue]};
+                if (!_.isUndefined(this.def.validation) && this.def.validation.type == 'range') {
+                    // we have digits, lets make sure it's int a valid range is one is specified
+                    if (!_.isUndefined(this.def.validation.min) && !_.isUndefined(this.def.validation.max)) {
+                        // we have a min and max value
+                        if (value < this.def.validation.min || value > this.def.validation.max) {
+                            return false
+                        }
                     }
                 }
 
@@ -570,21 +572,26 @@
             /**
              * Check the value to see if it's a percentage, if it is, then adjust the value
              *
-             * @param value
+             * @param {String} value        The value we are parsing
+             * @param {Integer} decimals        How far to round to
              * @return {*}
              */
-            _parsePercentage: function(value) {
+            _parsePercentage: function(value, decimals) {
                 var orig = this.model.get(this.name),
-                    parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)\%$/);
+                    parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)(\%)?$/);
                 if (parts) {
                     // use original number to apply calculations
-                    value = app.math.mul(app.math.div(parts[2], 100), orig);
+                    if(!_.isUndefined(parts[4])) {
+                        value = app.math.mul(app.math.div(parts[2], 100), orig);
+                    } else {
+                        value = parts[2]
+                    }
                     if (parts[1] == '+') {
                         value = app.math.add(orig, value);
                     } else if (parts[1] == '-') {
                         value = app.math.sub(orig, value);
                     }
-                    value = app.math.round(value);
+                    value = app.math.round(value, decimals);
                 }
                 return value.toString();
             },

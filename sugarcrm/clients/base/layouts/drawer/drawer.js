@@ -59,11 +59,15 @@
         //initialize layout definition components
         this._addComponentsFromDef([layoutDef]);
 
+        layout = _.last(this._components);
+
         //open the drawer
-        this._animateOpenDrawer();
+        this._animateOpenDrawer(_.bind(function(){
+            //called after animation finished
+            app.trigger("app:view:change", layout.options.name, layout.context.attributes);
+        }, this));
 
         //load and render new layout in drawer
-        layout = _.last(this._components);
         layout.loadData();
         layout.render();
     },
@@ -85,6 +89,13 @@
             //close the drawer
             this._animateCloseDrawer(function() {
                 self._components.pop().dispose(); //dispose top-most drawer
+                var layout = _.last(self._components);
+                if (layout) { // still have layouts in the drawer
+                    app.trigger("app:view:change", layout.options.name, layout.context.attributes);
+                } else { //we've returned to base layout
+                    app.trigger("app:view:change", app.controller.context.get("layout"), app.controller.context.attributes);
+                }
+
                 (self.onCloseCallback.pop()).apply(this, args); //execute callback
             });
         }
@@ -195,8 +206,9 @@
     /**
      * Animate opening of a new drawer
      * @private
+     * @param {Function} callback Called when open animation is finished
      */
-    _animateOpenDrawer: function() {
+    _animateOpenDrawer: function(callback) {
         if (this._components.length === 0) {
             return;
         }
@@ -240,6 +252,9 @@
             //resize the visible drawer when the browser resizes
             if (this._components.length === 1) {
                 $(window).on('resize.drawer', _.bind(this._resizeDrawer, this));
+            }
+            if (_.isFunction(callback)) {
+                callback();
             }
         }, this));
     },

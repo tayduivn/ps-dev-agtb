@@ -633,6 +633,10 @@ class ForecastWorksheet extends SugarBean
             return false;
         }
 
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
         // setup the return array
         $return = array(
             'amount' => '0',
@@ -644,8 +648,12 @@ class ForecastWorksheet extends SugarBean
             'timeperiod_id' => $tp->id,
             'lost_count' => '0',
             'lost_amount' => '0',
+            'lost_best' => '0',
+            'lost_worst' => '0',
             'won_count' => '0',
             'won_amount' => '0',
+            'won_best' => '0',
+            'won_worst' => '0',
             'included_opp_count' => 0,
             'total_opp_count' => 0,
             'includedClosedCount' => 0,
@@ -672,20 +680,26 @@ class ForecastWorksheet extends SugarBean
             $best_base = SugarCurrency::convertWithRate($row['best_case'], $row['base_rate']);
 
             $closed = false;
-            if ($row['sales_stage'] == Opportunity::STAGE_CLOSED_WON) {
+            if (in_array($row['sales_stage'], $settings['sales_stage_won'])) {
                 $return['won_amount'] = SugarMath::init($return['won_amount'], 6)->add($amount_base)->result();
+                $return['won_best'] = SugarMath::init($return['won_best'], 6)->add($best_base)->result();
+                $return['won_worst'] = SugarMath::init($return['won_worst'], 6)->add($worst_base)->result();
                 $return['won_count']++;
                 $closed = true;
-            } elseif ($row['sales_stage'] == Opportunity::STAGE_CLOSED_LOST) {
+            } elseif (in_array($row['sales_stage'], $settings['sales_stage_lost'])) {
                 $return['lost_amount'] = SugarMath::init($return['lost_amount'], 6)->add($amount_base)->result();
+                $return['lost_best'] = SugarMath::init($return['lost_best'], 6)->add($best_base)->result();
+                $return['lost_worst'] = SugarMath::init($return['lost_worst'], 6)->add($worst_base)->result();
                 $return['lost_count']++;
                 $closed = true;
             }
 
             if ($row['commit_stage'] == "include") {
-                $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
-                $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
-                $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
+                if(!$closed) {
+                    $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
+                    $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
+                    $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
+                }
                 $return['included_opp_count']++;
                 if ($closed) {
                     $return['includedClosedCount']++;

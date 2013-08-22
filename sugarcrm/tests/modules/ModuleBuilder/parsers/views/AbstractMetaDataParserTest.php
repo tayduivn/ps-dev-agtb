@@ -67,4 +67,79 @@ class AbstractMetaDataParserTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($boolVal, TestMetaDataParser::testIsTrue($testVal));
         }
     }
+    
+    /**
+     * Tests validation of studio defs for client and view specific rules
+     * 
+     * @dataProvider studioValidationDefProvider
+     * @param array $def Array of fields defs
+     * @param string $view The view name to check defs for
+     * @param string $client The client to check defs for
+     * @param bool $expected The expected result of the validation call
+     */
+    public function testGetClientStudioValidation($def, $view, $client, $expected)
+    {
+        $actual = AbstractMetaDataParser::getClientStudioValidation($def, $view, $client);
+        $this->assertEquals($expected, $actual);
+    }
+    
+    public function studioValidationDefProvider()
+    {
+        return array(
+            // Test no client specific rule in the defs is null
+            array(
+                'def' => array(),
+                'view' => 'list',
+                'client' => 'base',
+                'expected' => null,
+            ),
+            // Test no client passed is null
+            array(
+                'def' => array('base' => array()),
+                'view' => 'list',
+                'client' => '',
+                'expected' => null,
+            ),
+            // Test def[client] is a string is null
+            array(
+                'def' => array('base' => 'list'),
+                'view' => 'list',
+                'client' => 'base',
+                'expected' => null,
+            ),
+            // Test no view passed is null
+            array(
+                'def' => array('mobile' => array()),
+                'view' => '',
+                'client' => 'mobile',
+                'expected' => null,
+            ),
+            // Test def[client] is boolean returns the boolean
+            array(
+                'def' => array('mobile' => true),
+                'view' => 'list',
+                'client' => 'mobile',
+                'expected' => true,
+            ),
+            array(
+                'def' => array('mobile' => false),
+                'view' => 'list',
+                'client' => 'mobile',
+                'expected' => false,
+            ),
+            // Test client and view specific rules are boolean
+            array(
+                'def' => array('mobile' => array('list' => false)),
+                'view' => 'list',
+                'client' => 'mobile',
+                'expected' => false,
+            ),
+            array(
+                'def' => array('custom' => array('record' => 'somestring')),
+                'view' => 'record',
+                'client' => 'custom',
+                'expected' => true,
+            ),
+        );
+    }
 }

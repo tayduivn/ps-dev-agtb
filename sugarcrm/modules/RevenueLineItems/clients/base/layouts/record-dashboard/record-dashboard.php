@@ -26,7 +26,7 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecastdetails-record',
-                                'label' => 'Forecast',
+                                'label' => 'LBL_DASHLET_FORECAST_NAME',
                             ),
                             'context' =>
                             array(
@@ -40,7 +40,7 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'forecast-pareto',
-                                'label' => 'Forecast Pareto Chart',
+                                'label' => 'LBL_DASHLET_FORECAST_PARETO_CHART_NAME',
                             ),
                             'width' => 12,
                         ),
@@ -50,5 +50,5 @@ $viewdefs['RevenueLineItems']['base']['layout']['record-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );

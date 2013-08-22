@@ -198,12 +198,15 @@
         var dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
         //First try generic date parse (since we might have an ISO). This should generally work with the
         //ISO date strings we get from server.
-        if(_.isNaN(Date.parse(value))) {
+        var parsed = Date.parse(value);
+        //Firefox for invalid date returns negative value instead NaN.
+        if(_.isNaN(parsed) || parsed < 0) {
             //Safari chokes on '.', '-', so retry replacing with '/'
             if(_.isNaN(value.replace(/[\.\-]/g, '/'))) {
                 //Use datepicker plugin to verify datepicker format
                 return $.prototype.DateVerifier(value, dateFormat);
             }
+            return false;
         }
         return true;
     },

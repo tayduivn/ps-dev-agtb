@@ -15,9 +15,11 @@
     {{#if tpl}}
         <div><span class="tagged">{{{str tpl "Activities" model.attributes.data}}}</span></div>
     {{/if}}
-    {{#if embed}}
+    {{#if embeds}}
         <div class="embed">
-            {{{embed}}}
+            {{#each embeds}}
+                <div>{{{this}}}</div>
+            {{/each}}
         </div>
     {{/if}}
 </p>

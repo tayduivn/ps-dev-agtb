@@ -407,6 +407,8 @@ abstract class SugarRelationship
         $custom_logic_arguments = array();
         $custom_logic_arguments['id'] = $focus->id;
         $custom_logic_arguments['related_id'] = $related->id;
+        $custom_logic_arguments['name'] = $focus->name;
+        $custom_logic_arguments['related_name'] = $related->name;
         $custom_logic_arguments['module'] = $focus->module_dir;
         $custom_logic_arguments['related_module'] = $related->module_dir;
         $custom_logic_arguments['link'] = $link_name;

@@ -13,67 +13,72 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Accounts']['base']['layout']['record-dashboard'] = array (
-  'metadata' => 
-  array (
-    'components' => 
-    array (
-      array (
-        'rows' => 
-        array (
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'opportunity-metrics',
-                'label' => 'Opportunitity Metrics',
-              ),
-              'width' => 12,
-            ),
-          ),
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'casessummary',
-                'label' => 'Cases Summary',
-              ),
-              'width' => 12,
-            ),
-          ),
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'news',
-                'label' => 'News Feed',
-              ),
-              'width' => 12,
-            ),
-          ),
+$viewdefs['Accounts']['base']['layout']['record-dashboard'] = array(
+    'metadata' =>
+    array(
+        'components' =>
+        array(
             array(
+                'rows' =>
                 array(
-                    'view' => array(
-                        'name' => 'planned-activities',
-                        'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'opportunity-metrics',
+                                'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
+                            ),
+                            'width' => 12,
+                        ),
                     ),
-                    'width' => 12,
-                ),
-            ),
-            array(
-                array(
-                    'view' => array(
-                        'name' => 'history',
-                        'label' => 'LBL_HISTORY_DASHLET',
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'casessummary',
+                                'label' => 'LBL_DASHLET_CASES_SUMMARY_NAME',
+                            ),
+                            'width' => 12,
+                        ),
                     ),
-                    'width' => 12,
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'news',
+                                'label' => 'LBL_DASHLET_NEWS_FEED_NAME',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' => array(
+                                'name' => 'planned-activities',
+                                'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
+                                'limit' => '10',
+                                'date' => 'today',
+                                'visibility' => 'user',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    array(
+                        array(
+                            'view' => array(
+                                'name' => 'history',
+                                'label' => 'LBL_HISTORY_DASHLET',
+                                'limit' => '10',
+                                'visibility' => 'user',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
                 ),
+                'width' => 12,
             ),
         ),
-        'width' => 12,
-      ),
     ),
-  ),
-  'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

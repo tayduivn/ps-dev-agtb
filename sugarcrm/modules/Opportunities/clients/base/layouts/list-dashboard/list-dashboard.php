@@ -1,5 +1,4 @@
 <?php
-
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -26,7 +25,7 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'My Accounts',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
                                 'display_columns' =>
                                 array(
                                     'name',
@@ -48,7 +47,7 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'My Contacts',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
                                 'display_columns' =>
                                 array(
                                     'full_name',
@@ -70,6 +69,6 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
             ),
         ),
     ),
-    'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

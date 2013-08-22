@@ -28,6 +28,9 @@
      */
     class SugarOAuth extends Zend_Oauth_Consumer
     {
+
+        public $token;
+
         protected $_last = '';
         protected $_oauth_config = array();
 
@@ -75,8 +78,12 @@
         public function makeRequestToken()
         {
             $token = new Zend_Oauth_Token_Request();
-            $token->setToken($this->token[0]);
-            $token->setTokenSecret($this->token[1]);
+            if (isset($this->token[0])) {
+                $token->setToken($this->token[0]);
+            }
+            if (isset($this->token[1])) {
+                $token->setTokenSecret($this->token[1]);
+            }
             return $token;
         }
 
@@ -87,9 +94,47 @@
         public function makeAccessToken()
         {
             $token = new Zend_Oauth_Token_Access();
-            $token->setToken($this->token[0]);
-            $token->setTokenSecret($this->token[1]);
+            if (isset($this->token[0])) {
+                $token->setToken($this->token[0]);
+            }
+            if (isset($this->token[1])) {
+                $token->setTokenSecret($this->token[1]);
+            }
             return $token;
+        }
+
+        /**
+         * Retrieve URL and params array from URL string
+         * @param string $url
+         * @return array
+         */
+        protected function parseUrl($url)
+        {
+            $urlString = '';
+            $query = array();
+            $components = parse_url($url);
+
+            $urlString .= $components['scheme'] . '://';
+
+            if (isset($components['user'])) {
+                $urlString .= $components['user'];
+                if (isset($components['pass'])) {
+                    $urlString .= ':' . $components['pass'];
+                }
+                $urlString .= '@';
+            }
+
+            $urlString .= $components['host'];
+
+            if (isset($components['path'])) {
+                $urlString .= $components['path'];
+            }
+
+            if (isset($components['query'])) {
+                parse_str($components['query'], $query);
+            }
+
+            return array($urlString, $query);
         }
 
         /**
@@ -105,12 +150,10 @@
             if(!empty($callback)) {
                 $this->setCallbackUrl($callback);
             }
-            list($clean_url, $query) = explode('?', $url);
-            if($query) {
-                $url = $clean_url;
-                parse_str($query, $query_params);
-                $params = array_merge($params, $query_params);
-            }
+
+            list($url, $query_params) = $this->parseUrl($url);
+            $params = array_merge($params, $query_params);
+
             $this->setRequestTokenUrl($url);
             try{
                 $this->_last = $token = parent::getRequestToken($params);
@@ -142,17 +185,12 @@
         * @return string
         */
 
-        public function fetch($url, $params = null, $method = 'GET', $headers = null)
+        public function fetch($url, $params = array(), $method = 'GET', $headers = null)
         {
             $acc = $this->makeAccessToken();
-            if ( strpos($url,'?') ) {
-               list($clean_url, $query) = explode('?', $url);
-               if($query) {
-                   $url = $clean_url;
-                   parse_str($query, $query_params);
-                   $params = array_merge($params?$params:array(), $query_params);
-               }
-            }
+            list($url, $query_params) = $this->parseUrl($url);
+            $params = array_merge($params, $query_params);
+            
             $client = $acc->getHttpClient($this->_oauth_config, $url);
 
             Zend_Loader::loadClass('Zend_Http_Client_Adapter_Proxy');

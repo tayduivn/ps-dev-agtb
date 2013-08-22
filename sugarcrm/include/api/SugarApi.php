@@ -76,15 +76,6 @@ abstract class SugarApi {
             $this->trackAction($bean);
         }
 
-        // if data is an array or object we need to decode each element, if not just decode data and pass it back
-        if(is_array($data) || is_object($data)) {
-            $this->htmlDecodeReturn($data);
-        }
-        elseif(!empty($data)) {
-            // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
-            $data = html_entity_decode($data, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
-        }
-
         // Support returning whether the current user is following the record.
         $sub = Subscription::checkSubscription($api->user, $bean);
         $data['following'] = !empty($sub);

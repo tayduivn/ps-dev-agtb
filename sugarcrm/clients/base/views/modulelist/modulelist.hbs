@@ -26,7 +26,7 @@
                     <div class="dropdown-menu scroll">
                         <ul role="menu">
                             {{#each menu}}
-                                <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-navbar-menu-item="{{this.acl_module}}-{{this.acl_action}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
+                                <li><a class="actionLink" tabindex="-1" href="{{#if event}}javascript:void(0);{{else}}{{route}}{{/if}}" data-navbar-menu-item="{{this.label}}" data-{{#if event}}event="{{event}}"{{else}}route="{{route}}"{{/if}}>{{#if icon}}<i class="{{icon}}"></i>{{/if}}{{str label ../name}}</a></li>
                             {{/each}}
                             <div class="recentContainer hide"></div>
                             <div class="favoritesContainer hide"></div>

@@ -145,9 +145,9 @@ class ForecastsSeedData
                     } else {
                         $forecast->opp_weigh_value = '0';
                     }
-                    $forecast->best_case = SugarMath::init()->exp('?/?', array($totals['best_case'], $ratio[$key]))->result();
-                    $forecast->worst_case = SugarMath::init()->exp('?/?', array($totals['worst_case'], $ratio[$key]))->result();
-                    $forecast->likely_case = SugarMath::init()->exp('?/?', array($totals['amount'], $ratio[$key]))->result();
+                    $forecast->best_case = SugarMath::init()->exp('(?+?)/?', array($totals['best_case'], $totals['won_best'], $ratio[$key]))->result();
+                    $forecast->worst_case = SugarMath::init()->exp('(?+?)/?', array($totals['worst_case'], $totals['won_worst'], $ratio[$key]))->result();
+                    $forecast->likely_case = SugarMath::init()->exp('(?+?)/?', array($totals['amount'], $totals['won_amount'], $ratio[$key]))->result();
                     $forecast->forecast_type = 'Direct';
                     $forecast->date_committed = $timedate->asDb($timedate->getNow()->modify("-1 day"));
                     $forecast->date_entered = $timedate->asDb($timedate->getNow()->modify("-1 day"));
@@ -174,9 +174,9 @@ class ForecastsSeedData
                     } else {
                         $forecast2->opp_weigh_value = '0';
                     }
-                    $forecast2->best_case = $totals['best_case'];
-                    $forecast2->worst_case = $totals['worst_case'];
-                    $forecast2->likely_case = $totals['amount'];
+                    $forecast2->best_case = SugarMath::init($totals['best_case'])->add($totals['won_best'])->result();
+                    $forecast2->worst_case = SugarMath::init($totals['worst_case'])->add($totals['won_worst'])->result();
+                    $forecast2->likely_case = SugarMath::init($totals['amount'])->add($totals['won_amount'])->result();
                     $forecast2->forecast_type = 'Direct';
                     $forecast2->date_committed = $timedate->asDb($timedate->getNow());
                     $forecast2->calculatePipelineData(

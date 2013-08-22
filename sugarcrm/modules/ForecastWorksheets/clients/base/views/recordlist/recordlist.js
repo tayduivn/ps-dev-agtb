@@ -123,7 +123,7 @@
      * Tracks if the preview panel is visible or not
      */
     previewVisible: false,
-
+    plugins: ['tooltip'],
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -780,8 +780,12 @@
             includedCount = 0,
             lostCount = 0,
             lostAmount = 0,
+            lostBest = 0,
+            lostWorst = 0,
             wonCount = 0,
             wonAmount = 0,
+            wonBest = 0,
+            wonWorst = 0,
             includedClosedCount = 0,
             includedClosedAmount = 0;
 
@@ -818,9 +822,13 @@
 
             if (won) {
                 wonAmount = app.math.add(wonAmount, amount_base);
+                wonBest = app.math.add(wonBest, best_base);
+                wonWorst = app.math.add(wonWorst, worst_base);
                 wonCount++;
             } else if (lost) {
                 lostAmount = app.math.add(lostAmount, amount_base);
+                lostBest = app.math.add(lostBest, best_base);
+                lostWorst = app.math.add(lostWorst, worst_base);
                 lostCount++;
             }
             if (_.include(commit_stages_in_included_total, commit_stage)) {

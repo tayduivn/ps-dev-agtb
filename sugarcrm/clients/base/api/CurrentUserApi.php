@@ -372,6 +372,20 @@ class CurrentUserApi extends SugarApi
         
         return array($metaName => $user->getPreference($pref));
     }
+
+    /**
+     * Gets the user preference name by meta name.
+     *
+     * @param string $metaName
+     * @return string
+     */
+    protected function getUserPreferenceName($metaName)
+    {
+        if(false !== $preferenceName = array_search($metaName, $this->userPrefMeta)) {
+            return $preferenceName;
+        }
+        return $metaName;
+    }
     
     protected function getUserPrefTimezone($user)
     {
@@ -533,6 +547,7 @@ class CurrentUserApi extends SugarApi
         if (isset($args['category'])) {
             $category = $args['category'];
         }
+        $this->forceUserPreferenceReload($current_user);
 
         $prefs = (isset($current_user->user_preferences[$category])) ?
                         $current_user->user_preferences[$category] :
@@ -559,7 +574,8 @@ class CurrentUserApi extends SugarApi
 
         // set each of the args in the array
         foreach ($args as $key => $value) {
-            $current_user->setPreference($key, $value, 0, $category);
+            $preferenceName = $this->getUserPreferenceName($key);
+            $current_user->setPreference($preferenceName, $value, 0, $category);
         }
 
         // save the preferences to the db
@@ -584,6 +600,7 @@ class CurrentUserApi extends SugarApi
         if (isset($args['category'])) {
             $category = $args['category'];
         }
+        $this->forceUserPreferenceReload($current_user);
 
         $pref = $current_user->getPreference($args['preference_name'], $category);
 
@@ -606,10 +623,12 @@ class CurrentUserApi extends SugarApi
             $category = $args['category'];
         }
 
-        $current_user->setPreference($args['preference_name'], $args['value'], 0, $category);
+        $preferenceName = $this->getUserPreferenceName($args['preference_name']);
+
+        $current_user->setPreference($preferenceName, $args['value'], 0, $category);
         $current_user->savePreferencesToDB();
 
-        return array($args['preference_name'] => $args['value']);
+        return array($preferenceName => $args['value']);
     }
 
     /**
@@ -629,10 +648,12 @@ class CurrentUserApi extends SugarApi
             $category = $args['category'];
         }
 
-        $current_user->setPreference($args['preference_name'], null, 0, $category);
+        $preferenceName = $this->getUserPreferenceName($args['preference_name']);
+
+        $current_user->setPreference($preferenceName, null, 0, $category);
         $current_user->savePreferencesToDB();
 
-        return $args['preference_name'];
+        return $preferenceName;
     }
 
     /**

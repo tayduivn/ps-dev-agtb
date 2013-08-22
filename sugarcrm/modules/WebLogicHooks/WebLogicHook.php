@@ -143,7 +143,11 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
         );
 
         curl_setopt_array($curlHandler, $options);
-        curl_exec($curlHandler);
+
+        if (false === curl_exec($curlHandler)) {
+            $GLOBALS['log']->error('WebLogicHook failed: ' . curl_error($curlHandler));
+        }
+
         curl_close($curlHandler);
         $this->job->succeedJob();
         return true;

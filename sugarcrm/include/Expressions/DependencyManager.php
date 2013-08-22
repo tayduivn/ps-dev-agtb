@@ -61,7 +61,6 @@ class DependencyManager
                     //Check for the string "false"
                     (!is_string($def['enforced']) || strtolower($def['enforced']) !== "false")
                 ) {
-                    $dep->setFireOnLoad(true);
                     if ($includeReadOnly) {
                         $readOnlyDep = new Dependency("readOnly$field");
                         $readOnlyDep->setFireOnLoad(true);
@@ -71,6 +70,8 @@ class DependencyManager
                                 'value' => 'true')));
 
                         $ro_deps[] = $readOnlyDep;
+                    } else {
+                        $dep->setFireOnLoad(true);
                     }
                 }
                 $deps[$field] = $dep;

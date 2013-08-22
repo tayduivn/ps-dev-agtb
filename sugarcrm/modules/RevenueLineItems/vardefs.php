@@ -237,7 +237,10 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_DISCOUNT_RATE_USDOLLAR',
             'type' => 'decimal',
             'len' => '26,6',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'discount_select' => array(
             'name' => 'discount_select',
@@ -261,7 +264,10 @@ $dictionary['RevenueLineItem'] = array(
             'len' => '26,6',
             'group' => 'deal_calc',
             'comment' => 'deal_calc_usdollar',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'list_price' => array(
             'name' => 'list_price',
@@ -279,7 +285,10 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Cost expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'discount_usdollar' => array(
             'name' => 'discount_usdollar',
@@ -289,7 +298,10 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Discount price expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'list_usdollar' => array(
             'name' => 'list_usdollar',
@@ -299,7 +311,10 @@ $dictionary['RevenueLineItem'] = array(
             'group' => 'list_price',
             'len' => '26,6',
             'comment' => 'List price expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'currency_id' => array(
             'name' => 'currency_id',
@@ -459,7 +474,10 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Book value expressed in USD',
-            'studio' => array('editview' => false),
+            'studio' => array(
+                'editview' => false,
+                'mobile' => false,
+            ),
         ),
         'book_value_date' => array(
             'name' => 'book_value_date',
@@ -536,6 +554,7 @@ $dictionary['RevenueLineItem'] = array(
             'studio' => false,
             'reportable' => false,
             'audited' => true,
+            'activity_enabled' => false,
             'formula' => 'timestamp($date_closed)',
             'calculated' => true,
             'studio' => false
@@ -705,8 +724,6 @@ $dictionary['RevenueLineItem'] = array(
             'isnull' => 'true',
             'module' => 'Opportunities',
             'source' => 'non-db',
-            'unified_search' => true,
-            'full_text_search' => array('boost' => 1),
             'comment' => 'The opportunity name associated with the opportunity_id',
             'auto_populate' => true,
             'populate_list' => array(
@@ -738,7 +755,7 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'assigned_user_link',
             'type' => 'link',
             'relationship' => 'revenuelineitems_assigned_user',
-            'vname' => 'LBL_USER',
+            'vname' => 'LBL_USERS',
             'link_type' => 'one',
             'module' => 'Users',
             'bean_name' => 'User',
@@ -830,8 +847,6 @@ $dictionary['RevenueLineItem'] = array(
             'table' => 'accounts',
             'module' => 'Accounts',
             'source' => 'non-db',
-            'unified_search' => true,
-            'full_text_search' => array('boost' => 1),
         ),
     ),
     'indices' => array(

@@ -252,6 +252,12 @@
             //Don't show alerts for this request
             showAlerts: false,
             success: function(data) {
+                var pattern = /^(LBL|TPL|NTC|MSG)_(_|[a-zA-Z0-9])*$/;
+                _.each(dashCollection.models, function(model) {
+                    if (pattern.test(model.get('name'))) {
+                        model.set('name', app.lang.get(model.get('name'), dashCollection.module || null));
+                    }
+                });
                 self.$('[data-module=Home] .dashboardContainer').html(self.recentRowTemplate(dashCollection));
             }
         });

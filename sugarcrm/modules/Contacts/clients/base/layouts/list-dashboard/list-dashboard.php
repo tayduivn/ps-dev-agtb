@@ -13,40 +13,40 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Contacts']['base']['layout']['list-dashboard'] = array (
-  'metadata' => 
-  array (
-    'components' => 
-    array (
-      array (
-        'rows' => 
-        array (
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'dashablelist',
-                'label' => 'My Accounts',
-                'display_columns' => 
-                array (
-                  'name',
-                  'billing_address_country',
-                  'billing_address_city',
+$viewdefs['Contacts']['base']['layout']['list-dashboard'] = array(
+    'metadata' =>
+    array(
+        'components' =>
+        array(
+            array(
+                'rows' =>
+                array(
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'dashablelist',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'display_columns' =>
+                                array(
+                                    'name',
+                                    'billing_address_country',
+                                    'billing_address_city',
+                                ),
+                                'my_items' => '1',
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Accounts',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
                 ),
-                'my_items' => '1',
-              ),
-              'context' => 
-              array (
-                'module' => 'Accounts',
-              ),
-              'width' => 12,
+                'width' => 12,
             ),
-          ),
         ),
-        'width' => 12,
-      ),
     ),
-  ),
-  'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

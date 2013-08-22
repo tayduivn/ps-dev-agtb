@@ -82,19 +82,27 @@ abstract class AbstractMetaDataParser
      *
      * @param array $def     Field definition in the standard SugarBean field definition format - name, vname, type and so on
      * @param string $view   The name of the view
+     * @param string $client The client for this request
      * @return boolean       True if ok to show, false otherwise
      */
-    static function validField ( $def, $view = "")
+    static function validField($def, $view = "", $client = '')
     {
         //Studio invisible fields should always be hidden
-        if (isset ($def[ 'studio' ] ) )
-        {
-            if (is_array($def [ 'studio' ]))
-            {
-                if (!empty($view) && isset($def [ 'studio' ][$view]))
-                   return $def [ 'studio' ][$view] !== false && $def [ 'studio' ][$view] !== 'false' && $def [ 'studio' ][$view] !== 'hidden';
-                if (isset($def [ 'studio' ]['visible']))
-                   return $def [ 'studio' ]['visible'];
+        if (isset($def['studio'])) {
+            if (is_array($def['studio'])) {
+                // Handle client specific studio setting for a field
+                $clientRules = self::getClientStudioValidation($def['studio'], $view, $client);
+                if ($clientRules !== null) {
+                    return $clientRules;
+                }
+                
+                if (!empty($view) && isset($def['studio'][$view])) {
+                    return $def [ 'studio' ][$view] !== false && $def [ 'studio' ][$view] !== 'false' && $def [ 'studio' ][$view] !== 'hidden';
+                }
+                
+                if (isset($def['studio']['visible'])) {
+                    return $def['studio']['visible'];
+                }
             } else {
                 return ($def [ 'studio' ] != 'false' && $def [ 'studio' ] != 'hidden' && $def [ 'studio' ] !== false) ;
 			}
@@ -176,4 +184,32 @@ abstract class AbstractMetaDataParser
      * Cache killer, to be defined in child classes as needed.
      */
     protected function _clearCaches() {}
+    
+    /**
+     * Gets client specific vardef rules for a field for studio
+     * 
+     * @param Array $studio The value of $defs['studio']
+     * @param string $view A view name, which could be empty
+     * @param string $client The client for this request
+     * @return bool|null Boolean if there is a setting for a client, null otherwise
+     */
+    public static function getClientStudioValidation(Array $studio, $view, $client)
+    {
+        // Handle client specific studio setting for a field
+        if ($client && isset($studio[$client])) {
+            // Posibilities are:
+            // studio[client] = true|false
+            // studio[client] = array(view => true|false)
+            if (is_bool($studio[$client])) {
+                return $studio[$client];
+            }
+            
+            // Check for a client -> specific studio setting
+            if (!empty($view) && is_array($studio[$client]) && isset($studio[$client][$view])) {
+                return $studio[$client][$view] !== false;
+            }
+        }
+        
+        return null;
+    }
 }

@@ -13,29 +13,29 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Accounts']['base']['layout']['list-dashboard'] = array (
-  'metadata' => 
-  array (
-    'components' => 
-    array (
-      array (
-        'rows' => 
-        array (
-          array (
-            array (
-              'view' => 
-              array (
-                'name' => 'countrychart',
-                'label' => 'Sales By Country',
-              ),
-              'width' => 12,
+$viewdefs['Accounts']['base']['layout']['list-dashboard'] = array(
+    'metadata' =>
+    array(
+        'components' =>
+        array(
+            array(
+                'rows' =>
+                array(
+                    array(
+                        array(
+                            'view' =>
+                            array(
+                                'name' => 'countrychart',
+                                'label' => 'LBL_DASHLET_COUNTRY_CHART_NAME',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                ),
+                'width' => 12,
             ),
-          ),
         ),
-        'width' => 12,
-      ),
     ),
-  ),
-  'name' => 'My Dashboard',
+    'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
 

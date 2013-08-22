@@ -61,15 +61,22 @@ class Comment extends Basic
      */
     public function save($check_notify = false)
     {
+        //if a string convert to object
+        if (is_string($this->data)) {
+            $this->data = json_decode($this->data, true);
+        }
+
+        if(!empty($this->data['value'])) {
+            $this->data['value'] = SugarCleaner::cleanHtml($this->data['value']);
+        }
+
         if (!is_string($this->data)) {
             $this->data = json_encode($this->data);
         }
+
         $post = BeanFactory::getBean('Activities', $this->parent_id);
         if (!empty($post) && $post->id) {
-            $isNew = true;
-            if ($this->id) {
-                $isNew = false;
-            }
+            $isNew = (empty($this->id) || $this->new_with_id);
             if (parent::save($check_notify)) {
                 if ($isNew) {
                     $post->addComment($this);
