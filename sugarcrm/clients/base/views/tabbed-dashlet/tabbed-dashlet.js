@@ -116,6 +116,13 @@
             this.tabs[index].collection = collection;
             this.tabs[index].relate = _.isObject(collection.link);
             this.tabs[index].record_date = tab.record_date || 'date_entered';
+
+            if (tab.include_child_items) {
+                // FIXME: this logic should be dynamic instead of depending on
+                // specific modules
+                this.tabs[index].include_child_items = this.module === 'Accounts' && _.contains(['Calls', 'Meetings'], tab.module);
+            }
+
         }, this);
 
         return this;
@@ -228,7 +235,8 @@
                 myItems: this.settings.get('visibility') === 'user',
                 offset: 0,
                 params: {
-                    order_by: tab.order_by || null
+                    order_by: tab.order_by || null,
+                    include_child_items: tab.include_child_items || null
                 }
             };
 
