@@ -168,15 +168,13 @@
             this.stopListening(this.sourceModel);
         }
         this.sourceModel = sourceModel;
-        this.listenTo(this.sourceModel, 'sync', function() {
+        // If we've just sync'd, use sync'd model and re-render preview
+        this.listenTo(this.sourceModel, 'sync', function(model) {
             if (!this.model) {
                 return;
             }
-            this.model.fetch({
-                //Show alerts for this request
-                showAlerts: true,
-                fields: this.getFieldNames(this.model.module)
-            });
+            this.model = model;
+            this.renderPreview(this.model);
         }, this);
         this.listenTo(this.sourceModel, 'change', function() {
             if (!this.model) {
