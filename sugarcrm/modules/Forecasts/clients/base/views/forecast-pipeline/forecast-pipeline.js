@@ -39,6 +39,7 @@
                 complete: options ? options.complete : null
             });
         }
+
         this.chart = nv.models.funnelChart()
             .showTitle(false)
             .tooltips(false)
@@ -67,22 +68,33 @@
         if(this.disposed) {
             return;
         }
+
         // clear out the current chart before a re-render
-        this.$("svg#" + this.cid).children().remove();
+        if (!_.isEmpty(this.chart)) {
+            nv.utils.windowUnResize(this.chart.update);
+            this.$("svg#" + this.cid).children().remove();
+        }
 
-        d3.select('svg#' + this.cid)
-            .datum(this.results)
-            .transition().duration(500).call(this.chart);
+        if (this.results.data.length > 0) {
+            this.$('.nv-chart').toggleClass('hide', false);
+            this.$('.block-footer').toggleClass('hide', true);
 
-        app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open') {
-                this.chart.update();
-            }
-        }, this);
+            d3.select('svg#' + this.cid)
+                .datum(this.results)
+                .transition().duration(500).call(this.chart);
 
-        nv.utils.windowResize(this.chart.update);
+            app.events.on('app:toggle:sidebar', function(state) {
+                if(state == 'open') {
+                    this.chart.update();
+                }
+            }, this);
 
-        this.resizeOnPrint(this.chart);
+            nv.utils.windowResize(this.chart.update);
+            this.resizeOnPrint(this.chart);
+        } else {
+            this.$('.nv-chart').toggleClass('hide', true);
+            this.$('.block-footer').toggleClass('hide', false);
+        }
     },
 
     loadData: function(options) {
