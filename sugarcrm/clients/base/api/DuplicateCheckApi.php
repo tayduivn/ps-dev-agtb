@@ -64,7 +64,7 @@ class DuplicateCheckApi extends SugarApi
         }
 
         //populate bean
-        $errors = $this->populateFromApi($api, $bean, $args);
+        $errors = $this->populateFromApi($api, $bean, $args, array('database_updates_not_allowed' => true));
         if ($errors !== true) {
             $displayErrors = print_r($errors, true);
             throw new SugarApiExceptionInvalidParameter("Unable to run duplicate check. There were validation errors on the submitted data: $displayErrors");
@@ -97,8 +97,8 @@ class DuplicateCheckApi extends SugarApi
         return $args2;
     }
 
-    protected function populateFromApi($api, $bean, $args)
+    protected function populateFromApi($api, $bean, $args, $options=array())
     {
-        return ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
+        return ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args,$options);
     }
 }
