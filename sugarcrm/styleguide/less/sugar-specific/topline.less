@@ -87,6 +87,9 @@
           padding-right: 0;
           padding-left: 10px;
       }
+      div.pull-right .info:nth-last-child(2) .datapoint {
+          padding-left: 10px;
+      }
   }
   .datapoint {
       float: left;
@@ -191,6 +194,17 @@
       width: 63.957447%;
       margin-right: 2%;
   }
+  .span12 {
+      width: 96%;
+      margin-right: 2%;
+  }
+
+  .hr {
+      width: 100%;
+      height: 1px;
+      border-bottom: 1px solid darken(@grayLighter,5%);
+      float: left;
+  }
 }
 
 .topline,
@@ -235,12 +249,31 @@
         .span8 {
             width: 63.957447%;
             margin-right: 2%;
+            margin-left: 2%;
+            float: right;
+        }
+        .span12 {
+            width: 96%;
+            margin-left: 2%;
+            margin-right: 2%;
+            &.commit-date {
+                min-height: inherit;
+                padding: 8px 18px;
+                margin-left: 0px;
+            }
+        }
+        .hr {
+            width: 100%;
+            height: 1px;
+            border-top: 1px solid darken(@grayLighter,5%);
+            float: left;
         }
     }
 
     .row-fluid .span4 {
         min-height: inherit;
         padding: 8px 18px;
+        margin-left: 0px;
     }
 }
 
