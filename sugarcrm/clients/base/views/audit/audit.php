@@ -18,7 +18,7 @@ $viewdefs['base']['view']['audit'] = array(
         array(
             'fields' => array(
                 array(
-                    'type' => 'base',
+                    'type' => 'fieldtype',
                     'name' => 'field_name',
                     'label' => 'LBL_FIELD_NAME',
                     'sortable' => true,
