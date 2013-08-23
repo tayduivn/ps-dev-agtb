@@ -3773,6 +3773,7 @@ $app_strings = array (
     'LBL_TASKS_SUBPANEL_TITLE' => 'Tasks',
     'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
+    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LNK_SETTINGS' => 'Settings',
     'LBL_MOBILE_SUPPORT' => 'Support',
 
