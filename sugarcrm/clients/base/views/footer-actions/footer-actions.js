@@ -7,6 +7,7 @@
     },
     tagName: 'span',
     handleViewChange: function(layout, params) {
+        params = params || {};
         if (app.tutorial.hasTutorial(layout, params.module)) {
             this.enableTourButton();
         } else {
