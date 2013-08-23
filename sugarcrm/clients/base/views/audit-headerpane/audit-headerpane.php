@@ -18,7 +18,7 @@ $viewdefs['base']['view']['audit-headerpane'] = array(
         array(
             'name' => 'close_button',
             'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
+            'label' => 'LBL_CLOSE_BUTTON_TITLE',
             'css_class' => 'btn-invisible btn-link',
         ),
     ),
