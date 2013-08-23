@@ -277,29 +277,20 @@
             //  If module not specified we need select module from model in collection by current index.
             var currModule = module || this.collection.models[currIndex].module;
             var moduleMeta = app.metadata.getModule(currModule);
-
-            // Some activity stream items aren't previewable - e.g. no detail views
-            // for "Meetings" module.
-            if( moduleMeta && _.isUndefined(moduleMeta.views.detail) ) {
-                currID = this.collection.models[currIndex].id;
-                this.switching = false;
-                this.switchPreview(data, currIndex, currID, currModule);
-            } else {
-                this.model = app.data.createBean(currModule);
-                this.bindUpdates(this.collection.models[currIndex]);
-                this.model.set("id", this.collection.models[currIndex].get("id"));
-                this.model.fetch({
-                    //Show alerts for this request
-                    showAlerts: true,
-                    success: function(model) {
-                        model.module = currModule;
-                        self.model = null;
-                        //Reset the preview
-                        app.events.trigger("preview:render", model, null, false);
-                        self.switching = false;
-                    }
-                });
-            }
+            this.model = app.data.createBean(currModule);
+            this.bindUpdates(this.collection.models[currIndex]);
+            this.model.set("id", this.collection.models[currIndex].get("id"));
+            this.model.fetch({
+                //Show alerts for this request
+                showAlerts: true,
+                success: function(model) {
+                    model.module = currModule;
+                    self.model = null;
+                    //Reset the preview
+                    app.events.trigger("preview:render", model, null, false);
+                    self.switching = false;
+                }
+            });
         }
     },
     toggleMoreLess: function() {
