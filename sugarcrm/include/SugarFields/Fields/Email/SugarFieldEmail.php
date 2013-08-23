@@ -71,6 +71,14 @@ class SugarFieldEmail extends SugarFieldBase
         
         $bean->emailAddress->addresses = array();
         foreach ($params[$field] as $email ) {
+            if (empty($email['email_address'])) {
+                // Can't save an empty email address
+                continue;
+            }
+            $email['primary_address'] = isset($email['primary_address'])?$email['primary_address']:false;
+            $email['invalid_email'] = isset($email['invalid_email'])?$email['invalid_email']:false;
+            $email['opt_out'] = isset($email['opt_out'])?$email['opt_out']:false;
+
             $bean->emailAddress->addAddress($email['email_address'],
                                             $email['primary_address'],
                                             false,
