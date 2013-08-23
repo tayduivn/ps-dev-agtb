@@ -37,7 +37,7 @@
      */
     buildHref: function() {
         var defRoute = this.def.route ? this.def.route : {},
-            module = this.context.get('module') || this.model.get('module');
+            module = this.model.module || this.context.get('module');
         // FIXME remove this.def.bwcLink functionality (not yet removed due to Portal need for Documents)
         return '#' + app.router.buildRoute(module, this.model.id, defRoute.action, this.def.bwcLink);
     },
