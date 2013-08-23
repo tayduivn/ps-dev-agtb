@@ -41,7 +41,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_TASKS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-upload',
     ),
     //BEGIN SUGARCRM flav=int ONLY
     array(

@@ -40,7 +40,7 @@ class SugarUpgradeMBMenu extends UpgradeScript
                 'label' => 'LNK_IMPORT_'.strtoupper($moduleName),
                 'acl_action' => 'import',
                 'acl_module' => $moduleName,
-                'icon' => 'icon-upload-alternative',
+                'icon' => 'icon-upload',
         );
         $content = <<<END
 <?php

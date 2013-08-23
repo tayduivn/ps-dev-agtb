@@ -48,6 +48,6 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_PROSPECTS',
         'acl_action'=>'import',
         'acl_module'=>$module_name,
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-upload',
     ),
 );
