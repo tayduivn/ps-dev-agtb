@@ -57,6 +57,12 @@
         options.context.prepare(true);
 
         app.view.View.prototype.initialize.call(this, options);
+
+        var config = app.metadata.getConfig();
+        if (config && app.config.forgotpasswordON === true) {
+            this.showPasswordReset = true;
+        }
+
     },
 
     /**

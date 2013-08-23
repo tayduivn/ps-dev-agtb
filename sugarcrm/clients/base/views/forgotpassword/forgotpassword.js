@@ -82,6 +82,9 @@
      * @private
      */
     _render: function() {
+        if (!(app.config && app.config.forgotpasswordON === true)) {
+            return;
+        }
         if (app.config && app.config.logoURL) {
             this.logoURL = app.config.logoURL;
         }

@@ -313,6 +313,7 @@ $mod_strings = array (
 	'LBL_PROMPT_TIMEZONE_TEXT'			=> 'Select to have new users go through the New User Wizard upon first login.',
 	'LBL_PROMPT_TIMEZONE'				=> 'User Wizard Prompt',
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a valid User Name and an Email Address.',
+    'LBL_FORGOTPASSORD_NOT_ENABLED' 	=> 'This is currently not enabled. Please contact your administrator.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
 
     'LBL_QUOTAS'                        => 'Quotas',
