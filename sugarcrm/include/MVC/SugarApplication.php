@@ -541,7 +541,9 @@ class SugarApplication
 
     /**
      * Respond to XSF attempt
+     * @param string $http_host HTT host sent
      * @param bool $dieIfInvalid
+     * @param bool $inBWC Are we in BWC frame?
      * @return boolean Returns false
      */
     protected function xsrfResponse($http_host, $dieIfInvalid, $inBWC)
