@@ -30,6 +30,12 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'include/tcpdf',
             'include/ytree',
             'include/SugarSearchEngine/Elastic/Elastica',
+            //Remove the SugarFeed files
+            'modules/Cases/SugarFeeds',
+            'modules/Contacts/SugarFeeds',
+            'modules/Leads/SugarFeeds',
+            'modules/Opportunities/SugarFeeds/OppFeed.php',
+            'modules/SugarFeed',
         );
         $this->fileToDelete($files);
     }

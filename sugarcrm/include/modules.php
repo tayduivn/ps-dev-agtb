@@ -438,11 +438,6 @@ $report_include_modules['Worksheet']    = 'Worksheet';
 $report_include_modules['Quotas']    = 'Quota';
 //END SUGARCRM flav=pro ONLY
 
-$beanList['SugarFeed'] = 'SugarFeed';
-$beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
-$modInvisList[] = 'SugarFeed';
-
-
 
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['Notifications'] = 'Notifications';
@@ -458,7 +453,6 @@ $GLOBALS['moduleTabMap'] = array(
     'Configurator' => 'Administration',
     'Studio' => 'Administration',
     'Currencies' => 'Administration',
-    'SugarFeed' => 'Administration',
     'DocumentRevisions' => 'Documents',
     'EmailTemplates' => 'Emails',
 //BEGIN SUGARCRM flav=ent ONLY
@@ -618,7 +612,6 @@ $bwcModules = array(
     'Shippers',
     //END SUGARCRM flav=pro ONLY
     'SugarFavorites',
-    'SugarFeed',
     //BEGIN SUGARCRM flav=pro ONLY
     'TaxRates',
     'Teams',
