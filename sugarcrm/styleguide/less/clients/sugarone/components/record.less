@@ -11,9 +11,25 @@
     line-height: 22px;
     width: 100%;
     display: table-cell;
-    padding-left: 20px;
+    padding: 10px 0 0 15px;
     margin: 0;
     vertical-align: top;
+    
+    > .record-cell {
+	    display: block;
+	    min-height: 25px;
+	    
+	    .record-cell {
+	    	margin: 0 5px 0 0;
+		    padding-top: 5px;
+	    }
+    }
+    
+    // TODO: We can remove this once this `picture` field
+    //   is no longer included in the view.
+    span[data-name=picture] {
+	    display: none;
+    }
   }
 
   .module-title {
@@ -24,7 +40,7 @@
   .record-edit-link-wrapper {
     width: 28px;
     height: 28px;
-    top: 16px;
+    top: 0;
     left: -24px;
     .record-edit-link {
       margin-left: 0;
@@ -67,15 +83,23 @@
   }
 
   span[data-type="image"] {
-    margin-right: 12px;
-    margin-left: 2px;
-    padding-top: 9px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 19px;
+    background-color: @grayLighter;
+    .border-radius(5px);
+    
     .image_field.image_edit {
       .image_input input {
         float: none;
         position: static;
         width: 100%;
       }
+    }
+    
+    .image_field i {
+	    position: relative;
+	    top: 10px;
     }
   }
 
@@ -94,40 +118,16 @@
     font-size: 0;
   }
   
-  span[data-name="first_name"],
-  span[data-name="last_name"] {
-	  color: @gray;
+  span[data-name="full_name"] .record-cell {
 	  font-weight: 600;
 	  line-height: 18px;
   }
   
-  span[data-name="title"] {
-	  color: @gray;
+  span[data-name="subtitle"] .record-cell {
 	  font-size: 14px !important;
 	  line-height: 16px;
   }
   
-  // [moey] Had to do this because data-name="subtitle" is using absolute-positioning.
-  span.record-cell[data-name="full_name"] {
-	position: absolute;
-	top: 0;
-	left: 110px;	  
-  }
-  
-  // this is all because our layout method for header is a bit difficult
-  span.record-cell[data-name="subtitle"] {
-    position: absolute;
-    top: 24px;
-    left: 110px;
-  }
-  span[data-name="tags"] {
-    position: absolute;
-    top: 28px;
-    left: 0px;
-  }
-  span .record-edit-link-wrapper[data-name="subtitle"] label {
-      display: none;
-  }
   span .record-edit-link-wrapper[data-name="lastInteractionTime"] {
     display: none;
   }
@@ -167,10 +167,9 @@
     left: 8px;
   }
 
-//  Fix me!!
   .record-cell {
     font-size: @fontSizeSmall;
-    color: darken(@grayLight, 5%);
+    color: @gray;
     line-height: 14px;
   }
 
