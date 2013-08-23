@@ -559,7 +559,7 @@ $dictionary['RevenueLineItem'] = array(
             'activity_enabled' => false,
             'formula' => 'timestamp($date_closed)',
             'calculated' => true,
-            'studio' => false
+            'enforced' => true
         ),
         'next_step' => array(
             'name' => 'next_step',
