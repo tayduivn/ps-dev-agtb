@@ -81,19 +81,20 @@ describe("Preview View", function() {
         });
 
     });
-    it("should bind our fetch to source models fetch", function(){
-            var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
-            var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
-            var dummyFetchStub = sinon.stub(dummyModel, 'fetch');
-            preview.model = dummyModel;
-            preview.bindUpdates(dummySourceModel);
-            SugarTest.seedFakeServer();
-            SugarTest.server.respondWith("PUT", /.*rest\/v10\/Cases\/testid.*/,
-            [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
-            dummySourceModel.save();
-            SugarTest.server.respond();
-            expect(dummyFetchStub).toHaveBeenCalled();
-            dummyFetchStub.restore();
+    it("should bind to sync event and update our source model", function(){
+        var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+        var dummyModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
+        var dummyFetchStub = sinon.stub(dummyModel, 'fetch');
+        preview.model = dummyModel;
+        preview.bindUpdates(dummySourceModel);
+        SugarTest.seedFakeServer();
+        SugarTest.server.respondWith("PUT", /.*rest\/v10\/Cases\/testid.*/,
+        [200, { "Content-Type": "application/json"}, JSON.stringify({"id":"newid", "_module": "Cases"})]);
+        dummySourceModel.save();
+        SugarTest.server.respond();
+        expect(dummyFetchStub).not.toHaveBeenCalled();
+        expect(preview.model.id).toEqual("newid");
+        dummyFetchStub.restore();
     });
     it("should trigger 'preview:close' and 'list:preview:decorate' when source model destroy", function() {
         var dummySourceModel = app.data.createBean("Cases", {"id":"testid", "_module": "Cases"});
