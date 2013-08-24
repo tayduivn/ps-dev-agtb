@@ -193,7 +193,7 @@ class CurrentUserApi extends SugarApi
         //END SUGARCRM flav=pro ONLY
 
         // Send back a hash of this data for use by the client
-        $user_data['_hash'] = $this->getUserHash($current_user);
+        $user_data['_hash'] = $current_user->getUserMDHash();
 
         return array('current_user' => $user_data);
     }
@@ -597,7 +597,7 @@ class CurrentUserApi extends SugarApi
 
         // save the preferences to the db
         $current_user->save();
-        $args['_hash'] = $this->getUserHash($current_user);
+        $args['_hash'] = $current_user->getUserMDHash();
         return $args;
     }
 
@@ -744,15 +744,5 @@ class CurrentUserApi extends SugarApi
         
         // Set this back to what it was
         $_SESSION['unique_key'] = $uniqueKey;
-    }
-
-    /**
-     * Returns a consistent hash based on the date_modifed of the User object passed.
-     * @param $user {User}
-     *
-     * @return string
-     */
-    protected function getUserHash($user) {
-        return md5($user->hashTS);
     }
 }

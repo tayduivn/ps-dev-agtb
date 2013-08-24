@@ -2381,4 +2381,8 @@ EOQ;
 
         return $body;
     }
+
+    public function getUserMDHash() {
+        return md5($this->hashTS);
+    }
 }

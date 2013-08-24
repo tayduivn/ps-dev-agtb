@@ -824,7 +824,7 @@ class MetaDataManager
      */
     public function hasUserMetadataChanged($user, $hash)
     {
-        return md5($user->date_modified) != $hash;
+       return $user->getUserMDHash() != $hash;
     }
 
     /**
