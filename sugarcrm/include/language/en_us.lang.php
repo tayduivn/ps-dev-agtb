@@ -3205,6 +3205,7 @@ $app_strings = array (
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
+    'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
