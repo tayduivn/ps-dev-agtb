@@ -1,6 +1,6 @@
 <div class="tab-pane active">
-    <ul class="unstyled listed">
-        {{#if collection.length}}
+    {{#if collection.length}}
+        <ul class="unstyled listed">
             {{#each collection.models}}
                 <li>
                     <p>
@@ -18,8 +18,8 @@
             {{#notEq ../collection.next_offset "-1"}}
                 <li><a class="more" data-action="show-more">{{str "LBL_SHOW_MORE_MODULE" this.module}}</a></li>
             {{/notEq}}
-        {{else}}
-            <li><em>{{#if ../collection.dataFetched}}{{str "LBL_DASHLET_NO_RECORDS" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</em></li>
-        {{/if}}
-    </ul>
+        </ul>
+    {{else}}
+        <div class="block-footer">{{#if ../collection.dataFetched}}{{str "LBL_NO_DATA_AVAILABLE" this.module}}{{else}}{{str "LBL_LOADING" this.module}}{{/if}}</div>
+    {{/if}}
 </div>
