@@ -15,6 +15,7 @@
 
 // Get the meta data files handler for the new setup
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+require_once 'include/MetaDataManager/MetaDataConverter.php';
 
 abstract class SidecarAbstractMetaDataUpgrader
 {
@@ -152,6 +153,7 @@ abstract class SidecarAbstractMetaDataUpgrader
             'edit'   => 'viewdefs',
             'detail' => 'viewdefs',
             'filter' => 'searchdefs',
+            'subpanel' => 'subpanel_layout'
         ),
     );
 
@@ -202,6 +204,12 @@ abstract class SidecarAbstractMetaDataUpgrader
     );
 
     /**
+     * Metadata converted instance
+     * @var MetaDataConverter
+     */
+    protected $metaDataConverter;
+
+    /**
      * The actual legacy defs converter. For search this will do nothing as search
      * is really just a file move and rename.
      */
@@ -224,6 +232,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         if (!empty($this->fullpath)) {
             $this->filename = basename($this->fullpath);
         }
+        $this->metaDataConverter = new MetaDataConverter();
     }
 
     /**
@@ -282,13 +291,35 @@ abstract class SidecarAbstractMetaDataUpgrader
     }
 
     /**
+     * Simpler handleSave, which just saves array to path with write_array_to_file
+     * @param unknown_type $path
+     * @return boolean
+     */
+    public function handleSaveArray($name, $path)
+    {
+        if(empty($this->sidecarViewdefs)) {
+            return true;
+        }
+        $this->logUpgradeStatus("Saving new {$this->client} {$this->type} viewdefs for {$this->module}:{$this->viewtype} into $path");
+        $newDirName = dirname($path);
+
+        if (!sugar_mkdir($newDirName, null, true)) {
+            $this->logUpgradeStatus("Cannot create '$newDirName'.");
+            return false;
+        }
+        return write_array_to_file($name, $this->sidecarViewdefs, $path);
+    }
+
+
+    /**
      * Sets the necessary legacy field defs for use in converting
      */
-    public function setLegacyViewdefs() {
+    public function setLegacyViewdefs()
+    {
         // This check is probably not necessary, but seems like it is a good idea anyway
         if (file_exists($this->fullpath)) {
             $this->logUpgradeStatus("legacy file being read: {$this->fullpath}");
-            require_once $this->fullpath;
+            include $this->fullpath;
 
             // There is an odd case where custom modules are pathed without the
             // package name prefix but still use it in the module name for the

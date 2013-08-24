@@ -14,6 +14,7 @@
 
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarSubpanelMetaDataUpgrader.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
+require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarLayoutdefsMetaDataUpgrader.php';
 
 class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
 {
@@ -30,6 +31,9 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->subpanelUpgrader);
+        if(file_exists($this->oldFileName)) {
+            unlink($this->oldFileName);
+        }
     }
 
     public function testViewDefsUpgrade()
@@ -45,23 +49,29 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
         );
 
         $fileArray = array(
+            'module' => 'Accounts',
+            'client' => 'base',
             'fullpath' => $this->oldFileName,
         );
 
         $this->subpanelUpgrader = new SidecarSubpanelViewDefUpgraderMock($this->upgrader, $fileArray);
 
-        $this->subpanelUpgrader->convertLegacyViewDefsToSidecar();
+        $this->subpanelUpgrader->upgrade();
 
-        $this->assertEquals($this->expectedDefs, $this->subpanelUpgrader->newSubpanel);
-        unlink($this->oldFileName);
+        $this->assertEquals($this->expectedDefs, $this->subpanelUpgrader->sidecarViewdefs);
     }
 
     public function testLayoutDefsUpgrade()
     {
         $this->setUpLayoutDefs();
 
-        $fileArray = array();
-        $this->subpanelUpgrader = new SidecarSubpanelViewDefUpgraderMock($this->upgrader, $fileArray);
+        $fileArray = array(
+            'module' => 'Accounts',
+            'client' => 'base',
+            'filename' => 'overridecalls.php',
+            'fullpath' => 'custom/Extension/modules/Accounts/Ext/Layoutdefs/overridecalls.php',
+        );
+        $this->subpanelUpgrader = new SidecarLayoutdefsMetaDataUpgrader($this->upgrader, $fileArray);
         if (!is_dir("custom/modules/Accounts/metadata/")) {
             sugar_mkdir("custom/modules/Accounts/metadata/", null, true);
         }
@@ -89,7 +99,7 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
             "custom/modules/Accounts/Ext/Layoutdefs/layoutdefs.ext.php"
         );
 
-        $this->subpanelUpgrader->convertLegacySubpanelLayoutDefsToSidecar('Accounts');
+        $this->subpanelUpgrader->upgrade();
 
         $this->assertFileExists(
             "custom/Extension/modules/Accounts/Ext/clients/base/layouts/subpanels/overridecalls.php"
@@ -215,7 +225,9 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
 
 class SidecarSubpanelViewDefUpgraderMock extends SidecarSubpanelMetaDataUpgrader
 {
-    public function save()
+    public $sidecarViewdefs  = 'bad default';
+
+    public function handleSave()
     {
         // do nothing
     }

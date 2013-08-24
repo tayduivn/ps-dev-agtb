@@ -74,7 +74,6 @@ class SidecarMetaDataUpgrader
             'custom'  => 'custom/',
             'working' => 'custom/working/',
             'history' => 'custom/history/',
-            'ext'     => 'custom/Extension/',
         ),
     );
 
@@ -152,6 +151,7 @@ class SidecarMetaDataUpgrader
         'filter'             => 'Filter',
         'drop'               => 'Drop',
         'subpanel'           => 'Subpanel',
+        'layoutdef'          => 'Layoutdefs',
     );
 
     /**
@@ -168,6 +168,12 @@ class SidecarMetaDataUpgrader
      * @var bool
      */
     protected $writeToLog = true;
+
+    /**
+     * Extensions data
+     * @var array
+     */
+    public $extensions = array();
 
     /**
      * Sets the list of files that need to be upgraded. Will look in directories
@@ -222,6 +228,8 @@ class SidecarMetaDataUpgrader
             $this->logUpgradeStatus("Checking module $module for core upgrade");
             $basefiles = $this->getUpgradeableFilesInPath("modules/$module/metadata/", $module, 'base');
             $this->files = array_merge($this->files, $basefiles);
+            $subfiles = $this->getUpgradeableFilesInPath("modules/$module/metadata/subpanels/", $module, 'base', null, true, true);
+            $this->files = array_merge($this->files, $subfiles);
             // No need to scan portal here since MB modules are not supported for portal
             // Mobile part takes care of itself
         }
@@ -274,7 +282,7 @@ class SidecarMetaDataUpgrader
         // The second path will be handled by history types with a package name and undeployed status
         // The last path will be handdled by base types with a package name and undeployed status
         //
-        $this->logUpgradeStatus('Beginning search for custom module mobile metadata...');
+        $this->logUpgradeStatus("Beginning search for custom module $metatype metadata...");
         // Count for logging
         $total = 0;
         foreach ($mb->packages as $packagename => $package) {
@@ -353,6 +361,8 @@ class SidecarMetaDataUpgrader
      */
     public function upgrade()
     {
+        include "ModuleInstall/extensions.php";
+        $this->extensions = $extensions;
         // Set the upgrade file list
         $this->logUpgradeStatus('Setting upgrade file list...');
         $this->setFilesToUpgrade();
@@ -400,28 +410,15 @@ class SidecarMetaDataUpgrader
 
         $this->logUpgradeStatus('Finishing the Menu Upgrader.');
 
-        $this->upgradeSubpanels();
-
-        // Add the rest of the OOTB module wireless metadata files to the stack
-        $this->cleanupLegacyFiles();
-    }
-
-
-    /**
-     * Upgrade the subpanels to the sidecar version
-     */
-    public function upgradeSubpanels()
-    {
-        $sidecarUpgrader = new SidecarSubpanelMetaDataUpgrader($this, array());
-
         foreach ($GLOBALS['moduleList'] as $module) {
-            $sidecarUpgrader->convertLegacySubpanelLayoutDefsToSidecar($module);
             // if this is not a BWC module remove the old subpaneldefs layout
             if(!isModuleBWC($module)) {
                 self::$filesForRemoval[] = "modules/{$module}/metadata/subpaneldefs.php";
             }
         }
 
+        // Add the rest of the OOTB module wireless metadata files to the stack
+        $this->cleanupLegacyFiles();
     }
 
 
@@ -567,9 +564,6 @@ class SidecarMetaDataUpgrader
     {
         $this->logUpgradeStatus("Getting subpanel upgrade files ...");
         $paths = $this->legacyFilePaths['base'];
-        // need to add in modules/ for custom modules that are deployed that need subpanels upgraded
-        // and any custom subpanel that may have been tossed in an incorrect directory
-        $paths['base'] = '';
         foreach ($paths as $type => $path) {
             $dirs = glob($path . 'modules/*', GLOB_ONLYDIR);
             if (!empty($dirs)) {
@@ -581,7 +575,31 @@ class SidecarMetaDataUpgrader
                 }
             }
         }
+        $this->getExtensionFiles("layoutdefs");
         $this->getCustomModuleMetadata('base', 'subpanels/', true);
+    }
+
+    /**
+     * Add Extensions/ files to the list
+     * @param string $extename Extension type
+     * @param string $module Module name
+     */
+    protected function getExtensionFiles($extename)
+    {
+        if(empty($this->extensions[$extename])) {
+            return;
+        }
+        $extdefs = $this->extensions[$extename];
+        $dirs = glob("custom/Extension/modules/*/Ext/{$extdefs['extdir']}", GLOB_ONLYDIR);
+        if(empty($dirs)) {
+            return;
+        }
+        foreach($dirs as $dir) {
+            $comps = explode('/', $dir);
+            $module = $comps[3];
+            $files = $this->getUpgradeableFilesInPath($dir."/", $module, 'base', 'custom', null, true, true);
+            $this->files = array_merge($this->files, $files);
+        }
     }
 
     /**
@@ -686,7 +704,7 @@ class SidecarMetaDataUpgrader
      * @param string $filename The name of the file to get the view type from
      * @return string The target view type that the upgrade will produce
      */
-    protected function getViewTypeFromFilename($filename, $client, $type)
+    protected function getViewTypeFromFilename($filename, $client, $type, $fullname)
     {
         if (strpos($filename, 'list') !== false) {
             return 'list';
@@ -699,7 +717,11 @@ class SidecarMetaDataUpgrader
             return 'search';
         }
 
-        if (strpos($filename, 'For') !== false || strpos($filename, 'default') !== false) {
+        if(strpos($fullname, '/Layoutdefs/') !== false) {
+            return 'layoutdef';
+        }
+
+        if (strpos($filename, 'For') !== false || strpos($filename, 'default') !== false || strpos($fullname, "metadata/subpanels/") !== false) {
             return 'subpanel';
         }
 
@@ -889,7 +911,7 @@ class SidecarMetaDataUpgrader
             return false;
         }
 
-        if ($client == 'base' && isModuleBWC($module) && $subpanels === false) {
+        if ($client == 'base' && isModuleBWC($module) && !$subpanels) {
             // if the module is in BWC, do not upgrade its views in base client
             $this->logUpgradeStatus("Not upgrading $file: BWC module");
             return false;
@@ -910,7 +932,7 @@ class SidecarMetaDataUpgrader
             $filename = basename($file, '.php');
         }
 
-        if ($subpanels === true || (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client]))) {
+        if ($subpanels || (!empty($this->legacyMetaDataFileNames[$client]) && in_array($filename, $this->legacyMetaDataFileNames[$client]))) {
             // Success! We have a full file path. Add this module to the stack
             $this->addUpgradeModule($module);
 
@@ -924,7 +946,7 @@ class SidecarMetaDataUpgrader
                 'package'   => $package,
                 'deployed'  => $deployed,
                 'sidecar'   => $sidecar,
-                'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type),
+                'viewtype'  => $this->getViewTypeFromFilename($filename, $client, $type, $file),
             );
         }
         $this->logUpgradeStatus("Not upgrading $file: no file name for $filename");

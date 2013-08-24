@@ -397,10 +397,6 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
 
 class SidecarMetaDataUpgraderForTest extends SidecarMetaDataUpgrader
 {
-    protected function setSubpanelFilesToUpgrade()
-    {
-    }
-    
     public function logUpgradeStatus($msg)
     {
         $GLOBALS['log']->info($msg);

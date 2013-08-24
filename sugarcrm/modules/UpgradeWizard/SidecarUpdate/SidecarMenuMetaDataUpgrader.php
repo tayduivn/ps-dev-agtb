@@ -13,13 +13,11 @@
  */
 
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarAbstractMetaDataUpgrader.php';
-require_once 'include/MetaDataManager/MetaDataConverter.php';
 
 class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
     protected $curModStrings;
     protected $curAppStrings;
-    protected $curUser;
     protected $filesToDelete = array();
 
     /**
@@ -28,8 +26,6 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     public function convertLegacyViewDefsToSidecar()
     {
         global $current_language;
-
-        $mc = new MetaDataConverter();
 
         foreach ($GLOBALS['moduleList'] as $module) {
 
@@ -52,7 +48,7 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                     sugar_mkdir($newExtLocation, null, true);
                 }
 
-                $newMenu = $mc->fromLegacyMenu($module, $module_menu, true);
+                $newMenu = $this->metaDataConverter->fromLegacyMenu($module, $module_menu, true);
                 if(empty($newMenu['data'])) {
                     continue;
                 }
@@ -80,7 +76,7 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             $newMenuLocation = "custom/modules/{$module}/clients/base/menus/header/header.php";
             sugar_mkdir(dirname($newMenuLocation), null, true);
 
-            $newMenu = $mc->fromLegacyMenu($module, $module_menu);
+            $newMenu = $this->metaDataConverter->fromLegacyMenu($module, $module_menu);
 
             write_array_to_file($newMenu['name'], $newMenu['data'], $newMenuLocation);
             $this->filesToDelete[] = $legacyCustomMenu;
