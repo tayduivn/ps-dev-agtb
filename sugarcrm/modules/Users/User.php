@@ -585,6 +585,8 @@ class User extends Person {
 		}
 
         $this->savePreferencesToDB();
+        //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
+        $this->hashTS = $this->date_modified;
         return $this->id;
 	}
 
@@ -689,7 +691,9 @@ class User extends Person {
      * @return null null if no User found
      */
 	function retrieve($id, $encode = true, $deleted = true) {
-		$ret = parent::retrieve($id, $encode, $deleted);
+        $ret = parent::retrieve($id, $encode, $deleted);
+        //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
+        $this->hashTS = $this->fetched_row['date_modified'];
 		if ($ret) {
 			if (isset ($_SESSION)) {
 				$this->loadPreferences();

@@ -190,10 +190,10 @@ class CurrentUserApi extends SugarApi
             }
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
-        
-        // Send back a hash of this data for use by the client
-        $user_data['_hash'] = md5($current_user->date_modified);
         //END SUGARCRM flav=pro ONLY
+
+        // Send back a hash of this data for use by the client
+        $user_data['_hash'] = $this->getUserHash($current_user);
 
         return array('current_user' => $user_data);
     }
@@ -596,8 +596,8 @@ class CurrentUserApi extends SugarApi
         }
 
         // save the preferences to the db
-        $current_user->savePreferencesToDB();
-        $args['_hash'] = md5($current_user->date_modified);
+        $current_user->save();
+        $args['_hash'] = $this->getUserHash($current_user);
         return $args;
     }
 
@@ -643,7 +643,7 @@ class CurrentUserApi extends SugarApi
         $preferenceName = $this->getUserPreferenceName($args['preference_name']);
 
         $current_user->setPreference($preferenceName, $args['value'], 0, $category);
-        $current_user->savePreferencesToDB();
+        $current_user->save();
 
         return array($preferenceName => $args['value']);
     }
@@ -668,7 +668,7 @@ class CurrentUserApi extends SugarApi
         $preferenceName = $this->getUserPreferenceName($args['preference_name']);
 
         $current_user->setPreference($preferenceName, null, 0, $category);
-        $current_user->savePreferencesToDB();
+        $current_user->save();
 
         return $preferenceName;
     }
@@ -744,5 +744,15 @@ class CurrentUserApi extends SugarApi
         
         // Set this back to what it was
         $_SESSION['unique_key'] = $uniqueKey;
+    }
+
+    /**
+     * Returns a consistent hash based on the date_modifed of the User object passed.
+     * @param $user {User}
+     *
+     * @return string
+     */
+    protected function getUserHash($user) {
+        return md5($user->hashTS);
     }
 }
