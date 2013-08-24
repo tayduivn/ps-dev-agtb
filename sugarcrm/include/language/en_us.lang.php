@@ -3644,7 +3644,7 @@ $app_strings = array (
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
-
+    'SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED' => 'Not allowed to perform action "{0}" on this record',
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_ACTIVITY_VIEW_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
