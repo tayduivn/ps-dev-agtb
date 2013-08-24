@@ -27,6 +27,6 @@
  ********************************************************************************/
 }}
         {{#eachOptions enumOptions}}
-        <p><label><input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}> {{value}}</label></p>
+        <p><label><input type="radio" name="{{../name}}" value="{{key}}" {{#eq key ../value}}checked{{/eq}}> {{value}}</label></p>
         {{/eachOptions}}
         <p class="help-block"></p>
