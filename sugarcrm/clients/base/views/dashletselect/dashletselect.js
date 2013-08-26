@@ -273,6 +273,9 @@
             if (!dashlet.config) {
                 return;
             }
+            if (!app.acl.hasAccess('access', module || dashlet.config.module)) {
+                return;
+            }
             dashlets.push({
                 type: name,
                 filter: dashlet.filter,
