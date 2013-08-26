@@ -33,7 +33,7 @@ $viewdefs['base']['layout']['first-login-wizard'] = array(
         array(
             'name' => 'previous_button',
             'type' => 'button',
-            'label' => 'LNK_LIST_PREVIOUS',
+            'label' => 'LBL_BACK',
             'css_class' => 'btn-link btn-invisible',
         ),
         array(
