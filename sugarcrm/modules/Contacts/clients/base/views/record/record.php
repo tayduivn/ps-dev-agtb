@@ -46,16 +46,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'linkbutton',
-                    'name' => 'link_create',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
-                ),
-                array(
-                    'type' => 'linkbutton',
-                    'name' => 'link_exist',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                ),
-                array(
                     'type' => 'rowaction',
                     'event' => 'button:delete_button:click',
                     'name' => 'delete_button',
