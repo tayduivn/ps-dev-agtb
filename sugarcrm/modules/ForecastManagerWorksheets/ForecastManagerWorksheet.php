@@ -43,6 +43,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $table_name = 'forecast_manager_worksheets';
     public $disable_custom_fields = true;
     public $isManager = false;
+    public $draft_save_type = '';
 
     /**
      * Commit a manager forecast from the draft records

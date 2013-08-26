@@ -16,6 +16,19 @@
 class ForecastManagerWorksheetHooks
 {
     /**
+     * This method, just set the date_modified to the value from the db, vs the user formatted value that sugarbean sets
+     * after it has been retrieved
+     *
+     * @param ForecastManagerWorksheet $worksheet
+     * @param string $event
+     * @param array $params
+     */
+    public static function fixDateModified(ForecastManagerWorksheet $worksheet, $event, $params = array())
+    {
+        $worksheet->date_modified = $worksheet->fetched_row['date_modified'];
+    }
+
+    /**
      * This checks to see if the only thing that has changed is the quota, if it is, then don't update the date
      * modified
      *
@@ -26,7 +39,8 @@ class ForecastManagerWorksheetHooks
     public static function draftRecordQuotaOnlyCheck(ForecastManagerWorksheet $worksheet, $event, $params = array())
     {
         // this should only run on before_save and when the worksheet is a draft record
-        if ($event == 'before_save' && $worksheet->draft == 1) {
+        // and the draft_save_type is assign_quota
+        if ($event == 'before_save' && $worksheet->draft == 1 && $worksheet->draft_save_type == 'assign_quota') {
             $mm = new MetadataManager($GLOBALS['current_user']);
             $views = $mm->getModuleViews($worksheet->module_name);
 

@@ -111,6 +111,11 @@
      */
     hasCheckedForDraftRecords: false,
 
+    /**
+     * Draft Save Type
+     */
+    draftSaveType : undefined,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -167,6 +172,7 @@
                             this.setNavigationMessage(false, '', '');
                             this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                         }, this);
+                        this.draftSaveType = 'draft';
                         this.saveWorksheet(true);
                     }
                 }, this);
@@ -178,6 +184,7 @@
                         this.context.parent.once('forecasts:worksheet:saved', function() {
                             this.context.parent.trigger('forecasts:worksheet:commit', this.selectedUser, this.worksheetType, this.getCommitTotals())
                         }, this);
+                        this.draftSaveType = 'commit';
                         this.saveWorksheet(false);
                     }
                 }, this);
@@ -261,6 +268,7 @@
                         level: 'process',
                         title: app.lang.get('LBL_ASSIGNING_QUOTA', 'Forecasts')
                     });
+                    this.draftSaveType = 'assign_quota';
                     this.saveWorksheet(true, true);
                 }, this);
 
@@ -844,7 +852,7 @@
      *
      * @triggers forecasts:worksheet:saved
      * @param {bool} isDraft
-     * @param {bool} suppressMessage
+     * @param {bool} [suppressMessage]
      * @returns {number}
      */
     saveWorksheet: function(isDraft, suppressMessage) {
@@ -894,6 +902,8 @@
             }
         }
 
+        this.draftSaveType = undefined;
+
         return saveObj.totalToSave
     },
 
@@ -905,7 +915,8 @@
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({
             current_user: saveObj.userId || this.selectedUser.id,
-            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod
+            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod,
+            draft_save_type: this.draftSaveType
         }, {silent: true});
 
         saveObj.model.save({}, {success: _.bind(function() {
