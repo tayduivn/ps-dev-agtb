@@ -9,7 +9,7 @@
      *  - app:sync:complete indicates app.sync() has finished without errors
      *  - app:sync:error indicates app.sync() has finished with errors
      *  - data:sync:start indicates we are synchronizing a Bean or BeanCollection (fetch/save/destroy)
-     *  - data:sync:end indicates the Bean or BeanCollection sync has finished
+     *  - data:sync:complete indicates the Bean or BeanCollection sync has finished successfully or not
      */
 
     /**
@@ -124,7 +124,7 @@
         app.alert.show('data:sync:process', alertOpts);
     });
 
-    app.events.on('data:sync:end', function(method, model, options, error) {
+    app.events.on('data:sync:complete', function(method, model, options) {
 
         options = options || {};
 
@@ -144,7 +144,7 @@
         }
 
         // Error module will display proper message
-        if (error || method === 'read') return;
+        if (method === 'read') return;
 
         // The user can have disabled only the success alert
         if (options.showAlerts.success === false) return;
