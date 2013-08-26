@@ -49,6 +49,20 @@ class SugarACLOpi extends SugarACLStrategy
     {
         $bean = self::loadBean($module, $context);
 
+        // if there is no bean we have nothing to check
+        if ($bean === false) {
+            return true;
+        }
+
+        // if the recurring source is Sugar allow modifications
+        if (in_array($view, self::$syncingViews)
+            && !empty($bean->recurring_source)
+            && !empty($bean->fetched_row['recurring_source'])
+            && $bean->recurring_source == 'Sugar'
+            && $bean->recurring_source == $bean->fetched_row['recurring_source']) {
+            return true;
+        }
+
         $view = SugarACLStrategy::fixUpActionName($view);
 
         if (in_array($view, self::$syncingViews)
@@ -76,7 +90,7 @@ class SugarACLOpi extends SugarACLStrategy
             && $context['bean']->module_dir == $module) {
             $bean = $context['bean'];
         } else {
-            $bean = BeanFactory::newBean($module);
+            $bean = false;
         }
         return $bean;
     }
