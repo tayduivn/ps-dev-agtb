@@ -39,6 +39,13 @@
                 complete: options ? options.complete : null
             });
         }
+        this.chart = nv.models.funnelChart()
+            .showTitle(false)
+            .tooltips(false)
+            .colorData('class', {step:2})
+            .fmtValueLabel(function(d) {
+                return d.label;
+            });
     },
 
     handleTypeButtonClick: function(e) {
@@ -60,25 +67,22 @@
         if(this.disposed) {
             return;
         }
-        var chart, svg;
         // clear out the current chart before a re-render
         this.$("svg#" + this.cid).children().remove();
-        chart = nv.models.funnelChart()
-            .showTitle(false)
-            .tooltips(false)
-            .colorData('class', {step:2})
-            .fmtValueLabel(function(d) {
-                return d.label
-            });
 
         d3.select('svg#' + this.cid)
             .datum(this.results)
-            .transition().duration(500).call(chart);
+            .transition().duration(500).call(this.chart);
 
-        nv.utils.windowResize(chart.update);
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                this.chart.update();
+            }
+        }, this);
 
-        this.chart = chart;
+        nv.utils.windowResize(this.chart.update);
     },
+
     loadData: function(options) {
 
         var timePeriod = this.settings.get('selectedTimePeriod');
@@ -108,6 +112,7 @@
             });
         }
     },
+
     showTooltip: function(event) {
         this.$(event.currentTarget).tooltip("show");
     },

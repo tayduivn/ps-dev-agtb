@@ -35,6 +35,12 @@
             .transition().duration(500)
             .call(this.chart);
 
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                this.chart.update();
+            }
+        }, this);
+
         nv.utils.windowResize(this.chart.update);
     },
 
