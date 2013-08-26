@@ -23,7 +23,7 @@ class SidecarMenuMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
     /**
      *  Converts a Menu.php to a header.php
      */
-    public function convertLegacyViewDefsToSidecar()
+    public function convertLegacyViewDefsToSidecar2()
     {
         global $current_language;
 

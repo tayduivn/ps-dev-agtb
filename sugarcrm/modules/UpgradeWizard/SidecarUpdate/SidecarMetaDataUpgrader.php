@@ -124,6 +124,7 @@ class SidecarMetaDataUpgrader
             MB_EDITVIEW               => 'editviewdefs',
             MB_DETAILVIEW             => 'detailviewdefs',
             MB_SEARCHVIEW             => 'searchdefs',
+            MB_QUICKCREATE            => 'quickcreatedefs',
         )
     );
 
@@ -152,6 +153,7 @@ class SidecarMetaDataUpgrader
         'drop'               => 'Drop',
         'subpanel'           => 'Subpanel',
         'layoutdef'          => 'Layoutdefs',
+        'quickcreate'        => 'Quickcreate',
     );
 
     /**
@@ -205,6 +207,7 @@ class SidecarMetaDataUpgrader
     {
         $this->setUpgradeFiles('base');
         $this->setUpgradeMBFiles($this->getMBModules());
+        $this->setQuickCreateFiles();
     }
 
     /**
@@ -394,9 +397,6 @@ class SidecarMetaDataUpgrader
         }
         $this->logUpgradeStatus('Metadata upgrade process complete.');
 
-        // upgrade quickcreate menus
-        $this->upgradeQuickCreate();
-
         $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
 
         $this->logUpgradeStatus('Starting the Menu Upgrader.');
@@ -423,17 +423,11 @@ class SidecarMetaDataUpgrader
 
 
     /**
-     * Create the new quick create defs
+     * Add quickcreate files to the list
      */
-    public function upgradeQuickCreate()
+    protected function setQuickCreateFiles()
     {
-        $dirs = glob('modules/*', GLOB_ONLYDIR);
-        if (!empty($dirs)) {
-            foreach ($dirs as $dirpath) {
-                // Get the module to list it in case it needs to be upgraded
-                $modules[] = basename($dirpath);
-            }
-        }
+        $modules = $GLOBALS['moduleList'];
 
         $DCActions = array();
         $actions_path = "include/DashletContainer/Containers/DCActions.php";
@@ -446,55 +440,22 @@ class SidecarMetaDataUpgrader
 
         $availableModules = $DCActions;
 
-        $disabled = array_diff($modules, $availableModules);
-
+        $disabled = array_diff($modules, $DCActions);
 
         foreach ($DCActions as $module) {
-            $this->upgradeQuickCreateFile($module, true);
+            $file = $this->getUpgradeFileParams("modules/$module/clients/base/menus/quickcreate/quickcreate.php", $module, "base", "custom", null, true, false, true);
+            if(empty($file)) continue;
+            $file['isDCEnabled'] = true;
+            $this->files[] = $file;
         }
+
         foreach ($disabled as $module) {
-            $this->upgradeQuickCreateFile($module, false);
+            $file = $this->getUpgradeFileParams("modules/$module/clients/base/menus/quickcreate/quickcreate.php", $module, "base", "custom", null, true, false, true);
+            if(empty($file)) continue;
+            $file['isDCEnabled'] = false;
+            $this->files[] = $file;
         }
     }
-
-    /**
-     * Create the quick create def file
-     *
-     * @param $module string - module to create defs
-     * @param bool $enabled - is it enabled or disabled
-     */
-    public function upgradeQuickCreateFile($module, $enabled = true)
-    {
-        $quickCreateFile = "modules/$module/clients/base/menus/quickcreate/quickcreate.php";
-        $arrayName = "viewdefs['{$module}']['base']['menu']['quickcreate']";
-        // require the file
-        if (file_exists("custom/{$quickCreateFile}")) {
-            include "custom/{$quickCreateFile}";
-        } elseif (file_exists($quickCreateFile)) {
-            include $quickCreateFile;
-        } else {
-            if (!$enabled) {
-                // no need to write out a file for a module that doesn't currently have quickcreate defs and isn't
-                // going to need them
-                return true;
-            }
-            $viewdefs[$module]['base']['menu']['quickcreate'] = array(
-                'layout' => 'create',
-                'label' => translate($module),
-            );
-        }
-
-        $viewdefs[$module]['base']['menu']['quickcreate']['visible'] = $enabled;
-
-        sugar_mkdir(dirname("custom/{$quickCreateFile}"), null, true);
-
-        write_array_to_file(
-            $arrayName,
-            $viewdefs[$module]['base']['menu']['quickcreate'],
-            "custom/{$quickCreateFile}"
-        );
-    }
-
 
     /**
      * Gets the list of failed upgrades
@@ -710,6 +671,10 @@ class SidecarMetaDataUpgrader
             return 'list';
         }
 
+        if (strpos($filename, 'quickcreate') !== false) {
+            return 'quickcreate';
+        }
+
         if (strpos($filename, 'search') !== false) {
             if($client == 'base') {
                 return 'filter';
@@ -907,7 +872,7 @@ class SidecarMetaDataUpgrader
 
         if (empty($GLOBALS['beanList'][$module]) && $client != 'wireless') {
             // if the module is not among active, not upgrading it for now
-            $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules not supported");
+            $this->logUpgradeStatus("Not upgrading $file: upgrading undeployed modules ($module) not supported");
             return false;
         }
 
