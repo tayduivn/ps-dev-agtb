@@ -13,6 +13,29 @@ describe('Base.View.Bwc', function() {
         sinon.collection.restore();
     });
 
+    describe('Handling iframe URLs', function() {
+		
+    	it('Add frame mark to URL', function() {
+    		var withMark = view._addIframeMark('/sugar7/index.php?module=Administration&action=Home'); 
+    		expect(withMark).toBe('/sugar7/index.php?module=Administration&action=Home&bwcFrame=1');
+    		var withMark = view._addIframeMark('/sugar7/index.php'); 
+    		expect(withMark).toBe('/sugar7/index.php?bwcFrame=1');
+    	});
+    	
+    	it('Remove frame mark from URL', function() {
+    		var noMark = view._rmIframeMark('/sugar7/index.php?module=Administration&action=Home&bwcFrame=1');
+    		expect(noMark).toBe('/sugar7/index.php?module=Administration&action=Home'); 
+    		var noMark = view._rmIframeMark('/sugar7/index.php?bwcFrame=1');
+    		expect(noMark).toBe('/sugar7/index.php?'); 
+    		var noMark = view._rmIframeMark('/sugar7/index.php?module=Administration&bwcFrame=1&action=Home');
+    		expect(noMark).toBe('/sugar7/index.php?module=Administration&action=Home'); 
+    		var noMark = view._rmIframeMark('/sugar7/index.php?module=Administration&action=Home');
+    		expect(noMark).toBe('/sugar7/index.php?module=Administration&action=Home'); 
+    		var noMark = view._rmIframeMark('/sugar7/index.php');
+    		expect(noMark).toBe('/sugar7/index.php'); 
+    	});
+    });
+    
     describe('Warning unsaved changes', function() {
         var alertShowStub;
         beforeEach(function() {
