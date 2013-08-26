@@ -303,7 +303,7 @@ $dictionary['Document'] = array('table' => 'documents',
             'type' => 'link',
             'relationship' => 'documents_revenuelineitems',
             'source' => 'non-db',
-            'vname' => 'LBL_REVENUELINEITEMS_SUBPANEL_TITLE',
+            'vname' => 'LBL_RLI_SUBPANEL_TITLE',
         ),
         //END SUGARCRM flav=pro ONLY
         'related_doc_id' =>
