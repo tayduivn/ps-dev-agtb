@@ -209,9 +209,54 @@ input[type=radio] {
 .welcome {
   position: absolute;
   width: 100%;
+  .modal-header {
+    padding: 9px 10px;
+    .step-circle .icon-ok-sign {
+      display: inline-block;
+    }
+  }
+  .modal-body {
+    padding: 10px 8px 54px 8px;
+    min-height: 168px;
+    margin: 0;
+  }
   .control-group {
     &:not(:first-child) {
       margin: 13px 0 !important;
+    }
+  }
+  .thumbnails {
+    margin: 0;
+    li {
+      margin-bottom: 9px;
+      &.span3 .thumbnail {
+        padding: 14px 6px;
+        height: 44px;
+      }
+    }
+    .thumbnail {
+      height: 60px;
+      padding: 6px;
+      text-align: center;
+      color:  @gray;
+      font-size: @fontSizeSmall;
+      #gradient > .vertical(lighten(@grayLighter, 1%), darken(@grayLighter, 3%));
+      transition: all 0s;
+      i {
+        font-size: 24px;
+        display: inline-block;
+        width: 100%;
+        color: @grayLight;
+      }
+      &:hover{
+        @shadow: 1px 1px 1px rgba(0,0,0,0.2),2px 2px 1px rgba(0,0,0,0.1);
+        .box-shadow(@shadow);
+        border: none;
+        i {
+          text-decoration: none;
+          color: @gray;
+        }
+      }
     }
   }
 }
