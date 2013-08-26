@@ -63,7 +63,7 @@ describe("Record View", function () {
                             "name": "duplicate_button",
                             "label": "LBL_DUPLICATE_BUTTON_LABEL",
                             "showOn": "view",
-                            "acl_action":"create"
+                            'acl_module': moduleName
                         }
                     ]
                 }
