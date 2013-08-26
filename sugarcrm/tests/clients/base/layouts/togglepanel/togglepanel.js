@@ -24,9 +24,13 @@ describe("Base.Layout.Togglepanel", function () {
 
     beforeEach(function () {
         app = SugarTest.app;
+        getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
+            return {activityStreamEnabled:true};
+    });
     });
 
     afterEach(function () {
+        getModuleStub.restore();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
@@ -80,7 +84,8 @@ describe("Base.Layout.Togglepanel", function () {
                     {
                         'name': 'test3',
                         'label': 'test3',
-                        'icon': 'icon3'
+                        'icon': 'icon3',
+                        'disabled': true
                     }
                 ],
                 'components': {
@@ -103,17 +108,20 @@ describe("Base.Layout.Togglepanel", function () {
                 {
                     class: 'icon1',
                     title: 'test1',
-                    toggle: 'test1'
+                    toggle: 'test1',
+                    disabled: false
                 },
                 {
                     class: 'icon2',
                     title: 'test2',
-                    toggle: 'test2'
+                    toggle: 'test2',
+                    disabled: false
                 },
                 {
                     class: 'icon3',
                     title: 'test3',
-                    toggle: 'test3'
+                    toggle: 'test3',
+                    disabled: true
                 }
             ]);
         });

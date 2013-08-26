@@ -20,13 +20,17 @@
 
 describe("Base.Layout.Filterpanel", function(){
 
-    var app, layout;
+    var app, layout, getModuleStub;
 
     beforeEach(function() {
         app = SugarTest.app;
+        getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
+            return {activityStreamEnabled:true};
+        });
     });
 
     afterEach(function() {
+        getModuleStub.restore();
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;

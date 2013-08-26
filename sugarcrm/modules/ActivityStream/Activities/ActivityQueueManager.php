@@ -59,7 +59,7 @@ class ActivityQueueManager
     }
 
     /**
-     * Checks whether a mdoule is enabled to activity streams
+     * Checks whether a module has activity stream enabled
      * @param $moduleName
      *
      * @return bool

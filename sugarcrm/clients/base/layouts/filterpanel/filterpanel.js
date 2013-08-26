@@ -8,6 +8,9 @@
      * @param {Object} opts
      */
     initialize: function(opts) {
+        var moduleMeta = app.metadata.getModule(opts.module);
+        this.disableActivityStreamToggle(moduleMeta);
+
         this.on("filterpanel:change:module", function(module, link) {
             this.currentModule = module;
             this.currentLink = link;
@@ -36,7 +39,7 @@
         app.view.invokeParent(this, {type: 'layout', name: 'togglepanel', method: 'initialize', args: [opts]});
         // Needed to initialize this.currentModule.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
-        this.trigger('filterpanel:change:module', (lastViewed === "activitystream") ? 'Activities' : this.module);
+        this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === "activitystream") ? 'Activities' : this.module);
     },
 
     /**
@@ -58,6 +61,21 @@
                 var query = this.$('.search input.search-name').val();
                 this.trigger('filter:apply', query, collection.origFilterDef);
             }
+        }
+    },
+
+    /**
+     * Disables the activity stream toggle if activity stream is not enabled for a module
+     * @param {Collection} moduleMeta  The metadata for the component
+     */
+    disableActivityStreamToggle: function(moduleMeta) {
+        if (!moduleMeta.activityStreamEnabled) {
+            _.each(moduleMeta.availableToggles, function(module){
+                if (module.name  === 'activitystream') {
+                    module.disabled = true;
+                    module.label = 'LBL_ACTIVITY_STREAM_DISABLED';
+                }
+            });
         }
     }
 })
