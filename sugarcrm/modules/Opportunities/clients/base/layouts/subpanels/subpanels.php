@@ -3,7 +3,26 @@ $viewdefs['Opportunities']['base']['layout']['subpanels'] = array(
     'components' => array(
         //BEGIN SUGARCRM flav=ent ONLY
         array(
-            'layout' => 'subpanel',
+            'layout' => array (
+                'components' => array (
+                    array (
+                        'view' => 'panel-top',
+                    ),
+                    array (
+                        'view' => 'subpanel-list',
+                    ),
+                    array (
+                        'view' => 'list-bottom',
+                    ),
+                    array (
+                        'view' => 'massupdate',
+                    ),
+                ),
+                'span' => 12,
+                'last_state' => array(
+                    'id' => 'subpanel'
+                ),
+            ),
             'label' => 'LBL_RLI_SUBPANEL_TITLE',
             'override_subpanel_list_view' => 'subpanel-for-opportunities',
             'context' => array(
