@@ -208,6 +208,7 @@ $mod_strings = array (
 	'WARNING_SETTINGS_NOT_CONF'	=> 'Warning: Your email settings are not correctly configured to send email.',
 	'WARNING_NO_UPLOAD_DIR'		=> 'Attachments may fail: No value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
 	'WARNING_UPLOAD_DIR_NOT_WRITABLE'	=> 'Attachments may fail: An incorrect or unusable value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
+    'LBL_MESSAGE_UID'           => 'Message UID',
 
     // for All emails
     'LBL_BUTTON_RAW_TITLE'   => 'Show Raw Message',
