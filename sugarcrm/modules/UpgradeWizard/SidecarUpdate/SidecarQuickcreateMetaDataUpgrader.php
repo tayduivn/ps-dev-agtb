@@ -38,7 +38,8 @@ class SidecarQuickcreateMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 
         if(!empty($viewdefs[$this->module]['base']['menu']['quickcreate'])
                 && !empty($viewdefs[$this->module]['base']['menu']['quickcreate']['layout'])
-                && isset($viewdefs[$this->module]['base']['menu']['quickcreate']['visible'])) {
+                && isset($viewdefs[$this->module]['base']['menu']['quickcreate']['visible'])
+                && $viewdefs[$this->module]['base']['menu']['quickcreate']['visible'] == $this->isDCEnabled) {
                 // don't need to upgrade this, it's ok
                 return false;
         }

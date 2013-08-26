@@ -384,7 +384,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $defs = $viewdefs[$module]['base']['menu']['quickcreate'];
         $this->assertEquals('create', $defs['layout']);
-        $this->assertArrayHasKey("visible", $defs);
+        $this->assertEquals(false, $defs['visible']);
     }
 
     public function _sidecarQuickMenuProvider()

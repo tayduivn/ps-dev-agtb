@@ -93,7 +93,8 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
 
         if (empty($convertSubpanelDefs)) {
-            continue;
+            // no workable defs
+            return true;
         }
 
         $newdefs = array();

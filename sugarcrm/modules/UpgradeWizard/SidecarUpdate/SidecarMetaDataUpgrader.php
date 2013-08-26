@@ -13,7 +13,6 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
-require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMenuMetaDataUpgrader.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarSubpanelMetaDataUpgrader.php';
 
 /**
@@ -154,6 +153,7 @@ class SidecarMetaDataUpgrader
         'subpanel'           => 'Subpanel',
         'layoutdef'          => 'Layoutdefs',
         'quickcreate'        => 'Quickcreate',
+        'menu'               => 'Menu',
     );
 
     /**
@@ -208,6 +208,7 @@ class SidecarMetaDataUpgrader
         $this->setUpgradeFiles('base');
         $this->setUpgradeMBFiles($this->getMBModules());
         $this->setQuickCreateFiles();
+        $this->setMenuFiles();
     }
 
     /**
@@ -399,17 +400,6 @@ class SidecarMetaDataUpgrader
 
         $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
 
-        $this->logUpgradeStatus('Starting the Menu Upgrader.');
-
-        $menuUpgrader = new SidecarMenuMetaDataUpgrader($this, array());
-        $menuUpgrader->convertLegacyViewDefsToSidecar();
-        $menuRemove = $menuUpgrader->getFilesForRemoval();
-        if(!empty($menuRemove)) {
-            self::$filesForRemoval = array_merge(self::$filesForRemoval, $menuRemove);
-        }
-
-        $this->logUpgradeStatus('Finishing the Menu Upgrader.');
-
         foreach ($GLOBALS['moduleList'] as $module) {
             // if this is not a BWC module remove the old subpaneldefs layout
             if(!isModuleBWC($module)) {
@@ -455,6 +445,18 @@ class SidecarMetaDataUpgrader
             $file['isDCEnabled'] = false;
             $this->files[] = $file;
         }
+    }
+
+    protected function setMenuFiles()
+    {
+        foreach ($GLOBALS['moduleList'] as $module) {
+            if(file_exists("custom/modules/{$module}/Menu.php")) {
+                $file = $this->getUpgradeFileParams("custom/modules/{$module}/Menu.php", $module, "base", "custom", null, true, false, true);
+                if(empty($file)) continue;
+                $this->files[] = $file;
+            }
+        }
+        $this->getExtensionFiles("menus");
     }
 
     /**
@@ -682,8 +684,12 @@ class SidecarMetaDataUpgrader
             return 'search';
         }
 
-        if(strpos($fullname, '/Layoutdefs/') !== false) {
+        if(strpos($fullname, '/Ext/Layoutdefs/') !== false) {
             return 'layoutdef';
+        }
+
+        if(strpos($fullname, '/Ext/Menus/') !== false || $filename == 'Menu') {
+            return 'menu';
         }
 
         if (strpos($filename, 'For') !== false || strpos($filename, 'default') !== false || strpos($fullname, "metadata/subpanels/") !== false) {
