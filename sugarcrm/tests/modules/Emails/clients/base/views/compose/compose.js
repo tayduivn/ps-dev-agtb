@@ -516,12 +516,11 @@ describe("Emails.Views.Compose", function() {
             var id        = "abcd",
                 signature = new app.Bean({id: id});
 
-            view._updateEditorWithSignature(signature);
-
             SugarTest.seedFakeServer();
             SugarTest.server.respondWith("GET", /.*rest\/v10\/UserSignatures\/.*/,
                 [200, { "Content-Type": "application/json"}, JSON.stringify({})]);
 
+            view._updateEditorWithSignature(signature);
             expect(ajaxSpy.getCall(0).args[0].url).toContain("rest/v10/UserSignatures");
         });
 

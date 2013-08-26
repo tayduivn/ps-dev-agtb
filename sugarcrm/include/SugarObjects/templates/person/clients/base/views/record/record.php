@@ -54,20 +54,18 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'type' => 'linkbutton',
                     'name' => 'link_create',
                     'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'linkbutton',
                     'name' => 'link_exist',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'acl_module' => $module_name,
                 ),
                 array(
                     'type' => 'rowaction',

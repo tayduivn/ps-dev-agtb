@@ -10,6 +10,16 @@
     fieldValues: null,
     defaultOption: null,
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
+
+    /**
+     * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
+     * @property {Integer} _defaultSettings.maxRecordsToMerge Default number of records we can merge.
+     * @protected
+    */
+    _defaultSettings: {
+        maxRecordsToMerge: 5
+    },
+
     initialize: function(options) {
         this.fieldValues = [{}];
         this.setMetadata(options);
@@ -24,6 +34,7 @@
         this.layout.on("list:massaction:hide", this.hide, this);
         this.layout.on("list:massdelete:fire", this.confirmDelete, this);
         this.layout.on("list:massexport:fire", this.massExport, this);
+        this.layout.on('list:mergeduplicates:fire', this.mergeDuplicates, this);
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
@@ -255,6 +266,67 @@
                 });
         }
     },
+
+    /**
+     * Merge records handler.
+     */
+    mergeDuplicates: function() {
+        this.hide();
+        var mergeCollection = this.context.get('mass_collection'),
+            models = this.validateModelsForMerge(mergeCollection.models),
+            msg;
+
+        if (!models.length || models.length < 2 || models.length > this._defaultSettings.maxRecordsToMerge) {
+            if (models.length === mergeCollection.models.length) {
+                msg = app.lang.get('TPL_MERGE_INVALID_NUMBER_RECORDS',
+                    this.module,
+                    {maxRecords: this._defaultSettings.maxRecordsToMerge}
+                );
+            } else {
+                msg = app.lang.get('LBL_MERGE_NO_ACCESS', this.module);
+            }
+            app.alert.show('invalid-record-count', {
+                level: 'error',
+                messages: msg,
+                autoClose: true
+            });
+            return;
+        }
+
+        if (models) {
+            app.drawer.open({
+                layout: 'merge-duplicates',
+                context: {
+                    selectedDuplicates: models
+                }
+            }, _.bind(function(refresh) {
+                if (refresh) {
+                    this.collection.fetch();
+                    mergeCollection.reset();
+                }
+            }, this));
+        }
+    },
+
+    /**
+     * Check access for models selected for merge.
+     *
+     * @param {Data.Bean[]} models Models to check access for merge.
+     * @return {Data.Bean[]} Models with access.
+     */
+    validateModelsForMerge: function(models) {
+        var result = [];
+        _.each(models, function(model) {
+            var hasAccess = _.every(['view', 'edit', 'delete'], function(acl) {
+                return app.acl.hasAccessToModel(acl, model);
+            });
+            if (hasAccess) {
+                result.push(model);
+            }
+        }, this);
+        return result;
+    },
+
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.getAttributes(),

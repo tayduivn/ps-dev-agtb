@@ -36,7 +36,6 @@ $viewdefs['CampaignLog']['base']['view']['panel-top'] = array(
                     'name' => 'select_button',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
                     'icon' => 'icon-pencil',
-                    'acl_action' => 'view',
                     'css_class' => 'disabled',
                 ),
             ),

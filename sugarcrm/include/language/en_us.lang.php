@@ -585,10 +585,11 @@ $app_list_strings = array (
     'Opportunities' => 'Opportunity',
 
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    'RevenueLineItems' => 'Revenue Line Item',
+    //END SUGARCRM flav=ent ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-
-    'Products' => 'Revenue Line Item',
-
+    'Products' => 'Quoted Line Item',
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
 
@@ -3076,7 +3077,6 @@ $app_strings = array (
     'LBL_OC_STATUS_TEXT' => 'Indicates whether or not the current user is able to use an Offline Client.',
     'LBL_OC_DEFAULT_STATUS' => 'Inactive',
     //END SUGARCRM flav=pro ONLY
-    'LBL_MERGE_DUPLICATES'  => 'Merge',
     'LBL_SEARCH_PARENT_RELATED_ITEM' => 'Search ...',
     'LBL_SAVED_SEARCH_SHORTCUT' => 'Saved Searches',
     'LBL_SEARCH_POPULATE_ONLY'=> 'Perform a search using the search form above',
@@ -3607,8 +3607,20 @@ $app_strings = array (
     'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS' => 'Preview disabled: Record removed or no access to record',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
-    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+
     'LBL_SUCCESS' => 'Success',
+
+    //Merge Duplicates
+    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
+    'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
+    'LBL_MERGE'  => 'Merge',
+    'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
+    'TPL_MERGE_INVALID_NUMBER_RECORDS' =>
+        'Invalid number of records passed. The valid range is from 2 to {{maxRecords}} records.',
+    'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
+    'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
+        'All changes will be lost. Are you sure you want to continue?',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -3773,6 +3785,7 @@ $app_strings = array (
     'LBL_TASKS_SUBPANEL_TITLE' => 'Tasks',
     'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
+    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LNK_SETTINGS' => 'Settings',
     'LBL_MOBILE_SUPPORT' => 'Support',
 

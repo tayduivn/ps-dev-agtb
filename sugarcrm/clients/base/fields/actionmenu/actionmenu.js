@@ -47,8 +47,8 @@
 
         if (checkbox && evt.currentTarget == evt.target) {
             checkbox.attr("checked", !checkbox.is(":checked"));
+            this.toggleSelect(checkbox.is(':checked'));
         }
-        this.toggleSelect(checkbox.is(":checked"));
     },
     dropdownSelected: function(evt) {
         var $el = this.$(evt.currentTarget),

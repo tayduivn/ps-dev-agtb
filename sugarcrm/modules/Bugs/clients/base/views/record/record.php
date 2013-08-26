@@ -58,7 +58,7 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'acl_module' => 'Bugs'
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

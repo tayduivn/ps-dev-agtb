@@ -44,6 +44,18 @@ $viewdefs['base']['view']['recordlist'] = array(
                 'acl_action' => 'massupdate',
             ),
             array(
+                'name' => 'merge_button',
+                'type' => 'button',
+                'label' => 'LBL_MERGE',
+                'primary' => true,
+                'events' => array(
+                    'click' => 'function(e){
+                    this.view.layout.trigger("list:mergeduplicates:fire");
+                    }'
+                ),
+                'acl_action' => 'edit',
+            ),
+            array(
                 'name' => 'delete_button',
                 'type' => 'button',
                 'label' => 'LBL_DELETE',
