@@ -694,7 +694,7 @@ class ForecastWorksheet extends SugarBean
                 $closed = true;
             }
 
-            if ($row['commit_stage'] == "include") {
+            if (in_array($row['commit_stage'], $settings['commit_stages_included'])) {
                 if(!$closed) {
                     $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
                     $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
