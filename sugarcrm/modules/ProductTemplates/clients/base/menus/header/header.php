@@ -44,7 +44,7 @@ $viewdefs[$module_name]['base']['menu']['header'] = array(
         'icon' => '',
     ),
     array(
-        'route'=>'#bwc/index.php?module=ProductCategories&action=EditView&return_module=ProductCategories&return_action=DetailView',
+        'route'=>'#ProductCategories',
         'label' =>'LNK_NEW_PRODUCT_CATEGORY',
         'acl_action'=>'',
         'acl_module'=>'',
