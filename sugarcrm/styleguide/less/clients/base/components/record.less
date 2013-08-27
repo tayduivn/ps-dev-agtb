@@ -414,19 +414,14 @@
         margin-top: -5px;
       }
     }
-
-    /*&[data-type="url"] {
-    }*/
-
     &[data-type="email"] {
       .normal > span {
         display: block !important;
         margin-bottom: 10px;
       }
-      .detail .control-group.email {
-        .ellipsis-cell {
-          height: 20px;
-        }
+      .control-group.email > span,
+      .control-group.email > del {
+        color: @grayLight;
       }
       .edit .control-group.email {
         padding-right: 132px;
