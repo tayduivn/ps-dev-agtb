@@ -33,7 +33,7 @@
             fields = _.keys(this.fieldsToValidate);
         _.each(fields, function(key) {
             payload[key] = self.model.get(key);
-        })
+        });
         return payload;
     },
     /**
