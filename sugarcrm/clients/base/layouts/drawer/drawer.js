@@ -16,6 +16,7 @@
     backdropHtml: "<div class='drawer-backdrop'></div>",
 
     onCloseCallback: null, //callbacks to be called once drawers are closed
+    scrollTopPositions: [], //stores scroll positions for main and side pane
 
     pixelsFromFooter: 60, //how many pixels from the footer the drawer will drop down to
 
@@ -61,6 +62,9 @@
 
         layout = _.last(this._components);
 
+        //scroll both main and sidebar to the top
+        this._scrollToTop();
+
         //open the drawer
         this._animateOpenDrawer(_.bind(function(){
             //called after animation finished
@@ -88,8 +92,14 @@
         if (this._components.length > 0) {
             //close the drawer
             this._animateCloseDrawer(function() {
+                var layout;
+
                 self._components.pop().dispose(); //dispose top-most drawer
-                var layout = _.last(self._components);
+                layout = _.last(self._components);
+
+                //scroll both main and sidebar back its original position
+                self._scrollBackToOriginal(layout);
+
                 if (layout) { // still have layouts in the drawer
                     app.trigger("app:view:change", layout.options.name, layout.context.attributes);
                 } else { //we've returned to base layout
@@ -133,6 +143,7 @@
             }
 
             this._components.pop().dispose(); //dispose top-most drawer
+            this._scrollBackToOriginal(_.last(this._components)); //scroll both main and sidebar back its original position
             (this.onCloseCallback.pop()).apply(window, args); //execute callback
         }
     },
@@ -173,6 +184,15 @@
      */
     count: function() {
         return this._components.length;
+    },
+
+    /**
+     * Test if element is part of active drawer.  Always returns true if there's no inactive components on page.
+     * @param el DOM element to test if it is in the active drawer
+     * @return boolean
+     */
+    isActive: function(el) {
+        return ((this.count() === 0) || ($(el).parents('.drawer.active').length > 0));
     },
 
     /**
@@ -242,11 +262,12 @@
             }
 
             drawers.$top
-                .addClass('transition')
+                .addClass('transition inactive')
+                .removeClass('active')
                 .css('top', this._isMainAppContent(drawers.$top) ? drawerHeight : drawers.$top.offset().top + drawerHeight);
 
             drawers.$next
-                .addClass('transition')
+                .addClass('transition active')
                 .css('top','');
 
             //resize the visible drawer when the browser resizes
@@ -281,8 +302,13 @@
         }, this));
 
         //start the animation to close the drawer
-        drawers.$top.css('top', drawers.$top.offset().top-drawerHeight);
-        drawers.$bottom.css('top','');
+        drawers.$top
+            .removeClass('active')
+            .css('top', drawers.$top.offset().top-drawerHeight);
+        drawers.$bottom
+            .removeClass('inactive')
+            .addClass('active')
+            .css('top','');
 
         //this is a failsafe to ensure that drawer will always close
         //in Chrome the css change to 'top' sometimes (randomly) doesn't actually change the css value
@@ -412,7 +438,7 @@
     _cleanUpAfterClose: function(drawers) {
         this._removeTabAndBackdrop(drawers.$bottom);
         if (this._isMainAppContent(drawers.$bottom)) {
-            drawers.$bottom.removeClass('drawer transition');
+            drawers.$bottom.removeClass('drawer transition active');
             $('body').removeClass('noscroll');
             app.$contentEl.removeClass('noscroll');
         } else {
@@ -471,16 +497,38 @@
     },
 
     /**
-     * Test if element is part of active drawer.  Always returns true if there's no inactive components on page.
-     * @param el DOM element to test if it is in the active drawer
-     * @return Active layout
+     * Scroll the main and sidebar to the top and save its position.
+     * @private
      */
-    isActive: function(el){
-        if(_.isEmpty(this._components)){
-            return true; // No drawers on page
+    _scrollToTop: function() {
+        var drawers = this._getDrawers(true),
+            $mainpane = drawers.$top.find('.main-pane'),
+            $sidepane = drawers.$top.find('.sidebar-content');
+
+        this.scrollTopPositions.push({
+            main: $mainpane.scrollTop(),
+            side: $sidepane.scrollTop()
+        });
+
+        $mainpane.scrollTop(0);
+        $sidepane.scrollTop(0);
+    },
+
+    /**
+     * Scroll the main and sidebar back to its original position.
+     * @param drawerLayout
+     * @private
+     */
+    _scrollBackToOriginal: function(drawerLayout) {
+        var scrollPositions = this.scrollTopPositions.pop();
+
+        if (drawerLayout) {
+            drawerLayout.$('.main-pane').scrollTop(scrollPositions.main);
+            drawerLayout.$('.sidebar-content').scrollTop(scrollPositions.side);
+        } else {
+            app.$contentEl.find('.main-pane').scrollTop(scrollPositions.main);
+            app.$contentEl.find('.sidebar-content').scrollTop(scrollPositions.side);
         }
-        var top = this._getDrawers(false).$top;
-        return top.find(el).length > 0;
     },
 
     _dispose: function() {
