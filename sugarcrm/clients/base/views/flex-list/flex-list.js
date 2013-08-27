@@ -27,10 +27,7 @@
         app.view.invokeParent(this, {type: 'view', name: 'list', method: 'initialize', args: [options]});
         this.template = app.template.getView('flex-list');
         this.events = _.clone(this.events);
-        _.extend(this.events, {
-            'mouseenter .rowaction': 'showTooltip',
-            'mouseleave .rowaction': 'hideTooltip'
-        });
+
         //Store left column fields
         this.leftColumns = [];
         //Store right column fields
@@ -215,12 +212,7 @@
             }
         }
     },
-    showTooltip: function (e) {
-        this.$(e.currentTarget).tooltip("show");
-    },
-    hideTooltip: function (e) {
-        this.$(e.currentTarget).tooltip("hide");
-    },
+
     _renderHtml: function (ctx, options) {
 
         this.colSpan = this._fields.visible.length || 0;

@@ -1857,6 +1857,7 @@ $app_strings = array (
   'LBL_RECORD_SHOWMORE' => 'Show More', // Studio editing of record views
   'LBL_FAVORITE' => 'Favorite', // Record view header panel element
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
+  'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2013 SugarCRM Inc. All Rights Reserved.',
