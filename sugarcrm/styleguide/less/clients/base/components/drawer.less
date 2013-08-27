@@ -47,11 +47,13 @@ body.noscroll {
 
 //UIUX-808: remove buttons from headerpane when in drawer
 //UIUX-888: remove fixed position of header bar in drawer
-#content .drawer {
-    .side.sidebar-content.span4,
+.drawer.inactive {
     .main-pane {
         position: relative;
-        top: 0;
+        padding-top: 0 !important; //required to override padding-top position changes made by javascript
+    }
+    .side-pane.active {
+        display: block;
     }
     .headerpane,
     .preview-headerbar {
@@ -65,10 +67,10 @@ body.noscroll {
 }
 
 @media (max-width: 768px) {
-    #drawers .drawer {
+    .drawer.active {
         overflow: auto;
     }
-    .drawer {
+    .drawer.inactive {
         .drawerTrig {
             display: none;
         }
