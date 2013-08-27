@@ -453,7 +453,7 @@ abstract class DBManager
 	 */
 	protected function addDistinctClause(&$sql)
 	{
-	    preg_match("|^\W*(\w+)|i", $sql, $firstword);
+	    preg_match('|^\W*(\w+)|i', $sql, $firstword);
 	    if(empty($firstword[1]) || strtolower($firstword[1]) != 'select') {
 	        // take first word of the query, if it's not SELECT - ignore it
 	        return;
@@ -469,13 +469,13 @@ abstract class DBManager
 			    $newpart = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
 			        array($this, "replaceTeamClause"), $part);
 			    $selects = array();
-			    preg_match_all("/SELECT\s+(.*?)\s+FROM\s+/is", $newpart, $selects, PREG_OFFSET_CAPTURE);
+			    preg_match_all('/SELECT\s+(.*?)\s+FROM\s+/is', $newpart, $selects, PREG_OFFSET_CAPTURE);
 			    if(!empty($selects[1])) {
 			        $offset = 0;
 			        do {
     			        foreach($selects[1] as $match) {
                             if(stripos($match[0], 'distinct') !== false) continue; /* already have distinct */
-                            if(preg_match("/(avg|sum|min|max|count)\(.*\)/i", $match[0])) {
+                            if(preg_match('/(avg|sum|min|max|count)\(.*\)/i', $match[0])) {
                                 /* bug #61011 - don't rewrite queries with aggregates */
                                 break 2;
                             }
@@ -1039,7 +1039,7 @@ protected function checkQuery($sql, $object_name = false)
         $sql = "/* INDEXES */\n";
         $correctedIndexes = array();
 
-        $compareIndices_case_insensitive = array();
+        $compareIndices_ci = array();
 
         // ****************************************
         // do indices comparisons case-insensitive
@@ -1054,10 +1054,10 @@ protected function checkQuery($sql, $object_name = false)
                     $value['fields'][$index]=strtolower($fieldName);
                 }
             }
-            $compareIndices_case_insensitive[strtolower($k)] = $value;
+            $compareIndices_ci[strtolower($k)] = $value;
         }
-        $compareIndices = $compareIndices_case_insensitive;
-        unset($compareIndices_case_insensitive);
+        $compareIndices = $compareIndices_ci;
+        $compareIndices_ci = array();
         //Then change the $indices to lower case
         foreach($indices as $k => $value){
             $value['name'] = strtolower($value['name']);
@@ -1067,10 +1067,10 @@ protected function checkQuery($sql, $object_name = false)
                     $value['fields'][$index]=strtolower($fieldName);
                 }
             }
-            $compareIndices_case_insensitive[strtolower($k)] = $value;
+            $compareIndices_ci[strtolower($k)] = $value;
         }
-        $indices = $compareIndices_case_insensitive;
-        unset($compareIndices_case_insensitive);
+        $indices = $compareIndices_ci;
+        unset($compareIndices_ci);
 
         foreach ($indices as $value) {
             if (isset($value['source']) && $value['source'] != 'db') {
@@ -2613,7 +2613,7 @@ protected function checkQuery($sql, $object_name = false)
      */
     public function getTypeParts($type)
     {
-        if(preg_match("#(?P<type>\w+)\s*(?P<arg>\((?P<len>\w+)\s*(,\s*(?P<scale>\d+))*\))*#", $type, $matches))
+        if(preg_match('#(?P<type>\w+)\s*(?P<arg>\((?P<len>\w+)\s*(,\s*(?P<scale>\d+))*\))*#', $type, $matches))
         {
             $return = array();  // Not returning matches array as such as we don't want to expose the regex make up on the interface
             $return['baseType'] = $matches['type'];
@@ -2656,7 +2656,7 @@ protected function checkQuery($sql, $object_name = false)
         if(!empty($fieldDef['len'])) {
             if (in_array($colBaseType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
                                           'clob', 'blob', 'text'))) {
-          	    $colType = "$colBaseType(${fieldDef['len']})";
+          	    $colType = "$colBaseType({$fieldDef['len']})";
             } elseif(($colBaseType == 'decimal' || $colBaseType == 'float')){
                   if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
                       if(strpos($fieldDef['len'],',') === false){
