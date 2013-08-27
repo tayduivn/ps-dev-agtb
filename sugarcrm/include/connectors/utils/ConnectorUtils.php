@@ -513,6 +513,10 @@ class ConnectorUtils
            $GLOBALS['log']->debug(var_export($modules_sources, true));
            if(!empty($modules_sources)) {
               foreach($modules_sources as $module=>$mapping) {
+                     if(!isModuleBWC($module)) {
+                         // this is done only for BWC modules
+                         continue;
+                     }
                      $metadata_file = file_exists("custom/modules/{$module}/metadata/detailviewdefs.php") ? "custom/modules/{$module}/metadata/detailviewdefs.php" : "modules/{$module}/metadata/detailviewdefs.php";
 
 
