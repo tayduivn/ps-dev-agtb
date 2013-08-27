@@ -4860,6 +4860,9 @@ text-shadow: 0px 1px #fff;
 	padding: 5px;
 }
 
+.calendarButtons {
+    margin-bottom: 10px;
+}
 /* for subpanel tabs */
 .subpanelTabForm
 {
