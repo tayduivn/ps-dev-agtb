@@ -45,7 +45,7 @@ class LocaleApi extends SugarApi
         $data['datepref'] = $sugar_config['date_formats'];
         $data['default_locale_name_format'] = $locale->getUsableLocaleNameOptions($sugar_config['name_formats']);
         $data['timezone'] = $timezoneList = TimeDate::getTimezoneList();
-        $data['_hash'] = md5($current_user->date_modified);
+        $data['_hash'] = $current_user->getUserMDHash();
         return $data;
     }
 
