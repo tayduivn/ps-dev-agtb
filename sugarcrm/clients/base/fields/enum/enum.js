@@ -202,6 +202,13 @@
             select2Options.multiple = true;
         }
 
+        /* If we need to define a custom value separator
+         */
+        select2Options.separator = this.def.separator || ',';
+        if (this.def.separator) {
+            select2Options.tokenSeparators = [this.def.separator];
+        }
+
         select2Options.initSelection = _.bind(this._initSelection, this);
         select2Options.query = _.bind(this._query, this);
 
@@ -218,7 +225,10 @@
     _initSelection: function($ele, callback){
         var data = [];
         var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
-        var values = $ele.val().split(",");
+        var values = $ele.val();
+        if (this.def.isMultiSelect) {
+            values = values.split(this.def.separator || ',');
+        }
         _.each(_.pick(options, values), function(value, key){
             data.push({id: key, text: value});
         }, this);
