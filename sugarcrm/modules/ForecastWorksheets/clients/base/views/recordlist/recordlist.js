@@ -196,6 +196,8 @@
                         this.context.parent.once('forecasts:worksheet:saved', function() {
                             // clear out the current navigation message
                             this.setNavigationMessage(false, '', '');
+                            this.cleanUpDirtyModels();
+                            this.refreshData();
                             this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                         }, this);
                         this.saveWorksheet(true);
