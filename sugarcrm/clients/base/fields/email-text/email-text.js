@@ -49,7 +49,7 @@
     format: function(value) {
         if(_.isArray(value)) {
             var primaryEmail = _.find(value, function(email) {
-                return email.primary_address;
+                return email.primary_address && email.primary_address !== "0";
             });
             return primaryEmail ? primaryEmail.email_address : '';
         }
@@ -67,7 +67,10 @@
         if(!_.isArray(emails)){emails = [];}
         _.each(emails, function(email, index) {
             // If we find a primary address and its email_address is different
-            if(email.primary_address && email.email_address !== value) {
+            if(email.primary_address &&
+                email.primary_address !== "0" &&
+                email.email_address !== value)
+            {
                 changed = true;
                 emails[index].email_address = value;
             }
