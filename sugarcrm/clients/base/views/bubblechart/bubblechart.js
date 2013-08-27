@@ -89,6 +89,12 @@
         }, this);
         this.settings.on('change:filter_duration', this.changeFilter, this);
 
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                this.chart.render();
+            }
+        }, this);
+
         nv.utils.windowResize(this.chart.render);
     },
 

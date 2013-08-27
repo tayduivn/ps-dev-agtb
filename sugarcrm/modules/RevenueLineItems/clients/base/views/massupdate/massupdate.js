@@ -120,7 +120,7 @@
                     return_id: this.context.parent.get('model').get('id')
                 }), {trigger: true});
             }, this);
-            options.error = _.bind(function(resp, status, xhr) {
+            options.error = _.bind(function() {
                 app.alert.dismiss('info_quote');
                 app.alert.show('error_xhr', {
                     level: 'error',

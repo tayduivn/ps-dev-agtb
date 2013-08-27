@@ -91,10 +91,10 @@
                     self.render();
                 }
             },
-            error: function(xhr,status,error){
-                if (xhr.status == 424) {
+            error: function(error){
+                if (error.status == 424) {
                     self.needConnect = false;
-                    if (xhr.message && xhr.message == 'need OAuth') {
+                    if (error.message && error.message == 'need OAuth') {
                         self.needConnect = true;
                     }
                     self.showAdmin = app.acl.hasAccess('admin', 'Administration');

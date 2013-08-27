@@ -92,9 +92,10 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
     public function getChartLabels($chartData)
     {
         $weeks = array();
-        $start = strtotime($this->start_date);
-        $end = strtotime($this->end_date);
+        $start = strtotime($this->start_date . " 00:00:00");
+        $end = strtotime($this->end_date . " 23:59:59");
         $count = 0;
+        $timedate = TimeDate::getInstance();
 
         while ($start <= $end) {
             //Find out how many days are left for this period
@@ -105,6 +106,8 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
             $val = $chartData;
             $val['label'] = date($this->chart_label, $start) . '-' . date($this->chart_label, strtotime($modifier, $start));
+            $val['start_timestamp'] = $start;
+            $val['end_timestamp'] = $timedate->fromTimestamp($start)->modify($modifier)->setTime(23, 59, 59)->getTimestamp();
 
             //We internally use $count to store the corresponding data set for the week in the given timeperiod.
             //For a one month interval we will most likely get 4 weeks except for the case of non-leap year February

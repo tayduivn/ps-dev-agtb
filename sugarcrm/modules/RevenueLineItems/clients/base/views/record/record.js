@@ -96,14 +96,14 @@
 
         var url = app.api.buildURL(this.model.module, 'quote', { id: this.model.id });
         var callbacks = {
-            'success': _.bind(function(resp, status, xhr) {
+            'success': _.bind(function(resp) {
                 app.alert.dismiss('info_quote');
                 app.router.navigate(app.bwc.buildRoute('Quotes', resp.id, 'EditView', {
                     return_module: this.model.module,
                     return_id: this.model.id
                 }), {trigger: true});
             }, this),
-            'error': _.bind(function(resp, status, xhr) {
+            'error': _.bind(function() {
                 app.alert.dismiss('info_quote');
                 app.alert.show('error_xhr', {
                     level: 'error',
