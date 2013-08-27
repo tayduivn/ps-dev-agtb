@@ -732,4 +732,29 @@ class SugarFieldBase {
     {
         return $value;
     }
+
+    /**
+     * Unformat a value from an API format
+     * @param $value - the value that needs unformatted
+     * @return string - the unformatted value
+     */
+    public function apiUnformat($value)
+    {
+        return $value;
+    }
+
+    /**
+     * Fix a value(s) for a Filter statement
+     * @param $value - the value that needs fixing
+     * @param $fieldName - the field we are fixing
+     * @param SugarBean $bean - the Bean
+     * @param SugarQuery $q - the Query
+     * @param SugarQuery_Builder_Where $where - the Where statement
+     * @param $op - the filter operand
+     * @return bool - true if everything can pass as normal, false if new filters needed to be added to override the existing $op
+     */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
+    {
+        return true;
+    }
 }

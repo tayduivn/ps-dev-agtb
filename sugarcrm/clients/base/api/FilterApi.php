@@ -530,18 +530,24 @@ class FilterApi extends SugarApi
                     $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] : $fieldInfo['def']['type'];
                     $sugarField = $sfh->getSugarField($fieldType);
                     if (!is_array($filter)) {
-                        // This is just simple match
-                        $where->equals($field, $sugarField->convertFieldForDB($filter));
-                        continue;
+                        $value = $filter;
+                        $filter = array();
+                        $filter['$equals'] = $value;
                     }
                     foreach ($filter as $op => $value) {
+
                         if (is_array($value)) {
                             foreach ($value as $i => $val) {
-                                $value[$i] = $sugarField->convertFieldForDB($val);
+                                $value[$i] = $sugarField->apiUnformat($val);
                             }
                         } else {
-                            $value = $sugarField->convertFieldForDB($value);
+                            $value = $sugarField->apiUnformat($value);
                         }
+
+                        if ($sugarField->fixForFilter($value, $field, $fieldInfo['bean'], $q, $where, $op) == false) {
+                            continue;
+                        }
+
                         switch ($op) {
                             case '$equals':
                                 $where->equals($field, $value);
@@ -570,6 +576,7 @@ class FilterApi extends SugarApi
                                 }
                                 $where->notIn($field, $value);
                                 break;
+                            case '$dateBetween':
                             case '$between':
                                 if (!is_array($value) || count($value) != 2) {
                                     throw new SugarApiExceptionInvalidParameter(
@@ -598,14 +605,6 @@ class FilterApi extends SugarApi
                                 break;
                             case '$dateRange':
                                 $where->dateRange($field, $value);
-                                break;
-                            case '$dateBetween':
-                                if (!is_array($value) || count($value) != 2) {
-                                    throw new SugarApiExceptionInvalidParameter(
-                                        '$dateBetween requires an array with two values.'
-                                    );
-                                }
-                                $where->dateBetween($field, $value);
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: " . $op);
