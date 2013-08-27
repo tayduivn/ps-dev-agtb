@@ -58,6 +58,25 @@ describe("Opportunities.Base.Views.Record", function() {
         view = SugarTest.createView('base', 'Opportunities', 'record', options.meta, context, true);
     });
 
+    describe('rliCreateClose', function() {
+        afterEach(function() {
+            view.context.children = [];
+        });
+
+        it('should find and call child context loadData method', function() {
+            var rli_ctx = app.context.getContext();
+            rli_ctx.set('module', 'RevenueLineItems');
+            sinon.stub(rli_ctx, 'loadData', function() {});
+            view.context.children.push(rli_ctx);
+
+            view.rliCreateClose({});
+
+            expect(rli_ctx.loadData).toHaveBeenCalled();
+
+            rli_ctx.loadData.restore();
+        });
+    });
+
     describe('createLinkModel', function() {
         var parentModel, createBeanStub, relateFieldStub;
 
