@@ -120,6 +120,10 @@ class ForecastsConfigApi extends ConfigModuleApi
         if ($upgraded || empty($prior_forecasts_settings['is_setup'])) {
             require_once('modules/UpgradeWizard/uw_utils.php');
             updateOpportunitiesForForecasting();
+            //BEGIN SUGARCRM flav=ent ONLY
+            require_once('include/SugarQueue/jobs/SugarJobUpdateRevenueLineItems.php');
+            SugarJobUpdateRevenueLineItems::scheduleRevenueLineItemUpdateJobs(100);
+            //END SUGARCRM flav=ent ONLY
         }
 
         // we do the double check here since the front ent will send one one value if the input is empty
