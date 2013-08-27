@@ -408,7 +408,7 @@ class CurrentUserApi extends SugarApi
     {
         $val = $user->getPreference('timezone');
         if (!$val) {
-            $val = 'GMT';
+            $val = 'UTC';
         }
         
         return array('timezone' => $val);
