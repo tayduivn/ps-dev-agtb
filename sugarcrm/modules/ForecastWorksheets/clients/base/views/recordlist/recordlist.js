@@ -123,13 +123,12 @@
      * Tracks if the preview panel is visible or not
      */
     previewVisible: false,
-    plugins: ['tooltip'],
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins);
-        this.plugins.push('cte-tabbing');
-        this.plugins.push('dirty-collection');
+        this.plugins.push('cte-tabbing', 'dirty-collection', 'tooltip');
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
