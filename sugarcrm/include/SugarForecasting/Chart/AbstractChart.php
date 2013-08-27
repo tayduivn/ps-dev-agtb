@@ -198,7 +198,7 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
         $type = $config['timeperiod_leaf_interval'];
         $id = $this->getArg('timeperiod_id');
         if (!is_guid($id) && is_numeric($id)) {
-            $id = TimePeriod::getIdFromTimestamp($id);
+            $id = TimePeriod::getIdFromTimestamp($id, $type);
         }
         return TimePeriod::getByType($type, $id);
     }
