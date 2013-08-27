@@ -4159,6 +4159,9 @@ $app_strings = array (
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
 
+    'LBL_DASHLET_SAVED_REPORTS_CHART' => 'Saved Reports Chart Dashlet',
+    'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
+
     //SFA
     'LBL_BEST' => 'Best',
     'LBL_WORST' => 'Worst',

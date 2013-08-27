@@ -1,0 +1,149 @@
+describe('Base.Field.Chart', function() {
+    var field, app;
+    beforeEach(function() {
+        app = SugarTest.app;
+        field = SugarTest.createField('base','chart', 'chart', 'detail');
+    });
+    
+    afterEach(function() {
+        app = undefined;
+        field = undefined;
+    });
+
+    describe('getChartConfig()', function() {
+        var rawChartData;
+        beforeEach(function() {
+            rawChartData = {}
+            rawChartData.properties = {};
+            rawChartData.values = [0, 1, 2];
+            sinon.stub(field, 'bindDataChange', function() {});
+            sinon.stub(field, 'generateD3Chart', function() {});
+        });
+
+        afterEach(function() {
+            rawChartData = undefined;
+            field.bindDataChange.restore();
+            field.generateD3Chart.restore();
+        });
+
+        it('should return proper chart config -- pie chart', function() {
+            rawChartData.properties.type = 'pie chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.pieType).toEqual('basic');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('pieChart');
+        });
+
+        it('should return proper chart config -- line chart', function() {
+            rawChartData.properties.type = 'line chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.lineType).toEqual('basic');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('lineChart');
+        });
+
+        it('should return proper chart config -- funnel chart 3D', function() {
+            rawChartData.properties.type = 'funnel chart 3D'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.funnelType).toEqual('basic');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('funnelChart');
+        });
+
+        it('should return proper chart config -- gauge chart', function() {
+            rawChartData.properties.type = 'gauge chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.gaugeType).toEqual('basic');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('gaugeChart');
+        });
+
+        it('should return proper chart config -- stacked group by chart', function() {
+            rawChartData.properties.type = 'stacked group by chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('vertical');
+            expect(cfg.barType).toEqual('stacked');
+            expect(cfg.tip).toEqual('title');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+        it('should return proper chart config -- group by chart', function() {
+            rawChartData.properties.type = 'group by chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('vertical');
+            expect(cfg.barType).toEqual('grouped');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+        it('should return proper chart config -- bar chart', function() {
+            rawChartData.properties.type = 'bar chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('vertical');
+            expect(cfg.barType).toEqual('basic');
+            expect(cfg.tip).toEqual('label');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+        it('should return proper chart config -- horizontal group by chart', function() {
+            rawChartData.properties.type = 'horizontal group by chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('horizontal');
+            expect(cfg.barType).toEqual('stacked');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+        it('should return proper chart config -- horizontal bar chart', function() {
+            rawChartData.properties.type = 'horizontal bar chart'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('horizontal');
+            expect(cfg.barType).toEqual('basic');
+            expect(cfg.tip).toEqual('label');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+        it('should return proper chart config -- horizontal', function() {
+            rawChartData.properties.type = 'horizontal'
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('horizontal');
+            expect(cfg.barType).toEqual('basic');
+            expect(cfg.tip).toEqual('label');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+        it('should return proper chart config -- default', function() {
+            rawChartData.properties.type = ''
+            field.model.set({rawChartData: rawChartData});
+
+            var cfg = field.getChartConfig();
+            expect(cfg.orientation).toEqual('vertical');
+            expect(cfg.barType).toEqual('stacked');
+            expect(cfg.tip).toEqual('name');
+            expect(cfg.chartType).toEqual('barChart');
+        });
+
+    });
+
+});
+

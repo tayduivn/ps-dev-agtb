@@ -1,33 +1,20 @@
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
- */
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
 
-// $Id$
 
-function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callback) {
+
+
+function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, callback) {
     this.chartObject = "";
 
     // get chartId from params or use the default for sugar
@@ -46,24 +33,24 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
         /**
          * the main container to render chart
          */
-        contentEl = 'content',
+            contentEl = 'content',
         /**
          * with of one column to render bars
          */
-        minColumnWidth = 40;
+            minColumnWidth = 40;
 
     params = params ? params : {};
 
     contentEl = params.contentEl || contentEl;
     minColumnWidth = params.minColumnWidth || minColumnWidth;
 
-	switch(chartConfig["chartType"]) {
+    switch(chartConfig["chartType"]) {
 
         case "paretoChart":
-            SUGAR.charts.get(jsonFilename, params, function(data) {
+            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
 
-                if(SUGAR.charts.isDataEmpty(data)){
-                    var json = SUGAR.charts.translateParetoDataToD3(data,params,chartConfig);
+                if(SUGAR.chartsD3.isDataEmpty(data)){
+                    var json = SUGAR.chartsD3.translateParetoDataToD3(data,params,chartConfig);
 
                     var marginBottom = (chartConfig["orientation"] == 'vertical' && data.values.length > 8) ? 20*4 : 20;
 
@@ -108,17 +95,17 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
                     that.chartObject = paretoChart;
 
-                    SUGAR.charts.setChartObject(paretoChart);
+                    SUGAR.chartsD3.setChartObject(paretoChart);
                 }
-                SUGAR.charts.callback(callback);
+                SUGAR.chartsD3.callback(callback);
             });
             break;
 
         case "barChart":
-            SUGAR.charts.get(jsonFilename, params, function(data) {
+            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
 
-                if (SUGAR.charts.isDataEmpty(data)) {
-                    var json = SUGAR.charts.translateDataToD3(data,params,chartConfig);
+                if (SUGAR.chartsD3.isDataEmpty(data)) {
+                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
                     var marginBottom = (chartConfig["orientation"] === 'vertical' && data.values.length > 8) ? 20*3 : 20;
                     var marginLeft = (chartConfig["orientation"] === 'vertical') ? 45 : 20;
@@ -155,17 +142,17 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
                     that.chartObject = barChart;
 
-                    SUGAR.charts.setChartObject(barChart);
+                    SUGAR.chartsD3.setChartObject(barChart);
                 }
 
-                SUGAR.charts.callback(callback);
+                SUGAR.chartsD3.callback(callback);
             });
             break;
 
         case "lineChart":
-            SUGAR.charts.get(jsonFilename, params, function(data) {
-                if(SUGAR.charts.isDataEmpty(data)){
-                    var json = SUGAR.charts.translateDataToD3(data,params,chartConfig);
+            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+                if(SUGAR.chartsD3.isDataEmpty(data)){
+                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
                     var xLabels = data.label;
 
                     var lineChart = nv.models.lineChart()
@@ -198,16 +185,16 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
                     that.chartObject = lineChart;
 
-                    SUGAR.charts.setChartObject(lineChart);
+                    SUGAR.chartsD3.setChartObject(lineChart);
                 }
-                SUGAR.charts.callback(callback);
+                SUGAR.chartsD3.callback(callback);
             });
             break;
 
-		case "pieChart":
-            SUGAR.charts.get(jsonFilename, params, function(data) {
-                if(SUGAR.charts.isDataEmpty(data)){
-                    var json = SUGAR.charts.translateDataToD3(data,params,chartConfig);
+        case "pieChart":
+            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+                if(SUGAR.chartsD3.isDataEmpty(data)){
+                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
                     var pieChart = nv.models.pieChart()
                         .margin({top: 0, right: 0, bottom: 20, left: 45})
@@ -226,17 +213,16 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
                     that.chartObject = pieChart;
 
-                    SUGAR.charts.setChartObject(pieChart);
+                    SUGAR.chartsD3.setChartObject(pieChart);
                 }
-                SUGAR.charts.callback(callback);
+                SUGAR.chartsD3.callback(callback);
             });
-
             break;
 
-		case "funnelChart":
-            SUGAR.charts.get(jsonFilename, params, function(data) {
-                if(SUGAR.charts.isDataEmpty(data)){
-                    var json = SUGAR.charts.translateDataToD3(data,params,chartConfig);
+        case "funnelChart":
+            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+                if(SUGAR.chartsD3.isDataEmpty(data)){
+                    var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
                     var funnelChart = nv.models.funnelChart()
                         .margin({top: 0, right: 0, bottom: 20, left: 45})
@@ -260,16 +246,15 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
                     that.chartObject = funnelChart;
 
-                    SUGAR.charts.setChartObject(funnelChart);
+                    SUGAR.chartsD3.setChartObject(funnelChart);
                 }
-                SUGAR.charts.callback(callback);
+                SUGAR.chartsD3.callback(callback);
             });
+            break;
 
-			break;
-
-		case "gaugeChart":
-            SUGAR.charts.get(jsonFilename, params, function(data) {
-                if(SUGAR.charts.isDataEmpty(data)){
+        case "gaugeChart":
+            SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+                if(SUGAR.chartsD3.isDataEmpty(data)){
                     var properties = $jit.util.splat(data.properties)[0];
 
                     //init Gauge Chart
@@ -346,36 +331,35 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                     //load JSON data.
                     gaugeChart.loadJSON(data);
 
-                    var list = SUGAR.charts.generateLegend(gaugeChart, chartId);
+                    var list = SUGAR.chartsD3.generateLegend(gaugeChart, chartId);
 
                     //save canvas to image for pdf consumption
                     $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 
-                    SUGAR.charts.trackWindowResize(gaugeChart, chartId, data);
+                    SUGAR.chartsD3.trackWindowResize(gaugeChart, chartId, data);
                     that.chartObject = gaugeChart;
                 }
-                SUGAR.charts.callback(callback);
+                SUGAR.chartsD3.callback(callback);
             });
-
-			break;
-	}
+            break;
+    }
 }
-
-function updateChart(jsonFilename, chart, params) {
-    params = params ? params : {};
-    SUGAR.charts.get(jsonFilename, params, function(data) {
-        if(SUGAR.charts.isDataEmpty(data)){
-            chart.busy = false;
-            chart.updateJSON(data);
-        }
-    });
-}
-
+/*
+ function updateChart(jsonFilename, chart, params) {
+ params = params ? params : {};
+ SUGAR.chartsD3.get(jsonFilename, params, function(data) {
+ if(SUGAR.chartsD3.isDataEmpty(data)){
+ chart.busy = false;
+ chart.updateJSON(data);
+ }
+ });
+ }
+ */
 function swapChart(chartId,jsonFilename,css,chartConfig){
     $("#"+chartId).empty();
     $("#legend"+chartId).empty();
     $("#tiptip_holder").empty();
-    var chart = new loadSugarChart(chartId,jsonFilename,css,chartConfig);
+    var chart = new loadSugarChartD3(chartId,jsonFilename,css,chartConfig);
     return chart;
 }
 
@@ -387,7 +371,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
     if (typeof SUGAR == "undefined" || !SUGAR) {
         SUGAR = {};
     }
-    SUGAR.charts = {
+    SUGAR.chartsD3 = {
 
         chart : null,
         /**
@@ -475,24 +459,16 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         },
 
         /**
-         * Calls the server to retrieve chart data
+         * @override
          *
-         * @param url - target url
+         * For D3 charts we already have the data, don't need to make an ajax call to get anything
+         *
+         * @param data - JSON data for the chart
          * @param param - object of parameters to pass to the server
-         * @param success - callback function to be executed after a successful call
+         * @param success - callback function to be executed
          */
-        get: function(url, params, success) {
-            var data = {
-                r: new Date().getTime()
-            };
-            $.extend(data, params);
-            $.ajax({
-                url: url,
-                data: data,
-                dataType: 'json',
-                async: false,
-                success: success
-            });
+        get: function(data, params, success) {
+            success(data);
         },
 
         translateDataToD3 : function( json, params, chartConfig ) {
@@ -504,54 +480,54 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
                     case "barChart":
                         data = (chartConfig.barType === 'stacked') ?
-                                json.label.map( function(d,i){
-                                    return {
-                                        "key": (d !== '')?d:'undefined',
-                                        "type": "bar",
-                                        "values": json.values.map( function(e,j) {
-                                            return { "series": i, "x": j+1, "y": (parseInt(e.values[i],10) || 0), y0: 0 };
-                                        })
-                                    };
-                                }) :
-                                json.values.map( function(d,i){
-                                    return {
-                                        "key": (d.label[0] !== '')?d.label[0]:'undefined',
-                                        "type": "bar",
-                                        "values": json.values.map( function(e,j) {
-                                            return { "series": i, "x": j+1, "y": (i===j?parseInt(e.values[0],10):0), y0: 0 };
-                                        })
-                                    };
-                                });
+                            json.label.map( function(d,i){
+                                return {
+                                    "key": (d !== '')?d:'undefined',
+                                    "type": "bar",
+                                    "values": json.values.map( function(e,j) {
+                                        return { "series": i, "x": j+1, "y": (parseInt(e.values[i],10) || 0), y0: 0 };
+                                    })
+                                };
+                            }) :
+                            json.values.map( function(d,i){
+                                return {
+                                    "key": (d.label[0] !== '')?d.label[0]:'undefined',
+                                    "type": "bar",
+                                    "values": json.values.map( function(e,j) {
+                                        return { "series": i, "x": j+1, "y": (i===j?parseInt(e.values[0],10):0), y0: 0 };
+                                    })
+                                };
+                            });
                         break;
 
                     case "pieChart":
                         data = json.values.map( function(d,i){
-                                    return {
-                                        "key": (d.label[0] !== '')?d.label[0]:'undefined',
-                                        "value": parseInt(d.values[0],10)
-                                    };
-                                });
+                            return {
+                                "key": (d.label[0] !== '')?d.label[0]:'undefined',
+                                "value": parseInt(d.values[0],10)
+                            };
+                        });
                         break;
 
                     case "funnelChart":
                         data = json.values.map( function(d,i){
-                                    return {
-                                        "key": (d.label[0] !== '')?d.label[0]:'undefined',
-                                        "values": [{ "series": i, "x": 0, "y": (parseInt(d.values[0],10) || 0), y0: 0 }]
-                                    };
-                                });
+                            return {
+                                "key": (d.label[0] !== '')?d.label[0]:'undefined',
+                                "values": [{ "series": i, "x": 0, "y": (parseInt(d.values[0],10) || 0), y0: 0 }]
+                            };
+                        });
                         break;
 
 
                     case "lineChart":
                         data = json.values.map( function(d,i){
-                                    return {
-                                        "key": (d.label !== '')?d.label:'undefined',
-                                        "values": d.values.map( function(e,j) {
-                                            return [j, parseInt(e,10)];
-                                        })
-                                    };
-                                });
+                            return {
+                                "key": (d.label !== '')?d.label:'undefined',
+                                "values": d.values.map( function(e,j) {
+                                    return [j, parseInt(e,10)];
+                                })
+                            };
+                        });
                         break;
                 }
             }
@@ -562,20 +538,20 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                     // bar group data (x-axis)
                     "labels": (!json.values.filter(function(d) { return d.values.length; }).length) ? []
                         : json.values.map( function(d,i) {
-                            return {
-                                "group": i+1,
-                                "l": (d.label !== '')?d.label:'undefined'
-                            };
-                        }),
+                        return {
+                            "group": i+1,
+                            "l": (d.label !== '')?d.label:'undefined'
+                        };
+                    }),
                     "values": (!json.values.filter(function(d) { return d.values.length; }).length) ? []
                         : json.values.map( function(d,i) {
-                            return {
-                                "group": i+1,
-                                "t": d.values.reduce( function(p, c, i, a) {
-                                    return parseInt(p,10) + parseInt(c,10);
-                                })
-                            };
-                        })
+                        return {
+                            "group": i+1,
+                            "t": d.values.reduce( function(p, c, i, a) {
+                                return parseInt(p,10) + parseInt(c,10);
+                            })
+                        };
+                    })
                 },
                 // series data
                 "data": data
@@ -590,14 +566,14 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                     // bar group data (x-axis)
                     'groupData': (!json.values.filter(function(d) { return d.values.length; }).length) ? []
                         : json.values.map( function(d,i){
-                            return {
-                                'group': i,
-                                'l': json.values[i].label,
-                                't': json.values[i].values.reduce( function(p, c, i, a){
-                                    return parseInt(p,10) + parseInt(c,10);
-                                })
-                            };
-                        })
+                        return {
+                            'group': i,
+                            'l': json.values[i].label,
+                            't': json.values[i].values.reduce( function(p, c, i, a){
+                                return parseInt(p,10) + parseInt(c,10);
+                            })
+                        };
+                    })
                 },
                 // series data
                 'data': (!json.values.filter(function(d) { return d.values.length; }).length) ? [] :
@@ -614,22 +590,22 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                             })
                         };
                     }).concat(
-                        json.properties[0].goal_marker_label.filter( function(d,i){
-                            return d !== 'Quota';
-                        }).map( function(d,i){
-                            return {
-                                'key': d,
-                                'type': 'line',
-                                'series': i,
-                                'values': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
-                                }),
-                                'valuesOrig': json.values.map( function(e,j){
-                                    return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                            json.properties[0].goal_marker_label.filter( function(d,i){
+                                return d !== 'Quota';
+                            }).map( function(d,i){
+                                    return {
+                                        'key': d,
+                                        'type': 'line',
+                                        'series': i,
+                                        'values': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        }),
+                                        'valuesOrig': json.values.map( function(e,j){
+                                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                                        })
+                                    };
                                 })
-                            };
-                        })
-                    )
+                        )
             };
         },
         /**
