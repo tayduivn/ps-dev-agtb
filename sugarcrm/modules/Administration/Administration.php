@@ -266,7 +266,7 @@ class Administration extends SugarBean {
      */
     public function getAllSettings()
     {
-        $sql = 'SELECT category, name, value, platform FROM {$this->table_name}';
+        $sql = "SELECT category, name, value, platform FROM {$this->table_name}";
         $rows = $this->db->query($sql);
 
         $return = array();
