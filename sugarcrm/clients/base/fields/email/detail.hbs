@@ -27,12 +27,15 @@
  ********************************************************************************/
 }}
 {{#each value}}
-<div class="control-group email ellipsis-container">
-  <div class="ellipsis-row">
-    <span class="ellipsis-cell" data-original-title="{{email_address}} {{flagLabel}}" data-placement="bottom">
-        {{#if hasAnchor}}<a class="ellipsis_inline{{#if ../../useSugarEmailClient}} composeEmail{{/if}}" href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>{{else}}<del class="ellipsis_inline">{{email_address}}</del>{{/if}}
-    </span>
-    <label class="ellipsis-addon">{{flagLabel}}</label>
-  </div>
+<div class="control-group email">
+    {{#if hasAnchor}}
+	    <a rel="tooltip" data-original-title="{{email_address}}{{#notEq flagLabel ''}}, {{flagLabel}}{{/notEq}}" data-placement="bottom" class="ellipsis_inline{{#if ../../useSugarEmailClient}} composeEmail{{/if}}" href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>
+    {{else}}
+	    {{#eq flagClass 'invalid'}}
+		    <del rel="tooltip" data-original-title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</del>
+	    {{else}}
+	        <span rel="tooltip" data-original-title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</span>
+	    {{/eq}}
+    {{/if}}
 </div>
 {{/each}}
