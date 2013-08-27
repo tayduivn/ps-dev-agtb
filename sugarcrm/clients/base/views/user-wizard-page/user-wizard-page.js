@@ -43,7 +43,6 @@
      */
     beforeNext: function(callback) {
         var self = this;
-        this.clearValidationErrors();
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
                 if (isValid) {
