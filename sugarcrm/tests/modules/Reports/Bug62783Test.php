@@ -37,16 +37,15 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
 
         // Setup Forecast defaults
+        SugarTestForecastUtilities::setUpForecastConfig();
         ForecastsDefaults::setupForecastSettings();
     }
 
     public function tearDown()
     {
-        //Clear config table of Forecasts values
-        $db = DBManagerFactory::getInstance();
-        $db->query("DELETE FROM config WHERE category = 'Forecasts'");
-
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestHelper::tearDown();
     }
 
@@ -101,10 +100,13 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
         $admin->saveSetting('Forecasts', 'timeperiod_start_date', json_encode($startDate), 'base');
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
-
-        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $id = create_guid();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->date_closed = $startDate;
+        $rli->opportunity_id = $id;
+        $rli->save();
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
         $opportunity->date_closed = $startDate;
-        $opportunity->save();
 
         $reportDef = preg_replace('/\s\s+/', '', str_replace('{REPLACE}', $opportunity->id, $reportDef));
 
