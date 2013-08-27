@@ -22,3 +22,11 @@ $hook_array['process_record'][] = array(
     'ForecastManagerWorksheetHooks',
     'fixDateModified',
 );
+
+$hook_array['after_retrieve'][] = array(
+    1,
+    'fixDateModified',
+    'modules/ForecastManagerWorksheets/ForecastManagerWorksheetHooks.php',
+    'ForecastManagerWorksheetHooks',
+    'fixDateModified',
+);
