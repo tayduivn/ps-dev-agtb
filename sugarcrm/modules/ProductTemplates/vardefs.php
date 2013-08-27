@@ -246,7 +246,10 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'vname' => 'LBL_COST_USDOLLAR',
 		'type' => 'currency',
 		'len' => '26,6',
-		'comment' => 'Cost expressed in USD'
+		'comment' => 'Cost expressed in USD',
+		'studio' => array(
+			'mobile' => false,
+		),
 	),
 	'discount_usdollar' =>
 	array (
@@ -254,7 +257,10 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'vname' => 'LBL_DISCOUNT_USDOLLAR',
 		'type' => 'currency',
 		'len' => '26,6',
-		'comment' => 'Discount price expressed in USD'
+		'comment' => 'Discount price expressed in USD',
+		'studio' => array(
+			'mobile' => false,
+		),
 	),
 	'list_usdollar' =>
 	array (
@@ -262,7 +268,10 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'vname' => 'LBL_LIST_USDOLLAR',
 		'type' => 'currency',
 		'len' => '26,6',
-		'comment' => 'List price expressed in USD'
+		'comment' => 'List price expressed in USD',
+		'studio' => array(
+			'mobile' => false,
+		),
 	),
 	'currency_id' =>
 	array (
