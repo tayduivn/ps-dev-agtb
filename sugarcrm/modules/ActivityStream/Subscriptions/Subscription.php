@@ -268,7 +268,6 @@ class Subscription extends Basic
         }
     }
 
-
     /**
      * Helper for processing subscriptions on a bean-related activity.
      *
@@ -276,7 +275,7 @@ class Subscription extends Basic
      * @param  Activity  $act
      * @param  array     $args
      */
-    public function processSubscriptions(SugarBean $bean, Activity $act, array $args, $params = array())
+    public static function processSubscriptions(SugarBean $bean, Activity $act, array $args, $params = array())
     {
         $userPartials          = self::getSubscribedUsers($bean, 'array', $params);
         $data                  = array(
