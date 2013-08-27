@@ -26,7 +26,7 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'display_columns' =>
                                 array(
                                     'full_name',
@@ -34,8 +34,6 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array(
                                     'phone_work',
                                     'status',
                                 ),
-                                'my_items' => '1',
-                                'display_rows' => 5,
                             ),
                             'context' =>
                             array(
@@ -49,15 +47,13 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'display_columns' =>
                                 array(
                                     'bug_number',
                                     'name',
                                     'status',
                                 ),
-                                'my_items' => '1',
-                                'display_rows' => 5,
                             ),
                             'context' =>
                             array(

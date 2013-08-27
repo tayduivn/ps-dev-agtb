@@ -107,7 +107,7 @@
                 {
                     layout: {
                         type: 'dashlet',
-                        label: app.lang.get(metadata.name, metadata.preview.module),
+                        label: app.lang.get(metadata.preview.label || metadata.name, metadata.preview.module),
                         preview: true,
                         components: [
                             component

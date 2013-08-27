@@ -112,11 +112,6 @@ $mod_strings = array (
     'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 
-
-    //Dashlet
-    'LBL_DASHLET_LISTVIEW_NAME' => 'My Assigned Bugs',
-    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Bugs assigned to you',
-
     //BEGIN SUGARCRM flav=ent ONLY
     //Tour content
     'LBL_PORTAL_TOUR_RECORDS_INTRO' => 'The Bugs module is for viewing and reporting bugs.  Use the arrows below to go through a quick tour.',

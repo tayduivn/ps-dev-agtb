@@ -220,7 +220,7 @@ $mod_strings = array (
 
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_PASSWORD_CHANGE_FORM_TITLE' => 'Password Change',
-    'LBL_OLD_PORTAL_PASSWORD' => 'Old Portal Password',  
+    'LBL_OLD_PORTAL_PASSWORD' => 'Old Portal Password',
     'LBL_PORTAL_PASSWORD' => 'Portal Password',
     'LBL_CONFIRM_PORTAL_PASSWORD' => 'Confirm Portal Password',
     'LBL_LANG_PREF_TOOLTIP' => 'The Support Portal user interface is rendered in the language selected here',
@@ -251,8 +251,6 @@ $mod_strings = array (
     'LBL_FILENAME' => 'Attachment',
 
     //Dashlet
-    'LBL_DASHLET_LISTVIEW_NAME' => 'My Contacts',
-    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your contacts',
     'LBL_TWITTER' => 'Twitter ID',
 
     //Document title
@@ -266,5 +264,4 @@ $mod_strings = array (
     'LBL_PORTAL_TOUR_PROFILE_LANGUAGE' => 'Here is where you can set your preferred language.  This will change the language used by Sugar Portal.',
     'LBL_PORTAL_TOUR_PROFILE_RETURN' => 'You can return to your Profile at any time using the User menu.',
     //END SUGARCRM flav=ent ONLY
-)
-?>
+);

@@ -1,30 +1,16 @@
-<?php	
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+<?php
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 class MBLanguage{
 		var $iTemplates = array();
 		var $templates = array();
@@ -37,35 +23,33 @@ class MBLanguage{
         $this->label = $label;
         $this->label_singular = $label_singular;
     }
-		
+
 		function load(){
 			$this->generateModStrings();
 			$this->generateAppStrings();
 		}
-		
+
 		function loadStrings($file)
         {
             $module = strtoupper($this->name);
             $object_name = strtoupper($this->key_name);
-            $_object_name = strtolower($this->name);		
+            $_object_name = strtolower($this->name);
 			if(!file_exists($file))return;
-			
+
 			$d = dir($file);
 			while($e = $d->read()){
 				if(substr($e, 0, 1) != '.' && is_file($file . '/' . $e)){
 					include($file.'/'. $e);
 					if(empty($this->strings[$e])){
-						
+
 						$this->strings[$e] = $mod_strings;
 					}else{
 						$this->strings[$e] = array_merge($this->strings[$e], $mod_strings);
 					}
-					
-					
 				}
 			}
 		}
-		
+
 	    function loadAppListStrings($file){
             if(!file_exists($file))return;
 			//we may not need this when loading in the app strings, but there is no harm
@@ -77,21 +61,19 @@ class MBLanguage{
 				if(substr($e, 0, 1) != '.' && is_file($file . '/' . $e)){
 					include($file.'/'. $e);
 					if(empty($this->appListStrings[$e])){
-						
+
 						$this->appListStrings[$e] = $app_list_strings;
 					}else{
 						$this->appListStrings[$e] = array_merge($this->appListStrings[$e], $app_list_strings);
 					}
-					
-					
 				}
 			}
 		}
-		
+
 		function generateModStrings(){
 			$this->strings = array();
 			$this->loadTemplates();
-			
+
 			foreach($this->iTemplates as $template=>$val){
 				$file = MB_IMPLEMENTS . '/' . $template . '/language';
 				$this->loadStrings($file);
@@ -102,7 +84,7 @@ class MBLanguage{
 			}
 			$this->loadStrings($this->path . '/language');
 		}
-		
+
 		function getModStrings($language='en_us'){
 			$language .= '.lang.php';
 			if(!empty($this->strings[$language]) && $language != 'en_us.lang.php'){
@@ -121,13 +103,13 @@ class MBLanguage{
 			$empty = array();
 			return $empty;
 		}
-		
+
 		function generateAppStrings($buildFromTemplate = true){
 			$this->appListStrings = array('en_us.lang.php'=>array());
 			//By default, generate app strings for the current language as well.
 			$this->appListStrings[$GLOBALS [ 'current_language' ] . ".lang.php"] = array();
 			$this->loadAppListStrings($this->path . '/../../language/application');
-			
+
 			if($buildFromTemplate){
 				//go through the templates application strings and load anything that is needed
 				foreach($this->iTemplates as $template=>$val){
@@ -167,7 +149,6 @@ class MBLanguage{
                 'LNK_IMPORT_VCARD' => translate('LBL_IMPORT') . " " . $this->label_singular . ' vCard',
                 'LBL_IMPORT' => translate('LBL_IMPORT') . " " . $this->label_singular,
                 'LBL_IMPORT_VCARDTEXT' => "Automatically create a new {$this->label_singular} record by importing a vCard from your file system.",
-                'LBL_DASHLET_NAME' => $this->label . ' ' . translate('LBL_DASHLET'),
             );
             foreach ($required as $k => $v) {
                 $values[$k] = $v;
@@ -186,16 +167,13 @@ class MBLanguage{
                 include $neededFile;
             }
 
-
             if (!$duplicate) {
                 unset($values['moduleList'][$this->key_name]);
             }
 
-
             $values = sugarLangArrayMerge($values, $app_list_strings);
             $values['moduleList'][$key_name] = $this->label;
             $values['moduleListSingular'][$key_name] = $this->label_singular;
-
 
             $appFile = $header . "\n";
             require_once('include/utils/array_utils.php');
@@ -217,10 +195,10 @@ class MBLanguage{
             sugar_file_put_contents_atomic($app_save_path . '/' . $lang, $appFile);
         }
     }
-		
+
 		/**
-		*  If there is no this dropdown list  in  custom\modulebuilder\packages\$package\language\application\$lang.lang.php , 
-		*  we will include it from global app_list_string array into custom\modulebuilder\packages\$package\language\application\$lang.lang.php 
+		*  If there is no this dropdown list  in  custom\modulebuilder\packages\$package\language\application\$lang.lang.php ,
+		*  we will include it from global app_list_string array into custom\modulebuilder\packages\$package\language\application\$lang.lang.php
 		*  when we create a dropdown filed  and the value is created in MB.(#20728 )
 		**/
 		function getGlobalAppListStringsForMB(&$values){
@@ -229,17 +207,17 @@ class MBLanguage{
 				if(!isset($values[$_REQUEST['options']])){
 					global $app_list_strings;
 					if(!empty($app_list_strings[$_REQUEST['options']])){
-						$values[$_REQUEST['options']]  = $app_list_strings[$_REQUEST['options']];						
+						$values[$_REQUEST['options']]  = $app_list_strings[$_REQUEST['options']];
 					}
 				}
 			}
 		}
-		
+
 		function build($path){
 			if(file_exists($this->path.'/language/'))
 			copy_recursive($this->path.'/language/', $path . '/language/');
 		}
-		
+
 		function loadTemplates() {
 			if(empty($this->templates)){
 				if (file_exists("$this->path/config.php")) {
@@ -249,9 +227,9 @@ class MBLanguage{
 				}
 			}
 		}
-		
+
 		/**
-		 * Reset the templates and load the language files again.  This is called from 
+		 * Reset the templates and load the language files again.  This is called from
 		 * MBModule->save() once the config file has been written.
 		 */
 		function reload(){
@@ -277,6 +255,4 @@ class MBLanguage{
 
             return $label;
         }
-		
-	
 }

@@ -32,6 +32,9 @@
                 dashletMeta = app.metadata.getLayout(dashletDef.layout.module, dashletDef.layout.name || dashletDef.layout.type);
                 dashletModule = dashletDef.layout.module ? dashletDef.layout.module : null;
             }
+            if (!dashletModule && dashletDef.context && dashletDef.context.module) {
+                dashletModule = dashletDef.context.module;
+            }
             if (pattern.test(this.meta.label)) {
                 label = app.lang.get(label, dashletModule, dashletDef.view || dashletDef.layout);
             }
@@ -293,11 +296,6 @@
             }
         }, function(model) {
             if(!model) return;
-
-            if (!model.hasChanged('label')) {
-                var dashletMeta = meta.view || meta.layout;
-                model.set('label', dashletMeta.label);
-            }
 
             var conf = model.toJSON(),
                 dash = {

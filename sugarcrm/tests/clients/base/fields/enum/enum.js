@@ -62,12 +62,12 @@ describe("enum field", function() {
         expect($.trim(actual)).toEqual(expected);
     });
 
-    it("should call loadEnumOptions and set enumOptions during render", function() {
+    it("should call loadEnumOptions and set items during render", function() {
         var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
         var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
         field.render();
         expect(loadEnumSpy.called).toBe(true);
-        expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+        expect(field.items).toEqual(app.lang.getAppListStrings());
         loadEnumSpy.restore();
     });
 
@@ -111,7 +111,7 @@ describe("enum field", function() {
             field.render();
             expect(callStub).toHaveBeenCalled();
             expect(renderSpy.calledTwice).toBe(true);
-            expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
+            expect(field.items).toEqual(app.lang.getAppListStrings());
             callStub.restore();
             renderSpy.restore();
         });
@@ -137,8 +137,8 @@ describe("enum field", function() {
             //second field should be ignored, once first ajax called is being called
             expect(apiSpy.calledTwice).toBe(false);
             _.each(expected, function(value, key) {
-                expect(field.enumOptions[key]).toBe(value);
-                expect(field2.enumOptions[key]).toBe(value);
+                expect(field.items[key]).toBe(value);
+                expect(field2.items[key]).toBe(value);
             });
             apiSpy.restore();
             field.dispose();

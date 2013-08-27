@@ -204,7 +204,6 @@ class MetaDataFiles
         'include/SugarObjects/templates/basic/clients/base/views/' => array(
             'edit',
             'detail',
-            'dashablelist',
         ),
     );
 

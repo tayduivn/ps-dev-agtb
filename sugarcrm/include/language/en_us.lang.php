@@ -3184,6 +3184,7 @@ $app_strings = array (
     'LBL_DASHLET_CONFIGURE_GENERAL' => 'General',
     'LBL_DASHLET_CONFIGURE_FILTERS' => 'Filters',
     'LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY' => 'Only My Items',
+    'LBL_DASHLET_CONFIGURE_MY_FAVORITES_ONLY' => 'Only My Favorites',
     'LBL_DASHLET_CONFIGURE_TITLE' => 'Title',
     'LBL_DASHLET_CONFIGURE_DISPLAY_ROWS' => 'Display Rows',
 
@@ -3216,8 +3217,8 @@ $app_strings = array (
     'LBL_DASHLET_MOVE' => 'Move',
     'LBL_DASHLET_TOGGLE' => 'Toggle Dashboard Visibility',
 
-    'LBL_DASHLET_LISTVIEW_NAME' => 'My List View',
-    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing records assigned to you',
+    'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
+    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
 
     'LBL_DASHLET_NEWS_NAME' => 'News',
     'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
@@ -4270,6 +4271,11 @@ $app_list_strings['tasks_limit_options'] = array (
 $app_list_strings['tasks_visibility_options'] = array (
     'user' => 'Yes',
     'group' => 'No',
+);
+
+$app_list_strings['list_visibility_options'] = array(
+    '1' => 'Yes',
+    '0' => 'No',
 );
 
 //top 10 opportunites chart config options

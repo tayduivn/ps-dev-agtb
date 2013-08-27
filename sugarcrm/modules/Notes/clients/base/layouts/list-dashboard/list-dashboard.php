@@ -26,15 +26,13 @@ $viewdefs['Notes']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'display_columns' =>
                                 array(
                                     'name',
                                     'billing_address_country',
                                     'billing_address_city',
                                 ),
-                                'my_items' => '1',
-                                'display_rows' => 5,
                             ),
                             'context' =>
                             array(
@@ -48,7 +46,7 @@ $viewdefs['Notes']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'display_columns' =>
                                 array(
                                     'full_name',
@@ -56,7 +54,6 @@ $viewdefs['Notes']['base']['layout']['list-dashboard'] = array(
                                     'email',
                                     'phone_work',
                                 ),
-                                'my_items' => '1',
                             ),
                             'context' =>
                             array(
