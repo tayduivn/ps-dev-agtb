@@ -231,6 +231,9 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
         $curDisplay = array_keys($curTabs[0]);
 
         if (isset($DISPLAY_ARR['display_tabs'])) {
+            //Put home back in.  It needs to be first display module in Sugar 7
+            array_unshift($DISPLAY_ARR['display_tabs'], 'Home');
+
             // Order is relevent on display modules, so a simple diff is not
             // sufficient in this case. We need sameness AND order.
             // NOTE: HIDE_ARR will always be changed if display is changed, so
@@ -497,5 +500,7 @@ $redirect .= ($new_pwd!='') ? "&pwd_set=".$new_pwd : '';
 // for the current user changing their own profile
 $sameUser = !empty($focus->id) && $focus->id == $GLOBALS['current_user']->id;
 $redirect .= $sameUser && $refreshMetadata ? '&refreshMetadata=1' : '';
-header("Location: {$redirect}");
+if (!headers_sent()) {
+    header("Location: {$redirect}");
+}
 ?>

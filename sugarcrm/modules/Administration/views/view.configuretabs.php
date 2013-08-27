@@ -70,7 +70,13 @@ class ViewConfiguretabs extends SugarView
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs_system();
-        
+        // Remove Home module from UI.  We add it back to front of display tab list on save.
+        if (isset($tabs[0]['Home'])) {
+            unset($tabs[0]['Home']);
+        }
+        if (isset($tabs[1]['Home'])) {
+            unset($tabs[1]['Home']);
+        }
         $enabled= array();
         foreach ($tabs[0] as $key=>$value)
         {
