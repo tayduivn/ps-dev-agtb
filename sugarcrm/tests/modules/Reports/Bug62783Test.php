@@ -439,7 +439,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 '2013-05-05',
                 '',
                 '+3 month',
-                ">= '2013-03-31 07:00:00'",
+                ">= '2013-04-01 07:00:00'",
                 "< '2013-07-01 07:00:00'",
                 'America/Los_Angeles'
             ),
@@ -479,8 +479,8 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 '2013-05-05',
                 '',
                 '+3 month',
-                ">= '2013-04-30 07:00:00'",
-                "< '2013-07-30 07:00:00'",
+                ">= '2013-05-01 07:00:00'",
+                "< '2013-08-01 07:00:00'",
                 'America/Los_Angeles'
             ),
             array('year',
