@@ -311,6 +311,12 @@
             .on('mousemove', mousemove)
             .on('mouseup', mouseup);
 
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                resize();
+            }
+        }, this);
+
         nv.utils.windowResize(resize);
     },
 
