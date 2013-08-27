@@ -52,7 +52,6 @@
      * @override
      */
     beforeNext: function(callback) {
-        this.clearValidationErrors();
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
                 if (isValid) {

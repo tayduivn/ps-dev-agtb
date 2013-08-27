@@ -72,7 +72,6 @@
 
     saveModel: function() {
         var fieldsToValidate = this.view.getFields(this.module);
-        this.view.clearValidationErrors();
         this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
     cancelEdit: function() {

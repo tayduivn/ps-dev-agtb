@@ -585,10 +585,11 @@ $app_list_strings = array (
     'Opportunities' => 'Opportunity',
 
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    'RevenueLineItems' => 'Revenue Line Item',
+    //END SUGARCRM flav=ent ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-
-    'Products' => 'Revenue Line Item',
-
+    'Products' => 'Quoted Line Item',
     'Quotes' => 'Quote',
     //END SUGARCRM flav=pro ONLY
 
@@ -1856,6 +1857,7 @@ $app_strings = array (
   'LBL_RECORD_SHOWMORE' => 'Show More', // Studio editing of record views
   'LBL_FAVORITE' => 'Favorite', // Record view header panel element
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
+  'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2013 SugarCRM Inc. All Rights Reserved.',
@@ -3076,7 +3078,6 @@ $app_strings = array (
     'LBL_OC_STATUS_TEXT' => 'Indicates whether or not the current user is able to use an Offline Client.',
     'LBL_OC_DEFAULT_STATUS' => 'Inactive',
     //END SUGARCRM flav=pro ONLY
-    'LBL_MERGE_DUPLICATES'  => 'Merge',
     'LBL_SEARCH_PARENT_RELATED_ITEM' => 'Search ...',
     'LBL_SAVED_SEARCH_SHORTCUT' => 'Saved Searches',
     'LBL_SEARCH_POPULATE_ONLY'=> 'Perform a search using the search form above',
@@ -3204,7 +3205,7 @@ $app_strings = array (
     'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
-    'LBL_DASHLET_NO_RECORDS' => 'No records were found at this time.',
+    'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
 
     /* Twitter Dashlet */
     'LBL_TWITTER_REPLY' => 'Reply',
@@ -3607,8 +3608,20 @@ $app_strings = array (
     'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS' => 'Preview disabled: Record removed or no access to record',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
     'LBL_DUPLICATES_FOUND' => '{{duplicateCount}} duplicates found.',
-    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+
     'LBL_SUCCESS' => 'Success',
+
+    //Merge Duplicates
+    'LBL_MERGE_DUPLICATES' => 'Merge Duplicates',
+    'LBL_MERGE_DUPLICATES_PROCEED' => 'Do you want to proceed?',
+    'LBL_MERGE_DUPLICATES_CONFIRM' => 'This action will delete following record(s):',
+    'LBL_MERGE'  => 'Merge',
+    'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
+    'TPL_MERGE_INVALID_NUMBER_RECORDS' =>
+        'Invalid number of records passed. The valid range is from 2 to {{maxRecords}} records.',
+    'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
+    'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
+        'All changes will be lost. Are you sure you want to continue?',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -3773,6 +3786,7 @@ $app_strings = array (
     'LBL_TASKS_SUBPANEL_TITLE' => 'Tasks',
     'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
+    'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LNK_SETTINGS' => 'Settings',
     'LBL_MOBILE_SUPPORT' => 'Support',
 
@@ -4079,7 +4093,6 @@ $app_strings = array (
     'LBL_ALERT_BROWSER_SUPPORT' => 'The following browser versions are recommended: <ul><li>Internet Explorer 9</li><li>Firefox 22</li><li>Safari 6</li><li>Chrome 27</li></ul>',
 
     //opportunity chart
-    'LBL_NO_OPPORTUNITY_DATA' => 'No data found.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM' => 'Selected record currently contains the following related values: {{{values}}}. Click "Confirm" to copy these values to this record. Click "Cancel" to retain the current values.',
     'TPL_OVERWRITE_POPULATED_DATA_CONFIRM_CONTACTS_ACCOUNTS' => 'Selected Account has related values: {{{values}}}. Click "Confirm" to copy these values to the Contact. Click "Cancel" to retain the current values.',
     'TPL_ALERT_OVERWRITE_POPULATED_DATA_FIELD' => '<a rel="tooltip" data-container="body" href="javascript:void(0)" title="From: {{before}} To: {{after}}">{{field_label}}</a>',
@@ -4103,9 +4116,6 @@ $app_strings = array (
     'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
     'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => 'My Teams Opportunities',
 
-    //News feed
-    'LBL_NEWS_FEED_NO_DATA' => 'No data found.',
-
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment. Type @ to mention a user. Type # to reference a record.',
@@ -4120,7 +4130,6 @@ $app_strings = array (
 
     //attachments dashlet
     'LBL_MODULE_ATTACHMENTS_TITLE' => '{{module}} attachments',
-    'LBL_NO_ATTACHMENTS_FOUND' => 'No attachments found',
     'LBL_CREATE_ATTACHMENT' => 'Create attachment',
     'LBL_DASHLET_REFRESH' => 'Refresh',
     'LBL_DASHLET_MOVE' => 'Move',

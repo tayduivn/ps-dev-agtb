@@ -297,7 +297,6 @@
     },
 
     saveClicked: function () {
-        this.clearValidationErrors();
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
 

@@ -39,6 +39,7 @@
     },
     _render: function() {
         var self = this;
+        self.setHeaderpaneTitle(" "); //Clear the default "Module Name" title
         self.lastQuery = self.context.get('query');
         self.fireSearchRequest(function(collection) {
             // Bug 57853: Will brute force dismiss search dropdown if still present.

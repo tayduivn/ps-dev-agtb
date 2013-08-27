@@ -23,7 +23,6 @@ describe('Base.Field.Fullname', function() {
         SugarTest.loadHandlebarsTemplate('list', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'edit');
-        SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'list');
         SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'fieldset');
         SugarTest.loadComponent('base', 'field', 'fullname');

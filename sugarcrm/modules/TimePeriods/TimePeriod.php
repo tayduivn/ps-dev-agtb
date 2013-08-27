@@ -1172,12 +1172,28 @@ class TimePeriod extends SugarBean
         return BeanFactory::getBean("{$type}TimePeriods", $id);
     }
 
-    public static function getIdFromTimestamp($timestamp)
+    /**
+     * @param integer $timestamp        The timestamp we are looking for
+     * @param string|null $type         The time of timeperiod to find, if null, it will default to the current type
+     *                                  configured for Forecasts
+     * @return bool
+     */
+    public static function getIdFromTimestamp($timestamp, $type = null)
     {
+        if (is_null($type)) {
+            // fetch the type
+            /* @var $admin Administration */
+            $admin = BeanFactory::getBean('Administration');
+            $settings = $admin->getConfigForModule('Forecasts', 'base');
+            $type = $settings['timeperiod_leaf_interval'];
+            unset($admin, $settings);
+        }
+
         $sq = new SugarQuery();
         $sq->select(array('id'));
         $sq->from(BeanFactory::getBean('TimePeriods'))->where()
             ->equals('is_fiscal_year', 0)
+            ->equals('type', $type)
             ->lte('start_date_timestamp', $timestamp)
             ->gte('end_date_timestamp', $timestamp);
 

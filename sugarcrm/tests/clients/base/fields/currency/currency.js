@@ -293,5 +293,34 @@ describe('Base.Fields.Currency', function() {
             field.render();
             expect(field.transactionValue).toEqual('');
         });
+
+        it('should convert value to different currency', function() {
+
+            var sandbox = sinon.sandbox.create();
+            model = app.data.createBean(moduleName, {
+                amount: 900.00,
+                currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
+                base_rate: 0.9
+            });
+            field.model = model;
+            field.bindDataChange();
+
+            sandbox.stub(app.currency, 'unformatAmountLocale', function() {
+                return false;
+            });
+            var convertAmount = sandbox.stub(app.currency, 'convertAmount', function() {
+                return false;
+            });
+            sandbox.stub(app.metadata, 'getCurrency', function() {
+                return false;
+            });
+
+            field.model.set('currency_id', '-99');
+            expect(convertAmount.calledOnce).toBeTruthy();
+
+            sandbox.restore();
+
+        });
+
     });
 });

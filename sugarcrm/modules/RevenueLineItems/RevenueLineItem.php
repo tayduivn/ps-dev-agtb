@@ -194,7 +194,7 @@ class RevenueLineItem extends SugarBean
             }
         }
 
-        if ($this->probability == '') {
+        if ($this->probability === '') {
             $this->mapProbabilityFromSalesStage();
         }
         
