@@ -196,13 +196,12 @@
         this.filterOpened = isOpened;
     },
     fireSearch:function (term) {
+        term = term || "";
         var options = {
-            limit:this.limit || null,
-            params:{}
+            limit: this.limit || null,
+            query: term
         };
-        if(term) {
-            options.params.q = term;
-        }
+        this.context.get("collection").resetPagination();
         this.context.resetLoadFlag(false);
         this.context.set('skipFetch', false);
         this.context.loadData(options);
