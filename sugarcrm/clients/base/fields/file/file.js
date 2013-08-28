@@ -109,7 +109,7 @@
                     },
                     {
                         htmlJsonFormat: false,
-                        passOAuthToken: false
+                        passOAuthToken: true
                     })};
             attachments.push(fileObj);
         }

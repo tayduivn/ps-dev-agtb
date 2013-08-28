@@ -33,8 +33,8 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['app'] = new SugarApplication();
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$this->sugar_config_old = $GLOBALS['sugar_config'];
-    	$_REQUEST['user_name'] = 'foo';
-    	$_REQUEST['user_password'] = 'bar';
+    	$_POST['user_name'] = $_REQUEST['user_name'] = 'foo';
+    	$_POST['user_password'] = $_REQUEST['user_password'] = 'bar';
     	$_SESSION['authenticated_user_id'] = true;
     	$_SESSION['hasExpiredPassword'] = false;
     	$_SESSION['isMobile'] = null;
@@ -46,11 +46,11 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
 	{
 	    unset($GLOBALS['current_user']);
 	    $GLOBALS['sugar_config'] = $this->sugar_config_old;
-	    unset($_REQUEST['login_module']);
-        unset($_REQUEST['login_action']);
-        unset($_REQUEST['login_record']);
-        unset($_REQUEST['user_name']);
-        unset($_REQUEST['user_password']);
+	    unset($_POST['login_module']);
+        unset($_POST['login_action']);
+        unset($_POST['login_record']);
+        unset($_POST['user_name']);
+        unset($_POST['user_password']);
         unset($_SESSION['authenticated_user_id']);
         unset($_SESSION['hasExpiredPassword']);
         unset($_SESSION['isMobile']);
@@ -60,10 +60,12 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
-        $_REQUEST['action'] = 'Authenticate';
-        $_REQUEST['login_module'] = 'foo';
-        $_REQUEST['login_action'] = 'bar';
-        $_REQUEST['login_record'] = '123';
+        $_POST['action'] = 'Authenticate';
+        $_POST['login_module'] = 'foo';
+        $_POST['login_action'] = 'bar';
+        $_POST['login_record'] = '123';
+        unset($_POST['user_name']);
+        unset($_POST['user_password']);
         unset($_REQUEST['user_name']);
         unset($_REQUEST['user_password']);
         $authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
@@ -81,10 +83,10 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
-        $_REQUEST['action'] = 'Authenticate';
-        $_REQUEST['login_module'] = 'foo';
-        $_REQUEST['login_action'] = 'bar';
-        $_REQUEST['login_record'] = '123';
+        $_POST['action'] = 'Authenticate';
+        $_POST['login_module'] = 'foo';
+        $_POST['login_action'] = 'bar';
+        $_POST['login_record'] = '123';
         $authController = new AuthenticationController((!empty($GLOBALS['sugar_config']['authenticationClass'])? $GLOBALS['sugar_config']['authenticationClass'] : 'SugarAuthenticate'));
 
         $url = '';
@@ -94,7 +96,7 @@ class Bug49069Test extends  Sugar_PHPUnit_Framework_TestCase
             'Location: index.php?module=foo&action=bar&record=123',
             $url
             );
-        
+
         $this->assertTrue(!empty($_REQUEST['user_name']), 'Assert that we automatically set a user_name in $_REQUEST');
         $this->assertEquals('foo', $_REQUEST['user_name']);
         $this->assertTrue(!empty($_REQUEST['user_password']), 'Assert that we automatically set a user_password in $_REQUEST');

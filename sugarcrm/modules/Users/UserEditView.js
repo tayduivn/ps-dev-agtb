@@ -372,7 +372,7 @@ function onUserEditView() {
         document.getElementById('user_theme_picker').onchange = function() {
             document.getElementById('themePreview').src =
                 "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
-            if (typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
+            if (themeGroupList && typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
                 themeGroupList[document.getElementById('user_theme_picker').value] ) {
                 document.getElementById('use_group_tabs_row').style.display = '';
             } else {

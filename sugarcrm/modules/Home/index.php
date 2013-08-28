@@ -110,12 +110,6 @@ if(!$hasUserPreferences){
                                              ));
 
         //END SUGARCRM flav=com ONLY
-        $dashlets[create_guid()] = array ('className' => 'SugarFeedDashlet',
-                                          'module' => 'SugarFeed',
-                                          'forceColumn' => 1,
-                                          'fileLocation' => $dashletsFiles['SugarFeedDashlet']['file'],
-                                          );
-
         $dashlets[create_guid()] = array('className' => 'iFrameDashlet',
                                          'module' => 'Home',
                                          'forceColumn' => 1,

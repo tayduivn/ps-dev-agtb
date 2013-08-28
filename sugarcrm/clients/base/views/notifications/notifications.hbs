@@ -6,7 +6,7 @@
         <button class="btn {{#if this.collection.length}}btn-danger{{else}}btn-inverse{{/if}} dropdown-toggle dtoggle"
                 data-toggle="dropdown"
                 data-action="open">
-            {{{this.collection.length}}
+            {{this.collection.length}}
             {{#if this.collection.next_offset}}{{#notEq this.collection.next_offset "-1"}}+{{/notEq}}{{/if}}
         </button>
         <div class="dropdown-menu scroll pull-right">

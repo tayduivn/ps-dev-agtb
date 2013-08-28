@@ -259,7 +259,6 @@
         var view = this.createView,
             model = view.model;
 
-        view.clearValidationErrors(view.editableFields);
         model.doValidate(view.getFields(view.module), _.bind(function(isValid) {
             if (isValid) {
                 this.markPanelComplete(model);

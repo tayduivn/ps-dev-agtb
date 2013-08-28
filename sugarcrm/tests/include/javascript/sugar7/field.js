@@ -20,7 +20,7 @@ describe('Sugar7 field extensions', function () {
     });
 
     describe('fallback flow', function() {
-        it('should fallback to the detail action if edit acl is failed', function() {
+        it('should fallback to the detail action if edit acl fails', function() {
             sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
                 return action !== 'edit';
             });
@@ -31,6 +31,18 @@ describe('Sugar7 field extensions', function () {
 
         it('should fallback to the noaccess if all acl is failed', function() {
             field = SugarTest.createField('base', 'name', 'base', 'edit');
+            sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
+                return !_.contains(['edit', 'detail', 'list', 'admin'], action);
+            });
+            sinon.collection.stub(field, 'showNoData', function() {
+                return false;
+            });
+            field._loadTemplate();
+            expect(field.action).toBe('noaccess');
+        });
+
+        it('should fallback to the noaccess if list acl fails', function() {
+            field = SugarTest.createField('base', 'name', 'base', 'list');
             sinon.collection.stub(app.acl, 'hasAccessToModel', function(action) {
                 return !_.contains(['edit', 'detail', 'list', 'admin'], action);
             });

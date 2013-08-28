@@ -550,6 +550,13 @@ class MetadataApi extends SugarApi
         if (isset($administration->settings['honeypot_on'])) {
             $configs['honeypot_on'] = true;
         }
+        if (isset($GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON'])) {
+            if ($GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON'] === '1' || $GLOBALS['sugar_config']['passwordsetting']['forgotpasswordON'] === true) {
+                $configs['forgotpasswordON'] = true;
+            } else {
+                $configs['forgotpasswordON'] = false;
+            }
+        }
 
         return $configs;
     }
@@ -590,7 +597,9 @@ class MetadataApi extends SugarApi
     protected function getModules()
     {
         // Loading a standard module list
-        return array_keys($GLOBALS['app_list_strings']['moduleList']);
+        $base = array_keys($GLOBALS['app_list_strings']['moduleList']);
+        // TODO - need to make this more extensible through configuration
+        return array_merge($base, array('Audit'));
     }
 
     /**

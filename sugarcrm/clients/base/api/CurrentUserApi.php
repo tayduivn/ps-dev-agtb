@@ -38,7 +38,10 @@ class CurrentUserApi extends SugarApi
         'email_link_type' => 'email_link_type',
         'default_locale_name_format' => 'default_locale_name_format',
     );
-    
+
+    const TYPE_ADMIN = "admin";
+    const TYPE_USER = "user";
+
     public function registerApiRest()
     {
         return array(
@@ -150,13 +153,17 @@ class CurrentUserApi extends SugarApi
         // Get the basics
         $user_data = $this->getBasicUserInfo();
 
-        if ( isset($args['platform']) ) {
+        if (isset($args['platform'])) {
             $platform = array(basename($args['platform']),'base');
         } else {
             $platform = array('base');
         }
         // Fill in the rest
-        $user_data['type'] = 'user';
+        $user_data['type'] = self::TYPE_USER;
+        if ($current_user->isAdmin()) {
+            $user_data['type'] = self::TYPE_ADMIN;
+        }
+        $user_data['show_wizard'] = $this->shouldShowWizard();
         $user_data['id'] = $current_user->id;
         $current_user->_create_proper_name_field();
         $user_data['full_name'] = $current_user->full_name;
@@ -170,27 +177,37 @@ class CurrentUserApi extends SugarApi
 
         $teams = $current_user->get_my_teams();
         $my_teams = array();
-        foreach ($teams AS $id => $name) {
+        foreach ($teams as $id => $name) {
             $my_teams[] = array("id" => $id, "name" => $name,);
         }
         $user_data['my_teams'] = $my_teams;
 
         $defaultTeams = TeamSetManager::getTeamsFromSet($current_user->team_set_id);
-        foreach ($defaultTeams AS $id => $team) {
+        foreach ($defaultTeams as $id => $team) {
             $defaultTeams[$id]['primary'] = false;
             if ($team['id'] == $current_user->team_id) {
                 $defaultTeams[$id]['primary'] = true;
             }
         }
         $user_data['preferences']['default_teams'] = $defaultTeams;
-        
-        // Send back a hash of this data for use by the client
-        $user_data['_hash'] = md5($current_user->date_modified);
         //END SUGARCRM flav=pro ONLY
+
+        // Send back a hash of this data for use by the client
+        $user_data['_hash'] = $current_user->getUserMDHash();
 
         return array('current_user' => $user_data);
     }
 
+    /**
+     * Returns TRUE if a user needs to run through the setup wizard after install
+     * Used when building $user_data['show_wizard']
+     * @return bool TRUE if client should run wizard
+     */
+    public function shouldShowWizard()
+    {
+        $current_user = $this->getUserBean();
+        return !filter_var($current_user->is_instance_configured, FILTER_VALIDATE_BOOLEAN);
+    }
 
     /**
      * Updates current user info
@@ -579,8 +596,8 @@ class CurrentUserApi extends SugarApi
         }
 
         // save the preferences to the db
-        $current_user->savePreferencesToDB();
-
+        $current_user->save();
+        $args['_hash'] = $current_user->getUserMDHash();
         return $args;
     }
 
@@ -626,7 +643,7 @@ class CurrentUserApi extends SugarApi
         $preferenceName = $this->getUserPreferenceName($args['preference_name']);
 
         $current_user->setPreference($preferenceName, $args['value'], 0, $category);
-        $current_user->savePreferencesToDB();
+        $current_user->save();
 
         return array($preferenceName => $args['value']);
     }
@@ -651,7 +668,7 @@ class CurrentUserApi extends SugarApi
         $preferenceName = $this->getUserPreferenceName($args['preference_name']);
 
         $current_user->setPreference($preferenceName, null, 0, $category);
-        $current_user->savePreferencesToDB();
+        $current_user->save();
 
         return $preferenceName;
     }

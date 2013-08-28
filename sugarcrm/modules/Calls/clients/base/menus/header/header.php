@@ -47,7 +47,7 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_IMPORT_CALLS',
         'acl_action' => 'import',
         'acl_module' => $moduleName,
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-upload',
     ),
     array(
         'route' => '#bwc/index.php?' . http_build_query(

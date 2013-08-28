@@ -191,9 +191,13 @@ $dictionary['Product'] = array(
             'dbType' => 'varchar',
             'type' => 'name',
             'len' => '50',
+            'unified_search' => true,
+            'full_text_search' => array('boost' => 1),
             'comment' => 'Name of the product',
             'reportable' => true,
             'importable' => 'required',
+            // always keep product_template_name in sync if it is not empty
+            'formula' => 'ifElse(equal($product_template_name, ""), $name, $product_template_name)',
         ),
         'mft_part_num' =>  array(
             'name' => 'mft_part_num',
@@ -899,13 +903,13 @@ $dictionary['Product'] = array(
             'relationship_type' => 'one-to-many'
         ),
         'products_revenuelineitems' =>  array(
-            'lhs_module' => 'Products',
-            'lhs_table' => 'products',
-            'lhs_key' => 'revenuelineitem_id',
-            'rhs_module' => 'RevenueLineItems',
-            'rhs_table' => 'revenue_line_items',
-            'rhs_key' => 'id',
-            'relationship_type' => 'one-to-many'
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'revenuelineitem_id',
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'relationship_type' => 'one-to-one'
         ),
         //END SUGARCRM flav=pro ONLY
     ),

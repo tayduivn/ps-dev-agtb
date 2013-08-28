@@ -189,6 +189,12 @@ $dictionary['User'] = array(
             ) ,
             'importable' => 'false',
         ) ,
+        'is_instance_configured' => array(
+            'name' => 'is_instance_configured',
+            'type' => 'bool',
+            'default' => '0',
+            'studio' => array('listview' => false, 'searchview'=>false, 'related' => false),
+        ),
         'is_admin' => array(
             'name' => 'is_admin',
             'vname' => 'LBL_IS_ADMIN',

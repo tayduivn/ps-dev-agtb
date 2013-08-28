@@ -57,7 +57,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'acl_module' => 'Products'
                 ),
                 array(
                     'type' => 'rowaction',
@@ -65,6 +65,13 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
                 ),
             ),
         ),
@@ -87,7 +94,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'readonly'      => true,
                 ),
                 array(
-                    'name' => 'product_template_name',
+                    'name' => 'name',
                     'required' => true,
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
@@ -108,19 +115,22 @@ $viewdefs['Products']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
+                    'name' => 'product_template_name',
+                    'label' => 'LBL_PRODUCT_TEMPLATE'
+                ),
+                array(
                     'name' => 'account_name',
                     'label' => 'LBL_ACCOUNT_NAME',
                     'related_fields' => array('account_id'),
                 ),
                 array(
-                    'name' => 'status',
-                    'label' => 'LBL_STATUS',
-                ),
-                array(
                     'name' => 'quote_name',
                     'label' => 'LBL_QUOTE_NAME',
                     'related_fields' => array('quote_id'),
-                    'span' => 12,
+                ),
+                array(
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
                 ),
                 'quantity',
                 array(

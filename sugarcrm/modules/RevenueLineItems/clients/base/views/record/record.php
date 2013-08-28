@@ -406,13 +406,11 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'type' => 'linkbutton',
                     'name' => 'link_create',
                     'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'linkbutton',
                     'name' => 'link_exist',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
@@ -427,7 +425,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'event' => 'button:convert_to_quote:click',
                     'name' => 'convert_to_quote_button',
                     'label' => 'LBL_CONVERT_TO_QUOTE',
-                    'acl_action' => 'view',
+                    'acl_module' => 'RevenueLineItems'
                 ),
                 //END SUGARCRM flav=ent ONLY
                 array(
@@ -436,6 +434,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
                 ),
             ),
         ),

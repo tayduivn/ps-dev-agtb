@@ -24,6 +24,7 @@ $viewdefs['Campaigns']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_CAMPAIGN_NAME',
           'enabled' => true,
           'default' => true,
+          'link' => true,
         ),
         array(
           'name' => 'status',

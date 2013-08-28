@@ -48,6 +48,7 @@
     hiddenPanelExists: false,
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.action = 'detail';
         app.events.on("preview:render", this._renderPreview, this);
         app.events.on("preview:collection:change", this.updateCollection, this);
         app.events.on("preview:close", this.closePreview,  this);
@@ -168,15 +169,13 @@
             this.stopListening(this.sourceModel);
         }
         this.sourceModel = sourceModel;
-        this.listenTo(this.sourceModel, 'sync', function() {
+        // If we've just sync'd, use sync'd model and re-render preview
+        this.listenTo(this.sourceModel, 'sync', function(model) {
             if (!this.model) {
                 return;
             }
-            this.model.fetch({
-                //Show alerts for this request
-                showAlerts: true,
-                fields: this.getFieldNames(this.model.module)
-            });
+            this.model = model;
+            this.renderPreview(this.model);
         }, this);
         this.listenTo(this.sourceModel, 'change', function() {
             if (!this.model) {
@@ -279,29 +278,20 @@
             //  If module not specified we need select module from model in collection by current index.
             var currModule = module || this.collection.models[currIndex].module;
             var moduleMeta = app.metadata.getModule(currModule);
-
-            // Some activity stream items aren't previewable - e.g. no detail views
-            // for "Meetings" module.
-            if( moduleMeta && _.isUndefined(moduleMeta.views.detail) ) {
-                currID = this.collection.models[currIndex].id;
-                this.switching = false;
-                this.switchPreview(data, currIndex, currID, currModule);
-            } else {
-                this.model = app.data.createBean(currModule);
-                this.bindUpdates(this.collection.models[currIndex]);
-                this.model.set("id", this.collection.models[currIndex].get("id"));
-                this.model.fetch({
-                    //Show alerts for this request
-                    showAlerts: true,
-                    success: function(model) {
-                        model.module = currModule;
-                        self.model = null;
-                        //Reset the preview
-                        app.events.trigger("preview:render", model, null, false);
-                        self.switching = false;
-                    }
-                });
-            }
+            this.model = app.data.createBean(currModule);
+            this.bindUpdates(this.collection.models[currIndex]);
+            this.model.set("id", this.collection.models[currIndex].get("id"));
+            this.model.fetch({
+                //Show alerts for this request
+                showAlerts: true,
+                success: function(model) {
+                    model.module = currModule;
+                    self.model = null;
+                    //Reset the preview
+                    app.events.trigger("preview:render", model, null, false);
+                    self.switching = false;
+                }
+            });
         }
     },
     toggleMoreLess: function() {

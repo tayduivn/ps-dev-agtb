@@ -1,0 +1,22 @@
+<div class="welcome">
+    <div class="thumbnail modal">
+        <div class="modal-header modal-header-firstlogin">
+            <div class="row-fluid">
+                <div class="span1">
+                    <span class="pull-left step-circle">
+                        <span>{{progress.page}}</span>
+                    </span>
+                </div>
+                <div class="span5 firstlogin-title">
+                    <h3>{{str meta.title module}}</h3>
+                    <span>{{str meta.message module}}</span>
+                </div>
+                <div class="span6 progress-section">
+                    <span>{{str "LBL_SETUP_PROGRESS" module}}</span>
+                    <div class="progress progress-success">
+                        <div class="bar" style="width: {{percentComplete}}%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{! This is a partial, the close for the .modal div is in the footer partial}}

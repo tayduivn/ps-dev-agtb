@@ -172,6 +172,8 @@ $dictionary['RevenueLineItem'] = array(
             'dbType' => 'varchar',
             'type' => 'name',
             'len' => '50',
+            'unified_search' => true,
+            'full_text_search' => array('boost' => 2),
             'comment' => 'Name of the product',
             'reportable' => true,
             'importable' => 'required',
@@ -215,8 +217,7 @@ $dictionary['RevenueLineItem'] = array(
         'discount_amount' => array(
             'name' => 'discount_amount',
             'vname' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
-            'type' => 'decimal',
-            'options' => 'discount_amount_class_dom',
+            'type' => 'currency',
             'len' => '26,6',
             'precision' => 6,
             'comment' => 'Discounted amount'
@@ -557,7 +558,7 @@ $dictionary['RevenueLineItem'] = array(
             'activity_enabled' => false,
             'formula' => 'timestamp($date_closed)',
             'calculated' => true,
-            'studio' => false
+            'enforced' => true
         ),
         'next_step' => array(
             'name' => 'next_step',

@@ -76,6 +76,45 @@ describe('Base.View.Dashletselect', function() {
             expect(actual[0].type).toBe('dashablelist');
             expect(actual[1].type).toBe('dashablelist');
         });
+
+        it('should filter acl access role for module', function() {
+            SugarTest.loadComponent('base', 'view', 'alert');
+            SugarTest.loadComponent('base', 'view', 'dashablelist');
+            sinon.collection.stub(app.view, 'componentHasPlugin', function() {
+                return true;
+            }, this);
+            var noAccessModules = ['Accounts', 'Contacts'];
+            sinon.collection.stub(app.acl, 'hasAccess', function(action, module) {
+                return !_.contains(noAccessModules, module);
+            });
+            SugarTest.testMetadata.addViewDefinition('dashablelist', {
+                dashlets: [
+                    {
+                        name: 'first1',
+                        config: {}
+                    },
+                    {
+                        name: 'first2',
+                        config: {
+                            module: 'Contacts'
+                        }
+                    },
+                    {
+                        name: 'first3',
+                        config: {
+                            module: 'Notes'
+                        }
+                    }
+                ]
+            });
+            view.loadData();
+            var actual = view.context.get('dashlet_collection');
+            expect(actual.length).toBe(2);
+            expect(actual[0].type).toBe('dashablelist');
+            expect(actual[0].title).toBe('first1');
+            expect(actual[1].type).toBe('dashablelist');
+            expect(actual[1].title).toBe('first3');
+        });
     });
 
     describe('getFilteredList', function() {

@@ -49,13 +49,11 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'type' => 'linkbutton',
                     'name' => 'link_create',
                     'label' => 'LBL_CREATE_RELATED_RECORD',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'linkbutton',
                     'name' => 'link_exist',
                     'label' => 'LBL_ASSOC_RELATED_RECORD',
-                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',
@@ -69,7 +67,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'acl_module' => 'Contacts'
                 ),
                 array(
                     'type' => 'manage-subscription',
@@ -83,6 +81,13 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                     'name'       => 'vcard_button',
                     'label'      => 'LBL_VCARD_DOWNLOAD',
                     'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
                 ),
             ),
         ),

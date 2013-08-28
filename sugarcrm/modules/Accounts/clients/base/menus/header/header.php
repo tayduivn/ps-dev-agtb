@@ -55,6 +55,6 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' =>'LNK_IMPORT_ACCOUNTS',
         'acl_action'=>'import',
         'acl_module'=>$moduleName,
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-upload',
     ),
 );

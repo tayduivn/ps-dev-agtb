@@ -126,9 +126,9 @@ class SugarBeanApiHelper
         $acl = array('fields' => (object) array());
         if (SugarACL::moduleSupportsACL($bean->module_dir)) {
             $mm = new MetaDataManager($this->api->user);
-            $moduleAcl = $mm->getAclForModule($bean->module_dir, $this->api->user);
+            $moduleAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, false, true);
 
-            $beanAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, $bean);
+            $beanAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, $bean, true);
             if ($beanAcl['_hash'] != $moduleAcl['_hash'] || !empty($fieldList)) {
 
                 // diff the fields separately, they are usually empty anyway so we won't diff these often.

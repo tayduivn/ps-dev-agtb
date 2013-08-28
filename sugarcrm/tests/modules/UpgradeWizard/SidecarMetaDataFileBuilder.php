@@ -100,6 +100,13 @@ class SidecarMetaDataFileBuilder
                 'legacypath'  => 'custom/modules/Accounts/metadata/editviewdefs.php',
                 'sidecarpath' => 'custom/modules/Accounts/clients/base/views/record/record.php',
         ),
+        // Search defs to filter
+        array(
+                'module'      => 'Accounts', 'view' => 'filter', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountsearchdefs.php',
+                'legacypath'  => 'custom/modules/Accounts/metadata/searchdefs.php',
+                'sidecarpath' => 'custom/modules/Accounts/clients/base/filters/default/default.php',
+        ),
 
     );
 

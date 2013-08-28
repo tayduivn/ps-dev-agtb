@@ -41,10 +41,18 @@ class CurrencySumRelatedExpression extends NumericExpression
 		if (!is_array($linkField) || empty($linkField))
             return $ret;
 
+        if (!isset($this->context)) {
+            //If we don't have a context provided, we have to guess. This can be a large performance hit.
+            $this->setContext();
+        }
+        $toRate = isset($this->context->base_rate) ? $this->context->base_rate : null;
+
         foreach($linkField as $bean)
         {
             if (!empty($bean->$relfield)) {
-                $ret = SugarMath::init($ret)->add(SugarCurrency::convertWithRate($bean->$relfield, $bean->base_rate))->result();
+                $ret = SugarMath::init($ret)->add(
+                    SugarCurrency::convertWithRate($bean->$relfield, $bean->base_rate, $toRate)
+                )->result();
             }
         }
 

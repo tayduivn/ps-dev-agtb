@@ -49,6 +49,7 @@
     events: {
         'click [name=previous_button]': 'previous',
         'click [name=next_button]': 'next',
+        'click [name=start_sugar_button]': 'next',
         'keyup .modal-body.record .required': 'checkIfPageComplete'
     },
     /**
@@ -62,11 +63,13 @@
      */
     areAllRequiredFieldsNonEmpty: false,
     /**
-     * Initialize the wizard controller
+     * Initialize the wizard controller and load header and footer partials
      * @param  {options} options the options
      */
     initialize: function(options){
         this.fieldsToValidate = this._fieldsToValidate(options.meta);
+        Handlebars.registerPartial("wizard-page.header", app.template.get("wizard-page.header"));
+        Handlebars.registerPartial("wizard-page.footer", app.template.get("wizard-page.footer"));
         app.view.View.prototype.initialize.call(this, options);
     },
     /**
@@ -217,7 +220,18 @@
                 }
             });
         } else {
-            this.finish();
+            this.beforeFinish(function(success) {
+                if (success) {
+                    self.finish();
+                } else {
+                    app.logger.debug("There was an unknown issue after calling beforeFinish from wizard");
+                    app.alert.show('server-error', {
+                        level: 'error',
+                        messages: 'ERR_AJAX_LOAD_FAILURE',
+                        autoClose: false
+                    });
+                }
+            });
         }
     },
     /**
@@ -237,10 +251,11 @@
         this.progress = this.layout.previousPage();
     },
     /**
-     * Next button pressed and this is the last page. Implementers should
-     * override this and are responsible for removing Wizard layout.
+     * Next button pressed and this is the last page. We need to PUT /me to indicate that the
+     * "instance is configured". Calls finished on WizardLayout on complete.
      */
     finish: function(){
+        this.layout.finished();
     }
 
 })

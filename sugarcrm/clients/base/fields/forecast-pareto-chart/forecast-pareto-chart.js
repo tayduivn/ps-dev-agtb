@@ -55,6 +55,28 @@
 
         this._serverData = undefined;
 
+        this.chartId = this.cid + '_chart';
+        this.paretoChart = nv.models.paretoChart()
+            .margin({top: 0, right: 10, bottom: 20, left: 50})
+            .showTitle(false)
+            .tooltips(true)
+            .tooltipLine(function(key, x, y, e, graph) {
+                // Format the value using currency class and user settings
+                var val = App.currency.formatAmountLocale(e.point.y);
+                return '<p>' + key + ': <b>' + val + '</b></p>';
+            })
+            .tooltipBar(function(key, x, y, e, graph) {
+                // Format the value using currency class and user settings
+                var val = App.currency.formatAmountLocale(e.value);
+                return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
+                    '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
+            })
+            .showControls(false)
+            .colorData('default')
+            .colorFill('default')
+            .id(this.chartId);
+
         // just on the off chance that no options param is passed in
         options = options || {};
         options.success = _.bind(function(data) {
@@ -67,58 +89,50 @@
         var params = this.model.toJSON() || {},
             read_options = {};
         if (this.model.has('no_data') && this.model.get('no_data') === true) {
-            read_options['no_data'] = 1
+            read_options['no_data'] = 1;
         }
 
         var url = app.api.buildURL(this.buildChartUrl(params), null, null, read_options);
 
         app.api.call('read', url, {}, options);
+
+        app.events.on('app:toggle:sidebar', function(state) {
+            if(state == 'open') {
+                this.paretoChart.update();
+            }
+        }, this);
+
     },
 
     /**
      * Generate the D3 Chart Object
      */
     generateD3Chart: function() {
-        var params = this.model.toJSON(),
-            chartId = this.cid + '_chart',
-            paretoChart = nv.models.paretoChart()
-                .margin({top: 0, right: 10, bottom: 20, left: 50})
-                .showTitle(false)
-                .tooltips(true)
-                .tooltipLine(function(key, x, y, e, graph) {
-                    // Format the value using currency class and user settings
-                    var val = App.currency.formatAmountLocale(e.point.y);
-                    return '<p>' + key + ': <b>' + val + '</b></p>';
-                })
-                .tooltipBar(function(key, x, y, e, graph) {
-                    // Format the value using currency class and user settings
-                    var val = App.currency.formatAmountLocale(e.value);
-                    return '<p>' + SUGAR.App.lang.get('LBL_SALES_STAGE', 'Forecasts') + ': <b>' + key + '</b></p>' +
-                        '<p>' + SUGAR.App.lang.get('LBL_AMOUNT', 'Forecasts') + ': <b>' + val + '</b></p>' +
-                        '<p>' + SUGAR.App.lang.get('LBL_PERCENT', 'Forecasts') + ': <b>' + x + '%</b></p>';
-                })
-                .showControls(false)
-                .colorData('default')
-                .colorFill('default')
-                .stacked(!params.display_manager)
-                .id(chartId);
+        var params = this.model.toJSON();
 
-        d3.select('#' + chartId + ' svg').remove();
+        // clear out the current chart before a re-render
+        if (!_.isEmpty(this.paretoChart)) {
+            nv.utils.windowUnResize(this.paretoChart.update);
+            d3.select('#' + this.chartId + ' svg').remove();
+        }
+
+        this.paretoChart
+            .stacked(!params.display_manager);
 
         // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
         // only so we can custom format the Y-Axis values
-        d3.select('#' + chartId)
+        d3.select('#' + this.chartId)
             .append('svg')
             .datum(this.d3Data)
             .transition().duration(500)
-            .call(paretoChart)
+            .call(this.paretoChart)
             .selectAll('.nv-y.nv-axis .tick')
             .select('text')
             .text(function(d) {
                 return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
             });
 
-        nv.utils.windowResize(paretoChart.update);
+        nv.utils.windowResize(this.paretoChart.update);
 
         this.trigger('chart:pareto:rendered');
     },
@@ -149,7 +163,7 @@
                             group: i,
                             l: record.name,
                             t: parseFloat(record[dataset]) + parseFloat(record[dataset + '_adjusted'])
-                        }
+                        };
                     })
                 },
                 'data': []

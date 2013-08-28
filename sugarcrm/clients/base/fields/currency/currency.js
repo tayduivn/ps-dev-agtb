@@ -25,23 +25,43 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-
+    /**
+     * list of events to listen for
+     * @type {Object}
+     */
     'events': {
         'click': 'updateCss',
         'blur input.input-large': 'handleInputBlur',
         'keyup input.input-large': 'handleInputChange'
     },
+    /**
+     * @type {String}
+     * field value non-formatted or converted
+     */
     transactionValue: '',
+    /**
+     * @type {Object}
+     * cached object for the currency drop-down
+     */
     _currencyField: null,
+    /**
+     * @type {String}
+     * last known record currency id
+     */
+    _lastCurrencyId: null,
 
     /**
      * {@inheritdoc}
      */
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
+        var currencyField = this.def.currency_field || 'currency_id';
         if (this.model.isNew()) {
-            this.model.set('currency_id', app.user.get('preferences').currency_id);
+            // new records are set the user's preferred currency
+            this.model.set(currencyField, app.user.get('preferences').currency_id);
         }
+        // track the last currency id to convert the value on change
+        this._lastCurrencyId = this.model.get(currencyField);
     },
 
     /**
@@ -71,17 +91,27 @@
     /**
      * When currency changes, we need to make appropriate silent changes to the base rate.
      */
-    bindDataChange : function() {
+    bindDataChange: function() {
         app.view.Field.prototype.bindDataChange.call(this);
         var currencyField = this.def.currency_field || 'currency_id';
-        this.model.on('change:' + currencyField, function(model, value, options) {
+        var baseRateField = this.def.base_rate_field || 'base_rate';
+        this.model.on('change:' + currencyField, function(model, currencyId, options) {
             //When model is reset, it should not be called
-            if(!value) {
+            if (!currencyId || !this._lastCurrencyId) {
                 return;
             }
-            var baseRateField = this.def.base_rate_field || 'base_rate';
-            // manually force a change on the base rate in the model when the currency changes
-            this.model.set(baseRateField, app.metadata.getCurrency(value).conversion_rate);
+            // update the base rate in the model
+            this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
+            // convert the value to new currency
+            this.model.set(
+                this.name,
+                app.currency.convertAmount(
+                    app.currency.unformatAmountLocale(this.value),
+                    this._lastCurrencyId,
+                    currencyId
+                )
+            );
+            this._lastCurrencyId = currencyId;
         }, this);
     },
 

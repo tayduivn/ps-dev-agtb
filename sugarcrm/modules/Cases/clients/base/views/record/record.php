@@ -58,7 +58,7 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'acl_module' => 'Cases'
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -77,8 +77,8 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'type' => 'rowaction',
-                    'event' => 'button:change_log_button:click',
-                    'name' => 'change_log_button',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
                     'acl_action' => 'view',
                 ),

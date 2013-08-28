@@ -43,7 +43,6 @@
      */
     beforeNext: function(callback) {
         var self = this;
-        this.clearValidationErrors();
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
                 if (isValid) {
@@ -55,7 +54,6 @@
                             app.logger.debug("Wizard profile update failed: " + err);
                             callback(false);
                         } else {
-                            app.logger.debug("Wizard profile updated successfully!");
                             callback(true);
                         }
                     });

@@ -23,7 +23,6 @@ describe('Base.Field.Fullname', function() {
         SugarTest.loadHandlebarsTemplate('list', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'edit');
-        SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'list');
         SugarTest.loadHandlebarsTemplate('fullname', 'field', 'base', 'edit');
         SugarTest.loadComponent('base', 'field', 'fieldset');
         SugarTest.loadComponent('base', 'field', 'fullname');
@@ -126,6 +125,26 @@ describe('Base.Field.Fullname', function() {
             field = view.getField('full_name');
             expect(_.values(view.fields).length).toBe(1);
             expect(field.fields.length).toBe(0);
+        });
+    });
+
+    describe('_loadTemplate', function() {
+        it('should build this.href if def.link true', function() {
+            var expected = "#Contacts/12345";
+            view.render();
+            field = view.getField('full_name');
+            field.model.set('id', 12345);
+            field._loadTemplate();
+            expect(field.href).toEqual(expected);
+        });
+        it('should NOT build this.href if def.link is falsy', function() {
+            view.render();
+            field = view.getField('full_name');
+            field.def.link = undefined;
+            field.href = undefined;
+            field.model.set('id', 12345);
+            field._loadTemplate();
+            expect(field.href).toBeUndefined();
         });
     });
 });

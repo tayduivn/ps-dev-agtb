@@ -31,7 +31,7 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
-    public $supportedModules = array('SugarFeed');
+    public $supportedModules = array('Accounts', 'Contacts', 'Home');
     public $connector = "ext_eapm_facebook";
 
     protected $oauthParams = array(
@@ -99,8 +99,10 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
         }
     }
 
-
-	public function getLatestUpdates($maxTime, $maxEntries)
+    /**
+     * @deprecated This is a depreciated method and will be removed in version 7.3.
+     */
+    public function getLatestUpdates($maxTime, $maxEntries)
     {
         $td = $GLOBALS['timedate'];
 

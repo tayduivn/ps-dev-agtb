@@ -17,6 +17,10 @@ describe("revenuelineitems_view_recordlist", function() {
     beforeEach(function() {
         app = SugarTest.app;
         context = app.context.getContext();
+        context.set({
+            module: 'RevenueLineItems',
+        });
+        context.prepare();
         
         options = {
             meta: {

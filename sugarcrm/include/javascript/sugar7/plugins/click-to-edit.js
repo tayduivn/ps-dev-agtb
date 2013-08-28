@@ -438,6 +438,7 @@
                 if (name === "detail") {
                     // remove handlers
                     this.$(this.fieldTag).off("keydown.record" + this.cid);
+                    $(document).off("mousedown.record" + this.cid);
                 }
                 app.view.Field.prototype.setMode.call(this, name);
                 this._isInEdit = (this.action === 'edit');

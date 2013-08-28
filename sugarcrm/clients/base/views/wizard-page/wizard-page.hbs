@@ -26,27 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="welcome">
-    <div class="thumbnail modal modal-wide">
-        <div class="modal-header modal-header-firstlogin">
-            <div class="row-fluid">
-                <div class="span1">
-                    <span class="pull-left step-circle">
-                        <span>{{progress.page}}</span>
-                    </span>
-                </div>
-                <div class="span5 firstlogin-title">
-                    <h3>{{str meta.title module}}</h3>
-                    <span>{{str meta.message module}}</span>
-                </div>
-                <div class="span6 progress-section">
-                    <span>Setup progress</span>
-                    <div class="progress progress-success">
-                        <div class="bar" style="width: {{percentComplete}}%;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+{{> wizard-page.header }}
         <!-- Hack: Adding .record here since .record .record-cell contain styles we need :( -->
         <div class="modal-body record">
             {{#each meta.panels}}
@@ -64,10 +44,4 @@
                 {{/each}}
             {{/each}}
         </div>
-        <div class="modal-footer">
-            {{#each meta.buttons}}
-                {{field ../this model=../model template="edit"}}
-            {{/each}}
-        </div>
-    </div>
-</div>
+{{> wizard-page.footer }}

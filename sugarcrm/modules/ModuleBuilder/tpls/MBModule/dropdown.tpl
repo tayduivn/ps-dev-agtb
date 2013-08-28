@@ -135,6 +135,8 @@ addForm('dropdown_form');
 addToValidate('dropdown_form', 'dropdown_name', 'DBName', false, SUGAR.language.get("ModuleBuilder", "LBL_JS_VALIDATE_NAME"));
 addToValidate('dropdown_form', 'drop_value', 'varchar', false, SUGAR.language.get("ModuleBuilder", "LBL_JS_VALIDATE_LABEL"));
 eval({/literal}{$ul_list}{literal});
+SimpleList.name = {/literal}'{$dropdown_name}'{literal};
+SimpleList.requiredOptions = {/literal}{$required_items}{literal};
 SimpleList.ul_list = list;
 SimpleList.init({/literal}'{$editImage}'{literal}, {/literal}'{$deleteImage}'{literal});
 ModuleBuilder.helpSetup('dropdowns','editdropdown');

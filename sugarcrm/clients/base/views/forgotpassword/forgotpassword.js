@@ -82,6 +82,9 @@
      * @private
      */
     _render: function() {
+        if (!(app.config && app.config.forgotpasswordON === true)) {
+            return;
+        }
         if (app.config && app.config.logoURL) {
             this.logoURL = app.config.logoURL;
         }
@@ -103,7 +106,6 @@
     forgotPassword: function() {
         var self = this;
 
-        self.clearValidationErrors();
         self.model.doValidate(null, function(isValid) {
             if (isValid) {
 

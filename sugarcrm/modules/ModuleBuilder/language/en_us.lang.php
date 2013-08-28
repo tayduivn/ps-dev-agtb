@@ -750,6 +750,24 @@ $mod_strings = array(
 'LBL_JS_VALIDATE_REL_NAME'=>'Name - Must be alphanumeric with no spaces',
 'LBL_JS_VALIDATE_REL_LABEL'=>'Label - please add a label that will be displayed above the subpanel',
 
+// Dropdown lists
+'LBL_JS_DELETE_REQUIRED_DDL_ITEM' => 'Are you sure you wish to delete this required dropdown list item? This may affect the functionality of your application.',
+
+// Specific dropdown list should be:
+// LBL_JS_DELETE_REQUIRED_DDL_ITEM_(UPPERCASE_DDL_NAME)
+//BEGIN SUGARCRM flav=pro ONLY
+'LBL_JS_DELETE_REQUIRED_DDL_ITEM_SALES_STAGE_DOM' => 'Are you sure you wish to delete this dropdown list item? Deleting the Closed Won or Closed Lost stages will cause the Forecasting module to not work properly',
+//END SUGARCRM flav=pro ONLY
+
+// Specific list items should be:
+// LBL_JS_DELETE_REQUIRED_DDL_ITEM_(UPPERCASE_ITEM_NAME)
+// Item name should have all special characters removed and spaces converted to
+// underscores
+//BEGIN SUGARCRM flav=pro ONLY
+'LBL_JS_DELETE_REQUIRED_DDL_ITEM_CLOSED_WON' => 'Are you sure you wish to delete the Closed Won sales stage? Deleting this stage will cause the Forecasting module to not work properly',
+'LBL_JS_DELETE_REQUIRED_DDL_ITEM_CLOSED_LOST' => 'Are you sure you wish to delete the Closed Lost sales stage? Deleting this stage will cause the Forecasting module to not work properly',
+//END SUGARCRM flav=pro ONLY
+
 //CONFIRM
 'LBL_CONFIRM_FIELD_DELETE'=>"Deleting this custom field will delete both the custom field and all the data related to the custom field in the database. The field will be no longer appear in any module layouts."
 //BEGIN SUGARCRM flav=pro ONLY

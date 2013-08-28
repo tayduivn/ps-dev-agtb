@@ -173,14 +173,6 @@ class FilterApi extends SugarApi
 
     public function filterListSetup(ServiceBase $api, array $args)
     {
-        if ( !empty($args['q']) ) {
-            // We need to use unified search for this for compatibilty with Nomad
-            require_once('clients/base/api/UnifiedSearchApi.php');
-            $search = new UnifiedSearchApi();
-            $args['module_list'] = $args['module'];
-            return $search->globalSearch($api, $args);
-        }
-
         $seed = BeanFactory::newBean($args['module']);
 
         if (!$seed->ACLAccess('list')) {
@@ -211,6 +203,18 @@ class FilterApi extends SugarApi
 
     public function filterList(ServiceBase $api, array $args)
     {
+        if (!empty($args['q'])) {
+            if (!empty($args['filter'])||!empty($args['deleted'])) {
+                // These flags can be used with the filter API, but not with the search API
+                throw new SugarApiExceptionInvalidParameter();
+            }
+            // We need to use unified search for this for compatibilty with Nomad
+            require_once('clients/base/api/UnifiedSearchApi.php');
+            $search = new UnifiedSearchApi();
+            $args['module_list'] = $args['module'];
+            return $search->globalSearch($api, $args);
+        }
+
         list($args, $q, $options, $seed) = $this->filterListSetup($api, $args);
         $api->action = 'list';
 
@@ -492,11 +496,12 @@ class FilterApi extends SugarApi
      * @param SugarQuery $q
      * @throws SugarApiExceptionInvalidParameter
      */
-    protected static function addFilters(
-        array $filterDefs,
-        SugarQuery_Builder_Where $where,
-        SugarQuery $q
-    ) {
+    protected static function addFilters(array $filterDefs, SugarQuery_Builder_Where $where, SugarQuery $q) {
+        static $sfh;
+        if (!isset($sfh)) {
+            $sfh = new SugarFieldHandler();
+        }
+
         foreach ($filterDefs as $filterDef) {
             if (!is_array($filterDef)) {
                 throw new SugarApiExceptionInvalidParameter(
@@ -523,15 +528,20 @@ class FilterApi extends SugarApi
                     // Looks like just a normal field, parse it's options
                     $fieldInfo = self::verifyField($q, $field);
                     $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] : $fieldInfo['def']['type'];
-                    $sfh = new SugarFieldHandler();
                     $sugarField = $sfh->getSugarField($fieldType);
                     if (!is_array($filter)) {
                         // This is just simple match
-                        $where->equals($field, $filter);
+                        $where->equals($field, $sugarField->convertFieldForDB($filter));
                         continue;
                     }
                     foreach ($filter as $op => $value) {
-                        $value = $sugarField->convertFieldForDB($value);
+                        if (is_array($value)) {
+                            foreach ($value as $i => $val) {
+                                $value[$i] = $sugarField->convertFieldForDB($val);
+                            }
+                        } else {
+                            $value = $sugarField->convertFieldForDB($value);
+                        }
                         switch ($op) {
                             case '$equals':
                                 $where->equals($field, $value);

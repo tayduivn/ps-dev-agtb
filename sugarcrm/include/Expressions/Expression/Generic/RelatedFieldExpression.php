@@ -69,6 +69,22 @@ class RelatedFieldExpression extends GenericExpression
                         else
                             return BooleanExpression::$FALSE;
                     }
+                    //Currency values need to be converted to the current currency when the related value
+                    //doesn't match this records currency
+                    if ($bean->field_defs[$relfield]['type'] == "currency") {
+                        if (!isset($this->context)) {
+                            $this->setContext();
+                        }
+                        if (isset($this->context->base_rate) && isset($bean->base_rate) &&
+                            $this->context->base_rate != $bean->base_rate
+                        ) {
+                            return SugarCurrency::convertWithRate(
+                                $bean->$relfield,
+                                $bean->base_rate,
+                                $this->context->base_rate
+                            );
+                        }
+                    }
                 }
                 return $bean->$relfield;
             }

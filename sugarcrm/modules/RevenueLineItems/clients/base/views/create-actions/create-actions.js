@@ -12,39 +12,10 @@
  */
 ({
     extendsFrom: 'CreateView',
-    currencyFields: [],
 
     initialize: function(options) {
-        //reinitialize array on each init
-        this.currencyFields = [];
         app.view.invokeParent(this, {type: 'view', name: 'create', method: 'initialize', args: [options]});
         this._parsePanelFields(this.meta.panels);
-    },
-
-    /**
-     * Bind to model to make it so that it will re-render once it has loaded.
-     */
-    bindDataChange: function() {
-        // TODO: Calling "across controllers" considered harmful .. please consider using a plugin instead.
-        app.view.invokeParent(this, {type: 'view', name: 'create', method: 'bindDataChange'});
-        this.model.on('change:base_rate', function() {
-            _.debounce(this.convertCurrencyFields(this.model.previous("currency_id"), this.model.get("currency_id")), 500, true);
-        }, this);
-    },
-
-    /**
-     * convert all of the currency fields to the new currency
-     * @param oldCurrencyId
-     * @param newCurrencyId
-     */
-    convertCurrencyFields: function(oldCurrencyId, newCurrencyId) {
-        //run through the editable currency fields and convert the amounts to the new currency
-        _.each(this.currencyFields, function(currencyField) {
-            if (!_.isUndefined(this.model.get(currencyField)) && currencyField != 'total_amount') {
-                this.model.set(currencyField, app.currency.convertAmount(this.model.get(currencyField), oldCurrencyId, newCurrencyId), {silent: true});
-            }
-            this.model.trigger("change:" + currencyField);
-        }, this);
     },
 
     /**
@@ -70,9 +41,6 @@
                 }, this);
             } else {
                 _.each(panel.fields, function(field) {
-                    if (field.type == 'currency') {
-                        this.currencyFields.push(field.name);
-                    }
                     if (field.name == "commit_stage") {
                         field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
                     }

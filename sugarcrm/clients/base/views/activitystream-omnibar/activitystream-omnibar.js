@@ -1,6 +1,7 @@
 ({
     events: {
         'click .addPost': 'addPost',
+        'keyup .sayit': 'toggleSubmitButton',
         'change div[data-placeholder]': 'checkPlaceholder',
         'keydown div[data-placeholder]': 'checkPlaceholder',
         'keypress div[data-placeholder]': 'checkPlaceholder',
@@ -25,6 +26,8 @@
             id: this.user_id,
             field: 'picture'
         }) : '';
+
+        this.toggleSubmitButton = _.debounce(this.toggleSubmitButton, 200);
     },
 
     /**
@@ -113,6 +116,18 @@
         post.value = post.value.replace(this.nbspRegExp, ' ');
 
         return post;
+    },
+
+    /**
+     * Check to see if the Submit button should be disabled/enabled.
+     */
+    toggleSubmitButton: function() {
+        var post = this.getPost();
+        if (post.value.length === 0) {
+            this.$('.addPost').addClass('disabled');
+        } else {
+            this.$('.addPost').removeClass('disabled');
+        }
     },
 
     checkPlaceholder: function(e) {

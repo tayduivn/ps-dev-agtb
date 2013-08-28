@@ -84,6 +84,6 @@ $viewdefs[$moduleName]['base']['menu']['header'] = array(
         'label' => 'LNK_IMPORT_USERS',
         'acl_action' => 'admin',
         'acl_module' => $moduleName,
-        'icon' => 'icon-upload-alternative',
+        'icon' => 'icon-upload',
     ),
 );

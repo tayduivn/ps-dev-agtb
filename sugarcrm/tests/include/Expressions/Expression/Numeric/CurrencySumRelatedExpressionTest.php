@@ -17,11 +17,6 @@ require_once("include/Expressions/Expression/Parser/Parser.php");
 
 class CurrencySumRelatedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    
-    public function setUp()
-    {
-            $this->markTestIncomplete("SFA - This is failing in strict mode because of a bad date format, usually all 0's");
-    }    
 	public static function setUpBeforeClass()
 	{
 	    parent::setUpBeforeClass();
@@ -60,7 +55,32 @@ class CurrencySumRelatedExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expr = 'rollupCurrencySum($products, "likely_case")';
         $result = Parser::evaluate($expr, $opp)->evaluate();
+        $result = SugarMath::init($result, 2)->result();
         $this->assertEquals('1611.11', $result);
+
+    }
+
+
+    /**
+     * @ticket BR-437
+     * @group expressions
+     */
+    public function testRelatedCurrencySumWithNonBaseOppCurrency()
+    {
+        $currency = SugarTestCurrencyUtilities::createCurrency('Eur','€','EUR', 0.9);
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->currency_id = $currency->id;
+        $opp->base_rate = 0.9;
+
+        $product1 = SugarTestProductUtilities::createProduct();
+        $product1->likely_case = '1000.00';
+        $product1->opportunity_id = $opp->id;
+        $product1->save();
+
+        $expr = 'rollupCurrencySum($products, "likely_case")';
+        $result = Parser::evaluate($expr, $opp)->evaluate();
+        $result = SugarMath::init($result, 2)->result();
+        $this->assertEquals('900.00', $result);
 
     }
 }

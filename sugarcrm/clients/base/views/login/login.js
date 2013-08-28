@@ -57,6 +57,12 @@
         options.context.prepare(true);
 
         app.view.View.prototype.initialize.call(this, options);
+
+        var config = app.metadata.getConfig();
+        if (config && app.config.forgotpasswordON === true) {
+            this.showPasswordReset = true;
+        }
+
     },
 
     /**
@@ -100,7 +106,6 @@
      */
     login: function() {
         var self = this;
-        this.clearValidationErrors();
         this.model.doValidate(null,
             _.bind(function(isValid) {
                 if (isValid) {
@@ -117,8 +122,7 @@
                             app.logger.debug("logged in successfully!");
                             app.events.on('app:sync:complete', function() {
                                 app.logger.debug("sync in successfully!");
-                                this.refreshAddtionalComponents();
-                                app.$contentEl.show();
+                                this.postLogin();
                             }, self);
                         },
                         complete: function() {
@@ -128,6 +132,32 @@
                 }
             }, self)
         );
+    },
+    /**
+     * After login and app:sync:complete, we need to see if there's any post login setup we need to do prior to
+     * rendering the rest of the Sugar app
+     */
+    postLogin: function(){
+        var showWizard = app.user.get('show_wizard'),
+            wizardType = app.user.get('type');
+        if (showWizard) {
+            var callbacks = {
+                complete: function(){
+                    window.location.reload(); //Reload when done
+                }
+            };
+            app.controller.loadView({
+                layout: "first-login-wizard",
+                module: "Users",
+                modelId: app.user.get("id"),
+                callbacks: callbacks,
+                wizardName: wizardType
+            });
+            $("#header").hide();  //Hide the header bar
+        } else {
+            this.refreshAddtionalComponents();
+        }
+        app.$contentEl.show();
     },
 
     /**

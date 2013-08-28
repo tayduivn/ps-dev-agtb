@@ -155,7 +155,7 @@
 
         _.each(fields, function(fieldFilterDef, fieldName) {
             if (_.isEmpty(fieldFilterDef)) {
-                fields[fieldName] = fieldMeta[fieldName];
+                fields[fieldName] = fieldMeta[fieldName] || {};
             } else {
                 fields[fieldName] = _.extend({name: fieldName}, fieldFilterDef, fieldMeta[fieldName]);
             }

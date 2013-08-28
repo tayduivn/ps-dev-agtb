@@ -5030,6 +5030,13 @@ function verify_image_file($path, $jpeg = false)
                 if (file_put_contents($path, $image)) {
                     return true;
                 }
+            } elseif ($filetype == "image/gif") {
+                ob_start();
+                imagegif($img);
+                $image = ob_get_clean();
+                if (file_put_contents($path, $image)) {
+                    return true;
+                }
             } elseif ($filetype == "image/png") {
                 // else if the filetype is png, create png
                 imagealphablending($img, true);
@@ -5533,4 +5540,33 @@ function buildSidecarRoute($module, $id = null, $action = null)
 function navigateToSidecar($url)
 {
     return "parent.SUGAR.App.router.navigate('$url', {trigger: true});";
+}
+
+/**
+ * Gets the list of required dropdown list items, keyed on dropdown list name
+ * 
+ * @return array List of all required dropdown list items
+ */
+function getRequiredDropdownListItems()
+{
+    $required = array();
+    $files = SugarAutoLoader::existingCustom('include/required_list_items.php');
+    foreach ($files as $file) {
+        require $file;
+        if (isset($app_list_strings_required)) {
+            $required = array_merge($required, $app_list_strings_required);
+        }
+    }
+    return $required;
+}
+
+/**
+ * Gets the list of required items for a named dropdown list
+ * 
+ * @param string $name The name of the dropdown list
+ * @return array The list of required items for a dropdown list, if they exist
+ */
+function getRequiredDropdownListItemsByDDL($name) {
+    $items = getRequiredDropdownListItems();
+    return isset($items[$name]) ? $items[$name] : array();
 }

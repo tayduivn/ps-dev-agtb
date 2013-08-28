@@ -5917,7 +5917,7 @@ class SugarBean
                 $id_for_save = ($_SESSION['WORKFLOW_ALERTS']['id'] == $this->id ? true : false);
             }
 
-            if ($id_for_save && !($this instanceof SugarFeed))
+            if ($id_for_save)
             {
                 $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
                 unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);

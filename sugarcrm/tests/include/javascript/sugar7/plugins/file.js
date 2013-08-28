@@ -5,7 +5,6 @@ describe('File Plugin', function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('image', 'field', 'base', 'detail');
-        SugarTest.loadHandlebarsTemplate('picture', 'field', 'base', 'detail');
         SugarTest.loadHandlebarsTemplate('file', 'field', 'base', 'detail');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.set();

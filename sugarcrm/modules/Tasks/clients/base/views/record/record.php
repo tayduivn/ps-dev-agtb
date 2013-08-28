@@ -58,7 +58,7 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'name' => 'duplicate_button',
                     'event' => 'button:duplicate_button:click',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_action' => 'create',
+                    'acl_module' => 'Tasks'
                 ),
                 array(
                     'type' => 'closebutton',
@@ -71,6 +71,13 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'name' => 'record-close',
                     'label' => 'LBL_CLOSE_BUTTON_TITLE',
                     'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
                 ),
             ),
         ),

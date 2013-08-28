@@ -60,7 +60,9 @@ class AuditApi extends ModuleApi
 
         $auditBean = BeanFactory::newBean('Audit');
 
-        return $auditBean->getAuditLog($focus);
-
+        return array(
+            'next_offset' => -1,
+            'records' => $auditBean->getAuditLog($focus),
+        );
     }
 }
