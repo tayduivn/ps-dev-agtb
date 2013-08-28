@@ -36,6 +36,16 @@ require_once 'modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php';
  */
 class LinkFieldTest extends SubpanelMetaDataParser
 {
+    /**
+     * Field defs without id_name properties were throwing errors. Adding id_name
+     * here to allow tests to run around modification to the core code.
+     * 
+     * @var array
+     */
+    public $_fielddefs = array(
+        'name' => array('module' => 'test', 'id_name' => 'test'),
+    );
+    
     function __construct()
     {
         return true;
