@@ -23,9 +23,10 @@ describe("Forecasts.Layout.Config", function() {
                 Forecasts: {}
             };
         });
+
         app.data.reset();
         app.data.declareModel(moduleName, SugarTest.app.metadata.getModule(moduleName));
-        app.user.set({'id': 'test_userid', full_name: 'Selected User'});
+        app.user.set({'id': 'test_userid', full_name: 'Selected User', type: 'admin'});
 
         layout = SugarTest.createLayout('base', 'Forecasts', 'config', null, null, true);
         layoutProtoInitStub = sinon.stub(app.view.Layout.prototype, 'initialize', function() {});
@@ -68,11 +69,11 @@ describe("Forecasts.Layout.Config", function() {
                 aclStub = sinon.stub(app.user, 'getAcls', function () {
                     return {
                         Forecasts: {
-                            admin: 'no',
                             developer: 'no'
                         }
                     };
                 });
+                app.user.set({type: 'user'});
                 layout.initialize();
             });
 
@@ -115,6 +116,7 @@ describe("Forecasts.Layout.Config", function() {
                         }
                     };
                 });
+                app.user.set({type: 'user'});
                 layout.initialize();
             });
 
