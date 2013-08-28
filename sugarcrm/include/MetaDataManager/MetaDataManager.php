@@ -84,7 +84,7 @@ class MetaDataManager
 
     /**
      * The metadata hacks class
-     * 
+     *
      * @var MetaDataHacks
      */
     protected $metaDataHacks;
@@ -476,6 +476,7 @@ class MetaDataManager
         $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         // Add the _hash for the fields array
         $data['fields']['_hash'] = md5(serialize($data['fields']));
+        $data['nameFormat'] = isset($vardefs['name_format_map'])?$vardefs['name_format_map']:null;
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
@@ -1544,7 +1545,7 @@ class MetaDataManager
 
     /**
      * Tells the app the user preference metadata has changed.
-     * 
+     *
      * For now this will be done by simply changing the date_modified on the User
      * record and using that as the metadata hash value. This could change in the
      * future.
@@ -1893,7 +1894,7 @@ class MetaDataManager
     /**
      * Gets all enabled and disabled languages. Wraps the util function to allow
      * for manipulation of the return in the future.
-     * 
+     *
      * @return array Array of enabled and disabled languages
      */
     public function getAllLanguages()
@@ -1901,7 +1902,7 @@ class MetaDataManager
         $languages = LanguageManager::getEnabledAndDisabledLanguages();
 
         return array(
-            'enabled' => $this->getLanguageKeys($languages['enabled']), 
+            'enabled' => $this->getLanguageKeys($languages['enabled']),
             'disabled' => $this->getLanguageKeys($languages['disabled']),
         );
     }
@@ -1909,7 +1910,7 @@ class MetaDataManager
     /**
      * Gets language keys only. Used by the API in conjunction with language indexes
      * from app_list_strings.
-     * 
+     *
      * @param array $language An enabled or disabled language array
      * @return array
      */
