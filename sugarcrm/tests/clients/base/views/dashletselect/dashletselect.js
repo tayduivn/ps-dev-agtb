@@ -1,20 +1,20 @@
 describe('Base.View.Dashletselect', function() {
     var moduleName = 'Home',
-        app,
-        sinonSandbox, view;
+        app, view;
 
     beforeEach(function() {
+        app = SugarTest.app;
+        SugarTest.loadComponent('base', 'view', 'list');
+        SugarTest.loadComponent('base', 'view', 'filtered-list');
         SugarTest.testMetadata.init();
         SugarTest.testMetadata.set();
 
-        app = SugarTest.app;
         view = SugarTest.createView('base', moduleName, 'dashletselect');
-
     });
     afterEach(function() {
         view.dispose();
         SugarTest.testMetadata.dispose();
-        SugarTest.app.view.reset();
+        app.view.reset();
         sinon.collection.restore();
     });
 
@@ -45,11 +45,11 @@ describe('Base.View.Dashletselect', function() {
                 ]
             }, customModule);
             view.loadData();
-            var actual = view.context.get('dashlet_collection');
+            var actual = view.collection;
             expect(actual.length).toBe(2);
-            expect(actual[0].type).toBe('dashablelist');
-            expect(actual[1].type).toBe('piechart');
-            expect(actual[1].metadata.module).toBe(customModule);
+            expect(actual.at(0).get('type')).toBe('dashablelist');
+            expect(actual.at(1).get('type')).toBe('piechart');
+            expect(actual.at(1).get('metadata').module).toBe(customModule);
         });
 
         it('should get all sub dashlets that defines in dashlets array', function() {
@@ -71,10 +71,10 @@ describe('Base.View.Dashletselect', function() {
                 ]
             });
             view.loadData();
-            var actual = view.context.get('dashlet_collection');
+            var actual = view.collection;
             expect(actual.length).toBe(2);
-            expect(actual[0].type).toBe('dashablelist');
-            expect(actual[1].type).toBe('dashablelist');
+            expect(actual.at(0).get('type')).toBe('dashablelist');
+            expect(actual.at(1).get('type')).toBe('dashablelist');
         });
 
         it('should filter acl access role for module', function() {
@@ -108,12 +108,12 @@ describe('Base.View.Dashletselect', function() {
                 ]
             });
             view.loadData();
-            var actual = view.context.get('dashlet_collection');
+            var actual = view.collection;
             expect(actual.length).toBe(2);
-            expect(actual[0].type).toBe('dashablelist');
-            expect(actual[0].title).toBe('first1');
-            expect(actual[1].type).toBe('dashablelist');
-            expect(actual[1].title).toBe('first3');
+            expect(actual.at(0).get('type')).toBe('dashablelist');
+            expect(actual.at(0).get('title')).toBe('first1');
+            expect(actual.at(1).get('type')).toBe('dashablelist');
+            expect(actual.at(1).get('title')).toBe('first3');
         });
     });
 
@@ -121,14 +121,6 @@ describe('Base.View.Dashletselect', function() {
         it('should get filtered dashlet list', function() {
             SugarTest.loadComponent('base', 'view', 'alert');
             SugarTest.loadComponent('base', 'view', 'dashablelist');
-            sinon.collection.stub(app.controller.context, 'get', function(type) {
-                if (type === 'module') {
-                    return 'Home';
-                }
-                if (type === 'layout') {
-                    return 'records';
-                }
-            });
             SugarTest.testMetadata.addViewDefinition('dashablelist', {
                 dashlets: [
                     //Matched module and layout
@@ -177,12 +169,20 @@ describe('Base.View.Dashletselect', function() {
                     }
                 ]
             });
-            view.loadData();
-            var actualCollection = view.context.get('dashlet_collection'),
-                actualList = view.getFilteredList();
+            var contextStub = sinon.stub(app.controller.context, 'get', function(arg) {
+                if (arg === 'module') {
+                    return moduleName;
+                } else {
+                    return 'record';
+                }
+            });
 
-            expect(actualCollection.length).toBe(4);
-            expect(actualList.length).toBe(2);
+            view.loadData();
+            var actualCollection = view.collection;
+
+            contextStub.restore();
+
+            expect(actualCollection.length).toBe(2);
         });
     });
 });
