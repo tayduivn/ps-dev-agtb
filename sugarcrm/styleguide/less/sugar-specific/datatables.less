@@ -3,6 +3,7 @@ table.dataTable {
   margin: 0 auto;
   clear: both;
   width: 100%;
+  border-bottom: 2px solid darken(@grayLighter, 5%);
 
   /* ---------
   TABLE HEADER CELL (specific) */
@@ -64,11 +65,6 @@ table.dataTable {
   TABLE BODY */
   & > tbody {
     & > tr {
-      &:last-child {
-        td {
-          border-bottom-width: 2px;
-        }
-      }
       & > td {
         height: 38px;
         padding: 4px 8px;
