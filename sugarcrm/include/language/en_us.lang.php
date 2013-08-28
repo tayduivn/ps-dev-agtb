@@ -3202,7 +3202,7 @@ $app_strings = array (
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
     'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
-    'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
+    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
