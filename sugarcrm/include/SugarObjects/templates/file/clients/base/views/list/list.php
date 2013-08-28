@@ -69,7 +69,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'team_name',
                     'width' => '2',
-                    'label' => 'LBL_LIST_TEAM',
+                    'label' => 'LBL_TEAM',
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
