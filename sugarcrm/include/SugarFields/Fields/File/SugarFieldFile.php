@@ -108,8 +108,12 @@ class SugarFieldFile extends SugarFieldBase
         }
 
         if (isset($_FILES[$prefix . $field . '_file']) && $upload_file->confirm_upload()) {
+
+            // in order to avoid any discrepancies of MIME type with the download code,
+            // call the same MIME function instead of using the uploaded file's mime type property.
+            $mimeType = get_file_mime_type($upload_file->get_temp_file_location(), 'application/octet-stream');
             //verify the image
-            if (in_array($upload_file->get_mime_type(), self::$imageFileMimeTypes) &&
+            if (in_array($mimeType, self::$imageFileMimeTypes) &&
                 !verify_image_file($upload_file->get_temp_file_location())) {
                 $this->error = string_format(
                     $GLOBALS['app_strings']['LBL_UPLOAD_IMAGE_FILE_NOT_SUPPORTED'],

@@ -43,6 +43,11 @@ class NotesApiHelper extends SugarBeanApiHelper
      */
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
+        //TODO: need a more generic way to deal with file types
+        if (isset($submittedData['file_mime_type'])) {
+            unset($submittedData['file_mime_type']);
+        }
+
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
         //Only needed for Portal sessions
@@ -51,6 +56,7 @@ class NotesApiHelper extends SugarBeanApiHelper
                 $bean->id = create_guid();
                 $bean->new_with_id = true;
             }
+
             $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
             $account = $contact->account_id;
 
