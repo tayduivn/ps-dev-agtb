@@ -43,6 +43,9 @@
         app.view.View.prototype.initialize.call(this, options);
     },
 
+    /**
+     * {@inheritDocs}
+     */
     bindDataChange: function() {
         if(this.meta.config) {
             this.settings.on('change:saved_report_id', function(model) {

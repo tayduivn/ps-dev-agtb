@@ -92,4 +92,3 @@ describe('Base.View.Saved-Reports-Chart', function() {
         });
     });
 });
-
