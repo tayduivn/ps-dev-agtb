@@ -706,23 +706,14 @@ $dictionary['Contact'] = array(
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array(
-                    '$or' => array(
-                        array(
-                            '$and' => array(
-                                array('first_name' => array('$starts' => '$first_name')),
-                                array('last_name' => array('$starts' => '$last_name')),
-                                array('accounts.id' => array('$equals' => '$account_id')),
-                            )
-                        ),
-                        array('phone_work' => array('$equals' => '$phone_work'))
+                    '$and' => array(
+                        array('first_name' => array('$starts' => '$first_name')),
+                        array('last_name' => array('$starts' => '$last_name')),
+                        array('accounts.id' => array('$equals' => '$account_id')),
                     )
                 ),
             ),
             'ranking_fields' => array(
-                array(
-                    'in_field_name' => 'phone_work',
-                    'dupe_field_name' => 'phone_work',
-                ),
                 array(
                     'in_field_name' => 'account_id',
                     'dupe_field_name' => 'account_id',
