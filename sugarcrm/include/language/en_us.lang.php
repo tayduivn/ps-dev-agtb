@@ -2412,7 +2412,7 @@ $app_strings = array (
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
-    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\n\nPlease change one of the values.",
+    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator. Please change one of the values.",
     'ERR_DELETE_RECORD' => 'A record number must be specified to delete the contact.',
     'ERR_EXPORT_DISABLED' => 'Exports Disabled.',
     'ERR_EXPORT_TYPE' => 'Error exporting ',
@@ -3203,7 +3203,7 @@ $app_strings = array (
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
     'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
-    'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
+    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
@@ -3377,7 +3377,7 @@ $app_strings = array (
   'ERROR_CONNECTOR_CONFIGURE' => 'Unable to retrieve data.  The service may currently be inaccessible or the configuration settings may be invalid.',
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
   'LBL_CONNECT_TWITTER_FOR_ADMIN'=>'Configure Twitter Connector',
-  'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to properly configure Twitter',
+  'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to configure Twitter',
   'LBL_MERGE_CONNECTORS' => 'Get Data',
   'LBL_NO_DATA_AVAILABLE' => 'No data available.',
   'LBL_MERGE_CONNECTORS_BUTTON_KEY' => '[D]',
@@ -3646,7 +3646,7 @@ $app_strings = array (
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
-
+    'SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED' => 'Not allowed to perform action "{0}" on this record',
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_ACTIVITY_VIEW_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
@@ -3987,12 +3987,12 @@ $app_strings = array (
     'LBL_WIZ_KNOWLEDGE_BASE' => 'Knowledge Base',
     'LBL_WIZ_FORUMS' => 'Forums',
     //Admin wizard links
-    'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'System Locale Settings',
+    'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'Locale Settings',
     'LBL_WIZ_EMAIL_SETTINGS' => 'Email Settings',
     'LBL_WIZ_IMPORT_DATA' => 'Import Data',
     'LBL_WIZ_CREATE_USERS' => 'Create Users',
-    'LBL_WIZ_APPLICATION_SETTINGS' => 'View and Manage Application Settings',
-    'LBL_WIZ_CONFIGURE_APPLICATION' => 'Configure the Application',
+    'LBL_WIZ_APPLICATION_SETTINGS' => 'System Settings',
+    'LBL_WIZ_CONFIGURE_APPLICATION' => 'Studio',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',

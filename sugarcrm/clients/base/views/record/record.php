@@ -50,16 +50,6 @@ $viewdefs['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
-                    'type' => 'linkbutton',
-                    'name' => 'link_create',
-                    'label' => 'LBL_CREATE_RELATED_RECORD',
-                ),
-                array(
-                    'type' => 'linkbutton',
-                    'name' => 'link_exist',
-                    'label' => 'LBL_ASSOC_RELATED_RECORD',
-                ),
-                array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',

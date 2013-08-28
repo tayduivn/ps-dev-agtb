@@ -397,7 +397,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $actManager = self::getMock(
             'ActivityQueueManager',
-            array('isValidLink', 'createOrUpdate', 'link', 'unlink', 'processSubscriptions')
+            array('isValidLink', 'createOrUpdate', 'link', 'unlink')
         );
         $actManager->expects($this->any())->method('isValidLink')->will($this->returnValue(true));
         foreach ($actions as $action) {

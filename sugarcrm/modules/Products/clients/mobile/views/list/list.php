@@ -31,7 +31,7 @@ $viewdefs['Products']['mobile']['view']['list'] = array(
         array(
             'fields' => array(
                 array(
-                    'name' => 'product_template_name',
+                    'name' => 'name',
                     'default' => true,
                     'enabled' => true,
                 ),

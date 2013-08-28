@@ -23,7 +23,7 @@
         this.once('init', function() {
             var rlis = this.model.getRelatedCollection('revenuelineitems');
             rlis.once('reset', function(collection) {
-                if(collection.length === 0) {
+                if (collection.length === 0) {
                     this.showRLIWarningMessage(this.model.module);
                 }
             }, this);
@@ -64,17 +64,29 @@
                 module: model.module,
                 model: model
             }
-        }, _.bind(function(model) {
-            if (!model) {
-                return;
-            }
+        }, _.bind(this.rliCreateClose, this));
+    },
 
-            var ctx = this.listContext || this.context;
+    rliCreateClose: function(model) {
+        if (!model) {
+            return;
+        }
 
-            ctx.resetLoadFlag();
-            ctx.set('skipFetch', false);
-            ctx.loadData();
-        }, this));
+        var ctx = this.listContext || this.context;
+
+        ctx.resetLoadFlag();
+        ctx.set('skipFetch', false);
+        ctx.loadData();
+
+        // find the child collection for the RLI subpanel
+        // if we find one and it has the loadData method, call that method to
+        // force the subpanel to load the data.
+        var rli_ctx = _.find(ctx.children, function(child) {
+            return (child.get('module') == 'RevenueLineItems');
+        }, this);
+        if (!_.isUndefined(rli_ctx) && _.isFunction(rli_ctx.loadData)) {
+            rli_ctx.loadData();
+        }
     },
 
     /**

@@ -159,8 +159,8 @@ describe("Email field", function() {
                 }
             ];;
             field.addFlagLabels(testAddresses);
-            expect(testAddresses[0].flagLabel).toEqual("(LBL_EMAIL_PRIMARY)");
-            expect(testAddresses[1].flagLabel).toEqual("(LBL_EMAIL_PRIMARY, LBL_EMAIL_OPT_OUT)");
+            expect(testAddresses[0].flagLabel).toEqual("LBL_EMAIL_PRIMARY");
+            expect(testAddresses[1].flagLabel).toEqual("LBL_EMAIL_PRIMARY, LBL_EMAIL_OPT_OUT");
         });
 
         it("should make an email address a link when metadata allows for links and the address is not opted out or invalid", function() {
@@ -242,7 +242,8 @@ describe("Email field", function() {
                     primary_address: "1",
                     hasAnchor:       false,
                     _wasNotArray:    true,
-                    flagLabel: "(LBL_EMAIL_PRIMARY)"
+                    flagLabel: "LBL_EMAIL_PRIMARY",
+                    flagClass: "primary"
                 },
                 actual;
 

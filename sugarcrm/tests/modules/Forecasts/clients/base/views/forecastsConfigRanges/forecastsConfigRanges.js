@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("forecasts_view_forecastsConfigRanges", function() {
+describe("Forecasts.View.ForecastsConfigRanges", function() {
     var app, view, testStub, addHandlerStub;
 
     beforeEach(function() {
@@ -27,9 +27,12 @@ describe("forecasts_view_forecastsConfigRanges", function() {
         sinon.stub(app.metadata, "getModule", function() {
             return {
                 has_commits: 1,
-                forecast_ranges: 'show_binary'
+                forecast_ranges: 'show_binary',
+                commit_stages_included: ['include'],
+                buckets_dom: 'commit_stage_dom'
             };
         });
+
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigRanges", "forecastsConfigRanges", "js", function(d) {
             return eval(d);
         });
@@ -47,15 +50,15 @@ describe("forecasts_view_forecastsConfigRanges", function() {
     });
 
     it("should have a forecasts_ranges_field parameter to hold the metadata for the field", function() {
-        expect(view.forecast_ranges_field).toBeDefined();
+        expect(view.forecastRangesField).toBeDefined();
     });
 
-    it("should have a buckets_dom_field parameter to hold the metadata for the field", function() {
-        expect(view.buckets_dom_field).toBeDefined();
+    it("should have a bucketsDomField parameter to hold the metadata for the field", function() {
+        expect(view.bucketsDomField).toBeDefined();
     });
 
-    it("should have a category_ranges_field parameter to hold the metadata for the field", function() {
-        expect(view.category_ranges_field).toBeDefined();
+    it("should have a categoryRangesField parameter to hold the metadata for the field", function() {
+        expect(view.categoryRangesField).toBeDefined();
     });
 
     it("should have a parameter to keep track of the selection between selection changes", function() {
@@ -74,8 +77,8 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                 panels: [
                     {
                         label: 'testLabel',
-                        fields: [
-                            {
+                        fields: {
+                            forecast_ranges: {
                                 name: 'forecast_ranges',
                                 type: 'radioenum',
                                 label: 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
@@ -85,10 +88,10 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                                 enabled: true,
                                 value: ''
                             },
-                            {
+                            category_ranges: {
                                 name: 'category_ranges'
                             },
-                            {
+                            buckets_dom: {
                                 name: 'buckets_dom',
                                 options: {
                                     show_binary: 'commit_stage_binary_dom',
@@ -96,7 +99,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                                 },
                                 value: ''
                             }
-                        ]
+                        }
                     }
                 ]
             };
@@ -108,7 +111,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
 
         it("for label should get initialized to the label string in metadata", function() {
             var options = {
-                meta: []
+                meta: view.meta
             };
             view.initialize(options);
             expect(testStub).toHaveBeenCalled();
@@ -117,14 +120,15 @@ describe("forecasts_view_forecastsConfigRanges", function() {
 
         it("for fields should get initialized to the field metadata they correspond to", function() {
             var options = {
-                    meta: []
+                    meta: view.meta
                 },
                 fieldMeta = _.first(view.meta.panels).fields;
+
             view.initialize(options);
             expect(testStub).toHaveBeenCalled();
-            expect(view.forecast_ranges_field).toEqual(fieldMeta[0]);
-            expect(view.category_ranges_field).toEqual(fieldMeta[1]);
-            expect(view.buckets_dom_field).toEqual(fieldMeta[2]);
+            expect(view.forecastRangesField).toEqual(fieldMeta.forecast_ranges);
+            expect(view.categoryRangesField).toEqual(fieldMeta.category_ranges);
+            expect(view.bucketsDomField).toEqual(fieldMeta.buckets_dom);
         });
 
         describe("initial value for", function() {
@@ -148,31 +152,31 @@ describe("forecasts_view_forecastsConfigRanges", function() {
             afterEach(function() {
             });
 
-            describe("forecast_ranges_field", function() {
+            describe("forecastRangesField", function() {
                 it("should be defined", function() {
-                    view.initialize({ meta: []});
+                    view.initialize({ meta: view.meta});
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.forecast_ranges_field.value).toBeDefined();
+                    expect(view.forecastRangesField.value).toBeDefined();
                 });
 
                 it("should be set to what is in the model during initialize", function() {
-                    view.initialize({ meta: [] });
+                    view.initialize({ meta: view.meta });
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.forecast_ranges_field.value).toEqual('test_ranges');
+                    expect(view.forecastRangesField.value).toEqual('test_ranges');
                 });
             });
 
-            describe("bucket_dom_field", function() {
+            describe("bucketDomField", function() {
                 it("should be defined", function() {
-                    view.initialize({ meta: []});
+                    view.initialize({ meta: view.meta});
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.buckets_dom_field.value).toBeDefined();
+                    expect(view.bucketsDomField.value).toBeDefined();
                 });
 
                 it("should be set to what is in the model during initialize", function() {
-                    view.initialize({ meta: [] });
+                    view.initialize({ meta: view.meta});
                     expect(testStub).toHaveBeenCalled();
-                    expect(view.buckets_dom_field.value).toEqual('test_ranges_dom');
+                    expect(view.bucketsDomField.value).toEqual('test_ranges_dom');
                 });
             });
         });
@@ -219,7 +223,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
 
     });
 
-    describe("test call selectionHandler whit different types", function() {
+    describe("test call selectionHandler with different types", function() {
         beforeEach(function() {
             initializeStub = sinon.stub(app.view.View.prototype, "initialize");
             _selectionHandlerStub = sinon.stub(view, "_selectionHandler");
@@ -234,8 +238,8 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                 panels: [
                     {
                         label: 'testLabel',
-                        fields: [
-                            {
+                        fields: {
+                            forecast_ranges: {
                                 name: 'forecast_ranges',
                                 type: 'radioenum',
                                 label: 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
@@ -245,10 +249,10 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                                 enabled: true,
                                 value: ''
                             },
-                            {
+                            category_ranges: {
                                 name: 'category_ranges'
                             },
-                            {
+                            buckets_dom: {
                                 name: 'buckets_dom',
                                 options: {
                                     show_binary: 'commit_stage_binary_dom',
@@ -257,7 +261,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
                                 },
                                 value: ''
                             }
-                        ]
+                        }
                     }
                 ]
             };
@@ -284,7 +288,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
         });
 
         it("call selectionHandler for show_binary", function() {
-            view.initialize({ meta: [] });
+            view.initialize({ meta: view.meta });
 
             view.value = 'show_binary';
             view.selectionHandler({ data: { view: view } });
@@ -293,7 +297,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
         });
 
         it("call selectionHandler for show_buckets", function() {
-            view.initialize({ meta: [] });
+            view.initialize({ meta: view.meta });
 
             view.value = 'show_buckets';
             view.selectionHandler({ data: { view: view } });
@@ -302,7 +306,7 @@ describe("forecasts_view_forecastsConfigRanges", function() {
         });
 
         it("call customSlectionHandler for show_custom_buckets", function() {
-            view.initialize({ meta: [] });
+            view.initialize({ meta: view.meta });
 
             view.value = 'show_custom_buckets';
             view.selectionHandler({ data: { view: view } });

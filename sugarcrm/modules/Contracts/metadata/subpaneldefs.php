@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $layout_defs['Contracts'] = array( 
 	// sets up which panels to show, in which order, and with what linked_fields 
 	'subpanel_setup' => array(
-		'contract_documents' => array(
+		'contracts_documents' => array(
 			'order' => 10,
 			'module' => 'Documents',
 			'sort_order' => 'asc',

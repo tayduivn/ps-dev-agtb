@@ -903,6 +903,13 @@ class MetaDataFiles
                         $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
                     } else {
                         require $fileInfo['path'];
+                        if($fileInfo['subPath'] != 'subpanels') {
+                            $extensionName = "sidecar{$type}{$fileInfo['platform']}{$fileInfo['subPath']}";
+                            $extFile = SugarAutoLoader::loadExtension($extensionName, $module);
+                            if ($extFile !== false) {
+                                @include $extFile;
+                            }
+                        }
                         if ( empty($module) ) {
                             if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
                                 $GLOBALS['log']->error('No viewdefs for type: '.$type.' viewdefs @ '.$fileInfo['path']);

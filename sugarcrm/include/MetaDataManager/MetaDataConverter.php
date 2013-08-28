@@ -45,6 +45,20 @@ class MetaDataConverter
     protected static $converter = null;
 
     /**
+     * Actions associated to their ACLAction type
+     *
+     * @var array
+     */
+    protected $aclActionList = array(
+        'EditView' => 'edit',
+        '' => 'list',
+        'index' => 'list',
+        'Import' => 'import',
+        'Reports' => 'list',
+        'DetailView' => 'view',
+    );
+
+    /**
      * Converts edit and detail view defs that contain fieldsets to a compatible
      * defs that does not contain fieldsets. In essence, it splits up any fieldsets
      * and moves them out of their grouping into individual fields within the panel.
@@ -333,7 +347,7 @@ class MetaDataConverter
             foreach ($defs['panels'] as $panels) {
                 // Handle fields if there are any (there should be)
                 if (isset($panels['fields']) && is_array($panels['fields'])) {
-                    // Logic is fairly straight forward... take each member of 
+                    // Logic is fairly straight forward... take each member of
                     // the fields array and make it an array of its own
                     foreach ($panels['fields'] as $field) {
                         $newpanels[] = array($field);
@@ -392,5 +406,86 @@ class MetaDataConverter
         }
         $newSubpanelName = $this->fromLegacySubpanelName($pathInfo['filename']);
         return "{$customDir}modules/{$module}/clients/base/views/{$newSubpanelName}/{$newSubpanelName}.php";
+    }
+
+    /**
+     * Converts a legacy menu to the new style menu
+     *
+     * @param $module module converting
+     * @param array $menu menu contents
+     * @param bool $ext is this an Extension
+     * @return string new menu layout
+     */
+    public function fromLegacyMenu($moduleName, array $menu)
+    {
+        $arrayName = "viewdefs['{$moduleName}']['base']['menu']['header']";
+
+        $dataItems = array();
+
+        foreach ($menu as $option) {
+            $data = array();
+            // get the menu manip done
+            $url = parse_url($option[0]);
+            parse_str($url['query'], $menuOptions);
+            $data['label'] = trim($option[1]);
+            if (isset($this->aclActionList[$menuOptions['module']])) {
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['module']]);
+                $data['acl_module'] = $moduleName;
+            } elseif (isset($this->aclActionList[$menuOptions['action']])) {
+                $data['acl_action'] = trim($this->aclActionList[$menuOptions['action']]);
+                $data['acl_module'] = trim($menuOptions['module']);
+            }
+
+            if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
+                $data['icon'] = "icon-plus";
+            } else if($menuOptions['module'] == 'Import') {
+                $data['icon'] = 'icon-upload-alternative';
+            } else if($menuOptions['module'] == 'Reports' && $moduleName != 'Reports') {
+                $data['icon'] = 'icon-bar-chart';
+            }
+
+            $data['route'] = $this->buildMenuRoute($menuOptions, $option[0]);
+            $dataItems[] = $data;
+        }
+
+        return array('name' => $arrayName, 'data' => $dataItems);
+    }
+
+    /**
+     * @param array $menuOptions the request variables
+     * @param string $link the legacy link
+     * @return string the correct route for the menu option
+     */
+    protected function buildMenuRoute(array $menuOptions, $link)
+    {
+        global $bwcModules;
+
+        $url = parse_url($link);
+        $currSiteUrl = parse_url($GLOBALS['sugar_config']['site_url']);
+
+        // most likely another server, return the URL provided
+        if (!empty($url['host']) && $url['host'] != $currSiteUrl['host']) {
+            return $link;
+        }
+
+        if (in_array($menuOptions['module'], $bwcModules)) {
+            return "#bwc/index.php?" . http_build_query($menuOptions);
+        }
+
+        $route = null;
+
+        if ($menuOptions['action'] == 'EditView' && empty($menuOptions['record'])) {
+            $route = "#{$menuOptions['module']}/create";
+        } elseif (($menuOptions['action'] == 'EditView' || $menuOptions['action'] == 'DetailView') &&
+            !empty($menuOptions['record'])
+        ) {
+            $route = "#{$menuOptions['module']}/{$menuOptions['record']}";
+        } elseif (empty($menuOptions['action']) || $menuOptions['action'] == 'index') {
+            $route = "#{$menuOptions['module']}";
+        } else {
+            $route = "#bwc/index.php?" . http_build_query($menuOptions);
+        }
+
+        return $route;
     }
 }
