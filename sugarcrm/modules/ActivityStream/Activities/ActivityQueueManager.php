@@ -58,6 +58,23 @@ class ActivityQueueManager
         }
     }
 
+    /**
+     * Checks whether a module has activity stream enabled
+     * @param $moduleName
+     *
+     * @return bool
+     */
+    public static function isEnabledForModule($moduleName)
+    {
+        $isEnabled = false;
+        $bean = BeanFactory::getBean($moduleName);
+
+        if($bean) {
+            $isEnabled = self::isActivityStreamEnabled() && self::isAuditable($bean);
+        }
+        return $isEnabled;
+    }
+
     protected static function isAuditable(SugarBean $bean)
     {
         if (in_array($bean->module_name, self::$moduleBlacklist)) {
