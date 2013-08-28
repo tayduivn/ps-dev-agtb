@@ -10,8 +10,7 @@ table.dataTable {
   th {
     line-height: 26px;
     min-width: 20px;
-    max-width: 100px;
-    margin-top: 0 !important;
+    //max-width: 100px;
     font-weight: normal;
     font-size: @fontSizeSmall;
     color: @tableHeader;
@@ -66,19 +65,19 @@ table.dataTable {
   & > tbody {
     & > tr {
       & > td {
-        height: 38px;
+        height: 28px;
         padding: 4px 8px;
-        .box-sizing(border-box);
 
         white-space: nowrap;
         word-break: break-word;
         vertical-align: middle;
         text-overflow: ellipsis;
-        max-width: 100px;
+        max-width: 82px;
         border-top: 1px solid darken(@grayLighter, 5%);
         border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: @white;
         .rtl(@direction,ltr);
+
         &> *:not(.overflow-visible) {
           overflow-x: hidden;
           text-overflow: ellipsis;
@@ -137,8 +136,6 @@ table.dataTable {
     td {
       font-weight: bold;
       border-top: 2px solid @grayLight;
-      padding-left: 4px;
-      padding-right: 4px;
     }
     tr.overall th {
       font-weight: bold;
@@ -195,22 +192,80 @@ table.dataTable {
             .box-sizing(border-box);
           }
         }
+
+        > .edit .select2-container-multi {
+          position: absolute;
+          top: -15px;
+        }
+
+        &[data-type="fullname"] {
+          min-width: 288px;
+          max-width: 288px !important;
+          box-sizing: content-box;
+          height: 28px;
+          span.edit-cell {
+            display: inline-block;
+          }
+          .edit-cell[data-type="enum"] {
+            width: 80px;
+          }
+          .edit-cell[data-type="text"] {
+            width: 100px;
+          }
+        }
+        &[data-type="relate"] {
+          min-width: 150px;
+          max-width: 150px !important;
+        }
+        &[data-type="date"] {
+          min-width: 108px;
+          max-width: 108px !important;
+        }
+        &[data-type="currency"] {
+          min-width: 128px;
+          max-width: 128px !important;
+        }
+        &[data-type="parent"] {
+          min-width: 200px;
+          max-width: 200px !important;
+        }
+        &[data-type="file"] {
+          min-width: 200px;
+          max-width: 200px;
+          input[type="file"] {
+            width: 192px;
+          }
+          .btn-link {
+            margin-left: 0;
+            padding: 4px 0;
+            max-width: 150px;
+          }
+          button {
+            float: right;
+          }
+        }
+        &[data-type="enum"] {
+          min-width: 150px;
+          max-width: 150px;
+          .select2-container.select2-dropdown-open {
+            min-width: 82px;
+          }
+          .select2-container-multi.select2-choices-pills-close .select2-search-choice div {
+            text-overflow: ellipsis;
+            max-width: 116px;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+        }
+
         input[type="text"] {
           width: 100%;
+          min-width: 82px;
         }
         &> *:not(.overflow-visible) {
           overflow: visible;
         }
-        .select2-container .select2-choice {
-          line-height: 26px;
-          height: 26px;
-          abbr {
-            top: 6px;
-          }
-          div {
-            top: 0;
-          }
-        }
+
         .input-append.date {
           margin-bottom: 0;
           font-size: @baseFontSize;
@@ -225,7 +280,6 @@ table.dataTable {
           }
           input.datepicker {
             width: 100px;
-            margin-top: 0;
           }
           // reset datepicker since it is table inside table
           span.year.active:hover,
@@ -261,10 +315,8 @@ table.dataTable {
     .actions {
       display: inline-block;
       white-space: nowrap;
-      a {
-        &:hover:not(.disabled) {
-          color: @grayDark;
-        }
+      a:hover:not(.disabled) {
+        color: @grayDark;
       }
       &.open a .icon-eye-open {
         color: @gray !important;
@@ -302,9 +354,9 @@ table.dataTable {
   }
   input[type="text"] {
     min-height: 28px;
-    min-width: 100px;
+    //min-width: 100px;
     .box-sizing(border-box);
-    padding: 4px 6px 3px;
+    padding: 4px 6px;
   }
   input[type=radio],
   input[type=checkbox] {
@@ -313,11 +365,6 @@ table.dataTable {
   input[type=checkbox] {
     padding: 0 !important;
     margin: 0 !important;
-  }
-  span.full-name.edit {
-    span.edit-cell {
-      display: block;
-    }
   }
   td.number,
   tfoot th.number {
@@ -368,26 +415,23 @@ FLEXLIST GENERIC */
     & > thead > tr > th,
     & > tbody > tr > td {
       &:first-child {
-        width: 71px;
-        padding: 7px 8px;
-        .box-sizing(border-box);
+        width: 55px;
+        padding: 6px 8px;
         text-align: center;
         overflow-x: visible;
         position: absolute;
         left: 0;
       }
+      //8 + 55 + 8 + 1 + 8 = 80
       &:nth-child(2) {
         padding-left: 79px;
-        max-width: 179px;
       }
       & > thead > tr > th:first-child {
         padding: 8px;
       }
     }
-
     & > thead > tr > th {
       &:first-child {
-        height: 42px;
         background: @white;
         span {
           overflow-x: visible;
@@ -397,7 +441,7 @@ FLEXLIST GENERIC */
     & > tbody > tr > td {
       &:first-child {
         border: none;
-        height: 35px;
+        height: 22px;
         margin: 2px 0;
         z-index: 10;
       }
@@ -409,27 +453,21 @@ FLEXLIST GENERIC */
     & > thead > tr > th,
     & > tbody > tr > td {
       &:last-child {
-        width: 71px;
-        .box-sizing(border-box);
+        width: 55px;
         text-align: center;
         overflow-x: visible;
         position: absolute;
         right: 0;
       }
       &:nth-last-child(2) {
-        padding-right: 79px !important;
-        max-width: 179px;
+        padding-right: 79px;
       }
     }
 
     & > thead > tr > th {
       &:last-child {
-        height: 42px;
+        height: 26px;
         background: @white;
-        background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
-        background-position: ~"-moz-calc(100% - 80px)" 50% !important;
-        background-position: ~"-webkit-calc(100% - 80px)" 50% !important;
-        background-position: ~"calc(100% - 80px)" 50% !important;
         border-left: 1px solid darken(@grayLighter,5%);
         z-index: 100;
         > .dropdown {
@@ -437,14 +475,22 @@ FLEXLIST GENERIC */
         }
       }
       &:nth-last-child(2) {
+        background-position: 60% 50%;/* leave this for browsers that potentially don't support calc() function */
+        background-position: ~"-moz-calc(100% - 71px)" 50% !important;
+        background-position: ~"-webkit-calc(100% - 71px)" 50% !important;
+        background-position: ~"calc(100% - 71px)" 50% !important;
         border-right: none;
+        &.sorting {
+          // 71 + 25 = 96
+          padding-right: 96px !important;
+        }
       }
     }
     & > tbody > tr > td {
       &:last-child {
         padding: 3px 8px;
         border: none;
-        height: 35px;
+        height: 28px;
         margin: 2px 0;
         .list .btn.rowaction {
           margin-left: 0;
@@ -467,18 +513,16 @@ FLEXLIST GENERIC */
       border-bottom: 1px solid darken(@grayLighter,5%);
       thead > tr > th,
       tbody > tr > td {
-        &:first-child,
         &:first-child {
           padding-left: 20px;
           max-width: 116px;
         }
         &:nth-last-child(2) {
           padding-right: 143px;
-          max-width: 143px;
         }
         &:last-child {
-          width: 135px;
-          max-width: 135px;
+          width: 123px;
+          max-width: 123px;
           padding-left: 4px;
         }
       }
@@ -487,44 +531,38 @@ FLEXLIST GENERIC */
     &.duplicates-singleselect {
       thead > tr > th,
       tbody > tr > td {
-        &:first-child,
         &:first-child {
-          width: 59px;
-          padding: 8px;
+          width: 43px;
         }
         &:nth-child(2) {
           padding-left: 67px;
-          max-width: 167px;
         }
         &:nth-last-child(2) {
           padding-right: 53px;
-          max-width: 153px;
         }
-        &:last-child,
         &:last-child {
-          width: 45px;
+          width: 29px;
         }
+      }
+      thead > tr > th:first-child {
+        padding: 8px;
       }
     }
     /*lead record view find duplicates*/
     &.duplicates-multiselect {
       thead > tr > th,
       tbody > tr > td {
-        &:first-child,
         &:first-child {
-          width: 45px;
+          width: 29px;
         }
         &:nth-child(2) {
           padding-left: 53px;
-          max-width: 153px;
         }
         &:nth-last-child(2) {
           padding-right: 53px;
-          max-width: 153px;
         }
-        &:last-child,
         &:last-child {
-          width: 45px;
+          width: 29px;
         }
       }
       thead > tr > th:first-child {
@@ -551,15 +589,15 @@ FLEXLIST GENERIC */
     }
     & > tbody > tr > td {
       &.editableColumn {
-        padding: 0px 4px;
-        min-width: 80px;
+        padding: 0 2px;
+        min-width: 92px;
         max-width: 100%;
-        height: 37px;
         &:first-child {
           max-width: 80px;
         }
         span.detail,
         span.list {
+          padding-right: 8px;
           padding-left: 14px;
         }
         span.detail:hover,
@@ -575,6 +613,9 @@ FLEXLIST GENERIC */
           padding-right: 1px;
         }
       }
+      &:nth-last-child(2) {
+        padding-right: 71px;
+      }
     }
     & > tfoot > tr > td {
       &:last-child {
@@ -582,7 +623,7 @@ FLEXLIST GENERIC */
         position: absolute;
       }
       &:nth-last-child(2) {
-        padding-right: 79px !important;
+        padding-right: 79px;
       }
     }
   }
@@ -594,11 +635,11 @@ FLEXLIST GENERIC */
     & > tbody > tr > td,
     & > tfoot > tr > td {
       &:first-child {
-        padding-left: 14px;
+        padding: 4px 8px 4px 14px;
       }
     }
     & > tbody > tr > td {
-      padding: 0px 4px;
+      padding: 4px 0;
       span.detail:hover,
       span.list:hover {
         overflow: visible;
@@ -608,17 +649,26 @@ FLEXLIST GENERIC */
           top: 6px;
         }
       }
+      &.tright .list {
+        padding: 0 8px;
+      }
       .isEditable {
-        padding: 4px 0px 3px 3px;
+        padding: 3px 8px 3px 3px;
         &.active {
-          padding: 1px 0px 1px 0px;
+          padding: 0 1px;
         }
         .clickToEdit {
-          padding-left: 10px;
-            &.active{
-                padding: 0px;
-            }
+          padding-left: 8px;
+          &.active{
+            padding: 0;
+          }
         }
+      }
+      &:nth-last-child(2) {
+        padding-right: 71px;
+      }
+      &:last-child .list {
+        padding: 0;
       }
     }
     & > tfoot > tr > td {
@@ -627,7 +677,7 @@ FLEXLIST GENERIC */
         position: absolute;
       }
       &:nth-last-child(2) {
-        padding-right: 79px !important;
+        padding-right: 79px;
       }
     }
     & > tbody > tr[name$="_commit_history"] > td:first-child:last-child {
@@ -850,6 +900,13 @@ table.dataTable th:active {
     width: 54px;
     right: 4px;
     z-index: 111;*/
+    &.open > .btn {
+      .box-shadow(none);
+      background-color: darken(@grayLighter, 5%);
+      > [class^="icon-"] {
+        color: @grayDark;
+      }
+    }
   }
   .dropdown-menu {
     text-align: left;

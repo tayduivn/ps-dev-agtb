@@ -133,6 +133,13 @@
   .btn + .btn-group {
     margin-left: 8px;
   }
+  &.open .btn.dropdown-toggle {
+    .box-shadow(none);
+    background-color: darken(@grayLighter, 5%);
+    > [class^="icon-"] {
+      color: @grayDark;
+    }
+  }
 }
 
 .btn-toolbar > .dropdown-menu {
