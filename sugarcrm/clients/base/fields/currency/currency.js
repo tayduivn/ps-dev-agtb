@@ -45,6 +45,11 @@
      */
     _currencyField: null,
     /**
+     * @var {Boolean}
+     * whether or not the currency dropdown is hidden from view
+     */
+    hideCurrencyDropdown: false,
+    /**
      * @type {String}
      * last known record currency id
      */
@@ -60,6 +65,8 @@
             // new records are set the user's preferred currency
             this.model.set(currencyField, app.user.get('preferences').currency_id);
         }
+        // hide currency dropdown on list views
+        this.hideCurrencyDropdown = this.view.action === 'list';
         // track the last currency id to convert the value on change
         this._lastCurrencyId = this.model.get(currencyField);
     },
