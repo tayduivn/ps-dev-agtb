@@ -5,7 +5,7 @@
         this.processDef();
         this.context.on("toggleSidebar", this.toggleSide, this);
         this.context.on("openSidebar", this.openSide, this);
-        this.context.on('defaultLayout:setTop', this.setTopPosition, this)
+        this.context.on('defaultLayout:setPaddingTop', this.setPaddingTopPosition, this);
     },
     toggleSide: function() {
         this.$('.main-pane').not("#dashboard,.dashboard").toggleClass('span12');
@@ -27,8 +27,8 @@
      * Change the top position for main-pane.
      * @param top
      */
-    setTopPosition: function(top) {
-        this.$('.main-pane').eq(0).css('top', top);
+    setPaddingTopPosition: function(top) {
+        this.$('.main-pane').eq(0).css('padding-top', top);
     },
     renderHtml: function() {
         this.$el.html(this.template(this));

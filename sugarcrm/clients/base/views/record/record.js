@@ -640,6 +640,6 @@
      */
     adjustViewForHeaderpane: function() {
         var height = this.$('.headerpane').outerHeight(true);
-        this.context.trigger('defaultLayout:setTop', height);
+        this.context.trigger('defaultLayout:setPaddingTop', height);
     }
 })
