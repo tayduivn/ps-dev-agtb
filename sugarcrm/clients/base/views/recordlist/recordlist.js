@@ -35,6 +35,10 @@
 
     rowFields: {},
 
+    events: {
+        'click [name=inline-cancel]' : 'resize'
+    },
+
     contextEvents: {
         "list:editall:fire": "toggleEdit",
         "list:editrow:fire": "editClicked",
@@ -46,6 +50,8 @@
         var recordListMeta = this._initializeMetadata();
         options.meta = _.extend({}, recordListMeta, options.meta || {});
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+        //fire resize scroll-width on column add/remove
+        this.on('list:toggle:column', this.resize, this);
     },
 
     // Allows sub-views to override and use different view metadata if desired
@@ -142,6 +148,8 @@
 
     editClicked: function(model) {
         this.toggleRow(model.id, true);
+        //check to see if horizontal scrolling needs to be enabled
+        this.resize();
     },
 
     toggleRow: function(modelId, isEdit) {
