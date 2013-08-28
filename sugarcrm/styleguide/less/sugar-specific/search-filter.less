@@ -212,6 +212,7 @@
   }
 }
 
+
 // inset forms - general
 .filter-options.extend,
 .mu.extend,
@@ -219,6 +220,17 @@
   .filter-body {
     .controls {
       line-height: 16px;
+      .filter-rows .input-append .add-on:first-child {
+        margin-left: 0;
+        min-width: 70px;
+        text-align: right;
+      }
+      .filter-rows .input-append input.inherit-width {
+        width: 80%;
+        width: ~"-moz-calc(100% - 80px)";
+        width: ~"-webkit-calc(100% - 80px)";
+        width: ~"calc(100% - 80px)";
+      }
     }
     input[type=checkbox] {
       margin-bottom: inherit;
