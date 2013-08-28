@@ -27,7 +27,8 @@
             var options = {
                 limit: app.config.maxSubpanelResult
             };
-            this.context.set('collectionOptions', options);
+            var collectionOptions = this.context.has('collectionOptions') ? this.context.get('collectionOptions') : {};
+            this.context.set('collectionOptions', _.extend(collectionOptions, options));
         }
         this.layout.on("hide", this.toggleList, this);
     },
