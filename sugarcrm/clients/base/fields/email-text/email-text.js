@@ -90,40 +90,5 @@
             this.model.trigger('change:'+this.name);
         }
         return emails;
-    },
-    /**
-     * Custom error styling for the e-mail field
-     * @param {Object} errors
-     * @override BaseField
-     */
-    decorateError: function(errors){
-        this.$el.closest('.record-cell').addClass("error");
-        _.each(errors, function(errorContext, errorName) {
-            this._addErrorDecoration(errorName, errorContext);
-        }, this);
-    },
-    /**
-     * Custom error styling for the e-mail field
-     * @param {Object} errors
-     * @override BaseField
-     */
-    _addErrorDecoration: function(errorName, errorContext) {
-        // this.$el.closest('.record-cell').addClass("error");
-        var inp = this.$('input[name=email]');
-        var parent = $(inp).parent();
-        var isWrapped = parent.hasClass('input-append error');
-        if (!isWrapped) {
-            parent.wrap('<div class="input-append error '+this.fieldTag+'">');
-        }
-        inp.next('.error-tooltip').remove();
-        inp.after(this.exclamationMarkTemplate([app.error.getErrorString(errorName, errorContext)]));
-        var tooltip = inp.next('.error-tooltip');
-        if (_.isFunction(tooltip.tooltip)) {
-            tooltip.tooltip({
-                container:'body',
-                placement:'top',
-                trigger:'click'
-            });
-        }
     }
 })
