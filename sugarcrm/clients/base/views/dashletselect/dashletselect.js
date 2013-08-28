@@ -16,6 +16,7 @@
         'click .preview' : 'previewClicked',
         'keyup .search' : 'searchFired'
     },
+    plugins: ['ellipsis_inline'],
     dataTable: null,
 
     /**
@@ -273,6 +274,7 @@
             if (!dashlet.config) {
                 return;
             }
+            var description = app.lang.get(dashlet.description, dashlet.config.module);
             if (!app.acl.hasAccess('access', module || dashlet.config.module)) {
                 return;
             }
@@ -285,7 +287,7 @@
                     type: name
                 }, dashlet),
                 title: app.lang.get(dashlet.name, dashlet.config.module),
-                description: app.lang.get(dashlet.description, dashlet.config.module)
+                description: '<div class="ellipsis_inline" rel="tooltip" data-original-title="'+description+'" data-placement="bottom" data-container="body">' +description+'</div>'
             });
         }, this);
         return dashlets;
