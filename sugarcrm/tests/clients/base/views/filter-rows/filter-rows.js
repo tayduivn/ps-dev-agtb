@@ -229,21 +229,27 @@ describe("BaseFilterRowsView", function() {
             disposeStub.restore();
         });
         it('should validate rows', function() {
+            var disposeStub = sinon.stub(view, '_disposeFields');
             var validateStub = sinon.stub(view, 'validateRows');
             view.removeRow({currentTarget: $event});
             expect(validateStub).toHaveBeenCalled();
             validateStub.restore();
+            disposeStub.restore();
         });
     });
 
     describe('validateRows', function() {
-        var triggerStub, $rows;
+        var triggerStub, $rows, jQueryStub;
         beforeEach(function() {
             triggerStub = sinon.stub(view.layout, 'trigger');
             $rows = [];
+            jQueryStub = sinon.stub(view, '$', function() {
+                return $rows;
+            });
         });
         afterEach(function() {
             triggerStub.restore();
+            jQueryStub.restore();
         });
         it('should return true if all rows have a value set', function() {
             $rows.push($('<div>').data({ name: 'abc', value: 'ABC'}));
@@ -591,6 +597,7 @@ describe("BaseFilterRowsView", function() {
             view.handleOperatorSelected({currentTarget: $operatorField});
             $row.data('valueField').model.set('case_number', 200);
             var triggerStub = sinon.stub(view.layout, 'trigger');
+            view.lastFilterDef = undefined;
             $operatorField.parent('.filter-body').find('.filter-value input').trigger('keyup');
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');

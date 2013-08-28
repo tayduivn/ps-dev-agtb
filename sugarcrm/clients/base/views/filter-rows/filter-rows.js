@@ -229,7 +229,6 @@
      */
     removeRow: function(e) {
         var $row = this.$(e.currentTarget).parents('article.filter-body'),
-            $rows = this.$('article.filter-body'),
             fieldOpts = [
                 {'field': 'nameField', 'value': 'name'},
                 {'field': 'operatorField', 'value': 'operator'},
@@ -238,41 +237,54 @@
 
         this._disposeFields($row, fieldOpts);
         $row.remove();
-        this.validateRows($rows.not($row));
-        if ($rows.length === 1) {
+        this.validateRows();
+        if (this.$('article.filter-body').length === 0) {
             this.addRow();
         }
     },
 
     /**
      * Validate rows
-     * @param {Array} $rows
+     * @returns {Boolean} TRUE if valid, FALSE otherwise
      */
-    validateRows: function($rows) {
-        var isValid = true;
-        $rows = $rows ? $rows : this.$('article.filter-body');
+    validateRows: function() {
+        var isValid = true,
+            $rows = this.$('article.filter-body');
+
         _.each($rows, function(row) {
-            var data = $(row).data();
-            //If there's no value then it's not valid unless it is predefined
-            if (!_.isNumber(data.value) && _.isEmpty(data.value) && !data.isDateRange && !data.isPredefinedFilter) {
-                isValid = false;
-            }
-            //We need 2 values for a $between operator to be valid
-            if (data.operator === "$between" || data.operator === "$dateBetween") {
-                if (!_.isEmpty(data.value) && data.value.length == 2){
-                    if (data.operator === "$between") {
-                        isValid = _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
-                    }
-                    if (data.operator === "$dateBetween") {
-                        isValid = !_.isUndefined(data.value[0]) && !_.isUndefined(data.value[1]);
-                    }
-                } else {
-                    isValid = false;
-                }
-            }
+            if (!isValid) return false;
+            isValid = this.validateRow($(row));
         }, this);
         this.layout.trigger("filter:create:rowsValid", isValid);
         return isValid;
+    },
+
+    /**
+     * Verify the value of the row is not empty
+     * @param {Element} $row the row to validate
+     * @returns {Boolean} TRUE if valid, FALSE otherwise
+     */
+    validateRow: function($row) {
+        var data = $row.data();
+        //For date range and predefined filters there is no value
+        if (data.isDateRange || data.isPredefinedFilter) {
+            return true;
+        }
+        //Special case for between operators where 2 values are needed
+        var needTwoValues = ['$between', '$dateBetween'];
+        if (_.indexOf(needTwoValues, data.operator) > -1) {
+            if (_.isArray(data.value) && data.value.length === 2) {
+                if (data.operator === "$between") {
+                    return _.isNumber(data.value[0]) && _.isNumber(data.value[1]);
+                }
+                if (data.operator === "$dateBetween") {
+                    return !_.isUndefined(data.value[0]) && !_.isUndefined(data.value[1]);
+                }
+            } else {
+                return false;
+            }
+        }
+        return _.isNumber(data.value) || !_.isEmpty(data.value);
     },
 
     /**
@@ -288,6 +300,8 @@
         _.each(filterDef, function(row) {
             this.populateRow(row);
         }, this);
+        //Set lastFilterDef because the filter has already been applied and fireSearch is called in _disposeFields
+        this.lastFilterDef = this.buildFilterDef();
     },
 
     /**
@@ -350,10 +364,7 @@
         if (!fieldName) {
             return;
         }
-
-        //Reset flags
-        data.isDateRange = false;
-        data.isPredefinedFilter = false;
+        // For relate fields
         data.id_name = this.fieldList[fieldName].id_name;
 
         //Predefined filters don't need operators and value field
@@ -453,6 +464,7 @@
                 }
                 break;
         }
+        data.isRequired = fieldDef.required;
 
         // Create new model with the value set
         var model = app.data.createBean(moduleName);
@@ -504,7 +516,7 @@
                 this._renderField(field);
             }, this);
         } else {
-            model.set(fieldDef.id_name || fieldName, $row.data('value') || undefined);
+            model.set(fieldDef.id_name || fieldName, $row.data('value'));
             // Render the value field
             var field = this.createField(model, _.extend({}, fieldDef, {name: fieldName})),
                 fieldContainer = $(field.getPlaceholder().string);
@@ -543,7 +555,7 @@
 
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
-        if (!_.isEmpty(model.get(fieldName)) && model.get(fieldName) !== $row.data('value')) {
+        if (this.validateRow($row) && model.get(fieldDef.id_name || fieldName) !== $row.data('value')) {
             model.trigger('change');
         }
     },
@@ -582,18 +594,20 @@
     /**
      * Check each row, builds the filter definition and trigger the filtering
      */
-    fireSearch: function() {
-        var $rows = this.$('article.filter-body');
-        //Only apply valid filter definitions
-        if(this.validateRows($rows)){
-            var filterDef = this.buildFilterDef();
-            this.layout.trigger('filter:apply', null, filterDef);
+    fireSearch: _.debounce(function() {
+        var filterDef = this.buildFilterDef();
+        //Do not apply same filter twice
+        if (_.isEqual(this.lastFilterDef, filterDef)) {
+            return;
         }
-    },
+        this.validateRows();
+        this.lastFilterDef = filterDef;
+        this.layout.trigger('filter:apply', null, filterDef);
+    }, 400),
 
     /**
-     * Build filter definition
-     * @returns {Array}
+     * Build filter definition for all valid rows
+     * @returns {Array} Filter definition
      */
     buildFilterDef: function() {
         var $rows = this.$('article.filter-body'),
@@ -611,13 +625,16 @@
     },
 
     /**
-     * Build filter definition for one row
-     * @param {Object} $row
-     * @returns {Object}
+     * Runs validation on this row and build filter definition when validation passes.
+     * @param {Element} $row the related row
+     * @returns {Object} Filter definition for this row
      */
     buildRowFilterDef: function($row) {
-        var data = $row.data(),
-            operator = data['operator'],
+        var data = $row.data();
+        if (!this.validateRow($row)) {
+            return;
+        }
+        var operator = data['operator'],
             value = data['value'],
             name = data['id_name'] || data['name'],
             filter = {};
@@ -625,7 +642,7 @@
         if (data.isPredefinedFilter) {
             filter[name] = "";
             return filter;
-        } else if (_.isNumber(value) || !_.isEmpty(value) || data.isDateRange) {
+        } else {
             if (this.fieldList[name] && _.has(this.fieldList[name], 'dbFields')) {
                 var subfilters = [];
                 _.each(this.fieldList[name].dbFields, function(dbField) {
@@ -662,7 +679,7 @@
      {'field': 'valueField', 'value': 'value'}]
      */
     _disposeFields: function($row, opts) {
-        var data = $row.data(), trigger = false, model;
+        var data = $row.data(), model;
 
         if (_.isObject(data) && _.isArray(opts)) {
             _.each(opts, function(val) {
@@ -674,19 +691,19 @@
                         model = field.model;
                         if (val.field === "valueField" && model) {
                             model.clear({silent: true});
-                            trigger = true;
+                            this.stopListening(model);
                         }
                         field.dispose();
                         field = null;
-                    });
+                    }, this);
                 }
             }, this);
         }
+        //Reset flags
+        data.isDate = false;
+        data.isDateRange = false;
+        data.isPredefinedFilter = false;
         $row.data(data);
-
-        if (trigger) {
-            this.stopListening(model);
-            this.fireSearch();
-        }
+        this.fireSearch();
     }
 })
