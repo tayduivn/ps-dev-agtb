@@ -112,12 +112,12 @@ class ForecastsDefaults
             'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
             // the defined binary ranges the different buckets opportunities will fall in by default based on their probability
             'show_binary_ranges' => array(
-                'include' => array('min' => 70, 'max' => 100),
+                'include' => array('min' => 70, 'max' => 100, 'in_included_total' => true),
                 'exclude' => array('min' => 0, 'max' => 69)
             ),
             // the defined bucket ranges the different buckets opportunities will fall in by default based on their probability
             'show_buckets_ranges' => array(
-                'include' => array('min' => 85, 'max' => 100),
+                'include' => array('min' => 85, 'max' => 100, 'in_included_total' => true),
                 'upside' => array('min' => 70, 'max' => 84),
                 'exclude' => array('min' => 0, 'max' => 69)
             ),
@@ -129,7 +129,8 @@ class ForecastsDefaults
                 'exclude' => array('min' => 0, 'max' => 69)
             ),
             //END SUGARCRM flav=ent ONLY
-
+            // contains a comma-separated list of commit_stages that should be included in likely/best/worst totals
+            'commit_stages_included' => array('include'),
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
             'sales_stage_won' => array('Closed Won'),
             //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost

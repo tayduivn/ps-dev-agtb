@@ -18,8 +18,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
         array(
             'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGES',
             'fields' => array(
-                array(
-                    'name' =>'forecast_ranges',
+                'forecast_ranges' => array(
+                    'name' => 'forecast_ranges',
                     'type' => 'radioenum',
                     'label' => 'LBL_FORECASTS_CONFIG_RANGES_OPTIONS',
                     'view' => 'edit',
@@ -27,70 +27,65 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRanges'] = array(
                     'default' => false,
                     'enabled' => true,
                 ),
-                array(
-                    'name' => 'category_ranges',
-                    'ranges' => array(
-                        array(
-                            'name' => 'include',
-                            'type' => 'range',
-                            'view' => 'edit',
-                            'sliderType' => 'connected',
-                            'minRange' => 0,
-                            'maxRange' => 100,
-                            'default' => true,
-                            'enabled' => true,
-                        ),
-                        array(
-                            'name' => 'upside',
-                            'type' => 'range',
-                            'view' => 'edit',
-                            'sliderType' => 'connected',
-                            'minRange' => 0,
-                            'maxRange' => 100,
-                            'default' => true,
-                            'enabled' => true,
-                        ),
-// TODO-sfa: 6.8 - SFA-196: implement custom buckets
+                'category_ranges' => array(
+                    'include' => array(
+                        'name' => 'include',
+                        'type' => 'range',
+                        'view' => 'edit',
+                        'sliderType' => 'connected',
+                        'minRange' => 0,
+                        'maxRange' => 100,
+                        'default' => true,
+                        'enabled' => true,
+                    ),
+                    'upside' => array(
+                        'name' => 'upside',
+                        'type' => 'range',
+                        'view' => 'edit',
+                        'sliderType' => 'connected',
+                        'minRange' => 0,
+                        'maxRange' => 100,
+                        'default' => true,
+                        'enabled' => true,
+                    ),
 //BEGIN SUGARCRM flav=ent ONLY
-                        array(
-                            'name' => 'custom_default',
-                            'type' => 'range',
-                            'view' => 'edit',
-                            'sliderType' => 'connected',
-                            'minRange' => 0,
-                            'maxRange' => 100,
-                            'default' => true,
-                            'enabled' => true,
-                        ),
-                        array(
-                            'name' => 'custom',
-                            'type' => 'range',
-                            'view' => 'edit',
-                            'sliderType' => 'connected',
-                            'minRange' => 0,
-                            'maxRange' => 100,
-                            'default' => true,
-                            'enabled' => true,
-                        ),
-                        array(
-                            'name' => 'custom_without_probability',
-                            'type' => 'range',
-                            'view' => 'edit',
-                            'sliderType' => 'connected',
-                            'minRange' => 0,
-                            'maxRange' => 100,
-                            'default' => true,
-                            'enabled' => true,
-                        ),
+                    'custom_default' => array(
+                        'name' => 'custom_default',
+                        'type' => 'range',
+                        'view' => 'edit',
+                        'sliderType' => 'connected',
+                        'minRange' => 0,
+                        'maxRange' => 100,
+                        'default' => true,
+                        'enabled' => true,
+                    ),
+                    'custom' => array(
+                        'name' => 'custom',
+                        'type' => 'range',
+                        'view' => 'edit',
+                        'sliderType' => 'connected',
+                        'minRange' => 0,
+                        'maxRange' => 100,
+                        'default' => true,
+                        'enabled' => true,
+                    ),
+                    'custom_without_probability' => array(
+                        'name' => 'custom_without_probability',
+                        'type' => 'range',
+                        'view' => 'edit',
+                        'sliderType' => 'connected',
+                        'minRange' => 0,
+                        'maxRange' => 100,
+                        'default' => true,
+                        'enabled' => true,
+                    ),
 //END SUGARCRM flav=ent ONLY
                     ),
-                ),
-                array(
+                'buckets_dom' => array(
                     'name' => 'buckets_dom',
                     'options' => array(
                         'show_binary' => 'commit_stage_binary_dom',
                         'show_buckets' => 'commit_stage_dom',
-// TODO-sfa: 6.8 - SFA-196: implement custom buckets
 //BEGIN SUGARCRM flav=ent ONLY
                         'show_custom_buckets' => 'commit_stage_custom_dom'
 //END SUGARCRM flav=ent ONLY
