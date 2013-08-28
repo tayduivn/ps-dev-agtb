@@ -61,7 +61,14 @@
                 this.commit_date = model.get('date_modified');
 
                 _.each(this.points, function(point) {
-                    this.data_points.push(model.get(point));
+                    // make sure we can view data for this point
+                    var point_data = {};
+                    if (app.acl.hasAccess('read', 'ForecastWorksheets', app.user.get('id'), point)) {
+                        point_data.value = model.get(point)
+                    } else {
+                        point_data.error = app.template.getField('base', 'noaccess')(this);
+                    }
+                    this.data_points.push(point_data);
                 }, this);
             } else {
                 this.commit_date = undefined;
