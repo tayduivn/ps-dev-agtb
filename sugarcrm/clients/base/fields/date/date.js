@@ -205,33 +205,15 @@
      * @return {Boolean}       True if valid, false if not.
      */
     _verifyDateString: function(value) {
-        var sep, parsed, parts,
+        var sep, parsed, parts, valueWithForwardSlash,
             dateFormat = (this.usersDatePrefs) ? app.date.toDatepickerFormat(this.usersDatePrefs) : 'mm-dd-yyyy';
         //First try generic date parse (since we might have an ISO). This should generally work with the
         //ISO date strings we get from server.
         parsed = Date.parse(value);
         //Firefox for invalid date returns negative value instead NaN.
         if(_.isNaN(parsed) || parsed < 0) {
-            //Safari chokes on '.', '-', so retry replacing with '/'
-            if(_.isNaN(value.replace(/[\.\-]/g, '/'))) {
-                //Use datepicker plugin to verify datepicker format
-                return $.prototype.DateVerifier(value, dateFormat);
-            }
-            //Date strings starting with day e.g. dd* will fail due to Date.parse limitations
-            //So we artificially convert "date parts" to mm-dd-YYYY format to make date.parse
-            //We use '/' as separator since it seems to be most tolerated. Essentially, we're
-            //only confirming that the date parts are in fact valid.
-            sep = '.';
-            if (dateFormat.indexOf('dd') === 0) {
-                if (dateFormat.indexOf('/') > -1) {
-                    sep = '/';
-                } else if (dateFormat.indexOf('-') > -1) {
-                    sep = '-';
-                }
-                parts = value.split(sep);
-                return !_.isNaN(Date.parse(parts[1]+'/'+parts[0]+'/'+parts[2]));
-            }
-            return false;
+            // If generic Date.parse doesn't work, defer to the more robust bootstrap-datepicker verifier
+            return $.prototype.DateVerifier(value, dateFormat);
         }
         return true;
     },
