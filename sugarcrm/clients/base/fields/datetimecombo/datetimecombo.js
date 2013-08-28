@@ -412,16 +412,12 @@
      * @override BaseField
      */
     decorateError: function(errors){
-        var dateInputs;
         this.$el.closest('.record-cell').addClass("error");
         // Selects both the date and timepicker inputs
-        dateInputs = this.$('input');
+        var dateInputs = this.$('input');
         dateInputs.closest("span.edit").addClass('error');
-        var parent = dateInputs.parent();
-        var isWrapped = parent.hasClass('input-append error');
-        if (!isWrapped) {
-            parent.children().wrapAll('<div class="input-append error '+this.fieldTag+'">');
-        }
+        // We already have an input-append as parent, just need to add error klass
+        dateInputs.parent().addClass('error');
         _.each(errors, function(errorContext, errorName) {
             _.each(dateInputs, function(input) {
                 var inp = this.$(input);
