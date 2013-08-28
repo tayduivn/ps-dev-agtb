@@ -2,8 +2,8 @@
   border: 1px solid @grayLight;
   border: 1px solid rgba(0,0,0,.1);
   *border: 1px solid @grayLight; /* IE6-7 */
-  .box-shadow(0 4px 6px rgba(0,0,0,0.6));
-  .border-radius(8px);
+  .box-shadow(@shadowWidget);
+  .border-radius(@baseBorderRadius);
 }
 
 //Generate fixed spanX modal widths
@@ -133,6 +133,7 @@
   background-color: @grayLighter;
   border-top: 1px solid @grayLight;
   .box-sizing(border-box);
+  .border-radius(0 0 3px 3px);
 }
 
 .modal-backdrop,
