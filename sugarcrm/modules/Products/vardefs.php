@@ -648,16 +648,6 @@ $dictionary['Product'] = array(
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
         ),
-        'opportunity_link' =>  array(
-            'name' => 'opportunity_link',
-            'type' => 'link',
-            'relationship' => 'opportunities_products',
-            'vname' => 'LBL_OPPORTUNITY',
-            'link_type' => 'one',
-            'module' => 'Opportunities',
-            'bean_name' => 'Opportunity',
-            'source' => 'non-db',
-        ),
         'opportunity_name' => array(
             'name' => 'opportunity_name',
             'rname' => 'name',
@@ -827,7 +817,7 @@ $dictionary['Product'] = array(
             'rhs_module' => 'Products',
             'rhs_table' => 'products',
             'rhs_key' => 'opportunity_id',
-            'relationship_type' => 'one-to-one'
+            'relationship_type' => 'one-to-many'
         ),
         'products_accounts' =>  array(
             'lhs_module' => 'Accounts',
