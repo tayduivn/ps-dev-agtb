@@ -19,12 +19,13 @@ class SugarFieldFullname extends SugarFieldBase
         }
         $bean->ACLFilterFieldList($nameparts, array(), array("blank_value" => true));
 
-        if(!empty($nameparts['salutation']) && isset($this->field_defs['salutation']['options'])
-        		&& isset($app_list_strings[$this->field_defs['salutation']['options']])
-        		&& isset($app_list_strings[$this->field_defs['salutation']['options']][$nameparts['salutation']]) ) {
-
-        	$nameparts['salutation'] = $app_list_strings[$this->field_defs['salutation']['options']][$nameparts['salutation']];
-        } else {
+        if(!empty($nameparts['salutation'])
+           && isset($bean->field_defs['salutation']['options'])
+           && isset($app_list_strings[$bean->field_defs['salutation']['options']])
+           && isset($app_list_strings[$bean->field_defs['salutation']['options']][$nameparts['salutation']]) ) {
+            
+        	$nameparts['salutation'] = $app_list_strings[$bean->field_defs['salutation']['options']][$nameparts['salutation']];
+        } else if (empty($nameparts['salutation'])) {
             $nameparts['salutation'] = '';
         }
 
