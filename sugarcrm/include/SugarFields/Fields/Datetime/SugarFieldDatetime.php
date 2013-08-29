@@ -147,6 +147,7 @@ class SugarFieldDatetime extends SugarFieldBase {
     }
 
 
+
     /**
      * Unformat a value from an API Format
      * @param $value - the value that needs unformatted
@@ -154,7 +155,18 @@ class SugarFieldDatetime extends SugarFieldBase {
      */
     public function apiUnformat($value)
     {
-        return TimeDate::getInstance()->fromIsoDate($value)->asDb();
+        global $current_user;
+        if (strlen(trim($value)) < 11) {
+            $newValue = TimeDate::getInstance()->fromIsoDate($value, $current_user);
+        } else {
+            $newValue = TimeDate::getInstance()->fromIso($value, $current_user);
+        }
+
+        if (is_object($newValue)) {
+            $value = $newValue->asDb();
+        }
+
+        return $value;
     }
 
     /**
@@ -172,9 +184,8 @@ class SugarFieldDatetime extends SugarFieldBase {
         if($op === '$daterange') {
             return true;
         }
-
         $dateLengthCheck = is_array($value) ? reset($value) : $value;
-        if($bean->field_defs[$fieldName]['type'] == 'datetime' && strlen(trim($dateLengthCheck)) < 11) {
+        if(strlen(trim($dateLengthCheck)) < 11) {
             if(!is_array($value)) {
                 $dateParsed = date_parse($value);
             } else {
@@ -186,26 +197,26 @@ class SugarFieldDatetime extends SugarFieldBase {
                 case '$gt':
                 case '$gte':
                     $value = gmdate(
-                        "Y-m-d H:i:s",
+                        'Y-m-d\TH:i:s',
                         gmmktime(0, 0, 0, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
                     );
                     break;
                 case '$lt':
                 case '$lte':
                     $value = gmdate(
-                        "Y-m-d H:i:s",
+                        'Y-m-d\TH:i:s',
                         gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
                     );
                     break;
                 case '$between':
                 case '$dateBetween':
                     $value[0] = gmdate(
-                        "Y-m-d H:i:s",
+                        'Y-m-d\TH:i:s',
                         gmmktime(0, 0, 0, $dateParsed[0]['month'], $dateParsed[0]['day'], $dateParsed[0]['year'])
                     );
 
                     $value[1] = gmdate(
-                        "Y-m-d H:i:s",
+                        'Y-m-d\TH:i:s',
                         gmmktime(23, 59, 59, $dateParsed[1]['month'], $dateParsed[1]['day'], $dateParsed[1]['year'])
                     );
                     break;
