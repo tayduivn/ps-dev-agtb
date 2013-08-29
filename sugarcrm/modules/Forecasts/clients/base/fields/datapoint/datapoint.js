@@ -66,9 +66,7 @@
         this.total_field = this.total_field || this.name;
 
         this.hasAccess = app.utils.getColumnVisFromKeyMap(this.name, 'forecastsWorksheet');
-
         this.hasDataAccess = app.acl.hasAccess('read', 'ForecastWorksheets', app.user.get('id'), this.name);
-
         if(this.hasDataAccess === false) {
             this.noDataAccessTemplate = app.template.getField('base', 'noaccess')(this);
         }

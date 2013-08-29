@@ -60,21 +60,30 @@
             if (!_.isUndefined(model)) {
                 this.commit_date = model.get('date_modified');
 
-                _.each(this.points, function(point) {
-                    // make sure we can view data for this point
-                    var point_data = {};
-                    if (app.acl.hasAccess('read', 'ForecastWorksheets', app.user.get('id'), point)) {
-                        point_data.value = model.get(point)
-                    } else {
-                        point_data.error = app.template.getField('base', 'noaccess')(this);
-                    }
-                    this.data_points.push(point_data);
-                }, this);
+                this.data_points = this.processDataPoints(model);
             } else {
                 this.commit_date = undefined;
             }
 
             if (!this.disposed) this.render();
         }, this);
+    },
+
+    processDataPoints: function(model) {
+        var points = [],
+            noAccessTemplate = app.template.getField('base', 'noaccess')(this);
+
+        _.each(this.points, function(point) {
+            // make sure we can view data for this point
+            var point_data = {};
+            if (app.acl.hasAccess('read', 'ForecastWorksheets', app.user.get('id'), point)) {
+                point_data.value = model.get(point)
+            } else {
+                point_data.error = noAccessTemplate;
+            }
+            points.push(point_data);
+        }, this);
+
+        return points;
     }
 })
