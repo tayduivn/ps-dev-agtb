@@ -202,10 +202,12 @@
      * @returns {string}
      */
     formatSelection: function(item) {
-        var selectionLabel;
+        var selectionLabel, safeString;
 
+        //Escape string to prevent XSS injection
+        safeString = Handlebars.Utils.escapeExpression(item.text);
         // Update the text for the selected module.
-        this.$('.choice-related').html(item.text);
+        this.$('.choice-related').html(safeString);
 
         if (this.layout.layoutType !== "record" || this.layout.showingActivities) {
             selectionLabel = app.lang.get("LBL_MODULE");
