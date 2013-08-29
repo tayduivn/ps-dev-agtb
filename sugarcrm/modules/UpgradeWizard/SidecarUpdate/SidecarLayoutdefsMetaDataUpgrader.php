@@ -119,7 +119,9 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
 
         if (!empty($newdefs)) {
-            // $newdefs['layout'] = 'subpanel';
+            if(empty($newdefs['override_subpanel_list_view'])) {
+                $newdefs['layout'] = 'subpanel';
+            }
             $this->sidecarViewdefs = $newdefs;
         }
 
