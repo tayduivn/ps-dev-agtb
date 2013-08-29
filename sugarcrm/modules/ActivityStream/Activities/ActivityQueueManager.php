@@ -25,7 +25,11 @@ class ActivityQueueManager
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals', 'KBContents',
-        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications');
+        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications',
+        // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        'RevenueLineItems',
+        // END SUGARCRM flav=pro && flav!=ent ONLY
+    );
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
     /**
