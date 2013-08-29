@@ -54,10 +54,9 @@ class MetadataPortalApi extends MetadataApi {
     {
         $portalModuleList = $this->findPortalModules();
         if (!empty($args['module_filter'])) {
-            //If need be, update module filter for intersection of Portal enabled modules
+            //If need be, update module filter to get intersection with Portal enabled modules
             $intersection = array_intersect($portalModuleList, explode(',', $args['module_filter']));
-            //If we mistakenly set module filter to empty list, then we load ALL metadata.
-            if (!empty($intersection)) {
+            if (!empty($intersection)) { //If we set filter to empty list, then we'd load ALL metadata. (NO.)
                 $portalModuleList = $intersection;
             }
         }
@@ -69,13 +68,13 @@ class MetadataPortalApi extends MetadataApi {
      * Find all modules with Portal metadata
      * @return array List of Portal module names
      */
-    protected function findPortalModules()
+    public function findPortalModules()
     {
         $modules = array();
         foreach (SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
             // strip modules/ from name
             $mname = substr($mdir, 8);
-            if (SugarAutoLoader::fileExists("$mdir/clients/portal/views/")) {
+            if (SugarAutoLoader::fileExists("$mdir/clients/portal/")) {
                 $modules[] = $mname;
             }
         }
