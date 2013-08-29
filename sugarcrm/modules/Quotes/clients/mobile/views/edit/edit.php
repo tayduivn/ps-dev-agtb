@@ -40,7 +40,8 @@ $viewdefs['Quotes']['mobile']['view']['edit'] = array(
             'fields' => array(
                 'quote_num',
                 'name',
-                'account_name',
+                'billing_account_name',
+                'shipping_account_name',
                 'quote_stage',
                 'total',
                 'date_quote_expected_closed',

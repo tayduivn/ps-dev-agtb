@@ -52,8 +52,13 @@
 
         if (this.tplName === 'edit') {
 
+            var inList = this.view.name === 'recordlist'?true:false;
+            var cssClasses = (inList?'select2-narrow':'') + (this.type === 'parent'?' select2-parent':'');
+
             this.$(this.fieldTag).select2({
-                width: '100%',
+                width: inList?'off':'100%',
+                dropdownCssClass: cssClasses,
+                containerCssClass: cssClasses,
                 initSelection: function (el, callback) {
                     var $el = $(el),
                         id = $el.data('id'),

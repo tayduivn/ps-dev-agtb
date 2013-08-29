@@ -1,5 +1,5 @@
 describe("Base.Field.Follow", function() {
-    var app, field;
+    var app, field, getModuleStub, activityEnabled = true;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -7,6 +7,11 @@ describe("Base.Field.Follow", function() {
         SugarTest.testMetadata.set();
         SugarTest.loadComponent('base', 'field', 'button');
         SugarTest.loadComponent('base', 'field', 'rowaction');
+
+        getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
+            return {activityStreamEnabled:activityEnabled};
+        });
+
         var model = new Backbone.Model({
                 id: '1234567890'
             });
@@ -15,6 +20,7 @@ describe("Base.Field.Follow", function() {
     });
 
     afterEach(function() {
+        getModuleStub.restore();
         field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -24,6 +30,7 @@ describe("Base.Field.Follow", function() {
         field._loadTemplate = null;
         field = null;
     });
+
     describe("Label", function() {
         it('should assign the label as LBL_FOLLOW when the following value is empty', function() {
             expect(field.label).toBe('LBL_FOLLOW');
@@ -73,5 +80,18 @@ describe("Base.Field.Follow", function() {
         field.model.set("following", false);
         field.context.trigger("favorite:active");
         expect(field.model.get("following")).toBeTruthy();
+    });
+
+    describe("_render", function() {
+        it('should show if activity stream is enabled', function() {
+            field._render();
+            expect(field.isHidden).toBeFalsy();
+        });
+
+        it('should be hidden if activity stream is not enabled', function() {
+            activityEnabled = false;
+            field._render();
+            expect(field.isHidden).toBeTruthy();
+        });
     });
 });

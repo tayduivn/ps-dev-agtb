@@ -1,4 +1,5 @@
 ({
+    className: 'widget-header',
     events: {
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'

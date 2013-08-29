@@ -4122,6 +4122,7 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment. Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
+    'LBL_ACTIVITY_STREAM_DISABLED' => 'Activity Stream is not enabled',
     'LBL_DATA_VIEW' => 'Data View',
     'LBL_COMMENT' => 'Comment',
 

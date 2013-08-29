@@ -26,13 +26,35 @@
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
 
         // show the first toggle if the last viewed state isn't set in the metadata
-        if (_.isUndefined(lastViewed) && (this.toggles.length > 0)) {
-            lastViewed = _.first(this.toggles).toggle;
+        if (_.isUndefined(lastViewed) || this.isToggleButtonDisabled(lastViewed)) {
+            var enabledToggles = _.filter(this.toggles, function(toggle) {return !toggle.disabled});
+            if (enabledToggles.length > 0) {
+                lastViewed = _.first(enabledToggles).toggle;
+            }
         }
 
         this.showComponent(lastViewed, true);
         // Toggle the appropriate button and layout for initial render
         this.$('[data-view="' + lastViewed + '"]').button('toggle');
+    },
+
+    /**
+     * Checks whether the toggle button is disabled
+     * @param {string} name  The name of the button to check
+     * @return {boolean}
+     */
+    isToggleButtonDisabled: function (name) {
+        var disabled = false,
+            toggleButton;
+
+        toggleButton = _.find(this.toggles, function (toggle) {
+            return toggle.toggle === name;
+        });
+
+        if (toggleButton) {
+            disabled = toggleButton.disabled;
+        }
+        return disabled;
     },
 
     /**
@@ -56,7 +78,8 @@
                 return curr.name === toggle;
             }, this);
             if (toggle && availableToggle) {
-                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon };
+                var disabled = !!availableToggle.disabled;
+                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon, disabled: disabled};
             }
         }, this);
 
@@ -110,6 +133,7 @@
      * @param {Event} e
      */
     toggleView: function (e) {
+        debugger;
         var $el = this.$(e.currentTarget);
         // Hack: With a real <button> with attribute disabled="disabled", events won't fire on the button. However,
         // since we're using <a> anchor to allow tooltips even if btn disabled, we have to "fudge" disabled behavior

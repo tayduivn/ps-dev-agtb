@@ -43,7 +43,7 @@ $viewdefs['Quotes']['mobile']['view']['detail'] = array(
                     'name' => 'name',
                     'label' => 'LBL_QUOTE_NAME',
                 ),
-                'account_name',
+                'billing_account_name',
                 'quote_stage',
             ),
     	),
