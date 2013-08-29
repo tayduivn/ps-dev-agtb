@@ -179,34 +179,192 @@
         //set first item as default
         this.defaultOption = this.defaultOption || this.fieldOptions.splice(0, 1)[0];
     },
-    getMassUpdateModel: function(module) {
-        var massModel = this.context.get("mass_collection");
-        return massModel ? _.extend(massModel, {
-            sync: function(default_method, model, options) {
-                var callbacks = {
+
+    /**
+     * Create the Progress view unless it is initialized.
+     * Return the progress view component in the same layout.
+     *
+     * @return {Backbone.View} MassupdateProgress view component.
+     */
+    getProgressView: function() {
+        var progressView = this.layout.getComponent('massupdate-progress');
+        if (!progressView) {
+            progressView = app.view.createView({
+                context: this.context,
+                name: 'massupdate-progress',
+                layout: this.layout
+            });
+            this.layout._components.push(progressView);
+            this.layout.$el.append(progressView.$el);
+        }
+        progressView.render();
+        return progressView;
+    },
+
+    /**
+     * Create massupdate collection against the parent module.
+     * Design the model synchronizing progressively.
+     *
+     * @param {String} baseModule parent module name.
+     * @return {Backbone.Collection} Massupdate collection.
+     */
+    getMassUpdateModel: function(baseModule) {
+        var massModel = this.context.get('mass_collection'),
+            chunkSize = app.config.maxQueryResult,
+            progressView = this.getProgressView(),
+            massCollection = massModel ? _.extend({}, massModel, {
+                defaultMethod: 'update',
+                module: 'MassUpdate',
+                baseModule: baseModule,
+
+                /**
+                 * Maximum number of retrial attempt.
+                 *
+                 * @property
+                 */
+                maxAllowAttempt: 3,
+
+                /**
+                 * Chunk for each execution.
+                 *
+                 * @property
+                 */
+                chunks: null,
+
+                /**
+                 * Current trial attempt number.
+                 *
+                 * @property
+                 */
+                attempt: 0,
+
+                /**
+                 * Pause status.
+                 * If current job is on progress,
+                 * the next queue will be paused.
+                 *
+                 * @property
+                 */
+                paused: false,
+
+                /**
+                 * Reset mass job.
+                 */
+                resetProgress: function() {
+                    massModel.reset();
+                    this.length = 0;
+                },
+
+                /**
+                 * Update current progress job.
+                 */
+                updateProgress: function() {
+                    this.remove(this.chunks.splice(0));
+                    massModel.length = this.length;
+                },
+
+                /**
+                 * Update the next chunk queue.
+                 */
+                updateChunk: function() {
+                    if (!this.chunks) {
+                        this.chunks = this.slice(0, chunkSize);
+                        this.trigger('massupdate:start');
+                    }
+                    if (_.isEmpty(this.chunks)) {
+                        this.chunks = this.slice(0, chunkSize);
+                    }
+                },
+
+                /**
+                 * Resume the job from the previous paused status.
+                 */
+                resumeFetch: function() {
+                    if (!this._pauseOptions) {
+                        return;
+                    }
+                    this.paused = false;
+                    this.trigger('massupdate:resume');
+                    this.fetch(this._pauseOptions);
+                },
+
+                /**
+                 * Request pausing mass job.
+                 */
+                pauseFetch: function() {
+                    this.paused = true;
+                },
+
+                /**
+                 * {@inheritDoc}
+                 * Instead of fetching entire set,
+                 * split entire set into small chunks
+                 * and repeat fetching until entire set is completed.
+                 */
+                sync: function(default_method, model, options) {
+                    if (model.paused) {
+                        this._pauseOptions = options;
+                        this.trigger('massupdate:pause');
+                        return;
+                    }
+                    this.method = options.method;
+
+                    //split set into chunks.
+                    this.updateChunk();
+                    var callbacks = {
                         success: function(data, response) {
-                            options.success(model, data, response);
+                            model.attempt = 0;
+                            model.updateProgress();
+                            model.trigger('massupdate:done');
+                            if (model.length === 0) {
+                                model.trigger('massupdate:end');
+                                if (_.isFunction(options.success)) {
+                                    options.success(model, data, response);
+                                }
+                            } else {
+                                model.fetch(options);
+                            }
                         },
-                        error: options.error,
-                        complete: options.complete
+                        error: function(xhr, status, error) {
+                            model.attempt++;
+                            model.trigger('massupdate:fail');
+                            if (model.attempt <= model.maxAllowAttempt) {
+                                model.fetch(options);
+                            } else if (_.isFunction(options.error)) {
+                                model.trigger('massupdate:end');
+                                options.error(xhr, status, error);
+                            }
+                        },
+                        complete: function(xhr, status) {
+                            model.trigger('massupdate:always');
+                            if (_.isFunction(options.complete)) {
+                                options.complete(xhr, status);
+                            }
+                        }
                     },
-                    method = options.method || this.defaultMethod,
-                    data = this.getAttributes(options.attributes),
-                    url = app.api.buildURL(module, this.module, data, options.params);
-                app.api.call(method, url, data, callbacks);
-            },
-            defaultMethod: 'update',
-            module: 'MassUpdate',
-            getAttributes: function(attributes) {
-                return {
-                    massupdate_params: _.extend({
-                        'uid' : (this.entire) ? null : this.pluck('id'),
-                        'entire' : this.entire,
-                        'filter' : (this.entire) ? this.filterDef : null
-                    }, attributes)
-                };
-            }
-        }) : null;
+                        method = options.method || this.defaultMethod,
+                        data = this.getAttributes(options.attributes),
+                        url = app.api.buildURL(baseModule, this.module, data, options.params);
+                    app.api.call(method, url, data, callbacks);
+                },
+
+                /**
+                 * Convert collection attributes into MassUpdate API format.
+                 * @param {Object} attributes Collection attributes.
+                 * @return {Object} MassUpdate data format.
+                 */
+                getAttributes: function(attributes) {
+                    return {
+                        massupdate_params: _.extend({
+                            'uid': (this.entire) ? null : _.pluck(this.chunks, 'id'),
+                            'entire': this.entire,
+                            'filter': (this.entire) ? this.filterDef : null
+                        }, attributes)
+                    };
+                }
+            }) : null;
+        progressView.initCollection(massCollection);
+        return massCollection;
     },
     confirmDelete: function(evt) {
         var self = this;
@@ -358,7 +516,7 @@
                                     app.alert.show('massupdate_success_notice', {level: 'success', messages: successMessages[response.status], autoClose: true});
                                     //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                     //TODO: Need trigger for fetching new record list
-                                    self.layout.collection.fetch({
+                                    self.collection.fetch({
                                         //Don't show alerts for this request
                                         showAlerts: false,
                                         // Boolean coercion.
@@ -405,7 +563,17 @@
      * By default attributes are retrieved directly off the model, but broken out to allow for manipulation before handing off to the API
      */
     getAttributes: function() {
-        return this.model.attributes;
+        var values = [this.defaultOption].concat(this.fieldValues),
+            attributes = [];
+        _.each(values, function(value) {
+            attributes = _.union(attributes,
+                _.values(_.pick(value, 'name', 'id_name'))
+            );
+            if (value.name === 'parent_name') {
+                attributes.push('parent_id', 'parent_type');
+            }
+        }, this);
+        return _.pick(this.model.attributes, attributes);
     },
 
     checkValidationError: function() {
@@ -476,9 +644,10 @@
         this.model.clear();
         this.setDefault();
 
-        var massModel = this.context.get("mass_collection");
-        massModel.off("add remove reset", null, this);
-        massModel.on("add remove reset", this.setDisabled, this);
+        var massModel = this.context.get('mass_collection');
+        massModel.off(null, null, this);
+        massModel.on('add remove reset massupdate:estimate', this.setDisabled, this);
+        massModel.on('massupdate:start massupdate:end', this.setDisabledOnUpdate, this);
 
         // show will be called only on context.trigger("list:massupdate:fire").
         // therefore this should never be called in a situation in which
@@ -493,15 +662,26 @@
         this.layout.trigger("list:massaction:hide");
     },
     hide: function() {
+        if (this.disposed) {
+            return;
+        }
         this.visible = false;
         this.$el.hide();
     },
-    setDisabled: function() {
-        var massUpdate = this.getMassUpdateModel(this.module);
-        if(massUpdate.length == 0) {
-            this.$(".btn[name=update_button]").addClass("disabled");
+    setDisabledOnUpdate: function() {
+        var massUpdate = this.context.get('mass_collection');
+        if (massUpdate.length == 0) {
+            this.$('.btn[name=update_button]').removeClass('disabled');
         } else {
-            this.$(".btn[name=update_button]").removeClass("disabled");
+            this.$('.btn[name=update_button]').addClass('disabled');
+        }
+    },
+    setDisabled: function() {
+        var massUpdate = this.context.get('mass_collection');
+        if (massUpdate.length == 0 || massUpdate.entire == true) {
+            this.$('.btn[name=update_button]').addClass('disabled');
+        } else {
+            this.$('.btn[name=update_button]').removeClass('disabled');
         }
     },
     saveClicked: function(evt) {
@@ -519,8 +699,8 @@
         }
         app.view.View.prototype.unbindData.call(this);
     },
-    unbind: function() {
-        this.$(".select2.mu_attribute").select2('destroy');
-        app.view.View.prototype.unbind.call(this);
+    _dispose: function() {
+        this.$('.select2.mu_attribute').select2('destroy');
+        app.view.View.prototype._dispose.call(this);
     }
 })
