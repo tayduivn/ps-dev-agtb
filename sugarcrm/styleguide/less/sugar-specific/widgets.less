@@ -22,11 +22,14 @@
       color: lighten(@gray, 20%);
     }
   }
-
-  h4 {
-    padding: 7px 80px 8px 10px;
+  .widget-header {
     .border-radius(3px 3px 0 0);
     #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
+  }
+  h4 {
+    padding: 7px 80px 8px 10px;
+    //.border-radius(3px 3px 0 0);
+    //#gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
     cursor: ns-resize;
   }
 
