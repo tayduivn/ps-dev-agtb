@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -43,10 +44,53 @@ class MetadataPortalApi extends MetadataApi {
         return $configs;
     }
 
-    protected function loadMetadata() {
+    /**
+     * Override to allow only Portal modules
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array|void
+     */
+    public function getAllMetadata(ServiceBase $api, array $args)
+    {
+        $portalModuleList = $this->findPortalModules();
+        if (!empty($args['module_filter'])) {
+            //If need be, update module filter for intersection of Portal enabled modules
+            $intersection = array_intersect($portalModuleList, explode(',', $args['module_filter']));
+            //If we mistakenly set module filter to empty list, then we load ALL metadata.
+            if (!empty($intersection)) {
+                $portalModuleList = $intersection;
+            }
+        }
+        $args['module_filter'] = implode(',', $portalModuleList);
+        return parent::getAllMetadata($api, $args);
+    }
+
+    /**
+     * Find all modules with Portal metadata
+     * @return array List of Portal module names
+     */
+    protected function findPortalModules()
+    {
+        $modules = array();
+        foreach (SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
+            // strip modules/ from name
+            $mname = substr($mdir, 8);
+            if (SugarAutoLoader::fileExists("$mdir/clients/portal/views/")) {
+                $modules[] = $mname;
+            }
+        }
+        return $modules;
+    }
+
+    /**
+     * Load Portal specific metadata (heavily pruned to only show modules enabled for Portal)
+     * @return array Portal metadata
+     */
+    protected function loadMetadata()
+    {
         $data = parent::loadMetadata();
         if (!empty($data['modules'])) {
-            foreach($data['modules'] as $modKey => $modMeta) {
+            foreach ($data['modules'] as $modKey => $modMeta) {
                 if (!empty($modMeta['isBwcEnabled'])) {
                     // portal has no concept of bwc so get rid of it
                     unset($data['modules'][$modKey]['isBwcEnabled']);
