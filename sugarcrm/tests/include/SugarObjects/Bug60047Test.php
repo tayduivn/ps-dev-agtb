@@ -47,7 +47,6 @@ class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
     public function get_beans()
     {
         return array(
-            array('ForecastWorksheets'),
             array('ForecastManagerWorksheets'),
             array('Worksheet'),
             array('ForecastOpportunities'),
@@ -65,6 +64,6 @@ class Bug60047Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $bean = BeanFactory::getBean($module);
         $this->assertNotEmpty($bean);
-        $this->assertArrayNotHasKey("acls", $GLOBALS['dictionary'][$bean->object_name]);
+        $this->assertTrue(empty($GLOBALS['dictionary'][$bean->object_name]['acls']));
     }
 }
