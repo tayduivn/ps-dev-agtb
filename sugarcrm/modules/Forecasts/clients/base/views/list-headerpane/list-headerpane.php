@@ -76,7 +76,7 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                             this.view.context.trigger("button:settings_button:click");
                         }'
                     ),
-                    'acl_action' => 'admin'
+                    'acl_action' => 'developer'
                 ),
             ),
         ),
