@@ -149,3 +149,19 @@
   #gradient > .horizontal(rgba(255,255,255,0), rgba(0,0,0,0.1));
   background-color: transparent;
 }
+
+/* Headerpane shadows */
+.headerpane-shadow {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  width: 100%;
+  width: ~"-moz-calc(100% + 1px)";
+  width: ~"-webkit-calc(100% + 1px)";
+  width: ~"calc(100% + 1px)";
+  height: 5px;
+  left: 0;
+  top: auto;
+  #gradient > .vertical(rgba(0,0,0,0.1), rgba(255,255,255,0));
+  background-color: transparent; /* gradient function form twitter bootstrap adds background color, we needn't that fallback for shadow */
+}
