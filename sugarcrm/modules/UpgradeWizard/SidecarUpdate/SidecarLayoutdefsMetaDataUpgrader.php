@@ -101,10 +101,13 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 
         // find the subpaneldef that contains the $convertSubpanelDefs
         foreach (self::$supanelData[$this->module] as $key => $def) {
+            // if no keys for this module, don't bother
+            if(empty($convertSubpanelDefs[$key])) continue;
+
+            // convert this section to sidecar
+            $sidecarDef = $this->metaDataConverter->fromLegacySubpanelLayout(self::$supanelData[$this->module][$key]);
             foreach ($def as $k => $v) {
                 if (!empty($convertSubpanelDefs[$key][$k]) && $convertSubpanelDefs[$key][$k] == $v) {
-                    // convert this section to sidecar
-                    $sidecarDef = $this->metaDataConverter->fromLegacySubpanelLayout(self::$supanelData[$this->module][$key]);
                     // take out the key we are trying to create
                     if (self::$conversionKeys[$k] == 'link') {
                         $newdefs['context']['link'] = $sidecarDef['context']['link'];
@@ -116,7 +119,7 @@ class SidecarLayoutdefsMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
 
         if (!empty($newdefs)) {
-            $newdefs['layout'] = 'subpanel';
+            // $newdefs['layout'] = 'subpanel';
             $this->sidecarViewdefs = $newdefs;
         }
 

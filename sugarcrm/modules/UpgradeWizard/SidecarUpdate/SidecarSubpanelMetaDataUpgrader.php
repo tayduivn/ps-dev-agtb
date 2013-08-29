@@ -69,7 +69,7 @@ class SidecarSubpanelMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         }
         $this->logUpgradeStatus("Converting subpanel view defs for '$this->fullpath'");
 
-        $this->sidecarViewdefs = $this->metaDataConverter->fromLegacySubpanelsViewDefs($this->legacyViewdefs);
+        $this->sidecarViewdefs = $this->metaDataConverter->fromLegacySubpanelsViewDefs($this->legacyViewdefs, $this->module);
 
         $this->logUpgradeStatus("Converted subpanel view defs for '$this->fullpath'");
         return true;

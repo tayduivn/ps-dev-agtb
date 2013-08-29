@@ -187,23 +187,29 @@ class MetaDataConverter
         return $oldDefs;
     }
 
+    protected $subpanelNameTranslation = array(
+        'email1' => 'email',
+    );
+
     /**
      * Convert legacy subpanels view defs to sidecar subpanel view defs
      * @param array $defs
+     * @param string module
      * @return array
      */
-    public function fromLegacySubpanelsViewDefs(array $defs)
+    public function fromLegacySubpanelsViewDefs(array $defs, $module)
     {
         if (!isset($defs['list_fields'])) {
             throw new \RuntimeException("Subpanel is defined without fields");
         }
 
-        $viewdefs = array('panels' => array());
+        $viewdefs = array('panels' => array(), 'type' => 'subpanel-list');
 
         $viewdefs['panels'][0]['name'] = 'panel_header';
         $viewdefs['panels'][0]['label'] = 'LBL_PANEL_1';
 
         $viewdefs['panels'][0]['fields'] = array();
+        $bean = BeanFactory::getBean($module);
 
         foreach ($defs['list_fields'] as $fieldName => $details) {
             if (isset($details['vname'])) {
@@ -227,8 +233,30 @@ class MetaDataConverter
             if (!isset($details['enabled'])) {
                 $details['enabled'] = true;
             }
+            if(!empty($this->subpanelNameTranslation[$fieldName])) {
+                $details['name'] = $this->subpanelNameTranslation[$fieldName];
+            } else {
+                $details['name'] = $fieldName;
+            }
 
-            $details['name'] = $fieldName;
+            if(!empty($details['widget_class'])) {
+                if($details['widget_class'] == 'SubPanelDetailViewLink') {
+                    $details['link'] = true;
+                } elseif($details['widget_class'] == 'SubPanelEmailLink') {
+                    $details['type'] = 'email';
+                }
+            }
+
+            if($bean && !empty($bean->field_defs[$details['name']])) {
+                $defs = $bean->field_defs[$details['name']];
+                if(!empty($defs['fields'])) {
+                    $details['fields'] = $defs['fields'];
+                }
+                if(empty($details['type']) && !empty($defs['type']) && $defs['type'] != 'varchar') {
+                    $details['type'] = $defs['type'];
+                }
+            }
+
             $viewdefs['panels'][0]['fields'][] = $this->fromLegacySubpanelField($details);
         }
         return $viewdefs;
@@ -258,6 +286,9 @@ class MetaDataConverter
             'target_record_key' => true,
             'default' => true,
             'enabled' => true,
+            'link' => true,
+            'fields' => true,
+            'sortable' => true,
         );
 
         return array_intersect_key($fieldDefs, $fieldMap);
