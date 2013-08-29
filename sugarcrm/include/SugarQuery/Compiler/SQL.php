@@ -345,6 +345,8 @@ class SugarQuery_Compiler_SQL
      */
     protected function resolveField($field, $alias = null)
     {
+        $fields = array();
+
         $bean = $this->from_bean;
         if ($field == '*') {
             // Not really a good idea, but let's support it for now
@@ -415,11 +417,51 @@ class SugarQuery_Compiler_SQL
             || (isset($data['source']) && $data['source'] == 'non-db'
                 // For some reason the full_name field has 'link' => true
                 && isset($data['link']) && $data['link'] !== true)) { 
+            $this->jtcount++;
+            $params = array(
+                'joinType' => 'LEFT',
+                'alias' => 'jt' . $this->jtcount
+            );
+
+            if (!empty($data['id_name']) && $data['id_name'] != $field 
+                && !in_array($data['id_name'], $this->sugar_query->select->select)) {
+                $id_field = $this->resolveField(
+                    $data['id_name'],
+                    $data['id_name']
+                );
+                if (!empty($id_field)) {
+                    if(is_array($id_field[0])) {
+                        $fields += $id_field;
+                    } else {
+                        $fields[] = $id_field;
+                    }
+                }
+            }
+
             // this is a link field
             if (!isset($data['link'])) {
-                // no link specified - bail out
-                $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, relate field exists with no link: {$field}");
-                return false;
+                if (!isset($data['id_name']) || !isset($data['module'])) {
+                    $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, relate field exists with no link and no id_name: {$field}");
+                    return false;
+                }
+
+                // we may need to put on our detective hat and see if we can
+                // hunt down a relationship
+                $farBean = BeanFactory::newBean($data['module']);
+
+                if (empty($id_field)) {
+                    $id_field = $this->resolveField($data['id_name'],$data['id_name']);
+                }
+                $idAlias = $id_field[1];
+                
+                if (empty($idAlias)) {
+                    $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, bwc relate field exists but can't find id_name: {$field}");
+                    return false;
+                }
+                
+                $this->sugar_query->joinRaw(" LEFT JOIN {$farBean->table_name} {$data['name']} ON {$idAlias} = {$data['name']}.id ",array('alias'=>$data['name']));
+                return array("{$data['name']}.{$data['rname']}",$field);
+                
             }
             $bean->load_relationship($data['link']);
             if (empty($bean->$data['link'])) {
@@ -427,11 +469,6 @@ class SugarQuery_Compiler_SQL
                 $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, could not load link {$data['link']} for field {$field}");
                 return false;
             }
-            $this->jtcount++;
-            $params = array(
-                'joinType' => 'LEFT',
-                'alias' => 'jt' . $this->jtcount
-            );
             if (isset($data['join_name'])) {
                 $params['alias'] = $data['join_name'];
             }
@@ -449,20 +486,6 @@ class SugarQuery_Compiler_SQL
             if (!empty($fields)) {
                 if (!is_array($fields[0])) {
                     $fields = array($fields);
-                }
-            }
-            if (!empty($data['id_name']) && $data['id_name'] != $field 
-                && !in_array($data['id_name'], $this->sugar_query->select->select)) {
-                $id_field = $this->resolveField(
-                    $data['id_name'],
-                    $data['id_name']
-                );
-                if (!empty($id_field)) {
-                    if(is_array($id_field[0])) {
-                        $fields += $id_field;
-                    } else {
-                        $fields[] = $id_field;
-                    }
                 }
             }
             if (isset($data['custom_type']) && $data['custom_type'] == 'teamset') {
