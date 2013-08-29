@@ -61,7 +61,7 @@ class SugarTestConfigUtilities
     public static function resetConfig()
     {
         foreach (self::$orgConfig as $config) {
-            self::$admin->saveSetting($config['category'], $config['key'], $config['value'], $config['platform']);
+            self::$admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
     }
 }
