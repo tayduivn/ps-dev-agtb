@@ -66,9 +66,13 @@ CAL.fillRepeatForm = function(data) {
         $("#edit_all_recurrences_block").css('display', "none");
         toggle_repeat_type();
     }
-    
-    $("#edit_all_recurrences").val("true");
-    
+
+    $('#edit_all_recurrences').val('true');
+    if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
+        var model = window.parent.SUGAR.App.controller.layout.getComponent('bwc').bwcModel;
+        model.set('edit_all_recurrences', 'true');
+    }
+
     if(typeof data.current_dow != "undefined" && repeatType != "Weekly") {
         $("#repeat_dow_" + data.current_dow).prop('checked', true);
     }

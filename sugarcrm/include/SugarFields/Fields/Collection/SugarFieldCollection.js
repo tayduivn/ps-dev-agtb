@@ -212,9 +212,10 @@ if(typeof(SUGAR.collection) == "undefined") {
                     }
                 }
                 c.js_more();
-                // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
-                // TODO remove this
-//                initEditView(document.forms[c.form]);
+
+                if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
+                    window.parent.SUGAR.App.controller.layout.getComponent('bwc').revertBwcModel();
+                }
             }, this);
         },
         /*
@@ -396,6 +397,10 @@ if(typeof(SUGAR.collection) == "undefined") {
 
 	                arrow.value = 'show';
 	            }
+                if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
+                    var model = window.parent.SUGAR.App.controller.layout.getComponent('bwc').bwcModel;
+                    model.set($(arrow).attr('name'), arrow.value);
+                }
 
 	            var more_div = document.getElementById('more_div_'+this.field_element_name);
 	            if(more_div) {
