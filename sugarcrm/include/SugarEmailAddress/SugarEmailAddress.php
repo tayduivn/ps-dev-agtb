@@ -648,7 +648,7 @@ class SugarEmailAddress extends SugarBean
         // sanity checks to avoid SQL injection.
         $invalid = intval($invalid);
         $opt_out = intval($opt_out);
-        
+
         // Trim the address
         $addr = trim($addr);
 

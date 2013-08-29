@@ -228,7 +228,7 @@ class EmailMan extends SugarBean{
 
         $related_bean = BeanFactory::getBean($related_type, $related_id);
         if ($related_bean) {
-            $temp_array['RECIPIENT_NAME'] = $locale->formatName($related_bean);
+            $temp_array['RECIPIENT_NAME'] = $related_bean->get_summary_text();
         }
 
         //also store the recipient_email address

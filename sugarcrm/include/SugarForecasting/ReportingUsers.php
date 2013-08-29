@@ -49,21 +49,13 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             $this->setArg('user_id', $userBean->id);
         }
 
-        $user = array(
-            'id' => $userBean->id,
-            'first_name' => $userBean->first_name,
-            'last_name' => $userBean->last_name,
-            'user_name' => $userBean->user_name,
-            'reports_to_id' => $userBean->reports_to_id,
-            'title' => $userBean->title,
-            'children' => array()
-        );
-
         if (User::isManager($userBean->id)) {
-            $user['children'] = $this->getChildren();
+            $children = $this->getChildren($userBean);
+        } else {
+            $children = array();
         }
 
-        $tree = $this->formatForTree($user);
+        $tree = $this->formatForTree($userBean, $children);
 
         if ($GLOBALS['current_user']->id != $this->getArg('user_id')) {
             // we need to create a parent record
@@ -81,63 +73,34 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
     }
 
     /**
-     * Load up all the reporting users for a give user
-     *
+     * Load up all the reporting users for a given user
+     * @param User $user
      * @return array
      */
-    protected function getChildren()
+    protected function getChildren(User $user)
     {
-        $additional_fields = array(
-            'user_name',
-            'first_name',
-            'last_name',
-            'reports_to_id',
-            'title'
-        );
-
-        return User::getReporteesWithLeafCount($this->getArg('user_id'), false, $additional_fields);
+        $query = $user->create_new_list_query('',
+            'users.reports_to_id = ' . $user->db->quoted($user->id) . ' AND users.status = \'Active\'');
+        $response = $user->process_list_query($query, 0);
+        return $response['list'];
     }
 
     /**
      * Format the main part of the tree
-     *
-     * @param $data
+     * @param User $user
+     * @param array $children
      * @return array
      */
-    protected function formatForTree($data)
+    protected function formatForTree(User $user, array $children)
     {
-        $tree = $this->getTreeArray(
-            $data['id'],
-            $data['first_name'],
-            $data['last_name'],
-            $data['user_name'],
-            $data['reports_to_id'],
-            $data['title'],
-            'root'
-        );
+        $tree = $this->getTreeArray($user, 'root');
 
-        if (isset($data['children']) && !empty($data['children'])) {
+        if (!empty($children)) {
             // we have children
             // add the manager again as the my opportunities bunch
-            $tree['children'][] = $this->getTreeArray(
-                $data['id'],
-                $data['first_name'],
-                $data['last_name'],
-                $data['user_name'],
-                $data['reports_to_id'],
-                $data['title'],
-                'my_opportunities'
-            );
-
-            foreach ($data['children'] as $child) {
-                $tree['children'][] = $this->getTreeArray(
-                    $child['id'],
-                    $child['first_name'],
-                    $child['last_name'],
-                    $child['user_name'],
-                    $child['reports_to_id'],
-                    $data['title']
-                );
+            $tree['children'][] = $this->getTreeArray($user, 'my_opportunities');
+            foreach ($children as $child) {
+                $tree['children'][] = $this->getTreeArray($child, 'rep');
             }
 
             $tree['state'] = 'open';
@@ -156,15 +119,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
     {
         /* @var $parentBean User */
         $parentBean = BeanFactory::getBean('Users', $manager_reports_to);
-        $parent = $this->getTreeArray(
-            $parentBean->id,
-            $parentBean->first_name,
-            $parentBean->last_name,
-            $parentBean->user_name,
-            $parentBean->reports_to_id,
-            $parentBean->title,
-            'parent_link'
-        );
+        $parent = $this->getTreeArray($parentBean, 'parent_link');
 
         // overwrite the whole attr array for the parent
         $parent['attr'] = array(
@@ -179,25 +134,14 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
 
     /**
      * Utility method to build out a tree node array
-     *
-     * @param string $id
-     * @param string $first_name
-     * @param string $last_name
-     * @param string $user_name
-     * @param string $reports_to_id
+     * @param User $user
      * @param string $rel
      * @return array
      */
-    protected function getTreeArray($id, $first_name, $last_name, $user_name, $reports_to_id, $title, $rel = 'rep')
+    protected function getTreeArray(User $user, $rel = 'rep')
     {
         global $locale;
-        $fullName = $locale->formatName(
-            'Users',
-            array(
-                'first_name' => $first_name,
-                'last_name'  => $last_name,
-            )
-        );
+        $fullName = $locale->formatName($user);
 
         $qa_id = 'jstree_node_';
         if ($rel == "my_opportunities") {
@@ -206,7 +150,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
 
         $state = '';
 
-        if ($rel == 'rep' && User::isManager($id)) {
+        if ($rel == 'rep' && User::isManager($user->id)) {
             // check if the user is a manager and if they are change the rel to be 'manager'
             $rel = 'manager';
             $state = 'closed';
@@ -216,20 +160,20 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
             'data' => $fullName,
             'children' => array(),
             'metadata' => array(
-                'id' => $id,
-                'user_name' => $user_name,
+                'id' => $user->id,
+                'user_name' => $user->user_name,
                 'full_name' => $fullName,
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'reports_to_id' => $reports_to_id,
-                'title' => $title,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'reports_to_id' => $user->reports_to_id,
+                'title' => $user->title,
             ),
             'state' => $state,
             'attr' => array(
                 // set all users to rep by default
                 'rel' => $rel,
                 // adding id tag for QA's voodoo tests
-                'id' => $qa_id . $user_name
+                'id' => $qa_id . $user->user_name
             )
         );
     }

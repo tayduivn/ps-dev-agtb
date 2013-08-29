@@ -29,13 +29,13 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 {
 	public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
 	}
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
+	    SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     public function testGetNamePlusEmailAddressesForCompose()
@@ -48,7 +48,6 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	        $email->getNamePlusEmailAddressesForCompose('Accounts',array($account->id))
 	        );
 
-	    SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     public function testGetNamePlusEmailAddressesForComposeMultipleIds()
@@ -62,8 +61,6 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	    $this->assertContains("{$account1->name} <{$account1->email1}>",$addressString);
 	    $this->assertContains("{$account2->name} <{$account2->email1}>",$addressString);
 	    $this->assertContains("{$account3->name} <{$account3->email1}>",$addressString);
-
-	    SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
 
@@ -77,12 +74,11 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	        $email->getNamePlusEmailAddressesForCompose('Contacts',array($contact->id))
 	        );
 
-	    SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     public function testGetNamePlusEmailAddressesForComposeUser()
 	{
-	    $user = SugarTestUserUtilities::createAnonymousUser();
+	    $user = SugarTestUserUtilities::createAnonymousUser(false);
 	    $user->email1 = 'foo@bar.com';
 	    $user->save();
 

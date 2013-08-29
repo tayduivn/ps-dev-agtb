@@ -956,7 +956,6 @@ class Email extends SugarBean {
         {
             // Load bean
             $bean = BeanFactory::getBean($module, $id);
-
             // Got a bean
             if (!empty($bean))
             {
@@ -980,9 +979,7 @@ class Email extends SugarBean {
                 // If we have an e-mail address loaded
                 if (!empty($emailAddress))
                 {
-                    $fullName = from_html(
-                        $locale->formatName($bean)
-                    );
+                    $fullName = from_html($bean->get_summary_text());
 
                     // Make e-mail address in format "Name <@email>"
                     $result[$bean->id] = $fullName . " <" . from_html($emailAddress) . ">";

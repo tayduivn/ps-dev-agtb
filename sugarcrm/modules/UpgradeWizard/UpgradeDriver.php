@@ -961,8 +961,12 @@ abstract class UpgradeDriver
         $this->db = $GLOBALS['db'] = DBManagerFactory::getInstance();
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
-        if(method_exists('Localization', 'getObject')) {
-            $locale = new Localization();
+        if(empty($locale)) {
+            if(method_exists(array('Localization', 'getObject'))) {
+                $locale = Localization::getObject();
+            } else {
+                $locale = new Localization();
+            }
         }
         if (!isset ($_SERVER['REQUEST_URI'])) {
             $_SERVER['REQUEST_URI'] = '';
