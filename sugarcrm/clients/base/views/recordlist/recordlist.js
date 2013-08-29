@@ -1,29 +1,15 @@
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
- * http://www.sugarcrm.com/crm/master-subscription-agreement
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
  *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
  *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     /**
      * @class View.RecordlistView
@@ -32,6 +18,13 @@
      */
     extendsFrom: 'FlexListView',
     plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable', 'tooltip'],
+
+    /**
+     * List of current inline edit models.
+     *
+     * @property
+     */
+    toggledModels: null,
 
     rowFields: {},
 
@@ -50,8 +43,11 @@
         var recordListMeta = this._initializeMetadata();
         options.meta = _.extend({}, recordListMeta, options.meta || {});
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
+
+        this.toggledModels = {};
     },
 
     // Allows sub-views to override and use different view metadata if desired
@@ -146,17 +142,74 @@
         });
     },
 
+    /**
+     * {@link app.plugins.view.editable}
+     * Compare with last fetched data and return true if model contains changes.
+     * if model contains changed attributes,
+     * check whether those are among the editable fields or not.
+     *
+     * @return {Boolean} True if current inline edit model contains unsaved changes.
+     */
+    hasUnsavedChanges: function() {
+        var firstKey = _.first(_.keys(this.rowFields)),
+            formFields = [];
+
+        _.each(this.rowFields[firstKey], function(field) {
+            if (field.name) {
+                formFields.push(field.name);
+            }
+            //Inspect fieldset children fields
+            if (field.def.fields) {
+                formFields = _.chain(field.def.fields)
+                    .pluck('name')
+                    .compact()
+                    .union(formFields)
+                    .value();
+            }
+        }, this);
+        return _.some(_.values(this.toggledModels), function(model) {
+            var changedAttributes = model.changedAttributes(model.getSyncedAttributes());
+
+            if (_.isEmpty(changedAttributes)) {
+                return false;
+            }
+            var unsavedFields = _.intersection(_.keys(changedAttributes), formFields);
+            return !_.isEmpty(unsavedFields);
+        }, this);
+    },
+
+    /**
+     * Toggle the selected model's fields when edit is clicked.
+     *
+     * @param {Backbone.Model} model Selected row's model.
+     */
     editClicked: function(model) {
         this.toggleRow(model.id, true);
         //check to see if horizontal scrolling needs to be enabled
         this.resize();
     },
 
+    /**
+     * Toggle editable selected row's model fields.
+     *
+     * @param {String} modelId Model Id.
+     * @param {Boolean} isEdit True for edit mode, otherwise toggle back to list mode.
+     */
     toggleRow: function(modelId, isEdit) {
-        this.$("tr[name=" + this.module + "_" + modelId + "]").toggleClass("tr-inline-edit", isEdit);
+        if (isEdit) {
+            this.toggledModels[modelId] = this.collection.get(modelId);
+        } else {
+            delete this.toggledModels[modelId];
+        }
+        this.$('tr[name=' + this.module + '_' + modelId + ']').toggleClass('tr-inline-edit', isEdit);
         this.toggleFields(this.rowFields[modelId], isEdit);
     },
 
+    /**
+     * Toggle editable entire row fields.
+     *
+     * @param {Boolean} isEdit True for edit mode, otherwise toggle back to list mode.
+     */
     toggleEdit: function(isEdit) {
         var self = this;
         this.viewName = isEdit ? 'edit' : 'list';
