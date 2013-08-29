@@ -175,6 +175,26 @@ class SugarFieldMultienum extends SugarFieldEnum
     }
 
     /**
+     * Overloaded in field specific classes
+     * @param $value
+     * @return mixed
+     */
+    public function apiUnformat($value)
+    {
+        if (is_array($value)) {
+            $return = '';
+            foreach ($value as $key => $val) {
+                $return[$key] = $this->convertFieldForDB($val);
+            }
+            
+            return $return;
+        }
+
+        return "^{$value}^";
+    }
+
+
+    /**
      * Gets the field values for the multienum field as a cleaned up list of values
      * 
      * @param SugarBean $bean The bean to get the values from

@@ -750,14 +750,36 @@ class SugarQuery_Compiler_SQL
                     break;
                 case 'STARTS':
                 case 'CONTAINS':
+                case 'DOES NOT CONTAIN':
                 case 'ENDS':
-                    $value = $this->quoteValue(
-                        $condition->field,
-                        $condition->values,
-                        $condition->bean,
-                        $condition->operator
-                    );
-                    $sql .= "{$field} LIKE {$value}";
+                    //Handling for not contains
+                    $comparitor = 'LIKE';
+                    $chainWith = 'OR';
+                    if ($condition->operator == 'DOES NOT CONTAIN') {
+                        $comparitor = 'NOT LIKE';
+                        $chainWith = 'AND';
+                    }
+
+                    if (is_array($condition->values)) {
+                        foreach ($condition->values as $value) {
+                            $val = $this->quoteValue(
+                                $condition->field,
+                                $value,
+                                $condition->bean,
+                                $condition->operator
+                            );
+                            $sql .= "{$field} {$comparitor} {$val} {$chainWith} ";
+                        }
+                        $sql .= rtrim($sql, "$chainWith ");
+                    } else {
+                        $value = $this->quoteValue(
+                            $condition->field,
+                            $condition->values,
+                            $condition->bean,
+                            $condition->operator
+                        );
+                        $sql .= "{$field} {$comparitor} {$value}";
+                    }
                     break;
                 case 'EQUALFIELD':
                     $sql .= "{$field} = ".$this->conditionField($condition->values);
@@ -847,7 +869,7 @@ class SugarQuery_Compiler_SQL
                 if ($operator == 'STARTS') {
                     $value = $value . '%';
                 }
-                if ($operator == 'CONTAINS') {
+                if ($operator == 'CONTAINS' || $operator == 'DOES NOT CONTAIN') {
                     $value = '%' . $value . '%';
                 }
                 if ($operator == 'ENDS') {

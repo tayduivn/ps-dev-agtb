@@ -488,7 +488,7 @@ class FilterApi extends SugarApi
         }
 
         $field_def = $defs[$field];
-        if(empty($field_def['source']) || $field_def['source'] == 'db' || $field_def['source'] == 'custom_field') {
+        if(empty($field_def['source']) || $field_def['source'] == 'db' || $field_def['source'] == 'custom_fields') {
             return array('bean' => $bean, 'def' => $field_def);
         }
 
@@ -579,6 +579,9 @@ class FilterApi extends SugarApi
                                 break;
                             case '$contains':
                                 $where->contains($field, $value);
+                                break;
+                            case '$not_contains':
+                                $where->notContains($field, $value);
                                 break;
                             case '$in':
                                 if (!is_array($value)) {

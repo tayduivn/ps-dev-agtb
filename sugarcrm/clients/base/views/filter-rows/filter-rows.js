@@ -662,6 +662,10 @@
                     //filter definition on it.
                     filter[name] = {};
                     filter[name].$dateRange = operator;
+                } else if (operator === "$in" || operator === "$not_in") {
+                    // IN/NOT IN require an array
+                    filter[name] = {};
+                    filter[name][operator] = _.isArray(value) ? value : [value];
                 } else {
                     filter[name] = {};
                     filter[name][operator] = value;
