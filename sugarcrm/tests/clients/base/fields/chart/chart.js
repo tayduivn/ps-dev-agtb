@@ -4,7 +4,7 @@ describe('Base.Field.Chart', function() {
         app = SugarTest.app;
         field = SugarTest.createField('base','chart', 'chart', 'detail');
     });
-    
+
     afterEach(function() {
         app = undefined;
         field = undefined;
@@ -14,7 +14,7 @@ describe('Base.Field.Chart', function() {
         var rawChartData;
         beforeEach(function() {
             rawChartData = {}
-            rawChartData.properties = {};
+            rawChartData.properties = [];
             rawChartData.values = [0, 1, 2];
             sinon.stub(field, 'bindDataChange', function() {});
             sinon.stub(field, 'generateD3Chart', function() {});
@@ -27,7 +27,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- pie chart', function() {
-            rawChartData.properties.type = 'pie chart'
+            rawChartData.properties.push({type: 'pie chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -37,7 +37,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- line chart', function() {
-            rawChartData.properties.type = 'line chart'
+            rawChartData.properties.push({type: 'line chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -47,7 +47,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- funnel chart 3D', function() {
-            rawChartData.properties.type = 'funnel chart 3D'
+            rawChartData.properties.push({type: 'funnel chart 3D'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -57,7 +57,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- gauge chart', function() {
-            rawChartData.properties.type = 'gauge chart'
+            rawChartData.properties.push({type: 'gauge chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -67,7 +67,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- stacked group by chart', function() {
-            rawChartData.properties.type = 'stacked group by chart'
+            rawChartData.properties.push({type: 'stacked group by chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -78,7 +78,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- group by chart', function() {
-            rawChartData.properties.type = 'group by chart'
+            rawChartData.properties.push({type: 'group by chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -89,7 +89,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- bar chart', function() {
-            rawChartData.properties.type = 'bar chart'
+            rawChartData.properties.push({type: 'bar chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -100,7 +100,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- horizontal group by chart', function() {
-            rawChartData.properties.type = 'horizontal group by chart'
+            rawChartData.properties.push({type: 'horizontal group by chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -111,7 +111,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- horizontal bar chart', function() {
-            rawChartData.properties.type = 'horizontal bar chart'
+            rawChartData.properties.push({type: 'horizontal bar chart'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -122,7 +122,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- horizontal', function() {
-            rawChartData.properties.type = 'horizontal'
+            rawChartData.properties.push({type: 'horizontal'});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -133,7 +133,7 @@ describe('Base.Field.Chart', function() {
         });
 
         it('should return proper chart config -- default', function() {
-            rawChartData.properties.type = ''
+            rawChartData.properties.push({type: ''});
             field.model.set({rawChartData: rawChartData});
 
             var cfg = field.getChartConfig();
@@ -142,8 +142,5 @@ describe('Base.Field.Chart', function() {
             expect(cfg.tip).toEqual('name');
             expect(cfg.chartType).toEqual('barChart');
         });
-
     });
-
 });
-

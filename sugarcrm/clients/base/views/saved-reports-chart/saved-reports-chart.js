@@ -2,11 +2,6 @@
     plugins: ['Dashlet'],
 
     /**
-     * Holds initialization options
-     */
-    initOptions: undefined,
-
-    /**
      * Holds report data from the server's endpoint once we fetch it
      */
     reportData: undefined,
@@ -22,6 +17,11 @@
     reportOptions: undefined,
 
     /**
+     * ID for the autorefresh timer
+     */
+    timerId: undefined,
+
+    /**
      * {@inheritDocs}
      */
     initDashlet: function (view) {
@@ -30,7 +30,16 @@
             this.meta.panels = this.dashletConfig.dashlet_config_panels;
             this.getAllSavedReports();
         } else {
-            this.getSavedReportById(this.settings.get('saved_report_id'));
+            var autoRefresh = +this.settings.get("auto_refresh");
+            if (autoRefresh) {
+                if (this.timerId) {
+                    clearInterval(this.timerId);
+                }
+                this.timerId = setInterval(_.bind(function () {
+                    this.context.resetLoadFlag();
+                    this.loadData();
+                }, this), autoRefresh * 1000 * 60);
+            }
         }
     },
 
@@ -38,7 +47,6 @@
      * {@inheritDocs}
      */
     initialize: function(options) {
-        this.initOptions = options;
         this.reportData = new Backbone.Model();
         app.view.View.prototype.initialize.call(this, options);
     },
@@ -60,6 +68,14 @@
     },
 
     /**
+     * {@inheritDocs}
+     */
+    loadData: function(options) {
+        options = options || {};
+        this.getSavedReportById(this.settings.get('saved_report_id'), options);
+    },
+
+    /**
      * Makes a call to Reports/saved_reports to get any items stored in the saved_reports table
      */
     getAllSavedReports: function() {
@@ -69,8 +85,7 @@
             url = app.api.buildURL('Reports/saved_reports', null, null, params);
 
         app.api.call('read', url, null, {
-            success: _.bind(this.parseAllSavedReports, this),
-            complete: this.initOptions ? this.initOptions.complete : null
+            success: _.bind(this.parseAllSavedReports, this)
         });
     },
 
@@ -104,14 +119,20 @@
      *
      * @param {String} reportId the ID for the report we're looking for
      */
-    getSavedReportById: function(reportId) {
+    getSavedReportById: function(reportId, options) {
+        var dt = this.layout.getComponent('dashlet-toolbar');
+        if(dt) {
+            // manually set the icon class to spiny
+            this.$("[data-action=loading]").removeClass(dt.cssIconDefault).addClass(dt.cssIconRefresh);
+        }
+
         app.api.call('create', app.api.buildURL('Reports/chart/' + reportId), null, {
             success: _.bind(function(serverData) {
                 // set reportData's rawChartData to the chartData from the server
                 // this will trigger chart.js' change:rawChartData and the chart will update
                 this.reportData.set({rawChartData: serverData.chartData});
             }, this),
-            complete: this.initOptions ? this.initOptions.complete : null
+            complete: options ? options.complete : null
         });
     },
 

@@ -41,11 +41,6 @@ describe('Base.View.Saved-Reports-Chart', function() {
             view.initDashlet({});
             expect(getAllReportsStub).toHaveBeenCalled();
         });
-
-        it('should call getSavedReportById() when not in config', function() {
-            view.initDashlet({});
-            expect(getReportByIdStub).toHaveBeenCalled();
-        });
     });
 
     describe('bindDataChange()', function() {

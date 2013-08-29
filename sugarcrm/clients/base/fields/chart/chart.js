@@ -57,7 +57,7 @@
         var chartConfig,
             chartData = this.model.get('rawChartData');
 
-        switch(chartData.properties.type) {
+        switch(chartData.properties[0].type) {
             case 'pie chart':
                 chartConfig = {
                     pieType: 'basic',

@@ -42,7 +42,7 @@ $viewdefs['base']['view']['saved-reports-chart'] = array(
                     'name' => 'auto_refresh',
                     'label' => 'Auto Refresh',
                     'type' => 'enum',
-                    'options' => 'sugar7_dashlet_auto_refresh_options',
+                    'options' => 'sugar7_dashlet_reports_auto_refresh_options'
                 ),
             ),
         ),

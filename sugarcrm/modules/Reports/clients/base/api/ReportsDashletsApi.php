@@ -49,10 +49,18 @@ class ReportsDashletsApi extends SugarApi
      */
     public function getSavedReports($api, $args)
     {
+        // Make sure the user isn't seeing reports they don't have access to
+        require_once('modules/Reports/SavedReport.php');
+        $modules = array_keys(getACLDisAllowedModules());
+
         $sq = new SugarQuery();
         $sq->from(BeanFactory::getBean('Reports'));
         $sq->select(array('id', 'name', 'module', 'report_type', 'content', 'chart_type'));
-        $sq->where()->equals('is_published', '1');
+
+        // if there were restricted modules, add those to the query
+        if(count($modules)) {
+            $sq->where()->notIn('module', $modules);
+        }
 
         if(isset($args['has_charts']) && $args['has_charts'] == 'true') {
             $sq->where()->notEquals('chart_type', 'none');
