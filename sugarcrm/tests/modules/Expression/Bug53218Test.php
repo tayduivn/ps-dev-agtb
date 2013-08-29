@@ -50,7 +50,6 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        parent::setUp();
         $this->relationships = new DeployedRelationships('Products');
         $definition = array(
             'lhs_module' => 'Products',
@@ -65,6 +64,7 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_OutputTestCase
             'Products',
             'Users'
         ));
+        parent::setUp();
     }
 
     public function tearDown()
