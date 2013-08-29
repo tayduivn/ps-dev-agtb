@@ -48,13 +48,13 @@ class SugarTestForecastUtilities
      */
     public static function setUpForecastConfig(array $additional_config = array())
     {
-        SugarTestConfigUtilities::setConfig('Forecasts', 'is_setup', 1);
-        SugarTestConfigUtilities::setConfig('Forecasts', 'forecast_by', 'RevenueLineItems');
-        SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_likely', 1);
-        SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_best', 1);
-        SugarTestConfigUtilities::setConfig('Forecasts', 'show_worksheet_worst', 0);
+        require_once('modules/Forecasts/ForecastsDefaults.php');
+        $defaults = ForecastsDefaults::getDefaults(1);
+        foreach ($defaults as $key => $value) {
+            SugarTestConfigUtilities::setConfig('Forecasts', $key, $value);
+        }
 
-        foreach($additional_config as $key => $value) {
+        foreach ($additional_config as $key => $value) {
             SugarTestConfigUtilities::setConfig('Forecasts', $key, $value);
         }
     }

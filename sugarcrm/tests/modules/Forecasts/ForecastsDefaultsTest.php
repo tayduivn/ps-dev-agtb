@@ -32,16 +32,18 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        /*
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         // Save the current config to be put back later
         $admin = BeanFactory::getBean('Administration');
-        self::$currentConfig = $admin->getConfigForModule('Forecasts');
+        self::$currentConfig = $admin->getConfigForModule('Forecasts');*/
     }
 
     public function setUp()
     {
+        $this->markTestSkipped('Skipping by SFA');
         parent::setUp();
 
         //Clear config table of Forecasts values before each test, so each test can setup it's own db
@@ -59,12 +61,13 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestForecastUtilities::tearDownForecastConfig();
-        parent::tearDown();
+        //SugarTestForecastUtilities::tearDownForecastConfig();
+        //parent::tearDown();
     }
 
     public static function tearDownAfterClass()
     {
+        /*
         // Clear config table of Forecasts values after the last test in case tests
         // set any values that the bean doesnt normally have
         $db = DBManagerFactory::getInstance();
@@ -75,6 +78,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        */
     }
 
     /**
@@ -164,34 +168,6 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
             $adminConfig['timeperiod_interval'],
             "On an upgrade with config data already set up, default settings that don't override pre-existing settings should be in the config table"
         );
-    }
-
-    /**
-     * setupForecastsSettingsForIsUpgradeProvider
-     *
-     * This is the data provider for testForecastsSettingsForIsUpgradeProvider
-     */
-    public function setupForecastsSettingsForIsUpgradeProvider()
-    {
-        return array(
-            array(true, 1),
-            array(false, 0)
-        );
-    }
-
-    /**
-     * Test the is_upgrade flag depending on whether  $isUpgrade parameter in ForecastsDefaults::setupForecastSettings is true or false
-     *
-     * @dataProvider setupForecastsSettingsForIsUpgradeProvider
-     * @group forecasts
-     *
-     */
-    public function testSetupForecastsSettingsForIsUpgrade($isUpgrade, $expectedValue)
-    {
-        ForecastsDefaults::setupForecastSettings($isUpgrade);
-        $admin = BeanFactory::getBean('Administration');
-        $adminConfig = $admin->getConfigForModule('Forecasts');
-        $this->assertEquals($expectedValue, $adminConfig['is_upgrade']);
     }
 
     /**

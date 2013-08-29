@@ -59,7 +59,8 @@ function perform_save($focus)
 
     // if sales stage was set to Closed Won set best and worst cases to amount
     $wonStages = $settings['sales_stage_won'];
-    if (!empty($focus->sales_stage) && in_array($focus->sales_stage, $wonStages)) {
+    if (isset($settings['is_setup']) && $settings['is_setup'] == 1 &&
+        !empty($focus->sales_stage) && in_array($focus->sales_stage, $wonStages)) {
         $focus->best_case = $focus->amount;
         $focus->worst_case = $focus->amount;
     }

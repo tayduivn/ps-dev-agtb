@@ -60,7 +60,13 @@ class SugarTestConfigUtilities
      */
     public static function resetConfig()
     {
+        // delete everything in the table
+        $db = DBManagerFactory::getInstance();
+        $db->query('truncate config;');
         foreach (self::$orgConfig as $config) {
+            if (is_array($config['value'])) {
+                $config['value'] = json_encode($config['value']);
+            }
             self::$admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
     }
