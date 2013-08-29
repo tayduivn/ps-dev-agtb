@@ -202,19 +202,6 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
                 }
 			}
 		}
-		if (!empty($_POST['product_template_id'][$i]) && $_POST['product_template_id'][$i] != $the_product_template_id ) {
-			require_once($beanFiles['ProductTemplate']);
-			$template = BeanFactory::getBean('ProductTemplates', $_POST['product_template_id'][$i]);
-			foreach($product->template_fields as $temp_field)
-			{
-				if(isset($template->$temp_field))
-				{
-					$GLOBALS['log']->debug("$temp_field is ".$template->$temp_field);
-					$product->$temp_field = $template->$temp_field;
-
-				}
-			}
-		}
 		$product->currency_id = $focus->currency_id;
 
 		//BEGIN SUGARCRM flav=pro ONLY
