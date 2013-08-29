@@ -116,6 +116,12 @@
      */
     draftSaveType : undefined,
 
+    /**
+     * is the collection syncing
+     * @param boolean
+     */
+    isCollectionSyncing: false,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -221,6 +227,14 @@
                     if (this.layout.isVisible()) {
                         this.checkForDraftRows(changed);
                     }
+                }, this);
+
+                this.collection.on('data:sync:start', function() {
+                    this.isCollectionSyncing = true;
+                }, this);
+
+                this.collection.on('data:sync:complete', function() {
+                    this.isCollectionSyncing = false;
                 }, this);
 
                 /**
@@ -600,7 +614,8 @@
      */
     checkForDraftRows: function(lastCommitDate) {
         if (this.layout.isVisible() && this.canEdit && !_.isUndefined(lastCommitDate)
-            && this.collection.length !== 0 && this.hasCheckedForDraftRecords === false) {
+            && this.collection.length !== 0 && this.hasCheckedForDraftRecords === false &&
+            this.isCollectionSyncing === false) {
             this.hasCheckedForDraftRecords = true;
             this.collection.find(function(item) {
                 if (item.get('date_modified') > lastCommitDate) {
@@ -612,6 +627,10 @@
         } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
             // since the layout is not visible, lets wait for it to become visible
             this.layout.once('show', function() {
+                this.checkForDraftRows(lastCommitDate);
+            }, this);
+        } else if(this.isCollectionSyncing === true) {
+            this.collection.once('data:sync:complete', function() {
                 this.checkForDraftRows(lastCommitDate);
             }, this);
         }
@@ -675,7 +694,7 @@
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
-        this.trigger("data:sync:start", method, model, options);
+        this.collection.trigger("data:sync:start", method, model, options);
 
         url = app.api.buildURL("ForecastManagerWorksheets", null, null, options.params);
         app.api.call("read", url, null, callbacks);
