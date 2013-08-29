@@ -46,18 +46,11 @@ foreach ( $GLOBALS['beanFiles'] as $bean => $file )
         }
         $focus = BeanFactory::newBeanByName($bean);
         if ( $focus instanceOf SugarBean ) {
-            // Add defensive coding around required args for relationship meta
-            $objName = $focus->getObjectName();
-            $tblName = $focus->table_name;
-            if (empty($tblName) || empty($objName)) {
-                $GLOBALS['log']->info("Either the object name or the table name for bean " . get_class($focus) . " is empty. Object Name is: $objName. Table name is $tblName.");
-                continue;
-            }
-            
+            $table_name = $focus->table_name ;
             $empty = array() ;
             if (empty ( $_REQUEST [ 'silent' ] ))
-                echo $mod_strings [ 'LBL_REBUILD_REL_PROC_META' ] . $tblName . "..." ;
-            SugarBean::createRelationshipMeta($objName, $db, $tblName, $empty, $focus->module_dir ) ;
+                echo $mod_strings [ 'LBL_REBUILD_REL_PROC_META' ] . $focus->table_name . "..." ;
+            SugarBean::createRelationshipMeta ( $focus->getObjectName (), $db, $table_name, $empty, $focus->module_dir ) ;
             if (empty ( $_REQUEST [ 'silent' ] ))
                 echo $mod_strings [ 'LBL_DONE' ] . '<br>' ;
         }
@@ -76,17 +69,11 @@ foreach ( $GLOBALS['beanFiles'] as $bean => $file )
     }
     $focus = BeanFactory::newBeanByName($bean);
     if ( $focus instanceOf SugarBean ) {
-        $objName = $focus->getObjectName();
-        $tblName = $focus->table_name;
-        if (empty($tblName) || empty($objName)) {
-            $GLOBALS['log']->info("Custom Relationships: Either the object name or the table name for bean " . get_class($focus) . " is empty. Object Name is: $objName. Table name is $tblName.");
-            continue;
-        }
-        
+        $table_name = $focus->table_name ;
         $empty = array() ;
         if (empty ( $_REQUEST [ 'silent' ] ))
-            echo $mod_strings [ 'LBL_REBUILD_REL_PROC_C_META' ] . $tblName . "..." ;
-        SugarBean::createRelationshipMeta($objName, $db, $tblName, $empty, $focus->module_dir, true ) ;
+            echo $mod_strings [ 'LBL_REBUILD_REL_PROC_C_META' ] . $focus->table_name . "..." ;
+        SugarBean::createRelationshipMeta ( $focus->getObjectName (), $db, $table_name, $empty, $focus->module_dir, true ) ;
         if (empty ( $_REQUEST [ 'silent' ] ))
             echo $mod_strings [ 'LBL_DONE' ] . '<br>' ;
     }
