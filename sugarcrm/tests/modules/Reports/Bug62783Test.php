@@ -95,9 +95,6 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateTimeFiscalQueryGroupBy($startDate, $timezone, $expected, $reportDef)
     {
-        // Setup Fiscal Start Date
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'timeperiod_start_date', json_encode($startDate), 'base');
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
         $id = create_guid();
@@ -107,13 +104,14 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
         $rli->save();
         $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
         $opportunity->date_closed = $startDate;
-
+        $opportunity->save();
+        
         $reportDef = preg_replace('/\s\s+/', '', str_replace('{REPLACE}', $opportunity->id, $reportDef));
 
         $report = new Report($reportDef);
         $report->run_summary_query();
         $row = $report->get_summary_next_row();
-
+        
         $this->assertEquals(1, $row['count'], 'Report count should be 1');
         $this->assertEquals($expected, $row['cells'][0], 'Wrong grouping result');
     }
@@ -122,7 +120,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                '2013-05-05',
+                '2012-05-05',
                 'America/Los_Angeles',
                 '2012',
                 '{
@@ -275,7 +273,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 }'
             ),
             array(
-                '2013-05-05',
+                '2012-12-05',
                 'America/Los_Angeles',
                 'Q4 2012',
                 '{
@@ -326,7 +324,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 }'
             ),
             array(
-                '2013-05-05',
+                '2013-01-05',
                 'UTC',
                 'Q1 2013',
                 '{
@@ -377,7 +375,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 }'
             ),
             array(
-                '2013-05-05',
+                '2013-01-05',
                 'Europe/Helsinki',
                 'Q1 2013',
                 '{
