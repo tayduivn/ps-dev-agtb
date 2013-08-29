@@ -257,6 +257,8 @@
                         var ctx = this.context.parent || this.context;
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
                         this.refreshData();
+                        // after a commit, we don't need to check for draft records again
+                        this.hasCheckedForDraftRecords = true;
                     }
                 }, this);
 
