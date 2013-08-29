@@ -130,11 +130,14 @@ div.want_filter {
   position: relative;
   display: inline-block;
   #gradient > .vertical(darken(@grayLighter, 6%), lighten(@grayLighter, 1%));
+  filter: none;
   text-align: center;
   margin-right: 12px;
   > span {
     display: inline-block;
     #gradient > .vertical(lighten(@grayLighter, 1%), darken(@grayLighter, 12%));
+    filter: none;
+    background-color: @grayLighter;
     width: 18px;
     height: 18px;
     border: 1px solid #CCC;
