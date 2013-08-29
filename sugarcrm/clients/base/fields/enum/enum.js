@@ -26,6 +26,13 @@
  ********************************************************************************/
 ({
     fieldTag: "input",
+
+    /**
+     * Whether the value of this enum should be defaulted to the first item when model attribute is undefined
+     * Set to false to prevent this defaulting
+     */
+    defaultOnUndefined: true,
+
     bindKeyDown: function(callback) {
         this.$('input').on("keydown.record", {field: this}, callback);
     },
@@ -48,7 +55,7 @@
         var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
-        if (_.isUndefined(this.model.get(this.name))) {
+        if (this.defaultOnUndefined && _.isUndefined(this.model.get(this.name))) {
             var defaultValue = _.first(optionsKeys);
             if (defaultValue) {
                 this.model.set(this.name, defaultValue);

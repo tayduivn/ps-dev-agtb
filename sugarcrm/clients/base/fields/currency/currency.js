@@ -66,7 +66,7 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
         var currencyField = this.def.currency_field || 'currency_id';
-        if (this.model.isNew()) {
+        if (this.model.isNew() && (!this.model.isCopy())) {
             // new records are set the user's preferred currency
             this.model.set(currencyField, app.user.get('preferences').currency_id);
         }
@@ -90,12 +90,10 @@
     _render: function() {
         app.view.Field.prototype._render.call(this);
         if (this.action === 'edit' || this.action === 'disabled') {
-
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width','8px');
             this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
             this.getCurrencyField().render();
-            return this;
         }
         return this;
     },
@@ -110,19 +108,22 @@
         this.model.on('change:' + currencyField, function(model, currencyId, options) {
             //When model is reset, it should not be called
             if (!currencyId || !this._lastCurrencyId) {
+                this._lastCurrencyId = currencyId;
                 return;
             }
             // update the base rate in the model
             this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
             // convert the value to new currency
-            this.model.set(
-                this.name,
-                app.currency.convertAmount(
-                    app.currency.unformatAmountLocale(this.value),
-                    this._lastCurrencyId,
-                    currencyId
-                )
-            );
+            if (model.has(this.name)) {
+                this.model.set(
+                    this.name,
+                    app.currency.convertAmount(
+                        app.currency.unformatAmountLocale(model.get(this.name)),
+                        this._lastCurrencyId,
+                        currencyId
+                    )
+                );
+            }
             this._lastCurrencyId = currencyId;
         }, this);
     },
@@ -232,6 +233,7 @@
             viewName: this.action,
             model: this.model
         });
+        this._currencyField.defaultOnUndefined = false;
 
         return this._currencyField;
     },

@@ -32,13 +32,11 @@
         this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
 
         if (this.context.has('dupeCheckModel')) {
-            this.model = this.context.get('dupeCheckModel');
+            this.model = this.copyModel(this.context.get('dupeCheckModel'));
         }
 
-        // Create an empty collection if it doesn't exist, since we need it for sync
-        if(_.isUndefined(this.collection)){
-            this.collection = app.data.createBeanCollection(this.module);
-        }
+        // Create an empty collection since we need it for sync
+        this.collection = app.data.createBeanCollection(this.module);
 
         //save off the collection's sync so we can run our own and then run the original
         //this is so we can switch the endpoint out
@@ -67,7 +65,20 @@
     },
 
     fetchDuplicates: function(model, options) {
-        this.model = model;
+        this.model = this.copyModel(model);
         this.collection.fetch(options);
+    },
+
+    /**
+     * Make a copy of the model to prevent impacting other views
+     *
+     * @param model
+     * @returns {Object}
+     */
+    copyModel: function(model) {
+        var copiedModel = app.data.createBean(model.module);
+        copiedModel.copy(model);
+        copiedModel.set('id', model.id);
+        return copiedModel;
     }
 })

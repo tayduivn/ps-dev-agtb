@@ -448,6 +448,30 @@ describe("Create View", function() {
             expect(view.buttons[view.restoreButtonName].isHidden).toBe(false);
         });
 
+        it("Should set the model to selected duplicate values plus any create data for empty fields on selected duplicate", function() {
+            var title = "CEO",
+                selectedDuplicateAttributes = {
+                    "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
+                    "first_name":"Foo",
+                    "last_name":"Bar",
+                    "phone_work":"1234567890",
+                    "email1":"foobar@test.com",
+                    "full_name":"Mr Foo Bar",
+                    "age":42,
+                    "is_cool":false
+                },
+                expectedAttributes = _.extend({title:title}, selectedDuplicateAttributes);
+
+            view.render();
+            view.model.set({
+                first_name: 'First',
+                last_name: 'Last',
+                title: title
+            });
+            view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, selectedDuplicateAttributes));
+            expect(view.model.attributes).toEqual(expectedAttributes);
+        });
+
         it("Should reset to the original form values when restore is clicked.", function() {
             var data = {
                 "id":"f360b873-b11c-4f25-0a3e-50cb8e7ad0c2",
@@ -475,6 +499,7 @@ describe("Create View", function() {
 
             expect(view.model.get('first_name')).toBe('First');
             expect(view.model.get('last_name')).toBe('Last');
+            expect(view.model.isCopy()).toBe(true);
 
             render.restore();
         });

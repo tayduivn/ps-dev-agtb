@@ -272,14 +272,10 @@
     },
 
     findDuplicatesClicked: function () {
-        var model = app.data.createBean(this.model.module);
-
-        model.copy(this.model);
-        model.set('id', this.model.id);
         app.drawer.open({
             layout: 'find-duplicates',
             context: {
-                dupeCheckModel: model,
+                dupeCheckModel: this.model,
                 dupelisttype: 'dupecheck-list-multiselect'
             }
         });
