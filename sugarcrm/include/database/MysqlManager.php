@@ -785,7 +785,7 @@ class MysqlManager extends DBManager
 	// check if the passed value is an array of fields.
 	// if not, convert it into an array
 	if (!$this->isFieldArray($indices))
-		$indices[] = $indices;
+		$indices = array($indices);
 
 	$columns = array();
 	foreach ($indices as $index) {
@@ -1491,7 +1491,7 @@ class MysqlManager extends DBManager
 		} elseif($type == 'datetime' && $val == $this->quoted('0000-00-00 00:00:00')) {
 			return true;
 		}
-		
+
 		return parent::_emptyValue($val, $type);
 	}
 }
