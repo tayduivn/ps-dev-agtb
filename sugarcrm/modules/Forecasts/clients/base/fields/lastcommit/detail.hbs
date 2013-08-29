@@ -4,9 +4,9 @@
             {{#each this.data_points}}
                 <div class="datapoint pull-left">
                     {{#if this.value}}
-                    {{formatCurrency this.value}}
+                        {{formatCurrency this.value}}
                     {{else}}
-                    {{{this.error}}}
+                        {{{this.error}}}
                     {{/if}}
                 </div>
             {{/each}}
