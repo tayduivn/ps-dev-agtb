@@ -138,6 +138,17 @@
 
     /**
      * {@inheritDocs}
+     */
+    _render: function() {
+        // if we're in config, or if the chartField doesn't exist yet... render
+        // otherwise do not render again as this destroys and re-draws the chart and looks awful
+        if(this.meta.config || _.isUndefined(this.chartField)) {
+            app.view.View.prototype._render.call(this);
+        }
+    },
+
+    /**
+     * {@inheritDocs}
      * When rendering fields, get a reference to the chart field if we don't have one yet
      */
     _renderField: function(field) {
