@@ -11,6 +11,7 @@ describe("Drawer Layout", function() {
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate('record', 'view', 'base');
         SugarTest.loadHandlebarsTemplate('button', 'field', 'base', 'edit');
+        SugarTest.loadHandlebarsTemplate('drawer', 'layout', 'base', 'expand');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.testMetadata.addViewDefinition('record', {
             "panels":[
