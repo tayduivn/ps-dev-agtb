@@ -1,5 +1,8 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+//FILE SUGARCRM flav=pro || flav=sales ONLY
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -26,52 +29,62 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-
-$viewdefs['ProspectLists']['base']['view']['list'] = array(
+$viewdefs['Users']['base']['view']['subpanel-list'] = array(
     'panels' => array(
         array(
+            'name' => 'panel_header',
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 array(
                     'name' => 'name',
-                    'width' => '25',
-                    'label' => 'LBL_LIST_PROSPECT_LIST_NAME',
-                    'link' => true,
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'list_type',
-                    'width' => '15',
-                    'label' => 'LBL_LIST_TYPE_LIST_NAME',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array(
-                    'name' => 'description',
-                    'width' => '40',
-                    'label' => 'LBL_LIST_DESCRIPTION',
-                    'enabled' => true,
-                    'default' => true
-                ),
-                array (
-                    'name' => 'assigned_user_name',
-                    'width' => '10%',
-                    'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'id' => 'ASSIGNED_USER_ID',
+                    'label' => 'LBL_NAME',
                     'enabled' => true,
                     'default' => true,
                     'sortable' => false,
                 ),
                 array(
-                    'name' => 'date_entered',
-                    'type' => 'datetime',
-                    'label' => 'LBL_DATE_ENTERED',
-                    'width' => '10',
+                    'name' => 'user_name',
+                    'label' => 'LBL_USER_NAME',
+                    'sortable' => true,
+                ),
+                array(
+                    'name' => 'title',
+                    'label' => 'LBL_TITLE',
                     'enabled' => true,
                     'default' => true,
-                    'readonly' => true,
+                ),
+                array(
+                    'name' => 'department',
+                    'label' => 'LBL_DEPARTMENT',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array(
+                    'name' => 'email',
+                    'width' => '15%',
+                    'label' => 'LBL_EMAIL',
+                    'enabled' => true,
+                    'default' => true,
+                    'sortable' => false,
+                ),
+                array(
+                    'name' => 'phone_work',
+                    'width' => '15%',
+                    'label' => 'LBL_OFFICE_PHONE',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+                array (
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                array (
+                    'name' => 'is_admin',
+                    'label' => 'LBL_IS_ADMIN',
+                    'enabled' => true,
+                    'default' => true,
                 ),
             ),
         ),

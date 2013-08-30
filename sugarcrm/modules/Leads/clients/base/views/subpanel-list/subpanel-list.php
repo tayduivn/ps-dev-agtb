@@ -31,7 +31,6 @@ $viewdefs['Leads']['base']['view']['subpanel-list'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
         array(
           'label' => 'LBL_LIST_REFERED_BY',
