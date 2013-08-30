@@ -117,6 +117,20 @@ describe("enum field", function() {
         });
     });
 
+    describe("getSelect2Options", function() {
+        it("should allow separator to be configured via metadata", function(){
+            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, separator: '|', options: "bugs_type_dom"});
+            var select2opts = field.getSelect2Options([]);
+            expect(select2opts.separator).toEqual('|');
+            expect(select2opts.multiple).toBe(true);
+        });
+        it("should allow multiselect to be configured via metadata", function(){
+            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
+            var select2opts = field.getSelect2Options([]);
+            expect(select2opts.multiple).toBe(true);
+        });
+    });
+
     describe("multi select enum", function() {
 
         it("should display a labeled comma list for detail template", function() {
