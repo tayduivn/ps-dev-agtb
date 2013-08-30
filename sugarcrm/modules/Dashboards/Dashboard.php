@@ -77,6 +77,7 @@ class Dashboard extends Basic
     function save($check_notify = FALSE)
     {
         $this->assigned_user_id = $GLOBALS['current_user']->id;
-        return parent::save($check_notify);
+        // never send assignment notifications for dashboards
+        return parent::save(false);
     }
 }
