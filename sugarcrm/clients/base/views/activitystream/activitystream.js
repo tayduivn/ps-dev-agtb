@@ -496,10 +496,10 @@
         if (this.model.get("activity_type") === 'attach') { //no preview for attachments
             preview.enabled = false;
             preview.label = 'LBL_PREVIEW_DISABLED_ATTACHMENT';
-        } else if (_.isEmpty(this.model.get('parent_id')) || _.isEmpty(this.model.get('parent_type'))) {  //no related record
+        } else if (_.isEmpty(this.model.get('display_parent_id')) || _.isEmpty(this.model.get('display_parent_type'))) {  //no related record
             preview.enabled = false;
             preview.label = 'LBL_PREVIEW_DISABLED_NO_RECORD';
-        } else if (!app.acl.hasAccess("view", this.model.get('parent_type'))) { //no access to related record
+        } else if (!app.acl.hasAccess("view", this.model.get('display_parent_type'))) { //no access to related record
             preview.enabled = false;
             preview.label = 'LBL_PREVIEW_DISABLED_NO_ACCESS';
         } else if (this.model.get('preview_enabled') === false) { //deleted or no team access to related record
@@ -508,7 +508,7 @@
         } else {
             parentModel = this._getParentModel('record', this.context);
             // Check if the bean to be previewed is the same as the context.
-            if (parentModel.module == this.model.get('display_parent_type') && parentModel.id === this.model.get('display_parent_id')) {
+            if (parentModel && parentModel.module == this.model.get('display_parent_type') && parentModel.id === this.model.get('display_parent_id')) {
                 preview.enabled = false;
                 preview.label = 'LBL_PREVIEW_DISABLED_SAME_RECORD';
             }

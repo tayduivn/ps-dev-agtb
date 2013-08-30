@@ -56,7 +56,7 @@
         <a class="btn btn-mini comment-btn" rel="tooltip" data-container="body" data-title="{{str 'LBL_COMMENT'}}">
             <i class="icon-comment"></i>
         </a>
-        <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" data-container="body" data-title="{{str preview.label}}" data-module="{{model.attributes.parent_type}}" data-id="{{model.attributes.parent_id}}">
+        <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" data-container="body" data-title="{{str preview.label}}" data-module="{{model.attributes.display_parent_type}}" data-id="{{model.attributes.display_parent_id}}">
             <i class="icon-eye-open"></i>
         </a>
     </div>

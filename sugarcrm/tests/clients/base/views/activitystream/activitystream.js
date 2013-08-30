@@ -175,7 +175,7 @@ describe("Activity Stream View", function() {
                 display_parent_type: "Contacts"
             });
 
-            getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: moduleId});
+            getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: moduleId, module: "Contacts"});
 
             previewData = view.getPreviewData();
 
