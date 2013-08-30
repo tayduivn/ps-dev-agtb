@@ -226,6 +226,13 @@ table.dataTable {
           min-width: 108px;
           max-width: 108px !important;
         }
+        &[data-type="datetimecombo"] {
+          min-width: 180px;
+          max-width: 180px !important;
+          .ui-timepicker-input {
+            width: 80px;
+          }
+        }
         &[data-type="currency"] {
           min-width: 128px;
           max-width: 128px !important;
