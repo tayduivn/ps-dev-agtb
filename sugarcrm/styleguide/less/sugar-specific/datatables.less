@@ -432,13 +432,14 @@ FLEXLIST GENERIC */
         padding-left: 79px;
       }
       & > thead > tr > th:first-child {
-        padding: 8px;
+        padding: 6px 8px;
         min-height: 30px;
       }
     }
     & > thead > tr > th {
       &:first-child {
         background: @white;
+        min-height: 30px;
         span {
           overflow-x: visible;
         }
@@ -549,9 +550,6 @@ FLEXLIST GENERIC */
         &:last-child {
           width: 29px;
         }
-      }
-      thead > tr > th:first-child {
-        padding: 8px;
       }
     }
     /*lead record view find duplicates*/
@@ -782,6 +780,7 @@ FLEXLIST GENERIC */
         border-right: none;
         &:after {
           .right-shadow;
+          top: -1px;
         }
       }
       & > tbody > tr > td:first-child {
@@ -797,6 +796,7 @@ FLEXLIST GENERIC */
         border-left: none;
         &:before {
           .left-shadow;
+          top: -1px;
         }
       }
       & > tbody > tr > td:last-child {
