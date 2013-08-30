@@ -1,4 +1,3 @@
-{{!
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
@@ -11,9 +10,13 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
-}}
-{{#if value}}
-<div class="ellipsis_inline" data-placement="bottom" >
-    {{value}}
-</div>
-{{/if}}
+({
+    _render: function() {
+        if (this.view.name === 'record') {
+            this.def.link = false;
+        } else if (this.view.name ==='preview') {
+            this.def.link = true;
+        }
+        this._super('_render');
+    }
+})
