@@ -133,7 +133,6 @@
      * @param {Event} e
      */
     toggleView: function (e) {
-        debugger;
         var $el = this.$(e.currentTarget);
         // Hack: With a real <button> with attribute disabled="disabled", events won't fire on the button. However,
         // since we're using <a> anchor to allow tooltips even if btn disabled, we have to "fudge" disabled behavior
