@@ -68,7 +68,7 @@ $dictionary['RevenueLineItem'] = array(
             'audited' => true,
             'comment' => 'Account this product is associated with',
             'formula' => 'related($opportunities, "account_id")',
-            'enforce' => true,
+            'enforced' => true,
             'calculated' => true,
         ),
         'contact_id' => array(
