@@ -214,7 +214,6 @@
     },
 
     _renderHtml: function (ctx, options) {
-
         this.colSpan = this._fields.visible.length || 0;
         if (this.leftColumns.length) {
             this.colSpan++;
