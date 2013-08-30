@@ -126,6 +126,36 @@ describe('Base.Field.Fullname', function() {
             expect(_.values(view.fields).length).toBe(1);
             expect(field.fields.length).toBe(0);
         });
+        it('should update the Full Name when First Name or Last Name changes', function() {
+            user.setPreference('default_locale_name_format', 's f l');
+            view.render();
+            field = view.getField('full_name');
+            var renderStub = sinon.stub(field, 'render');
+
+            field.fields.length = 3;
+            expect(field.value).toBe('Mr. firstName lastName');
+
+            field.model.set('first_name', 'FIRST');
+            expect(field.model.get('full_name')).toBe('Mr. FIRST lastName');
+
+            field.model.set('last_name', 'LAST');
+            expect(field.model.get('full_name')).toBe('Mr. FIRST LAST');
+
+            field.model.set('salutation', 'Dr.');
+            expect(field.model.get('full_name')).toBe('Dr. FIRST LAST');
+
+            //Until now we were faking an edit template with 3 SugarFields
+            expect(renderStub).not.toHaveBeenCalled();
+
+            //Now we are faking a detail template with 0 SugarFields so the need to manually render full_name field
+            field.fields.length = 0;
+            field.model.set('first_name', 'first');
+            expect(field.model.get('full_name')).toBe('Dr. first LAST');
+
+            expect(renderStub).toHaveBeenCalled();
+
+            renderStub.restore();
+        });
     });
 
     describe('_loadTemplate', function() {

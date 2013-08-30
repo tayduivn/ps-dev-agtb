@@ -121,7 +121,10 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,6',
     'disable_num_format' => true,
-    'comment' => 'Total tax for all items in group in USD'
+    'comment' => 'Total tax for all items in group in USD',
+    'studio' => array(
+      'mobile' => false,
+    ),
   ),
   'total' =>
   array (
@@ -139,7 +142,10 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,6',
     'disable_num_format' => true,
-    'comment' => 'Total amount for all items in the group in USD'
+    'comment' => 'Total amount for all items in the group in USD',
+    'studio' => array(
+      'mobile' => false,
+    ),
   ),
 
   'subtotal_usdollar' =>
@@ -149,7 +155,10 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,6',
     'disable_num_format' => true,
-    'comment' => 'Group total minus tax and shipping in USD'
+    'comment' => 'Group total minus tax and shipping in USD',
+    'studio' => array(
+      'mobile' => false,
+    ),
   ),
   'shipping_usdollar' =>
   array (
@@ -158,7 +167,10 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,6',
     'disable_num_format' => true,
-    'comment' => 'Shipping charge for group in USD'
+    'comment' => 'Shipping charge for group in USD',
+    'studio' => array(
+      'mobile' => false,
+    ),
   ),
   'deal_tot' =>
   array (
@@ -176,7 +188,10 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,2',
     'disable_num_format' => true,
-    'comment' => 'discount amount'
+    'comment' => 'discount amount',
+    'studio' => array(
+      'mobile' => false,
+    ),
   ),
   'new_sub' =>
   array (
@@ -194,7 +209,10 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,6',
     'disable_num_format' => true,
-    'comment' => 'Group total minus discount and tax and shipping'
+    'comment' => 'Group total minus discount and tax and shipping',
+    'studio' => array(
+      'mobile' => false,
+    ),
   ),
   'subtotal' =>
   array (

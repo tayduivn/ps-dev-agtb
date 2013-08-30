@@ -694,8 +694,9 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
                     return $field['name'];
                 }
 
-                // This handles non-field fields like favorite and follow
-                if (!empty($field['readonly'])) {
+                // This handles non-field fields like favorite and follow that 
+                // may not have a name property
+                if (!empty($field['readonly']) && empty($field['name'])) {
                     return $field['type'];
                 }
             }

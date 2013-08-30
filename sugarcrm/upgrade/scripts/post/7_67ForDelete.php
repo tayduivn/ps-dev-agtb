@@ -36,6 +36,8 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'modules/Leads/SugarFeeds',
             'modules/Opportunities/SugarFeeds/OppFeed.php',
             'modules/SugarFeed',
+            // remove the old FTS Logic Hook
+            'custom/Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
         );
         $this->fileToDelete($files);
     }

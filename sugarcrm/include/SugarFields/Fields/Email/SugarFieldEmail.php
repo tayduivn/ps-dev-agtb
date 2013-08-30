@@ -18,16 +18,6 @@ class SugarFieldEmail extends SugarFieldBase
      */    
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
-        // need to remove Email fields if Email1 is not allowed
-        if (!empty($bean->field_defs['email']) && !empty($bean->field_defs['email1'])
-            && !$bean->ACLFieldAccess('email1', 'access')
-            && isset($data['email'])) {
-            unset($data['email']);
-            return;
-        }
-        //END SUGARCRM flav=pro ONLY
-
         $emailsRaw = $bean->emailAddress->getAddressesByGUID($bean->id, $bean->module_name);
 
         if (!empty($emailsRaw)) {
@@ -49,15 +39,6 @@ class SugarFieldEmail extends SugarFieldBase
      */
     public function apiSave(SugarBean $bean, array $params, $field, $properties)
     {
-        //BEGIN SUGARCRM flav=pro ONLY
-        if (!empty($bean->field_defs['email'])
-            && !empty($bean->field_defs['email1'])
-            && !$bean->ACLFieldAccess('email1', 'edit')
-        ) {
-            throw new SugarApiExceptionNotAuthorized('No access to edit records for module: '.$bean->module);
-        }
-        //END SUGARCRM flav=pro ONLY
-        
         if (!is_array($params[$field])) {
             // Not an array, don't do anything.
             return;

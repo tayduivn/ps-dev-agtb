@@ -109,5 +109,32 @@
             last_name: this.model.get('last_name'),
             salutation: this.model.get('salutation')
         });
+    },
+
+    /**
+     * @override
+     * Note that the parent bindDataChange (from FieldsetField) is an empty function
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            // As detail templates don't contain Sidecar Fields,
+            // we need to rerender this field in order to visualize the changes
+            this.model.on("change:" + this.name, function() {
+                if (this.fields.length === 0) {
+                    this.render();
+                }
+            }, this);
+            // When a child field changes, we need to update the full_name value
+            _.each(this.def.fields, function(field) {
+                this.model.on("change:" + field.name, this.updateValue, this);
+            }, this);
+        }
+    },
+
+    /**
+     * Update the value of this parent field when a child changes
+     */
+    updateValue: function() {
+        this.model.set(this.name, this.format());
     }
 })

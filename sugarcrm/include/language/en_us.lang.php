@@ -1857,6 +1857,7 @@ $app_strings = array (
   'LBL_RECORD_SHOWMORE' => 'Show More', // Studio editing of record views
   'LBL_FAVORITE' => 'Favorite', // Record view header panel element
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
+  'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
   'LBL_ACTIVITIES' => 'Activities',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2013 SugarCRM Inc. All Rights Reserved.',
@@ -2410,7 +2411,7 @@ $app_strings = array (
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
-    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\n\nPlease change one of the values.",
+    'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator. Please change one of the values.",
     'ERR_DELETE_RECORD' => 'A record number must be specified to delete the contact.',
     'ERR_EXPORT_DISABLED' => 'Exports Disabled.',
     'ERR_EXPORT_TYPE' => 'Error exporting ',
@@ -2674,8 +2675,23 @@ $app_strings = array (
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
     'LBL_LISTVIEW_OPTION_SELECTED' => 'Selected Records',
     'LBL_LISTVIEW_SELECTED_OBJECTS' => 'Selected: ',
-    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this result set.  <a href="javascript:void(0);">Clear selections</a>.',
-    'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {num} records in this view.  <a href="javascript:void(0);">Select all records</a> in the result set.',
+    'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' => 'There are more than {{num}} records in this result set. You have selected first {{num}} records. <a href="javascript:void(0);">Clear selections</a>.',
+    'TPL_LISTVIEW_SELECTED_ALL' => 'You have selected all {{num}} records in this result set. <a href="javascript:void(0);">Clear selections</a>.',
+    'TPL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {{num}} records in this view. <a href="javascript:void(0);">Select all records</a> in the result set.',
+    'TPL_MASSUPDATE_PROGRESS_STATUS' => 'Updating {{num}} of {{total}}.',
+    'TPL_MASSUPDATE_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
+    'TPL_MASSUPDATE_FAIL_TO_ATTEMPT' => 'Mass Update failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MASSUPDATE_WARNING_CLOSE' => 'Mass Update incomplete. {{num}} records remain unchanged.',
+    'TPL_MASSUPDATE_WARNING_INCOMPLETE' => 'Mass Update incomplete. {{num}} records remain unchanged.',
+    'TPL_MASSUPDATE_SUCCESS' => '{{num}} records were updated successfully.',
+    'TPL_MASSUPDATE_TITLE' => '{{module}} Mass Update',
+    'TPL_MASSDELETE_PROGRESS_STATUS' => 'Deleting {{num}} of {{total}}.',
+    'TPL_MASSDELETE_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
+    'TPL_MASSDELETE_FAIL_TO_ATTEMPT' => 'Mass Delete failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MASSDELETE_WARNING_CLOSE' => 'Mass Delete incomplete. {{num}} records remain.',
+    'TPL_MASSDELETE_WARNING_INCOMPLETE' => 'Mass Delete incomplete. {{num}} records remain.',
+    'TPL_MASSDELETE_SUCCESS' => '{{num}} records were deleted successfully.',
+    'TPL_MASSDELETE_TITLE' => '{{module}} Mass Delete',
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
@@ -3201,7 +3217,7 @@ $app_strings = array (
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
     'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
-    'LBL_DASHLET_FORECAST_NAME' => 'Forecast',
+    'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
 
     'LBL_DASHBOARD_NO_RECORDS' => 'No saved dashboards',
@@ -3375,7 +3391,7 @@ $app_strings = array (
   'ERROR_CONNECTOR_CONFIGURE' => 'Unable to retrieve data.  The service may currently be inaccessible or the configuration settings may be invalid.',
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
   'LBL_CONNECT_TWITTER_FOR_ADMIN'=>'Configure Twitter Connector',
-  'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to properly configure Twitter',
+  'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to configure Twitter',
   'LBL_MERGE_CONNECTORS' => 'Get Data',
   'LBL_NO_DATA_AVAILABLE' => 'No data available.',
   'LBL_MERGE_CONNECTORS_BUTTON_KEY' => '[D]',
@@ -3430,6 +3446,7 @@ $app_strings = array (
     'LBL_DURATION_DAYS' => 'days',
     'LBL_DURATION_HOURS' => 'hours',
     'LBL_DURATION_MINUTES' => 'minutes',
+    'LBL_DURATION_SECONDS' => 'seconds',
 
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
@@ -3594,7 +3611,7 @@ $app_strings = array (
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
     'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
     'LBL_COMMITTED_TIME_RELATIVE' => 'Last Commit: {{relativetime}} at {{time}}',
-    'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time.',
+    'LBL_LISTVIEW_NO_RECORDS' => 'No data available.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
@@ -3644,7 +3661,7 @@ $app_strings = array (
 
     //SugarApiExceptionNotAuthorized language string
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
-
+    'SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED' => 'Not allowed to perform action "{0}" on this record',
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_ACTIVITY_VIEW_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
@@ -3985,12 +4002,12 @@ $app_strings = array (
     'LBL_WIZ_KNOWLEDGE_BASE' => 'Knowledge Base',
     'LBL_WIZ_FORUMS' => 'Forums',
     //Admin wizard links
-    'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'System Locale Settings',
+    'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'Locale Settings',
     'LBL_WIZ_EMAIL_SETTINGS' => 'Email Settings',
     'LBL_WIZ_IMPORT_DATA' => 'Import Data',
     'LBL_WIZ_CREATE_USERS' => 'Create Users',
-    'LBL_WIZ_APPLICATION_SETTINGS' => 'View and Manage Application Settings',
-    'LBL_WIZ_CONFIGURE_APPLICATION' => 'Configure the Application',
+    'LBL_WIZ_APPLICATION_SETTINGS' => 'System Settings',
+    'LBL_WIZ_CONFIGURE_APPLICATION' => 'Studio',
 
     // For passwordmodal widget
     'LBL_PASSWORD'						=> 'Password',
@@ -4120,6 +4137,7 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_POST_PLACEHOLDER' => 'Type a note or drag and drop an attachment. Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
+    'LBL_ACTIVITY_STREAM_DISABLED' => 'Activity Stream is not enabled',
     'LBL_DATA_VIEW' => 'Data View',
     'LBL_COMMENT' => 'Comment',
 

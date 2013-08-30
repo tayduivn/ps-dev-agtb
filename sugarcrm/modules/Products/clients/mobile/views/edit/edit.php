@@ -37,9 +37,10 @@ $viewdefs['Products']['mobile']['view']['edit'] = array(
         array(
             'fields' => array(
                 array(
-                    'name' => 'product_template_name',
+                    'name' => 'name',
                     'required' => true,
                 ),
+                'product_template_name',
                 'status',
                 'account_name',
                 'quote_name',

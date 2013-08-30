@@ -13,6 +13,7 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMenuMetaDataUpgrader.php';
 
 /**
  * Handles migration of wireless and portal metadata for pre-6.6 modules into 6.6+
@@ -368,6 +369,19 @@ class SidecarMetaDataUpgrader
         // upgrade quickcreate menus
         $this->upgradeQuickCreate();
 
+        $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
+
+        $this->logUpgradeStatus('Starting the Menu Upgrader.');
+
+        $menuUpgrader = new SidecarMenuMetaDataUpgrader($this, array());
+        $menuUpgrader->convertLegacyViewDefsToSidecar();
+        $menuRemove = $menuUpgrader->getFilesForRemoval();
+        if(!empty($menuRemove)) {
+            self::$filesForRemoval = array_merge(self::$filesForRemoval, $menuRemove);
+        }
+
+        $this->logUpgradeStatus('Finishing the Menu Upgrader.');
+
         // Add the rest of the OOTB module wireless metadata files to the stack
         $this->cleanupLegacyFiles();
     }
@@ -386,9 +400,13 @@ class SidecarMetaDataUpgrader
             }
         }
 
+        $DCActions = array();
         $actions_path = "include/DashletContainer/Containers/DCActions.php";
-        foreach (SugarAutoLoader::existingCustom($actions_path) as $file) {
-            include $file;
+        if(file_exists($actions_path)) {
+            include $actions_path;
+        }
+        if(file_exists("custom/$actions_path")) {
+            include "custom/$actions_path";
         }
 
         $availableModules = $DCActions;
@@ -420,7 +438,7 @@ class SidecarMetaDataUpgrader
         } elseif (file_exists($quickCreateFile)) {
             include $quickCreateFile;
         } else {
-            if ($enabled == false) {
+            if (!$enabled) {
                 // no need to write out a file for a module that doesn't currently have quickcreate defs and isn't
                 // going to need them
                 return true;

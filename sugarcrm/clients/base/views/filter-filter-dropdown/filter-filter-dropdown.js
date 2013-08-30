@@ -161,10 +161,12 @@
      * @returns {string}
      */
     formatSelection: function(item) {
-        var ctx = {};
+        var ctx = {}, safeString;
 
+        //Escape string to prevent XSS injection
+        safeString = Handlebars.Utils.escapeExpression(item.text);
         // Update the text for the selected filter.
-        this.$('.choice-filter').html(item.text);
+        this.$('.choice-filter').html(safeString);
 
         ctx.label = app.lang.get("LBL_FILTER");
         ctx.enabled = this.filterDropdownEnabled;

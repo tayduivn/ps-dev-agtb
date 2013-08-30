@@ -23,12 +23,12 @@
     fields: null, //action button fields
     actionDropDownTag: ".dropdown-toggle",
     fieldTag: "input[name=check]",
-    initialize: function (options) {
+    initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
         var massCollection = this.context.get('mass_collection');
         if (!massCollection) {
             var MassCollection = app.BeanCollection.extend({
-                reset: function () {
+                reset: function() {
                     this.filterDef = null;
                     this.entire = false;
                     Backbone.Collection.prototype.reset.call(this);
@@ -91,7 +91,7 @@
         var self = this,
             massCollection = this.context.get('mass_collection');
         if (massCollection && this.model.id) { //listeners for each record selection
-            var modelId = this.model.id;
+            var modelId = this.model.cid;
             massCollection.on("add", function (model) {
                 if (self.model && model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", true);
@@ -145,36 +145,119 @@
             this.selected = (massCollection.entire);
         }
     },
+
+    /**
+     * Fetch api to retrieve the entire filtered set.
+     */
+    getTotalRecords: function() {
+        var massCollection = (this.context) ? this.context.get('mass_collection') : null,
+            filterDef = massCollection.filterDef;
+
+        if (!_.isArray(filterDef)) {
+            filterDef = [filterDef];
+        }
+
+        var url = app.api.buildURL(this.module, null, null, {
+                fields: 'id',
+                //FIXME: max_num should be configurable
+                //FIXME: once app.config returns max_mass_update.
+                max_num: 1000,
+                filter: filterDef
+            });
+
+        app.alert.show('totalrecord', {
+            level: 'process',
+            title: app.lang.getAppString('LBL_LOADING'),
+            autoClose: false
+        });
+
+        massCollection.trigger('massupdate:estimate');
+
+        app.api.call('read', url, null, {
+            success: _.bind(function(data) {
+                if (this.disposed) {
+                    return;
+                }
+                app.alert.dismiss('totalrecord');
+                this._processTotalRecords(data.records);
+                this._alertTotalRecords(data.next_offset);
+            }, this)
+        });
+    },
+
+    /**
+     * Update total record set from api request.
+     *
+     * @param {Object[]} collection JSON formatted list of model ids.
+     * @private
+     */
+    _processTotalRecords: function(collection) {
+        var massCollection = (this.context) ? this.context.get('mass_collection') : null;
+        if (!massCollection) {
+            return;
+        }
+        massCollection.add(collection, {silent: true});
+        massCollection.entire = false;
+        massCollection.trigger('massupdate:estimate');
+    },
+
+    /**
+     * Alert the message for total record set.
+     *
+     * @param {Number} offset Next pagination offset.
+     * @private
+     */
+    _alertTotalRecords: function(offset) {
+        var massCollection = (this.context) ? this.context.get('mass_collection') : null;
+        if (!massCollection) {
+            return;
+        }
+        //if filtered size is more than maximum allow, it will execute with the first set.
+        var label = (offset >= 0) ?
+                'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' :
+                'TPL_LISTVIEW_SELECTED_ALL',
+            message = app.lang.get(label, this.module, {
+                num: massCollection.length
+            }),
+            allSelected = $('<div>').html(message);
+        allSelected.find('a').on('click', function(evt) {
+            massCollection.reset();
+        });
+        this.view.layout.trigger('list:alert:show', allSelected);
+    },
+
     /**
      * Toggles the actionmenu buttons when the min or max rows have been selected. Prevents the "select all" alert from
      * being shown if the alert is disabled.
      */
     toggleSelectAll: function() {
-        var self           = this,
+        var self = this,
             massCollection = (this.context) ? this.context.get('mass_collection') : null;
         /**
          * Builds the DOM alert with an event for resetting the mass collection.
-         * @returns {*|jQuery}
+         * @return {HTMLElement}
          */
         var buildAlertForReset = function() {
-            var alert = $('<div>').html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL'));
-            $(alert).find('a').on('click', function() {
+            var alert = $('<div>').html(app.lang.get('TPL_LISTVIEW_SELECTED_ALL'));
+            alert.find('a').on('click', function() {
                 massCollection.reset();
             });
             return alert;
         };
         /**
          * Builds the DOM alert with event for selecting all records.
-         * @returns {*|jQuery}
+         * @return {HTMLElement}
          */
         var buildAlertForEntire = function() {
-            var alert = $('<div>').html(app.utils.formatString(
-                app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS'),
-                {num: massCollection.length}
-            ));
-            $(alert).find('a').on('click', function() {
+            var alert = selectAll = $('<div>').html(
+                app.lang.get('TPL_LISTVIEW_SELECT_ALL_RECORDS', this.module, {
+                    num: massCollection.length
+                })
+            );
+            alert.find('a').on('click', function() {
                 massCollection.entire = true;
-                self.toggleSelectAll();
+                self.getTotalRecords();
+                $(this).off('click');
             });
             return alert;
         };
@@ -199,7 +282,7 @@
         };
         /**
          * Toggles the actionmenu buttons based on the state of the mass collection.
-         * @param fields
+         * @param {Object[]} fields List of the view's fields.
          */
         var setButtonsDisabled = function (fields) {
             _.each(fields, function (field) {
@@ -290,7 +373,7 @@
     unbindData: function() {
         var collection = this.context.get('mass_collection');
         if (collection) {
-            var modelId = this.model.id,
+            var modelId = this.model.cid,
                 cid = this.view.cid;
             collection.off(null, null, this);
             if (modelId) {

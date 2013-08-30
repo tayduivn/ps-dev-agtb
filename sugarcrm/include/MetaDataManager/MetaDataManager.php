@@ -31,6 +31,8 @@ require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/SugarObjects/LanguageManager.php';
+require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
+
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
@@ -223,6 +225,8 @@ class MetaDataManager
         // Indicate whether Module Has duplicate checking enabled --- Rules must exist and Enabled flag must be set
         $data['dupCheckEnabled'] = isset($vardefs['duplicate_check']) && isset($vardefs['duplicate_check']['enabled']) && ($vardefs['duplicate_check']['enabled']===true);
 
+        // Indicate whether a Module has activity stream enabled
+        $data['activityStreamEnabled'] = ActivityQueueManager::isEnabledForModule($moduleName);
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
@@ -828,7 +832,7 @@ class MetaDataManager
      */
     public function hasUserMetadataChanged($user, $hash)
     {
-        return md5($user->date_modified) != $hash;
+       return $user->getUserMDHash() != $hash;
     }
 
     /**

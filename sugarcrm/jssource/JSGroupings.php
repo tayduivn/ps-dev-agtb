@@ -246,7 +246,9 @@
                    'include/javascript/nvd3/nv.d3.min.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/sugar7/error.js' => 'include/javascript/sugar_sidecar.min.js',
                    'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
-                   'include/javascript/select2-release-3.3.2/select2.js' => "include/javascript/sugar_sidecar.min.js",
+                   'include/javascript/select2-release-3.3.2/select2.js' => 'include/javascript/sugar_sidecar.min.js',
+                   //To fix some issues on select2 plugin.
+                   'include/javascript/sugar7/plugins/select2.js'  => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.jstree.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
@@ -267,6 +269,7 @@
                     'include/javascript/sugar7/plugins/dropdown.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ellipsis_inline.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/list-column-ellipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ToggleMoreLess.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //BEGIN SUGARCRM flav=pro ONLY
                     //load SFA specific plugins. Remove this in favor of a custom plugin loader.
                     'modules/Forecasts/clients/base/plugins/disable-delete.js'  => 'include/javascript/sugar_sidecar.min.js',

@@ -82,6 +82,7 @@
         this._buildGridsFromPanelsMetadata(this.meta.panels);
         this.progress = this.layout.getProgress();
         this.percentComplete = this._getPercentageComplete();
+        this.wizardCompleted = (this.progress.page === this.progress.lastPage)?true:false;
         app.view.View.prototype._render.call(this);
     },
     /**

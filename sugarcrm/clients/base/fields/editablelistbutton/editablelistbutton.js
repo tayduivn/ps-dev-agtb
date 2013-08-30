@@ -27,7 +27,10 @@
      * @private
      */
     _validationComplete : function(isValid){
-        if (!isValid) return;
+        if (!isValid) {
+            this.setDisabled(false);
+            return;
+        }
         if (!this.changed) {
             this.cancelEdit();
             return;
@@ -38,6 +41,9 @@
                     self.changed = false;
                     self.view.toggleRow(model.id, false);
                     self._refreshListView();
+                },
+                complete: function() {
+                    self.setDisabled(false);
                 },
                 //Show alerts for this request
                 showAlerts: {
@@ -71,11 +77,14 @@
     },
 
     saveModel: function() {
+        this.setDisabled(true);
         var fieldsToValidate = this.view.getFields(this.module);
-        this.view.clearValidationErrors();
         this.model.doValidate(fieldsToValidate, _.bind(this._validationComplete, this));
     },
     cancelEdit: function() {
+        if (this.isDisabled()) {
+            this.setDisabled(false);
+        }
         this.changed = false;
         this.model.revertAttributes();
         this.view.clearValidationErrors();

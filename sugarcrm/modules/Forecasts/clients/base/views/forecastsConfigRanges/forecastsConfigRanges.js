@@ -21,19 +21,19 @@
      * used to hold the metadata for the forecasts_ranges field, used to manipulate and render out as the radio buttons
      * that correspond to the fieldset for each bucket type.
      */
-    forecast_ranges_field: {},
+    forecastRangesField: {},
 
     /**
      * Used to hold the buckets_dom field metadata, used to retrieve and set the proper bucket dropdowns based on the
      * selection for the forecast_ranges
      */
-    buckets_dom_field: {},
+    bucketsDomField: {},
 
     /**
      * Used to hold the category_ranges field metadata, used for rendering the sliders that correspond to the range
      * settings for each of the values contained in the selected buckets_dom dropdown definition.
      */
-    category_ranges_field: {},
+    categoryRangesField: {},
 
     /**
      * Used to keep track of the selection as it changes so that it can be used to determine how to hide and show the
@@ -73,6 +73,16 @@
     toggleTitleTpl: {},
 
     /**
+     * Holds the fields metadata
+     */
+    fieldsMeta: {},
+
+    /**
+     * Holds the values found in Forecasts Config commit_stages_included value
+     */
+    includedCommitStages: [],
+
+    /**
      * Adds event listener to elements
      */
     events: {
@@ -97,25 +107,24 @@
 
         this.label = _.first(this.meta.panels).label;
 
-        // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
-        _.each(['forecast_ranges', 'buckets_dom', 'category_ranges'], function(item) {
-            var fields = _.first(this.meta.panels).fields;
+        // get the fields metadata
+        this.fieldsMeta = _.first(this.meta.panels).fields;
 
-            this[item + '_field'] = function(fieldName, fieldMeta) {
-                return _.find(fieldMeta, function(field) {
-                    return field.name == this;
-                }, fieldName);
-            }(item, fields);
-
-        }, this);
+        // init the fields from metadata
+        this.forecastRangesField = this.fieldsMeta.forecast_ranges;
+        this.bucketsDomField = this.fieldsMeta.buckets_dom;
+        this.categoryRangesField = this.fieldsMeta.category_ranges;
 
         // Set this model equal to the latest config metadata
         this.model.set(app.metadata.getModule('Forecasts', 'config'));
         this.updateTitleValues(this.model);
 
-        // set the values for forecast_ranges_field and buckets_dom_field from the model, so it can be set to selected properly when rendered
-        this.forecast_ranges_field.value = this.model.get('forecast_ranges');
-        this.buckets_dom_field.value = this.model.get('buckets_dom');
+        // get the included commit stages
+        this.includedCommitStages = this.model.get('commit_stages_included'),
+
+        // set the values for forecastRangesField and bucketsDomField from the model, so it can be set to selected properly when rendered
+        this.forecastRangesField.value = this.model.get('forecast_ranges');
+        this.bucketsDomField.value = this.model.get('buckets_dom');
         this.toggleTitleTpl = app.template.getView('forecastsConfigHelpers.toggleTitle', 'Forecasts');
     },
 
@@ -222,7 +231,7 @@
      */
     _addForecastRangesSelectionHandler: function() {
         // finds all radiobuttons with this name
-        var elements = this.$el.find(':radio[name="' + this.forecast_ranges_field.name + '"]');
+        var elements = this.$el.find(':radio[name="' + this.forecastRangesField.name + '"]');
 
         // apply the change handler to each of the ranges radio button elements.
         _.each(elements, function(el) {
@@ -255,13 +264,12 @@
         // now set the new selection, so that if they change it, we can later hide the things we are about to show.
         view.selection = this.value;
 
-        bucket_dom = view.buckets_dom_field.options[this.value];
+        bucket_dom = view.bucketsDomField.options[this.value];
 
         hideElement = view.$el.find('#' + oldValue + '_ranges');
         showElement = view.$el.find('#' + this.value + '_ranges');
 
         if(showElement.children().length == 0) {
-
             this.value == 'show_custom_buckets' ? view._customSelectionHandler(this, showElement) : view._selectionHandler(this, showElement);
 
             // use call to set context back to the view for connecting the sliders
@@ -277,7 +285,7 @@
 
         // set the forecast ranges and associated dropdown dom on the model
         view.model.set(this.name, this.value);
-        view.model.set(view.buckets_dom_field.name, bucket_dom);
+        view.model.set(view.bucketsDomField.name, bucket_dom);
     },
 
     /**
@@ -288,7 +296,7 @@
      * @private
      */
     _selectionHandler: function(element, showElement) {
-        var bucket_dom = this.buckets_dom_field.options[element.value];
+        var bucket_dom = this.bucketsDomField.options[element.value];
 
         // add the things here...
         this.fieldRanges[element.value] = {};
@@ -307,18 +315,7 @@
                 // build a range field
                 fieldSettings = {
                     view: this.view,
-                    def: _.find(
-                        _.find(
-                            _.first(this.view.meta.panels).fields,
-                            function(field) {
-                                return field.name == 'category_ranges';
-                            }
-                        ).ranges,
-                        function(range) {
-                            return range.name == this.key
-                        },
-                        {key: key}
-                    ),
+                    def: this.view.fieldsMeta.category_ranges[key],
                     viewName: 'edit',
                     context: this.view.context,
                     module: this.view.module,
@@ -354,7 +351,7 @@
      * @private
      */
     _customSelectionHandler: function(element, showElement) {
-        var bucket_dom = this.buckets_dom_field.options[element.value],
+        var bucket_dom = this.bucketsDomField.options[element.value],
             bucket_dom_options = [],
             rangeField,
             _ranges;
@@ -368,13 +365,15 @@
             this.model.set(element.value + '_ranges', {});
         }
         _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
-            if (_.isUndefined(this.view.model.get(this.category + '_ranges')[key]) ) {
+            if (_.isUndefined(this.view.model.get(this.category + '_ranges')[key])) {
+                // the range doesn't exist, so we add it to the ranges
                 _ranges = this.view.model.get(this.category + '_ranges');
                 _ranges[key] = {min: 0, max: 100, in_included_total: false};
                 this.view.model.set(this.category + '_ranges', _ranges);
-            } else if ( _.isUndefined(this.view.model.get(this.category + '_ranges')[key].in_included_total) ) {
+            } else {
+                // the range already exists, update the in_included_total value
                 _ranges = this.view.model.get(this.category + '_ranges');
-                _ranges[key].in_included_total = false;
+                _ranges[key].in_included_total = (_.contains(this.view.includedCommitStages, key));
                 this.view.model.set(this.category + '_ranges', _ranges);
             }
             bucket_dom_options.push([key, label]);
@@ -387,7 +386,6 @@
         this.model.on('change:' + element.value + '_options', function(event) {
             this.view.validateCustomRangeLabels(this.category);
         }, {view: this, category: element.value});
-
 
         // create layout, create pleceholders for different types of custom ranges
         this._renderCustomRangesLayout(showElement, element.value);
@@ -413,8 +411,7 @@
      * @param {String} category type for the ranges 'show_binary' etc.
      * @private
      */
-    _renderCustomRangesLayout : function(showElement, category)
-    {
+    _renderCustomRangesLayout : function(showElement, category) {
         var template =
             '<p><b>{{str "LBL_FORECASTS_RANGES_BASED_TITLE" "Forecasts"}}</b></p>'+
                 '<div id="plhCustomProbabilityRanges">'+
@@ -474,31 +471,16 @@
             currentPlh = this.$el.find('#plhCustomDefault');
         }
 
-        if ( _.isUndefined(this.model.get(category + '_ranges')[key].in_included_total) ) {
-            var _ranges = this.model.get(this.category + '_ranges');
-            _ranges[key].in_included_total = false;
-            this.model.set(this.category + '_ranges', _ranges);
-        }
-
         // get the value in the current model and use it to display the slider
         model.set(key, this.model.get(category + '_ranges')[key]);
 
+        // get the field definition from
+        var fieldDef = this.fieldsMeta.category_ranges[key] || this.fieldsMeta.category_ranges[customType];
 
         // build a range field
         fieldSettings = {
             view: this,
-            def: _.clone(_.find(
-                _.find(
-                    _.first(this.meta.panels).fields,
-                    function(field) {
-                        return field.name == 'category_ranges';
-                    }
-                ).ranges,
-                function(range) {
-                    return range.name == this.key
-                },
-                {key: customType}
-            )),
+            def: _.clone(fieldDef),
             viewName: 'forecastsCustomRange',
             context: this.context,
             module: this.module,
@@ -518,7 +500,7 @@
         rangeField.customType = customType;
         rangeField.customIndex = customIndex;
         rangeField.isExclude = isExclude;
-        rangeField.in_included_total = this.model.get(category + '_ranges')[key].in_included_total;
+        rangeField.in_included_total = (_.contains(this.includedCommitStages, key));
         rangeField.category = category;
         rangeField.render();
 
@@ -553,20 +535,17 @@
      * @private
      */
     _getLastCustomRangeIndex: function(category, customType) {
-        // find all custom ranges with type that should be created
-        var lastCustomRange = _.last(_.sortBy(_.filter(
-            this.fieldRanges[category],
-            function(item) {
-                return item.customType == this.key
-            }, {key: customType}
-        ), function(item) {
-                return parseInt(item.customIndex, 10);
-            }
-        ));
-
-        if(_.isUndefined(lastCustomRange)) return 0;
-
-        return parseInt(lastCustomRange.customIndex, 10);
+        var lastCustomRangeIndex = 0;
+        // loop through all ranges, if there are multiple ranges with the same customType, they'll just overwrite
+        // each other's index and after the loop we'll have the final index left
+        if(this.fieldRanges[category]) {
+            _.each(this.fieldRanges[category], function(range) {
+                if(range.customType == customType && range.customIndex > lastCustomRangeIndex) {
+                    lastCustomRangeIndex = range.customIndex;
+                }
+            }, this);
+        }
+        return lastCustomRangeIndex;
     },
 
     /**
@@ -579,25 +558,26 @@
      * @private
      */
     _getLastCustomRange: function(category, customType) {
-        // find all custom ranges with type that should be created
-        var lastCustomRange = _.last(_.sortBy(_.filter(
-            this.fieldRanges[category],
-            function(item) {
-                return item.customType == this.key
-            }, {key: customType}
-        ), function(item) {
-                return parseInt(item.customIndex, 10);
-            }
-        ));
+        if(this.fieldRanges[category] && !_.isEmpty(this.fieldRanges[category])) {
+            var lastCustomRange = undefined;
+            // loop through all ranges, if there are multiple ranges with the same customType, they'll just overwrite
+            // each other on lastCustomRange and after the loop we'll have the final one left
+            _.each(this.fieldRanges[category], function(range) {
+                if(range.customType == customType
+                    && (_.isUndefined(lastCustomRange) || range.customIndex > lastCustomRange.customIndex)) {
+                    lastCustomRange = range;
+                }
+            }, this);
 
-        if(_.isUndefined(lastCustomRange)) {
-            // there is not custom range - use default ranges
-            if(customType == 'custom') {
-                // use upside or include
-                lastCustomRange = !_.isUndefined(this.fieldRanges[category].upside) ? this.fieldRanges[category].upside : this.fieldRanges[category].include;
-            } else {
-                // use exclude
-                lastCustomRange = this.fieldRanges[category].exclude;
+            if(_.isUndefined(lastCustomRange)) {
+                // there is not custom range - use default ranges
+                if(customType == 'custom') {
+                    // use upside or include
+                    lastCustomRange = this.fieldRanges[category].upside || this.fieldRanges[category].include;
+                } else {
+                    // use exclude
+                    lastCustomRange = this.fieldRanges[category].exclude;
+                }
             }
         }
 
@@ -616,10 +596,8 @@
             ranges = view.model.get(category + '_ranges'),
             bucket_dom_options = view.model.get(category + '_options'),
             showElement = ( customType == 'custom' ) ? view.$el.find('#plhCustom') : view.$el.find('#plhCustomWithoutProbability'),
-            model = new Backbone.Model(),
             label = app.lang.get('LBL_FORECASTS_CUSTOM_RANGES_DEFAULT_NAME', 'Forecasts'),
             key,
-            fieldSettings,
             rangeField,
             lastCustomRange,
             lastCustomRangeIndex,
@@ -674,6 +652,7 @@
                 lastOptionIndex = key;
             }
         }, {value: lastCustomRange.name});
+
         bucket_dom_options.splice(lastOptionIndex + 1, 0, [key, label]);
         view.model.unset(category + '_options', {silent: true});
         view.model.set(category + '_options', bucket_dom_options);
@@ -682,18 +661,13 @@
             // use call to set context back to the view for connecting the sliders
             view.connectSliders.call(view, category, view.fieldRanges);
         } else {
-            // haide add button form top of block and for previous ranges not based on probability
+            // hide add button form top of block and for previous ranges not based on probability
             view.$el.find('#btnAddCustomRangeWithoutProbability').hide();
-            _.each(_.filter(
-                view.fieldRanges[category],
-                function(item) {
-                    return item.customType == this.key && item.customIndex < this.index;
-                }, {key: customType, index: lastCustomRangeIndex}
-            ), function(item) {
-                if(!_.isUndefined(item.$el)) {
+            _.each(view.fieldRanges[category], function(item) {
+                if(item.customType == this.key && item.customIndex < this.index && !_.isUndefined(item.$el)) {
                     item.$el.find('.addCustomRange').parent().hide();
                 }
-            });
+            }, this);
         }
     },
 
@@ -710,16 +684,18 @@
             ranges = view.model.get(category + '_ranges'),
             bucket_dom_options = view.model.get(category + '_options'),
             range,
-            previosCustomRange,
+            previousCustomRange,
             lastCustomRangeIndex,
             lastCustomRange,
             optionIndex;
 
-        if ( _.isNull(category) || _.isNull(fieldKey) ||
-            _.isUndefined(view.fieldRanges[category]) || _.isUndefined(view.fieldRanges[category][fieldKey]) ||
-            _.isUndefined(ranges) || _.isUndefined(bucket_dom_options)) {
+        if (_.isNull(category) || _.isNull(fieldKey) || _.isUndefined(view.fieldRanges[category])
+            || _.isUndefined(view.fieldRanges[category][fieldKey]) || _.isUndefined(ranges)
+            || _.isUndefined(bucket_dom_options))
+             {
             return false;
         }
+
         range = view.fieldRanges[category][fieldKey];
 
         if ( _.indexOf(['include', 'upside', 'exclude'], range.name) != -1 ) {
@@ -728,21 +704,20 @@
 
         if(range.customType == 'custom') {
             // find previous renge and reassign range values form removed to it
-            previosCustomRange = _.last(_.sortBy(_.filter(
-                view.fieldRanges[category],
-                function(item) {
-                    return item.customType == 'custom' && parseInt(item.customIndex, 10) < parseInt(this.index, 10);
-                }, {index: range.customIndex}
-            ), function(item) {
-                    return parseInt(item.customIndex, 10);
+            _.each(this.fieldRanges[category], function(item) {
+                if(item.customType == 'custom' && item.customIndex < range.customIndex) {
+                    previousCustomRange = +item.customIndex;
                 }
-            ));
-            if(_.isUndefined(previosCustomRange)) {
-                previosCustomRange = !_.isUndefined(view.fieldRanges[category].upside) ? view.fieldRanges[category].upside : view.fieldRanges[category].include;
+            }, this);
+
+            if(_.isUndefined(previousCustomRange)) {
+                previousCustomRange = !_.isUndefined(view.fieldRanges[category].upside) ? view.fieldRanges[category].upside : view.fieldRanges[category].include;
             }
-            ranges[previosCustomRange.name].min = parseInt(ranges[range.name].min);
-            if(!_.isUndefined(previosCustomRange.$el)) {
-                previosCustomRange.$el.find(previosCustomRange.fieldTag).noUiSlider('move', {handle: 'lower', to: ranges[previosCustomRange.name].min});
+
+            ranges[previousCustomRange.name].min = +ranges[range.name].min;
+
+            if(!_.isUndefined(previousCustomRange.$el)) {
+                previousCustomRange.$el.find(previousCustomRange.fieldTag).noUiSlider('move', {handle: 'lower', to: ranges[previousCustomRange.name].min});
             }
         }
 
@@ -758,6 +733,7 @@
                 optionIndex = key;
             }
         }, {value: range.name});
+
         bucket_dom_options.splice(optionIndex, 1);
         view.model.unset(category + '_options', {silent: true});
         view.model.set(category + '_options', bucket_dom_options);
@@ -831,10 +807,12 @@
             fieldKey = $(event.target).data('key') || null,
             ranges;
 
-        if ( !_.isNull(category) && !_.isNull(fieldKey) ) {
+        if (!_.isNull(category) && !_.isNull(fieldKey))
+        {
             ranges = view.model.get(category + '_ranges');
-            if ( !_.isUndefined(ranges) && !_.isUndefined(ranges[fieldKey]) ) {
-                if ( fieldKey !== 'exclude' && fieldKey.indexOf('custom_without_probability') == -1 ) {
+            if (!_.isUndefined(ranges) && !_.isUndefined(ranges[fieldKey]))
+            {
+                if (fieldKey !== 'exclude' && fieldKey.indexOf('custom_without_probability') == -1) {
                     ranges[fieldKey].in_included_total = $(event.target).is(':checked');
                 } else {
                     ranges[fieldKey].in_included_total = false;
@@ -857,7 +835,7 @@
         var catRange = category + '_ranges',
             setting = this.model.get(catRange);
 
-        if ( category == 'show_custom_buckets' ) {
+        if (category == 'show_custom_buckets') {
             value.in_included_total = setting[range].in_included_total || false;
         }
 

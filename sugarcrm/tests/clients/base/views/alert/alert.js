@@ -6,6 +6,9 @@ describe("Alert View", function() {
     beforeEach(function() {
         SugarTest.testMetadata.init();
         SugarTest.loadComponent('base', 'view', 'alert');
+        SugarTest.loadHandlebarsTemplate('alert', 'view', 'base', 'process');
+        SugarTest.loadHandlebarsTemplate('alert', 'view', 'base', 'confirmation');
+        SugarTest.loadHandlebarsTemplate('alert', 'view', 'base', 'error');
         SugarTest.testMetadata.set();
 
         app = SugarTest.app;

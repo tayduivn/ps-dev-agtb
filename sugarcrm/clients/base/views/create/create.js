@@ -184,7 +184,6 @@
      * @param callback
      */
     initiateSave: function (callback) {
-        this.clearValidationErrors();
         this.disableButtons();
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),

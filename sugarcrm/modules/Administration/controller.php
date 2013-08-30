@@ -32,17 +32,21 @@ class AdministrationController extends SugarController
 
         global $current_user, $app_strings;
 
-        if (!is_admin($current_user)) sugar_die($app_strings['ERR_NOT_ADMIN']);
+        if (!is_admin($current_user)) {
+            sugar_die($app_strings['ERR_NOT_ADMIN']);
+        }
 
         // handle the tabs listing
-        $toDecode = html_entity_decode  ($_REQUEST['enabled_tabs'], ENT_QUOTES);
+        $toDecode = html_entity_decode($_REQUEST['enabled_tabs'], ENT_QUOTES);
         $enabled_tabs = json_decode($toDecode);
+        // Add Home back in so that it always appears first in Sugar 7
+        array_unshift($enabled_tabs, 'Home');
         $tabs = new TabController();
         $tabs->set_system_tabs($enabled_tabs);
         $tabs->set_users_can_edit(isset($_REQUEST['user_edit_tabs']) && $_REQUEST['user_edit_tabs'] == 1);
 
         // handle the subpanels
-        if(isset($_REQUEST['disabled_tabs'])) {
+        if (isset($_REQUEST['disabled_tabs'])) {
             $disabledTabs = json_decode(html_entity_decode($_REQUEST['disabled_tabs'], ENT_QUOTES));
             $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
             SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
@@ -51,7 +55,9 @@ class AdministrationController extends SugarController
         // BR-29 When changing module tabs the megamenu is not updated on the client
         MetaDataManager::clearAPICache();
 
-        header("Location: index.php?module=Administration&action=ConfigureTabs");
+        if (!headers_sent()) {
+            header("Location: index.php?module=Administration&action=ConfigureTabs");
+        }
     }
 
     public function action_savelanguages()

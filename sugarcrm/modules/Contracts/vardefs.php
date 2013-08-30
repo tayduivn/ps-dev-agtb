@@ -199,6 +199,9 @@ $dictionary['Contract'] = array(
                 'wirelesslistview'=>false,
                 'wirelesseditview'=>false,
                 'wirelessdetailview'=>false,
+                'wireless_basic_search' => false,
+                'wireless_advanced_search' => false,
+                'mobile' => false,
             ),
 		),
 		'status' => array (

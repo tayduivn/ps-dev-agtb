@@ -18,21 +18,45 @@
     {{#each this.leftColumns}}
         <td>&nbsp;</td>
     {{/each}}
+    {{#if this.totals.name_display}}
     <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
-    <td class="tright">{{formatCurrency this.totals.quota}}</td>
+    {{/if}}
+    {{#if this.totals.quota_display}}
+    <td class="tright">
+        {{#eq this.totals.display_total_label_in "quota"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+        {{formatCurrency this.totals.quota}}
+    </td>
+    {{/if}}
     {{#if this.totals.likely_case_display}}
-        <td class="tright">{{formatCurrency this.totals.likely_case}}</td>
-        <td class="tright">{{formatCurrency this.totals.likely_adjusted}}</td>
+        <td class="tright">
+            {{#eq this.totals.display_total_label_in "likely_case"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+            {{formatCurrency this.totals.likely_case}}
+        </td>
     {{/if}}
-
+    {{#if this.totals.likely_case_adjusted_display}}
+        <td class="tright">
+        {{#eq this.totals.display_total_label_in "likely_case_adjusted"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+        {{formatCurrency this.totals.likely_adjusted}}</td>
+    {{/if}}
     {{#if this.totals.best_case_display}}
-        <td class="tright">{{formatCurrency this.totals.best_case}}</td>
-        <td class="tright">{{formatCurrency this.totals.best_adjusted}}</td>
+        <td class="tright">
+        {{#eq this.totals.display_total_label_in "best_case"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+        {{formatCurrency this.totals.best_case}}</td>
     {{/if}}
-
+    {{#if this.totals.best_case_adjusted_display}}
+        <td class="tright">
+        {{#eq this.totals.display_total_label_in "best_case_adjusted"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+        {{formatCurrency this.totals.best_adjusted}}</td>
+    {{/if}}
     {{#if this.totals.worst_case_display}}
-        <td class="tright">{{formatCurrency this.totals.worst_case}}</td>
-        <td class="tright">{{formatCurrency this.totals.worst_adjusted}}</td>
+        <td class="tright">
+        {{#eq this.totals.display_total_label_in "worst_case"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+        {{formatCurrency this.totals.worst_case}}</td>
+    {{/if}}
+    {{#if this.totals.worst_case_adjusted_display}}
+        <td class="tright">
+        {{#eq this.totals.display_total_label_in "worst_case_adjusted"}}<div class="pull-left">{{str "LBL_TOTAL" "Forecasts"}}</div>{{/eq}}
+        {{formatCurrency this.totals.worst_adjusted}}</td>
     {{/if}}
     {{#each this.rightColumns}}
     <td>&nbsp;</td>

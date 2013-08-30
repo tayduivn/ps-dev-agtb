@@ -26,6 +26,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                                 'name' => 'twitter',
                                 'label' => 'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME',
                                 'twitter' => 'sugarcrm',
+                                'limit' => 20, 
                             ),
                             'width' => 12,
                         ),

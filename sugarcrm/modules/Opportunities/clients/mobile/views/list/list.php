@@ -48,10 +48,10 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'enabled' => true
                 ),
                 array(
-                    'name' => 'sales_stage',
+                    'name' => 'sales_status',
                     'width' => '10',
                     'label' => 'LBL_LIST_SALES_STAGE',
-                    'default' => true,
+                    'default' => false,
                     'enabled' => true
                 ),
                 array(
@@ -82,7 +82,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'name' => 'date_closed',
                     'width' => '10',
                     'label' => 'LBL_LIST_DATE_CLOSED',
-                    'default' => true,
+                    'default' => false,
                     'enabled' => true
                 ),
                 array(
@@ -104,7 +104,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'name' => 'team_name',
                     'width' => '5',
                     'label' => 'LBL_LIST_TEAM',
-                    'default' => true,
+                    'default' => false,
                     'enabled' => true
                 ),
 //END SUGARCRM flav=pro ONLY
@@ -112,7 +112,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'name' => 'assigned_user_name',
                     'width' => '5',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
-                    'default' => true,
+                    'default' => false,
                     'enabled' => true
                 ),
                 array(

@@ -1,28 +1,37 @@
 ({
     inlineEditMode: false,
+
     createMode: false,
-    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable', 'tooltip', 'audit'],
+
+    plugins: [
+        'SugarLogic',
+        'ellipsis_inline',
+        'error-decoration',
+        'GridBuilder',
+        'editable',
+        'tooltip',
+        'audit',
+        'ToggleMoreLess'
+    ],
 
     enableHeaderButtons: true,
+
     enableHeaderPane: true,
+
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
-        'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
         'click [data-action=scroll]': 'paginateRecord'
     },
-    // button fields defined in view definition
+
+    /**
+     * Button fields defined in view definition.
+     */
     buttons: null,
 
-    // "Show More" state per module
-    MORE_LESS_KEY: "more_less", //gets namespaced in initialize function
-    MORE_LESS: {
-        MORE: 'more',
-        LESS: 'less'
-    },
-
-    // button states
+    /**
+     * Button states.
+     */
     STATE: {
         EDIT: 'edit',
         VIEW: 'view'
@@ -158,13 +167,6 @@
             // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
             this.toggleFields(this.editableFields, true);
         }
-        // Restore state of 'Show More' panel by toggling it if 'Show Less' needs to be shown
-        if(app.user.lastState.get(this.MORE_LESS_KEY) === this.MORE_LESS.LESS){
-            this.toggleMoreLess();
-        }
-
-
-
     },
 
     setEditableFields: function () {
@@ -235,14 +237,6 @@
 
     },
 
-    toggleMoreLess: function () {
-        this.$(".less").toggleClass("hide");
-        this.$(".more").toggleClass("hide");
-        this.$(".panel_hidden").toggleClass("hide");
-        var moreLess = this.$(".less").is(".hide") ? this.MORE_LESS.MORE : this.MORE_LESS.LESS;
-        app.user.lastState.set(this.MORE_LESS_KEY, moreLess);
-    },
-
     bindDataChange: function () {
         this.model.on("change", function (fieldType) {
             if (this.inlineEditMode) {
@@ -297,7 +291,6 @@
     },
 
     saveClicked: function () {
-        this.clearValidationErrors();
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
 
@@ -466,7 +459,9 @@
                 return;
             }
 
-            if (nextField.$el.closest('.panel_hidden').hasClass('hide')) {
+            var hasHiddenPanel = nextField.$el.closest('.panel_hidden').hasClass('hide') &&
+                _.isFunction(this.toggleMoreLess);
+            if (hasHiddenPanel) {
                 this.toggleMoreLess();
             }
             this.toggleField(field, false);

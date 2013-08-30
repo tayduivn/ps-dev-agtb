@@ -180,12 +180,14 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     }
 
     /**
-     * Getter for the language
+     * Gets the appropriate module name for use in translation of labels in
+     * studio
+     * 
      * @return string
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->_moduleName;
     }
 
     /*

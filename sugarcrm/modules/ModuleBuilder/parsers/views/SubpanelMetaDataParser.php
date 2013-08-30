@@ -164,11 +164,15 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
      */
     protected function makeRelateFieldsAsLink($defs)
     {
-        foreach($defs as $index => $fieldData)
-        {
-            if ((isset($fieldData['type']) && $fieldData['type'] == 'relate') 
-                || (isset($fieldData['link']) && self::isTrue($fieldData['link'])))
-            {
+        foreach($defs as $index => $fieldData) {
+            // These checks need to pass in some way, shape or form in order to 
+            // make this relatable
+            $typeCheck = isset($fieldData['type']) && $fieldData['type'] == 'relate';
+            $linkCheck = isset($fieldData['link']) && self::isTrue($fieldData['link']);
+            $reqsCheck = isset($this->_fielddefs[$index]['module']) || !empty($this->_moduleName);
+            $reqsCheck = $reqsCheck && isset($this->_fielddefs[$index]['id_name']);
+            
+            if (($typeCheck || $linkCheck) && $reqsCheck) {
                 $defs[$index]['widget_class'] = 'SubPanelDetailViewLink';
                 $defs[$index]['target_module'] = isset($this->_fielddefs[$index]['module']) ? $this->_fielddefs[$index]['module'] : $this->_moduleName;
                 $defs[$index]['target_record_key'] = $this->_fielddefs[$index]['id_name'];
@@ -179,4 +183,3 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
     }
 
 }
-?>

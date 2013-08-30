@@ -476,7 +476,7 @@ class SugarQuery
         $bean->$join->buildJoinSugarQuery(
             $this,
             array(
-                'joinTableAlias' => $bean->module_name,
+                'joinTableAlias' => $bean->table_name,
                 'myAlias' => $alias,
                 'joinType' => $joinType,
                 'ignoreRole' => $ignoreRole,
