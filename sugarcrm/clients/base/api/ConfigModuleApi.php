@@ -108,17 +108,16 @@ class ConfigModuleApi extends ModuleApi
         unset($args['__sugar_url']);
 
         //acl check, only allow if they are module admin
-        if (!$api->user->isAdminForModule($module)) {
+        if (!$api->user->isAdmin() && !$api->user->isDeveloperForModule($module)) {
             // No create access so we construct an error message and throw the exception
-            $moduleName = null;
-            if (isset($args['module'])) {
-                $failed_module_strings = return_module_language($GLOBALS['current_language'], $args['module']);
-                $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
-            }
+            $failed_module_strings = return_module_language($GLOBALS['current_language'], $module);
+            $moduleName = $failed_module_strings['LBL_MODULE_NAME'];
+
             $args = null;
             if (!empty($moduleName)) {
                 $args = array('moduleName' => $moduleName);
             }
+
             throw new SugarApiExceptionNotAuthorized(
                 $GLOBALS['app_strings']['EXCEPTION_CHANGE_MODULE_CONFIG_NOT_AUTHORIZED'],
                 $args
