@@ -43,7 +43,7 @@ require_once("'".$externalJSFile."'");
 <div>
 <h3>{$MOD.LBL_RECURRENCE}</h3>
 {include file='modules/Calendar/tpls/repeat.tpl'}
-<script type="text/javascript" src="modules/Meetings/recurrence.js"></script>
+{sugar_getscript file='modules/Meetings/recurrence.js'}
 <script type="text/javascript">
 {literal}
 SUGAR.util.doWhen(function() {
