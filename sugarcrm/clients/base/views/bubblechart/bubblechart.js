@@ -94,8 +94,6 @@
                 this.chart.render();
             }
         }, this);
-
-        nv.utils.windowResize(this.chart.render);
     },
 
     /**
@@ -119,6 +117,7 @@
             .call(this.chart);
 
         nv.utils.windowResize(this.chart.render);
+        nv.utils.resizeOnPrint(this.chart.render);
     },
 
     /**
@@ -229,6 +228,7 @@
         this.on('data-changed', null, this);
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.render);
+            nv.utils.unResizeOnPrint(this.chart.render);
         }
         app.view.View.prototype._dispose.call(this);
     },

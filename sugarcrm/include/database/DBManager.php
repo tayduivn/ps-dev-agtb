@@ -1638,17 +1638,12 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * This function increments the global $sql_queries variable
-	 * 
-	 * @param string $sql The query that was just run
 	 */
-	public function countQuery($sql = '')
+	public function countQuery()
 	{
 		if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
 			&&(empty($GLOBALS['current_user']) || !is_admin($GLOBALS['current_user']))) {
             require_once('include/resource/ResourceManager.php');
-            if ($sql) {
-                $GLOBALS['log']->fatal("Last query before failure:\n" . $sql);
-            }
             $resourceManager = ResourceManager::getInstance();
             $resourceManager->notifyObservers('ERR_QUERY_LIMIT');
 		}

@@ -318,6 +318,7 @@
         }, this);
 
         nv.utils.windowResize(resize);
+        nv.utils.resizeOnPrint(resize);
     },
 
     loadData: function(options) {

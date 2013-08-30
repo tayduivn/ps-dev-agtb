@@ -1643,6 +1643,15 @@ $app_list_strings = array (
         '300'   => 'Every 5 minutes',
         '600'   => 'Every 10 minutes',
     ),
+    'sugar7_dashlet_reports_auto_refresh_options' =>
+    array (
+        '0'  => 'None',
+        '15' => 'Every 15 Minutes',
+        '30' => 'Every 30 Minutes',
+        '45' => 'Every 45 Minutes',
+        '60' => 'Every Hour',
+        '120' => 'Every 2 Hours',
+    ),
   'dashlet_auto_refresh_options_admin' =>
     array (
         '-1'  => 'Never',
@@ -2676,8 +2685,23 @@ $app_strings = array (
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
     'LBL_LISTVIEW_OPTION_SELECTED' => 'Selected Records',
     'LBL_LISTVIEW_SELECTED_OBJECTS' => 'Selected: ',
-    'LBL_LISTVIEW_SELECTED_ALL' => 'You have selected all records in this result set.  <a href="javascript:void(0);">Clear selections</a>.',
-    'LBL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {num} records in this view.  <a href="javascript:void(0);">Select all records</a> in the result set.',
+    'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' => 'There are more than {{num}} records in this result set. You have selected first {{num}} records. <a href="javascript:void(0);">Clear selections</a>.',
+    'TPL_LISTVIEW_SELECTED_ALL' => 'You have selected all {{num}} records in this result set. <a href="javascript:void(0);">Clear selections</a>.',
+    'TPL_LISTVIEW_SELECT_ALL_RECORDS' => 'You have selected all {{num}} records in this view. <a href="javascript:void(0);">Select all records</a> in the result set.',
+    'TPL_MASSUPDATE_PROGRESS_STATUS' => 'Updating {{num}} of {{total}}.',
+    'TPL_MASSUPDATE_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
+    'TPL_MASSUPDATE_FAIL_TO_ATTEMPT' => 'Mass Update failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MASSUPDATE_WARNING_CLOSE' => 'Mass Update incomplete. {{num}} records remain unchanged.',
+    'TPL_MASSUPDATE_WARNING_INCOMPLETE' => 'Mass Update incomplete. {{num}} records remain unchanged.',
+    'TPL_MASSUPDATE_SUCCESS' => '{{num}} records were updated successfully.',
+    'TPL_MASSUPDATE_TITLE' => '{{module}} Mass Update',
+    'TPL_MASSDELETE_PROGRESS_STATUS' => 'Deleting {{num}} of {{total}}.',
+    'TPL_MASSDELETE_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
+    'TPL_MASSDELETE_FAIL_TO_ATTEMPT' => 'Mass Delete failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MASSDELETE_WARNING_CLOSE' => 'Mass Delete incomplete. {{num}} records remain.',
+    'TPL_MASSDELETE_WARNING_INCOMPLETE' => 'Mass Delete incomplete. {{num}} records remain.',
+    'TPL_MASSDELETE_SUCCESS' => '{{num}} records were deleted successfully.',
+    'TPL_MASSDELETE_TITLE' => '{{module}} Mass Delete',
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
@@ -3432,6 +3456,7 @@ $app_strings = array (
     'LBL_DURATION_DAYS' => 'days',
     'LBL_DURATION_HOURS' => 'hours',
     'LBL_DURATION_MINUTES' => 'minutes',
+    'LBL_DURATION_SECONDS' => 'seconds',
 
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
@@ -3596,7 +3621,7 @@ $app_strings = array (
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
     'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
     'LBL_COMMITTED_TIME_RELATIVE' => 'Last Commit: {{relativetime}} at {{time}}',
-    'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time.',
+    'LBL_LISTVIEW_NO_RECORDS' => 'No data available.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
     'LBL_SEARCH_BY' => 'Search by',
@@ -4143,6 +4168,9 @@ $app_strings = array (
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
+
+    'LBL_DASHLET_SAVED_REPORTS_CHART' => 'Saved Reports Chart Dashlet',
+    'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
 
     //SFA
     'LBL_BEST' => 'Best',

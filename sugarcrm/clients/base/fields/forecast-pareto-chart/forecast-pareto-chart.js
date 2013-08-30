@@ -133,6 +133,7 @@
             });
 
         nv.utils.windowResize(this.paretoChart.update);
+        nv.utils.resizeOnPrint(this.paretoChart.update);
 
         this.trigger('chart:pareto:rendered');
     },

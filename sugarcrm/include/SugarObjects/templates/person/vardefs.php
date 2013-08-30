@@ -520,5 +520,6 @@ $vardefs =array(
         'relationship_role_column'=>'primary_address',
         'relationship_role_column_value'=>'1'
     ),
-)
+),
+'acls'=>array('SugarACLEmailAddress'=>true),
 );

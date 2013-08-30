@@ -139,6 +139,12 @@ $dictionary['ForecastManagerWorksheet'] = array(
             'type' => 'int',
             'source' => 'non-db'
         ),
+        'draft_save_type' =>
+        array(
+            'name' => 'draft_save_type',
+            'type' => 'varchar',
+            'source' => 'non-db'
+        ),
     ),
     'relationships' => array(// relationships that might be needed: User_id -> users, quota_id -> Quota,
     ),

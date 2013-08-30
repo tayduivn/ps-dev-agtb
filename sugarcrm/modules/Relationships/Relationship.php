@@ -22,37 +22,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class Relationship extends SugarBean {
 
-	public $object_name='Relationship';
-	public $module_dir = 'Relationships';
-	public $new_schema = true;
-	public $table_name = 'relationships';
+	var $object_name='Relationship';
+	var $module_dir = 'Relationships';
+	var $new_schema = true;
+	var $table_name = 'relationships';
 
-	public $id;
-	public $relationship_name;
-	public $lhs_module;
-	public $lhs_table;
-	public $lhs_key;
-	public $rhs_module;
-	public $rhs_table;
-	public $rhs_key;
-	public $join_table;
-	public $join_key_lhs;
-	public $join_key_rhs;
-	public $relationship_type;
-	public $relationship_role_column;
-	public $relationship_role_column_value;
-	public $reverse;
+	var $id;
+	var $relationship_name;
+	var $lhs_module;
+	var $lhs_table;
+	var $lhs_key;
+	var $rhs_module;
+	var $rhs_table;
+	var $rhs_key;
+	var $join_table;
+	var $join_key_lhs;
+	var $join_key_rhs;
+	var $relationship_type;
+	var $relationship_role_column;
+	var $relationship_role_column_value;
+	var $reverse;
 
-	public $_self_referencing;
-
-	/**
-	 * Used to hold the listing of relationship names for use in existence checks.
-	 * This addresses an issue in which the cap for queries was being reached by
-	 * non admins given admin rights to make changes in studio.
-	 * 
-	 * @var array
-	 */
-	public static $relCacheInternal = array();
+	var $_self_referencing;
 
     /**
      * This is a depreciated method, please start using __construct() as this method will be removed in a future version
@@ -84,37 +75,23 @@ class Relationship extends SugarBean {
 		return $this->_self_referencing;
 	}
 
-    /**
-     * Returns true if a relationship with provided name exists
-     * 
-     * @param string $relationship_name The name of the relationship to check
-     * @param DBManager $db A DBManager object
-     * @return boolean
-     */
-    function exists($relationship_name,&$db) {
-        // Cache the list of relationships internally to prevent an insane 
-        // number of queries from running
-        if (empty(self::$relCacheInternal)) {
-            $query = "SELECT relationship_name FROM relationships WHERE deleted=0";
-            $result = $db->query($query,true," Error searching relationships table..");
-            while ($row = $db->fetchByAssoc($result)) {
-                self::$relCacheInternal[$row['relationship_name']] = 1;
-            }
-        }
+	/*returns true if a relationship with provided name exists*/
+	function exists($relationship_name,&$db) {
+		$query = "SELECT relationship_name FROM relationships WHERE deleted=0 AND relationship_name = '".$relationship_name."'";
+		$result = $db->query($query,true," Error searching relationships table..");
+		$row  =  $db->fetchByAssoc($result);
+		if ($row != null) {
+			return true;
+		}
 
-        return isset(self::$relCacheInternal[$relationship_name]);
-    }
+		return false;
+	}
 
 	function delete($relationship_name,&$db) {
 
 		$query = "UPDATE relationships SET deleted=1 WHERE deleted=0 AND relationship_name = '".$relationship_name."'";
 		$result = $db->query($query,true," Error updating relationships table for ".$relationship_name);
 
-		// Unset this from the exists array in case we need it in the same request
-		unset(self::$relCacheInternal[$relationship_name]);
-
-		// Rebuild the cache
-		$this->rebuild_relationship_cache();
 	}
 
 
@@ -278,14 +255,9 @@ class Relationship extends SugarBean {
 
 	//end function trace_relationship_module
 	}
-	
-	public function rebuild_relationship_cache()
-	{
-		self::delete_cache();
-		$this->load_relationship_meta();
-	}
 
 
 
 
 }
+?>

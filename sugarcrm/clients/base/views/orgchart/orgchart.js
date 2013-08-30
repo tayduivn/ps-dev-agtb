@@ -83,6 +83,7 @@
         }
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.resize);
+            nv.utils.unResizeOnPrint(this.chart.resize);
         }
 
         app.view.View.prototype._dispose.call(this);
@@ -187,6 +188,7 @@
 
                 self.chart = chart;
                 nv.utils.windowResize(self.chart.resize);
+                nv.utils.resizeOnPrint(self.chart.resize);
 
                 _.debounce(function () {
                     if (self.disposed) {
