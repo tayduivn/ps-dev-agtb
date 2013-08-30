@@ -1,9 +1,7 @@
 ({
     tagName: 'li',
     events: {
-        'click .remove-row': 'removeClicked',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click .remove-row': 'removeClicked'
     },
     plugins: ['tooltip'],
     initialize: function(options) {
@@ -202,12 +200,5 @@
         this.model.off("applyDragAndDrop", null, this);
         this.model.off("setMode", null, this);
         app.view.Layout.prototype._dispose.call(this);
-    },
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
     }
 })
