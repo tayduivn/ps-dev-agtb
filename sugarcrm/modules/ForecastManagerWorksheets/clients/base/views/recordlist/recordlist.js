@@ -647,6 +647,9 @@
                 // we have a field that needs to be disabled, so disable it!
                 field.setDisabled((field.model.get('show_history_log') == "0"));
                 field.render();
+                if((field.model.get('show_history_log') == "0")) {
+                    field.$el.find("a.rowaction").attr("title",app.lang.get("LBL_NO_COMMIT","ForecastManagerWorksheets"));
+                }
             }
         });
     },
