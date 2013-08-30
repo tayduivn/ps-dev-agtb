@@ -41,7 +41,7 @@ class Bug63486Test extends Sugar_PHPUnit_Framework_TestCase
         $bean = BeanFactory::getBean('Meetings');
         // mobile subpanels
         $subPanel = new SubPanelDefinitions($bean, '', '', 'mobile');
-        $subPanel->open_layout_defs(true, '', true);
+        $subPanel->open_layout_defs(true, '', false);
         $this->assertEquals($mobileLayoutDefs, $subPanel->layout_defs);
         // base subapanels
         $subPanel = new SubPanelDefinitions($bean);
