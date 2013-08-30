@@ -109,6 +109,8 @@
             }, this);
             // if the model changes, run a fetch
             this.model.on('change', function() {
+                // clear this out this someone on the model change, this will be set once the collection resets
+                this.context.set({'currentForecastCommitDate' : undefined}, {silent: true});
                 this.collection.fetch();
             }, this);
 

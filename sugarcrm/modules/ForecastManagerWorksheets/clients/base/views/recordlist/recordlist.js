@@ -111,6 +111,17 @@
      */
     hasCheckedForDraftRecords: false,
 
+    /**
+     * Draft Save Type
+     */
+    draftSaveType : undefined,
+
+    /**
+     * is the collection syncing
+     * @param boolean
+     */
+    isCollectionSyncing: false,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -167,6 +178,7 @@
                             this.setNavigationMessage(false, '', '');
                             this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
                         }, this);
+                        this.draftSaveType = 'draft';
                         this.saveWorksheet(true);
                     }
                 }, this);
@@ -178,6 +190,7 @@
                         this.context.parent.once('forecasts:worksheet:saved', function() {
                             this.context.parent.trigger('forecasts:worksheet:commit', this.selectedUser, this.worksheetType, this.getCommitTotals())
                         }, this);
+                        this.draftSaveType = 'commit';
                         this.saveWorksheet(false);
                     }
                 }, this);
@@ -216,6 +229,14 @@
                     }
                 }, this);
 
+                this.collection.on('data:sync:start', function() {
+                    this.isCollectionSyncing = true;
+                }, this);
+
+                this.collection.on('data:sync:complete', function() {
+                    this.isCollectionSyncing = false;
+                }, this);
+
                 /**
                  * When the collection is reset, we need checkForDraftRows
                  */
@@ -236,6 +257,8 @@
                         var ctx = this.context.parent || this.context;
                         ctx.trigger('forecasts:worksheet:is_dirty', this.worksheetType, false);
                         this.refreshData();
+                        // after a commit, we don't need to check for draft records again
+                        this.hasCheckedForDraftRecords = true;
                     }
                 }, this);
 
@@ -261,6 +284,7 @@
                         level: 'process',
                         title: app.lang.get('LBL_ASSIGNING_QUOTA', 'Forecasts')
                     });
+                    this.draftSaveType = 'assign_quota';
                     this.saveWorksheet(true, true);
                 }, this);
 
@@ -592,7 +616,8 @@
      */
     checkForDraftRows: function(lastCommitDate) {
         if (this.layout.isVisible() && this.canEdit && !_.isUndefined(lastCommitDate)
-            && this.collection.length !== 0 && this.hasCheckedForDraftRecords === false) {
+            && this.collection.length !== 0 && this.hasCheckedForDraftRecords === false &&
+            this.isCollectionSyncing === false) {
             this.hasCheckedForDraftRecords = true;
             this.collection.find(function(item) {
                 if (item.get('date_modified') > lastCommitDate) {
@@ -600,6 +625,15 @@
                     return true;
                 }
                 return false;
+            }, this);
+        } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
+            // since the layout is not visible, lets wait for it to become visible
+            this.layout.once('show', function() {
+                this.checkForDraftRows(lastCommitDate);
+            }, this);
+        } else if(this.isCollectionSyncing === true) {
+            this.collection.once('data:sync:complete', function() {
+                this.checkForDraftRows(lastCommitDate);
             }, this);
         }
     },
@@ -662,7 +696,7 @@
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
-        this.trigger("data:sync:start", method, model, options);
+        this.collection.trigger("data:sync:start", method, model, options);
 
         url = app.api.buildURL("ForecastManagerWorksheets", null, null, options.params);
         app.api.call("read", url, null, callbacks);
@@ -839,7 +873,7 @@
      *
      * @triggers forecasts:worksheet:saved
      * @param {bool} isDraft
-     * @param {bool} suppressMessage
+     * @param {bool} [suppressMessage]
      * @returns {number}
      */
     saveWorksheet: function(isDraft, suppressMessage) {
@@ -889,6 +923,8 @@
             }
         }
 
+        this.draftSaveType = undefined;
+
         return saveObj.totalToSave
     },
 
@@ -900,7 +936,8 @@
     _worksheetSaveHelper: function(saveObj, ctx) {
         saveObj.model.set({
             current_user: saveObj.userId || this.selectedUser.id,
-            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod
+            timeperiod_id: saveObj.timeperiod || this.selectedTimeperiod,
+            draft_save_type: this.draftSaveType
         }, {silent: true});
 
         saveObj.model.save({}, {success: _.bind(function() {

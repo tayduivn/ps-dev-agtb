@@ -16,6 +16,20 @@ require_once('modules/Forecasts/AbstractForecastHooks.php');
 
 class ForecastWorksheetHooks extends AbstractForecastHooks
 {
+
+    /**
+     * This method, just set the date_modified to the value from the db, vs the user formatted value that sugarbean sets
+     * after it has been retrieved
+     *
+     * @param ForecastWorksheet $worksheet
+     * @param string $event
+     * @param array $params
+     */
+    public static function fixDateModified(ForecastWorksheet $worksheet, $event, $params = array())
+    {
+        $worksheet->date_modified = $worksheet->fetched_row['date_modified'];
+    }
+
     /**
      * @param ForecastWorksheet $bean
      * @param string $event
