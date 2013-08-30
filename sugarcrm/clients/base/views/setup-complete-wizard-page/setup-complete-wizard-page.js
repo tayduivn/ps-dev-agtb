@@ -16,7 +16,7 @@
      */
     initialize: function(options){
         //Extend default events to add listener for click events on links
-        _.extend(this.events, {
+        this.events = _.extend({}, this.events, {
             "click a.thumbnail": "linkClicked"
         });
         app.view.invokeParent(this, {type: 'view', name: 'wizard-page', method: 'initialize', args:[options]});
