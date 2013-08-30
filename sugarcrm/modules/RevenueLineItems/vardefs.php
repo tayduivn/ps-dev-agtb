@@ -573,7 +573,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_COMMIT_STAGE_FORECAST',
             'type' => 'enum',
             'default' => 'exclude',
-            'options' => 'commit_stage_binary_dom',
             'len' => '50',
             'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
         ),
