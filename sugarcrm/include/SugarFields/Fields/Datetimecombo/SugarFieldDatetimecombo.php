@@ -277,18 +277,8 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
      */
     public function apiUnformat($value)
     {
-        global $current_user;
-        if (strlen(trim($value)) < 11) {
-            $newValue = TimeDate::getInstance()->fromIsoDate($value, $current_user);
-        } else {
-            $newValue = TimeDate::getInstance()->fromIso($value, $current_user);
-        }
-
-        if (is_object($newValue)) {
-            $value = $newValue->asDb();
-        }
-
-        return $value;
+        $sugarField = SugarFieldHandler::getSugarField('datetime');
+        return $sugarField->apiUnformat($value);
     }
 
     /**
@@ -303,48 +293,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
      */
     public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
     {
-        if($op === '$daterange') {
-            return true;
-        }
-        $dateLengthCheck = is_array($value) ? reset($value) : $value;
-        if(strlen(trim($dateLengthCheck)) < 11) {
-            if(!is_array($value)) {
-                $dateParsed = date_parse($value);
-            } else {
-                $dateParsed[0] = date_parse($value[0]);
-                $dateParsed[1] = date_parse($value[1]);
-            }
-            switch($op)
-            {
-                case '$gt':
-                case '$gte':
-                    $value = gmdate(
-                        'Y-m-d\TH:i:s',
-                        gmmktime(0, 0, 0, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
-                    );
-                    break;
-                case '$lt':
-                case '$lte':
-                    $value = gmdate(
-                        'Y-m-d\TH:i:s',
-                        gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
-                    );
-                    break;
-                case '$between':
-                case '$dateBetween':
-                    $value[0] = gmdate(
-                        'Y-m-d\TH:i:s',
-                        gmmktime(0, 0, 0, $dateParsed[0]['month'], $dateParsed[0]['day'], $dateParsed[0]['year'])
-                    );
-
-                    $value[1] = gmdate(
-                        'Y-m-d\TH:i:s',
-                        gmmktime(23, 59, 59, $dateParsed[1]['month'], $dateParsed[1]['day'], $dateParsed[1]['year'])
-                    );
-                    break;
-            }
-        }
-
-        return true;
+        $sugarField = SugarFieldHandler::getSugarField('datetime');
+        return $sugarField->fixForFilter($value, $fieldName, $bean, $q, $where, $op);
     }
 }
