@@ -47,9 +47,14 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
     array (
       'layout' => 'subpanel',
       'label' => 'LBL_QUOTES_SUBPANEL_TITLE',
-      'context' => array (
-        'link' => 'quotes',
-      ),
+        'context' => array (
+          'link' => 'quotes',
+          'collectionOptions' => array(
+            'params' => array(
+              'ignore_role' => 1,
+            ),
+          ),
+        ),
     ),
     array (
       'layout' => 'subpanel',
