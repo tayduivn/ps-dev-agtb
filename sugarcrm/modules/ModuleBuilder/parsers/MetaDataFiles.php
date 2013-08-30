@@ -750,31 +750,26 @@ class MetaDataFiles
             $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
         foreach ($modules as $module) {
-
+            $seed = BeanFactory::getBean($module);
             $fileList = self::getClientFiles($platforms, $type, $module);
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
             if ($type == "view") {
                 foreach ($moduleResults as $view => $defs) {
-                    if (is_array($defs)) {
-                        $meta = isset($defs['meta']) ? $defs['meta'] : array();
-                        $seed = BeanFactory::getBean($module);
-                        if (!empty($seed) && !empty($seed->field_defs))
-                            $deps = array_merge(
-                                DependencyManager::getDependenciesForFields(
-                                    $seed->field_defs,
-                                    ucfirst($view) . "View"),
-                                DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
-                            );
-                        if (!empty($deps) && !empty($meta)) {
-                            if (!isset($meta['dependencies']) ||
-                                !is_array($meta['dependencies'])
-                            ) {
-                                $moduleResults[$view]['meta']['dependencies'] = array();
-                            }
-                            foreach ($deps as $dep) {
-                                $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
-                            }
+                    if (!is_array($defs) || empty($seed) || empty($seed->field_defs)) {
+                        continue;
+                    }
+                    $meta = !empty($defs['meta']) ? $defs['meta'] : array();
+                    $deps = array_merge(
+                        DependencyManager::getDependenciesForFields($seed->field_defs, ucfirst($view) . "View"),
+                        DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
+                        );
+                    if (!empty($deps)) {
+                        if (!isset($meta['dependencies']) || !is_array($meta['dependencies'])) {
+                            $moduleResults[$view]['meta']['dependencies'] = array();
+                        }
+                        foreach ($deps as $dep) {
+                            $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
                         }
                     }
                 }
