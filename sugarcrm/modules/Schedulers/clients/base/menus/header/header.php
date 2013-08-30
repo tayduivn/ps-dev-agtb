@@ -20,18 +20,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$module_name = 'Accounts';
+$module_name = 'Schedulers';
 $viewdefs[$module_name]['base']['menu']['header'] = array(
     array(
-        'route'=>'#bwc/index.php?module=Schedulers&action=index',
-        'label' =>'LNK_LIST_SCHEDULER',
+        'route'=>'#bwc/index.php?module=Schedulers&action=EditView',
+        'label' =>'LNK_NEW_SCHEDULER',
         'acl_action'=>'admin',
         'acl_module'=>'',
         'icon' => '',
     ),
     array(
-        'route'=>'#bwc/index.php?module=Schedulers&action=EditView',
-        'label' =>'LNK_NEW_SCHEDULER',
+        'route'=>'#bwc/index.php?module=Schedulers&action=index',
+        'label' =>'LNK_LIST_SCHEDULER',
         'acl_action'=>'admin',
         'acl_module'=>'',
         'icon' => '',
