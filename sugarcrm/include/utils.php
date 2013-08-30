@@ -632,7 +632,7 @@ function get_assigned_user_name($assigned_user_id, $is_group = '')
 {
 	// Declare static early so PSR-2 parser doesn't choke
 	static $saved_user_list = null;
-	
+
     if (!empty($GLOBALS['sugar_config']['disable_user_cache'])) {
         $user = BeanFactory::getBean("Users", $assigned_user_id);
         if (!empty($user->id)) {

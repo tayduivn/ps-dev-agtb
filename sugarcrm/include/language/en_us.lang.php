@@ -1643,6 +1643,15 @@ $app_list_strings = array (
         '300'   => 'Every 5 minutes',
         '600'   => 'Every 10 minutes',
     ),
+    'sugar7_dashlet_reports_auto_refresh_options' =>
+    array (
+        '0'  => 'None',
+        '15' => 'Every 15 Minutes',
+        '30' => 'Every 30 Minutes',
+        '45' => 'Every 45 Minutes',
+        '60' => 'Every Hour',
+        '120' => 'Every 2 Hours',
+    ),
   'dashlet_auto_refresh_options_admin' =>
     array (
         '-1'  => 'Never',
@@ -4158,6 +4167,9 @@ $app_strings = array (
 
     'LBL_DASHLET_FORECASTS_DETAILS' => 'Forecasts Details',
     'LBL_DASHLET_FORECASTS_DETAILS_DESC' => 'Displays current Forecast details.',
+
+    'LBL_DASHLET_SAVED_REPORTS_CHART' => 'Saved Reports Chart Dashlet',
+    'LBL_DASHLET_SAVED_REPORTS_CHART_DESC' => 'Displays any chart from a saved report.',
 
     //SFA
     'LBL_BEST' => 'Best',
