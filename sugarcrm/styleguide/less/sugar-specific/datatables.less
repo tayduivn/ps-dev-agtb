@@ -3,7 +3,6 @@ table.dataTable {
   margin: 0 auto;
   clear: both;
   width: 100%;
-  border-bottom: 2px solid darken(@grayLighter, 5%);
 
   /* ---------
   TABLE HEADER CELL (specific) */
@@ -145,6 +144,12 @@ table.dataTable {
   /* ---------
   TABLE ROW (specific) */
   tr {
+    //last row
+    &:last-child {
+      td {
+        border-bottom: 2px solid darken(@grayLighter, 5%);
+      }
+    }
     //for preview
     &.highlighted {
       &.current td {
@@ -427,12 +432,14 @@ FLEXLIST GENERIC */
         padding-left: 79px;
       }
       & > thead > tr > th:first-child {
-        padding: 8px;
+        padding: 6px 8px;
+        min-height: 30px;
       }
     }
     & > thead > tr > th {
       &:first-child {
         background: @white;
+        min-height: 30px;
         span {
           overflow-x: visible;
         }
@@ -543,9 +550,6 @@ FLEXLIST GENERIC */
         &:last-child {
           width: 29px;
         }
-      }
-      thead > tr > th:first-child {
-        padding: 8px;
       }
     }
     /*lead record view find duplicates*/
@@ -776,6 +780,7 @@ FLEXLIST GENERIC */
         border-right: none;
         &:after {
           .right-shadow;
+          top: -1px;
         }
       }
       & > tbody > tr > td:first-child {
@@ -791,6 +796,7 @@ FLEXLIST GENERIC */
         border-left: none;
         &:before {
           .left-shadow;
+          top: -1px;
         }
       }
       & > tbody > tr > td:last-child {
@@ -829,9 +835,14 @@ FLEXLIST GENERIC */
 }
 
 .subpanel .flex-list-view table.dataTable {
-  &> thead > tr > th:first-child,
-  &> tbody > tr > td:first-child {
-    padding: 6px 8px;
+  border-bottom: 0;
+  tr {
+    //last row
+    &:last-child {
+      td {
+        border-bottom: 0;
+      }
+    }
   }
 }
 
