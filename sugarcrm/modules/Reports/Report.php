@@ -2170,9 +2170,9 @@ return str_replace(' > ','_',
 
                 global $locale;
                 $params = array();
-                $params['currency_id'] = -99;
+                $params['currency_id'] = $locale->getPrecedentPreference('currency');
                 $params['convert'] = true;
-                $params['currency_symbol'] = $this->currency_obj->getDefaultCurrencySymbol();
+                $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
 
                 // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
                 // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
