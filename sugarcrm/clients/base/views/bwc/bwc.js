@@ -30,6 +30,12 @@
     ],
 
     initialize: function(options) {
+        // If (for some reason) we're trying to directly access old Home/Dashboards, for redirect to sidecar #Home
+        var url = options.context.get('url');
+        if (url && url.search(/module=Home.*action=index/) > -1 || url.search(/action=index.*module=Home/) > -1) {
+            app.router.navigate('#Home', {trigger: true});
+            return;
+        }
         this.$el.attr('src', this._addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
