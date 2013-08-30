@@ -40,6 +40,9 @@ var aclviewer = function(){
 		postSave: function(o){
 			eval(o.responseText);
 			aclviewer.view(result['role_id'], result['module']);
+            if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
+                 window.parent.SUGAR.App.controller.layout.getComponent('bwc').revertBwcModel();
+            }
 		},
 		display:function(o){
 					aclviewer.lastDisplay = '';
