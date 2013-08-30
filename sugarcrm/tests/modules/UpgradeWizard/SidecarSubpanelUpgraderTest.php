@@ -125,7 +125,6 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
                 'view' => 'subpanel-for-calls',
                 'link' => 'calls',
             ),
-            'layout' => 'subpanel',
         );
 
     }
@@ -196,6 +195,8 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
                             'label' => 'LBL_LIST_ACCOUNT_NAME',
                             'enabled' => true,
                             'name' => 'name',
+                            'link' => true,
+                            'type' => 'name'
                         ),
                         array(
                             'default' => true,
@@ -215,10 +216,12 @@ class SidecarSubpanelUpgraderTest extends PHPUnit_Framework_TestCase
                             'label' => 'LBL_LIST_PHONE',
                             'enabled' => true,
                             'name' => 'phone_office',
+                            'type' => 'phone'
                         ),
                     ),
                 ),
             ),
+            'type' => 'subpanel-list'
         );
     }
 }
