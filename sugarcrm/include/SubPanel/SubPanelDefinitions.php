@@ -740,7 +740,7 @@ class SubPanelDefinitions
     {
         $layout_defs [$this->_focus->module_dir] = array();
         $layout_defs [$layout_def_key] = array();
-
+        $def_path = array();
         if (empty ($this->layout_defs) || $reload || (!empty ($layout_def_key) && !isset ($layout_defs [$layout_def_key]))) {
             if (!$original_only) {
                 if (isModuleBWC($this->_focus->module_dir)) {
