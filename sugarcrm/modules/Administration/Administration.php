@@ -271,6 +271,10 @@ class Administration extends SugarBean {
 
         $return = array();
         while($row = $this->db->fetchByAssoc($rows)) {
+            $temp = json_decode(html_entity_decode(stripslashes($row['value'])), true);
+            if (!is_null($temp)) {
+                $row['value'] = $temp;
+            }
             $return[] = $row;
         }
 

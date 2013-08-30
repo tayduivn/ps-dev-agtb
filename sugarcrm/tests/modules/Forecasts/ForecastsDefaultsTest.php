@@ -47,8 +47,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUp();
 
         //Clear config table of Forecasts values before each test, so each test can setup it's own db
-        $db = DBManagerFactory::getInstance();
-        $db->query("DELETE FROM config WHERE category = 'Forecasts' ");
+        //$db = DBManagerFactory::getInstance();
+        //$db->query("DELETE FROM config WHERE category = 'Forecasts' ");
 
         SugarTestForecastUtilities::setUpForecastConfig(
             array(
@@ -218,7 +218,6 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
         $admin->saveSetting('Forecasts', 'sales_stage_won', '[]', 'base');
         $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', TimePeriod::QUARTER_TYPE, 'base');
-        //error_log(var_export($admin->getConfigForModule('Forecasts'), true));
         $currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
 
         // base_rate should get calculated from usdollar field

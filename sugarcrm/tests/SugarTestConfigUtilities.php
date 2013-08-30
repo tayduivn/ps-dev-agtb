@@ -60,6 +60,9 @@ class SugarTestConfigUtilities
      */
     public static function resetConfig()
     {
+        if (empty(self::$orgConfig)) {
+            return;
+        }
         // delete everything in the table
         $db = DBManagerFactory::getInstance();
         $db->query('truncate config;');
@@ -69,5 +72,6 @@ class SugarTestConfigUtilities
             }
             self::$admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
+        self::$orgConfig = array();
     }
 }
