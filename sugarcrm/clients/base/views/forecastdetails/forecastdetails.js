@@ -501,7 +501,7 @@
         // since the user might add this dashlet after they have changed the quota models, but before they saved it
         // we have to check and make sure that we're accounting for any changes in the dashlet totals that come
         // from the server
-        if(this.currentModule == 'Forecasts' && this.context) {
+        if(this.currentModule == 'Forecasts' && this.context && this.shouldRollup) {
             var lhsData = this.context.get('lhsData');
             if(!lhsData && _.has(this.context, 'parent') && !_.isNull(this.context.parent)) {
                 lhsData = this.context.parent.get('lhsData');
