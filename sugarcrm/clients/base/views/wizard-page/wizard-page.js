@@ -47,10 +47,8 @@
      * @alias SUGAR.App.view.views.WizardPageView
      */
     events: {
-        'click [name=previous_button]': 'previous',
-        'click [name=next_button]': 'next',
-        'click [name=start_sugar_button]': 'next',
-        'keyup .modal-body.record .required': 'checkIfPageComplete'
+        'click [name=previous_button]:not(.disabled)': 'previous',
+        'click [name=next_button]:not(.disabled)': 'next'
     },
     /**
      * Current progress through wizard, updated automatically on each render.
@@ -84,6 +82,7 @@
         this.percentComplete = this._getPercentageComplete();
         this.wizardCompleted = (this.progress.page === this.progress.lastPage)?true:false;
         app.view.View.prototype._render.call(this);
+        this.checkIfPageComplete();
     },
     /**
      * We have to check if required fields are pre-filled once we've sync'd. For example,
@@ -94,6 +93,13 @@
         if (this.model) {
             this.listenTo(this.model, "sync", function() {
                 self.checkIfPageComplete();
+            });
+            _.each(this.fieldsToValidate, function(field) {
+               if (field && field.required) {
+                  self.listenTo(self.model, 'change:'+field.name, function() {
+                      self.checkIfPageComplete();
+                  });
+               }
             });
         }
     },
@@ -109,7 +115,7 @@
                         fields:      panel.fields,
                         columns:     panel.columns,
                         labels:      panel.labels,
-                        labelsOnTop: panel.labelsOnTop,
+                        labelsOnTop: panel.labelsOnTop
                     },
                     gridResults = this.getGridBuilder(options).build();
                 panel.grid   = gridResults.grid;
@@ -172,20 +178,17 @@
      * @param {Object} evt the event
      */
     checkIfPageComplete: function(evt) {
-        var self = this,
-            last = this.areAllRequiredFieldsNonEmpty;
+        var self = this;
         this.areAllRequiredFieldsNonEmpty = true;
         _.each(this.fields, function(field) {
-            var value = field.$(field.fieldTag).val();
+            if (!field.def.required) return;
+            var value = field.$(field.fieldTag + ".required").val();
             var invalid = app.validation.requiredValidator(field.def, field.name, field.model, value);
             if (invalid) {
                 self.areAllRequiredFieldsNonEmpty = false;
             }
         });
-        // Update buttons if applicable and something's actually changed
-        if (!last || last !== this.areAllRequiredFieldsNonEmpty) {
-            this.updateButtons();
-        }
+        this.updateButtons();
     },
     /**
      * Only validate fields pertinent to wizard page
@@ -242,7 +245,7 @@
      * @returns {Boolean} Whether action was performed successfully or not
      */
     beforeNext: function(callback) {
-        app.logger.debug("wizard's beforeNext called directly. Derived controller's should have overriden this!");
+        app.logger.debug("wizard's beforeNext called directly. Derived controller's should have overridden this!");
         callback(true);
     },
     /**

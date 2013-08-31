@@ -17,7 +17,8 @@
     initialize: function(options){
         //Extend default events to add listener for click events on links
         this.events = _.extend({}, this.events, {
-            "click a.thumbnail": "linkClicked"
+            "click a.thumbnail": "linkClicked",
+            "click [name=start_sugar_button]:not(.disabled)": "next"
         });
         app.view.invokeParent(this, {type: 'view', name: 'wizard-page', method: 'initialize', args:[options]});
         this.wizardName = this.context.get("wizardName") || "user";
