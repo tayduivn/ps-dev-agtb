@@ -34,7 +34,7 @@ $dictionary['Note'] = array(
     'activity_enabled'=>false,
 	'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true,
 
-	'comment' => 'Notes and Attachments'
+	'comment' => 'Notes & Attachments'
                                ,'fields' => array (
   'name' =>
   array (
