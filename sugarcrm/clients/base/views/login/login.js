@@ -122,7 +122,7 @@
                             app.logger.debug("logged in successfully!");
                             app.events.on('app:sync:complete', function() {
                                 app.logger.debug("sync in successfully!");
-                                this.postLogin();
+                                _.defer(_.bind(this.postLogin, this));
                             }, self);
                         },
                         complete: function() {
