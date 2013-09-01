@@ -39,7 +39,6 @@
      * @param previewId
      */
     fetchActivities: function(model, collection, fetch, previewId) {
-        this.parentId = model.id;
         this.disposeAllActivities();
         this.collection.dataFetched = false;
         this.$el.hide();
@@ -77,9 +76,7 @@
             } else {
                 this.$el.show();
                 collection.each(function(activity) {
-                    if (self.parentId === activity.get('parent_id')) {
-                        self.renderPost(activity, true);
-                    }
+                    self.renderPost(activity, true);
                 });
             }
         } else {
@@ -109,7 +106,7 @@
      */
     bindDataChange: function() {
         this.collection.on('add', function(activity) {
-            if (!this.disposed && this.parentId === activity.get('parent_id')) {
+            if (!this.disposed) {
                 this.renderPost(activity);
             }
         }, this);
