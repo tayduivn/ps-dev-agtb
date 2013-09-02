@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/utils.php';
 
 class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
@@ -34,8 +34,8 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
                 'dog2' => 'dog2',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                )
-            );
+            )
+        );
 
         $array2 = array(
             'dog' => array(
@@ -43,16 +43,16 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
                 'dog1' => 'dog1',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                )
-            );
+            )
+        );
 
-        $results = sugarArrayIntersectMerge($array1,$array2);
+        $results = sugarArrayIntersectMerge($array1, $array2);
 
         $keys1 = array_keys($results['dog']);
         $keys2 = array_keys($array1['dog']);
 
-        for ( $i = 0; $i < 4; $i++ ) {
-            $this->assertEquals($keys1[$i],$keys2[$i]);
+        for ($i = 0; $i < 4; $i++) {
+            $this->assertEquals($keys1[$i], $keys2[$i]);
         }
     }
 
@@ -79,9 +79,9 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
                 'bar' => 'foo',
             ),
         );
-        
+
         $expected = array(
-            'one' => 123, 
+            'one' => 123,
             'two' => 321,
             'foo' => array(
                 'int' => 321,
@@ -101,20 +101,20 @@ class SugarArrayIntersectMergeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDaysOfTheWeek()
     {
         $gimp = array(
-            'days_of_the_week' => array('mon','tues','weds','thurs','fri','sat','sun'),
+            'days_of_the_week' => array('mon', 'tues', 'weds', 'thurs', 'fri', 'sat', 'sun'),
         );
         $dom = array(
-            'days_of_the_week' => array('1','2','3','4'),
+            'days_of_the_week' => array('1', '2', '3', '4'),
         );
-        
+
         $expected = array(
-            'days_of_the_week' => array('1','2','3','4','fri','sat','sun'),
+            'days_of_the_week' => array('1', '2', '3', '4', 'fri', 'sat', 'sun'),
         );
         $this->assertEquals(sugarArrayIntersectMerge($gimp, $dom), $expected);
         // insure that internal functions can't duplicate behavior
         $this->assertNotEquals(array_merge($gimp, $dom), $expected);
         $this->assertNotEquals(array_merge_recursive($gimp, $dom), $expected);
-    }    
+    }
 
     public function testDuration()
     {
