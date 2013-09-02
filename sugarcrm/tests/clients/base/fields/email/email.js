@@ -13,12 +13,12 @@ describe("Email field", function() {
         mock_addr =  [
             {
                 email_address: "test1@test.com",
-                primary_address: "1"
+                primary_address: true
             },
             {
                 email_address: "test2@test.com",
-                primary_address: "0",
-                opt_out: "1"
+                primary_address: false,
+                opt_out: true
             }
         ];
         model = field.model;
@@ -75,30 +75,30 @@ describe("Email field", function() {
             field.$('[data-emailproperty=opt_out]:first').trigger('click');
 
             emails = model.get('email');
-            expect(emails[0].opt_out).toEqual("1");
+            expect(emails[0].opt_out).toBeTruthy();
             field.$('[data-emailproperty=opt_out]:first').trigger('click');
 
             emails = model.get('email');
-            expect(emails[0].opt_out).toEqual("0");
+            expect(emails[0].opt_out).toBeFalsy();
         });
         it("should make sure one and only one email is set as primary", function() {
             var emails = model.get('email');
-            emails[0].primary_address = '1';
-            emails[1].primary_address = '0';
-            expect(emails[0].primary_address).toEqual('1');
-            expect(emails[1].primary_address).toEqual('0');
+            emails[0].primary_address = true;
+            emails[1].primary_address = false;
+            expect(emails[0].primary_address).toBeTruthy();
+            expect(emails[1].primary_address).toBeFalsy();
 
             //Should cancel the click on primary_address button
             field.$('[data-emailproperty=primary_address]:first').trigger('click');
             emails = model.get('email');
-            expect(emails[0].primary_address).toEqual('1');
-            expect(emails[1].primary_address).toEqual('0');
+            expect(emails[0].primary_address).toBeTruthy();
+            expect(emails[1].primary_address).toBeFalsy();
 
             //Should unset the first email as the primary email
             field.$('[data-emailproperty=primary_address]:last').trigger('click');
             emails = model.get('email');
-            expect(emails[0].primary_address).toEqual('0');
-            expect(emails[1].primary_address).toEqual('1');
+            expect(emails[0].primary_address).toBeFalsy();
+            expect(emails[1].primary_address).toBeTruthy();
         });
     });
 
@@ -106,13 +106,13 @@ describe("Email field", function() {
         it("should select another primary e-mail address if the primary is deleted", function(){
             var emails = model.get('email');
             expect(emails.length).toEqual(2);
-            expect(emails[0].primary_address).toEqual("1");
-            expect(emails[1].primary_address).toEqual("0");
+            expect(emails[0].primary_address).toBeTruthy();
+            expect(emails[1].primary_address).toBeFalsy();
 
             field.$('.removeEmail:first-child').trigger('click');
             emails = model.get('email');
             expect(emails.length).toEqual(1);
-            expect(emails[0].primary_address).toEqual("1");
+            expect(emails[0].primary_address).toBeTruthy();
         });
         it("should delete email addresses on the model", function() {
             var emails = model.get('email');
@@ -135,8 +135,8 @@ describe("Email field", function() {
         it("should decorate the first field if there isn't any primary address set", function(){
             var $inputs = field.$('input');
             var emails = model.get('email');
-            emails[0].primary_address = '0';
-            emails[1].primary_address = '0';
+            emails[0].primary_address = false;
+            emails[1].primary_address = false;
             expect(field.$('.add-on').length).toEqual(0);
             field.decorateError({primaryEmail: true});
             expect(field.$('.add-on').length).toEqual(1);
@@ -150,12 +150,12 @@ describe("Email field", function() {
             var testAddresses =[
                 {
                     email_address: "test1@test.com",
-                    primary_address: "1"
+                    primary_address: true
                 },
                 {
                     email_address: "test2@test.com",
-                    primary_address: "1",
-                    opt_out: "1"
+                    primary_address: true,
+                    opt_out: true
                 }
             ];;
             field.addFlagLabels(testAddresses);
@@ -170,8 +170,8 @@ describe("Email field", function() {
                     },
                     {
                         email_address: "biz@baz.net",
-                        opt_out:       "0",
-                        invalid_email: "0"
+                        opt_out:       false,
+                        invalid_email: false
                     }
                 ],
                 actual;
@@ -188,8 +188,8 @@ describe("Email field", function() {
                     },
                     {
                         email_address: "biz@baz.net",
-                        opt_out:       "0",
-                        invalid_email: "0"
+                        opt_out:       false,
+                        invalid_email: false
                     }
                 ],
                 actual;
@@ -203,8 +203,8 @@ describe("Email field", function() {
         it("should not make an email address a link when the address is opted out", function() {
             var emails = [{
                     email_address: "foo@bar.com",
-                    opt_out:       "1",
-                    invalid_email: "0"
+                    opt_out:       true,
+                    invalid_email: false
                 }],
                 actual;
 
@@ -215,8 +215,8 @@ describe("Email field", function() {
         it("should not make an email address a link when the address is invalid", function() {
             var emails = [{
                     email_address: "foo@bar.com",
-                    opt_out:       "0",
-                    invalid_email: "1"
+                    opt_out:       false,
+                    invalid_email: true
                 }],
                 actual;
 
@@ -227,8 +227,8 @@ describe("Email field", function() {
         it("should not make an email address a link when the address is opted out and invalid", function() {
             var emails = [{
                     email_address: "foo@bar.com",
-                    opt_out:       "1",
-                    invalid_email: "1"
+                    opt_out:       true,
+                    invalid_email: true
                 }],
                 actual;
 
@@ -239,7 +239,7 @@ describe("Email field", function() {
         it("should convert a string representing an email address into an array containing one object", function() {
             var expected = {
                     email_address:   "foo@bar.com",
-                    primary_address: "1",
+                    primary_address: true,
                     hasAnchor:       false,
                     _wasNotArray:    true,
                     flagLabel: "LBL_EMAIL_PRIMARY",
@@ -255,8 +255,8 @@ describe("Email field", function() {
         it("should remove the hasAnchor property from the email address", function() {
             var emails = [{
                     email_address: "foo@bar.com",
-                    opt_out:       "0",
-                    invalid_email: "0",
+                    opt_out:       false,
+                    invalid_email: false,
                     hasAnchor:     true
                 }],
                 actual;
@@ -269,7 +269,7 @@ describe("Email field", function() {
             var expected = "foo@bar.com",
                 emails   = [{
                     email_address:   expected,
-                    primary_address: "1",
+                    primary_address: true,
                     hasAnchor:       false,
                     _wasNotArray:    true
                 }],

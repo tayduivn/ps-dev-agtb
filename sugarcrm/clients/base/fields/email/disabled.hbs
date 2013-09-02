@@ -37,9 +37,9 @@
         </div>
         <div class="span6 btn-toolbar">
             <div class="btn-group" data-parentEmail="{{email_address}}">
-                <button type="button" class="{{#eq primary_address "1"}}active {{/eq}}is_primary btn" disabled><i class="icon-star"></i></button>
-                <button type="button" class="{{#eq opt_out "1"}}active {{/eq}}btn" disabled><i class="icon-ban-circle"></i></button>
-                <button type="button" class="{{#eq invalid_email "1"}}active {{/eq}}btn" disabled><i class="icon-exclamation-sign"></i></button>
+                <button type="button" class="{{#if primary_address}}active {{/if}}is_primary btn" disabled><i class="icon-star"></i></button>
+                <button type="button" class="{{#if opt_out}}active {{/if}}btn" disabled><i class="icon-ban-circle"></i></button>
+                <button type="button" class="{{#if invalid_email}}active {{/if}}btn" disabled><i class="icon-exclamation-sign"></i></button>
             </div>
         </div>
     </div>
