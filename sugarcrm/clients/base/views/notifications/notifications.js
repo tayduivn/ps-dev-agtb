@@ -19,6 +19,16 @@
     collection: null,
 
     /**
+     * Collections for additional modules.
+     */
+    _alertsCollections: {},
+
+    /**
+     * Intervals for additional modules' reminders.
+     */
+    _intervals: {},
+
+    /**
      * Interval ID defined when the pulling mechanism is running.
      *
      * @property {Integer}
@@ -70,6 +80,7 @@
     _bootstrap: function() {
         this._initOptions();
         this._initCollection();
+        this._initReminders();
         this.startPulling();
         return this;
     },
@@ -125,6 +136,43 @@
     },
 
     /**
+     * Initialize reminders for Calls and Meetings.
+     *
+     * Setup the reminderMaxTime that is based on maximum reminder time option
+     * added to the pulls delay to get a big interval to grab for possible
+     * reminders.
+     * Setup collections for each module that we support with reminders.
+     *
+     * FIXME this will be removed when we integrate reminders with
+     * Notifications on server side. This is why we have modules hardcoded.
+     * We also don't check for meta as optional because it is required.
+     * We will keep all this code private because we don't want to support it
+     *
+     * @private
+     */
+    _initReminders: function() {
+
+        var timeOptions = _.keys(app.lang.getAppListStrings('reminder_time_options')),
+            max = _.max(timeOptions, function(key) {
+            return parseInt(key, 10);
+        });
+
+        this.reminderMaxTime = parseInt(max, 10) + this.delay / 1000;
+
+        _.each(['Calls', 'Meetings'], function(module) {
+            this._alertsCollections[module] = app.data.createBeanCollection(module);
+            this._alertsCollections[module].options = {
+                limit: this.meta.remindersLimit,
+                myItems: true,
+                fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
+            };
+            this._intervals[module] = {};
+        }, this);
+
+        return this;
+    },
+
+    /**
      * Retrieve label according to supplied level.
      *
      * @param {String} level Notification level.
@@ -161,6 +209,7 @@
         var self = this;
 
         this.pull();
+        this._pullReminders();
         this._intervalId = window.setInterval(function() {
             if (!app.api.isAuthenticated()) {
                 self.stopPulling();
@@ -168,6 +217,8 @@
             }
 
             self.pull();
+            self._pullReminders();
+
         }, this.delay);
 
         return this;
@@ -211,6 +262,161 @@
         });
 
         return this;
+    },
+
+    /**
+     * Pull next reminders from now to the next remindersMaxTime.
+     *
+     * This will give us all the reminders that should be triggered during the
+     * next maximum reminders time (with pull delay).
+     */
+    _pullReminders: function() {
+
+        if (this.disposed) {
+            return this;
+        }
+
+        var date = new Date(),
+            startDate = date.toISOString(),
+            endDate;
+
+        date.setTime(date.getTime() + this.reminderMaxTime * 1000);
+        endDate = date.toISOString();
+
+        _.each(['Calls', 'Meetings'], function(module) {
+
+            this._alertsCollections[module].filterDef = _.extend({},
+                this.meta.remindersFilterDef || {},
+                {'date_start': {'$dateBetween': [startDate, endDate]}}
+            );
+            this._alertsCollections[module].fetch({
+                silent: true,
+                merge: true,
+                success: _.bind(function(data) {
+                    if (!this.disposed) {
+                        this._parseReminders(data);
+                    }
+                }, this)
+            });
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * Creates reminders based on {@link Backbone.Collection#fetch} from latest
+     * pull.
+     *
+     * Creates new and delete old reminders for the new data received.
+     *
+     * @param {Data.BeanCollection} data Data from response.
+     * @private
+     */
+    _parseReminders: function(data) {
+
+        if (!data.length) {
+            return this;
+        }
+
+        var deadIds = _.difference(_.keys(this._intervals[data.module]), data.pluck('id'));
+
+        _.each(deadIds, function(id) {
+            this._clearReminders(data.module, id);
+        }, this);
+
+        data.each(function(model) {
+            this._parseReminder(model);
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * Creates an alert reminder based on model given.
+     *
+     * If the model didn't change the reminder time and if we already set it
+     * up, keep it.
+     *
+     * @param {Backbone.Model} model The model to create a reminder from.
+     * @private
+     */
+    _parseReminder: function(model) {
+        var hasChanged = !_.has(this._intervals[model.module], model.id) ||
+            !!model.changedAttributes(this._intervals[model.module][model.id].prevAttr);
+
+        if (!hasChanged) {
+            return this;
+        }
+
+        // FIXME we need to support timezone of the user preferences not of the browser/location.
+        var diff = new Date(model.get('date_start')) - new Date(),
+            delay = diff - parseInt(model.get('reminder_time'), 10) * 1000;
+
+        if (delay < 0) {
+            return this;
+        }
+
+        this._clearReminders(model.module, model.id);
+
+        this._intervals[model.module][model.id] = {
+            timer: setTimeout(_.bind(function() {
+                this._showReminderAlert(model);
+            }, this), delay),
+            prevAttr: _.pick(model.attributes, 'reminder_time', 'date_start')
+        };
+
+        return this;
+    },
+
+    /**
+     * Clears alerts' interval of a given record or of all in module given.
+     *
+     * @param {String} module Module to clear intervals for.
+     * @param {String} [id] Id of a record or `undefined` to clear all.
+     * @private
+     */
+    _clearReminders: function(module, id) {
+
+        if (id) {
+            if (_.has(this._intervals[module], id)) {
+                clearTimeout(this._intervals[module][id].timer);
+                delete this._intervals[module][id];
+            }
+            return;
+        }
+
+        _.each(this._intervals[module], function(data) {
+            clearTimeout(data.timer);
+        }, this);
+        this._intervals[module] = {};
+    },
+
+    /**
+     * Show reminder alert based on given model.
+     *
+     * @param {Backbone.Model} model Model that is triggering a reminder.
+     *
+     * @private
+     */
+    _showReminderAlert: function(model) {
+        var url = app.router.buildRoute(model.module, model.id),
+            link = '<a href="#' + url + '">' + app.lang.get('LBL_SHOW', model.module) + '</a>',
+            dateFormat = app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'),
+            dateValue = app.date.format(new Date(model.get('date_start')), dateFormat),
+            message = model.get('name') + ', ' + dateValue + '. ' +
+                (_.isUndefined(model.get('location')) ?
+                    model.get('description') :
+                    app.lang.get('MSG_JS_ALERT_MTG_REMINDER_LOC', model.module) + model.get('location')) +
+                '. ' + link;
+
+        app.alert.show('reminder' + model.id, {
+            level: 'info',
+            messages: [message],
+            title: app.lang.get('LBL_REMINDER_TITLE', model.module),
+            closeable: true
+        });
+
+        delete this._intervals[model.module][model.id];
     },
 
     /**
@@ -266,9 +472,18 @@
 
     /**
      * {@inheritDoc}
+     *
+     * Stops pulling for new notifications and disposes all reminders.
      */
     _dispose: function() {
         this.stopPulling();
-        this._super('_dispose');
+
+        _.each(this._alertsCollections, function(collection, module) {
+            this._clearReminders(module);
+            collection.off();
+        }, this);
+        this._alertsCollections = {};
+
+        app.view.View.prototype._dispose.call(this);
     }
 })

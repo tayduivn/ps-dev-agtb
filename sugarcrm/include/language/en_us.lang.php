@@ -4210,6 +4210,8 @@ $app_strings = array (
 
     'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',
     'LBL_PASSWORD_REQUEST_ERROR' => 'There was a problem retrieving your username and email combination.',
+
+    'LBL_REMINDER_TITLE' => 'Reminder',
 );
 
 $app_list_strings['interactions_options'] = array (
