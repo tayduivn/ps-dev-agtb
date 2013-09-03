@@ -56,6 +56,7 @@ class ReportsDashletsApi extends SugarApi
         $sq = new SugarQuery();
         $sq->from(BeanFactory::getBean('Reports'));
         $sq->select(array('id', 'name', 'module', 'report_type', 'content', 'chart_type'));
+        $sq->orderBy('name', 'asc');
 
         // if there were restricted modules, add those to the query
         if(count($modules)) {
