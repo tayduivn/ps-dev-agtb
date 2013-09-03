@@ -617,12 +617,12 @@ FP;
     $enabled_tabs[] = 'Cases';
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
-
     //BEGIN SUGARCRM flav=ent ONLY
+    $enabled_tabs[] = 'RevenueLineItems';
+
     if ($_SESSION['demoData'] != 'no') {
         $enabled_tabs[] = 'KBDocuments';
         $enabled_tabs[] = 'Bugs';
-        $enabled_tabs[] = 'RevenueLineItems';
     }
     //END SUGARCRM flav=ent ONLY
 
