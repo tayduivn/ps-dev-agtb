@@ -55,5 +55,6 @@ $mod_strings = array (
   //For export labels
   'LBL_EXPORT_MODIFIED_USER_ID'=> 'Assigned To ID',
   'LBL_EXPORT_CREATED_BY'=>'Created By ID',
+    'LNK_IMPORT_PRODUCT_CATEGORIES'=>'Import Product Categories',
 );
 ?>
