@@ -34,8 +34,8 @@
      * Supported options:
      * - delay: How often (minutes) should the pulling mechanism run.
      * - limit: Limit imposed to the number of records pulled.
-     * - type_css: An object where its keys map to a specific notification type
-     * and values to a matching CSS class.
+     * - level_css: An object where its keys map to a specific notification
+     * level and values to a matching CSS class.
      *
      * @property {Object}
      * @protected
@@ -43,7 +43,7 @@
     _defaultOptions: {
         delay: 5,
         limit: 4,
-        type_css: {
+        level_css: {
             alert: 'label-important',
             information: 'label-info',
             other: 'label-inverse',
@@ -89,7 +89,7 @@
 
         this.delay = options.delay * 60 * 1000;
         this.limit = options.limit;
-        this.typeCss = options.type_css;
+        this.levelCss = options.level_css;
 
         return this;
     },
@@ -108,7 +108,7 @@
             },
             limit: this.limit,
             myItems: true,
-            fields: ['date_entered', 'id', 'name', 'type']
+            fields: ['date_entered', 'id', 'name', 'level']
         };
 
         this.collection.sync = _.wrap(
@@ -128,25 +128,25 @@
     },
 
     /**
-     * Retrieve label according to supplied type.
+     * Retrieve label according to supplied level.
      *
-     * @param {String} type Notification type.
-     * @return {String} Matching label or type if supplied type doesn't exist.
+     * @param {String} level Notification level.
+     * @return {String} Matching label or level if supplied level doesn't exist.
      */
-    getTypeLabel: function(type) {
-        var list = app.lang.getAppListStrings('notifications_type_list');
-        return list[type] || type;
+    getLevelLabel: function(level) {
+        var list = app.lang.getAppListStrings('notifications_level_list');
+        return list[level] || level;
     },
 
     /**
-     * Retrieve CSS class according to supplied type.
+     * Retrieve CSS class according to supplied level.
      *
-     * @param {String} type Notification type.
-     * @return {String} Matching css class or an empty string if supplied type
+     * @param {String} level Notification level.
+     * @return {String} Matching css class or an empty string if supplied level
      * doesn't exist.
      */
-    getTypeCss: function(type) {
-        return this.typeCss[type] || '';
+    getLevelCss: function(level) {
+        return this.levelCss[level] || '';
     },
 
     /**
@@ -242,10 +242,10 @@
     },
 
     /**
-     * If notifications collection is available and has models, two 'type'
+     * If notifications collection is available and has models, two 'level'
      * related properties are injected into each model:
-     * - typeCss: Model type matching CSS class.
-     * - typeLabel: Model type label.
+     * - levelCss: Model level matching CSS class.
+     * - levelLabel: Model level label.
      *
      * @inheritdoc
      */
@@ -260,8 +260,8 @@
         }
 
         _.each(this.collection.models, function(model) {
-            model.set('typeCss', this.getTypeCss(model.get('type')));
-            model.set('typeLabel', this.getTypeLabel(model.get('type')));
+            model.set('levelCss', this.getLevelCss(model.get('level')));
+            model.set('levelLabel', this.getLevelLabel(model.get('level')));
         }, this);
 
         app.view.View.prototype._renderHtml.call(this);
