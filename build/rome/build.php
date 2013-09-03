@@ -41,7 +41,9 @@ if(!empty($config['cleanCache'])){
         $rome->remove($path ."/cache/modules");
         $rome->remove($path ."/cache/smarty");
         $rome->remove($path ."/cache/Expressions");
-        $rome->remove($path ."/cache/themes");
+        //Only clear themes if we have touched a file that affects them
+        if (empty($config['file']) || preg_match('/\.css|styleguide|\.less|themes/i', $config['file']))
+            $rome->remove($path ."/cache/themes");
         $rome->remove($path ."/cache/blowfish");
         $rome->remove($path ."/cache/dashlets");
         $rome->remove($path ."/cache/include/api");
