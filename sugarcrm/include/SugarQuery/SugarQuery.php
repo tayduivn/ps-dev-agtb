@@ -274,7 +274,6 @@ class SugarQuery
         // FIXME: it's really not good we have a special case here
         if (!empty($options['favorites']) || $link_name == 'favorites') {
             $sfOptions = $options;
-            $sfOptions['joinType'] = 'LEFT';
             $sf = new SugarFavorites();
             $options['alias'] = $sf->addToSugarQuery($this, $sfOptions);
         } else {

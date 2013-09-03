@@ -194,7 +194,7 @@ class FilterApi extends SugarApi
         }
 
         if (!empty($args['favorites'])) {
-            self::addFavoriteFilter($q, $q->where(), '_this');
+            self::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
 
@@ -677,9 +677,10 @@ class FilterApi extends SugarApi
     protected static function addFavoriteFilter(
         SugarQuery $q,
         SugarQuery_Builder_Where $where,
-        $link
+        $link,
+        $joinType = 'LEFT'
     ) {
-        $sfOptions = array('joinType' => 'LEFT', 'favorites' => true);
+        $sfOptions = array('joinType' => $joinType, 'favorites' => true);
         if ($link == '' || $link == '_this') {
             $link_name = 'favorites';
         } else {
