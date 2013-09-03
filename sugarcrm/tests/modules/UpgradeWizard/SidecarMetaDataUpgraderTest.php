@@ -90,6 +90,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['current_language']);
 
         // Builds all the legacy test files
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('files');
         self::getBuilder();
         self::$builder->buildFiles();
@@ -383,6 +384,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
 
         $defs = $viewdefs[$module]['base']['menu']['quickcreate'];
         $this->assertEquals('create', $defs['layout']);
+        $this->assertEquals(false, $defs['visible']);
     }
 
     public function _sidecarQuickMenuProvider()
@@ -397,7 +399,6 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase
 
 class SidecarMetaDataUpgraderForTest extends SidecarMetaDataUpgrader
 {
-
     public function logUpgradeStatus($msg)
     {
         $GLOBALS['log']->info($msg);
