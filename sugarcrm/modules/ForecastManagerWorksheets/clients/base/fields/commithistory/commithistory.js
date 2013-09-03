@@ -74,7 +74,7 @@
         // create the history log
         var tpl = app.template.getField(this.type, 'log', this.module);
         this.$el.html(tpl({
-            commit: app.utils.createHistoryLog(oldestModel, newestModel),
+            commit: app.utils.createHistoryLog(oldestModel, newestModel).text,
             commit_date: displayCommitDate
         }));
 
