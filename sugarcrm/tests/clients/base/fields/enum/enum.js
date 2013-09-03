@@ -191,10 +191,31 @@ describe("enum field", function() {
             expect(field.unformat(original)).toEqual(expected);
         });
 
-        it('should format the blank value', function() {
-            field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
-            field.render();
-            expect(field.items['']).toEqual('LBL_BLANK_VALUE');
+        describe("blank value on multi select", function() {
+            it('should transform the empty key on render', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+                field.render();
+                expect(field.items['']).toBeUndefined();
+                expect(field.items['___i_am_empty___']).toEqual('LBL_BLANK_VALUE');
+            });
+            it('should format a value with blank option for the template', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+                var value = field.format(['Defect', '']);
+                expect(value).toEqual(['Defect', '___i_am_empty___']);
+            });
+            it('should unformat a value with blank option for the model', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+                var value = field.unformat(['Defect', '___i_am_empty___']);
+                expect(value).toEqual(['Defect', '']);
+            });
+        });
+
+        it('should prevent focus otherwise the dropdown is opened and it\'s impossible to remove an item', function() {
+            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
+            var jQueryStub = sinon.stub(field, '$');
+            field.focus();
+            expect(jQueryStub).not.toHaveBeenCalled();
+            jQueryStub.restore();
         });
 
     });

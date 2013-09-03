@@ -3492,7 +3492,7 @@ $app_strings = array (
     //External API Error Messages
     'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
 
-    'LBL_BLANK_VALUE' => '<Blank>',
+    'LBL_BLANK_VALUE' => '<empty>',
     'LBL_EMPTY' => 'Empty',
     'LBL_IS_EMPTY' => 'Is empty',
     'LBL_IS_NOT_EMPTY' => 'Is not empty',
