@@ -3220,7 +3220,7 @@ $app_strings = array (
 
     'LBL_DASHLET_OPPORTUNITY_NAME' => 'Opportunity Metrics',
     'LBL_DASHLET_OPPORTUNITY_DESCRIPTION' => 'Opportunity Metrics for Related Account',
-    'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Cases Summary',
+    'LBL_DASHLET_CASES_SUMMARY_NAME' => 'Case Summary',
     'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
     'LBL_DASHLET_ATTACHMENTS_NAME' => 'Notes & Attachments',
