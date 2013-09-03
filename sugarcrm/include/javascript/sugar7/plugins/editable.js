@@ -231,6 +231,7 @@
                     return;
                 }
                 this.toggleField(field, false);
+                this.trigger("editable:mousedown", evt, field);
             },
 
             /**

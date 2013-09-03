@@ -58,6 +58,7 @@
         this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
         this.on("editable:keydown", this.handleKeyDown, this);
+        this.on("editable:mousedown", this.handleMouseDown, this);
 
         this.delegateButtonEvents();
 
@@ -69,11 +70,8 @@
         // properly namespace SHOW_MORE_KEY key
         this.MORE_LESS_KEY = app.user.lastState.key(this.MORE_LESS_KEY, this);
 
-        $(window).on('resize',function(){
-            var headerPaneHeight = $("#drawers .main-pane div.headerpane").height();
-            $("#drawers .main-pane").css("top",headerPaneHeight+"px");
-        });
-
+        this.adjustViewForHeaderpane = _.bind(_.debounce(this.adjustViewForHeaderpane, 200), this);
+        $(window).on('resize.' + this.cid, this.adjustViewForHeaderpane);
     },
 
     /**
@@ -233,7 +231,7 @@
     _renderHtml: function () {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
-        $("#drawers .main-pane").css("top",$("#drawers .main-pane div.headerpane").height()+"px");
+        this.adjustViewForHeaderpane();
 
     },
 
@@ -313,6 +311,7 @@
         this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
         this.toggleViewButtons(isEdit);
+        this.adjustViewForHeaderpane();
     },
 
     /**
@@ -340,6 +339,7 @@
         this.setButtonStates(this.STATE.EDIT);
 
         this.toggleField(field);
+        this.adjustViewForHeaderpane();
     },
 
     /**
@@ -479,7 +479,16 @@
 
                 }
             }
+
+            this.adjustViewForHeaderpane();
         }
+    },
+
+    /**
+     * Adjust view when height of the headerpane changes
+     */
+    handleMouseDown: function() {
+        this.adjustViewForHeaderpane();
     },
 
     /**
@@ -520,6 +529,7 @@
         this.buttons = null;
         this.editableFields = null;
         this.off("editable:keydown", this.handleKeyDown, this);
+        $(window).off('resize.' + this.cid);
         app.view.View.prototype._dispose.call(this);
     },
 
@@ -618,5 +628,13 @@
         app.logger.error('Wrong data for record pagination. Pagination is disabled.');
         el.addClass('disabled');
         el.data('id', '');
+    },
+
+    /**
+     * Push down main pane depending upon the height of the headerpane
+     */
+    adjustViewForHeaderpane: function() {
+        var height = this.$('.headerpane').outerHeight(true);
+        this.context.trigger('defaultLayout:setPaddingTop', height);
     }
 })
