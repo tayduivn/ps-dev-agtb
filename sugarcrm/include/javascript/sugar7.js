@@ -262,13 +262,14 @@
     //check module access before navigating to certain routes
     //redirect to access denied page if user is lacking module access
     app.routing.before('route', function(options) {
+        options = options || {};
+
         var checkAccessRoutes = {
                 'list': 'list',
                 'record': 'view',
                 'create': 'create',
                 'vcardImport': 'create'
             },
-            options = options || {};
             route = options.route || '',
             args = options.args || [],
             module = args[0],
