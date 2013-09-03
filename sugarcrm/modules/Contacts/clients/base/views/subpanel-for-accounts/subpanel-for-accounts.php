@@ -34,7 +34,6 @@ $viewdefs['Contacts']['base']['view']['subpanel-for-accounts'] = array(
           'label' => 'LBL_LIST_NAME',
           'enabled' => true,
           'default' => true,
-          'sortable' => false,
         ),
         array(
           'name' => 'primary_address_city',

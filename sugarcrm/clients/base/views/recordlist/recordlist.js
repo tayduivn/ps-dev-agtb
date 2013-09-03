@@ -28,10 +28,6 @@
 
     rowFields: {},
 
-    events: {
-        'click [name=inline-cancel]' : 'resize'
-    },
-
     contextEvents: {
         "list:editall:fire": "toggleEdit",
         "list:editrow:fire": "editClicked",
@@ -43,6 +39,11 @@
         var recordListMeta = this._initializeMetadata();
         options.meta = _.extend({}, recordListMeta, options.meta || {});
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
+
+        //Extend the prototype's events object to setup additional events for this controller
+        this.events = _.extend({}, this.events, {
+            'click [name=inline-cancel]' : 'resize'
+        });
 
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
