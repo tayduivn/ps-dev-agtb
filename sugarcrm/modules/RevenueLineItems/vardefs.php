@@ -177,6 +177,8 @@ $dictionary['RevenueLineItem'] = array(
             'comment' => 'Name of the product',
             'reportable' => true,
             'importable' => 'required',
+            'required' => true,
+            'audited' => true,
         ),
         'mft_part_num' => array(
             'name' => 'mft_part_num',
