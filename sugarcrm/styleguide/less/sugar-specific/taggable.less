@@ -12,7 +12,12 @@ ul.activitystream-tag-dropdown {
   .disabled > a:hover {
     background: @dropdownDisabledBackground;
     color: @dropdownDisabledLinkColor;
-    text-decoration: none;
+    .add-on {
+      font-style: italic;
+      display: inline;
+      position: absolute;
+      right: 10px;
+    }
   }
 }
 .sugar_tag {
