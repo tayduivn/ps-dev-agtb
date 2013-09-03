@@ -115,7 +115,6 @@ $dictionary['Note'] = array(
     'vname' => 'LBL_PORTAL_FLAG',
     'type' => 'bool',
     'default' => '0',
-	'required' => true,
 	'comment' => 'Portal flag indicator determines if note created via portal'
   ),
   'embed_flag' =>
