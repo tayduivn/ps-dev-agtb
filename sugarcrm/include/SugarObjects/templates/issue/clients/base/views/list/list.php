@@ -82,7 +82,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'assigned_user_name',
                     'width' => '9',
-                    'label' => 'LBL_ASSIGNED_USER_NAME',
+                    'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,
                     'enabled' => true,
                 ),
