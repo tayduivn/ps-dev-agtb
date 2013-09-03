@@ -57,6 +57,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $records = array(
             array(
+                'display_parent_type' => '',
+                'display_parent_id' => '',
                 'comment_count' => 0,
                 'last_comment'  => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
@@ -83,6 +85,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             ),
             array(
+                'display_parent_type' => '',
+                'display_parent_id' => '',
                 'comment_count' => 0,
                 'last_comment'  => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
@@ -114,6 +118,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'records' => array(
                 array(
+                    'display_parent_type' => '',
+                    'display_parent_id' => '',
                     'comment_count'   => 0,
                     'last_comment'    => array(),
                     'date_modified'   => '2013-12-25T13:00:00+00:00',
@@ -139,6 +145,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
                     'created_by_name' => 'Davey Crockett',
                 ),
                 array(
+                    'display_parent_type' => '',
+                    'display_parent_id' => '',
                     'comment_count'   => 0,
                     'last_comment'    => array(),
                     'date_modified'   => '2013-12-25T13:00:00+00:00',
@@ -185,6 +193,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $records   = array(
             array(
+                'display_parent_type' => '',
+                'display_parent_id' => '',
                 'comment_count' => 0,
                 'last_comment'  => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
@@ -216,6 +226,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'records'     => array(
                 array(
+                    'display_parent_type' => '',
+                    'display_parent_id' => '',
                     'comment_count'   => 0,
                     'last_comment'    => array(),
                     'date_modified'   => '2013-12-25T13:00:00+00:00',
@@ -265,6 +277,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $records   = array(
             array(
+                'display_parent_type' => '',
+                'display_parent_id' => '',
                 'comment_count' => 0,
                 'last_comment'  => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
@@ -296,6 +310,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'records'     => array(
                 array(
+                    'display_parent_type' => '',
+                    'display_parent_id' => '',
                     'comment_count'   => 0,
                     'last_comment'    => array(),
                     'date_modified'   => '2013-12-25T13:00:00+00:00',
@@ -339,6 +355,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $records   = array(
             array(
+                'display_parent_type' => '',
+                'display_parent_id' => '',
                 'comment_count' => 0,
                 'last_comment'  => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
@@ -380,6 +398,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'records'     => array(
                 array(
+                    'display_parent_type' => '',
+                    'display_parent_id' => '',
                     'comment_count'   => 0,
                     'last_comment'    => array(),
                     'date_modified'   => '2013-12-25T13:00:00+00:00',
@@ -431,6 +451,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $records   = array(
             array(
+                'display_parent_type' => '',
+                'display_parent_id' => '',
                 'comment_count' => 0,
                 'last_comment'  => json_encode(array()),
                 'date_modified' => "2013-12-25 13:00:00",
@@ -472,6 +494,8 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $expected = array(
             'records'     => array(
                 array(
+                    'display_parent_type' => '',
+                    'display_parent_id' => '',
                     'comment_count'   => 0,
                     'last_comment'    => array(),
                     'date_modified'   => '2013-12-25T13:00:00+00:00',
@@ -618,6 +642,49 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         $actualResult = $activitiesApi->exec_checkParentPreviewEnabled($this->api->user, 'Leads', $lead->id);
 
         $this->assertEquals($expectedResult, $actualResult, 'Expected result to not be preview enabled with correct reason');
+    }
+
+
+    public function dataProviderForGetDisplayModule()
+    {
+        $emptyAccount = BeanFactory::newBean('Accounts');
+        $emptyLead = BeanFactory::newBean('Leads');
+        return array(
+            array('post', null, 'Accounts', '123'),
+            array('post', $emptyAccount, 'Accounts', '123'),
+            array('post', $emptyLead, 'Accounts', '123'),
+            array('link', null, 'Accounts', '123'),
+            array('link', $emptyAccount, 'Leads', '456'),
+            array('link', $emptyLead, 'Accounts', '123'),
+            array('unlink', null, 'Accounts', '123'),
+            array('unlink', $emptyAccount, 'Leads', '456'),
+            array('unlink', $emptyLead, 'Accounts', '123'),
+        );
+    }
+
+    /**
+     * @covers ActivitiesApi::getDisplayModule
+     * @dataProvider dataProviderForGetDisplayModule
+     */
+    public function testGetDisplayModule($activity_type, $contextBean, $expected_module, $expected_id)
+    {
+        $record = array(
+            'parent_type' => 'Accounts',
+            'parent_id' => '123',
+            'activity_type' => $activity_type,
+            'data' => array(
+                'subject' => array(
+                    'module' => 'Leads',
+                    'id' => '456',
+                ),
+            ),
+        );
+
+        $activitiesApi = new ActivitiesApi();
+        $result = SugarTestReflection::callProtectedMethod($activitiesApi, 'getDisplayModule', array($record, $contextBean));
+
+        $this->assertEquals($expected_module, $result['module']);
+        $this->assertEquals($expected_id, $result['id']);
     }
 
 }

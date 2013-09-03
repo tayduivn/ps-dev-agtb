@@ -163,9 +163,14 @@ class ActivitiesApi extends FilterApi
                 }
             }
 
+            // Do module flipping if necessary.
+            $displayFields = $this->getDisplayModule($record, $bean);
+            $record['display_parent_type'] = $displayFields['module'];
+            $record['display_parent_id'] = $displayFields['id'];
+
             //check if parent record preview should be enabled
             if (!empty($record['parent_type']) && !empty($record['parent_id'])) {
-                $previewCheckResult = $this->checkParentPreviewEnabled($api->user, $record['parent_type'], $record['parent_id']);
+                $previewCheckResult = $this->checkParentPreviewEnabled($api->user, $record['display_parent_type'], $record['display_parent_id']);
                 $record['preview_enabled'] = $previewCheckResult['preview_enabled'];
                 $record['preview_disabled_reason'] = $previewCheckResult['preview_disabled_reason'];
             }
@@ -196,7 +201,7 @@ class ActivitiesApi extends FilterApi
             $previewCheckBean = $this->getEmptyBean($module);
             $previewCheckBean->id = $id;
             //check if user has access - also checks if record is deleted
-            $previewCheckResult['preview_enabled'] = $previewCheckBean->checkUserAccess($user);;
+            $previewCheckResult['preview_enabled'] = $previewCheckBean->checkUserAccess($user);
             //currently only one error reason, but may be others in the future
             $previewCheckResult['preview_disabled_reason'] = $previewCheckResult['preview_enabled'] ? '' : 'LBL_PREVIEW_DISABLED_DELETED_OR_NO_ACCESS';
         }
@@ -204,7 +209,33 @@ class ActivitiesApi extends FilterApi
         return $previewCheckResult;
     }
 
-    protected function getEmptyBean($module) {
+    /**
+     * For non-homepage requests and link/unlink activities, flip the parent
+     * record that's displayed so that the event is noticeable.
+     * @param  array     $record The individual activity, as an array.
+     * @param  SugarBean $bean   The request's context's bean.
+     * @return array     Associative array with two keys, 'module' and 'id'.
+     */
+    protected function getDisplayModule(array $record, SugarBean $bean = null)
+    {
+        $array = array(
+            'module' => isset($record['parent_type']) ? $record['parent_type'] : '',
+            'id' => isset($record['parent_id']) ? $record['parent_id'] : '',
+        );
+
+        if (!is_null($bean) && ($record['activity_type'] === 'link' || $record['activity_type'] === 'unlink')) {
+            // Verify that the context matches record's parent module.
+            if ($bean->module_name === $record['parent_type']) {
+                $array['module'] = $record['data']['subject']['module'];
+                $array['id'] = $record['data']['subject']['id'];
+            }
+        }
+
+        return $array;
+    }
+
+    protected function getEmptyBean($module)
+    {
         if (isset(self::$beanList[$module])) {
             $bean = self::$beanList[$module];
         } else {

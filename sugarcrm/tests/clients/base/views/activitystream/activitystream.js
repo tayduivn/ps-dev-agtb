@@ -131,8 +131,8 @@ describe("Activity Stream View", function() {
             var previewId = "3be4-2be4-49bcc-dcbc-cccaf35c5bb1";
 
             view.model.set({
-                parent_id: "5asdfgg-2be4-49bcc-dcbc-cccaf35c5bb1",
-                parent_type: "Contacts"
+                display_parent_id: "5asdfgg-2be4-49bcc-dcbc-cccaf35c5bb1",
+                display_parent_type: "Contacts"
             });
 
             getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: previewId});
@@ -151,8 +151,8 @@ describe("Activity Stream View", function() {
             });
 
             view.model.set({
-                parent_id: "5asdfgg-2be4-49bcc-dcbc-cccaf35c5bb1",
-                parent_type: "Contacts"
+                display_parent_id: "5asdfgg-2be4-49bcc-dcbc-cccaf35c5bb1",
+                display_parent_type: "Contacts"
             });
 
             previewData = view.getPreviewData();
@@ -171,11 +171,11 @@ describe("Activity Stream View", function() {
             var moduleId = "3be4-2be4-49bcc-dcbc-cccaf35c5bb1";
 
             view.model.set({
-                parent_id: moduleId,
-                parent_type: "Contacts"
+                display_parent_id: moduleId,
+                display_parent_type: "Contacts"
             });
 
-            getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: moduleId});
+            getParentModelStub = sinon.stub(view, '_getParentModel').returns({id: moduleId, module: "Contacts"});
 
             previewData = view.getPreviewData();
 
@@ -215,7 +215,7 @@ describe("Activity Stream View", function() {
 
             view.formatAllTagsAndLinks();
 
-            expect(view.model.get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar')
+            expect(view.model.get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar');
         });
 
         it('Should format text-based tags in comments into HTML format', function() {
@@ -227,7 +227,7 @@ describe("Activity Stream View", function() {
 
             view.formatAllTagsAndLinks();
 
-            expect(view.commentsCollection.at(0).get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar')
+            expect(view.commentsCollection.at(0).get('data').value).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234-1234">foo bar</a></span> bar');
         });
 
         it('Should convert URLs into links in posts', function() {
@@ -363,7 +363,7 @@ describe("Activity Stream View", function() {
             preferenceStub.withArgs('decimal_separator').returns('.');
             preferenceStub.withArgs('decimal_precision').returns(4);
 
-            langStub = sinon.stub(SugarTest.app.lang, 'get'),
+            langStub = sinon.stub(SugarTest.app.lang, 'get');
             langStub.withArgs('TPL_ACTIVITY_UPDATE_FIELD', 'Activities').returns('{{before}}:{{after}}');
 
             view.model.set('parent_type', 'Cases');
