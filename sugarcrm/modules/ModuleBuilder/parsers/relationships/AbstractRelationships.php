@@ -262,6 +262,7 @@ class AbstractRelationships
     protected function getDeployedRelationships ()
     {
 
+        $relationships = array();
         $db = DBManagerFactory::getInstance () ;
         $query = "SELECT * FROM relationships WHERE deleted = 0" ;
         $result = $db->query ( $query ) ;
