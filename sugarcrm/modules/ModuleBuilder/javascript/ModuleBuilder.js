@@ -784,6 +784,32 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				}
 			}
 		},
+		/**
+		 * Sets up the popup events for fieldset fields when double clicked
+		 */
+		helpSetupFieldsets: function() {
+			var fieldsetElems = document.getElementsByClassName('field_fieldset_fields'),
+				fieldElem;
+			
+			for (var i = 0; i < fieldsetElems.length; i++) {
+				if (fieldsetElems[i].id != 'undefined') {
+					// Get the div that contains the box that contains the field
+					fieldElem = document.getElementById(fieldsetElems[i].id.replace('fieldset_', ''));
+					if (fieldElem) {
+						// Add a double click event that shows what field a combo
+						// field contains
+						fieldElem.ondblclick = function() {
+							var fieldList = document.getElementById('fieldset_' + this.id).innerHTML;
+							YAHOO.SUGAR.MessageBox.show({
+			                    title: this.innerText.replace(" **", "") + " " + SUGAR.language.get("ModuleBuilder", "LBL_COMBO_FIELD_CONTAINS"),
+			                    msg: fieldList,
+			                    width: 500
+			                });
+						};
+					}
+				}
+			}
+		},
 		helpSetup: function(group, def, panel){
 			if (!ModuleBuilder.panelHelp) ModuleBuilder.panelHelp = [];
 			
@@ -800,6 +826,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			} 
 			
 			ModuleBuilder.helpToggle('default');
+			
+			// Add fieldset help handling
+			ModuleBuilder.helpSetupFieldsets();
 		},
 		helpLoad: function(panelId){
 			if (!ModuleBuilder.panelHelp) return;
@@ -814,10 +843,24 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 		},
 		helpToggle: function(name){
-			if (name == 'default')
+			// Handling for combo field help text being appended to record view
+			// help text. The areas this applies to are the toolbox, the panels
+			// area and the default area when the layout editor loads for record
+			// view.
+			var newHelpText;
+			var appendComboFieldIndicator = name == 'default' || name == 'panels' || name == 'toolbox';
+			var isRecordView = ModuleBuilder.helpDefault == 'defaultrecordview';
+			if (name == 'default') {
 				name = ModuleBuilder.helpDefault;
+			}
+			
 			if (ModuleBuilder.helpLang != null && typeof(ModuleBuilder.helpLang[name]) != 'undefined') {
-				document.getElementById('mbhelp').innerHTML = ModuleBuilder.helpLang[name];
+				newHelpText = ModuleBuilder.helpLang[name];
+				if (isRecordView && appendComboFieldIndicator) {
+					// Add the notification of combo fields
+					newHelpText += "<br><br>" + SUGAR.language.get('ModuleBuilder', 'LBL_INDICATES_COMBO_FIELD');
+				}
+				document.getElementById('mbhelp').innerHTML = newHelpText;
 			}
 		},
 		handleSave: function(form, callBack){

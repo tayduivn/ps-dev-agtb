@@ -259,6 +259,13 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 }
 
                 $availableFields[$key]['translatedLabel'] = translate( isset($def [ 'label' ]) ? $def [ 'label' ] : $def['vname'], $this->_moduleName);
+                if (isset($this->_originalViewDef[$key]['type']) && $this->_originalViewDef[$key]['type'] == 'fieldset') {
+                    $availableFields[$key]['fieldset'] = true;
+                
+                    if (isset($this->_originalViewDef[$key]['fields'])) {
+                        $availableFields[$key]['fieldset_fields'] = $this->getFieldsetFields($this->_originalViewDef[$key]['fields']);
+                    }
+                }
             }
 
         }
@@ -1046,18 +1053,28 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     /**
      * Gets valid field defs for a field name
      *
-     * @param  string $fieldname The fieldname to get the defs for
+     * @param string $fieldname The fieldname to get the defs for
+     * @param boolean $withFieldset If true, will look for fieldset fields as well
      * @return array
      */
-    protected function getViewDefFromFieldname($fieldname)
+    protected function getViewDefFromFieldname($fieldname, $withFieldset = true)
     {
+        $return = '';
         if (isset($this->_fielddefs[$fieldname])) {
-            return self::_trimFieldDefs($this->_fielddefs[$fieldname]);
+            $return = self::_trimFieldDefs($this->_fielddefs[$fieldname]);
         } else if (isset($this->_originalViewDef[$fieldname]) && is_array($this->_originalViewDef[$fieldname])) {
-            return self::_trimFieldDefs($this->_originalViewDef[$fieldname]);
+            $return = self::_trimFieldDefs($this->_originalViewDef[$fieldname]);
         }
 
-        return array("name" => $fieldname, "label" => $fieldname);
+        if (empty($return)) {
+            $return = array("name" => $fieldname, "label" => $fieldname);
+        }
+
+        if ($withFieldset) {
+            $return = $this->getFieldsetInfo($return, $fieldname);
+        }
+        
+        return $return;
     }
 
     /**
@@ -1072,5 +1089,53 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     protected function unsetHiddenPanelFields(&$availableFields)
     {
 
+    }
+
+    /**
+     * Gets fields from the fieldset array in a way that resembles how fields are
+     * returned to the layouts.
+     * 
+     * @param array $fields The fieldset fields array
+     * @return array
+     */
+    protected function getFieldsetFields(array $fields)
+    {
+        $return = array();
+        foreach ($fields as $index => $field) {
+            if (isset($field['name'])) {
+                $return[$index]['name'] = $field['name'];
+                
+                if (isset($field['label'])) {
+                    $return[$index]['label'] = $field['label'];
+                } else {
+                    // Get the label from the viewdefs or vardefs
+                    $defs = $this->getViewDefFromFieldname($field['name'], false);
+                    $return[$index]['label'] = $defs['label'];
+                }
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Gets an array of the fieldset flag and fieldset fields where applicable
+     * 
+     * @param array $defs The current defs for a field
+     * @param string $fieldname The name of the field to get fieldset info for
+     * @return array The defs with fieldset info appended to it where applicable
+     */
+    protected function getFieldsetInfo($defs, $fieldname)
+    {
+        if (isset($this->_originalViewDef[$fieldname]) 
+            && is_array($this->_originalViewDef[$fieldname])
+            && isset($this->_originalViewDef[$fieldname]['type'])
+            && $this->_originalViewDef[$fieldname]['type'] == 'fieldset') {
+            $defs['fieldset'] = true;
+            if (isset($this->_originalViewDef[$fieldname]['fields'])) {
+                $defs['fieldset_fields'] = $this->getFieldsetFields($this->_originalViewDef[$fieldname]['fields']);
+            }
+        }
+        
+        return $defs;
     }
 }

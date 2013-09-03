@@ -103,9 +103,27 @@
                 {else}
                 	{$label}
                 {/if}
-            {/if}</span>
+            {/if}{if !empty($col.fieldset)} **{/if}</span>
             <span class='field_name'>{$col.name}</span>
             <span class='field_label'>{$col.label}</span>
+            {if !empty($col.fieldset_fields)}
+            <span class='field_fieldset_fields' id='fieldset_{$idCount}'>
+                {foreach from=$col.fieldset_fields item='fsfield'}
+                    {eval var=$fsfield.label assign='fslabel'}
+                    {if !empty($translate) && !empty($fsfield.label)}
+                        {sugar_translate label=$fslabel module=$language}
+                    {else}
+                        {if !empty($current_mod_strings[$fslabel])}
+                            {$current_mod_strings[$fslabel]}
+                        {elseif !empty($mod[$fslabel])}
+                            {$mod[$fslabel]}
+                        {else}
+                            {$fslabel}
+                        {/if}
+                    {/if}<br>
+                {/foreach}
+            </span>
+            {/if}
             <span id='le_tabindex_{$idCount}' class='field_tabindex'>{$col.tabindex}</span>
         </div>
         {counter name='idCount' assign='idCount' print=false}
@@ -201,9 +219,27 @@
 		                {else}
 		                	{$label}
 		                {/if}
-		            {/if}</span>
+		            {/if}{if !empty($col.fieldset)} **{/if}</span>
                     <span class='field_name'>{$col.name}</span>
                     <span class='field_label'>{$col.label}</span>
+                    {if !empty($col.fieldset_fields)}
+                    <span class='field_fieldset_fields' id='fieldset_{$idCount}'>
+                        {foreach from=$col.fieldset_fields item='fsfield'}
+                            {eval var=$fsfield.label assign='fslabel'}
+                            {if !empty($translate) && !empty($fsfield.label)}
+                                {sugar_translate label=$fslabel module=$language}
+                            {else}
+                                {if !empty($current_mod_strings[$fslabel])}
+                                    {$current_mod_strings[$fslabel]}
+                                {elseif !empty($mod[$fslabel])}
+                                    {$mod[$fslabel]}
+                                {else}
+                                    {$fslabel}
+                                {/if}
+                            {/if}<br>
+                        {/foreach}
+                    </span>
+                    {/if}
                     <span id='le_tabindex_{$idCount}' class='field_tabindex'>{$col.tabindex}</span>
                 </div>
                 {counter name='idCount' assign='idCount' print=false}
