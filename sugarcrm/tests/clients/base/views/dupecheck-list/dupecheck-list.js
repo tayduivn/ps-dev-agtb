@@ -2,7 +2,8 @@ describe('Base.View.DupeCheckList', function() {
     var app,
         moduleName = 'Contacts',
         listMeta,
-        layout;
+        layout,
+        createBeanStub;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -33,6 +34,14 @@ describe('Base.View.DupeCheckList', function() {
         };
         SugarTest.testMetadata.set();
         layout = SugarTest.createLayout('base', 'Cases', 'list', null, null);
+        createBeanStub = sinon.stub(app.data, 'createBean', function() {
+            var bean = new Backbone.Model();
+            bean.copy = $.noop;
+            sinon.stub(bean, 'copy', function(sourceBean) {
+                bean.set(sourceBean.attributes);
+            });
+            return bean;
+        });
     });
 
     afterEach(function() {
@@ -40,6 +49,7 @@ describe('Base.View.DupeCheckList', function() {
         app.view.reset();
         delete Handlebars.templates;
         SugarTest.testMetadata.dispose();
+        createBeanStub.restore();
     });
 
     it('should turn off sorting on all fields', function(){
@@ -82,6 +92,7 @@ describe('Base.View.DupeCheckList', function() {
         view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta, context);
         view.layout = layout;
         expect(view.model.get('foo')).toEqual('bar');
+        expect(view.model.copy.callCount).toBe(1);
     });
 
     it('should be calling the duplicate check api', function() {

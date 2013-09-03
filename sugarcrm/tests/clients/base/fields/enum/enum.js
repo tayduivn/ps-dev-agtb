@@ -70,6 +70,26 @@ describe("enum field", function() {
         expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
         loadEnumSpy.restore();
     });
+
+    it("should default the value of the field to the first option if undefined", function() {
+        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        field.items = {'first': 'first', 'second': 'second'};
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.render();
+        loadEnumSpy.restore();
+        expect(field.model.get(field.name)).toEqual('first');
+    });
+
+    it("should not default the value of the field to the first option if defaultOnUndefined is false", function() {
+        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        field.items = {'first': 'first', 'second': 'second'};
+        field.defaultOnUndefined = false;
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.render();
+        loadEnumSpy.restore();
+        expect(field.model.get(field.name)).toBeUndefined();
+    });
+
     describe('enum API', function() {
         it('should load options from enum API if options is undefined', function() {
             var callStub = sinon.stub(app.api, 'enumOptions', function(module, field, callbacks) {
