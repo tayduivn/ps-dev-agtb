@@ -53,7 +53,7 @@
         var filterTypes = {
             'today': {
                 'date_entered': {
-                    '$between': [today + ' 00:00:00', today + ' 23:59:59']
+                    '$dateBetween': [today + ' 00:00:00', today + ' 23:59:59']
                 }
             },
             'recent': {
