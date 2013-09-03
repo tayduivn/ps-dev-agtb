@@ -37,11 +37,11 @@
         args_filter.push({"user_id": this.model.get('user_id')});
         args_filter.push({"forecast_type": forecastType});
 
-        url = {"url": app.api.buildURL('Forecasts', 'filter'), "filters": {"filter": args_filter}};
+        var url = {"url": app.api.buildURL('Forecasts', 'filter'), "filters": {"filter": args_filter}};
 
-        options.success = function(data) {
+        options.success = _.bind(function(data) {
             this.buildLog(data);
-        }
+        }, this);
         app.api.call('create', url.url, url.filters, options, { context: this });
     },
 
@@ -72,12 +72,9 @@
         }
 
         // create the history log
-        outputLog = app.utils.createHistoryLog(oldestModel, newestModel);
-
         var tpl = app.template.getField(this.type, 'log', this.module);
-
         this.$el.html(tpl({
-            commit: outputLog.text,
+            commit: app.utils.createHistoryLog(oldestModel, newestModel),
             commit_date: displayCommitDate
         }));
 
