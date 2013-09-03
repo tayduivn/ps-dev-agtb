@@ -317,7 +317,7 @@ class MetadataApi extends SugarApi
         $js .= "}})(SUGAR.App);";
         $hash = md5($js);
         //If we are going to be using uglify to minify our JS, we should minify the entire file rather than each component separately.
-        if (!inDeveloperMode() && !empty($GLOBALS['sugar_config']['uglify'])) {
+        if (!inDeveloperMode() && SugarMin::isMinifyFast()) {
             $js = SugarMin::minify($js);
         }
         $path = "cache/javascript/$platform/components_$hash.js";

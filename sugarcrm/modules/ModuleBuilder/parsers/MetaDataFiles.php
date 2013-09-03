@@ -868,10 +868,6 @@ class MetaDataFiles
                     }
 
                     $controller = file_get_contents($fileInfo['path']);
-                    //If we are not going to be using uglify to minify our JS, we should minify each component separately
-                    if (!inDeveloperMode() && empty($GLOBALS['sugar_config']['uglify'])) {
-                        $controller = SugarMin::minify($controller);
-                    }
                     $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
                     break;
                 case 'hbs':

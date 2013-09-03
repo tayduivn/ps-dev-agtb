@@ -67,4 +67,11 @@ class SugarMin {
         require_once('jssource/Minifier.php');
         return JShrink\Minifier::minify($this->text);
 	}
+
+    /**
+     * @return bool true if a more native js minifier exists on the system.
+     */
+    public static function isMinifyFast() {
+        return extension_loaded("jsmin") || !empty($GLOBALS['sugar_config']['uglify']);
+    }
 }
