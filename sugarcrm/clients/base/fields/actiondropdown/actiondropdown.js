@@ -146,6 +146,9 @@
             this.fields.push(field);
             field.on('show hide', this.setPlaceholder, this);
             field.parent = this;
+            if (fieldDef.type === 'divider') {
+                return;
+            }
             if (index == 0) {
                 container += field.getPlaceholder();
             } else {
@@ -214,6 +217,16 @@
         _.each(this.fields, function(field, idx) {
             var cssClass = _.unique(field.def.css_class ? field.def.css_class.split(' ') : []),
                 fieldPlaceholder = this.$('span[sfuuid="' + field.sfId + '"]');
+            if (field.type === 'divider') {
+                //Divider is only attached the below the first dropdown action.
+                if (index <= 1) {
+                    return;
+                }
+                var dividerEl = document.createElement('li');
+                dividerEl.className = 'divider';
+                visibleEl.appendChild(dividerEl);
+                return;
+            }
             if (field.isVisible() && field.hasAccess()) {
                 cssClass = _.without(cssClass, 'hide');
                 fieldPlaceholder.toggleClass('hide', false);

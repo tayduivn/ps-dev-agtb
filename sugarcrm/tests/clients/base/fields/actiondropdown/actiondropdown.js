@@ -42,6 +42,7 @@ describe('Base.Field.Actiondropdown', function() {
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         field.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -224,6 +225,99 @@ describe('Base.Field.Actiondropdown', function() {
             //after an action is selected, the button should remain as original condition
             expect(field.fields[defaultAction].def.name).toBe('test1');
             expect(field.fields[selectedAction].def.name).toBe('test3');
+        });
+    });
+
+    describe('divider', function() {
+        beforeEach(function() {
+            field.dispose();
+            field = SugarTest.createField('base', 'main_dropdown', 'actiondropdown', 'detail', {
+                'name': 'main_dropdown',
+                'type': 'actiondropdown',
+                //'switch_on_click' option must be ignored when no_default_action is enabled
+                'switch_on_click': true,
+                'buttons': [
+                    {
+                        'type' : 'rowaction',
+                        'name' : 'test1'
+                    },
+                    {
+                        'type' : 'divider'
+                    },
+                    {
+                        'type' : 'rowaction',
+                        'name' : 'test2'
+                    },
+                    {
+                        'type' : 'divider'
+                    },
+                    {
+                        'type' : 'rowaction',
+                        'name' : 'test3'
+                    },
+                    {
+                        'type' : 'divider'
+                    },
+                    {
+                        'type' : 'rowaction',
+                        'name' : 'test3'
+                    },
+                    {
+                        'type' : 'rowaction',
+                        'name' : 'test4'
+                    }
+                ]
+            }, moduleName);
+            var $element = $(field.getPlaceholder().toString());
+            field.setElement($element);
+            field.render();
+        });
+        afterEach(function() {
+            sinon.collection.restore();
+            field.dispose();
+        });
+
+        it('should contain the divider in the correct location', function() {
+            //click dropdown toggle to display the dropdown actions
+            field.$('[data-toggle=dropdown]').click();
+
+            var $actualDropdown = field.$('.dropdown-menu'),
+                $firtDropdown = $actualDropdown.find('li:eq(0)'),
+                $secondDropdown = $actualDropdown.find('li:eq(1)'),
+                $thirdDropdown = $actualDropdown.find('li:eq(2)'),
+                $forthDropdown = $actualDropdown.find('li:eq(3)');
+            expect($firtDropdown.hasClass('divider')).toBe(false);
+            expect($secondDropdown.hasClass('divider')).toBe(true);
+            expect($thirdDropdown.hasClass('divider')).toBe(false);
+            expect($forthDropdown.hasClass('divider')).toBe(true);
+        });
+
+        it('should not contain the divider above the first actionmenu', function() {
+            //click dropdown toggle to display the dropdown actions
+            field.$('[data-toggle=dropdown]').click();
+
+            var $actualDropdown = field.$('.dropdown-menu'),
+                $divider = $actualDropdown.find('li:eq(0)');
+            expect($divider.hasClass('divider')).toBe(false);
+        });
+
+        it('should re-organize the divider once button is hidden due to access fails', function() {
+            //click dropdown toggle to display the dropdown actions
+            var accessStub = sinon.collection.stub(field.fields[2], 'hasAccess', function() {
+                return false;
+            });
+            field.$('[data-toggle=dropdown]').click();
+
+            var $actualDropdown = field.$('.dropdown-menu'),
+                $firtDropdown = $actualDropdown.find('li:eq(0)'),
+                $secondDropdown = $actualDropdown.find('li:eq(1)'),
+                $thirdDropdown = $actualDropdown.find('li:eq(2)'),
+                $forthDropdown = $actualDropdown.find('li:eq(3)');
+            expect($firtDropdown.hasClass('divider')).toBe(false);
+            expect($secondDropdown.hasClass('divider')).toBe(true);
+            expect($thirdDropdown.hasClass('divider')).toBe(false);
+            expect($forthDropdown.hasClass('divider')).toBe(false);
+            accessStub.restore();
         });
     });
 });

@@ -46,18 +46,13 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'acl_action' => 'edit',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:duplicate_button:click',
-                    'name' => 'duplicate_button',
-                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => 'Prospects'
+                    'type' => 'shareaction',
+                    'name' => 'share',
+                    'label' => 'LBL_RECORD_SHARE_BUTTON',
+                    'acl_action' => 'view',
                 ),
                 array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
+                    'type' => 'divider',
                 ),
                 array(
                     'type' => 'rowaction',
@@ -72,10 +67,20 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'label' => 'LBL_MANAGE_SUBSCRIPTIONS',
                 ),
                 array(
-                    'type'       => 'vcard',
-                    'name'       => 'vcard_button',
-                    'label'      => 'LBL_VCARD_DOWNLOAD',
+                    'type' => 'vcard',
+                    'name' => 'vcard_button',
+                    'label' => 'LBL_VCARD_DOWNLOAD',
                     'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:duplicate_button:click',
+                    'name' => 'duplicate_button',
+                    'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
+                    'acl_module' => 'Prospects'
                 ),
                 array(
                     'type' => 'rowaction',
@@ -83,6 +88,16 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
                     'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
                 ),
             ),
         ),

@@ -43,7 +43,6 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'event' => 'button:edit_button:click',
                     'name' => 'edit_button',
                     'label' => 'LBL_EDIT_BUTTON_LABEL',
-                    'primary' => true,
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -53,18 +52,14 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
+                    'type' => 'divider',
+                ),
+                array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',
                     'name' => 'duplicate_button',
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
-                    'acl_module' => 'Products'
-                ),
-                array(
-                    'type' => 'rowaction',
-                    'event' => 'button:delete_button:click',
-                    'name' => 'delete_button',
-                    'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_action' => 'delete',
+                    'acl_module' => 'Products',
                 ),
                 array(
                     'type' => 'rowaction',
@@ -72,6 +67,16 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'name' => 'audit_button',
                     'label' => 'LNK_VIEW_CHANGE_LOG',
                     'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:delete_button:click',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
                 ),
             ),
         ),
