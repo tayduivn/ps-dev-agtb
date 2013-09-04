@@ -529,6 +529,11 @@ class JsChart extends SugarChart {
 	}
 
 	function buildJson($xmlstr, $ignore_datacheck = false){
+        // make sure chartType is set if we buildJson() instead of going thru display()
+        if(!isset($this->chartType)) {
+            $this->chartType = $this->chart_properties['type'];
+        }
+
 		if($this->checkData($xmlstr) || $ignore_datacheck === true) {
 			$content = "{\n";
 			if ($this->chartType == "pie chart" || $this->chartType == "funnel chart 3D") {
