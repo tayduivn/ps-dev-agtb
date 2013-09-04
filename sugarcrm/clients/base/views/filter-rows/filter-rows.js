@@ -18,6 +18,8 @@
 
     filterFields: [],
 
+    lastFilterDef: [],
+
     /**
      * Map of fields types.
      *

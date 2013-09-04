@@ -584,6 +584,7 @@ describe("BaseFilterRowsView", function() {
             var triggerStub = sinon.stub(view.layout, 'trigger');
             var renderStub = sinon.stub(app.view.Field.prototype, 'render', $.noop());
             view.handleOperatorSelected({currentTarget: $operatorField});
+            view.lastFilterDef = undefined;
             $row.data('valueField').model.set('status', 'firesModelChangeEvent');
             expect(triggerStub).toHaveBeenCalled();
             expect(triggerStub).toHaveBeenCalledWith('filter:apply');
