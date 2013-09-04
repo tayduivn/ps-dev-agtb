@@ -73,24 +73,16 @@ ensureCache($minifyUtils, $rootDir);
         <div id="sidecar">
             <div id="portal">
                 <div id="alerts" class="alert-top">
-                </div>
-                <div id="header">
-                </div>
-                <div id="content">
-                    <div class="alert-top">
-                        <div class="alert alert-process">
-                            <strong>Loading</strong>
-                            <div class="loading">
-                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
-                            </div>
-                            <a class="close" data-dismiss="alert">x</a>
+                    <div class="alert alert-process">
+                        <strong>Loading</strong>
+                        <div class="loading">
+                            <span class="l1"></span><span class="l2"></span><span class="l3"></span>
                         </div>
                     </div>
                 </div>
-
-                <div id="footer">
-
-                </div>
+                <div id="header"></div>
+                <div id="content"></div>
+                <div id="footer"></div>
                 <div id="drawers"></div>
             </div>
         </div>
@@ -99,6 +91,7 @@ ensureCache($minifyUtils, $rootDir);
             var App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
+                    $('#alerts').empty();
                     app.start();
                 }
             });
