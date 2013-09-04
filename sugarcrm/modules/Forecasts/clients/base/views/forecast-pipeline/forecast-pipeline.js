@@ -64,6 +64,16 @@
         }, this);
     },
 
+    /**
+     * {@inheritDoc}
+     */
+    render: function() {
+        app.view.invokeParent(this, {type: 'view', name: 'view', method: 'render'});
+        if(this.chart && !_.isEmpty(this.results)) {
+            this.renderChart();
+        }
+    },
+    
     renderChart: function() {
         if(this.disposed) {
             return;
