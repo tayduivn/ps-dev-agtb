@@ -540,15 +540,17 @@
 
     /**
      * Toggles a Preview for the primary record.
+     *
+     * @param {Event} evt Mouse click event.
      */
-    togglePreview: function() {
+    togglePreview: function(evt) {
         if (this.isPreviewOpen) {
             app.events.trigger('preview:close');
-            this.isPreviewOpen = false;
         } else {
             this.updatePreviewRecord(this.primaryRecord);
-            this.isPreviewOpen = true;
         }
+        this.isPreviewOpen = !this.isPreviewOpen;
+        $(evt.currentTarget).toggleClass('on', this.isPreviewOpen);
     },
 
     /**
