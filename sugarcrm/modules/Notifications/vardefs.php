@@ -32,13 +32,13 @@ $dictionary['Notifications'] = array(
             'default' => 0,
             'reportable' => 1,
         ),
-        'type' => array(
+        'level' => array(
             'len' => 15,
-            'name' => 'type',
-            'options' => 'notifications_type_list',
+            'name' => 'level',
+            'options' => 'notifications_level_list',
             'required' => true,
             'type' => 'enum',
-            'vname' => 'LBL_TYPE',
+            'vname' => 'LBL_LEVEL',
         ),
     ),
     'relationships' => array(),
