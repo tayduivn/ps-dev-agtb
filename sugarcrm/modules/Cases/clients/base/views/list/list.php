@@ -85,6 +85,7 @@ $viewdefs['Cases']['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'sortable' => false,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'date_entered',

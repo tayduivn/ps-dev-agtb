@@ -102,6 +102,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'label' => 'LBL_CREATED',
                     'default' => false,
                     'readonly' => true,
+                    'module' => 'Employees',
                 ),
 // CORP/PRO should have sales stage
 //BEGIN SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
@@ -128,7 +129,8 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'width' => '5',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'default' => false,
-                    'enabled' => true
+                    'enabled' => true,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'modified_by_name',
@@ -136,6 +138,7 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'label' => 'LBL_MODIFIED',
                     'default' => false,
                     'readonly' => true,
+                    'module' => 'Employees',
                 )
             )
         )

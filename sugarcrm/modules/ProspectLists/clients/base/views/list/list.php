@@ -63,6 +63,7 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'sortable' => false,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'date_entered',

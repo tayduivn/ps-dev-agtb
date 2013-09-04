@@ -56,6 +56,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                    'module' => 'Employees',
                 ),
                 array(
                     'label' => 'LBL_DATE_MODIFIED',

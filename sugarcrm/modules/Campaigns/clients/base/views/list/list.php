@@ -81,6 +81,7 @@ $viewdefs['Campaigns']['base']['view']['list'] = array(
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'date_entered',
