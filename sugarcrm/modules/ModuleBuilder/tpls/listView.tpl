@@ -79,7 +79,7 @@ studiotabs.reset();
 
 {foreach from=$list key='key' item='value'}
 
-<li name="width={$value.width}%" id='subslot{$modCounter}' class='draggable' >
+<li name="width={$value.width}%" id='subslot{$modCounter}' class='draggable' data-name="{$key}">
     <table width='100%'>
         <tr>
             <td id='subslot{$modCounter}label' style="font-weight: bold;">
