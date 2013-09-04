@@ -60,8 +60,9 @@
     },
     setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
-
-        this.def.css_class = this.def.css_class || '';
+        //Preserve the original css definition to restore later
+        var orig_css = this.def.css_class || '';
+        this.def.css_class = orig_css;
         var css_class = this.def.css_class.split(' ');
         if(disable) {
             css_class.push('disabled');
@@ -70,6 +71,8 @@
         }
         this.def.css_class = _.unique(_.compact(css_class)).join(' ');
         app.view.Field.prototype.setDisabled.call(this, disable);
+        //Restore original css
+        this.def.css_class = orig_css;
     },
     preventClick: function(evt) {
         if(this.isDisabled()) {
