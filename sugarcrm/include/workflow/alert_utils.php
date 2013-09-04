@@ -1125,10 +1125,10 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
 function get_system_default_body(&$mail_object, $focus, &$notify_user) {
     global $sugar_version, $sugar_config, $current_user;
 
-    $currentLanguage = $_SESSION['authenticated_user_language'];
-
-    if (empty($_SESSION['authenticated_user_language'])) {
+    if (!isset($_SESSION['authenticated_user_language']) || empty($_SESSION['authenticated_user_language'])) {
         $currentLanguage = $sugar_config['default_language'];
+    } else {
+        $currentLanguage = $_SESSION['authenticated_user_language'];
     }
 
     $xtpl = new XTemplate("include/language/{$currentLanguage}.notify_template.html");
