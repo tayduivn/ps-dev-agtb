@@ -1868,7 +1868,7 @@ $app_strings = array (
   'LBL_FOLLOW' => 'Follow', // Record view header panel element
   'LBL_FOLLOW_LINK' => 'Follow Link',
   'LBL_TOGGLE_VISIBILITY' => 'Toggle Visibility', // Record view header panel element
-  'LBL_ACTIVITIES' => 'Activities',
+  'LBL_ACTIVITIES' => 'Activity Stream',
   'LBL_COPYRIGHT' => 'Copyright © 2004-2013 SugarCRM Inc. All Rights Reserved.',
   'LBL_TRADEMARK' => 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
   'LBL_TRADEMARK2' => 'SugarCRM ®, Sugar Enterprise™ and Sugar™ are trademarks of SugarCRM Inc.',
@@ -4150,6 +4150,8 @@ $app_strings = array (
     'LBL_ACTIVITYSTREAM_COMMENT_PLACEHOLDER' => 'Add your comment&hellip; Type @ to mention a user. Type # to reference a record.',
     'LBL_ACTIVITY_STREAM' => 'Activity Stream',
     'LBL_ACTIVITY_STREAM_DISABLED' => 'Activity Stream is not enabled',
+    'LBL_ACTIVTY_STREAM_SHOW_MORE' => 'More posts...',
+
     'LBL_DATA_VIEW' => 'Data View',
     'LBL_COMMENT' => 'Comment',
 
