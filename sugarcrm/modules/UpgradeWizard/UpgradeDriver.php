@@ -1,4 +1,17 @@
 <?php
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+* subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+* the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+* http://www.sugarcrm.com/master-subscription-agreement
+*
+* If Company is not bound by the MSA, then by installing or using this file
+* you are agreeing unconditionally that Company will be bound by the MSA and
+* certifying that you have authority to bind Company accordingly.
+*
+* Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+********************************************************************************/
+
 /**
  * Upgrader main driver class
  * @api
@@ -105,6 +118,12 @@ abstract class UpgradeDriver
     abstract public function runStage($stage);
 
     /**
+     * Which scripts will be executed
+     * @var int
+     */
+    protected $script_mask = UpgradeScript::UPGRADE_ALL;
+
+    /**
      * Copy data files
      */
     protected function commit()
@@ -190,9 +209,8 @@ abstract class UpgradeDriver
         die("Must override this function in a driver");
     }
 
-    public function __construct($context)
+    public function __construct()
     {
-        $this->context = $context;
     }
 
     /**
@@ -206,6 +224,10 @@ abstract class UpgradeDriver
         $this->ensureDir($this->context['temp_dir']);
         $this->context['state_file'] = $this->cacheDir('upgrades/').self::STATE_FILE;
         $this->loadState();
+        $this->context['backup_dir'] = $this->config['upload_dir']."/upgrades/backup/".pathinfo($this->context['zip'], PATHINFO_FILENAME) . "-restore";
+        if(isset($this->context['script_mask'])) {
+            $this->script_mask &= $this->context['script_mask'];
+        }
         $this->initialized = true;
     }
 
@@ -978,8 +1000,11 @@ abstract class UpgradeDriver
                     $scriptname = $fileInfo->getBasename(".php");
                     $classname = "SugarUpgrade".preg_replace('/^\d+_/', "", $scriptname); // strip numeric prefix, add SugarUpgrade
                     if(!class_exists($classname)) continue;
-                    // add class to results
-                    $results[$scriptname] = new $classname($this);
+                     $newscript = new $classname($this);
+                     if($newscript->type & $this->script_mask) {
+                         // add class to results if it fits current mask
+                         $results[$scriptname] = $newscript;
+                     }
                 }
             } catch(Exception $e) {
                 // ignore Iterator exceptions
@@ -1381,8 +1406,40 @@ abstract class UpgradeDriver
     {
         $this->removeDir($this->context['temp_dir']);
     }
+
+    /**
+     * Backup the file
+     * @param string $file
+     * @return boolean
+     */
+    protected function backupFile($file)
+    {
+        if(!file_exists($file)) {
+            // no point to backup file that isn't there
+            return true;
+        }
+        if(isset($this->context['backup']) && !$this->context['backup']) {
+            // backup disabled by option
+            return true;
+        }
+        $target = $this->context['backup_dir']  . '/'. $file;
+        $path = pathinfo($target, PATHINFO_DIRNAME);
+        if(!empty($path)) {
+            $this->ensureDir($target);
+        }
+        $this->log("Backing up $file");
+        if(is_dir($file)) {
+            return $this->copyDir($file, $target);
+        } else {
+            return copy($file, $target);
+        }
+
+    }
 }
 
+/**
+ * Base class for upgrade scripts
+ */
 abstract class UpgradeScript
 {
     /**
