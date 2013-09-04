@@ -275,7 +275,7 @@ function get_sugar_config_defaults()
         'l, f' => 'l, f', 's l, f' => 's l, f', 'l s f' => 'l s f', 'l f s' => 'l f s'
     ),
     'dbconfigoption' => array (
-    'persistent' => true,
+    'persistent' => false,
     'autofree' => false,
     'debug' => 0,
     'ssl' => false ),
@@ -5547,7 +5547,7 @@ function navigateToSidecar($url)
 
 /**
  * Gets the list of required dropdown list items, keyed on dropdown list name
- * 
+ *
  * @return array List of all required dropdown list items
  */
 function getRequiredDropdownListItems()
@@ -5565,7 +5565,7 @@ function getRequiredDropdownListItems()
 
 /**
  * Gets the list of required items for a named dropdown list
- * 
+ *
  * @param string $name The name of the dropdown list
  * @return array The list of required items for a dropdown list, if they exist
  */
