@@ -127,10 +127,10 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 }
                 if (is_array($component['override_subpanel_list_view']) && $component['override_subpanel_list_view']['link'] == $this->linkName) {
                     $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
-                    $this->loadedSupbanelName = $component['override_subpanel_list_view']['view'];
-                    $this->loadedSubpanelFileName = file_exists("custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php") ?
-                        "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php"
-                      : "modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php";
+                    $this->loadedSubpanelName = $component['override_subpanel_list_view']['view'];
+                    $this->loadedSubpanelFileName = file_exists("custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php") ?
+                        "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php"
+                      : "modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php";
                     $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
                     $this->overrideArrayKey = $key;
                     return true;
@@ -142,7 +142,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             ) . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
 
         $defaultSubpanelFile = "modules/{$this->_moduleName}/clients/base/views/subpanel-list/subpanel-list.php";
-        $this->loadedSupbanelName = $this->sidecarSubpanelName;
+        $this->loadedSubpanelName = $this->sidecarSubpanelName;
 
         $studioModule = new StudioModule($this->_moduleName);
         $defaultTemplate = $studioModule->getType();
@@ -157,15 +157,15 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->loadedSubpanelFileName = $subpanelFile;
         } elseif (file_exists($defaultSubpanelFile)) {
             $this->loadedSubpanelFileName = $defaultSubpanelFile;
-            $this->loadedSupbanelName = 'subpanel-list';
+            $this->loadedSubpanelName = 'subpanel-list';
         } elseif (file_exists($defaultTemplateSubpanelFile)) {
             $this->loadedSubpanelFileName = $defaultTemplateSubpanelFile;
-            $this->loadedSupbanelName = 'subpanel-list';
+            $this->loadedSubpanelName = 'subpanel-list';
         } elseif (file_exists($baseTemplateSubpanelFile)) {
             $this->loadedSubpanelFileName = $baseTemplateSubpanelFile;
-            $this->loadedSupbanelName = 'subpanel-list';
+            $this->loadedSubpanelName = 'subpanel-list';
         } else {
-            throw new Exception("No metadata file found for subpanel: {$this->loadedSupbanelName}");
+            throw new Exception("No metadata file found for subpanel: {$this->loadedSubpanelName}");
         }
         $this->sidecarFile = "custom/" . $subpanelFile;
     }
@@ -177,8 +177,8 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
      */
     public function getNewViewDefs(array $viewDefs)
     {
-        if (isset($viewDefs[$this->_moduleName][$this->_viewClient]['view'][$this->loadedSupbanelName])) {
-            return $viewDefs[$this->_moduleName][$this->_viewClient]['view'][$this->loadedSupbanelName];
+        if (isset($viewDefs[$this->_moduleName][$this->_viewClient]['view'][$this->loadedSubpanelName])) {
+            return $viewDefs[$this->_moduleName][$this->_viewClient]['view'][$this->loadedSubpanelName];
         }
 
         return array();
