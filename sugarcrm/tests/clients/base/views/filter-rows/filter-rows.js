@@ -416,7 +416,6 @@ describe("BaseFilterRowsView", function() {
             expect(createFieldSpy.lastCall.args[1]).toEqual({
                 type: 'enum',
                 options: {
-                    '': '',
                     '$in': 'is',
                     '$not_in': 'is not'
                 },
