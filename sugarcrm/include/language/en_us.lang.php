@@ -2790,6 +2790,9 @@ $app_strings = array (
     'LBL_QUOTES_SHIP_TO'=>'Quotes Ship to',
     'LBL_QUOTES'=>'Quotes',
 
+    'LBL_FORECAST_WORKSHEETS' => 'Forecast Worksheets',
+    'LBL_FORECAST_WORKSHEET' => 'Forecast Worksheet',
+
     // Strings for Instance Picker Widget
     'LBL_INVITE' => 'Invite',
     'LBL_INVITED' => 'Invited',
