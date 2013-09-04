@@ -119,21 +119,27 @@
         this.paretoChart
             .stacked(!params.display_manager);
 
-        // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
-        // only so we can custom format the Y-Axis values
-        d3.select('#' + this.chartId)
-            .append('svg')
-            .datum(this.d3Data)
-            .transition().duration(500)
-            .call(this.paretoChart)
-            .selectAll('.nv-y.nv-axis .tick')
-            .select('text')
-            .text(function(d) {
-                return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
-            });
+        if (this.d3Data.data.length > 0) {
 
-        nv.utils.windowResize(this.paretoChart.update);
-        nv.utils.resizeOnPrint(this.paretoChart.update);
+            // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
+            // only so we can custom format the Y-Axis values
+            d3.select('#' + this.chartId)
+                .append('svg')
+                .datum(this.d3Data)
+                .transition().duration(500)
+                .call(this.paretoChart)
+                .selectAll('.nv-y.nv-axis .tick')
+                .select('text')
+                .text(function(d) {
+                    return App.user.get('preferences').currency_symbol + d3.format(',.2s')(d);
+                });
+
+            nv.utils.windowResize(this.paretoChart.update);
+            nv.utils.resizeOnPrint(this.paretoChart.update);
+        } else {
+            this.$('.nv-chart').toggleClass('hide', true);
+            this.$('.block-footer').toggleClass('hide', false);
+        }
 
         this.trigger('chart:pareto:rendered');
     },
