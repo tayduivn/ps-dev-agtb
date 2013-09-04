@@ -120,7 +120,8 @@ class Currency extends SugarBean
      * @return float  currency  value in US Dollars from conversion
      */
     function convertToBase($amount, $precision = 6) {
-        return SugarCurrency::convertWithRate($amount, $this->conversion_rate, 1.0, $precision);
+        $amount = ($amount == null) ? 0 : $amount;
+        return SugarCurrency::convertWithRate(str_replace($this->symbol, '', $amount), $this->conversion_rate, 1.0, $precision);
     }
 
     /**
@@ -131,7 +132,8 @@ class Currency extends SugarBean
      * @return float  currency  value from US Dollar conversion
      */
     function convertFromBase($amount, $precision = 6) {
-        return SugarCurrency::convertWithRate($amount, 1.0, $this->conversion_rate, $precision);
+        $amount = ($amount == null) ? 0 : $amount;
+        return SugarCurrency::convertWithRate(str_replace($this->symbol, '', $amount), 1.0, $this->conversion_rate, $precision);
     }
 
 
