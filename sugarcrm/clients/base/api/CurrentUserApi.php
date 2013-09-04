@@ -206,7 +206,8 @@ class CurrentUserApi extends SugarApi
     public function shouldShowWizard()
     {
         $current_user = $this->getUserBean();
-        return !filter_var($current_user->is_instance_configured, FILTER_VALIDATE_BOOLEAN);
+        $isInstanceConfigured = $current_user->getPreference('ut');
+        return !filter_var($isInstanceConfigured, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
