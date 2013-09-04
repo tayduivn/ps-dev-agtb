@@ -75,7 +75,7 @@
         var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
-        if (this.defaultOnUndefined && _.isUndefined(this.model.get(this.name))) {
+        if (this.defaultOnUndefined && !this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))) {
             var defaultValue = _.first(optionsKeys);
             if (defaultValue) {
                 this.model.set(this.name, defaultValue);
