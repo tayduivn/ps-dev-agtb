@@ -34,7 +34,7 @@ describe('Notifications', function () {
 
             expect(view.delay / 60 / 1000).toBe(view._defaultOptions.delay);
             expect(view.limit).toBe(view._defaultOptions.limit);
-            expect(view.typeCss).toBe(view._defaultOptions.type_css);
+            expect(view.levelCss).toBe(view._defaultOptions.level_css);
         });
 
         it('should initialize collection options with default values', function () {
@@ -54,7 +54,7 @@ describe('Notifications', function () {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'type']
+                fields: ['date_entered', 'id', 'name', 'level']
             });
         });
     });
@@ -63,7 +63,7 @@ describe('Notifications', function () {
         var app, view, customOptions = {
             delay: 10,
             limit: 8,
-            type_css: {
+            level_css: {
                 alert: 'cstm-label-alert',
                 information: 'cstm-label-info',
                 other: 'cstm-label-inverse',
@@ -94,7 +94,7 @@ describe('Notifications', function () {
 
             expect(view.delay / 60 / 1000).toBe(customOptions.delay);
             expect(view.limit).toBe(customOptions.limit);
-            expect(view.typeCss).toEqual(customOptions.type_css);
+            expect(view.levelCss).toEqual(customOptions.level_css);
         });
 
         it('should initialize collection options with metadata overridden values', function () {
@@ -114,7 +114,7 @@ describe('Notifications', function () {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'type']
+                fields: ['date_entered', 'id', 'name', 'level']
             });
         });
     });
@@ -254,23 +254,23 @@ describe('Notifications', function () {
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve type as a label for non-existent type', function () {
-            var appList, label, type;
+        it('should retrieve level as a label for non-existent level', function () {
+            var appList, label, level;
 
             appList = sinon.collection.stub(app.lang, 'getAppListStrings', function () {
                 return {};
             });
 
-            type = 'non-existent';
-            label = view.getTypeLabel(type);
+            level = 'non-existent';
+            label = view.getLevelLabel(level);
 
             expect(appList).toHaveBeenCalledOnce();
-            expect(label).toBe(type);
+            expect(label).toBe(level);
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve matching label for existent type', function () {
-            var appList, label, type;
+        it('should retrieve matching label for existent level', function () {
+            var appList, label, level;
 
             appList = sinon.collection.stub(app.lang, 'getAppListStrings', function () {
                 return {
@@ -278,29 +278,29 @@ describe('Notifications', function () {
                 };
             });
 
-            type = 'alert';
-            label = view.getTypeLabel(type);
+            level = 'alert';
+            label = view.getLevelLabel(level);
 
             expect(appList).toHaveBeenCalledOnce();
             expect(label).toBe('Alert');
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve an empty string for non-existent type', function () {
-            view.typeCss = {};
+        it('should retrieve an empty string for non-existent level', function () {
+            view.levelCss = {};
 
-            var css = view.getTypeCss('non-existent');
+            var css = view.getLevelCss('non-existent');
 
             expect(css).toBe('');
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve a css class for existent type', function () {
-            view.typeCss = {
+        it('should retrieve a css class for existent level', function () {
+            view.levelCss = {
                 alert: 'label-important'
             };
 
-            var css = view.getTypeCss('alert');
+            var css = view.getLevelCss('alert');
 
             expect(css).toBe('label-important');
         });
