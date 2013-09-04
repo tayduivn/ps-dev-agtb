@@ -150,7 +150,7 @@
         if (!_.isUndefined(this.context.parent) && !_.isNull(this.context.parent)) {
             this.context.parent.off(null, null, this);
         }
-        app.routing.offBefore(null, null, this);
+        app.routing.offBefore('route', this.beforeRouteHandler, this);
         $(window).off("beforeunload." + this.worksheetType);
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: '_dispose'});
     },
@@ -288,10 +288,7 @@
                     }
                 }, this);
 
-                app.routing.before('route', function() {
-                    var ret = this.showNavigationMessage('router');
-                    this.processNavigationMessageReturn(ret);
-                }, {}, this);
+                app.routing.before('route', this.beforeRouteHandler, {}, this);
 
                 $(window).bind("beforeunload." + this.worksheetType, _.bind(function() {
                     var ret = this.showNavigationMessage('window');
@@ -317,6 +314,12 @@
 
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
+
+    beforeRouteHandler: function() {
+        var ret = this.showNavigationMessage('router');
+        this.processNavigationMessageReturn(ret);
+    },
+
 
     /**
      * {@inheritdoc}

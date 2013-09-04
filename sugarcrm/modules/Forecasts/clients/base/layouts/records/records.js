@@ -118,10 +118,6 @@
             this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
                 this.commitForecast(user, worksheet_type, forecast_totals);
             }, this);
-
-            this.context.on('button:settings_button:click', function() {
-                this.openConfigDrawer();
-            }, this);
         }
     },
 
@@ -135,14 +131,10 @@
         app.drawer.open({
             layout: 'config',
             context: {
-                inDrawer: true
+                create: true,
+                module: 'Forecasts'
             }
-        }, _.bind(function(hasChanged, data) {
-            if(hasChanged && this.context) {
-                // Now that we've reset the metadata with any new changes, let other models know
-                this.context.trigger('forecasts:metadata:changed', data);
-            }
-        },this));
+        });
     },
 
     /**

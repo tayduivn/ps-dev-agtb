@@ -174,23 +174,10 @@
             // getting the fresh model with correct config settings passed in as the param
             success: _.bind(function(model) {
                 // If we're inside a drawer and Forecasts is setup and this isn't the first time, otherwise refresh
-                if(this.context && this.context.get('inDrawer') && !firstTime) {
-                    // build an object based on the metadata structure
-                    var updatedMetadata = {
-                        modules: {
-                            Forecasts: {
-                                config: model.toJSON()
-                            }
-                        }
-                    };
-
+                if(app.drawer && !firstTime) {
                     this.showSavedConfirmation();
-
-                    // set Forecasts config to new metadata set in config
-                    app.metadata.getModule('Forecasts').config = model.toJSON();
-
                     // close the drawer and return to Forecasts
-                    app.drawer.close(true, model.toJSON());
+                    app.drawer.close();
                     // ping the server to reload the metadata since it changed
                     app.api.call("read", app.api.buildURL('ping'));
                 } else {
@@ -199,11 +186,15 @@
 
                     // only navigate after save api call has returned
                     // have to do it this way because if we're already on #Forecasts it will not reload by setting
-
-                    this.showSavedConfirmation(function() {
+                    app.drawer.close();
+                    if(app.controller.context.get("module") == "Forecasts") {
+                        this.showSavedConfirmation(function() {
                             window.location = '#Forecasts';
                             window.location.reload();
-                    });
+                        });
+                    } else {
+                        this.showSavedConfirmation();
+                    }
                 }
 
             }, this)
@@ -212,7 +203,7 @@
 
     /**
      * show the saved confirmation alert
-     * @param {Object|Undefined} onClose the function fired upon closing.
+     * @param {Object|Undefined} [onClose] the function fired upon closing.
      */
     showSavedConfirmation: function(onClose) {
         onClose = onClose || function() {};
@@ -234,12 +225,15 @@
      */
     cancelConfig: function() {
         // If we're inside a drawer and Forecasts is setup
-        if(this.context.get('inDrawer') && this.context.get('model').get('is_setup')) {
+        if (app.drawer) {
             // close the drawer
-            app.drawer.close();
-        } else {
-            // otherwise go back to wherever you were before
-            app.router.goBack();
+            app.drawer.close(this.context);
+        }
+        if (this.context.get('model').get('is_setup') == 0) {
+            // if we are on forecast, redirect back to home, if we are on admin, it works fine because of the bwc module
+            if (app.controller.context.get('module') == 'Forecasts') {
+                app.router.navigate('Home', {trigger: true});
+            }
         }
     }
 })

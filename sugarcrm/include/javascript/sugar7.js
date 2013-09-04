@@ -227,10 +227,20 @@
                 name: 'config',
                 route: ':module/config',
                 callback: function(module) {
-                    app.controller.loadView({
-                        module: module,
-                        layout: 'config'
-                    });
+
+                    // figure out where we need to go back to on cancel
+                    var previousModule = app.controller.context.get("module");
+
+                    app.drawer.open({
+                        layout: 'config',
+                        context: {
+                            module: module,
+                            create: true
+                        }
+                    }, _.bind(function(context, model) {
+                        var route = app.router.buildRoute(previousModule);
+                        app.router.navigate(route, {replace: true});
+                    }, this));
                 }
             },
             {
