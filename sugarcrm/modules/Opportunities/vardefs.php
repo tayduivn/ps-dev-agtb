@@ -403,6 +403,15 @@ $dictionary['Opportunity'] = array(
             ),
             'vname' => 'LBL_CONTACTS',
         ),
+        'contact_role' => array(
+            'name' => 'contact_role',
+            'type' => 'enum',
+            'source' => 'non-db',
+            'vname' => 'LBL_OPPORTUNITY_ROLE',
+            'options' => 'opportunity_relationship_type_dom',
+            'link' => 'contacts',
+            'rname_link' => 'contact_role',
+        ),
         'tasks' => array(
             'name' => 'tasks',
             'type' => 'link',

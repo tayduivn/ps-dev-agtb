@@ -745,6 +745,7 @@ $dictionary['User'] = array(
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
         /* to support Meetings SubPanels */
+        // Deprecated: Use rname_link instead
         'c_accept_status_fields' => array(
             'name' => 'c_accept_status_fields',
             'rname' => 'id',
@@ -760,6 +761,7 @@ $dictionary['User'] = array(
             'importable' => 'false',
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
+        // Deprecated: Use rname_link instead
         'm_accept_status_fields' => array(
             'name' => 'm_accept_status_fields',
             'rname' => 'id',
@@ -775,6 +777,7 @@ $dictionary['User'] = array(
             'importable' => 'false',
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
+        // Deprecated: Use rname_link instead
         'accept_status_id' => array(
             'name' => 'accept_status_id',
             'type' => 'varchar',
@@ -783,6 +786,7 @@ $dictionary['User'] = array(
             'importable' => 'false',
         	'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
+        // Deprecated: Use rname_link instead
         'accept_status_name' => array(
             'name' => 'accept_status_name',
             'type' => 'enum',
@@ -792,6 +796,30 @@ $dictionary['User'] = array(
             'massupdate' => false,
             'studio' => array('listview' => false, 'searchview'=>false, 'formula' => false),
         ) ,
+        'accept_status_calls' => array(
+            'massupdate' => false,
+            'name' => 'accept_status_calls',
+            'type' => 'enum',
+            'studio' => 'false',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'importable' => 'false',
+            'link' => 'calls',
+            'rname_link' => 'accept_status',
+        ),
+        'accept_status_meetings' => array(
+            'massupdate' => false,
+            'name' => 'accept_status_meetings',
+            'type' => 'enum',
+            'studio' => 'false',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'importable' => 'false',
+            'link' => 'meetings',
+            'rname_link' => 'accept_status',
+        ),
         'prospect_lists' => array(
             'name' => 'prospect_lists',
             'type' => 'link',

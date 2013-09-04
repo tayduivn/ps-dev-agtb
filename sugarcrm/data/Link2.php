@@ -433,6 +433,8 @@ class Link2 {
             $seed = BeanFactory::getBean($rel_module);
             if($seed !== FALSE)
             {
+                // Deprecated: This format of relationship fields will be removed
+                // please use the rname_link format instead
                 $relationshipFields = $this->getRelationshipFieldMapping($seed);
                 if (!empty($this->def['rel_fields']))
                 {
@@ -448,6 +450,15 @@ class Link2 {
                                 break;
                             }
                         }
+                    }
+                }
+
+                if ($seed && is_array($seed->field_defs)) {
+                    foreach ($seed->field_defs as $fieldName => $def) {
+                        if (empty($def['rname_link'])) {
+                            continue;
+                        }
+                        $relationshipFields[$def['rname_link']] = $fieldName;
                     }
                 }
             }

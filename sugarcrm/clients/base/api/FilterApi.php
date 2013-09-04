@@ -349,13 +349,7 @@ class FilterApi extends SugarApi
         //
     }
 
-    protected function runQuery(
-        ServiceBase $api,
-        array $args,
-        SugarQuery $q,
-        array $options,
-        SugarBean $seed
-    ) {
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed) {
         $seed->call_custom_logic("before_filter", array($q, $options));
         $GLOBALS['log']->info("Filter SQL: " . $q->compileSql());
         $idRows = $q->execute();
@@ -377,15 +371,22 @@ class FilterApi extends SugarApi
                     $getBeanOptions['deleted'] = false;
                 }
                 $bean = BeanFactory::getBean($options['module'], $row['id'],$getBeanOptions);
+
+                // If we are filtering on a link and there is link data we need to populate the bean manually
+                if (!empty($options['linkDataFields']) && is_array($options['linkDataFields'])) {
+                    foreach ($options['linkDataFields'] as $fieldName) {
+                        if (!empty($row[$fieldName])) {
+                            $bean->$fieldName = $row[$fieldName];
+                        }
+                    }
+                }
             } else {
                 // Fetch a fresh "bean", even if $seed is a mock.
                 $bean = $seed->getCleanCopy();
                 // convert will happen inside populateFromRow
                 $bean->loadFromRow($row, true);
                 $this->populateRelatedFields($bean, $row);
-                if (!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent(
-                )
-                ) {
+                if (!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent()) {
                     $child_info[$row['parent_type']][] = array(
                         'child_id' => $bean->id,
                         'parent_id' => $bean->parent_id,
