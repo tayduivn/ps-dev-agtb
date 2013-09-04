@@ -295,6 +295,16 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
 		'vname'=>'LBL_CONTACTS',
   ),
+//BEGIN SUGARCRM flav=pro ONLY
+  'quotes' =>
+  array(
+      'name' => 'quotes',
+      'type' => 'link',
+      'relationship' => 'quote_calls',
+      'source'=>'non-db',
+      'vname'=>'LBL_QUOTES',
+  ),    
+//END SUGARCRM flav=pro ONLY
   'users' =>
   array (
   	'name' => 'users',
