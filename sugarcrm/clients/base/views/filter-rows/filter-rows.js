@@ -59,7 +59,8 @@
         }
         this.fieldList = this.getFilterableFields(moduleName);
 
-        this.filterFields = {};
+        // This is the Select2 data for the enum field. 1st value must be blank.
+        this.filterFields = {"": ""};
         this.moduleName = moduleName;
 
         _.each(this.fieldList, function(value, key) {
@@ -375,7 +376,7 @@
 
         // Get operators for this filter type
         var fieldType = this.fieldTypeMap[this.fieldList[fieldName].type] || this.fieldList[fieldName].type,
-            payload = {},
+            payload = {"": ""},
             types = _.keys(this.filterOperatorMap[fieldType]);
 
         $fieldWrapper.removeClass('hide').empty();
