@@ -144,6 +144,12 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $defaultSubpanelFile = "modules/{$this->_moduleName}/clients/base/views/subpanel-list/subpanel-list.php";
         $this->loadedSupbanelName = $this->sidecarSubpanelName;
 
+        $studioModule = new StudioModule($this->_moduleName);
+        $defaultTemplate = $studioModule->getType();
+        $defaultTemplateSubpanelFile = "include/SugarObjects/templates/{$defaultTemplate}/clients/base/views/subpanel-list/subpanel-list.php";
+
+        $baseTemplateSubpanelFile = "include/SugarObjects/templates/basic/clients/base/views/subpanel-list/subpanel-list.php";
+
         // using includes because require_once causes an empty array
         if (file_exists('custom/' . $subpanelFile)) {
             $this->loadedSubpanelFileName = 'custom/' . $subpanelFile;
@@ -151,6 +157,12 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $this->loadedSubpanelFileName = $subpanelFile;
         } elseif (file_exists($defaultSubpanelFile)) {
             $this->loadedSubpanelFileName = $defaultSubpanelFile;
+            $this->loadedSupbanelName = 'subpanel-list';
+        } elseif (file_exists($defaultTemplateSubpanelFile)) {
+            $this->loadedSubpanelFileName = $defaultTemplateSubpanelFile;
+            $this->loadedSupbanelName = 'subpanel-list';
+        } elseif (file_exists($baseTemplateSubpanelFile)) {
+            $this->loadedSubpanelFileName = $baseTemplateSubpanelFile;
             $this->loadedSupbanelName = 'subpanel-list';
         } else {
             throw new Exception("No metadata file found for subpanel: {$this->loadedSupbanelName}");
