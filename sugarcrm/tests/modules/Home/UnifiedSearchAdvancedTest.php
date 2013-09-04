@@ -37,6 +37,8 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('Does not test things still in use');
+        /*
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $unid = uniqid();
         $contact = new Contact();
@@ -61,12 +63,13 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         	unlink('custom/modules/unified_search_modules_display.php');
         	SugarAutoLoader::delFromMap('custom/modules/unified_search_modules_display.php', false);
         }
+        */
 
+    }
 
-	}
-
-	public function tearDown()
-	{
+    public function tearDown()
+    {
+        /*
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact->id}'");
         unset($this->_contact);
 
@@ -102,7 +105,8 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         {
             unset($_REQUEST['enabled_modules']);
         }
-	}
+        */
+    }
 
 	public function testSearchByFirstName()
 	{
