@@ -229,7 +229,14 @@
                 callback: function(module) {
 
                     // figure out where we need to go back to on cancel
-                    var previousModule = app.controller.context.get("module");
+                    var previousModule = app.controller.context.get("module"),
+                        previousLayout = app.controller.context.get("layout");
+                    if (!(previousModule === module && previousLayout === "records")) {
+                        app.controller.loadView({
+                            module: module,
+                            layout: "records"
+                        });
+                    }
 
                     app.drawer.open({
                         layout: 'config',
@@ -238,8 +245,10 @@
                             create: true
                         }
                     }, _.bind(function(context, model) {
-                        var route = app.router.buildRoute(previousModule);
-                        app.router.navigate(route, {replace: true});
+                        var module = context.get("module") || model.module,
+                            route = app.router.buildRoute(module);
+
+                        app.router.navigate(route, {trigger: (model instanceof Backbone.Model)});
                     }, this));
                 }
             },

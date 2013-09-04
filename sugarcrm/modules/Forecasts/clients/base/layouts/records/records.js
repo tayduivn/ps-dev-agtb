@@ -128,13 +128,15 @@
         // open a drawer for the config layout, pass in our current config
         // in drawer is used in case user navigates to the config from Admin
         // and it isnt in a drawer, it redirects different if they save/cancel
-        app.drawer.open({
-            layout: 'config',
-            context: {
-                create: true,
-                module: 'Forecasts'
-            }
-        });
+        if(!app.drawer) {
+            app.drawer.open({
+                layout: 'config',
+                context: {
+                    create: true,
+                    module: 'Forecasts'
+                }
+            });
+        }
     },
 
     /**

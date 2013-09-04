@@ -11,13 +11,13 @@
  * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
  ********************************************************************************/
 
-describe("forecasts_view_forecastsConfigHeaderButtons", function() {
+describe("Forecasts.Base.View.forecastsConfigHeaderButtons", function() {
     var app, view;
 
     beforeEach(function() {
         app = SugarTest.app;
         app.router = {
-            goBack: sinon.stub()
+            navigate: sinon.stub()
         }
         app.drawer = {
             close: sinon.stub()
@@ -43,16 +43,39 @@ describe("forecasts_view_forecastsConfigHeaderButtons", function() {
         app = null;
     });
 
-    describe('cancelConfig()', function() {
+    describe('cancelConfig', function() {
         it('should call app.drawer.close', function() {
             view.cancelConfig();
             expect(app.drawer.close).toHaveBeenCalled();
         });
 
-        it('should call app.router.goBack()', function() {
-            view.context.get('model').set({ is_setup: false });
-            view.cancelConfig();
-            expect(app.router.goBack).toHaveBeenCalled();
+        describe('forecast is setup', function() {
+            it('should not call app.router.navigate', function() {
+                view.cancelConfig();
+                expect(app.router.navigate).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('forecast is not setup', function() {
+            beforeEach(function() {
+                view.context.get('model').set({ is_setup: false });
+            });
+
+            afterEach(function() {
+                view.context.get('model').set({ is_setup: true });
+            });
+
+            it('and controller.context module is not Forecast, app.router.navigate should not be called', function() {
+                view.cancelConfig();
+                expect(app.router.navigate).not.toHaveBeenCalled();
+            });
+
+            it('and controller.context module is Forecast, app.router.navigate should be called', function() {
+                app.controller.context.set('module', 'Forecasts');
+                view.cancelConfig();
+                expect(app.router.navigate).toHaveBeenCalled();
+                app.controller.context.unset('module');
+            });
         });
     });
 });
