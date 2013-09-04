@@ -656,3 +656,17 @@ hr.soften {
 @-moz-document url-prefix() {
   .icon-spin { height: .9em; }
 }
+
+// Removed the gap between the top nav and modules in the dashboard.
+#content .row-fluid .dashboard.main-pane  {
+  top: 0;
+  padding-top: 0;
+}
+
+
+@media (max-width: 768px) {
+
+  .row-fluid .main-pane.span8 {
+    padding-top: 81px !important; 
+  }
+}
