@@ -121,6 +121,7 @@ class RepairAndClear
                 $this->clearPDFFontCache();
                 //END SUGARCRM flav=pro ONLY
                 $this->rebuildExtensions();
+                $this->rebuildFileMap();     
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
                 //BEGIN SUGARCRM flav=ent ONLY
@@ -258,6 +259,18 @@ class RepairAndClear
             unset($_SESSION['rebuild_extensions']);
         }
 	}
+
+     /**
+     * rebuild mapping file
+     */
+    public function rebuildFileMap()
+    {
+        global $mod_strings;
+        if ($this->show_output) {
+            echo "<h3>{$mod_strings['LBL_QR_REBUILDFILEMAP']}</h3>";
+        }
+        SugarAutoLoader::buildCache();
+    }
 
 	//Cache Clear Methods
 	public function clearSmarty()
