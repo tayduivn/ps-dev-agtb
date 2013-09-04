@@ -4,13 +4,11 @@
     className: 'nav pull-right megamenu',
 
     // FIXME: dropdown plugin should not be needed when SC-1214 gets fixed
-    plugins: ['dropdown', 'timeago', 'ellipsis_inline','tooltip'],
+    plugins: ['dropdown', 'timeago', 'ellipsis_inline', 'tooltip'],
 
     // FIXME: open event should not be needed when SC-1214 gets fixed
     events: {
-        'click [data-action=open]': 'open',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click [data-action=open]': 'open'
     },
 
     /**
@@ -53,7 +51,7 @@
     },
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     initialize: function(options) {
         options.module = 'Notifications';
@@ -157,7 +155,7 @@
      */
     startPulling: function() {
         if (!_.isNull(this._intervalId)) {
-            return;
+            return this;
         }
 
         var self = this;
@@ -197,7 +195,7 @@
      */
     pull: function() {
         if (this.disposed || this.isOpened()) {
-            return;
+            return this;
         }
 
         var self = this;
@@ -205,7 +203,7 @@
         this.collection.fetch({
             success: function() {
                 if (self.disposed || self.isOpened()) {
-                    return;
+                    return this;
                 }
 
                 self.render();
@@ -246,7 +244,7 @@
      * - levelCss: Model level matching CSS class.
      * - levelLabel: Model level label.
      *
-     * @inheritdoc
+     * {@inheritDoc}
      */
     _renderHtml: function() {
         if (!app.api.isAuthenticated() || app.config.appStatus === 'offline') {
@@ -265,19 +263,12 @@
 
         app.view.View.prototype._renderHtml.call(this);
     },
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
 
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
-    },
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     _dispose: function() {
         this.stopPulling();
-        this.collection.off();
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })
