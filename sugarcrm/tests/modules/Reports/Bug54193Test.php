@@ -36,115 +36,104 @@ require_once 'include/generic/SugarWidgets/SugarWidgetReportField.php';
 class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
 {
     /** @var Currency */
-    protected $currency;
-
-    /** @var Opportunity */
-    protected $opportunity1;
-
-    /** @var Opportunity */
-    protected $opportunity2;
-
-    /** @var Opportunity */
-    protected $opportunity3;
-
-    /** @var Report */
-    protected $report;
+    protected static $currency;
 
     /** @var DeployedRelationships */
-    protected $relationships;
+    protected static $relationships;
 
     /** @var OneToOneRelationship */
-    protected $relationship;
+    protected static $relationship;
 
     /** @var DynamicField  */
-    protected $df;
+    protected static $df;
 
     /** @var TemplateCurrency */
-    protected $field;
+    protected static $field;
 
     /** @var string */
-    protected $module_name = 'Opportunities';
+    protected static $module_name = 'Opportunities';
 
     /** @var string */
-    protected $bean_name = 'Opportunity';
+    protected static $bean_name = 'Opportunity';
 
     /** @var string */
-    protected $custom_field_name = 'currency_54193_c';
+    protected static $custom_field_name = 'currency_54193_c';
 
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
      */
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user', array(true, 1));
-        SugarTestHelper::setUp('mod_strings', array($this->module_name));
+        SugarTestHelper::setUp('mod_strings', array(self::$module_name));
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
 
-        $this->createRelationship();
+        self::createRelationship();
 
-        $this->createCurrency();
+        self::createCurrency();
 
-        $this->createCustomField();
+        self::createCustomField();
 
         // create opportunities
-        $this->opportunity1 = $this->createOpportunity('O1', -99, 10, 20);
-        $this->opportunity2 = $this->createOpportunity('O2', $this->currency->id, 15, 22.5);
-        $this->opportunity3 = $this->createOpportunity('O3', $this->currency->id, 75, 75);
+        $opportunity1 = self::createOpportunity('O1', -99, 10, 20);
+        $opportunity2 = self::createOpportunity('O2', self::$currency->id, 15, 22.5);
+        $opportunity3 = self::createOpportunity('O3', self::$currency->id, 75, 75);
 
         /** @var Link2 $link */
-        $relation_name = $this->relationship->getName();
+        $relation_name = self::$relationship->getName();
 
         // create relationship O1 -> O2
-        $this->opportunity1->load_relationship($relation_name);
-        $link = $this->opportunity1->{$relation_name};
-        $link->add(array($this->opportunity2));
+        $opportunity1->load_relationship($relation_name);
+        $link = $opportunity1->{$relation_name};
+        $link->add(array($opportunity2));
 
         // create relationship O2 -> O3
-        $this->opportunity2->load_relationship($relation_name);
-        $link = $this->opportunity2->{$relation_name};
-        $link->add(array($this->opportunity3));
-
-        $this->createReport();
+        $opportunity2->load_relationship($relation_name);
+        $link = $opportunity2->{$relation_name};
+        $link->add(array($opportunity3));
     }
 
     /**
      * Tears down the fixture, for example, close a network connection.
      * This method is called after a test is executed.
      */
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
-        $this->df->deleteField($this->field);
+        self::$df->deleteField(self::$field);
 
         VardefManager::clearVardef();
-        VardefManager::refreshVardefs($this->module_name, $this->bean_name);
+        VardefManager::refreshVardefs(self::$module_name, self::$bean_name);
 
-        $this->relationships->delete($this->relationship->getName());
-        $this->relationships->save();
-        $this->relationships->build();
+        self::$relationships->delete(self::$relationship->getName());
+        self::$relationships->save();
+        self::$relationships->build();
 
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        $this->currency->mark_deleted($this->currency->id);
+        self::$currency->mark_deleted(self::$currency->id);
 
         SugarTestHelper::tearDown();
     }
 
     /**
-     * Check values in "total" row
+     * Tests system currency
+     *
+     * @group reports
      */
-    public function testSumOpportunityAmount()
+    public function testSystemCurrency()
     {
+        // updated tests but leaving Incomplete message intact
         $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $this->report->run_total_query();
-        $total = $this->report->get_summary_total_row();
+        global $current_user;
+        $current_user->setPreference('currency', -99);
 
-        $this->assertInternalType('array', $total);
-        $this->assertArrayHasKey('cells', $total);
-        $this->assertInternalType('array', $total['cells']);
-        $total = $total['cells'];
+        $report = $this->getReport();
+        $total = $this->getReportTotal($report);
+
+        $GLOBALS['log']->fatal(var_export($total, true));
 
         // Amount (US Dollar): $130 = $10 + 15€ + 75€
         $this->assertEquals('$130.00', $total[0]);
@@ -160,6 +149,34 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests custom currency
+     *
+     * @group reports
+     */
+    public function testCustomCurrency()
+    {
+        // updated tests but leaving Incomplete message intact
+        $this->markTestIncomplete('Needs to be fixed by FRM team.');
+        global $current_user;
+        $current_user->setPreference('currency', self::$currency->id);
+
+        $report = $this->getReport();
+        $total = $this->getReportTotal($report);
+
+        // Amount (US Dollar): €97.50 = $10 + 15€ + 75€
+        $this->assertEquals('€97.50', $total[0]);
+
+        // Custom field: €112.50 = $20 + 22.5€ + 75€
+        $this->assertEquals('€112.50', $total[1]);
+
+        // Amount (US Dollar) in related table: €90.00 = 15€ + 75€ + 0
+        $this->assertEquals('€90.00', $total[2]);
+
+        // Custom field in related table: €97.50 = 22.5€ + 75€ + 0
+        $this->assertEquals('€97.50', $total[3]);
+    }
+
+    /**
      * Creates new opportunity
      *
      * @param string $name
@@ -169,13 +186,13 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
      *
      * @return Opportunity
      */
-    protected function createOpportunity($name, $currency_id, $amount, $custom_value)
+    protected static function createOpportunity($name, $currency_id, $amount, $custom_value)
     {
         $opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $opportunity->name = $name;
         $opportunity->currency_id = $currency_id;
         $opportunity->amount = $amount;
-        $opportunity->{$this->custom_field_name} = $custom_value;
+        $opportunity->{self::$custom_field_name} = $custom_value;
         $opportunity->save();
         return $opportunity;
     }
@@ -183,24 +200,24 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Create new relationship between module and itself
      */
-    protected function createRelationship()
+    protected static function createRelationship()
     {
-        $this->relationships = new DeployedRelationships($this->module_name);
-        $this->relationship = RelationshipFactory::newRelationship(
+        self::$relationships = new DeployedRelationships(self::$module_name);
+        self::$relationship = RelationshipFactory::newRelationship(
             array(
-                'lhs_module'        => $this->module_name,
+                'lhs_module'        => self::$module_name,
                 'relationship_type' => 'one-to-many',
-                'rhs_module'        => $this->module_name
+                'rhs_module'        => self::$module_name
             )
         );
-        $this->relationships->add($this->relationship);
-        $this->relationships->save();
-        $this->relationships->build();
+        self::$relationships->add(self::$relationship);
+        self::$relationships->save();
+        self::$relationships->build();
         SugarTestHelper::setUp(
             'relation',
             array(
-                $this->module_name,
-                $this->module_name,
+                self::$module_name,
+                self::$module_name,
             )
         );
     }
@@ -208,42 +225,44 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Creates custom field of "currency" type
      */
-    protected function createCustomField()
+    protected static function createCustomField()
     {
         //create a new field for opportunities
-        $field = $this->field = get_widget('currency');
-        $field->id = $this->custom_field_name;
-        $field->name = $this->custom_field_name;
-        $field->label = 'LBL_' . strtoupper($this->custom_field_name);
+        $field = self::$field = get_widget('currency');
+        $field->id = self::$custom_field_name;
+        $field->name = self::$custom_field_name;
+        $field->label = 'LBL_' . strtoupper(self::$custom_field_name);
 
         //add field to metadata
-        $this->df = new DynamicField($this->bean_name);
-        $this->df->setup(new Opportunity());
-        $this->df->addFieldObject($field);
-        $this->df->buildCache($this->module_name);
+        self::$df = new DynamicField(self::$bean_name);
+        self::$df->setup(new Opportunity());
+        self::$df->addFieldObject($field);
+        self::$df->buildCache(self::$module_name);
 
         VardefManager::clearVardef();
-        VardefManager::refreshVardefs($this->module_name, $this->bean_name);
+        VardefManager::refreshVardefs(self::$module_name, self::$bean_name);
     }
 
     /**
      * Creates custom currency
      */
-    protected function createCurrency()
+    protected static function createCurrency()
     {
         //create new Currency
-        $this->currency = new Currency();
-        $this->currency->iso4217 = 'EUR';
-        $this->currency->conversion_rate = 0.75;
-        $this->currency->save();
+        self::$currency = new Currency();
+        self::$currency->iso4217 = 'EUR';
+        self::$currency->conversion_rate = 0.75;
+        self::$currency->save();
     }
 
     /**
      * Creates report for test
+     *
+     * @return Report
      */
-    protected function createReport()
+    protected function getReport()
     {
-        $relationship_name = $this->relationship->getName();
+        $relationship_name = self::$relationship->getName();
         $table_key = 'Opportunities:' . $relationship_name;
 
         $report_def = array(
@@ -253,7 +272,7 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
                     'table_key' => 'self',
                 ),
             ),
-            'module' => $this->module_name,
+            'module' => self::$module_name,
             'group_defs' => array(
                 array(
                     'name'            => 'date_closed',
@@ -271,7 +290,7 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
                     'table_key'      => 'self',
                 ),
                 array(
-                    'name'           => $this->custom_field_name,
+                    'name'           => self::$custom_field_name,
                     'field_type'     => 'currency',
                     'group_function' => 'sum',
                     'table_key'      => 'self',
@@ -283,7 +302,7 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
                     'table_key'      => $table_key,
                 ),
                 array(
-                    'name'           => $this->custom_field_name,
+                    'name'           => self::$custom_field_name,
                     'field_type'     => 'currency',
                     'group_function' => 'sum',
                     'table_key'      => $table_key,
@@ -293,12 +312,12 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
             'report_type' => 'summary',
             'full_table_list' => array(
                 'self' => array(
-                    'value'  => $this->module_name,
-                    'module' => $this->module_name,
+                    'value'  => self::$module_name,
+                    'module' => self::$module_name,
                 ),
                 $table_key => array(
-                    'value'    => $this->module_name,
-                    'module'   => $this->module_name,
+                    'value'    => self::$module_name,
+                    'module'   => self::$module_name,
                     'parent'   => 'self',
                     'optional' => true,
                     'link_def' => array(
@@ -312,7 +331,7 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
                 'Filter_1' => array(
                     'operator' => 'AND',
                     array(
-                        'name'           => $this->custom_field_name,
+                        'name'           => self::$custom_field_name,
                         'table_key'      => 'self',
                         'qualifier_name' => 'not_empty',
                     ),
@@ -320,6 +339,23 @@ class Bug54193Test extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
 
-        $this->report = new Report(json_encode($report_def));
+        return new Report(json_encode($report_def));
+    }
+
+    /**
+     * Returns total values of the report and makes basic assertions
+     *
+     * @param Report $report
+     * @return array
+     */
+    protected function getReportTotal(Report $report)
+    {
+        $report->run_total_query();
+        $total = $report->get_summary_total_row();
+
+        $this->assertInternalType('array', $total);
+        $this->assertArrayHasKey('cells', $total);
+        $this->assertInternalType('array', $total['cells']);
+        return $total['cells'];
     }
 }

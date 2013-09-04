@@ -18,7 +18,7 @@ $viewdefs['Notifications']['base']['view']['raw'] = array(
         array(
             'fields' => array(
                 array(
-                    'name' => 'type',
+                    'name' => 'level',
                     'type' => 'level',
                     'css_class' => 'level',
                 ),

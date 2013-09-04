@@ -489,10 +489,13 @@ class EditView
                        && isset($this->focus->field_defs[$name][ 'module' ])
                        && $this->focus->field_defs[$name][ 'module' ] == $this->returnModule)
                    {
-                       if (isset( $this->fieldDefs[$name]['id_name'])
+                       if ((isset( $this->fieldDefs[$name]['id_name'])
                            && !empty($this->returnRelationship)
                            && isset($this->focus->field_defs[$this->fieldDefs[$name]['id_name']]['relationship'])
                            && ($this->returnRelationship == $this->focus->field_defs[$this->fieldDefs[$name]['id_name']]['relationship']))
+                       || (!empty($this->fieldDefs[$name]['custom_module'])
+                               && !empty($this->focus->module_dir)
+                               && $this->focus->module_dir == $this->fieldDefs[$name]['custom_module']))
                        {
                            $this->fieldDefs[$name]['value'] =  $this->returnName ;
                            // set the hidden id field for this relate field to the correct value i.e., return_id

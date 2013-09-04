@@ -44,9 +44,9 @@
     _render: function () {
         app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render', platform: 'base'});
 
-        var type = this.model.get(this.name);
-        var typeCss = this._styleMapping[type] || this._styleMapping.default;
+        var level = this.model.get(this.name);
+        var levelCss = this._styleMapping[level] || this._styleMapping.default;
 
-        this.getFieldElement().addClass(typeCss);
+        this.getFieldElement().addClass(levelCss);
     }
 })
