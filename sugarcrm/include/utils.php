@@ -132,7 +132,6 @@ function make_sugar_config(&$sugar_config)
     'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
     'default_user_name' => empty($default_user_name) ? '' : $default_user_name,
     'disable_export' => empty($disable_export) ? false : $disable_export,
-    'disable_persistent_connections' => empty($disable_persistent_connections) ? false : $disable_persistent_connections,
     'display_email_template_variable_chooser' => empty($display_email_template_variable_chooser) ? false : $display_email_template_variable_chooser,
     'display_inbound_email_buttons' => empty($display_inbound_email_buttons) ? false : $display_inbound_email_buttons,
     'history_max_viewed' => empty($history_max_viewed) ? 50 : $history_max_viewed,

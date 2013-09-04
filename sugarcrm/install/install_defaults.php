@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-   
+
 
        $installer_defaults = array(
             'language' => 'en_us',
@@ -73,7 +73,6 @@
             //BEGIN SUGARCRM flav!=com ONLY
             'site_default_theme' => 'RacerX',
             //END SUGARCRM flav!=com ONLY
-            'disable_persistent_connections' => 'false',
             'default_language' => 'en_us',
             'default_charset' => 'UTF-8',
             'default_currency_name' => 'US Dollars',
@@ -92,5 +91,5 @@
             'dbUSRData' => 'same',
 
         );
-        
+
 ?>
