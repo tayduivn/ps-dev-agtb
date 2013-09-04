@@ -39,6 +39,7 @@ class Bug62906Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unset($_SESSION['ACL']);
+        ACLField::$acl_fields = array();
 
         SugarTestHelper::tearDown();
 
@@ -75,6 +76,8 @@ class Bug62906Test extends Sugar_PHPUnit_Framework_TestCase
         $listview = new ListViewMock();
 
         // setting acl values
+        ACLField::$acl_fields[$current_user->id]['Tasks']['parent_id'] = $parentIDPermission;
+        ACLField::$acl_fields[$current_user->id]['Tasks']['parent_type'] = $parentTypePermission;
         $_SESSION['ACL'][$current_user->id]['Tasks']['fields']['parent_id'] = $parentIDPermission;
         $_SESSION['ACL'][$current_user->id]['Tasks']['fields']['parent_type'] = $parentTypePermission;
 
