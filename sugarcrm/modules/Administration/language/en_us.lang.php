@@ -105,6 +105,7 @@ $mod_strings = array (
     'ERROR_VALIDATION_EXPIRED'=> "Error: Your validation key expired ",
     'ERROR_VALIDATION_EXPIRED2' => " day(s) ago.   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a> in the Admin screen to enter your new validation key.  If you do not enter a new validation key within 7 days of your validation key expiration, you will no longer be able to log into this application.",
     'ERROR_VERSION_INCOMPATIBLE' => 'The uploaded file is not compatible with this version of Sugar: ',
+    'ERROR_VERSION_MISSING' => 'Manifest file must specify an acceptable version of Sugar',
 
     'FATAL_LICENSE_ALTERED' => "Your license has been altered since the last time you validated it. <br> Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",
     'FATAL_LICENSE_EXPIRED'=> "Fatal: Your license expired more than 7 days ago",
