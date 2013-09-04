@@ -220,6 +220,20 @@ class SugarFieldDatetime extends SugarFieldBase {
                         gmmktime(23, 59, 59, $dateParsed[1]['month'], $dateParsed[1]['day'], $dateParsed[1]['year'])
                     );
                     break;
+                case '$starts':
+                case '$equals':
+                    $value = array();
+                    $value[0] = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(0, 0, 0, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+
+                    $value[1] = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+                    $where->between($fieldName, $this->apiUnformat($value[0]), $this->apiUnformat($value[1]), $bean);
+                    return false;
             }
         }
 
