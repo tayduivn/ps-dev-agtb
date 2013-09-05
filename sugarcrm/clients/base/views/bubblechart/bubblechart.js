@@ -164,6 +164,16 @@
     },
 
     /**
+     * {@inheritDoc}
+     */
+    render: function() {
+        app.view.invokeParent(this, {type: 'view', name: 'view', method: 'render'});
+        if(this.chart && !_.isEmpty(this.dataset)) {
+            this.updateChart();
+        }
+    },
+
+    /**
      * Request data from REST endpoint, evaluate result and trigger data change event
      */
     loadData: function (options) {
