@@ -1,5 +1,11 @@
 <?php
 
-$layout = MetaDataManager::getLayout('GenericLayout', array('type' => 'preview-activitystream'));
-$layout->push(array("view" => "activitystream-bottom"));
-$viewdefs['base']['layout']['preview-activitystream'] = $layout->getLayout();
+$viewdefs['base']['layout']['preview-activitystream'] = array(
+    'components' => array(
+        array(
+            'view' => 'activitystream-bottom',
+        ),
+    ),
+    'type' => 'preview-activitystream',
+    'span' => 12,
+);
