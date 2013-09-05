@@ -1,7 +1,22 @@
 ({
     extendsFrom: 'ListView',
     plugins: ['Dashlet'],
-    type : "list",
+    type: 'list',
+
+    /**
+     * {@inheritDoc}
+     *
+     * Append lastStateID on metadata in order to active user cache.
+     */
+    initialize: function(options) {
+        options.meta = _.extend({}, options.meta, {
+            last_state: {
+                id: 'dashable-list'
+            }
+        });
+        this._super('initialize', [options]);
+    },
+
     initDashlet: function (view) {
         var module = this.context.get("module"),
             filterDef = [],
