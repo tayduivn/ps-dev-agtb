@@ -14,6 +14,9 @@
 $dictionary['ProductCategory'] = array(
     'favorites' => false,
     'table' => 'product_categories',
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => true,
     'comment' => 'Used to categorize products in the product catalog',
     'fields' => array(
         'id' =>
@@ -130,6 +133,8 @@ $dictionary['ProductCategory'] = array(
             'len' => '50',
             'comment' => 'Name of the product category',
             'importable' => 'required',
+            'unified_search' => true,
+            'full_text_search' => array('boost' => 3),
         ),
         'list_order' =>
         array(
