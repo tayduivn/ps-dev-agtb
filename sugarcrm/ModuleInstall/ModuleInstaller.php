@@ -2422,6 +2422,8 @@ private function dir_file_count($path){
      */
     public static function getBaseConfig()
     {
+        global $sugar_config;
+
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'dev',
@@ -2448,6 +2450,7 @@ private function dir_file_count($path){
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',
+            'timeout' => isset($sugar_config['api']['timeout']) ? $sugar_config['api']['timeout'] : 30,
             'metadataTypes' => array(
                 "currencies",
                 "full_module_list",

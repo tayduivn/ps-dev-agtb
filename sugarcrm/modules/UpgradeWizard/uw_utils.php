@@ -3924,7 +3924,10 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		   {
 		      logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
 		   }
-		   $sugar_config[$key] = $value;
+		   // Add config_si values to the global sugar_config array so that they
+		   // are available on install, since merging SI happens after capturing
+		   // sugar_config and only saves to file, not to memory
+		   $GLOBALS['sugar_config'][$key] = $sugar_config[$key] = $value;
 		   $modified = true;
 		}
 	}
