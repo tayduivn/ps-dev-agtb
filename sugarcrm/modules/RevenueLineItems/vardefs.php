@@ -657,14 +657,6 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
         ),
-        'contracts' => array(
-            'name' => 'contracts',
-            'type' => 'link',
-            'vname' => 'LBL_CONTRACTS',
-            'relationship' => 'contracts_revenuelineitems',
-            'link_type' => 'one',
-            'source' => 'non-db',
-        ),
         // Added for Meta-Data framework
         'currency_name' => array(
             'name' => 'currency_name',
