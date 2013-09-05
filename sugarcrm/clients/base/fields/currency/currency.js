@@ -30,9 +30,7 @@
      * @type {Object}
      */
     'events': {
-        'click': 'updateCss',
-        'blur input.input-large': 'handleInputBlur',
-        'keyup input.input-large': 'handleInputChange'
+        'click': 'updateCss'
     },
     /**
      * @type {String}
@@ -40,17 +38,17 @@
      */
     transactionValue: '',
     /**
-     * @var {Object}
+     * @type {Object}
      * reference to the currency dropdown field object
      */
     _currencyField: null,
     /**
-     * @var {Boolean}
+     * @type {Boolean}
      * tracks whether the currency dropdown field is disabled or not
      */
     _currencyFieldDisabled: false,
     /**
-     * @var {Boolean}
+     * @type {Boolean}
      * whether or not the currency dropdown is hidden from view
      */
     hideCurrencyDropdown: false,
@@ -88,11 +86,14 @@
      * @private
      */
     _render: function() {
+        if (this._currencyField) {
+            this._currencyField.dispose();
+            this._currencyField = null;
+        }
         app.view.Field.prototype._render.call(this);
         if (this.action === 'edit' || this.action === 'disabled') {
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
-            this.$el.find('div.select2-container').css('min-width','8px');
-            this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
+            this.$el.find('div.select2-container').css('min-width', '8px');
             this.getCurrencyField().render();
         }
         return this;
@@ -102,7 +103,13 @@
      * When currency changes, we need to make appropriate silent changes to the base rate.
      */
     bindDataChange: function() {
-        app.view.Field.prototype.bindDataChange.call(this);
+
+        // we do not call the parent which re-renders,
+        // but instead update the value on the field directly
+        this.model.on('change:' + this.name, function(model, value) {
+            this.setCurrencyValue(value);
+        }, this);
+
         var currencyField = this.def.currency_field || 'currency_id';
         var baseRateField = this.def.base_rate_field || 'base_rate';
         this.model.on('change:' + currencyField, function(model, currencyId, options) {
@@ -129,25 +136,13 @@
     },
 
     /**
-     * enable currency dropdown when input is blurred
+     * set the currency value on the field directly
      *
-     * @param {Object} e element.
+     * @param {String} value
      */
-    handleInputBlur: function(e) {
-        this._currencyFieldDisabled = false;
-        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
+    setCurrencyValue: function(value) {
+        this.$('[name=' + this.name + ']').val(app.utils.formatNumberLocale(value));
     },
-
-    /**
-     * disable currency dropdown when input is changed
-     *
-     * @param {Object} e element.
-     */
-    handleInputChange: function(e) {
-        this._currencyFieldDisabled = true;
-        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
-    },
-
 
     /**
      * {@inheritdoc}
@@ -158,8 +153,8 @@
      * @return {String} the formatted value based on view name.
      */
     format: function(value) {
-        if (_.isNull(value) || _.isUndefined(value) || _.isNaN(value)){
-            value = "";
+        if (_.isNull(value) || _.isUndefined(value) || _.isNaN(value)) {
+            value = '';
         }
 
         if (this.tplName === 'edit' || (this.tplName == 'disabled' && this.action == 'disabled')) {
@@ -212,9 +207,14 @@
 
         return app.currency.unformatAmountLocale(value);
     },
-    updateCss: function(){
-      $('div.select2-drop.select2-drop-active').width('auto');
+
+    /**
+     * update dropdown css to active state
+     */
+    updateCss: function() {
+        $('div.select2-drop.select2-drop-active').width('auto');
     },
+
     /**
      * Get the currency field related to this currency amount.
      *
@@ -243,15 +243,23 @@
         return this._currencyField;
     },
 
-    setDisabled: function(disable) {
-        disable = _.isUndefined(disable) ? true : disable;
-        app.view.Field.prototype.setDisabled.call(this, disable);
-        this._currencyFieldDisabled = disable;
-        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
-    },
-
+    /**
+     * set the mode of the dropdown field
+     * @param {String} the mode name.
+     */
     setMode: function(name) {
         app.view.Field.prototype.setMode.call(this, name);
         this.getCurrencyField().setMode(name);
+    },
+
+    /**
+     * {@inheritdoc}
+     */
+    dispose: function() {
+        if (this._currencyField) {
+            this._currencyField.dispose();
+            this._currencyField = null;
+        }
+        app.view.Field.prototype.dispose.call(this);
     }
 })
