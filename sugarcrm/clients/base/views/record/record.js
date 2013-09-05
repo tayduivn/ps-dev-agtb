@@ -630,7 +630,9 @@
      * Push down main pane depending upon the height of the headerpane
      */
     adjustViewForHeaderpane: function() {
-        var height = this.$('.headerpane').outerHeight(true);
-        this.context.trigger('defaultLayout:setPaddingTop', height);
+        if (!this.disposed) {
+            var height = this.$('.headerpane').outerHeight(true);
+            this.context.trigger('defaultLayout:setPaddingTop', height);
+        }
     }
 })
