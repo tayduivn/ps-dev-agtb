@@ -332,6 +332,7 @@ class MetadataApi extends SugarApi
         $data = $this->getMetadataCache($this->platforms[0],true);
         
         if (empty($data)) {
+            $themeObject = SugarThemeRegistry::current();
             // since this is a public metadata call pass true to the meta data manager to only get public/
             $mm = $this->getMetadataManager( true );
 
@@ -346,7 +347,8 @@ class MetadataApi extends SugarApi
             $data['config']   = $this->getConfigs();
             $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
             $data['_override_values'] = $this->getOverrides($data, $args);
-            $data["_hash"]    = md5(serialize($data));
+            $data['logo_url'] = $themeObject->getImageURL('company_logo.png');
+            $data["_hash"] = md5(serialize($data));
 
             $this->putMetadataCache($data, $this->platforms[0], true);
             $this->cacheMetadataHash($data['_hash'], true);
@@ -478,6 +480,8 @@ class MetadataApi extends SugarApi
 
     protected function loadMetadata(array $args)
     {
+        $themeObject = SugarThemeRegistry::current();
+
         // Start collecting data
         $data = $this->_populateModules(array());
         $mm = $this->getMetadataManager();
@@ -513,6 +517,7 @@ class MetadataApi extends SugarApi
         $data['relationships'] = $mm->getRelationshipData();
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0], true);
         $data['server_info'] = $mm->getServerInfo();
+        $data['logo_url'] = $themeObject->getImageURL('company_logo.png');
         $data['config'] = $this->getConfigs();
 
         // BR-470 Handle languages
