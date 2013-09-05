@@ -125,17 +125,11 @@
      * Opens the Forecasts Config drawer
      */
     openConfigDrawer: function() {
-        // open a drawer for the config layout, pass in our current config
-        // in drawer is used in case user navigates to the config from Admin
-        // and it isnt in a drawer, it redirects different if they save/cancel
-        if(!app.drawer) {
-            app.drawer.open({
-                layout: 'config',
-                context: {
-                    create: true,
-                    module: 'Forecasts'
-                }
-            });
+        // if there is no drawer open, then we need to open the drawer.
+        if(app.drawer._components.length == 0) {
+            // trigger the forecast config by going to the config route, while replacing what
+            // is currently there so when we use app.route.goBack() from the cancel button
+            app.router.navigate('Forecasts/config', {replace: true, trigger: true});
         }
     },
 

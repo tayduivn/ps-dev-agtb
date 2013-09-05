@@ -17,7 +17,7 @@ describe("Forecasts.Base.View.forecastsConfigHeaderButtons", function() {
     beforeEach(function() {
         app = SugarTest.app;
         app.router = {
-            navigate: sinon.stub()
+            goBack: sinon.stub()
         }
         app.drawer = {
             close: sinon.stub()
@@ -52,7 +52,7 @@ describe("Forecasts.Base.View.forecastsConfigHeaderButtons", function() {
         describe('forecast is setup', function() {
             it('should not call app.router.navigate', function() {
                 view.cancelConfig();
-                expect(app.router.navigate).not.toHaveBeenCalled();
+                expect(app.router.goBack).not.toHaveBeenCalled();
             });
         });
 
@@ -67,13 +67,13 @@ describe("Forecasts.Base.View.forecastsConfigHeaderButtons", function() {
 
             it('and controller.context module is not Forecast, app.router.navigate should not be called', function() {
                 view.cancelConfig();
-                expect(app.router.navigate).not.toHaveBeenCalled();
+                expect(app.router.goBack).not.toHaveBeenCalled();
             });
 
             it('and controller.context module is Forecast, app.router.navigate should be called', function() {
                 app.controller.context.set('module', 'Forecasts');
                 view.cancelConfig();
-                expect(app.router.navigate).toHaveBeenCalled();
+                expect(app.router.goBack).toHaveBeenCalled();
                 app.controller.context.unset('module');
             });
         });
