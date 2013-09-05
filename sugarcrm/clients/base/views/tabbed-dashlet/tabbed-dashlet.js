@@ -22,10 +22,11 @@
  * - {String} filter_applied_to Date field to be used on date switcher, defaults
  *   to date_entered.
  * - {Array} filters Array of filters to be applied.
- * - {Array} labels Array of labels to be applied when LBL_MODULE_NAME_SINGULAR
- *   and LBL_MODULE_NAME aren't available or there's a need to use custom
- *   labels.
- * - {String} link Relationship link to be used if we're on a recordview
+ * - {String} label Tab label.
+ * - {Array} labels Array of labels (singular/plural) to be applied when
+ *   LBL_MODULE_NAME_SINGULAR and LBL_MODULE_NAME aren't available or there's a
+ *   need to use custom labels depending on the number of records available.
+ * - {String} link Relationship link to be used if we're on a record view
  *   context, leading to only associated records being shown.
  * - {String} module Module from which the records are retrieved.
  * - {String} order_by Sort records by field.
@@ -215,7 +216,13 @@
      * @protected
      */
     _createCollection: function(tab) {
-        var meta = app.metadata.getModule(this.module);
+        if (this.context.parent) {
+            var module = this.context.parent.get('module');
+        } else {
+            var module = this.module;
+        }
+
+        var meta = app.metadata.getModule(module);
 
         if (_.isUndefined(meta)) {
             return null;
@@ -395,7 +402,7 @@
      */
     _renderHtml: function() {
         if (this.meta.config) {
-            app.view.View.prototype._renderHtml.call(this);
+            this._super('_renderHtml');
             return;
         };
 
@@ -411,7 +418,7 @@
         this.tabsHtml = this._tabsTpl(this);
         this.recordsHtml = recordsTpl(this);
 
-        app.view.View.prototype._renderHtml.call(this);
+        this._super('_renderHtml');
     },
 
     /**
@@ -422,6 +429,6 @@
             tab.collection.off(null, null, this);
         });
 
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })
