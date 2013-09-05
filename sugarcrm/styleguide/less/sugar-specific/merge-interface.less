@@ -1,10 +1,25 @@
 @mergeFieldHeight: 30px;
 h4.merge-interface-header {
-	margin-left: 20px;
-	margin-right: 10px;
-	.preview {
-		padding-top: 0;
-	}
+  margin: 20px -3px 0 20px;
+  .preview {
+    padding-top: 0;
+  }
+  i.icon-eye-open {
+    padding: 2px 4px;
+  }
+  button {
+    width: 65px;
+    text-align: left;
+    &.on {
+      #gradient > .horizontal(darken(@grayLighter, 4%), darken(@grayLighter, 4%));
+      .border-radius(4px 0 0 4px);
+      i.icon-eye-open {
+        color: @gray;
+        .opacity(100);
+        text-shadow: 0 1px @white;
+      }
+    }
+  }
 }
 .merge-interface {
 	height:auto;

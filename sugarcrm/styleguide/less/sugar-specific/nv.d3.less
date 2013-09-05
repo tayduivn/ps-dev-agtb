@@ -1,4 +1,32 @@
 /********************
+ * SVG CSS
+ */
+
+svg {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Trying to get SVG to act like a greedy block in all browsers */
+  display: block;
+  width:100%;
+  height:100%;
+  max-height: 500px;
+}
+
+svg text {
+  font: normal @chartTextSize @sansFontFamily;
+  fill: @textColor;
+}
+
+svg .title {
+ font: bold @fontSizeMedium @sansFontFamily;
+}
+
+
+/********************
  * General CSS
  */
 
@@ -14,8 +42,7 @@
 }
 
 .nv-title {
-  margin: .2em .2em .2em .2em;
-  font-size: @fontSizeLarge;
+  font-size: @fontSizeMedium;
 }
 
 .nv-labels text {
@@ -23,9 +50,6 @@
   fill: #666;
 }
 
-svg {
-  max-height: 500px;
-}
 .nv-chart {
   height: 400px;
   min-width: 300px;
@@ -52,6 +76,9 @@ svg {
   pointer-events: none;
 }
 
+.dashboard .thumbnail.widget:not(.collapsed) .saved-reports-chart .nv-chart {
+  max-height: 348px;
+}
 
 /**********
 * Styleguide
@@ -73,32 +100,6 @@ body.full-screen {
     bottom: 20px;
     height: auto;
   }
-}
-
-
-/********************
- * SVG CSS
- */
-
-svg {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  /* Trying to get SVG to act like a greedy block in all browsers */
-  display: block;
-  width:100%;
-  height:100%;
-}
-
-svg text {
-  font: normal @chartTextSize sans-serif;
-}
-
-svg .title {
- font: bold @fontSizeLarge Arial;
 }
 
 
@@ -261,7 +262,7 @@ svg .title {
 
 .nvd3.nv-pie path {
   stroke: #fff;
-  stroke-width: 2px;
+  stroke-width: 3px;
   stroke-opacity: 1;
 }
 
@@ -464,7 +465,7 @@ svg .title {
 * Funnel
 */
 
-.nv-chart-funnel {
+.nv-funnelChart {
   .nv-y path {
     stroke: none;
   }
@@ -478,7 +479,7 @@ svg .title {
   }
   .nv-group polygon {
     stroke: #fff;
-    stroke-width: 2px;
+    stroke-width: 3px;
     stroke-opacity: 1;
   }
 }
