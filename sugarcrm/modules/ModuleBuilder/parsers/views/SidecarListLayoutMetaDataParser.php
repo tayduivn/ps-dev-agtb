@@ -82,6 +82,11 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         foreach ($this->_paneldefs as $def) {
             if (isset($def['fields']) && is_array($def['fields'])) {
                 foreach ($def['fields'] as $field) {
+                    if (!is_array($field) && !empty($this->_fielddefs[$field])) {
+                        $field = $this->_fielddefs[$field];
+                        $field['default'] = true;
+                        $field['enabled'] = true;
+                    }
                     if (!empty($field['name'])) {
                         if (
                             !empty($field['default']) && !empty($field['enabled']) &&
@@ -117,6 +122,10 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         foreach ($this->_paneldefs as $def) {
             if (isset($def['fields'])) {
                 foreach ($def['fields'] as $field) {
+                    if (!is_array($field) && !empty($this->_fielddefs[$field])) {
+                        $field = $this->_fielddefs[$field];
+                        $field['default'] = true;
+                    }
                     if (!empty($field['name'])) {
                         // Bug #25322
                         if (strtolower($field['name']) == 'email_opt_out') {
@@ -160,6 +169,9 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         foreach ($origPanels as $panel) {
             if (is_array($panel) && isset($panel['fields']) && is_array($panel['fields'])) {
                 foreach ($panel['fields'] as $field) {
+                    if (!is_array($field) && !empty($this->_fielddefs[$field])) {
+                        $field = $this->_fielddefs[$field];
+                    }
                     if (isset($field['name']) && !$this->panelHasField($field['name']) || (isset($field['enabled']) && $field['enabled'] == false)) {
                         $availableFields[$field['name']] = $field;
                     }
@@ -221,6 +233,9 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
         foreach ($panels as $panelix => $def) {
             if (isset($def['fields']) && is_array($def['fields'])) {
                 foreach ($def['fields'] as $fieldix => $field) {
+                    if (!is_array($field) && !empty($this->_fielddefs[$field])) {
+                        $field = $this->_fielddefs[$field];
+                    }
                     if (isset($field['name']) && $field['name'] == $name) {
                         return array('field' => $field, 'panelix' => $panelix, 'fieldix' => $fieldix);
                     }
