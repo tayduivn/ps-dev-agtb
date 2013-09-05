@@ -169,7 +169,8 @@
      * Sets up the timepicker.
      */
     _setupTimepicker: function() {
-        var placeholder = this.userTimePrefs,
+        var self = this,
+            placeholder = this.userTimePrefs,
             placeholderFormatMap = {
                 'H': 'hh',
                 'h': 'hh',
@@ -200,6 +201,12 @@
             focus: function(){$('.datepicker.dropdown-menu').hide()}
         });
 
+        // Bind clock icon click to open up the timepicker
+        this.$('.ui-timepicker-input').parent().find('.add-on:last').on('click', function(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            self.$('.ui-timepicker-input').timepicker('show');
+        });
     },
     /**
      * Main hook to update model when timepicker selected

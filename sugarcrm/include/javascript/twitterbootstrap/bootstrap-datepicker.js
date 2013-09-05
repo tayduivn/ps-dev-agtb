@@ -47,7 +47,10 @@
 			});
 			// If we have a button with .add-on stand class bind to our show:
 			if (this.element.parent().find('.add-on').length) {
-				this.element.parent().find('.add-on').on({
+			    // Only proxy on the first one (e.g. calendar icon; if a SugarCRM datetimecombo, we'll have a
+			    // "clock" for time and we don't want to open the calendar when that's clicked (UIUX-1110 / SP-1362)
+			    // Clicking on clock time icon is handled by the datetimecombo.js controller in SugarCRM.
+				this.element.parent().find('.add-on:first').on({
 					click: $.proxy(this.focusShow, this)
 				});
 			}
