@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-describe("when the custom Opportunities.Base.Fields.Rowaction is used", function() {
+describe("Opportunities.Base.Fields.Rowaction", function() {
     
     var app, field, moduleName = 'Opportunities', context, def, model;
     
@@ -49,6 +49,7 @@ describe("when the custom Opportunities.Base.Fields.Rowaction is used", function
     });
     
     afterEach(function() {
+        delete app.plugins.plugins['field']['disable-delete'];
         field = null;
         app = null;
         context = null;
