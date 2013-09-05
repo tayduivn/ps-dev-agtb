@@ -519,7 +519,6 @@ $dictionary['Product'] = array(
             'type' => 'date',
             'audited' => true,
             'comment' => 'Expected or actual date the product (for opportunity) will close',
-            'importable' => 'required',
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
         ),
