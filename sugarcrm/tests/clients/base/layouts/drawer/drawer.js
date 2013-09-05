@@ -627,6 +627,36 @@ describe("Drawer Layout", function() {
         });
     });
 
+    describe('getHeight()', function(){
+        var $contentEl, $mainDiv;
+
+        beforeEach(function() {
+            $contentEl = SugarTest.app.$contentEl;
+            $mainDiv = $('<div id="target"></div>');
+
+            SugarTest.app.$contentEl = $('<div id="content"></div>').append($mainDiv);
+            sinonSandbox.stub(drawer, '_animateOpenDrawer', $.noop());
+        });
+
+        afterEach(function() {
+            SugarTest.app.$contentEl = $contentEl;
+        });
+
+        it('should return 0 when no drawer is open', function() {
+            expect(drawer.getHeight()).toEqual(0);
+        });
+
+        it('should return true for elements on active drawer', function() {
+            var mockHeight = 42;
+            drawer.open({
+                layout: {"components":[{"view":"record"}]},
+                context: {create: true}
+            });
+            drawer._components[0].$el.height(mockHeight); //mock height of component
+            expect(drawer.getHeight()).toEqual(mockHeight);
+        });
+    });
+
     describe('_isMainAppContent()', function() {
         var $contentEl, $mainDiv;
 

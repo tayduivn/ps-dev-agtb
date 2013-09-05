@@ -7,6 +7,7 @@ describe("Emails.Views.Compose", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
+        app.drawer = { on: $.noop, off: $.noop, getHeight: $.noop, close: $.noop };
 
         moduleName = 'UserSignatures';
         metadata = {
@@ -26,6 +27,7 @@ describe("Emails.Views.Compose", function() {
         };
 
         SugarTest.testMetadata.init();
+        SugarTest.loadComponent('base', 'layout', 'drawer');
         SugarTest.loadComponent('base', 'view', 'record');
         SugarTest.loadComponent('base', 'view', 'create');
         SugarTest.loadComponent('base', 'view', 'compose', 'Emails');
@@ -43,6 +45,7 @@ describe("Emails.Views.Compose", function() {
     });
 
     afterEach(function() {
+        app.drawer = undefined;
         view.dispose();
         SugarTest.testMetadata.dispose();
         app.cache.cutAll();
@@ -264,8 +267,6 @@ describe("Emails.Views.Compose", function() {
             alertDismissStub = sinon.stub(app.alert, 'dismiss');
             disableButtonStub = sinon.stub(view, 'setMainButtonsDisabled');
 
-            app.drawer = {close: function() {}};
-
             view.model.off('change');
         });
 
@@ -274,8 +275,6 @@ describe("Emails.Views.Compose", function() {
             alertShowStub.restore();
             alertDismissStub.restore();
             disableButtonStub.restore();
-
-            delete app.drawer;
         });
 
         it('should call mail api with correctly formatted model', function() {
@@ -733,4 +732,82 @@ describe("Emails.Views.Compose", function() {
         });
     });
 
+    describe('ResizeEditor', function() {
+        var $drawer, $editor, getDrawerHeightStub;
+
+        beforeEach(function() {
+            var mockHtml = '<div><div class="drawer">' +
+                '<div class="headerpane"></div>' +
+                '<div class="record"><div class="mceLayout"></div></div>' +
+                '<div class="show-hide-toggle"></div>' +
+                '</div></div>',
+                drawerHeight = view.MIN_EDITOR_HEIGHT + 300,
+                otherHeight = 50,
+                editorHeight = drawerHeight - (otherHeight * 2) - view.EDITOR_RESIZE_PADDING;
+
+            view.$el = $(mockHtml);
+            $drawer = view.$('.drawer');
+            $drawer.height(drawerHeight);
+            $editor = view.$('.mceLayout');
+            $editor.height(editorHeight);
+
+            view.$('.headerpane').height(otherHeight);
+            view.$('.record').height(editorHeight);
+            view.$('.show-hide-toggle').height(otherHeight);
+
+            getDrawerHeightStub = sinon.stub(app.drawer, 'getHeight', function() {
+                return $drawer.height();
+            });
+        });
+
+        afterEach(function() {
+            getDrawerHeightStub.restore();
+        });
+
+        it("should increase the height of the editor when drawer height increases", function() {
+            var editorHeightBefore = $editor.height(),
+                drawerHeightBefore = $drawer.height();
+
+            //increase drawer height by 100 pixels
+            $drawer.height(drawerHeightBefore + 100);
+
+            view.resizeEditor();
+            //editor should be increased to fill the space
+            expect($editor.height()).toEqual(editorHeightBefore + 100);
+        });
+
+        it("should decrease the height of the editor when drawer height decreases", function() {
+            var editorHeightBefore = $editor.height(),
+                drawerHeightBefore = $drawer.height();
+
+            //decrease drawer height by 100 pixels
+            $drawer.height(drawerHeightBefore - 100);
+
+            view.resizeEditor();
+            //editor should be decreased to account for decreased drawer height
+            expect($editor.height()).toEqual(editorHeightBefore - 100);
+        });
+
+        it("should ensure that editor maintains minimum height when drawer shrinks beyond that", function() {
+            //decrease drawer height to 50 pixels below min editor height
+            $drawer.height(view.MIN_EDITOR_HEIGHT - 50);
+
+            view.resizeEditor();
+            //editor should maintain min height
+            expect($editor.height()).toEqual(view.MIN_EDITOR_HEIGHT);
+        });
+
+        it("should resize editor to fill empty drawer space but with a padding to prevent scrolling", function() {
+            var editorHeightBefore = $editor.height(),
+                editorHeightPlusPadding = editorHeightBefore + view.EDITOR_RESIZE_PADDING;
+
+            //add the resize padding on
+            $editor.height(editorHeightPlusPadding);
+            view.$('.record').height(editorHeightPlusPadding);
+
+            //padding should be added back
+            view.resizeEditor();
+            expect($editor.height()).toEqual(editorHeightBefore);
+        });
+    });
 });

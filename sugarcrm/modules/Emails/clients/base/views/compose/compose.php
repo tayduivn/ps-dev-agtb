@@ -100,7 +100,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                                     'name'  => 'upload_new_button',
                                     'type'  => 'button',
                                     'icon'  => 'icon-paper-clip',
-                                    'label' => 'LBL_UPLOAD_ATTACHMENT',
+                                    'label' => 'LBL_ATTACHMENT',
                                 ),
                                 array(
                                     'name'  => 'attach_sugardoc_button',
@@ -137,7 +137,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                     'tinyConfig'    => array(
                         // Location of TinyMCE script
                         'script_url'                        => 'include/javascript/tiny_mce/tiny_mce.js',
-                        'height'                            => 300,
+                        'height'                            => '100%',
                         'width'                             => '100%',
                         // General options
                         'theme'                             => 'advanced',
@@ -149,7 +149,7 @@ $viewdefs['Emails']['base']['view']['compose'] = array(
                         'theme_advanced_buttons1'           => "code,separator,bold,italic,underline,strikethrough,separator,bullist,numlist,separator,justifyleft,justifycenter,justifyright,justifyfull,separator,forecolor,backcolor,separator,fontsizeselect",
                         'theme_advanced_toolbar_location'   => "top",
                         'theme_advanced_toolbar_align'      => "left",
-                        'theme_advanced_statusbar_location' => "bottom",
+                        'theme_advanced_statusbar_location' => "none",
                         'theme_advanced_resizing'           => false,
                         'schema'                            => 'html5',
                         'template_external_list_url'        => 'lists/template_list.js',

@@ -7,6 +7,8 @@
     _lastSelectedSignature: null,
     ATTACH_TYPE_SUGAR_DOCUMENT: 'document',
     ATTACH_TYPE_TEMPLATE: 'template',
+    MIN_EDITOR_HEIGHT: 300,
+    EDITOR_RESIZE_PADDING: 5,
 
     initialize: function(options) {
         _.bindAll(this);
@@ -22,6 +24,9 @@
         this.context.on('actionbar:attach_sugardoc_button:clicked', this.launchDocumentDrawer, this);
         this.context.on("actionbar:signature_button:clicked", this.launchSignatureDrawer, this);
         this.context.on('attachments:updated', this.toggleAttachmentVisibility, this);
+        this.context.on('tinymce:oninit', this.handleTinyMceInit, this);
+        this.on('more-less:toggled', this.handleMoreLessToggled, this);
+        app.drawer.on('drawer:resize', this.resizeEditor, this);
 
         this._lastSelectedSignature = app.user.getPreference("signature_default");
     },
@@ -176,6 +181,8 @@
         if (this.$('.cc-option').hasClass('hide') && this.$('.bcc-option').hasClass('hide')){
             this.$('.compose-sender-options').addClass('hide');
         }
+
+        this.resizeEditor();
     },
 
     /**
@@ -566,6 +573,7 @@
             $row.addClass('hidden');
             $row.removeClass('single');
         }
+        this.resizeEditor();
     },
 
     /**
@@ -716,5 +724,61 @@
             autoClose: false
         });
         app.error.handleHttpError(error);
+    },
+
+    /**
+     * When toggling to show/hide hidden panel, resize editor accordingly
+     */
+    handleMoreLessToggled: function() {
+        this.resizeEditor();
+    },
+
+    /**
+     * When TinyMCE has been completely initialized, go ahead and resize the editor
+     */
+    handleTinyMceInit: function() {
+        this.resizeEditor();
+    },
+
+    _dispose: function() {
+        if (app.drawer) {
+            app.drawer.off(null, null, this);
+        }
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: '_dispose'});
+    },
+
+    /**
+     * Resize the html editor based on height of the drawer it is in
+     *
+     * @param drawerHeight current height of the drawer or height the drawer will be after animations
+     */
+    resizeEditor: function(drawerHeight) {
+        var $editor, headerHeight, recordHeight, showHideHeight, diffHeight, editorHeight, newEditorHeight;
+
+        $editor = this.$('.mceLayout');
+        //if editor not already rendered, cannot resize
+        if ($editor.length === 0) {
+            return;
+        }
+
+        drawerHeight = drawerHeight || app.drawer.getHeight();
+        headerHeight = this.$('.headerpane').outerHeight(true);
+        recordHeight = this.$('.record').outerHeight(true);
+        showHideHeight = this.$('.show-hide-toggle').outerHeight(true);
+        editorHeight = $editor.height();
+
+        //calculate the space left to fill - subtracting padding to prevent scrollbar
+        diffHeight = drawerHeight - headerHeight - recordHeight - showHideHeight - this.EDITOR_RESIZE_PADDING;
+
+        //add the space left to fill to the current height of the editor to get a new height
+        newEditorHeight = editorHeight + diffHeight;
+
+        //maintain min height
+        if (newEditorHeight < this.MIN_EDITOR_HEIGHT) {
+            newEditorHeight = this.MIN_EDITOR_HEIGHT;
+        }
+
+        //set the new height for the editor
+        $editor.height(newEditorHeight);
     }
 })
