@@ -119,7 +119,7 @@ if(!empty($_POST['saveConfig'])){
 
 		$focus->saveConfig();
 
-		header('Location: index.php?module=Administration&action=index');
+        echo '<script>parent.window.location.reload();</script>';
 	}
 }
 
