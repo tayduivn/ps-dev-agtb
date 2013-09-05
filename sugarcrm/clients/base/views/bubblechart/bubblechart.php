@@ -26,6 +26,7 @@ $viewdefs['base']['view']['bubblechart'] = array(
                     'Contacts',
                     'Leads',
                     'Opportunities',
+                    'RevenueLineItems',
                 ),
                 'view' => 'records',
             ),

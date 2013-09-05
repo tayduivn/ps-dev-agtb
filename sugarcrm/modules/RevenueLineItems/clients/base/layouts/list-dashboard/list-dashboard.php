@@ -25,42 +25,10 @@ $viewdefs['RevenueLineItems']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
-                                'display_columns' =>
-                                array(
-                                    'name',
-                                    'billing_address_country',
-                                    'billing_address_city',
-                                ),
-                                'my_items' => '1',
-                                'limit' => 5,
-                            ),
-                            'context' =>
-                            array(
-                                'module' => 'Accounts',
-                            ),
-                            'width' => 12,
-                        ),
-                    ),
-                    array(
-                        array(
-                            'view' =>
-                            array(
-                                'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
-                                'display_columns' =>
-                                array(
-                                    'full_name',
-                                    'account_name',
-                                    'email',
-                                    'phone_work',
-                                ),
-                                'my_items' => '1',
-                            ),
-                            'context' =>
-                            array(
-                                'module' => 'Contacts',
+                                'name' => 'bubblechart',
+                                'label' => 'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME',
+                                'filter_duration' => 0,
+                                'filter_assigned' => 'my',
                             ),
                             'width' => 12,
                         ),
