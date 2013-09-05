@@ -268,7 +268,10 @@ class FilterApi extends SugarApi
         $q->distinct(true);
 
         foreach ($options['order_by'] as $orderBy) {
-            self::verifyField($q, $orderBy[0]);
+            // ID and date_modified are used to give some order to the system
+            if ( $orderBy[0] != 'date_modified' && $orderBy[0] != 'id' ) {
+                self::verifyField($q, $orderBy[0]);
+            }
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
         // Add an extra record to the limit so we can detect if there are more records to be found
