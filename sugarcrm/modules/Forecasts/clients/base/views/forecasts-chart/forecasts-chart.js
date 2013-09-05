@@ -68,7 +68,8 @@
         fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options);
         this.dashletConfig.dataset.options = {};
 
-        if (cfg.show_worksheet_worst) {
+        if (cfg.show_worksheet_worst &&
+            app.acl.hasAccess('view', 'ForecastWorksheets', app.user.get('id'), 'worst_case')) {
             this.dashletConfig.dataset.options['worst'] = fieldOptions['worst'];
         }
 
@@ -76,7 +77,8 @@
             this.dashletConfig.dataset.options['likely'] = fieldOptions['likely'];
         }
 
-        if (cfg.show_worksheet_best) {
+        if (cfg.show_worksheet_best &&
+            app.acl.hasAccess('view', 'ForecastWorksheets', app.user.get('id'), 'best_case')) {
             this.dashletConfig.dataset.options['best'] = fieldOptions['best'];
         }
     },
