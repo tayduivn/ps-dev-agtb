@@ -94,4 +94,15 @@ describe("Base.Field.QuickCreate", function() {
         expect(spyOnLoad).toHaveBeenCalled();
         app.controller.context.children = [];
     });
+    it('Should create a regular bean if parent model isn\'t populated.', function() {
+        var parentModel = app.data.createBean('Test'),
+            getRelatedModuleStub = sinon.stub(app.data, 'getRelatedModule', function() {
+                return 'Accounts';
+            });
+        parentModel.dataFetched = false;
+
+        var newModel = field.createLinkModel(parentModel, 'test');
+        getRelatedModuleStub.restore();
+        expect(newModel.link).not.toBeDefined();
+    });
 });
