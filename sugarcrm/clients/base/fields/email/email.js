@@ -410,7 +410,7 @@
                 prepopulate: {
                     to_addresses: [
                         {
-                            email: evt.currentTarget.innerText,
+                            email: this.$(evt.currentTarget).text(),
                             bean: model
                         }
                     ],
