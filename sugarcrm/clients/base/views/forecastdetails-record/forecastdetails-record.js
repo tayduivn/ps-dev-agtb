@@ -61,6 +61,25 @@
     },
 
     /**
+     * {@inheritDoc}
+     */
+    renderSubDetails: function() {
+        // clear the footer class
+        var subEl = this.$el.find('.forecast-details');
+        if(subEl && subEl.hasClass('block-footer')) {
+            subEl.removeClass('block-footer');
+        }
+
+        if(this.currentModule != 'Opportunities'
+            || (this.currentModule == 'Opportunities' && this.model.get('selectedTimePeriod'))) {
+            app.view.invokeParent(this, {type: 'view', name: 'forecastdetails', method: 'renderSubDetails'});
+        } else {
+            subEl.addClass('block-footer');
+            subEl.html(app.lang.get('LBL_NO_DATA_AVAILABLE'));
+        }
+    },
+
+    /**
      * {@inheritdoc}
      */
     bindDataChange: function() {
