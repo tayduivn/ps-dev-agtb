@@ -237,11 +237,8 @@ $dictionary['Product'] = array(
         ),
         'discount_amount' =>  array(
             'name' => 'discount_amount',
-            'vname' => 'LBL_DISCOUNT_TOTAL',
+            'vname' => 'LBL_DISCOUNT_AMOUNT',
             'type' => 'currency',
-            'options' => 'discount_amount_class_dom',
-            'len' => '26,6',
-            'precision' => 6,
             'comment' => 'Discounted amount'
         ),
         'discount_rate_percent' => array(
