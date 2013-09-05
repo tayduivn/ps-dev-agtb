@@ -97,7 +97,7 @@ class MassUpdateApi extends SugarApi {
                 $args['massupdate_params']['filter'] = array();
             }
 
-            $args['massupdate_params']['filter'][] = array('date_entered' => array('$lt' => TimeDate::getInstance()->nowDb()));
+            $args['massupdate_params']['filter'][] = array('date_entered' => array('$lt' => TimeDate::getInstance()->getNow(true)));
         }
 
         return $this->massUpdate($api, $args);
