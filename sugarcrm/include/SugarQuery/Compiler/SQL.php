@@ -618,7 +618,6 @@ class SugarQuery_Compiler_SQL
 
             if (!empty($whereObj->raw)) {
                 $sql .= $whereObj->raw;
-                continue;
             }
             foreach ($whereObj->conditions as $condition) {
                 if ($condition instanceof SugarQuery_Builder_Where) {
