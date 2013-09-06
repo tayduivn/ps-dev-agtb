@@ -1,5 +1,5 @@
 <div class="span{{spanCSS}} tcenter">
-    <div id="forecast_details_{{case}}_numbers">
+    <div id="forecast_details_{{case}}_numbers" class="ellipsis_inline" data-original-title="{{label}}: {{{amount}}}" data-placement="bottom" data-container="body">
         <span class="forecast_details_label">
             {{label}}
         </span>
@@ -10,10 +10,9 @@
             {{{amount}}}
         </span>
 
-        <br>
     </div>
 
-    <div id="forecast_details_{{case}}_feedback">
+    <div id="forecast_details_{{case}}_feedback" class="ellipsis_inline"  data-original-title="{{{feedbackLn1}}} {{{feedbackLn2}}}" data-placement="bottom" data-container="body">
         <span class="forecast_details_feedback">
             {{{feedbackLn1}}}
             <br>
