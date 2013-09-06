@@ -1,10 +1,7 @@
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view
     id: 'searchForm',
-    className: 'minimized',
-
     plugins: ['dropdown'],
-
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',
@@ -238,9 +235,9 @@
         var $searchBox = this.$('[data-provide=typeahead]');
 
         if (!$searchBox.is(':visible')) {
-            this.$el.removeClass('minimized');
+            this.$el.addClass('active');
             $(window).on('click.globalsearch.data-api', _.bind(function() {
-                this.$el.addClass('minimized');
+                this.$el.removeClass('active');
             }, this));
             $searchBox.focus();
             return;
