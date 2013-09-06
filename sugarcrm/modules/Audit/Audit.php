@@ -232,7 +232,7 @@ class Audit extends SugarBean
                     $temp_list = array();
 
                     foreach ($fieldDefs as $field) {
-                            if (isset($row[$field['name']])) {
+                            if (array_key_exists($field['name'], $row)) {
                                 if(($field['name'] == 'before_value_string' || $field['name'] == 'after_value_string') &&
                                     (array_key_exists($row['field_name'], $genericAssocFieldsArray) || (!empty($moduleAssocFieldsArray[$focus->object_name]) && array_key_exists($row['field_name'], $moduleAssocFieldsArray[$focus->object_name])) )
                                    ) {
