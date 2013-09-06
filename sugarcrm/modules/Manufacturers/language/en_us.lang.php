@@ -52,6 +52,7 @@ $mod_strings = array (
   'LNK_NEW_MANUFACTURER' => 'Manufacturers',
   'LNK_NEW_SHIPPER' => 'Shipping Providers',
   'LNK_NEW_PRODUCT_CATEGORY' => 'Product Categories',
+  'LNK_IMPORT_PRODUCT_CATEGORIES' => 'Import Product Categories',
   'LNK_NEW_PRODUCT_TYPE' => 'Product Types',
   'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
   'ERR_DELETE_RECORD' => 'You must specify a record number to delete the manufacturer.',
