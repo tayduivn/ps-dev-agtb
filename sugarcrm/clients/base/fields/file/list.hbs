@@ -15,7 +15,12 @@
 {{#if value}}
     {{#with value}}
         <div class="ellipsis_inline">
-            <a href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+            {{#notEq mimeType 'image'}}
+                <a class="ellipsis_inline" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+            {{/notEq}}
+            {{#eq mimeType 'image'}}
+                <a class="ellipsis_inline" href="{{url}}" target="_blank">{{name}}</a>
+            {{/eq}}
         </div>
     {{/with}}
 {{/if}}

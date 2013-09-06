@@ -29,7 +29,12 @@
 {{#if value.length}}
     {{#each value}}
         <div class="row-fluid file-field">
-            <a class="span10" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+            {{#eq mimeType 'image'}}
+                <a class="span10 ellipsis_inline" href="{{url}}" target="_blank">{{name}}</a>
+            {{/eq}}
+            {{#notEq mimeType 'image'}}
+                <a class="span10 ellipsis_inline" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+            {{/notEq}}
             <button class="btn icon-remove-sign" data-action="delete"></button>
         </div>
     {{/each}}

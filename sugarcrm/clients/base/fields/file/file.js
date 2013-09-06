@@ -26,6 +26,11 @@
  ********************************************************************************/
 ({
     fieldTag: 'input[type=file]',
+    supportedImageExtensions: {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/gif': 'gif'
+    },
     events: {
         'click [data-action=download]': 'startDownload',
         'click [data-action=delete]': 'deleteFile'
@@ -100,25 +105,32 @@
             }, this);
         } else if (value) {
             // If it's a string, build the uri with the api library
-            var fileObj = {
-                name: value,
-                url: app.api.buildFileURL({
-                        module: this.module,
-                        id: this.model.id,
-                        field: this.name
-                    },
-                    {
-                        htmlJsonFormat: false,
-                        passOAuthToken: true
-                    })};
+            var isImage = this._isImage(this.model.get('file_mime_type')),
+                forceDownload = !isImage,
+                mimeType = isImage ? 'image' : '',
+                fileObj = {
+                    name: value,
+                    mimeType: mimeType,
+                    url: app.api.buildFileURL({
+                            module: this.module,
+                            id: this.model.id,
+                            field: this.name
+                        },
+                        {
+                            htmlJsonFormat: false,
+                            passOAuthToken: false,
+                            cleanCache: true,
+                            forceDownload: forceDownload
+                        })
+                };
             attachments.push(fileObj);
         }
         return (this.tplName === "list") ? _.first(attachments) : attachments;
     },
     startDownload: function(e) {
-        var uri = self.$(e.currentTarget).data('url');
+        var uri = this.$(e.currentTarget).data('url');
 
-        App.api.fileDownload(uri, {
+        app.api.fileDownload(uri, {
             error: function(data) {
                 // refresh token if it has expired
                 app.error.handleHttpError(data, {});
@@ -151,5 +163,16 @@
      */
     unformat: function (value) {
         return value.split('/').pop().split('\\').pop();
+    },
+
+    /**
+     * Check if input mime type is an image or not.
+     *
+     * @param {String} mime type.
+     * @return {Boolean} true if mime type is an image.
+     * @private
+     */
+    _isImage: function(mimeType) {
+        return !!this.supportedImageExtensions[mimeType];
     }
 })
