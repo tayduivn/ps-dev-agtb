@@ -1,7 +1,7 @@
 ({
     extendsFrom: 'ToggleLayout',
 
-    TOGGLE_DUPECHECK: 'dupecheck',
+    TOGGLE_DUPECHECK: 'create-dupecheck',
     TOGGLE_CREATE: 'create',
 
     availableToggles: {
@@ -24,6 +24,9 @@
         convertPanelEvents['click [name="associate_button"]'] = 'handleAssociateClick';
         convertPanelEvents['click [name="reset_button"]'] = 'handleResetClick';
         this.events = _.extend({}, this.events, convertPanelEvents);
+        this.plugins = _.union(this.plugins || [], [
+            'FindDuplicate'
+        ]);
 
         this.currentState = {
             complete: false,
@@ -102,10 +105,12 @@
      * Add the dupe check layout along with events to listen for changes to dupe view
      */
     addDupeCheckComponent: function() {
-        var context = this.context.getChildContext({
+        var leadsModel = this.context.get('leadsModel'),
+            context = this.context.getChildContext({
             'module': this.meta.module,
             'forceNew': true,
-            'dupelisttype': 'dupecheck-list-select'
+            'dupelisttype': 'dupecheck-list-select',
+            'collection': this.createDuplicateCollection(leadsModel, this.meta.module)
         });
         context.prepare();
 

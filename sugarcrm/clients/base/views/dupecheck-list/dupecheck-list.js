@@ -22,35 +22,21 @@
     displayFirstNColumns: 4,
     additionalTableClasses: null,
 
+    /**
+     * {@inheritDoc}
+     * Use dupecheck-list metadata by default - subviews will just extend.
+     */
     initialize: function(options) {
-        //use dupecheck-list metadata by default - subviews will just extend
         var dupeListMeta = app.metadata.getView(options.module, 'dupecheck-list') || {};
         options.meta = _.extend({}, dupeListMeta, options.meta || {});
 
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
-
-        this.context.on("dupecheck:fetch:fire", this.fetchDuplicates, this);
-
-        if (this.context.has('dupeCheckModel')) {
-            this.model = this.copyModel(this.context.get('dupeCheckModel'));
-        }
-
-        this.collection = app.data.createBeanCollection(this.module);
-        this.context.set('collection', this.collection);
-
-        //save off the collection's sync so we can run our own and then run the original
-        //this is so we can switch the endpoint out
-        this.collectionSync = this.collection.sync;
-        this.collection.sync = _.bind(this.sync, this);
+        this._super('initialize', [options]);
+        this.context.on('dupecheck:fetch:fire', this.fetchDuplicates, this);
     },
 
-    bindDataChange: function() {
-        this.collection.on("reset", function() {
-            this.context.trigger('dupecheck:collection:reset');
-        }, this);
-        this._super('bindDataChange');
-   },
-
+    /**
+     * {@inheritDoc}
+     */
     _renderHtml: function() {
         var classesToAdd = 'duplicates highlight';
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
@@ -60,32 +46,14 @@
         this.$('table.table-striped').addClass(classesToAdd);
     },
 
-    sync: function(method, model, options) {
-        options = options || {};
-        options.endpoint = _.bind(this.endpoint, this);
-        this.collectionSync(method, model, options);
-    },
-
-    endpoint: function(method, model, options, callbacks) {
-        var url = app.api.buildURL(this.module, "duplicateCheck");
-        return app.api.call('create', url, this.model.attributes, callbacks); //Dupe Check API requires POST
-    },
-
-    fetchDuplicates: function(model, options) {
-        this.model = this.copyModel(model);
-        this.collection.fetch(options);
-    },
-
     /**
-     * Make a copy of the model to prevent impacting other views
+     * Fetch the duplicate collection.
      *
-     * @param model
-     * @returns {Object}
+     * @param {Backbone.Model} model Duplicate check model.
+     * @param {Object} options Fetch options.
      */
-    copyModel: function(model) {
-        var copiedModel = app.data.createBean(model.module);
-        copiedModel.copy(model);
-        copiedModel.set('id', model.id);
-        return copiedModel;
+    fetchDuplicates: function(model, options) {
+        this.collection.dupecheckModel = model;
+        this.collection.fetch(options);
     }
 })

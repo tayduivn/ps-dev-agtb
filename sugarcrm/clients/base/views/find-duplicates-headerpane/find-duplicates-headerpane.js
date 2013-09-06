@@ -3,14 +3,17 @@
 
     events: {
         'click a[name=cancel_button]': 'cancel',
-        'click a[name=merge_duplicates_button]:not(".disabled")': 'mergeDuplicates'
+        'click a[name=merge_duplicates_button]:not(".disabled")': 'mergeDuplicatesClicked'
     },
+
+    plugins: ['Merge'],
 
     /**
      * Wait for the mass_collection to be set up so we can add listener
      */
     bindDataChange: function() {
         app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'bindDataChange'});
+        this.on('mergeduplicates:complete', this.mergeComplete, this);
         this.context.on('change:mass_collection', this.addMassCollectionListener, this);
     },
 
@@ -32,8 +35,7 @@
      */
     addMassCollectionListener: function() {
         var massCollection = this.context.get('mass_collection');
-        massCollection.on('add', this.toggleMergeButton, this);
-        massCollection.on('remove', this.toggleMergeButton, this);
+        massCollection.on('add remove', this.toggleMergeButton, this);
     },
 
     /**
@@ -57,14 +59,20 @@
         app.drawer.close();
     },
 
-    mergeDuplicates: function() {
-        app.drawer.load({
-            layout : 'merge-duplicates',
-            context: {
-                primaryRecord: this.context.get('dupeCheckModel'),
-                selectedDuplicates: this.context.get('mass_collection')
-            }
-        });
-    }
+    /**
+     * Close the current drawer window by passing merged primary record
+     * once merge process is complete.
+     *
+     * @param {Backbone.Model} primaryRecord Primary Record.
+     */
+    mergeComplete: function(primaryRecord) {
+        app.drawer.closeImmediately(true, primaryRecord);
+    },
 
+    /**
+     * Merge records handler.
+     */
+    mergeDuplicatesClicked: function() {
+        this.mergeDuplicates(this.context.get('mass_collection'), this.collection.dupeCheckModel);
+    }
 })

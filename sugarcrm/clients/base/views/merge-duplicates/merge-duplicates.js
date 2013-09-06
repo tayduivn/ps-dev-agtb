@@ -859,7 +859,7 @@
         this.primaryRecord.on('mergeduplicates:primary:merged', function() {
             app.alert.dismiss('mergeduplicates_merging');
             this._showSuccessMessage();
-            app.drawer.close(true);
+            app.drawer.close(true, this.primaryRecord);
         }, this);
     },
 

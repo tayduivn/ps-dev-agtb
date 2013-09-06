@@ -28,6 +28,9 @@
         createViewEvents['click a[name=' + this.saveAndViewButtonName + ']'] = 'saveAndView';
         createViewEvents['click a[name=' + this.restoreButtonName + ']'] = 'restoreModel';
         this.events = _.extend({}, this.events, createViewEvents);
+        this.plugins = _.union(this.plugins || [], [
+            'FindDuplicate'
+        ]);
 
         //add states for create view
         this.STATE = _.extend({}, this.STATE, {
@@ -463,24 +466,18 @@
     },
 
     /**
-     * Sets the dupecheck list type
-     *
-     * @param {String} type view to load
-     */
-    setDupeCheckType: function(type) {
-        this.context.set('dupelisttype', type);
-    },
-
-    /**
      * Render duplicate check list table
      */
     renderDupeCheckList: function () {
-        this.setDupeCheckType('dupecheck-list-edit');
+        this.context.set({
+            'dupelisttype': 'dupecheck-list-edit',
+            'collection': this.createDuplicateCollection(this.model)
+        });
 
         if (_.isNull(this.dupecheckList)) {
             this.dupecheckList = app.view.createLayout({
                 context: this.context,
-                name: 'dupecheck',
+                name: 'create-dupecheck',
                 module: this.module
             });
             this.addToLayoutComponents(this.dupecheckList);

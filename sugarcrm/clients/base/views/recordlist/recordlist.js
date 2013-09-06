@@ -17,7 +17,12 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ListColumnEllipsis', 'ErrorDecoration', 'Editable'],
+    plugins: [
+        'ListColumnEllipsis',
+        'ErrorDecoration',
+        'Editable',
+        'Merge'
+    ],
 
     /**
      * List of current inline edit models.
@@ -52,7 +57,10 @@
 
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
-
+        this.on('mergeduplicates:complete', this.refreshCollection, this);
+        if (this.layout) {
+            this.layout.on('list:mergeduplicates:fire', this.mergeDuplicatesClicked, this);
+        }
         this.toggledModels = {};
 
         this.context._recordListFields = this.getFieldNames();
@@ -76,8 +84,12 @@
     },
 
     /**
-     * Add left and right action columns to the list view
+     * Refresh the current collection set.
      */
+    refreshCollection: function() {
+        this.collection.fetch();
+    },
+
     addActions:function () {
         if (this.actionsAdded) return;
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
@@ -280,6 +292,13 @@
             var unsavedFields = _.intersection(_.keys(changedAttributes), formFields);
             return !_.isEmpty(unsavedFields);
         }, this);
+    },
+
+    /**
+     * Handles merge button.
+     */
+    mergeDuplicatesClicked: function() {
+        this.mergeDuplicates(this.context.get('mass_collection'));
     },
 
     /**
