@@ -229,6 +229,7 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_SELECT_DISCOUNT',
             'type' => 'bool',
             'reportable' => false,
+            'importable' => false,
         ),
         'deal_calc' => array(
             'name' => 'deal_calc',
