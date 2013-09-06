@@ -106,7 +106,7 @@ class OpportunitiesSeedData {
                 $opp->currency_id = '-99';
                 $opp->base_rate = 1;
             }
-    
+
             $opp->name = $account->name;
             $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
             $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);

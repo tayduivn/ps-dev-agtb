@@ -504,6 +504,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
+            'showTransactionalAmount' => true,
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
@@ -518,6 +519,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
+            'showTransactionalAmount' => true,
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
@@ -531,6 +533,7 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
+            'showTransactionalAmount' => true,
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
