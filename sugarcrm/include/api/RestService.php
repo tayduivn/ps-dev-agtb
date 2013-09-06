@@ -726,12 +726,9 @@ class RestService extends ServiceBase
             }
 
             // This is for our URI return value
-            $siteUrl = SugarConfig::getInstance()->get('site_url');
-
-            if($options['relative'] === true) {
-                $siteUrl = '';
-            } else {
-                $siteUrl .= '/';
+            $siteUrl = '';
+            if (!empty($options['relative']) && $options['relative'] === false) {
+                $siteUrl = SugarConfig::getInstance()->get('site_url');
             }
 
             // Get the file uri bas
