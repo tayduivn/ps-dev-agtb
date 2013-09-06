@@ -295,6 +295,7 @@ $dictionary['Opportunity'] = array(
             'options' => 'sales_status_dom',
             'len' => '255',
             'audited' => true,
+            'readonly' => true,
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
             //END SUGARCRM flav=pro && flav!=ent ONLY
