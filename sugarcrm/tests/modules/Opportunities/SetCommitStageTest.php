@@ -62,24 +62,20 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         SugarTestHelper::setUp('current_user');
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        self::$isSetup = $settings['is_setup'];
-        self::$forecastRanges = $settings['forecast_ranges'];
-        self::$rangeValues = $settings['show_binary_ranges'];
 
-        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
-        $admin->saveSetting('Forecasts', 'forecast_ranges', 'show_binary', 'base');
-        $values = json_encode(array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)));
-        $admin->saveSetting('Forecasts', 'show_binary_ranges', $values, 'base');
+        SugarTestForecastUtilities::setUpForecastConfig(
+            array(
+                'show_binary_ranges' => array(
+                    'include' => array('min' => 70, 'max' => 100),
+                    'exclude' => array('min' => 0, 'max' => 69)
+                )
+            )
+        );
     }
 
     public static function tearDownAfterClass()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
-        $admin->saveSetting('Forecasts', 'show_binary_ranges', json_encode(self::$rangeValues), 'base');
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestHelper::tearDown();
     }
 
@@ -96,6 +92,7 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Tests the probability against the expected commit_stage value with the supplied probabilityProvider function
+     *
      * @dataProvider probabilityProvider
      * @group forecasts
      */
@@ -104,11 +101,16 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
         //Test setting field 'commit_stage'
         $this->opp->probability = $probability;
         $this->opp->save();
-        $this->assertEquals($commit_stage, $this->opp->commit_stage, "commit stage should be {$commit_stage} when probability is {$probability}");
+        $this->assertEquals(
+            $commit_stage,
+            $this->opp->commit_stage,
+            "commit stage should be {$commit_stage} when probability is {$probability}"
+        );
     }
 
     /**
      * Tests the forecast and commit_stage to be updated when sales_stage is "Closed Lost"
+     *
      * @group forecasts
      */
     public function testUpdateForecastAndCommitStage()

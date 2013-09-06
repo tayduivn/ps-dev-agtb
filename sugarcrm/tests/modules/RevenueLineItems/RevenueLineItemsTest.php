@@ -48,12 +48,13 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
+        SugarTestForecastUtilities::setUpForecastConfig();
         $this->revenuelineitem = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
     }
 
     public function tearDown()
     {
-
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
