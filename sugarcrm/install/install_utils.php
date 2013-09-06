@@ -915,6 +915,10 @@ RedirectMatch 403 {$ignoreCase}/+upload/
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
+
+# Fix mimetype for logo.svg (SP-1395)
+AddType     image/svg+xml     .svg
+
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
