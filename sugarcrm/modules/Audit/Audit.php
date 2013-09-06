@@ -37,6 +37,10 @@ class Audit extends SugarBean
     public $disable_vardefs = true;
     public $disable_custom_fields = true;
 
+    public $genericAssocFieldsArray = array();
+    public $moduleAssocFieldsArray = array();
+    private $fieldDefs;
+    
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = Array();
 
@@ -46,6 +50,10 @@ class Audit extends SugarBean
         //BEGIN SUGARCRM flav=pro ONLY
         $this->team_id = 1; // make the item globally accessible
         //END SUGARCRM flav=pro ONLY
+
+        // load up the assoc fields array from globals
+        $this->getAssocFieldsArray();
+        $this->getFieldDefs();
     }
 
     public $new_schema = true;
@@ -79,6 +87,33 @@ class Audit extends SugarBean
     {
 
     }
+
+    /**
+     * wrapper for evil global var
+     * @protected
+     */
+    protected function getAssocFieldsArray()
+    {
+        global $genericAssocFieldsArray, $moduleAssocFieldsArray;
+        $this->genericAssocFieldsArray = (!empty($genericAssocFieldsArray) &&
+            is_array($genericAssocFieldsArray)) ? $genericAssocFieldsArray : array();
+
+        $this->moduleAssocFieldsArray = (!empty($moduleAssocFieldsArray) &&
+            is_array($moduleAssocFieldsArray)) ? $moduleAssocFieldsArray : array();
+    }
+
+    /**
+     * wrapper to get fielddefs for class - punch out for unit testing
+     * @protected
+     */
+    protected function getFieldDefs()
+    {
+        if (empty($this->fieldDefs)) {
+            require 'metadata/audit_templateMetaData.php';
+            $this->fieldDefs = $dictionary['audit']['fields'];
+        }
+        return $this->fieldDefs;
+    }
     /**
      * This method gets the Audit log and formats it specifically for the API.
      * @param  type SugarBean $bean
@@ -106,27 +141,42 @@ class Audit extends SugarBean
             return array();
         }
 
-        if (!isset($this->fieldDefs)) {
-            require_once 'metadata/audit_templateMetaData.php';
-            $fieldDefs = $dictionary['audit']['fields'];
-        } else {
-            $fieldDefs = $this->fieldDefs;
-        }
-
+        $fieldDefs = $this->fieldDefs;
         $return = array();
 
         while ($row = $db->fetchByAssoc($results)) {
+
             //BEGIN SUGARCRM flav=pro ONLY
-            if(!ACLField::hasAccess($row['field_name'], $bean->module_dir, $GLOBALS['current_user']->id, $bean->isOwner($GLOBALS['current_user']->id))) continue;
+            if (!ACLField::hasAccess(
+                $row['field_name'],
+                $bean->module_dir,
+                $GLOBALS['current_user']->id,
+                $bean->isOwner($GLOBALS['current_user']->id)
+            )) {
+                continue;
+            }
 
             //If the team_set_id field has a log entry, we retrieve the list of teams to display
             if ($row['field_name'] == 'team_set_id') {
-               $row['field_name'] = 'team_name';
-               require_once 'modules/Teams/TeamSetManager.php';
-               $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
-               $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
+                $row['field_name'] = 'team_name';
+                require_once 'modules/Teams/TeamSetManager.php';
+                $row['before_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['before_value_string']);
+                $row['after_value_string'] = TeamSetManager::getCommaDelimitedTeams($row['after_value_string']);
             }
             //END SUGARCRM flav=pro ONLY
+
+            // look for opportunities to relate ids to name values.
+            if (!empty($this->genericAssocFieldsArray[$row['field_name']]) ||
+                !empty($this->moduleAssocFieldsArray[$bean->object_name][$row['field_name']])
+            ) {
+                foreach ($fieldDefs as $field) {
+                    if (in_array($field['name'], array('before_value_string', 'after_value_string'))) {
+                        $row[$field['name']] =
+                            $this->getAssociatedFieldName($row['field_name'], $row[$field['name']]);
+                    }
+                }
+            }
+
             // convert the date
             $dateCreated = $timedate->fromDbType($row['date_created'], "datetime");
             $row['date_created'] = $timedate->asIso($dateCreated);
@@ -291,6 +341,12 @@ class Audit extends SugarBean
         return $audit_list;
     }
 
+    /**
+     * Return a more readable name for an id
+     * @param {String} $fieldName
+     * @param {String} $fieldValue
+     * @return string
+     */
     public function getAssociatedFieldName($fieldName, $fieldValue)
     {
     global $focus,  $genericAssocFieldsArray, $moduleAssocFieldsArray;
@@ -322,9 +378,10 @@ class Audit extends SugarBean
 
          $query .= " FROM ".$field_arr['table_name']." WHERE ".$field_arr['select_field_join']." = '".$fieldValue."'";
 
-         $result = $focus->db->query($query);
+         $db = DBManagerFactory::getInstance();
+         $result = $db->query($query);
          if (!empty($result)) {
-             if ($row = $focus->db->fetchByAssoc($result)) {
+             if ($row = $db->fetchByAssoc($result)) {
                 if (is_array($field_arr['select_field_name'])) {
                     $returnVal = "";
                     foreach ($field_arr['select_field_name'] as $col) {
