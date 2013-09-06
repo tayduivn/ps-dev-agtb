@@ -286,6 +286,7 @@ $dictionary['Opportunity'] = array(
             //BEGIN SUGARCRM flav=ent ONLY
             'studio' => false,
             'massupdate' => false,
+            'reportable' => false,
             //END SUGARCRM flav=ent ONLY
         ),
         'sales_status' => array(
@@ -354,7 +355,8 @@ $dictionary['Opportunity'] = array(
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
             //BEGIN SUGARCRM flav=ent ONLY
             'massupdate' => false,
-            'studio' => false
+            'studio' => false,
+            'reportable' => false
             //END SUGARCRM flav=ent ONLY
         ),
         //END SUGARCRM flav=PRO ONLY
