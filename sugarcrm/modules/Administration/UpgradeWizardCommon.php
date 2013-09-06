@@ -40,11 +40,11 @@ ini_set("max_execution_time", "3600");
 if( isset( $_REQUEST['view'] ) && ($_REQUEST['view'] != "") ){
     $view = $_REQUEST['view'];
     if( $view != "default" && $view != "module" ){
-        die($mod_strings['ERR_UW_INVALID_VIEW']);
+        throw new Exception($mod_strings['ERR_UW_INVALID_VIEW']);
     }
 }
 else{
-    die($mod_strings['ERR_UW_NO_VIEW']);
+    throw new Exception($mod_strings['ERR_UW_NO_VIEW']);
 }
 $form_action = "index.php?module=Administration&view=" . $view . "&action=UpgradeWizard";
 
@@ -151,16 +151,16 @@ function validate_manifest( $manifest ){
 	global $mod_strings;
 
     if( !isset($manifest['type']) ){
-        die($mod_strings['ERROR_MANIFEST_TYPE']);
+        throw new Exception($mod_strings['ERROR_MANIFEST_TYPE']);
     }
     $type = $manifest['type'];
     if( getInstallType( "/$type/" ) == "" ){
-        die($mod_strings['ERROR_PACKAGE_TYPE']. ": '" . $type . "'." );
+        throw new Exception($mod_strings['ERROR_PACKAGE_TYPE']. ": '" . $type . "'." );
     }
 
     $acceptable_sugar_versions = getAcceptableSugarVersions($manifest);
     if (!$acceptable_sugar_versions) {
-        die($mod_strings['ERROR_VERSION_MISSING']);
+        throw new Exception($mod_strings['ERROR_VERSION_MISSING']);
     }
     
     $version_ok = false;
@@ -191,7 +191,7 @@ function validate_manifest( $manifest ){
     }
 
     if( !$matches_empty && !$version_ok ){
-        die( $mod_strings['ERROR_VERSION_INCOMPATIBLE'] . $sugar_version );
+        throw new Exception( $mod_strings['ERROR_VERSION_INCOMPATIBLE'] . $sugar_version );
     }
 
     $acceptable_sugar_flavors = getAcceptableSugarFlavors($manifest);
@@ -203,7 +203,7 @@ function validate_manifest( $manifest ){
             }
         }
         if( !$flavor_ok ){
-            die( $mod_strings['ERROR_FLAVOR_INCOMPATIBLE'] . $sugar_flavor );
+            throw new Exception( $mod_strings['ERROR_FLAVOR_INCOMPATIBLE'] . $sugar_flavor );
         }
     }
 }
