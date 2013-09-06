@@ -121,7 +121,7 @@
             module: context.module
         });
         this.duplicateView.context.on('change:selection_model', this.handleDupeSelectedChange, this);
-        this.duplicateView.context.get('collection').on('reset', this.dupeCheckComplete, this);
+        this.duplicateView.collection.on('reset', this.dupeCheckComplete, this);
         this.addComponent(this.duplicateView);
     },
 
