@@ -22,13 +22,17 @@ $viewdefs['base']['view']['bubblechart'] = array(
             'preview' => array(),
             'filter' => array(
                 'module' => array(
+                    'Home',
                     'Accounts',
                     'Contacts',
                     'Leads',
                     'Opportunities',
                     'RevenueLineItems',
                 ),
-                'view' => 'records',
+                'view' => array(
+                    'record',
+                    'records',
+                ),
             ),
         ),
     ),
