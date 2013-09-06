@@ -53,6 +53,14 @@ class ActivitiesApiTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    public function testGetQueryObject_ForHomePage_DoesntShowListViewActivities()
+    {
+        $query = ActivitiesApi::getQueryObject($this->api, array('offset' => 0, 'limit' => 5));
+        $sql = $query->compileSQL();
+        // assertTrue does a strict equality check, which doesn't equal a number
+        $this->assertNotSame(false, strpos($sql, "activities.parent_type IS NULL"));
+    }
+
     public function testListActivities_HomePage_MultipleModuleTypes_UserHasMixedFieldAccess_AppropriateFieldChangesReturned()
     {
         $records = array(
