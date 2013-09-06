@@ -107,8 +107,8 @@ describe("Base.Field.ActionMenu", function() {
                     'name' : 'test_button',
                     'type' : 'button',
                     'events' : {
-                        'click' : 'function() { this.callback = "stuff excuted"; }',
-                        'blur [name=test_button]' : 'function() { this.callback = "blur excuted"; }'
+                        'click' : 'function() { this.callback = "stuff executed"; }',
+                        'blur [name=test_button]' : 'function() { this.callback = "blur executed"; }'
                     }
                 }
             ]
@@ -119,13 +119,9 @@ describe("Base.Field.ActionMenu", function() {
         field.getPlaceholder();
 
         expect(def.buttons.length).toBe(field.fields.length);
-        _.each(_.pluck(def.buttons, 'events'), function(expected_events, index) {
-            _.each(expected_events, function(exp_handler, key){
-                var actual_event = field.fields[index]['callback_' + key];
-                expect(actual_event).toBeDefined();
-                expect(_.isFunction(actual_event)).toBeTruthy();
-            });
-
-        });
+        expect(_.where(_.pluck(def.buttons, 'events'), {
+            'click' : 'function() { this.callback = "stuff executed"; }',
+            'blur [name=test_button]' : 'function() { this.callback = "blur executed"; }'
+        })).not.toBeEmpty();
     });
 });
