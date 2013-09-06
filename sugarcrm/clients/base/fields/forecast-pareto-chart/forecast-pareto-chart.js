@@ -121,10 +121,8 @@
 
         if (this.d3Data.data.length > 0) {
             // if the chart element is hidden by a previous render, but has data now, show it
-            if(this.$('.nv-chart').hasClass('hide')) {
-                this.$('.nv-chart').toggleClass('hide', false);
-                this.$('.block-footer').toggleClass('hide', true);
-            }
+            this.$('.nv-chart').toggleClass('hide', false);
+            this.$('.block-footer').toggleClass('hide', true);
 
             // After the .call(paretoChart) line, we are selecting the text elements for the Y-Axis
             // only so we can custom format the Y-Axis values
