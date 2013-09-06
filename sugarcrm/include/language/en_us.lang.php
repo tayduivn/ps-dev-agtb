@@ -3065,11 +3065,13 @@ $app_strings = array (
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected record(s)?',
     'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record. Are you sure you want to delete it?',
     'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records. Are you sure you want to delete them?\n",
-    'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
+    'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete the ',
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
     'NTC_DELETE_SELECTED_RECORDS' =>' selected record(s)?',
-    'NTC_UNLINK_CONFIRMATION' => 'Are you sure you want to unlink this record?',
+    'NTC_DELETE_SUCCESS' => 'You deleted the ',
+    'NTC_UNLINK_CONFIRMATION' => 'Are you sure you want to unlink the ',
+    'NTC_UNLINK_SUCCESS' => 'You unlinked the ',
     'NTC_LOGIN_MESSAGE' => 'Please enter your user name and password.',
     'NTC_NO_ITEMS_DISPLAY' => 'none',
     'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship? Only the relationship will be removed. The record will not be deleted.',
@@ -4091,10 +4093,6 @@ $app_strings = array (
     'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and create new',
     'LBL_SAVE_AND_VIEW' => 'Save and view',
     'LBL_RESTORE' => 'Reset to Original',
-
-    // record delete
-    'NTC_RECORD_DELETE_CONFIRMATION' => 'Are you sure you want to delete the {{module}} {{name}}?',
-    'NTC_RECORD_DELETE_SUCCESS' => 'You deleted the {{module}} {{name}}.',
 
     // tabbed dashlet
     'TPL_TABBED_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',

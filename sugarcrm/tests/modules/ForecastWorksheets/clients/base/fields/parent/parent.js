@@ -21,7 +21,7 @@
 
 describe("ForecastWorksheets.Field.Parent", function () {
 
-    var app, field, buildRouteStub, moduleName = 'ForecastWorksheets';
+    var app, field, buildRouteStub, moduleName = 'ForecastWorksheets', _oRouter;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -48,7 +48,7 @@ describe("ForecastWorksheets.Field.Parent", function () {
         };
 
         // Workaround because router not defined yet
-        oRouter = SugarTest.app.router;
+        _oRouter = SugarTest.app.router;
         SugarTest.app.router = {buildRoute: function(){}};
         buildRouteStub = sinon.stub(SugarTest.app.router, 'buildRoute', function(module, id, action, params) {
             return module+'/'+id;
@@ -59,6 +59,7 @@ describe("ForecastWorksheets.Field.Parent", function () {
 
     afterEach(function() {
         buildRouteStub.restore();
+        SugarTest.app.router = _oRouter;
         field = null;
         app = null;
     });
