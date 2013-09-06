@@ -75,7 +75,7 @@
      * 0 Timeout error handler. If server doesn't respond within timeout.
      */
     app.error.handleTimeoutError = function(error) {
-        backToLogin(true);
+        app.alert.dismissAll();
         alertUser("timeout_error", "LBL_REQUEST_TIMEOUT_TITLE", "LBL_REQUEST_TIMEOUT");
     };
 
