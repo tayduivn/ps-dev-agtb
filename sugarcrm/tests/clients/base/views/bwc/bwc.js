@@ -1,15 +1,9 @@
 describe('Base.View.Bwc', function() {
-    var view, app, navigateStub;
+    var view, app;
 
     beforeEach(function() {
         app = SugarTest.app;
-        var module = 'Documents';
-        //view's initialize checks context's url so we add a "sidecar url" here
-        var url = 'http://localhost:8888/master/ent/sugarcrm/';
-        var context = app.context.getContext();
-        context.set({ url: url, module: module});
-        context.prepare();
-        view = SugarTest.createView('base', module, 'bwc', null, context);
+        view = SugarTest.createView('base', 'Documents', 'bwc', null, null);
     });
 
     afterEach(function() {
@@ -45,7 +39,7 @@ describe('Base.View.Bwc', function() {
     describe('Warning unsaved changes', function() {
         var alertShowStub;
         beforeEach(function() {
-            navigateStub = sinon.collection.stub(app.router, 'navigate');
+            sinon.collection.stub(app.router, 'navigate', function() {});
             alertShowStub = sinon.collection.stub(app.alert, 'show');
             sinon.collection.stub(Backbone.history, 'getFragment');
         });
@@ -132,16 +126,6 @@ describe('Base.View.Bwc', function() {
             //change the value once again
             form.phone_number.value = '408-888-8888';
             expect(view.hasUnsavedChanges()).toBe(true);
-        });
-
-        // TODO: Remove this when we get rid of bwc functionality
-        it('should redirect to sidecar Home if user tries to directly access bwc Home/Dashboard', function() {
-            var oldHomeUrl = 'http://localhost:8888/master/ent/sugarcrm/#bwc/index.php?module=Home&action=index';
-            var context = app.context.getContext();
-            context.set({ url: oldHomeUrl, module: 'Documents'});
-            context.prepare();
-            view.initialize({context: context});
-            expect(navigateStub).toHaveBeenCalled();
         });
     });
 });
