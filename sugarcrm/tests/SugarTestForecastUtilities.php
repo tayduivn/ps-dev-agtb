@@ -35,6 +35,7 @@
 
 require_once 'modules/Forecasts/Forecast.php';
 require_once 'modules/Opportunities/Opportunity.php';
+require_once 'modules/Opportunities/OpportunityHooks.php';
 
 class SugarTestForecastUtilities
 {
@@ -57,6 +58,7 @@ class SugarTestForecastUtilities
         foreach ($additional_config as $key => $value) {
             SugarTestConfigUtilities::setConfig('Forecasts', $key, $value);
         }
+        OpportunityHooks::$settings = array();
     }
 
     /**
@@ -65,6 +67,7 @@ class SugarTestForecastUtilities
     public static function tearDownForecastConfig()
     {
         SugarTestConfigUtilities::resetConfig();
+        OpportunityHooks::$settings = array();
     }
 
     /**
