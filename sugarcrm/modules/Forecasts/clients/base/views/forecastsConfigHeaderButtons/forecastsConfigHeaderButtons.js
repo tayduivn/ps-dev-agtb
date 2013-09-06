@@ -177,7 +177,7 @@
                 if(app.drawer && !firstTime) {
                     this.showSavedConfirmation();
                     // close the drawer and return to Forecasts
-                    app.drawer.close();
+                    app.drawer.close(this.context, this.context.get('model'));
                     // ping the server to reload the metadata since it changed
                     app.api.call("read", app.api.buildURL('ping'));
                 } else {
@@ -186,7 +186,7 @@
 
                     // only navigate after save api call has returned
                     // have to do it this way because if we're already on #Forecasts it will not reload by setting
-                    app.drawer.close();
+                    app.drawer.close(this.context, this.context.get('model'));
                     if(app.controller.context.get("module") == "Forecasts") {
                         this.showSavedConfirmation(function() {
                             window.location = '#Forecasts';
@@ -227,7 +227,7 @@
         // If we're inside a drawer and Forecasts is setup
         if (app.drawer) {
             // close the drawer
-            app.drawer.close(this.context);
+            app.drawer.close(this.context, this.context.get('model'));
         }
         if (this.context.get('model').get('is_setup') == 0) {
             // if we are on forecast, redirect back to home, if we are on admin, it works fine because of the bwc module
