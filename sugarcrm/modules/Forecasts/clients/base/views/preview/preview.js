@@ -177,43 +177,30 @@
                 currID = this.collection.models[currIndex].id;
                 this.switching = false;
                 this.switchPreview(data, currIndex, currID, currModule);
-            }
-            else {
-                var targetModule = this.collection.models[currIndex].get("target_module") || currModule,
-                    moduleMeta = app.metadata.getModule(targetModule);
+            } else {
+                var targetModule = this.collection.models[currIndex].get("target_module") || currModule;
 
-                // Some activity stream items aren't previewable - e.g. no detail views
-                // for "Meetings" module.
-                if( moduleMeta && _.isUndefined(moduleMeta.views.detail) ) {
-                    currID = this.collection.models[currIndex].id;
-                    this.switching = false;
-                    this.switchPreview(data, currIndex, currID, currModule);
-                }
-                else {
-                    this.model = app.data.createBean(targetModule);
+                this.model = app.data.createBean(targetModule);
 
-                    if( _.isUndefined(this.collection.models[currIndex].get("target_id")) ) {
-                        // get the parent_id
-                        this.model.set("id", this.collection.models[currIndex].get("parent_id"));
-                    }
-                    else
-                    {
-                        this.model.set("postId", this.collection.models[currIndex].get("id"));
-                        this.model.set("id", this.collection.models[currIndex].get("target_id"));
-                    }
-                    this.originalModel = this.collection.models[currIndex];
-                    this.model.fetch({
-                        //Show alerts for this request
-                        showAlerts: true,
-                        success: function(model) {
-                            model.set("_module", targetModule);
-                            self.model = null;
-                            //Reset the preview
-                            app.events.trigger("preview:render", model, null, false);
-                            self.switching = false;
-                        }
-                    });
+                if( _.isUndefined(this.collection.models[currIndex].get("target_id")) ) {
+                    // get the parent_id
+                    this.model.set("id", this.collection.models[currIndex].get("parent_id"));
+                } else {
+                    this.model.set("postId", this.collection.models[currIndex].get("id"));
+                    this.model.set("id", this.collection.models[currIndex].get("target_id"));
                 }
+                this.originalModel = this.collection.models[currIndex];
+                this.model.fetch({
+                    //Show alerts for this request
+                    showAlerts: true,
+                    success: function(model) {
+                        model.set("_module", targetModule);
+                        self.model = null;
+                        //Reset the preview
+                        app.events.trigger("preview:render", model, null, false);
+                        self.switching = false;
+                    }
+                });
             }
         }
     }
