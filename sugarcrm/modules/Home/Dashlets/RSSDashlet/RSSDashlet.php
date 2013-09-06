@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/Dashlets/Dashlet.php');
-require_once('include/Sugar_Smarty.php');
 
 class RSSDashlet extends Dashlet
 {
