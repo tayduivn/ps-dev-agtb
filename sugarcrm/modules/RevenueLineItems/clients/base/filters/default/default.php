@@ -52,9 +52,15 @@ $viewdefs['RevenueLineItems']['base']['filter']['default'] = array(
         'best_case' => array(),
         'date_entered' => array(),
         'date_modified' => array(),
+        '$owner' => array(
+            'predefined_filter' => true,
+            'vname' => 'LBL_CURRENT_USER_FILTER',
+        ),
+        'assigned_user_name' => array(),
         '$favorite' => array(
             'predefined_filter' => true,
             'vname' => 'LBL_FAVORITES_FILTER',
         ),
+
     ),
 );
