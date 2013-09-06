@@ -69,7 +69,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
   array (
     'name' => 'base_rate',
     'vname' => 'LBL_BASE_RATE',
-    'type' => 'double',
+    'type' => 'decimal',
     'studio' => false
   ),
   'taxrate_id' =>

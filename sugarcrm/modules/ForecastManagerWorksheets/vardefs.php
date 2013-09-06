@@ -70,7 +70,7 @@ $dictionary['ForecastManagerWorksheet'] = array(
         array(
             'name' => 'base_rate',
             'vname' => 'LBL_BASE_RATE',
-            'type' => 'double',
+            'type' => 'decimal',
         ),
         'timeperiod_id' =>
         array(
