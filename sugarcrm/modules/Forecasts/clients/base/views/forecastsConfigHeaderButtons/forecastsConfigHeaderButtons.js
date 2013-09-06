@@ -232,7 +232,6 @@
         if (this.context.get('model').get('is_setup') == 0) {
             // if we are on forecast, redirect back to home, if we are on admin, it works fine because of the bwc module
             if (app.controller.context.get('module') == 'Forecasts') {
-                //app.router.navigate('Home', {trigger: true});
                 app.router.goBack();
             }
         }
