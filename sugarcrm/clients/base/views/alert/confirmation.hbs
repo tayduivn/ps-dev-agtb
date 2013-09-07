@@ -1,7 +1,6 @@
 <div class="alert {{alertClass}} alert-block">
     {{#if title}}<strong>{{title}}</strong>{{/if}}
     {{#each messages}}{{{this}}}{{/each}}
-    <a class="btn-link confirm" data-action="confirm">{{str 'LBL_CONFIRM_BUTTON_LABEL'}}</a>
-    {{str 'LBL_LOWER_OR'}}
-    <a class="btn-link cancel" data-action="cancel">{{str 'LBL_CANCEL_BUTTON_LABEL'}}</a>
+    <a class="btn-link cancel" data-action="cancel">{{str 'LBL_CANCEL_BUTTON_LABEL'}}</a> {{str 'LBL_CANCEL_BUTTON_LABEL_CONT'}}
+    <a class="btn-link confirm" data-action="confirm">{{str 'LBL_CONFIRM_BUTTON_LABEL'}}</a> {{str 'LBL_CONFIRM_BUTTON_LABEL_CONT'}}
 </div>
