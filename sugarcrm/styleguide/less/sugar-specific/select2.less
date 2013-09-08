@@ -176,16 +176,26 @@
       background: none;
       .border-radius(0);
       top: 0;
+      padding-left: 4px;
+      box-sizing: border-box;
       b {
-        background-position: 0 0;
+        .fontawesome();
+        position: relative;
+        top: 0;
+        &:before{
+          content: "\f0d7";
+        }
       }
     }
-    span {
-      margin-right: 16px;
-    }
     abbr {
+      .fontawesome();
+      position: absolute;
       top: 6px;
       right: 18px;
+      font-size: 12px;
+      &:before{
+        content: "\f00D";
+      }
     }
   }
   &.select2-container-active .select2-choice {
@@ -196,6 +206,24 @@
   }
   &.required .select2-choice {
     border-color: lighten(@gray, 25%);
+  }
+}
+
+.fontawesome {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  line-height: 14px;
+  font-size: 14px;
+  color: lighten(@gray,20%);
+  background: none;
+  font-family: FontAwesome;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  &:before{
+    text-decoration: inherit;
+    display: inline-block;
+    speak: none;
   }
 }
 

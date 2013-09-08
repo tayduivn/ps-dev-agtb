@@ -7,67 +7,8 @@
   }
 }
 
-[data-module="Home"] > .btn-group > .dropdown-toggle {margin-right: 40px;}
-
-// Navbar search
-.navbar-search {
-  margin-top: 8px;
-  margin-right: 6px;
-  .btn-group .dropdown-toggle {
-    box-shadow: none;
-  }
-  .search-query {
-    color: @grayLighter;
-    #gradient > .vertical(lighten(@navbarBackground, 20%), lighten(@navbarBackgroundHighlight, 20%));
-    border: 1px solid #111;
-    .border-radius(2px);
-    .box-shadow(~"inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15)");
-
-    // Placeholder text gets special styles; can't be bundled together though for some reason
-    .placeholder(@grayDarker);
-
-    // Hover states
-    &:hover {
-      color: @grayDark;
-      background: @white;
-    }
-    // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
-    &:focus,
-    &.focused {
-      color: @grayDark;
-      background: @white;
-      border: 1px solid @gray;
-    }
-  }
-  .btn-group .dropdown-toggle {
-    box-shadow: none;
-  }
-  .search-query {
-    margin-bottom: 0;
-    min-height: 1px;
-    padding: 4px 9px;
-    .border-radius(2px);
-    .transition(none);
-    // Hover states
-    &:hover {
-      background-color: @grayLight;
-      background-color: rgba(255,255,255,.5);
-    }
-    // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
-    &:focus,
-    &.focused {
-      text-shadow: 0 1px 0 @white;
-      background-color: @white;
-      outline: 0;
-    }
-  }
-  .btn-toolbar {
-    margin-top:0;
-  }
-
-}
-.search-query {
-  .border-radius(4px);
+[data-module="Home"] > .btn-group > .dropdown-toggle {
+  margin-right: 40px;
 }
 
 
@@ -178,51 +119,6 @@
     }
   }
 
-  .advanced {
-    position: absolute;
-    right: 0;
-    top: 0;
-    .btn {
-      line-height: 17px;
-    }
-    //fix advanced drop down position
-    .dropdown-menu {
-      right: 29px;
-      top: 42px;
-      left: auto;
-      padding: 8px 0 0 0;
-      li {
-        padding: 4px 8px;
-        &.divider {
-          padding: 0;
-        }
-      }
-      &:before,
-      &:after {
-        display: none !important;
-      }
-    }
-    &.dropdown-toggle {
-      right: 31px;
-      top: -2px;
-      height: 24px;
-      .border-radii(0,0,3px,3px);
-      &:hover {
-        border-color: transparent;
-      }
-    }
-    .caret {
-      margin-top: 10px;
-    }
-    .btn-group {
-      margin-right: 0;
-      &.open {
-        .dropdown-toggle {
-          background: transparent;
-        }
-      }
-    }
-  }
   .divider-vertical {
     height: 44px;
     width: 1px;
@@ -320,9 +216,6 @@
             margin-top: 0;
             margin-bottom: 0;
             line-height: 32px;
-            .caret {
-              margin-top: 15px;
-            }
             &:hover {
               text-decoration: none;
             }
@@ -379,7 +272,7 @@
             border-left: 1px solid @black !important;
             &> a {
               margin-left: 4px;
-              margin-right: 4px;
+              margin-right: 0;
               padding-left: 0;
               padding-right: 0;
               line-height: 19px;
@@ -479,17 +372,14 @@
   .btn-group:hover > .routeLink {
     color: @navbarLinkColorActive !important;
   }
-  .btn-group:hover > .btn .caret {
-    border-top-color: @navbarLinkColorActive;
-    border-bottom-color: @navbarLinkColorActive;
+  .btn-group:hover > .btn .icon-caret-down {
+    color: @navbarLinkColorActive;
   }
-  .open.dropdown .caret {
-    border-top-color: @white;
-    border-bottom-color: @white;
+  .open.dropdown .icon-caret-down {
+    color: @white;
   }
-  .dropdown .caret {
-    border-top-color: @gray;
-    border-bottom-color: @gray;
+  .dropdown .icon-caret-down {
+    color: @gray;
   }
 }
 
