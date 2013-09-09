@@ -155,7 +155,7 @@ $dictionary['Opportunity'] = array(
         'base_rate' => array(
             'name' => 'base_rate',
             'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'double',
+            'type' => 'decimal',
             'required' => true,
             'studio' => false
         ),

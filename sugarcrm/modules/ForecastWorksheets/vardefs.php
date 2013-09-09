@@ -235,7 +235,7 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'base_rate',
             'vname' => 'LBL_BASE_RATE',
-            'type' => 'double',
+            'type' => 'decimal',
             'required' => true,
             'studio' => false
         ),
