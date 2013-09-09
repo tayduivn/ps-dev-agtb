@@ -395,6 +395,9 @@
                     this.render();
                 }
             }, this),
+            error: _.bind(function() {
+                this.editClicked();
+            }, this),
             viewed: true
         };
 

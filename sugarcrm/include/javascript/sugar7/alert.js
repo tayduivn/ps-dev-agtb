@@ -91,10 +91,14 @@
         options = options || {};
 
         // By default we don't display the alert
-        if (!options.showAlerts) return;
+        if (!options.showAlerts) {
+            return;
+        }
 
         // The user can have disabled only the process alert
-        if (options.showAlerts.process === false) return;
+        if (options.showAlerts.process === false) {
+            return;
+        }
 
         // From here we are sure we want to show the process alert
         var alertOpts = {
@@ -124,8 +128,14 @@
         app.alert.show('data:sync:process', alertOpts);
     });
 
-    app.events.on('data:sync:complete', function(method, model, options) {
-
+    // Not to be confused with the event fired for data:sync:complete.
+    var syncCompleteHandler = function(type, messages, method, model, options) {
+        // Preconstruct the alert options.
+        var alertOpts = {
+            level: type,
+            messages: messages,
+            autoClose: true
+        };
         options = options || {};
 
         // By default we don't display the alert
@@ -146,29 +156,33 @@
         // Error module will display proper message
         if (method === 'read') return;
 
-        // The user can have disabled only the success alert
-        if (options.showAlerts.success === false) return;
+        // The user can have disabled only this particular type of alert.
+        if (options.showAlerts[type] === false) return;
 
-        // From here we are sure we want to show the success alert
-        var alertOpts = {
-            level: 'success',
-            autoClose: true
-        };
+        // Check for an alert options object attach to options
+        if (_.isObject(options.showAlerts[type])) {
+            _.extend(alertOpts, options.showAlerts[type]);
+        }
+
+        app.alert.show('data:sync:' + type, alertOpts);
+    };
+
+    app.events.on('data:sync:success', function(method, model, options) {
+        var messages;
 
         if (method === 'delete') {
             // options.relate means we are breaking a relationship between two records, not actually deleting a record
-            alertOpts.messages = options.relate ? 'LBL_UNLINKED' : 'LBL_DELETED';
+            messages = options.relate ? 'LBL_UNLINKED' : 'LBL_DELETED';
         }
         else {
-            alertOpts.messages = 'LBL_SAVED';
+            messages = 'LBL_SAVED';
         }
 
-        // Check for an alert options object attach to options
-        if (_.isObject(options.showAlerts.success)) {
-            _.extend(alertOpts, options.showAlerts.success);
-        }
+        syncCompleteHandler('success', messages, method, model, options);
+    });
 
-        app.alert.show('data:sync:success', alertOpts);
+    app.events.on('data:sync:error', function(method, model, options) {
+        syncCompleteHandler('error', 'ERR_GENERIC_SERVER_ERROR', method, model, options);
     });
 
 })(SUGAR.App);
