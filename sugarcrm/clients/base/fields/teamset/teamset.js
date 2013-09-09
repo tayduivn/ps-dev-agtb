@@ -168,8 +168,9 @@
      * @private
      */
     _updateAndTriggerChange: function (value) {
-        this.model.set(this.name, value, {silent: true});
-        this.model.trigger("change:" + this.name);
+        // SP-1437: No Warning message when update with Team field only
+        // http://stackoverflow.com/questions/17221680/backbone-model-changedattributes-not-showing-all-changes
+        this.model.unset(this.name, {silent: true}).set(this.name, value);//force changedAttributes
         this.model.trigger("change");
     },
     addItem: _.debounce(function (evt) {
