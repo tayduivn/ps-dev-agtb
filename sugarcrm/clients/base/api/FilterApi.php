@@ -253,7 +253,7 @@ class FilterApi extends SugarApi
             // FIXME: convert this to vardefs too?
             //BEGIN SUGARCRM flav=pro ONLY
             if ($field == 'my_favorite') {
-                $fjoin = $q->join("favorites");
+                $fjoin = $q->join("favorites", array('joinType' => 'LEFT'));
                 $fields[] = array($fjoin->joinName() . ".id", 'my_favorite');
                 continue;
             }
