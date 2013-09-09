@@ -16,6 +16,18 @@ describe("Activity Stream Omnibar View", function() {
     });
 
     describe("toggleSubmitButton()", function() {
+        var attachments = {};
+
+        beforeEach(function() {
+            view.getAttachments = function() {
+                return attachments;
+            }
+        });
+
+        afterEach(function() {
+            view.getAttachments = null;
+        });
+
         it('Should disable Submit button by default', function() {
             expect(view.$('.addPost').hasClass('disabled')).toBe(true);
         });
@@ -29,6 +41,26 @@ describe("Activity Stream Omnibar View", function() {
         it('Should disable Submit button when there are only spaces inside the input area', function() {
             view.$('.sayit').text('       ');
             view.toggleSubmitButton();
+            expect(view.$('.addPost').hasClass('disabled')).toBe(true);
+        });
+
+        it('Should enable Submit button when an attachment is added', function() {
+            view.toggleSubmitButton();
+
+            attachments = {one:1};
+            view.trigger('attachments:add');
+
+            expect(view.$('.addPost').hasClass('disabled')).toBe(false);
+            attachments = {};
+        });
+
+        it('Should disable Submit button when an existing attachment is removed', function() {
+            attachments = {one:1};
+            view.toggleSubmitButton();
+
+            attachments = {};
+            view.trigger('attachments:remove');
+
             expect(view.$('.addPost').hasClass('disabled')).toBe(true);
         });
     });
