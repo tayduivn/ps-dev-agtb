@@ -31,10 +31,13 @@ $viewdefs['base']['view']['history'] = array(
             'filter' => array(
                 'module' => array(
                     'Accounts',
+                    'Bugs',
+                    'Cases',
                     'Contacts',
                     'Home',
                     'Leads',
                     'Opportunities',
+                    'Prospects',
                 ),
                 'view' => 'record',
             ),
