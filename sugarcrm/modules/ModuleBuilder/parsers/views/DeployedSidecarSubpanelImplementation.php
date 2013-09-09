@@ -17,6 +17,7 @@ require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataImplementation
 require_once 'modules/ModuleBuilder/parsers/constants.php';
 require_once 'include/MetaDataManager/MetaDataConverter.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'include/SubPanel/SubPanelDefinitions.php';
 
 class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
@@ -42,24 +43,17 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         $bean = BeanFactory::getBean($loadedModule);
         $link = new Link2($linkName, $bean);
         $moduleName = $link->getRelatedModuleName();
+
         $this->_moduleName = $moduleName;
         $this->bean = BeanFactory::getBean($moduleName);
         $this->setViewClient($client);
-        $this->setUpSubpanelViewDefFileInfo();
 
         // Handle validation up front that will throw exceptions
-        if (empty($this->bean)) {
-            throw new Exception("Bean was not provided for {$this->sidecarSubpanelName}");
+        if (empty($this->bean) && !$this->fixUpSubpanel()) {
+            throw new Exception("No valid parent bean found for {$this->linkName} on {$this->loadedModule}");
         }
 
-        if (empty($this->loadedSubpanelFileName)) {
-            throw new Exception("No valid metadata file name found for subpanel {$this->sidecarSubpanelName}");
-        }
-
-        // Load the base/custom metadata file first
-        if (!file_exists($this->loadedSubpanelFileName)) {
-            throw new Exception("Metadata file '{$this->loadedSubpanelFileName}' does not exist for subpanel {$this->loadedSubpanelFileName}");
-        }
+        $this->setUpSubpanelViewDefFileInfo();
 
         include $this->loadedSubpanelFileName;
 
@@ -84,6 +78,47 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         }
         // Make sure the paneldefs are proper if there are any
         $this->_paneldefs = isset($this->_viewdefs['panels']) ? $this->_viewdefs['panels'] : array();
+    }
+
+    /**
+     * If a subpanel cannot be found in sidecar, try to find it in legacy
+     * and convert it
+     * @return bool
+     */
+    protected function fixUpSubpanel()
+    {
+        // getting here usually means that the link passed in is from an oldschool layoutdef
+        // get the name, get the key, get the link, then we work the magic
+        $spd = new SubPanelDefinitions(BeanFactory::getBean($this->loadedModule));
+        if (! empty ( $spd->layout_defs )) {
+            if (array_key_exists(strtolower($this->linkName), $spd->layout_defs ['subpanel_setup'])) {
+                $aSubPanelObject = $spd->load_subpanel($this->linkName);
+                $this->_moduleName = $aSubPanelObject->get_module_name();
+                $this->bean = BeanFactory::getBean($this->_moduleName);
+                // convert the old viewdef on the fly
+                $this->convertLegacyViewDef($aSubPanelObject->get_list_fields());
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Convert the legacy viewdefs to sidecar viewdefs
+     * @param array $listFields list of fields on teh subpanel
+     * @return bool
+     */
+    protected function convertLegacyViewDef($listFields)
+    {
+        $this->sidecarSubpanelName = $this->mdc->fromLegacySubpanelName($this->legacySubpanelName);
+        $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient(
+            ) . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+        if (!file_exists($this->sidecarFile)) {
+            $viewDefs = $this->mdc->fromLegacySubpanelsViewDefs(array('list_fields' => $listFields), $this->_moduleName);
+            $this->deploy($viewDefs);
+        }
+        return true;
     }
 
     /**
@@ -130,7 +165,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                     $this->loadedSubpanelName = $component['override_subpanel_list_view']['view'];
                     $this->loadedSubpanelFileName = file_exists("custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php") ?
                         "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php"
-                      : "modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php";
+                        : "modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php";
                     $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
                     $this->overrideArrayKey = $key;
                     return true;
@@ -213,10 +248,11 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     {
         // Make a viewdefs variable for saving
         $varname = "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']";
-
-        // first sort out the historical record...
-        write_array_to_file($varname, $this->_viewdefs, $this->historyPathname);
-        $this->_history->append($this->historyPathname);
+        if (!empty($this->historyPathname)) {
+            // first sort out the historical record...
+            write_array_to_file($varname, $this->_viewdefs, $this->historyPathname);
+            $this->_history->append($this->historyPathname);
+        }
         $this->_viewdefs = $defs;
 
         // Now move on to the viewdefs proper
@@ -264,5 +300,4 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             }
         }
     }
-
 }
