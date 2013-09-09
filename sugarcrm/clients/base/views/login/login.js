@@ -138,23 +138,7 @@
      * rendering the rest of the Sugar app
      */
     postLogin: function(){
-        var showWizard = app.user.get('show_wizard'),
-            wizardType = app.user.get('type');
-        if (showWizard) {
-            var callbacks = {
-                complete: function(){
-                    window.location.reload(); //Reload when done
-                }
-            };
-            app.controller.loadView({
-                layout: "first-login-wizard",
-                module: "Users",
-                modelId: app.user.get("id"),
-                callbacks: callbacks,
-                wizardName: wizardType
-            });
-            $("#header").hide();  //Hide the header bar
-        } else {
+        if (!app.user.get('show_wizard')) {
             this.refreshAddtionalComponents();
         }
         app.$contentEl.show();

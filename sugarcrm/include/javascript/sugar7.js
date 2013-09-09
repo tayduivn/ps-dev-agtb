@@ -39,23 +39,11 @@
                 callback: function() {
                     var lastHomeKey = getLastHomeKey(),
                         lastHome = app.user.lastState.get(lastHomeKey);
-
                     if (lastHome === homeOptions.dashboard) {
                         app.router.list("Home");
                     } else if (lastHome === homeOptions.activities) {
                         app.router.navigate('#activities', {trigger: true});
                     }
-                }
-            },
-            {   //Route for the "first login" wizard
-                name: "firstlogin",
-                route: "firstlogin",
-                callback: function(){
-                    app.controller.loadView({
-                        layout: "first-login-wizard",
-                        module: "Users",
-                        modelId: app.user.get("id")
-                    });
                 }
             },
             {
@@ -281,7 +269,28 @@
             });
             return false;
         }
-        return true;
+
+        // Check if first time login wizard should be shown
+        var showWizard = false;
+        if (app.user && app.user.has('show_wizard')) {
+            showWizard = app.user.get('show_wizard');
+        }
+        if (showWizard) {
+            var callbacks = {
+                complete: function() {
+                    window.location.reload(); //Reload when done
+                }
+            };
+            app.controller.loadView({
+                layout: 'first-login-wizard',
+                module: 'Users',
+                modelId: app.user.get('id'),
+                callbacks: callbacks,
+                wizardName: app.user.get('type')
+            });
+            $('#header').hide(); //Hide the header bar
+        }
+        return !showWizard;
     });
 
     //template language string for each page
