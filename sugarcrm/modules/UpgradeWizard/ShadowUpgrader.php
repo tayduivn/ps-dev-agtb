@@ -40,8 +40,8 @@ class ShadowUpgrader extends CliUpgrader
 php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -z zip -l logFile -u admin-user
 
 Example:
-    php ShadowUpgrader.php -f /sugar/templates/6.6.2 -t /sugar/templates/6.7.0 path-to-sugar-instance/ \
-    	    -z SugarEnt-Upgrade-6.6.x-to-6.7.0.zip -l silentupgrade.log -u admin
+    php ShadowUpgrader.php -f /sugar/templates/7.0.0 -t /sugar/templates/7.1.0 path-to-sugar-instance/ \
+    	    -z SugarEnt-Upgrade-7.0.x-to-7.1.0.zip -l silentupgrade.log -u admin
 
 Arguments:
     -f/--from oldTemplate                : Pre-upgrade template

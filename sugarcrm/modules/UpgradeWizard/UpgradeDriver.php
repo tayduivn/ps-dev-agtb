@@ -1428,7 +1428,7 @@ abstract class UpgradeDriver
         $target = $this->context['backup_dir']  . '/'. $file;
         $path = pathinfo($target, PATHINFO_DIRNAME);
         if(!empty($path)) {
-            $this->ensureDir($target);
+            $this->ensureDir($path);
         }
         $this->log("Backing up $file");
         if(is_dir($file)) {
