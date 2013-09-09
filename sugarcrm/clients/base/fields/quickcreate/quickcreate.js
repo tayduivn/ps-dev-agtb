@@ -71,14 +71,30 @@
             }
         }, function (refresh) {
             if (refresh) {
-                var collection = app.controller.context.get('collection');
-                if (collection && collection.module === module) {
-                    collection.fetch({
-                        //Don't show alerts for this request
-                        showAlerts: false
-                    });
+                //Check main context to see if it needs to be updated
+                this._loadContext(app.controller.context, module);
+                //Also check child contexts for updates
+                if (app.controller.context.children) {
+                    _.each(app.controller.context.children, function(context){
+                        this._loadContext(context, module);
+                    }, this);
                 }
             }
         });
+    },
+    /**
+     * Conditionally load context if it is for given module
+     * @param context Context to load
+     * @param module Module name to check
+     * @private
+     */
+    _loadContext: function(context, module){
+        var collection = context.get('collection');
+        if (collection && collection.module === module) {
+            collection.fetch({
+                //Don't show alerts for this request, background update
+                showAlerts: false
+            });
+        }
     }
 })

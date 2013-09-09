@@ -1,5 +1,5 @@
 describe("Base.Field.QuickCreate", function() {
-    var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount;
+    var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount, collection, spyOnFetch;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -24,10 +24,17 @@ describe("Base.Field.QuickCreate", function() {
         event = {
             currentTarget: '<a data-module="Foo" data-layout="Bar"></a>'
         };
+
+        collection = {
+            module: "Foo",
+            fetch: function(){}
+        };
+        spyOnFetch = sinon.spy(collection, 'fetch');
     });
 
     afterEach(function() {
         alertShowStub.restore();
+        spyOnFetch.restore();
         app.drawer = drawerBefore;
         app.cache.cutAll();
         app.view.reset();
@@ -63,5 +70,29 @@ describe("Base.Field.QuickCreate", function() {
         expect(alertShowStub.callCount).toBe(1);
         expect(app.drawer.reset.callCount).toBe(1);
         expect(app.drawer.open.callCount).toBe(1);
+    });
+
+    it('should refresh collection for current app context if it is same module', function() {
+        alertConfirm = true;
+        mockDrawerCount = 1;
+        app.drawer.open = function(options, callback){ callback(true); };
+
+        app.controller.context.set("collection", collection);
+        field._handleActionLink(event);
+        expect(spyOnFetch).toHaveBeenCalled();
+        app.controller.context.unset("collection");
+    });
+
+    it('should refresh collection(s) for child contexts if it is same module', function() {
+        alertConfirm = true;
+        mockDrawerCount = 1;
+        app.drawer.open = function(options, callback){ callback(true); };
+        var child = new Backbone.Model();
+
+        child.set("collection", collection);
+        app.controller.context.children = [child];
+        field._handleActionLink(event);
+        expect(spyOnFetch).toHaveBeenCalled();
+        app.controller.context.children = [];
     });
 });
