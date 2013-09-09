@@ -78,16 +78,16 @@
                 });
 
                 if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
-                    data.embed = {
+                    data.embeds = [{
                         type: "image",
                         src: url
-                    };
+                    }];
                 }
 
                 data.url = url;
                 this.$el.data(data);
                 this.model.set('data', data);
-                this.model.set('parent_type', 'Files');
+                this.model.set('display_parent_type', 'Files');
                 break;
         }
 
