@@ -194,6 +194,7 @@ class MBLanguage{
 
             $values = sugarLangArrayMerge($values, $app_list_strings);
             $values['moduleList'][$key_name] = $this->label;
+            $values['moduleListSingular'][$key_name] = $this->label_singular;
 
 
             $appFile = $header . "\n";
