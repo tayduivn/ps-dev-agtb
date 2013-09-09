@@ -112,5 +112,16 @@
         _.each(this._components, function(component) {
             component.context.set("isSubpanel", true);
         });
+    },
+
+    /**
+     * Load data for all subpanels. Need to override the layout's loadData() because
+     * it calls loadData() for the context, which we do not want to do here.
+     * @param options
+     */
+    loadData: function(options) {
+        _.each(this._components, function(component) {
+            component.loadData(options);
+        });
     }
 })

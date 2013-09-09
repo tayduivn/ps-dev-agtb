@@ -157,6 +157,7 @@
             var data = $el.data();
             app.user.lastState.set(this.toggleViewLastStateKey, data.view);
             this.showComponent(data.view);
+            this.reloadData(data.view);
         }
     },
 
@@ -170,7 +171,6 @@
             this.componentsList[name].render();
             this._components.push(this.componentsList[name]);
             this.$(".main-content").append(this.componentsList[name].el);
-            this.componentsList[name] = null;
         }
 
         _.each(this.toggleComponents, function (comp) {
@@ -181,6 +181,18 @@
             }
         }, this);
         this.trigger('filterpanel:change', name);
+    },
+
+    /**
+     * Reload the toggled component
+     * @param name
+     */
+    reloadData: function(name) {
+        var layout = this.componentsList[name];
+        if (layout) {
+            layout.context.resetLoadFlag(true);
+            layout.loadData();
+        }
     },
 
     /**

@@ -99,10 +99,10 @@
     },
 
     _load: function(options) {
-        if (_.isUndefined(this.context.parent.get('layout')) || _.isUndefined(options)) {
+        if (_.isUndefined(this.context.parent.get('layout'))) {
             return;
         }
-        options = _.extend(options, this.context.get('collectionOptions'));
+        options = _.extend({}, options, this.context.get('collectionOptions'));
         this.collection.fetch(options);
     },
 
