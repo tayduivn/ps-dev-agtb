@@ -80,9 +80,11 @@
         // just on the off chance that no options param is passed in
         options = options || {};
         options.success = _.bind(function(data) {
-            this._serverData = data;
-            this.convertDataToChartData();
-            this.generateD3Chart();
+            if(this.model) {
+                this._serverData = data;
+                this.convertDataToChartData();
+                this.generateD3Chart();
+            }
         }, this);
 
 
