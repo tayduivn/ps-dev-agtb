@@ -391,7 +391,8 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
    array (
        'name' => 'base_rate',
        'vname' => 'LBL_BASE_RATE',
-       'type' => 'double',
+       'type' => 'decimal',
+       'len' => '26,6',
    ),
    'best_case' =>
   array (
@@ -613,7 +614,8 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     array (
         'name' => 'base_rate',
         'vname' => 'LBL_BASE_RATE',
-        'type' => 'double',
+        'type' => 'decimal',
+        'len' => '26,6',
         'required' => true,
     ),
     'best_case' =>
