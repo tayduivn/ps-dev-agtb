@@ -591,6 +591,7 @@ class ForecastWorksheet extends SugarBean
 
         // reassign entries in forecast_manager_worksheets
         $_object = BeanFactory::getBean('ForecastManagerWorksheets');
+
         // delete all manager worksheets for the user we are migrating away from
         $_query = "update {$_object->table_name} set " .
             "deleted = 1, " .
@@ -601,21 +602,24 @@ class ForecastWorksheet extends SugarBean
         $res = $db->query($_query, true);
         $affected_rows += $db->getAffectedRowCount($res);
 
-        $_query = "update {$_object->table_name} set " .
-            "assigned_user_id = '{$toUserId}', " .
-            "user_id = '{$toUserId}', " .
-            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
-            "modified_user_id = '{$current_user->id}' " .
-            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' ";
-        $res = $db->query($_query, true);
-        $affected_rows += $db->getAffectedRowCount($res);
-
+        // Remove any committed rows that are assigned to the user we are migration away from, since we don't
+        // want to migration committed records
         $_query = "update {$_object->table_name} set " .
             "deleted = 1, " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
             "modified_user_id = '{$current_user->id}' " .
             "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.draft = 0
             and {$_object->table_name}.assigned_user_id = '{$fromUserId}'";
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
+
+        // move all draft records left over that have not been deleted to the new user.
+        $_query = "update {$_object->table_name} set " .
+            "assigned_user_id = '{$toUserId}', " .
+            "user_id = '{$toUserId}', " .
+            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
+            "modified_user_id = '{$current_user->id}' " .
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' ";
         $res = $db->query($_query, true);
         $affected_rows += $db->getAffectedRowCount($res);
 
