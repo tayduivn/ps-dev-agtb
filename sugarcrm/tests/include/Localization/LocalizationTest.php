@@ -323,4 +323,29 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->setPreference('num_grp_sep', '!');
         $this->assertEquals('!', $this->_locale->getPrecedentPreference('num_grp_sep', $this->_user));
     }
+
+    /**
+     * Test to retrieve authenticated user's preferred language
+     */
+    public function testGetAuthenticatedUserLanguage()
+    {
+        //test from user pref
+        $this->_user->preferred_language = 'fr_FR';
+        $this->assertEquals('fr_FR', $this->_locale->getAuthenticatedUserLanguage());
+        $this->_user->preferred_language = 'de_DE';
+        $this->assertEquals('de_DE', $this->_locale->getAuthenticatedUserLanguage());
+        //test from session
+        if (!empty($_SESSION['authenticated_user_language'])) {
+            $oSESSION = $_SESSION['authenticated_user_language'];
+        }
+        $this->_user->preferred_language = null;
+        $_SESSION['authenticated_user_language'] = 'ja_JP';
+        $this->assertEquals('ja_JP', $this->_locale->getAuthenticatedUserLanguage());
+        //test from default
+        unset($_SESSION['authenticated_user_language']);
+        $this->assertEquals($GLOBALS['sugar_config']['default_language'], $this->_locale->getAuthenticatedUserLanguage());
+        if (isset($oSESSION)) {
+            $_SESSION['authenticated_user_language'] = $oSESSION;
+        }
+    }
 }
