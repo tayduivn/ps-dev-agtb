@@ -71,17 +71,27 @@
                 this.model.set('data', data);
                 break;
             case 'attach':
-                var url = app.api.buildFileURL({
+                var url,
+                    urlAttributes = {
                     module: 'Notes',
                     id: data.noteId,
                     field: 'filename'
-                });
+                };
 
                 if (data.mimetype && data.mimetype.indexOf("image/") === 0) {
+                    url = app.api.buildFileURL(urlAttributes, {
+                        htmlJsonFormat: false,
+                        passOAuthToken: false,
+                        cleanCache: true,
+                        forceDownload: false
+                    });
+
                     data.embeds = [{
                         type: "image",
                         src: url
                     }];
+                } else {
+                    url = app.api.buildFileURL(urlAttributes);
                 }
 
                 data.url = url;
