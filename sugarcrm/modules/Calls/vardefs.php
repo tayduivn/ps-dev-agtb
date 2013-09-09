@@ -521,6 +521,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
       'relationship_role_column_value'=>'Calls',
 		),
 	),
+    'acls' => array('SugarACLOpi' => true, 'SugarACLStatic' => true),
 //This enables optimistic locking for Saves From EditView
 	'optimistic_locking'	=> true,
 );
