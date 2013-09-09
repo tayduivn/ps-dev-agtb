@@ -138,7 +138,7 @@ class Activity extends Basic
                 if ($parent && !is_null($parent->id)) {
                     $this->data['object'] = ActivityQueueManager::getBeanAttributes($parent);
                 } else {
-                    $this->data['object_type'] = $this->parent_type;
+                    $this->data['module'] = $this->parent_type;
                 }
             }
 
