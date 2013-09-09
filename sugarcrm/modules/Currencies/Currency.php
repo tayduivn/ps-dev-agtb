@@ -360,7 +360,7 @@ class Currency extends SugarBean
      * @param  bool $check_notify
      * @return String
      */
-    function save($check_notify = FALSE)
+    function save($check_notify = false)
     {
         sugar_cache_clear('currency_list');
 
@@ -368,6 +368,20 @@ class Currency extends SugarBean
         MetaDataManager::clearAPICache(false);
 
         return parent::save($check_notify);
+    }
+
+    /**
+     * Same as SugarBean::mark_deleted except clears api cache.
+     * @param $id
+     */
+    public function mark_deleted($id)
+    {
+        sugar_cache_clear('currency_list');
+
+        // The per-module cache doesn't need to be cleared here
+        MetaDataManager::clearAPICache(false);
+
+        return parent::mark_deleted($id);
     }
 
     /**
@@ -632,7 +646,7 @@ function unformat_number($string)
  * @param bool $for_display
  * @return string
  */
-function format_money($amount, $for_display = TRUE)
+function format_money($amount, $for_display = true)
 {
     // This function formats an amount for display.
     // Later on, this should be converted to use proper thousand and decimal seperators
