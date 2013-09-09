@@ -118,7 +118,7 @@ class MysqlManager extends DBManager
 			'blob'     => 'blob',
 			'longblob' => 'longblob',
 			'currency' => 'decimal(26,6)',
-			'decimal'  => 'decimal(26,6)',
+			'decimal'  => 'decimal',
 			'decimal2' => 'decimal',
 			'id'       => 'char(36)',
 			'url'      => 'varchar',
@@ -1004,7 +1004,7 @@ class MysqlManager extends DBManager
 					$fieldDef['len'] .= ",0";
 				}
 			} else {
-				$fieldDef['len']  = '26,0';
+				$fieldDef['len']  = '10,0';
 			}
 		}
 	}

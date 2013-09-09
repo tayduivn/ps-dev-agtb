@@ -123,7 +123,7 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
     array (
         'name' => 'base_rate',
         'vname' => 'LBL_BASE_RATE',
-        'type' => 'decimal',
+        'type' => 'double',
     ),
 
     /*
