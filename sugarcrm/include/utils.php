@@ -2425,10 +2425,8 @@ function getVersionedPath($path, $additional_attrs='')
 {
     if(empty($GLOBALS['sugar_config']['js_custom_version'])) $GLOBALS['sugar_config']['js_custom_version'] = 1;
     $js_version_key = isset($GLOBALS['js_version_key'])?$GLOBALS['js_version_key']:'';
-    if (inDeveloperMode()) {
-        static $rand;
-        if(empty($rand)) $rand = mt_rand();
-        $dev = $rand;
+    if (inDeveloperMode() && file_exists($path)) {
+        $dev = md5(filemtime($path));
     } else {
         $dev = '';
     }
