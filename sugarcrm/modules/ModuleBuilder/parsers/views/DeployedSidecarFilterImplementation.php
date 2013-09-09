@@ -49,6 +49,13 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             $GLOBALS['log']->debug(get_class($this) . ": loading from history");
             require $this->historyPathname;
         }
+
+        $studioModule = new StudioModule($this->_moduleName);
+        $defaultTemplate = $studioModule->getType();
+        $defaultTemplateFilterFile = "include/SugarObjects/templates/{$defaultTemplate}/clients/base/filters/default/default.php";
+
+        $baseTemplateFilterFile = "include/SugarObjects/templates/basic/clients/base/filters/default/default.php";
+
         if(file_exists("custom/modules/{$loadedModule}/clients/{$client}/filters/default/default.php")) {
             include "custom/modules/{$loadedModule}/clients/{$client}/filters/default/default.php";
         } elseif(file_exists("modules/{$loadedModule}/clients/{$client}/filters/default/default.php")) {
@@ -57,6 +64,12 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             if ($client != 'base' && file_exists("modules/{$loadedModule}/clients/base/filters/default/default.php")) {
                 include "modules/{$loadedModule}/clients/base/filters/default/default.php";
                 $this->loadedViewClient='base';
+            } elseif (file_exists($defaultTemplateFilterFile)) {
+                include $defaultTemplateFilterFile;
+                $this->loadedViewClient = 'base';
+            } elseif (file_exists($baseTemplateFilterFile)) {
+                include $baseTemplateFilterFile;
+                $this->loadedViewClient = 'base';
             } else {
                 throw new Exception("Could not find a filter file for {$loadedModule}");
             }
