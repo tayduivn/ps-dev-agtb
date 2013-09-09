@@ -1,14 +1,16 @@
-{{#each meta.panels}}
-    {{#each fields}}
-        <span class="record-cell">
-            <h1>{{field ../../this model=../../this.model template=../../this.action}}</h1>
-        </span>
-    {{/each}}
-{{/each}}
-<span class="record-cell">
-    <div class="btn-toolbar">
-        {{#each meta.buttons}}
-            {{field ../this model=../this.model template="detail"}}
+<div class="headerpane">
+    <h1>
+        {{#each meta.panels}}
+            {{#each fields}}
+                <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                    {{field ../../this model=../../this.model template=../../this.action}}
+                </span>
+            {{/each}}
         {{/each}}
-    </div>
-</span>
+        <div class="btn-toolbar">
+            {{#each meta.buttons}}
+                {{field ../this model=../this.model template="detail"}}
+            {{/each}}
+        </div>
+    </h1>
+</div>

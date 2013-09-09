@@ -60,5 +60,27 @@
         ) {
             this.template = app.template.getField('base', this.tplName) || this.template;
         }
+    },
+
+    /**
+     * Called by record view to set max width of inner record-cell div
+     * to prevent long names from overflowing the outer record-cell container
+     */
+    setMaxWidth: function(width) {
+        this.$el.css({'max-width': width});
+    },
+
+    /**
+     * Return the width of padding on inner record-cell
+     */
+    getCellPadding: function() {
+        var padding = 0,
+            $cell = this.$('.dropdown-toggle');
+
+        if (!_.isEmpty($cell)) {
+            padding = parseInt($cell.css('padding-left'), 10) + parseInt($cell.css('padding-right'), 10);
+        }
+
+        return padding;
     }
 })

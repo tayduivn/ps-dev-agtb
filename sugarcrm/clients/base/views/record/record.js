@@ -43,6 +43,9 @@
     // fields that should not be editable
     noEditFields: null,
 
+    // width of the layout that contains this view
+    _containerWidth: 0,
+
     initialize: function (options) {
         _.bindAll(this);
         options.meta = _.extend({}, app.metadata.getView(null, 'record'), options.meta);
@@ -70,8 +73,8 @@
         // properly namespace SHOW_MORE_KEY key
         this.MORE_LESS_KEY = app.user.lastState.key(this.MORE_LESS_KEY, this);
 
-        this.adjustViewForHeaderpane = _.bind(_.debounce(this.adjustViewForHeaderpane, 200), this);
-        $(window).on('resize.' + this.cid, this.adjustViewForHeaderpane);
+        this.adjustHeaderpane = _.bind(_.debounce(this.adjustHeaderpane, 50), this);
+        $(window).on('resize.' + this.cid, this.adjustHeaderpane);
     },
 
     /**
@@ -231,8 +234,7 @@
     _renderHtml: function () {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
-        this.adjustViewForHeaderpane();
-
+        this.adjustHeaderpane();
     },
 
     bindDataChange: function () {
@@ -307,7 +309,7 @@
         this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
         this.toggleViewButtons(isEdit);
-        this.adjustViewForHeaderpane();
+        this.adjustHeaderpane();
     },
 
     /**
@@ -335,7 +337,11 @@
         this.setButtonStates(this.STATE.EDIT);
 
         this.toggleField(field);
-        this.adjustViewForHeaderpane();
+
+        if (cell.closest('.headerpane').length > 0) {
+            this.toggleViewButtons(true);
+            this.adjustHeaderpaneFields();
+        }
     },
 
     /**
@@ -345,6 +351,7 @@
     toggleHeaderLabels: function (isEdit) {
         this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleViewButtons(isEdit);
+        this.adjustHeaderpane();
     },
 
     /**
@@ -352,11 +359,10 @@
      * @param isEdit
      */
     toggleViewButtons: function(isEdit) {
-        this.$('.headerpane span[data-type="badge"]').toggle(!isEdit);
-        this.$('.headerpane span[data-type="favorite"]').toggle(!isEdit);
-        this.$('.headerpane span[data-type="follow"]').toggle(!isEdit);
-        this.$('.headerpane .previous-row').toggle(!isEdit);
-        this.$('.headerpane .next-row').toggle(!isEdit);
+        this.$('.headerpane span[data-type="badge"]').toggleClass('hide', isEdit);
+        this.$('.headerpane span[data-type="favorite"]').toggleClass('hide', isEdit);
+        this.$('.headerpane span[data-type="follow"]').toggleClass('hide', isEdit);
+        this.$('.headerpane .btn-group-previous-next').toggleClass('hide', isEdit);
     },
 
     /**
@@ -365,9 +371,15 @@
      */
     toggleLabelByField: function (field) {
         if (field.action === 'edit') {
-            field.$el.closest('.record-cell').find('.record-label').show();
+            field.$el.closest('.record-cell')
+                .addClass('edit')
+                .find('.record-label')
+                .show();
         } else {
-            field.$el.closest('.record-cell').find('.record-label').hide();
+            field.$el.closest('.record-cell')
+                .removeClass('edit')
+                .find('.record-label')
+                .hide();
         }
     },
 
@@ -378,9 +390,8 @@
         var options = {
             showAlerts: true,
             success: _.bind(function() {
-                
                 // Loop through the visible subpanels and have them sync. This is to update any related
-                // fields to the record that may have been changed on the server on save. 
+                // fields to the record that may have been changed on the server on save.
                 _.each(this.context.children, function(child) {
                     if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
                         if (child.attributes.isSubpanel && !child.attributes.hidden) {
@@ -388,7 +399,6 @@
                         }
                     }
                 });
-                
                 if (this.createMode) {
                     app.navigate(this.context, this.model);
                 } else if (!this.disposed) {
@@ -490,15 +500,16 @@
                 }
             }
 
-            this.adjustViewForHeaderpane();
+            this.adjustHeaderpane();
         }
     },
 
     /**
-     * Adjust view when height of the headerpane changes
+     * Adjust headerpane fields when they change to view mode
      */
     handleMouseDown: function() {
-        this.adjustViewForHeaderpane();
+        this.toggleViewButtons(false);
+        this.adjustHeaderpaneFields();
     },
 
     /**
@@ -527,7 +538,7 @@
         if ($title.length > 0) {
             $title.text(title);
         } else {
-            this.$('.headerpane').prepend('<h1><span class="module-title">' + title + '</span></h1>');
+            this.$('.headerpane h1').prepend('<div class="record-cell"><span class="module-title">' + title + '</span></div>');
         }
     },
 
@@ -627,7 +638,6 @@
             var el = this.$el.find('[data-action=scroll][data-action-type=' + actionType + ']');
             this._disablePagination(el);
         }
-
     },
 
     /**
@@ -641,12 +651,142 @@
     },
 
     /**
-     * Push down main pane depending upon the height of the headerpane
+     * Adjust headerpane such that certain fields can be shown with ellipsis
      */
-    adjustViewForHeaderpane: function() {
-        if (!this.disposed) {
-            var height = this.$('.headerpane').outerHeight(true);
-            this.context.trigger('defaultLayout:setPaddingTop', height);
+    adjustHeaderpane: function() {
+        this.setContainerWidth();
+        this.adjustHeaderpaneFields();
+    },
+
+    /**
+     * Get the width of the layout container
+     */
+    getContainerWidth: function() {
+        return this._containerWidth;
+    },
+
+    /**
+     * Set the width of the layout container
+     */
+    setContainerWidth: function() {
+        this._containerWidth = this._getParentLayoutWidth(this.layout);
+    },
+
+    /**
+     * Get the width of the parent layout that contains getPaneWidth() method.
+     * @param layout
+     * @returns {number}
+     * @private
+     */
+    _getParentLayoutWidth: function(layout) {
+        if (!layout) {
+            return 0;
+        } else if (_.isFunction(layout.getPaneWidth)) {
+            return layout.getPaneWidth(this);
+        }
+
+        return this._getParentLayoutWidth(layout.layout);
+    },
+
+    /**
+     * Adjust headerpane fields such that the first field is ellipsified and the last field
+     * is set to 100% on view.  On edit, the first field is set to 100%.
+     */
+    adjustHeaderpaneFields: function() {
+        var $ellipsisCell,
+            ellipsisCellWidth,
+            $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
+        if (!this.disposed && !_.isEmpty($recordCells) && this.getContainerWidth() > 0) {
+            $ellipsisCell = $(this._getCellToEllipsify($recordCells));
+            if (!_.isEmpty($ellipsisCell)) {
+                if ($ellipsisCell.hasClass('edit')) {
+                    // make the ellipsis cell widen to 100% on edit
+                    $ellipsisCell.css({'width': '100%'});
+                } else {
+                    ellipsisCellWidth = this._calculateEllipsifiedCellWidth($recordCells, $ellipsisCell);
+                    this._setMaxWidthForEllipsifiedCell($ellipsisCell, ellipsisCellWidth);
+                    this._widenLastCell($recordCells);
+                }
+            }
+        }
+    },
+
+    /**
+     * Get the first cell for the field that can be ellipsified.
+     * @param {jQuery} $cells
+     * @returns {jQuery}
+     * @private
+     */
+    _getCellToEllipsify: function($cells) {
+        var fieldTypesToEllipsify = ['fullname', 'name', 'text', 'base', 'enum', 'url', 'dashboardtitle'];
+
+        return _.find($cells, function(cell) {
+            return (_.indexOf(fieldTypesToEllipsify, $(cell).data('type')) !== -1);
+        });
+    },
+
+    /**
+     * Calculate the width for the cell that needs to be ellipsified.
+     * @param {jQuery} $cells
+     * @param {jQuery} $ellipsisCell
+     * @returns {number}
+     * @private
+     */
+    _calculateEllipsifiedCellWidth: function($cells, $ellipsisCell) {
+        var width = this.getContainerWidth();
+
+        _.each($cells, function(cell) {
+            var $cell = $(cell);
+
+            if ($cell.is($ellipsisCell)) {
+                width -= (parseInt($ellipsisCell.css('padding-left'), 10)
+                         + parseInt($ellipsisCell.css('padding-right'), 10));
+            } else if ($cell.is(':visible')) {
+                $cell.css({'width': 'auto'});
+                width -= $cell.outerWidth();
+            }
+            $cell.css({'width': ''});
+        });
+
+        return width;
+    },
+
+    /**
+     * Set the max-width for the specified cell.
+     * @param {jQuery} $ellipsisCell
+     * @param {number} width
+     * @private
+     */
+    _setMaxWidthForEllipsifiedCell: function($ellipsisCell, width) {
+        var ellipsifiedCell,
+            fieldType = $ellipsisCell.data('type');
+
+        if (fieldType === 'fullname' || fieldType === 'dashboardtitle') {
+            ellipsifiedCell = this.getField($ellipsisCell.data('name'));
+            width -= ellipsifiedCell.getCellPadding();
+            ellipsifiedCell.setMaxWidth(width);
+        } else {
+            $ellipsisCell.css({'max-width': width});
+        }
+    },
+
+    /**
+     * Widen the last cell to 100%.
+     * @param {jQuery} $cells
+     * @private
+     */
+    _widenLastCell: function($cells) {
+        var $cellToWiden;
+
+        _.each($cells, function(cell) {
+            var $cell = $(cell);
+            if ($cell.hasClass('record-cell') && (!$cell.hasClass('hide') || $cell.is(':visible'))) {
+                $cellToWiden = $cell;
+            }
+        });
+
+        if ($cellToWiden) {
+            $cellToWiden.css({'width': '100%'});
         }
     }
 })
