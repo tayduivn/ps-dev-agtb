@@ -1,220 +1,3 @@
-.span8 .headerpane {
-  width: 66%;
-  border-right: 1px solid darken(@grayLighter,10%);
-}
-
-.headerpane {
-  min-height: 60px;
-  width: 100%;
-  height: 61px;
-  z-index: 1000;
-  background: @grayLighter;
-  border-bottom: 1px solid darken(@grayLighter,10%);
-  .box-sizing(border-box);
-  display: table;
-  position: fixed;
-  top: 48px;
-  h1 {
-    font-size: @fontSizeHeader;
-    line-height: 22px;
-    width: 100%;
-    display: table-cell;
-    padding-left: 20px;
-    margin: 0;
-    vertical-align: top;
-  }
-
-  .module-title {
-    padding-top: 19px;
-    display: inline-block;
-  }
-
-  .record-edit-link-wrapper {
-    width: 28px;
-    height: 28px;
-    top: 16px;
-    left: -24px;
-    .record-edit-link {
-      margin-left: 0;
-    }
-    &:hover {
-      .record-edit-link {
-        display: inline-block;
-      }
-    }
-  }
-
-  //40+1+1=42px=standard height of headerpane elements
-  .record-cell {
-    display: inline-block;
-    vertical-align: top;
-    font-size: @fontSizeHeader;
-    position: relative;
-    .record-cell {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: @fontSizeHeader;
-      margin-right: 8px;
-      padding-top: 19px;
-    }
-  }
-  .ellipsis_inline {
-    max-width: 300px;
-  }
-
-  span[data-type="image"], span[data-type="avatar"] {
-    margin-right: 12px;
-    margin-left: 2px;
-    padding-top: 9px;
-    .image_field.image_edit {
-      .image_input input {
-        float: none;
-        position: static;
-        width: 100%;
-      }
-    }
-  }
-
-  span {
-    &[data-type="parent"],
-    &[data-type="relate"],
-    &[data-type="text"],
-    &[data-type="name"],
-    &[data-type="int"] {
-      padding-top: 19px;
-      [data-fieldname="bug_number"] span {
-        padding-top: 9px;
-        display: inline-block;
-      }
-    }
-  }
-  span[data-type="relate"] .edit > .select2-container {
-    min-width: 275px;
-  }
-
-  span[data-type="fieldset-with-labels"] {
-    font-size: 0;
-    padding-bottom: 4px;
-  }
-
-  span[data-type="follow"],
-  span[data-type="badge"] {
-    padding-top: 16px;
-    .label {
-      font-size: @fontSizeMini;
-    }
-    span {
-      font-size: @fontSizeLarge;
-    }
-  }
-  span[data-type="favorite"] {
-    font-size: @baseFontSize;
-    padding-top: 20px;
-    [class="icon-favorite"] {
-      color: @grayLight;
-    }
-    &:hover [class="icon-favorite"] {
-      color: @gray;
-    }
-  }
-
-  .record-label {
-    font-size: @fontSizeSmall;
-    color: darken(@grayLight, 5%);
-    line-height: 14px;
-    position: absolute;
-    top: 3px;
-    left: 8px;
-  }
-
-  input[type="text"] {
-    font-size: @fontSizeHeader;
-    padding: 0 0 0 6px;
-    margin-top: -3px;
-    width: 290px; /* uiux 1106 */
-    height: @fontSizeHeader + 8px;
-    line-height: @fontSizeHeader + 8px;
-  }
-
-  .select2-container {
-    margin-top: -3px;
-    .select2-choice {
-      min-width: 50px;
-    }
-  }
-  /* Must be same as above margin-top definition */
-  .input-append .add-on {
-    margin-top: -3px;
-  }
-
-  .help-block {
-    display: none;
-  }
-
-  //action buttons
-
-  .btn-toolbar {
-    padding: 16px 8px 0 8px;
-    margin: 0;
-    white-space: nowrap;
-    display: table-cell;
-    .box-sizing(border-box);
-    vertical-align: top;
-    height: 60px;
-    .btn-group {
-      vertical-align: middle;
-    }
-  }
-
-  .btn-group-previous-next {
-    margin: 0;
-    .btn {
-      [class^="icon-"] {
-        font-size: @baseFontSize;
-      }
-    }
-  }
-  &.btn-group > .btn {
-    float: none;
-    margin: 0;
-  }
-
-  .btn-link.drawerTrig {
-    margin: 0 0 0 8px;
-    color: @grayLight;
-    &:hover {
-      text-decoration: none;
-    }
-    &.pull-right {
-      .border-radius(0 2px 2px 0);
-      position: relative;
-    }
-
-    &.pull-left {
-      .border-radius(2px);
-      margin-right: 0;
-      padding: 4px 4px 0 4px;
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    [class*="icon-"]{
-        line-height: 16px;
-        font-size: @fontSizeHeader;
-        vertical-align: top;
-        font-weight: 500;
-    }
-    .icon-double-angle-left {
-        margin: 0 2px 0 -2px;
-    }
-  }
-
-  .dashletconfiguration-headerpane input[type="text"] {
-    margin-top: 16px;
-  }
-}
-
 //email compose recipient select2
 .record div[data-type="recipients"].controls.btn-fit {
   .btn {
@@ -300,6 +83,7 @@
     padding-left: 15px;
     min-height: 43px;
     margin-bottom: 7px;
+
     .record-label {
       font-size: @fontSizeSmall;
       color: darken(@grayLight, 5%);
@@ -551,41 +335,38 @@
 
     &[data-type="date"],
     &[data-type="datetimecombo"] {
-
-        input[type="text"] {
-            width: 110px;
-        }
+      input[type="text"] {
+        width: 110px;
+      }
+      .add-on {
+        z-index: 2;
+        padding: 4px;
+        margin: -2px 10px 0 -30px;
+        width: 12px;
+        height: 12px;
+        position: relative;
+        top: -4px;
+        left: 7px;
+        background: @white;
+        font-size: 12px;
+      }
+      .input-append.date {
         .add-on {
-            z-index: 2;
-            padding: 4px;
-            margin: -2px 10px 0 -30px;
-            width: 12px;
-            height: 12px;
-            position: relative;
-            top: -4px;
-            left: 7px;
-            background: @white;
-            font-size: 12px;
+          top: 4px;
+          left: 5px;
         }
-
-        .input-append.date {
-            .add-on {
-                top: 4px;
-                left: 5px;
+        .error {
+          .add-on {
+            &:not(.error-tooltip) {
+              left: 1px;
             }
-            .error {
-                .add-on {
-                    &:not(.error-tooltip) {
-                        left: 1px;
-                    }
-                }
-             }
-            .ui-timepicker-input,
-            .ui-timepicker-list {
-                margin-left: 10px;
-            }
+          }
          }
-
+        .ui-timepicker-input,
+        .ui-timepicker-list {
+          margin-left: 10px;
+        }
+      }
     }
 
     &[data-type="fieldset"] {
@@ -684,6 +465,7 @@
     left: -18px;
   }
 
+
   .wide {
     width: 100%;
   }
@@ -765,6 +547,9 @@
   .record-edit-link {
     display: inline-block;
   }
+}
+.record-cell.edit:hover .record-edit-link {
+  display: none;
 }
 
 //show more-less control

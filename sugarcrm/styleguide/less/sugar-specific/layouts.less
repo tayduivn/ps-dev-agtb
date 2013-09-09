@@ -12,9 +12,6 @@
   margin: 0;
   padding: 0;
   overflow-y: hidden;
-  /*& > div {
-    height: 100%;
-  }*/
 }
 
 #content,
@@ -39,6 +36,7 @@
 .touch .main-pane {
   padding-top: 60px !important;
   top: 0;
+  overflow-x: auto;
 }
 
 .main-pane.span12 {
@@ -65,15 +63,4 @@
   &.hide {
     display: none;
   }
-}
-
-.dashboard {
-  width: 100%;
-  border-right: none;
-  background: url(@textureSecondary);
-  .rtlFloat(@direction,right);
-}
-
-.touch .main-pane {
-  overflow-x: auto;
 }

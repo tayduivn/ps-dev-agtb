@@ -16,6 +16,7 @@ ul.nav.nav-tabs li.activity > p {
 }
 
 .dashboard {
+  top: 0;
 
   .thumbnail {
     //recover
@@ -36,27 +37,24 @@ ul.nav.nav-tabs li.activity > p {
       .border-radius(3px);
       border-bottom: 0;
       h1 {
-
-        //recover
         color: @tableHeader;
         line-height: @baseLineHeight;
         .border-radius(3px 3px 0 0);
         #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));
         border-bottom: 1px solid darken(@grayLighter, 5%);
         margin: 0;
-        .rtlPadding(@direction,7px 10px 7px 80px);
-        a {
-          color: lighten(@gray, 20%);
-        }
-        //recover
-
         font-weight: 600;
         font-size: 14px;
         height: auto;
         padding: 8px 0 0 10px;
+        display: table-cell;
+        .rtlPadding(@direction,7px 10px 7px 80px);
+        a {
+          color: lighten(@gray, 20%);
+        }
       }
       .btn-toolbar{
-        height: 38px;
+        height: 32px;
         padding: 5px 5px 0 0;
         margin: 0;
         #gradient > .vertical(@grayLighter, darken(@grayLighter, 2%));

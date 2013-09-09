@@ -1,273 +1,4 @@
 
-//headerpane record name edit
-//sugar7
-.headerpane {
-  min-height: 60px;
-  z-index: 1000;
-  display: table;
-  width: 100%;
-  h1 {
-    font-size: @fontSizeHeader;
-    line-height: 22px;
-    width: 100%;
-    display: table-cell;
-    padding: 10px 0 0 15px;
-    margin: 0 300px 0 0;
-    vertical-align: top;
-    
-    > .record-cell {
-	    display: block;
-	    min-height: 25px;
-	    
-	    .record-cell {
-	    	margin: 0 5px 0 0;
-		    padding-top: 5px;
-	    }
-    }
-    
-    // TODO: We can remove this once this `picture` field
-    //   is no longer included in the view.
-    span[data-name=picture] {
-	    display: none;
-    }
-  }
-
-  .module-title {
-    padding-top: 19px;
-    display: inline-block;
-  }
-
-  .record-edit-link-wrapper {
-    width: 28px;
-    height: 28px;
-    top: 0;
-    left: -24px;
-    .record-edit-link {
-      margin-left: 0;
-    }
-    &:hover {
-      .record-edit-link {
-        display: inline-block;
-      }
-    }
-  }
-
-  //module type element label
-  .label-module {
-    width: 32px;
-    height: 32px;
-    vertical-align: top;
-    margin-right: 12px;
-    margin-top: 11px;
-    display: inline-block;
-    position: relative;
-  }
-
-  //40+1+1=42px=standard height of headerpane elements
-  .record-cell {
-    display: inline-block;
-    vertical-align: top;
-    font-size: @fontSizeHeader;
-    position: relative;
-    .record-cell {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: @fontSizeHeader;
-      margin-right: 8px;
-      padding-top: 19px;
-    }
-  }
-  .ellipsis_inline {
-    max-width: 300px;
-  }
-
-  span[data-type="image"] {
-    float: left;
-    margin-top: 10px;
-    margin-left: 19px;
-    background-color: @grayLighter;
-    .border-radius(5px);
-    
-    .image_field.image_edit {
-      .image_input input {
-        float: none;
-        position: static;
-        width: 100%;
-      }
-    }
-    
-    .image_field i {
-	    position: relative;
-	    top: 10px;
-    }
-  }
-
-  span {
-    &[data-type="text"],
-    &[data-type="int"] {
-      padding-top: 19px;
-      [data-fieldname="bug_number"] span {
-        padding-top: 9px;
-        display: inline-block;
-      }
-    }
-  }
-
-  span[data-type="fieldset-with-labels"] {
-    font-size: 0;
-  }
-  
-  span[data-name="full_name"] .record-cell {
-	  font-weight: 600;
-	  line-height: 18px;
-  }
-  
-  span[data-name="subtitle"] .record-cell {
-	  font-size: 14px !important;
-	  line-height: 16px;
-  }
-  
-  span .record-edit-link-wrapper[data-name="lastInteractionTime"] {
-    display: none;
-  }
-  /*
-  .record-edit-link-wrapper[data-name="subtitle"] {
-    top: 16px;
-    left: 24px;
-  }
-  */
-  span[data-type="follow"],
-  span[data-type="badge"] {
-    padding-top: 16px;
-    .label {
-      font-size: @fontSizeMini;
-    }
-    span {
-      font-size: @fontSizeLarge;
-    }
-  }
-  span[data-type="favorite"] {
-    font-size: @baseFontSize;
-    padding-top: 20px;
-    [class="icon-favorite"] {
-      color: @grayLight;
-    }
-    &:hover [class="icon-favorite"] {
-      color: @gray;
-    }
-  }
-
-  .record-label {
-    font-size: @fontSizeSmall;
-    color: darken(@grayLight, 5%);
-    line-height: 14px;
-    position: absolute;
-    top: 3px;
-    left: 8px;
-  }
-
-  .record-cell {
-    font-size: @fontSizeSmall;
-    color: @gray;
-    line-height: 14px;
-  }
-
-  input[type="text"] {
-    font-size: @fontSizeHeader;
-    padding: 0 0 0 6px;
-    margin-top: -3px;
-    width: 190px;
-    height: @fontSizeHeader + 8px;
-    line-height: @fontSizeHeader + 8px;
-  }
-
-  .select2-container {
-    margin-top: -3px;
-    .select2-choice {
-      height: @fontSizeHeader;
-      line-height: @fontSizeHeader;
-      padding: 5px 0 3px 8px;
-      min-width: 50px;
-      span {
-        margin-right: 32px;
-      }
-      div {
-        top: 1px;
-      }
-      abbr {
-        top: 7px;
-      }
-    }
-  }
-
-  .help-block {
-    display: none;
-  }
-
-  //action buttons
-
-  .btn-toolbar {
-    padding: 0;
-    margin: 0;
-    white-space: nowrap;
-    display: table-cell;
-    .box-sizing(border-box);
-    vertical-align: top;
-    height: 60px;
-    .btn-group {
-      vertical-align: middle;
-    }
-  }
-
-  .btn-group-previous-next {
-    margin: 0;
-    .btn {
-      [class^="icon-"] {
-        font-size: @baseFontSize;
-      }
-    }
-  }
-  &.btn-group > .btn {
-    float: none;
-    margin: 0;
-  }
-
-  .drawerTrig {
-    margin: 0 0 0 8px;
-    color: @grayLight;
-    &:hover {
-      text-decoration: none;
-    }
-    &.pull-right {
-      .border-radius(0 2px 2px 0);
-      position: relative;
-    }
-
-    &.pull-left {
-      .border-radius(2px);
-      margin-right: 0;
-      padding: 4px 4px 0 4px;
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    [class*="icon-"]{
-        line-height: 16px;
-        font-size: @fontSizeHeader;
-        vertical-align: top;
-        font-weight: 500;
-    }
-    .icon-double-angle-left {
-        margin: 0 2px 0 -2px;
-    }
-  }
-
-  .dashletconfiguration-headerpane input[type="text"] {
-    margin-top: 16px;
-  }
-}
-
 //email compose recipient select2
 .record div[data-type="recipients"].controls.btn-fit {
   margin-bottom: 6px;
@@ -690,9 +421,9 @@
 .record {
 
   .row-fluid.panel_hidden {
-    margin-bottom: 10px;	  
+    margin-bottom: 10px;
   }
-  
+
   .card2 {
     .normal {
       .detail {
@@ -834,18 +565,18 @@
 
 	.toolbar {
 		margin-bottom: 10px;
-	
+
 		> ul {
 			margin: 0;
 			list-style-type: none;
-		
+
 			> li {
 				display: inline-block;
-			
+
 				> button {
 					margin-left: 0;
 				}
-				
+
 				&.actions > a {
 					margin-right: 10px;
 				}
