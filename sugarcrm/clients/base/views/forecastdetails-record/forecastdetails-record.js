@@ -17,6 +17,11 @@
     closedWonIds: [],
 
     /**
+     * An array of the RLI ids that are included in likely/best/worst values
+     */
+    includedIds: [],
+
+    /**
      * Holds Sales Stage values that get added to Closed Won amounts
      */
     salesStageWon: [],
@@ -89,6 +94,7 @@
 
         // reset closedWonIds
         this.closedWonIds = [];
+        this.includedIds = [];
 
         var ctx = this.context.parent || this.context,
             ctxMdl = ctx.get('model');
@@ -106,7 +112,9 @@
 
                 this.rliCollection.on('change:likely_case change:best_case change:worst_case change:amount', this.processCases, this);
 
-                this.rliCollection.on('change:sales_stage', this.processSalesStatus, this);
+                this.rliCollection.on('change:sales_stage', this.processSalesStage, this);
+
+                this.rliCollection.on('change:commit_stage', this.processCommitStage, this);
 
                 this.rliCollection.on('change:date_closed', function(model, date) {
                     if(this.checkDateAgainstCurrentTP(date)) {
@@ -125,7 +133,9 @@
 
             ctxMdl.on('change:likely_case change:best_case change:worst_case change:amount', this.processCases, this);
 
-            ctxMdl.on('change:sales_stage', this.processSalesStatus, this);
+            ctxMdl.on('change:sales_stage', this.processSalesStage, this);
+
+            ctxMdl.on('change:commit_stage', this.processCommitStage, this);
 
             ctxMdl.on('change:date_closed', function(model, date) {
                 if(this.checkDateAgainstCurrentTP(date)) {
@@ -193,7 +203,7 @@
      * Processes this.rliCollection.models to determine which models IDs should be
      * saved into the closedWonIds array
      */
-    processRLICollection: function() {
+    processRLICollection: function(collection) {
         this.oldTotals.models = new Backbone.Model();
         _.each(this.rliCollection.models, function(model) {
             // save all the initial likely values
@@ -204,6 +214,11 @@
             });
             this.initClosedWonIds(model);
         }, this);
+
+        if(collection) {
+            // if this is coming from the rliCollection reset, fetch server data
+            this.loadData();
+        }
     },
 
     /**
@@ -240,7 +255,8 @@
     processCases: function(model) {
         // model is undefined when users change currency symbols,
         // it throws a change:best_case but there's no model
-        if(!_.isUndefined(model) && (app.user.get('id') == model.get('assigned_user_id'))) {
+        if(!_.isUndefined(model) && (app.user.get('id') == model.get('assigned_user_id'))
+            && _.contains(this.includedIds, model.get('id'))) {
             var data = _.clone(model.toJSON()),
                 diff = 0,
                 old = 0;
@@ -310,13 +326,19 @@
             && !_.contains(this.closedWonIds, id)) {
             this.closedWonIds.push(id);
         }
+
+        // If this model's commit_stage is included in Closed Won totals
+        // and the id isnt already in includedIds
+        if(_.contains(this.commitStagesInIncludedTotal, cs) && !_.contains(this.closedWonIds, id)) {
+            this.includedIds.push(id);
+        }
     },
 
     /**
      * Process model changes when sales_stage is changed
      * @param model
      */
-    processSalesStatus: function(model) {
+    processSalesStage: function(model) {
         var shouldBeIncluded = false,
             updatedData = false,
             ss = model.get('sales_stage'),
@@ -343,6 +365,54 @@
             // add likely amount to closed won
             this.serverData.set({closed_amount: app.math.add(this.serverData.get('closed_amount'), model.get('likely_case'))});
 
+            updatedData = true;
+        }
+
+        if(updatedData) {
+            // update the calculations
+            this.calculateData(this.serverData.toJSON());
+        }
+    },
+
+    /**
+     * Processes a model to see if it should be add/subtracted from likely/best/worst totals
+     * based on it's commit_stage
+     *
+     * @param model
+     */
+    processCommitStage: function(model) {
+        var shouldBeIncluded = false,
+            updatedData = false,
+            cs = model.get('commit_stage'),
+            id = model.get('id');
+
+        if(_.contains(this.commitStagesInIncludedTotal, cs)) {
+            shouldBeIncluded = true;
+        }
+
+        // If the ID was already included in the totals, and now should not be
+        if(_.contains(this.includedIds, id) && !shouldBeIncluded) {
+            // remove the model's ID from the array
+            this.includedIds = _.without(this.includedIds, id);
+
+            // remove amounts from best/likely/worst
+            this.serverData.set({
+                likely: app.math.sub(this.serverData.get('likely'), model.get('likely_case')),
+                best: app.math.sub(this.serverData.get('best'), model.get('best_case')),
+                worst: app.math.sub(this.serverData.get('worst'), model.get('worst_case')),
+            });
+
+            updatedData = true;
+        } else if(!_.contains(this.includedIds, id) && shouldBeIncluded) {
+            // model needs to be included in closed_amount
+            this.includedIds.push(id);
+
+            // add amounts to best/likely/worst
+            this.serverData.set({
+                likely: app.math.add(this.serverData.get('likely'), model.get('likely_case')),
+                best: app.math.add(this.serverData.get('best'), model.get('best_case')),
+                worst: app.math.add(this.serverData.get('worst'), model.get('worst_case')),
+            });
             updatedData = true;
         }
 
@@ -390,7 +460,7 @@
             worst: ctxModel.get('worst_case')
         });
 
-        if(!_.isUndefined(date)) {
+        if(!_.isUndefined(date) && !_.isEmpty(date)) {
             // get the current timeperiod
             app.api.call('GET', app.api.buildURL('TimePeriods/' + date), null, {
                 success: _.bind(function(o) {
@@ -403,6 +473,15 @@
                 }, this),
                 complete: options ? options.complete : null
             });
+        } else {
+            // this model doesnt have a selectedTimePeriod yet, so use the current date
+            var d = new Date(),
+                month = (d.getUTCMonth().toString().length == 1) ? '0' + d.getUTCMonth() : d.getUTCMonth(),
+                day = (d.getUTCDate().toString().length == 1) ? '0' + d.getUTCDate() : d.getUTCDate()
+            date = d.getFullYear() + '-' + month + '-' + day;
+            // set initDataLoaded to true so we don't infiniteloop
+            this.initDataLoaded = true;
+            this.fetchNewTPByDate(date);
         }
     },
 
