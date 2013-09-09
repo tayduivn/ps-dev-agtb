@@ -174,7 +174,7 @@ nv.models.multiBarHorizontal = function() {
       bars.exit().remove();
 
       var barsEnter = bars.enter().append('g')
-          .attr('class','nv-bar')
+          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
           .attr('transform', function(d,i,j) {
             return 'translate(' + y0(stacked ? d.y0 : 0) + ',' + (stacked ? 0 : (j * x.rangeBand() / data.length ) + x(getX(d,i))) + ')';
           });
@@ -284,62 +284,31 @@ nv.models.multiBarHorizontal = function() {
         d3.transition(bars)
             //.delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('transform', function(d,i) {
-              var shift = 0;
-              //if bar is first in stack
-              if (getY(d,i)<0) {
-                //shift it left or right
-                shift = getY(d,i)<0?-2:2;
-              }
-              return 'translate(' + (y(d.y1)) + ',' + x(getX(d,i)) + ')';
+              return 'translate(' + y(d.y1) + ',' + x(getX(d,i)) + ')';
             })
           .select('rect')
             .attr('x', function(d,i) {
-              var shift = 0;
-              //if bar is first in stack
-              if (d.y0===0) {
-                //shift it left or right
-                shift = 2;
-              } else {
-                shift = 2;
-              }
-              return shift;
+              return getY(d,i) < 0 ? 0 : 1;
             })
             .attr('width', function(d,i) {
-              var adjust = 0;
-              //if bar is first in stack
-              if (d.y0===0) {
-                //shift it left or right
-                adjust = 4;
-              } else {
-                adjust = 4;
-              }
-              return Math.max(Math.abs(y(getY(d,i) + d.y0) - y(d.y0)) - adjust, 0);
+              return Math.max(Math.abs(y(getY(d,i) + d.y0) - y(d.y0)) - 1, 0);
             })
             .attr('height', x.rangeBand());
       } else {
         d3.transition(bars)
           //.delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('transform', function(d,i) {
-              //TODO: stacked must be all positive or all negative, not both?
-              return 'translate(' + (getY(d,i) < 0 ? y(getY(d,i)) : y(0) + (getY(d,i)<0?-2:2) ) + ',' +
+              return 'translate(' + (getY(d,i) < 0 ? y(getY(d,i)) : y(0)) + ',' +
                 (d.series * x.rangeBand() / data.length + x(getX(d,i)) ) + ')';
             })
           .select('rect')
             .attr('x', function(d,i) {
-              var shift = 0;
-              //if bar is first in stack
-              if (d.y0===0) {
-                //shift it left or right
-                shift = 0;
-              } else {
-                shift = 2;
-              }
-              return shift;
+              return getY(d,i) < 0 ? 0 : 2;
             })
-            .attr('height', x.rangeBand() / data.length )
             .attr('width', function(d,i) {
-              return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 4,0) || 0;
-            });
+              return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 2, 0) || 0;
+            })
+            .attr('height', x.rangeBand() / data.length );
       }
 
       //store old scales for use in transitions on update
