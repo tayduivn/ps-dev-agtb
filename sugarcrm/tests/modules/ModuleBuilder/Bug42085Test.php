@@ -48,8 +48,7 @@ class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
     public function testHideMeetingType()
     {
     	$validDef = $this->meeting->field_defs['type'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
+		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wireless_basic_search'));
     }
 
     public function testHideMeetingPassword()
