@@ -585,8 +585,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         $now = $timedate->getNow(true);
 
         if (!empty($config['timeperiod_start_date'])) {
-            $fiscalDate = $timedate->fromDbDate($config['timeperiod_start_date'])->setTime(0, 0, 0);
-            $fiscalDate = $timedate->tzUser($fiscalDate);
+            $fiscalDate = $timedate->fromString($config['timeperiod_start_date']);
         } else {
             // If there is no fiscal start date, use 1st of January
             // Probably because of reseting the forecast settings, while running an old report
@@ -607,9 +606,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
     private function getNormalizedDate($column)
     {
         $fiscalDate = $this->getFiscalStartDate();
-        // Convert fiscal date to UTC timezone, for day_of_year
-        $timedate = TimeDate::getInstance();
-        $timedate->tzGMT($fiscalDate);
 
         // Need to add tz offset for grouping
         $column = $this->reporter->db->convert($column, 'add_tz_offset');
@@ -694,10 +690,8 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
         $column = $this->_get_column_select($layout_def);
 
-        $startTime = $timedate->getDayStartEndGMT($start);
-        $startTime = $startTime['start'];
-        $endTime = $timedate->getDayStartEndGMT($end);
-        $endTime = $endTime['start'];
+        $startTime = $start->asDb(true);
+        $endTime = $end->asDb(true);
 
         // Return the WHERE statement
         return "(" . $this->queryDateOp($column, $startTime, ">=", "datetime")

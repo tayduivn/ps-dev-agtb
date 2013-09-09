@@ -57,7 +57,7 @@ class MassUpdateApiTest extends Sugar_PHPUnit_Framework_TestCase
         // test 'date_entered' filter
         $args = array('massupdate_params'=> array('entire'=>1),'module'=>'Accounts');
         $args = $this->massDeleteApiMock->massDelete($this->serviceMock, $args);
-        $this->assertLessThanOrEqual(TimeDate::getInstance()->nowDb(), $args['massupdate_params']['filter'][0]['date_entered']['$lt']);
+        $this->assertLessThanOrEqual(TimeDate::getInstance()->getNow(true), $args['massupdate_params']['filter'][0]['date_entered']['$lt']);
     }
 }
 

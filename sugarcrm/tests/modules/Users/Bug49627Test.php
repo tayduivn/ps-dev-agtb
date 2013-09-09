@@ -24,7 +24,6 @@
  ********************************************************************************/
 
 require_once('modules/Users/UserViewHelper.php');
-require_once 'include/Sugar_Smarty.php';
 
 /**
  * Bug49627Test.php

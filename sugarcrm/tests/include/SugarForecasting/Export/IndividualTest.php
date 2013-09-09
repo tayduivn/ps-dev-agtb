@@ -67,13 +67,13 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-                'forecast_by' => 'Opportunities'
-            ));
     }
 
     public function setUp()
     {
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'forecast_by' => 'Opportunities'
+            ));
         $this->manager = SugarTestForecastUtilities::createForecastUser();
 
         $this->reportee = SugarTestForecastUtilities::createForecastUser(
@@ -129,12 +129,12 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
 
     public function tearDown()
     {
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
     }
 
     public static function tearDownAfterClass()
     {
-        SugarTestForecastUtilities::tearDownForecastConfig();
         parent::tearDownAfterClass();
     }
 

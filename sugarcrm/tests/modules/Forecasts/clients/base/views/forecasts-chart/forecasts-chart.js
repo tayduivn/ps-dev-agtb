@@ -266,4 +266,25 @@ describe('Forecasts.Base.Views.ForecastsChart', function() {
             expect(view.serverData.quota).toEqual(45);
         });
     });
+    describe("when the sidebar is closed", function() {
+        beforeEach(function() {
+            view.state = "close";
+        });
+        
+        afterEach(function() {
+            view.state = "open";
+        });
+        
+        describe("when mgrWorksheetChanged is called", function() {
+            it("should return -1 and stop execution", function() {
+                expect(view.mgrWorksheetChanged(null)).toEqual(-1);
+            });
+        });
+        
+        describe("when repWorksheetChanged is called", function() {
+            it("should return -1 and stop execution", function() {
+                expect(view.repWorksheetChanged(null)).toEqual(-1);
+            });
+        });
+    });
 });

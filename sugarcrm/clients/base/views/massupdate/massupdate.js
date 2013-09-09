@@ -10,7 +10,7 @@
     fieldValues: null,
     defaultOption: null,
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
-
+    plugins: ['tooltip'],
     /**
      * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
      * @property {Integer} _defaultSettings.maxRecordsToMerge Default number of records we can merge.

@@ -150,6 +150,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);
         }
 
+        if (!empty($searchFields['email1']) && empty($bean->email1)) {
+            $emailAddress = BeanFactory::getBean('EmailAddresses');
+            $bean->email1 = $emailAddress->getPrimaryAddress($bean);
+        }
+
         $keyValues = array();
         foreach ($searchFields as $fieldName => $fieldDef) {
             //All fields have already been formatted to db values at this point so no further processing necessary

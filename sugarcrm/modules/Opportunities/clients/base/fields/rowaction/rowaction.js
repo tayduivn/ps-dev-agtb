@@ -20,5 +20,13 @@
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push("disable-delete");
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
+        
+        //Redraw dropdown on change
+        this.model.on("change:closed_revenue_line_items", function(){
+            this.render();
+            //clean up visible buttons
+            this.view.initButtons();
+            this.view.setButtonStates(this.view.STATE.VIEW);
+        }, this);
     }
 })

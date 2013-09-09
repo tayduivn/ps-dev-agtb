@@ -42,7 +42,7 @@
         if (app.drawer.count() > 0) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
-                messages: 'WARN_UNSAVED_CHANGES',
+                messages: 'LBL_WARN_UNSAVED_EDITS',
                 onConfirm: _.bind(function() {
                     app.drawer.reset();
                     this._openCreate(module, layout);

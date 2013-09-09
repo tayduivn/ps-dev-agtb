@@ -21,9 +21,8 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('vendor/Smarty/plugins/function.multienum_to_array.php');
-require_once 'include/Sugar_Smarty.php';
+
+require_once('include/SugarSmarty/plugins/function.multienum_to_array.php');
 
 class FunctionMultienumToArrayTest extends Sugar_PHPUnit_Framework_TestCase
 {

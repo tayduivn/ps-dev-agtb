@@ -50,7 +50,6 @@ class Popup_Picker
 	 */
 	function Popup_Picker()
 	{
-		;
 	}
 	
 	/*

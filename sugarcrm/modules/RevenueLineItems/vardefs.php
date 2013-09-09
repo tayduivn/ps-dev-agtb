@@ -66,7 +66,10 @@ $dictionary['RevenueLineItem'] = array(
             'required' => false,
             'reportable' => false,
             'audited' => true,
-            'comment' => 'Account this product is associated with'
+            'comment' => 'Account this product is associated with',
+            'formula' => 'related($opportunities, "account_id")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'contact_id' => array(
             'name' => 'contact_id',
@@ -656,14 +659,6 @@ $dictionary['RevenueLineItem'] = array(
             'relationship' => 'documents_revenuelineitems',
             'source' => 'non-db',
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
-        ),
-        'contracts' => array(
-            'name' => 'contracts',
-            'type' => 'link',
-            'vname' => 'LBL_CONTRACTS',
-            'relationship' => 'contracts_revenuelineitems',
-            'link_type' => 'one',
-            'source' => 'non-db',
         ),
         // Added for Meta-Data framework
         'currency_name' => array(

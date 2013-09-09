@@ -47,7 +47,6 @@ $viewdefs['Products']['mobile']['view']['edit'] = array(
                 'quantity',
                 array(
                     'name' => 'discount_price',
-                    'readonly' => true,
                 ),
                 array(
                     'name' => 'cost_price',

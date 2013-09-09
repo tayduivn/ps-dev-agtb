@@ -214,8 +214,8 @@ class SugarSNIP
     public function getSnipEmail()
     {
         $admin = Administration::getSettings('snip');
-        if (isset($snip->settings['snip_email']))
-            return $snip->settings['snip_email'];
+        if (isset($admin->settings['snip_email']))
+            return $admin->settings['snip_email'];
         return '';
     }
 

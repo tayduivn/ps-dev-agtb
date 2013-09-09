@@ -7,6 +7,7 @@ $viewdefs['Tasks']['mobile']['layout']['subpanels'] = array(
             'context' => array(
                 'link' => 'notes',
             ),
+            'linkable' => false,
         ),
     ),
 );

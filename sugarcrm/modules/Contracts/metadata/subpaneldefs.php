@@ -81,16 +81,6 @@ $layout_defs['Contracts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
-		'revenuelineitems' => array(
-			'order' => 40,
-			'module' => 'RevenueLineItems',
-			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'revenuelineitems',
-			'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopSelectButton'),
-			),
-		),
 		'quotes' => array(
 			'order' => 50,
 			'module' => 'Quotes',

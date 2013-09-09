@@ -915,6 +915,10 @@ RedirectMatch 403 {$ignoreCase}/+upload/
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
+
+# Fix mimetype for logo.svg (SP-1395)
+AddType     image/svg+xml     .svg
+
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
@@ -1133,7 +1137,6 @@ function create_default_users(){
     $user->status = 'Active';
     $user->is_admin = true;
     $user->employee_status = 'Active';
-    $user->is_instance_configured = false;
     $user->user_hash = User::getPasswordHash($setup_site_admin_password);
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);

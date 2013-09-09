@@ -281,9 +281,6 @@ class Product extends SugarBean
             $temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount;
         }
 
-        $this->get_account();
-        $this->get_contact();
-
         $temp_array['ACCOUNT_NAME'] = empty($this->account_name) ? '' : $this->account_name;
         $temp_array['CONTACT_NAME'] = empty($this->contact_name) ? '' : $this->contact_name;
         return $temp_array;

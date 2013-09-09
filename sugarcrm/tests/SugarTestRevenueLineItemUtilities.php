@@ -80,6 +80,7 @@ class SugarTestRevenueLineItemUtilities
     public static function getCreatedRevenueLineItemIds() 
     {
         $product_ids = array();
+        $rli_ids = array();
         foreach (self::$_createdRlis as $rli) {
             $rli_ids[] = $rli->id;
         }
