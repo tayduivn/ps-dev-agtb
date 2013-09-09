@@ -67,4 +67,48 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedTime, $value);
     }
 
+    public function unformatDataProvider()
+    {
+        return array(
+            array('Europe/Helsinki', '2013-08-05T08:15:30+02:00', '2013-08-05 06:15:30'),
+            array('America/Boise', '2013-08-05T08:15:30-07:00', '2013-08-05 15:15:30'),
+            array('America/NewYork','2013-08-05T08:15:30','2013-08-05 05:15:30'),
+            array('Europe/Minsk','2013-08-05T08:15:30+03:00','2013-08-05 05:15:30'),
+            array('Antarctica/Vostok','2013-08-05T08:15:30','2013-08-05 05:15:30'),
+        );
+    }
+
+    /**
+     * @dataProvider unformatDataProvider
+     **/
+    public function testApiUnformat($timeZone, $isoDate, $gmtResult)
+    {
+        $GLOBALS['current_user']->setPreference('timezone', $timeZone);
+        $GLOBALS['current_user']->savePreferencesToDB();
+        $GLOBALS['current_user']->reloadPreferences();
+
+        $field = SugarFieldHandler::getSugarField('datetime');
+        $this->assertEquals($gmtResult, $field->apiUnformat($isoDate));
+    }
+
+    public function fixForFilterDataProvider()
+    {
+        return array(
+            array('2013-08-29', '$equals', array('2013-08-29T00:00:00', '2013-08-29T23:59:59')),
+            array('2013-08-29', '$lt', '2013-08-29T23:59:59'),
+            array('2013-08-29', '$gt', '2013-08-29T00:00:00'),
+            array(array('2013-08-19', '2013-08-29'), '$between', array('2013-08-19T00:00:00', '2013-08-29T23:59:59')),
+            array('2013-08-29', '$daterange', '2013-08-29'),
+        );
+    }
+
+    /**
+     * @dataProvider fixForFilterDataProvider
+     */
+    public function testFixForFilter($date, $op, $fixedDate)
+    {
+        $field = SugarFieldHandler::getSugarField('datetime');
+        $field->fixForFilter($date, 'date_entered', BeanFactory::getBean('Accounts'), new SugarQuery, new SugarQuery_Builder_AndWhere, $op);
+        $this->assertEquals($fixedDate, $date);
+    }
 }

@@ -19,7 +19,7 @@ require_once("clients/base/api/FilterApi.php");
  */
 class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public static $notes, $opps, $accounts;
+    public static $notes, $opps, $accounts, $meetings;
 
     public static function setUpBeforeClass()
     {
@@ -59,6 +59,16 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
                 $note->save();
                 self::$notes[] = $note;
             }
+
+            // create some meetings
+            $meeting = BeanFactory::newBean('Meetings');
+            $meeting->id = 'UNIT-TEST-' . create_guid_section(10);
+            $meeting->new_with_id = true;
+            $meeting->name = 'Test Meeting';
+            $day = 10 + $i;
+            $meeting->date_start = gmdate('Y-m-d H:i:s', gmmktime(1, 0, 0, 8, $day, 2013));
+            $meeting->save();
+            self::$meetings[] = $meeting;
         }
 
         // Clean up any hanging related records
@@ -108,6 +118,16 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
             $noteIds = "('" . implode("','", $noteIds) . "')";
 
             $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
+        }
+
+        if (count(self::$meetings)) {
+            $meetingIds = array();
+            foreach (self::$meetings as $meeting) {
+                $meetingIds[] = $meeting->id;
+            }
+            $meetingIds = "('" . implode("','", $meetingIds) . "')";
+
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN {$meetingIds}");
         }
         SugarTestFilterUtilities::removeAllCreatedFilters();
         SugarTestHelper::tearDown();
@@ -501,4 +521,35 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($reply['records']), 'OwnerRelated: Returned too many results');
     }
 
+    public function testBetweenDates()
+    {
+        // set the timezone to something out of range
+        $GLOBALS['current_user']->setPreference('timezone', 'Pacific/Niue');
+        $GLOBALS['current_user']->savePreferencesToDB();
+        $GLOBALS['current_user']->reloadPreferences();
+
+        $user = $GLOBALS['current_user'];
+        unset($GLOBALS['current_user']);
+        unset($_SESSION);
+        $GLOBALS['current_user'] = $user;
+
+        $leftDate = '2013-08-10';
+        $rightDate = '2013-08-29';
+
+        $reply = $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Meetings',
+                'filter' => array(array('date_start' => array('$between' => array($leftDate, $rightDate)))),
+                'fields' => 'id,name',
+            )
+        );
+
+
+        $this->assertNotEmpty($reply['records']);
+
+        // the first one is out of range, so we should only get 19 records back
+        $this->assertEquals(19, count($reply['records']));
+
+    }
 }
