@@ -2942,6 +2942,7 @@ $app_strings = array (
 
     'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
     'LBL_SUGAR_COPYRIGHT_NAME_AND_RIGHTS' => 'SugarCRM Inc. All Rights Reserved.',
+    'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
 
 
     // LOGIN PAGE STRINGS
