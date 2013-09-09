@@ -24,20 +24,13 @@
  * All Rights Reserved.
  ********************************************************************************/
 //change directories to where this file is located.
-//this is to make sure it can find dce_config.php
 chdir(dirname(__FILE__));
 define('ENTRY_POINT_TYPE', 'api');
 require_once('include/entryPoint.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
-
-if (SugarSearchEngineAbstractBase::isSearchEngineDown())
-{
-    sugar_die('Is fts server down?'."\n");
-}
 
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) != 'cli') {
-    sugar_die("silentFTSIndex.php is CLI only.");
+    sugar_die("silentFTSIndex.php is CLI only.\n");
 }
 
 if(empty($current_language)) {
@@ -51,8 +44,19 @@ global $current_user;
 $current_user = BeanFactory::getBean('Users');
 $current_user->getSystemUser();
 
-$moules = ($argc > 1) ?  array($argv[1]) : array();
+$modules = ($argc > 1) ?  array($argv[1]) : array();
 $clearData = ($argc == 2) ?  $argv[2] : TRUE;
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
-$indexer = new SugarSearchEngineFullIndexer();
-$results = $indexer->performFullSystemIndex($moules, $clearData);
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
+try {
+    SugarSearchEngineAbstractBase::markSearchEngineStatus(false); // set search engine to "up"
+    $indexer = new SugarSearchEngineFullIndexer();
+    if(!$indexer->performFullSystemIndex($modules, $clearData)) {
+        echo "FTS index failed. Please check the sugarcrm.log for more details.\n";
+        exit(1);
+    }
+} catch(Exception $e) {
+    echo "Exception: ".$e->getMessage()."\n";
+    exit(1);
+}
+exit(0);

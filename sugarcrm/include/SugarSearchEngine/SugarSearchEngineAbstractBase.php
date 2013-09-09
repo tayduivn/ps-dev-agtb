@@ -96,9 +96,11 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         self::markSearchEngineStatus(true);
 
         // notification
-        $cfg = new Configurator();
-        $cfg->config['fts_disable_notification'] = true;
-        $cfg->handleOverride();
+        if(empty($GLOBALS['sugar_config']['fts_disable_notification'])) {
+            $cfg = new Configurator();
+            $cfg->config['fts_disable_notification'] = true;
+            $cfg->handleOverride();
+        }
     }
 
     /**

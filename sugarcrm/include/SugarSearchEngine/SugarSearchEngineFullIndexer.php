@@ -82,7 +82,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
      * by the job queue system.
      *
      * @param array $modules
-     * @return SugarSearchEngineFullIndexer
+     * @return bool
      */
     public function initiateFTSIndexer($modules = array(), $deleteExistingData = TRUE)
     {
@@ -91,7 +91,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
         {
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
-            return $this;
+            return false;
         }
 
         //Create the index on the server side
@@ -124,7 +124,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $avgRecs = ($totalCount != 0 && $totalTime != 0) ? number_format(round(($totalCount / $totalTime), 2), 2) : 0;
         $GLOBALS['log']->info("Total number of modules queued: $totalCount , modules per sec. $avgRecs");
 
-        return $this;
+        return true;
 
     }
 
@@ -182,12 +182,16 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         if(! $this->SSEngine instanceof SugarSearchEngineAbstractBase)
         {
             $GLOBALS['log']->info("No FTS engine enabled, not doing anything");
-            return $this;
+            return false;
         }
-        $this->initiateFTSIndexer($modules, $clearExistingData);
+        if(!$this->initiateFTSIndexer($modules, $clearExistingData)) {
+            $GLOBALS['log']->info("FTS index was not initiated");
+            return false;
+        }
         require_once 'include/SugarQueue/SugarCronJobs.php';
         $jobq = new SugarCronJobs();
         $jobq->runCycle();
+        return true;
     }
 
     /**
