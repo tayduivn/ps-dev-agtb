@@ -10,7 +10,6 @@
                     'mouseenter [rel="tooltip"]': 'onShowRecordViewTooltip',
                     'mouseleave [rel="tooltip"]': 'onHideRecordViewTooltip',
                     'click [rel="tooltip"]': 'unbindTooltip'
-
                 });
 
                 this.on('render', function() {

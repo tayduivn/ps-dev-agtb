@@ -8,6 +8,7 @@
         'dashlet:delete:clicked' : 'removeClicked',
         'dashlet:toggle:clicked' : 'toggleMinify'
     },
+    plugins: ['tooltip'],
     initialize: function (options) {
         _.extend(options.meta, app.metadata.getView(null, 'dashlet-toolbar'), options.meta.toolbar);
         app.view.View.prototype.initialize.call(this, options);
