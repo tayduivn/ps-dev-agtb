@@ -728,8 +728,9 @@ function sendTestEmail()
     var smtpPort = document.getElementById('mail_smtpport').value;
     var smtpssl  = document.getElementById('mail_smtpssl').value;
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
-    var mail_sendtype = 'SMTP'; 
-    var postDataString = 'mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl + "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    var mail_sendtype = 'SMTP';
+    var smtppass = trim(document.getElementById('mail_smtppass').value);
+    var postDataString = 'mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl + "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + encodeURIComponent(smtppass) + "&outboundtest_from_address=" + fromAddress;
     YAHOO.util.Connect.asyncRequest("POST", "index.php?action=EmailUIAjax&module=Emails&emailUIAction=testOutbound&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
