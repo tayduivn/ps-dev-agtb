@@ -258,6 +258,9 @@
 
                 this.context.parent.on('change:selectedRanges', function(model, changed) {
                     this.filters = changed;
+                    this.once('render', function() {
+                        app.alert.dismiss('worksheet_filtering');
+                    });
                     this.filterCollection();
                     if (!this.disposed) this.render();
                 }, this);
@@ -544,12 +547,12 @@
                     return false;
                 }, this);
             }
-        } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
+        } else if (this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
             // since the layout is not visible, lets wait for it to become visible
             this.layout.once('show', function() {
                 this.checkForDraftRows(lastCommitDate);
             }, this);
-        } else if(this.isCollectionSyncing === true) {
+        } else if (this.isCollectionSyncing === true) {
             this.collection.once('data:sync:complete', function() {
                 this.checkForDraftRows(lastCommitDate);
             }, this);
@@ -573,6 +576,11 @@
      * Filter the Collection so we only show what the filter says we should show
      */
     filterCollection: function() {
+
+
+        //this.once('render', function() {
+        //
+        //}, this);
         this.filteredCollection.reset();
         if (_.isEmpty(this.filters)) {
             this.filteredCollection.add(this.collection.models);
@@ -583,6 +591,8 @@
                 }
             }, this);
         }
+
+        this.trigger('collection:filtered')
     },
 
     /**
