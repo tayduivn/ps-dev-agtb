@@ -668,6 +668,7 @@ abstract class UpgradeDriver
         if($res !== true) {
             return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
         }
+        $this->log("Starting extracting {$this->context['zip']} to $unzip_dir");
         $res = $zip->extractTo($unzip_dir);
         if($res !== true) {
         	return $this->error(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $this->context['zip'], $unzip_dir));
@@ -1004,6 +1005,8 @@ abstract class UpgradeDriver
                      if($newscript->type & $this->script_mask) {
                          // add class to results if it fits current mask
                          $results[$scriptname] = $newscript;
+                     } else {
+                         $this->log("Bypassing script $scriptname due to script mask");
                      }
                 }
             } catch(Exception $e) {
@@ -1412,7 +1415,7 @@ abstract class UpgradeDriver
      * @param string $file
      * @return boolean
      */
-    protected function backupFile($file)
+    public function backupFile($file)
     {
         if(!file_exists($file)) {
             // no point to backup file that isn't there

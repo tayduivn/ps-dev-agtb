@@ -24,6 +24,7 @@ class ShadowUpgrader extends CliUpgrader
             "log" => array(true, 'l', 'log'),
             "admin" => array(true, 'u', 'user'),
             "backup" => array(false, 'b', 'backup'),
+            "script_mask" => array(false, 'm', 'mask'),
             "stage" => array(false, 'S', 'stage'),
     );
 

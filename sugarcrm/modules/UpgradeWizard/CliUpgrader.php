@@ -25,6 +25,7 @@ class CliUpgrader extends UpgradeDriver
         "source_dir" => array(true, 's', 'source'),
         "admin" => array(true, 'u', 'user'),
         "backup" => array(false, 'b', 'backup'),
+        "script_mask" => array(false, 'm', 'mask'),
         "stage" => array(false, 'S', 'stage'),
     );
 
@@ -126,20 +127,20 @@ eoq2;
         }
         if(empty($mask)) {
             $this->argError("Empty script mask");
-            return $this->$maskTypes['all'];
+            return $this->maskTypes['all'];
         }
         $parts = explode(',', $mask);
         $mask = 0;
         if(empty($parts)) {
             $this->argError("Empty script mask");
-            return $this->$maskTypes['all'];
+            return $this->maskTypes['all'];
         }
         foreach($parts as $part) {
-            if(empty($this->$maskTypes[$part])) {
+            if(!isset($this->maskTypes[$part])) {
                 $this->argError("Unknown script mask: $part");
                 continue;
             }
-            $mask |= $this->$maskTypes[$part];
+            $mask |= $this->maskTypes[$part];
         }
         return $mask;
     }
