@@ -157,4 +157,6 @@ $mod_strings = array(
     'LBL_DASHLET_LISTVIEW_NAME' => 'My Closed Opportunities',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Opportunities that you have closed',
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
+
+    'LBL_OPPORTUNITY_ROLE'=>'Opportunity Role',
 );
