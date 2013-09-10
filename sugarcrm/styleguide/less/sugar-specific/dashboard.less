@@ -30,61 +30,6 @@
           }
         }
       }
-      .empty {
-        padding: 16px 0;
-        border: 3px dashed lighten(@grayLight,8%);
-        background-color: @white;
-        cursor: pointer;
-        p {
-          font-size: @fontSizeMedium;
-          font-weight: 500;
-          text-align: center;
-          color: lighten(@grayLight,8%);
-          &.header {
-            line-height: 40px;
-          }
-        }
-        .add-dashlet {
-          color: lighten(@grayLight,8%);
-          text-align: center;
-          small {
-            font-size: @baseFontSize;
-          }
-          strong {
-            font-size: 60px;
-            font-weight: 900;
-            i {
-              color: lighten(@grayLight,8%);
-              display: inline-block;
-              width: auto;
-            }
-          }
-        }
-      }
-      &.active {
-        .widget.empty {
-          background: lighten(@grayLight,8%);
-          border-color: @white;
-          p,
-          strong i {
-            color: @white;
-          }
-        }
-        .widget:not(.empty) {
-          opacity: .5;
-          .swappable-dashlet {
-            display: block;
-            position: absolute;
-            width: 100%;
-            font-size: 60px;
-            font-weight: 900;
-            text-align: center;
-            top: 30%;
-            text-shadow: 0px 0px 3px rgb(0,0,0);
-            color: @white !important;
-          }
-        }
-      }
     }
     .add-row {
       position: relative;
