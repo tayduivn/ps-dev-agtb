@@ -277,7 +277,7 @@ $dictionary['Expression'] = array('table' => 'expressions', 'comment' => 'Used b
 
   
 ),
-'acls' => array('SugarACLAdminOnly' => true),
+'acls' => array('SugarACLDeveloperForAny' => true),
 'indices' => array (
        array('name' =>'exp_k', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_exp', 'type'=>'index', 'fields'=>array('parent_id','deleted')),

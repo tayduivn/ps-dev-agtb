@@ -41,6 +41,10 @@ class SugarACLDeveloperForAny extends SugarACLStrategy
             return false;
         }
 
+        if ($view == 'team_security' || $view == 'field') {
+            return true;
+        }
+
         // if they are a developer for any module
         $devForAny = $current_user->isDeveloperForAnyModule();
 

@@ -30,8 +30,8 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         $old_current_user = $GLOBALS['current_user'];
         $new_current_user = new SugarBeanAclModuleUserMock();
-        $new_current_user->retrieve($old_current_user->id);
         $GLOBALS['current_user'] = $new_current_user;
+        $new_current_user->retrieve($old_current_user->id);
     }
 
     public static function tearDownAfterClass()
@@ -68,7 +68,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
             array('module'=>'CustomQueries',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
             array('module'=>'DataSets',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
             //END SUGARCRM flav=ent ONLY
-            array('module'=>'Expressions',      'view'=>'admin','edit'=>'admin','delete'=>'admin'),
+            array('module'=>'Expressions',      'view'=>'dev'  ,'edit'=>'dev'  ,'delete'=>'dev'),
             array('module'=>'Holidays',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
             array('module'=>'Manufacturers',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
             array('module'=>'OAuthKeys',        'view'=>'admin','edit'=>'admin','delete'=>'admin'),
@@ -97,7 +97,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $testBean = BeanFactory::newBean($module);
 
-        // First, no admin, no module admin
+        // First, no admin, no module admin, no developer for any.
         $canView = $testBean->ACLAccess('view');
         if ( $view == 'any' ) {
             $this->assertTrue($canView,"Any user should be able to view.");
@@ -168,6 +168,37 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
         } else {
             $this->assertFalse($canDelete,"A module admin was denied the abilitiy to delete.");
         }
+
+        $GLOBALS['current_user']->clearAdminForAllModules();
+
+        // Fourth, no admin, developer for any module.
+        $GLOBALS['current_user']->is_admin = 0;
+        $GLOBALS['current_user']->setDeveloperForAny(true);
+        $this->getAclAction()->clearACLCache();
+
+        $canView = $testBean->ACLAccess('view');
+        $canEdit = $testBean->ACLAccess('edit');
+        $canDelete = $testBean->ACLAccess('delete');
+
+        $GLOBALS['current_user']->setDeveloperForAny(false);
+
+        if ($view == 'any' || $view == 'dev') {
+            $this->assertTrue($canView, 'Developer should be able to view.');
+        } else {
+            $this->assertFalse($canView, 'Only admin should be able to view.');
+        }
+
+        if ($edit == 'any' || $edit == 'dev') {
+            $this->assertTrue($canEdit, 'Developer should be able to edit.');
+        } else {
+            $this->assertFalse($canEdit, 'Only admin should be able to edit.');
+        }
+
+        if ($delete == 'any' || $delete == 'dev') {
+            $this->assertTrue($canDelete, 'Developer should be able to delete.');
+        } else {
+            $this->assertFalse($canDelete, 'Only admin should be able to delete.');
+        }
     }
 }
 
@@ -180,6 +211,7 @@ class SugarACLModuleTest extends Sugar_PHPUnit_Framework_TestCase
 class SugarBeanAclModuleUserMock extends User
 {
     protected $adminForModules = array();
+    protected $isDeveloperForAny = false;
 
     public function clearAdminForAllModules()
     {
@@ -208,4 +240,11 @@ class SugarBeanAclModuleUserMock extends User
         return array_keys($this->adminForModules);
     }
 
+    public function setDeveloperForAny($status) {
+        $this->isDeveloperForAny = $status;
+    }
+
+    public function isDeveloperForAnyModule() {
+        return $this->isDeveloperForAny;
+    }
 }
