@@ -400,22 +400,22 @@
      */
     _showReminderAlert: function(model) {
         var url = app.router.buildRoute(model.module, model.id),
-            link = '<a href="#' + url + '">' + app.lang.get('LBL_SHOW', model.module) + '</a>',
             dateFormat = app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'),
             dateValue = app.date.format(new Date(model.get('date_start')), dateFormat),
-            message = model.get('name') + ', ' + dateValue + '. ' +
-                (_.isUndefined(model.get('location')) ?
-                    model.get('description') :
-                    app.lang.get('MSG_JS_ALERT_MTG_REMINDER_LOC', model.module) + model.get('location')) +
-                '. ' + link;
-
-        app.alert.show('reminder' + model.id, {
-            level: 'info',
-            messages: [message],
-            title: app.lang.get('LBL_REMINDER_TITLE', model.module),
-            closeable: true
+            template = app.template.getView('notifications.notifications-alert'),
+            message = template({
+                title: app.lang.get('LBL_REMINDER_TITLE', model.module),
+                module: model.module,
+                model: model,
+                location: model.get('location'),
+                description: model.get('description'),
+                dateStart: dateValue
+            });
+        _.defer(function() {
+            if (confirm(message)) {
+                app.router.navigate(url, {trigger: true});
+            }
         });
-
         delete this._intervals[model.module][model.id];
     },
 

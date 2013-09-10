@@ -185,6 +185,6 @@ $mod_strings = array (
     'LBL_CREATE_MODULE' => 'Schedule Meeting',
     'LBL_RELATED_RECORD_DEFAULT_NAME' => 'Meeting with {{{this}}}',
     'LBL_SEND_INVITES' => 'Send Invites',
-    'LBL_REMINDER_TITLE' => 'Meeting',
+    'LBL_REMINDER_TITLE' => 'Meeting:',
 );
 ?>

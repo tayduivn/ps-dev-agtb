@@ -433,10 +433,16 @@ describe('Notifications', function () {
                     layouts: []
                 };
                 app.data.declareModel(reminderModule, meta);
+                SugarTest.testMetadata.init();
+                SugarTest.loadHandlebarsTemplate('notifications', 'view', 'base', 'notifications-alert');
+                SugarTest.testMetadata.set();
+
             });
 
             afterEach(function() {
                 app.data.reset(reminderModule);
+                SugarTest.testMetadata.dispose();
+                delete Handlebars.templates;
             });
 
 
@@ -673,7 +679,7 @@ describe('Notifications', function () {
 
             it('should clear interval after triggering alert', function() {
 
-                var showStub = sinon.collection.stub(app.alert, 'show', $.noop),
+                var clock = sinon.useFakeTimers(),
                     model = new app.data.createBean(reminderModule, {
                         'id': '105b0b4a-1337-e0db-b448-522784b92270',
                         'name': 'Discuss pricing',
@@ -707,7 +713,7 @@ describe('Notifications', function () {
                         timer: 3
                     }
                 });
-                expect(showStub).toHaveBeenCalled();
+                clock.restore();
             });
 
             it('should clear reminders and alerts if disposed', function() {
