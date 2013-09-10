@@ -457,3 +457,10 @@ ul.unstyled, ol.unstyled {
 .table-cell {
   display: table-cell;
 }
+
+.preview-headerbar,
+.headerpane {
+  &.shadow:after {
+    .headerpane-shadow; /* located in sugar-specific/mixins.less */
+  }
+}
