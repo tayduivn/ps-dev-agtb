@@ -25,8 +25,19 @@ $viewdefs['Accounts']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'countrychart',
-                                'label' => 'LBL_DASHLET_COUNTRY_CHART_NAME',
+                                'name' => 'dashablelist',
+                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'display_columns' =>
+                                array(
+                                    'name',
+                                    'billing_address_country',
+                                    'billing_address_city',
+                                ),
+                                'my_items' => '1',
+                            ),
+                            'context' =>
+                            array(
+                                'module' => 'Accounts',
                             ),
                             'width' => 12,
                         ),
