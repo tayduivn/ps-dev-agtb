@@ -85,9 +85,9 @@ class MetadataPortalApi extends MetadataApi {
      * Load Portal specific metadata (heavily pruned to only show modules enabled for Portal)
      * @return array Portal metadata
      */
-    protected function loadMetadata()
+    protected function loadMetadata(array $args)
     {
-        $data = parent::loadMetadata();
+        $data = parent::loadMetadata($args);
         if (!empty($data['modules'])) {
             foreach ($data['modules'] as $modKey => $modMeta) {
                 if (!empty($modMeta['isBwcEnabled'])) {
