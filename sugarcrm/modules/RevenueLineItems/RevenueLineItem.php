@@ -413,4 +413,30 @@ class RevenueLineItem extends SugarBean
         }
         return $product;
     }
+
+    /**
+     * getClosedStages
+     *
+     * Return an array of closed stage names from the admin bean.
+     *
+     * @access protected
+     * @return array array of closed stage values
+     */
+    public function getClosedStages()
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        // get all possible closed stages
+        $stages = array_merge(
+            (array)$settings['sales_stage_won'],
+            (array)$settings['sales_stage_lost']
+        );
+        // db quote values
+        foreach($stages as $stage_key => $stage_value) {
+            $stages[$stage_key] = $this->db->quote($stage_value);
+        }
+        return $stages;
+    }
+
 }
