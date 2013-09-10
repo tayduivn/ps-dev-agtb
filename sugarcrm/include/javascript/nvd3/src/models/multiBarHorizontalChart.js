@@ -262,7 +262,9 @@ nv.models.multiBarHorizontalChart = function() {
           });
       }
 
-      g.select('.nv-x.nv-axis').transition()
+      g.select('.nv-x.nv-axis')
+        .attr('transform', 'translate(-2,0)')
+        .transition()
           .call(xAxis);
 
       var xTicks = g.select('.nv-x.nv-axis').selectAll('g');

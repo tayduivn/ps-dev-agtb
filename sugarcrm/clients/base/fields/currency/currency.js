@@ -40,10 +40,20 @@
      */
     transactionValue: '',
     /**
-     * @type {Object}
-     * cached object for the currency drop-down
+     * @var {Object}
+     * reference to the currency dropdown field object
      */
     _currencyField: null,
+    /**
+     * @var {Boolean}
+     * tracks whether the currency dropdown field is disabled or not
+     */
+    _currencyFieldDisabled: false,
+    /**
+     * @var {Boolean}
+     * whether or not the currency dropdown is hidden from view
+     */
+    hideCurrencyDropdown: false,
     /**
      * @type {String}
      * last known record currency id
@@ -56,10 +66,12 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
         var currencyField = this.def.currency_field || 'currency_id';
-        if (this.model.isNew()) {
+        if (this.model.isNew() && (!this.model.isCopy())) {
             // new records are set the user's preferred currency
             this.model.set(currencyField, app.user.get('preferences').currency_id);
         }
+        // hide currency dropdown on list views
+        this.hideCurrencyDropdown = this.view.action === 'list';
         // track the last currency id to convert the value on change
         this._lastCurrencyId = this.model.get(currencyField);
     },
@@ -78,12 +90,10 @@
     _render: function() {
         app.view.Field.prototype._render.call(this);
         if (this.action === 'edit' || this.action === 'disabled') {
-
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width','8px');
-            this.getCurrencyField().setDisabled(false);
+            this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
             this.getCurrencyField().render();
-            return this;
         }
         return this;
     },
@@ -98,19 +108,22 @@
         this.model.on('change:' + currencyField, function(model, currencyId, options) {
             //When model is reset, it should not be called
             if (!currencyId || !this._lastCurrencyId) {
+                this._lastCurrencyId = currencyId;
                 return;
             }
             // update the base rate in the model
             this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
             // convert the value to new currency
-            this.model.set(
-                this.name,
-                app.currency.convertAmount(
-                    app.currency.unformatAmountLocale(this.value),
-                    this._lastCurrencyId,
-                    currencyId
-                )
-            );
+            if (model.has(this.name)) {
+                this.model.set(
+                    this.name,
+                    app.currency.convertAmount(
+                        app.currency.unformatAmountLocale(model.get(this.name)),
+                        this._lastCurrencyId,
+                        currencyId
+                    )
+                );
+            }
             this._lastCurrencyId = currencyId;
         }, this);
     },
@@ -121,7 +134,8 @@
      * @param {Object} e element.
      */
     handleInputBlur: function(e) {
-        this.getCurrencyField().setDisabled(false);
+        this._currencyFieldDisabled = false;
+        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
     },
 
     /**
@@ -130,7 +144,8 @@
      * @param {Object} e element.
      */
     handleInputChange: function(e) {
-        this.getCurrencyField().setDisabled(true);
+        this._currencyFieldDisabled = true;
+        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
     },
 
 
@@ -218,6 +233,7 @@
             viewName: this.action,
             model: this.model
         });
+        this._currencyField.defaultOnUndefined = false;
 
         return this._currencyField;
     },
@@ -225,8 +241,8 @@
     setDisabled: function(disable) {
         disable = _.isUndefined(disable) ? true : disable;
         app.view.Field.prototype.setDisabled.call(this, disable);
-
-        this.getCurrencyField().setDisabled(disable);
+        this._currencyFieldDisabled = disable;
+        this.getCurrencyField().setDisabled(this._currencyFieldDisabled);
     },
 
     setMode: function(name) {

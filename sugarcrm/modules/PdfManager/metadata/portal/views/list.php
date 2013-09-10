@@ -55,6 +55,7 @@ $viewdefs['PdfManager']['portal']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'link' => true,
+                    'module' => 'Employees',
                 ),
             ),
         ),

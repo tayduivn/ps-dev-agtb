@@ -412,7 +412,9 @@ class SugarQuery_Compiler_SQL
         }
 
         if ($data['type'] == 'relate' 
-            || ($data['source'] == 'non-db' && isset($data['link']) && $data['link'] !== true)) { // For some reason the full_name field has 'link' => true
+            || (isset($data['source']) && $data['source'] == 'non-db'
+                // For some reason the full_name field has 'link' => true
+                && isset($data['link']) && $data['link'] !== true)) { 
             // this is a link field
             if (!isset($data['link'])) {
                 // no link specified - bail out
@@ -436,6 +438,13 @@ class SugarQuery_Compiler_SQL
 
             $join = $this->sugar_query->join($data['link'], $params);
             $jalias = $join->joinName();
+
+            // Role column fields
+            if (!empty($data['rname_link'])) {
+                $linkAlias = $jalias . '_link';
+                return array("{$linkAlias}.{$data['rname_link']}", $field);
+            }
+
             $fields = $this->resolveField("$jalias.{$data['rname']}", $field);
             if (!empty($fields)) {
                 if (!is_array($fields[0])) {
@@ -609,7 +618,6 @@ class SugarQuery_Compiler_SQL
 
             if (!empty($whereObj->raw)) {
                 $sql .= $whereObj->raw;
-                continue;
             }
             foreach ($whereObj->conditions as $condition) {
                 if ($condition instanceof SugarQuery_Builder_Where) {

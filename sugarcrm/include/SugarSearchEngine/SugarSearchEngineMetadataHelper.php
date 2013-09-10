@@ -124,8 +124,9 @@ class SugarSearchEngineMetadataHelper
 
         foreach($obj->field_defs as $field => $def)
         {
-            if( isset($def['full_text_search']) && is_array($def['full_text_search']) && !empty($def['full_text_search']['boost']) )
+            if (isset($def['full_text_search']) && is_array($def['full_text_search'])) {
                 $results[$field] = $def;
+            }
         }
 
         sugar_cache_put($cacheKey, $results);

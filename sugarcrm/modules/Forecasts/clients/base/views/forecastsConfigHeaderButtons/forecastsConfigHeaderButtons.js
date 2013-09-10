@@ -150,6 +150,26 @@
             firstTime = true;
         }
 
+        // update the commit_stages_included property and
+        // remove "include_in_totals" from the ranges so it doesn't get saved
+        var mdl = this.context.get('model');
+        if(mdl.get('forecast_ranges') == "show_custom_buckets") {
+            var ranges = mdl.get('show_custom_buckets_ranges'),
+                commitStages = [];
+            mdl.unset('commit_stages_included');
+            _.each(ranges, function(range, key) {
+                if(range.in_included_total) {
+                    commitStages.push(key)
+                }
+                delete range.in_included_total;
+            }, this);
+
+            mdl.set({
+                commit_stages_included: commitStages,
+                show_custom_buckets_ranges: ranges
+            });
+        }
+
         this.context.get('model').save({}, {
             // getting the fresh model with correct config settings passed in as the param
             success: _.bind(function(model) {

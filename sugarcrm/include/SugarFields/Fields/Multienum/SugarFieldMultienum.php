@@ -33,32 +33,42 @@ class SugarFieldMultienum extends SugarFieldEnum
     }
 
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
-        if(!empty($bean->$fieldName)){
-            $value = explode('^,^', trim($bean->$fieldName, '^'));
-        } else {
-            $value = array();  // Blank array
-        }
-        $data[$fieldName] = $value;
+        $data[$fieldName] = $this->getNormalizedFieldValues($bean, $fieldName);
     }
 
-	public function save(&$bean, $params, $field, $properties, $prefix = ''){
-		if ( isset($params[$prefix.$field]) ) {
-			if(!empty($params[$prefix.$field])
-                && $params[$prefix.$field][0] === '' && !empty($params[$prefix.$field][1]) ) {
-				unset($params[$prefix.$field][0]);
-			}
+    public function save(&$bean, $params, $field, $properties, $prefix = ''){
+        global $app_list_strings;
 
-			$bean->$field = encodeMultienumValue($params[$prefix.$field]);
-		}
-        else  if (isset($params[$prefix.$field.'_multiselect']) && $params[$prefix.$field.'_multiselect']==true) {
-			// if the value in db is not empty and
-			// if the data is not set in params (means the user has deselected everything) and
-			// if the corresponding multiselect flag is true
-			// then set field to ''
-			if (!empty($bean->$field)) {
-				$bean->$field = '';
-			}
-		}
+        // Used for value validation and allowing empty leading and ending selected
+        // list items
+        $listSource = array();
+        if (isset($properties['options']) && isset($app_list_strings[$properties['options']])) {
+            $listSource = $app_list_strings[$properties['options']];
+        }
+
+        $index = $prefix.$field;
+        if (isset($params[$index])) {
+            if (!empty($params[$index]) && is_array($params[$index])) {
+                foreach ($params[$index] as $k => $v) {
+                    // If there is a listSource entry for this field but a selected 
+                    // value does not exist in the source list for this field, unset it
+                    if (!empty($listSource) && !isset($listSource[$v])) {
+                        unset($params[$index][$k]);
+                    }
+                }
+            }
+
+            $bean->$field = encodeMultienumValue($params[$index]);
+        }
+        else  if (isset($params[$index.'_multiselect']) && $params[$index.'_multiselect'] == true) {
+            // if the value in db is not empty and
+            // if the data is not set in params (means the user has deselected everything) and
+            // if the corresponding multiselect flag is true
+            // then set field to ''
+            if (!empty($bean->$field)) {
+                $bean->$field = '';
+            }
+        }
     }
 
     /**
@@ -153,11 +163,7 @@ class SugarFieldMultienum extends SugarFieldEnum
             return $this->apiSave($bean, $params, $fieldName, $properties);
         }
 
-        if (!empty($bean->$fieldName)) {
-            $start = explode('^,^', trim($bean->$fieldName, '^'));
-        } else {
-            $start = array();  // Blank array
-        }
+        $start = $this->getNormalizedFieldValues($bean, $fieldName);
 
         if (!is_array($params[$fieldName])) {
             $params[$fieldName] = array();
@@ -168,5 +174,31 @@ class SugarFieldMultienum extends SugarFieldEnum
         return $this->apiSave($bean, $params, $fieldName, $properties);
     }
 
-
+    /**
+     * Gets the field values for the multienum field as a cleaned up list of values
+     * 
+     * @param SugarBean $bean The bean to get the values from
+     * @param string $fieldName The name of the field to get normalized values from
+     * @return array
+     */
+    protected function getNormalizedFieldValues($bean, $fieldName) {
+        // Default return value
+        $return = array();
+        
+        // if we have data in this field, clean it up
+        if(!empty($bean->$fieldName)) {
+            // Fix the issue of empty values in list at the front or end of the 
+            // list of selected options for this field
+            $values = explode('^,^', trim(str_replace('^^', '^ ^', $bean->$fieldName), '^'));
+            foreach ($values as $value) {
+                if ($value == ' ') {
+                    $value = '';
+                }
+                
+                $return[] = $value;
+            }
+        }
+        
+        return $return;
+    }
 }

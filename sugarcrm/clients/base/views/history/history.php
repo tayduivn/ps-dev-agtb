@@ -157,6 +157,7 @@ $viewdefs['base']['view']['history'] = array(
             'module' => 'Meetings',
             'order_by' => 'date_start:desc',
             'record_date' => 'date_start',
+            'include_child_items' => true,
         ),
         array(
             'filter_applied_to' => 'date_entered',
@@ -193,6 +194,7 @@ $viewdefs['base']['view']['history'] = array(
             'module' => 'Calls',
             'order_by' => 'date_start:desc',
             'record_date' => 'date_start',
+            'include_child_items' => true,
         ),
     ),
 );

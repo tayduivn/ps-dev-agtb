@@ -3,7 +3,7 @@
 var nv = window.nv || {};
 
 nv.version = '0.0.1a';
-nv.dev = true //set false when in production
+nv.dev = false; //set false when in production
 
 window.nv = nv;
 
@@ -342,20 +342,52 @@ nv.utils.windowResize = function(fun)
   else {
       //The browser does not support Javascript event binding
   }
-}
+};
 
 nv.utils.windowUnResize = function(fun)
 {
-  if(window.detachEvent) {
+  if (window.detachEvent) {
       window.detachEvent('onresize', fun);
   }
-  else if(window.removeEventListener) {
+  else if (window.removeEventListener) {
       window.removeEventListener('resize', fun, true);
   }
   else {
       //The browser does not support Javascript event binding
   }
 }
+
+nv.utils.resizeOnPrint = function(fn) {
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                fn();
+            }
+        });
+    } else if (window.attachEvent) {
+      window.attachEvent("onbeforeprint", fn);
+    } else {
+      window.onbeforeprint = fn;
+    }
+    //TODO: allow for a second call back to undo using
+    //window.attachEvent("onafterprint", fn);
+};
+
+nv.utils.unResizeOnPrint = function(fn) {
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.removeListener(function(mql) {
+            if (mql.matches) {
+                fn();
+            }
+        });
+    } else if (window.detachEvent) {
+      window.detachEvent("onbeforeprint", fn);
+    } else {
+      window.onbeforeprint = null;
+    }
+};
 
 // Backwards compatible way to implement more d3-like coloring of graphs.
 // If passed an array, wrap it in a function which implements the old default
@@ -2613,7 +2645,7 @@ nv.models.funnel = function() {
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
 
-      d3.transition(groups.exit())
+      d3.transition(groups.exit()).duration(0)
         .selectAll('polygon.nv-bar')
         .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('points', function(d) {
@@ -2627,7 +2659,7 @@ nv.models.funnel = function() {
             })
           .remove();
 
-      d3.transition(groups.exit())
+      d3.transition(groups.exit()).duration(0)
         .selectAll('g.nv-label-value')
         .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('y', 0)
@@ -2635,7 +2667,7 @@ nv.models.funnel = function() {
           .attr('transform', 'translate('+ c +',0)')
           .remove();
 
-      d3.transition(groups.exit())
+      d3.transition(groups.exit()).duration(0)
         .selectAll('text.nv-label-group')
         .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('y', 0)
@@ -2649,7 +2681,7 @@ nv.models.funnel = function() {
           .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
           .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
 
-      d3.transition(groups)
+      d3.transition(groups).duration(0)
           .style('stroke-opacity', 1)
           .style('fill-opacity', 1);
 
@@ -2674,7 +2706,7 @@ nv.models.funnel = function() {
               );
             });
 
-      d3.transition(funs)
+      d3.transition(funs).duration(0)
           .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
             var w0 = (r * y(d.y0)) + w/2,
@@ -2732,7 +2764,7 @@ nv.models.funnel = function() {
       //         .attr('x', -labelBoxWidth/2);
       //     });
 
-      d3.transition(lblValue)
+      d3.transition(lblValue).duration(0)
           .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; });
 
@@ -2757,7 +2789,7 @@ nv.models.funnel = function() {
             .attr('transform', 'translate('+ availableWidth +',0)')
           ;
 
-      d3.transition(lblGroup)
+      d3.transition(lblGroup).duration(0)
           .delay(function(d,i) { return i * delay / data[0].values.length; })
           .style('fill-opacity', 1)
           .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })
@@ -2961,7 +2993,7 @@ nv.models.funnelChart = function() {
     , legend = nv.models.legend()
     ;
 
-  var margin = {top: 30, right: 20, bottom: 20, left: 20}
+  var margin = {top: 20, right: 10, bottom: 10, left: 10}
     , width = null
     , height = null
     , showLegend = true
@@ -3013,7 +3045,7 @@ nv.models.funnelChart = function() {
           availableHeight = (height || parseInt(container.style('height'), 10) || 400)
                              - margin.top - margin.bottom;
 
-      chart.update = function() { container.transition().duration(300).call(chart); };
+      chart.update = function() { container.transition().duration(chart.delay()).call(chart); };
       chart.container = this;
 
       //------------------------------------------------------------
@@ -3147,7 +3179,7 @@ nv.models.funnelChart = function() {
       var funnelWrap = g.select('.nv-funnelWrap')
           .datum( data.filter(function(d) { return !d.disabled; }) );
 
-      funnelWrap.transition().call(funnel);
+      funnelWrap.transition().duration(chart.delay()).call(funnel);
 
       //------------------------------------------------------------
 
@@ -3202,7 +3234,7 @@ nv.models.funnelChart = function() {
             })
           ;
 
-      g.select('.nv-y.nv-axis').transition()
+      g.select('.nv-y.nv-axis').transition().duration(chart.delay())
         .call(yAxis)
           .style('stroke-width', '1')
           .selectAll('line');
@@ -3225,7 +3257,7 @@ nv.models.funnelChart = function() {
           });
         }
 
-        container.transition().duration(300).call(chart);
+        container.transition().duration(chart.delay()).call(chart);
       });
 
       dispatch.on('tooltipShow', function(e) {
@@ -5823,9 +5855,9 @@ nv.models.multiBar = function() {
       if (stacked) {
         d3.transition(bars)
             .delay(function(d,i) { return i * delay / data[0].values.length; })
-            .attr('y', function(d,i) { return y(d.y1); })
+            .attr('y', function(d,i) { return y(d.y1) - 2; })
             .attr('height', function(d,i) {
-              return Math.max(Math.abs(y(d.y + d.y0) - y(d.y0)) - (d.y0===0?2:0),0);
+              return Math.max(Math.abs(y(d.y + d.y0) - y(d.y0)) - 1,0);
             })
             .each('end', function() {
               d3.select(this)
@@ -5846,7 +5878,7 @@ nv.models.multiBar = function() {
                           y(0) :
                           y(0) - y(getY(d,i)) < 1 ?
                             y(0) - 1 :
-                          y(getY(d,i)) || 0;
+                            y(getY(d,i)) || 0;
                 })
                 .attr('height', function(d,i) {
                   return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 2, 0) || 0;
@@ -6719,7 +6751,7 @@ nv.models.multiBarHorizontal = function() {
       bars.exit().remove();
 
       var barsEnter = bars.enter().append('g')
-          .attr('class','nv-bar')
+          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'; })
           .attr('transform', function(d,i,j) {
             return 'translate(' + y0(stacked ? d.y0 : 0) + ',' + (stacked ? 0 : (j * x.rangeBand() / data.length ) + x(getX(d,i))) + ')';
           });
@@ -6829,62 +6861,31 @@ nv.models.multiBarHorizontal = function() {
         d3.transition(bars)
             //.delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('transform', function(d,i) {
-              var shift = 0;
-              //if bar is first in stack
-              if (getY(d,i)<0) {
-                //shift it left or right
-                shift = getY(d,i)<0?-2:2;
-              }
-              return 'translate(' + (y(d.y1)) + ',' + x(getX(d,i)) + ')';
+              return 'translate(' + y(d.y1) + ',' + x(getX(d,i)) + ')';
             })
           .select('rect')
             .attr('x', function(d,i) {
-              var shift = 0;
-              //if bar is first in stack
-              if (d.y0===0) {
-                //shift it left or right
-                shift = 2;
-              } else {
-                shift = 2;
-              }
-              return shift;
+              return getY(d,i) < 0 ? 0 : 1;
             })
             .attr('width', function(d,i) {
-              var adjust = 0;
-              //if bar is first in stack
-              if (d.y0===0) {
-                //shift it left or right
-                adjust = 4;
-              } else {
-                adjust = 4;
-              }
-              return Math.max(Math.abs(y(getY(d,i) + d.y0) - y(d.y0)) - adjust, 0);
+              return Math.max(Math.abs(y(getY(d,i) + d.y0) - y(d.y0)) - 1, 0);
             })
             .attr('height', x.rangeBand());
       } else {
         d3.transition(bars)
           //.delay(function(d,i) { return i * delay / data[0].values.length; })
             .attr('transform', function(d,i) {
-              //TODO: stacked must be all positive or all negative, not both?
-              return 'translate(' + (getY(d,i) < 0 ? y(getY(d,i)) : y(0) + (getY(d,i)<0?-2:2) ) + ',' +
+              return 'translate(' + (getY(d,i) < 0 ? y(getY(d,i)) : y(0)) + ',' +
                 (d.series * x.rangeBand() / data.length + x(getX(d,i)) ) + ')';
             })
           .select('rect')
             .attr('x', function(d,i) {
-              var shift = 0;
-              //if bar is first in stack
-              if (d.y0===0) {
-                //shift it left or right
-                shift = 0;
-              } else {
-                shift = 2;
-              }
-              return shift;
+              return getY(d,i) < 0 ? 0 : 2;
             })
-            .attr('height', x.rangeBand() / data.length )
             .attr('width', function(d,i) {
-              return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 4,0) || 0;
-            });
+              return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 2, 0) || 0;
+            })
+            .attr('height', x.rangeBand() / data.length );
       }
 
       //store old scales for use in transitions on update
@@ -7310,7 +7311,9 @@ nv.models.multiBarHorizontalChart = function() {
           });
       }
 
-      g.select('.nv-x.nv-axis').transition()
+      g.select('.nv-x.nv-axis')
+        .attr('transform', 'translate(-2,0)')
+        .transition()
           .call(xAxis);
 
       var xTicks = g.select('.nv-x.nv-axis').selectAll('g');

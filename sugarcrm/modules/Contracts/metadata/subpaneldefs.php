@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $layout_defs['Contracts'] = array( 
 	// sets up which panels to show, in which order, and with what linked_fields 
 	'subpanel_setup' => array(
-		'contract_documents' => array(
+		'contracts_documents' => array(
 			'order' => 10,
 			'module' => 'Documents',
 			'sort_order' => 'asc',
@@ -79,16 +79,6 @@ $layout_defs['Contracts'] = array(
 			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
-			),
-		),
-		'revenuelineitems' => array(
-			'order' => 40,
-			'module' => 'RevenueLineItems',
-			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'revenuelineitems',
-			'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopSelectButton'),
 			),
 		),
 		'quotes' => array(

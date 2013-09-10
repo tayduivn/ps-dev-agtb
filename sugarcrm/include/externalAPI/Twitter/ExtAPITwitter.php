@@ -108,6 +108,25 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
         return $reply['responseJSON'];
     }
 
+    /**
+     * Gets a twitter users last maxEntries
+     * @param $twitterHandle twitter screen name
+     * @param $maxTime
+     * @param $maxEntries maximum number of entries to retrieve
+     * @return array
+     */
+    public function getCurrentUserInfo()
+    {
+
+        $twitter_json_url = 'http://api.twitter.com/1.1/account/verify_credentials.json';
+        $reply = $this->makeRequest('GET', $twitter_json_url,array());
+
+        if ( !$reply['success'] ) {
+            $GLOBALS['log']->error('Twitter failed, reply said: '.print_r($reply,true));
+            return $reply;
+        }
+        return $reply['responseJSON'];
+    }
 
     // Internal functions
     protected function makeRequest($requestMethod, $url, $urlParams = null, $postData = null )

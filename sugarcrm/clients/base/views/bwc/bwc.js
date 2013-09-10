@@ -30,9 +30,29 @@
     ],
 
     initialize: function(options) {
-        this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
+        this.$el.attr('src', this._addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
+    },
+    
+    _addIframeMark: function(url) {
+    	var parts = url.split("?");
+    	return parts[0] + "?" + (parts[1]?parts[1]+"&bwcFrame=1":"bwcFrame=1"); 
+    },
+    
+    _rmIframeMark: function(url) {
+    	var parts = url.split("?");
+    	if(!parts[1]) {
+    		return url;
+    	}
+    	// scan and drop bwcFrame=1
+    	return parts[0]+"?"+_.reduce(parts[1].split("&"), function(acc, item) {
+    		if(item == 'bwcFrame=1') {
+    			return acc;
+    		} else {
+    			return acc?acc+"&"+item:item;
+    		}
+    	}, '');
     },
 
     /**
@@ -148,7 +168,7 @@
         // update bwc context
         var app = window.parent.SUGAR.App;
         app.controller.context.set('module', module);
-        app.events.trigger('app:view:change');
+        app.events.trigger('app:view:change', this.layout, {module: module});
     },
 
     /**
@@ -181,6 +201,7 @@
      * @private
      */
     _setCurrentUrl: function(url) {
+    	url = this._rmIframeMark(url);
         this._currentUrl = url;
         window.parent.location.hash = url;
     },

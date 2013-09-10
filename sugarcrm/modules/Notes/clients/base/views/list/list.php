@@ -56,7 +56,7 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'ACLTag' => 'CONTACT',
                     'related_fields' =>
                     array (
-                        0 => 'contact_id',
+                        'contact_id',
                     ),
                 ),
                 array (
@@ -72,8 +72,8 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'ACLTag' => 'PARENT',
                     'related_fields' =>
                     array (
-                        0 => 'parent_id',
-                        1 => 'parent_type',
+                        'parent_id',
+                        'parent_type',
                     ),
                 ),
                 array (
@@ -85,8 +85,9 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                     'type' => 'file',
                     'related_fields' =>
                     array (
-                        0 => 'file_url',
-                        1 => 'id',
+                        'file_url',
+                        'id',
+                        'file_mime_type',
                     ),
                     'displayParams' =>
                     array(
@@ -95,6 +96,7 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                 ),
                 array (
                     'name' => 'created_by_name',
+                    'module' => 'Employees',
                     'type' => 'relate',
                     'label' => 'LBL_CREATED_BY',
                     'width' => '10%',

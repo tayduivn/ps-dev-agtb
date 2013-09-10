@@ -453,7 +453,7 @@ abstract class DBManager
 	 */
 	protected function addDistinctClause(&$sql)
 	{
-	    preg_match("|^\W*(\w+)|i", $sql, $firstword);
+	    preg_match('|^\W*(\w+)|i', $sql, $firstword);
 	    if(empty($firstword[1]) || strtolower($firstword[1]) != 'select') {
 	        // take first word of the query, if it's not SELECT - ignore it
 	        return;
@@ -469,13 +469,13 @@ abstract class DBManager
 			    $newpart = preg_replace_callback('/INNER JOIN \((select tst\.team_set_id[^\)]*)\)\s*(\w*)_tf on \w*_tf\.team_set_id  = \w*\.team_set_id/i',
 			        array($this, "replaceTeamClause"), $part);
 			    $selects = array();
-			    preg_match_all("/SELECT\s+(.*?)\s+FROM\s+/is", $newpart, $selects, PREG_OFFSET_CAPTURE);
+			    preg_match_all('/SELECT\s+(.*?)\s+FROM\s+/is', $newpart, $selects, PREG_OFFSET_CAPTURE);
 			    if(!empty($selects[1])) {
 			        $offset = 0;
 			        do {
     			        foreach($selects[1] as $match) {
                             if(stripos($match[0], 'distinct') !== false) continue; /* already have distinct */
-                            if(preg_match("/(avg|sum|min|max|count)\(.*\)/i", $match[0])) {
+                            if(preg_match('/(avg|sum|min|max|count)\(.*\)/i', $match[0])) {
                                 /* bug #61011 - don't rewrite queries with aggregates */
                                 break 2;
                             }
@@ -882,7 +882,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Builds the SQL commands that repair a table structure
 	 *
-	 * @param  string $tablename
+	 * @param  string $tableName
 	 * @param  array  $fielddefs Field definitions, in vardef format
 	 * @param  array  $indices   Index definitions, in vardef format
 	 * @param  bool   $execute   optional, true if we want the queries executed instead of returned
@@ -890,212 +890,268 @@ protected function checkQuery($sql, $object_name = false)
      * @todo: refactor engine param to be more generic
      * @return string
      */
-	public function repairTableParams($tablename, $fielddefs,  $indices, $execute = true, $engine = null)
-	{
-		//jc: had a bug when running the repair if the tablename is blank the repair will
-		//fail when it tries to create a repair table
-		if ($tablename == '' || empty($fielddefs))
-			return '';
 
-		//if the table does not exist create it and we are done
-		$sql = "/* Table : $tablename */\n";
-		if (!$this->tableExists($tablename)) {
-			$createtablesql = $this->createTableSQLParams($tablename,$fielddefs,$indices,$engine);
-			if($execute && $createtablesql){
-				$this->createTableParams($tablename,$fielddefs,$indices,$engine);
-			}
+    public function repairTableParams($tableName, $fielddefs,  $indices, $execute = true, $engine = null)
+    {
+        global  $sugar_config;
+        //jc: had a bug when running the repair if the tablename is blank the repair will
+        //fail when it tries to create a repair table
+        if ($tableName == '' || empty($fielddefs))
+            return '';
 
-			$sql .= "/* MISSING TABLE: {$tablename} */\n";
-			$sql .= $createtablesql . "\n";
-			return $sql;
-		}
+        //if the table does not exist create it and we are done
+        $sql = "/* Table : $tableName */\n";
+        if (!$this->tableExists($tableName)) {
+            $createtablesql = $this->createTableSQLParams($tableName,$fielddefs,$indices,$engine);
+            if($execute && $createtablesql){
+                $this->createTableParams($tableName,$fielddefs,$indices,$engine);
+            }
 
-		$compareFieldDefs = $this->get_columns($tablename);
-		$compareIndices = $this->get_indices($tablename);
+            $sql .= "/* MISSING TABLE: {$tableName} */\n";
+            $sql .= $createtablesql . "\n";
+            return $sql;
+        }
 
-		$take_action = false;
+        $sql = $this->repairTableColumns($tableName, $fielddefs, $execute);
+        if (empty($this->options['skip_index_rebuild'])) {
+            $sql .= $this->repairTableIndices($tableName, $indices, $execute);
+        }
 
-		// do column comparisons
-		$sql .=	"/*COLUMNS*/\n";
-		foreach ($fielddefs as $name => $value) {
-			if (isset($value['source']) && $value['source'] != 'db')
-				continue;
+        return $sql;
+    }
 
-            // Bug #42406. Skipping breaked vardef without type or name
+    /**
+     * Supplies the SQL commands that repair a table structure
+     *
+     * @param  string $tableName
+     * @param  array  $fielddefs Field definitions, in vardef format
+     * @param  bool   $execute   optional, true if we want the queries executed instead of returned
+     *
+     * @return string
+     */
+    private function repairTableColumns($tableName, $fielddefs, $execute)
+    {
+        $compareFieldDefs = $this->get_columns($tableName);
+        $sql = "/*COLUMNS*/\n";
+        $take_action = false;
+
+        // do column comparisons
+        foreach ($fielddefs as $name => $value) {
+            if (isset($value['source']) && $value['source'] != 'db')
+                continue;
+
+            // Bug #42406. Skipping broken vardef without type or name
             if (isset($value['name']) == false || $value['name'] == false)
             {
-                $sql .= "/* NAME IS MISSING IN VARDEF $tablename::$name */\n";
+                $sql .= "/* NAME IS MISSING IN VARDEF $tableName::$name */\n";
                 continue;
             }
             else if (isset($value['type']) == false || $value['type'] == false)
             {
-                $sql .= "/* TYPE IS MISSING IN VARDEF $tablename::$name */\n";
+                $sql .= "/* TYPE IS MISSING IN VARDEF $tableName::$name */\n";
                 continue;
             }
 
-			$name = strtolower($value['name']);
-			// add or fix the field defs per what the DB is expected to give us back
-			$this->massageFieldDef($value,$tablename);
+            $name = strtolower($value['name']);
+            // add or fix the field defs per what the DB is expected to give us back
+            $this->massageFieldDef($value,$tableName);
 
-			$ignorerequired=false;
+            $ignorerequired=false;
 
-			//Do not track requiredness in the DB, auto_increment, ID,
-			// and deleted fields are always required in the DB, so don't force those
-			if ($this->isNullable($value)) {
-				$value['required'] = false;
-			}
-			//Should match the conditions in DBManager::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
+            //Do not track requiredness in the DB, auto_increment, ID,
+            // and deleted fields are always required in the DB, so don't force those
+            if ($this->isNullable($value)) {
+                $value['required'] = false;
+            }
+            //Should match the conditions in DBManager::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
+            //come into this function as 'type' = 'char', 'dbType' = 'id' without required set in $value. Assume they are correct and leave them alone.
+            else if (($name == 'id' || $value['type'] == 'id' || (isset($value['dbType']) && $value['dbType'] == 'id'))
+                && (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])))
+            {
+                $value['required'] = $compareFieldDefs[$name]['required'];
+            }
 
-			//come into this function as 'type' = 'char', 'dbType' = 'id' without required set in $value. Assume they are correct and leave them alone.
-			else if (($name == 'id' || $value['type'] == 'id' || (isset($value['dbType']) && $value['dbType'] == 'id'))
-				&& (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])))
-			{
-				$value['required'] = $compareFieldDefs[$name]['required'];
-			}
+            if ( !isset($compareFieldDefs[$name]) ) {
+                // ok we need this field lets create it
+                $sql .=	"/*MISSING IN DATABASE - $name -  ROW*/\n";
+                $sql .= $this->addColumnSQL($tableName, $value) .  "\n";
+                if ($execute) {
+                    $this->addColumn($tableName, $value);
+                }
+                $take_action = true;
+            } elseif ( !$this->compareVarDefs($compareFieldDefs[$name],$value)) {
+                //fields are different lets alter it
+                $sql .=	"/*MISMATCH WITH DATABASE - $name -  ROW ";
+                foreach($compareFieldDefs[$name] as $rKey => $rValue) {
+                    $sql .=	"[$rKey] => '$rValue'  ";
+                }
+                $sql .=	"*/\n";
+                $sql .=	"/* VARDEF - $name -  ROW";
+                foreach($value as $rKey => $rValue) {
+                    if(is_array($rValue)) {
+                        $rValue = join("\n", $rValue);
+                    }
+                    $sql .=	"[$rKey] => '$rValue'  ";
+                }
+                $sql .=	"*/\n";
 
-			if ( !isset($compareFieldDefs[$name]) ) {
-				// ok we need this field lets create it
-				$sql .=	"/*MISSING IN DATABASE - $name -  ROW*/\n";
-				$sql .= $this->addColumnSQL($tablename, $value) .  "\n";
-				if ($execute)
-					$this->addColumn($tablename, $value);
-				$take_action = true;
-			} elseif ( !$this->compareVarDefs($compareFieldDefs[$name],$value)) {
-				//fields are different lets alter it
-				$sql .=	"/*MISMATCH WITH DATABASE - $name -  ROW ";
-				foreach($compareFieldDefs[$name] as $rKey => $rValue) {
-					$sql .=	"[$rKey] => '$rValue'  ";
-				}
-				$sql .=	"*/\n";
-				$sql .=	"/* VARDEF - $name -  ROW";
-				foreach($value as $rKey => $rValue) {
-				    if(is_array($rValue)) {
-				        $rValue = join("\n", $rValue);
-				    }
-					$sql .=	"[$rKey] => '$rValue'  ";
-				}
-				$sql .=	"*/\n";
+                //jc: oracle will complain if you try to execute a statement that sets a column to (not) null
+                //when it is already (not) null
+                if ( isset($value['isnull']) && isset($compareFieldDefs[$name]['isnull']) &&
+                    $value['isnull'] === $compareFieldDefs[$name]['isnull']) {
+                    unset($value['required']);
+                    $ignorerequired=true;
+                }
 
-				//jc: oracle will complain if you try to execute a statement that sets a column to (not) null
-				//when it is already (not) null
-				if ( isset($value['isnull']) && isset($compareFieldDefs[$name]['isnull']) &&
-					$value['isnull'] === $compareFieldDefs[$name]['isnull']) {
-					unset($value['required']);
-					$ignorerequired=true;
-				}
+                //dwheeler: Once a column has been defined as null, we cannot try to force it back to !null
+                if ((isset($value['required']) && ($value['required'] === true || $value['required'] == 'true' || $value['required'] === 1))
+                    && (empty($compareFieldDefs[$name]['required']) || $compareFieldDefs[$name]['required'] != 'true'))
+                {
+                    $ignorerequired = true;
+                }
+                $altersql = $this->alterColumnSQL($tableName, $value, $ignorerequired);
+                if(is_array($altersql)) {
+                    $altersql = join("\n", $altersql);
+                }
+                $sql .= $altersql .  "\n";
+                if($execute){
+                    $this->alterColumn($tableName, $value, $ignorerequired);
+                }
+                $take_action = true;
+            }
+        }
+        return ($take_action === true) ? $sql : '';
+    }
 
-				//dwheeler: Once a column has been defined as null, we cannot try to force it back to !null
-				if ((isset($value['required']) && ($value['required'] === true || $value['required'] == 'true' || $value['required'] === 1))
-					&& (empty($compareFieldDefs[$name]['required']) || $compareFieldDefs[$name]['required'] != 'true'))
-				{
-					$ignorerequired = true;
-				}
-				$altersql = $this->alterColumnSQL($tablename, $value,$ignorerequired);
-				if(is_array($altersql)) {
-					$altersql = join("\n", $altersql);
-				}
-				$sql .= $altersql .  "\n";
-				if($execute){
-					$this->alterColumn($tablename, $value, $ignorerequired);
-				}
-				$take_action = true;
-			}
-		}
+    /**
+     * Supplies the SQL commands that repair a table Indices
+     *
+     * @param  string $tableName
+     * @param  array  $indices   Index definitions, in vardef format
+     * @param  bool   $execute   optional, true if we want the queries executed instead of returned
+     *
+     * @return string
+     */
+    private function repairTableIndices($tableName, $indices, $execute)
+    {
+        $take_action = false;
+        $compareIndices = $this->get_indices($tableName);
+        $sql = "/* INDEXES */\n";
+        $correctedIndexes = array();
 
-		// do index comparisons
-		$sql .=	"/* INDEXES */\n";
-		$correctedIndexs = array();
+        $compareIndices_ci = array();
 
-        $compareIndices_case_insensitive = array();
+        // ****************************************
+        // do indices comparisons case-insensitive
+        // ****************************************
 
-		// do indices comparisons case-insensitive
-		foreach($compareIndices as $k => $value){
-			$value['name'] = strtolower($value['name']);
-			$compareIndices_case_insensitive[strtolower($k)] = $value;
-		}
-		$compareIndices = $compareIndices_case_insensitive;
-		unset($compareIndices_case_insensitive);
+        //First change the DB indices to lower case
+        foreach($compareIndices as $k => $value){
+            $value['name'] = strtolower($value['name']);
+            $value['type'] = strtolower($value['type']);
+            if (isset($value['fields'])) {
+                foreach($value['fields'] as $index=>$fieldName) {
+                    $value['fields'][$index]=strtolower($fieldName);
+                }
+            }
+            $compareIndices_ci[strtolower($k)] = $value;
+        }
+        $compareIndices = $compareIndices_ci;
+        $compareIndices_ci = array();
+        //Then change the $indices to lower case
+        foreach($indices as $k => $value){
+            $value['name'] = strtolower($value['name']);
+            $value['type'] = strtolower($value['type']);
+            if (isset($value['fields'])) {
+                foreach($value['fields'] as $index=>$fieldName) {
+                    $value['fields'][$index]=strtolower($fieldName);
+                }
+            }
+            $compareIndices_ci[strtolower($k)] = $value;
+        }
+        $indices = $compareIndices_ci;
+        unset($compareIndices_ci);
 
-		foreach ($indices as $value) {
-			if (isset($value['source']) && $value['source'] != 'db')
-				continue;
+        foreach ($indices as $value) {
+            if (isset($value['source']) && $value['source'] != 'db') {
+                continue;
+            }
 
+            $validDBName = $this->getValidDBName($value['name'], true, 'index', true);
+            if (isset($compareIndices[$validDBName])) {
+                $value['name'] = $validDBName;
+            }
+            $name = strtolower($value['name']);
 
-			$validDBName = $this->getValidDBName($value['name'], true, 'index', true);
-			if (isset($compareIndices[$validDBName])) {
-				$value['name'] = $validDBName;
-			}
-		    $name = strtolower($value['name']);
+            //Don't attempt to fix the same index twice in one pass;
+            if (isset($correctedIndexes[$name]))
+                continue;
 
-			//Don't attempt to fix the same index twice in one pass;
-			if (isset($correctedIndexs[$name]))
-				continue;
+            //don't bother checking primary nothing we can do about them
+            if (isset($value['type']) && $value['type'] == 'primary')
+                continue;
 
-			//don't bother checking primary nothing we can do about them
-			if (isset($value['type']) && $value['type'] == 'primary')
-				continue;
+            //database helpers do not know how to handle full text indices
+            if ($value['type']=='fulltext')
+                continue;
 
-			//database helpers do not know how to handle full text indices
-			if ($value['type']=='fulltext')
-				continue;
+            if ( in_array($value['type'],array('alternate_key','foreign')) )
+                $value['type'] = 'index';
 
-			if ( in_array($value['type'],array('alternate_key','foreign')) )
-				$value['type'] = 'index';
+            if ( !isset($compareIndices[$name]) ) {
+                //First check if an index exists that doesn't match our name, if so, try to rename it
+                $found = false;
+                foreach ($compareIndices as $ex_name => $ex_value) {
+                    if($this->compareVarDefs($ex_value, $value, true)) {
+                        $found = $ex_name;
+                        break;
+                    }
+                }
+                if ($found) {
+                    $sql .=	 "/*MISNAMED INDEX IN DATABASE - $name - $ex_name */\n";
+                    $rename = $this->renameIndexDefs($ex_value, $value, $tableName);
+                    if($execute) {
+                        $this->query($rename, true, "Cannot rename index");
+                    }
+                    $sql .= is_array($rename)?join("\n", $rename). "\n":$rename."\n";
 
-			if ( !isset($compareIndices[$name]) ) {
-				//First check if an index exists that doesn't match our name, if so, try to rename it
-				$found = false;
-				foreach ($compareIndices as $ex_name => $ex_value) {
-					if($this->compareVarDefs($ex_value, $value, true)) {
-						$found = $ex_name;
-						break;
-					}
-				}
-				if ($found) {
-					$sql .=	 "/*MISNAMED INDEX IN DATABASE - $name - $ex_name */\n";
-					$rename = $this->renameIndexDefs($ex_value, $value, $tablename);
-					if($execute) {
-						$this->query($rename, true, "Cannot rename index");
-					}
-					$sql .= is_array($rename)?join("\n", $rename). "\n":$rename."\n";
+                } else {
+                    // ok we need this field lets create it
+                    $sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
+                    $sql .= $this->addIndexes($tableName,array($value), $execute) .  "\n";
+                }
+                $take_action = true;
+                $correctedIndexes[$name] = true;
+            } elseif ( !$this->compareVarDefs($compareIndices[$name],$value) ) {
+                // fields are different lets alter it
+                $sql .=	"/*INDEX MISMATCH WITH DATABASE - $name -  ROW ";
+                foreach ($compareIndices[$name] as $n1 => $t1) {
+                    $sql .=	 "<$n1>";
+                    if ( $n1 == 'fields' )
+                        foreach($t1 as $rKey => $rValue)
+                            $sql .= "[$rKey] => '$rValue'  ";
+                    else
+                        $sql .= " $t1 ";
+                }
+                $sql .=	"*/\n";
+                $sql .=	"/* VARDEF - $name -  ROW";
+                foreach ($value as $n1 => $t1) {
+                    $sql .=	"<$n1>";
+                    if ( $n1 == 'fields' )
+                        foreach ($t1 as $rKey => $rValue)
+                            $sql .=	"[$rKey] => '$rValue'  ";
+                    else
+                        $sql .= " $t1 ";
+                }
+                $sql .=	"*/\n";
+                $sql .= $this->modifyIndexes($tableName,array($value), $execute) .  "\n";
+                $take_action = true;
+                $correctedIndexes[$name] = true;
+            }
+        }
 
-				} else {
-					// ok we need this field lets create it
-					$sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
-					$sql .= $this->addIndexes($tablename,array($value), $execute) .  "\n";
-				}
-				$take_action = true;
-				$correctedIndexs[$name] = true;
-			} elseif ( !$this->compareVarDefs($compareIndices[$name],$value) ) {
-				// fields are different lets alter it
-				$sql .=	"/*INDEX MISMATCH WITH DATABASE - $name -  ROW ";
-				foreach ($compareIndices[$name] as $n1 => $t1) {
-					$sql .=	 "<$n1>";
-					if ( $n1 == 'fields' )
-						foreach($t1 as $rKey => $rValue)
-							$sql .= "[$rKey] => '$rValue'  ";
-					else
-						$sql .= " $t1 ";
-				}
-				$sql .=	"*/\n";
-				$sql .=	"/* VARDEF - $name -  ROW";
-				foreach ($value as $n1 => $t1) {
-					$sql .=	"<$n1>";
-					if ( $n1 == 'fields' )
-						foreach ($t1 as $rKey => $rValue)
-							$sql .=	"[$rKey] => '$rValue'  ";
-					else
-						$sql .= " $t1 ";
-				}
-				$sql .=	"*/\n";
-				$sql .= $this->modifyIndexes($tablename,array($value), $execute) .  "\n";
-				$take_action = true;
-				$correctedIndexs[$name] = true;
-			}
-		}
-
-		return ($take_action === true) ? $sql : '';
-	}
+        return ($take_action === true) ? $sql : '';
+    }
 
     /**
      * Compares two vardefs
@@ -1638,12 +1694,17 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * This function increments the global $sql_queries variable
+	 * 
+	 * @param string $sql The query that was just run
 	 */
-	public function countQuery()
+	public function countQuery($sql = '')
 	{
 		if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
 			&&(empty($GLOBALS['current_user']) || !is_admin($GLOBALS['current_user']))) {
             require_once('include/resource/ResourceManager.php');
+            if ($sql) {
+                $GLOBALS['log']->fatal("Last query before failure:\n" . $sql);
+            }
             $resourceManager = ResourceManager::getInstance();
             $resourceManager->notifyObservers('ERR_QUERY_LIMIT');
 		}
@@ -2557,7 +2618,7 @@ protected function checkQuery($sql, $object_name = false)
      */
     public function getTypeParts($type)
     {
-        if(preg_match("#(?P<type>\w+)\s*(?P<arg>\((?P<len>\w+)\s*(,\s*(?P<scale>\d+))*\))*#", $type, $matches))
+        if(preg_match('#(?P<type>\w+)\s*(?P<arg>\((?P<len>\w+)\s*(,\s*(?P<scale>\d+))*\))*#', $type, $matches))
         {
             $return = array();  // Not returning matches array as such as we don't want to expose the regex make up on the interface
             $return['baseType'] = $matches['type'];
@@ -2600,7 +2661,7 @@ protected function checkQuery($sql, $object_name = false)
         if(!empty($fieldDef['len'])) {
             if (in_array($colBaseType, array( 'nvarchar', 'nchar', 'varchar', 'varchar2', 'char',
                                           'clob', 'blob', 'text'))) {
-          	    $colType = "$colBaseType(${fieldDef['len']})";
+          	    $colType = "$colBaseType({$fieldDef['len']})";
             } elseif(($colBaseType == 'decimal' || $colBaseType == 'float')){
                   if(!empty($fieldDef['precision']) && is_numeric($fieldDef['precision']))
                       if(strpos($fieldDef['len'],',') === false){

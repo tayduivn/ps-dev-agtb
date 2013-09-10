@@ -33,9 +33,9 @@
 
         className: '', //override default class
 
-        events:{
-            'click .cancel': 'cancel',
-            'click .confirm': 'confirm',
+        events: {
+            'click [data-action=cancel]': 'cancelClicked',
+            'click [data-action=confirm]': 'confirmClicked',
             'click a': 'linkClick'
         },
 
@@ -50,8 +50,10 @@
 
         initialize: function(options) {
             this.onConfirm = options.onConfirm;
+            this.onCancel = options.onCancel;
             this.onLinkClick = options.onLinkClick;
             this.alertLevel = options.level;
+            this.name = 'alert';
         },
 
         render: function(options) {
@@ -75,7 +77,20 @@
             app.alert.dismiss(this.key);
         },
 
-        confirm: function() {
+        /**
+         * Executes assigned handlers when user clicks `cancel`.
+         */
+        cancelClicked: function() {
+            if (_.isFunction(this.onCancel)) {
+                this.onCancel();
+            }
+            this.cancel();
+        },
+
+        /**
+         * Executes assigned handlers when user clicks `confirm`.
+         */
+        confirmClicked: function() {
             if (_.isFunction(this.onConfirm)) {
                 this.onConfirm();
             }
@@ -105,37 +120,22 @@
                 case this.LEVEL.PROCESS:
                     //Cut ellipsis at the end of the string
                     title = title.substr(-3)==='...' ? title.substr(0, title.length-3) : title;
-                    template = '<div class="alert {{alertClass}}">' +
-                        '<strong>{{title}}</strong>' +
-                        '<div class="loading">' +
-                        '<span class="l1"></span><span class="l2"></span><span class="l3"></span>' +
-                        '</div>' +
-                        '</div>';
+                    template = app.template.getView(this.name + '.process');
                     break;
                 case this.LEVEL.SUCCESS:
                 case this.LEVEL.WARNING:
                 case this.LEVEL.INFO:
                 case this.LEVEL.ERROR:
-                    template = '<div class="alert {{alertClass}} alert-block">' +
-                        '<a class="close">x</a>' +
-                        '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
-                        ' {{#each messages}}{{{this}}}{{/each}}' +
-                        '</div>';
+                    template = app.template.getView(this.name + '.error');
                     break;
                 case this.LEVEL.CONFIRMATION:
-                    template = '<div class="alert {{alertClass}} alert-block">' +
-                        '{{#if title}}<strong>{{title}}</strong>{{/if}}' +
-                        ' {{#each messages}}{{{this}}}{{/each}}' +
-                        ' <a class="btn-link confirm">' + app.lang.get('LBL_CONFIRM_BUTTON_LABEL') + '</a> ' +
-                        app.lang.get('LBL_OR').toLocaleLowerCase() +
-                        ' <a class="btn-link cancel">' + app.lang.get('LBL_CANCEL_BUTTON_LABEL') + '</a>' +
-                        '</div>';
+                    template = app.template.getView(this.name + '.confirmation');
                     break;
                 default:
-                    template = '';
+                    template = app.template.empty;
             }
 
-            return Handlebars.compile(template)({
+            return template({
                 alertClass: alertClasses,
                 title: this.getTranslatedLabels(title),
                 messages: this.getTranslatedLabels(messages)

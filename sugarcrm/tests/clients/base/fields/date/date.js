@@ -69,8 +69,37 @@ describe("date field", function() {
         it("should verify date string return false when date is invalid", function() {
             expect(field._verifyDateString('not date string')).toBeFalsy();
             expect(field._verifyDateString('30/30/13')).toBeFalsy();
-            expect(field._verifyDateString('12/12/2013')).toBeTruthy();
-        })
+        });
+
+        it("should ensure valid strings of supported date format and user's selected format return true", function() {
+            // YYYY-MM-DD
+            field.usersDatePrefs = 'Y-m-d';
+            expect(field._verifyDateString('2013-12-31')).toBeTruthy();
+            // MM-DD-YYYY
+            field.usersDatePrefs = 'm-d-Y';
+            expect(field._verifyDateString('12-31-2013')).toBeTruthy();
+            // DD-MM-YYYY
+            field.usersDatePrefs = 'd-m-Y';
+            expect(field._verifyDateString('31-12-2013')).toBeTruthy();
+            // YYYY/MM/DD
+            field.usersDatePrefs = 'Y/m/d';
+            expect(field._verifyDateString('2013/12/31')).toBeTruthy();
+            // MM/DD/YYYY
+            field.usersDatePrefs = 'm/d/Y';
+            expect(field._verifyDateString('12/31/2013')).toBeTruthy();
+            // DD/MM/YYYY
+            field.usersDatePrefs = 'd/m/Y';
+            expect(field._verifyDateString('31/12/2013')).toBeTruthy();
+            // YYYY.MM.DD
+            field.usersDatePrefs = 'Y.m.d';
+            expect(field._verifyDateString('2013.12.31')).toBeTruthy();
+            // MM.DD.YYYY
+            field.usersDatePrefs = 'm.d.Y';
+            expect(field._verifyDateString('12.31.2013')).toBeTruthy();
+            // DD.MM.YYYY
+            field.usersDatePrefs = 'd.m.Y';
+            expect(field._verifyDateString('31.12.2013')).toBeTruthy();
+        });
     });
     describe("basedatepicker core functions", function() {
 

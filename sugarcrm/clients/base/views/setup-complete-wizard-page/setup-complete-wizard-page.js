@@ -16,8 +16,9 @@
      */
     initialize: function(options){
         //Extend default events to add listener for click events on links
-        _.extend(this.events, {
-            "click a.thumbnail": "linkClicked"
+        this.events = _.extend({}, this.events, {
+            "click a.thumbnail": "linkClicked",
+            "click [name=start_sugar_button]:not(.disabled)": "next"
         });
         app.view.invokeParent(this, {type: 'view', name: 'wizard-page', method: 'initialize', args:[options]});
         this.wizardName = this.context.get("wizardName") || "user";
@@ -60,7 +61,12 @@
     beforeFinish: function(callback) {
         var self = this;
         app.alert.show('wizardprofile', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
-        app.user.update("update", {is_instance_configured: true}, function(err) {
+        // 'ut' is, historically, a special flag in user's preferences that is
+        // generally marked truthy upon timezone getting saved. It's also used
+        // to semantically represent "is the user's instance configured"
+        var preferences = app.user.get('preferences');
+        preferences['ut'] = true;
+        app.user.updatePreferences(preferences, function(err) {
             app.alert.dismiss('wizardprofile');
             if (err) {
                 app.logger.debug("Wizard failed to indicate to server that the instance is configured: " + err);

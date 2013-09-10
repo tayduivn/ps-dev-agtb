@@ -35,6 +35,11 @@
         'change .newEmail':        'addNewAddress',
         'click  .composeEmail':    'composeEmail'
     },
+    _flag2Deco: {
+        primary_address: {lbl: "LBL_EMAIL_PRIMARY", cl: "primary"},
+        opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
+        invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
+    },
     initialize: function(options) {
         options     = options || {};
         options.def = options.def || {};
@@ -285,26 +290,31 @@
         return value;
     },
     addFlagLabels: function(value) {
-        var flagStr = "", flagArray;
-        var flag2Lbl = {
-            primary_address:"LBL_EMAIL_PRIMARY",
-            opt_out:"LBL_EMAIL_OPT_OUT",
-            invalid_email:"LBL_EMAIL_INVALID"
-        };
-        _.each(value, function(emailObj, key) {
+        var flagStr = "", flagClassStr = "", flagArray, flagClass;
+        _.each(value, function(emailObj) {
             flagStr = "";
             flagArray = _.map(emailObj, function (flagValue, key) {
-                if (flag2Lbl[key] && flagValue == "1") {
-                    return app.lang.get(flag2Lbl[key]);
+                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].lbl && flagValue == "1") {
+                    return app.lang.get(this._flag2Deco[key].lbl);
                 }
-            });
+            }, this);
             flagArray = _.without(flagArray, undefined);
             if (flagArray.length > 0) {
-                flagStr = "(" + flagArray.join(", ") + ")";
+                flagStr = flagArray.join(", ");
+            }
+            flagClassStr = "";
+            flagClass = _.map(emailObj, function (flagValue, key) {
+                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].cl && flagValue == "1") {
+                    return app.lang.get(this._flag2Deco[key].cl);
+                }
+            }, this);
+            flagClass = _.without(flagClass, undefined);
+            if (flagClass.length > 0) {
+                flagClassStr = flagClass.join(", ");
             }
             emailObj.flagLabel = flagStr;
-        })
-
+            emailObj.flagClass = flagClassStr;
+        }, this);
         return value;
     },
     /**
@@ -400,7 +410,7 @@
                 prepopulate: {
                     to_addresses: [
                         {
-                            email: evt.currentTarget.innerText,
+                            email: this.$(evt.currentTarget).text(),
                             bean: model
                         }
                     ],

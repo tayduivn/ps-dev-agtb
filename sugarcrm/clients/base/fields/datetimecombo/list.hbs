@@ -26,7 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="ellipsis_inline" data-placement="bottom" title data-original-title="{{dateValue}} {{timeValue}}">
-    {{dateValue}} {{timeValue}}
-</div>
-
+{{#if dateValue}}
+    {{#if timeValue}}
+        <div class="ellipsis_inline" data-placement="bottom" title data-original-title="{{dateValue}} {{timeValue}}">
+            {{dateValue}} {{timeValue}}
+        </div>
+    {{/if}}
+{{/if}}

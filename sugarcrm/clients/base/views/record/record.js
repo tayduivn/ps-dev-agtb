@@ -1,28 +1,37 @@
 ({
     inlineEditMode: false,
+
     createMode: false,
-    plugins: ['SugarLogic', 'ellipsis_inline', 'error-decoration', 'GridBuilder', 'editable', 'tooltip', 'audit'],
+
+    plugins: [
+        'SugarLogic',
+        'ellipsis_inline',
+        'error-decoration',
+        'GridBuilder',
+        'editable',
+        'tooltip',
+        'audit',
+        'ToggleMoreLess'
+    ],
 
     enableHeaderButtons: true,
+
     enableHeaderPane: true,
+
     events: {
         'click .record-edit-link-wrapper': 'handleEdit',
         'click a[name=cancel_button]': 'cancelClicked',
-        'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess',
         'click [data-action=scroll]': 'paginateRecord'
     },
-    // button fields defined in view definition
+
+    /**
+     * Button fields defined in view definition.
+     */
     buttons: null,
 
-    // "Show More" state per module
-    MORE_LESS_KEY: "more_less", //gets namespaced in initialize function
-    MORE_LESS: {
-        MORE: 'more',
-        LESS: 'less'
-    },
-
-    // button states
+    /**
+     * Button states.
+     */
     STATE: {
         EDIT: 'edit',
         VIEW: 'view'
@@ -49,6 +58,7 @@
         this.context.set("viewed", true);
         this.model.on("duplicate:before", this.setupDuplicateFields, this);
         this.on("editable:keydown", this.handleKeyDown, this);
+        this.on("editable:mousedown", this.handleMouseDown, this);
 
         this.delegateButtonEvents();
 
@@ -60,11 +70,8 @@
         // properly namespace SHOW_MORE_KEY key
         this.MORE_LESS_KEY = app.user.lastState.key(this.MORE_LESS_KEY, this);
 
-        $(window).on('resize',function(){
-            var headerPaneHeight = $("#drawers .main-pane div.headerpane").height();
-            $("#drawers .main-pane").css("top",headerPaneHeight+"px");
-        });
-
+        this.adjustViewForHeaderpane = _.bind(_.debounce(this.adjustViewForHeaderpane, 200), this);
+        $(window).on('resize.' + this.cid, this.adjustViewForHeaderpane);
     },
 
     /**
@@ -158,13 +165,6 @@
             // readonly's pruned out), we can call toggleFields - so only fields that should be are editable
             this.toggleFields(this.editableFields, true);
         }
-        // Restore state of 'Show More' panel by toggling it if 'Show Less' needs to be shown
-        if(app.user.lastState.get(this.MORE_LESS_KEY) === this.MORE_LESS.LESS){
-            this.toggleMoreLess();
-        }
-
-
-
     },
 
     setEditableFields: function () {
@@ -231,16 +231,8 @@
     _renderHtml: function () {
         this.showPreviousNextBtnGroup();
         app.view.View.prototype._renderHtml.call(this);
-        $("#drawers .main-pane").css("top",$("#drawers .main-pane div.headerpane").height()+"px");
+        this.adjustViewForHeaderpane();
 
-    },
-
-    toggleMoreLess: function () {
-        this.$(".less").toggleClass("hide");
-        this.$(".more").toggleClass("hide");
-        this.$(".panel_hidden").toggleClass("hide");
-        var moreLess = this.$(".less").is(".hide") ? this.MORE_LESS.MORE : this.MORE_LESS.LESS;
-        app.user.lastState.set(this.MORE_LESS_KEY, moreLess);
     },
 
     bindDataChange: function () {
@@ -278,14 +270,10 @@
     },
 
     findDuplicatesClicked: function () {
-        var model = app.data.createBean(this.model.module);
-
-        model.copy(this.model);
-        model.set('id', this.model.id);
         app.drawer.open({
             layout: 'find-duplicates',
             context: {
-                dupeCheckModel: model,
+                dupeCheckModel: this.model,
                 dupelisttype: 'dupecheck-list-multiselect'
             }
         });
@@ -297,7 +285,6 @@
     },
 
     saveClicked: function () {
-        this.clearValidationErrors();
         this.model.doValidate(this.getFields(this.module), _.bind(this.validationComplete, this));
     },
 
@@ -320,6 +307,7 @@
         this.$('.headerpane .record-label').toggle(isEdit);
         this.toggleFields(this.editableFields, isEdit);
         this.toggleViewButtons(isEdit);
+        this.adjustViewForHeaderpane();
     },
 
     /**
@@ -347,6 +335,7 @@
         this.setButtonStates(this.STATE.EDIT);
 
         this.toggleField(field);
+        this.adjustViewForHeaderpane();
     },
 
     /**
@@ -389,11 +378,25 @@
         var options = {
             showAlerts: true,
             success: _.bind(function() {
+                
+                // Loop through the visible subpanels and have them sync. This is to update any related
+                // fields to the record that may have been changed on the server on save. 
+                _.each(this.context.children, function(child) {
+                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
+                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
+                            child.attributes.collection.fetch();
+                        }
+                    }
+                });
+                
                 if (this.createMode) {
                     app.navigate(this.context, this.model);
                 } else if (!this.disposed) {
                     this.render();
                 }
+            }, this),
+            error: _.bind(function() {
+                this.editClicked();
             }, this),
             viewed: true
         };
@@ -466,7 +469,9 @@
                 return;
             }
 
-            if (nextField.$el.closest('.panel_hidden').hasClass('hide')) {
+            var hasHiddenPanel = nextField.$el.closest('.panel_hidden').hasClass('hide') &&
+                _.isFunction(this.toggleMoreLess);
+            if (hasHiddenPanel) {
                 this.toggleMoreLess();
             }
             this.toggleField(field, false);
@@ -484,7 +489,16 @@
 
                 }
             }
+
+            this.adjustViewForHeaderpane();
         }
+    },
+
+    /**
+     * Adjust view when height of the headerpane changes
+     */
+    handleMouseDown: function() {
+        this.adjustViewForHeaderpane();
     },
 
     /**
@@ -525,6 +539,7 @@
         this.buttons = null;
         this.editableFields = null;
         this.off("editable:keydown", this.handleKeyDown, this);
+        $(window).off('resize.' + this.cid);
         app.view.View.prototype._dispose.call(this);
     },
 
@@ -623,5 +638,15 @@
         app.logger.error('Wrong data for record pagination. Pagination is disabled.');
         el.addClass('disabled');
         el.data('id', '');
+    },
+
+    /**
+     * Push down main pane depending upon the height of the headerpane
+     */
+    adjustViewForHeaderpane: function() {
+        if (!this.disposed) {
+            var height = this.$('.headerpane').outerHeight(true);
+            this.context.trigger('defaultLayout:setPaddingTop', height);
+        }
     }
 })

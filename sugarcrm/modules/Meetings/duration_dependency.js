@@ -180,8 +180,11 @@ DurationDependency.prototype.set_duration_handler = function(){
 		if(this.duration >= 0){
 			this.add_custom_duration(dur_elm);
 		}	
-		dur_elm.value = "";
 		dur_elm.value = this.duration;
+        if (!_.isUndefined(window.parent.SUGAR) && !_.isUndefined(window.parent.SUGAR.App.view)) {
+            var model = window.parent.SUGAR.App.controller.layout.getComponent('bwc').bwcModel;
+            model.set($(dur_elm).attr('name'), this.duration.toString());
+        }
 	}
 }
 

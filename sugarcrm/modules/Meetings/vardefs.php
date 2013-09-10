@@ -218,7 +218,7 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
    	 'studio' => 'false',
      //END SUGARCRM flav=com ONLY
    	 //BEGIN SUGARCRM flav!=com ONLY
-   	 'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+   	 'studio' => array('wireless_basic_search'=>false),
    	 //END SUGARCRM flav!=com ONLY
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
@@ -399,6 +399,16 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source'=>'non-db',
 		'vname'=>'LBL_OPPORTUNITY',
   ),
+//BEGIN SUGARCRM flav=pro ONLY
+  'quotes' =>
+  array(
+      'name' => 'quotes',
+      'type' => 'link',
+      'relationship' => 'quote_meetings',
+      'source'=>'non-db',
+      'vname'=>'LBL_QUOTES',
+  ),    
+//END SUGARCRM flav=pro ONLY
   'case' =>
   array (
   	'name' => 'case',
@@ -548,9 +558,11 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
 							  'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'parent_id',
 							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
 							  'relationship_role_column_value'=>'Meetings')
-	)
+	),
+    'acls' => array('SugarACLOpi' => true, 'SugarACLStatic' => true),
 
-                                                      , 'indices' => array (
+
+    'indices' => array (
        array('name' =>'idx_mtg_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_meet_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
        array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id', 'status', 'deleted')),

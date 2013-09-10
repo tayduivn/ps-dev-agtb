@@ -1,10 +1,10 @@
-<div class="span4">
-    <select class="select2" name="parent_type">
+<div class="span5">
+    <select class="select2 inherit-width" name="parent_type">
         {{#eachOptions def.options}}
         <option value="{{{this.key}}}" {{#eq this.key ../def.module}}selected{{/eq}}>{{this.value}}</option>
         {{/eachOptions}}
     </select>
 </div>
-<div class="span8">
-    <input type="hidden" name="{{name}}" class="select2 inherit-width" value="{{value}}" data-id="{{getFieldValue this.model "parent_id"}}">
+<div class="span7">
+    <input type="hidden" name="{{name}}" class="select2 select2-parent inherit-width" value="{{value}}" data-id="{{getFieldValue this.model "parent_id"}}">
 </div>

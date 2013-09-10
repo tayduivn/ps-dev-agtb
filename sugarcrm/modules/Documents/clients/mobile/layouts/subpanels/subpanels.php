@@ -32,6 +32,7 @@ $viewdefs['Documents']['mobile']['layout']['subpanels'] = array (
       array(
           'layout' => 'subpanel',
           'label' => 'LBL_RLI_SUBPANEL_TITLE',
+          'creatable' => false,
           'context' => array(
               'link' => 'revenuelineitems',
           ),

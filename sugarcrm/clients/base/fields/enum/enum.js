@@ -26,9 +26,29 @@
  ********************************************************************************/
 ({
     fieldTag: "input",
+
+    /**
+     * Whether the value of this enum should be defaulted to the first item when model attribute is undefined
+     * Set to false to prevent this defaulting
+     */
+    defaultOnUndefined: true,
+
+    //For multi select, we replace the empty key by a temporary key because Select2 doesn't handle empty values well
+    BLANK_VALUE_ID: '___i_am_empty___',
+
+    /**
+     * @param {Function} callback
+     * @override
+     */
     bindKeyDown: function(callback) {
         this.$('input').on("keydown.record", {field: this}, callback);
     },
+
+    /**
+     * @returns {Field} this
+     * @override
+     * @private
+     */
     _render: function() {
         var self = this;
         var options = this.items = this.items || this.enumOptions;
@@ -42,13 +62,20 @@
         }
         //Use blank value label for blank values on multiselects
         if (this.def.isMultiSelect && !_.isUndefined(this.items['']) && this.items[''] === '') {
-            this.items = _.clone(this.items);
-            this.items[''] = app.lang.getAppString('LBL_BLANK_VALUE');
+            var obj = {};
+            _.each(this.items, function(value, key) {
+               if (key ==='') {
+                   key = this.BLANK_VALUE_ID;
+                   value = app.lang.getAppString('LBL_BLANK_VALUE');
+               }
+               obj[key] = value;
+            }, this);
+            this.items = obj;
         }
         var optionsKeys = _.isObject(options) ? _.keys(options) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
-        if (_.isUndefined(this.model.get(this.name))) {
+        if (this.defaultOnUndefined && _.isUndefined(this.model.get(this.name))) {
             var defaultValue = _.first(optionsKeys);
             if (defaultValue) {
                 this.model.set(this.name, defaultValue);
@@ -81,9 +108,8 @@
                 $el.select2('disable');
             }
             //Setup selected value in Select2 widget
-            var val = this.model.get(this.name);
-            if(val){
-                $el.select2('val', val);
+            if(this.value){
+                $el.select2('val', this.value);
             }
         } else {
             // Set loading message in place of empty DIV while options are loaded via API
@@ -91,11 +117,18 @@
         }
         return this;
     },
+
+    /**
+     * Called when focus on inline editing
+     */
     focus: function () {
-        if(this.action !== 'disabled') {
+        //We must prevent focus for multi select otherwise when inline editing the dropdown is opened and it is
+        //impossible to click on a pill `x` icon in order to remove an item
+        if(this.action !== 'disabled' && !this.def.isMultiSelect) {
             this.$(this.fieldTag).select2('open');
         }
     },
+
     /**
      * Load the options for this field and pass them to callback function.  May be asynchronous.
      * @param {Boolean} fetch (optional) Force use of Enum API to load options.
@@ -141,6 +174,7 @@
         }
         return items;
     },
+
     /**
      * Helper function for generating Select2 options for this enum
      * @param {Array} optionsKeys Set of option keys that will be loaded into Select2 widget
@@ -202,6 +236,13 @@
             select2Options.multiple = true;
         }
 
+        /* If we need to define a custom value separator
+         */
+        select2Options.separator = this.def.separator || ',';
+        if (this.def.separator) {
+            select2Options.tokenSeparators = [this.def.separator];
+        }
+
         select2Options.initSelection = _.bind(this._initSelection, this);
         select2Options.query = _.bind(this._query, this);
 
@@ -218,7 +259,10 @@
     _initSelection: function($ele, callback){
         var data = [];
         var options = _.isString(this.items) ? app.lang.getAppListStrings(this.items) : this.items;
-        var values = $ele.val().split(",");
+        var values = $ele.val();
+        if (this.def.isMultiSelect) {
+            values = values.split(this.def.separator || ',');
+        }
         _.each(_.pick(options, values), function(value, key){
             data.push({id: key, text: value});
         }, this);
@@ -263,12 +307,17 @@
      * @return {String|Array} Unformatted value as String or String Array
      */
     unformat: function(value){
+        if (this.def.isMultiSelect && _.isArray(value) && _.indexOf(value, this.BLANK_VALUE_ID) > -1) {
+            value = _.clone(value);
+            value[_.indexOf(value, this.BLANK_VALUE_ID)] = '';
+        }
         if(this.def.isMultiSelect && _.isNull(value)){
             return [];  // Returning value that is null equivalent to server.  Backbone.js won't sync attributes with null values.
         } else {
             return value;
         }
     },
+
     /**
      * Convert server value into one appropriate for display in widget
      *
@@ -276,6 +325,10 @@
      * @return {Array} Value for select2 widget as String Array
      */
     format: function(value){
+        if (this.def.isMultiSelect && _.isArray(value) && _.indexOf(value, '') > -1) {
+            value = _.clone(value);
+            value[_.indexOf(value, '')] = this.BLANK_VALUE_ID;
+        }
         if(this.def.isMultiSelect && _.isString(value)){
             return this.convertMultiSelectDefaultString(value);
         } else {
@@ -303,11 +356,17 @@
     bindDomChange: function() {
     },
 
+    /**
+     * @override
+     */
     unbindDom: function() {
         this.$(this.fieldTag).select2('destroy');
         app.view.Field.prototype.unbindDom.call(this);
     },
 
+    /**
+     * @override
+     */
     unbindData: function() {
         var _key = 'request:' + this.module + ':' + this.name;
         this.context.unset(_key);

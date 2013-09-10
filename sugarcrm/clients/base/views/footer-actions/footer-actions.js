@@ -7,8 +7,8 @@
     },
     tagName: 'span',
     handleViewChange: function(layout, params) {
-        params = params || {};
-        if (app.tutorial.hasTutorial(layout, params.module)) {
+        var module = params && params.module ? params.module : null;
+        if (app.tutorial.hasTutorial(layout, module)) {
             this.enableTourButton();
         } else {
             this.disableTourButton();

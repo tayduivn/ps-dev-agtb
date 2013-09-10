@@ -71,7 +71,7 @@ body > .le_panel .le_edit, #toolbox .le_panel .le_edit {
 .le_row .le_field {display:none;}
 
 
-.field_tabindex,.field_label,.field_name, .panel_id {display:none;}
+.field_tabindex,.field_label,.field_name, .panel_id, .field_fieldset_fields {display:none;}
 #availablefields .le_field {clear:both;}
 #availablefields {margin-top:20px;}
 

@@ -45,7 +45,6 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'link' => true,
                     'css_class' => 'full-name',
                     'label' => 'LBL_LIST_NAME',
-                    'orderBy' => 'last_name',
                     'enabled' => true,
                     'default' => true,
                 ),
@@ -85,6 +84,7 @@ $viewdefs['Leads']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                     'sortable' => false,
+                    'module' => 'Employees',
                 ),
                 array (
                     'name'  => 'date_entered',

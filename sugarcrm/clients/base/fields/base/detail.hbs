@@ -12,6 +12,8 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 }}
-<div class="ellipsis_inline" data-placement="bottom" title data-original-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}" >{{#if value}}
+{{#if value}}
+<div class="ellipsis_inline" data-placement="bottom" >
     {{value}}
-{{/if}}</div>
+</div>
+{{/if}}

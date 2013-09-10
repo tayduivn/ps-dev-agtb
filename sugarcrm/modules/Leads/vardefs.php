@@ -302,6 +302,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
       'relationship' => 'campaign_leads',
       'source' => 'non-db',
     ),
+  //Deprecated: Use rname_link instead
     'c_accept_status_fields' =>
 		array (
 			'name' => 'c_accept_status_fields',
@@ -316,6 +317,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
             'duplicate_merge'=> 'disabled',
 			'studio' => false,
 		),
+  //Deprecated: Use rname_link instead
 	'm_accept_status_fields' =>
 		array (
 			'name' => 'm_accept_status_fields',
@@ -331,6 +333,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
             'duplicate_merge'=> 'disabled',
 			'studio' => false,
 		),
+  //Deprecated: Use rname_link instead
 	'accept_status_id' =>
 		array(
 			'name' => 'accept_status_id',
@@ -339,6 +342,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			'vname' => 'LBL_LIST_ACCEPT_STATUS',
 			'studio' => array('listview' => false),
 		),
+  //Deprecated: Use rname_link instead
 	'accept_status_name' =>
 		array(
 			'massupdate' => false,
@@ -349,6 +353,30 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			'options' => 'dom_meeting_accept_status',
 			'importable' => 'false',
 		),
+        'accept_status_calls' => array(
+            'massupdate' => false,
+            'name' => 'accept_status_calls',
+            'type' => 'enum',
+            'studio' => 'false',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'importable' => 'false',
+            'link' => 'calls',
+            'rname_link' => 'accept_status',
+        ),
+        'accept_status_meetings' => array(
+            'massupdate' => false,
+            'name' => 'accept_status_meetings',
+            'type' => 'enum',
+            'studio' => 'false',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'importable' => 'false',
+            'link' => 'meetings',
+            'rname_link' => 'accept_status',
+        ),
 		//bug 42902
 		'email'=> array(
 			'name' => 'email',
@@ -518,6 +546,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'module' => 'Emails',
         'link_type' => 'many',
         'relationship' => '',
+        'hideacl' => true,
     ),
   'email_addresses' =>
    array (

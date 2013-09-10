@@ -61,6 +61,25 @@
     },
 
     /**
+     * {@inheritDoc}
+     */
+    renderSubDetails: function() {
+        // clear the footer class
+        var subEl = this.$el.find('.forecast-details');
+        if(subEl && subEl.hasClass('block-footer')) {
+            subEl.removeClass('block-footer');
+        }
+
+        if(this.currentModule != 'Opportunities'
+            || (this.currentModule == 'Opportunities' && this.model.get('selectedTimePeriod'))) {
+            app.view.invokeParent(this, {type: 'view', name: 'forecastdetails', method: 'renderSubDetails'});
+        } else {
+            subEl.addClass('block-footer');
+            subEl.html(app.lang.get('LBL_NO_DATA_AVAILABLE'));
+        }
+    },
+
+    /**
      * {@inheritdoc}
      */
     bindDataChange: function() {
@@ -82,21 +101,22 @@
 
             this.rliCollection = app.utils.getSubpanelCollection(ctx, 'RevenueLineItems');
 
-            this.rliCollection.on('reset', this.processRLICollection, this);
+            if(this.rliCollection) {
+                this.rliCollection.on('reset', this.processRLICollection, this);
 
-            this.rliCollection.on('change:likely_case change:best_case change:worst_case change:amount', this.processCases, this);
+                this.rliCollection.on('change:likely_case change:best_case change:worst_case change:amount', this.processCases, this);
 
-            this.rliCollection.on('change:sales_stage', this.processSalesStatus, this);
+                this.rliCollection.on('change:sales_stage', this.processSalesStatus, this);
 
-            this.rliCollection.on('change:date_closed', function(model, date) {
-                if(this.checkDateAgainstCurrentTP(date)) {
-                    this.fetchNewTPByDate(date)
-                }
-            }, this);
+                this.rliCollection.on('change:date_closed', function(model, date) {
+                    if(this.checkDateAgainstCurrentTP(date)) {
+                        this.fetchNewTPByDate(date)
+                    }
+                }, this);
 
-            // Process RLICollection
-            this.processRLICollection();
-
+                // Process RLICollection
+                this.processRLICollection();
+            }
         } else if(this.currentModule == 'RevenueLineItems') {
             // RLI only listeners
 

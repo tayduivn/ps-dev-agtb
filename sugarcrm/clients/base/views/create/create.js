@@ -168,15 +168,15 @@
      */
     restoreModel: function () {
         this.model.clear();
+        if (this._origAttributes) {
+            this.model.set(this._origAttributes);
+            this.model.isCopied = true;
+        }
         this.createMode = true;
         if (!this.disposed) {
             this.render();
         }
         this.setButtonStates(this.STATE.CREATE);
-
-        if (this._origAttributes) {
-            this.model.set(this._origAttributes);
-        }
     },
 
     /**
@@ -184,7 +184,6 @@
      * @param callback
      */
     initiateSave: function (callback) {
-        this.clearValidationErrors();
         this.disableButtons();
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
@@ -439,7 +438,8 @@
         var modelAttributes = _.clone(newModel.attributes);
 
         _.each(modelAttributes, function (value, key) {
-            if (_.isUndefined(value) || _.isEmpty(value)) {
+            if (_.isUndefined(value) || _.isNull(value) ||
+                ((_.isObject(value) || _.isArray(value) || _.isString(value)) && _.isEmpty(value))) {
                 delete modelAttributes[key];
             }
         });

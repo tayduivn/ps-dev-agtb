@@ -67,8 +67,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $GLOBALS['starttTime'] = microtime(true);
 
 set_include_path(
-    dirname(__FILE__) . '/..' . PATH_SEPARATOR .
-    dirname(__FILE__) . '/../vendor' . PATH_SEPARATOR .
+    realpath(dirname(__FILE__) . '/..') . PATH_SEPARATOR .
+    realpath(dirname(__FILE__) . '/../vendor') . PATH_SEPARATOR .
     get_include_path()
 );
 
@@ -185,6 +185,8 @@ if(isset($_GET['PHPSESSID'])){
         unset($_GET['PHPSESSID']);
     }
 }
+
+    LogicHook::initialize()->call_custom_logic('', 'entry_point_variables_setting');
 
 if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);

@@ -14,7 +14,7 @@
     allow_single_deselect: true,
     minChars: 1,
     fieldTag: 'input.select2',
-    plugins: ['quicksearchfilter'],
+    plugins: ['quicksearchfilter', 'tooltip'],
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options
@@ -52,8 +52,13 @@
 
         if (this.tplName === 'edit') {
 
+            var inList = this.view.name === 'recordlist'?true:false;
+            var cssClasses = (inList?'select2-narrow':'') + (this.type === 'parent'?' select2-parent':'');
+
             this.$(this.fieldTag).select2({
-                width: '100%',
+                width: inList?'off':'100%',
+                dropdownCssClass: cssClasses,
+                containerCssClass: cssClasses,
                 initSelection: function (el, callback) {
                     var $el = $(el),
                         id = $el.data('id'),

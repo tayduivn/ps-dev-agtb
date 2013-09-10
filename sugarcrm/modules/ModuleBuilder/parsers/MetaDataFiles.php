@@ -192,12 +192,12 @@ class MetaDataFiles
     /**
      * Listing of excluded client file paths. This tells {@see getClientFiles} not
      * to included files in these paths when getting the list of client files.
-     * 
+     *
      * The structure of this array should be
      *  - path/to/type/dir => array(files)
-     * 
+     *
      * At present, this will only exclude PHP files.
-     * 
+     *
      * @var array
      */
     public static $excludedClientFilePaths = array(
@@ -209,9 +209,9 @@ class MetaDataFiles
     );
 
     /**
-     * The compiled list of excluded client files. This is based off 
+     * The compiled list of excluded client files. This is based off
      * excludedClientFilePaths.
-     * 
+     *
      * @var array
      */
     public static $excludedClientFiles = array();
@@ -750,31 +750,26 @@ class MetaDataFiles
             $modules = array_keys($GLOBALS['app_list_strings']['moduleList']);
         }
         foreach ($modules as $module) {
-
+            $seed = BeanFactory::getBean($module);
             $fileList = self::getClientFiles($platforms, $type, $module);
             $moduleResults = self::getClientFileContents($fileList, $type, $module);
 
             if ($type == "view") {
                 foreach ($moduleResults as $view => $defs) {
-                    if (is_array($defs)) {
-                        $meta = isset($defs['meta']) ? $defs['meta'] : array();
-                        $seed = BeanFactory::getBean($module);
-                        if (!empty($seed) && !empty($seed->field_defs))
-                            $deps = array_merge(
-                                DependencyManager::getDependenciesForFields(
-                                    $seed->field_defs,
-                                    ucfirst($view) . "View"),
-                                DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
-                            );
-                        if (!empty($deps) && !empty($meta)) {
-                            if (!isset($meta['dependencies']) ||
-                                !is_array($meta['dependencies'])
-                            ) {
-                                $moduleResults[$view]['meta']['dependencies'] = array();
-                            }
-                            foreach ($deps as $dep) {
-                                $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
-                            }
+                    if (!is_array($defs) || empty($seed) || empty($seed->field_defs)) {
+                        continue;
+                    }
+                    $meta = !empty($defs['meta']) ? $defs['meta'] : array();
+                    $deps = array_merge(
+                        DependencyManager::getDependenciesForFields($seed->field_defs, ucfirst($view) . "View"),
+                        DependencyManager::getDependenciesForView($meta, ucfirst($view) . "View", $module)
+                        );
+                    if (!empty($deps)) {
+                        if (!isset($meta['dependencies']) || !is_array($meta['dependencies'])) {
+                            $moduleResults[$view]['meta']['dependencies'] = array();
+                        }
+                        foreach ($deps as $dep) {
+                            $moduleResults[$view]['meta']['dependencies'][] = $dep->getDefinition();
                         }
                     }
                 }
@@ -868,10 +863,6 @@ class MetaDataFiles
                     }
 
                     $controller = file_get_contents($fileInfo['path']);
-                    //If we are not going to be using uglify to minify our JS, we should minify each component separately
-                    if (!inDeveloperMode() && empty($GLOBALS['sugar_config']['uglify'])) {
-                        $controller = SugarMin::minify($controller);
-                    }
                     $results[$fileInfo['subPath']]['controller'][$fileInfo['platform']] = $controller;
                     break;
                 case 'hbs':
@@ -903,6 +894,13 @@ class MetaDataFiles
                         $results[$fileInfo['subPath']]['meta'] = $viewdefs[$module][$fileInfo['platform']][$type][$fileInfo['subPath']];
                     } else {
                         require $fileInfo['path'];
+                        if($fileInfo['subPath'] != 'subpanels') {
+                            $extensionName = "sidecar{$type}{$fileInfo['platform']}{$fileInfo['subPath']}";
+                            $extFile = SugarAutoLoader::loadExtension($extensionName, $module);
+                            if ($extFile) {
+                                include $extFile;
+                            }
+                        }
                         if ( empty($module) ) {
                             if ( !isset($viewdefs[$fileInfo['platform']][$type][$fileInfo['subPath']]) ) {
                                 $GLOBALS['log']->error('No viewdefs for type: '.$type.' viewdefs @ '.$fileInfo['path']);
@@ -981,9 +979,9 @@ class MetaDataFiles
     /**
      * Checks if a client file path should be excluded from the list of files to
      * be fetched when getting client files for a module
-     * 
+     *
      * @param string $filepath Full path to the file to check
-     * @return boolean 
+     * @return boolean
      */
     public static function isExcludedClientFile($filepath)
     {
@@ -1015,7 +1013,7 @@ class MetaDataFiles
 
     /**
      * Adds a path => array(files) to the excluded client file path array
-     * 
+     *
      * @param array $pathArray Array of files keyed on a base path
      */
     public static function addExcludedClientFilePath(array $pathArray)
@@ -1025,7 +1023,7 @@ class MetaDataFiles
 
     /**
      * Adds an excluded file to a path in the excluded client file path array
-     * 
+     *
      * @param string $path The path to use as the index for the excluded file array
      * @param string $file the file basename to add
      */

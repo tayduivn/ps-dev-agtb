@@ -60,6 +60,9 @@ describe('Base.Fields.Currency', function() {
             currency_id: '-99',
             base_rate: 1
         });
+        model.isCopy = function() {
+            return (model.isCopied === true);
+        };
     });
 
     afterEach(function() {
@@ -73,16 +76,22 @@ describe('Base.Fields.Currency', function() {
     });
 
     describe('EditView', function() {
-
         var field;
 
         beforeEach(function() {
-            field = SugarTest.createField('base', 'amount', 'currency', 'edit', {
-                related_fields: ['currency_id', 'base_rate'],
-                currency_field: 'currency_id',
-                base_rate_field: 'base_rate'
-            });
-            field.model = model;
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
             field._loadTemplate();
         });
 
@@ -115,10 +124,17 @@ describe('Base.Fields.Currency', function() {
             var currencyRender,
                 sandbox = sinon.sandbox.create();
             var getCurrencyField = sandbox.stub(field, 'getCurrencyField', function() {
-                var currencyField = SugarTest.createField('base', 'amount', 'enum', 'edit', {
-                    options: {'-99': '$ USD' }
-                });
-                currencyField.model = model;
+                var currencyField = SugarTest.createField(
+                    'base',
+                    'amount',
+                    'enum',
+                    'edit',
+                    {
+                        options: {'-99': '$ USD' }
+                    },
+                    moduleName,
+                    model
+                );
                 currencyRender = sandbox.stub(currencyField, 'render', function() {
                     return null;
                 });
@@ -141,7 +157,7 @@ describe('Base.Fields.Currency', function() {
             app.user.setPreference('currency_id', 'abc123');
         });
 
-        it('should make new record default to user preferred currency', function() {
+        it('should make new record default to user preferred currency if record not copied', function() {
             model = app.data.createBean(moduleName, {
                 amount: 123456789.12,
                 currency_id: '-99',
@@ -163,7 +179,30 @@ describe('Base.Fields.Currency', function() {
             expect(field.model.get('currency_id')).toEqual('abc123');
         });
 
-        it('should leave existing record currency', function() {
+        it('should not make new record default to user preferred currency if record is copied', function() {
+            model = app.data.createBean(moduleName, {
+                amount: 123456789.12,
+                currency_id: '-99',
+                base_rate: 1.0
+            });
+            model.isCopied = true;
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            expect(field.model.get('currency_id')).toEqual('-99');
+        });
+
+        it('should leave existing record currency if not new', function() {
             model = app.data.createBean(moduleName, {
                 id: 'abcdefg9999999',
                 amount: 123456789.12,
@@ -193,13 +232,19 @@ describe('Base.Fields.Currency', function() {
         var field;
 
         beforeEach(function() {
-            field = SugarTest.createField('base', 'amount', 'currency', 'detail', {
-                related_fields: ['currency_id', 'base_rate'],
-                currency_field: 'currency_id',
-                base_rate_field: 'base_rate'
-            });
-            field.model = model;
-
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
         });
 
         afterEach(function() {
@@ -320,6 +365,39 @@ describe('Base.Fields.Currency', function() {
 
             sandbox.restore();
 
+        });
+
+        it('should not convert when model is cleared and refreshed with new values', function() {
+            var sandbox = sinon.sandbox.create(),
+                convertAmountStub,
+                beforeAttributes = {
+                    amount: 900.00,
+                    currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
+                    base_rate: 0.9
+                },
+                afterAttributes = {
+                    amount: 100.00,
+                    currency_id: '-99',
+                    base_rate: 1.0
+                };
+            model = app.data.createBean(moduleName, beforeAttributes);
+            field.model = model;
+            field.bindDataChange();
+
+            convertAmountStub = sandbox.stub(app.currency, 'convertAmount');
+
+            field.model.clear();
+            expect(convertAmountStub.callCount).toBe(0);
+            expect(field.model.has('amount')).toBe(false);
+            expect(field.model.has('currency_id')).toBe(false); //currency_id should not be defaulted on clear
+            expect(_.isUndefined(field._lastCurrencyId)).toBe(true);
+
+            field.model.set(afterAttributes);
+            expect(convertAmountStub.callCount).toBe(0);
+            expect(field.model.get('amount')).toBe(afterAttributes.amount);
+            expect(field._lastCurrencyId).toBe(afterAttributes.currency_id);
+
+            sandbox.restore();
         });
 
     });

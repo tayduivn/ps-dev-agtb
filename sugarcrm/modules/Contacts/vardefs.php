@@ -85,6 +85,7 @@ $dictionary['Contact'] = array(
             'hideacl' => true,
             'link' => 'accounts',
         ),
+        // Deprecated, use rname_link instead
         'opportunity_role_fields' => array(
             'name' => 'opportunity_role_fields',
             'rname' => 'id',
@@ -102,6 +103,7 @@ $dictionary['Contact'] = array(
             'duplicate_merge' => 'disabled',
             'studio' => false,
         ),
+        // Deprecated, use rname_link instead
         'opportunity_role_id' => array(
             'name' => 'opportunity_role_id',
             'type' => 'varchar',
@@ -130,6 +132,8 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITY_ROLE',
             'options' => 'opportunity_relationship_type_dom',
+            'link' => 'opportunities',
+            'rname_link' => 'contact_role',
         ),
         'reports_to_id' => array(
             'name' => 'reports_to_id',
@@ -496,6 +500,7 @@ $dictionary['Contact'] = array(
             'relationship' => 'campaign_contacts',
             'source' => 'non-db',
         ),
+        // Deprecated: Use rname_link instead
         'c_accept_status_fields' => array(
             'name' => 'c_accept_status_fields',
             'rname' => 'id',
@@ -512,6 +517,7 @@ $dictionary['Contact'] = array(
             'duplicate_merge' => 'disabled',
             'studio' => false,
         ),
+        // Deprecated: Use rname_link instead
         'm_accept_status_fields' => array(
             'name' => 'm_accept_status_fields',
             'rname' => 'id',
@@ -529,6 +535,7 @@ $dictionary['Contact'] = array(
             'duplicate_merge' => 'disabled',
             'studio' => false,
         ),
+        // Deprecated: Use rname_link instead
         'accept_status_id' => array(
             'name' => 'accept_status_id',
             'type' => 'varchar',
@@ -536,6 +543,7 @@ $dictionary['Contact'] = array(
             'vname' => 'LBL_LIST_ACCEPT_STATUS',
             'studio' => array('listview' => false),
         ),
+        // Deprecated: Use rname_link instead
         'accept_status_name' => array(
             'massupdate' => false,
             'name' => 'accept_status_name',
@@ -545,6 +553,30 @@ $dictionary['Contact'] = array(
             'vname' => 'LBL_LIST_ACCEPT_STATUS',
             'options' => 'dom_meeting_accept_status',
             'importable' => 'false',
+        ),
+        'accept_status_calls' => array(
+            'massupdate' => false,
+            'name' => 'accept_status_calls',
+            'type' => 'enum',
+            'studio' => 'false',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'importable' => 'false',
+            'link' => 'calls',
+            'rname_link' => 'accept_status',
+        ),
+        'accept_status_meetings' => array(
+            'massupdate' => false,
+            'name' => 'accept_status_meetings',
+            'type' => 'enum',
+            'studio' => 'false',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'importable' => 'false',
+            'link' => 'meetings',
+            'rname_link' => 'accept_status',
         ),
         'prospect_lists' => array(
             'name' => 'prospect_lists',
@@ -706,23 +738,14 @@ $dictionary['Contact'] = array(
         'FilterDuplicateCheck' => array(
             'filter_template' => array(
                 array(
-                    '$or' => array(
-                        array(
-                            '$and' => array(
-                                array('first_name' => array('$starts' => '$first_name')),
-                                array('last_name' => array('$starts' => '$last_name')),
-                                array('accounts.id' => array('$equals' => '$account_id')),
-                            )
-                        ),
-                        array('phone_work' => array('$equals' => '$phone_work'))
+                    '$and' => array(
+                        array('first_name' => array('$starts' => '$first_name')),
+                        array('last_name' => array('$starts' => '$last_name')),
+                        array('accounts.id' => array('$equals' => '$account_id')),
                     )
                 ),
             ),
             'ranking_fields' => array(
-                array(
-                    'in_field_name' => 'phone_work',
-                    'dupe_field_name' => 'phone_work',
-                ),
                 array(
                     'in_field_name' => 'account_id',
                     'dupe_field_name' => 'account_id',

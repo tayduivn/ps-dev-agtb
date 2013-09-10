@@ -493,11 +493,8 @@ class Quote extends SugarBean {
 		if(!isset($this->system_id) || empty($this->system_id)) {
 
 			$admin = Administration::getSettings();
-			$system_id = $admin->settings['system_system_id'];
-			if(!isset($system_id)){
-				$system_id = 1;
-			}
-			$this->system_id = $system_id;
+			$this->system_id = (isset($admin->settings['system_system_id']) && !empty($admin->settings['system_system_id']))
+                ? $admin->settings['system_system_id'] : 1;
 		}
 
 		// CL Fix for 14365.  Have a default quote_type value

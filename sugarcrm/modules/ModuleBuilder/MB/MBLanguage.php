@@ -148,7 +148,6 @@ class MBLanguage{
         mkdir_recursive($save_path);
         foreach ($this->strings as $lang => $values) {
             //Check if the module Label or Singular Label has changed.
-            $renameLang = $rename || empty($values) || (isset($values['LBL_MODULE_NAME']) && $this->label != $values['LBL_MODULE_NAME']) && (isset($values['LBL_MODULE_NAME_SINGULAR']) && $this->label_singular != $values['LBL_MODULE_NAME_SINGULAR']);
             $mod_strings = return_module_language(str_replace('.lang.php', '', $lang), 'ModuleBuilder');
             $required = array(
                 'LBL_LIST_FORM_TITLE' => $this->label . " " . $mod_strings['LBL_LIST'],
@@ -171,9 +170,7 @@ class MBLanguage{
                 'LBL_DASHLET_NAME' => $this->label . ' ' . translate('LBL_DASHLET'),
             );
             foreach ($required as $k => $v) {
-                if (empty($values[$k]) || $renameLang) {
-                    $values[$k] = $v;
-                }
+                $values[$k] = $v;
             }
             write_array_to_file('mod_strings', $values, $save_path . '/' . $lang, 'w', $header);
         }
@@ -197,6 +194,7 @@ class MBLanguage{
 
             $values = sugarLangArrayMerge($values, $app_list_strings);
             $values['moduleList'][$key_name] = $this->label;
+            $values['moduleListSingular'][$key_name] = $this->label_singular;
 
 
             $appFile = $header . "\n";

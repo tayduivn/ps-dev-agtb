@@ -24,8 +24,13 @@ class ActivityQueueManager
 {
     public static $linkBlacklist = array('user_sync', 'activities', 'contacts_sync');
     public static $linkModuleBlacklist = array('ActivityStream/Activities');
+    public static $linkDupeCheck = array();
     public static $moduleBlacklist = array('OAuthTokens', 'SchedulersJobs', 'Activities', 'vCals', 'KBContents',
-        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications');
+        'Forecasts', 'ForecastWorksheets', 'ForecastManagerWorksheets', 'Notifications',
+        // BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+        'RevenueLineItems',
+        // END SUGARCRM flav=pro && flav!=ent ONLY
+    );
     public static $moduleWhitelist = array('Notes', 'Tasks', 'Meetings', 'Calls', 'Emails');
 
     /**
@@ -56,6 +61,23 @@ class ActivityQueueManager
                 $subscriptionsBeanName::processSubscriptions($bean, $activity, $args, array('disable_row_level_security' => true));
             }
         }
+    }
+
+    /**
+     * Checks whether a module has activity stream enabled
+     * @param $moduleName
+     *
+     * @return bool
+     */
+    public static function isEnabledForModule($moduleName)
+    {
+        $isEnabled = false;
+        $bean = BeanFactory::getBean($moduleName);
+
+        if($bean) {
+            $isEnabled = self::isActivityStreamEnabled() && self::isAuditable($bean);
+        }
+        return $isEnabled;
     }
 
     protected static function isAuditable(SugarBean $bean)
@@ -94,8 +116,33 @@ class ActivityQueueManager
         $rhs_module = in_array($args['related_module'], self::$linkModuleBlacklist);
         if ($blacklist || $lhs_module || $rhs_module) {
             return false;
+        } else {
+            foreach (self::$linkDupeCheck as $dupe_args) {
+                if ($dupe_args['relationship'] == $args['relationship']) {
+                    if (self::isLinkDupe($args, $dupe_args)) {
+                        return false;
+                    }
+                }
+            }
         }
         return true;
+    }
+
+    /**
+     * Helper to check if a link or unlink activity is a duplicate.
+     * @param  array $args1
+     * @param  array $args2
+     * @return bool
+     */
+    protected static function isLinkDupe($args1, $args2)
+    {
+        if ($args1['module'] == $args2['related_module'] && $args1['id'] == $args2['related_id']) {
+            return true;
+        }
+        if ($args1['module'] == $args2['module'] && $args1['id'] == $args2['id']) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -176,6 +223,8 @@ class ActivityQueueManager
         $act->parent_type   = $lhs->module_name;
         $act->data          = $data;
         $act->save();
+
+        self::$linkDupeCheck[] = $args;
         $act->processRecord($lhs);
         $act->processRecord($rhs);
         return true;
@@ -206,6 +255,8 @@ class ActivityQueueManager
         $act->parent_type   = $lhs->module_name;
         $act->data          = $data;
         $act->save();
+
+        self::$linkDupeCheck[] = $args;
         $act->processRecord($lhs);
         $act->processRecord($rhs);
         return true;
@@ -344,7 +395,7 @@ class ActivityQueueManager
             $rows = $teamSet->getTeamIds($teamSetId);
             $teams = array();
             if (!empty($rows)) {
-                foreach($rows as $teamId) {
+                foreach ($rows as $teamId) {
                     $teams[] = $this->getTeamNameFromId($teamId);
                 }
             }

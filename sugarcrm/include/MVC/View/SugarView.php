@@ -1348,18 +1348,20 @@ EOHTML;
      * @param  $module string optional, can specify module to retrieve menu for if not the current one
      * @return array module menu
      */
-    public function getMenu(
-        $module = null
-        )
+    public function getMenu($module = null, $mod_strings_override = false)
     {
-        global $current_language, $current_user, $mod_strings, $app_strings, $module_menu;
+        global $current_language, $current_user, $app_strings, $module_menu, $mod_strings;
 
         if ( empty($module) )
             $module = $this->module;
 
         //Need to make sure the mod_strings match the requested module or Menus may fail
         $curr_mod_strings = $mod_strings;
-        $mod_strings = return_module_language ( $current_language, $module ) ;
+        if($mod_strings_override !== false) {
+            $mod_strings = $mod_strings_override;
+        } else {
+            $mod_strings = return_module_language($current_language, $module);
+        }
 
         $module_menu = array();
 

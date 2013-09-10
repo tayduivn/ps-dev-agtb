@@ -107,6 +107,25 @@ class SidecarMetaDataFileBuilder
                 'legacypath'  => 'custom/modules/Accounts/metadata/searchdefs.php',
                 'sidecarpath' => 'custom/modules/Accounts/clients/base/filters/default/default.php',
         ),
+        // Menu files
+        array(
+                'module'      => 'Bugs', 'view' => 'menu', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsmenudefs.php',
+                'legacypath'  => 'custom/Extension/modules/Bugs/Ext/Menus/test1.php',
+                'sidecarpath' => 'custom/Extension/modules/Bugs/Ext/clients/base/menus/header/test1.php',
+        ),
+        array(
+                'module'      => 'Accounts', 'view' => 'menu', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountsmenudefs.php',
+                'legacypath'  => 'custom/modules/Accounts/Menu.php',
+                'sidecarpath' => 'custom/modules/Accounts/clients/base/menus/header/header.php',
+        ),
+        array(
+                'module'      => 'Cases', 'view' => 'quickmenu', 'type' => 'base',
+                'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesquickdefs.php',
+                'legacypath'  => 'custom/modules/Cases/clients/base/menus/quickcreate/quickcreate.php',
+                'sidecarpath' => 'custom/modules/Cases/clients/base/menus/quickcreate/quickcreate.php',
+        ),
 
     );
 

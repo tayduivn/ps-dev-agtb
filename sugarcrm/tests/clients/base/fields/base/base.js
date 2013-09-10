@@ -58,7 +58,8 @@ describe("Base.Field.Base", function() {
         });
         var def = { link: true };
         field = SugarTest.createField('base', 'text', 'base', 'list', def);
-        field.model = new Backbone.Model({id: '12345', module: 'Quotes'});
+        field.model = new Backbone.Model({id: '12345'});
+        field.model.module = 'Quotes';
         field._render();
         expect(getModuleStub).toHaveBeenCalled();
         expect(field.href).toEqual('#bwc/index.php?module=Quotes&action=DetailView&record=12345');
@@ -70,7 +71,8 @@ describe("Base.Field.Base", function() {
         });
         var def = { link: true, bwcLink: true };
         field = SugarTest.createField('base', 'text', 'base', 'list', def);
-        field.model = new Backbone.Model({id: '12345', module: 'Quotes'});
+        field.model = new Backbone.Model({id: '12345'});
+        field.model.module = 'Quotes';
         field._render();
         expect(getModuleStub).toHaveBeenCalled();
         expect(field.href).toEqual('#bwc/index.php?module=Quotes&action=DetailView&record=12345');
@@ -82,7 +84,8 @@ describe("Base.Field.Base", function() {
         });
         var def = { link: true, bwcLink: false };
         field = SugarTest.createField('base', 'text', 'base', 'list', def);
-        field.model = new Backbone.Model({id: '12345', module: 'Quotes'});
+        field.model = new Backbone.Model({id: '12345'});
+        field.model.module = 'Quotes';
         field._render();
         expect(getModuleStub).toHaveBeenCalled();
         expect(field.href).toEqual('#Quotes/12345');
@@ -100,7 +103,8 @@ describe("Base.Field.Base", function() {
             }
         };
         field = SugarTest.createField('base', 'text', 'base', 'list', def);
-        field.model = new Backbone.Model({id: '12345', module: 'Quotes'});
+        field.model = new Backbone.Model({id: '12345'});
+        field.model.module = 'Quotes';
         field._render();
         expect(getModuleStub).toHaveBeenCalled();
         expect(field.href).toEqual('#Quotes/12345/myaction');

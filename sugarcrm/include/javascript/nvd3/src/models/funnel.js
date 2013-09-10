@@ -142,7 +142,7 @@ nv.models.funnel = function() {
           .style('stroke-opacity', 1e-6)
           .style('fill-opacity', 1e-6);
 
-      d3.transition(groups.exit())
+      d3.transition(groups.exit()).duration(0)
         .selectAll('polygon.nv-bar')
         .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('points', function(d) {
@@ -156,7 +156,7 @@ nv.models.funnel = function() {
             })
           .remove();
 
-      d3.transition(groups.exit())
+      d3.transition(groups.exit()).duration(0)
         .selectAll('g.nv-label-value')
         .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('y', 0)
@@ -164,7 +164,7 @@ nv.models.funnel = function() {
           .attr('transform', 'translate('+ c +',0)')
           .remove();
 
-      d3.transition(groups.exit())
+      d3.transition(groups.exit()).duration(0)
         .selectAll('text.nv-label-group')
         .delay(function(d,i) { return i * delay/ data[0].values.length; })
           .attr('y', 0)
@@ -178,7 +178,7 @@ nv.models.funnel = function() {
           .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i); })
           .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i); });
 
-      d3.transition(groups)
+      d3.transition(groups).duration(0)
           .style('stroke-opacity', 1)
           .style('fill-opacity', 1);
 
@@ -203,7 +203,7 @@ nv.models.funnel = function() {
               );
             });
 
-      d3.transition(funs)
+      d3.transition(funs).duration(0)
           .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('points', function(d) {
             var w0 = (r * y(d.y0)) + w/2,
@@ -261,7 +261,7 @@ nv.models.funnel = function() {
       //         .attr('x', -labelBoxWidth/2);
       //     });
 
-      d3.transition(lblValue)
+      d3.transition(lblValue).duration(0)
           .delay(function(d,i) { return i * delay / data[0].values.length; })
           .attr('transform', function(d){ return 'translate('+ c +','+ ( y(d.y0+d.y/2) ) +')'; });
 
@@ -286,7 +286,7 @@ nv.models.funnel = function() {
             .attr('transform', 'translate('+ availableWidth +',0)')
           ;
 
-      d3.transition(lblGroup)
+      d3.transition(lblGroup).duration(0)
           .delay(function(d,i) { return i * delay / data[0].values.length; })
           .style('fill-opacity', 1)
           .attr('transform', function(d){ return 'translate('+ availableWidth +','+ ( y(d.y0+d.y/2) ) +')'; })

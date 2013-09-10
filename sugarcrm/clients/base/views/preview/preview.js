@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['ellipsis_inline'],
+    plugins: ['ellipsis_inline', 'ToggleMoreLess'],
     fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:
@@ -38,16 +38,13 @@
      *  - list:preview:fire             indicate the user clicked on the preview icon
      *  - list:preview:decorate         indicate we need to update the highlighted row in list view
      */
-    events: {
-        'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
-    },
 
     // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
     switching: false,
     hiddenPanelExists: false,
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.action = 'detail';
         app.events.on("preview:render", this._renderPreview, this);
         app.events.on("preview:collection:change", this.updateCollection, this);
         app.events.on("preview:close", this.closePreview,  this);
@@ -207,8 +204,7 @@
         if (model) {
             this.bindUpdates(model);
             this.model = app.data.createBean(model.module, model.toJSON());
-
-            app.view.View.prototype._render.call(this);
+            this.render();
 
             // TODO: Remove when pagination on activity streams is fixed.
             if (this.previewModule && this.previewModule === "Activities") {
@@ -292,11 +288,6 @@
                 }
             });
         }
-    },
-    toggleMoreLess: function() {
-        this.$(".less").toggleClass("hide");
-        this.$(".more").toggleClass("hide");
-        this.$(".panel_hidden").toggleClass("hide");
     },
 
     closePreview: function() {

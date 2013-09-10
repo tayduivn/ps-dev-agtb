@@ -95,7 +95,7 @@ class SugarUpgradeScanModules extends UpgradeScript
             }
         }
         $badExts = array("ActionViewMap", "ActionFileMap", "ActionReMap", "EntryPointRegistry",
-            "FileAccessControlMap", "Layoutdefs", "WirelessLayoutdefs", "WirelessModuleRegistry");
+            "FileAccessControlMap", "WirelessModuleRegistry");
         $badExts = array_flip($badExts);
         // Check Ext for any "dangerous" extentsions
         foreach(glob("custom/$module_dir/Ext/*") as $extdir) {

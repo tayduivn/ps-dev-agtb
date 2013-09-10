@@ -233,7 +233,7 @@ function process_action_new($focus, $action_array){
 	//BEGIN BRIDGING FOR MEETINGS/CALLS
 	if(!empty($action_array['bridge_id']) && $action_array['bridge_id']!=""){
 		$target_module->bridge_id = $action_array['bridge_id'];
-		$target_module->bridge_object = & $focus;
+		$target_module->bridge_object = $focus;
 
 	}
 	//END BRIDGING FOR MEETINGS/CALLS
@@ -311,7 +311,7 @@ function process_action_new_rel($focus, $action_array){
 			//BEGIN BRIDGING FOR MEETINGS/CALLS
 				if(!empty($action_array['bridge_id']) && $action_array['bridge_id']!=""){
 					$target_module->bridge_id = $action_array['bridge_id'];
-					$target_module->bridge_object = & $focus;
+					$target_module->bridge_object = $focus;
 				}
 			//END BRIDGING FOR MEETINGS/CALLS
             if($focus->object_name == $target_module->object_name){

@@ -196,6 +196,11 @@ class ModuleApi extends SugarApi {
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'view');
+        
+        // formatBean is soft on view so that creates without view access will still work
+        if (!$bean->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED',array('view'));
+        }
 
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);

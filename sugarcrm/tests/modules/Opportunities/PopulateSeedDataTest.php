@@ -79,6 +79,7 @@ function tearDown()
     public function testCreatePastDate($monthDelta)
     {
         $now = new DateTime();
+        $now->setTime(23, 59, 59);
         $date = OpportunitiesSeedData::createPastDate($monthDelta);
         $objDate = new DateTime($date);
         $this->assertLessThan($now->format('U'), $objDate->format('U'));

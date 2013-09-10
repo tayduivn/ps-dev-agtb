@@ -122,8 +122,7 @@
 
         if (model) {
             this.model = app.data.createBean(model.module, model.toJSON());
-
-            app.view.View.prototype._render.call(this);
+            this.render();
 
             // TODO: Remove when pagination on activity streams is fixed.
             if (this.previewModule && this.previewModule === "Activities") {

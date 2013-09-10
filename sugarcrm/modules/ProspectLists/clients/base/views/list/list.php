@@ -62,6 +62,8 @@ $viewdefs['ProspectLists']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'enabled' => true,
                     'default' => true,
+                    'sortable' => false,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'date_entered',

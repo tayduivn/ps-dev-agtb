@@ -50,53 +50,73 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
 
         $args = $this->getArgs();
         $db = DBManagerFactory::getInstance();
-        
-        $args['opp_count'] = !isset($args['opp_count']) ? 0 : $args['opp_count'];
-        $args['closed_amount'] = !isset($args['closed_amount']) ? 0 : $args['closed_amount'];
-        $args['closed_count'] = !isset($args['closed_count']) ? 0 : $args['closed_count'];
-        $args['lost_amount'] = !isset($args['lost_amount']) ? 0 : $args['lost_amount'];
-        $args['pipeline_opp_count'] = !isset($args['pipeline_opp_count']) ? 0 : $args['pipeline_opp_count'];
-        $args['pipeline_amount'] = !isset($args['pipeline_amount']) ? 0 : $args['pipeline_amount'];
 
+        if (!isset($args['timeperiod_id']) || empty($args['timeperiod_id'])) {
+            $args['timeperiod_id'] = TimePeriod::getCurrentId();
+        }
+
+        $commit_type = strtolower($this->getArg('commit_type'));
+
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
+        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        /* @var $worksheet ForecastWorksheet */
+        $worksheet = BeanFactory::getBean('ForecastWorksheets');
+
+        $field_ext = '_case';
+
+        if ($commit_type == "manager") {
+            $worksheet_totals = $mgr_worksheet->worksheetTotals($current_user->id, $args['timeperiod_id']);
+            // we don't need the *_case values so lets make them the same as the *_adjusted values
+            $field_ext = '_adjusted';
+        } else {
+            $worksheet_totals = $worksheet->worksheetTotals($args['timeperiod_id'], $current_user->id);
+            // set likely
+            $worksheet_totals['likely_case'] = SugarMath::init($worksheet_totals['amount'], 6)
+                    ->add($worksheet_totals['includedClosedAmount'])->result();
+            $worksheet_totals['best_case'] = SugarMath::init($worksheet_totals['best_case'], 6)
+                    ->add($worksheet_totals['includedClosedBest'])->result();
+            $worksheet_totals['worst_case'] = SugarMath::init($worksheet_totals['worst_case'], 6)
+                    ->add($worksheet_totals['includedClosedWorst'])->result();
+        }
+        
         /* @var $forecast Forecast */
         $forecast = BeanFactory::getBean('Forecasts');
         $forecast->user_id = $current_user->id;
         $forecast->timeperiod_id = $args['timeperiod_id'];
-        $forecast->best_case = $args['best_case'];
-        $forecast->likely_case = $args['likely_case'];
-        $forecast->worst_case = $args['worst_case'];
+        $forecast->best_case = $worksheet_totals['best' . $field_ext];
+        $forecast->likely_case = $worksheet_totals['likely' . $field_ext];
+        $forecast->worst_case = $worksheet_totals['worst' . $field_ext];
         $forecast->forecast_type = $args['forecast_type'];
-        $forecast->opp_count = $args['opp_count'];
+        $forecast->opp_count = $worksheet_totals['included_opp_count'];
         $forecast->currency_id = '-99';
         $forecast->base_rate = '1';
         
         //If we are committing a rep forecast, calculate things.  Otherwise, for a manager, just use what is passed in.
         if ($args['commit_type'] == 'sales_rep') {
-            $forecast->calculatePipelineData(($args['closed_amount']), ($args['closed_count']));
+            $forecast->calculatePipelineData(
+                $worksheet_totals['includedClosedAmount'],
+                $worksheet_totals['includedClosedCount']
+            );
             //push the pipeline numbers back into the args
             $args['pipeline_opp_count'] = $forecast->pipeline_opp_count;
             $args['pipeline_amount'] = $forecast->pipeline_amount;
         } else {
-            $forecast->pipeline_opp_count = $args['pipeline_opp_count'];
-            $forecast->pipeline_amount = $args['pipeline_amount'];
-            $forecast->closed_amount = $args['closed_amount'];
+            $forecast->pipeline_opp_count = $worksheet_totals['pipeline_opp_count'];
+            $forecast->pipeline_amount = $worksheet_totals['pipeline_amount'];
+            $forecast->closed_amount = $worksheet_totals['closed_amount'];
         }
        
-        if ($args['likely_case'] != 0 && $args['opp_count'] != 0) {
-            $forecast->opp_weigh_value = $args['likely_case'] / $args['opp_count'];
+        if ($worksheet_totals['likely_case'] != 0 && $worksheet_totals['included_opp_count'] != 0) {
+            $forecast->opp_weigh_value = $worksheet_totals['likely_case'] / $worksheet_totals['included_opp_count'];
         }
         $forecast->save();
 
         // roll up the committed forecast to that person manager view
-        /* @var $mgr_worksheet ForecastManagerWorksheet */
-        $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
 
         if ($this->getArg('commit_type') == "sales_rep") {
-            /* @var $worksheet ForecastWorksheet */
-            $worksheet = BeanFactory::getBean('ForecastWorksheets');
             $worksheet->commitWorksheet($current_user->id, $args['timeperiod_id']);
-        } else if($this->getArg('commit_type') == "manager") {
+        } elseif ($this->getArg('commit_type') == "manager") {
             $mgr_worksheet->commitManagerForecast($current_user, $args['timeperiod_id']);
         }
 
@@ -110,6 +130,6 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->date_entered = $this->convertDateTimeToISO($db->fromConvert($forecast->date_entered, 'datetime'));
         $forecast->date_modified = $this->convertDateTimeToISO($db->fromConvert($forecast->date_modified, 'datetime'));
 
-        return $forecast->toArray(true);
+        return $worksheet_totals;
     }
 }

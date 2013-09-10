@@ -221,7 +221,9 @@
         if (clear) {
             _.each(ctxList, function(ctx) {
                 ctx.get('collection').resetPagination();
-                ctx.get('collection').reset();
+                // Silently reset the collection otherwise the view is re-rendered.
+                // It will be re-rendered on request response.
+                ctx.get('collection').reset(null, { silent: true });
             });
             this.trigger('filter:clear:quicksearch');
         }
@@ -248,9 +250,6 @@
                         // Close the preview pane to ensure that the preview
                         // collection is in sync with the list collection.
                         app.events.trigger('preview:close');
-
-                        // reset the collection with what we fetched to trigger rerender
-                        if (!self.disposed && collection) collection.reset(response);
                     }};
 
             ctxCollection.filterDef = filterDef;

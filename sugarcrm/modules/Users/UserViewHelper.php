@@ -79,7 +79,7 @@ class UserViewHelper {
 
         // check if the user has access to the User Management
         $this->ss->assign('USER_ADMIN',$current_user->isAdminForModule('Users')&& !is_admin($current_user));
-        
+
 
         if ($this->is_current_admin) {
             $this->ss->assign('IS_ADMIN','1');
@@ -361,7 +361,7 @@ class UserViewHelper {
 	$reminder_time = $this->bean->getPreference('reminder_time');
 	if(empty($reminder_time)){
 		$reminder_time = -1;
-	}	
+	}
 	$email_reminder_time = $this->bean->getPreference('email_reminder_time');
 	if(empty($email_reminder_time)){
 		$email_reminder_time = -1;
@@ -506,6 +506,17 @@ class UserViewHelper {
 
         $chooser->args['id'] = 'edit_tabs';
         $chooser->args['values_array'] = $controller->get_tabs($this->bean);
+        //Remove 'Home' module from tab configuration UI (we add it back in at top of display tabs on save)
+        if(isset($chooser->args['values_array'][0]['Home'])){
+            unset($chooser->args['values_array'][0]['Home']);
+        }
+        if(isset($chooser->args['values_array'][1]['Home'])){
+            unset($chooser->args['values_array'][1]['Home']);
+        }
+        if(isset($chooser->args['values_array'][2]['Home'])){
+            unset($chooser->args['values_array'][2]['Home']);
+        }
+
         foreach($chooser->args['values_array'][0] as $key=>$value) {
             $chooser->args['values_array'][0][$key] = $app_list_strings['moduleList'][$key];
         }
@@ -523,7 +534,7 @@ class UserViewHelper {
 
         $chooser->args['left_label'] =  translate('LBL_DISPLAY_TABS','Users');
         $chooser->args['right_label'] =  translate('LBL_HIDE_TABS','Users');
-        require_once('vendor/Smarty/plugins/function.sugar_help.php');
+        require_once('include/SugarSmarty/plugins/function.sugar_help.php');
         $chooser->args['title'] =  translate('LBL_EDIT_TABS','Users').smarty_function_sugar_help(array("text"=>translate('LBL_CHOOSE_WHICH','Users')),$ss);
 
         $this->ss->assign('TAB_CHOOSER', $chooser->display());
@@ -612,7 +623,7 @@ class UserViewHelper {
         }
         $currencySymbolJSON = json_encode($currencyList);
         $this->ss->assign('currencySymbolJSON', $currencySymbolJSON);
-        
+
         $currencyDisplay = BeanFactory::getBean('Currencies');
         if(isset($cur_id) ) {
             $currencyDisplay->retrieve($cur_id);

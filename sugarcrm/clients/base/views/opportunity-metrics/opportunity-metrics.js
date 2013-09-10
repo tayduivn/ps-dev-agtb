@@ -55,6 +55,7 @@
         }, this);
 
         nv.utils.windowResize(this.chart.update);
+        nv.utils.resizeOnPrint(this.chart.update);
     },
 
     /* Process data loaded from REST endpoint so that d3 chart can consume
@@ -117,6 +118,7 @@
     _dispose: function () {
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.update);
+            nv.utils.unResizeOnPrint(this.chart.update);
         }
         app.view.View.prototype._dispose.call(this);
     }

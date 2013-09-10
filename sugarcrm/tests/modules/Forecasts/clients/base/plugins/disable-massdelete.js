@@ -12,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-describe("when disable-massdelete plugin is used", function() {
+describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
     
     var app, view, layout, moduleName = 'Opportunities', context, options, model;
     
@@ -43,6 +43,7 @@ describe("when disable-massdelete plugin is used", function() {
     });
     
     afterEach(function() {
+        delete app.plugins.plugins['field']['disable-massdelete'];
         view = null;
         app = null;
         context = null;

@@ -34,6 +34,11 @@
      * The context of the ForecastWorksheet Module if one exists
      */
     forecastWorksheetContext: undefined,
+    
+    /**
+     * The open state of the sidepanel
+     */
+    state: "open",
 
     /**
      * {@inheritdoc}
@@ -68,7 +73,8 @@
         fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options);
         this.dashletConfig.dataset.options = {};
 
-        if (cfg.show_worksheet_worst) {
+        if (cfg.show_worksheet_worst &&
+            app.acl.hasAccess('view', 'ForecastWorksheets', app.user.get('id'), 'worst_case')) {
             this.dashletConfig.dataset.options['worst'] = fieldOptions['worst'];
         }
 
@@ -76,7 +82,8 @@
             this.dashletConfig.dataset.options['likely'] = fieldOptions['likely'];
         }
 
-        if (cfg.show_worksheet_best) {
+        if (cfg.show_worksheet_best &&
+            app.acl.hasAccess('view', 'ForecastWorksheets', app.user.get('id'), 'best_case')) {
             this.dashletConfig.dataset.options['best'] = fieldOptions['best'];
         }
     },
@@ -105,7 +112,9 @@
             if (collection) {
                 collection.on('change', this.repWorksheetChanged, this);
                 collection.on('reset', function(collection) {
-                    this.parseCollectionForData(collection);
+                    if (!_.isEqual(this.state, "close")) {
+                        this.parseCollectionForData(collection);
+                    }
                 }, this);
             }
         }
@@ -116,7 +125,7 @@
             if (collection) {
                 collection.on('change', this.mgrWorksheetChanged, this);
                 collection.on('reset', function(collection) {
-                    if(this.values.get('display_manager')) {
+                    if(this.values.get('display_manager') && !_.isEqual(this.state, "close")) {
                         this.parseCollectionForData(collection);
                     }
                 }, this);
@@ -211,6 +220,11 @@
      * @param {Object} model
      */
     repWorksheetChanged: function(model) {
+        //if the sidebar is closed, bail
+        if (_.isEqual(this.state, "close")) {
+            return -1;
+        }
+        
         // get what we are currently filtered by
         // find the item in the serverData
         var changed = model.changed,
@@ -262,6 +276,11 @@
      * @param {Object} model
      */
     mgrWorksheetChanged: function(model) {
+        //if the sidebar is closed, bail
+        if (_.isEqual(this.state, "close")) {
+            return -1;
+        }
+        
         var fieldsChanged = _.keys(model.changed),
             changed = model.changed,
             field = this.getField('paretoChart'),
@@ -321,6 +340,7 @@
         }
 
         app.events.on('app:toggle:sidebar', function(state) {
+            this.state = state;
             if(state == 'open') {
                 this.parseCollectionForData();
             }

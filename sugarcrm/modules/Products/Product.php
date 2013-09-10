@@ -138,8 +138,6 @@ class Product extends SugarBean
 
 
     // This is the list of fields that are copied over from product template.
-    //#9668: removed description from this list..default product desc was overwriting the
-    //the description provided by the user in the quote screen.
     public $template_fields = array(
         'mft_part_num',
         'vendor_part_num',
@@ -153,7 +151,11 @@ class Product extends SugarBean
         'support_name',
         'support_term',
         'support_description',
-        'support_contact'
+        'support_contact',
+        'description',
+        'cost_price',
+        'discount_price',
+        'list_price',
     );
 
     /**
@@ -279,9 +281,6 @@ class Product extends SugarBean
             $temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount;
         }
 
-        $this->get_account();
-        $this->get_contact();
-
         $temp_array['ACCOUNT_NAME'] = empty($this->account_name) ? '' : $this->account_name;
         $temp_array['CONTACT_NAME'] = empty($this->contact_name) ? '' : $this->contact_name;
         return $temp_array;
@@ -323,51 +322,56 @@ class Product extends SugarBean
 
         /* @var $currency Currency */
         $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+
+        $this->populateFromTemplate();
+
         // RPS - begin - decimals cant be null in sql server
         if ($this->cost_price == '') {
-            $this->cost_price = '0';
+            $this->cost_price = 0;
         }
         if ($this->discount_price == '') {
-            $this->discount_price = '0';
+            $this->discount_price = 0;
         }
         if ($this->list_price == '') {
-            $this->list_price = '0';
+            $this->list_price = 0;
         }
         if ($this->weight == '') {
-            $this->weight = '0';
+            $this->weight = 0;
         }
         if ($this->book_value == '') {
-            $this->book_value = '0';
+            $this->book_value = 0;
         }
         if ($this->discount_amount == '') {
-            $this->discount_amount = '0';
+            $this->discount_amount = 0;
         }
         if ($this->deal_calc == '') {
-            $this->deal_calc = '0';
+            $this->deal_calc = 0;
         }
 
         if ($this->quantity == '') {
             $this->quantity = 1;
         }
 
+        $this->calculateDiscountPrice();
+
         // always set the base rate to what the conversion_rate is in the currency
         $this->base_rate = $currency->conversion_rate;
 
         //US DOLLAR
-        if (isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {
-            $this->discount_usdollar = $currency->convertToDollar($this->discount_price);
-        }
-        if (isset($this->list_price) && (!empty($this->list_price) || $this->list_price == '0')) {
-            $this->list_usdollar = $currency->convertToDollar($this->list_price);
-        }
-        if (isset($this->cost_price) && (!empty($this->cost_price) || $this->cost_price == '0')) {
-            $this->cost_usdollar = $currency->convertToDollar($this->cost_price);
-        }
-        if (isset($this->book_value) && (!empty($this->book_value) || $this->book_value == '0')) {
-            $this->book_value_usdollar = $currency->convertToDollar($this->book_value);
-        }
-        if (isset($this->deal_calc) && (!empty($this->deal_calc) || $this->deal_calc == '0')) {
-            $this->deal_calc_usdollar = $currency->convertToDollar($this->deal_calc);
+        $varsToConvert = array(
+            'discount_price' => 'discount_usdollar',
+            'list_price' => 'list_usdollar',
+            'cost_price' => 'cost_usdollar',
+            'book_value' => 'book_value_usdollar',
+            'deal_calc' => 'deal_calc_usdollar',
+        );
+        
+        foreach ( $varsToConvert as $fromVar => $toVar ) {
+            if (!empty($this->$fromVar)) {
+                $this->$toVar = $currency->convertToDollar($this->$fromVar);
+            } else {
+                $this->$toVar = 0.00;
+            }
         }
         if (isset($this->discount_amount) && (!empty($this->discount_amount) || $this->discount_amount == '0')) {
             if (isset($this->discount_select) && $this->discount_select) {
@@ -627,5 +631,68 @@ class Product extends SugarBean
         $this->save();
 
         return $rli;
+    }
+
+    /**
+     * This function loads in values from the product's template
+     */
+    protected function populateFromTemplate()
+    {
+        if (!isset($this->product_template_id)) {
+            // No template to choose from
+            return;
+        }
+        if (isset($this->fetched_row['product_template_id'])
+            && $this->product_template_id == $this->fetched_row['product_template_id']) {
+            // Templates are the same, don't do anything
+            return;
+        }
+
+        $template = BeanFactory::getBean('ProductTemplates', $this->product_template_id);
+        
+        foreach ($this->template_fields as $template_field) {
+            // Empty isn't good enough here, if they set a total to 0.00 we need to not
+            // copy that from the template
+            if (!empty($this->$template_field) 
+                || (isset($this->$template_field)
+                    && ($this->$template_field === 0 || $this->$template_field === 0.0))) {
+                continue;
+            }
+            if (isset($template->$template_field)) {
+               $this->$template_field = $template->$template_field;
+            }
+        }
+    }
+
+    /**
+     * This function calculates any requested discount from the various formulas
+     */
+    protected function calculateDiscountPrice()
+    {
+        if (!empty($this->discount_select)) {
+            $this->deal_calc = $this->discount_amount/100*$this->discount_price;
+        } else {
+            $this->deal_calc = $this->discount_amount;
+        }
+        
+        if (!empty($this->pricing_formula)
+            || !empty($this->cost_price)
+            || !empty($this->list_price)
+            || !empty($this->discount_price)
+            || !empty($this->pricing_factor)
+            || !empty($this->discount_amount)
+            || !empty($this->discount_select)) {
+            require_once('modules/ProductTemplates/Formulas.php');
+            refresh_price_formulas();
+            global $price_formulas;
+            if (isset($price_formulas[$this->pricing_formula]))
+            {
+                include_once ($price_formulas[$this->pricing_formula]);
+                $formula = new $this->pricing_formula;
+                $this->discount_price = $formula->calculate_price($this->cost_price,$this->list_price,$this->discount_price,$this->pricing_factor);
+            }
+        }
+        
+
     }
 }

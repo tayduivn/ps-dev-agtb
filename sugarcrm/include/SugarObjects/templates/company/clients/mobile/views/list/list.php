@@ -179,6 +179,7 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
                     'default' => true,
                     'enabled' => true,
                     'width' => '2',
+                    'module' => 'Employees',
                 ),
             ),
         ),

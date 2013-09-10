@@ -83,6 +83,7 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                     'label' => 'LBL_ASSIGNED_USER',
                     'default' => true,
                     'enabled' => true,
+                    'module' => 'Employees',
                 ),
             ),
         ),

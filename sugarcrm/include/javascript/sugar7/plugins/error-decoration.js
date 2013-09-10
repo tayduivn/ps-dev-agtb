@@ -3,6 +3,19 @@
         app.plugins.register('error-decoration', ['view'], {
 
             /**
+             * Clears validation errors on start and success.
+             *
+             * @param {Object} component
+             * @param {Object} plugin
+             * @return {void}
+             */
+            onAttach: function(component, plugin) {
+                this.on('init', function() {
+                    this.model.on('validation:start validation:success', this.clearValidationErrors, this);
+                }, this);
+            },
+
+            /**
              * We need to add those events to the view to show/hide the tooltip that contains the error message
              */
             events:{

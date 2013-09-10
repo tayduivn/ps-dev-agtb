@@ -60,7 +60,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         if (!file_exists($this->loadedSubpanelFileName)) {
             throw new Exception("Metadata file '{$this->loadedSubpanelFileName}' does not exist for subpanel {$this->loadedSubpanelFileName}");
         }
-        
+
         include $this->loadedSubpanelFileName;
 
         // Prepare to load the history file. This will be available in cases when
@@ -74,7 +74,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             $GLOBALS['log']->debug(get_class($this) . ": loading from history");
             require $this->historyPathname;
         }
-        
+
         $this->_viewdefs = !empty($viewdefs) ? $this->getNewViewDefs($viewdefs) : array();
         $this->_fielddefs = $this->bean->field_defs;
         $this->_language = '';
@@ -111,7 +111,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             @include $file;
         }
         foreach ($layoutExtensionName as $extension) {
-            $file = SugarAutoLoader::loadExtension($extension, $this->_moduleName);
+            $file = SugarAutoLoader::loadExtension($extension, $this->loadedModule);
             if ($file !== false) {
                 @include $file;
             }
@@ -128,8 +128,10 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                 if (is_array($component['override_subpanel_list_view']) && $component['override_subpanel_list_view']['link'] == $this->linkName) {
                     $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
                     $this->loadedSupbanelName = $component['override_subpanel_list_view']['view'];
-                    $this->loadedSubpanelFileName = file_exists("custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php") ? "custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php" : "{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php";
-                    $this->sidecarFile = "custom/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
+                    $this->loadedSubpanelFileName = file_exists("custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php") ?
+                        "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php"
+                      : "modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSupbanelName}/{$this->loadedSupbanelName}.php";
+                    $this->sidecarFile = "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->sidecarSubpanelName}/{$this->sidecarSubpanelName}.php";
                     $this->overrideArrayKey = $key;
                     return true;
                 }
@@ -180,12 +182,14 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     }
 
     /**
-     * Getter for the language
+     * Gets the appropriate module name for use in translation of labels in
+     * studio
+     *
      * @return string
      */
     public function getLanguage()
     {
-        return $this->_language;
+        return $this->_moduleName;
     }
 
     /*
@@ -197,7 +201,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
     {
         // Make a viewdefs variable for saving
         $varname = "viewdefs['{$this->_moduleName}']['{$this->_viewClient}']['view']['{$this->sidecarSubpanelName}']";
-        
+
         // first sort out the historical record...
         write_array_to_file($varname, $this->_viewdefs, $this->historyPathname);
         $this->_history->append($this->historyPathname);

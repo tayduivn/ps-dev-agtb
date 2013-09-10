@@ -29,8 +29,10 @@
         var self = this;
         // Prepare the metadata so we can prefetch select2 locale options
         this._prepareFields(function() {
-            self.fieldsToValidate = self._fieldsToValidate(self.meta);
-            app.view.invokeParent(self, {type: 'view', name: 'user-wizard-page', method: '_render'});
+            if (!self.disposed) {
+                self.fieldsToValidate = self._fieldsToValidate(self.meta);
+                app.view.invokeParent(self, {type: 'view', name: 'user-wizard-page', method: '_render'});
+            }
         });
     },
     _prepareFields: function(callback) {
@@ -52,7 +54,6 @@
      * @override
      */
     beforeNext: function(callback) {
-        this.clearValidationErrors();
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
                 if (isValid) {

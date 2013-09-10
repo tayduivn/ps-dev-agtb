@@ -98,12 +98,25 @@ class RelateApi extends FilterApi {
         }
 
         $options = $this->parseArguments($api, $args, $linkSeed);
-        $q = self::getQueryObject($linkSeed, $options);
-        if (!isset($args['filter']) || !is_array($args['filter'])) {
-            $args['filter'] = array();
+
+        // If they don't have fields selected we need to include any link fields
+        // for this relationship
+        if (empty($args['fields']) && is_array($linkSeed->field_defs)) {
+            $options['linkDataFields'] = array();
+            foreach ($linkSeed->field_defs as $field => $def) {
+                if (empty($def['rname_link']) || empty($def['link'])) {
+                    continue;
+                }
+                if ($def['link'] != $relatedLinkName) {
+                    continue;
+                }
+                // It's a match
+                $options['linkDataFields'][] = $field;
+                $options['select'][] = $field;
+            }
         }
-        $args['filter'][][$relatedLinkName . '.' . $column] = array('$equals' => $record->id);
-        self::addFilters($args['filter'], $q->where(), $q);
+
+        $q = self::getQueryObject($linkSeed, $options);
 
         // Some relationships want the role column ignored
         if (!empty($args['ignore_role'])) {
@@ -112,6 +125,12 @@ class RelateApi extends FilterApi {
             $ignoreRole = false;
         }
         $q->join($relatedLinkName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
+
+        if (!isset($args['filter']) || !is_array($args['filter'])) {
+            $args['filter'] = array();
+        }
+        self::addFilters($args['filter'], $q->where(), $q);
+
         $q->where()->equals($relatedLinkName . '.' . $column, $record->id);
 
         return array($args, $q, $options, $linkSeed);

@@ -632,7 +632,7 @@ function get_assigned_user_name($assigned_user_id, $is_group = '')
 {
 	// Declare static early so PSR-2 parser doesn't choke
 	static $saved_user_list = null;
-	
+
     if (!empty($GLOBALS['sugar_config']['disable_user_cache'])) {
         $user = BeanFactory::getBean("Users", $assigned_user_id);
         if (!empty($user->id)) {
@@ -1561,15 +1561,6 @@ function displayWorkflowForCurrentUser()
     foreach ($moduleList as $module) {
         $workflow_mod_list[$module] = $module;
     }
-    // This list is taken from the previous version of workflow_utils.php
-    $workflow_mod_list['Tasks'] = "Tasks";
-    $workflow_mod_list['Calls'] = "Calls";
-    $workflow_mod_list['Meetings'] = "Meetings";
-    $workflow_mod_list['Notes'] = "Notes";
-    $workflow_mod_list['ProjectTask'] = "Project Tasks";
-    $workflow_mod_list['Leads'] = "Leads";
-    $workflow_mod_list['Opportunities'] = "Opportunities";
-    // End of list
 
     $access = get_workflow_admin_modules_for_user($GLOBALS['current_user']);
     foreach ($access as $key=>$val) {
@@ -1611,16 +1602,6 @@ function get_admin_modules_for_user($user)
     foreach ($moduleList as $module) {
         $workflow_mod_list[$module] = $module;
     }
-
-    // This list is taken from teh previous version of workflow_utils.php
-    $workflow_mod_list['Tasks'] = "Tasks";
-    $workflow_mod_list['Calls'] = "Calls";
-    $workflow_mod_list['Meetings'] = "Meetings";
-    $workflow_mod_list['Notes'] = "Notes";
-    $workflow_mod_list['ProjectTask'] = "Project Tasks";
-    $workflow_mod_list['Leads'] = "Leads";
-    $workflow_mod_list['Opportunities'] = "Opportunities";
-    // End of list
 
     $workflow_admin_modules = array();
     if (empty($user)) {
@@ -2425,10 +2406,8 @@ function getVersionedPath($path, $additional_attrs='')
 {
     if(empty($GLOBALS['sugar_config']['js_custom_version'])) $GLOBALS['sugar_config']['js_custom_version'] = 1;
     $js_version_key = isset($GLOBALS['js_version_key'])?$GLOBALS['js_version_key']:'';
-    if (inDeveloperMode()) {
-        static $rand;
-        if(empty($rand)) $rand = mt_rand();
-        $dev = $rand;
+    if (inDeveloperMode() && file_exists($path)) {
+        $dev = md5(filemtime($path));
     } else {
         $dev = '';
     }
@@ -2771,11 +2750,6 @@ function parse_list_modules(&$listArray)
             $returnArray['ProductTemplates'] = $listArray['ProductTemplates'];
         }
         //END SUGARCRM flav=pro ONLY
-
-        // special case for projects
-        if (array_key_exists('Project', $modListHeader)) {
-            $returnArray['ProjectTask'] = $listArray['ProjectTask'];
-        }
     }
     $returnArray = SugarACL::filterModuleList($listArray, 'access', true);
     asort($returnArray);
@@ -3226,8 +3200,12 @@ function sugar_cleanup($exit = false)
     static $called = false;
     if($called)return;
     $called = true;
-    set_include_path(realpath(dirname(__FILE__) . '/..') . PATH_SEPARATOR . get_include_path());
-    chdir(sugar_root_dir());
+    $root_path = sugar_root_dir();
+    $paths = explode(PATH_SEPARATOR, get_include_path());
+    if (in_array($root_path, $paths) == false) {
+        set_include_path($root_path . PATH_SEPARATOR . get_include_path());
+    }
+    chdir($root_path);
     global $sugar_config;
     require_once 'include/utils/LogicHook.php';
     LogicHook::initialize();
@@ -3627,10 +3605,6 @@ function convert_module_to_singular($module_array)
         if ($value=="Cases") {
             $module_array[$key] = "Case";
         }
-        if ($key=="projecttask") {
-            $module_array['ProjectTask'] = "Project Task";
-            unset($module_array[$key]);
-        }
     }
 
     return $module_array;
@@ -4007,11 +3981,14 @@ function sugarArrayIntersectMerge($gimp, $dom)
     if (is_array($gimp) && is_array($dom)) {
         foreach ($gimp as $domKey => $domVal) {
             if (isset($dom[$domKey])) {
-                if (is_array($dom[$domKey])) {
+                if (is_array($dom[$domKey]) && $dom[$domKey] !== $gimp[$domKey]) {
                     if (is_numeric(key($dom[$domKey]))) {
                         $gimp[$domKey] = array_merge($gimp[$domKey], array_intersect($dom[$domKey], $gimp[$domKey]));
                     } else {
-                        $gimp[$domKey] = array_merge($gimp[$domKey], array_intersect_key($dom[$domKey], $gimp[$domKey]));
+                        $gimp[$domKey] = array_merge(
+                            $gimp[$domKey],
+                            array_intersect_key($dom[$domKey], $gimp[$domKey])
+                        );
                     }
                 } else {
                     $gimp[$domKey] = $dom[$domKey];

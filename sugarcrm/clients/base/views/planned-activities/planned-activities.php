@@ -137,6 +137,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'module' => 'Meetings',
             'order_by' => 'date_start:asc',
             'record_date' => 'date_start',
+            'include_child_items' => true,
         ),
         array(
             'filter_applied_to' => 'date_start',
@@ -147,6 +148,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'module' => 'Calls',
             'order_by' => 'date_start:asc',
             'record_date' => 'date_start',
+            'include_child_items' => true,
         ),
     ),
 );

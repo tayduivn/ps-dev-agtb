@@ -26,7 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<div class="row-fluid">
-<div class="span8"><input type="text" name="{{name}}" value="{{value}}" class="input-large"></div>
-<div class="span4"><span sfuuid="{{currencySfId}}" class="currency"></span><p class="help-block"></p></div>
-</div>
+{{#if hideCurrencyDropdown}}
+    <input type="text" name="{{name}}" value="{{value}}" class="input-large">
+{{else}}
+    <div class="row-fluid">
+        <div class="span8"><input type="text" name="{{name}}" value="{{value}}" class="input-large"></div>
+        <div class="span4"><span sfuuid="{{currencySfId}}" class="currency"></span><p class="help-block"></p></div>
+    </div>
+{{/if}}

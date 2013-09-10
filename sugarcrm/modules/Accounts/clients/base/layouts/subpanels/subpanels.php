@@ -46,14 +46,16 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
         'link' => 'bugs',
       ),
     ),
-    array (
-      'layout' => 'subpanel',
-      'label' => 'LBL_RLI_SUBPANEL_TITLE',
-      'context' => array (
-        'link' => 'revenuelineitems',
+//BEGIN SUGARCRM flav=ent ONLY
+      array (
+          'layout' => 'subpanel',
+          'label' => 'LBL_RLI_SUBPANEL_TITLE',
+          'context' => array (
+              'link' => 'revenuelineitems',
+          ),
       ),
-    ),
-    array (
+//END SUGARCRM flav=ent ONLY
+      array (
       'layout' => 'subpanel',
       'label' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
       'context' => array (
@@ -66,6 +68,11 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
       'override_subpanel_list_view' => 'subpanel-for-accounts',
       'context' => array (
         'link' => 'quotes',
+        'collectionOptions' => array(
+          'params' => array(
+            'ignore_role' => 1,  //See SP-1305 and BR-344. Load Quotes from all link types (both quotes, quotes_shipto).
+          ),
+        ),
       ),
     ),
     array (

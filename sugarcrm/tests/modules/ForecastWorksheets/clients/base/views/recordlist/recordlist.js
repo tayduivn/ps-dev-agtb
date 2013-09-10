@@ -31,6 +31,7 @@ describe("ForecastWorksheets.View.RecordList", function() {
 
         app.user.set({'id': 'test_userid'});
 
+        SugarTest.loadHandlebarsTemplate('base', 'field', 'base', 'noaccess');
         SugarTest.loadComponent('base', 'view', 'list');
         SugarTest.loadComponent('base', 'view', 'flex-list');
         SugarTest.loadComponent('base', 'view', 'recordlist');
@@ -68,9 +69,8 @@ describe("ForecastWorksheets.View.RecordList", function() {
         context.parent = undefined;
         context.prepare();
 
-        view = SugarTest.createView("base", moduleName, "recordlist", null, context);
         layout = SugarTest.createLayout("base", moduleName, "list", null, null);
-        view.layout = layout;
+        view = SugarTest.createView("base", moduleName, "recordlist", null, context, true, layout, true);
 
     });
 
@@ -78,6 +78,14 @@ describe("ForecastWorksheets.View.RecordList", function() {
         app.user.unset('id');
         view = null;
         app = null;
+    });
+
+    it("should have default recordlist plugins defined", function() {
+        expect(_.indexOf(view.plugins, 'ellipsis_inline')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'list-column-ellipsis')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'error-decoration')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'editable')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'tooltip')).not.toEqual(-1);
     });
 
     it("should have additional plugins defined", function() {

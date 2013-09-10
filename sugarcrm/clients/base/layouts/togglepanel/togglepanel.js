@@ -21,18 +21,50 @@
         this.componentsList = {};
         this.processToggles();
         app.view.Layout.prototype.initialize.call(this, opts);
+    },
+
+    /**
+     * @override
+     * @private
+     */
+    _render: function() {
+        this._super('_render');
         // get the last viewed layout
         this.toggleViewLastStateKey = app.user.lastState.key('toggle-view', this);
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
 
         // show the first toggle if the last viewed state isn't set in the metadata
-        if (_.isUndefined(lastViewed) && (this.toggles.length > 0)) {
-            lastViewed = _.first(this.toggles).toggle;
+        if (_.isUndefined(lastViewed) || this.isToggleButtonDisabled(lastViewed)) {
+            var enabledToggles = _.filter(this.toggles, function(toggle) {
+                return !toggle.disabled;
+            });
+            if (enabledToggles.length > 0) {
+                lastViewed = _.first(enabledToggles).toggle;
+            }
         }
 
-        this.showComponent(lastViewed, true);
+        this.showComponent(lastViewed);
         // Toggle the appropriate button and layout for initial render
         this.$('[data-view="' + lastViewed + '"]').button('toggle');
+    },
+
+    /**
+     * Checks whether the toggle button is disabled
+     * @param {string} name  The name of the button to check
+     * @return {boolean}
+     */
+    isToggleButtonDisabled: function (name) {
+        var disabled = false,
+            toggleButton;
+
+        toggleButton = _.find(this.toggles, function (toggle) {
+            return toggle.toggle === name;
+        });
+
+        if (toggleButton) {
+            disabled = toggleButton.disabled;
+        }
+        return disabled;
     },
 
     /**
@@ -56,7 +88,8 @@
                 return curr.name === toggle;
             }, this);
             if (toggle && availableToggle) {
-                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon };
+                var disabled = !!availableToggle.disabled;
+                temp[toggle] = {toggle: toggle, title: availableToggle.label, 'class': availableToggle.icon, disabled: disabled};
             }
         }, this);
 
@@ -122,23 +155,22 @@
         // Only toggle if we click on an inactive button
         if (!$el.hasClass("active")) {
             var data = $el.data();
-            this.showComponent(data.view);
             app.user.lastState.set(this.toggleViewLastStateKey, data.view);
+            this.showComponent(data.view);
+            this.reloadData(data.view);
         }
     },
 
     /**
      * Show a component and triggers "filterpanel:change"
      * @param {String} name
-     * @param {Boolean} silent
      */
-    showComponent: function (name, silent) {
+    showComponent: function (name) {
         if (!name) return;
         if (this.componentsList[name]) {
             this.componentsList[name].render();
             this._components.push(this.componentsList[name]);
             this.$(".main-content").append(this.componentsList[name].el);
-            this.componentsList[name] = null;
         }
 
         _.each(this.toggleComponents, function (comp) {
@@ -148,7 +180,19 @@
                 comp.hide();
             }
         }, this);
-        this.trigger('filterpanel:change', name, silent);
+        this.trigger('filterpanel:change', name);
+    },
+
+    /**
+     * Reload the toggled component
+     * @param name
+     */
+    reloadData: function(name) {
+        var layout = this.componentsList[name];
+        if (layout) {
+            layout.context.resetLoadFlag(true);
+            layout.loadData();
+        }
     },
 
     /**

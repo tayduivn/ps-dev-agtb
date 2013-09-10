@@ -1,25 +1,16 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
- *********************************************************************************/
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (\“MSA\”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 $mod_strings = array(
     'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
@@ -148,6 +139,12 @@ $mod_strings = array(
     ,
         //this defualt will be used for edit view
         'default'	=> 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>EditView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/>'.SugarThemeRegistry::current()->getImage("icon_calculated", '', null, null, ".gif", "Calculated Value").'Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
+        //this defualt will be used for edit view
+        'defaultrecordview'   => 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>Record View</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
     //BEGIN SUGARCRM flav=pro ONLY
     . '<br/><br/><!--not_in_theme!--><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/>'.SugarThemeRegistry::current()->getImage("icon_calculated", '', null, null, ".gif", "Calculated Value").'Indicates a Calculated field whose value will be automatically determined based on a formula.'
     //END SUGARCRM flav=pro ONLY
@@ -450,6 +447,11 @@ $mod_strings = array(
 'LBL_DROPDOWN_KEY_EXISTS' => 'Key already exists in list',
 'LBL_NO_SAVE_ACTION' => 'Could not find the save action for this view.',
 'LBL_BADLY_FORMED_DOCUMENT' => 'Studio2:establishLocation: badly formed document',
+// @TODO: Remove this lang string and uncomment out the string below once studio
+// supports removing combo fields if a member field is on the layout already.
+'LBL_INDICATES_COMBO_FIELD' => '** Indicates a combination field. A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>Doubleclick a combination field to see which fields it contains.',
+//'LBL_INDICATES_COMBO_FIELD' => '<b>** Indicates a combination field</b><br>There are both single fields and combination fields available for the record view.<br><br>A combination field is a collection of individual fields. For example, "Address" is a combination field that contains "Street address", "City", "Zip Code","State" and "Country".<br><br>You can add either a combination field or its individual fields to a layout - but NOT both. For example: if you add "State" to the layout, the combination field "Address" is no longer available to select from the toolbox. Similarly, if you add "Address", the individual field "State" is no longer available in the toolbox.',
+'LBL_COMBO_FIELD_CONTAINS' => 'contains:',
 
 //BEGIN SUGARCRM flav=pro ONLY
 'LBL_WIRELESSLAYOUTS'=>'Mobile Layouts',
@@ -695,7 +697,7 @@ $mod_strings = array(
 'LBL_LIST_VIEW'=>'List View',
 'LBL_HISTORY'=>'View History',
 'LBL_RESTORE_DEFAULT'=>'Restore Default',
-'LBL_ACTIVITIES'=>'Activities',
+'LBL_ACTIVITIES'=>'Activity Stream',
 'LBL_SEARCH'=>'Search',
 'LBL_NEW'=>'New',
 'LBL_TYPE_BASIC'=>'basic',

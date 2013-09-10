@@ -135,7 +135,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 ),
                 array(
                     'name' => 'phone_alternate',
-                    'label' => 'LBL_PHONE_ALTERNATE',
+                    'label' => 'LBL_PHONE_ALT',
                     'enabled' => true,
                     'width' => '10',
                 ),
@@ -182,10 +182,11 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 //END SUGARCRM flav=pro ONLY
                 array(
                     'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_USER_NAME',
+                    'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,
                     'enabled' => true,
                     'width' => '2',
+                    'module' => 'Employees',
                 ),
             ),
         ),

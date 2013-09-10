@@ -69,8 +69,11 @@ class SugarACLForecastWorksheets extends SugarACLStrategy
             if ($bean instanceof Opportunity && $context['field'] == 'likely_case') {
                 $context['field'] = 'amount';
             }
+
+            // always set the bean to the context
+            $context['bean'] = $bean;
             // make sure the user has access to the field
-            return $bean->ACLFieldAccess($context['field'], $context['action'], $context + array('bean' => $bean));
+            return $bean->ACLFieldAccess($context['field'], $context['action'], $context);
         }
 
         return true;

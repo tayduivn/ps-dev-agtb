@@ -54,4 +54,53 @@ $viewdefs['portal']['view']['tutorial'] = array(
             ),
         )
     ),
+    'dashboard' => array(
+        'version' =>1,
+        'intro' => 'LBL_PORTAL_TOUR_RECORDS_INTRO',
+        'content' => array(
+            array(
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_PAGE',
+            ),
+            array(
+                'name' => '.routeLink.[data-route="#Cases"]',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_CASES',
+                'full' => true,
+            ),
+            array(
+                'name' => '.routeLink.[data-route="#KBDocuments"]',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_KB',
+                'full' => true,
+            ),
+            array(
+                'name' => '.routeLink.[data-route="#Bugs"]',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_BUGS',
+                'full' => true,
+            ),
+            array(
+                'name' => 'input.search-query',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_GLOBAL_SEARCH',
+                'full' => true,
+            ),
+            array(
+                'name' => 'li#userActions',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_USER',
+                'full' => true,
+            ),
+            array(
+                'name' => 'li#createList',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_QUICK_CREATE',
+                'full' => true,
+            ),
+            array(
+                'name' => '.dataTables_filter',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_SEARCH',
+                'full' => true,
+            ),
+            array(
+                'name' => '[href=#Home]',
+                'text' => 'LBL_PORTAL_TOUR_RECORDS_RETURN',
+                'full' => true,
+            ),
+        )
+    ),
 );

@@ -57,7 +57,7 @@
         model = model || new Backbone.Model();
 
         if (fieldDef) {
-            model.fields = {};
+            model.fields = model.fields || {};
             model.fields[name] = fieldDef;
         }
 

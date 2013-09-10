@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @group ActivityStream
+ */
 require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
 require_once 'modules/ActivityStream/Activities/Activity.php';
 
@@ -24,6 +26,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_TeamIDsChangedToNames_ChangesOccurredNormally()
     {
         $contact    = SugarTestContactUtilities::createContact();
@@ -70,6 +75,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_AssignedUserIDsChangedToNames_ChangesOccurredNormally()
     {
         $lead         = SugarTestLeadUtilities::createLead();
@@ -115,6 +123,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_AccountParentIdNoParentType_ChangesOccurredNormally()
     {
         $account1 = SugarTestAccountUtilities::createAccount();
@@ -161,6 +172,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $activityData);
     }
 
+    /**
+     * @covers ActivityQueueManager::prepareChanges
+     */
     public function testChangeFields_BeanParentIdIncludesParentType_ChangesOccurredNormally()
     {
         $account1 = SugarTestAccountUtilities::createAccount();
@@ -377,6 +391,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ActivityQueueManager::eventDispatcher
      * @dataProvider dataProviderForActivityMessageCreation
      */
     public function testEventDispatcher_ActivityMessageCreation($activityEnabled, $event, $expectedAction)
@@ -397,7 +412,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $actManager = self::getMock(
             'ActivityQueueManager',
-            array('isValidLink', 'createOrUpdate', 'link', 'unlink', 'processSubscriptions')
+            array('isValidLink', 'createOrUpdate', 'link', 'unlink')
         );
         $actManager->expects($this->any())->method('isValidLink')->will($this->returnValue(true));
         foreach ($actions as $action) {
@@ -413,6 +428,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ActivityQueueManager::isAuditable
      * @dataProvider dataProviderForecastModulesAuditable
      */
     public function testForecastModulesAreNotAuditable($module, $expected)
@@ -434,6 +450,7 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ActivityQueueManager::assignmentChanged
      * @dataProvider dataProviderAssignedUserChanged
      */
     public function testAssignmentChanged($auditedChanges, $allChanges, $expected, $assertMessage)
@@ -482,6 +499,51 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @covers ActivityQueueManager::isLinkDupe
+     * @dataProvider dataProviderIsLinkDupe
+     */
+    public function testIsLinkDupeReturnsValidResult(array $link1, array $link2, $expected)
+    {
+        $aqm = new ActivityQueueManager();
+        $this->assertEquals($expected, SugarTestReflection::callProtectedMethod($aqm, 'isLinkDupe', array($link1, $link2)));
+    }
+
+    public static function dataProviderIsLinkDupe()
+    {
+        $link1 = array(
+            'id' => 'foo',
+            'module' => 'Accounts',
+            'related_module' => 'Leads',
+            'related_id' => 'bar',
+            'link' => 'leads',
+            'relationship' => 'account_leads',
+        );
+
+        $link2 = array(
+            'related_id' => 'foo',
+            'related_module' => 'Accounts',
+            'module' => 'Leads',
+            'id' => 'bar',
+            'link' => 'account',
+            'relationship' => 'account_leads',
+        );
+
+        $link3 = array(
+            'id' => 'baz',
+            'module' => 'Leads',
+            'related_id' => 'bar',
+            'related_module' => 'Accounts',
+            'link' => 'account',
+            'relationship' => 'account_leads',
+        );
+
+        return array(
+            array($link1, $link2, true),
+            array($link1, $link3, false),
+            array($link2, $link3, false),
+        );
+    }
 }
 
 class TestActivityQueueManager extends ActivityQueueManager

@@ -96,20 +96,20 @@ describe('Sugar7 sync alerts', function() {
             expect(alertStubs.dismiss).toHaveBeenCalled();
         });
     });
-    
+
     describe('process alerts for Backbone.sync()', function() {
         it('should display an alert on data:sync:start if options.showAlerts = true', function() {
             var options = { showAlerts: true };
             app.events.trigger('data:sync:start', 'read', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
-            app.events.trigger('data:sync:complete', 'read', model, options);
+            app.events.trigger('data:sync:success', 'read', model, options);
         });
 
         it('should display an alert on data:sync:start if options.showAlerts.process = true', function() {
             var options = { showAlerts: { process: true } };
             app.events.trigger('data:sync:start', 'read', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
-            app.events.trigger('data:sync:complete', 'read', model, options);
+            app.events.trigger('data:sync:success', 'read', model, options);
         });
 
         it('should not display an alert on data:sync:start by default', function() {
@@ -124,22 +124,22 @@ describe('Sugar7 sync alerts', function() {
             expect(alertStubs.show).not.toHaveBeenCalled();
         });
 
-        it('should hide the alert on data:sync:complete', function() {
+        it('should hide the alert on data:sync:success', function() {
             var options = { showAlerts: { process: true } };
-            app.events.trigger('data:sync:complete', 'read', model, options);
+            app.events.trigger('data:sync:success', 'read', model, options);
             expect(alertStubs.dismiss).toHaveBeenCalled();
         });
 
-        it('should dismiss the alert only on the last data:sync:complete', function() {
+        it('should dismiss the alert only on the last data:sync:success', function() {
             var options = { showAlerts: { process: true } };
             app.events.trigger('data:sync:start', 'read', model, options);
             app.events.trigger('data:sync:start', 'read', model, options);
             app.events.trigger('data:sync:start', 'read', model, options);
-            app.events.trigger('data:sync:complete', 'read', model, options);
+            app.events.trigger('data:sync:success', 'read', model, options);
             expect(alertStubs.dismiss).not.toHaveBeenCalled();
-            app.events.trigger('data:sync:complete', 'read', model, options);
+            app.events.trigger('data:sync:success', 'read', model, options);
             expect(alertStubs.dismiss).not.toHaveBeenCalled();
-            app.events.trigger('data:sync:complete', 'read', model, options);
+            app.events.trigger('data:sync:success', 'read', model, options);
             expect(alertStubs.dismiss).toHaveBeenCalled();
         });
 
@@ -153,26 +153,26 @@ describe('Sugar7 sync alerts', function() {
     });
 
     describe('success alerts for Backbone.sync()', function() {
-        it('should display an alert on data:sync:complete if options.showAlerts = true', function() {
+        it('should display an alert on data:sync:success if options.showAlerts = true', function() {
             var options = { showAlerts: true };
-            app.events.trigger('data:sync:complete', 'create', model, options);
+            app.events.trigger('data:sync:success', 'create', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
         });
 
-        it('should display an alert on data:sync:complete if options.showAlerts.success = true', function() {
+        it('should display an alert on data:sync:success if options.showAlerts.success = true', function() {
             var options = { showAlerts: { success: true } };
-            app.events.trigger('data:sync:complete', 'create', model, options);
+            app.events.trigger('data:sync:success', 'create', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
         });
 
         it('should not display an alert for read method', function() {
-            app.events.trigger('data:sync:complete', 'read', model, {});
+            app.events.trigger('data:sync:success', 'read', model, {});
             expect(alertStubs.show).not.toHaveBeenCalled();
         });
 
         it('should not display an alert if options.showAlerts.success = false', function() {
             var options = { showAlerts: { success: false } };
-            app.events.trigger('data:sync:complete', 'create', model, options);
+            app.events.trigger('data:sync:success', 'create', model, options);
             expect(alertStubs.show).not.toHaveBeenCalled();
         });
 
@@ -184,11 +184,52 @@ describe('Sugar7 sync alerts', function() {
                     }
                 }
             };
-            app.events.trigger('data:sync:complete', 'create', model, options);
+            app.events.trigger('data:sync:success', 'create', model, options);
             expect(alertStubs.show).toHaveBeenCalled();
             expect(alertStubs.show.args[0][0]).toBe('data:sync:success');
             expect(alertStubs.show.args[0][1].title).toEqual('Success');
             expect(alertStubs.show.args[0][1].messages).toEqual('Tests are green');
         });
     });
+
+    describe('error alerts for Backbone.sync()', function() {
+        it('should display an alert on data:sync:error if options.showAlerts = true', function() {
+            var options = { showAlerts: true };
+            app.events.trigger('data:sync:error', 'create', model, options);
+            expect(alertStubs.show).toHaveBeenCalled();
+        });
+
+        it('should display an alert on data:sync:error if options.showAlerts.error = true', function() {
+            var options = { showAlerts: { error: true } };
+            app.events.trigger('data:sync:error', 'create', model, options);
+            expect(alertStubs.show).toHaveBeenCalled();
+        });
+
+        it('should not display an alert for read method', function() {
+            app.events.trigger('data:sync:error', 'read', model, {});
+            expect(alertStubs.show).not.toHaveBeenCalled();
+        });
+
+        it('should not display an alert if options.showAlerts.error = false', function() {
+            var options = { showAlerts: { error: false } };
+            app.events.trigger('data:sync:error', 'create', model, options);
+            expect(alertStubs.show).not.toHaveBeenCalled();
+        });
+
+        it('should allow you to override alert options', function() {
+            var options = {
+                showAlerts: {
+                    error: {
+                        title: 'Error', messages: 'Tests are green'
+                    }
+                }
+            };
+            app.events.trigger('data:sync:error', 'create', model, options);
+            expect(alertStubs.show).toHaveBeenCalled();
+            expect(alertStubs.show.args[0][0]).toBe('data:sync:error');
+            expect(alertStubs.show.args[0][1].title).toEqual('Error');
+            expect(alertStubs.show.args[0][1].messages).toEqual('Tests are green');
+        });
+    });
+
 });

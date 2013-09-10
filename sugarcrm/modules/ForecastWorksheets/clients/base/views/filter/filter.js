@@ -64,22 +64,7 @@
      */
     _setUpFilters: function() {
         var ctx = this.context.parent || this.context,
-            selectedRanges = ctx.has("selectedRanges") ? ctx.get("selectedRanges") : app.defaultSelections.ranges,
-            moduleFilterNode = this.$el.find(".related-filter");
-
-        moduleFilterNode.select2({
-            data: [{id: ctx.get('module'), text: ctx.get('module')}],
-            multiple: false,
-            minimumResultsForSearch: 7,
-            formatSelection: this.formatModuleSelection,
-            containerCssClass: "select2-container-disabled",
-            dropdownCss: {display:"none"},
-            initSelection: function(element, callback) {
-                callback(this.data[0]);
-            },
-            escapeMarkup: function(m) { return m; },
-            width: 'off'
-        });
+            selectedRanges = ctx.has("selectedRanges") ? ctx.get("selectedRanges") : app.defaultSelections.ranges;
 
         this.node.select2({
             data:this._getRangeFilters(),
@@ -103,9 +88,6 @@
             width: '50%'
         });
 
-        //run this to "hard code" the module filter to Forecasts
-        moduleFilterNode.select2("val", ctx.get('module'));
-
         // set the default selections
         this.node.select2("val", selectedRanges);
 
@@ -126,13 +108,6 @@
      */
     formatCustomSelection: function(item) {        
         return '<span class="select2-choice-type">' + app.lang.get("LBL_FILTER") + '</span><a class="select2-choice-filter" rel="'+ item.id + '" href="javascript:void(0)">'+ item.text +'</a>';
-    },
-    
-    /**
-     * Format module pills
-     */
-    formatModuleSelection: function(item) {
-        return '<span class="select2-choice-type">' + app.lang.get("LBL_MODULE", 'Forecasts') + '</span><a class="select2-choice-related" href="javascript:void(0)">'+ item.text +'</a>';
     },
 
     /**

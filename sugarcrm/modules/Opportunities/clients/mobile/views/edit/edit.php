@@ -37,14 +37,19 @@ $fields = array(
     'amount',
     'account_name',
     'date_closed',
-    //'sales_stage',
+    array(
+        'name' => 'sales_status',
+        //BEGIN SUGARCRM flav=ent ONLY
+        'readonly' => true,
+        //END SUGARCRM flav=ent ONLY
+    ),
     'assigned_user_name',
     //BEGIN SUGARCRM flav=pro ONLY
     'team_name',
     //BEGIN SUGARCRM flav=pro ONLY
 );
 
-// here we add `sales_stage` for all flavors except ent and ult
+// here we add `sales_stage` for `pro` and `corporate` flavors
 //BEGIN SUGARCRM flav=pro && flav!=ent && flav!=ult ONLY
 $fields = array(
     array(

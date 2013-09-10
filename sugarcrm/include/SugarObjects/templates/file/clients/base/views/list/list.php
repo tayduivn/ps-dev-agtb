@@ -49,6 +49,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'id' => 'USERS_ID',
                     'default' => false,
                     'sortable' => false,
+                    'module' => 'Employees',
                     'related_fields' => array('modified_user_id'),
                 ),
                 array(
@@ -69,7 +70,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                 array(
                     'name' => 'team_name',
                     'width' => '2',
-                    'label' => 'LBL_LIST_TEAM',
+                    'label' => 'LBL_TEAM',
                     'sortable' => false,
                     'default' => true,
                     'enabled' => true,
@@ -82,6 +83,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => true,
                     'sortable' => false,
                     'enabled' => true,
+                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'active_date',

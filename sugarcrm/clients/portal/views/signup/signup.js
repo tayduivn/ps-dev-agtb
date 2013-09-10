@@ -155,7 +155,6 @@
     signup: function() {
         var self = this;
 
-        self.clearValidationErrors();
         self.model.doValidate(null, function(isValid) {
             if (isValid) {
                 app.$contentEl.hide();

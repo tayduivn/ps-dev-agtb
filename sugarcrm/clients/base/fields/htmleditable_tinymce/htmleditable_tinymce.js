@@ -167,6 +167,9 @@
                     self._isDirty = true;
                 });
             };
+            config.oninit = function(inst) {
+                self.context.trigger('tinymce:oninit', inst);
+            };
 
             $('.htmleditable').tinymce(config);
         }

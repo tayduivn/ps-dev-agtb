@@ -97,7 +97,7 @@ class MassUpdateApi extends SugarApi {
                 $args['massupdate_params']['filter'] = array();
             }
 
-            $args['massupdate_params']['filter'][] = array('date_entered' => array('$lt' => TimeDate::getInstance()->nowDb()));
+            $args['massupdate_params']['filter'][] = array('date_entered' => array('$lt' => TimeDate::getInstance()->getNow(true)));
         }
 
         return $this->massUpdate($api, $args);
@@ -149,14 +149,15 @@ class MassUpdateApi extends SugarApi {
 
         global $sugar_config;
         $asyncThreshold = isset($sugar_config['max_mass_update']) ? $sugar_config['max_mass_update'] : self::MAX_MASS_UPDATE;
-        if (!empty($mu_params['entire']) || ($uidCount>$asyncThreshold))
-        {
-            // create a job queue consumer for this
-            $massUpdateJob = new SugarJobMassUpdate();
-            $this->jobId = $massUpdateJob->createJobQueueConsumer($mu_params);
-
-            return array('status'=>'queued', 'jobId'=>$this->jobId);
-        }
+        //FIXME: Async massupdate is deprecated.
+        //FIXME: Folowing block is used for jobqueue.
+        //if (!empty($mu_params['entire']) || ($uidCount>$asyncThreshold))
+        //{
+        //    // create a job queue consumer for this
+        //    $massUpdateJob = new SugarJobMassUpdate();
+        //    $this->jobId = $massUpdateJob->createJobQueueConsumer($mu_params);
+        //    return array('status'=>'queued', 'jobId'=>$this->jobId);
+        //}
 
         $massUpdateJob = new SugarJobMassUpdate();
         $massUpdateJob->runUpdate($mu_params);

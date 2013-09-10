@@ -61,6 +61,8 @@ $viewdefs['base']['view']['user-locale-wizard-page'] = array(
                     'type' => 'enum',
                     'label' => 'LBL_WIZ_NAME_FORMAT',
                     'required' => true,
+                    //Define something other than comma since that is used in name format values
+                    'separator' => '|',
                 ),
             ),
         ),

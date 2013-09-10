@@ -70,6 +70,26 @@ describe("enum field", function() {
         expect(field.enumOptions).toEqual(app.lang.getAppListStrings());
         loadEnumSpy.restore();
     });
+
+    it("should default the value of the field to the first option if undefined", function() {
+        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        field.items = {'first': 'first', 'second': 'second'};
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.render();
+        loadEnumSpy.restore();
+        expect(field.model.get(field.name)).toEqual('first');
+    });
+
+    it("should not default the value of the field to the first option if defaultOnUndefined is false", function() {
+        var field = SugarTest.createField("base", fieldName, "enum", "edit", {options: "bugs_type_dom"});
+        field.items = {'first': 'first', 'second': 'second'};
+        field.defaultOnUndefined = false;
+        var loadEnumSpy = sinon.spy(field, "loadEnumOptions");
+        field.render();
+        loadEnumSpy.restore();
+        expect(field.model.get(field.name)).toBeUndefined();
+    });
+
     describe('enum API', function() {
         it('should load options from enum API if options is undefined', function() {
             var callStub = sinon.stub(app.api, 'enumOptions', function(module, field, callbacks) {
@@ -117,6 +137,20 @@ describe("enum field", function() {
         });
     });
 
+    describe("getSelect2Options", function() {
+        it("should allow separator to be configured via metadata", function(){
+            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, separator: '|', options: "bugs_type_dom"});
+            var select2opts = field.getSelect2Options([]);
+            expect(select2opts.separator).toEqual('|');
+            expect(select2opts.multiple).toBe(true);
+        });
+        it("should allow multiselect to be configured via metadata", function(){
+            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
+            var select2opts = field.getSelect2Options([]);
+            expect(select2opts.multiple).toBe(true);
+        });
+    });
+
     describe("multi select enum", function() {
 
         it("should display a labeled comma list for detail template", function() {
@@ -157,10 +191,31 @@ describe("enum field", function() {
             expect(field.unformat(original)).toEqual(expected);
         });
 
-        it('should format the blank value', function() {
-            field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
-            field.render();
-            expect(field.items['']).toEqual('LBL_BLANK_VALUE');
+        describe("blank value on multi select", function() {
+            it('should transform the empty key on render', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+                field.render();
+                expect(field.items['']).toBeUndefined();
+                expect(field.items['___i_am_empty___']).toEqual('LBL_BLANK_VALUE');
+            });
+            it('should format a value with blank option for the template', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+                var value = field.format(['Defect', '']);
+                expect(value).toEqual(['Defect', '___i_am_empty___']);
+            });
+            it('should unformat a value with blank option for the model', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "list", {isMultiSelect: true, options: "bugs_type_dom"});
+                var value = field.unformat(['Defect', '___i_am_empty___']);
+                expect(value).toEqual(['Defect', '']);
+            });
+        });
+
+        it('should prevent focus otherwise the dropdown is opened and it\'s impossible to remove an item', function() {
+            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
+            var jQueryStub = sinon.stub(field, '$');
+            field.focus();
+            expect(jQueryStub).not.toHaveBeenCalled();
+            jQueryStub.restore();
         });
 
     });

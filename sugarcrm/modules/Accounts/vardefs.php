@@ -174,6 +174,7 @@ $dictionary['Account'] = array(
             'module' => 'Emails',
             'link_type' => 'many',
             'relationship' => '',
+            'hideacl' => true,
         ),
         'documents' => array(
             'name' => 'documents',
@@ -324,7 +325,7 @@ $dictionary['Account'] = array(
             'name' => 'forecastworksheets',
             'type' => 'link',
             'relationship' => 'forecastworksheets_accounts',
-            'vname' => 'LBL_FORECAST_WORKSHEETS',
+            'vname' => 'LBL_FORECAST_WORKSHEET',
             'module' => 'ForecastWorksheets',
             'bean_name' => 'ForecastWorksheet',
             'source' => 'non-db',

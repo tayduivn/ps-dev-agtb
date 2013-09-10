@@ -123,13 +123,23 @@
      * Tracks if the preview panel is visible or not
      */
     previewVisible: false,
-    plugins: ['tooltip'],
+
+    /**
+     * is the collection syncing
+     * @param boolean
+     */
+    isCollectionSyncing: false,
+
+    /**
+     * The template for when we don't have access to a data point
+     */
+    noAccessDataErrorTemplate: undefined,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins);
-        this.plugins.push('cte-tabbing');
-        this.plugins.push('dirty-collection');
+        this.plugins.push('cte-tabbing', 'dirty-collection');
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display
@@ -139,6 +149,7 @@
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
         this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
+        this.noAccessDataErrorTemplate = app.template.getField('base', 'noaccess')(this);
     },
 
     _dispose: function() {
@@ -217,6 +228,14 @@
                     if (this.layout.isVisible()) {
                         this.checkForDraftRows(changed);
                     }
+                }, this);
+
+                this.collection.on('data:sync:start', function() {
+                    this.isCollectionSyncing = true;
+                }, this);
+
+                this.collection.on('data:sync:complete', function() {
+                    this.isCollectionSyncing = false;
                 }, this);
 
                 this.collection.on('reset', function() {
@@ -515,8 +534,7 @@
      */
     checkForDraftRows: function(lastCommitDate) {
         if (this.layout.isVisible() && this.canEdit && this.hasCheckedForDraftRecords === false
-            && !_.isEmpty(this.collection.models)) {
-
+            && !_.isEmpty(this.collection.models) && this.isCollectionSyncing === false) {
             this.hasCheckedForDraftRecords = true;
             if (_.isUndefined(lastCommitDate)) {
                 // we have rows but no commit, enable the commit button
@@ -535,6 +553,10 @@
         } else if(this.layout.isVisible() === false && this.canEdit && this.hasCheckedForDraftRecords === false) {
             // since the layout is not visible, lets wait for it to become visible
             this.layout.once('show', function() {
+                this.checkForDraftRows(lastCommitDate);
+            }, this);
+        } else if(this.isCollectionSyncing === true) {
+            this.collection.once('data:sync:complete', function() {
                 this.checkForDraftRows(lastCommitDate);
             }, this);
         }
@@ -656,6 +678,7 @@
             var calcFields = ['worst_case', 'best_case', 'likely_case'],
                 fields = _.filter(this._fields.visible, function(field) {
                     if (_.contains(calcFields, field.name)) {
+                        this.totals[field.name + '_access'] = app.acl.hasAccess('read', this.module, app.user.get('id'), field.name);
                         this.totals[field.name + '_display'] = true;
                         return true;
                     }
@@ -761,7 +784,7 @@
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);
-        this.trigger("data:sync:start", method, model, options);
+        this.collection.trigger("data:sync:start", method, model, options);
 
         url = app.api.buildURL("ForecastWorksheets", null, null, options.params);
         app.api.call("read", url, null, callbacks);
@@ -789,25 +812,18 @@
             wonBest = 0,
             wonWorst = 0,
             includedClosedCount = 0,
-            includedClosedAmount = 0;
+            includedClosedAmount = 0,
+            cfg = app.metadata.getModule('Forecasts', 'config');
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        var sales_stage_won_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_won || [];
-        var sales_stage_lost_setting = app.metadata.getModule('Forecasts', 'config').sales_stage_lost || [];
+        var sales_stage_won_setting = cfg.sales_stage_won || [],
+            sales_stage_lost_setting = cfg.sales_stage_lost || [];
 
         // set up commit_stages that should be processed in included total
-        var forecast_ranges = app.metadata.getModule('Forecasts', 'config').forecast_ranges,
-            commit_stages_in_included_total = [];
+        var commit_stages_in_included_total = ['include'];
 
-        if (forecast_ranges == 'show_custom_buckets') {
-            var ranges = app.metadata.getModule('Forecasts', 'config')[forecast_ranges + '_ranges'];
-            _.each(ranges, function(value, key) {
-                if (!_.isUndefined(value.in_included_total) && value.in_included_total) {
-                    commit_stages_in_included_total.push(key);
-                }
-            })
-        } else {
-            commit_stages_in_included_total.push('include');
+        if (cfg.forecast_ranges == 'show_custom_buckets') {
+            commit_stages_in_included_total = cfg.commit_stages_included;
         }
 
         this.collection.each(function(model) {

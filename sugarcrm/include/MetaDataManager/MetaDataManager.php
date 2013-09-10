@@ -31,6 +31,8 @@ require_once 'soap/SoapHelperFunctions.php';
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/SugarObjects/LanguageManager.php';
+require_once 'modules/ActivityStream/Activities/ActivityQueueManager.php';
+
 SugarAutoLoader::requireWithCustom('include/MetaDataManager/MetaDataHacks.php');
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
@@ -106,7 +108,7 @@ class MetaDataManager
             $parent_bean = (object) array('module_dir' => $moduleName);
         }
 
-        $spd = new SubPanelDefinitions($parent_bean);
+        $spd = new SubPanelDefinitions($parent_bean, '', '', $this->platforms[0]);
         $layout_defs = $spd->layout_defs;
 
         if (is_array($layout_defs) && isset($layout_defs['subpanel_setup'])) {
@@ -223,6 +225,8 @@ class MetaDataManager
         // Indicate whether Module Has duplicate checking enabled --- Rules must exist and Enabled flag must be set
         $data['dupCheckEnabled'] = isset($vardefs['duplicate_check']) && isset($vardefs['duplicate_check']['enabled']) && ($vardefs['duplicate_check']['enabled']===true);
 
+        // Indicate whether a Module has activity stream enabled
+        $data['activityStreamEnabled'] = ActivityQueueManager::isEnabledForModule($moduleName);
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
@@ -351,32 +355,6 @@ class MetaDataManager
 
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
-        }
-
-        // loop over the fields to find if they can be sortable
-        // get the indexes on the module and the first field of each index
-        $indexes = array();
-        if (isset($data['indices'])) {
-            foreach ($data['indices'] AS $index) {
-                if (isset($index['fields'][0])) {
-                    $indexes[$index['fields'][0]] = $index['fields'][0];
-                }
-            }
-        }
-
-        // If sortable isn't already set THEN
-        //      Set it sortable to TRUE, if the field is indexed.
-        //      Set sortable to FALSE, otherwise. (Bug56943, Bug57644)
-        $isIndexed = !empty($indexes);
-        if (!empty($data['fields']) && is_array($data['fields'])) {
-            foreach ($data['fields'] AS $field_name => $info) {
-                if (!isset($data['fields'][$field_name]['sortable'])) {
-                    $data['fields'][$field_name]['sortable'] = false;
-                    if ($isIndexed && isset($indexes[$field_name])) {
-                        $data['fields'][$field_name]['sortable'] = true;
-                    }
-                }
-            }
         }
 
         return $data;
@@ -828,7 +806,7 @@ class MetaDataManager
      */
     public function hasUserMetadataChanged($user, $hash)
     {
-        return md5($user->date_modified) != $hash;
+       return $user->getUserMDHash() != $hash;
     }
 
     /**

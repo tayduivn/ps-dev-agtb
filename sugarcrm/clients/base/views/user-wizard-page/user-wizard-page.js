@@ -33,7 +33,7 @@
             fields = _.keys(this.fieldsToValidate);
         _.each(fields, function(key) {
             payload[key] = self.model.get(key);
-        })
+        });
         return payload;
     },
     /**
@@ -43,7 +43,6 @@
      */
     beforeNext: function(callback) {
         var self = this;
-        this.clearValidationErrors();
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
                 if (isValid) {

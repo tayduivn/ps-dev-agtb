@@ -277,7 +277,6 @@ $mod_strings = array (
     'LBL_NAME'							=> 'Full Name',
     'LBL_SIGNATURE_NAME'                                        =>  'Name',
     'LBL_NAVIGATION_PARADIGM'           => 'Navigation',
-    'LBL_NAVIGATION_PARADIGM_DESCRIPTION'   => 'Select to be able to view modules in the navigation bar based on pre-defined groups. When selected, the "Filter Menu By" feature will appear in the "More" menu.',
     'LBL_USE_GROUP_TABS'                => 'Module Menu Filters',
 	'LBL_NEW_FORM_TITLE'				=> 'New User',
 	'LBL_NEW_PASSWORD'					=> 'New Password',

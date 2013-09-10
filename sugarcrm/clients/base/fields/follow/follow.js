@@ -73,28 +73,34 @@
         this.$("[data-hover=true]").off();
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'unbindDom'});
     },
-    _render: function() {
-        var mouseoverText, mouseoverClass, self = this;
-        app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
+    _render: function () {
+        var module, mouseoverText, mouseoverClass, self = this;
 
-        if(this.tplName !== "detail") {
-            return;
-        }
-
-        if (this.model.get("following")) {
-            mouseoverText = app.lang.get("LBL_UNFOLLOW");
-            mouseoverClass = "label-important";
+        module = app.metadata.getModule(this.model.module);
+        if (!module.activityStreamEnabled) {
+            this.hide();
         } else {
-            mouseoverText = app.lang.get("LBL_FOLLOW");
-            mouseoverClass = "label-success";
-        }
+            app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: '_render'});
 
-        this.$("[data-hover=true]").on("mouseover", function() {
-            $(this).text(mouseoverText).attr("class", "label").addClass(mouseoverClass);
-        }).on("mouseout", function() {
-            var kls = self.model.get("following") ? "label-success" : "";
-            $(this).text(self.label).attr("class", "label").addClass(kls);
-        });
+            if (this.tplName !== "detail") {
+                return;
+            }
+
+            if (this.model.get("following")) {
+                mouseoverText = app.lang.get("LBL_UNFOLLOW");
+                mouseoverClass = "label-important";
+            } else {
+                mouseoverText = app.lang.get("LBL_FOLLOW");
+                mouseoverClass = "label-success";
+            }
+
+            this.$("[data-hover=true]").on("mouseover",function () {
+                $(this).text(mouseoverText).attr("class", "label").addClass(mouseoverClass);
+            }).on("mouseout", function () {
+                    var kls = self.model.get("following") ? "label-success" : "";
+                    $(this).text(self.label).attr("class", "label").addClass(kls);
+                });
+        }
     },
     /**
      * Call REST API for subscribe and unsubscribe
@@ -105,31 +111,13 @@
         var isFollowing = this.model.get("following");
 
         if(!_.isUndefined(isFollowing)) {
-            var guid = this.model.get("id"),
-                module = this.model.module,
-                method, action, value;
-
-            if(isFollowing) {
-                method = "delete";
-                action = "unsubscribe";
-                value = false;
+            var options = {
+                alerts: false
+            };
+            if (this.model.follow(!isFollowing, options) === false) {
+                app.logger.error('Unable to follow "' + this.model.module + '" record "' + this.model.id);
+                return;
             }
-            else {
-                method = "create";
-                action = "subscribe";
-                value = true;
-            }
-            var self = this,
-                url = app.api.buildURL(module, action, {id: guid});
-
-            app.api.call(method, url, null, {
-                success: function() {
-                    if(self.disposed) {
-                        return;
-                    }
-                    self.model.set("following", value);
-                }
-            });
         }
     }
 })

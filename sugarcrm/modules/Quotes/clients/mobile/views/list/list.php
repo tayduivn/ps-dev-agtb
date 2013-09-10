@@ -40,7 +40,7 @@ $viewdefs['Quotes']['mobile']['view']['list'] = array(
                     'width' => '10%',
                 ),
                 array(
-                    'name' => 'account_name',
+                    'name' => 'billing_account_name',
                     'label' => 'LBL_ACCOUNT_NAME',
                     'enabled' => true,
                     'width' => '10%',

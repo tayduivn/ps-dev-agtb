@@ -373,10 +373,17 @@ class FileApi extends SugarApi {
         $this->verifyFieldAccess($bean, $field);
         //END SUGARCRM flav=pro ONLY
 
+        $def = $bean->field_defs[$field];
+        //for the image type field, forceDownload set default as false in order to display on the image element.
+        $forceDownload = ($def['type'] == 'image') ? false : true;
+        if (isset($args['force_download'])) {
+            $forceDownload = (bool) $args['force_download'];
+        }
+
         require_once 'include/download_file.php';
         $download = new DownloadFileApi($api);
         try {
-            $download->getFile($bean, $field);
+            $download->getFile($bean, $field, $forceDownload);
         } catch (Exception $e) {
             throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
         }

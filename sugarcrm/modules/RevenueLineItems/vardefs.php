@@ -66,7 +66,10 @@ $dictionary['RevenueLineItem'] = array(
             'required' => false,
             'reportable' => false,
             'audited' => true,
-            'comment' => 'Account this product is associated with'
+            'comment' => 'Account this product is associated with',
+            'formula' => 'related($opportunities, "account_id")',
+            'enforced' => true,
+            'calculated' => true,
         ),
         'contact_id' => array(
             'name' => 'contact_id',
@@ -224,14 +227,14 @@ $dictionary['RevenueLineItem'] = array(
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
-            'formula' => 'ifElse(isNumeric($discount_amount),ifElse(equal($discount_amount,0),0,multiply(divide($discount_amount,add($discount_amount,$total_amount)),100)),0)',
+            'formula' => 'ifElse(isNumeric($discount_amount),ifElse(equal($discount_amount,0),0,multiply(divide($discount_amount,ifElse(equal(add($discount_amount,$total_amount), 0), $discount_amount, add($discount_amount,$total_amount))),100)),0)',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_DISCOUNT_AS_PERCENT',
             'reportable' => false,
             'type' => 'decimal',
             'precision' => 2,
-            'len' => '4,2'
+            'len' => '27,2'
         ),
         'discount_amount_usdollar' => array(
             'name' => 'discount_amount_usdollar',
@@ -573,7 +576,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_COMMIT_STAGE_FORECAST',
             'type' => 'enum',
             'default' => 'exclude',
-            'options' => 'commit_stage_binary_dom',
             'len' => '50',
             'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
         ),
@@ -657,14 +659,6 @@ $dictionary['RevenueLineItem'] = array(
             'relationship' => 'documents_revenuelineitems',
             'source' => 'non-db',
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
-        ),
-        'contracts' => array(
-            'name' => 'contracts',
-            'type' => 'link',
-            'vname' => 'LBL_CONTRACTS',
-            'relationship' => 'contracts_revenuelineitems',
-            'link_type' => 'one',
-            'source' => 'non-db',
         ),
         // Added for Meta-Data framework
         'currency_name' => array(

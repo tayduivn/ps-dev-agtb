@@ -64,7 +64,6 @@ EOQ;
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];
         $this->displayParams = array('sources'=>array('ext_rest_twitter'));
         $this->tabindex = 0;
-        require_once 'include/Sugar_Smarty.php';
         $this->ss = new Sugar_Smarty();
         $this->ss->assign('parentFieldArray', $this->parentFieldArray);
         $this->ss->assign('vardef', $this->vardef);

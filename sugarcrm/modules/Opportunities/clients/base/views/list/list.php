@@ -126,7 +126,8 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true,
-        'readonly' => true
+        'readonly' => true,
+        'module' => 'Employees',
     ),
     array(
         'name' => 'team_name',
@@ -145,6 +146,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
         'sortable' => false,
+        'module' => 'Employees',
     ),
     array(
         'name' => 'modified_by_name',
@@ -154,6 +156,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
         'readonly' => true,
+        'module' => 'Employees',
     ),
     array(
         'name' => 'date_entered',
@@ -250,6 +253,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
         'readonly' => true,
+        'module' => 'Employees',
     ),
     array(
         'name' => 'team_name',
@@ -268,6 +272,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
         'sortable' => false,
+        'module' => 'Employees',
     ),
     array(
         'name' => 'modified_by_name',
@@ -277,6 +282,7 @@ $fields = array(
         'enabled' => true,
         'default' => true,
         'readonly' => true,
+        'module' => 'Employees',
     ),
     array(
         'name' => 'date_entered',

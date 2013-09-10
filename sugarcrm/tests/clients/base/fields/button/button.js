@@ -67,6 +67,22 @@ describe("Base.Field.Button", function() {
         expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
     });
 
+    it("setDisabled should clean up after itself and restore field.def.css_class value after _render", function() {
+        var def = {
+            css_class: 'original'
+        };
+        field = SugarTest.createField("base","button", "button", "edit", def);
+        field._loadTemplate = function() {  this.template = function(){ return '<a class="btn" href="javascript:void(0);"></a>'}; };
+        field.render();
+        expect(field.def.css_class).toEqual('original');
+        field.setDisabled(true);
+        expect(field.def.css_class).toEqual('original');
+        expect(field.getFieldElement().hasClass("disabled")).toBeTruthy();
+        field.setDisabled(false);
+        expect(field.def.css_class).toEqual('original');
+        expect(field.getFieldElement().hasClass("disabled")).toBeFalsy();
+    });
+
     it("should show and hide functions must trigger hide and show events, and it should change the isHidden property", function() {
 
         SugarTest.testMetadata.init();

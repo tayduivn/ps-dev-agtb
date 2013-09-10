@@ -268,7 +268,10 @@ class FilterApi extends SugarApi
         $q->distinct(true);
 
         foreach ($options['order_by'] as $orderBy) {
-            self::verifyField($q, $orderBy[0]);
+            // ID and date_modified are used to give some order to the system
+            if ( $orderBy[0] != 'date_modified' && $orderBy[0] != 'id' ) {
+                self::verifyField($q, $orderBy[0]);
+            }
             $q->orderBy($orderBy[0], $orderBy[1]);
         }
         // Add an extra record to the limit so we can detect if there are more records to be found
@@ -349,13 +352,7 @@ class FilterApi extends SugarApi
         //
     }
 
-    protected function runQuery(
-        ServiceBase $api,
-        array $args,
-        SugarQuery $q,
-        array $options,
-        SugarBean $seed
-    ) {
+    protected function runQuery(ServiceBase $api, array $args, SugarQuery $q, array $options, SugarBean $seed) {
         $seed->call_custom_logic("before_filter", array($q, $options));
         $GLOBALS['log']->info("Filter SQL: " . $q->compileSql());
         $idRows = $q->execute();
@@ -377,15 +374,22 @@ class FilterApi extends SugarApi
                     $getBeanOptions['deleted'] = false;
                 }
                 $bean = BeanFactory::getBean($options['module'], $row['id'],$getBeanOptions);
+
+                // If we are filtering on a link and there is link data we need to populate the bean manually
+                if (!empty($options['linkDataFields']) && is_array($options['linkDataFields'])) {
+                    foreach ($options['linkDataFields'] as $fieldName) {
+                        if (!empty($row[$fieldName])) {
+                            $bean->$fieldName = $row[$fieldName];
+                        }
+                    }
+                }
             } else {
                 // Fetch a fresh "bean", even if $seed is a mock.
                 $bean = $seed->getCleanCopy();
                 // convert will happen inside populateFromRow
                 $bean->loadFromRow($row, true);
                 $this->populateRelatedFields($bean, $row);
-                if (!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent(
-                )
-                ) {
+                if (!empty($bean->id) && !empty($row['parent_type']) && $q->hasParent()) {
                     $child_info[$row['parent_type']][] = array(
                         'child_id' => $bean->id,
                         'parent_id' => $bean->parent_id,
@@ -530,18 +534,28 @@ class FilterApi extends SugarApi
                     $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] : $fieldInfo['def']['type'];
                     $sugarField = $sfh->getSugarField($fieldType);
                     if (!is_array($filter)) {
-                        // This is just simple match
-                        $where->equals($field, $sugarField->convertFieldForDB($filter));
-                        continue;
+                        $value = $filter;
+                        $filter = array();
+                        $filter['$equals'] = $value;
                     }
                     foreach ($filter as $op => $value) {
+                        /*
+                         * occasionally fields may need to be fixed up for the Filter, for instance if you are
+                         * doing an operation on a datetime field and only send in a date, we need to fix that field to
+                         * be a dateTime then unFormat it so that its in GMT ready for DB use
+                         */
+                        if ($sugarField->fixForFilter($value, $field, $fieldInfo['bean'], $q, $where, $op) == false) {
+                            continue;
+                        }
+
                         if (is_array($value)) {
                             foreach ($value as $i => $val) {
-                                $value[$i] = $sugarField->convertFieldForDB($val);
+                                $value[$i] = $sugarField->apiUnformat($val);
                             }
                         } else {
-                            $value = $sugarField->convertFieldForDB($value);
+                            $value = $sugarField->apiUnformat($value);
                         }
+
                         switch ($op) {
                             case '$equals':
                                 $where->equals($field, $value);
@@ -570,6 +584,7 @@ class FilterApi extends SugarApi
                                 }
                                 $where->notIn($field, $value);
                                 break;
+                            case '$dateBetween':
                             case '$between':
                                 if (!is_array($value) || count($value) != 2) {
                                     throw new SugarApiExceptionInvalidParameter(
@@ -598,14 +613,6 @@ class FilterApi extends SugarApi
                                 break;
                             case '$dateRange':
                                 $where->dateRange($field, $value);
-                                break;
-                            case '$dateBetween':
-                                if (!is_array($value) || count($value) != 2) {
-                                    throw new SugarApiExceptionInvalidParameter(
-                                        '$dateBetween requires an array with two values.'
-                                    );
-                                }
-                                $where->dateBetween($field, $value);
                                 break;
                             default:
                                 throw new SugarApiExceptionInvalidParameter("Did not recognize the operand: " . $op);

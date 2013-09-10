@@ -10,8 +10,13 @@
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
         if(this.tplName === 'edit') {
             this.checkAcl('access', this.model.get('parent_type'));
+
+            var inList = (this.view.name === 'recordlist') ? true : false;
+
             this.$(this.typeFieldTag).select2({
-                width : '100%',
+                dropdownCssClass: inList?'select2-narrow':'',
+                containerCssClass: inList?'select2-narrow':'',
+                width: inList?'off':'100%',
                 minimumResultsForSearch: 5
             }).on("change", function(e) {
                 var module = e.val;

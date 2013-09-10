@@ -4860,6 +4860,9 @@ text-shadow: 0px 1px #fff;
 	padding: 5px;
 }
 
+.calendarButtons {
+    margin-bottom: 10px;
+}
 /* for subpanel tabs */
 .subpanelTabForm
 {
@@ -6836,6 +6839,10 @@ ul.clickMenu.showLess .moreOverflow , ul.clickMenu.showLess .moduleMenuOverFlowL
 	display:none;
 }
 
+ul#selectLinkBottom li>span, ul#selectLinkTop li>span {
+    border-left: 1px #aaa solid;
+}
+
 #globalLinksDivider {
 	float: right;
 	margin-right: 0px;	
@@ -6893,6 +6900,10 @@ td.paginationActionButtons ul.clickMenu .massall,
 ul#selectLink.clickMenu .massall, td.selectCol .massall{
 	float: left;
 	margin: 4px 4px;
+}
+
+input[name='mass[]'] {
+    margin-left: 5px;
 }
 
 td.paginationActionButtons ul.selectmenu > li > a, td.selectCol ul.selectmenu > li > a, ul#selectLink.clickMenu > li > a {

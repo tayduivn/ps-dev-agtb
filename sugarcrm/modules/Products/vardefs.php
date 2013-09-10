@@ -519,7 +519,6 @@ $dictionary['Product'] = array(
             'type' => 'date',
             'audited' => true,
             'comment' => 'Expected or actual date the product (for opportunity) will close',
-            'importable' => 'required',
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
         ),
@@ -647,16 +646,6 @@ $dictionary['Product'] = array(
             'required' => true,
             'reportable' => false,
             'comment' => 'The opportunity id for the line item entry'
-        ),
-        'opportunity_link' =>  array(
-            'name' => 'opportunity_link',
-            'type' => 'link',
-            'relationship' => 'opportunities_products',
-            'vname' => 'LBL_OPPORTUNITY',
-            'link_type' => 'one',
-            'module' => 'Opportunities',
-            'bean_name' => 'Opportunity',
-            'source' => 'non-db',
         ),
         'opportunity_name' => array(
             'name' => 'opportunity_name',
@@ -827,7 +816,7 @@ $dictionary['Product'] = array(
             'rhs_module' => 'Products',
             'rhs_table' => 'products',
             'rhs_key' => 'opportunity_id',
-            'relationship_type' => 'one-to-one'
+            'relationship_type' => 'one-to-many'
         ),
         'products_accounts' =>  array(
             'lhs_module' => 'Accounts',

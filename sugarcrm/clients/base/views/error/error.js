@@ -41,7 +41,7 @@
     },
     _render: function() {
         if(this.context.get('errorType')) {
-            attributes = this.getErrorAttributes();
+            var attributes = this.getErrorAttributes();
             this.model.set(attributes);
         }
         app.view.View.prototype._render.call(this);
@@ -62,9 +62,9 @@
             };
         } else {
             var error = this.context.get('error') || {};
-	        var title = null;
-            if(error.status && error.errorThrown) {
-            	title = 'HTTP: '+error.status+' '+error.errorThrown
+            var title = null;
+            if (error.status && error.errorThrown) {
+                title = 'HTTP: ' + error.status + ' ' + error.errorThrown;
             }
             attributes = {
                 title: title || 'ERR_HTTP_DEFAULT_TITLE',
