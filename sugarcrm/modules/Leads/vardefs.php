@@ -546,6 +546,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'module' => 'Emails',
         'link_type' => 'many',
         'relationship' => '',
+        'hideacl' => true,
     ),
   'email_addresses' =>
    array (
