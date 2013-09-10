@@ -62,6 +62,18 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $forecast_strings = $this->getModuleLanguage('Forecasts');
         $config = $this->getForecastConfig();
 
+        $acl = new SugarACLForecastWorksheets();
+
+        $bestAccess = $acl->checkAccess(
+            'ForecastWorksheets',
+            'field',
+            array('field' => 'best_case', 'action' => 'view')
+        );
+        $worstAccess = $acl->checkAccess(
+            'ForecastWorksheets',
+            'field',
+            array('field' => 'worst_case', 'action' => 'view')
+        );
 
         if (!empty($this->dataArray)) {
             foreach ($this->dataArray as $data) {
@@ -75,10 +87,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                     'date_closed_timestamp' => intval($data['date_closed_timestamp'])
                 );
 
-                if ($config['show_worksheet_best']) {
+                if ($config['show_worksheet_best'] && $bestAccess) {
                     $v['best'] = SugarCurrency::convertWithRate($data['best_case'], $data['base_rate']);
                 }
-                if ($config['show_worksheet_worst']) {
+                if ($config['show_worksheet_worst'] && $worstAccess) {
                     $v['worst'] = SugarCurrency::convertWithRate($data['worst_case'], $data['base_rate']);
                 }
 

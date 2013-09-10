@@ -24,9 +24,7 @@ class ForecastsModuleApi extends ModuleApi
         }
 
         $obj = $this->getClass($args);
-        $obj->save();
-
-        return array();
+        return $obj->save();
     }
 
     /**

@@ -624,7 +624,7 @@ class ForecastWorksheet extends SugarBean
      * @param $forecast_by
      * @return bool
      */
-    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by)
+    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by = null)
     {
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiod_id);
@@ -636,6 +636,10 @@ class ForecastWorksheet extends SugarBean
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
+
+        if (is_null($forecast_by)) {
+            $forecast_by = $settings['forecast_by'];
+        }
 
         // setup the return array
         $return = array(
@@ -658,6 +662,8 @@ class ForecastWorksheet extends SugarBean
             'total_opp_count' => 0,
             'includedClosedCount' => 0,
             'includedClosedAmount' => '0',
+            'includedClosedBest' => '0',
+            'includedClosedWorst' => '0',
             'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
         );
@@ -695,7 +701,7 @@ class ForecastWorksheet extends SugarBean
             }
 
             if (in_array($row['commit_stage'], $settings['commit_stages_included'])) {
-                if(!$closed) {
+                if (!$closed) {
                     $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
                     $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
                     $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
@@ -705,6 +711,10 @@ class ForecastWorksheet extends SugarBean
                     $return['includedClosedCount']++;
                     $return['includedClosedAmount'] = SugarMath::init($return['includedClosedAmount'], 6)
                         ->add($amount_base)->result();
+                    $return['includedClosedBest'] = SugarMath::init($return['includedClosedBest'], 6)
+                        ->add($best_base)->result();
+                    $return['includedClosedWorst'] = SugarMath::init($return['includedClosedWorst'], 6)
+                        ->add($worst_base)->result();
                 }
             }
 

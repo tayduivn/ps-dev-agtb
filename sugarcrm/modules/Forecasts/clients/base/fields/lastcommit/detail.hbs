@@ -3,7 +3,11 @@
         <div class="pull-right">
             {{#each this.data_points}}
                 <div class="datapoint pull-left">
-                    {{formatCurrency this}}
+                    {{#if this.value}}
+                        {{formatCurrency this.value}}
+                    {{else}}
+                        {{{this.error}}}
+                    {{/if}}
                 </div>
             {{/each}}
         </div>
