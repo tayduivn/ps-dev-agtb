@@ -127,3 +127,25 @@
 .outline(@val) {
   outline: @val;
 }
+
+/* Mixins for .scroll-width classes on flex lists */
+.right-shadow {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: -2px;
+  bottom: -1px;
+  width: 5px;
+  #gradient > .horizontal(rgba(0,0,0,0.1), rgba(255,255,255,0));
+  background-color: transparent;
+}
+.left-shadow {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: -2px;
+  bottom: -1px;
+  width: 5px;
+  #gradient > .horizontal(rgba(255,255,255,0), rgba(0,0,0,0.1));
+  background-color: transparent;
+}

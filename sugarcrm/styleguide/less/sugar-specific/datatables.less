@@ -721,52 +721,6 @@ FLEXLIST GENERIC */
 
 }
 
-/*Mixins for .scroll-width classes*/
-.right-shadow {
-  content: "";
-  position: absolute;
-  right: -5px;
-  top: -2px;
-  bottom: -1px;
-  width: 5px;
-
-  /* Webkit (Safari/Chrome 10) */
-  //background-image: -webkit-gradient(linear, left top, right top, color-stop(0, rgba(0, 0, 0, 0.1)), color-stop(1, transparent));
-  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#bbb), to(transparent));
-  /* Webkit (Chrome 11+) */
-  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
-  /* Mozilla Firefox */
-  background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
-  /* Opera */
-  background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
-  /* IE10 Consumer Preview */
-  background-image: -ms-linear-gradient(left, rgba(0, 0, 0, 0.1), transparent);
-  /* W3C Markup, IE10 Release Preview */
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
-}
-
-.left-shadow {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: -2px;
-  bottom: -1px;
-  width: 5px;
-
-  /* Webkit (Safari/Chrome 10) */
-  //background-image: -webkit-gradient(linear, right top, left top, color-stop(0, rgba(0, 0, 0, 0.1)), color-stop(1, transparent));
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#bbb), to(transparent));
-  /* Webkit (Chrome 11+) */
-  background-image: -webkit-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
-  /* Mozilla Firefox */
-  background-image: -moz-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
-  /* Opera */
-  background-image: -o-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
-  /* IE10 Consumer Preview */
-  background-image: -ms-linear-gradient(right, rgba(0, 0, 0, 0.1), transparent);
-  /* W3C Markup, IE10 Release Preview */
-  background-image: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
-}
 /**
  * The flex list allows you to add left actions and right actions to the traditional list view.
  * The code below aims to fix the first action column and the last action column
