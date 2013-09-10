@@ -507,10 +507,8 @@
                 lhsData = this.context.parent.get('lhsData');
             }
 
-            if(lhsData) {
+            if(lhsData && !_.isEmpty(lhsData.quotas.models.attributes)) {
                 var lhsTotal = 0;
-                    //ctx = this.context.parent || this.context,
-                    //ctxMdl = ctx.get('model');
                 _.each(lhsData.quotas.models.attributes, function(val, key) {
                     lhsTotal = app.math.add(lhsTotal, val.quota);
                 }, this);
