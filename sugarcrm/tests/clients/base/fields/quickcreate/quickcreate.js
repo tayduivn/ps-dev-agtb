@@ -1,5 +1,5 @@
 describe("Base.Field.QuickCreate", function() {
-    var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount, collection, spyOnFetch;
+    var app, field, drawerBefore, event, alertShowStub, alertConfirm, mockDrawerCount, collection, spyOnLoad;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -25,16 +25,15 @@ describe("Base.Field.QuickCreate", function() {
             currentTarget: '<a data-module="Foo" data-layout="Bar"></a>'
         };
 
-        collection = {
-            module: "Foo",
-            fetch: function(){}
-        };
-        spyOnFetch = sinon.spy(collection, 'fetch');
+        collection = new app.BeanCollection();
+        collection.module = "Foo";
+        collection.fetch = function(){};
+        spyOnLoad = sinon.spy(app.Context.prototype, 'loadData');
     });
 
     afterEach(function() {
         alertShowStub.restore();
-        spyOnFetch.restore();
+        spyOnLoad.restore();
         app.drawer = drawerBefore;
         app.cache.cutAll();
         app.view.reset();
@@ -79,7 +78,7 @@ describe("Base.Field.QuickCreate", function() {
 
         app.controller.context.set("collection", collection);
         field._handleActionLink(event);
-        expect(spyOnFetch).toHaveBeenCalled();
+        expect(spyOnLoad).toHaveBeenCalled();
         app.controller.context.unset("collection");
     });
 
@@ -87,12 +86,12 @@ describe("Base.Field.QuickCreate", function() {
         alertConfirm = true;
         mockDrawerCount = 1;
         app.drawer.open = function(options, callback){ callback(true); };
-        var child = new Backbone.Model();
+        var child = new app.Context();
 
         child.set("collection", collection);
         app.controller.context.children = [child];
         field._handleActionLink(event);
-        expect(spyOnFetch).toHaveBeenCalled();
+        expect(spyOnLoad).toHaveBeenCalled();
         app.controller.context.children = [];
     });
 });

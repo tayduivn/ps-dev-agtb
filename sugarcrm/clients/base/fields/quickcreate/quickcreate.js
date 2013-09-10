@@ -69,7 +69,7 @@
                 create: true,
                 module: module
             }
-        }, function (refresh) {
+        }, _.bind(function (refresh) {
             if (refresh) {
                 //Check main context to see if it needs to be updated
                 this._loadContext(app.controller.context, module);
@@ -80,7 +80,7 @@
                     }, this);
                 }
             }
-        });
+        }, this));
     },
     /**
      * Conditionally load context if it is for given module
@@ -91,10 +91,15 @@
     _loadContext: function(context, module){
         var collection = context.get('collection');
         if (collection && collection.module === module) {
-            collection.fetch({
+            var options = {
                 //Don't show alerts for this request, background update
                 showAlerts: false
-            });
+            };
+            collection.resetPagination();
+            context.resetLoadFlag(false);
+            context.set('skipFetch', false);
+            options = _.extend(options, context.get('collectionOptions'));
+            context.loadData(options);
         }
     }
 })
