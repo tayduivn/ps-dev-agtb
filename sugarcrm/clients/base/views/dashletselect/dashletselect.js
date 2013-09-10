@@ -10,35 +10,44 @@
  *
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
+
+/**
+ * "Add a dashlet" view.
+ * Displays a list of dashlets filtered according to current module and layout.
+ * @class View.DashletSelectView
+ * @alias SUGAR.App.view.views.DashletSelectView
+ * @extends View.FilteredListView
+ */
 ({
-    events: {
-        'click .select' : 'selectClicked',
-        'click .preview' : 'previewClicked',
-        'keyup .search' : 'searchFired'
-    },
-    plugins: ['ellipsis_inline'],
-    dataTable: null,
+    extendsFrom: 'FilteredListView',
 
     /**
-     * Triggers dataTable filter to search the typed string
+     * {@inheritDoc}
      *
-     * @param {Event} evt Window event.
+     * Displays a filtered list of dashlets.
+     * Uses client-generated collection with disabled load state, custom
+     * preview and select actions.
      */
+    initialize: function(options) {
+        var meta = app.metadata.getView(null, 'dashletselect') || {};
+        options.meta = _.extend({}, meta, options.meta || {});
 
-    searchFired: function(evt) {
-        var value = $(evt.currentTarget).val();
-        this.dataTable.fnFilter(value, 0);
-    },
+        this._super('initialize', [options]);
 
-    /**
-     * Operation when user clicks preview
-     *
-     * @param {Event} evt Window event.
-     */
-    previewClicked: function(evt) {
-        var index = $(evt.currentTarget).data('index');
-        var collection = this.context.get('dashlet_collection');
-        this.previewDashlet(collection[index].metadata);
+        // To avoid reset while sorting.
+        this.context = _.extend(_.clone(this.context), {
+            resetLoadFlag: function() {
+                return;
+            }
+        });
+
+        this.context.on('dashletlist:select-and-edit', function(model, collection) {
+            this.selectDashlet(model.get('metadata'));
+        }, this);
+
+        this.context.on('dashletlist:preview:fire', function(model, collection) {
+            this.previewDashlet(model.get('metadata'));
+        }, this);
     },
 
     /**
@@ -112,17 +121,6 @@
     },
 
     /**
-     * Operation when user clicks [Select and Edit]
-     *
-     * @param {Event} evt Window event.
-     */
-    selectClicked: function(evt) {
-        var index = $(evt.currentTarget).data('index');
-        var collection = this.context.get('dashlet_collection');
-        this.selectDashlet(collection[index].metadata);
-    },
-
-    /**
      * Load dashlet configuration view by passing configuration metadata
      *
      * @param {Object} metadata Configuration metadata.
@@ -151,63 +149,17 @@
     },
 
     /**
-     * {@inheritDoc}
-     *
-     * After rendering the template, it activates dataTable plugin.
-     */
-    _render: function() {
-        app.view.View.prototype._render.call(this);
-        var self = this;
-        if (this.context.get('dashlet_collection')) {
-            this.dataTable = this.$('#dashletList').dataTable({
-                'bFilter': true,
-                'bInfo': false,
-                'bPaginate': false,
-                'aaData': this.getFilteredList(),
-                'aoColumns': [
-                    {
-                        sTitle: app.lang.get('LBL_NAME')
-                    },
-                    {
-                        sTitle: app.lang.get('LBL_DESCRIPTION')
-                    },
-                    {
-                        sTitle: app.lang.get('LBL_LISTVIEW_ACTIONS'),
-                        fnRender: function(obj) {
-                            return '<a class="select" href="javascript:void(0);" ' +
-                                'data-index="' + obj.aData[obj.iDataColumn] + '" ' +
-                                '>' + app.lang.get('LBL_LISTVIEW_SELECT_AND_EDIT') + '</a>';
-                        },
-                        bSortable: false
-                    },
-                    {
-                        sTitle: app.lang.get('LBL_PREVIEW'),
-                        fnRender: function(obj) {
-                            return '<a class="preview" href="javascript:void(0);" ' +
-                                'data-index="' + obj.aData[obj.iDataColumn] + '" ' +
-                                '><i class=icon-eye-open></i></a>';
-                        },
-                        bSortable: false
-                    }
-                ]
-            });
-            //hide default search box
-            this.$('#dashletList_filter').hide();
-        }
-
-    },
-
-    /**
      * Filtering the available dashlets with the current page's module and
      * layout view.
      *
+     * @param {Array} dashlets A list of dashlet components.
      * @return {Array} A list of filtered dashlet set.
      */
-    getFilteredList: function() {
+    getFilteredList: function(dashlets) {
         var parentModule = app.controller.context.get('module'),
             parentView = app.controller.context.get('layout');
 
-        return _.chain(this.context.get('dashlet_collection'))
+        return _.chain(dashlets)
             .filter(function(dashlet) {
                 var filter = dashlet.filter;
                 if (_.isUndefined(filter)) {
@@ -225,27 +177,7 @@
                 //if the filter is matched, then it returns true
                 return _.contains(filterModules, parentModule) && _.contains(filterViews, parentView);
             })
-            .pluck('table')
             .value();
-    },
-
-    /**
-     * Convert the component metadata to match with dataTable format.
-     *
-     * @param {Array} components The list of components.
-     * @return {Array} The parsed collection format.
-     */
-    _getDashletCollection: function(components) {
-        _.each(components, function(component, index) {
-            //FIXME: dataTable should be replace into flex-list
-            component['table'] = [
-                component.title,
-                component.description,
-                index,
-                index
-            ];
-        }, this);
-        return components;
     },
 
     /**
@@ -287,7 +219,7 @@
                     type: name
                 }, dashlet),
                 title: app.lang.get(dashlet.name, dashlet.config.module),
-                description: '<div class="ellipsis_inline" rel="tooltip" data-original-title="'+description+'" data-placement="bottom" data-container="body">' +description+'</div>'
+                description: description
             });
         }, this);
         return dashlets;
@@ -336,13 +268,26 @@
      * based on metadata.
      */
     loadData: function() {
-        var dashletCollection = this.context.get('dashlet_collection');
-        if (dashletCollection) {
+        if (this.collection.length) {
+            this.filteredCollection = this.collection.models;
             return;
         }
 
-        dashletCollection = _.union(this._addBaseViews(), this._addModuleViews());
-        this.context.set('dashlet_collection', this._getDashletCollection(dashletCollection));
-        this.render();
+        var dashletCollection = _.union(this._addBaseViews(), this._addModuleViews()),
+            filteredDashletCollection = this.getFilteredList(dashletCollection);
+
+        this.collection.add(filteredDashletCollection);
+        this.collection.dataFetched = true;
+        this._renderData();
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * DashletSelect isn't a read module, no need to compare fields with defs.
+     */
+    getFields: function() {
+        return _.flatten(_.pluck(this.meta.panels, 'fields'));
     }
+
 })

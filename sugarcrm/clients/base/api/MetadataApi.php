@@ -194,7 +194,7 @@ class MetadataApi extends SugarApi
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             ini_set('max_execution_time', 0);
-            $data = $this->loadMetadata();
+            $data = $this->loadMetadata($args);
             $this->putMetadataCache($data, $this->platforms[0], false);
         }
 
@@ -424,7 +424,7 @@ class MetadataApi extends SugarApi
         return substr($controller, 0, $pos) . $headerComment . substr($controller, $pos);
     }
 
-    protected function loadMetadata()
+    protected function loadMetadata(array $args)
     {
         // Start collecting data
         $data = $this->_populateModules(array());

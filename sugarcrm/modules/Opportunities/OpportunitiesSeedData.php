@@ -344,7 +344,7 @@ class OpportunitiesSeedData {
             $day = $now->day;
         } else {
             // random day from start of month to now
-            $day =  mt_rand(1, $now->day);
+            $day =  mt_rand(1, $now->day-1);
         }
         $now->setTime(0, 0, 0); // always default it to midnight
         return $timedate->asDbDate($now->get_day_begin($day));

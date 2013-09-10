@@ -160,11 +160,12 @@
     },
     /**
      * Get the modules that current user selected for search.
+     * Empty array for all.
      * @returns {Array}
      */
     _getSearchModuleNames: function() {
         if (this.$('input:checkbox[data-module="all"]').attr('checked')) {
-            return this.searchModules;
+            return [];
         }
         else {
             var searchModuleNames = [],
