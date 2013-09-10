@@ -85,7 +85,7 @@
             formatSelection: this.formatCustomSelection,
             dropdownCssClass: "search-filter-dropdown",
             escapeMarkup: function(m) { return m; },
-            width: '50%'
+            width: '100%'
         });
 
         // set the default selections

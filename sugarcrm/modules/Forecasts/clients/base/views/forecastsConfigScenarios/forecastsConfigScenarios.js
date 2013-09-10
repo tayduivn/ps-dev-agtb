@@ -197,6 +197,7 @@
             data: this.scenarioOptions,
             multiple: true,
             dropdownCss: {width:"auto"},
+            width: "90%",
             containerCss: "border: none",
             containerCssClass: "select2-choices-pills-close",
             escapeMarkup: function(m) { return m; },
