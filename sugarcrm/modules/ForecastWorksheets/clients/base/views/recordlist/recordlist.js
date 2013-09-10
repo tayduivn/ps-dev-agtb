@@ -209,7 +209,9 @@
                             this.setNavigationMessage(false, '', '');
                             this.cleanUpDirtyModels();
                             this.refreshData();
-                            this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+                            this.collection.once('reset', function(){
+                                this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+                            }, this);
                         }, this);
                         this.saveWorksheet(true);
                     }
