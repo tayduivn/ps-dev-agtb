@@ -27,6 +27,9 @@ $viewdefs['base']['layout']['dashletselect'] = array(
                             'components' =>
                             array(
                                 array(
+                                    'view' => 'filtered-search',
+                                ),
+                                array(
                                     'view' => 'dashletselect-headerpane',
                                 ),
                                 array(
