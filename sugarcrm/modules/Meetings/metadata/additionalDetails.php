@@ -47,7 +47,7 @@ function additionalDetailsMeeting($fields) {
     if (!empty($fields['PARENT_ID']))
     {
          $overlib_string .= "<b>". $mod_strings['LBL_RELATED_TO'] . "</b> ".
-   	               "<a href='index.php?module=".$fields['PARENT_TYPE']."&action=DetailView&record=".$fields['PARENT_ID']."'>".
+             "<a href=\"javascript:parent.SUGAR.App.router.navigate('".$fields['PARENT_TYPE']."/".$fields['PARENT_ID']."', {trigger: true});\">".
    	               $fields['PARENT_NAME'] . "</a>";
    	       $overlib_string .= '<br>';
     }
