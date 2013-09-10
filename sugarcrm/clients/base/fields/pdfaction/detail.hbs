@@ -1,0 +1,36 @@
+<a class="rowaction" href="javascript:void(0);"
+   data-action="link"
+    {{#if def.tooltip}}
+   rel="tooltip"
+   data-container="body"
+   data-placement="bottom"
+   data-original-title="{{str def.tooltip module}}"
+    {{/if}}
+   name="{{name}}">
+    {{#if def.icon}}<i class="{{def.icon}}"></i>{{/if}}{{str label}}</a>
+{{#if fetchCalled}}
+    {{#if templateCollection.length}}
+        <ul>
+            {{#each templateCollection.models}}
+                <li>
+                    <a href="javascript:void(0);" data-action="{{../../../def.action}}" data-id="{{attributes.id}}">{{attributes.name}}</a>
+                </li>
+            {{/each}}
+        </ul>
+    {{else}}
+        <ul>
+            <li>
+                {{#if templateCollection.dataFetched}}
+                    <a href="javascript:void(0);" class="disabled"><em>{{str "LBL_NO_PDF_TEMPLATE" this.module}}</em></a>
+                {{else}}
+                    <div class="alert-process">
+                        <strong>{{str "LBL_PORTAL_LOADING"}}</strong>
+                        <div class="loading">
+                            <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+                        </div>
+                    </div>
+                {{/if}}
+            </li>
+        </ul>
+    {{/if}}
+{{/if}}
