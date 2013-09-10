@@ -34,11 +34,6 @@
      * The context of the ForecastWorksheet Module if one exists
      */
     forecastWorksheetContext: undefined,
-    
-    /**
-     * The open state of the sidepanel
-     */
-    state: "open",
 
     /**
      * {@inheritdoc}
@@ -110,9 +105,7 @@
             if (collection) {
                 collection.on('change', this.repWorksheetChanged, this);
                 collection.on('reset', function(collection) {
-                    if (!_.isEqual(this.state, "close")) {
-                        this.parseCollectionForData(collection);
-                    }
+                    this.parseCollectionForData(collection);
                 }, this);
             }
         }
@@ -123,9 +116,7 @@
             if (collection) {
                 collection.on('change', this.mgrWorksheetChanged, this);
                 collection.on('reset', function(collection) {
-                    if(this.values.get('display_manager') && !_.isEqual(this.state, "close")) {
-                        this.parseCollectionForData(collection);
-                    }
+                    this.parseCollectionForData(collection);
                 }, this);
             }
         }
@@ -218,11 +209,6 @@
      * @param {Object} model
      */
     repWorksheetChanged: function(model) {
-        //if the sidebar is closed, bail
-        if (_.isEqual(this.state, "close")) {
-            return -1;
-        }
-        
         // get what we are currently filtered by
         // find the item in the serverData
         var changed = model.changed,
@@ -274,11 +260,6 @@
      * @param {Object} model
      */
     mgrWorksheetChanged: function(model) {
-        //if the sidebar is closed, bail
-        if (_.isEqual(this.state, "close")) {
-            return -1;
-        }
-        
         var fieldsChanged = _.keys(model.changed),
             changed = model.changed,
             field = this.getField('paretoChart'),
@@ -337,13 +318,6 @@
             return;
         }
 
-        app.events.on('app:toggle:sidebar', function(state) {
-            this.state = state;
-            if(state == 'open') {
-                this.parseCollectionForData();
-            }
-        }, this);
-
         this.on('render', function() {
             var f = this.getField('paretoChart'),
                 dt = this.layout.getComponent('dashlet-toolbar');
@@ -396,7 +370,6 @@
         }
         if (this.context) this.context.off(null, null, this);
         if (this.values) this.values.off(null, null, this);
-        app.events.off('app:toggle:sidebar', null, this);
         app.view.View.prototype.unbindData.call(this);
     }
 })
