@@ -576,11 +576,6 @@
      * Filter the Collection so we only show what the filter says we should show
      */
     filterCollection: function() {
-
-
-        //this.once('render', function() {
-        //
-        //}, this);
         this.filteredCollection.reset();
         if (_.isEmpty(this.filters)) {
             this.filteredCollection.add(this.collection.models);
@@ -591,8 +586,6 @@
                 }
             }, this);
         }
-
-        this.trigger('collection:filtered')
     },
 
     /**

@@ -3091,7 +3091,6 @@ $app_strings = array (
     'LBL_LOADING' => 'Loading...',
     'LBL_SEARCHING' => 'Searching...',
     'LBL_SAVING_LAYOUT' => 'Saving Layout...',
-    'LBL_FILTERING' => 'Filtering...',
     'LBL_SAVED_LAYOUT' => 'Layout has been saved.',
     'LBL_SAVED' => 'Saved',
     'LBL_SAVING' => 'Saving',

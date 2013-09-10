@@ -98,7 +98,7 @@
             },
             function(event) {
                 app.alert.show('worksheet_filtering',
-                    {level: 'process', title: app.lang.getAppString('LBL_FILTERING')}
+                    {level: 'process', title: app.lang.getAppString('LBL_LOADING')}
                 );
                 _.delay(function() {
                     event.data.context.set("selectedRanges", event.val);
