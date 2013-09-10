@@ -46,7 +46,6 @@ $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 $moduleList[] = 'Forecasts';
 $moduleList[] = 'Contracts';
-$moduleList[] = 'WebLogicHooks';
 $moduleList[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
@@ -143,7 +142,6 @@ $beanList['TeamSetModules']            = 'TeamSetModule';
 $beanList['Quotes']         = 'Quote';
 $beanList['RevenueLineItems'] = 'RevenueLineItem';
 $beanList['Products']       = 'Product';
-$beanList['WebLogicHooks'] = 'WebLogicHook';
 $beanList['ProductBundles']     = 'ProductBundle';
 $beanList['ProductBundleNotes'] = 'ProductBundleNote';
 $beanList['ProductTemplates']= 'ProductTemplate';
@@ -286,7 +284,6 @@ $beanFiles['Quote']         = 'modules/Quotes/Quote.php';
 $beanFiles['ProductBundleNote'] = 'modules/ProductBundleNotes/ProductBundleNote.php';
 $beanFiles['Product']       = 'modules/Products/Product.php';
 $beanFiles['ProductBundle']     = 'modules/ProductBundles/ProductBundle.php';
-$beanFiles['WebLogicHook'] = 'modules/WebLogicHooks/WebLogicHook.php';
 $beanFiles['RevenueLineItem'] = 'modules/RevenueLineItems/RevenueLineItem.php';
 $beanFiles['Shipper']       = 'modules/Shippers/Shipper.php';
 $beanFiles['TaxRate']       = 'modules/TaxRates/TaxRate.php';
@@ -485,6 +482,11 @@ $beanList['SugarFavorites'] = 'SugarFavorites';
 $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';
 $modules_exempt_from_availability_check['SugarFavorites'] = 'SugarFavorites';
 $modInvisList[] = 'SugarFavorites';
+
+
+$beanList['WebLogicHooks'] = 'WebLogicHook';
+$beanFiles['WebLogicHook'] = 'modules/WebLogicHooks/WebLogicHook.php';
+$modInvisList[] = 'WebLogicHooks';
 //END SUGARCRM flav=pro ONLY
 
 $beanList['Activities'] = 'Activity';
