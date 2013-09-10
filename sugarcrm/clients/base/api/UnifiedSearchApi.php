@@ -46,7 +46,8 @@ class UnifiedSearchApi extends SugarListApi {
      * @param $args array The arguments array passed in from the API
      * @return array Many elements containing each setting the search engine uses
      */
-    protected function parseSearchOptions(ServiceBase $api, array $args) {
+    public function parseSearchOptions(ServiceBase $api, array $args)
+    {
         $options = array();
 
         if ( isset($args['module_list']) && count($args['module_list']) == 1 ) {
@@ -402,7 +403,8 @@ class UnifiedSearchApi extends SugarListApi {
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
      */
-    protected function globalSearchSpot(ServiceBase $api, array $args, $searchEngine, array $options) {
+    public function globalSearchSpot(ServiceBase $api, array $args, $searchEngine, array $options)
+    {
         require_once('modules/Home/UnifiedSearchAdvanced.php');
 
 
