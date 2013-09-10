@@ -273,9 +273,9 @@ nv.models.multiBar = function() {
       if (stacked) {
         d3.transition(bars)
             .delay(function(d,i) { return i * delay / data[0].values.length; })
-            .attr('y', function(d,i) { return y(d.y1); })
+            .attr('y', function(d,i) { return y(d.y1) - 2; })
             .attr('height', function(d,i) {
-              return Math.max(Math.abs(y(d.y + d.y0) - y(d.y0)) - (d.y0===0?2:0),0);
+              return Math.max(Math.abs(y(d.y + d.y0) - y(d.y0)) - 1,0);
             })
             .each('end', function() {
               d3.select(this)
@@ -296,7 +296,7 @@ nv.models.multiBar = function() {
                           y(0) :
                           y(0) - y(getY(d,i)) < 1 ?
                             y(0) - 1 :
-                          y(getY(d,i)) || 0;
+                            y(getY(d,i)) || 0;
                 })
                 .attr('height', function(d,i) {
                   return Math.max(Math.abs(y(getY(d,i)) - y(0)) - 2, 0) || 0;

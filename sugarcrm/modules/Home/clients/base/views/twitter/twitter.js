@@ -1,6 +1,9 @@
 ({
     plugins: ['Dashlet', 'timeago'],
     limit : 20,
+    events: {
+        'click .connect-twitter': 'onConnectTwitterClick'
+    },
     initDashlet: function() {
         var limit = this.settings.get("limit") || this.limit;
             this.settings.set("limit", limit);
@@ -11,6 +14,15 @@
         }
         if (currentUserCache && currentUserCache.current_twitter_user_pic) {
             self.current_twitter_user_pic = currentUserCache.current_twitter_user_pic;
+        }
+    },
+    onConnectTwitterClick: function(event) {
+        if ( !_.isUndefined(event.currentTarget) ) {
+            event.preventDefault();
+            var href = this.$(event.currentTarget).attr('href');
+            app.bwc.login(false, function(response){
+                window.open(href);
+            });
         }
     },
     _render: function () {

@@ -553,9 +553,10 @@ function sendTestEmail()
     	}
     };
     var smtpServer = document.getElementById('mail_smtpserver').value;
+    var smtppass = trim(document.getElementById('mail_smtppass').value);
     if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass'))
        {
-         var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+         var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + encodeURIComponent(smtppass) + "&outboundtest_from_address=" + fromAddress;
         }
     else
        {

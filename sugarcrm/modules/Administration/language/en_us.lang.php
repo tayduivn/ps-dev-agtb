@@ -1021,6 +1021,7 @@ $mod_strings = array (
     'LBL_QR_CLEARLANG'=>'Clearing language files from cache...done',
     'LBL_QR_CLEARSEARCH'=>'Clearing Unified Search Cache...done',
     'LBL_QR_REBUILDAUDIT'=>'Rebuilding Audit Tables...',
+    'LBL_QR_REBUILDFILEMAP'=>'Rebuilding mapping file...',
     'LBL_QR_CBOX_CLEARTHEMECACHE'=> 'Clear Theme Cache',
     'LBL_QR_CLEARTHEMECACHE'=>'Clearing Theme Cache...done',
     'LBL_REPAIR_DB_FOR'=>'Repairing DB for',

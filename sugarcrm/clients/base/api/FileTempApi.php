@@ -106,7 +106,7 @@ class FileTempApi extends FileApi {
             );
             require_once "include/download_file.php";
             $dl = new DownloadFileApi($api);
-            $dl->outputFile('image', $info);
+            $dl->outputFile(false, $info);
             register_shutdown_function(
                 function () use($filepath) {
                     unlink($filepath);

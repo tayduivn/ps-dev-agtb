@@ -278,6 +278,8 @@
                 callback();
             }
         }, this));
+
+        this.trigger('drawer:resize', drawerHeight);
     },
 
     /**
@@ -483,6 +485,8 @@
             .find('.drawer-tab i')
             .removeClass('icon-chevron-down')
             .addClass('icon-chevron-up');
+
+        this.trigger('drawer:resize', expandHeight);
     },
 
     /**
@@ -505,6 +509,8 @@
             .find('.drawer-tab i')
             .removeClass('icon-chevron-up')
             .addClass('icon-chevron-down');
+
+        this.trigger('drawer:resize', collapseHeight);
     },
 
     /**
@@ -540,6 +546,18 @@
             app.$contentEl.find('.main-pane').scrollTop(scrollPositions.main);
             app.$contentEl.find('.sidebar-content').scrollTop(scrollPositions.side);
         }
+    },
+
+    /**
+     * Get the current height of the active drawer
+     * @returns {Number}
+     */
+    getHeight: function(){
+        if (_.isEmpty(this._components)) {
+            return 0; // No drawers on page
+        }
+        var $top = this._getDrawers(false).$top;
+        return $top.height();
     },
 
     _dispose: function() {

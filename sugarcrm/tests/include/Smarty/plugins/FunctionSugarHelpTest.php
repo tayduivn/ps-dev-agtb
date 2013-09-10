@@ -21,9 +21,8 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once 'vendor/Smarty/plugins/function.sugar_help.php';
-require_once 'include/Sugar_Smarty.php';
+
+require_once 'include/SugarSmarty/plugins/function.sugar_help.php';
 
 class FunctionSugarHelpTest extends Sugar_PHPUnit_Framework_TestCase
 {

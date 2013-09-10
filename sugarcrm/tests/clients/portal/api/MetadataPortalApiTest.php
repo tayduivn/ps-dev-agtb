@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -23,50 +24,53 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/ModuleBuilder/parsers/relationships/ActivitiesRelationship.php');
+require_once 'clients/portal/api/MetadataPortalApi.php';
 
 /**
- * Bug #42169
- * Creating Relationship to Activities From Custom Module to Activities Via Studio Results in Module Key Displayed in Related To Dropdown
- *
- * @author mgusev@sugarcrm.com
- * @ticket 42169
+ * @group ApiTests
  */
-class Bug42169Test extends Sugar_PHPUnit_Framework_TestCase
+class MetadataPortalApiTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public $metadataApi;
+
+    public function setUp()
+    {
+
+        SugarTestHelper::setUp("app_strings");
+        SugarTestHelper::setUp("app_list_strings");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("beanList");
+        SugarTestHelper::setUp('current_user');
+
+        $this->metadataApi= new MetadataPortalApi();
+    }
+
+    public function tearDown()
+    {
+
+        SugarTestHelper::tearDown();
+
+        parent::tearDown();
+    }
 
     /**
-     * @group 42169
+     * Tests finding Portal modules
      */
-    public function testBuildLabels()
+    public function testFindPortalModules()
     {
-        $definition = array(
-            'lhs_module' => 'lhs_module',
-            'lhs_label' => 'lhs_label'
+        $result = $this->metadataApi->findPortalModules();
+        $this->assertTrue(in_array("Notes", $result), "Notes should be included in Portal metadata");
+        $this->assertTrue(in_array("Home", $result), "Home should be included in Portal metadata");
+        $this->assertTrue(in_array("Contacts", $result));
+        $this->assertTrue(in_array("Cases", $result));
+        $this->assertTrue(in_array("Bugs", $result));
+        $this->assertTrue(in_array("KBDocuments", $result));
+        $this->assertFalse(
+            in_array("Accounts", $result),
+            "Portal metadata should not contain non-portal modules like Accounts"
         );
-        $activitiesRelationship = new ActivitiesRelationship($definition);
-        $actual = $activitiesRelationship->buildLabels();
-
-        foreach($actual as $item)
-        {
-            if (isset($item['display_label']) == false)
-            {
-                continue;
-            }
-            if (is_array($item['display_label']))
-            {
-                if (isset($item['display_label'][$definition['lhs_module']]))
-                {
-                    $this->assertEquals($definition['lhs_label'], $item['display_label'][$definition['lhs_module']], 'Label is missed');
-                }
-            }
-            else
-            {
-                $this->assertEquals($definition['lhs_label'], $item['display_label'], 'Label is missed');
-            }
-        }
     }
 }

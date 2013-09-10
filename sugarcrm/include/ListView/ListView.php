@@ -216,6 +216,45 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         }
     }
 
+    /**
+     * @param $linked_field field to get relationsip name from
+     * @param $aItem sugar bean to check against
+     * @param $parentBean parent bean
+     * @return bool
+     */
+    protected function checkUnlinkPermission($linked_field, $aItem, $parentBean)
+    {
+        if (!empty($parentBean)) {
+
+            $parentBean->load_relationship($linked_field);
+
+            if (isset($parentBean->$linked_field) && isset($parentBean->$linked_field->def['relationship'])) {
+
+                $relObj = $parentBean->$linked_field->getRelationshipObject();
+
+                if (!empty($relObj)) {
+                    // relationship def
+                    $relDef = $relObj->def;
+
+                    $fieldsToCheck = array();
+                    foreach (array('rhs_key', 'relationship_role_column') as $field) {
+                        if (!empty($relDef[$field])) {
+                            $fieldsToCheck[] = $relDef[$field];
+                        }
+                    }
+
+                    // check if the field is editable, if any field is not, return false
+                    foreach ($fieldsToCheck as $field) {
+                        if (!empty($field) && !($aItem->ACLFieldAccess($field, 'edit'))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 /**
  * @return void
  * @param unknown $data
@@ -386,6 +425,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         $field_acl['ListView'] = $aItem->ACLAccess('ListView');
         $field_acl['EditView'] = $aItem->ACLAccess('EditView');
         $field_acl['Delete'] = $aItem->ACLAccess('Delete');
+        $field_acl['field_edit_relate'] = $this->checkUnlinkPermission($linked_field, $aItem, $thepanel->parent_bean);
         foreach($thepanel->get_list_fields() as $field_name=>$list_field)
         {
             //add linked field attribute to the array.
@@ -474,7 +514,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		                $this->xTemplate->assign('CELL', $widget_contents);
 		                $this->xTemplate->parse($xtemplateSection.".row.cell");
                 	} elseif (preg_match("/button/i", $list_field['name'])) {
-                        if ( '' != $_content = $layout_manager->widgetDisplay($list_field) )
+                        if ((($list_field['name'] === 'edit_button' && $field_acl['EditView']) || ($list_field['name'] === 'close_button' && $field_acl['EditView']) || ($list_field['name'] === 'remove_button' && $field_acl['field_edit_relate'])) && '' != ($_content = $layout_manager->widgetDisplay($list_field)) )
                         {
                             $button_contents[] = $_content;
                             unset($_content);
@@ -499,7 +539,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         if(isset($button_contents[0])) {
             // this is for inline buttons on listviews
             // bug#51275: smarty widget to help provide the action menu functionality as it is currently sprinkled throughout the app with html
-            require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
+            require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
             $tempid = create_guid();
             $button_contents[0] = "<div style='display: inline' id='$tempid'>".$button_contents[0]."</div>";
             $action_button = smarty_function_sugar_action_menu(array(
@@ -1328,7 +1368,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
                     "<a  name='selectall' id='button_select_all' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$total});' href='#'>{$app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$total_label}&#x29;&#x200E;</a>",
                     "<a name='deselect' id='button_deselect' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick='sListView.clear_all(document.MassUpdate, \"mass[]\", false);' href='#'>{$app_strings['LBL_LISTVIEW_NONE']}</a>",
                 );
-                require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
+                require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
                 $select_link = smarty_function_sugar_action_menu(array(
                     'class' => 'clickMenu selectmenu',
                     'id' => 'selectLink',
@@ -1621,7 +1661,7 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 
                 if($aItem->ACLAccess('Delete')) {
                     $delete = '<a class="listViewTdToolsS1" onclick="return confirm(\''.$this->local_app_strings['NTC_DELETE_CONFIRMATION'].'\')" href="'.'index.php?action=Delete&module='.$aItem->module_dir.'&record='.$fields['ID'].'&return_module='.$aItem->module_dir.'&return_action=index&return_id=">'.$this->local_app_strings['LBL_DELETE_INLINE'].'</a>';
-                    require_once('vendor/Smarty/plugins/function.sugar_action_menu.php');
+                    require_once('include/SugarSmarty/plugins/function.sugar_action_menu.php');
                     $fields['DELETE_BUTTON'] = smarty_function_sugar_action_menu(array(
                         'id' => $aItem->module_dir.'_'.$fields['ID'].'_create_button',
                         'buttons' => array($delete),

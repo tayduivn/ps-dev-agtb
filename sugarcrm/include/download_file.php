@@ -35,8 +35,9 @@ class DownloadFile {
      *
      * @param SugarBean $bean The SugarBean to get the file for
      * @param string $field The field name to get the file for
+     * @param boolean $forceDownload force to download the file if true.
      */
-    public function getFile(SugarBean $bean, $field) {
+    public function getFile(SugarBean $bean, $field, $forceDownload = false) {
         if ($this->validateBeanAndField($bean, $field, 'file') || $this->validateBeanAndField($bean, $field, 'image')) {
             $def = $bean->field_defs[$field];
 
@@ -44,10 +45,20 @@ class DownloadFile {
                 $info = $this->getImageInfo($bean, $field);
             } elseif ($def['type'] == 'file') {
                 $info = $this->getFileInfo($bean, $field);
+
+                require_once 'include/SugarFields/SugarFieldHandler.php';
+                $sfh = new SugarFieldHandler();
+                /* @var $sf SugarFieldFile */
+                $sf = $sfh->getSugarField($def['type']);
+
+                //If the requested file is not a supported image type, we should force a download.
+                if (!$forceDownload && !in_array($info['content-type'], $sf::$imageFileMimeTypes)) {
+                    $forceDownload = true;
+                }
             }
 
             if ($info) {
-                $this->outputFile($def['type'], $info);
+                $this->outputFile($forceDownload, $info);
             } else {
                 // @TODO Localize this exception message
                 throw new Exception('File information could not be retrieved for this record');
@@ -58,14 +69,14 @@ class DownloadFile {
     /**
      * Sends an HTTP response with the contents of the request file for download
      *
-     * @param string $type Field type (image/file)
+     * @param boolean $forceDownload force to download the file if true.
      * @param array $info Array containing the file details.
      */
-    public function outputFile($type, array $info) {
+    public function outputFile($forceDownload, array $info) {
         header("Pragma: public");
         header("Cache-Control: maxage=1, post-check=0, pre-check=0");
 
-        if ($type == 'image') {
+        if (!$forceDownload) {
             header("Content-Type: {$info['content-type']}");
         } else {
             header("Content-Type: application/force-download");
@@ -306,13 +317,13 @@ class DownloadFileApi extends DownloadFile
     /**
      * Sends an HTTP response with the contents of the request file for download
      *
-     * @param string $type Field type (image/file)
+     * @param boolean $forceDownload true if force to download the file
      * @param array $info Array containing the file details.
      * Currently supported:
      * - content-type - content type for the file
      *
      */
-    public function outputFile($type, array $info)
+    public function outputFile($forceDownload, array $info)
     {
         if(empty($info['path'])) {
             throw new SugarApiException('No file name supplied');
@@ -320,7 +331,7 @@ class DownloadFileApi extends DownloadFile
 
         $this->api->setHeader("Expires", TimeDate::httpTime(time() + 2592000));
 
-        if ($type == 'image') {
+        if (!$forceDownload) {
             if(!empty($info['content-type'])) {
                 $this->api->setHeader("Content-Type", $info['content-type']);
             } else {

@@ -350,6 +350,7 @@ class Email extends SugarBean {
         $configurations["from_email"]   = $fromaddress;
         $configurations["from_name"]    = $fromname;
         $configurations["display_name"] = "{$fromname} ({$fromaddress})";
+        $configurations["personal"]     = 0;
 
         $outboundEmail                    = new OutboundEmail();
         $outboundEmail->mail_sendtype     = $mail_sendtype;

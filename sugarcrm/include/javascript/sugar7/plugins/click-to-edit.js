@@ -209,7 +209,8 @@
                         // field is valid, save it
                         self.isErrorState = false;
                         self.errorMessage = '';
-                        self.model.set(self.name, self.unformat(value));
+                        // save to model
+                        self.model.set(self.name, value);
                     } else {
                         // invalid display error
                         var hb = Handlebars.compile("{{str key module context}}"),
@@ -502,10 +503,8 @@
                 // trim off any whitespace
                 value = value.toString().trim();
 
-                var ds = app.utils.regexEscape(app.user.getPreference('decimal_separator')) || '.',
-                    gs = app.utils.regexEscape(app.user.getPreference('number_grouping_separator')) || ',',
                 // matches a valid positive decimal number
-                    reg = new RegExp("^\\+?(\\d+|\\d{1,3}(" + gs + "\\d{3})*)?(" + ds + "\\d+)?\\%?$");
+                    reg = new RegExp("^\\d+(\\.\\d+)?$");
 
                 // always make sure that we have a string here, since match only works on strings
                 if (value.length == 0 || _.isNull(value.match(reg))) {
@@ -573,19 +572,21 @@
             /**
              * Check the value to see if it's a percentage, if it is, then adjust the value
              *
-             * @param {String} value        The value we are parsing
-             * @param {Integer} decimals        How far to round to
+             * @param {String} value        The value we are parsing.
+             * @param {Integer} decimals        How far to round to.
              * @return {*}
              */
             _parsePercentage: function(value, decimals) {
                 var orig = this.model.get(this.name),
-                    parts = value.toString().match(/^([+-]?)(\d+(\.\d+)?)(\%)?$/);
+                    parts = value.toString().match(/^([+-])(\d+(\.\d+)?)(\%?)$/);
                 if (parts) {
                     // use original number to apply calculations
-                    if(!_.isUndefined(parts[4])) {
+                    if (parts[4] == '%') {
+                        // percentage calculation
                         value = app.math.mul(app.math.div(parts[2], 100), orig);
                     } else {
-                        value = parts[2]
+                        // add/sub calculation
+                        value = parts[2];
                     }
                     if (parts[1] == '+') {
                         value = app.math.add(orig, value);

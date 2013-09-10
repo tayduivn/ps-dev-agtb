@@ -104,20 +104,28 @@
         if (this.meta.config) {
             return;
         }
-        //clear existing chart
+
+        // clear out the current chart before a re-render
         if (!_.isEmpty(this.chart)) {
             nv.utils.windowUnResize(this.chart.render);
+            d3.select('svg#' + this.cid).select('.nvd3').remove();
         }
 
-        d3.select('svg#' + this.cid).select('.nvd3').remove();
+        if (this.dataset.data.length > 0) {
+            this.$('.nv-chart').toggleClass('hide', false);
+            this.$('.block-footer').toggleClass('hide', true);
 
-        d3.select('svg#' + this.cid)
-            .datum(this.dataset)
-            .transition().duration(500)
-            .call(this.chart);
+            d3.select('svg#' + this.cid)
+                .datum(this.dataset)
+                .transition().duration(500)
+                .call(this.chart);
 
-        nv.utils.windowResize(this.chart.render);
-        nv.utils.resizeOnPrint(this.chart.render);
+            nv.utils.windowResize(this.chart.render);
+            nv.utils.resizeOnPrint(this.chart.render);
+        } else {
+            this.$('.nv-chart').toggleClass('hide', true);
+            this.$('.block-footer').toggleClass('hide', false);
+        }
     },
 
     /**
@@ -153,6 +161,16 @@
                 value: data.records.length
             }
         };
+    },
+
+    /**
+     * {@inheritDoc}
+     */
+    render: function() {
+        app.view.invokeParent(this, {type: 'view', name: 'view', method: 'render'});
+        if(this.chart && !_.isEmpty(this.dataset)) {
+            this.updateChart();
+        }
     },
 
     /**

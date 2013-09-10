@@ -105,6 +105,7 @@
                     '.panel-hidden';
                 this.$(target).toggleClass('hide', this.hidePanel);
                 app.user.lastState.set(this.SHOW_MORE_KEY, moreLess);
+                this.trigger('more-less:toggled', moreLess);
             },
 
             /**

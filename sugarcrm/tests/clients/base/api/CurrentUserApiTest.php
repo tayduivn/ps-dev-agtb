@@ -68,16 +68,20 @@ class CurrentUserApiTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->currentUserApiMock->getBasicInfo();
         $this->assertEquals($GLOBALS['sugar_config']['default_language'], $result['preferences']['language']);
     }
-
+    /**
+     * @group wizard
+     */
     public function testShowFirstLoginWizard()
     {
         global $current_user;
-        $current_user->is_instance_configured = false;
+        $current_user->setPreference('ut', '0');
+        $current_user->savePreferencesToDB();
         $result = $this->currentUserApiMock->shouldShowWizard();
-        $this->assertTrue($result, "We show Wizard when is_instance_configured is falsy");
-        $current_user->is_instance_configured = true;
+        $this->assertTrue($result, "We show Wizard when user's preference 'ut' is falsy");
+        $current_user->setPreference('ut', '1');
+        $current_user->savePreferencesToDB();
         $result = $this->currentUserApiMock->shouldShowWizard();
-        $this->assertFalse($result, "We do NOT show Wizard when is_instance_configured is truthy");
+        $this->assertFalse($result, "We do NOT show Wizard when user's preference 'ut' is truthy");
     }
 }
 

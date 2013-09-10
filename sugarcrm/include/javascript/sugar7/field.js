@@ -374,6 +374,29 @@
                 this.$el.removeClass(ftag);
                 this.$el.removeClass("error");
                 this.$el.closest('.record-cell').removeClass("error");
+            },
+
+            /**
+             * Adding additional events for links with bad `href` attribute
+             * @param {Array} events Events for the field
+             */
+            delegateEvents: function(events) {
+                events = events || this.events || (this.def ? this.def.events : null);
+                if (!events) {
+                    return;
+                }
+                events['click a[href="javascript:void(0)"]'] = _.bind(this._handleBadLinkHref, this);
+                events['click a[href="javascript:void(0);"]'] = _.bind(this._handleBadLinkHref, this);
+                _fieldProto.delegateEvents.call(this, events);
+            },
+
+            /**
+             * Handle click event for bad links
+             * @param {Object} evt Click event
+             * @private
+             */
+            _handleBadLinkHref: function(evt) {
+                evt.preventDefault();
             }
         });
     });

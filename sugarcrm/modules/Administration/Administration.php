@@ -266,11 +266,15 @@ class Administration extends SugarBean {
      */
     public function getAllSettings()
     {
-        $sql = 'SELECT category, name, value, platform FROM {$this->table_name}';
+        $sql = "SELECT category, name, value, platform FROM {$this->table_name}";
         $rows = $this->db->query($sql);
 
         $return = array();
         while($row = $this->db->fetchByAssoc($rows)) {
+            $temp = json_decode(html_entity_decode(stripslashes($row['value'])), true);
+            if (!is_null($temp)) {
+                $row['value'] = $temp;
+            }
             $return[] = $row;
         }
 

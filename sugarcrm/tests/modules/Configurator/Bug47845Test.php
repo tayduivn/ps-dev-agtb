@@ -24,7 +24,6 @@
 
 require_once('include/Localization/Localization.php');
 require_once('modules/Configurator/views/view.edit.php');
-require_once('include/Sugar_Smarty.php');
 
 class Bug47845Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {

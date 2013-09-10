@@ -174,6 +174,7 @@ $dictionary['Account'] = array(
             'module' => 'Emails',
             'link_type' => 'many',
             'relationship' => '',
+            'hideacl' => true,
         ),
         'documents' => array(
             'name' => 'documents',

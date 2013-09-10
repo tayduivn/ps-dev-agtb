@@ -53,27 +53,27 @@ class SugarFieldDatetime extends SugarFieldBase {
 
     //BEGIN SUGARCRM flav=pro ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-    	global $timedate;
-    	$datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
-    	$datetime = explode(' ', $vardef['value']);
+        global $timedate;
+        $datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
+        $datetime = explode(' ', $vardef['value']);
 
-		// format date and time to db format
-		$date_start = $timedate->swap_formats($datetime[0], $datetime_prefs['date'], $timedate->dbDayFormat);
+        // format date and time to db format
+        $date_start = $timedate->swap_formats($datetime[0], $datetime_prefs['date'], $timedate->dbDayFormat);
 
-    	// pass date parameters to smarty
-    	if ($datetime_prefs['date'] == 'Y-m-d' || $datetime_prefs['date'] == 'Y/m/d' || $datetime_prefs['date'] == 'Y.m.d'){
-    		$this->ss->assign('field_order', 'YMD');
-    	}
-    	else if ($datetime_prefs['date'] == 'd-m-Y' || $datetime_prefs['date'] == 'd/m/Y' || $datetime_prefs['date'] == 'd.m.Y'){
-    		$this->ss->assign('field_order', 'DMY');
-    	}
-    	else{
-    		$this->ss->assign('field_order', 'MDY');
-    	}
-    	$this->ss->assign('date_start', $date_start);
+        // pass date parameters to smarty
+        if ($datetime_prefs['date'] == 'Y-m-d' || $datetime_prefs['date'] == 'Y/m/d' || $datetime_prefs['date'] == 'Y.m.d'){
+            $this->ss->assign('field_order', 'YMD');
+        }
+        else if ($datetime_prefs['date'] == 'd-m-Y' || $datetime_prefs['date'] == 'd/m/Y' || $datetime_prefs['date'] == 'd.m.Y'){
+            $this->ss->assign('field_order', 'DMY');
+        }
+        else{
+            $this->ss->assign('field_order', 'MDY');
+        }
+        $this->ss->assign('date_start', $date_start);
 
-    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
-    	return $this->fetch($this->findTemplate('WirelessEditView'));
+        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
+        return $this->fetch($this->findTemplate('WirelessEditView'));
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -88,7 +88,7 @@ class SugarFieldDatetime extends SugarFieldBase {
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
         }
-    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
+        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
     }
 
     public function getEmailTemplateValue($inputField, $vardef, $context = null){
@@ -144,6 +144,100 @@ class SugarFieldDatetime extends SugarFieldBase {
             }
         }
         return $value;
+    }
+
+
+
+    /**
+     * Unformat a value from an API Format
+     * @param $value - the value that needs unformatted
+     * @return string - the unformatted value
+     */
+    public function apiUnformat($value)
+    {
+        global $current_user;
+        if (strlen(trim($value)) < 11) {
+            $newValue = TimeDate::getInstance()->fromIsoDate($value, $current_user);
+        } else {
+            $newValue = TimeDate::getInstance()->fromIso($value, $current_user);
+        }
+
+        if (is_object($newValue)) {
+            $value = $newValue->asDb();
+        }
+
+        return $value;
+    }
+
+    /**
+     * Fix a value(s) for a Filter statement
+     * @param $value - the value that needs fixing
+     * @param $fieldName - the field we are fixing
+     * @param SugarBean $bean - the Bean
+     * @param SugarQuery $q - the Query
+     * @param SugarQuery_Builder_Where $where - the Where statement
+     * @param $op - the filter operand
+     * @return bool - true if everything can pass as normal, false if new filters needed to be added to override the existing $op
+     */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op)
+    {
+        if($op === '$daterange') {
+            return true;
+        }
+        $dateLengthCheck = is_array($value) ? reset($value) : $value;
+        if(strlen(trim($dateLengthCheck)) < 11) {
+            if(!is_array($value)) {
+                $dateParsed = date_parse($value);
+            } else {
+                $dateParsed[0] = date_parse($value[0]);
+                $dateParsed[1] = date_parse($value[1]);
+            }
+            switch($op)
+            {
+                case '$gt':
+                case '$gte':
+                    $value = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(0, 0, 0, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+                    break;
+                case '$lt':
+                case '$lte':
+                    $value = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+                    break;
+                case '$between':
+                case '$dateBetween':
+                    $value[0] = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(0, 0, 0, $dateParsed[0]['month'], $dateParsed[0]['day'], $dateParsed[0]['year'])
+                    );
+
+                    $value[1] = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(23, 59, 59, $dateParsed[1]['month'], $dateParsed[1]['day'], $dateParsed[1]['year'])
+                    );
+                    break;
+                case '$starts':
+                case '$equals':
+                    $value = array();
+                    $value[0] = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(0, 0, 0, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+
+                    $value[1] = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+                    $where->between($fieldName, $this->apiUnformat($value[0]), $this->apiUnformat($value[1]), $bean);
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     /**

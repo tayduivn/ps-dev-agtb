@@ -45,7 +45,6 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
 	    require_once('include/SugarFields/SugarFieldHandler.php');
 		$sfh = new SugarFieldHandler();
 		$this->_sugarField = $sfh->getSugarField('Teamset', true);
-		require_once('include/Sugar_Smarty.php');
 
 		$this->_params = array();
 		$this->_params['parentFieldArray'] = 'fields';

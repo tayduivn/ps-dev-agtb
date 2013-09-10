@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
  
 require_once('include/ListView/ListViewDisplay.php');
-require_once('include/Sugar_Smarty.php');
 require_once('include/utils.php');
 
 class ListViewSmarty extends ListViewDisplay {

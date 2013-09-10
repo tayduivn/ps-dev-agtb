@@ -37,16 +37,15 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
 
         // Setup Forecast defaults
+        SugarTestForecastUtilities::setUpForecastConfig();
         ForecastsDefaults::setupForecastSettings();
     }
 
     public function tearDown()
     {
-        //Clear config table of Forecasts values
-        $db = DBManagerFactory::getInstance();
-        $db->query("DELETE FROM config WHERE category = 'Forecasts'");
-
+        SugarTestForecastUtilities::tearDownForecastConfig();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestHelper::tearDown();
     }
 
@@ -96,22 +95,23 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDateTimeFiscalQueryGroupBy($startDate, $timezone, $expected, $reportDef)
     {
-        // Setup Fiscal Start Date
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'timeperiod_start_date', json_encode($startDate), 'base');
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
-
-        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $id = create_guid();
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->date_closed = $startDate;
+        $rli->opportunity_id = $id;
+        $rli->save();
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity($id);
         $opportunity->date_closed = $startDate;
         $opportunity->save();
-
+        
         $reportDef = preg_replace('/\s\s+/', '', str_replace('{REPLACE}', $opportunity->id, $reportDef));
 
         $report = new Report($reportDef);
         $report->run_summary_query();
         $row = $report->get_summary_next_row();
-
+        
         $this->assertEquals(1, $row['count'], 'Report count should be 1');
         $this->assertEquals($expected, $row['cells'][0], 'Wrong grouping result');
     }
@@ -120,7 +120,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                '2013-05-05',
+                '2012-05-05',
                 'America/Los_Angeles',
                 '2012',
                 '{
@@ -273,7 +273,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 }'
             ),
             array(
-                '2013-05-05',
+                '2012-12-05',
                 'America/Los_Angeles',
                 'Q4 2012',
                 '{
@@ -324,7 +324,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 }'
             ),
             array(
-                '2013-05-05',
+                '2013-01-05',
                 'UTC',
                 'Q1 2013',
                 '{
@@ -375,7 +375,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 }'
             ),
             array(
-                '2013-05-05',
+                '2013-01-05',
                 'Europe/Helsinki',
                 'Q1 2013',
                 '{
@@ -437,7 +437,7 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 '2013-05-05',
                 '',
                 '+3 month',
-                ">= '2013-03-31 07:00:00'",
+                ">= '2013-04-01 07:00:00'",
                 "< '2013-07-01 07:00:00'",
                 'America/Los_Angeles'
             ),
@@ -477,8 +477,8 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
                 '2013-05-05',
                 '',
                 '+3 month',
-                ">= '2013-04-30 07:00:00'",
-                "< '2013-07-30 07:00:00'",
+                ">= '2013-05-01 07:00:00'",
+                "< '2013-08-01 07:00:00'",
                 'America/Los_Angeles'
             ),
             array('year',

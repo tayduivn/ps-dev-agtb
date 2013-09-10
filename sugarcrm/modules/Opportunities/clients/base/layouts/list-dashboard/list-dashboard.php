@@ -24,44 +24,14 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' =>
                             array(
-                                'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
-                                'display_columns' =>
-                                array(
-                                    'name',
-                                    'billing_address_country',
-                                    'billing_address_city',
-                                ),
-                                'my_items' => '1',
-                                'limit' => 5,
+                                'name' => 'forecast-pipeline',
+                                'label' => 'LBL_DASHLET_PIPLINE_NAME',
+                                'display_type' => 'self',
                             ),
                             'context' =>
                             array(
-                                'module' => 'Accounts',
+                                'module' => 'Forecasts',
                             ),
-                            'width' => 12,
-                        ),
-                    ),
-                    array(
-                        array(
-                            'view' =>
-                            array(
-                                'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
-                                'display_columns' =>
-                                array(
-                                    'full_name',
-                                    'account_name',
-                                    'email',
-                                    'phone_work',
-                                ),
-                                'my_items' => '1',
-                            ),
-                            'context' =>
-                            array(
-                                'module' => 'Contacts',
-                            ),
-                            'width' => 12,
                         ),
                     ),
                 ),
@@ -71,4 +41,3 @@ $viewdefs['Opportunities']['base']['layout']['list-dashboard'] = array(
     ),
     'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
-

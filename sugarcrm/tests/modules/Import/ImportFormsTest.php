@@ -21,9 +21,8 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Import/Forms.php';
-require_once 'include/Sugar_Smarty.php';
 require_once 'modules/Import/controller.php';
 require_once 'modules/Import/views/view.step3.php';
 require_once 'modules/Import/views/view.step4.php';

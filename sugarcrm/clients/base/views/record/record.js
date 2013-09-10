@@ -378,11 +378,25 @@
         var options = {
             showAlerts: true,
             success: _.bind(function() {
+                
+                // Loop through the visible subpanels and have them sync. This is to update any related
+                // fields to the record that may have been changed on the server on save. 
+                _.each(this.context.children, function(child) {
+                    if (!_.isUndefined(child.attributes) && !_.isUndefined(child.attributes.isSubpanel)) {
+                        if (child.attributes.isSubpanel && !child.attributes.hidden) {
+                            child.attributes.collection.fetch();
+                        }
+                    }
+                });
+                
                 if (this.createMode) {
                     app.navigate(this.context, this.model);
                 } else if (!this.disposed) {
                     this.render();
                 }
+            }, this),
+            error: _.bind(function() {
+                this.editClicked();
             }, this),
             viewed: true
         };
@@ -630,7 +644,9 @@
      * Push down main pane depending upon the height of the headerpane
      */
     adjustViewForHeaderpane: function() {
-        var height = this.$('.headerpane').outerHeight(true);
-        this.context.trigger('defaultLayout:setPaddingTop', height);
+        if (!this.disposed) {
+            var height = this.$('.headerpane').outerHeight(true);
+            this.context.trigger('defaultLayout:setPaddingTop', height);
+        }
     }
 })

@@ -2942,6 +2942,7 @@ $app_strings = array (
 
     'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
     'LBL_SUGAR_COPYRIGHT_NAME_AND_RIGHTS' => 'SugarCRM Inc. All Rights Reserved.',
+    'LBL_SUGAR7_COPYRIGHT' => '&copy; 2004-2013 <a href="http://www.sugarcrm.com" target="_blank">SugarCRM Inc.</a>',
 
 
     // LOGIN PAGE STRINGS
@@ -3063,7 +3064,7 @@ $app_strings = array (
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
     'WARN_UNSAVED_CHANGES'=> "You are about to leave this record without saving any changes you may have made to the record. Are you sure you want to navigate away from this record?",
-    'LBL_WARN_UNSAVED_EDITS' => 'You are leaving and have unsaved edits.',
+    'LBL_WARN_UNSAVED_EDITS' => 'You have unsaved changes. ',
     'ERROR_NO_RECORD' => 'Error retrieving record.  This record may be deleted or you may not be authorized to view it.',
     'ERROR_TYPE_NOT_VALID' => 'Error. This type is not valid.',
     'ERROR_MAX_FIELD_LENGTH' => 'Error. The max length of this field is {{this}}.',
@@ -3581,6 +3582,7 @@ $app_strings = array (
     'LBL_SAVE_BUTTON_TITLE' => 'Save',
     'LBL_CANCEL_BUTTON_KEY' => 'l',
     'LBL_CANCEL_BUTTON_LABEL' => 'Cancel',
+    'LBL_CANCEL_BUTTON_LABEL_CONT' => 'to stay on page.',
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
     'LBL_SHARE_BUTTON_KEY' => 'r',
     'LBL_SHARE_BUTTON_LABEL' => 'Share',
@@ -3591,6 +3593,7 @@ $app_strings = array (
     'LBL_FINISH_BUTTON_LABEL' => 'Finish',
     'LBL_FINISH_BUTTON_TITLE' => 'Finish',
     'LBL_CONFIRM_BUTTON_LABEL' => 'Confirm',
+    'LBL_CONFIRM_BUTTON_LABEL_CONT' => 'to leave page and discard changes.',
     'LBL_FIRST_INPUT_EDIT_VIEW_KEY' => '7',
     'LBL_ADV_SEARCH_LNK_KEY' => '8',
     'LBL_FIRST_INPUT_SEARCH_KEY' => '9',

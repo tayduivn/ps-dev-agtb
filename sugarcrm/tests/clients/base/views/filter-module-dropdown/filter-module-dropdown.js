@@ -24,7 +24,7 @@ describe("BaseFilterModuleDropdownView", function () {
     it('should hide the dropdown for records layout', function() {
         view.layout.layoutType = 'record';
         view.render();
-        expect(view.$el.css('display')).toEqual('');
+        expect(view.$el.css('display')).not.toEqual('none');
         view.layout.layoutType = 'records';
         view.render();
         expect(view.$el.css('display')).toEqual('none');

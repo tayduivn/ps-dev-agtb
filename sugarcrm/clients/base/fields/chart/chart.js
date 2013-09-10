@@ -15,6 +15,7 @@
      * Contains the actual chart being displayed
      */
     chart: undefined,
+    chartType: '',
 
     /**
      * @{inheritDoc}
@@ -26,6 +27,8 @@
                 this.$el.find('.block-footer').toggleClass('hide', true);
 
                 this.generateD3Chart();
+
+                this.$el.find('.nv-chart').attr('class', 'nv-chart nv-' + this.chartType);
             } else {
                 this.$el.find('.nv-chart').toggleClass('hide', true);
                 this.$el.find('.block-footer').toggleClass('hide', false);
@@ -145,6 +148,8 @@
                 };
                 break;
         }
+
+        this.chartType = chartConfig.chartType;
 
         return chartConfig;
     }

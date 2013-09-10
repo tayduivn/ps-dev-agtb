@@ -15,6 +15,7 @@
 require_once 'data/BeanFactory.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
+require_once 'include/TimeDate.php';
 
 class CurrentUserApi extends SugarApi
 {
@@ -206,7 +207,8 @@ class CurrentUserApi extends SugarApi
     public function shouldShowWizard()
     {
         $current_user = $this->getUserBean();
-        return !filter_var($current_user->is_instance_configured, FILTER_VALIDATE_BOOLEAN);
+        $isInstanceConfigured = $current_user->getPreference('ut');
+        return !filter_var($isInstanceConfigured, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -403,14 +405,28 @@ class CurrentUserApi extends SugarApi
         }
         return $metaName;
     }
-    
+
+    /**
+     * Gets the user's timezone setting
+     * 
+     * @param User $user The current user
+     * @return string
+     */
     protected function getUserPrefTimezone($user)
     {
+        // Grab the user's timezone preference if it's set
         $val = $user->getPreference('timezone');
+
+        // If there is no setting for the user, fall back to the system setting
         if (!$val) {
-            $val = 'GMT';
+            $val = TimeDate::guessTimezone();
         }
-        
+
+        // If there is still no timezone, fallback to UTC
+        if (!$val) {
+            $val = 'UTC';
+        }
+
         return array('timezone' => $val);
     }
     

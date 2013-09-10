@@ -25,6 +25,7 @@ $vardefs= array (
   array (
     'name' => 'name',
     'type' => 'name',
+    'link' => true,
     'dbType' => 'varchar',
     'vname' => 'LBL_NAME',
     'len' => 150,
@@ -383,7 +384,7 @@ $vardefs= array (
     'group'=>'email1',
     'merge_filter' => 'enabled',
     'studio' => array('editview' => true, 'editField' => true, 'searchview' => false, 'popupsearch' => false), // bug 46859
-    'full_text_search' => array('boost' => 3, 'index' => 'whitespace'), //bug 54567
+    'full_text_search' => array('index' => 'not_analyzed'), //bug 54567
     'duplicate_on_record_copy' => 'always',
 ),
 

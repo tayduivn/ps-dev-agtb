@@ -71,6 +71,27 @@ describe('Sugar7.Routes', function() {
         });
     });
 
+    describe("Before Route Show Wizard Check", function() {
+        var hasAccessStub;
+
+        beforeEach(function() {
+            hasAccessStub = sinon.stub(app.acl, 'hasAccess');
+            hasAccessStub.returns(true);
+        });
+
+        afterEach(function() {
+            hasAccessStub.restore();
+            app.user.unset('show_wizard', {silent: true});
+        });
+
+        it("should return false if user's show_wizard true", function() {
+            var route = 'record';
+            app.user.set('show_wizard', true);
+            var response = app.routing.triggerBefore("route", {route:route})
+            expect(response).toBe(false);
+        });
+    });
+
     describe("Before Route Access Check", function() {
         var hasAccessStub;
 
