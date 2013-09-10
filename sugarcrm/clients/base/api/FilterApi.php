@@ -77,6 +77,8 @@ class FilterApi extends SugarApi
         );
     }
 
+    protected static $isFavorite = false;
+
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
 
     protected static $current_user;
@@ -194,6 +196,7 @@ class FilterApi extends SugarApi
         }
 
         if (!empty($args['favorites'])) {
+            self::$isFavorite = true;
             self::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
@@ -253,7 +256,13 @@ class FilterApi extends SugarApi
             // FIXME: convert this to vardefs too?
             //BEGIN SUGARCRM flav=pro ONLY
             if ($field == 'my_favorite') {
-                // this will be added on the bean everytime
+                if (self::$isFavorite) {
+                    $joinType = 'INNER';
+                } else {
+                    $joinType = 'LEFT';
+                }
+                $fjoin = $q->join("favorites", array('joinType' => $joinType));
+                $fields[] = array($fjoin->joinName() . ".id", 'my_favorite');
                 continue;
             }
             //END SUGARCRM flav=pro ONLY
