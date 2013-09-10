@@ -460,7 +460,7 @@
             worst: ctxModel.get('worst_case')
         });
 
-        if(!_.isUndefined(date) && !_.isEmpty(date)) {
+        if(!_.isEmpty(date)) {
             // get the current timeperiod
             app.api.call('GET', app.api.buildURL('TimePeriods/' + date), null, {
                 success: _.bind(function(o) {
