@@ -111,31 +111,13 @@
         var isFollowing = this.model.get("following");
 
         if(!_.isUndefined(isFollowing)) {
-            var guid = this.model.get("id"),
-                module = this.model.module,
-                method, action, value;
-
-            if(isFollowing) {
-                method = "delete";
-                action = "unsubscribe";
-                value = false;
+            var options = {
+                alerts: false
+            };
+            if (this.model.follow(!isFollowing, options) === false) {
+                app.logger.error('Unable to follow "' + this.model.module + '" record "' + this.model.id);
+                return;
             }
-            else {
-                method = "create";
-                action = "subscribe";
-                value = true;
-            }
-            var self = this,
-                url = app.api.buildURL(module, action, {id: guid});
-
-            app.api.call(method, url, null, {
-                success: function() {
-                    if(self.disposed) {
-                        return;
-                    }
-                    self.model.set("following", value);
-                }
-            });
         }
     }
 })
