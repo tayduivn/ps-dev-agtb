@@ -350,8 +350,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TITLE_MESSAGE_TIMEPERIODS' => 'Fiscal year start date:',
 
     'LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS' => 'Conﬁgure the time period that will be used in the Forecasts module.<br><br>Start by choosing the Start Date of your ﬁscal year. Then choose the type of  time period that you want to forecast over. The date range for the time periods will be automatically calculated based on your selections. The Sub Time Period is the base for the Forecast worksheet.<br><br>The viewable future and past time periods will determine the number of visible sub-periods in the Forecasts module. The users are able to view and edit the forecasting numbers in the visible  sub-periods.',
-    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to tag the opportunities (for example which opportunities should be included or excluded from the forecasting numbers). You can choose the number of categories and determine the ranges of the probabilities for the categories. The opportunities with certain probabilities will default  to the corresponding category. After the initial tag, the user can manually modify the value. Only the opportunities in the "Included" category will be reported to managers as committed.',
-    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to ﬁll out for their forecasts of each opportunity. Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_HELP_RANGES' => 'Configure the way you would like to tag the {{forecastByModule}} (for example which {{forecastByModule}} should be included or excluded from the forecasting numbers). You can choose the number of categories and determine the ranges of the probabilities for the categories. The {{forecastByModule}} with certain probabilities will default  to the corresponding category. After the initial tag, the user can manually modify the value. Only the {{forecastByModule}} in the "Included" category will be reported to managers as committed.',
+    'LBL_FORECASTS_CONFIG_HELP_SCENARIOS' => 'Select the columns you would like the user to ﬁll out for their forecasts of each {{forecastByModuleSingular}}. Please note the Likely amount is tied to the amount shown in {{forecastByModule}}; for this reason the Likely column cannot be hidden.',
     'LBL_FORECASTS_CONFIG_HELP_WORKSHEET_COLUMNS' => 'Select which columns you would like to view in the Forecast module. The list of fields will combine the worksheet and allow the user to choose how to configure its view.',
     'LBL_FORECASTS_CONFIG_HELP_FORECAST_BY' => 'I am a placeholder for Forecast By how-to text!',
     'LBL_FORECASTS_CONFIG_SETTINGS_SAVED' => 'Forecast config settings have been saved.',
@@ -377,16 +377,16 @@ $mod_strings = array (
     //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
     'LBL_FORECASTS_CONFIG_RANGES_SETUP_NOTICE' => 'Range settings cannot be changed after first save draft or commit in the Forecasts module. For an upgraded instance however, Range settings cannot be changed after the initial setup as the Forecasts data is already available through the upgrade.',
     'LBL_FORECASTS_CONFIG_RANGES' => 'Forecast Range Options:',
-    'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Select the way you would like to categorize opportunities.',
-    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to specify opportunities that will be included or excluded from a forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be excluded from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed range, excluded range and any others that you setup.',
+    'LBL_FORECASTS_CONFIG_RANGES_OPTIONS' => 'Select the way you would like to categorize {{forecastByModule}}.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to specify {{forecastByModule}} that will be included or excluded from a forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their {{forecastByModule}} that are not included in the commit but are upside and have the potential of closing if everything goes well and {{forecastByModule}} that are to be excluded from the forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their {{forecastByModule}} to be committed into the forecast into a committed range, excluded range and any others that you setup.',
     'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Choose the Scenarios to include on the forecasting worksheet.',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Likely is based on the amount entered in the Opportunities module.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Likely is based on the amount entered in the {{forecastByModule}} module.',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_LIKELY' => 'Likely',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_BEST' => 'Best',
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS_WORST' => 'Worst',
@@ -397,14 +397,13 @@ $mod_strings = array (
 
     // variables config
     'LBL_FORECASTS_CONFIG_VARIABLES' => 'Variables',
-    'LBL_FORECASTS_CONFIG_VARIABLES_DESC' => 'The formulas for the Metrics Table rely on the sales stage for opportunities that need to be excluded from the pipleline, i.e., opportunities that are closed and lost.',
-    'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost opportunities:',
-    'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE' => 'Please select the Sales Stage that represent closed and won opportunities:',
+    'LBL_FORECASTS_CONFIG_VARIABLES_DESC' => 'The formulas for the Metrics Table rely on the sales stage for {{forecastByModule}} that need to be excluded from the pipleline, i.e., {{forecastByModule}} that are closed and lost.',
+    'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost {{forecastByModule}}:',
+    'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE' => 'Please select the Sales Stage that represent closed and won {{forecastByModule}}:',
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
 
     'LBL_FORECASTS_WIZARD_SUCCESS_TITLE' => 'Success:',
     'LBL_FORECASTS_WIZARD_SUCCESS_MESSAGE' => 'You successfully set up your forecasting module. Please wait while the module loads.',
-    'LBL_FORECASTS_WIZARD_REFRESH_NOTICE' => 'This is your first time using the Forecasts module and your Opportunities need to be loaded. This process may take a few minutes and you may need to refresh the page.',
     'LBL_FORECASTS_TABBED_CONFIG_SUCCESS_MESSAGE' => 'The setting has been saved. Please wait while the module reloads.',
     // Labels for Success Messages:
     'LBL_FORECASTS_WORKSHEET_SAVE_DRAFT_SUCCESS' => 'You have saved the forecasting worksheet as draft for the selected time period.',
