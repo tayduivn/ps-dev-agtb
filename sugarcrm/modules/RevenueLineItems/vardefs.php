@@ -71,15 +71,6 @@ $dictionary['RevenueLineItem'] = array(
             'enforced' => true,
             'calculated' => true,
         ),
-        'contact_id' => array(
-            'name' => 'contact_id',
-            'type' => 'id',
-            'vname' => 'LBL_CONTACT_ID',
-            'required' => false,
-            'reportable' => false,
-            'audited' => true,
-            'comment' => 'Contact this product is associated with'
-        ),
         'total_amount' => array(
             'name' => 'total_amount',
             'formula' => 'subtract(multiply(ifElse(isNumeric($discount_price), $discount_price, 0), ifElse(isNumeric($quantity), $quantity, 1)), ifElse(isNumeric($discount_amount), $discount_amount, 0))',
@@ -88,19 +79,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
             'reportable' => false,
             'type' => 'currency'
-        ),
-        'contact_name' => array(
-            'name' => 'contact_name',
-            'rname' => 'last_name',
-            'id_name' => 'contact_id',
-            'vname' => 'LBL_CONTACT_NAME',
-            'type' => 'relate',
-            'link' => 'contact_link',
-            'table' => 'contacts', // for bug 20184, replace 'join_name'=>'contacts',
-            'isnull' => 'true',
-            'module' => 'Contacts',
-            'source' => 'non-db',
-            'db_concat_fields' => array(0 => 'first_name', 1 => 'last_name'),
         ),
         'type_id' => array(
             'name' => 'type_id',
@@ -826,17 +804,6 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_PRODUCTS',
             'source' => 'non-db',
         ),
-        'contact_link' => array(
-            'name' => 'contact_link',
-            'type' => 'link',
-            'relationship' => 'contact_revenuelineitems',
-            'vname' => 'LBL_CONTACT',
-            'link_type' => 'one',
-            'module' => 'Contacts',
-            'bean_name' => 'Contact',
-            'source' => 'non-db',
-            'duplicate_merge' => 'disabled',
-        ), //bug 20184, add contact_link field
         'account_name' => array(
             'name' => 'account_name',
             'rname' => 'name',
