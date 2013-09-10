@@ -327,9 +327,9 @@
             this.closedWonIds.push(id);
         }
 
-        // If this model's commit_stage is included in Closed Won totals
+        // If this model's commit_stage is included in included totals
         // and the id isnt already in includedIds
-        if(_.contains(this.commitStagesInIncludedTotal, cs) && !_.contains(this.closedWonIds, id)) {
+        if(_.contains(this.commitStagesInIncludedTotal, cs) && !_.contains(this.includedIds, id)) {
             this.includedIds.push(id);
         }
     },
