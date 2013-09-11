@@ -312,7 +312,7 @@ else if(!isset($_GET['execute'])){
 			continue;
 		}
         $p_module = $beanListFlip[$module];
-        $object = BeanFactory::getBean($p_module);
+        $object = BeanFactory::getBean($module);
         if(empty($object->table_name)){
 //			echo "<h5>Could not find the database table for $p_module.</h5>";
 			continue;

@@ -112,7 +112,11 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->save();
 
         // roll up the committed forecast to that person manager view
-        $mgr_worksheet->reporteeForecastRollUp($current_user, $args);
+        // copy the object so we can set some needed values
+        $mgr_rollup_data = $worksheet_totals;
+        $mgr_rollup_data['forecast_type'] = $args['forecast_type'];
+
+        $mgr_worksheet->reporteeForecastRollUp($current_user, $mgr_rollup_data);
 
         if ($this->getArg('commit_type') == "sales_rep") {
             $worksheet->commitWorksheet($current_user->id, $args['timeperiod_id']);
