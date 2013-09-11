@@ -3405,6 +3405,7 @@ $app_strings = array (
   'ERROR_CONNECTOR_CONFIGURE' => 'Unable to retrieve data.  The service may currently be inaccessible or the configuration settings may be invalid.',
   'LBL_CONNECT_TWITTER'=>'Connect to Twitter',
   'LBL_CONNECT_TWITTER_FOR_ADMIN'=>'Configure Twitter Connector',
+  'LBL_CONNECT_TEST_FAIL'=>'Error: The connector configuration settings may be invalid. Please contact your administrator.',
   'LBL_CONFIGURE_TWITTER'=>'Contact your administrator to configure Twitter',
   'LBL_MERGE_CONNECTORS' => 'Get Data',
   'LBL_NO_DATA_AVAILABLE' => 'No data available.',

@@ -133,6 +133,19 @@ class EAPMController extends SugarController
 		}
         if(empty($_REQUEST['oauth_error'])) {
             $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
+            $this->api->getConnector();
+            $source = $this->api->connector_source;
+
+            if ($source && $source->hasTestingEnabled()) {
+                try {
+                    if (!$source->test()) {
+                        sugar_die(translate('LBL_CONNECT_TEST_FAIL', $this->bean->module_dir));
+                    }
+                } catch (Exception $e) {
+                    sugar_die(translate('LBL_CONNECT_TEST_FAIL', $this->bean->module_dir));
+                }
+            }
+
             $reply = $this->api->checkLogin($this->bean);
             if ( !$reply['success'] ) {
                 return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
