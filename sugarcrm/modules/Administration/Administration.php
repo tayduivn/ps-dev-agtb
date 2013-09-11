@@ -240,12 +240,7 @@ class Administration extends SugarBean {
 
         $moduleConfig = array();
         while($row = $this->db->fetchByAssoc($result)) {
-            $temp = json_decode(html_entity_decode(stripslashes($row['value'])), true);
-            if (is_null($temp)) {
-                $temp = $row['value'];
-            }
-
-            $moduleConfig[$row['name']] = $temp;
+            $moduleConfig[$row['name']] = $this->decodeConfigVar($row['value']);
         }
 
         if(!empty($moduleConfig)) {
@@ -271,14 +266,30 @@ class Administration extends SugarBean {
 
         $return = array();
         while($row = $this->db->fetchByAssoc($rows)) {
-            $temp = json_decode(html_entity_decode(stripslashes($row['value'])), true);
-            if (!is_null($temp)) {
-                $row['value'] = $temp;
-            }
+            $row['value'] = $this->decodeConfigVar($row['value']);
             $return[] = $row;
         }
 
         return $return;
+    }
+
+    /**
+     * @param string $var
+     * @return string
+     * decode the config var
+     */
+    public function decodeConfigVar($var)
+    {
+        $var = html_entity_decode(stripslashes($var));
+        // don't json_decode numerics, it will
+        // strip off trailing zeros
+        if(!empty($var) && !is_numeric($var)) {
+            $decoded = json_decode($var, true);
+            if(json_last_error() == JSON_ERROR_NONE) {
+                $var = $decoded;
+            }
+        }
+        return $var;
     }
 
     /**
