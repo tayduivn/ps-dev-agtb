@@ -30,7 +30,6 @@
     ],
 
     initialize: function(options) {
-<<<<<<< HEAD
         // If (for some reason) we're trying to directly access old Home/Dashboards, for redirect to sidecar #Home
         var url = options.context.get('url');
         if (url && (url.search(/module=Home.*action=index/) > -1 || url.search(/action=index.*module=Home/) > -1)) {
@@ -38,9 +37,7 @@
             return;
         }
         this.$el.attr('src', this._addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
-=======
-        this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
->>>>>>> parent of 92227db... Merge pull request #13908 from smalyshev/e194
+
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
     },
