@@ -118,6 +118,10 @@ if(!empty($_POST['saveConfig'])){
 		$configurator->saveConfig();
 
 		$focus->saveConfig();
+
+		// Clean API cache since we may have changed the authentication settings
+		MetaDataManager::clearAPICache();
+
         die("
             <script>
             var app = window.parent.SUGAR.App;
