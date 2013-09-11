@@ -138,6 +138,13 @@ class SugarFieldFile extends SugarFieldBase
             $old_id = $params['duplicateId'];
         }
 
+        // case when we should copy one file to another using merge-duplicate view
+        // $params[$field . '_duplicateModuleId'] contains id of bean from
+        // which we should copy file.
+        if (!empty($params[$field . '_duplicateModuleId'])) {
+            $duplicateModuleId = $params[$field . '_duplicateModuleId'];
+        }
+
         // Backwards compatibility for fields that still use customCode to handle the file uploads
         if ( !$move && empty($old_id) && isset($_FILES['uploadfile']) ) {
             $upload_file = new UploadFile('uploadfile');
@@ -209,6 +216,16 @@ class SugarFieldFile extends SugarFieldBase
                     $bean->file_ext = $extension;
                     $bean->file_mime_type = get_mime_content_type_from_filename($bean->$field);
                 }
+            }
+        } elseif (!empty($duplicateModuleId)) {
+            $upload_file->duplicate_file($duplicateModuleId, $bean->id, $bean->$field);
+            $bean->$field = $params[$field];
+
+            require_once 'include/utils/file_utils.php';
+            $extension = get_file_extension($bean->$field);
+            if (!empty($extension)) {
+                $bean->file_ext = $extension;
+                $bean->file_mime_type = get_mime_content_type_from_filename($bean->$field);
             }
         }
 
