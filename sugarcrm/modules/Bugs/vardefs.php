@@ -203,7 +203,6 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'source' => 'non-db',
     'vname' => 'LBL_MEETINGS',
     'module' => 'Meetings',
-    'bean_name' => 'Meeting',
   ),
   'calls' => array(
     'name' => 'calls',
@@ -212,7 +211,6 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'source' => 'non-db',
     'vname' => 'LBL_CALLS',
     'module' => 'Calls',
-    'bean_name' => 'Call',
   ),
   'emails' =>
   array (

@@ -295,7 +295,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'source'=>'non-db',
         'vname'=>'LBL_BUGS',
         'module'=>'Bugs',
-        'bean_name'=>'Bug',
     ),
   'contacts' =>
   array (

@@ -391,7 +391,6 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
         'source'=>'non-db',
         'vname'=>'LBL_BUGS',
         'module'=>'Bugs',
-        'bean_name'=>'Bug',
     ),
   'leads' =>
   array (
