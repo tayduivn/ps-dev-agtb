@@ -62,7 +62,11 @@
                     related: this.model
                 }
             }
-        });
+        }, _.bind(function(context, newModel) {
+            if (newModel && newModel.id) {
+                this.layout.loadData();
+            }
+        }, this));
     },
 
     /**
