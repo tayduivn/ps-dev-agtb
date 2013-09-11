@@ -1731,19 +1731,19 @@ $app_list_strings = array (
             '$not_in' => 'is not any of',
         ),
         'varchar' => array(
-            '$equals' => 'matches',
+            '$equals' => 'exactly matches',
             '$starts' => 'starts with',
         ),
         'name' => array(
-            '$equals' => 'matches',
+            '$equals' => 'exactly matches',
             '$starts' => 'starts with',
         ),
         'text' => array(
-            '$equals' => 'matches',
+            '$equals' => 'exactly matches',
             '$starts' => 'starts with',
         ),
         'textarea' => array(
-            '$equals' => 'matches',
+            '$equals' => 'exactly matches',
             '$starts' => 'starts with',
         ),
         'currency' => array(
