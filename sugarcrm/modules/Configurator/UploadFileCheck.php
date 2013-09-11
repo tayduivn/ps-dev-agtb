@@ -68,6 +68,7 @@ if(file_exists($file_name) && is_file($file_name)) {
         }
         if (($test>20 || $test<3)&& $returnArray['forQuotes'] == 'quotes')
             $returnArray['data']='size';
+        sugar_mkdir(sugar_cached('images'));
         copy($file_name, sugar_cached('images/'.$upload->get_stored_file_name()));
     }
     if(!empty($returnArray['data'])){

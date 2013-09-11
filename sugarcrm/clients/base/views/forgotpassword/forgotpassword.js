@@ -85,9 +85,7 @@
         if (!(app.config && app.config.forgotpasswordON === true)) {
             return;
         }
-        if (app.config && app.config.logoURL) {
-            this.logoURL = app.config.logoURL;
-        }
+        this.logoUrl = app.metadata.getLogoUrl();
         app.view.View.prototype._render.call(this);
 
         return this;

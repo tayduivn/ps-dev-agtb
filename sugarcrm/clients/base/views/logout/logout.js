@@ -14,6 +14,7 @@
      * @private
      */
     _render: function() {
+        this.logoUrl = app.metadata.getLogoUrl();
         app.view.View.prototype._render.call(this);
         this.refreshAddtionalComponents();
         return this;

@@ -7,11 +7,18 @@
     _placeComponent: function(component) {
         this.$el.find('.btn-toolbar').append(component.$el);
     },
-    initialize: function(options) {
-        if (app.config && app.config.logoURL) {
-            this.logoURL=app.config.logoURL;
-        }
-        app.view.Layout.prototype.initialize.call(this, options);
-    }
 
+    /**
+     * @override
+     * @private
+     */
+    _render: function() {
+        this.logoUrl = app.metadata.getLogoUrl();
+        //For a layout we need to
+        this.$el.html(this.template(this));
+        _.each(this._components, function(component) {
+            this._placeComponent(component);
+        }, this);
+        app.view.Layout.prototype._render.call(this);
+    }
 })
