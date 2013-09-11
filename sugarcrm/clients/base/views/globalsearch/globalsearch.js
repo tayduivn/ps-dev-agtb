@@ -1,14 +1,16 @@
 ({
+    // FIXME this needs to be removed so that we can be able to reuse this view
+    id: 'searchForm',
     plugins: ['dropdown'],
-
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',
-        'click .icon-search': 'gotoFullSearchResultsPage',
-        'click .globalsearch-adv': 'persistMenu',
-        'click .select-module': 'selectModule',
-        'click .dropdown-toggle':'toggleDropdown'
+        'click [data-action=search]': 'gotoFullSearchResultsPage',
+        'click [data-advanced=options]': 'persistMenu',
+        'click [data-action="select-module"]': 'selectModule',
+        'click .dropdown-toggle': 'toggleDropdown'
     },
+    // FIXME remove this code
     toggleDropdown: function(event) {
         var $currentTarget = this.$(event.currentTarget);
         this.toggleDropdownHTML($currentTarget);
@@ -228,20 +230,29 @@
      * Show full search results when the search button is clicked
      * (Show searchahead results for sugarcon because we don't have full results page yet)
      */
-    gotoFullSearchResultsPage: function(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
+    gotoFullSearchResultsPage: function() {
+
+        var $searchBox = this.$('[data-provide=typeahead]');
+
+        if (!$searchBox.is(':visible')) {
+            this.$el.addClass('active');
+            $(window).on('click.globalsearch.data-api', _.bind(function() {
+                this.$el.removeClass('active');
+            }, this));
+            $searchBox.focus();
+            return;
+        }
+
         // Simulate 'enter' keyed so we can show searchahead results
-        var e = jQuery.Event("keyup");
-        e.keyCode = $.ui.keyCode.ENTER;
-        this.$('.search-query').focus();
-        this.$('.search-query').trigger(e);
+        var e = $.Event('keyup', { keyCode: $.ui.keyCode.ENTER });
+        $searchBox.focus();
+        $searchBox.trigger(e);
     },
 
     /**
      * Clears out search upon user following search result link in menu
      */
-    clearSearch: function(evt) {
+    clearSearch: function() {
         this.$('.search-query').val('');
     },
 
@@ -250,5 +261,10 @@
      */
     persistMenu: function(e) {
         e.stopPropagation();
+    },
+
+    unbind: function() {
+        $(window).off('click.globalsearch.data-api');
+        this._super('unbind');
     }
 })
