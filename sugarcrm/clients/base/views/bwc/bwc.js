@@ -36,7 +36,9 @@
             app.router.navigate('#Home', {trigger: true});
             return;
         }
-        this.$el.attr('src', this._addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
+      //  this.$el.attr('src', this._addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
+        this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
+
 
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
