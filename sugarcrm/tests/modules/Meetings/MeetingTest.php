@@ -40,7 +40,6 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
 
 		$meeting = BeanFactory::newBean('Meetings');
-		$meeting->id = uniqid();
         $meeting->name = 'Test Meeting';
         $meeting->save();
 		$this->meeting = $meeting;
@@ -85,9 +84,10 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
     function testMeetingTypeSaveDefaultInDb() {
         $query = "SELECT * FROM meetings WHERE id = '{$this->meeting->id}'";
         $result = $GLOBALS['db']->query($query);
-    	while($row = $GLOBALS['db']->fetchByAssoc($result))
-		// Assert doc type default is 'Sugar'
-    	$this->assertEquals($row['type'], 'Sugar');
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            // Assert doc type default is 'Sugar'
+            $this->assertEquals($row['type'], 'Sugar');
+        }
 	}
 	
 	function testEmailReminder(){
@@ -152,4 +152,3 @@ class MeetingTest extends Sugar_PHPUnit_Framework_TestCase
 
 	}
 }
-?>
