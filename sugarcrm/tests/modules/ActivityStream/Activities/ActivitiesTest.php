@@ -8,13 +8,16 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestIncomplete('Needs to be fixed by ABE team.');
         parent::setUp();
         $this->activity = SugarTestActivityUtilities::createActivity();
     }
 
     public function tearDown()
     {
+        //restore the BeanFactory name
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        SugarTestReflection::setProtectedValue($activity, 'beanFactoryClass', 'BeanFactory');
+
         SugarTestActivityUtilities::removeAllCreatedActivities();
         SugarTestCommentUtilities::removeAllCreatedComments();
         parent::tearDown();
@@ -49,7 +52,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertInternalType('string', $comment->id);
         $this->assertEquals($comment->id, $this->activity->last_comment_bean->id);
         $this->assertEquals(1, $this->activity->comment_count);
-        $this->assertEquals((string)$comment, $this->activity->last_comment);
+        $this->assertEquals($comment->toJson(), $this->activity->last_comment);
     }
 
     /**
@@ -184,9 +187,7 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testProcessPostSubscription()
     {
-        $relationshipStub = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $relationshipStub = $this->getMockRelationship();;
         $relationshipStub->expects($this->once())
             ->method('add');
 
@@ -199,4 +200,491 @@ class ActivitiesTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestReflection::callProtectedMethod($stub, 'processPostSubscription', array());
     }
+
+    public static function dataProvider_TestGetData()
+    {
+        return array(array('String'), array('Array'));
+    }
+
+    /**
+     * @covers Activity::getDataString
+     * @covers Activity::getDataArray
+     * @dataProvider dataProvider_TestGetData
+     */
+    public function testGetData($format)
+    {
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $testData = array(
+            'String' => '{"test":123}',
+            'Array' => array('test' => 123),
+        );
+
+        foreach ($testData as $data) {
+            $activity->data = $data;
+            $result = SugarTestReflection::callProtectedMethod($activity, 'getData'.$format);
+            $this->assertEquals($result, $testData[$format]);
+        }
+    }
+
+    /**
+     * @covers Activity::getParentBean
+     */
+    public function testGetParentBean_NullParentType_ReturnsNull()
+    {
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->parent_type = null;
+        $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
+        $this->assertEquals(null, $result, "Should return null if parent type is null");
+    }
+
+    /**
+     * @covers Activity::getParentBean
+     */
+    public function testGetParentBean_NullParentId_RetrievesEmptyBean()
+    {
+        $parentType = 'FooBean';
+        $mockBean = array('module' => $parentType);
+
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->parent_type = $parentType;
+        $activity->parent_id = null;
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('getBean'));
+        $bf::staticExpects($this->once())
+            ->method('getBean')
+            ->will($this->returnValue($mockBean));
+
+        SugarTestReflection::setProtectedValue($activity, 'beanFactoryClass', get_class($bf));
+        $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
+        $this->assertEquals($mockBean, $result, "Should return empty bean");
+    }
+
+    /**
+     * @covers Activity::getParentBean
+     */
+    public function testGetParentBean_DeleteActivity_RetrievesBeanDisablingRowSecurity()
+    {
+        $parentType = 'FooBean';
+        $parentId = '123';
+        $mockBean = array('module' => $parentType, 'id' => $parentId, 'deleted' => 1);
+
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->parent_type = $parentType;
+        $activity->parent_id = $parentId;
+        $activity->activity_type = 'delete';
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->with($this->equalTo($parentType),
+                $this->equalTo($parentId),
+                $this->equalTo(array('disable_row_level_security' => true)),
+                $this->equalTo(false))
+            ->will($this->returnValue($mockBean));
+
+        $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
+        $this->assertEquals($mockBean, $result, "Should return deleted bean");
+    }
+
+    /**
+     * @covers Activity::getParentBean
+     */
+    public function testGetParentBean_NonDeleteActivity_RetrievesBean()
+    {
+        $parentType = 'FooBean';
+        $parentId = '123';
+        $mockBean = array('module' => $parentType, 'id' => $parentId);
+
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->parent_type = $parentType;
+        $activity->parent_id = $parentId;
+        $activity->activity_type = 'update';
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->with($this->equalTo($parentType),
+                $this->equalTo($parentId),
+                $this->equalTo(array()),
+                $this->equalTo(true))
+            ->will($this->returnValue($mockBean));
+
+        $result = SugarTestReflection::callProtectedMethod($activity, 'getParentBean');
+        $this->assertEquals($mockBean, $result, "Should return retrieved bean");
+    }
+
+    /**
+     * @covers Activity::getChangedFieldsForUser
+     */
+    public function testGetChangedFieldsForUser_NonUpdateActivity_ReturnsEmptyArray()
+    {
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->activity_type = 'foo';
+        $activity->data = '{changes: []}';
+
+        $bean = $this->getMock('SugarBean');
+        $bean->expects($this->never())->method('ACLFilterFieldList');
+
+        $result = SugarTestReflection::callProtectedMethod(
+            $activity,
+            'getChangedFieldsForUser',
+            array(new User(), $bean)
+        );
+        $this->assertEquals(array(), $result, "Should return empty array");
+    }
+
+    /**
+     * @covers Activity::getChangedFieldsForUser
+     */
+    public function testGetChangedFieldsForUser_NoDataChanges_ReturnsEmptyArray()
+    {
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->activity_type = 'update';
+        $activity->data = '{}';
+
+        $bean = $this->getMock('SugarBean');
+        $bean->expects($this->never())->method('ACLFilterFieldList');
+
+        $result = SugarTestReflection::callProtectedMethod(
+            $activity,
+            'getChangedFieldsForUser',
+            array(new User(), $bean)
+        );
+        $this->assertEquals(array(), $result, "Should return empty array");
+    }
+
+    /**
+     * @covers Activity::getChangedFieldsForUser
+     */
+    public function testGetChangedFieldsForUser_DataChangesExist_ChecksACLAndReturnsFields()
+    {
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->activity_type = 'update';
+        $activity->data = '{"changes": [{"field_name": "foo"},{"field_name": "bar"}]}';
+
+        $bean = $this->getMock('SugarBean');
+        $bean->expects($this->once())->method('ACLFilterFieldList');
+
+        $result = SugarTestReflection::callProtectedMethod(
+            $activity,
+            'getChangedFieldsForUser',
+            array(new User(), $bean)
+        );
+        $this->assertEquals(array('foo','bar'), $result, "Should return array with two fields");
+    }
+
+    /**
+     * @covers Activity::processPostTags
+     */
+    public function testProcessPostTags_WithTags_CallsProcessTags()
+    {
+        $activity = $this->getMock('Activity', array('processTags'));
+        $activity->expects($this->once())->method('processTags');
+
+        $activity->data = '{"tags": ["tag1","tag2"]}';
+        SugarTestReflection::callProtectedMethod($activity, 'processPostTags');
+    }
+
+    /**
+     * @covers Activity::processPostTags
+     */
+    public function testProcessPostTags_WithNoTags_DoesNotCallProcessTags()
+    {
+        $activity = $this->getMock('Activity', array('processTags'));
+        $activity->expects($this->never())->method('processTags');
+
+        $activity->data = '{}';
+        SugarTestReflection::callProtectedMethod($activity, 'processPostTags');
+    }
+
+    /**
+     * @covers Activity::processTags
+     */
+    public function testProcessTags_WithNoTags_DoesNotProcessAnyRelationships()
+    {
+        $tags = array();
+        $activity = $this->getMock('Activity', array('processUserRelationships', 'processRecord'));
+        $activity->expects($this->never())->method('processUserRelationships');
+        $activity->expects($this->never())->method('processRecord');
+        $activity->processTags($tags);
+    }
+
+    /**
+     * @covers Activity::processTags
+     */
+    public function testProcessTags_UserTagNonPostActivity_CallsProcessUserRelationships()
+    {
+        $tags = array(
+            array('module'=>'Users', 'id'=>'123'),
+        );
+        $activity = $this->getMock('Activity', array('processUserRelationships', 'processRecord'));
+        $activity->expects($this->once())
+            ->method('processUserRelationships')
+            ->with($this->equalTo(array('123')));
+        $activity->expects($this->never())->method('processRecord');
+
+        $activity->parent_id = '456';
+        $activity->processTags($tags);
+    }
+
+    /**
+     * @covers Activity::processTags
+     */
+    public function testProcessTags_UserTagPostToModuleWithUserAccess_CallsProcessRecord()
+    {
+        $tags = array(
+            array('module'=>'Users', 'id'=>'123'),
+        );
+        $activity = $this->getMock('Activity', array(
+            'processUserRelationships',
+            'processRecord',
+            'userHasViewAccessToParentModule',
+        ));
+        $activity->expects($this->once())
+            ->method('userHasViewAccessToParentModule')
+            ->will($this->returnValue(true));
+        $activity->expects($this->once())->method('processRecord');
+        $activity->expects($this->never())->method('processUserRelationships');
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->with($this->equalTo('Users'), $this->equalTo('123'))
+            ->will($this->returnValue(new SugarBean()));
+
+        $activity->parent_type = 'Foo';
+        $activity->processTags($tags);
+    }
+
+    /**
+     * @covers Activity::processTags
+     */
+    public function testProcessTags_UserTagPostToModuleWithNoAccess_DoesNotProcessAnyRelationships()
+    {
+        $tags = array(
+            array('module'=>'Users', 'id'=>'123'),
+        );
+        $activity = $this->getMock('Activity', array(
+            'processUserRelationships',
+            'processRecord',
+            'userHasViewAccessToParentModule',
+        ));
+        $activity->expects($this->once())
+            ->method('userHasViewAccessToParentModule')
+            ->will($this->returnValue(false));
+        $activity->expects($this->never())->method('processRecord');
+        $activity->expects($this->never())->method('processUserRelationships');
+
+        $activity->parent_type = 'Bar';
+        $activity->processTags($tags);
+    }
+
+    /**
+     * @covers Activity::processTags
+     */
+    public function testProcessTags_NonUserTag_CallsProcessRecord()
+    {
+        $tags = array(
+            array('module'=>'Blah', 'id'=>'123'),
+        );
+        $activity = $this->getMock('Activity', array(
+            'processUserRelationships',
+            'processRecord',
+        ));
+        $activity->expects($this->once())->method('processRecord');
+        $activity->expects($this->never())->method('processUserRelationships');
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->with($this->equalTo('Blah'), $this->equalTo('123'))
+            ->will($this->returnValue(new SugarBean()));
+
+        $activity->processTags($tags);
+    }
+
+    /**
+     * @covers Activity::userHasViewAccessToParentModule
+     */
+    public function testUserHasViewAccessToParentModule_NoParentType_ReturnsTrue()
+    {
+        $activity = SugarTestActivityUtilities::createUnsavedActivity();
+        $activity->parent_type = null;
+        $result = SugarTestReflection::callProtectedMethod(
+            $activity,
+            'userHasViewAccessToParentModule',
+            array(array('123'))
+        );
+        $this->assertTrue($result);
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_NoRelationship_ReturnsFalse()
+    {
+        $activity = $this->getMock('Activity', array('load_relationship'));
+        $activity->expects($this->once())
+            ->method('load_relationship')
+            ->will($this->returnValue(false));
+
+        $result = $activity->processUserRelationships();
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_NoUserIds_NoRelationshipAdded()
+    {
+        $relationship = $this->getMockRelationship();;
+        $relationship->expects($this->never())->method('add');
+
+        $activity = $this->getMock('Activity', array(
+            'load_relationship',
+            'getParentBean',
+        ));
+        $activity->expects($this->once())
+            ->method('load_relationship')
+            ->will($this->returnValue(true));
+        $activity->activities_users = $relationship;
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->never())->method('retrieveBean');
+
+        $activity->processUserRelationships(array());
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_ParentBeanNotRetrieved_NoRelationshipAdded()
+    {
+        $relationship = $this->getMockRelationship();;
+        $relationship->expects($this->never())->method('add');
+
+        $activity = $this->getMock('Activity', array(
+            'load_relationship',
+            'getParentBean',
+        ));
+        $this->mockActivitiesUserRelationship($activity, $relationship);
+
+        $activity->expects($this->once())
+            ->method('getParentBean')
+            ->will($this->returnValue(null));
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->never())->method('retrieveBean');
+
+        $activity->processUserRelationships(array());
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_UserHasAccessToParent_RelationshipAdded()
+    {
+        $relationship = $this->getMockRelationship();
+        $relationship->expects($this->once())->method('add');
+
+        $activity = $this->getMock('Activity', array(
+            'load_relationship',
+            'getParentBean',
+            'getChangedFieldsForUser',
+        ));
+        $this->mockActivitiesUserRelationship($activity, $relationship);
+
+        $parentBean = $this->getMock('SugarBean', array('checkUserAccess'));
+        $parentBean->expects($this->once())
+            ->method('checkUserAccess')
+            ->will($this->returnValue(true));
+
+        $activity->expects($this->once())
+            ->method('getParentBean')
+            ->will($this->returnValue($parentBean));
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->will($this->returnValue(new User()));
+
+        $activity->processUserRelationships(array('123'));
+    }
+
+    /**
+     * @covers Activity::processUserRelationships
+     */
+    public function testProcessUserRelationships_UserNoAccessToParent_SubscriptionRemoved()
+    {
+        $relationship = $this->getMockRelationship();
+        $relationship->expects($this->never())->method('add');
+
+        $activity = $this->getMock('Activity', array(
+            'load_relationship',
+            'getParentBean',
+            'getChangedFieldsForUser',
+        ));
+        $this->mockActivitiesUserRelationship($activity, $relationship);
+
+        $parentBean = $this->getMock('SugarBean', array('checkUserAccess'));
+        $parentBean->expects($this->once())
+            ->method('checkUserAccess')
+            ->will($this->returnValue(false));
+
+        $activity->expects($this->once())
+            ->method('getParentBean')
+            ->will($this->returnValue($parentBean));
+
+        $subscription = $this->getMock('Subscription', array('unsubscribeUserFromRecord'));
+        $subscription::staticExpects($this->once())->method('unsubscribeUserFromRecord');
+
+        $bf = $this->mockBeanFactoryOnActivity($activity, array('retrieveBean', 'getBeanName'));
+        $bf::staticExpects($this->once())
+            ->method('retrieveBean')
+            ->will($this->returnValue(new User()));
+        $bf::staticExpects($this->once())
+            ->method('getBeanName')
+            ->with($this->equalTo('Subscriptions'))
+            ->will($this->returnValue(get_class($subscription)));
+
+        $activity->processUserRelationships(array('123'));
+    }
+
+    /**
+     * Helper to get a mock relationship
+     * @return mixed
+     */
+    protected function getMockRelationship()
+    {
+        return $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * Helper for mocking out the activities_users relationship on an activity
+     * @param $activity
+     * @param $relationship
+     */
+    protected function mockActivitiesUserRelationship($activity, $relationship)
+    {
+        $activity->expects($this->once())
+            ->method('load_relationship')
+            ->will($this->returnValue(true));
+        $activity->activities_users = $relationship;
+    }
+
+    /**
+     * Helper to create a mock BeanFactory and set it on the activity
+     * @param $activity
+     * @param $methods
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function mockBeanFactoryOnActivity($activity, $methods)
+    {
+        $beanFactory = $this->getMock('BeanFactory', $methods);
+        SugarTestReflection::setProtectedValue($activity, 'beanFactoryClass', get_class($beanFactory));
+        return $beanFactory;
+    }
+
 }

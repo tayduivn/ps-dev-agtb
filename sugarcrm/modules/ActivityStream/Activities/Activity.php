@@ -45,6 +45,12 @@ class Activity extends Basic
     public static $enabled = true;
 
     /**
+     * For mocking out BeanFactory
+     * @var string
+     */
+    protected $beanFactoryClass = 'BeanFactory';
+
+    /**
      * Constructor for the Activity bean.
      *
      * Override SugarBean's constructor so that we can create a comment bean as
@@ -79,6 +85,7 @@ class Activity extends Basic
     /**
      * Adds a comment to the activity, handling the denormalized columns.
      * @param Comment $comment
+     * @return bool
      */
     public function addComment(Comment $comment)
     {
@@ -126,10 +133,7 @@ class Activity extends Basic
     {
         $isUpdate = !(empty($this->id) || $this->new_with_id);
 
-        if (is_string($this->data)) {
-            $this->data = json_decode($this->data, true);
-        }
-
+        $this->data = $this->getDataArray();
         $this->data = $this->processDataWithHtmlPurifier($this->activity_type, $this->data);
 
         if ($this->activity_type == 'post' || $this->activity_type == 'attach') {
@@ -147,21 +151,94 @@ class Activity extends Basic
             }
         }
 
-        if (!is_string($this->data)) {
-            $this->data = json_encode($this->data);
-        }
+        $this->data = $this->getDataString();
         $this->last_comment = $this->last_comment_bean->toJson();
 
         $return = parent::save($check_notify);
 
         if (($this->activity_type === 'post' || $this->activity_type === 'attach') && !$isUpdate) {
             $this->processPostSubscription();
-            $this->processTags();
+            $this->processPostTags();
         }
 
         return $return;
     }
 
+    /**
+     * Helper to retrieve a representation of the data property in string format
+     * @return string
+     */
+    protected function getDataString()
+    {
+        if (is_string($this->data)) {
+            return $this->data;
+        } else {
+            return json_encode($this->data);
+        }
+    }
+
+    /**
+     * Helper to retrieve a representation of the data property in array format
+     * @return array
+     */
+    protected function getDataArray()
+    {
+        if (is_array($this->data)) {
+            return $this->data;
+        } else {
+            return json_decode($this->data, true);
+        }
+    }
+
+    /**
+     * Helper to retrieve the parent bean of this activity
+     * @return null|SugarBean
+     */
+    protected function getParentBean()
+    {
+        $bf = $this->beanFactoryClass;
+        if (empty($this->parent_type)) {
+            return null;
+        }
+
+        if (empty($this->parent_id)) {
+            return $bf::getBean($this->parent_type);
+        }
+
+        $ignoreDeleted = true;
+        $beanParams = array();
+        if ($this->activity_type === 'delete') {
+            $ignoreDeleted = false;
+            $beanParams['disable_row_level_security'] = true;
+        }
+        return $bf::retrieveBean($this->parent_type, $this->parent_id, $beanParams, $ignoreDeleted);
+    }
+
+    /**
+     * Retrieve the list of changed fields for this activity that the user has ACL permissions to see
+     * @param User $user
+     * @param SugarBean $bean
+     * @return array List of fields the user has ACL permission to see
+     */
+    protected function getChangedFieldsForUser(User $user, SugarBean $bean)
+    {
+        $fields = array();
+        $activityData = $this->getDataArray();
+        if ($this->activity_type === 'update' && isset($activityData['changes'])) {
+            foreach ($activityData['changes'] as $field) {
+                $fields[$field['field_name']] = 1;
+            }
+            $context = array('user' => $user);
+            $bean->ACLFilterFieldList($fields, $context);
+            $fields = array_keys($fields);
+        }
+        return $fields;
+    }
+
+    /**
+     * Retrieve embed info about a link and merge it into the data array
+     * Makes the assumption that data property is in array format
+     */
     protected function processEmbed()
     {
         if (!empty($this->data['value'])) {
@@ -172,15 +249,50 @@ class Activity extends Basic
         }
     }
 
-    protected function processTags()
+    /**
+     * Helper for processing tags directly on a post
+     * Links the activity to the appropriate tagged record(s)
+     */
+    protected function processPostTags()
     {
-        $data = json_decode($this->data, true);
-        if (!empty($data['tags']) && is_array($data['tags'])) {
-            foreach ($data['tags'] as $tag) {
-                $bean = BeanFactory::retrieveBean($tag['module'], $tag['id']);
+        $data = $this->getDataArray();
+        if (isset($data['tags'])) {
+            $this->processTags($data['tags']);
+        }
+    }
+
+    /**
+     * Helper for processing tags and linking the activity to the appropriate tagged record(s)
+     * This is used for tags both directly on a post or in comments
+     * @param array $tags
+     */
+    public function processTags(array $tags)
+    {
+        $bf = $this->beanFactoryClass;
+        foreach ($tags as $tag) {
+            //if tag is a User and the activity has a parent, we need to check access
+            if ($tag['module'] === 'Users' && !empty($this->parent_id)) {
+                $this->processUserRelationships(array($tag['id']));
+            } elseif ($tag['module'] !== 'Users' || $this->userHasViewAccessToParentModule($tag['id'])) {
+                $bean = $bf::retrieveBean($tag['module'], $tag['id']);
                 $this->processRecord($bean);
             }
         }
+    }
+
+    /**
+     * Check if the user has view access to the parent module
+     * Return true if no parent module
+     * @param string $userId
+     * @return boolean
+     */
+    protected function userHasViewAccessToParentModule($userId)
+    {
+        if (empty($this->parent_type)) {
+            return true;
+        }
+        $aclActionBeanName = BeanFactory::getBeanName('ACLActions');
+        return $aclActionBeanName::userHasAccess($userId, $this->parent_type, 'view');
     }
 
     /**
@@ -192,6 +304,38 @@ class Activity extends Basic
         if ($bean->load_relationship('activities')) {
             $bean->activities->add($this);
         }
+    }
+
+    /**
+     * Helper for creating the relationship between the activity and a given list of users
+     * Checks access (module, record, and field level) first
+     * @param array $userIds
+     * @return boolean
+     */
+    public function processUserRelationships(array $userIds = array())
+    {
+        $bf = $this->beanFactoryClass;
+        if (!$this->load_relationship('activities_users')) {
+            $GLOBALS['log']->error('Could not load the activity/user relationship.');
+            return false;
+        }
+        $deleteActivity = ($this->activity_type === 'delete');
+        $bean = $this->getParentBean();
+        foreach ($userIds as $userId) {
+            $user = $bf::retrieveBean('Users', $userId);
+            if ($user && $bean) {
+                if ($deleteActivity || $bean->checkUserAccess($user)) {
+                    // if user has access to the bean, we allow the user to see the activity on home and list views
+                    $fields = $this->getChangedFieldsForUser($user, $bean);
+                    $this->activities_users->add($user, array('fields' => json_encode($fields)));
+                } else {
+                    // if user does not have access to the bean, remove the user's subscription to the bean.
+                    $subscriptionsBeanName = $bf::getBeanName('Subscriptions');
+                    $subscriptionsBeanName::unsubscribeUserFromRecord($user, $bean);
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -214,6 +358,7 @@ class Activity extends Basic
 
     /**
      * Removes harmful html tags from data using html purifier
+     * @param $activityType string
      * @param $data array
      * @return array data
      */
