@@ -392,6 +392,55 @@ class PdfManagerHelper
     }
 
     /**
+     * helper method to determine if the link is a 'one' (i.e. not many) link
+     * @param SugarBean $bean
+     * @param $fieldName
+     * @return bool
+     */
+    protected static function hasOneRelationship(SugarBean $bean, $fieldName)
+    {
+        if (!isset($bean->$fieldName)) {
+            return false;
+        }
+
+        if ($bean->$fieldName instanceof Link2) {
+            return ($bean->$fieldName->getType() == 'one');
+        }
+
+        // not Link2 or Link. Bail
+        if (!isset($bean->$fieldName->_relationship->relationship_type)) {
+            return false;
+        }
+
+        // deal with Link
+        switch ($bean->$fieldName->_relationship->relationship_type) {
+            case 'one-to-one':
+                return true;
+            case 'one-to-many':
+                return !$bean->$fieldName->_get_bean_position();
+            case 'many-to-one':
+                return $bean->$fieldName->_get_bean_position();
+            case 'many-to-many':
+                if (isset($bean->field_defs[$fieldName]['side'])) {
+                    return false;
+                }
+                switch ($bean->$fieldName->_get_link_table_definition(
+                    $bean->$fieldName->_relationship_name,
+                    'true_relationship_type'
+                )) {
+                    case 'one-to-many':
+                        return !$bean->$fieldName->_get_bean_position();
+                    case 'many-to-one':
+                        return $bean->$fieldName->_get_bean_position();
+                    default:
+                        return false;
+                }
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Make array from bean
      *
      * @param  array   $module_instance -- Instance of module
@@ -436,14 +485,7 @@ class PdfManagerHelper
                 isset($module_instance->field_defs[$name]['type']) &&
                 $module_instance->field_defs[$name]['type'] == 'link' &&
                 $module_instance->load_relationship($name) &&
-                (
-                    (isset($module_instance->field_defs[$name]['link_type']) && $module_instance->field_defs[$name]['link_type'] == 'one') ||
-                    ($module_instance->$name->_relationship->relationship_type == 'one-to-one') ||
-                    ($module_instance->$name->_relationship->relationship_type == 'one-to-many' && !$module_instance->$name->_get_bean_position()) ||
-                    ($module_instance->$name->_relationship->relationship_type == 'many-to-one' && $module_instance->$name->_get_bean_position()) ||
-                    ($module_instance->$name->_relationship->relationship_type == 'many-to-many' && !isset($module_instance->field_defs[$name]['side']) && $module_instance->$name->_get_link_table_definition($module_instance->$name->_relationship_name, 'true_relationship_type') == 'one-to-many' && !$module_instance->$name->_get_bean_position()) ||
-                    ($module_instance->$name->_relationship->relationship_type == 'many-to-many' && !isset($module_instance->field_defs[$name]['side']) && $module_instance->$name->_get_link_table_definition($module_instance->$name->_relationship_name, 'true_relationship_type') == 'many-to-one' && $module_instance->$name->_get_bean_position())
-                ) &&
+                self::hasOneRelationship($module_instance, $name) &&
                 count($module_instance->$name->get()) == 1
                ) {
                 $related_module = $module_instance->$name->getRelatedModuleName();
