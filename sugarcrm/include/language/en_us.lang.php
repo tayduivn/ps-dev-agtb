@@ -1793,8 +1793,8 @@ $app_list_strings = array (
         ),
         'date' => array(
             '$starts' => 'is equal to',
-            '$lte' => 'before',
-            '$gte' => 'after',
+            '$lt' => 'before',
+            '$gt' => 'after',
             'last_7_days' => 'last 7 days',
             'next_7_days' => 'next 7 days',
             'last_30_days' => 'last 30 days',
@@ -1827,6 +1827,10 @@ $app_list_strings = array (
             '$equals' => 'is'
         ),
         'relate' => array(
+            '$equals' => 'is',
+            '$not_equals' => 'is not'
+        ),
+        'teamset' => array(
             '$equals' => 'is',
             '$not_equals' => 'is not'
         ),
