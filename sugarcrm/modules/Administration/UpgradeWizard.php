@@ -141,7 +141,14 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
     				$ms->displayIssues();
     				die();
     			}
-    			validate_manifest( $manifest );
+
+                try {
+                    validate_manifest($manifest);
+                } catch (Exception $e) {
+                    $msg = $e->getMessage();
+                    $GLOBALS['log']->fatal("$msg\n" . $e->getTraceAsString());
+                    die($msg);
+                }
 
 			    $upgrade_zip_type = $manifest['type'];
 

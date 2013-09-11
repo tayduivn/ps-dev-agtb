@@ -40,11 +40,11 @@ ini_set("max_execution_time", "3600");
 if( isset( $_REQUEST['view'] ) && ($_REQUEST['view'] != "") ){
     $view = $_REQUEST['view'];
     if( $view != "default" && $view != "module" ){
-        die($mod_strings['ERR_UW_INVALID_VIEW']);
+        throw new Exception($mod_strings['ERR_UW_INVALID_VIEW']);
     }
 }
 else{
-    die($mod_strings['ERR_UW_NO_VIEW']);
+    throw new Exception($mod_strings['ERR_UW_NO_VIEW']);
 }
 $form_action = "index.php?module=Administration&view=" . $view . "&action=UpgradeWizard";
 
@@ -151,45 +151,47 @@ function validate_manifest( $manifest ){
 	global $mod_strings;
 
     if( !isset($manifest['type']) ){
-        die($mod_strings['ERROR_MANIFEST_TYPE']);
+        throw new Exception($mod_strings['ERROR_MANIFEST_TYPE']);
     }
     $type = $manifest['type'];
     if( getInstallType( "/$type/" ) == "" ){
-        die($mod_strings['ERROR_PACKAGE_TYPE']. ": '" . $type . "'." );
+        throw new Exception($mod_strings['ERROR_PACKAGE_TYPE']. ": '" . $type . "'." );
     }
 
     $acceptable_sugar_versions = getAcceptableSugarVersions($manifest);
-    if ($acceptable_sugar_versions){
-        $version_ok = false;
-        $matches_empty = true;
-        
-        // For cases in which the manifest was written incorrectly we need to create
-        // a comparator. For now we will assume that major and minor version 
-        // matches are acceptable. -rgonzalez
-        if (!isset($acceptable_sugar_versions['exact_matches']) && !isset($acceptable_sugar_versions['regex_matches'])) {
-            $acceptable_sugar_versions = addAcceptableVersionRegex($acceptable_sugar_versions);
-        }
-        
-        if( isset($acceptable_sugar_versions['exact_matches']) ){
-            $matches_empty = false;
-            foreach( $acceptable_sugar_versions['exact_matches'] as $match ){
-                if( $match == $sugar_version ){
-                    $version_ok = true;
-                }
+    if (!$acceptable_sugar_versions) {
+        throw new Exception($mod_strings['ERROR_VERSION_MISSING']);
+    }
+    
+    $version_ok = false;
+    $matches_empty = true;
+    
+    // For cases in which the manifest was written incorrectly we need to create
+    // a comparator. For now we will assume that major and minor version 
+    // matches are acceptable. -rgonzalez
+    if (!isset($acceptable_sugar_versions['exact_matches']) && !isset($acceptable_sugar_versions['regex_matches'])) {
+        $acceptable_sugar_versions = addAcceptableVersionRegex($acceptable_sugar_versions);
+    }
+    
+    if( isset($acceptable_sugar_versions['exact_matches']) ){
+        $matches_empty = false;
+        foreach( $acceptable_sugar_versions['exact_matches'] as $match ){
+            if( $match == $sugar_version ){
+                $version_ok = true;
             }
         }
-        if( !$version_ok && isset($acceptable_sugar_versions['regex_matches']) ){
-            $matches_empty = false;
-            foreach( $acceptable_sugar_versions['regex_matches'] as $match ){
-                if( preg_match( "/$match/", $sugar_version ) ){
-                    $version_ok = true;
-                }
+    }
+    if( !$version_ok && isset($acceptable_sugar_versions['regex_matches']) ){
+        $matches_empty = false;
+        foreach( $acceptable_sugar_versions['regex_matches'] as $match ){
+            if( preg_match( "/$match/", $sugar_version ) ){
+                $version_ok = true;
             }
         }
+    }
 
-        if( !$matches_empty && !$version_ok ){
-            die( $mod_strings['ERROR_VERSION_INCOMPATIBLE'] . $sugar_version );
-        }
+    if( !$matches_empty && !$version_ok ){
+        throw new Exception( $mod_strings['ERROR_VERSION_INCOMPATIBLE'] . $sugar_version );
     }
 
     $acceptable_sugar_flavors = getAcceptableSugarFlavors($manifest);
@@ -201,7 +203,7 @@ function validate_manifest( $manifest ){
             }
         }
         if( !$flavor_ok ){
-            die( $mod_strings['ERROR_FLAVOR_INCOMPATIBLE'] . $sugar_flavor );
+            throw new Exception( $mod_strings['ERROR_FLAVOR_INCOMPATIBLE'] . $sugar_flavor );
         }
     }
 }
@@ -284,7 +286,7 @@ function getAcceptableSugarValues($manifest, $property)
     }
     
     foreach ($manifest as $key => $val) {
-        if (isset($val[$property])) {
+        if (is_array($val) && isset($val[$property])) {
             return $val[$property];
         }
     }
@@ -301,6 +303,12 @@ function addAcceptableVersionRegex($versions)
 {
     $regex = array();
     foreach ($versions as $index => $version) {
+        // Empty versions are not allowed for Sugar7
+        if (empty($version)) {
+            unset($versions[$index]);
+            continue;
+        }
+
         $version_parts = explode('.', $version);
         if (isset($version_parts[1])) {
             // Major and minor matching
