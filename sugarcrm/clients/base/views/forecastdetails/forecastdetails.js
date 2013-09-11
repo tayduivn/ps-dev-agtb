@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'ellipsis_inline'],
 
     /**
      * Manager totals for likely_adjusted
@@ -102,7 +102,7 @@
      * Holds a collection of quota Objects by the quota's record ID
      */
     quotaCollection: undefined,
-    plugins: ['ellipsis_inline'],
+
     /**
      * {@inheritdoc}
      */
