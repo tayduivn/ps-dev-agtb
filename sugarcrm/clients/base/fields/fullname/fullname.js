@@ -33,20 +33,12 @@
         options.def.fields = _.sortBy(options.def.fields, function(field) {
             return formatPlaceholder.indexOf(this.formatMap[field.name]);
         }, this);
-        app.view.invokeParent(this, {
-            type: 'field',
-            name: 'fieldset',
-            method: 'initialize',
-            args: [options]
-        });
+        this._super('initialize',[options]);
     },
 
     _loadTemplate: function() {
-        app.view.invokeParent(this, {
-            type: 'field',
-            name: 'fieldset',
-            method: '_loadTemplate'
-        });
+        this._super('_loadTemplate');
+
         //Bug: SP-1273 - Fixes Contacts subpanel record links to home page
         //(where expectation was to go to the corresponding Contact record)
         if (this.def.link) {
@@ -81,21 +73,15 @@
             delete this.view.fields[field.sfId];
         }, this);
         this.fields = [];
-        var fieldSize = _.size(this.view.fields);
+
         app.view.Field.prototype._render.call(this);
-        //skip bind the children placeholder unless the template contains child fields
-        if (_.size(this.view.fields) === fieldSize) {
-            return this;
-        }
-        _.each(this.def.fields, function(field) {
-            var field = this.view.getField(field.name);
-            if (_.isEmpty(field)) {
-                return;
-            }
-            this.fields.push(field);
+
+        // this.fields will have been updated from the childField hbs-helper during _render
+        _.each(this.fields, function(field) {
             field.setElement(this.$("span[sfuuid='" + field.sfId + "']"));
             field.render();
         }, this);
+
         return this;
     },
 

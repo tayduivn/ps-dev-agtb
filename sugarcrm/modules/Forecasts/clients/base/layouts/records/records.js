@@ -283,35 +283,22 @@
     commitForecast: function(user, worksheet_type, forecast_totals) {
         var forecast = new this.collection.model(),
             forecastType = app.utils.getForecastType(user.isManager, user.showOpps),
-            forecastData = {},
-            totalsProperty = 'case';
+            forecastData = {};
 
-        if (forecastType == 'Rollup') {
-            totalsProperty = 'adjusted';
-        }
-
-        forecastData.best_case = forecast_totals['best_' + totalsProperty];
-        forecastData.likely_case = forecast_totals['likely_' + totalsProperty];
-        forecastData.worst_case = forecast_totals['worst_' + totalsProperty];
 
         // we need a commit_type so we know what to do on the back end.
         forecastData.commit_type = worksheet_type;
         forecastData.timeperiod_id = forecast_totals.timeperiod_id || this.model.get('selectedTimePeriod');
         forecastData.forecast_type = forecastType;
-        forecastData.opp_count = forecast_totals.included_opp_count;
-        forecastData.closed_amount = forecast_totals.closed_amount;
-        forecastData.closed_count = forecast_totals.closed_count;
-        forecastData.pipeline_amount = forecast_totals.pipeline_amount || 0;
-        forecastData.pipeline_opp_count = forecast_totals.pipeline_opp_count || 0;
 
-        forecast.save(forecastData, { success: _.bind(function() {
+        forecast.save(forecastData, { success: _.bind(function(model, response) {
             // we need to make sure we are not disposed, this handles any errors that could come from the router and window
             // alert events
             if (!this.disposed) {
                 // Call sync again so commitLog has the full collection
                 // method gets overridden and options just needs an
                 this.collection.fetch();
-                this.context.trigger("forecasts:worksheet:committed", worksheet_type, forecastData);
+                this.context.trigger("forecasts:worksheet:committed", worksheet_type, response);
                 app.alert.show('success', {
                     level: 'success',
                     autoClose: true,

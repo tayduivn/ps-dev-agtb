@@ -73,7 +73,10 @@
                             container.on('close', function() {
                                 $(this).remove();
                                 delete view.dragdrop_attachments[container.attr('id')];
+                                view.trigger('attachments:remove');
                             });
+
+                            view.trigger('attachments:add');
                         };
                     })(file, this);
 

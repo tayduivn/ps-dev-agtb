@@ -349,9 +349,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 	$field_list = array();
     
     require_once 'modules/Currencies/Currency.php';
-
-    $userCurrencyId = $current_user->getPreference('currency');
-    $userCurrency = BeanFactory::getBean('Currencies', $userCurrencyId);
+    $currencies = array();
 
 	foreach($list as $value)
 	{
@@ -364,8 +362,13 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		$value->fill_in_additional_detail_fields();
 
         // bug 55129 - populate currency from user settings
-        if (property_exists($value, 'currency_id') && $userCurrency->deleted != 1)
+        if (property_exists($value, 'currency_id'))
         {
+            if (!isset($currencies[$value->currency_id])) {
+                $currencies[$value->currency_id] = SugarCurrency::getCurrencyByID($value->currency_id);
+            }
+            $row_currency = $currencies[$value->currency_id];
+
             // walk through all currency-related fields
             foreach ($value->field_defs as $temp_field)
             {
@@ -376,19 +379,9 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
                     // populate related properties manually
                     $temp_property     = $temp_field['name'];
                     $currency_property = $temp_field['rname'];
-                    $value->$temp_property = $userCurrency->$currency_property;
-                }
-                else if ($value->currency_id != $userCurrency->id
-                         && isset($temp_field['type'])
-                         && 'currency' == $temp_field['type']
-                         && substr($temp_field['name'], -9) != '_usdollar')
-                {
-                    $temp_property = $temp_field['name'];
-                    $value->$temp_property *= $userCurrency->conversion_rate;
+                    $value->$temp_property = $row_currency->$currency_property;
                 }
             }
-
-            $value->currency_id = $userCurrencyId;
         }
         // end of bug 55129
 

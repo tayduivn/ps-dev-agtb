@@ -28,6 +28,7 @@
         }) : '';
 
         this.toggleSubmitButton = _.debounce(this.toggleSubmitButton, 200);
+        this.on('attachments:add attachments:remove', this.toggleSubmitButton, this);
     },
 
     /**
@@ -122,8 +123,10 @@
      * Check to see if the Submit button should be disabled/enabled.
      */
     toggleSubmitButton: function() {
-        var post = this.getPost();
-        if (post.value.length === 0) {
+        var post = this.getPost(),
+            attachments = this.getAttachments();
+
+        if ((post.value.length === 0) && (_.size(attachments) === 0)) {
             this.$('.addPost').addClass('disabled');
         } else {
             this.$('.addPost').removeClass('disabled');

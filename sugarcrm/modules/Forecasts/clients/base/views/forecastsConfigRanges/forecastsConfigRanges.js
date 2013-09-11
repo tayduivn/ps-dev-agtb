@@ -118,6 +118,7 @@
         // Set this model equal to the latest config metadata
         this.model.set(app.metadata.getModule('Forecasts', 'config'));
         this.updateTitleValues(this.model);
+        this.forecastByModule = app.lang.getAppListStrings('moduleList')[this.model.get('forecast_by')];
 
         // get the included commit stages
         this.includedCommitStages = this.model.get('commit_stages_included'),
@@ -300,7 +301,7 @@
 
         // add the things here...
         this.fieldRanges[element.value] = {};
-        showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + element.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
+        showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + element.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts', this) + '</p>');
 
         _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
             if(key != 'exclude') {
@@ -358,7 +359,7 @@
 
         // add the things here...
         this.fieldRanges[element.value] = {};
-        showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + element.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
+        showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + element.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts', this) + '</p>');
 
         // if custom bucket isn't defined seve default values
         if(!this.model.has(element.value + '_ranges')) {

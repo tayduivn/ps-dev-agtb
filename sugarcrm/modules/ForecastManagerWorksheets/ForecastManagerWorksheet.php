@@ -749,7 +749,8 @@ class ForecastManagerWorksheet extends SugarBean
             "worst_adjusted" => '0',
             "included_opp_count" => 0,
             "pipeline_opp_count" => 0,
-            "pipeline_amount" => '0'
+            "pipeline_amount" => '0',
+            "closed_amount" => '0'
         );
 
         require_once('include/SugarQuery/SugarQuery.php');
@@ -783,6 +784,9 @@ class ForecastManagerWorksheet extends SugarBean
             )->result();
             $return['worst_adjusted'] = SugarMath::init($return['worst_adjusted'], 6)->add(
                 SugarCurrency::convertWithRate($row['worst_case_adjusted'], $row['base_rate'])
+            )->result();
+            $return['closed_amount'] = SugarMath::init($return['closed_amount'], 6)->add(
+                SugarCurrency::convertWithRate($row['closed_amount'], $row['base_rate'])
             )->result();
 
             $return['included_opp_count'] += $row['opp_count'];

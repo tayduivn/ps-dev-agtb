@@ -130,6 +130,11 @@
      */
     isCollectionSyncing: false,
 
+    /**
+     * The template for when we don't have access to a data point
+     */
+    noAccessDataErrorTemplate: undefined,
+
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
@@ -144,6 +149,7 @@
         this.context.set('skipFetch', !(this.selectedUser.showOpps || !this.selectedUser.isManager)); // if user is a manager, skip the initial fetch
         this.filters = this.context.get('selectedRanges') || this.context.parent.get('selectedRanges');
         this.collection.sync = _.bind(this.sync, this);
+        this.noAccessDataErrorTemplate = app.template.getField('base', 'noaccess')(this);
     },
 
     _dispose: function() {
@@ -203,7 +209,9 @@
                             this.setNavigationMessage(false, '', '');
                             this.cleanUpDirtyModels();
                             this.refreshData();
-                            this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+                            this.collection.once('reset', function(){
+                                this.context.parent.trigger('forecasts:worksheet:needs_commit', this.worksheetType);
+                            }, this);
                         }, this);
                         this.saveWorksheet(true);
                     }
@@ -672,6 +680,7 @@
             var calcFields = ['worst_case', 'best_case', 'likely_case'],
                 fields = _.filter(this._fields.visible, function(field) {
                     if (_.contains(calcFields, field.name)) {
+                        this.totals[field.name + '_access'] = app.acl.hasAccess('read', this.module, app.user.get('id'), field.name);
                         this.totals[field.name + '_display'] = true;
                         return true;
                     }

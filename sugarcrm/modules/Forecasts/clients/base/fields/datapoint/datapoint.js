@@ -46,6 +46,16 @@
     hasAccess: true,
 
     /**
+     * Do we have access from the ForecastWorksheet Level to show data here?
+     */
+    hasDataAccess: true,
+
+    /**
+     * What to show when we don't have access to the data
+     */
+    noDataAccessTemplate: undefined,
+
+    /**
      * Holds the totals field name
      */
     total_field: '',
@@ -56,6 +66,11 @@
         this.total_field = this.total_field || this.name;
 
         this.hasAccess = app.utils.getColumnVisFromKeyMap(this.name, 'forecastsWorksheet');
+        this.hasDataAccess = app.acl.hasAccess('read', 'ForecastWorksheets', app.user.get('id'), this.name);
+        if(this.hasDataAccess === false) {
+            this.noDataAccessTemplate = app.template.getField('base', 'noaccess')(this);
+        }
+
         // before we try and render, lets see if we can actually render this field
         this.before('render', function() {
             if (!this.hasAccess) {

@@ -18,6 +18,8 @@
 
     filterFields: [],
 
+    lastFilterDef: [],
+
     /**
      * Map of fields types.
      *
@@ -554,7 +556,8 @@
 
         // Manually trigger the filter request if a value has been selected lately
         // This is the case for checkbox fields or enum fields that don't have empty values.
-        if (this.validateRow($row) && model.get(fieldDef.id_name || fieldName) !== $row.data('value')) {
+        var modelValue = model.get(fieldDef.id_name || fieldName);
+        if (!_.isEmpty(modelValue) && modelValue !== $row.data('value')) {
             model.trigger('change');
         }
     },

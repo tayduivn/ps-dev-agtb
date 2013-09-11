@@ -36,14 +36,19 @@
      */
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
-        var appLang = app.lang;
+        var appLang = app.lang,
+            forecastBy = app.metadata.getModule('Forecasts', 'config').forecast_by,
+            forecastByLabels = {
+                forecastByModule: appLang.getAppListStrings('moduleList')[forecastBy],
+                forecastByModuleSingular: appLang.getAppListStrings('moduleListSingular')[forecastBy]
+            };
 
         this.timeperiodsTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_TIMEPERIODS', 'Forecasts');
         this.timeperiodsText = appLang.get('LBL_FORECASTS_CONFIG_HELP_TIMEPERIODS', 'Forecasts');
         this.scenariosTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_SCENARIOS', 'Forecasts');
-        this.scenariosText = appLang.get('LBL_FORECASTS_CONFIG_HELP_SCENARIOS', 'Forecasts');
+        this.scenariosText = appLang.get('LBL_FORECASTS_CONFIG_HELP_SCENARIOS', 'Forecasts', forecastByLabels);
         this.rangesTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_RANGES', 'Forecasts');
-        this.rangesText = appLang.get('LBL_FORECASTS_CONFIG_HELP_RANGES', 'Forecasts');
+        this.rangesText = appLang.get('LBL_FORECASTS_CONFIG_HELP_RANGES', 'Forecasts', forecastByLabels);
         this.forecastByTitle = appLang.get('LBL_FORECASTS_CONFIG_HOWTO_TITLE_FORECAST_BY', 'Forecasts');
         this.forecastByText = appLang.get('LBL_FORECASTS_CONFIG_HELP_FORECAST_BY', 'Forecasts');
         this.wkstColumnsTitle = appLang.get('LBL_FORECASTS_CONFIG_TITLE_WORKSHEET_COLUMNS', 'Forecasts');

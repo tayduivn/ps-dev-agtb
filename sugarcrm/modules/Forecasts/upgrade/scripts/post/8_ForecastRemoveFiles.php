@@ -99,7 +99,9 @@ class SugarUpgradeForecastRemoveFiles extends UpgradeScript
                 'modules/Forecasts/clients/base/views/forecastsWorksheetManagerTotals/forecastsWorksheetManagerTotals.php',
                 'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.hbt',
                 'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.js',
-                'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.php'
+                'modules/Forecasts/clients/base/views/forecastsWorksheetTotals/forecastsWorksheetTotals.php',
+                'clients/base/layouts/inspector',
+                'clients/base/views/inspector-header'
             );
 
             $this->fileToDelete($files);

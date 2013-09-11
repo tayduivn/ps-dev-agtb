@@ -519,7 +519,8 @@ class ForecastWorksheet extends SugarBean
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
             "modified_user_id = '{$current_user->id}' " .
             "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' and {$_object->table_name}.opportunity_id IS NOT NULL ";
-        $db->query($_query, true);
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
 
         // delete Forecasts
         $_object = BeanFactory::getBean('Forecasts');
@@ -527,15 +528,8 @@ class ForecastWorksheet extends SugarBean
             "deleted = 1, " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "' " .
             "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
-        $db->query($_query, true);
-
-        // delete Expected Opportunities
-        $_object = BeanFactory::getBean('ForecastSchedule');
-        $_query = "update {$_object->table_name} set " .
-            "deleted = 1, " .
-            "date_modified = '" . TimeDate::getInstance()->nowDb() . "' " .
-            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
-        $db->query($_query, true);
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
 
         // delete Quotas
         $_object = BeanFactory::getBean('Quotas');
@@ -543,7 +537,8 @@ class ForecastWorksheet extends SugarBean
             "deleted = 1, " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "' " .
             "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
-        $db->query($_query, true);
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
 
         // clear reports_to for inactive users
         $objFromUser = BeanFactory::getBean('Users');
@@ -570,49 +565,64 @@ class ForecastWorksheet extends SugarBean
             $db->query($_query, true);
         }
 
-        // Worksheets
-        // reassign worksheets for products (opportunities)
-        $_object = BeanFactory::getBean('Worksheet');
-        $_query = "update {$_object->table_name} set " .
-            "user_id = '{$toUserId}', " .
-            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
-            "modified_user_id = '{$current_user->id}' " .
-            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}' ";
-        $db->query($_query, true);
-
-        // delete worksheet where related_id is user id - rollups
-        $_object = BeanFactory::getBean('Worksheet');
-        $_query = "update {$_object->table_name} set " .
-            "deleted = 1, " .
-            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
-            "modified_user_id = '{$current_user->id}' " .
-            "where {$_object->table_name}.deleted = 0 " .
-            "and {$_object->table_name}.forecast_type = 'Rollup' and {$_object->table_name}.related_forecast_type = 'Direct' " .
-            "and {$_object->table_name}.related_id = '{$fromUserId}' ";
-        $db->query($_query, true);
-
         // ForecastWorksheets
-        // reassign entries in forecast_worksheets
+        // reassign entries in forecast_worksheets for the draft rows
         $_object = BeanFactory::getBean('ForecastWorksheets');
         $_query = "update {$_object->table_name} set " .
             "assigned_user_id = '{$toUserId}', " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
             "modified_user_id = '{$current_user->id}' " .
-            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' ";
-        $db->query($_query, true);
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.draft = 1
+            and {$_object->table_name}.assigned_user_id = '{$fromUserId}'";
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
+
+        // delete all the committed rows as they are no longer needed
+        $_query = "update {$_object->table_name} set " .
+            "deleted = 1, " .
+            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
+            "modified_user_id = '{$current_user->id}' " .
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.draft = 0
+            and {$_object->table_name}.assigned_user_id = '{$fromUserId}'";
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
 
         // ForecastManagerWorksheets
+
         // reassign entries in forecast_manager_worksheets
         $_object = BeanFactory::getBean('ForecastManagerWorksheets');
+
+        // delete all manager worksheets for the user we are migrating away from
+        $_query = "update {$_object->table_name} set " .
+            "deleted = 1, " .
+            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
+            "modified_user_id = '{$current_user->id}' " .
+            "where {$_object->table_name}.deleted = 0
+            and {$_object->table_name}.user_id = '{$fromUserId}'";
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
+
+        // Remove any committed rows that are assigned to the user we are migration away from, since we don't
+        // want to migration committed records
+        $_query = "update {$_object->table_name} set " .
+            "deleted = 1, " .
+            "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
+            "modified_user_id = '{$current_user->id}' " .
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.draft = 0
+            and {$_object->table_name}.assigned_user_id = '{$fromUserId}'";
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
+
+        // move all draft records left over that have not been deleted to the new user.
         $_query = "update {$_object->table_name} set " .
             "assigned_user_id = '{$toUserId}', " .
             "user_id = '{$toUserId}', " .
             "date_modified = '" . TimeDate::getInstance()->nowDb() . "', " .
             "modified_user_id = '{$current_user->id}' " .
             "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' ";
-        $db->query($_query, true);
+        $res = $db->query($_query, true);
+        $affected_rows += $db->getAffectedRowCount($res);
 
-        //todo: forecast_tree
         return $affected_rows;
     }
 
@@ -624,7 +634,7 @@ class ForecastWorksheet extends SugarBean
      * @param $forecast_by
      * @return bool
      */
-    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by)
+    public function worksheetTotals($timeperiod_id, $user_id, $forecast_by = null)
     {
         /* @var $tp TimePeriod */
         $tp = BeanFactory::getBean('TimePeriods', $timeperiod_id);
@@ -636,6 +646,10 @@ class ForecastWorksheet extends SugarBean
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
+
+        if (is_null($forecast_by)) {
+            $forecast_by = $settings['forecast_by'];
+        }
 
         // setup the return array
         $return = array(
@@ -658,6 +672,8 @@ class ForecastWorksheet extends SugarBean
             'total_opp_count' => 0,
             'includedClosedCount' => 0,
             'includedClosedAmount' => '0',
+            'includedClosedBest' => '0',
+            'includedClosedWorst' => '0',
             'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
         );
@@ -695,7 +711,7 @@ class ForecastWorksheet extends SugarBean
             }
 
             if (in_array($row['commit_stage'], $settings['commit_stages_included'])) {
-                if(!$closed) {
+                if (!$closed) {
                     $return['amount'] = SugarMath::init($return['amount'], 6)->add($amount_base)->result();
                     $return['best_case'] = SugarMath::init($return['best_case'], 6)->add($best_base)->result();
                     $return['worst_case'] = SugarMath::init($return['worst_case'], 6)->add($worst_base)->result();
@@ -705,6 +721,10 @@ class ForecastWorksheet extends SugarBean
                     $return['includedClosedCount']++;
                     $return['includedClosedAmount'] = SugarMath::init($return['includedClosedAmount'], 6)
                         ->add($amount_base)->result();
+                    $return['includedClosedBest'] = SugarMath::init($return['includedClosedBest'], 6)
+                        ->add($best_base)->result();
+                    $return['includedClosedWorst'] = SugarMath::init($return['includedClosedWorst'], 6)
+                        ->add($worst_base)->result();
                 }
             }
 
