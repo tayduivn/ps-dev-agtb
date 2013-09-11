@@ -129,5 +129,33 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(array("Portal"), $results['AdministrationTest']);
     }
+
+    /**
+     * @dataProvider testDecodeConfigValDataProvider
+     */
+    public function testDecodeConfigVal($val, $result)
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $this->assertEquals($result, $admin->decodeConfigVar($val));
+    }
+
+    /**
+     * @return array
+     */
+    public function testDecodeConfigValDataProvider()
+    {
+        return array(
+            array('A', 'A'), // simple string
+            array('A\\B', 'AB'), // stripslashes
+            array('&amp;', '&'), // html decode
+            array('7.0', '7.0'), // simple number
+            array('7.0.0', '7.0.0'),
+            array('7', '7'),
+            array('["portal"]', array('portal')), // json encoded string
+            array('{"foo":"bar"}',array('foo'=>'bar')),
+        );
+    }
+
     //END SUGARCRM flav=pro ONLY
 }
