@@ -30,6 +30,7 @@
     ],
 
     initialize: function(options) {
+<<<<<<< HEAD
         // If (for some reason) we're trying to directly access old Home/Dashboards, for redirect to sidecar #Home
         var url = options.context.get('url');
         if (url && (url.search(/module=Home.*action=index/) > -1 || url.search(/action=index.*module=Home/) > -1)) {
@@ -37,28 +38,11 @@
             return;
         }
         this.$el.attr('src', this._addIframeMark(options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index'));
+=======
+        this.$el.attr('src', options.context.get('url') || 'index.php?module=' + this.options.module + '&action=index');
+>>>>>>> parent of 92227db... Merge pull request #13908 from smalyshev/e194
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
-    },
-    
-    _addIframeMark: function(url) {
-    	var parts = url.split("?");
-    	return parts[0] + "?" + (parts[1]?parts[1]+"&bwcFrame=1":"bwcFrame=1"); 
-    },
-    
-    _rmIframeMark: function(url) {
-    	var parts = url.split("?");
-    	if(!parts[1]) {
-    		return url;
-    	}
-    	// scan and drop bwcFrame=1
-    	return parts[0]+"?"+_.reduce(parts[1].split("&"), function(acc, item) {
-    		if(item == 'bwcFrame=1') {
-    			return acc;
-    		} else {
-    			return acc?acc+"&"+item:item;
-    		}
-    	}, '');
     },
 
     /**
@@ -207,7 +191,6 @@
      * @private
      */
     _setCurrentUrl: function(url) {
-    	url = this._rmIframeMark(url);
         this._currentUrl = url;
         window.parent.location.hash = url;
     },
