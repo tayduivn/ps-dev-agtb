@@ -195,24 +195,6 @@ $layout_defs['Contacts'] = array(
 			),
 		),
 		//END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
-        'revenuelineitems' => array(
-            'order' => 50,
-            'module' => 'RevvenueLineItems',
-            'subpanel_name' => 'default',
-            'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
-            'get_subpanel_data' => 'revenuelineitems',
-            'top_buttons' => array(
-                array(
-                    'widget_class' => 'SubPanelTopButtonQuickCreate',
-                ),
-                array(
-                    'widget_class' => 'SubPanelTopSelectButton',
-                    'mode' => 'MultiSelect',
-                ),
-            ),
-        ),
-		//END SUGARCRM flav=pro ONLY
 		'cases' => array(
 			'order' => 80,
 			'sort_order' => 'desc',

@@ -65,13 +65,6 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array (
     ),
     array (
       'layout' => 'subpanel',
-      'label' => 'LBL_RLI_SUBPANEL_TITLE',
-      'context' => array (
-        'link' => 'revenuelineitems',
-      ),
-    ),
-    array (
-      'layout' => 'subpanel',
       'label' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
       'context' => array (
         'link' => 'campaigns',
