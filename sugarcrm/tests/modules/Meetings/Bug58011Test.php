@@ -51,9 +51,7 @@ class Bug58011Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAcceptanceAfterDateUpdate()
     {
-        $this->markTestIncomplete('Errors out on OutboundEmailConfiguration::getHost()');
-        global $current_user;
-        global $db;
+        global $current_user, $db;
 
         $meeting = SugarTestMeetingUtilities::createMeeting();
         $user = SugarTestUserUtilities::createAnonymousUser();
