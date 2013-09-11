@@ -25,8 +25,7 @@ class DocSaveTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        global $current_user, $currentModule;
-        $mod_strings = return_module_language($GLOBALS['current_language'], "Documents");
+        global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
 
         $document = new Document();
