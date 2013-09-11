@@ -196,21 +196,23 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'source'=>'non-db',
 		'vname'=>'LBL_NOTES'
   ),
-  'meetings' =>
-  array (
-  	'name' => 'meetings',
+   'meetings' => array(
+    'name' => 'meetings',
     'type' => 'link',
     'relationship' => 'bug_meetings',
-    'source'=>'non-db',
-		'vname'=>'LBL_MEETINGS'
+    'source' => 'non-db',
+    'vname' => 'LBL_MEETINGS',
+    'module' => 'Meetings',
+    'bean_name' => 'Meeting',
   ),
-  'calls' =>
-  array (
-  	'name' => 'calls',
+  'calls' => array(
+    'name' => 'calls',
     'type' => 'link',
     'relationship' => 'bug_calls',
-    'source'=>'non-db',
-		'vname'=>'LBL_CALLS'
+    'source' => 'non-db',
+    'vname' => 'LBL_CALLS',
+    'module' => 'Calls',
+    'bean_name' => 'Call',
   ),
   'emails' =>
   array (
@@ -304,16 +306,31 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
 	'bug_tasks' => array('lhs_module'=> 'Bugs', 'lhs_table'=> 'bugs', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Tasks', 'rhs_table'=> 'tasks', 'rhs_key' => 'parent_id',
 							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-							  'relationship_role_column_value'=>'Bugs')
-	,'bug_meetings' => array('lhs_module'=> 'Bugs', 'lhs_table'=> 'bugs', 'lhs_key' => 'id',
-							  'rhs_module'=> 'Meetings', 'rhs_table'=> 'meetings', 'rhs_key' => 'parent_id',
-							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-							  'relationship_role_column_value'=>'Bugs')
-	,'bug_calls' => array('lhs_module'=> 'Bugs', 'lhs_table'=> 'bugs', 'lhs_key' => 'id',
-							  'rhs_module'=> 'Calls', 'rhs_table'=> 'calls', 'rhs_key' => 'parent_id',
-							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-							  'relationship_role_column_value'=>'Bugs')
-	,'bug_emails' => array('lhs_module'=> 'Bugs', 'lhs_table'=> 'bugs', 'lhs_key' => 'id',
+							  'relationship_role_column_value'=>'Bugs'),
+
+        'bug_meetings' => array(
+            'lhs_module' => 'Bugs',
+            'lhs_table' => 'bugs',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Meetings',
+            'rhs_table' => 'meetings',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Bugs'
+        ),
+        'bug_calls' => array(
+            'lhs_module' => 'Bugs',
+            'lhs_table' => 'bugs',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Calls',
+            'rhs_table' => 'calls',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Bugs'
+        ),
+	'bug_emails' => array('lhs_module'=> 'Bugs', 'lhs_table'=> 'bugs', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Emails', 'rhs_table'=> 'emails', 'rhs_key' => 'parent_id',
 							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
 							  'relationship_role_column_value'=>'Bugs')

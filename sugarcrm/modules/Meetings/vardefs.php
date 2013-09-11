@@ -383,6 +383,16 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source'=>'non-db',
 		'vname'=>'LBL_ACCOUNT',
   ),
+    'bugs' =>
+    array (
+        'name' => 'bugs',
+        'type' => 'link',
+        'relationship' => 'bug_meetings',
+        'source'=>'non-db',
+        'vname'=>'LBL_BUGS',
+        'module'=>'Bugs',
+        'bean_name'=>'Bug',
+    ),
   'leads' =>
   array (
     'name' => 'leads',
