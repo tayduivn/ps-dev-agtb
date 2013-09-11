@@ -140,18 +140,4 @@ describe("Global Search", function() {
         view.$('.search-query').trigger(e);
         expect(searchSpy).toHaveBeenCalled();
     });
-
-    it("Should fire search request when search button is clicked", function() {
-        var searchSpy = sinon.collection.stub(view, 'fireSearchRequest');
-        view.$('.search-query').val('abc');
-        view.$('.icon-search').click();
-        expect(searchSpy).toHaveBeenCalled();
-    });
-
-    it("Should not fire search request when search field is empty", function() {
-        var searchSpy = sinon.collection.stub(view, 'fireSearchRequest');
-        view.$('.search-query').val('');
-        view.$('.icon-search').click();
-        expect(searchSpy).not.toHaveBeenCalled();
-    });
 });
