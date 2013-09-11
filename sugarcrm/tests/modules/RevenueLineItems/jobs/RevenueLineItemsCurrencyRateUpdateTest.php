@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'tests/SugarTestDatabaseMock.php';
 require_once 'modules/RevenueLineItems/jobs/RevenueLineItemsCurrencyRateUpdate.php';
 
-class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
+class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $db;
     private $mock;
