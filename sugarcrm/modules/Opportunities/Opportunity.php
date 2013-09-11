@@ -518,10 +518,13 @@ class Opportunity extends SugarBean
         $xtpl->assign("OPPORTUNITY_NAME", $oppty->name);
         $xtpl->assign("OPPORTUNITY_AMOUNT", $oppty->amount);
         $xtpl->assign("OPPORTUNITY_CLOSEDATE", $oppty->date_closed);
-        $xtpl->assign(
-            "OPPORTUNITY_STAGE",
-            (isset($oppty->sales_stage) ? $app_list_strings['sales_stage_dom'][$oppty->sales_stage] : "")
-        );
+
+        $oppStage = '';
+        if(isset($oppty->sales_stage) && !empty($oppty->sales_stage)) {
+            $oppStage = $app_list_strings['sales_stage_dom'][$oppty->sales_stage];
+        }
+        $xtpl->assign("OPPORTUNITY_STAGE", $oppStage);
+
         $xtpl->assign("OPPORTUNITY_DESCRIPTION", $oppty->description);
 
         return $xtpl;

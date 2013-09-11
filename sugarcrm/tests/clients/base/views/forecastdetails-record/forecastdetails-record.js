@@ -131,6 +131,7 @@ describe("Base.View.Forecastdetails-record", function() {
                 model.set({
                     amount: 100
                 });
+                view.includedIds = ['modelId'];
                 result = view.processCases(model);
                 expect(result.likely_case).toBe(90);
             });
@@ -180,16 +181,22 @@ describe("Base.View.Forecastdetails-record", function() {
         });
 
         describe("when date_closed is undefined", function() {
+            var fetchNewTPStub;
             beforeEach(function() {
                 view.context.parent.get('model').set({
                     amount: 100,
                     date_closed: undefined
                 });
+                fetchNewTPStub = sinon.stub(view, 'fetchNewTPByDate');
+            });
+
+            afterEach(function() {
+                fetchNewTPStub.restore();
             });
 
             it("should not call app.api.call", function() {
                 view.getInitData({});
-                expect(app.api.call).not.toHaveBeenCalled();
+                expect(fetchNewTPStub).toHaveBeenCalled();
             });
         });
     });
@@ -253,6 +260,178 @@ describe("Base.View.Forecastdetails-record", function() {
             it("should return false", function() {
                 result = view.checkDateAgainstCurrentTP(date);
                 expect(result).toBeTruthy();
+            });
+        });
+    });
+
+    describe("processSalesStage()", function() {
+        var calcDataStub, mdl;
+        beforeEach(function() {
+            calcDataStub = sinon.stub(view, 'calculateData', function() {});
+            mdl = new Backbone.Model();
+            view.salesStageWon = ['Closed Won'];
+            view.commitStagesInIncluded= ['include']
+        });
+
+        afterEach(function() {
+            calcDataStub.restore();
+        });
+
+        describe("when no data changed", function() {
+            it("should not run calculateData", function() {
+                mdl.set({
+                    sales_stage: '',
+                    commit_stage: '',
+                    id: ''
+                })
+                view.processSalesStage(mdl);
+                expect(calcDataStub).not.toHaveBeenCalled()
+            });
+        });
+
+        describe("when model was in closedWonIds and should be removed", function() {
+            beforeEach(function() {
+                view.closedWonIds = ['mdl1', 'mdl2'];
+                mdl.set({
+                    sales_stage: 'Prospecting',
+                    commit_stage: 'exclude',
+                    id: 'mdl2',
+                    likely_case: 20
+                });
+                view.serverData = new Backbone.Model();
+                view.serverData.set({closed_amount: 100});
+            });
+
+            afterEach(function() {
+
+            });
+
+            it("should remove model id from closedWonIds", function() {
+                view.processSalesStage(mdl);
+                expect(view.closedWonIds).toEqual(['mdl1']);
+            });
+
+            it("should subtract likely_case from from closed_amount", function() {
+                view.processSalesStage(mdl);
+                expect(view.serverData.get('closed_amount')).toEqual(80);
+            });
+
+            it("should run calculateData", function() {
+                view.processSalesStage(mdl);
+                expect(calcDataStub).toHaveBeenCalled()
+            });
+        });
+
+        describe("when model was not in closedWonIds and should be added", function() {
+            beforeEach(function() {
+                view.closedWonIds = ['mdl1'];
+                mdl.set({
+                    sales_stage: 'Closed Won',
+                    commit_stage: 'include',
+                    id: 'mdl2',
+                    likely_case: 20
+                });
+                view.serverData = new Backbone.Model();
+                view.serverData.set({closed_amount: 100});
+            });
+
+            it("should remove model id from closedWonIds", function() {
+                view.processSalesStage(mdl);
+                expect(view.closedWonIds).toEqual(['mdl1', 'mdl2']);
+            });
+
+            it("should add likely_case to closed_amount", function() {
+                view.processSalesStage(mdl);
+                expect(view.serverData.get('closed_amount')).toEqual(120);
+            });
+
+            it("should run calculateData", function() {
+                view.processSalesStage(mdl);
+                expect(calcDataStub).toHaveBeenCalled()
+            });
+        });
+    });
+
+    describe("processCommitStage()", function() {
+        var calcDataStub, mdl;
+        beforeEach(function() {
+            calcDataStub = sinon.stub(view, 'calculateData', function() {});
+            mdl = new Backbone.Model();
+            view.commitStagesInIncluded= ['include']
+        });
+
+        afterEach(function() {
+            calcDataStub.restore();
+        });
+
+        describe("when no data changed", function() {
+            it("should not run calculateData", function() {
+                mdl.set({
+                    commit_stage: '',
+                    id: ''
+                })
+                view.processCommitStage(mdl);
+                expect(calcDataStub).not.toHaveBeenCalled()
+            });
+        });
+
+        describe("when model was in includedIds and should be removed", function() {
+            beforeEach(function() {
+                view.includedIds = ['mdl1', 'mdl2'];
+                mdl.set({
+                    commit_stage: 'exclude',
+                    id: 'mdl2',
+                    likely_case: 20
+                });
+                view.serverData = new Backbone.Model();
+                view.serverData.set({likely: 100});
+            });
+
+            afterEach(function() {
+
+            });
+
+            it("should remove model id from includedIds", function() {
+                view.processCommitStage(mdl);
+                expect(view.includedIds).toEqual(['mdl1']);
+            });
+
+            it("should subtract likely_case from from serverData likely", function() {
+                view.processCommitStage(mdl);
+                expect(view.serverData.get('likely')).toEqual(80);
+            });
+
+            it("should run calculateData", function() {
+                view.processCommitStage(mdl);
+                expect(calcDataStub).toHaveBeenCalled()
+            });
+        });
+
+        describe("when model was not in includedIds and should be added", function() {
+            beforeEach(function() {
+                view.includedIds = ['mdl1'];
+                mdl.set({
+                    commit_stage: 'include',
+                    id: 'mdl2',
+                    likely_case: 20
+                });
+                view.serverData = new Backbone.Model();
+                view.serverData.set({likely: 100});
+            });
+
+            it("should remove model id from includedIds", function() {
+                view.processCommitStage(mdl);
+                expect(view.includedIds).toEqual(['mdl1', 'mdl2']);
+            });
+
+            it("should add likely_case to serverData likely", function() {
+                view.processCommitStage(mdl);
+                expect(view.serverData.get('likely')).toEqual(120);
+            });
+
+            it("should run calculateData", function() {
+                view.processCommitStage(mdl);
+                expect(calcDataStub).toHaveBeenCalled()
             });
         });
     });
