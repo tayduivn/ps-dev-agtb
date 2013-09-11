@@ -118,6 +118,7 @@ $viewdefs['Tasks']['base']['view']['active-tasks'] = array(
             'module' => 'Tasks',
             'order_by' => 'date_due:asc',
             'record_date' => 'date_due',
+            'show_overdue' => true,
         ),
         array(
             'filters' => array(

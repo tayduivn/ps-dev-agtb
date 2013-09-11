@@ -11,9 +11,15 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 /**
- * Tasks dashlet takes advantage of the tabbed dashlet abstraction by using
- * its metadata driven capabilities to configure its tabs in order to display
- * information about tasks module.
+ * Active tasks dashlet takes advantage of the tabbed dashlet abstraction by
+ * using its metadata driven capabilities to configure its tabs in order to
+ * display information about tasks module.
+ *
+ * Besides the metadata properties inherited from Tabbed dashlet, Active tasks
+ * dashlet also supports other properties:
+ *
+ * - {Boolean} show_overdue If tab supports overdue calculation, defaults to
+ *   false.
  *
  * @class View.Views.BaseActiveTasksView
  * @alias SUGAR.App.view.views.BaseActiveTasksView
@@ -109,18 +115,20 @@
             return;
         };
 
-        var tab = this.tabs[this.settings.get('activeTab')],
-            now = new Date();
+        var tab = this.tabs[this.settings.get('activeTab')];
 
         _.each(this.collection.models, function(model) {
-            var date = new Date(model.get(tab.record_date)),
-                pictureUrl = app.api.buildFileURL({
-                    module: 'Users',
-                    id: model.get('assigned_user_id'),
-                    field: 'picture'
-                });
+            if (tab.show_overdue) {
+                var date = new Date(model.get(tab.record_date)),
+                    now = new Date();
+                model.set('overdue', date < now);
+            }
 
-            model.set('overdue', date < now);
+            var pictureUrl = app.api.buildFileURL({
+                module: 'Users',
+                id: model.get('assigned_user_id'),
+                field: 'picture'
+            });
             model.set('picture_url', pictureUrl);
         }, this);
 
