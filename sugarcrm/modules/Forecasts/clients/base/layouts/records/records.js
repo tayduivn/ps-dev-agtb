@@ -118,10 +118,6 @@
             this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
                 this.commitForecast(user, worksheet_type, forecast_totals);
             }, this);
-
-            this.context.on('button:settings_button:click', function() {
-                this.openConfigDrawer();
-            }, this);
         }
     },
 
@@ -129,20 +125,12 @@
      * Opens the Forecasts Config drawer
      */
     openConfigDrawer: function() {
-        // open a drawer for the config layout, pass in our current config
-        // in drawer is used in case user navigates to the config from Admin
-        // and it isnt in a drawer, it redirects different if they save/cancel
-        app.drawer.open({
-            layout: 'config',
-            context: {
-                inDrawer: true
-            }
-        }, _.bind(function(hasChanged, data) {
-            if(hasChanged && this.context) {
-                // Now that we've reset the metadata with any new changes, let other models know
-                this.context.trigger('forecasts:metadata:changed', data);
-            }
-        },this));
+        // if there is no drawer open, then we need to open the drawer.
+        if(app.drawer._components.length == 0) {
+            // trigger the forecast config by going to the config route, while replacing what
+            // is currently there so when we use app.route.goBack() from the cancel button
+            app.router.navigate('Forecasts/config', {replace: true, trigger: true});
+        }
     },
 
     /**

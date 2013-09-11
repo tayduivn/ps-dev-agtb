@@ -71,12 +71,10 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                     'name' => 'settings_button',
                     'type' => 'rowaction',
                     'label' => 'LBL_FORECAST_SETTINGS',
-                    'events' => array(
-                        'click' => 'function(e){
-                            this.view.context.trigger("button:settings_button:click");
-                        }'
-                    ),
-                    'acl_action' => 'developer'
+                    'acl_action' => 'developer',
+                    'route' => array(
+                        'action'=>'config'
+                    )
                 ),
             ),
         ),
