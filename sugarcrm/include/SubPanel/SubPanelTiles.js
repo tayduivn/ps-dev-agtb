@@ -558,9 +558,7 @@ SUGAR.subpanelUtils = function() {
         // prevent DOM event propagation. thus, cancelCallback optional
         // parameter is added to be able to track this case
 		cancelCreate: function(buttonName, cancelCallback) {
-			var element = document.getElementById(buttonName),
-                theForm = element.form,
-                confirmMsg = onUnloadEditView(theForm);
+			var element = document.getElementById(buttonName);
 
 			do {
 				element = element.parentNode;
@@ -571,16 +569,9 @@ SUGAR.subpanelUtils = function() {
 			if (typeof(subpanelContents[theDiv]) == 'undefined')
                 return false;
 
-            if ( confirmMsg != null ) {
-                if ( !confirm(confirmMsg) ) {
-                    if ("function" === typeof cancelCallback)
-                    {
-                        cancelCallback();
-                    }
-                    return false;
-                } else {
-//                    disableOnUnloadEditView(theForm);
-                }
+            if ("function" === typeof cancelCallback)
+            {
+                cancelCallback();
             }
 
             SUGAR.subpanelUtils.removeSubPanel();
