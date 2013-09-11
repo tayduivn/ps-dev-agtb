@@ -168,27 +168,32 @@
             return app.utils.formatNumberLocale(value);
         }
 
-        // TODO review this forecasts requirement and make it work with css defined on metadata
-        // force this to recalculate the transaction value if needed
-        // and more importantly, clear out previous transaction value
-        this.transactionValue = '';
-        if (this.def.convertToBase &&
-            this.def.showTransactionalAmount &&
-            this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
-        ) {
+        var baseRate;
+        var currencyId;
 
-            this.transactionValue = app.currency.formatAmountLocale(
-                this.model.get(this.name),
-                this.model.get(this.def.currency_field || 'currency_id')
-            );
-        }
-
-        var baseRate = this.model.get(this.def.base_rate_field || 'base_rate');
-        var currencyId = this.model.get(this.def.currency_field || 'currency_id');
-
-        if (this.def.convertToBase) {
-            value = app.currency.convertWithRate(value, baseRate) || 0;
-            currencyId = app.currency.getBaseCurrencyId();
+        if (this.name.indexOf('_usdollar') >= 0) {
+            // usdollar fields are always in base currency
+            currencyId = '-99';
+        } else {
+            // TODO review this forecasts requirement and make it work with css defined on metadata
+            // force this to recalculate the transaction value if needed
+            // and more importantly, clear out previous transaction value
+            this.transactionValue = '';
+            if (this.def.convertToBase &&
+                this.def.showTransactionalAmount &&
+                this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
+            ) {
+                this.transactionValue = app.currency.formatAmountLocale(
+                    this.model.get(this.name),
+                    this.model.get(this.def.currency_field || 'currency_id')
+                );
+            }
+            baseRate = this.model.get(this.def.base_rate_field || 'base_rate');
+            currencyId = this.model.get(this.def.currency_field || 'currency_id');
+            if (this.def.convertToBase) {
+                value = app.currency.convertWithRate(value, baseRate) || 0;
+                currencyId = app.currency.getBaseCurrencyId();
+            }
         }
         return app.currency.formatAmountLocale(value, currencyId);
     },

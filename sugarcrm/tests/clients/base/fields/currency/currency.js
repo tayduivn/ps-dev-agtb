@@ -298,6 +298,7 @@ describe('Base.Fields.Currency', function() {
 
         });
 
+
         it("should not show transactional amount on render when converted to base rate", function() {
             //convert the field to push a transactionValue as needed
             model = app.data.createBean(moduleName, {
@@ -323,6 +324,18 @@ describe('Base.Fields.Currency', function() {
             field.render();
             expect(field.transactionValue).toEqual('');
         });
+
+        it("should not convert on _usdollar field", function() {
+            var convertWithRate = sinon.spy(app.currency, 'convertWithRate');
+
+            field.def.convertToBase = true;
+            field.name = 'total_usdollar';
+            field.format(123456789.98);
+            expect(convertWithRate.calledOnce).toBeFalsy();
+
+            convertWithRate.restore();
+        });
+
 
         it("transactional amount should be empty when using the base currency and currency_field not set", function() {
             model = app.data.createBean(moduleName, {

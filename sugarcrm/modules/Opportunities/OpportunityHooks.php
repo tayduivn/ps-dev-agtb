@@ -122,4 +122,17 @@ class OpportunityHooks
             }
         }
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * set currency on opportunity to base in ENT
+     */
+    public static function setCurrencyToBase(Opportunity $bean, $event, $args)
+    {
+        $currency = SugarCurrency::getBaseCurrency();
+        $bean->currency_id = $currency->id;
+        $bean->base_rate = $currency->conversion_rate;
+    }
+    //END SUGARCRM flav=ent ONLY
+
 }
