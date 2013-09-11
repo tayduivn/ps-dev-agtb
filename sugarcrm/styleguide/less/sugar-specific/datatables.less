@@ -76,7 +76,14 @@ table.dataTable {
         border-bottom: 1px solid darken(@grayLighter, 5%);
         background-color: @white;
         .rtl(@direction,ltr);
-
+        &[data-type="currency"] {
+          text-align: right;
+          min-width: 132px;
+          max-width: 200px !important;
+          .list {
+            width: 100%;
+          }
+        }
         &> *:not(.overflow-visible) {
           overflow-x: hidden;
           text-overflow: ellipsis;
@@ -388,18 +395,6 @@ table.dataTable {
         position: relative;
       }
     }
-  }
-  label.original {
-    margin: 0 2px 0 0;
-    display: inline-block;
-    background-color: @grayLight;
-    .border-radius(4px);
-    padding: 2px 4px;
-
-  }
-  .converted {
-    display: inline-block;
-    .rtlMargin(@direction,0 16px 0 0);
   }
   .icon-favorite {
     margin-left: 14px;
