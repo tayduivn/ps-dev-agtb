@@ -19,6 +19,14 @@
              */
             rowHeight: 42,
 
+            /**
+             * Override this property if there's a need to provide custom
+             * target element for max height appliance.
+             *
+             * @property {HTMLElement} Target element.
+             */
+            maxHeightTarget: '',
+
             onAttach: function () {
                 this.on("init", function () {
                     this.dashletConfig = app.metadata.getView(this.module, this.name);
@@ -75,7 +83,8 @@
                         this.initDashlet(viewName);
                         var height = this.calculateMaxHeight();
                         if (_.isNumber(height)) {
-                            this.$el.css('max-height', height + 'px');
+                            var $target = this.$(this.maxHeightTarget || this.$el);
+                            $target.css('max-height', height + 'px');
                         }
                     }
                     if (buildGrid) {

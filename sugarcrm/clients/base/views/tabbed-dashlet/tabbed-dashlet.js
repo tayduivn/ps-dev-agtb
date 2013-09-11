@@ -75,9 +75,24 @@
 
         this.collection = new Backbone.Collection();
 
+        this._initMaxHeightTarget();
         this._initEvents();
         this._initTabs();
         this._initTemplates();
+    },
+
+    /**
+     * Initialize max height target element by overriding it's value and
+     * setting it to a specific tab inner element.
+     *
+     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @template
+     * @protected
+     */
+    _initMaxHeightTarget: function() {
+        this.maxHeightTarget = this.meta.max_height_target || 'div.tab-content';
+
+        return this;
     },
 
     /**
