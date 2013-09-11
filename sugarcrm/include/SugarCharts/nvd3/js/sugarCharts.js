@@ -225,6 +225,7 @@ function loadSugarChartD3 (chartId, jsonFilename, css, chartConfig, params, call
                     var json = SUGAR.chartsD3.translateDataToD3(data,params,chartConfig);
 
                     var funnelChart = nv.models.funnelChart()
+                        .margin({top: 0, right: 0, bottom: 20, left: 45})
                         .showTitle(true)
                         .tooltips(true)
                         .fmtValueLabel(function(d) { return d.y; })
@@ -481,7 +482,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         data = (chartConfig.barType === 'stacked') ?
                             json.label.map( function(d,i){
                                 return {
-                                    "key": (d !== '')?d:'undefined',
+                                    "key": (d !== '')?d:'',
                                     "type": "bar",
                                     "values": json.values.map( function(e,j) {
                                         return { "series": i, "x": j+1, "y": (parseInt(e.values[i],10) || 0), y0: 0 };
@@ -490,10 +491,10 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                             }) :
                             json.values.map( function(d,i){
                                 return {
-                                    "key": (d.label !== '')?d.label:'undefined',
+                                    "key": (d.label[0] !== '')?d.label[0]:'',
                                     "type": "bar",
                                     "values": json.values.map( function(e,j) {
-                                        return { "series": i, "x": j+1, "y": (i===j?parseInt(d.gvalue,10):0), y0: 0 };
+                                        return { "series": i, "x": j+1, "y": (i===j?parseInt(e.values[0],10):0), y0: 0 };
                                     })
                                 };
                             });
@@ -502,8 +503,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                     case "pieChart":
                         data = json.values.map( function(d,i){
                             return {
-                                "key": (d.label !== '')?d.label:'undefined',
-                                "value": parseInt(d.gvalue,10)
+                                "key": (d.label[0] !== '')?d.label[0]:'',
+                                "value": parseInt(d.values[0],10)
                             };
                         });
                         break;
@@ -511,7 +512,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                     case "funnelChart":
                         data = json.values.map( function(d,i){
                             return {
-                                "key": (d.label !== '')?d.label:'undefined',
+                                "key": (d.label[0] !== '')?d.label[0]:'',
                                 "values": [{ "series": i, "x": 0, "y": (parseInt(d.values[0],10) || 0), y0: 0 }]
                             };
                         });
@@ -521,7 +522,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                     case "lineChart":
                         data = json.values.map( function(d,i){
                             return {
-                                "key": (d.label !== '')?d.label:'undefined',
+                                "key": (d.label !== '')?d.label:'',
                                 "values": d.values.map( function(e,j) {
                                     return [j, parseInt(e,10)];
                                 })
@@ -539,7 +540,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         : json.values.map( function(d,i) {
                         return {
                             "group": i+1,
-                            "l": (d.label !== '')?d.label:'undefined'
+                            "l": (d.label !== '')?d.label:''
                         };
                     }),
                     "values": (!json.values.filter(function(d) { return d.values.length; }).length) ? []
