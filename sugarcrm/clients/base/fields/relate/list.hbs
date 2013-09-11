@@ -26,4 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-{{# if href}}<a href="{{href}}">{{value}}</a>{{else}}{{value}}{{/if}}
+<div class="ellipsis_inline" data-placement="bottom" data-container="body"
+     data-original-title="{{#unless value}}{{#if def.placeholder}}{{str def.placeholder this.model.module}}{{/if}}{{/unless}}{{value}}">
+    {{# if href}}
+        <a href="{{href}}">{{value}}</a>
+    {{else}}
+        {{value}}
+    {{/if}}
+</div>
