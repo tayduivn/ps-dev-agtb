@@ -34,7 +34,6 @@ class DocSaveTest extends Sugar_PHPUnit_Framework_TestCase
 		$current_user = SugarTestUserUtilities::createAnonymousUser();
 
 		$document = new Document();
-		$document->id = uniqid();
         $document->name = 'Test Document';
         $document->save();
 		$this->doc = $document;
@@ -64,4 +63,3 @@ class DocSaveTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 }
-?>
