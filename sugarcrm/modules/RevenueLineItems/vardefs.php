@@ -312,7 +312,8 @@ $dictionary['RevenueLineItem'] = array(
         'base_rate' => array(
             'name' => 'base_rate',
             'vname' => 'LBL_CURRENCY_RATE',
-            'type' => 'double',
+            'type' => 'decimal',
+            'len' => '26,6',
             'required' => true,
             'studio' => false
         ),
