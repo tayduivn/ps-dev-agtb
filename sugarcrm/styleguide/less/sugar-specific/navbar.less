@@ -184,7 +184,6 @@
     top: 0;
     .btn {
       line-height: 17px;
-      height: 17px;
     }
     //fix advanced drop down position
     .dropdown-menu {
@@ -205,7 +204,7 @@
     }
     &.dropdown-toggle {
       right: 31px;
-      top: 1px;
+      top: -2px;
       height: 24px;
       .border-radii(0,0,3px,3px);
       &:hover {
@@ -217,6 +216,11 @@
     }
     .btn-group {
       margin-right: 0;
+      &.open {
+        .dropdown-toggle {
+          background: transparent;
+        }
+      }
     }
   }
   .divider-vertical {
@@ -472,20 +476,13 @@
     left: 1px;
     top: 1px;
   }
-
   .btn-group:hover > .routeLink {
     color: @navbarLinkColorActive !important;
-  }
-
-  .btn-group:hover > .btn .caret {
-    border-top-color: @navbarLinkColorActive;
-    border-bottom-color: @navbarLinkColorActive;
   }
   .open.dropdown .caret {
     border-top-color: @white;
     border-bottom-color: @white;
   }
-
   .dropdown .caret {
     border-top-color: @gray;
     border-bottom-color: @gray;
