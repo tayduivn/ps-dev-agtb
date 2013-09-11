@@ -33,8 +33,6 @@ class Bug38016Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp() 
     {
-        $this->markTestIncomplete('Skipping for now as this leads to a DB Failure error');
-    	
 		$beanList = array();
 		$beanFiles = array();
 		require('include/modules.php');
