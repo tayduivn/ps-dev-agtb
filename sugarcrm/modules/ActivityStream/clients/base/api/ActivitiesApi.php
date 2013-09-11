@@ -283,7 +283,9 @@ class ActivitiesApi extends FilterApi
             if ($record) {
                 $query->where()->equals('activities.parent_type', $record->module_name);
             } else {
-                $query->where()->isNull('activities.parent_type');
+                $homeActivityFilter = $query->where()->queryOr();
+                $homeActivityFilter->isNull('activities.parent_type');
+                $homeActivityFilter->equals('activities_users.parent_type', 'Users');
             }
         } else {
             // If we have a relevant bean, we add our where condition.
