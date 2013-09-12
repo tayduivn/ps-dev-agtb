@@ -26,7 +26,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                                 'name' => 'twitter',
                                 'label' => 'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME',
                                 'twitter' => 'sugarcrm',
-                                'limit' => 20, 
+                                'limit' => 20,
                             ),
                             'width' => 12,
                         ),
@@ -73,15 +73,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             array(
                                 'module' => 'Forecasts',
                             ),
-                            'width' => 6,
-                        ),
-                        array(
-                            'view' =>
-                            array(
-                                'name' => 'countrychart',
-                                'label' => 'LBL_DASHLET_COUNTRY_CHART_NAME',
-                            ),
-                            'width' => 6,
+                            'width' => 12,
                         ),
                     ),
                     array(
