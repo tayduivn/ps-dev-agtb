@@ -187,7 +187,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
-        $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
+
+        if (isset($bean->team_set_id)) {
+            $keyValues['team_set_id'] = $this->formatGuidFields($bean->team_set_id);
+        }
 
         //BEGIN SUGARCRM flav=pro ONLY
         $user_ids = SugarFavorites::getUserIdsForFavoriteRecordByModuleRecord($bean->module_dir, $bean->id);

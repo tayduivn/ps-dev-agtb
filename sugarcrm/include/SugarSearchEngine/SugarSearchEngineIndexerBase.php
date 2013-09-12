@@ -126,7 +126,12 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $queuTableName = self::QUEUE_TABLE;
         $bean = BeanFactory::getBean($module, null);
         $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
-        $selectFields = array($id,'team_id','team_set_id');
+
+        $selectFields = array($id);
+        if (in_array(array('team_id', 'team_set_id'), array_keys($fieldDefinitions))) {
+            $selectFields += array('team_id', 'team_set_id');
+        }
+
         $ownerField = $bean->getOwnerField(true);
         if (!empty($ownerField))
         {
