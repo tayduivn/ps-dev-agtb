@@ -129,17 +129,4 @@ class Styleguide extends Person
         $this->assigned_user_id = $GLOBALS['current_user']->id;
         return parent::save($check_notify);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function bean_implements($interface)
-    {
-        switch ($interface) {
-            case 'ACL':
-                return true;
-            default:
-                return false;
-        }
-    }
 }
