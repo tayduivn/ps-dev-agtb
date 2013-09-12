@@ -287,6 +287,15 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
     'vname'=>'LBL_ACCOUNT',
   ),
+    'bugs' =>
+    array (
+        'name' => 'bugs',
+        'type' => 'link',
+        'relationship' => 'bug_calls',
+        'source'=>'non-db',
+        'vname'=>'LBL_BUGS',
+        'module'=>'Bugs',
+    ),
   'contacts' =>
   array (
   	'name' => 'contacts',
