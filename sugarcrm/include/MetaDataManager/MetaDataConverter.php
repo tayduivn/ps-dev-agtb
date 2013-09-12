@@ -247,13 +247,13 @@ class MetaDataConverter
                 }
             }
 
-            if($bean && !empty($bean->field_defs[$details['name']])) {
-                $defs = $bean->field_defs[$details['name']];
-                if(!empty($defs['fields'])) {
-                    $details['fields'] = $defs['fields'];
+            if ($bean && !empty($bean->field_defs[$details['name']])) {
+                $newDefs = $bean->field_defs[$details['name']];
+                if (!empty($newDefs['fields'])) {
+                    $details['fields'] = $newDefs['fields'];
                 }
-                if(empty($details['type']) && !empty($defs['type']) && $defs['type'] != 'varchar') {
-                    $details['type'] = $defs['type'];
+                if (empty($details['type']) && !empty($newDefs['type']) && $newDefs['type'] != 'varchar') {
+                    $details['type'] = $newDefs['type'];
                 }
             }
 

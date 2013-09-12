@@ -599,7 +599,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     {
         // Set the label
         $label = isset($fieldDef['label']) ? $fieldDef['label'] : '';
-        if (empty($label)) {
+        if (empty($label) && isset($fieldDef['name'])) {
             $label = isset($fieldDef['vname']) ? $fieldDef['vname'] : $fieldDef['name'];
         }
 
