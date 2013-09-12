@@ -104,6 +104,17 @@
     quotaCollection: undefined,
 
     /**
+     * What to show when we don't have access to the data
+     */
+    noDataAccessTemplate: undefined,
+
+    /**
+     * Holds likely/best/worst field access boolean values
+     * ex: { likely: true, best: false, worst: false }
+     */
+    fieldDataAccess: {},
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -118,6 +129,20 @@
 
         if(this.isForecastSetup && this.forecastsConfigOK) {
             this.serverData = new Backbone.Model();
+
+            // Check field access
+            var aclModule = this.forecastConfig.forecast_by,
+                likelyFieldName = (aclModule == 'RevenueLineItems') ? 'likely_case' : 'amount';
+            this.fieldDataAccess = {
+                likely: app.acl.hasAccess('read', aclModule, app.user.get('id'), likelyFieldName),
+                best: app.acl.hasAccess('read', aclModule, app.user.get('id'), 'best_case'),
+                worst: app.acl.hasAccess('read', aclModule, app.user.get('id'), 'worst_case')
+            };
+            var hasAccess = (this.fieldDataAccess.likely && this.fieldDataAccess.best && this.fieldDataAccess.worst);
+            // if any field has no access, get the noaccess field template
+            if(hasAccess === false) {
+                this.noDataAccessTemplate = app.template.getField('base', 'noaccess')(this);
+            }
 
             // set up the model data
             this.resetModel();
@@ -453,7 +478,8 @@
      */
     checkPropertySetCSS: function(prop, model) {
         model = model || this.context.get('model') || this.model;
-        if(this.forecastConfig['show_worksheet_' + prop]) {
+        // if we're showing the field And if the user has access to the field
+        if(this.forecastConfig['show_worksheet_' + prop] && this.fieldDataAccess[prop]) {
             var css = this.getClassBasedOnAmount(this.serverData.get(prop), model.get('quota_amount'), 'background-color');
             this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
@@ -588,42 +614,53 @@
         params.feedbackLn1 = '';
         params.feedbackLn2 = '';
 
-        if(caseValueN == 0 && stageValueN == 0)
+        var hasAccess = this.fieldDataAccess[caseStr];
+        // Check field access, in 2 of 3 cases below this works, otherwise it gets overwritten
+        // in caseValueN == 0 && stageValueN == 0
+        if(hasAccess)
         {
-            // if we have no data
-            params.amount = app.lang.get('LBL_FORECAST_DETAILS_NO_DATA', "Forecasts");
-        }
-        else if(caseValueN != 0 && stageValueN != 0 && caseValueN == stageValueN)
-        {
-            // if the values are equal but we have data
             params.amount = app.currency.formatAmountLocale(caseValue);
-            params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_MEETING_QUOTA', "Forecasts");
+            params.labelAmount = params.label + ': ' + params.amount.toString();
+
+            if(caseValueN == 0 && stageValueN == 0)
+            {
+                // if we have no data
+                params.amount = app.lang.get('LBL_FORECAST_DETAILS_NO_DATA', "Forecasts");
+            }
+            else if(caseValueN != 0 && stageValueN != 0 && caseValueN == stageValueN)
+            {
+                // if the values are equal but we have data
+                params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_MEETING_QUOTA', "Forecasts");
+            }
+            else
+            {
+                if(caseValueN > stageValueN) {
+                    params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_EXCEED', "Forecasts");
+                } else {
+                    params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
+                }
+
+                var casePlusClosed = app.math.add(caseValue, closedAmt),
+                    deficitAmount = Math.abs(app.math.sub(stageValue, casePlusClosed));
+
+                params.percent = this.getPercent(deficitAmount, stageValue);
+                params.deficitAmount = '(' + app.currency.formatAmountLocale(deficitAmount) + ')';
+
+            }
+
+            params.feedbackLn1 = params.shortOrExceed;
+
+            if(params.percent) {
+                params.feedbackLn1 += ' ' + params.percent;
+            }
+
+            params.feedbackLn2 = params.deficitAmount;
         }
         else
         {
-            params.amount = app.currency.formatAmountLocale(caseValue);
-
-            if(caseValueN > stageValueN) {
-                params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_EXCEED', "Forecasts");
-            } else {
-                params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
-            }
-
-            var casePlusClosed = app.math.add(caseValue, closedAmt),
-                deficitAmount = Math.abs(app.math.sub(stageValue, casePlusClosed));
-
-            params.percent = this.getPercent(deficitAmount, stageValue);
-            params.deficitAmount = '(' + app.currency.formatAmountLocale(deficitAmount) + ')';
-
+            params.amount = this.noDataAccessTemplate;
+            params.labelAmount = params.label + ': ' + app.lang.get('LBL_NO_FIELD_ACCESS');
         }
-
-        params.feedbackLn1 = params.shortOrExceed;
-
-        if(params.percent) {
-            params.feedbackLn1 += ' ' + params.percent;
-        }
-
-        params.feedbackLn2 = params.deficitAmount;
 
         return params;
     },
