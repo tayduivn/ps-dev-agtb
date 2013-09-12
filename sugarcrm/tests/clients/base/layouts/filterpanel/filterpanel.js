@@ -20,12 +20,12 @@
 
 describe("Base.Layout.Filterpanel", function(){
 
-    var app, layout, getModuleStub;
+    var app, layout, getModuleStub, activityStreamEnabled = true;
 
     beforeEach(function() {
         app = SugarTest.app;
         getModuleStub = sinon.stub(app.metadata, 'getModule', function(module) {
-            return {activityStreamEnabled:true};
+            return {activityStreamEnabled: activityStreamEnabled};
         });
     });
 
@@ -132,5 +132,33 @@ describe("Base.Layout.Filterpanel", function(){
                 expect(triggerStub).not.toHaveBeenCalled();
             });
         });
+    });
+
+    describe('disableActivityStreamToggle', function(){
+        it('should set activity stream toggle to inactive when activity stream not enabled', function(){
+            var meta = {'availableToggles': [
+                {'name': 'list', 'icon': 'icon-table', 'label': 'LBL_LISTVIEW'},
+                {'name': 'activitystream', 'icon': 'icon-th-list', 'label': 'LBL_ACTIVITY_STREAM'}
+            ], 'components': [
+                {'layout': 'filter', 'targetEl': '.filter', 'position': 'prepend'},
+                {'view': 'filter-actions', 'targetEl': '.filter-options'},
+                {'view': 'filter-rows', 'targetEl': '.filter-options'},
+                {'layout': 'activitystream', 'context': {'module': 'Activities'}},
+                {'layout': 'list'}
+            ]};
+            activityStreamEnabled = false;
+
+            layout = SugarTest.createLayout('base', 'Accounts', 'filterpanel', meta);
+
+            var activityStreamToggle = _.find(layout.meta.availableToggles, function(toggle) {
+                return toggle.name === 'activitystream';
+            })
+
+            expect(activityStreamToggle.disabled).toEqual(true);
+            expect(activityStreamToggle.label).toEqual('LBL_ACTIVITY_STREAM_DISABLED');
+
+            activityStreamEnabled = true;
+        });
+
     });
 });

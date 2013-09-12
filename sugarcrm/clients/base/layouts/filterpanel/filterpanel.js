@@ -9,7 +9,7 @@
      */
     initialize: function(opts) {
         var moduleMeta = app.metadata.getModule(opts.module);
-        this.disableActivityStreamToggle(moduleMeta);
+        this.disableActivityStreamToggle(opts.module, moduleMeta, opts.meta || {});
 
         this.on("filterpanel:change:module", function(module, link) {
             this.currentModule = module;
@@ -39,7 +39,7 @@
         app.view.invokeParent(this, {type: 'layout', name: 'togglepanel', method: 'initialize', args: [opts]});
         // Needed to initialize this.currentModule.
         var lastViewed = app.user.lastState.get(this.toggleViewLastStateKey);
-        this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === "activitystream") ? 'Activities' : this.module);
+        this.trigger('filterpanel:change:module', (moduleMeta.activityStreamEnabled && lastViewed === 'activitystream') ? 'Activities' : this.module);
     },
 
     /**
@@ -66,14 +66,16 @@
 
     /**
      * Disables the activity stream toggle if activity stream is not enabled for a module
-     * @param {Collection} moduleMeta  The metadata for the component
+     * @param {String} moduleName The name of the module
+     * @param {Object} moduleMeta The metadata for the module
+     * @param {Object} viewMeta The metadata for the component
      */
-    disableActivityStreamToggle: function(moduleMeta) {
-        if (!moduleMeta.activityStreamEnabled) {
-            _.each(moduleMeta.availableToggles, function(module){
-                if (module.name  === 'activitystream') {
-                    module.disabled = true;
-                    module.label = 'LBL_ACTIVITY_STREAM_DISABLED';
+    disableActivityStreamToggle: function(moduleName, moduleMeta, viewMeta) {
+        if (moduleName !== 'Activities' && !moduleMeta.activityStreamEnabled) {
+            _.each(viewMeta.availableToggles, function(toggle) {
+                if (toggle.name === 'activitystream') {
+                    toggle.disabled = true;
+                    toggle.label = 'LBL_ACTIVITY_STREAM_DISABLED';
                 }
             });
         }
