@@ -24,7 +24,7 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
     public $url;
     public $trigger_event;
 
-    public $table_name = 'web_logic_hooks';
+    public $table_name = 'weblogichooks';
     public $object_name = 'WebLogicHook';
     public $module_dir = 'WebLogicHooks';
     public $new_schema = true;

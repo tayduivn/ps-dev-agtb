@@ -12,7 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $dictionary['WebLogicHook'] = array(
-    'table' => 'web_logic_hooks',
+    'table' => 'weblogichooks',
     //BEGIN SUGARCRM flav=pro ONLY
     'favorites'=>false,
     //END SUGARCRM flav=pro ONLY
