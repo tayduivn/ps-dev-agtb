@@ -1,0 +1,4 @@
+<?php
+
+$upgrader_version = '1.0.0';
+$sugar_build = '999';
