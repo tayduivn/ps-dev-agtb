@@ -5,7 +5,7 @@
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',
-        'click [data-action=search]': 'gotoFullSearchResultsPage',
+        'click [data-action=search]': 'showResults',
         'click [data-advanced=options]': 'persistMenu',
         'click [data-action="select-module"]': 'selectModule',
         'click .dropdown-toggle': 'toggleDropdown'
@@ -34,8 +34,7 @@
             searchAllLabel.addClass('active');
             checkedModules.removeAttr('checked');
             checkedModules.closest('label').removeClass('active');
-        }
-        else {
+        } else {
             var currentTarget = this.$(event.currentTarget),
                 currentTargetLabel = currentTarget.closest('label');
 
@@ -138,26 +137,19 @@
                 self.debounceFunction();
             },
             onEnterFn: function(hrefOrTerm, isHref) {
-                // there seems a bug in the function go() in sugar.searchahead.js.
-                // it will pass the first active record in the results even for 'enter' key
-                // comment out this 'if' statement for now. it's not being used anyway
-                // if full href treat as user clicking link
-                //if(isHref) {
-                //    window.location = hrefOrTerm;
-                //} else {
+                // FIXME there is a bug on searchahead lib that even if the
+                // menu is hidden triggers isHref = true
+                if (isHref && this.$menu.is(':visible')) {
+                    app.router.navigate(hrefOrTerm, {trigger: true});
+                } else {
                     // It's the term only (user didn't select from drop down
                     // so this is essentially the term typed
                     var term = $.trim(self.$('.search-query').attr('value'));
                     if (!_.isEmpty(term)) {
                         self.fireSearchRequest.call(self, term, this);
                     }
-                //}
+                }
             }
-        });
-
-        // Prevent the form from being submitted
-        this.$('.navbar-search').submit(function() {
-            return false;
         });
     },
     /**
@@ -227,10 +219,11 @@
     },
 
     /**
-     * Show full search results when the search button is clicked
-     * (Show searchahead results for sugarcon because we don't have full results page yet)
+     * Show results when the search button is clicked.
+     *
+     * @param {Event} evt The event that triggered the search.
      */
-    gotoFullSearchResultsPage: function() {
+    showResults: function(evt) {
 
         var $searchBox = this.$('[data-provide=typeahead]');
 
@@ -244,7 +237,7 @@
         }
 
         // Simulate 'enter' keyed so we can show searchahead results
-        var e = $.Event('keyup', { keyCode: $.ui.keyCode.ENTER });
+        var e = jQuery.Event('keyup', { keyCode: $.ui.keyCode.ENTER });
         $searchBox.focus();
         $searchBox.trigger(e);
     },
