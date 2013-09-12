@@ -195,10 +195,17 @@ document.getElementById('importmore').onclick = function(){
     return true;
 }
 
-document.getElementById('finished').onclick = function(){
-    javascript:parent.SUGAR.App.router.navigate(document.getElementById('importlast').import_module.value, {trigger: true});
-	return true;
-}
+document.getElementById('finished').onclick = function() {
+    var form = $(this).closest('form'),
+        module = form.find('input[name=import_module]').val(),
+        action = 'index';
+    form.find('input[name=module]').val(module);
+    form.find('input[name=action]').val(action);
+
+    parent.SUGAR.App.metadata.getModule(module).isBwcEnabled ?
+        form.submit() :
+        parent.SUGAR.App.router.navigate(module, {trigger: true});
+};
 
 if ( typeof(SUGAR) == 'undefined' )
     SUGAR = {};

@@ -72,10 +72,17 @@ class ImportViewUndo extends ImportView
     {
         return <<<EOJAVASCRIPT
 
-document.getElementById('finished').onclick = function(){
-    document.getElementById('importundo').module.value = document.getElementById('importundo').import_module.value;
-    document.getElementById('importundo').action.value = 'index';
-}
+document.getElementById('finished').onclick = function() {
+    var form = $(this).closest('form'),
+        module = form.find('input[name=import_module]').val(),
+        action = 'index';
+    form.find('input[name=module]').val(module);
+    form.find('input[name=action]').val(action);
+
+    parent.SUGAR.App.metadata.getModule(module).isBwcEnabled ?
+        form.submit() :
+        parent.SUGAR.App.router.navigate(module, {trigger: true});
+};
 EOJAVASCRIPT;
     }
 }
