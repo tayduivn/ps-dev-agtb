@@ -395,6 +395,9 @@
                 self._setupDatepicker();
             }
         });
+        if (Modernizr.touch) {
+           this.$("[rel=datepicker]").attr('readonly',true);
+        }
     },
     /**
      * Formats value per user's preferences
@@ -510,5 +513,4 @@
         this.$el.closest("span.edit").removeClass('error');
         this.$el.closest('.record-cell').removeClass("error");
     }
-
 })

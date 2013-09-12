@@ -60,6 +60,9 @@
                 self._setupTimepicker();
             }
         });
+        if (Modernizr.touch) {
+           this.$("[rel=timepicker]").attr('readonly',true);
+        }
     },
 
     /**
