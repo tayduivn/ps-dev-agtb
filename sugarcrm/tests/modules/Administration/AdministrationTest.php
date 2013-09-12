@@ -137,7 +137,8 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $this->assertEquals($result, $admin->decodeConfigVar($val));
+        $return = SugarTestReflection::callProtectedMethod($admin, 'decodeConfigVar', array($val));
+        $this->assertEquals($result, $return);
     }
 
     /**
@@ -151,7 +152,10 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
             array('&amp;', '&'), // html decode
             array('7.0', '7.0'), // simple number
             array('7.0.0', '7.0.0'),
-            array('7', '7'),
+            array('7', 7),      // convert to integers
+            array('0', 0),      // convert to integers
+            array(null, null),  // null check
+            array('', ''),      // empty string check
             array('["portal"]', array('portal')), // json encoded string
             array('{"foo":"bar"}',array('foo'=>'bar')),
         );

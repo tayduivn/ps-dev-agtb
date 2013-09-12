@@ -278,15 +278,21 @@ class Administration extends SugarBean {
      * @return string
      * decode the config var
      */
-    public function decodeConfigVar($var)
+    protected function decodeConfigVar($var)
     {
         $var = html_entity_decode(stripslashes($var));
-        // don't json_decode numerics, it will
-        // strip off trailing zeros
-        if(!empty($var) && !is_numeric($var)) {
-            $decoded = json_decode($var, true);
-            if(json_last_error() == JSON_ERROR_NONE) {
-                $var = $decoded;
+        // make sure the value is not null and the length is greater than 0
+        if (!is_null($var) && strlen($var) > 0) {
+            // if it's not numeric, then lets run the json_decode on it
+            if (!is_numeric($var)) {
+                $decoded = json_decode($var, true);
+                // if we didn't get a json error, then put the decoded value as the value we want to return
+                if(json_last_error() == JSON_ERROR_NONE) {
+                    $var = $decoded;
+                }
+            // if it's a numeric value and all the string only contains digits, the convert it to an integer
+            } elseif (is_numeric($var) && ctype_digit($var)) {
+                $var = intval($var);
             }
         }
         return $var;
