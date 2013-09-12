@@ -57,24 +57,30 @@ class UsersController extends SugarController
 		}
 	}
     //END SUGARCRM flav=pro ONLY
-	/**
-	 * bug 48170
-	 * Action resetPreferences gets fired when user clicks on  'Reset User Preferences' button
-	 * This action is set in UserViewHelper.php
-	 */
-	protected function action_resetPreferences(){
-	    if($_REQUEST['record'] == $GLOBALS['current_user']->id || ($GLOBALS['current_user']->isAdminForModule('Users'))){
-	        $u = BeanFactory::getBean('Users', $_REQUEST['record']);
-	        $u->resetPreferences();
-	        if($u->id == $GLOBALS['current_user']->id) {
-	            SugarApplication::redirect('index.php');
-	        }
-	        else{
-	            SugarApplication::redirect("index.php?module=Users&record=".$_REQUEST['record']."&action=DetailView"); //bug 48170]
 
-	        }
-	    }
-	}
+    /**
+     * Triggers reset preferences for a given user.
+     *
+     * If the user is resetting his own preferences, make sure he logs out to
+     * have full refresh settings coming up (he was warned already).
+     * If an admin is resetting other user's preferences, redirect him back to
+     * that user's detail view.
+     */
+    protected function action_resetPreferences()
+    {
+        if (!($_REQUEST['record'] == $GLOBALS['current_user']->id || ($GLOBALS['current_user']->isAdminForModule('Users')))) {
+            return;
+        }
+
+        $user = BeanFactory::getBean('Users', $_REQUEST['record']);
+        $user->resetPreferences();
+
+        if ($user->id !== $GLOBALS['current_user']->id) {
+            SugarApplication::redirect("index.php?module=Users&record=" . $_REQUEST['record'] . "&action=DetailView"); //bug 48170]
+        }
+        echo '<script>parent.SUGAR.App.router.navigate("logout/?clear=1", {trigger: true});</script>';
+    }
+
 	protected function action_delete()
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && ($GLOBALS['current_user']->isAdminForModule('Users')
