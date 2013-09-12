@@ -345,7 +345,6 @@ class RestService extends ServiceBase
         // Empty resources are simply the URI for the current request
         if (empty($resource)) {
             $siteUrl = SugarConfig::getInstance()->get('site_url');
-
             return $siteUrl . (empty($this->request)?$_SERVER['REQUEST_URI']:$this->request->getRequestURI());
         }
 
@@ -363,7 +362,11 @@ class RestService extends ServiceBase
             $req->setMethod('GET');
             $route = $this->findRoute($req);
             if ($route != false) {
-                return $req->getResourceURIBase() . implode('/', $resource);
+                $url = $this->resourceURIBase;
+                if (isset($options['relative']) && $options['relative'] == false) {
+                    $url = $req->getResourceURIBase();
+                }
+                return $url . implode('/', $resource);
             }
         }
 
@@ -727,7 +730,7 @@ class RestService extends ServiceBase
 
             // This is for our URI return value
             $siteUrl = '';
-            if (!empty($options['relative']) && $options['relative'] === false) {
+            if (isset($options['relative']) && $options['relative'] == false) {
                 $siteUrl = SugarConfig::getInstance()->get('site_url');
             }
 
