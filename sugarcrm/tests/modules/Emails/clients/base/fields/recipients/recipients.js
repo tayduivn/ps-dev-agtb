@@ -427,11 +427,11 @@ describe("Emails.fields.recipients", function() {
                         email:  [
                             {
                                 email_address:   'will.westin@example.com',
-                                primary_address: '0'
+                                primary_address: false
                             },
                             {
                                 email_address:   'will@example.com',
-                                primary_address: '1'
+                                primary_address: true
                             }
                         ]
                     }
@@ -448,11 +448,11 @@ describe("Emails.fields.recipients", function() {
                         email:  [
                             {
                                 email_address:   'will.westin@example.com',
-                                primary_address: '0'
+                                primary_address: false
                             },
                             {
                                 email_address:   'will@example.com',
-                                primary_address: '0'
+                                primary_address: false
                             }
                         ]
                     }
