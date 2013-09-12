@@ -478,8 +478,10 @@
      */
     checkPropertySetCSS: function(prop, model) {
         model = model || this.context.get('model') || this.model;
-        // if we're showing the field And if the user has access to the field
-        if(this.forecastConfig['show_worksheet_' + prop] && this.fieldDataAccess[prop]) {
+        // if we're showing the field
+        // And this is the mgr view or it's the rep view and the user has access to the field
+        if(this.forecastConfig['show_worksheet_' + prop]
+            && (this.shouldRollup || (!this.shouldRollup && this.fieldDataAccess[prop]))) {
             var css = this.getClassBasedOnAmount(this.serverData.get(prop), model.get('quota_amount'), 'background-color');
             this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
@@ -614,7 +616,11 @@
         params.feedbackLn1 = '';
         params.feedbackLn2 = '';
 
-        var hasAccess = this.fieldDataAccess[caseStr];
+        var hasAccess = true;
+        // if this is the rep view and the user doesnt have access to this field set to false
+        if(!this.shouldRollup && !this.fieldDataAccess[caseStr]) {
+            hasAccess = false;
+        }
         // Check field access, in 2 of 3 cases below this works, otherwise it gets overwritten
         // in caseValueN == 0 && stageValueN == 0
         if(hasAccess)
