@@ -25,9 +25,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'tests/SugarTestDatabaseMock.php';
-require_once 'modules/RevenueLineItems/jobs/RevenueLineItemsCurrencyRateUpdate.php';
+require_once 'modules/Opportunities/jobs/OpportunitiesCurrencyRateUpdate.php';
 
-class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
+class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $db;
     private $mock;
@@ -52,7 +52,7 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function setupMockClass()
     {
-        $this->mock = $this->getMock('RevenueLineItemsCurrencyRateUpdate', array('getClosedStages'));
+        $this->mock = $this->getMock('OpportunitiesCurrencyRateUpdate', array('getClosedStages'));
         $this->mock->expects($this->once())
             ->method('getClosedStages')
             ->will($this->returnValue(array('Closed Won', 'Closed Lost')));

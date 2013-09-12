@@ -32,9 +32,9 @@ class Bug62783Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
 
         // Setup Forecast defaults
         SugarTestForecastUtilities::setUpForecastConfig();

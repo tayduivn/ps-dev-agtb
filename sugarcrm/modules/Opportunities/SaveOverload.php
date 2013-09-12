@@ -39,7 +39,7 @@ function perform_save($focus)
         //Retrieve Forecasts_category_ranges and json decode as an associative array
         $forecast_ranges = isset($settings['forecast_ranges']) ? $settings['forecast_ranges'] : '';
         $category_ranges = isset($settings[$forecast_ranges . '_ranges']) ?
-            $settings[$forecast_ranges . '_ranges'] : array();
+            (array)$settings[$forecast_ranges . '_ranges'] : array();
         foreach ($category_ranges as $key => $entry) {
             if ($focus->probability >= $entry['min'] && $focus->probability <= $entry['max']) {
                 $focus->commit_stage = $key;

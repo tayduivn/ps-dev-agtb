@@ -37,14 +37,12 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-        self::$isSetup = $settings['is_setup'];
-        self::$forecastRanges = $settings['forecast_ranges'];
+
         //Set is_setup to 0 for testing purposes
-        $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_ranges', 'show_binary', 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', 'Opportunities', 'base');
+        SugarTestForecastUtilities::setUpForecastConfig(array(
+                'forecast_ranges' => 'show_binary',
+                'forecast_by' => 'Opportunities'
+            ));
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 1");
 
@@ -53,11 +51,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
     public static function tearDownAfterClass()
     {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_ranges', self::$forecastRanges, 'base');
-        $admin->saveSetting('Forecasts', 'forecast_by', 'RevenueLineItems', 'base');
-        
+        SugarTestForecastUtilities::tearDownForecastConfig();
         $db = DBManagerFactory::getInstance();
         $db->query("UPDATE opportunities SET deleted = 0");
         SugarTestHelper::tearDown();

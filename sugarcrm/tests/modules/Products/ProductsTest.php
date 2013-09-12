@@ -43,6 +43,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', array('Products'));
+        SugarTestForecastUtilities::setUpForecastConfig();
     }
 
     public function setUp()
@@ -54,12 +55,7 @@ class ProductsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        /*
-        SugarTestProductUtilities::removeAllCreatedProducts();
-        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        */
+        SugarTestForecastUtilities::tearDownForecastConfig();
         parent::tearDown();
     }
 
