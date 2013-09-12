@@ -77,6 +77,8 @@ class FilterApi extends SugarApi
         );
     }
 
+    protected static $isFavorite = false;
+
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
 
     protected static $current_user;
@@ -194,7 +196,8 @@ class FilterApi extends SugarApi
         }
 
         if (!empty($args['favorites'])) {
-            self::addFavoriteFilter($q, $q->where(), '_this');
+            self::$isFavorite = true;
+            self::addFavoriteFilter($q, $q->where(), '_this', 'INNER');
         }
 
 
@@ -253,7 +256,12 @@ class FilterApi extends SugarApi
             // FIXME: convert this to vardefs too?
             //BEGIN SUGARCRM flav=pro ONLY
             if ($field == 'my_favorite') {
-                $fjoin = $q->join("favorites");
+                if (self::$isFavorite) {
+                    $joinType = 'INNER';
+                } else {
+                    $joinType = 'LEFT';
+                }
+                $fjoin = $q->join("favorites", array('joinType' => $joinType));
                 $fields[] = array($fjoin->joinName() . ".id", 'my_favorite');
                 continue;
             }
@@ -677,9 +685,10 @@ class FilterApi extends SugarApi
     protected static function addFavoriteFilter(
         SugarQuery $q,
         SugarQuery_Builder_Where $where,
-        $link
+        $link,
+        $joinType = 'LEFT'
     ) {
-        $sfOptions = array('joinType' => 'LEFT', 'favorites' => true);
+        $sfOptions = array('joinType' => $joinType, 'favorites' => true);
         if ($link == '' || $link == '_this') {
             $link_name = 'favorites';
         } else {
