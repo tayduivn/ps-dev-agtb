@@ -20,11 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('clients/base/api/PersonUnifiedSearchApi.php');
+require_once('clients/base/api/PersonFilterApi.php');
 require_once('modules/Reports/SavedReport.php');
 
-class ReportsSearchApi extends PersonUnifiedSearchApi {
-    public function registerApiRest() {
+class ReportsSearchApi extends PersonFilterApi
+{
+    public function registerApiRest()
+    {
         return array(
             'ReportSearch' => array(
                 'reqType' => 'GET',
@@ -40,19 +42,27 @@ class ReportsSearchApi extends PersonUnifiedSearchApi {
     /**
      * Gets the proper query where clause to use to prevent special user types from
      * being returned in the result
-     * 
+     *
      * @param string $module The name of the module we are looking for
+     * @param SugarQuery|null
      * @return string
      */
-    protected function getCustomWhereForModule($module) {
-        
-        $where_clauses = array();
-        
+    protected function getCustomWhereForModule($module, $query = null)
+    {
         $ACLUnAllowedModules = getACLDisAllowedModules();
-        foreach($ACLUnAllowedModules as $module => $class_name) {
+
+        if ($query instanceof SugarQuery) {
+            foreach ($ACLUnAllowedModules as $module => $class_name) {
+                $query->where()->notEquals('saved_reports.module', $module);
+            }
+            return;
+        }
+
+        $where_clauses = array();
+        foreach ($ACLUnAllowedModules as $module => $class_name) {
             array_push($where_clauses, "saved_reports.module != '$module'");
         }
 
-        return implode(' AND ',$where_clauses);
+        return implode(' AND ', $where_clauses);
     }
 }

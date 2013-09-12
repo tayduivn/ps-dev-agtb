@@ -29,19 +29,19 @@
 
 
 require_once ('include/api/RestService.php');
-require_once ("clients/base/api/PersonUnifiedSearchApi.php");
+require_once ("clients/base/api/PersonFilterApi.php");
 
 
 /**
  * @group ApiTests
  */
-class PersonUnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
+class PersonFilterApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
     public $personUnifiedSearchApi;
 
     public function setUp() {
         SugarTestHelper::setUp("current_user");        
-        $this->personUnifiedSearchApi = new PersonUnifiedSearchApi();
+        $this->personFilterApi = new PersonFilterApi();
     }
 
     public function tearDown() {
@@ -54,7 +54,7 @@ class PersonUnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $GLOBALS['current_user']->portal_only = 1;
         $GLOBALS['current_user']->save();
         $args = array('module_list' => 'Users',);
-        $list = $this->personUnifiedSearchApi->globalSearch(new PersonUnifiedSearchApiServiceMockUp(), $args);
+        $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
         foreach($list AS $record) {
             $expected[] = $record['id'];
@@ -69,7 +69,7 @@ class PersonUnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $GLOBALS['current_user']->employee_status = 'Active';
         $GLOBALS['current_user']->save();
         $args = array('module_list' => 'Employees',);
-        $list = $this->personUnifiedSearchApi->globalSearch(new PersonUnifiedSearchApiServiceMockUp(), $args);
+        $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
         foreach($list AS $record) {
             $expected[] = $record['id'];
@@ -83,7 +83,7 @@ class PersonUnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
         $GLOBALS['current_user']->employee_status = 'Active';
         $GLOBALS['current_user']->save();
         $args = array('module_list' => 'Employees',);
-        $list = $this->personUnifiedSearchApi->globalSearch(new PersonUnifiedSearchApiServiceMockUp(), $args);
+        $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
         foreach($list AS $record) {
             $expected[] = $record['id'];
@@ -95,7 +95,7 @@ class PersonUnifiedSearchApiTest extends Sugar_PHPUnit_Framework_TestCase {
 
 }
 
-class PersonUnifiedSearchApiServiceMockUp extends RestService
+class PersonFilterApiMockUp extends RestService
 {
     public function __construct() {$this->user = $GLOBALS['current_user'];}
     public function execute() {}

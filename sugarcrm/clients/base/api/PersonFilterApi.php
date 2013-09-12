@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('clients/base/api/FilterApi.php');
 require_once('clients/base/api/UnifiedSearchApi.php');
 
-class PersonUnifiedSearchApi extends FilterApi {
+class PersonFilterApi extends FilterApi {
     public function registerApiRest() {
         return array(
             'UserSearch' => array(
