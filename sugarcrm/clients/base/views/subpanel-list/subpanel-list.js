@@ -23,7 +23,7 @@
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         // Setup max limit on collection's fetch options for this subpanel's context
-        if(app.config.maxSubpanelResult){
+        if (app.config.maxSubpanelResult) {
             var options = {
                 limit: app.config.maxSubpanelResult
             };
@@ -31,6 +31,14 @@
             this.context.set('collectionOptions', _.extend(collectionOptions, options));
         }
         this.layout.on("hide", this.toggleList, this);
+        // Listens to parent of subpanel layout (subpanels)
+        this.listenTo(this.layout.layout, 'filter:change', this.renderOnFilterChanged);
+    },
+    // SP-1383: Subpanel filters hide some panels when related filters are changed
+    // So when 'Related' filter changed, this ensures recordlist gets reloaded
+    renderOnFilterChanged: function () {
+        this.collection.trigger('reset');
+        this.render();
     },
 
     /**
@@ -40,10 +48,10 @@
      */
     _initializeMetadata: function() {
         return  _.extend({},
-                app.metadata.getView(null, 'subpanel-list', true),
-                app.metadata.getView(this.options.module, 'record-list', true),
-                app.metadata.getView(this.options.module, 'subpanel-list', true)
-            );
+            app.metadata.getView(null, 'subpanel-list', true),
+            app.metadata.getView(this.options.module, 'record-list', true),
+            app.metadata.getView(this.options.module, 'subpanel-list', true)
+        );
     },
 
     /**

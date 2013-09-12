@@ -1,11 +1,13 @@
 describe("Subpanel List View", function() {
-    var app, layout, view, sinonSandbox;
+    var app, parentLayout, layout, view, sinonSandbox;
 
     beforeEach(function () {
         sinonSandbox = sinon.sandbox.create();
         SugarTest.testMetadata.init();
         app = SugarTest.app;
-        layout = SugarTest.createLayout("base", "Cases", "list", null, null);
+        layout = SugarTest.createLayout("base", "Cases", "subpanels", null, null);
+        parentLayout = SugarTest.createLayout("base", "Cases", "list", null, null);
+        layout.layout = parentLayout;
         SugarTest.loadComponent('base', 'view', 'subpanel-list');
         view = SugarTest.createView("base", 'Cases', 'subpanel-list', null, null, null, layout);
     });

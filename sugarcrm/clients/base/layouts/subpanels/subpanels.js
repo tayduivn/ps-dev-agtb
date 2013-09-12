@@ -6,6 +6,11 @@
         if (!opts.meta) return;
         app.view.Layout.prototype.initialize.call(this, opts);
         this.layout.on("subpanel:change", this.showSubpanel, this);
+
+        this.listenTo(this.layout, 'filter:change', function(linkModuleName, linkName) {
+            //broadcast on subpanels layout so supanel-lists update
+            this.trigger('filter:change', linkModuleName, linkName);
+        });
     },
 
     /**
