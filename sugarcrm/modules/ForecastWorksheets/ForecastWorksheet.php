@@ -233,6 +233,7 @@ class ForecastWorksheet extends SugarBean
      */
     public function saveRelatedProduct(RevenueLineItem $rli, $isCommit = false)
     {
+
         $this->retrieve_by_string_fields(
             array(
                 'parent_type' => 'RevenueLineItems',
@@ -418,12 +419,14 @@ class ForecastWorksheet extends SugarBean
 
         $sq = new SugarQuery();
         // we want the deleted records
-        $sq->from(BeanFactory::getBean($type), array('add_deleted' => false))->where()
+        /* @var $bean_obj SugarBean */
+        $bean_obj = BeanFactory::getBean($type);
+        $sq->select(array($bean_obj->getTableName().'.*'));
+        $sq->from($bean_obj, array('add_deleted' => false))->where()
             ->equals('assigned_user_id', $user_id)
             ->queryAnd()
             ->gte('date_closed_timestamp', $tp->start_date_timestamp)
             ->lte('date_closed_timestamp', $tp->end_date_timestamp);
-        $sq->select(array('*'));
         $sq->orderBy('date_modified', 'DESC');
         $beans = $sq->execute();
 
@@ -453,7 +456,7 @@ class ForecastWorksheet extends SugarBean
     public static function processWorksheetDataChunk($forecast_by, array $data)
     {
         foreach ($data as $bean) {
-            /* @var $obj Opportunity|Product */
+            /* @var $obj Opportunity|RevenueLineItem */
             $obj = BeanFactory::getBean($forecast_by);
             $obj->loadFromRow($bean);
 
@@ -469,6 +472,7 @@ class ForecastWorksheet extends SugarBean
             } elseif ($forecast_by == 'RevenueLineItems') {
                 $worksheet->saveRelatedProduct($obj, true);
             }
+            unset($worksheet, $obj);
         }
     }
 
