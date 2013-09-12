@@ -399,6 +399,15 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source'=>'non-db',
 		'vname'=>'LBL_OPPORTUNITY',
   ),
+  'prospects' =>
+  array(
+      'name'         => 'prospects',
+      'type'         => 'link',
+      'relationship' => 'prospect_meetings',
+      'source'       => 'non-db',
+      'vname'        => 'LBL_PROSPECTS',
+      'module'       => 'Prospects',
+  ),
 //BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
   array(

@@ -118,21 +118,23 @@ $dictionary['Prospect'] = array(
         'vname'=>'LBL_PROSPECT_LIST',
       ),
       'calls' =>
-		array (
-			'name' => 'calls',
-			'type' => 'link',
-			'relationship' => 'prospect_calls',
-			'source' => 'non-db',
-			'vname' => 'LBL_CALLS',
-		),
-      'meetings'=>
-		array (
-			'name' => 'meetings',
-			'type' => 'link',
-			'relationship' => 'prospect_meetings',
-			'source' => 'non-db',
-			'vname' => 'LBL_MEETINGS',
-		),
+      array(
+          'name'         => 'calls',
+          'type'         => 'link',
+          'relationship' => 'prospect_calls',
+          'source'       => 'non-db',
+          'vname'        => 'LBL_CALLS',
+          'module'       => 'Calls',
+      ),
+      'meetings' =>
+      array(
+          'name'         => 'meetings',
+          'type'         => 'link',
+          'relationship' => 'prospect_meetings',
+          'source'       => 'non-db',
+          'vname'        => 'LBL_MEETINGS',
+          'module'       => 'Meetings',
+      ),
       'notes'=>
 		array (
 			'name' => 'notes',
@@ -196,14 +198,28 @@ $dictionary['Prospect'] = array(
                               'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'parent_id',
                               'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
                               'relationship_role_column_value'=>'Prospects'),
-    'prospect_meetings' => array('lhs_module'=> 'Prospects', 'lhs_table'=> 'prospects', 'lhs_key' => 'id',
-                              'rhs_module'=> 'Meetings', 'rhs_table'=> 'meetings', 'rhs_key' => 'parent_id',
-                              'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-                              'relationship_role_column_value'=>'Prospects'),
-    'prospect_calls' => array('lhs_module'=> 'Prospects', 'lhs_table'=> 'prospects', 'lhs_key' => 'id',
-                              'rhs_module'=> 'Calls', 'rhs_table'=> 'calls', 'rhs_key' => 'parent_id',
-                              'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-                              'relationship_role_column_value'=>'Prospects'),
+    'prospect_meetings' => array(
+        'lhs_module'                     => 'Prospects',
+        'lhs_table'                      => 'prospects',
+        'lhs_key'                        => 'id',
+        'rhs_module'                     => 'Meetings',
+        'rhs_table'                      => 'meetings',
+        'rhs_key'                        => 'parent_id',
+        'relationship_type'              => 'one-to-many',
+        'relationship_role_column'       => 'parent_type',
+        'relationship_role_column_value' => 'Prospects'
+    ),
+    'prospect_calls'    => array(
+        'lhs_module'                     => 'Prospects',
+        'lhs_table'                      => 'prospects',
+        'lhs_key'                        => 'id',
+        'rhs_module'                     => 'Calls',
+        'rhs_table'                      => 'calls',
+        'rhs_key'                        => 'parent_id',
+        'relationship_type'              => 'one-to-many',
+        'relationship_role_column'       => 'parent_type',
+        'relationship_role_column_value' => 'Prospects'
+    ),
     'prospect_emails' => array('lhs_module'=> 'Prospects', 'lhs_table'=> 'prospects', 'lhs_key' => 'id',
                               'rhs_module'=> 'Emails', 'rhs_table'=> 'emails', 'rhs_key' => 'parent_id',
                               'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
