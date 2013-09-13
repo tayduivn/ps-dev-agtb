@@ -460,7 +460,7 @@ class TemplateHandler {
                         }
                     } else {
                         $sqs_objects[$name] = $qsd->getQSParent($field['module']);
-                        if(!isset($field['field_list']) && !isset($field['populate_list'])) {
+                        if(!isset($field['field_list'])) {
                             $sqs_objects[$name]['populate_list'] = array($field['name'], $field['id_name']);
                             // now handle quicksearches where the column to match is not 'name' but rather specified in 'rname'
                             if (!isset($field['rname']))

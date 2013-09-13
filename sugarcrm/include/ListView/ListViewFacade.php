@@ -90,10 +90,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			    }
 			}
 			else {
-			    foreach($listViewDefs[$this->module] as $col => $params) {
-			        if(!empty($params['default']) && $params['default'])
-			            $displayColumns[$col] = $params;
-			    }
+                if (isset($listViewDefs[$this->module])) {
+                    foreach ($listViewDefs[$this->module] as $col => $params) {
+                        if (!empty($params['default']) && $params['default']) {
+                            $displayColumns[$col] = $params;
+                        }
+                    }
+                }
 			}
 			$this->lv->displayColumns = $displayColumns;
 			$this->type = 2;
