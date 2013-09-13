@@ -5269,3 +5269,25 @@ SUGAR.MultiEnumAutoComplete.getMultiSelectValuesFromKeys = function(options_inde
     }
     return final_arr;
 }
+
+function convertReportDateTimeToDB(dateValue, timeValue)
+{
+    var date_match = dateValue.match(date_reg_format);
+    var time_match = timeValue.match(/([0-9]{1,2})\:([0-9]{1,2})([ap]m)/);
+    if ( date_match != null && time_match != null) {
+        time_match[1] = parseInt(time_match[1]);
+        if (time_match[3] == 'pm') {
+            time_match[1] = time_match[1] + 12;
+            if (time_match[1] >= 24) {
+                time_match[1] = time_match[1] - 24;
+            }
+        } else if (time_match[3] == 'am' && time_match[1] == 12) {
+            time_match[1] = 0;
+        }
+        if (time_match[1] < 10) {
+            time_match[1] = '0' + time_match[1];
+        }
+        return date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ time_match[1] + ':' + time_match[2] + ':00';
+    }
+    return '';
+}

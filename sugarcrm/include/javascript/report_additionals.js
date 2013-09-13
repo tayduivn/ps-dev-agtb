@@ -733,10 +733,8 @@ function addFilterInputDate(row,filter) {
 	new_input.type="text";
 
 	if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
-		filter.input_name0 = to_display_date(filter.input_name0);
+        new_input.value = to_display_date(filter.input_name0);
  	}
-
-	new_input.value=filter.input_name0;
 	new_input.name="text_input";
 	new_input.size="30";
 	new_input.maxsize="255";
@@ -932,8 +930,7 @@ function addFilterInputDateBetween(row,filter) {
 		filter.input_name0 = '';
 	}
 
-	filter.input_name0 = to_display_date(filter.input_name0);
-	new_input.value=filter.input_name0;
+    new_input.value = to_display_date(filter.input_name0);
 	new_input.name="text_input";
 	new_input.size="12";
 	new_input.maxsize="255";
@@ -973,8 +970,7 @@ function addFilterInputDateBetween(row,filter) {
 	if (typeof(filter.input_name1) == 'undefined') {
 		filter.input_name1 = '';
 	}
-	filter.input_name1 = to_display_date(filter.input_name1);
-	new_input.value=filter.input_name1;
+    new_input.value = to_display_date(filter.input_name1);
 	new_input.name="text_input";
 	new_input.size="12";
 	new_input.maxsize="255";
@@ -1595,18 +1591,16 @@ function fill_form(type) {
 			}
 		}else if ( field.type == 'datetimecombo') {
 			if ( (typeof(filter_def.input_name0) != 'undefined' && typeof(filter_def.input_name0) != 'array') && (typeof(filter_def.input_name1) != 'undefined' && typeof(filter_def.input_name1) != 'array')) {
-				var date_match = filter_def.input_name0.match(date_reg_format);
-				var time_match = filter_def.input_name1.match(time_reg_format);
-				if ( date_match != null && time_match != null) {
-					filter_def.input_name0 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter_def.input_name1;
-				}
+                var dbValue = convertReportDateTimeToDB(filter_def.input_name0, filter_def.input_name1);
+                if (dbValue != '') {
+                    filter_def.input_name0 = dbValue;
+                }
 			}
 			if ( typeof(filter_def.input_name2) != 'undefined' && typeof(filter_def.input_name2) != 'array' && typeof(filter_def.input_name3) != 'undefined' && typeof(filter_def.input_name3) != 'array') {
-				var date_match = filter_def.input_name2.match(date_reg_format);
-				var time_match = filter_def.input_name3.match(time_reg_format);
-				if ( date_match != null && time_match != null) {
-					filter_def.input_name2 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter_def.input_name3;
-				}
+                var dbValue = convertReportDateTimeToDB(filter_def.input_name2, filter_def.input_name3);
+                if (dbValue != '') {
+                    filter_def.input_name2 = dbValue;
+                }
 			}
 		}
 		filters_def.push(filter_def);

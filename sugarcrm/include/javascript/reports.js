@@ -706,18 +706,16 @@ SUGAR.reports = function() {
 				}			
 			}else if ( field.type == 'datetimecombo') {
 				if ( (typeof(filter_def.input_name0) != 'undefined' && typeof(filter_def.input_name0) != 'array') && (typeof(filter_def.input_name1) != 'undefined' && typeof(filter_def.input_name1) != 'array')) {
-					var date_match = filter_def.input_name0.match(date_reg_format);
-					var time_match = filter_def.input_name1.match(time_reg_format);
-					if ( date_match != null && time_match != null) {
-						filter_def.input_name0 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter_def.input_name1;
-					}
-				}			
+                    var dbValue = convertReportDateTimeToDB(filter_def.input_name0, filter_def.input_name1);
+                    if (dbValue != '') {
+                        filter_def.input_name0 = dbValue;
+                    }
+				}
 				if ( typeof(filter_def.input_name2) != 'undefined' && typeof(filter_def.input_name2) != 'array' && typeof(filter_def.input_name3) != 'undefined' && typeof(filter_def.input_name3) != 'array') {
-					var date_match = filter_def.input_name2.match(date_reg_format);
-					var time_match = filter_def.input_name3.match(time_reg_format);
-					if ( date_match != null && time_match != null) {
-						filter_def.input_name2 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter_def.input_name3;
-					}
+                    var dbValue = convertReportDateTimeToDB(filter_def.input_name2, filter_def.input_name3);
+                    if (dbValue != '') {
+                        filter_def.input_name2 = dbValue;
+                    }
 				}			
 			}
 			return filter_def;
@@ -876,18 +874,16 @@ SUGAR.reports = function() {
 						}			
 					}else if ( field.type == 'datetimecombo') {
 						if ( (typeof(filter_def.input_name0) != 'undefined' && typeof(filter_def.input_name0) != 'array') && (typeof(filter_def.input_name1) != 'undefined' && typeof(filter_def.input_name1) != 'array')) {
-							var date_match = filter_def.input_name0.match(date_reg_format);
-							var time_match = filter_def.input_name1.match(time_reg_format);
-							if ( date_match != null && time_match != null) {
-								filter_def.input_name0 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter_def.input_name1;
-							}
+                            var dbValue = convertReportDateTimeToDB(filter_def.input_name0, filter_def.input_name1);
+                            if (dbValue != '') {
+                                filter_def.input_name0 = dbValue;
+                            }
 						}			
 						if ( typeof(filter_def.input_name2) != 'undefined' && typeof(filter_def.input_name2) != 'array' && typeof(filter_def.input_name3) != 'undefined' && typeof(filter_def.input_name3) != 'array') {
-							var date_match = filter_def.input_name2.match(date_reg_format);
-							var time_match = filter_def.input_name3.match(time_reg_format);
-							if ( date_match != null && time_match != null) {
-								filter_def.input_name2 = date_match[date_reg_positions['Y']] + "-"+date_match[date_reg_positions['m']] + "-"+date_match[date_reg_positions['d']] + ' '+ filter_def.input_name3;
-							}
+                            var dbValue = convertReportDateTimeToDB(filter_def.input_name2, filter_def.input_name3);
+                            if (dbValue != '') {
+                                filter_def.input_name2 = dbValue;
+                            }
 						}			
 					}	 		
 			 		
@@ -2855,7 +2851,7 @@ SUGAR.reports = function() {
 			}
 			var selectSpan = document.createElement("span");
 			var timevalue = "01:00am";
-			if( inputTime &&inputTime.match(time_reg_format) != null){
+			if( inputTime &&inputTime.match(/([0-9]{1,2})\:([0-9]{1,2})([ap]m)/) != null){
 				timevalue = inputTime;
 			}
 			hrs = parseInt(timevalue.substring(0,2));
