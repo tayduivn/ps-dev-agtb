@@ -1,5 +1,6 @@
 .row-fluid .main-pane.span8 {
-  width: 67.75%;
+  width: calc(66% + 17px);
+  overflow-y: scroll;
 }
 
 @media (max-width: 768px) {
