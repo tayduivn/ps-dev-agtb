@@ -118,8 +118,13 @@ if(!empty($_POST['saveConfig'])){
 		$configurator->saveConfig();
 
 		$focus->saveConfig();
-
-		header('Location: index.php?module=Administration&action=index');
+        die("
+            <script>
+            var app = window.parent.SUGAR.App;
+            app.api.call('read', app.api.buildURL('ping'));
+            app.router.navigate('#bwc/index.php?module=Administration&action=index', {trigger:true, replace:true});
+            </script>"
+        );
 	}
 }
 
