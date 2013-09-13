@@ -23,6 +23,21 @@
  */
 ({
     /**
+     * bool to store if a child worksheet is dirty
+     */
+    isDirty: false,
+    
+    /**
+     * worksheet type
+     */
+    worksheetType: '',
+    
+    /**
+     * the forecast navigation message
+     */
+    navigationMessage: "",
+    
+    /**
      * The options from the initialize call
      */
     initOptions: undefined,
@@ -117,6 +132,53 @@
             // listen on the context for a commit trigger
             this.context.on('forecasts:worksheet:commit', function(user, worksheet_type, forecast_totals) {
                 this.commitForecast(user, worksheet_type, forecast_totals);
+            }, this);
+            
+            //listen for the worksheets to be dirty/clean
+            this.context.on("forecasts:worksheet:dirty", function(type, isDirty){
+                this.isDirty = isDirty;
+                this.worksheetType = type;
+            }, this);
+            
+            //listen for the worksheet navigation messages
+            this.context.on("forecasts:worksheet:navigationMessage", function(message){
+                this.navigationMessage = message;
+            }, this);
+            
+            //listen for the user to change
+            this.context.on("forecasts:user:changed", function(selectedUser, context){
+                if(this.isDirty){
+                    app.alert.show('leave_confirmation', {
+                        level: 'confirmation',
+                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
+                        onConfirm: _.bind(function(){
+                            app.utils.getSelectedUsersReportees(selectedUser, context);
+                        }, this),
+                        onCancel: _.bind(function(){
+                            this.context.trigger("forecasts:user:canceled");
+                        }, this)
+                    });
+                } else {
+                    app.utils.getSelectedUsersReportees(selectedUser, context);
+                }
+            }, this);
+            
+            //handle timeperiod change events
+            this.context.on("forecasts:timeperiod:changed", function(model){
+                if(this.isDirty){
+                    app.alert.show('leave_confirmation', {
+                        level: 'confirmation',
+                        messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
+                        onConfirm: _.bind(function(){
+                            this.context.set("selectedTimePeriod", model.get("selectedTimePeriod"));
+                        }, this),
+                        onCancel: _.bind(function(){
+                            this.context.trigger("forecasts:timeperiod:canceled");
+                        }, this)
+                    });
+                } else {
+                    this.context.set("selectedTimePeriod", model.get("selectedTimePeriod"));
+                }
             }, this);
         }
     },

@@ -121,6 +121,16 @@
      * @param boolean
      */
     isCollectionSyncing: false,
+    
+    /**
+     * Target URL of the nav action
+     */
+    targetURL: '',
+    
+    /**
+     * Current URL of the module
+     */
+    currentURL: '',
 
     initialize: function(options) {
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
@@ -133,6 +143,7 @@
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';
         this.context.set('skipFetch', (this.selectedUser.is_manager && this.selectedUser.showOpps));    // skip the initial fetch, this will be handled by the changing of the selectedUser
         this.collection.sync = _.bind(this.sync, this);
+        this.currentURL = Backbone.history.getFragment();
     },
 
     _dispose: function() {
@@ -192,6 +203,15 @@
                         }, this);
                         this.draftSaveType = 'commit';
                         this.saveWorksheet(false);
+                    }
+                }, this);
+                
+                /**
+                 * trigger an event if dirty
+                 */
+                this.dirtyModels.on("add change reset", function(){
+                    if(this.layout.isVisible()){
+                        this.context.parent.trigger("forecasts:worksheet:dirty", this.worksheetType, this.dirtyModels.length > 0);
                     }
                 }, this);
 
@@ -265,7 +285,7 @@
                 this.context.parent.on('forecasts:worksheet:is_dirty', function(worksheetType, is_dirty) {
                     if (this.worksheetType == worksheetType) {
                         if (is_dirty) {
-                            this.setNavigationMessage(true, 'LBL_WORKSHEET_SAVE_CONFIRM', 'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD');
+                            this.setNavigationMessage(true, 'LBL_WARN_UNSAVED_EDITS', 'LBL_WARN_UNSAVED_EDITS');
                         } else {
                             // worksheet is not dirty,
                             this.cleanUpDirtyModels();
@@ -373,8 +393,15 @@
     },
 
     beforeRouteHandler: function() {
-        var ret = this.showNavigationMessage('router');
-        this.processNavigationMessageReturn(ret);
+        return this.showNavigationMessage('router');
+    },
+    
+    /**
+     * default navigation callback for alert message
+     */
+    defaultNavCallback: function(){
+        this.displayNavigationMessage = false;
+        app.router.navigate(this.targetURL, {trigger: true});
     },
 
     /**
@@ -383,7 +410,10 @@
      * @param type
      * @returns {*}
      */
-    showNavigationMessage: function(type) {
+    showNavigationMessage: function(type, callback) {
+        if (!_.isFunction(callback)) {
+            callback = this.defaultNavCallback;
+        }
         if (this.layout.isVisible()) {
             var canEdit = this.dirtyCanEdit || this.canEdit;
             if (canEdit && this.displayNavigationMessage) {
@@ -394,12 +424,21 @@
                     return false;
                 }
 
-                var ret = confirm(app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"));
-                return {'message': this.navigationMessage, 'run_action': ret};
+                this.targetURL = Backbone.history.getFragment();
+                
+                //Replace the url hash back to the current staying page
+                app.router.navigate(this._currentUrl, {trigger: false, replace: true});
+                
+                app.alert.show('leave_confirmation', {
+                    level: 'confirmation',
+                    messages: app.lang.get(this.navigationMessage, 'Forecasts').split("<br>"),
+                    onConfirm: _.bind(function(){
+                        callback.call(this);
+                    }, this)
+                });
+                return false;
             }
-            return true;
         }
-
         return true;
     },
 
@@ -414,19 +453,15 @@
         this.displayNavigationMessage = display;
         this.navigationMessage = reload_label;
         this.routeNavigationMessage = route_label;
+        this.context.parent.trigger("forecasts:worksheet:navigationMessage", this.navigationMessage);
     },
 
     /**
      * Custom Method to handle the refreshing of the worksheet Data
      */
     refreshData: function() {
-        var ret = this.showNavigationMessage('forecast');
-
-        if (this.processNavigationMessageReturn(ret)) {
-            this.hasCheckedForDraftRecords = false;
-            this.displayLoadingMessage();
-            this.collection.fetch();
-        }
+        this.displayLoadingMessage();
+        this.collection.fetch();
     },
 
     /**
@@ -439,29 +474,6 @@
         this.collection.once('reset', function() {
             app.alert.dismiss('workshet_loading');
         }, this);
-    },
-    /**
-     * Utility to process the return from the Navigation Message
-     *
-     * @param message_result
-     * @returns {boolean}
-     */
-    processNavigationMessageReturn: function(message_result) {
-        if (_.isObject(message_result) && message_result.run_action === true) {
-            if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
-                this.context.parent.once('forecasts:worksheet:saved', function() {
-                    if (this.layout.isVisible()) {
-                        this.displayLoadingMessage();
-                        this.collection.fetch();
-                    }
-                }, this);
-                this.saveWorksheet(true);
-            }
-
-            return false
-        }
-
-        return true;
     },
 
     /**
@@ -583,16 +595,12 @@
 
         // Set the flag for use in other places around this controller to suppress stuff if we can't edit
         this.canEdit = (this.selectedUser.id == app.user.get('id'));
-
+        this.cleanUpDirtyModels();
+        
         if (doFetch) {
             this.refreshData();
         } else {
-            if (this.selectedUser.is_manager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
-                if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
-                    this.processNavigationMessageReturn(this.showNavigationMessage('manager_to_rep'));
-                } else if (this.displayNavigationMessage) {
-                    this.processNavigationMessageReturn(this.showNavigationMessage('user_switch'));
-                }
+            if (this.selectedUser.is_manager && this.selectedUser.showOpps && this.layout.isVisible()) {
                 // viewing managers opp worksheet so hide the manager worksheet
                 this.layout.hide();
             }

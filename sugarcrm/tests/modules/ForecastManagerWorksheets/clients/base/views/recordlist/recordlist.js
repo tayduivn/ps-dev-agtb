@@ -368,35 +368,6 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                 expect(view.dirtyTimeperiod).toEqual(undefined);
             });
         });
-
-        describe("dirty models with correct user_id after selected_user changes", function() {
-            var m, saveStub, safeFetchStub;
-            beforeEach(function() {
-                m = new Backbone.Model({'hello': 'world'});
-                saveStub = sinon.stub(m, 'save', function() {
-                });
-                safeFetchStub = sinon.stub(view.collection, 'fetch', function() {
-                });
-                view.collection.add(m);
-            });
-
-            afterEach(function() {
-                saveStub.restore();
-                safeFetchStub.restore();
-                m = undefined;
-            });
-
-            it('model should contain the old userid', function() {
-                m.set({'hello': 'jon1'});
-                view.updateSelectedUser({'id': 'my_new_user_id'});
-                expect(view.saveWorksheet()).toEqual(1);
-                expect(saveStub).toHaveBeenCalled();
-
-                expect(m.get('current_user')).toEqual('test_userid');
-                expect(view.selectedUser.id).toEqual('my_new_user_id');
-                expect(view.dirtyUser).toEqual(undefined);
-            });
-        });
     });
 
     describe("collectionSuccess", function() {
@@ -494,22 +465,22 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
     describe('refreshData', function() {
         var sbox = sinon.sandbox.create();
         beforeEach(function() {
-            sbox.stub(view, 'showNavigationMessage', function() {
+            sbox.stub(view, 'displayLoadingMessage', function() {
                 return true;
             });
-            sbox.stub(view, 'processNavigationMessageReturn', function() {
-                return true;
-            });
+            
             sbox.stub(view.collection, 'fetch');
+            view.refreshData();
         });
 
         afterEach(function() {
             sbox.restore();
         });
-
-        it('should set hasCheckedForDraftRecords to false', function() {
-            view.refreshData();
-            expect(view.hasCheckedForDraftRecords).toBeFalsy();
+        it("should have called displayLoadingMessage", function() {
+            expect(view.displayLoadingMessage).toHaveBeenCalled();
+        });
+        it("should should have called fetch on the collection", function() {
+            expect(view.collection.fetch).toHaveBeenCalled();
         });
     });
 

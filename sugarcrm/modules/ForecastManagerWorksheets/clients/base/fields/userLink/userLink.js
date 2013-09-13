@@ -71,7 +71,7 @@
                 // get the current selected user, if the id's match up set the showOpps to be true)
                 selectedUser.showOpps = (su.id == data.id);
 
-                app.utils.getSelectedUsersReportees(selectedUser, this.context.parent);
+                this.context.parent.trigger("forecasts:user:changed", selectedUser, this.context.parent);
             }, this)
         };
 
