@@ -7174,7 +7174,7 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 .listViewEmpty p {
 	padding:5px 0px 5px 16px ;
 }
-p.submsg, p.submsg a{
+p.submsg a{
 	font-size:16px;
 }
 .listViewEmpty a{
