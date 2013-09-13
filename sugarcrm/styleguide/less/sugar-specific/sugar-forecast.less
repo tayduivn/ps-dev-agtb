@@ -67,8 +67,9 @@
       line-height: 28px;
     }
     &.deficitRow {
-      background-color: @grayLighter;
-      font-weight: 600;
+      background-color: @white;
+      border-top: 1px solid darken(@grayLighter, 5%);
+        font-weight: 600;
       &.font-green {
         color: @green;
       }
@@ -77,7 +78,7 @@
       }
     }
     &:last-child {
-      background-color: @grayLighter;
+      background-color: @white;
       div[class*="span"] {
         padding: 0 5px;
         line-height: 18px;
