@@ -16,8 +16,6 @@ class SugarUpgradeRemoveFiles extends UpgradeScript
             return;
         }
 
-    	$this->ensureDir($this->backup_dir);
-
 	    foreach($this->state['files_to_delete'] as $file) {
 	        $this->backupFile($file);
 	        $this->log("Removing $file");
