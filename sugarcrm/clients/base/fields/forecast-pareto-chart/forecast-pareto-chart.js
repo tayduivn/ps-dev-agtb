@@ -19,11 +19,35 @@
     _serverData: undefined,
 
     /**
+     * The open state of the sidepanel
+     */
+    state: "open",
+
+    /**
+     * Visible state of the preview window
+     */
+    preview_open: false,
+
+    /**
      * @{inheritDoc}
      */
     bindDataChange: function() {
         this.once('render', function() {
             this.renderChart();
+        }, this);
+
+        app.events.on('preview:open', function() {
+            this.preview_open = true;
+        }, this);
+        app.events.on('preview:close', function() {
+            this.preview_open = false;
+        }, this);
+        app.events.on('app:toggle:sidebar', function(state) {
+            this.state = state;
+            if (this.state == 'open' && !this.preview_open) {
+                this.convertDataToChartData();
+                this.generateD3Chart();
+            }
         }, this);
 
         this.model.on('change', function(model) {
@@ -34,9 +58,20 @@
         }, this);
 
         this.model.on('change:group_by change:dataset change:ranges', function() {
-            this.convertDataToChartData();
-            this.generateD3Chart();
+            if (this.state == 'open' && !this.preview_open) {
+                this.convertDataToChartData();
+                this.generateD3Chart();
+            }
         }, this);
+    },
+
+    /**
+     * {@inheritdoc}
+     * Clean up!
+     */
+    unbindData: function() {
+        app.events.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
     },
 
     /**
@@ -97,13 +132,6 @@
         var url = app.api.buildURL(this.buildChartUrl(params), null, null, read_options);
 
         app.api.call('read', url, {}, options);
-
-        app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open') {
-                this.paretoChart.update();
-            }
-        }, this);
-
     },
 
     /**
@@ -153,6 +181,10 @@
      * Utility method to determine which data we need to parse,
      */
     convertDataToChartData: function() {
+        if(this.state == 'closed' || this.preview_open) {
+            return -1;
+        }
+
         if (this.model.get('display_manager')) {
             this.convertManagerDataToChartData();
         } else {

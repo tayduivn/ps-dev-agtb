@@ -131,6 +131,8 @@ describe('Base.Fields.ForecastParetoChart', function() {
             sandbox.restore();
             s1 = null;
             s2 = null;
+            field.preview_open = false;
+            field.state = 'open';
         });
 
         it('should call convertManagerDataToChartData when manager', function() {
@@ -147,6 +149,19 @@ describe('Base.Fields.ForecastParetoChart', function() {
             expect(s1).not.toHaveBeenCalled();
             expect(s2).toHaveBeenCalled();
         });
+
+        it('should return -1 since preview is open', function() {
+            field.preview_open = true;
+
+            expect(field.convertDataToChartData()).toEqual(-1)
+        });
+
+        it('should return -1 since state is closed', function() {
+            field.state = 'closed';
+
+            expect(field.convertDataToChartData()).toEqual(-1)
+        });
+
     });
 
     describe('convertManagerDataToChartData', function() {
