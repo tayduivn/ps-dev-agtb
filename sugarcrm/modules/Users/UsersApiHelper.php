@@ -51,4 +51,27 @@ class UsersApiHelper extends SugarBeanApiHelper
         $record->id = $recordId;
         return $record->checkUserAccess($user);
     }
+
+
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    {
+        parent::populateFromApi($bean, $submittedData, $options);
+        if (!$bean->new_with_id || !empty($bean->id)) {
+            return true;
+        }
+
+        $exception = false;
+
+        if (empty($submittedData)) {
+            $exception = true;
+        } elseif (empty($submittedData['user_name']) || empty($submittedData['user_hash'])) {
+            $exception = true;
+        }
+
+        if ($exception === true) {
+            throw new SugarApiExceptionMissingParameter("Missing password or username");
+        }
+
+        return true;
+    }
 }
