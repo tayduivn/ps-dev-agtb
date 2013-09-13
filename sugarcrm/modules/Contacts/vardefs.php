@@ -587,6 +587,9 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'comment' => 'Synch to outlook?  (Meta-Data only)',
             'studio' => 'true',
+            'link' => 'user_sync',
+            'rname' => 'id',
+            'rname_exists' => true,
         ),
     ),
     'indices' => array(

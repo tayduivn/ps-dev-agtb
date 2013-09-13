@@ -137,9 +137,17 @@ class Contact extends Person {
 //END SUGARCRM flav=pro ONLY
 	);
 
-	var $relationship_fields = Array('account_id'=> 'accounts','bug_id' => 'bugs', 'call_id'=>'calls','case_id'=>'cases','email_id'=>'emails',
-								'meeting_id'=>'meetings','note_id'=>'notes','task_id'=>'tasks', 'opportunity_id'=>'opportunities', 'contacts_users_id' => 'user_sync'
-								);
+	var $relationship_fields = Array(
+        'account_id'=> 'accounts',
+        'bug_id' => 'bugs', 
+        'call_id'=>'calls',
+        'case_id'=>'cases',
+        'email_id'=>'emails',
+        'meeting_id'=>'meetings',
+        'note_id'=>'notes',
+        'task_id'=>'tasks', 
+        'opportunity_id'=>'opportunities', 
+    );
 
 
     /**
@@ -391,16 +399,19 @@ class Contact extends Person {
 			$this->account_id = '';
 			$this->report_to_name = '';
 		}
-		$this->load_contacts_users_relationship();
+
+		$this->load_relationship('user_sync');
+		if ($this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user'])) {
+			$this->sync_contact = true;
+		} else {
+			$this->sync_contact = false;
+		}
+
 		/** concating this here because newly created Contacts do not have a
 		 * 'name' attribute constructed to pass onto related items, such as Tasks
 		 * Notes, etc.
 		 */
 		$this->name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
-        if(!empty($this->contacts_users_id)) {
-		   $this->sync_contact = true;
-		}
-
 		if(!empty($this->portal_active) && $this->portal_active == 1) {
 		   $this->portal_active = true;
 		}
@@ -414,24 +425,6 @@ class Contact extends Person {
 		}
 	}
 
-		/**
-		loads the contacts_users relationship to populate a checkbox
-		where a user can select if they would like to sync a particular
-		contact to Outlook
-	*/
-	function load_contacts_users_relationship(){
-		global $current_user;
-
-		$this->load_relationship("user_sync");
-
-        $beanIDs = $this->user_sync->get();
-
-        if( in_array($current_user->id, $beanIDs) )
-        {
-            $this->contacts_users_id = $current_user->id;
-        }
-	}
-
 	function get_list_view_data($filter_fields = array()) {
 		global $system_config;
 		global $current_user;
@@ -442,8 +435,8 @@ class Contact extends Person {
 		$temp_array['ENCODED_NAME'] = $this->name;
 
 		if($filter_fields && !empty($filter_fields['sync_contact'])){
-			$this->load_contacts_users_relationship();
-			$temp_array['SYNC_CONTACT'] = !empty($this->contacts_users_id) ? 1 : 0;
+			$this->load_relationship('user_sync');
+			$temp_array['SYNC_CONTACT'] = $this->user_sync->_relationship->relationship_exists($this, $GLOBALS['current_user']->id) ? 1 : 0;
 		}
 		$temp_array['EMAIL1'] = $this->emailAddress->getPrimaryAddress($this);
 		$this->email1 = $temp_array['EMAIL1'];
