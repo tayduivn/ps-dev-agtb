@@ -222,7 +222,9 @@
     },
 
     /**
-     * Normalizes the metadata, and removes favorite fields, that gets shown in Preview dialog
+     * Normalizes the metadata, and removes favorite/follow fields that gets
+     * shown in Preview dialog.
+     *
      * @param meta Layout metadata to be trimmed
      * @return Returns trimmed metadata
      * @private
@@ -233,8 +235,8 @@
             if(panel.header){
                 panel.header = false;
                 panel.fields = _.filter(panel.fields, function(field){
-                    //Don't show favorite icon in Preview, it's already on list view row
-                    return field.type != 'favorite';
+                    //Don't show favorite or follow in Preview, it's already on list view row
+                    return field.type != 'favorite' && field.type != 'follow';
                 });
             }
             //Keep track if a hidden panel exists
