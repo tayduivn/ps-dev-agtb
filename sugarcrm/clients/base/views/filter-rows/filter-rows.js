@@ -453,6 +453,9 @@
             case 'int':
                 fieldDef.auto_increment = false;
                 break;
+            case 'teamset':
+                fieldDef.type = 'relate';
+                break;
             case 'datetimecombo':
             case 'date':
                 fieldDef.type = 'date';
