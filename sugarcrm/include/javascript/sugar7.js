@@ -367,4 +367,21 @@
         document.title = title || document.title;
     }, this);
 
+    app.routing.before("route", function(o) {
+        if (o && _.isArray(o.args) && o.args[0]) {
+            var module = o.args[0],
+                id = o.args[1],
+                meta = app.metadata.getModule(module);
+            if (meta && meta.isBwcEnabled) {
+                var redirect = "bwc/index.php?module=" + module
+                if (o.route == "record" && id) {
+                    redirect += "&action=DetailView&record=" + id;
+                }
+                app.router.navigate(redirect , {trigger: true, replace: true });
+                return false;
+            }
+        }
+        return true;
+    });
+    
 })(SUGAR.App);
