@@ -33,7 +33,12 @@ require_once('modules/Campaigns/utils.php');
 
 global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
 global $import_file_name, $theme;$app_list_strings;
-$lead = BeanFactory::getBean('Leads');
+
+if (!empty($_REQUEST['lead_id'])) {
+    $lead = BeanFactory::getBean('Leads',$_REQUEST['lead_id']);
+} else {
+    $lead = BeanFactory::getBean('Leads');
+}
 $fields = array();
 
 $xtpl=new XTemplate ('modules/Campaigns/WebToLeadCreation.html');
@@ -205,15 +210,15 @@ $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_obje
 $xtpl->assign("JAVASCRIPT", $quicksearch_js);
 
 //BEGIN SUGARCRM flav=pro ONLY
-if (empty($focus->id) && !isset($_REQUEST['isDuplicate'])) {
+if (empty($lead->id) && !isset($_REQUEST['isDuplicate'])) {
 	$xtpl->assign("TEAM_OPTIONS", get_select_options_with_id(get_team_array(), $current_user->default_team));
 	$xtpl->assign("TEAM_NAME", $current_user->default_team_name);
 	$xtpl->assign("TEAM_ID", $current_user->default_team);
 }
 else {
-	$xtpl->assign("TEAM_OPTIONS", get_select_options_with_id(get_team_array(), $focus->team_id));
-	$xtpl->assign("TEAM_NAME", $focus->assigned_name);
-	$xtpl->assign("TEAM_ID", $focus->team_id);
+	$xtpl->assign("TEAM_OPTIONS", get_select_options_with_id(get_team_array(), $lead->team_id));
+	$xtpl->assign("TEAM_NAME", $lead->assigned_name);
+	$xtpl->assign("TEAM_ID", $lead->team_id);
 }
 $code = $teamSetField->getClassicView();
 $xtpl->assign("TEAM_SET_FIELD", $code);
@@ -221,11 +226,11 @@ $xtpl->parse("main.pro");
 //END SUGARCRM flav=pro ONLY
 
 
-if (empty($focus->assigned_user_id) && empty($focus->id))  $focus->assigned_user_id = $current_user->id;
-if (empty($focus->assigned_name) && empty($focus->id))  $focus->assigned_user_name = $current_user->user_name;
-$xtpl->assign("ASSIGNED_USER_OPTIONS", get_select_options_with_id(get_user_array(TRUE, "Active", $focus->assigned_user_id), $focus->assigned_user_id));
-$xtpl->assign("ASSIGNED_USER_NAME", $focus->assigned_user_name);
-$xtpl->assign("ASSIGNED_USER_ID", $focus->assigned_user_id );
+if (empty($lead->assigned_user_id) && empty($lead->id))  $lead->assigned_user_id = $current_user->id;
+if (empty($lead->assigned_name) && empty($lead->id))  $lead->assigned_user_name = $current_user->user_name;
+$xtpl->assign("ASSIGNED_USER_OPTIONS", get_select_options_with_id(get_user_array(TRUE, "Active", $lead->assigned_user_id), $lead->assigned_user_id));
+$xtpl->assign("ASSIGNED_USER_NAME", $lead->assigned_user_name);
+$xtpl->assign("ASSIGNED_USER_ID", $lead->assigned_user_id );
 
 $xtpl->assign("REDIRECT_URL_DEFAULT",'http://');
 
