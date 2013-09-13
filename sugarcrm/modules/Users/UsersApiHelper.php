@@ -56,20 +56,12 @@ class UsersApiHelper extends SugarBeanApiHelper
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
         parent::populateFromApi($bean, $submittedData, $options);
-        if (!$bean->new_with_id || !empty($bean->id)) {
+        if (!$bean->new_with_id && !empty($bean->id)) {
             return true;
         }
 
-        $exception = false;
-
-        if (empty($submittedData)) {
-            $exception = true;
-        } elseif (empty($submittedData['user_name']) || empty($submittedData['user_hash'])) {
-            $exception = true;
-        }
-
-        if ($exception === true) {
-            throw new SugarApiExceptionMissingParameter("Missing password or username");
+        if (empty($submittedData) || empty($submittedData['user_name'])) {
+            throw new SugarApiExceptionMissingParameter("Missing username");
         }
 
         return true;
