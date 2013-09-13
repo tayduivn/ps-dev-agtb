@@ -133,6 +133,43 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     }
 
     /**
+     * do post update process to update the opportunity RLIs, ENT only
+     */
+    public function doPostUpdateAction()
+    {
+        //BEGIN SUGARCRM flav=ent ONLY
+        $sql = "SELECT opportunity_id               AS opp_id,
+                          Sum(likely_case)             AS likely,
+                          Sum(worst_case)              AS worst,
+                          Sum(best_case)               AS best
+                   FROM   (SELECT rli.opportunity_id,
+                                  (rli.likely_case/rli.base_rate) as likely_case,
+                                  (rli.worst_case/rli.base_rate) as worst_case,
+                                  (rli.best_case/rli.base_rate) as best_case
+                           FROM   revenue_line_items AS rli
+                           WHERE  rli.deleted = 0) AS T
+                   GROUP  BY opp_id";
+        $results = $this->db->query($sql);
+
+        $queries = array();
+
+        // skip closed opps
+        $sql = "UPDATE opportunities SET amount = '%s', best_case = '%s', worst_case = '%s' WHERE id = '%s' AND sales_status NOT IN ('Closed Won', 'Closed Lost')";
+        while ($row = $this->db->fetchRow($results)) {
+            $queries[] = sprintf(
+                $sql,
+                $row['likely'],
+                $row['best'],
+                $row['worst'],
+                $row['opp_id']
+            );
+        }
+        $this->db->query(join(';', $queries));
+        //END SUGARCRM flav=ent ONLY
+        return true;
+    }
+
+    /**
      * getClosedStages
      *
      * Return an array of closed stage names from the opportunity bean.
