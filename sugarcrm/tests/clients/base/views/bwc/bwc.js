@@ -129,5 +129,21 @@ describe('Base.View.Bwc', function() {
             view.initialize({context: context});
             expect(navigateStub).not.toHaveBeenCalled();
         });
+        it('should get the current module off the page if not in location.search', function() {
+            var contentWindowMock = {
+                location: {
+                    search: null
+                },
+                $: function () {
+                    return {
+                        val: function () {
+                            return 'testModuleName';
+                        }
+                    }
+                }
+            };
+            var module = view._setModule(contentWindowMock);
+            expect(SugarTest.app.controller.context.get('module')).toEqual('testModuleName');
+        });
     });
 });
