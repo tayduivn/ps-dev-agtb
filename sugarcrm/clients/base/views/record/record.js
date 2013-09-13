@@ -275,6 +275,8 @@
                 app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
             }
         });
+
+        prefill.trigger('duplicate:field', self.model);
     },
 
     editClicked: function () {
