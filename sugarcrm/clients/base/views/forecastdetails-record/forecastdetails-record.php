@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=ent ONLY
 $viewdefs['base']['view']['forecastdetails-record'] = array(
     'dashlets' => array(
         array(

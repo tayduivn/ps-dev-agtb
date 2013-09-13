@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 ({
     extendsFrom: 'ForecastdetailsView',
 
