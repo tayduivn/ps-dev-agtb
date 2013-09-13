@@ -32,8 +32,9 @@
     /**
      * Define proper filter for PDF template list.
      * Fetch the collection to get available template list.
+     * @private
      */
-    fetchTemplate: function() {
+    _fetchTemplate: function() {
         this.fetchCalled = true;
         var collection = this.templateCollection;
         collection.filterDef = {'$and': [{
@@ -49,9 +50,11 @@
      *
      * @param {String} templateId PDF Template id.
      * @return {string} Link url.
+     * @private
      */
-    buildDownloadLink: function(templateId) {
-        return '#' + app.bwc.buildRoute(this.module, null, 'sugarpdf', {
+    _buildDownloadLink: function(templateId) {
+        //IE does not support shart-start url on iframe path
+        return '?#' + app.bwc.buildRoute(this.module, null, 'sugarpdf', {
             'sugarpdf': 'pdfmanager',
             'record': this.model.id,
             'pdf_template_id': templateId
@@ -63,8 +66,9 @@
      *
      * @param {String} templateId PDF Template id.
      * @return {string} Email pdf url.
+     * @private
      */
-    buildEmailLink: function(templateId) {
+    _buildEmailLink: function(templateId) {
         return '#' + app.bwc.buildRoute(this.module, null, 'sugarpdf', {
             'sugarpdf': 'pdfmanager',
             'record': this.model.id,
@@ -85,7 +89,7 @@
         if (this.templateCollection.dataFetched) {
             this.fetchCalled = !this.fetchCalled;
         } else {
-            this.fetchTemplate();
+            this._fetchTemplate();
         }
         this.render();
     },
@@ -97,7 +101,7 @@
      */
     emailClicked: function(evt) {
         var templateId = this.$(evt.currentTarget).data('id');
-        app.router.navigate(this.buildEmailLink(templateId), {
+        app.router.navigate(this._buildEmailLink(templateId), {
             trigger: true
         });
     },
@@ -109,7 +113,7 @@
      */
     downloadClicked: function(evt) {
         var templateId = this.$(evt.currentTarget).data('id');
-        app.api.fileDownload(this.buildDownloadLink(templateId), {
+        app.api.fileDownload(this._buildDownloadLink(templateId), {
             error: function(data) {
                 // refresh token if it has expired
                 app.error.handleHttpError(data, {});
