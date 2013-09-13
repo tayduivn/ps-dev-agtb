@@ -145,7 +145,7 @@
         if (this.meta.config) {
             app.view.View.prototype._renderHtml.call(this);
             return;
-        };
+        }
 
         _.each(this.collection.models, function(model) {
             var pictureUrl = app.api.buildFileURL({
