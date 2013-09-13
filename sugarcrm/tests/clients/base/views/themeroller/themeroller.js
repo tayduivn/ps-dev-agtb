@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 describe("Theme Roller View", function() {
 
     var app, view, themeApiStub;
@@ -37,7 +38,7 @@ describe("Theme Roller View", function() {
     });
 
     it("should make right api call", function() {
-        var url, platform = app.config.platform;
+        var url, platform = 'portal';
         $('<input>').attr({type:"text", name:"a", value:"aaaa"}).appendTo(view.$el);
 
         //Describe loadTheme

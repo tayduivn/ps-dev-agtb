@@ -3722,6 +3722,8 @@ $app_strings = array (
     'LBL_FILE_DELETED' => 'File was successfully deleted',
 
     //theme roller
+    'LBL_PORTAL_THEME' => 'Portal Theme',
+    'LBL_COFIGURE_PORTAL_THEME' => 'Configure Portal Theme',
     'LBL_THEME_PREVIEW' => 'Theme Preview',
     'LBL_LOADING_PREVIEW' => 'Loading Preview',
     'LBL_RESET' => 'Reset',

@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -51,6 +52,9 @@
         }
     },
     _renderHtml: function() {
+        if (!app.acl.hasAccess('admin', 'Administration')) {
+            return;
+        }
         this.parseLessVars();
         app.view.View.prototype._renderHtml.call(this);
         _.each(this.$('.hexvar[rel=colorpicker]'), function(obj, key) {
@@ -62,22 +66,23 @@
         this.$('.rgbavar[rel=colorpicker]').colorpicker({format: 'rgba'});
     },
     loadTheme: function() {
-        this.themeApi('read', {}, function(data) {
+        this.themeApi('read', {}, _.bind(function(data) {
             this.lessVars = data;
             if (this.disposed) {
                 return;
             }
             this.render();
             this.previewTheme();
-        });
+        }, this));
     },
     saveTheme: function() {
+        var self = this;
         // get the value from each input
         var colors = this.getInputValues();
 
         this.showMessage('LBL_SAVE_THEME_PROCESS');
         this.themeApi('create', colors, function() {
-            this.showMessage('LBL_REQUEST_PROCESSED', 3000);
+            app.alert.dismissAll();
         });
     },
     resetTheme: function() {
@@ -88,7 +93,7 @@
             onConfirm: function () {
                 self.showMessage('LBL_RESET_THEME_PROCESS');
                 self.themeApi('create', {"reset": true}, function(data) {
-                    self.showMessage('LBL_REQUEST_PROCESSED', 3000);
+                    app.alert.dismissAll();
                     self.loadTheme();
                 });
             }
@@ -101,7 +106,7 @@
     themeApi: function(method, params, successCallback) {
         var self = this;
         _.extend(params, {
-            platform: app.config.platform,
+            platform: 'portal',
             themeName: self.customTheme
         });
         var paramsGET   = (method==='read') ? params : {},
@@ -125,19 +130,7 @@
         });
         return colors;
     },
-    showMessage: function(messageKey, timer) {
-
-        var message = app.lang.getAppString(messageKey);
-
-        ajaxStatus = new SUGAR.ajaxStatusClass() || null;
-
-        if (ajaxStatus) {
-            if (timer) {
-                ajaxStatus.flashStatus(message, timer);
-                window.setTimeout('ajaxStatus.hideStatus();', timer);
-            } else {
-                ajaxStatus.showStatus(message);
-            }
-        }
+    showMessage: function(messageKey) {
+        app.alert.show('themeProcessing', {level: 'process', title: app.lang.getAppString(messageKey), closeable: true, autoclose: true});
     }
 })

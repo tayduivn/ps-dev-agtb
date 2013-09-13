@@ -55,5 +55,11 @@
                 $('iframe#previewTheme').show();
             });
         $('iframe').contents().find('body').css("backgroundColor", "transparent");
+    },
+    _renderHtml: function() {
+        if (!app.acl.hasAccess('admin', 'Administration')) {
+            return;
+        }
+        this._super('_renderHtml');
     }
 })

@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 {{!
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
@@ -26,30 +27,50 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 }}
-<header class="subhead">
-    <button href="javascript:void(0)" class="button pull-right" name="refresh_button" style="margin-left: 10px">
-        <i class="icon-refresh"></i> {{str "LBL_RESET"}}</button>
-    <h1><small>{{str "LBL_COLORS"}}</small>
-    </h1>
-</header>
-<table class="table table-bordered table-striped">
-    <tbody>
-    {{#each lessVars.hex}}
-    <tr>
-        <td>{{str name}}</td>
-        <td class="swatch-col" style="background-color: {{value}}"><span class="swatch"></span></td>
-        <td>
-            <input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="hexvar span10">
-        </td>
-    </tr>
-    {{/each}}
-    </tbody>
-</table>
-<div class="row-fluid">
-    <div class="btn-toolbar pull-right">
-        <a href="javascript:void(0)" name="reset_button">{{str "LBL_RESET_THEME_LNK"}}</a>
-        <button href="javascript:void(0)" class="btn btn-primary" name="save_button" style="margin-left: 10px">
+<div class="headerpane">
+    <h1>
+       <span class="record-cell">
+            {{str "LBL_COFIGURE_PORTAL_THEME"}}
+       </span>
+        <div class="btn-toolbar pull-right">
+            <a class="btn btn-invisible btn-link"
+               href="#bwc/index.php?module=ModuleBuilder&action=index&type=sugarportal"
+               name="back_button">
+                {{str "LBL_CANCEL_BUTTON_LABEL"}}
+            </a>
+            <button href="javascript:void(0)" class="btn btn-primary" name="save_button" style="margin-left: 10px">
                 <i class="icon-upload"></i> {{str "LBL_SAVE_AND_DEPLOY_BTN"}}</button>
+        </div>
+    </h1>
+</div>
 
+<div class="record">
+    <div class="row-fluid panel_body">
+        <div class="span12 record-cell">
+            <h1>
+                <small>{{str "LBL_COLORS"}}</small>
+            </h1>
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    {{#each lessVars.hex}}
+                    <tr>
+                        <td>{{str name}}</td>
+                        <td class="swatch-col" style="background-color: {{value}}"><span class="swatch"></span></td>
+                        <td>
+                            <input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="hexvar span10">
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            <div class="row-fluid">
+                <div class="btn-toolbar pull-right">
+                    <a href="javascript:void(0)" class="btn pull-right"  name="reset_button">{{str "LBL_RESET_THEME_LNK"}}</a>
+                    <button href="javascript:void(0)" class="btn pull-right" name="refresh_button" style="margin-left: 10px">
+                        <i class="icon-refresh"></i> {{str "LBL_RESET"}}</button>
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
