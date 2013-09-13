@@ -367,13 +367,23 @@
      * saved into the closedWonIds array
      */
     processQuotaCollection: function() {
+        var model = this.context.get('model') || this.model,
+            newQuota = 0,
+            oldQuota = model.get('quota_amount'),
+            quota = 0;
         this.oldTotals.models = new Backbone.Model();
         _.each(this.quotaCollection.models, function(model) {
+            quota = model.get('quota');
+            newQuota = app.math.add(newQuota, quota);
             // save all the initial likely values
             this.setOldTotalFromCollectionById(model.get('id'), {
-                quota: model.get('quota')
+                quota: quota
             });
         }, this);
+
+        if(oldQuota !== newQuota) {
+            this.calculateData({quota_amount: newQuota});
+        }
     },
 
     /**
