@@ -1699,11 +1699,15 @@ EOQ;
                 continue;
             }
 
-            $focus = BeanFactory::getBean($module);
-            if ( $focus instanceOf SugarBean ) {
-                $key = $focus->acltype;
-            } else {
-                $key = 'module';
+            $key = 'module';
+            // The tracker modules have special case ACL mappings
+            // in $GLOBALS['ACLActions'] that we need to account for.
+            // TODO: In the future these should be migrated to a custom ACL strategy for those modules.
+            if (in_array($module, array('Tracker', 'TrackerPerfs', 'TrackerQueries', 'TrackerSessions'))) {
+                $focus = BeanFactory::getBean($module);
+                if ($focus instanceOf SugarBean) {
+                    $key = $focus->acltype;
+                }
             }
 
             if (($this->isAdmin() && isset($actions[$module][$key]))
