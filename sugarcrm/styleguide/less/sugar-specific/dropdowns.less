@@ -161,6 +161,29 @@
   .opacity(30);
 }*/
 
+.dropdown-inset {
+  max-height: 118px;
+  background-color: @grayLighter;
+  background-image: none;
+  outline: 0;
+  .box-shadow(~"inset 0px 3px 1px rgba(0,0,0,.2)");
+  position: relative;
+  margin: 0;
+  padding-right: 0 !important;
+  a {
+    border-bottom: 1px solid darken(@grayLighter, 10%);
+    color: @gray;
+  }
+  li:last-child a {
+    border-bottom: 1px solid darken(@grayLight, 10%);
+    .border-radius(0);
+  }
+  li > a {
+    padding: 9px 20px;
+    color: @gray;
+  }
+
+}
 /* Add a caret to action dropdowns */
 .actions {
   .dropdown-menu {
