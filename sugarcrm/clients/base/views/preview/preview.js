@@ -203,7 +203,14 @@
 
         if (model) {
             this.bindUpdates(model);
+
+            // FIXME why can't we reuse the model that we have on the collection. We should fix this in SP-1483.
             this.model = app.data.createBean(model.module, model.toJSON());
+
+            this.listenTo(this.model, 'change', function() {
+                this.sourceModel.set(this.model.attributes);
+            }, this);
+
             this.render();
 
             // TODO: Remove when pagination on activity streams is fixed.
