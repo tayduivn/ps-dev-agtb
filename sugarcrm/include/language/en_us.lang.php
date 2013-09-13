@@ -4108,6 +4108,20 @@ $app_strings = array (
     'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
 
+    // active tasks dashlet
+    'LBL_ACTIVE_TASKS_DASHLET' => 'Active Tasks',
+    'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Active Tasks dashlet displays due now, upcoming  and to do tasks.',
+    'LBL_ACTIVE_TASKS_DASHLET_DUE_NOW' => 'Due Now',
+    'LBL_ACTIVE_TASKS_DASHLET_UPCOMING' => 'Upcoming',
+    'LBL_ACTIVE_TASKS_DASHLET_TODO' => 'To Do',
+
+    // inactive tasks dashlet
+    'LBL_INACTIVE_TASKS_DASHLET' => 'Inactive Tasks',
+    'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION' => 'The Tasks dashlet displays deferred and completed tasks.',
+    'LBL_INACTIVE_TASKS_DASHLET_DEFERRED' => 'Deferred',
+    'LBL_INACTIVE_TASKS_DASHLET_COMPLETED' => 'Completed',
+    'TPL_INACTIVE_TASKS_DASHLET_TIME_RELATIVE' => 'last modified {{relativetime}} on {{date}} at {{time}}',
+
     // interactions chart dashlet
     'LBL_EMAIL_SENT' => 'sent',
     'LBL_EMAIL_RECV' => 'rec',
@@ -4242,6 +4256,18 @@ $app_list_strings['history_limit_options'] = array (
 );
 
 $app_list_strings['history_visibility_options'] = array (
+    'user' => 'Yes',
+    'group' => 'No',
+);
+
+$app_list_strings['tasks_limit_options'] = array (
+    5 => 5,
+    10 => 10,
+    15 => 15,
+    20 => 20,
+);
+
+$app_list_strings['tasks_visibility_options'] = array (
     'user' => 'Yes',
     'group' => 'No',
 );
