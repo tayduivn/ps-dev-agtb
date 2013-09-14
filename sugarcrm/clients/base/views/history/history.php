@@ -165,24 +165,11 @@ $viewdefs['base']['view']['history'] = array(
         array(
             'filter_applied_to' => 'date_entered',
             'filters' => array(
-                'type' => array('$equals' => 'out'),
+                'type' => array('$in' => array('out', 'inbound', 'archived')),
             ),
             'labels' => array(
-                'singular' => 'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_SINGULAR',
-                'plural' => 'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_PLURAL',
-            ),
-            'link' => 'emails',
-            'module' => 'Emails',
-            'order_by' => 'date_entered:desc',
-        ),
-        array(
-            'filter_applied_to' => 'date_entered',
-            'filters' => array(
-                'type' => array('$equals' => 'inbound'),
-            ),
-            'labels' => array(
-                'singular' => 'LBL_HISTORY_DASHLET_EMAIL_INBOUND_SINGULAR',
-                'plural' => 'LBL_HISTORY_DASHLET_EMAIL_INBOUND_PLURAL',
+                'singular' => 'LBL_HISTORY_DASHLET_EMAIL_SINGULAR',
+                'plural' => 'LBL_HISTORY_DASHLET_EMAIL_PLURAL',
             ),
             'link' => 'emails',
             'module' => 'Emails',

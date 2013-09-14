@@ -30,6 +30,15 @@
         });
 
         /**
+         * Handlebar helper to translate any dropdown values to have the appropriate labels
+         * @param {String} value The value to be translated.
+         * @param {String} key The dropdown list name.
+         */
+        Handlebars.registerHelper('getDDLabel', function(value, key) {
+            return app.lang.getAppListStrings(key)[value] || value;
+        });
+
+        /**
          * Handlebar helper to retrieve a view template as a sub template
          * @param {String} key Key for the template to retrieve.
          * @param {Object} data Data to pass into the compiled template
