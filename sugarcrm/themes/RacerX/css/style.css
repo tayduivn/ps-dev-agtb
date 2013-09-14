@@ -9092,3 +9092,7 @@ i.icon-arrow-up:before {
 .sugar-subpanel-header-row input[type="button"], .button {
     margin-top: 0px;
 }
+
+.touch table.edit.view tr td > a > span[class^="spr_"] {
+    display:none;
+}
