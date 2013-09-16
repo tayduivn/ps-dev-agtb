@@ -19,6 +19,7 @@
 
         this.on("panel:toggle", this.togglePanel, this);
         this.listenTo(this.collection, "reset", function() {
+            //Update the subpanel to be open or closed depending on how user left it last
             var hideShowLastState = app.user.lastState.get(this.hideShowLastStateKey);
             if(_.isUndefined(hideShowLastState)) {
                 this.togglePanel(this.collection.length > 0, false);
@@ -26,6 +27,15 @@
                 this.togglePanel(hideShowLastState === this.HIDE_SHOW.SHOW, false);
             }
         });
+        //Decorate the subpanel based on if the collection is empty or not
+        this.listenTo(this.collection, "reset add remove", this._checkIfSubpanelEmpty, this);
+    },
+    /**
+     * Check if subpanel collection is empty and decorate subpanel header appropriately
+     * @private
+     */
+    _checkIfSubpanelEmpty: function(){
+        this.$(".subpanel").toggleClass("empty", this.collection.length === 0);
     },
     /**
      * Places layout component in the DOM.
@@ -42,7 +52,7 @@
      * @param {Boolean} saveState(optional) TRUE to save the current state
      */
     togglePanel: function(show, saveState) {
-        this.$(".subpanel").toggleClass("out", !show);
+        this.$(".subpanel").toggleClass("closed", !show);
         //check if there's second param then check it and save show/hide to user state
         if(arguments.length === 1 || saveState) {
             app.user.lastState.set(this.hideShowLastStateKey, show ? this.HIDE_SHOW.SHOW : this.HIDE_SHOW.HIDE);
