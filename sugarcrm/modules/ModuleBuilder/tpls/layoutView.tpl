@@ -65,7 +65,7 @@
     {counter name='idCount' assign='idCount' start='1'}
     {foreach from=$available_fields item='col' key='id'}
         {assign var="field" value=$col.name}
-        <div class='le_field' id='{$idCount}'>
+        <div class='le_field' data-name="{$field}" id='{$idCount}'>
             {if ! $fromModuleBuilder && ($col.name != '(filler)')}
                 {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties('{$idCount}', '{$col.label}');"{/capture}
                 {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
@@ -187,7 +187,7 @@
 
             {foreach from=$row item='col' key='cid'}
                 {assign var="field" value=$col.name}
-                <div class='le_field' id='{$idCount}'>
+                <div class='le_field' data-name="{$col.name}" id='{$idCount}'>
                     {if ! $fromModuleBuilder && ($col.name != '(filler)')}
                         {capture assign="otherAttributes"}class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties('{$idCount}', '{$col.label}');"{/capture}
                         {sugar_getimage name="edit_inline" ext=".gif" other_attributes=$otherAttributes}
