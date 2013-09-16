@@ -50,6 +50,7 @@ class ProductBundle extends SugarBean {
 	var $field_name_map;
 	var $name;
 	var $currency_id;
+    var $base_rate;
 	var $description;
 	var $tax;
 	var $shipping;
@@ -384,33 +385,32 @@ class ProductBundle extends SugarBean {
 }
 
 function save($check_notify = FALSE)
-	{
+{
+    $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+    $this->base_rate = $currency->conversion_rate;
+    //US DOLLAR
+    if (!empty($this->tax)) {
+        $this->tax_usdollar = SugarCurrency::convertWithRate($this->tax, $this->base_rate);
+    }
+    if (isset($this->shipping) && !empty($this->shipping)) {
+        $this->shipping_usdollar = SugarCurrency::convertWithRate($this->shipping, $this->base_rate);
+    }
+    if (isset($this->total) && !empty($this->total)) {
+        $this->total_usdollar = SugarCurrency::convertWithRate($this->total, $this->base_rate);
+    }
+    if (isset($this->subtotal) && !empty($this->subtotal)) {
+        $this->subtotal_usdollar = SugarCurrency::convertWithRate($this->subtotal, $this->base_rate);
+    }
+    if (isset($this->deal_tot) && !empty($this->deal_tot)) {
+        $this->deal_tot_usdollar = SugarCurrency::convertWithRate($this->deal_tot, $this->base_rate);
+    }
+    if (isset($this->new_sub) && !empty($this->new_sub)) {
+        $this->new_sub_usdollar = SugarCurrency::convertWithRate($this->new_sub, $this->base_rate);
+    }
+    $this->id = parent::save($check_notify);
 
-		
-		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
-			//US DOLLAR
-			if(!empty($this->tax)){
-				$this->tax_usdollar = $currency->convertToDollar($this->tax);
-			}
-			if(isset($this->shipping) && !empty($this->shipping)){
-				$this->shipping_usdollar = $currency->convertToDollar($this->shipping);
-			}
-			if(isset($this->total) && !empty($this->total)){
-				$this->total_usdollar = $currency->convertToDollar($this->total);
-			}
-			if(isset($this->subtotal) && !empty($this->subtotal)){
-				$this->subtotal_usdollar = $currency->convertToDollar($this->subtotal);
-			}
-	        if(isset($this->deal_tot) && !empty($this->deal_tot)){
-                $this->deal_tot_usdollar = $currency->convertToDollar($this->deal_tot);
-            }
-	        if(isset($this->new_sub) && !empty($this->new_sub)){
-                $this->new_sub_usdollar = $currency->convertToDollar($this->new_sub);
-            }
-			$this->id = parent::save($check_notify);
-
-			return $this->id;
-		}
+    return $this->id;
+}
 
     /**
      * Compare Product and(or) ProductBundleNote objects by {record}_index field

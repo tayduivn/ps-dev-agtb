@@ -114,6 +114,14 @@ $vardefs = array(
             'duplicate_on_record_copy' => 'always',
             'comment' => 'Currency used for display purposes'
           ),
+        'base_rate' => array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_CURRENCY_RATE',
+            'type' => 'decimal',
+            'len' => '26,6',
+            'required' => true,
+            'studio' => false
+        ),
           'currency_name'=>
                array(
                 'name'=>'currency_name',

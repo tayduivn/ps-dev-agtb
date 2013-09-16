@@ -59,6 +59,7 @@ class Contract extends SugarBean {
 	var $start_date;
 	var $end_date;
 	var $currency_id;
+    var $base_rate;
 	var $currency_name;
 	var $total_contract_value;
 	var $total_contract_value_usdollar;
@@ -119,36 +120,51 @@ class Contract extends SugarBean {
 		//$this->disable_row_level_security = false;
 	}
 
-	function save($check_notify = false) {
+    function save($check_notify = false) {
         global $timedate;
-		//decimals cant be null in sql server	
-        if(!empty($this->expiration_notice)) {
-            if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" && !empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID) {
-                $this->special_notification = true;
-                $check_notify = true;
+        //decimals cant be null in sql server
+        if (!empty($this->expiration_notice)) {
+            if (!empty($_SESSION["workflow_cron"])
+                && $_SESSION["workflow_cron"]=="Yes"
+                && !empty($_SESSION["workflow_id_cron"])
+                && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID) {
+                    $this->special_notification = true;
+                    $check_notify = true;
             }
-            elseif(empty($this->fetched_row) || (!empty($this->fetched_row) && $this->expiration_notice != $timedate->to_display_date_time($this->fetched_row['expiration_notice']))) {//only when expiration_notice changes, the workflow_schedular should be created.
+            elseif  (empty($this->fetched_row)
+                || (!empty($this->fetched_row)
+                    && $this->expiration_notice != $timedate->to_display_date_time($this->fetched_row['expiration_notice']))) {
+                //only when expiration_notice changes, the workflow_schedular should be created.
                 require_once("include/workflow/time_utils.php");
                 $time_array['time_int'] = '0';
-                $time_array['time_int_type'] = 'datetime'; 
-                $time_array['target_field'] = 'expiration_notice'; 
-                check_for_schedule($this,CONTRACT_BUILT_IN_WORKFLOW_ID,$time_array);//check if it is update, then save();
+                $time_array['time_int_type'] = 'datetime';
+                $time_array['target_field'] = 'expiration_notice';
+                //check if it is update, then save();
+                check_for_schedule($this,CONTRACT_BUILT_IN_WORKFLOW_ID,$time_array);
             }
         }
-		if ( $this->total_contract_value == '' ) { $this->total_contract_value = 0; }
-		if ( $this->total_contract_value_usdollar == '' ) { $this->total_contract_value_usdollar = 0; }
-		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
-		if(!empty($this->total_contract_value)){
-			$this->total_contract_value_usdollar = $currency->convertToDollar($this->total_contract_value);
-		}	
+        if ( $this->total_contract_value == '' ) {
+            $this->total_contract_value = 0;
+        }
+        if ( $this->total_contract_value_usdollar == '' ) {
+            $this->total_contract_value_usdollar = 0;
+        }
+        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+        $this->base_rate = $currency->conversion_rate;
+        if(!empty($this->total_contract_value)){
+        $this->total_contract_value_usdollar = SugarCurrency::convertWithRate($this->total_contract_value, $this->base_rate);
+        }
         $return_id = parent::save($check_notify);
         //BEGIN SUGARCRM flav=pro ONLY
-        if(!empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" && !empty($_SESSION["workflow_id_cron"]) && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID) {
+        if(!empty($_SESSION["workflow_cron"])
+            && $_SESSION["workflow_cron"]=="Yes"
+            && !empty($_SESSION["workflow_id_cron"])
+            && $_SESSION["workflow_id_cron"] == CONTRACT_BUILT_IN_WORKFLOW_ID) {
             $this->special_notification = false;
         }
         //END SUGARCRM flav=pro ONLY
-		return $return_id;
-	}
+        return $return_id;
+    }
 
 	function get_summary_text() {
 		return $this->name;
