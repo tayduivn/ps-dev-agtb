@@ -1,5 +1,5 @@
 <li class="comment">
-    <a href="#{{buildRoute module='Users' id=created_by}}" id="avatar-comment-{{id}}" class="pull-left avatar">
+    <a href="#{{buildRoute module='Users' id=created_by}}" id="avatar-comment-{{id}}" title="{{created_by_name}}" class="pull-left avatar" rel="tooltip" data-container="body"  data-placement="right">
         {{#if picture_url}}
             <img src="{{picture_url}}" alt="{{created_by_name}}">
         {{else}}
