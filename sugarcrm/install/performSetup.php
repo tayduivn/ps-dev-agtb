@@ -660,6 +660,8 @@ SugarAutoLoader::buildCache();
 
 // prepare the metadata
 installLog("Populating metadata cache");
+global $app_list_strings;
+$app_list_strings = return_app_list_strings_language('en_us');
 require_once 'include/api/RestService.php';
 require_once 'clients/base/api/MetadataApi.php';
 $rest = new RestService();
