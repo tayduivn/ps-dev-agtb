@@ -94,6 +94,8 @@ $mod_strings = array (
 	'ERR_SERVER_STATUS'					=> 'Your server status',
 	'ERR_SERVER_SMTP_EMPTY'				=> 'The system is unable to send an email to the user. Please check the Outgoing Mail Configuration in <a href="index.php?module=EmailMan&action=config">Email Settings</a>.',
 
+    'LBL_EMAIL_ADDRESS'                 => 'Email Address',
+
 	'LBL_ADDRESS_CITY'					=> 'Address City',
 	'LBL_ADDRESS_COUNTRY'				=> 'Address Country',
 	'LBL_ADDRESS_INFORMATION'			=> 'Address Information',
