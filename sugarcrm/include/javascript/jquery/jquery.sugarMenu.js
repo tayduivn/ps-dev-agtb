@@ -167,7 +167,7 @@
 					} else {
 						dropDownHandle = $(parent.find("span"));
 					}
-						if(menuNode.hasClass("fancymenu")){
+						if(menuNode.hasClass("fancymenu") && !window.parent.Modernizr.touch){
 							dropDownHandle.addClass("ab");
 							dropDownHandle.tipTip({maxWidth: "auto",
 							   edgeOffset: 10,
