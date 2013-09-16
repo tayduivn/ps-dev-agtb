@@ -214,14 +214,14 @@ class MetadataApi extends SugarApi
         $baseChunks = array(
             'fields',
             'labels',
-            'module_list', 
-            'views', 
-            'layouts', 
+            'module_list',
+            'views',
+            'layouts',
             'full_module_list',
-            'relationships', 
-            'currencies', 
-            'jssource', 
-            'server_info', 
+            'relationships',
+            'currencies',
+            'jssource',
+            'server_info',
             'module_tab_map',
             'hidden_subpanels',
             'config',
@@ -429,14 +429,14 @@ class MetadataApi extends SugarApi
         // Start collecting data
         $data = $this->_populateModules(array());
         $mm = $this->getMetadataManager();
-        
-        // BR-29 Handle hidden subpanels - SubPanelDefinitons needs a bean at 
-        // construct time, so hand it an admin bean. This returns a list of 
+
+        // BR-29 Handle hidden subpanels - SubPanelDefinitons needs a bean at
+        // construct time, so hand it an admin bean. This returns a list of
         // hidden subpanels in lowercase module name form:
         // array('accounts', 'bugs', 'contacts');
         $spd = new SubPanelDefinitions(BeanFactory::getBean('Administration'));
         $data['hidden_subpanels'] = array_values($spd->get_hidden_subpanels());
-        
+
         // TODO:
         // Sadly, it's now unclear what our abstraction is here. It should be that this class
         // is just for API stuff and $mm is for any metadata data operations. However, since
@@ -462,7 +462,7 @@ class MetadataApi extends SugarApi
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0], true);
         $data['server_info'] = $mm->getServerInfo();
         $data['config'] = $this->getConfigs();
-        
+
         // BR-470 Handle languages
         $data['languages'] = $mm->getAllLanguages();
         $data['_override_values'] = $this->getOverrides($data, $args);
@@ -574,6 +574,10 @@ class MetadataApi extends SugarApi
             } else {
                 $configs['forgotpasswordON'] = false;
             }
+        }
+        $auth = AuthenticationController::getInstance();
+        if($auth->isExternal()) {
+            $configs['externalLogin'] = true;
         }
 
         return $configs;
@@ -750,7 +754,7 @@ class MetadataApi extends SugarApi
 
     /**
      * Builds the language javascript file if needed, else returns what is known
-     * 
+     *
      * @param string $platform The client for this file
      * @param string $language The language for this file
      * @param array $modules The module list
@@ -766,7 +770,7 @@ class MetadataApi extends SugarApi
             // Get the contents of the file so that we can get the hash
             $data = file_get_contents($filePath);
 
-            // Decode the json and get the hash. The hash should be there but 
+            // Decode the json and get the hash. The hash should be there but
             // check for it just in case something went wrong somewhere.
             $array = json_decode($data, true);
             $hash = isset($array['_hash']) ? $array['_hash'] : '';
@@ -774,7 +778,7 @@ class MetadataApi extends SugarApi
             // Cleanup
             unset($array);
 
-            // Return the same thing as would be returned if we had to build the 
+            // Return the same thing as would be returned if we had to build the
             // file for the first time
             return array('hash' => $hash, 'data' => $data);
         }
@@ -873,7 +877,7 @@ class MetadataApi extends SugarApi
                    '// created: ' . date('Y-m-d H:i:s') . "\n" .
                    '$metadata = ' .
                     var_export_helper($data) . ';';
-                    
+
         // Write with atomic writing to prevent issues with simultaneous requests
         // for this file
         sugar_file_put_contents_atomic($cacheFile, $write);
