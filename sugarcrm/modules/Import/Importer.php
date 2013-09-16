@@ -850,6 +850,11 @@ class Importer
      */
     public static function handleImportErrors($errno, $errstr, $errfile, $errline)
     {
+        // Error was suppressed with the @-operator.
+        if (error_reporting() === 0) {
+            return false;
+        }
+
         $GLOBALS['log']->fatal("Caught error: $errstr");
 
         if ( !defined('E_DEPRECATED') )
