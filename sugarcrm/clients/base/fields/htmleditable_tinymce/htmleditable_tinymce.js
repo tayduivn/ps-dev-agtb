@@ -127,7 +127,9 @@
             theme_advanced_path: false,
             theme_advanced_source_editor_width: 500,
             theme_advanced_source_editor_height: 400,
-            inlinepopups_skin: "sugar7modal"
+            inlinepopups_skin: "sugar7modal",
+            relative_urls: false,
+            remove_script_host: false
         };
     },
 
