@@ -55,26 +55,12 @@
         }
     },
     /**
-     * For setup complete we need to PUT /me to indicate the "instance is configured".
-     * @param {Function} callback The callback to call once HTTP request is completed.
+     * When the setup complete page is shown, we know we can update user object
+     * now that user setup is complete so that routing to setup wizard stops.
      */
-    beforeFinish: function(callback) {
-        var self = this;
-        app.alert.show('wizardprofile', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
-        // 'ut' is, historically, a special flag in user's preferences that is
-        // generally marked truthy upon timezone getting saved. It's also used
-        // to semantically represent "is the user's instance configured"
-        var preferences = app.user.get('preferences');
-        preferences['ut'] = true;
-        app.user.updatePreferences(preferences, function(err) {
-            app.alert.dismiss('wizardprofile');
-            if (err) {
-                app.logger.debug("Wizard failed to indicate to server that the instance is configured: " + err);
-                callback(false);
-            } else {
-                callback(true);
-            }
-        });
+    _render: function() {
+        this._super('_render');
+        app.user.unset("show_wizard");
     }
 
 })

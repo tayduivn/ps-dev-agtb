@@ -63,6 +63,10 @@
                         title: app.lang.getAppString('LBL_LOADING'),
                         autoClose: false
                     });
+                    // 'ut' is, historically, a special flag in user's preferences that is
+                    // generally marked truthy upon timezone getting saved. It's also used
+                    // to semantically represent "is the user's instance configured"
+                    payload['ut'] = true;
                     app.user.updatePreferences(payload, function(err) {
                         app.alert.dismiss('wizardlocale');
                         if (err) {

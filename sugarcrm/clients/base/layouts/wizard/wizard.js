@@ -96,6 +96,16 @@
         return this.getProgress();
     },
     /**
+     * Only render the current component (WizardPageView) instead of each component in layout
+     * @override
+     * @private
+     */
+    _render: function(){
+        if (this._components) {
+            this._components[this._currentIndex].render();
+        }
+    },
+    /**
      * Returns current progress through wizard
      * @returns {{page: number, lastPage: number}} Current page number and the
      * last page number
