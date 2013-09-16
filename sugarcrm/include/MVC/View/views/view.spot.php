@@ -28,6 +28,10 @@ require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 class ViewSpot extends ViewAjax
 {
+    public function ViewSpot() {
+        $this->options['show_header'] = true;
+        parent::SugarView();
+    }
     /**
      * @see SugarView::display()
      */
