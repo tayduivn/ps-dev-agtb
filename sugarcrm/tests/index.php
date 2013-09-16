@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListRemoveLinks.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/File.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/MetadataEventDriven.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/Merge.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/FindDuplicate.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/MergeDuplicates.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/FindDuplicates.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/LinkedModel.js"></script>
 
     <!-- customized beans -->

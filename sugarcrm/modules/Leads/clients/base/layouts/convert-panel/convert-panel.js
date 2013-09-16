@@ -25,7 +25,7 @@
         convertPanelEvents['click [name="reset_button"]'] = 'handleResetClick';
         this.events = _.extend({}, this.events, convertPanelEvents);
         this.plugins = _.union(this.plugins || [], [
-            'FindDuplicate'
+            'FindDuplicates'
         ]);
 
         this.currentState = {

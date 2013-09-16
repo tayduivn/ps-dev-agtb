@@ -1,6 +1,6 @@
 (function(app) {
     app.events.on('app:init', function() {
-        app.plugins.register('Merge', ['view'], {
+        app.plugins.register('MergeDuplicates', ['view'], {
 
             /**
              * Minimum number of records for merging.
@@ -60,24 +60,28 @@
              * @return {Boolean} True only if it contains valid size of collection.
              */
             validateSize: function(models) {
-                if (!models.length ||
-                    models.length < this._minRecordsToMerge ||
-                    models.length > this._maxRecordsToMerge) {
-                    var msg = app.lang.get('TPL_MERGE_INVALID_NUMBER_RECORDS',
-                        this.module,
-                        {
-                            minRecords: this._minRecordsToMerge,
-                            maxRecords: this._maxRecordsToMerge
-                        }
-                    );
-                    app.alert.show('invalid-record-count', {
-                        level: 'error',
-                        messages: msg,
-                        autoClose: true
-                    });
-                    return false;
+                var isValidSize = models.length && models.length >= this._minRecordsToMerge &&
+                    models.length <= this._maxRecordsToMerge;
+
+                if (isValidSize) {
+                    return true;
                 }
-                return true;
+
+                var msg = app.lang.get('TPL_MERGE_INVALID_NUMBER_RECORDS',
+                    this.module,
+                    {
+                        minRecords: this._minRecordsToMerge,
+                        maxRecords: this._maxRecordsToMerge
+                    }
+                );
+
+                app.alert.show('invalid-record-count', {
+                    level: 'error',
+                    messages: msg,
+                    autoClose: true
+                });
+
+                return false;
             },
 
             /**
@@ -87,16 +91,11 @@
              * @return {Array} Models with access.
              */
             validateModelsForMerge: function(mergeCollection) {
-                var result = [];
-                _.each(mergeCollection.models, function(model) {
-                    var hasAccess = _.every(['view', 'edit', 'delete'], function(acl) {
+                return _.filter(mergeCollection.models, function(model) {
+                    return _.every(['view', 'edit', 'delete'], function(acl) {
                         return app.acl.hasAccessToModel(acl, model);
                     });
-                    if (hasAccess) {
-                        result.push(model);
-                    }
                 }, this);
-                return result;
             }
         });
     });

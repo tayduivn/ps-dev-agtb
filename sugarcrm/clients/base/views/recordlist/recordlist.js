@@ -21,7 +21,7 @@
         'ListColumnEllipsis',
         'ErrorDecoration',
         'Editable',
-        'Merge'
+        'MergeDuplicates'
     ],
 
     /**

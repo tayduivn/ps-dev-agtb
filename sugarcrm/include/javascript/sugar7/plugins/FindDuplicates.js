@@ -13,6 +13,7 @@
 
                 /**
                  * {@inheritDoc}
+                 *
                  * Override endpoint in order to fetch custom api.
                  */
                 sync: function(method, model, options) {
@@ -25,6 +26,7 @@
 
                 /**
                  * {@inheritDoc}
+                 *
                  * Custom endpoint for duplicate check.
                  */
                 endpoint: function(method, model, options, callbacks) {
@@ -36,7 +38,7 @@
             return collection;
         };
 
-        app.plugins.register('FindDuplicate', ['view'], {
+        app.plugins.register('FindDuplicates', ['view'], {
             /**
              * {@inheritDoc}
              *
@@ -44,15 +46,15 @@
              */
             onAttach: function(component, plugin) {
                 this.on('init', function() {
-                    this.context.on('button:find_duplicates_button:click', this.findDuplicateClicked, this);
+                    this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
                 });
             },
 
             /**
              * Handles the click event, and open the duplicate list view in the drawer.
              */
-            findDuplicateClicked: function() {
-                this.findDuplicate(this.model);
+            findDuplicatesClicked: function() {
+                this.findDuplicates(this.model);
             },
 
             /**
@@ -60,7 +62,7 @@
              *
              * @param {Backbone.Model} dupeCheckModel Duplicate check model.
              */
-            findDuplicate: function(dupeCheckModel) {
+            findDuplicates: function(dupeCheckModel) {
                 app.drawer.open({
                     layout: 'find-duplicates',
                     context: {
@@ -92,11 +94,11 @@
              * Clean up associated event handlers.
              */
             onDetach: function(component, plugin) {
-                this.context.off('button:find_duplicates_button:click', this.findDuplicateClicked, this);
+                this.context.off('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
             }
         });
 
-        app.plugins.register('FindDuplicate', ['layout'], {
+        app.plugins.register('FindDuplicates', ['layout'], {
             /**
              * Create Duplicates list collection.
              *

@@ -28,7 +28,7 @@ $viewdefs['base']['layout']['dupecheck'] = array(
                         'components' => array(
                             array(
                                 'view' => 'filter-quicksearch'
-                            )
+                            ),
                         )
                     ),
                     array(

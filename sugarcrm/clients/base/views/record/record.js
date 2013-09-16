@@ -9,7 +9,7 @@
         'GridBuilder',
         'Editable',
         'Audit',
-        'FindDuplicate',
+        'FindDuplicates',
         'ToggleMoreLess'
     ],
 

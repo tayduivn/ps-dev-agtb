@@ -6,7 +6,7 @@
         'click a[name=merge_duplicates_button]:not(".disabled")': 'mergeDuplicatesClicked'
     },
 
-    plugins: ['Merge'],
+    plugins: ['MergeDuplicates'],
 
     /**
      * Wait for the mass_collection to be set up so we can add listener
