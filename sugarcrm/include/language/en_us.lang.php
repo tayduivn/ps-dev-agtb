@@ -4091,6 +4091,8 @@ $app_strings = array (
 
     // tabbed dashlet
     'TPL_TABBED_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
+    'TPL_TABBED_DASHLET_USER_BUTTON_LABEL' => 'My History',
+    'TPL_TABBED_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
 
     // history dashlet
     'LBL_HISTORY_DASHLET' => 'History',
