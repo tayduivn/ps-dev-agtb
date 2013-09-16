@@ -8,7 +8,8 @@
 
                 this.events = _.extend({}, this.events, {
                     'mouseenter [rel="tooltip"]': 'onShowRecordViewTooltip',
-                    'mouseleave [rel="tooltip"]': 'onHideRecordViewTooltip'
+                    'mouseleave [rel="tooltip"]': 'onHideRecordViewTooltip',
+                    'click [rel="tooltip"]': 'unbindTooltip'
                 });
 
                 this.on('render', function() {

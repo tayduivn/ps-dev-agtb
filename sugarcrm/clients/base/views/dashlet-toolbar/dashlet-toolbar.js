@@ -1,9 +1,5 @@
 ({
     className: 'widget-header',
-    events: {
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
-    },
     cssIconDefault: 'icon-cog',
     cssIconRefresh: 'icon-refresh icon-spin',
     defaultActions: {
@@ -12,6 +8,7 @@
         'dashlet:delete:clicked' : 'removeClicked',
         'dashlet:toggle:clicked' : 'toggleMinify'
     },
+    plugins: ['tooltip'],
     initialize: function (options) {
         _.extend(options.meta, app.metadata.getView(null, 'dashlet-toolbar'), options.meta.toolbar);
         app.view.View.prototype.initialize.call(this, options);
@@ -64,12 +61,5 @@
         var $el = this.$('.dashlet-toggle > i'),
             collapsed = $el.is('.icon-chevron-up');
         this.layout.collapse(collapsed);
-    },
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
     }
 })
