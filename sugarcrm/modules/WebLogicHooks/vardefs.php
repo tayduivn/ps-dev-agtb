@@ -13,6 +13,9 @@
  */
 $dictionary['WebLogicHook'] = array(
     'table' => 'web_logic_hooks',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'favorites'=>false,
+    //END SUGARCRM flav=pro ONLY
     'comment' => 'Web Logic Hooks',
     'audited' => false,
     'activity_enabled'=>false,
