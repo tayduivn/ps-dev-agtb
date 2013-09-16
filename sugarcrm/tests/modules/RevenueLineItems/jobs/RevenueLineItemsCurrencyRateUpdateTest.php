@@ -122,11 +122,13 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
         // setup the query strings we are expecting and what they should return
         $this->db->queries['post_select'] = array(
             'match' => "/SELECT opportunity_id/",
-            'rows' => array(array('likely'=>'1000', 'best'=>'1000', 'worst'=>'1000', 'opp_id'=>'abc123')),
+            'rows' => array(
+                array('likely'=>'1000', 'best'=>'1000', 'worst'=>'1000', 'opp_id'=>'abc123'),
+                array('likely'=>'2000', 'best'=>'2000', 'worst'=>'2000', 'opp_id'=>'abc123'),
+            )
         );
         $this->db->queries['post_update'] = array(
             'match' => "/UPDATE opportunities/",
-            'rows' => array(array(1)),
         );
 
         // run our tests with mockup data
@@ -134,7 +136,7 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
         // make sure we get the expected result and the expected run counts
         $this->assertEquals(true, $result);
         $this->assertEquals(1, $this->db->queries['post_select']['runCount']);
-        $this->assertEquals(1, $this->db->queries['post_update']['runCount']);
+        $this->assertGreaterThan(0, $this->db->queries['post_update']['runCount']);
     }
 
 

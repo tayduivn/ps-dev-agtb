@@ -32,6 +32,12 @@ require_once('include/SugarCurrency/CurrencyRateUpdateAbstract.php');
 class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
 {
     /**
+     * @const CHUNK_SIZE
+     * number of SQL queries to group together for SQLRunner
+     */
+    const CHUNK_SIZE = 100;
+
+    /**
      * constructor
      *
      * @access public
@@ -151,20 +157,43 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
                    GROUP  BY opp_id";
         $results = $this->db->query($sql);
 
-        $queries = array();
+        $stages = $this->getClosedStages();
 
+        $queries = array();
         // skip closed opps
-        $sql = "UPDATE opportunities SET amount = '%s', best_case = '%s', worst_case = '%s' WHERE id = '%s' AND sales_status NOT IN ('Closed Won', 'Closed Lost')";
+        $sql_tpl = "UPDATE opportunities SET amount = '%s', best_case = '%s', worst_case = '%s' WHERE id = '%s' AND sales_status NOT IN ('%s')";
         while ($row = $this->db->fetchRow($results)) {
             $queries[] = sprintf(
-                $sql,
+                $sql_tpl,
                 $row['likely'],
                 $row['best'],
                 $row['worst'],
-                $row['opp_id']
+                $row['opp_id'],
+                implode("','", $stages)
             );
         }
-        $this->db->query(join(';', $queries));
+        if (count($queries) < self::CHUNK_SIZE) {
+            // do queries in this process
+            foreach ($queries as $query) {
+                $this->db->query($query);
+            }
+        } else {
+            // schedule queries to SQLRunner job scheduler
+            $chunks = array_chunk($queries, self::CHUNK_SIZE);
+            global $timedate, $current_user;
+            foreach ($chunks as $chunk) {
+                $job = BeanFactory::getBean('SchedulersJobs');
+                $job->name = "SugarJobSQLRunner: " . $timedate->getNow()->asDb();
+                $job->target = "class::SugarJobSQLRunner";
+                $job->data = serialize($chunk);
+                $job->retry_count = 0;
+                $job->assigned_user_id = $current_user->id;
+                $jobQueue = new SugarJobQueue();
+                $jobQueue->submitJob($job);
+            }
+
+        }
+
         //END SUGARCRM flav=ent ONLY
         return true;
     }

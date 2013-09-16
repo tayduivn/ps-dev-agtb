@@ -40,6 +40,7 @@ class SugarTestDatabaseMock extends DBManager
 
     public function tearDown()
     {
+        $this->queries = array();
         DBManagerFactory::$instances = $this->oldInstances;
     }
 
@@ -55,19 +56,22 @@ class SugarTestDatabaseMock extends DBManager
             }
         }
 
-        if ( !isset($response) ) {
+        if (!isset($response)) {
             $GLOBALS['log']->fatal("SugarTestDatabaseMock came across a query it wasn't expecting: $sql");
             $this->rows = array();
             return false;
         } else {
-            if ( isset($this->queries[$responseKey]['runCount']) ) {
+            if (isset($this->queries[$responseKey]['runCount'])) {
                 $this->queries[$responseKey]['runCount']++;
-            }
-            else {
+            } else {
                 $this->queries[$responseKey]['runCount'] = 1;
             }
-            $this->rows = $response['rows'];
-            return $response['rows'];
+            // if response has rows, return them
+            if (isset($response['rows'])) {
+                $this->rows = $response['rows'];
+                return $response['rows'];
+            }
+            return true;
         }
         
     }
