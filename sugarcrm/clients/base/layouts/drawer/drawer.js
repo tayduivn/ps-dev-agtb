@@ -122,8 +122,9 @@
                 drawerHeight = this._determineDrawerHeight();
 
             //temporarily remove transitions so that the drawer can be closed immediately
-            drawers.$top.removeClass('transition');
-            drawers.$bottom.removeClass('transition');
+            drawers.$top.removeClass('transition').removeClass('active');
+            drawers.$bottom.removeClass('transition').removeClass('inactive')
+                .addClass('active');
             if (drawers.$next) {
                 drawers.$next.removeClass('transition');
             }
