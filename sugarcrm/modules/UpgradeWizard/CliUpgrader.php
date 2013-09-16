@@ -218,6 +218,11 @@ eoq2;
             $context = array();
             foreach($this->options as $ctx => $data) {
                 if(isset($argv[$i])) {
+                    if(!$data[0] && $argv[$i][0] == '-') {
+                       // if we're positional then no options
+                        $this->argError("Positional and named arguments can not be mixed");
+                        continue; // never happens
+                    }
                     $context[$ctx] = $argv[$i];
                     $i++;
                 } else {
