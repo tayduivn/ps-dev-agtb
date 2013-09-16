@@ -444,6 +444,11 @@ class SugarQuery_Compiler_SQL
                 $linkAlias = $jalias . '_link';
                 return array("{$linkAlias}.{$data['rname_link']}", $field);
             }
+            
+            // Exists only checks
+            if (!empty($data['rname_exists'])) {
+                return array("IF({$jalias}.{$data['rname']} IS NOT NULL,1,0)", $field);
+            }
 
             $fields = $this->resolveField("$jalias.{$data['rname']}", $field);
             if (!empty($fields)) {

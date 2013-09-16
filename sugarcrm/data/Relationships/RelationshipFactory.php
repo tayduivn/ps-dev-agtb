@@ -92,6 +92,9 @@ class SugarRelationshipFactory {
                 
                 return new M2MRelationship($def);
             break;
+            case "user-based":
+                return new UserBasedRelationship($def);
+            break;
             case "one-to-many":
                 
                 //If a relationship has no table or join keys, it must be bean based
