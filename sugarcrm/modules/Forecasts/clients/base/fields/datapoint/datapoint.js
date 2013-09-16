@@ -91,6 +91,15 @@
             return true;
         }, this);
     },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        $(window).off('resize.datapoints');
+        app.view.Field.prototype._dispose.call(this);
+    },
+
     /**
      * Overwrite this to only place the placeholder if we actually have access to view it
      *
@@ -103,6 +112,7 @@
 
         return '';
     },
+
     adjustDatapointLayout: function(){
         if(this.hasAccess) {
             var parentMarginLeft = this.view.$el.find(".topline .datapoints").css("margin-left");
