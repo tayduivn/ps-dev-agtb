@@ -91,7 +91,7 @@ describe('View.Views.BaseMergeDuplicatesView', function() {
                 source: 'db',
                 name: 'amount'
             },
-            expectedResult: true
+            expectedResult: false // if SC-1947 is merged it should be true
         }
     ], function(data) {
         it('should show as editable on merge view', function() {

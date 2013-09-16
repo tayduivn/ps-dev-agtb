@@ -12,7 +12,9 @@
  */
 ({
     extendsFrom: 'ImageField',
-    plugins: ['File','Tooltip'],
+
+    plugins: ['File', 'FieldDuplicate', 'Tooltip'],
+
     /**
      * @override
      * @private
@@ -20,7 +22,7 @@
     _render: function() {
         var template;
         app.view.invokeParent(this, {type: 'field', name: 'image', method: '_render'});
-        if (this.action !== 'edit') {
+        if (this.action !== 'edit' || this.view.name === 'merge-duplicates') {
             if (_.isEmpty(this.value)) {
                 // replace the image field with the module icon when there is no avatar to display
                 // load the module icon template

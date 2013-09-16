@@ -139,10 +139,10 @@ class SugarFieldFile extends SugarFieldBase
         }
 
         // case when we should copy one file to another using merge-duplicate view
-        // $params[$field . '_duplicateModuleId'] contains id of bean from
+        // $params[$field . '_duplicateBeanId'] contains id of bean from
         // which we should copy file.
-        if (!empty($params[$field . '_duplicateModuleId'])) {
-            $duplicateModuleId = $params[$field . '_duplicateModuleId'];
+        if (!empty($params[$field . '_duplicateBeanId'])) {
+            $duplicateModuleId = $params[$field . '_duplicateBeanId'];
         }
 
         // Backwards compatibility for fields that still use customCode to handle the file uploads

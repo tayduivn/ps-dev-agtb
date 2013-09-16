@@ -121,7 +121,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['image', 'email', 'team_list', 'teamset', 'link', 'id'],
+    fieldTypesBlacklist: ['currency', 'email', 'team_list', 'teamset', 'link', 'id'],
 
     /**
      * Links names won't be mergeable.
@@ -188,7 +188,8 @@
         { dbType: 'varchar', source: 'db' },
         { dbType: 'double', source: 'db' },
         { type: 'relate' },
-        { type: 'parent' }
+        { type: 'parent' },
+        { type: 'image' }
     ],
 
     /**
