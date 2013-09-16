@@ -310,6 +310,14 @@ $dictionary['Contract'] = array(
 			'source' => 'non-db',
 			'vname' => 'LBL_NOTES',
 		),
+        'products' => array (
+            'name' => 'products',
+            'type' => 'link',
+            'vname' => 'LBL_PRODUCTS',
+            'relationship' => 'contracts_products',
+            'link_type' => 'one',
+            'source' => 'non-db',
+        ),
 	),
 	'relationships' => array(
 		'contracts_contract_types' => array(
