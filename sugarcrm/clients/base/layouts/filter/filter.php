@@ -28,4 +28,7 @@ $viewdefs['base']['layout']['filter'] = array(
     ),
     'type' => 'filter',
     'span' => 12,
+    'last_state' => array(
+        'id' => 'filter',
+    ),
 );
