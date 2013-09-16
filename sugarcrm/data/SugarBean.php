@@ -1698,15 +1698,10 @@ class SugarBean
         global $current_user, $action;
 
         $isUpdate = true;
-        if(empty($this->id))
-        {
+        if(empty($this->id) || !empty($this->new_with_id)) {
             $isUpdate = false;
         }
 
-		if ( $this->new_with_id == true )
-		{
-			$isUpdate = false;
-		}
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
 			$this->date_modified = $GLOBALS['timedate']->nowDb();
@@ -1930,7 +1925,7 @@ class SugarBean
     public function updateRelatedCalcFields($linkName = "")
     {
         // we don't have an id, lets not run this code.
-        if (empty($this->id)) {
+        if (empty($this->id) || !empty($this->new_with_id)) {
             return;
         }
 
@@ -6161,21 +6156,22 @@ class SugarBean
     function isOwner($user_id)
     {
         //if we don't have an id we must be the owner as we are creating it
-        if(!isset($this->id))
-        {
+        if (!isset($this->id) || !empty($this->new_with_id)) {
             return true;
         }
         //if there is an assigned_user that is the owner
-        if(isset($this->assigned_user_id))
-        {
-            if($this->assigned_user_id == $user_id) return true;
+        if (isset($this->assigned_user_id)) {
+            if ($this->assigned_user_id == $user_id) {
+                return true;
+            }
+            if (isset($this->fetched_row['assigned_user_id'])
+                && $this->fetched_row['assigned_user_id'] == $user_id) {
+                return true;
+            }
             return false;
-        }
-        else
-        {
+        } else {
             //other wise if there is a created_by that is the owner
-            if(isset($this->created_by) && $this->created_by == $user_id)
-            {
+            if (isset($this->created_by) && $this->created_by == $user_id) {
                 return true;
             }
         }
@@ -6831,7 +6827,7 @@ class SugarBean
         $save_user = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $user;
 
-        if (!empty($this->id)) {
+        if (!empty($this->id) && empty($this->new_with_id)) {
             $newBean = $bf::retrieveBean($this->module_name, $this->id, array('use_cache' => false));
             if (!empty($newBean)) {
                 $context = array('user' => $user);
