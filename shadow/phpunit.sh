@@ -8,5 +8,9 @@ export SHADOW_ROOT="$2"
 # Drop first two args
 shift
 shift
-phpunit=`which phpunit`
+if [ -f /mnt/sugar/shadowed/$SERVER_NAME/tests/phpunit.php ]; then
+	phpunit=phpunit.php
+else
+	phpunit=`which phpunit`
+fi
 cd /mnt/sugar/shadowed/$SERVER_NAME/tests && php -dauto_prepend_file="/mnt/sugar/SugarShadow.php" $phpunit $*
