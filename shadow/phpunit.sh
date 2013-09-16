@@ -8,4 +8,5 @@ export SHADOW_ROOT="$2"
 # Drop first two args
 shift
 shift
-cd /mnt/sugar/shadowed/$SERVER_NAME/tests && php -dauto_prepend_file="/mnt/sugar/SugarShadow.php" phpunit.php $*
+phpunit=`which phpunit`
+cd /mnt/sugar/shadowed/$SERVER_NAME/tests && php -dauto_prepend_file="/mnt/sugar/SugarShadow.php" $phpunit $*
