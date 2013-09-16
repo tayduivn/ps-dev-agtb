@@ -379,11 +379,14 @@ class TemplateHandler {
                     $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSParent();
                 } //if-else
             } //foreach
-
-            foreach ( $sqs_objects as $name => $field )
-               foreach ( $field['populate_list'] as $key => $fieldname )
-                    $sqs_objects[$name]['populate_list'][$key] = $sqs_objects[$name]['populate_list'][$key] . '_'.$parsedView;
-        }else{
+            foreach ($sqs_objects as $name => $field) {
+                if (!empty($field['populate_list'])) {
+                    foreach ($field['populate_list'] as $key => $fieldname) {
+                        $sqs_objects[$name]['populate_list'][$key] = $sqs_objects[$name]['populate_list'][$key] . '_'.$parsedView;
+                    }
+                }
+            }
+        } else {
             //Loop through the Meta-Data fields to see which ones need quick search support
             foreach($defs2 as $f) {
                 if(!isset($defs[$f['name']])) continue;

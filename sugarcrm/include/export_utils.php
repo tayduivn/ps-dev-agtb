@@ -350,6 +350,11 @@ function getExportContentFromFilter($args, $remove_from_members, $focus, $member
         $record = get_field_order_mapping2($args['module'], $record, true, false);
 
         $new_arr = array();
+
+        //replace user_name with full name if use_real_name preference setting is enabled
+        //and this is a user name field
+        $useRealNames = $GLOBALS['current_user']->getPreference('use_real_names');
+
         foreach ($record as $key => $value)
         {
             //getting content values depending on their types
@@ -361,20 +366,8 @@ function getExportContentFromFilter($args, $remove_from_members, $focus, $member
                 $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus);
             }
 
-            //replace user_name with full name if use_real_name preference setting is enabled
-            //and this is a user name field
-            $useRealNames = $GLOBALS['current_user']->getPreference('use_real_names');
-            if (!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off')
-              && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
-              && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
-              && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
-            ) {
-               global $locale;
-               $userFocus = BeanFactory::getBean('Users');
-               $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
-               if (!empty($userFocus->id)) {
-                   $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
-               }
+            if ($useRealNames) {
+                $value = formatRealNameField($focus, $fields_array, $key, $value);
             }
 
             array_push($new_arr, preg_replace("/\"/","\"\"", $value));
@@ -492,6 +485,11 @@ function getExportContentFromResult(
             $pre_id = isset($val['id']) ? $val['id'] : '';
 
             require_once('include/SugarFields/SugarFieldHandler.php');
+
+            //replace user_name with full name if use_real_name preference setting is enabled
+            //and this is a user name field
+            $useRealNames = $current_user->getPreference('use_real_names');
+
             foreach ($val as $key => $value)
             {
                 //getting content values depending on their types
@@ -509,20 +507,8 @@ function getExportContentFromResult(
                     $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
                 }
 
-                //replace user_name with full name if use_real_name preference setting is enabled
-                //and this is a user name field
-                $useRealNames = $current_user->getPreference('use_real_names');
-                if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
-                  && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
-                  && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
-                  && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
-                ){
-                   global $locale;
-                   $userFocus = BeanFactory::getBean('Users');
-                   $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
-                   if ( !empty($userFocus->id) ) {
-                       $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
-                   }
+                if ($useRealNames) {
+                    $value = formatRealNameField($focus, $fields_array, $key, $value);
                 }
 
                 //END SUGARCRM flav=pro ONLY
@@ -1146,4 +1132,31 @@ function get_field_order_mapping2($name, $reorderArr = '', $exclude = true, $for
     } else {
         return $field_order_array[strtolower($name)];
     }
+}
+
+/**
+ * This is a function to format User Name fields using global locale
+ *
+ * @param SugarBean $focus
+ * @param array  $fields_array field definitions array
+ * @param string $key   field name
+ * @param string $value field value
+ * @return string $value
+ */
+function formatRealNameField(SugarBean $focus, $fields_array, $key, $value) {
+    global $locale;
+
+    if (!empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
+        && !empty($focus->field_name_map[$fields_array[$key]]['module']) && $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
+        && !empty($focus->field_name_map[$fields_array[$key]]['rname']) &&
+        ($focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name' || $focus->field_name_map[$fields_array[$key]]['rname'] == 'full_name')
+    ) {
+        $userFocus = BeanFactory::getBean('Users');
+        $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
+        if (!empty($userFocus->id)) {
+            $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
+        }
+    }
+
+    return $value;
 }

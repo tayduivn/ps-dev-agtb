@@ -469,11 +469,8 @@
             if (!_.isEmpty(formattedRecipient.id)) {
                 // extract the primary email address for the recipient
                 if (_.isArray(formattedRecipient.email)) {
-                    // grab the primary email address
-                    var primaryEmailAddress = _.find(formattedRecipient.email, function (emailAddress) {
-                        return (emailAddress.primary_address === '1');
-                    });
-                    // use the primary email address
+                    var primaryEmailAddress = _.findWhere(formattedRecipient.email, {primary_address: true});
+
                     if (!_.isUndefined(primaryEmailAddress) && !_.isEmpty(primaryEmailAddress.email_address)) {
                         formattedRecipient.email = primaryEmailAddress.email_address;
                     }

@@ -142,7 +142,9 @@ class RevenueLineItemToQuoteConvertApi extends SugarApi
         $quote->new_sub_usdollar = $product_bundle->total_base;
         $quote->tax = 0.00;
         $quote->tax_usdollar = 0.00;
-        $quote->currency_id = $opp->currency_id;
+        // quote should default to same currency as RLI
+        $quote->currency_id = $rli->currency_id;
+        $quote->base_rate = $rli->base_rate;
         $quote->opportunity_id = $opp->id;
         $quote->quote_stage = "Draft";
         $quote->assigned_user_id = $GLOBALS['current_user']->id;

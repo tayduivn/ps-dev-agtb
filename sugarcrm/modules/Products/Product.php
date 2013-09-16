@@ -204,7 +204,7 @@ class Product extends SugarBean
     {
         global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
         $product_mod_strings = return_module_language($current_language,"Products");
-        require_once('modules/Products/config.php');
+        require('modules/Products/config.php');
         //$this->format_all_fields();
 
         if ($this->date_purchased == '0000-00-00') {

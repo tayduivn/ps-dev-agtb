@@ -49,9 +49,7 @@ class Bug60114Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testOrganizerDefaultAcceptance()
     {
-        $this->markTestIncomplete("DB failure on Date Start and Date End");
-        global $current_user;
-        global $db;
+        global $current_user, $db;
 
         $_POST['user_invitees'] = $current_user->id;
         $_POST['module'] = 'Calls';

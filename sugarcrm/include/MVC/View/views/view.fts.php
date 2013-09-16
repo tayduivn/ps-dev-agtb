@@ -63,7 +63,7 @@ class ViewFts extends SugarView
         if (!empty($moduleFilter) && is_scalar($moduleFilter)) {
             $moduleFilter = str_getcsv($moduleFilter);
         }
-        $disabledModules = !empty($_REQUEST['disabled_modules']) ? str_getcsv($_REQUEST['disabled_modules']) : false;
+        $disabledModules = !empty($_REQUEST['disabled_modules']) ? str_getcsv($_REQUEST['disabled_modules']) : array();
         //If no modules have been passed in then lets check user preferences.
         if ($moduleFilter === false) {
             $moduleFilter = SugarSearchEngineMetadataHelper::getUserEnabledFTSModules();

@@ -68,7 +68,6 @@ DEFS;
      */
     public function testHtmlInSavedReports()
     {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
         $rep = new SavedReport();
         $rep->save_report(-1, $GLOBALS['current_user']->id, "<s>".to_html("<s>TEST</s>")."</s>", "Accounts","summary",$this->reportDefs, 0, 1);
         $id = $rep->id;
@@ -78,4 +77,3 @@ DEFS;
         $this->assertNotContains("</s>", $rep->name);
     }
 }
-

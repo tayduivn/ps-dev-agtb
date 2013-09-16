@@ -41,8 +41,7 @@ class Bug52796Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-        $this->markTestIncomplete("Disabling broken test, working with Andrija to fix");
-		// Change default currency to check conversion
+        // Change default currency to check conversion
 		global $sugar_config, $beanList, $beanFiles;
         require('include/modules.php');
 		$this->saved['currency'] = $sugar_config['currency'];

@@ -184,7 +184,7 @@
                 this.model.get(this.def.currency_field || 'currency_id') !== app.currency.getBaseCurrencyId()
             ) {
                 this.transactionValue = app.currency.formatAmountLocale(
-                    this.model.get(this.name),
+                    this.model.get(this.name) || 0,
                     this.model.get(this.def.currency_field || 'currency_id')
                 );
             }

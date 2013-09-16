@@ -47,6 +47,10 @@ class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
+        if ($GLOBALS['sugar_flavor'] !== 'PRO') {
+            $this->markTestSkipped('This test is for PRO flavor');
+        }
+
         global $beanList, $beanFiles;
         require('include/modules.php');
 
@@ -90,32 +94,30 @@ class Bug46246Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testRelationCreating()
     {
-        if($GLOBALS['sugar_flavor']==$this->accepted_flav){
-            include_once('modules/Cases/Case.php');
-            $focus=new aCase();
-            $focus->id=$this->case_id;
+        include_once 'modules/Cases/Case.php';
+        $focus = new aCase();
+        $focus->id = $this->case_id;
 
-            $action_array=array(
-                'action_type' => 'new',
-                'action_module' => 'documents',
-                'rel_module' => '',
-                'rel_module_type' => 'all',
-                'basic' => array(
-                                'document_name' => 'TEST ALERT',
-                                'active_date' => 14440,
-                ),
-                'basic_ext' => array(
-                                'active_date' => 'Triggered Date',
-                ),
-                'advanced' => array(),
-            );
-            process_action_new($focus, $action_array);
+        $action_array = array(
+            'action_type' => 'new',
+            'action_module' => 'documents',
+            'rel_module' => '',
+            'rel_module_type' => 'all',
+            'basic' => array(
+                'document_name' => 'TEST ALERT',
+                'active_date' => 14440,
+            ),
+            'basic_ext' => array(
+                'active_date' => 'Triggered Date',
+            ),
+            'advanced' => array(),
+        );
+        process_action_new($focus, $action_array);
 
 
-            $this->doc_id=$GLOBALS['db']->getOne("SELECT document_id FROM `documents_cases` WHERE case_id='{$this->case_id}'",true);
+        $this->doc_id = $GLOBALS['db']->getOne("SELECT document_id FROM `documents_cases` WHERE case_id='{$this->case_id}'", true);
 
-            // check for relation existing
-                $this->assertTrue($this->doc_id ? true : false, true);
-        }
+        // check for relation existing
+        $this->assertTrue($this->doc_id ? true : false, true);
     }
 }

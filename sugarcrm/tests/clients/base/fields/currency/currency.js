@@ -413,5 +413,16 @@ describe('Base.Fields.Currency', function() {
             sandbox.restore();
         });
 
+        it('should not return null if the model has a null value for the field', function() {
+            field.model = app.data.createBean(moduleName, {
+                myfield: null
+            });
+            field.name = 'myfield';
+            field.def.convertToBase = true;
+            field.def.showTransactionalAmount = true;
+            field.format();
+
+            expect(field.transactionValue).toEqual('$0.00');
+        });
     });
 });

@@ -239,6 +239,10 @@ class Activity extends Basic
         return array();
     }
 
+    public function save_relationship_changes($is_update, $exclude = array())
+    {
+    }
+
     public static function enable()
     {
         self::$enabled = true;

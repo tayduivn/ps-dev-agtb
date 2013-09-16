@@ -196,6 +196,7 @@ $dictionary['Product'] = array(
             'comment' => 'Name of the product',
             'reportable' => true,
             'importable' => 'required',
+            'required' => true,
             // always keep product_template_name in sync if it is not empty
             'formula' => 'ifElse(equal($product_template_name, ""), $name, $product_template_name)',
         ),
