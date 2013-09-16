@@ -495,9 +495,12 @@
 
                         // If the mapped module is different from the module, get
                         // the mapped module element if it exists
-                        if (mapped != module) {
+                        if (mapped !== module) {
                             $module = $modules.find("[data-module='" + mapped + "']");
-                        } else if (updateNav) {
+                            updateNav = $module.length === 0;
+                        }
+                        if (updateNav) {
+                            module = mapped;
                             // create the menu and add it
                             var moduleList = {};
                             moduleList[module] = app.metadata.getFullModuleList()[module];
