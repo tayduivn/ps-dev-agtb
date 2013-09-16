@@ -111,6 +111,8 @@
         if (!silent) {
             this.layout.layout.trigger("filter:change", linkModuleName, linkName);
             this.layout.trigger("filter:get", linkModuleName, linkName);
+            //Clear the search input and apply filter
+            this.layout.trigger('filter:clear:quicksearch');
         }
     },
 
