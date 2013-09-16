@@ -34,7 +34,7 @@
     getPlaceholder: function() {
         var placeholder = app.view.Field.prototype.getPlaceholder.call(this),
             $container = $(placeholder.toString()),
-            $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>'),
+            $caret = $('<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><i class="icon-caret-down"></i></a>'),
             $dropdown = $('<ul class="dropdown-menu"></ul>');
 
         if(this.def.primary) {
