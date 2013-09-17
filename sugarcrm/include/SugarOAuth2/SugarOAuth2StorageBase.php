@@ -54,6 +54,29 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
      * This method is used by child classes like portal
      */
     public function fillInAddedSessionData() {
+        if ($this->canStartSession()) {
+            // Grab the user's timezone preference if it's set
+            $val = $this->userBean->getPreference('timezone');
+            $needPreferenceSet = false;
+            // If there is no setting for the user, fall back to the system setting
+            if (!$val) {
+                $val = TimeDate::guessTimezone();
+                $needPreferenceSet = true;
+            }
+
+            // If there is still no timezone, fallback to UTC
+            if (!$val) {
+                $val = 'UTC';
+                $needPreferenceSet = true;
+            }
+
+            if ($needPreferenceSet === true) {
+                $this->userBean->setPreference('timezone', $val);
+                $this->userBean->savePreferencesToDB();
+            }
+
+            $this->userBean->loadPreferences();
+        }
         return true;
     }
 
