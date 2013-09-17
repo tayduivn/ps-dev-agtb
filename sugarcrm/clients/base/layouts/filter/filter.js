@@ -259,6 +259,9 @@
             options = _.extend(options, ctx.get('collectionOptions'));
 
             ctx.resetLoadFlag(false);
+            if (!_.isEmpty(ctx._recordListFields)) {
+                ctx.set('fields', ctx._recordListFields);
+            }
             ctx.set('skipFetch', false);
             ctx.loadData(options);
         });

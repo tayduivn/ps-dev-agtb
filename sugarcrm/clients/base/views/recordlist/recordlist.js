@@ -49,6 +49,8 @@
         this.on('list:toggle:column', this.resize, this);
 
         this.toggledModels = {};
+
+        this.context._recordListFields = this.getFieldNames();
     },
 
     // Allows sub-views to override and use different view metadata if desired

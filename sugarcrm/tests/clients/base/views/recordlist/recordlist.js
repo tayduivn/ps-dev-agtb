@@ -57,6 +57,10 @@ describe("Base.View.RecordList", function () {
             expect(_.indexOf(fields, 'my_favorite')).toBeGreaterThan(-1);
         });
 
+        it('should return my_favorite field and save to context for filtering', function () {
+            expect(_.indexOf(view.context._recordListFields, 'my_favorite')).toBeGreaterThan(-1);
+        });
+
         it('should have added favorite field', function () {
             view.render();
             expect(view.leftColumns[0].fields[1]).toEqual({type:'favorite'});

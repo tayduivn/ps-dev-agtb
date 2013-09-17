@@ -120,7 +120,7 @@
         var newObj = {email_address:email};
         //If no address exists, set this one as the primary
         if (existingAddresses.length < 1) {
-            newObj.primary_address = "1";
+            newObj.primary_address = true;
         }
         existingAddresses.push(newObj);
 
@@ -137,24 +137,24 @@
         //If property is primary_address, we want to make sure one and only one primary email is set
         //As a consequence we reset all the primary_address properties to 0 then we toggle property for this index.
         if (property === 'primary_address') {
-            existingAddresses[index][property] = "0";
+            existingAddresses[index][property] = false;
             _.find(existingAddresses, function(email, i) {
-                if (email[property] == "1") {
-                    existingAddresses[i][property] = "0";
+                if (email[property]) {
+                    existingAddresses[i][property] = false;
                 }
-            })
+            });
         }
         // Toggle property for this email
-        if (existingAddresses[index][property] == "1") {
-            existingAddresses[index][property] = "0";
+        if (existingAddresses[index][property]) {
+            existingAddresses[index][property] = false;
         } else {
-            existingAddresses[index][property] = "1";
+            existingAddresses[index][property] = true;
         }
         this.updateModel(existingAddresses);
     },
     _removeExistingAddress: function(index) {
         var existingAddresses = _.clone(this.model.get(this.name)),
-            wasPrimary = existingAddresses[index]['primary_address'] == '1';
+            wasPrimary = existingAddresses[index]['primary_address'];
 
         //Reject this index from existing addresses
         existingAddresses = _.reject(existingAddresses, function (emailInfo, i) { return i == index; });
@@ -164,7 +164,7 @@
             //Let's pick the first one
             var address = _.first(existingAddresses);
             if (address) {
-                address.primary_address = '1';
+                address.primary_address = true;
             }
         }
         this.updateModel(existingAddresses);
@@ -274,13 +274,13 @@
             _.each(value, function(email) {
                 // On render, determine which e-mail addresses need anchor tag included
                 // Needed for handlebars template, can't accomplish this boolean expression with handlebars
-                email.hasAnchor = this.def.link && email.opt_out != "1" && email.invalid_email != "1";
+                email.hasAnchor = this.def.link && !email.opt_out && !email.invalid_email;
             }, this);
         } else if ((_.isString(value) && value !== "") || this.view.action === 'list') {
             // expected an array with a single address but got a string or an empty array
             value = [{
                 email_address:value,
-                primary_address:"1",
+                primary_address:true,
                 hasAnchor:false,
                 _wasNotArray:true
             }];
@@ -294,7 +294,7 @@
         _.each(value, function(emailObj) {
             flagStr = "";
             flagArray = _.map(emailObj, function (flagValue, key) {
-                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].lbl && flagValue == "1") {
+                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].lbl && flagValue) {
                     return app.lang.get(this._flag2Deco[key].lbl);
                 }
             }, this);
@@ -304,7 +304,7 @@
             }
             flagClassStr = "";
             flagClass = _.map(emailObj, function (flagValue, key) {
-                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].cl && flagValue == "1") {
+                if (!_.isUndefined(this._flag2Deco[key]) && this._flag2Deco[key].cl && flagValue) {
                     return app.lang.get(this._flag2Deco[key].cl);
                 }
             }, this);
@@ -330,7 +330,7 @@
                 emails = [];
             }
             _.each(emails, function(email, index) {
-                if(email.primary_address === '1') {
+                if(email.primary_address) {
                     if(email.email_address !== value) {
                         changed = true;
                         emails[index].email_address = value;
@@ -342,7 +342,7 @@
             if (emails.length == 0) {
                 emails.push({
                     email_address:   value,
-                    primary_address: "1",
+                    primary_address: true,
                     hasAnchor:       false,
                     _wasNotArray:    true
                 });
@@ -380,7 +380,7 @@
 
         if (this.focusIndex >= this.$inputs.length) {
             // done focusing our inputs return false
-            this.focusIndex = -1
+            this.focusIndex = -1;
             return false;
         } else {
             // focus the next item in our list of inputs
