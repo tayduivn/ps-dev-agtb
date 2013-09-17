@@ -70,7 +70,12 @@ class ViewFts extends SugarView
         }
         $filteredModules =  $this->getFilterModules($moduleFilter, $disabledModules);
         $append_wildcard = !empty($_REQUEST['append_wildcard']) ? $_REQUEST['append_wildcard'] : false;
-        $options = array('current_module' => $this->module, 'moduleFilter' => $moduleFilter, 'append_wildcard' => $append_wildcard);
+        $options = array(
+            'current_module' => $this->module,
+            'moduleFilter' => $moduleFilter,
+            'append_wildcard' => $append_wildcard,
+            'sort' => array(array('module' => array('order' => 'asc'))),
+        );
 
         if( $this->fullView || $refreshModuleFilter)
         {
