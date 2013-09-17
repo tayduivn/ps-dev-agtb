@@ -371,6 +371,7 @@
              */
             _searchForTags: function(searchTerm) {
                 var searchParams,
+                    referenceSearchFields = ['name', 'first_name', 'last_name'],
                     tagAction = searchTerm.charAt(0); // @ or # character
 
                 searchTerm = searchTerm.substr(1);
@@ -406,7 +407,7 @@
                                 }, this)
                             });
                         } else if (tagAction === reference) {
-                            searchParams.search_fields = 'name';
+                            searchParams.search_fields = referenceSearchFields.join();
 
                             app.api.search(searchParams, {
                                 success: _.bind(function(response) {
