@@ -1807,6 +1807,22 @@ $app_list_strings = array (
             'next_year' => 'next year',
             '$dateBetween' => 'is between',
         ),
+        'datetimecombo' => array(
+            '$starts' => 'is equal to',
+            '$lte' => 'before',
+            '$gte' => 'after',
+            'last_7_days' => 'last 7 days',
+            'next_7_days' => 'next 7 days',
+            'last_30_days' => 'last 30 days',
+            'next_30_days' => 'next 30 days',
+            'last_month' => 'last month',
+            'this_month' => 'this month',
+            'next_month' => 'next month',
+            'last_year' => 'last year',
+            'this_year' => 'this year',
+            'next_year' => 'next year',
+            '$dateBetween' => 'is between',
+        ),
         'bool' => array(
             '$equals' => 'is'
         ),
