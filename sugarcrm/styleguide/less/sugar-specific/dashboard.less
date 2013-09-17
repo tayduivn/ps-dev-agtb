@@ -1,4 +1,36 @@
+.touch .dashboard {
+  top: 0;
+  padding-top: 60px !important;
+  overflow-x: auto;
+}
+
 .dashboard {
+  width: 100%;
+  border-right: none;
+  background: url(@textureSecondary);
+  position: absolute;
+  top: 61px;
+  bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .rtlFloat(@direction,right);
+
+  .headerpane {
+    .record-cell {
+      padding-top: 15px;
+      &:first-child {
+        width: 100%;
+      }
+      .detail {
+        display: inline-block;
+        padding-top: 4px;
+      }
+    }
+    input[type="text"] {
+      margin: 0 0 0 -7px;
+    }
+  }
+
   ul {
     list-style: none;
     margin: 0;
@@ -115,9 +147,6 @@
       }
     }
   }
-  &.main-pane .headerpane h1 {
-    padding: 19px 0 0 20px;
-  }
   .ui-sortable .ui-sortable-placeholder {
     height: auto !important;
   }
@@ -126,47 +155,40 @@
 /* Dashboard inside right hand side panel */
 .sidebar-content {
   .dashboard {
-    .preview-headerbar {
-      display: table;
-      height: 61px;
+    .headerpane {
       width: 34%;
+      background: url(@textureSecondary);
       /* middle div is unnecessary, filipe said it cannot
          be removed from template, doing this for now */
       .record-cell {
         display: none;
+        .detail {
+          padding-top: 1px;
+        }
       }
       .record-cell:first-child {
-        display: table-cell;
         width: 100%;
+        max-width: 100px; //temp until better fix for ellipsis
+        display: table-cell;
         position: relative;
-        padding-left: 1.5%;
-        vertical-align: middle;
+        padding-left: ~"-moz-calc(1.5% + 6px)";
+        padding-left: ~"-webkit-calc(1.5% + 6px)";
+        padding-left: ~"calc(1.5% + 6px)";
+        padding-top: 14px;
+        padding-right: 0;
       }
       .record-cell:last-child {
         display: table-cell;
         white-space: nowrap;
         width: auto;
         padding-right: 1.5%;
-        vertical-align: middle;
-      }
-      .record-cell:last-child {
-        display: table-cell;
-        white-space: nowrap;
-        width: auto;
-        padding-right: 1.5%;
-        vertical-align: middle;
+        padding-top: 16px;
       }
       h1 {
-        width: 90%;
-        margin: 0px 0px 0px 7px;
-        height: 28px;
         float: none;
+        margin: 0;
         input {
-          font-size: inherit;
-          margin-top: -10px;
-          margin-left: -6px;
-          width: 100%;
-          line-height: 24px;
+          margin-left: -4px;
         }
         div.error {
           input {
@@ -176,15 +198,18 @@
         }
         div.dropdown {
           line-height: 24px;
+          /*max-width: ~"-moz-calc(100% - 78px)";
+          max-width: ~"-webkit-calc(100% - 78px)";
+          max-width: ~"calc(100% - 78px)";*/
           &> a {
             font-size: @fontSizeHeader;
             color: inherit;
-            padding-left: 0;
+            padding: 4px 12px 4px 2px;
             margin-left: 0;
+            max-width: 100%;
             text-align: left;
-            position: absolute;
-            width: 100%;
             white-space: nowrap;
+            position: relative;
             overflow: hidden;
             display: inline-block;
             text-overflow: ellipsis;
@@ -194,6 +219,9 @@
             }
             .icon-caret-down {
               top: -2px;
+              position: absolute;
+              right: 0;
+              top: 7px;
             }
           }
           ul.dropdown-menu {
@@ -212,8 +240,12 @@
         min-width: auto;
       }
       .btn-toolbar {
-        margin: 0px 7px 0px 0px;
-        padding-left: 8px;
+        /*position: absolute;
+        right: 0;
+        top: 0;*/
+        padding-right: ~"-moz-calc(1.5% + 8px)";
+        padding-right: ~"-webkit-calc(1.5% + 8px)";
+        padding-right: ~"calc(1.5% + 8px)";
       }
     }
     &.edit {
