@@ -901,8 +901,8 @@ $dictionary['User'] = array(
       ),
 
 
-        'activities_users' => array (
-            'name' => 'activities_users',
+        'activities' => array (
+            'name' => 'activities',
             'type' => 'link',
             'relationship' => 'activities_users',
             'link_type' => 'many',

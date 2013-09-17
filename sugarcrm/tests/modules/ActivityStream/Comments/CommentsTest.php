@@ -50,10 +50,38 @@ class CommentsTest extends Sugar_PHPUnit_Framework_TestCase
      * Tests that saving a comment without a parent post returns false.
      * @covers Comment::save
      */
-    public function testSave()
+    public function testSave_WithoutParentPost_ReturnsFalse()
     {
         $comment = BeanFactory::getBean('Comments');
         $id = $comment->save();
         $this->assertFalse($id);
+    }
+
+    /**
+     * @covers Comment::processCommentTags
+     */
+    public function testProcessCommentTags_NoTagsOnComment_ProcessTagsNotCalled()
+    {
+        $comment = BeanFactory::getBean('Comments');
+        $comment->data = '{}';
+
+        $activity = $this->getMock('Activity', array('processTags'));
+        $activity->expects($this->never())->method('processTags');
+
+        SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', array($activity));
+    }
+
+    /**
+     * @covers Comment::processCommentTags
+     */
+    public function testProcessCommentTags_TagsOnComment_ProcessTagsCalled()
+    {
+        $comment = BeanFactory::getBean('Comments');
+        $comment->data = '{"tags":[{"module":"Foo","id":"123"}]}';
+
+        $activity = $this->getMock('Activity', array('processTags'));
+        $activity->expects($this->once())->method('processTags');
+
+        SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', array($activity));
     }
 }

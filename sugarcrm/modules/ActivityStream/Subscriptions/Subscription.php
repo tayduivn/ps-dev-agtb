@@ -226,46 +226,17 @@ class Subscription extends Basic
     }
 
     /**
-     * Adds an activity subscription relationship between the activity and all users who are subscribed to the record
-     * on which the activity took place.
+     * Adds an activities_users relationship between the activity and all users specified in the data array
      * @param array $data
-     * @throws Exception
      */
     public static function addActivitySubscriptions(array $data)
     {
-        $act           = BeanFactory::retrieveBean('Activities', $data['act_id']);
-        $ignoreDeleted = true;
-        $beanParams    = array();
-        if ($act->activity_type === 'delete') {
-            $ignoreDeleted = false;
-            $beanParams['disable_row_level_security'] = true;
-        }
-        $bean = BeanFactory::retrieveBean($data['bean_module'], $data['bean_id'], $beanParams, $ignoreDeleted);
-        if (!$act->load_relationship('activities_users')) {
-            throw new Exception('Could not load the relationship.');
-        }
+        $activity = BeanFactory::retrieveBean('Activities', $data['act_id']);
+        $userIds = array();
         foreach ($data['user_partials'] as $userPartial) {
-            $user = BeanFactory::retrieveBean('Users', $userPartial['created_by']);
-            if ($user && $bean) {
-                if (!$ignoreDeleted || $bean->checkUserAccess($user)) {
-                    $context = array('user' => $user);
-                    // if we have access to the bean, we allow the user to see the activity on the home page and the
-                    // records list page
-                    $fields = array();
-                    if ($act->activity_type === 'update') {
-                        foreach ($data['args']['dataChanges'] as $field) {
-                            $fields[$field['field_name']] = 1;
-                        }
-                        $bean->ACLFilterFieldList($fields, $context);
-                        $fields = array_keys($fields);
-                    }
-                    $act->activities_users->add($user, array('fields' => json_encode($fields)));
-                } else {
-                    // if we don't have access to the bean, we remove the user's subscription to the bean.
-                    static::unsubscribeUserFromRecord($user, $bean);
-                }
-            }
+            $userIds[] = $userPartial['created_by'];
         }
+        $activity->processUserRelationships($userIds);
     }
 
     /**
@@ -274,14 +245,13 @@ class Subscription extends Basic
      * @param  SugarBean $bean
      * @param  Activity  $act
      * @param  array     $args
+     * @param  array     $params
      */
     public static function processSubscriptions(SugarBean $bean, Activity $act, array $args, $params = array())
     {
         $userPartials          = self::getSubscribedUsers($bean, 'array', $params);
         $data                  = array(
             'act_id'        => $act->id,
-            'bean_module'   => $bean->module_name,
-            'bean_id'       => $bean->id,
             'args'          => $args,
             'user_partials' => $userPartials,
         );

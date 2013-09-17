@@ -91,69 +91,18 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @covers Subscription::addActivitySubscriptions
      */
-    public function testAddActivitySubscriptions_FailedToLoadTheRelationship_ExceptionThrown()
-    {
-        BeanFactory::setBeanClass('Activities', 'MockActivityForSubscriptionsTest');
-        $activity = SugarTestActivityUtilities::createActivity();
-        $bean     = SugarTestAccountUtilities::createAccount();
-        $data     = array(
-            'act_id'        => $activity->id,
-            'bean_module'   => $bean->module_name,
-            'bean_id'       => $bean->id,
-            'user_partials' => array(
-                array(
-                    'created_by' => $this->user->id,
-                ),
-            ),
-        );
-        $this->setExpectedException('Exception');
-        $subscriptionsBeanName = BeanFactory::getBeanName('Subscriptions');
-        $subscriptionsBeanName::addActivitySubscriptions($data);
-    }
-
-    /**
-     * @covers Subscription::addActivitySubscriptions
-     */
-    public function testAddActivitySubscriptions_UserDoesNotHaveAccess_UserIsUnsubscribed()
-    {
-        BeanFactory::setBeanClass('Accounts', 'MockAccountForSubscriptionsTest');
-        $activity               = SugarTestActivityUtilities::createActivity();
-        $bean                   = SugarTestAccountUtilities::createAccount();
-        $bean->assigned_user_id = $this->user->id;
-        $bean->save();
-        $data             = array(
-            'act_id'        => $activity->id,
-            'bean_module'   => $bean->module_name,
-            'bean_id'       => $bean->id,
-            'user_partials' => array(
-                array(
-                    'created_by' => $this->user->id,
-                ),
-            ),
-        );
-        $mockSubscription = $this->getMockClass('Subscription', array('unsubscribeUserFromRecord'));
-        $mockSubscription::staticExpects($this->once())->method('unsubscribeUserFromRecord');
-        $mockSubscription::addActivitySubscriptions($data);
-    }
-
-    /**
-     * @covers Subscription::addActivitySubscriptions
-     */
-    public function testAddActivitySubscriptions_TypeOfActivityIsDeleteAndSuccessful_RelationshipIsAdded()
+    public function testAddActivitySubscriptions()
     {
         $GLOBALS['reload_vardefs'] = true;
-        $activity                = SugarTestActivityUtilities::createActivity();
-        $activity->activity_type = 'delete';
+        $bean = SugarTestAccountUtilities::createAccount();
+        $activity = SugarTestActivityUtilities::createActivity();
+        $activity->activity_type = 'create';
+        $activity->parent_id = $bean->id;
+        $activity->parent_type = 'Accounts';
         $activity->save();
-        $bean                   = SugarTestAccountUtilities::createAccount();
-        $bean->assigned_user_id = $this->user->id;
-        $bean->save();
-        // simulate deleted bean and associated activity
-        BeanFactory::deleteBean($bean->module_name, $bean->id);
-        $data         = array(
+
+        $data = array(
             'act_id'        => $activity->id,
-            'bean_module'   => $bean->module_name,
-            'bean_id'       => $bean->id,
             'user_partials' => array(
                 array(
                     'created_by' => $this->user->id,
@@ -164,7 +113,7 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         $subscriptionsBeanName::addActivitySubscriptions($data);
         $activity->load_relationship('activities_users');
         $expected = array($this->user->id);
-        $actual   = $activity->activities_users->get();
+        $actual = $activity->activities_users->get();
         $this->assertEquals($expected, $actual, 'Should have added the user relationship to the activity.');
         unset($GLOBALS['reload_vardefs']);
     }
@@ -177,21 +126,5 @@ class SubscriptionsTest extends Sugar_PHPUnit_Framework_TestCase
         $record = new Account();
         $record->id = "SubscriptionsTest".mt_rand();
         return $record;
-    }
-}
-
-class MockActivityForSubscriptionsTest extends Activity
-{
-    public function load_relationship($rel_name)
-    {
-        return false;
-    }
-}
-
-class MockAccountForSubscriptionsTest extends Account
-{
-    public function checkUserAccess(User $user = null, $bf = 'BeanFactory')
-    {
-        return false;
     }
 }
