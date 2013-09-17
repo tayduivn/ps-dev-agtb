@@ -708,7 +708,11 @@ class MetadataApi extends SugarApi
         }
         $urlList = array();
         foreach ($fileList as $lang => $file) {
-            $urlList[$lang] = $this->getUrlForCacheFile($file);
+            // Get the hash for this lang file so we can append it to the URL.
+            // This fixes issues where lang strings or list strings change but
+            // don't force a metadata refresh
+            $hash = $this->getLanguageFileHash($lang, $isPublic);
+            $urlList[$lang] = $this->getUrlForCacheFile($file) . '?v=' . $hash;
         }
         $urlList['default'] = $GLOBALS['sugar_config']['default_language'];
 
@@ -723,21 +727,52 @@ class MetadataApi extends SugarApi
     public function getLanguage(ServiceBase $api, array $args, $public = false)
     {
         $this->setPlatformList($api);
+        return $this->getLanguageFileData($args['lang'], $public);
+    }
 
-        $hash = $this->getCachedLanguageHash($this->platforms[0], $args['lang'], $public);
-        if (!empty($hash) && $api->generateETagHeader($hash)) {
-            return;
-        }
-
-        $resp = $this->buildLanguageFile($this->platforms[0], $args['lang'], $this->getModuleList(), $public);
-        if (empty($hash) || $hash != $resp['hash']) {
-            $this->putCachedLanguageHash($this->platforms[0], $args['lang'], $resp['hash'], $public);
-            if ($api->generateETagHeader($resp['hash'])) {
-                return;
-            }
-        }
-
+    /**
+     * Get the data element of the language file properties for a language
+     * 
+     * @param  string  $lang   The language to get data for
+     * @param  boolean $public Whether this is a public metadata request
+     * @return string  A JSON string of langauge data
+     */
+    protected function getLanguageFileData($lang, $public = false)
+    {
+        $resp = $this->getLanguageFileProperties($lang, $public);
         return $resp['data'];
+    }
+
+    /**
+     * Get the hash element of the language file properties for a language
+     * 
+     * @param  string  $lang   The language to get data for
+     * @param  boolean $public Whether this is a public metadata request
+     * @return string  The hash of the contents of the language file
+     */
+    protected function getLanguageFileHash($lang, $public = false)
+    {
+        $resp = $this->getLanguageFileProperties($lang, $public);
+        return $resp['hash'];
+    }
+
+    /**
+     * Gets the file properties for a language
+     * 
+     * @param  string  $lang   The language to get data for
+     * @param  boolean $public Whether this is a public metadata request
+     * @return array   Array containing the hash and data for a language file
+     */
+    protected function getLanguageFileProperties($lang, $public = false)
+    {
+        $hash = $this->getCachedLanguageHash($this->platforms[0], $lang, $public);
+
+        $resp = $this->buildLanguageFile($this->platforms[0], $lang, $this->getModuleList(), $public);
+        if (empty($hash) || $hash != $resp['hash']) {
+            $this->putCachedLanguageHash($this->platforms[0], $lang, $resp['hash'], $public);
+        }
+        
+        return $resp;
     }
 
     public function getPublicLanguage(ServiceBase $api, array $args)
