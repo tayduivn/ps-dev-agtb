@@ -73,7 +73,6 @@
         this._initOptions();
         this._initCollection();
         this.startPulling();
-
         return this;
     },
 

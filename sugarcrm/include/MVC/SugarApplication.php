@@ -353,11 +353,8 @@ class SugarApplication
      */
     function loadLanguages()
     {
-        if (!empty($_SESSION['authenticated_user_language'])) {
-            $GLOBALS['current_language'] = $_SESSION['authenticated_user_language'];
-        } else {
-            $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
-        }
+        global $locale;
+        $GLOBALS['current_language'] = $locale->getAuthenticatedUserLanguage();
         $GLOBALS['log']->debug('current_language is: ' . $GLOBALS['current_language']);
         //set module and application string arrays based upon selected language
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);

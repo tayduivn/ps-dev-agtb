@@ -58,11 +58,6 @@
         app.alert.show('language', {level: 'warning', title: app.lang.getAppString('LBL_LOADING_LANGUAGE'), autoclose: false});
         app.lang.setLanguage(langKey, function() {
             app.alert.dismiss('language');
-            if(!app.api.isAuthenticated()){
-                // Hard reload page SP-1024 so language settings reflected. Can't trigger sync:complete since we haven't
-                // really done a full meta sync and listeners of that event expect meta to have been synced, beans declared, etc.
-                window.location.reload();
-            }
         });
     }
 })

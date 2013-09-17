@@ -1,23 +1,33 @@
 //FILE SUGARCRM flav=ent ONLY
 describe("ContactsBean", function() {
+    var app, bean;
+
+    beforeEach(function() {
+        SugarTest.testMetadata.init();
+        app = SugarTest.app;
+        SugarTest.testMetadata.set();
+        SugarTest.app.data.declareModels();
+        app.router = {};
+        app.router.start = function(){};
+    });
+
+    afterEach(function() {
+        SugarTest.testMetadata.dispose();
+        app.cache.cutAll();
+    });
+
+    it("should not extend bean class if Contacts bean does not exist (gonna create infinite loop)", function(){
+        var stub = sinon.stub(app.metadata, 'getModule', function() { return; });
+        app.events.trigger('app:sync:complete');
+        expect(app.data.getBeanClass("Contacts").prototype._doValidatePortalName).toBeUndefined();
+        stub.restore();
+    });
+
     describe("isValid", function(){
-        var app, bean;
         beforeEach(function() {
-            SugarTest.testMetadata.init();
-            SugarTest.testMetadata.set();
-            SugarTest.app.data.declareModels();
-            app = SugarTest.app;
-            app.router = {};
-            app.router.start = function(){};
             app.events.trigger('app:sync:complete');
             bean = app.data.createBean("Contacts");
-
             SugarTest.clock.restore();
-        });
-
-        afterEach(function() {
-            SugarTest.testMetadata.dispose();
-            app.cache.cutAll();
         });
 
         it("should perform uniqueness check only if portal_name attribute has changed", function(){

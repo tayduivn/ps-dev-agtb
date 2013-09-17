@@ -815,10 +815,12 @@ eoq;
      */
     public function getAuthenticatedUserLanguage()
     {
+        if (!empty($GLOBALS['current_user']->preferred_language)) {
+            return $GLOBALS['current_user']->preferred_language;
+        }
         if (!empty($_SESSION['authenticated_user_language'])) {
             return $_SESSION['authenticated_user_language'];
         }
-        
         return $GLOBALS['sugar_config']['default_language'];
     }
 } // end class def
