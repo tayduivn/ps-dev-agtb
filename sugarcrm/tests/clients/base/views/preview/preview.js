@@ -8,7 +8,7 @@ describe("Preview View", function() {
             "panels": [{
                 "name": "panel_header",
                 "header": true,
-                "fields": ["name", {"name":"favorite", "type":"favorite"}]
+                "fields": ["name", {"name":"favorite", "type":"favorite"}, {"name":"follow", "type":"follow"}]
             }, {
                 "name": "panel_body",
                 "label": "LBL_PANEL_2",
@@ -71,6 +71,18 @@ describe("Preview View", function() {
             });
             expect(fav).toBeUndefined();
         });
+        it("should remove follow field from metadata", function(){
+            var follow = _.find(meta.panels[0].fields, function(field){
+                return field.type === "follow";
+            });
+            expect(follow).toBeTruthy();
+            var trimmed = preview._previewifyMetadata(meta);
+            follow = _.find(trimmed.panels[0].fields, function(field){
+                return field.type === "follow";
+            });
+            expect(follow).toBeUndefined();
+        });
+
         it("should detect if at least one of the panels is hidden", function(){
             expect(preview.hiddenPanelExists).toBe(false);
             preview._previewifyMetadata(meta);
