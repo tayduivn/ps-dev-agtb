@@ -11,6 +11,7 @@ describe("Activity Stream Omnibar View", function() {
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         view.dispose();
         SugarTest.testMetadata.dispose();
     });
@@ -62,6 +63,43 @@ describe("Activity Stream Omnibar View", function() {
             view.trigger('attachments:remove');
 
             expect(view.$('.addPost').hasClass('disabled')).toBe(true);
+        });
+
+        describe('checkPlaceholder calls toggleSubmitButton', function() {
+            var evt,
+                stubGetPost;
+
+            beforeEach(function() {
+                evt = {
+                    currentTarget: {
+                        setAttribute: function(attr, val) {},
+                        removeAttribute: function(attr) {}
+                    }
+                };
+                stubGetPost = sinon.collection.stub(view, 'getPost');
+            });
+
+            var dataProvider = [
+                {
+                    message: 'should enable Submit button when checkPlaceholder receives an event with content',
+                    content: 'foo',
+                    expected: false
+                },
+                {
+                    message: 'should disable Submit button when checkPlaceholder receives an event without content',
+                    content: '',
+                    expected: true
+                }
+            ];
+
+            _.each(dataProvider, function(data) {
+                it(data.message, function() {
+                    evt.currentTarget.textContent = data.content;
+                    stubGetPost.returns({value: data.content});
+                    view.checkPlaceholder(evt);
+                    expect(view.$('.addPost').hasClass('disabled')).toBe(data.expected);
+                });
+            });
         });
     });
 });

@@ -143,5 +143,6 @@
         } else {
             el.removeAttribute('data-hide-placeholder');
         }
+        this.toggleSubmitButton();
     }
 })
