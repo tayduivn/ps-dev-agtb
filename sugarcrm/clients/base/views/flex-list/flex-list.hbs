@@ -40,7 +40,7 @@
                     <ul class="dropdown-menu left">
                     {{#each ../../../_fields.options}}
                         <li>
-                            <button class="btn btn-link btn-invisible{{#if selected}} active{{/if}}" data-field-toggle="{{name}}">
+                            <button class="{{#if selected}}active{{/if}}" data-field-toggle="{{name}}">
                                 {{#if selected}}<i class="icon icon-ok"></i> {{/if}}{{str label ../../../../module}}
                             </button>
                         </li>
