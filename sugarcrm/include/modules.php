@@ -613,6 +613,7 @@ $bwcModules = array(
     //BEGIN SUGARCRM flav=pro ONLY
     'Shippers',
     'SNIP',
+    'Studio',
     //END SUGARCRM flav=pro ONLY
     'SugarFavorites',
     //BEGIN SUGARCRM flav=pro ONLY

@@ -136,7 +136,6 @@
 </table>
 </table>
 
-{sugar_getscript file="include/javascript/yui/dragdrop.js"}
 {literal}
 <script>
 
