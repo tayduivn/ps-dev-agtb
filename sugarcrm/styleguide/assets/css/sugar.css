@@ -10917,9 +10917,6 @@ a.recommended-experts-link:hover {
 .opportunities-treemap svg rect.parent {
   pointer-events: all;
 }
-.list-top .relate-bar {
-  padding: 8px;
-}
 td.preview-list-cell {
   text-align: center;
 }
