@@ -1472,6 +1472,18 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 							'Users'=>array('where'=>array('EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"users.id, users.user_name, users.first_name, ea.email_address"),
 						);
 
+	$more_query_array = array();
+	foreach($modules as $module) {
+	    if (!array_key_exists($module, $query_array)) {
+	        $lc_module = strtolower($module);
+	        $more_query_array[$module] = array('where'=>array($module => array(0 => "$lc_module.name like '{0}%'")), 'fields'=>"$lc_module.id, $lc_module.name");
+	    }
+	}
+
+	if (!empty($more_query_array)) {
+	    $query_array = array_merge($query_array, $more_query_array);
+	}
+
 	if(!empty($search_string) && isset($search_string)){
 		foreach($modules as $module_name){
 		    $seed = BeanFactory::getBean($module_name);
