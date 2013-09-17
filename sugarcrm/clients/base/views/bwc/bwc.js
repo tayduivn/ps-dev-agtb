@@ -130,7 +130,7 @@
             }
             self._rewriteLinksForSidecar(this.contentWindow);
             self._rewriteNewWindowLinks(this.contentWindow);
-
+            this.contentWindow.$('html').addClass($('html').prop('class'));
         });
     },
 
