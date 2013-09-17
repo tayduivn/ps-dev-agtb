@@ -17,7 +17,7 @@ $viewdefs['RevenueLineItems']['base']['view']['panel-top'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-up'
+            'icon' => 'icon-chevron-up',
             'tooltip' => 'LBL_TOGGLE_VISIBILITY',
         ),
         array(
