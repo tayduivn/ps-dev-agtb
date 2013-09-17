@@ -224,11 +224,6 @@ function getAnyToForm($ignore='', $usePostAsAuthority = false)
  */
 function handleRedirect($return_id = '', $return_module = '', array $additionalFlags = array())
 {
-    trigger_error(
-        'handleRedirect() is deprecated since version 7.0.0. Use buildRedirectUrl() and SugarApplication::redirect().',
-        E_USER_DEPRECATED
-    );
-
     if (!empty($_REQUEST['return_url'])) {
         $url = $_REQUEST['return_url'];
     } else {

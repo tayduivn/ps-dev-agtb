@@ -255,6 +255,11 @@ describe("Base.Field.Teamset", function () {
             expect(addTeamStub).not.toHaveBeenCalled();
         });
     });
+    it("should leave model in `hasChanged` state upon calling _updateAndTriggerChange", function() {
+        var teamsetValue = [{"id": "West", "primary": true}];
+        field._updateAndTriggerChange(teamsetValue);
+        expect(field.model.hasChanged()).toBeTruthy();
+    });
     describe("_loadTemplate", function(){
         it("should load list template when doing inline editing (See SP-1197)", function(){
             field.view.action = "list";

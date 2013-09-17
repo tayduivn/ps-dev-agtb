@@ -2464,10 +2464,6 @@ private function dir_file_count($path){
                 "config",
             ),
         );
-        $auth = AuthenticationController::getInstance();
-        if($auth->isExternal()) {
-            $sidecarConfig['externalLogin'] = true;
-        }
         return $sidecarConfig;
     }
 

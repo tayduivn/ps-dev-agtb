@@ -525,12 +525,12 @@ enableInsideViewConnector();
 //BEGIN SUGARCRM flav=pro ONLY
 	///////////////////////////////////////////////////////////////////////////////
 	////    INSTALL PDF TEMPLATES
-    include('install/seed_data/PdfManager_SeedData.php');    
+    include('install/seed_data/PdfManager_SeedData.php');
 //END SUGARCRM flav=pro ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    SETUP DONE
-installLog("Installation has completed *********");
+installLog("Done populating data *********");
 $memoryUsed = '';
     if(function_exists('memory_get_usage')) {
     $memoryUsed = $mod_strings['LBL_PERFORM_OUTRO_5'].memory_get_usage().$mod_strings['LBL_PERFORM_OUTRO_6'];
@@ -634,7 +634,9 @@ FP;
     $tabs->set_system_tabs($enabled_tabs);
     installerHook('post_setSystemTabs');
 
+installLog("Running post-install hooks");
 post_install_modules();
+installLog("Finished post-install hooks");
 
 //Call rebuildSprites
 if(function_exists('imagecreatetruecolor'))
@@ -653,7 +655,20 @@ if( count( $bottle ) > 0 ){
 installerHook('post_installModules');
 
 // rebuild cache after all is said and done
+installLog("Populating file cache");
 SugarAutoLoader::buildCache();
+
+// prepare the metadata
+installLog("Populating metadata cache");
+require_once 'include/api/RestService.php';
+require_once 'clients/base/api/MetadataApi.php';
+$rest = new RestService();
+$rest->platform = 'base';
+$api = new MetadataApi();
+$api->getAllMetadata($rest, array());
+$api->getLanguage($rest, array('lang' => 'en_us'));
+$api->getPublicMetadata($rest, array());
+$api->getPublicLanguage($rest, array('lang' => 'en_us'));
 
 // Restore the activity stream behaviour.
 Activity::enable();
@@ -687,6 +702,4 @@ $out =<<<EOQ
 EOQ;
 
 echo $out;
-
-
-?>
+installLog("Installation has completed *********");

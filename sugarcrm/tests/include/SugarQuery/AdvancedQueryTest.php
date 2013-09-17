@@ -290,14 +290,14 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name", "account_name"));
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
-        $this->assertRegExp('/WHERE.*accounts\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\d+\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
 
         // without related in name
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->where()->equals('account_name','Awesome');
-        $this->assertRegExp('/WHERE.*accounts\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
+        $this->assertRegExp('/WHERE.*jt\d+\.name\s*=\s*\'Awesome\'/',$sq->compileSql());
 
         // self-link
         $acc = BeanFactory::getBean('Accounts');
@@ -370,14 +370,14 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name");
-        $this->assertContains('ORDER BY accounts.name DESC',$sq->compileSql());
+        $this->assertRegExp('/.*ORDER BY jt\d+.name DESC.*/',$sq->compileSql());
 
         // by custom field too
         $sq = new SugarQuery();
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("account_name")->orderBy("bigname_c", "ASC");
-        $this->assertContains('ORDER BY accounts.name DESC,contacts.last_name ASC',$sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\d+.name DESC,contacts.last_name ASC/',$sq->compileSql());
 
         // by related custom field
         $sq = new SugarQuery();
@@ -391,7 +391,7 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq->select(array("id", "last_name"));
         $sq->from($contact);
         $sq->orderBy("portal_password1")->orderBy("account_name", "asc");
-        $this->assertContains('ORDER BY accounts.name asc',$sq->compileSql());
+        $this->assertRegExp('/ORDER BY jt\d+.name asc/',$sq->compileSql());
     }
 
 }

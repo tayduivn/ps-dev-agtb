@@ -95,6 +95,7 @@ class User extends Person {
 
 	var $emailAddress;
 
+    public $relationship_fields = array('call_id' => 'calls', 'meeting_id' => 'meetings');
 
 	var $new_schema = true;
 

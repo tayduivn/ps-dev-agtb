@@ -98,12 +98,10 @@
                 'class': 'cols row-fluid'
             });
             this.$el.append(
-                $("<div></div>").attr({
-                    'class': 'dashboard main-pane' + css,
-                    'data-dashboard': 'true'
-                }).append(
-                        dashboardEl
-                    )
+                $("<div></div>")
+                    .addClass('dashboard' + css)
+                    .data('dashboard', 'true')
+                    .append(dashboardEl)
             );
         } else {
             dashboardEl = dashboardEl.children(".row-fluid");

@@ -27,7 +27,7 @@
  ********************************************************************************/
 }}
 {{#each value}}
-{{#eq primary_address "1"}}
+{{#if primary_address}}
 {{#if ../hasAnchor}}
     <div class="ellipsis_inline" data-original-title="{{../email_address}}" data-placement="bottom">
         <a {{#if ../../../useSugarEmailClient}}class="composeEmail" {{/if}}href="{{#if ../../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{../../email_address}}{{/if}}">{{../email_address}}</a>
@@ -35,5 +35,5 @@
 {{else}}
     <del>{{../email_address}}</del>
 {{/if}}
-{{/eq}}
+{{/if}}
 {{/each}}

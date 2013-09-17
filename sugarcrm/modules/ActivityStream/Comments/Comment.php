@@ -74,17 +74,31 @@ class Comment extends Basic
             $this->data = json_encode($this->data);
         }
 
-        $post = BeanFactory::getBean('Activities', $this->parent_id);
-        if (!empty($post) && $post->id) {
+        $activity = BeanFactory::getBean('Activities', $this->parent_id);
+        if (!empty($activity) && $activity->id) {
             $isNew = (empty($this->id) || $this->new_with_id);
             if (parent::save($check_notify)) {
                 if ($isNew) {
-                    $post->addComment($this);
+                    $activity->addComment($this);
+                    $this->processCommentTags($activity);
                 }
                 return $this->id;
             }
         }
         return false;
+    }
+
+    /**
+     * Helper for processing tags on a comment and linking the parent activity to the appropriate tagged record(s)
+     *
+     * @param Activity $activity
+     */
+    protected function processCommentTags(Activity $activity)
+    {
+        $data = json_decode($this->data, true);
+        if (isset($data['tags'])) {
+            $activity->processTags($data['tags']);
+        }
     }
 
     /**

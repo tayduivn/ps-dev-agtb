@@ -145,7 +145,13 @@
         module = (_.isArray(module)) ? module[1] : null;
 
         if (!module) {
-            return;
+            // try and strip module off the page if its not set on location
+            if (contentWindow.$ && contentWindow.$('input[name="module"]') && contentWindow.$('input[name="module"]').val()) {
+                module = contentWindow.$('input[name="module"]').val();
+            } else {
+                return;
+            }
+
         }
         // on BWC import we want to try and take the import module as the module
         if (module === 'Import') {

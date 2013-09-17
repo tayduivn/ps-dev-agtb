@@ -77,6 +77,7 @@ describe("BaseFilterModuleDropdownView", function () {
             expect(layoutStub.firstCall.args[0]).toEqual('filter:create:close');
             expect(layoutStub.secondCall.args[0]).toEqual('subpanel:change');
             expect(layoutStub.thirdCall.args[0]).toEqual('filter:get');
+            expect(layoutStub.lastCall.args[0]).toEqual('filter:clear:quicksearch');
         });
     });
 

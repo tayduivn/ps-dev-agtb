@@ -15,6 +15,7 @@ describe("bug 54496", function () {
             expect(logoutSpy).not.toHaveBeenCalled();
             app.config.appStatus = 'online';
             ajaxPrevention.restore();
+            logoutSpy.restore();
         });
     });
 });

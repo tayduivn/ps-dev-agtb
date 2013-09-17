@@ -89,7 +89,8 @@ class Configurator {
 
 	}
 
-	function handleOverride($fromParseLoggerSettings=false) {
+	function handleOverride()
+	{
 		global $sugar_config, $sugar_version;
 		$sc = SugarConfig::getInstance();
 		$overrideArray = $this->readOverride();
@@ -97,13 +98,9 @@ class Configurator {
 		$diffArray = deepArrayDiff($this->config, $sugar_config);
 		$overrideArray = sugarArrayMergeRecursive($overrideArray, $diffArray);
 
-		// To remember checkbox state
-      if (!$this->useAuthenticationClass && !$fromParseLoggerSettings) {
-         if (isset($overrideArray['authenticationClass']) &&
-            $overrideArray['authenticationClass'] == 'SAMLAuthenticate') {
-      	  unset($overrideArray['authenticationClass']);
-      	}
-      }
+		if(isset($overrideArray['authenticationClass']) && empty($overrideArray['authenticationClass'])) {
+		    unset($overrideArray['authenticationClass']);
+		}
 
 		$overideString = "<?php\n/***CONFIGURATOR***/\n";
 
@@ -315,7 +312,7 @@ class Configurator {
 				'suffix' => ''), // bug51583, change default suffix to blank for backwards comptability
 			'level' => 'fatal');
 		}
-		$this->handleOverride(true);
+		$this->handleOverride();
 
 
 	}

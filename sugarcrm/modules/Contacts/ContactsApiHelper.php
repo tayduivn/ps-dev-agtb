@@ -36,15 +36,17 @@ class ContactsApiHelper extends SugarBeanApiHelper
         global $current_user;
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
-        if(!empty($submittedData['sync_contact'])) {
-            $bean->contacts_users_id = $current_user->id;
-        }
-        else {
-            if (!isset($bean->users)) {
-                $bean->load_relationship('user_sync');
+        if (isset($submittedData['sync_contact'])) {
+            $bean->load_relationship('user_sync');
+
+            if(!empty($submittedData['sync_contact'])) {
+                // They want to sync_contact
+                $bean->user_sync->add($current_user->id);
+                $bean->sync_contact = true;
+            } else {
+                $bean->user_sync->delete($bean->id, $current_user->id);            
+                $bean->sync_contact = false;
             }
-            $bean->contacts_users_id = null;
-            $bean->user_sync->delete($bean->id, $current_user->id);            
         }
 
         return $data;

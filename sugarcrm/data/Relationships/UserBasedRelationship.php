@@ -1,3 +1,5 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement (""License"") which can be viewed at
@@ -23,51 +25,30 @@
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-({
-    events: {
-        'click [rel=tooltip]': 'fixTooltip',
-        'click .search': 'showSearch',
-        'click .relate': 'showCreate',
-        'click .drawerTrig': 'toggleSidebar'
-    },
+********************************************************************************/
 
-    _renderHtml: function() {
-        if (app.acl.hasAccess('create', this.module)) {
-            this.context.set('isCreateEnabled', true);
-        }
-
-        app.view.View.prototype._renderHtml.call(this);
-    },
-
-    fixTooltip: function() {
-        this.$(".tooltip").hide();
-    },
-
-    showSearch: function() {
-        // Toggle on search filter and off the pagination buttons
-        this.$('.search').toggleClass('active');
-        this.layout.trigger("list:search:toggle");
-    },
-
-    showCreate: function(e) {
-        // Check to see if current module and global context module align
-        if (this.collection.module == app.controller.context.get("module")) {
-
-        } else {
-            e.preventDefault();
-
-            this.$('.relate-bar').slideToggle('fast');
-        }
-    },
-
-    relate: function() {
-
-    },
-
-    toggleSidebar: function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        app.controller.context.trigger('toggleSidebar');
+/**
+ * Represents a relationship where part of the data is substituted by the current_user_id
+ * @api
+ */
+class UserBasedRelationship extends M2MRelationship
+{
+    public $type = "user-based";
+    
+    public function __construct($def)
+    {
+        $this->userField = $def['user_field'];
+        
+        parent::__construct($def);
     }
-})
+
+    protected function buildSugarQueryRoleWhere($sugar_query, $table = "", $ignore_role_filter = false)
+    {
+        $sugar_query = parent::buildSugarQueryRoleWhere($sugar_query, $table, $ignore_role_filter);
+        
+        $sugar_query->join[$table]->on()->equals($table.'.'.$this->userField,$GLOBALS['current_user']->id);
+
+        return $sugar_query;
+    }
+}
+

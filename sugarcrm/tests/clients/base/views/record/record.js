@@ -767,4 +767,46 @@ describe("Record View", function () {
         });
 
     });
+
+    describe('_getCellToEllipsify', function () {
+        it('should return fullname cell if it is the first cell', function() {
+            var actual,
+                fullname = $('<div></div>').data('type', 'fullname'),
+                text = $('<div></div>').data('type', 'text');
+
+            actual = view._getCellToEllipsify($([fullname, text]));
+
+            expect(actual.data('type')).toBe('fullname');
+        });
+
+        it('should return name cell if the first cell cannot be ellipsified', function() {
+            var actual,
+                html = $('<div></div>').data('type', 'html'),
+                name = $('<div></div>').data('type', 'name');
+
+            actual = view._getCellToEllipsify($([html, name]));
+
+            expect(actual.data('type')).toBe('name');
+        });
+    });
+
+    describe('_widenLastCell', function () {
+        it('should widen the last record cell', function() {
+            var fullname = $('<div></div>').addClass('record-cell'),
+                text = $('<div></div>').addClass('record-cell');
+
+            view._widenLastCell($([fullname, text]));
+
+            expect(text.prop('style').width).toBe('100%');
+        });
+
+        it('should widen the first record cell if the last record cell is hidden', function() {
+            var fullname = $('<div></div>').addClass('record-cell'),
+                text = $('<div></div>').addClass('record-cell hide');
+
+            view._widenLastCell($([fullname, text]));
+
+            expect(fullname.prop('style').width).toBe('100%');
+        });
+    });
 });

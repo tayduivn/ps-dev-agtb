@@ -44,9 +44,9 @@ class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_Abs
         $quota = BeanFactory::getBean('Quotas');
         $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'));
 
-		$progressData = array(
+        $progressData = array(
             "quota_amount"      => isset($quotaData["amount"]) ? $quotaData["amount"] : 0
-		);
+        );
 
         // get what we are forecasting on
         /* @var $admin Administration */
@@ -61,6 +61,30 @@ class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_Abs
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
         $totals = $worksheet->worksheetTotals($timeperiod_id, $user_id,  $forecast_by);
 
+        $acl = new SugarACLForecastWorksheets();
+
+        $bestAccess = $acl->checkAccess(
+            'ForecastWorksheets',
+            'field',
+            array('field' => 'best_case', 'action' => 'view')
+        );
+
+        $worstAccess = $acl->checkAccess(
+            'ForecastWorksheets',
+            'field',
+            array('field' => 'worst_case', 'action' => 'view')
+        );
+
+        // if the user doesn't have access to best field, remove the value from totals
+        if(!$bestAccess) {
+            unset($totals['best_case']);
+        }
+
+        // if the user doesn't have access to worst field, remove the value from totals
+        if(!$worstAccess) {
+            unset($totals['worst_case']);
+        }
+
         $totals['user_id'] = $user_id;
         $totals['timeperiod_id'] = $timeperiod_id;
 
@@ -71,6 +95,6 @@ class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_Abs
         // combine totals in with other progress data
         $progressData = array_merge($progressData, $totals);
 
-		return $progressData;
+        return $progressData;
     }
 }

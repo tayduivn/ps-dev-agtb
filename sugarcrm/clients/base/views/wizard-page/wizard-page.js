@@ -219,7 +219,7 @@
                     app.alert.show('server-error', {
                         level: 'error',
                         messages: 'ERR_AJAX_LOAD_FAILURE',
-                        autoClose: false
+                        autoClose: true
                     });
                 }
             });
@@ -232,7 +232,7 @@
                     app.alert.show('server-error', {
                         level: 'error',
                         messages: 'ERR_AJAX_LOAD_FAILURE',
-                        autoClose: false
+                        autoClose: true
                     });
                 }
             });
@@ -245,7 +245,17 @@
      * @returns {Boolean} Whether action was performed successfully or not
      */
     beforeNext: function(callback) {
-        app.logger.debug("wizard's beforeNext called directly. Derived controller's should have overridden this!");
+        app.logger.debug("wizard's beforeNext called directly. Derived controllers should have overridden this!");
+        callback(true);
+    },
+    /**
+     * Do any actions like http requests, etc., before allowing user to proceed to finish
+     * the wizard. Implementers should override this.
+     * @param {Function} callback The callback to call once actions are completed
+     * @returns {Boolean} Whether action was performed successfully or not
+     */
+    beforeFinish: function(callback){
+        app.logger.debug("wizard's beforeFinish called directly. Derived controller should have overridden this!");
         callback(true);
     },
     /**

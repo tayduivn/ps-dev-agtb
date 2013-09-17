@@ -5,7 +5,7 @@
     {{else}}
         {{#if dropdown_buttons}}
             <a data-toggle="dropdown" rel="tooltip" title="{{str "LBL_DASHLET_CONFIGURE"}}" class="dropdown-toggle btn btn-invisible" data-container="body" data-placement="bottom"><i data-action="loading" class="icon-cog"></i></a>
-            <ul class="dropdown-menu left carettop">
+            <ul class="dropdown-menu left">
                 <div>
                     {{#each dropdown_buttons}}
                         <li>{{field ../../../../this model=../../../../this.model}}</li>

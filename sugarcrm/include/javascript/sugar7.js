@@ -366,6 +366,14 @@
         }
         document.title = title || document.title;
     }, this);
+    
+    var refreshExternalLogin = function() {
+    	var config = app.metadata.getConfig();
+        app.api.setExternalLogin(config && config['externalLogin']);
+    }
+    
+    app.events.on("app:sync:complete", refreshExternalLogin, this);
+    app.events.on("app:init", refreshExternalLogin, this);
 
     app.routing.before("route", function(o) {
         if (o && _.isArray(o.args) && o.args[0]) {

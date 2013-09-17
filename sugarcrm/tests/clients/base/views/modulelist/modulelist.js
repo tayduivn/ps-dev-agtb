@@ -1,13 +1,25 @@
 describe("Module List", function() {
     var moduleName = 'Cases',
-        viewName = 'modulelist';
+        viewName = 'modulelist',
+        app,
+        view;
+
+    var $newLink = function(module, route) {
+        return $('<a href="#' + module + '" data-route="' + (route ? '#' + module : '') + '">' + module + '</a>');
+    };
+    var $newTab = function(module, route) {
+        return $('<li data-module="' + module + '">' + $newLink(module, route) + '</li>');
+    };
 
     beforeEach(function() {
+        app = SugarTest.app;
         SugarTest.testMetadata.init();
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base');
         SugarTest.loadHandlebarsTemplate(viewName, 'view', 'base', 'favorites');
         SugarTest.loadComponent('base', 'view', viewName);
         SugarTest.testMetadata.set();
+
+        view = SugarTest.createView("base", moduleName, "modulelist", null, null);
     });
 
     afterEach(function() {
@@ -15,12 +27,11 @@ describe("Module List", function() {
     });
 
     describe('Render', function() {
-        var view, isAuthenticatedStub, getModuleNamesStub, modStrings;
+        var isAuthenticatedStub, getModuleNamesStub, modStrings;
         afterEach(function() {
             this.getModuleListStub.restore();
         });
         beforeEach(function() {
-            view = SugarTest.createView("base", moduleName, "modulelist", null, null);
 
             isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
                 return true;
@@ -288,8 +299,7 @@ describe("Module List", function() {
     });
 
     describe("handle data route events", function() {
-        var view,
-            refreshStub,
+        var refreshStub,
             navigateStub,
             oRouter;
 
@@ -298,7 +308,6 @@ describe("Module List", function() {
             oRouter              = SugarTest.app.router;
             SugarTest.app.router = {navigate: function() {}, refresh: function() {}};
 
-            view         = SugarTest.createView("base", moduleName, "modulelist", null, null);
             refreshStub = sinon.stub(SugarTest.app.router, "refresh");
             navigateStub = sinon.stub(SugarTest.app.router, "navigate");
         });
@@ -311,7 +320,7 @@ describe("Module List", function() {
         });
 
         it("should not call navigate or loadUrl when data-route is empty", function() {
-            var link = $('<a href="#Contacts" data-route="">Contacts</a>');
+            var link = $newLink('Contacts', false);
 
             view.$el.append(link);
             link.click();
@@ -321,7 +330,7 @@ describe("Module List", function() {
         });
 
         it("should call loadUrl when data-route matches the current route", function() {
-            var link              = $('<a href="#Contacts" data-route="#Contacts">Contacts</a>'),
+            var link = $newLink('Contacts', true),
                 getFragmentStub = sinon.stub(Backbone.history, "getFragment", function() {
                     return "Contacts";
                 });
@@ -337,7 +346,7 @@ describe("Module List", function() {
         });
 
         it("should call navigate when data-route is a new route", function() {
-            var link            = $('<a href="#Contacts" data-route="#Contacts">Contacts</a>'),
+            var link = $newLink('Contacts', true),
                 getFragmentStub = sinon.stub(Backbone.history, "getFragment", function() {
                     return "Accounts";
                 });
@@ -349,6 +358,72 @@ describe("Module List", function() {
             expect(navigateStub).toHaveBeenCalled();
 
             getFragmentStub.restore();
+        });
+    });
+
+    describe('activeModule.set', function() {
+        var resetStub, getFullModuleListStub, getModuleTabMapStub, completeMenuMetaStub;
+        beforeEach(function() {
+            view.$el.append($('<ul id="module_list"></ul>'));
+            // Add Accounts tab
+            view.$('#module_list').append($newTab('Contacts', true));
+            resetStub = sinon.stub(view.activeModule, 'reset');
+            getFullModuleListStub = sinon.stub(app.metadata, 'getFullModuleList', function() {
+                return {
+                    'Contacts': 'Contacts',
+                    'Leads': 'Leads',
+                    'ReportMaker': 'ReportMaker',
+                    'CustomQueries': 'CustomQueries'
+                };
+            });
+            getModuleTabMapStub = sinon.stub(app.metadata, 'getModuleTabMap', function() {
+                return {
+                    'Leads': 'Contacts',
+                    'ReportMaker': 'ReportMaker',
+                    'CustomQueries': 'ReportMaker'
+                };
+            });
+            completeMenuMetaStub = sinon.stub(view.activeModule._moduleList, 'completeMenuMeta', function() {
+                return [];
+            });
+        });
+        afterEach(function() {
+            resetStub.restore();
+            getFullModuleListStub.restore();
+            getModuleTabMapStub.restore();
+            completeMenuMetaStub.restore();
+        });
+        it('should select Contacts tab because it exists', function() {
+            view.activeModule.set('Contacts');
+            expect(getModuleTabMapStub).not.toHaveBeenCalled();
+            expect(completeMenuMetaStub).not.toHaveBeenCalled();
+        });
+        it('should select Contacts tab because Leads tab does not exist', function() {
+            view.activeModule.set('Leads');
+            expect(getModuleTabMapStub).toHaveBeenCalled();
+            expect(completeMenuMetaStub).not.toHaveBeenCalled();
+        });
+        it('should create ReportMaker tab because it does not exist', function() {
+            view.activeModule.set('ReportMaker');
+            expect(getModuleTabMapStub).toHaveBeenCalled();
+            expect(completeMenuMetaStub).toHaveBeenCalled();
+            expect(completeMenuMetaStub).toHaveBeenCalledWith({ReportMaker: 'ReportMaker'});
+        });
+        it('should not create ReportMaker because updateNav = false (property from the metadata)', function() {
+            var _oLayout = app.controller.layout;
+            //Fake layout
+            app.controller.layout = new Backbone.View();
+            app.controller.layout.meta = { updateNav: false };
+            view.activeModule.set('ReportMaker');
+            expect(getModuleTabMapStub).toHaveBeenCalled();
+            expect(completeMenuMetaStub).not.toHaveBeenCalled();
+            app.controller.layout = _oLayout;
+        });
+        it('should create ReportMaker tab even because it is mapped module though the tab does not exist', function() {
+            view.activeModule.set('CustomQueries');
+            expect(getModuleTabMapStub).toHaveBeenCalled();
+            expect(completeMenuMetaStub).toHaveBeenCalled();
+            expect(completeMenuMetaStub).toHaveBeenCalledWith({ReportMaker: 'ReportMaker'});
         });
     });
 });

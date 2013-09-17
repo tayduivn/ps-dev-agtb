@@ -1,7 +1,7 @@
-{{!
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement (""License"") which can be viewed at
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/master-subscription-agreement
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -15,7 +15,7 @@
  * remove SugarCRM copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the ""Powered by SugarCRM"" logo and
+ *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
@@ -25,13 +25,28 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-}}
-<div class="headerpane">
-    <h1><a class="module-title" href='#{{module}}'>{{str "LBL_MODULE_NAME" module}}</a></h1>
-    <div class="btn-toolbar pull-right dropdown">
-        {{#if context.attributes.isCreateEnabled}}
-        <a href="#{{buildRoute context=context model=model action="create"}}" title="{{str "LNK_CREATE" module}}" class="btn btn-primary">{{str "LNK_CREATE" module}}</a>
-        {{/if}}
-        <a title="{{str "LBL_HIDE" module}}" class="btn btn-invisible drawerTrig"><i class="icon-double-angle-right"></i></a>
-    </div>
-</div>
+
+/**
+ * Bug #56692
+ *
+ * Module Builder | Editing Stock Fields Causes SQL Errors When Deploying Custom Modules
+ * @ticket 56692
+ */
+
+class Bug56692Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    /**
+     * Test that field with type 'link' has source 'non-db', but not 'custom_fields'
+     *
+     * @group 56692
+     * @return void
+     */
+    public function testDisplayFields()
+    {
+        $field = get_widget('link');
+        $vardefs = $field->get_field_def() ;
+
+        $this->assertEquals('non-db', $vardefs['source']) ;
+    }
+}
+?>
