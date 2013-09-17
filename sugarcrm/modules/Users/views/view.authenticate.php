@@ -47,6 +47,11 @@ class UsersViewAuthenticate extends SidecarView
         } else {
             if(empty($args['grant_type'])) {
                 $args['grant_type'] = OAuth2::GRANT_TYPE_USER_CREDENTIALS;
+                if(!empty($args['user_name']) && isset($args['user_password'])) {
+                    // old-style login, let's translate it
+                    $args['username'] = $args['user_name'];
+                    $args['password'] = $args['user_password'];
+                }
             }
         }
         try {
