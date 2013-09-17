@@ -28,10 +28,16 @@ require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 class ViewSpot extends ViewAjax
 {
+    /**
+     * Constructor
+     *
+     * @see SugarView::SugarView()
+     */
     public function ViewSpot() {
         $this->options['show_header'] = true;
         parent::SugarView();
     }
+
     /**
      * @see SugarView::display()
      */
@@ -73,6 +79,7 @@ class ViewSpot extends ViewAjax
         $ss->assign('appStrings', $GLOBALS['app_strings']);
         $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $ss->assign('queryEncoded', $query_encoded);
+        $ss->assign('test', "#bwc/index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string=".$query_encoded);
 
         echo $ss->fetch(SugarAutoLoader::existingCustomOne('include/SearchForm/tpls/SugarSpot.tpl'));
     }
