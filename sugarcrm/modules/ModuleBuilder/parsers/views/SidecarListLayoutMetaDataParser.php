@@ -83,7 +83,9 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             if (isset($def['fields']) && is_array($def['fields'])) {
                 foreach ($def['fields'] as $field) {
                     if (!is_array($field) && !empty($this->_fielddefs[$field])) {
+                        $fieldName = $field;
                         $field = self::_trimFieldDefs($this->_fielddefs[$field]);
+                        $field['name'] = $fieldName;
                         $field['default'] = true;
                         $field['enabled'] = true;
                     }

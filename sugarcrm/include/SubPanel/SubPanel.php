@@ -275,7 +275,7 @@ class SubPanel
         $layoutDefsExtName = "layoutdefs";
         $moduleInstallerMethod = "rebuild_layoutdefs";
         //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
-        $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
+        $overrideValue = $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
         
         // Set a reasonable default value in case we ARE bwc. Without this BWC
@@ -295,6 +295,12 @@ class SubPanel
             } else {
                 $viewName = $mc->fromLegacySubpanelName($panel->_instance_properties['subpanel_name']);
             }
+
+            $overrideValue = array(
+                "link" => $panel->name,
+                "view" => $viewName,
+            );
+
         }
 
 
@@ -324,10 +330,6 @@ class SubPanel
         //tyoung 10.12.07 pushed panel->name to lowercase to match case in subpaneldefs.php files -
         //gave error on bad index 'module' as this override key didn't match the key in the subpaneldefs
 
-        $overrideValue = array(
-            "link" => $panel->name,
-            "view" => $viewName,
-        );
         $newValue = override_value_to_string($layoutDefsName, $overrideName, $overrideValue);
         mkdir_recursive($layoutPath, true);
 
