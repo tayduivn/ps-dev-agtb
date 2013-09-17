@@ -1,8 +1,12 @@
 <div class="headerpane">
-    <h1><span class="module-title">{{title}}</span></h1>
-    <div class="btn-toolbar pull-right dropdown">
-        {{#each meta.buttons}}
-            {{field ../this}}
-        {{/each}}
-    </div>
+    <h1>
+        <div class="record-cell">
+            <span class="module-title">{{title}}</span>
+        </div>
+        <div class="btn-toolbar pull-right dropdown">
+            {{#each meta.buttons}}
+                {{field ../this}}
+            {{/each}}
+        </div>
+    </h1>
 </div>

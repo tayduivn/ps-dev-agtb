@@ -2,7 +2,7 @@
     {{#unless def.dismiss_label}}
         <div class="record-label" data-name="{{name}}">{{str label ../module}}</div>
     {{/unless}}
-    <span data-fieldname="{{name}}">
+    <span class="ellipsis_inline" rel="tooltip" data-original-title="{{value}}" data-placement="bottom" data-fieldname="{{name}}">
         {{value}}
     </span>
 </span>

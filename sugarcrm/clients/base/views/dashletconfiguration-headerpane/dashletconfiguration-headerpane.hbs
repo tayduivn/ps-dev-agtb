@@ -1,14 +1,16 @@
 <div class="headerpane">
-    {{#each meta.panels}}
-        {{#each fields}}
-            <span class="record-cell">
-                <h1>{{field ../../this model=../../this.model template="edit"}}</h1>
-            </span>
+    <h1>
+        {{#each meta.panels}}
+            {{#each fields}}
+                <span class="record-cell">
+                    {{field ../../this model=../../this.model template="edit"}}
+                </span>
+            {{/each}}
         {{/each}}
-    {{/each}}
-    <div class="btn-toolbar pull-right dropdown">
-        {{#each meta.buttons}}
-            {{field ../this model=../this.model template="detail"}}
-        {{/each}}
-    </div>
+        <div class="btn-toolbar pull-right dropdown">
+            {{#each meta.buttons}}
+                {{field ../this model=../this.model template="detail"}}
+            {{/each}}
+        </div>
+    </h1>
 </div>

@@ -15,10 +15,14 @@
 }}
 
 <div class="headerpane">
-    <h1><span class="module-title">{{str 'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS' 'Forecasts'}}</span></h1>
-    <div class="btn-toolbar pull-right dropdown">
-        {{#each meta.buttons}}
-            {{field ../this}}
-        {{/each}}
-    </div>
+    <h1>
+        <div class="record-cell">
+            <span class="module-title">{{str 'LBL_FORECASTS_CONFIG_TITLE_FORECAST_SETTINGS' 'Forecasts'}}</span>
+        </div>
+        <div class="btn-toolbar pull-right dropdown">
+            {{#each meta.buttons}}
+                {{field ../this}}
+            {{/each}}
+        </div>
+    </h1>
 </div>

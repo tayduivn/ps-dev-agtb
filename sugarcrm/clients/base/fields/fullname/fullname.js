@@ -122,5 +122,27 @@
      */
     updateValue: function() {
         this.model.set(this.name, this.format());
+    },
+
+    /**
+     * Called by record view to set max width of inner record-cell div
+     * to prevent long names from overflowing the outer record-cell container
+     */
+    setMaxWidth: function(width) {
+        this.$('.record-cell').css({'max-width': width});
+    },
+
+    /**
+     * Return the width of padding on inner record-cell
+     */
+    getCellPadding: function() {
+        var padding = 0,
+            $cell = this.$('.record-cell');
+
+        if (!_.isEmpty($cell)) {
+            padding = parseInt($cell.css('padding-left'), 10) + parseInt($cell.css('padding-right'), 10);
+        }
+
+        return padding;
     }
 })
