@@ -141,6 +141,10 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'order_by' => 'date_start:asc',
             'record_date' => 'date_start',
             'include_child_items' => true,
+            'invitation_actions' => array(
+                'name' => 'accept_status_users',
+                'type' => 'invitation-actions',
+            ),
         ),
         array(
             'filter_applied_to' => 'date_start',
@@ -152,6 +156,10 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'order_by' => 'date_start:asc',
             'record_date' => 'date_start',
             'include_child_items' => true,
+            'invitation_actions' => array(
+                'name' => 'accept_status_users',
+                'type' => 'invitation-actions',
+            ),
         ),
     ),
 );
