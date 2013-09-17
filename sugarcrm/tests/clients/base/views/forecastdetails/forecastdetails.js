@@ -270,7 +270,7 @@ describe("Base.View.Forecastdetails", function() {
     });
 
     describe("bindDataChange()", function() {
-        var loadDataStub;
+        var loadDataStub, calcStub;
         beforeEach(function() {
             loadDataStub = sinon.stub(view, 'loadData', function() {});
             view.forecastConfig = {
@@ -279,12 +279,13 @@ describe("Base.View.Forecastdetails", function() {
                 show_worksheet_worst: false
             };
             view.model = new Backbone.Model();
-
+            calcStub = sinon.stub(view, 'calculateData', function() {});
         });
 
         afterEach(function() {
             loadDataStub.restore();
             view.forecastConfig = null;
+            calcStub.restore();
         });
 
         it("loadData() should be called on this.model change:selectedTimePeriod events", function() {
@@ -781,6 +782,7 @@ describe("Base.View.Forecastdetails", function() {
     });
 
     describe("processQuotaCollection()", function() {
+        var calcStub;
         beforeEach(function() {
             view.quotaCollection = new Backbone.Collection();
             view.quotaCollection.add(new Backbone.Model({
@@ -792,10 +794,12 @@ describe("Base.View.Forecastdetails", function() {
                 quota: 500
             }));
             view.currentModule = 'Forecasts';
+            calcStub = sinon.stub(view, 'calculateData', function() {});
             view.processQuotaCollection();
         });
         afterEach(function() {
             view.unbindData();
+            calcStub.restore();
         });
 
         it("should build oldTotals properly - id1", function() {

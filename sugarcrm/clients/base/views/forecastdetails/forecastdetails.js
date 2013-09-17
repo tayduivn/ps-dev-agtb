@@ -392,13 +392,23 @@
      * saved into the closedWonIds array
      */
     processQuotaCollection: function() {
+        var model = this.context.get('model') || this.model,
+            newQuota = 0,
+            oldQuota = model.get('quota_amount'),
+            quota = 0;
         this.oldTotals.models = new Backbone.Model();
         _.each(this.quotaCollection.models, function(model) {
+            quota = model.get('quota');
+            newQuota = app.math.add(newQuota, quota);
             // save all the initial likely values
             this.setOldTotalFromCollectionById(model.get('id'), {
-                quota: model.get('quota')
+                quota: quota
             });
         }, this);
+
+        if(oldQuota !== newQuota) {
+            this.calculateData({quota_amount: newQuota});
+        }
     },
 
     /**
@@ -529,16 +539,14 @@
         // since the user might add this dashlet after they have changed the quota models, but before they saved it
         // we have to check and make sure that we're accounting for any changes in the dashlet totals that come
         // from the server
-        if(this.currentModule == 'Forecasts' && this.context) {
+        if(this.currentModule == 'Forecasts' && this.context && this.shouldRollup) {
             var lhsData = this.context.get('lhsData');
             if(!lhsData && _.has(this.context, 'parent') && !_.isNull(this.context.parent)) {
                 lhsData = this.context.parent.get('lhsData');
             }
 
-            if(lhsData) {
+            if(lhsData && !_.isEmpty(lhsData.quotas.models.attributes)) {
                 var lhsTotal = 0;
-                    //ctx = this.context.parent || this.context,
-                    //ctxMdl = ctx.get('model');
                 _.each(lhsData.quotas.models.attributes, function(val, key) {
                     lhsTotal = app.math.add(lhsTotal, val.quota);
                 }, this);
