@@ -318,8 +318,9 @@
       }
     }
 
-    &[data-type="date"],
-    &[data-type="datetimecombo"],
+
+
+
     &[data-type="fieldset"] {
       .error {
         .input-append.date {
@@ -336,12 +337,12 @@
     &[data-type="date"],
     &[data-type="datetimecombo"] {
       input[type="text"] {
-        width: 110px;
+          width: 110px;
       }
       .add-on {
         z-index: 2;
-        padding: 4px;
-        margin: -2px 10px 0 -30px;
+        padding: 4px 0px 4px 4px;
+        margin: -5px 10px 0 -30px;
         width: 12px;
         height: 12px;
         position: relative;
@@ -350,23 +351,35 @@
         background: @white;
         font-size: 12px;
       }
+
+
+
+
       .input-append.date {
         .add-on {
-          top: 4px;
-          left: 5px;
+            top: 4px;
+            left: 5px;
         }
         .error {
-          .add-on {
-            &:not(.error-tooltip) {
-              left: 1px;
+            .add-on {
+              &:not(.error-tooltip) {
+                left: 1px;
+              }
             }
-          }
-         }
+        }
         .ui-timepicker-input,
         .ui-timepicker-list {
-          margin-left: 10px;
+            margin-left: 10px;
         }
       }
+      .input-append span.error-tooltip.add-on {
+        left: -10px;
+        z-index: 3;
+      }
+
+
+
+
     }
 
     &[data-type="fieldset"] {
