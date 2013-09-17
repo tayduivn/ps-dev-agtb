@@ -220,13 +220,14 @@ $dictionary['Opportunity'] = array(
             'type' => 'date',
             'audited' => true,
             'comment' => 'Expected or actual date the oppportunity will close',
-            'importable' => 'required',
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+            'importable' => 'required',
             'required' => true,
             //END SUGARCRM flav=pro && flav!=ent ONLY
             'enable_range_search' => true,
             'options' => 'date_range_search_dom',
             //BEGIN SUGARCRM flav=ent ONLY
+            'importable' => 'true',
             'massupdate' => false,
             'calculated' => true,
             'formula' => 'maxRelatedDate($revenuelineitems, "date_closed")',
