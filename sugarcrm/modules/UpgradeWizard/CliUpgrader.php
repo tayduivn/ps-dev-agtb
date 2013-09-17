@@ -1,4 +1,16 @@
 <?php
+/*********************************************************************************
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright (C) 2004-2013 SugarCRM Inc.  All rights reserved.
+ ********************************************************************************/
 require_once 'UpgradeDriver.php';
 
 /**
@@ -6,14 +18,36 @@ require_once 'UpgradeDriver.php';
  */
 class CliUpgrader extends UpgradeDriver
 {
+    protected $options = array(
+    // required, short, long
+        "zip" => array(true, 'z', 'zip'),
+        "log" => array(true, 'l', 'log'),
+        "source_dir" => array(true, 's', 'source'),
+        "admin" => array(true, 'u', 'user'),
+        "backup" => array(false, 'b', 'backup'),
+        "script_mask" => array(false, 'm', 'mask'),
+        "stage" => array(false, 'S', 'stage'),
+    );
+
+    /**
+     * Script mask types
+     * @var array[int]
+     */
+    protected $maskTypes = array(
+        'core' => UpgradeScript::UPGRADE_CORE,
+        'db' => UpgradeScript::UPGRADE_DB,
+        'custom' => UpgradeScript::UPGRADE_CUSTOM,
+        'all' => UpgradeScript::UPGRADE_ALL,
+        'none' => 0,
+    );
+
     /*
      * CLI arguments: Zipfile Logfile Sugardir Adminuser [Stage]
      */
     public function runStage($stage)
     {
         $argv = $this->context['argv'];
-        $argv[] = $stage;
-        $cmd = "{$this->context['php']} -f {$this->context['script']} " . $this->buildArgString($argv);
+        $cmd = "{$this->context['php']} -f {$this->context['script']} -- " . $this->buildArgString(array("stage" => $stage));
         $this->log("Running $cmd");
         passthru($cmd, $retcode);
         return ($retcode == 0);
@@ -26,35 +60,41 @@ class CliUpgrader extends UpgradeDriver
     	echo "FAILURE\n";
     }
 
-    protected static function argError($msg)
+    protected function argError($msg)
     {
-        static::bannerError($msg);
-        static::usage();
+        $this->bannerError($msg);
+        $this->usage();
         exit(1);
     }
 
     protected static function usage()
     {
 $usage =<<<eoq2
-Usage: php -f CliUpgrader.php upgradeZipFile logFile pathToSugarInstance admin-user
+Usage:
+php CliUpgrader.php -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
 
 Example:
-    [path-to-PHP/]php -f CliUpgrader.php [path-to-upgrade-package/]SugarEnt-Upgrade-6.6.x-to-6.7.0.zip [path-to-log-file/]silentupgrade.log  path-to-sugar-instance/ admin
+    php CliUpgrader.php -z [path-to-upgrade-package/]SugarEnt-Upgrade-6.5.x-to-7.1.0.zip -l [path-to-log-file/]silentupgrade.log -s path-to-sugar-instance/ -u admin
 
 Arguments:
-    upgradeZipFile                       : Upgrade package file.
-    logFile                              : Silent Upgarde log file.
-    pathToSugarInstance                  : Sugar instance being upgraded.
-    admin-user                           : admin user performing the upgrade
+    -z/--zip upgrade.zip                 : Upgrade package file.
+    -l/--log logFile                     : Upgarde log file (by default relative to instance dir)
+    -s/--source pathToSugarInstance      : Sugar instance being upgraded.
+    -u/--user admin-user                 : admin user performing the upgrade
+Optional arguments:
+    -m/--mask scriptMask                 : Script mask - which types of scripts to run.
+                                           Supported types: core, db, custom, all, none. Default is all.
+    -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
+    -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
 
 eoq2;
         echo $usage;
     }
 
-    protected function verifyArguments($argv)
+    protected function verifyArguments()
     {
         if(empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
-            self::argError("3rd parameter must be a valid directory: {$argv[3]}.");
+            self::argError("Source directory parameter must be a valid directory.");
         }
 
         if(!is_file("{$this->context['source_dir']}/include/entryPoint.php") || !is_file("{$this->context['source_dir']}/config.php")) {
@@ -66,13 +106,58 @@ eoq2;
         }
 
         if(!is_file($this->context['zip'])) { // valid zip?
-            self::argError("First argument must be a full path to the patch file: {$argv[1]}.");
+            self::argError("Zip file argument must be a full path to the patch file.");
         }
 
         if(!is_readable($this->context['zip'])) { // valid zip?
-            self::argError("{$argv[1]} is not readable.");
+            self::argError("Zip archive is not readable: {$this->context['zip']}");
         }
         return true;
+    }
+
+    /**
+     * Parse script mask
+     * @param string $mask
+     * @return int
+     */
+    public function parseScriptMask($mask)
+    {
+        if(is_numeric($mask)) {
+            return intval($mask);
+        }
+        if(empty($mask)) {
+            $this->argError("Empty script mask");
+            return $this->maskTypes['all'];
+        }
+        $parts = explode(',', $mask);
+        $mask = 0;
+        if(empty($parts)) {
+            $this->argError("Empty script mask");
+            return $this->maskTypes['all'];
+        }
+        foreach($parts as $part) {
+            if(!isset($this->maskTypes[$part])) {
+                $this->argError("Unknown script mask: $part");
+                continue;
+            }
+            $mask |= $this->maskTypes[$part];
+        }
+        return $mask;
+    }
+
+    /**
+     * Fix values in the context
+     * @param array $context
+     * @return array
+     */
+    public function fixupContext($context)
+    {
+        $context['zip'] = realpath($context['zip']);
+        $context['source_dir'] = realpath($context['source_dir']);
+        if(isset($context['script_mask'])) {
+            $context['script_mask'] = $this->parseScriptMask($context['script_mask']);
+        }
+        return $context;
     }
 
     /**
@@ -80,23 +165,78 @@ eoq2;
      * @param array $argv
      * @return array
      */
-    public static function mapArgs($argv)
+    public function mapNamedArgs($argv)
     {
-        if(count($argv) < 5) {
-            $cnt = count($argv);
-            static::argError("Upgrader requires 4 argumens, $cnt given");
+        $opt = '';
+        $context = $longopt = array();
+        foreach($this->options as $ctx => $data)
+        {
+            $opt .= $data[1].':';
+            $longopt[] = $data[2].':';
+        }
+        /* FIXME: getopt always uses global argv */
+        $opts = getopt($opt, $longopt);
+
+        if(empty($opts)) {
+            $this->argError("Invalid upgrader options");
             return array(); // never happens
         }
 
-        $context = array(
-                'zip' => realpath($argv[1]),
-                'log' => $argv[2],
-                'source_dir' => realpath($argv[3]),
-                'admin' => $argv[4],
-        );
-        if(isset($argv[5])) {
-            $context['stage'] = $argv[5];
+        foreach($this->options as $ctx => $data) {
+            $val = null;
+            if(isset($opts[$data[1]])) {
+                $val = $opts[$data[1]];
+            } elseif(isset($opts[$data[2]])) {
+                $val = $opts[$data[2]];
+            }
+            if(is_null($val)) {
+                if($data[0]) {
+                    $this->argError("Required option '{$data[2]}' missing");
+                }
+                continue;
+            } elseif(is_array($val)) {
+                $this->argError("Multiple valued for '{$data[2]}' are not allowed");
+            }
+
+            $context[$ctx] = $val;
         }
+        return $context;
+    }
+
+    /**
+     * Map CLI arguments into context entries
+     * @param array $argv
+     * @return array
+     */
+    public function mapArgs($argv)
+    {
+        if(!empty($argv[1]) && $argv[1][0] == '-') {
+            /* named options */
+            $context = $this->mapNamedArgs($argv);
+        } else {
+            $i = 1;
+            $context = array();
+            foreach($this->options as $ctx => $data) {
+                if(isset($argv[$i])) {
+                    if(!$data[0] && $argv[$i][0] == '-') {
+                       // if we're positional then no options
+                        $this->argError("Positional and named arguments can not be mixed");
+                        continue; // never happens
+                    }
+                    $context[$ctx] = $argv[$i];
+                    $i++;
+                } else {
+                    if($data[0]) {
+                        $this->argError("Insufficient arguments");
+                        continue; // never happens
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        $context = $this->fixupContext($context);
         return $context;
     }
 
@@ -105,7 +245,7 @@ eoq2;
      * @param array $argv
      * @return array
      */
-    public static function parseArgs($argv)
+    public function parseArgs($argv)
     {
         if(defined('PHP_BINDIR')) {
         	$php_path = PHP_BINDIR."/";
@@ -115,10 +255,12 @@ eoq2;
         if(!file_exists($php_path . 'php')) {
             $php_path = '';
         }
-        $context = static::mapArgs($argv);
+        $context = $this->mapArgs($argv);
         $context['php'] = $php_path."php";
         $context['script'] = __FILE__;
         $context['argv'] = $argv;
+        $this->context = $context;
+        $this->log("Setting context to: ".var_export($context, true));
         return $context;
     }
 
@@ -128,7 +270,8 @@ eoq2;
     public static function start()
     {
         global $argv;
-        $upgrader = new static(static::parseArgs($argv));
+        $upgrader = new static();
+        $upgrader->parseArgs($argv);
         $upgrader->verifyArguments($argv);
         $upgrader->init();
         if(isset($upgrader->context['stage'])) {
@@ -183,23 +326,17 @@ eoq2;
      */
     protected function buildArgString($arguments=array())
     {
-    	if(!is_array($arguments) || count($arguments) == 1) {
-    		return '';
-    	}
-
-    	array_shift($arguments); // drop $argv[0]
-
     	$argument_string = '';
-    	foreach($arguments as $arg) {
-    	    //If current directory or parent directory is specified, substitute with full path
-    		if($arg == '.')
-    		{
-    			$arg = getcwd();
-    		} else if ($arg == '..') {
-    		    $args = dirname(getcwd());
-    		}
-    		$argument_string .= ' ' . escapeshellarg($arg);
-    	}
+
+    	$arguments = array_merge($this->context, $arguments);
+
+        foreach($this->options as $ctx => $data) {
+            if(!$data[0] && !isset($arguments[$ctx])) {
+                continue;
+            }
+
+            $argument_string .= sprintf(" -%s %s", $data[1], escapeshellarg($arguments[$ctx]));
+        }
 
     	return $argument_string;
    }

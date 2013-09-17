@@ -15,6 +15,19 @@ require_once 'CliUpgrader.php';
 
 class ShadowUpgrader extends CliUpgrader
 {
+    protected $options = array(
+            // required, short, long
+            'pre_template' => array(true, 'f', 'from'),
+            'post_template' => array(true, 't', 'to'),
+            "source_dir" => array(true, 's', 'source'),
+            "zip" => array(true, 'z', 'zip'),
+            "log" => array(true, 'l', 'log'),
+            "admin" => array(true, 'u', 'user'),
+            "backup" => array(false, 'b', 'backup'),
+            "script_mask" => array(false, 'm', 'mask'),
+            "stage" => array(false, 'S', 'stage'),
+    );
+
     protected function commit()
     {
         // commit doesn't do anything
@@ -24,89 +37,75 @@ class ShadowUpgrader extends CliUpgrader
     protected static function usage()
     {
     	$usage =<<<eoq2
-Usage: php -f ShadowUpgrader.php oldTemplate newTemplate pathToSugarInstance zip logFile admin-user
+php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -z zip -l logFile -u admin-user
 
 Example:
-    [path-to-PHP/]php -f ShadowUpgrader.php /sugar/templates/6.6.2 /sugar/templates/6.7.0 path-to-sugar-instance/ SugarEnt-Upgrade-6.6.x-to-6.7.0.zip silentupgrade.log admin
+    php ShadowUpgrader.php -f /sugar/templates/7.0.0 -t /sugar/templates/7.1.0 path-to-sugar-instance/ \
+    	    -z SugarEnt-Upgrade-7.0.x-to-7.1.0.zip -l silentupgrade.log -u admin
 
 Arguments:
-    oldTemplate                          : Pre-upgrade template
-    newTemplate                          : Target template
-    pathToSugarInstance                  : Sugar instance being upgraded
-    zip                                  : ZIP file with manifest and DB scripts
-    logFile                              : Upgrade log
-    admin-user                           : admin user performing the upgrade
+    -f/--from oldTemplate                : Pre-upgrade template
+    -t/--to newTemplate                  : Target template
+    -s/--source pathToSugarInstance      : Sugar instance being upgraded.
+    -z/--zip upgrade.zip                 : Upgrade package file.
+    -l/--log logFile                     : Upgarde log file (by default relative to instance dir)
+    -u/--user admin-user                 : admin user performing the upgrade
+Optional arguments:
+    -m/--mask scriptMask                 : Script mask - which types of scripts to run.
+                                           Supported types: db, custom, none. Default is db,custom.
+    -b/--backup 0/1                      : Create backup of deleted files? 0 means no backup, default is 1.
+    -S/--stage stage                     : Run specific stage of the upgrader. 'continue' means start where it stopped last time.
 
 eoq2;
     	echo $usage;
     }
 
-    protected function verifyArguments($argv)
+    protected function verifyArguments()
     {
         if(!function_exists("shadow")) {
-            self::argError("Shadow module should be installed to run this script.");
+            $this->argError("Shadow module should be installed to run this script.");
         }
 
         if(empty($this->context['source_dir']) || !is_dir($this->context['source_dir'])) {
-            self::argError("3rd parameter must be a valid directory: {$argv[3]}.");
+            $this->argError("Source dir parameter must be a valid directory.");
         }
 
         if(empty($this->context['pre_template']) || empty($this->context['post_template'])) {
-            self::argError("Templates should be specified");
+            $this->argError("Templates should be specified");
         }
 
         if(!is_file("{$this->context['pre_template']}/include/entryPoint.php")) {
-            self::argError("{$context['pre_template']} is not a SugarCRM template.");
+            $this->argError("{$this->context['pre_template']} is not a SugarCRM template.");
         }
 
         if(!is_file("{$this->context['post_template']}/include/entryPoint.php")) {
-            self::argError("{$context['post_template']} is not a SugarCRM template.");
+            $this->argError("{$his->context['post_template']} is not a SugarCRM template.");
         }
 
         if(!is_file("{$this->context['source_dir']}/config.php")) {
-            self::argError("{$context['source_dir']} is not a SugarCRM directory.");
+            $this->argError("{$this->context['source_dir']} is not a SugarCRM directory.");
         }
 
     	return true;
     }
 
     /**
-     * Map CLI arguments into context entries
-     * @param array $argv
+     * Fix values in the context
+     * @param array $context
      * @return array
      */
-    public static function mapArgs($argv)
+    public function fixupContext($context)
     {
-        if(count($argv) < 7) {
-            $cnt = count($argv);
-            self::argError("Upgrader requires 6 argumens, $cnt given");
-            return array(); // never happens
-        }
-
-        $context = array(
-                'pre_template' => realpath($argv[1]),
-                'post_template' => realpath($argv[2]),
-                'source_dir' => realpath($argv[3]),
-                'zip' => realpath($argv[4]),
-                'log' => $argv[5],
-                'admin' => $argv[6],
-        );
-        if(isset($argv[7])) {
-            $context['stage'] = $argv[7];
+        $context = parent::fixupContext($context);
+        $context['pre_template'] = realpath($context['pre_template']);
+        $context['post_template'] = realpath($context['post_template']);
+        // only use custom and DB scripts
+        if(isset($context['script_mask'])) {
+            $context['script_mask'] &= UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
+        } else {
+            $context['script_mask'] = UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB;
         }
         return $context;
-    }
-
-    protected function getScripts($dir, $stage)
-    {
-        $scripts = parent::getScripts($dir, $stage);
-        foreach($scripts as $name => $script) {
-            // shadow will allow only DB and custom scripts
-            if(($script->type & (UpgradeScript::UPGRADE_CUSTOM|UpgradeScript::UPGRADE_DB)) == 0) {
-                unset($scripts[$name]);
-            }
-        }
-        return $scripts;
     }
 
     protected function initSugar()

@@ -70,7 +70,7 @@ if(!empty($fail)) {
     // refresh caches
     $mi = new ModuleInstaller();
     $mi->silent = true;
-    $mi->rebuild_modules();
+    $mi->rebuild_extensions();
     SugarAutoLoader::buildCache();
     MetaDataManager::clearAPICache(true);
     exit(0);
