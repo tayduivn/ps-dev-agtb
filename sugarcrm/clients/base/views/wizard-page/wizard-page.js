@@ -219,7 +219,7 @@
                     app.alert.show('server-error', {
                         level: 'error',
                         messages: 'ERR_AJAX_LOAD_FAILURE',
-                        autoClose: false
+                        autoClose: true
                     });
                 }
             });
@@ -232,7 +232,7 @@
                     app.alert.show('server-error', {
                         level: 'error',
                         messages: 'ERR_AJAX_LOAD_FAILURE',
-                        autoClose: false
+                        autoClose: true
                     });
                 }
             });
