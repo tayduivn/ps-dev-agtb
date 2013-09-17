@@ -134,7 +134,7 @@ class Product extends SugarBean
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
-    public $relationship_fields = array('related_product_id' => 'related_products');
+    public $relationship_fields = array('account_id'=> 'account_link', 'related_product_id' => 'related_products');
 
 
     // This is the list of fields that are copied over from product template.
