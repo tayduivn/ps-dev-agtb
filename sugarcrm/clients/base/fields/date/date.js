@@ -501,17 +501,14 @@
     clearErrorDecoration: function () {
         var ftag = this.fieldTag || '',
             $ftag = this.$(ftag);
-        // Remove previous exclamation then add back.
-        this.$('.add-on').remove();
         var isWrapped = $ftag.parent().hasClass('input-append');
         if (isWrapped) {
-            $ftag.unwrap();
+            $ftag.parent().removeClass('error');
         }
         this.$el.removeClass(ftag);
         this.$el.removeClass("error");
+        this.$el.closest("span.edit").removeClass('error');
         this.$el.closest('.record-cell').removeClass("error");
-        $ftag.after('<span class="add-on"><i class="icon-calendar"></i></span>');
-
     }
 
 })

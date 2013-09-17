@@ -169,7 +169,8 @@
      * Sets up the timepicker.
      */
     _setupTimepicker: function() {
-        var placeholder = this.userTimePrefs,
+        var self = this,
+            placeholder = this.userTimePrefs,
             placeholderFormatMap = {
                 'H': 'hh',
                 'h': 'hh',
@@ -200,6 +201,12 @@
             focus: function(){$('.datepicker.dropdown-menu').hide()}
         });
 
+        // Bind clock icon click to open up the timepicker
+        this.$('.ui-timepicker-input').parent().find('.add-on:last').on('click', function(evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            self.$('.ui-timepicker-input').timepicker('show');
+        });
     },
     /**
      * Main hook to update model when timepicker selected
@@ -412,16 +419,12 @@
      * @override BaseField
      */
     decorateError: function(errors){
-        var dateInputs;
         this.$el.closest('.record-cell').addClass("error");
         // Selects both the date and timepicker inputs
-        dateInputs = this.$('input');
+        var dateInputs = this.$('input');
         dateInputs.closest("span.edit").addClass('error');
-        var parent = dateInputs.parent();
-        var isWrapped = parent.hasClass('input-append error');
-        if (!isWrapped) {
-            parent.children().wrapAll('<div class="input-append error '+this.fieldTag+'">');
-        }
+        // We already have an input-append as parent, just need to add error klass
+        dateInputs.parent().addClass('error');
         _.each(errors, function(errorContext, errorName) {
             _.each(dateInputs, function(input) {
                 var inp = this.$(input);
