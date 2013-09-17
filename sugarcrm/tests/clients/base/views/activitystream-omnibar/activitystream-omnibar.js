@@ -65,7 +65,7 @@ describe("Activity Stream Omnibar View", function() {
             expect(view.$('.addPost').hasClass('disabled')).toBe(true);
         });
 
-        describe('checkPlaceholder calls toggleSubmitButton', function() {
+        describe('_handleContentChange calls toggleSubmitButton', function() {
             var evt,
                 stubGetPost;
 
@@ -81,12 +81,12 @@ describe("Activity Stream Omnibar View", function() {
 
             var dataProvider = [
                 {
-                    message: 'should enable Submit button when checkPlaceholder receives an event with content',
+                    message: 'should enable Submit button when _handleContentChange receives an event with content',
                     content: 'foo',
                     expected: false
                 },
                 {
-                    message: 'should disable Submit button when checkPlaceholder receives an event without content',
+                    message: 'should disable Submit button when _handleContentChange receives an event without content',
                     content: '',
                     expected: true
                 }
@@ -96,7 +96,7 @@ describe("Activity Stream Omnibar View", function() {
                 it(data.message, function() {
                     evt.currentTarget.textContent = data.content;
                     stubGetPost.returns({value: data.content});
-                    view.checkPlaceholder(evt);
+                    view._handleContentChange(evt);
                     expect(view.$('.addPost').hasClass('disabled')).toBe(data.expected);
                 });
             });
