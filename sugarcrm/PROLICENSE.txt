@@ -98,7 +98,7 @@ UNLESS AND UNTIL COMPANY HAS AGREED TO BE BOUND BY ALL OF THE TERMS OF THE AGREE
 
 9.2. United States Federal Civilian Government Entities.  If Company is a federal civilian government entity, SugarCRM provides the SugarCRM Product, for ultimate federal government end use solely in accordance with the license rights customarily provided to the public as defined in this "standard" or "customary" commercial license Agreement, as specified in 48 C.F.R. 12.212 (Computer Software) and 12.211 (Technical Data) of the Federal Acquisition Regulation ("FAR") and its successors.
 
-9.3. United States Department of Defense Agencies.  If Company is any agency within the Department of Defense ("DOD"), SugarCRM provides the SugarCRM Product, for ultimate federal government end use solely in accordance with the license rights customarily provided to the public as defined in this "standard" or "customary" commercial Agreement, as specified in 48 C.F.R. §§227.7202-3 and 48 C.F.R. §§227.7202-4 of the DOD FAR Supplement ("DFARS") and its successors, and consistent with 48 C.F.R.  227.7202.  This Government Users clause, consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202, is in lieu of, and supersedes, any other FAR, DFARS, or other clause or provision that addresses Government rights in computer software, computer software documentation or technical data related to the SugarCRM Product under this Agreement and in any subcontract under which this commercial computer software and commercial computer software documentation is acquired or licensed.
+9.3. United States Department of Defense Agencies.  If Company is any agency within the Department of Defense ("DOD"), SugarCRM provides the SugarCRM Product, for ultimate federal government end use solely in accordance with the license rights customarily provided to the public as defined in this "standard" or "customary" commercial Agreement, as specified in 48 C.F.R. ï¿½ï¿½227.7202-3 and 48 C.F.R. ï¿½ï¿½227.7202-4 of the DOD FAR Supplement ("DFARS") and its successors, and consistent with 48 C.F.R.  227.7202.  This Government Users clause, consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202, is in lieu of, and supersedes, any other FAR, DFARS, or other clause or provision that addresses Government rights in computer software, computer software documentation or technical data related to the SugarCRM Product under this Agreement and in any subcontract under which this commercial computer software and commercial computer software documentation is acquired or licensed.
 
 10. General.
 
@@ -182,5 +182,5 @@ UNLESS AND UNTIL COMPANY HAS AGREED TO BE BOUND BY ALL OF THE TERMS OF THE AGREE
 
 MASTER SUBSCRIPTION AGREEMENT              Effective: 1 June 2011
 
-(c) 2012 SugarCRM, Inc.  SugarCRM and the SugarCRM logo are trademarks of SugarCRM, Inc.
+(c) 2013 SugarCRM, Inc.  SugarCRM and the SugarCRM logo are trademarks of SugarCRM, Inc.
 
