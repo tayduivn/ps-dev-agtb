@@ -1,4 +1,5 @@
-/*********************************************************************************
+//FILE SUGARCRM flav=ent ONLY
+//*********************************************************************************
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
  * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:

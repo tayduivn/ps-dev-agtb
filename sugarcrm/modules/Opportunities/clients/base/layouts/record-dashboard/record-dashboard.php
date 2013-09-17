@@ -21,6 +21,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
             array(
                 'rows' =>
                 array(
+                    //BEGIN SUGARCRM flav=ent ONLY
                     array(
                         array(
                             'view' =>
@@ -34,6 +35,7 @@ $viewdefs['Opportunities']['base']['layout']['record-dashboard'] = array(
                             'width' => 12,
                         ),
                     ),
+                    //END SUGARCRM flav=ent ONLY
                     array(
                         array(
                             'view' =>
