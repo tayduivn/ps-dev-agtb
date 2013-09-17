@@ -187,6 +187,8 @@ $dictionary['User'] = array(
                 0 => 'first_name',
                 1 => 'last_name'
             ) ,
+            'sort_on' => 'last_name',
+
             'importable' => 'false',
         ) ,
         'is_admin' => array(
