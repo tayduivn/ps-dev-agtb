@@ -242,6 +242,10 @@ hr.soften {
 .bwc.layout {
   height: 100%;
 }
+.touch .bwc.layout {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
 
 #tutorial {
   position: absolute;
@@ -469,4 +473,12 @@ ul.unstyled, ol.unstyled {
 
 .touch .welcome { /* UIUX-1121 */
   border-right: 0.1em solid transparent;
+}
+
+.touch .bwc-frame {
+  display: block;
+  border: 1px solid transparent; /* REQUIRED HACK UIUX-1165 */
+  -webkit-overflow-scrolling: touch;
+  overflow: scroll;
+  width: 100%;
 }
