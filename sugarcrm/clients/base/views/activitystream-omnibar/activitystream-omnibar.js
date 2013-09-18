@@ -1,11 +1,21 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     events: {
         'click .addPost': 'addPost',
-        'keyup .sayit': 'toggleSubmitButton',
-        'change div[data-placeholder]': 'checkPlaceholder',
-        'keydown div[data-placeholder]': 'checkPlaceholder',
-        'keypress div[data-placeholder]': 'checkPlaceholder',
-        'input div[data-placeholder]': 'checkPlaceholder'
+        'keyup .sayit': '_handleContentChange',
+        'change div[data-placeholder]': '_handleContentChange',
+        'input div[data-placeholder]': '_handleContentChange'
     },
 
     className: "omnibar",
@@ -133,7 +143,14 @@
         }
     },
 
-    checkPlaceholder: function(e) {
+    /**
+     * Show or hide the placeholder and toggle the submit button in response to
+     * a content change in the input field.
+     *
+     * @param e
+     * @private
+     */
+    _handleContentChange: function(e) {
         // We can't use any of the jQuery methods or use the dataset property to
         // set this attribute because they don't seem to work in IE 10. Dataset
         // isn't supported in IE 10 at all.
@@ -143,5 +160,6 @@
         } else {
             el.removeAttribute('data-hide-placeholder');
         }
+        this.toggleSubmitButton();
     }
 })
