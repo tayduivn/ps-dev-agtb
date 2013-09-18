@@ -90,18 +90,18 @@
         app.view.View.prototype.initialize.call(this, this.initOptions);
         this.values.module = 'Forecasts';
         this.isManager = o.initData.userData.isManager;
-        this.displayTimeperiodPivot = (this.context.get('module') === "Home");
+        this.displayTimeperiodPivot = (this.context.get('module') === 'Home');
 
         var defaultOptions = {
             user_id: app.user.get('id'),
-            display_manager: false, // we always show the rep view by default
+            display_manager: this.isManager, // default to 'self' view for reps, and 'team' view for managers
             selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
             timeperiod_id: o.defaultSelections.timeperiod_id.id,
             timeperiod_label: o.defaultSelections.timeperiod_id.label,
             dataset: o.defaultSelections.dataset,
             group_by: o.defaultSelections.group_by,
             ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
-        }
+        };
 
         if (!this.displayTimeperiodPivot) {
             this.isOnHomePage = false;
