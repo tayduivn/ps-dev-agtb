@@ -25,7 +25,7 @@
         var meta = app.metadata.getView(options.module, 'raw') || {};
         options.meta = _.extend({}, meta, options.meta || {});
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
 
         this._initCollection();
     },

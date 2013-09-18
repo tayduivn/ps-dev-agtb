@@ -66,7 +66,7 @@
     initialize: function(options) {
         options.module = 'Notifications';
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         app.events.on('app:sync:complete', this._bootstrap, this);
         app.events.on('app:logout', this.stopPulling, this);
     },
@@ -459,7 +459,7 @@
         }
 
         if (!_.isObject(this.collection)) {
-            app.view.View.prototype._renderHtml.call(this);
+            this._super('_renderHtml');
             return;
         }
 
@@ -468,7 +468,7 @@
             model.set('severityLabel', this.getSeverityLabel(model.get('severity')));
         }, this);
 
-        app.view.View.prototype._renderHtml.call(this);
+        this._super('_renderHtml');
     },
 
     /**
@@ -485,6 +485,6 @@
         }, this);
         this._alertsCollections = {};
 
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

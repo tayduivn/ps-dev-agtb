@@ -42,7 +42,7 @@
      * {@inheritdoc}
      */
     _render: function () {
-        app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render', platform: 'base'});
+        this._super('_render');
 
         var severity = this.model.get(this.name);
         var severityCss = this._styleMapping[severity] || this._styleMapping.default;
