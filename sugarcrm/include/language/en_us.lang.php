@@ -4103,10 +4103,8 @@ $app_strings = array (
     // history dashlet
     'LBL_HISTORY_DASHLET' => 'History',
     'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
-    'LBL_HISTORY_DASHLET_EMAIL_INBOUND_SINGULAR' => 'Email (From)',
-    'LBL_HISTORY_DASHLET_EMAIL_INBOUND_PLURAL' => 'Emails (From)',
-    'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_SINGULAR' => 'Email (To)',
-    'LBL_HISTORY_DASHLET_EMAIL_OUTBOUND_PLURAL' => 'Emails (To)',
+    'LBL_HISTORY_DASHLET_EMAIL_SINGULAR' => 'Email',
+    'LBL_HISTORY_DASHLET_EMAIL_PLURAL' => 'Emails',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
