@@ -133,12 +133,13 @@ abstract class SugarApi {
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how the bean is retrieved
      * @param $args array The arguments array passed in from the API
      * @param $aclToCheck string What kind of ACL to verify when loading a bean. Supports: view,edit,create,import,export
+     * @param $options Options array to pass to the retrieveBean method
      * @return SugarBean The loaded bean
      */
-    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read', $options = array()) {
         $this->requireArgs($args, array('module','record'));
 
-        $bean = BeanFactory::retrieveBean($args['module'],$args['record']);
+        $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
 
         if ( $bean == FALSE || $bean->deleted == 1) {
             // Couldn't load the bean

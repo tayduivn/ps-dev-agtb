@@ -170,11 +170,7 @@ class ModuleApi extends SugarApi {
 
         $args['record'] = $id;
 
-        $bean = $this->loadBean($api, $args, 'view');
-        $api->action = 'view';
-        $data = $this->formatBean($api, $args, $bean);
-
-        return $data;
+        return $this->getLoadedAndFormattedBean($api, $args, $bean);
     }
 
     public function updateRecord($api, $args) {
@@ -182,14 +178,9 @@ class ModuleApi extends SugarApi {
 
         $bean = $this->loadBean($api, $args, 'save');
 
-        $id = $this->updateBean($bean, $api, $args);
+        $this->updateBean($bean, $api, $args);
 
-        $bean = $this->loadBean($api, $args, 'view');
-
-        $api->action = 'view';
-        $data = $this->formatBean($api, $args, $bean);
-
-        return $data;
+        return $this->getLoadedAndFormattedBean($api, $args, $bean);
     }
 
     public function retrieveRecord($api, $args) {
@@ -236,4 +227,34 @@ class ModuleApi extends SugarApi {
         return $data;
     }
 
+    /**
+     * Shared method from create and update process that handles records that 
+     * might not pass visibility checks. This method assumes the API has validated
+     * the authorization to create/edit records prior to this point.
+     * 
+     * @param ServiceBase $api The service object
+     * @param array $args Request arguments
+     * @param SugarBean $bean The bean for this process
+     * @return array Array of formatted fields
+     */
+    protected function getLoadedAndFormattedBean($api, $args, SugarBean $bean)
+    {
+        // Load the bean fresh to ensure the cache entry from the create process
+        // doesn't get in the way of visibility checks
+        try {
+            $bean = $this->loadBean($api, $args, 'view', array('use_cache' => false));
+        } catch (SugarApiExceptionNotAuthorized $e) {
+            // If there was an exception thrown from the load process then strip
+            // the field list down and return only id and date_modified. This will
+            // happen on new records created with visibility rules that conflict 
+            // with the current user or from edits made to records that do the same
+            // thing.
+            $args['fields'] = 'id,date_modified';
+        }
+
+        $api->action = 'view';
+        $data = $this->formatBean($api, $args, $bean);
+
+        return $data;
+    }
 }
