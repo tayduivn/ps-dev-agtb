@@ -93,14 +93,14 @@
     _placeComponent: function (component) {
         var dashboardEl = this.$("[data-dashboard]"),
             css = this.context.get("create") ? " edit" : "";
-        if (dashboardEl.length == 0) {
+        if (dashboardEl.length === 0) {
             dashboardEl = $("<div></div>").attr({
                 'class': 'cols row-fluid'
             });
             this.$el.append(
                 $("<div></div>")
                     .addClass('dashboard' + css)
-                    .data('dashboard', 'true')
+                    .attr({'data-dashboard': 'true'})
                     .append(dashboardEl)
             );
         } else {
