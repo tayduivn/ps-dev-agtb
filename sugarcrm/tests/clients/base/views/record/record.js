@@ -809,4 +809,15 @@ describe("Record View", function () {
             expect(fullname.prop('style').width).toBe('100%');
         });
     });
+
+    it('should not return my_favorite field when calling getFieldNames', function () {
+        var fields = view.getFieldNames();
+        expect(_.indexOf(fields, 'my_favorite')).toEqual(-1);
+    });
+
+    it('should return my_favorite field when calling getFieldNames', function () {
+        view.meta.panels[0].fields.push({name: 'favorite', type: 'favorite'});
+        var fields = view.getFieldNames();
+        expect(_.indexOf(fields, 'my_favorite')).toBeGreaterThan(-1);
+    });
 });
