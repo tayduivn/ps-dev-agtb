@@ -19,18 +19,27 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('clients/base/api/UnifiedSearchApi.php');
-class MeetingsApi extends UnifiedSearchApi {
-    public function registerApiRest() {
-        return array(
-            'moduleSearch' => array(
-                'reqType' => 'GET',
-                'path' => array('Meetings'),
-                'pathVars' => array(''),
-                'method' => 'globalSearch',
-                'shortHelp' => 'Search records in this module',
-                'longHelp' => 'include/api/help/module_get_help.html',
-            ),
+
+require_once 'clients/base/api/FilterApi.php';
+
+/**
+ * Meetings module API
+ */
+class MeetingsApi extends FilterApi
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function registerApiRest()
+    {
+        $endPoints = parent::registerApiRest();
+
+        // force the use of this class for all Meetings filter endpoints
+        foreach ($endPoints as &$endPoint) {
+            $endPoint['path'][0] = 'Meetings';
+        }
+
+        $endPoints = array_merge($endPoints, array(
             'getAgenda' => array(
                 'reqType' => 'GET',
                 'path' => array('Meetings','Agenda'),
@@ -39,62 +48,37 @@ class MeetingsApi extends UnifiedSearchApi {
                 'shortHelp' => 'Fetch an agenda for a user',
                 'longHelp' => 'include/api/html/meetings_agenda_get_help',
             ),
-        );
-    }
+        ));
 
+        return $endPoints;
 
-    public function __construct() {
     }
 
     /**
-     * This function is the global search
-     * @param $api ServiceBase The API class of the request
-     * @param $args array The arguments array passed in from the API
-     * @return array result set
+     * {@inheritdoc}
      */
-    public function globalSearch(ServiceBase $api, array $args) {
-        require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+    public function filterListSetup(ServiceBase $api, array $args)
+    {
+        /** @var $timedate TimeDate */
+        global $timedate;
 
-        // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
-        $GLOBALS['disable_date_format'] = true;
+        $args = array_merge(
+            array(
+                // by default show only upcoming meetings
+                'filter' => array(
+                    array(
+                        'date_start' => array(
+                            '$gte' => $timedate->getNow()->modify('-30 minutes')->asDb(),
+                        ),
+                    ),
+                ),
+                // by default sort records by start date
+                'order_by' => 'date_start:asc,id:desc',
+            ),
+            $args
+        );
 
-        $options = $this->parseSearchOptions($api,$args);
-        $options['moduleList'] = $options['moduleFilter'] = array('Meetings');
-
-        // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
-        $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
-        if ( $searchEngine instanceOf SugarSearchEngine) {
-            $options['custom_where'] = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted(TimeDate::getInstance()->nowDb()), 'datetime');
-            $orderBy = 'date_start ASC, id DESC';
-            $orderByData['date_start'] = false;
-            $orderByData['id'] = false;
-            if (!in_array('date_start', $options['selectFields'])) {
-                $options['selectFields'][] = 'date_start';
-            }
-            if (!in_array('id', $options['selectFields'])) {
-                $options['selectFields'][] = 'id';
-            }
-            $options['orderByArray'] = $orderByData;
-            $options['orderBy'] = $orderBy;
-            $options['resortResults'] = true;
-            $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
-            $sortByDateModified = true;
-        } else {
-            // add an option for filtering out meetings that have already started
-            $options['filter']['fieldname'] = 'date_start';
-            $options['filter']['type'] = 'range';
-            $options['filter']['range']['from'] = gmdate('Y-m-d', strtotime("-30 minutes"));
-            $options['filter']['range']['to'] = gmdate('Y-m-d',strtotime('+10 years'));
-            $options['filter']['range']['include_lower'] = true;
-            $options['filter']['range']['include_upper'] = true;
-            $options['sort'][] = array('date_start' => array('order' => 'asc'));
-
-            $recordSet = $this->globalSearchFullText($api,$args,$searchEngine,$options);
-            $sortByDateModified = false;
-        }
-
-        return $recordSet;
-
+        return parent::filterListSetup($api, $args);
     }
 
     public function getAgenda($api, $args) {
