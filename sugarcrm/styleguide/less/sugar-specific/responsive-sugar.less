@@ -232,8 +232,6 @@
     .border-radius(0);
     overflow: auto;
   }
-  .thumbnail h1 {
-  }
 
   .modal {
     height: 100%;
@@ -249,7 +247,6 @@
   }
 
   #content {
-    top: 108px;
     overflow-y: auto;
   }
 
@@ -258,6 +255,7 @@
   }
 
   #content > .row-fluid > .dashboard { /* specific selector to avoid applying it to .side-pane dashboard */
+    padding-top: 61px;
     .dashlets.row-fluid > li {
       width: 100%;
       .widget-container {
@@ -272,9 +270,16 @@
     }
   }
 
-  .main-pane,
-  .row-fluid .main-pane.span8,
-  .row-fluid .side.sidebar-content.span4 {
+  .touch #content > .row-fluid > .dashboard {
+    padding-top: 61px !important;
+  }
+
+  #portal #content > .row-fluid > .dashboard {
+    padding-top: 0;
+  }
+
+  .main-pane.span8,
+  .main-pane.span12 {
     float: none;
     position: relative;
     top: auto;
@@ -283,10 +288,43 @@
     overflow-y: visible;
     border-right: none;
     width: 100%;
+    margin-top: 61px;
+    border-bottom: 1px solid darken(@grayLighter, 10%);
+  }
+
+  .touch .main-pane {
+    margin-top: 0 !important;
+  }
+
+  .side.sidebar-content {
+    float: none;
+    position: relative;
+    top: auto;
+    bottom: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+    border-right: none;
+    width: 100%;
+    .box-shadow(~"inset 0 4px 16px -4px rgba(0, 0, 0, .2)");
+    .dashlet-cell.row-fluid > li {
+      width: 100%;
+    }
   }
 
   .headerpane .drawerTrig {
     display: none;
+  }
+
+  .dashboard {
+    position: relative;
+    top: auto;
+    bottom: auto;
+  }
+
+  .touch .dashboard {
+    overflow-x: auto;
+    top: auto;
+    padding-top: 0 !important;
   }
 
   .row-fluid .main-pane.span8 .headerpane {
@@ -308,11 +346,6 @@
 
   .row-fluid .side.sidebar-content.span4 {
     .side-pane.active {
-      padding: 0;
-      top: auto;
-      right: auto;
-      width: auto;
-      position: relative !important;
       .block.thumbnail {
         margin: 0;
         width: 94%;
@@ -325,40 +358,12 @@
     }
   }
 
-  .side.sidebar-content {
-    .box-shadow(none);
-    .dashlet-cell.row-fluid > li {
-      width: 100%;
-    }
-  }
-
   .filter-value [rel=datepicker] .add-on .icon-calendar {
     display: none;
   }
 }
 
-//from responsive-forecast.less
-@media (max-width: 920px) {
-  .side .side-pane.active {
-    position: absolute !important;
-  }
-  /*.row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
-  overflow-y: auto !important;
-  margin: 0;
-  }*/
-  .headerpane input[type="text"] {
-    width: 100px;
-  }
-}
-
-
 //is this the best place for this? grid.less? it is responsive though
 .row-fluid [class*="span"] {
   .rtlFloat(@direction,right);
-}
-
-@media (max-width: 1170px) {
-  .headerpane input[type="text"] {
-    width: 140px;
-  }
 }
