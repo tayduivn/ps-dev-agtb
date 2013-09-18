@@ -45,6 +45,12 @@ if(empty($_REQUEST['record']))
 	die("'record' was not defined");
 }
 
+if(empty($_REQUEST['subpanel']))
+{
+    LoggerManager::getLogger()->error("SubPanelViewer: 'subpanel' was not defined in request");
+    exit(1);
+}
+
 if(!isset($beanList[$_REQUEST['module']]))
 {
 	die("'".$_REQUEST['module']."' is not defined in \$beanList");

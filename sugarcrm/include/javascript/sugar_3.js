@@ -3244,96 +3244,84 @@ SUGAR.util = function () {
 			}
 
 	        var objRegex = /<\s*script([^>]*)>((.|\s|\v|\0)*?)<\s*\/script\s*>/igm;
-			var lastIndex = -1;
-			var result =  objRegex.exec(text);
-            while(result && result.index > lastIndex){
-            	lastIndex = result.index
-				try{
-                    // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-                    // Change approach to handle javascripts included to body of ajax response.
-                    // To load & run javascripts and inline javascript in correct order load them as synchronous requests
-                    // JQuery library uses this approach to eval scripts
-                  	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9_\-\&\/\.\?=:-]*)['"].*/igm;
-						var srcResult =  result[1].replace(srcRegex, '$1');
 
-                        // Check is ulr cross domain or not
-                        var r1 = /:\/\//igm;
-                        if ( r1.test(srcResult) && srcResult.indexOf(window.location.hostname) == -1 )
-                        {
-                            // if script is cross domain it cannot be loaded via ajax request
-                            // try load script asynchronous by creating script element in the body
-                            // YUI 3.3 doesn't allow load scrips synchronously
-                            // YUI 3.5 do it
-                            YUI().use('get', function (Y)
+            YUI().use("io-base", "get", function(Y) {
+                var lastIndex = -1;
+                var result =  objRegex.exec(text);
+                while(result && result.index > lastIndex){
+                    lastIndex = result.index
+                    try{
+                        // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                        // Change approach to handle javascripts included to body of ajax response.
+                        // To load & run javascripts and inline javascript in correct order load them as synchronous requests
+                        // JQuery library uses this approach to eval scripts
+                        if(result[1].indexOf("src=") > -1){
+                            var srcRegex = /.*src=['"]([a-zA-Z0-9_\-\&\/\.\?=:-]*)['"].*/igm;
+                            var srcResult =  result[1].replace(srcRegex, '$1');
+
+                            // Check is ulr cross domain or not
+                            var r1 = /:\/\//igm;
+                            if ( r1.test(srcResult) && srcResult.indexOf(window.location.hostname) == -1 )
                             {
-                                var url = srcResult;
-                                Y.Get.script(srcResult,
-                                {
+                                // if script is cross domain it cannot be loaded via ajax request
+                                // try load script asynchronous by creating script element in the body
+                                // YUI 3.3 doesn't allow load scrips synchronously
+                                // YUI 3.5 do it
+                                Y.Get.script(srcResult, {
                                     autopurge: false,
                                     onSuccess : function(o) {  },
                                     onFailure: function(o) { },
                                     onTimeout: function(o) { }
                                 });
-                            });
-                            // TODO: for YUI 3.5 - load scripts as script object synchronous
-                            /*
-                            YUI().use('get', function (Y) {
-                                var url = srcResult;
-                                Y.Get.js([{url: url, async: false}], function (err) {});
-                            });
-                            */
-                        }
-                        else
-                        {
-                            // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-                            // Create a YUI instance using the io-base module.
-                            (function (srcResult) {
-                                YUI().use("io-base",function(Y)
-                                {
-                                    var cfg,response;
-                                    cfg={
-                                        method:'GET',
-                                        sync:true,
-                                        on:{
-                                            success:function(transactionid,response,arguments)
-                                            {
-                                                SUGAR.util.globalEval(response.responseText);
-                                            }
-                                        }
-                                    };
-                                    // Call synchronous request to load javascript content
-                                    // restonse will be processed in success function
-                                    response=Y.io(srcResult,cfg);
+                                // TODO: for YUI 3.5 - load scripts as script object synchronous
+                                /*
+                                YUI().use('get', function (Y) {
+                                    var url = srcResult;
+                                    Y.Get.js([{url: url, async: false}], function (err) {});
                                 });
-                            })(srcResult);
+                                */
+                            }
+                            else
+                            {
+                                // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                                // Create a YUI instance using the io-base module.
+                                Y.io(srcResult, {
+                                    method:'GET',
+                                    sync:true,
+                                    on:{
+                                        success:function(transactionid,response,arguments)
+                                        {
+                                            SUGAR.util.globalEval(response.responseText);
+                                        }
+                                    }
+                                });
+                            }
+                        }else{
+                            // Bug #49205 : Subpanels fail to load when selecting subpanel tab
+                            // execute script in global context
+                            // Bug #57288 : don't eval with html comment-out script; that causes syntax error in IE
+                            var srcRegex = /<!--([\s\S]*?)-->/;
+                            var srcResult = srcRegex.exec(result[2]);
+                            if (srcResult && srcResult.index > -1)
+                            {
+                                SUGAR.util.globalEval(srcResult[1]);
+                            }
+                            else
+                            {
+                                SUGAR.util.globalEval(result[2]);
+                            }
                         }
-                  	}else{
-                        // Bug #49205 : Subpanels fail to load when selecting subpanel tab
-                        // execute script in global context
-                        // Bug #57288 : don't eval with html comment-out script; that causes syntax error in IE
-                        var srcRegex = /<!--([\s\S]*?)-->/;
-                        var srcResult = srcRegex.exec(result[2]);
-                        if (srcResult && srcResult.index > -1)
-                        {
-                            SUGAR.util.globalEval(srcResult[1]);
-                        }
-                        else
-                        {
-                            SUGAR.util.globalEval(result[2]);
-                        }
-                  	}
-	              }
-	              catch(e) {
-                      if(typeof(console) != "undefined" && typeof(console.log) == "function")
-                      {
-                          console.log("error adding script");
-                          console.log(e);
-                          console.log(result);
                       }
-                  }
-                  result =  objRegex.exec(text);
-			}
+                      catch(e) {
+                          if(typeof(console) != "undefined" && typeof(console.log) == "function")
+                          {
+                              console.log("error adding script");
+                              console.log(e);
+                              console.log(result);
+                          }
+                      }
+                      result =  objRegex.exec(text);
+                }});
 	    },
 		/**
 		 * Gets the sidebar object
