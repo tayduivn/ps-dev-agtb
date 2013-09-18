@@ -788,5 +788,22 @@
         if ($cellToWiden) {
             $cellToWiden.css({'width': '100%'});
         }
+    },
+
+    /**
+     * Adds the favorite field to app.view.View.getFieldNames() if `favorite` field is within a panel
+     * so my_favorite is part of the field list and is fetched
+     */
+    getFieldNames: function(module) {
+        var fields = app.view.View.prototype.getFieldNames.call(this, module);
+        var favorite = _.find(this.meta.panels, function(panel) {
+             return _.find(panel.fields, function(field) {
+                 return field.type === 'favorite';
+             });
+        });
+        if (favorite) {
+            fields = _.union(fields, ['my_favorite']);
+        }
+        return fields;
     }
 })
