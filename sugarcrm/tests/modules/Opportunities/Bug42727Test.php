@@ -69,7 +69,7 @@ class Bug42727Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_opportunity->created_by = SugarTestUserUtilities::createAnonymousUser()->id;
         $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;
-        $this->_opportunityIds[] = $this->_opportunity->save();
+        $this->_opportunityIds[] = $this->_opportunity->save(true);
         $this->assertFalse($this->_opportunity->isOwner($this->_opportunity->created_by));
         $this->assertTrue($this->_opportunity->mailWasSent);    
     }
