@@ -67,6 +67,23 @@ class UsersApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $data = $this->helper->formatForApi($this->bean, array(), $options);
         $this->assertEquals(array_key_exists('has_access', $data), false, "Has Access data should not exist");
     }
+
+    public function testPopulateFromApi_newBean()
+    {
+        $user = BeanFactory::getBean('Users');
+        $user->new_with_id = true;
+        $user->id = '';
+
+        $this->setExpectedException('SugarApiExceptionMissingParameter');
+
+        $this->helper->populateFromApi($user, array(), array());
+    }
+
+    public function testPopulateFromApi_updateBean()
+    {
+        $test = $this->helper->populateFromApi($GLOBALS['current_user'], array(), array());
+        $this->assertTrue($test);
+    }
 }
 
 class UsersServiceMockup extends ServiceBase

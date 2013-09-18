@@ -51,4 +51,19 @@ class UsersApiHelper extends SugarBeanApiHelper
         $record->id = $recordId;
         return $record->checkUserAccess($user);
     }
+
+
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
+    {
+        parent::populateFromApi($bean, $submittedData, $options);
+        if (!$bean->new_with_id && !empty($bean->id)) {
+            return true;
+        }
+
+        if (empty($submittedData) || empty($submittedData['user_name'])) {
+            throw new SugarApiExceptionMissingParameter("Missing username");
+        }
+
+        return true;
+    }
 }
