@@ -144,9 +144,6 @@ class SugarQuery_Compiler_SQL
             $join_part = trim($this->compileJoin($this->sugar_query->join));
         }
 
-        // DB MANAGER::limitQuerySql
-        $limit_part = (!empty($limit)) ? " LIMIT {$limit} " : '';
-        $offset_part = (!empty($offset)) ? " OFFSET {$offset} " : '';
 
         $sql = "SELECT {$distinct} {$select_part} FROM {$from_part}";
         if (!empty($join_part)) {
@@ -164,13 +161,9 @@ class SugarQuery_Compiler_SQL
         if (!empty($order_by_part)) {
             $sql .= " ORDER BY {$order_by_part} ";
         }
-        if (!empty($limit_part)) {
-            $sql .= $limit_part;
+        if (!empty($limit)) {
+            $sql = $this->db->limitQuery($sql, $offset, $limit, false, '', false);
         }
-        if (!empty($offset_part)) {
-            $sql .= $offset_part;
-        }
-
         if (!empty($union)) {
             foreach ($union as $u) {
                 if (isset($u['select'])) {
