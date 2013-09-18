@@ -52,6 +52,12 @@ class ValidMetadataHashTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testHashValid()
     {
+        // If we are getting a system level warning the hashes won't match up
+        $systemStatus = apiCheckSystemStatus(true);
+        if ($systemStatus !== true) {
+            $this->markTestSkipped("Can't test metadata hashing with bad system status.");
+        }
+
         $mm = new MetaDataManager($GLOBALS['current_user']);
         $this->assertTrue(
             $mm->isMetadataHashValid($this->baseHash, "base"),
