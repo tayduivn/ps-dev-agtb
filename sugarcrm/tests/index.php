@@ -24,7 +24,6 @@
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleMoreLess.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-remove-links.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/file.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/LinkedModel.js"></script>
 
     <!-- customized beans -->
     <script type="text/javascript" src="../modules/Contacts/clients/base/lib/bean.js"></script>

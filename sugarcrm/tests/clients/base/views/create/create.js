@@ -193,8 +193,8 @@ describe("Create View", function() {
             expect(user_id).toEqual(current_user_id);
             expect(full_name).toEqual(current_user_name);
 
-            expect(view.model.relatedAttributes.assigned_user_id).toBe(user_id);
-            expect(view.model.relatedAttributes.assigned_user_name).toBe(full_name);
+            expect(view.model._defaults.assigned_user_id).toBe(user_id);
+            expect(view.model._defaults.assigned_user_name).toBe(full_name);
         });
 
         it("Should create a record view having a Assigned-To field initialized with the Assigned-to user of the original record if performing a copy.", function() {
@@ -236,8 +236,8 @@ describe("Create View", function() {
             expect(user_id).toEqual(copied_user_id);
             expect(full_name).toEqual(copied_user_name);
 
-            expect(view.model.relatedAttributes.assigned_user_id).toBe(current_user_id);
-            expect(view.model.relatedAttributes.assigned_user_name).toBe(current_user_name);
+            expect(view.model._defaults.assigned_user_id).toBe(current_user_id);
+            expect(view.model._defaults.assigned_user_name).toBe(current_user_name);
         });
         it("Should create a record view having a Assigned-To field - 'id_name' is assigned_user_id", function() {
             fields = [

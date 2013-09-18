@@ -91,11 +91,11 @@ describe("PanelTop View", function() {
         });
         it('should store the relate fields in default to keep the values for [Save and create new]', function() {
             var newModel = view.createLinkModel(parentModel, 'blah');
-            expect(newModel.relatedAttributes['product_template_id']).toBe(parentModel.get('id'));
-            expect(newModel.relatedAttributes['product_template_name']).toBe(parentModel.get('name'));
-            expect(newModel.relatedAttributes['account_id']).toBe(parentModel.get('account_id'));
-            expect(newModel.relatedAttributes['account_name']).toBe(parentModel.get('account_name'));
-            expect(newModel.relatedAttributes['user_name']).toBe(parentModel.get('assigned_user_name'));
+            expect(newModel._defaults['product_template_id']).toBe(parentModel.get('id'));
+            expect(newModel._defaults['product_template_name']).toBe(parentModel.get('name'));
+            expect(newModel._defaults['account_id']).toBe(parentModel.get('account_id'));
+            expect(newModel._defaults['account_name']).toBe(parentModel.get('account_name'));
+            expect(newModel._defaults['user_name']).toBe(parentModel.get('assigned_user_name'));
         });
     });
 

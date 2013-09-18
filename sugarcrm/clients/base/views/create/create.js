@@ -53,7 +53,6 @@
 
         var fields = (moduleMetadata && moduleMetadata.fields) ? moduleMetadata.fields : [];
 
-        this.model.relatedAttributes = this.model.relatedAttributes || {};
         _.each(fields, function (field) {
             var userId, userName, isDuplicate;
             if (((field.name && field.name === 'assigned_user_id') || (field.id_name && field.id_name === 'assigned_user_id')) &&
@@ -68,8 +67,9 @@
 
                 this.model.set('assigned_user_id', userId);
                 this.model.set('assigned_user_name', userName);
-                this.model.relatedAttributes.assigned_user_id = app.user.id;
-                this.model.relatedAttributes.assigned_user_name = app.user.attributes.full_name;
+                this.model._defaults = this.model._defaults || {};
+                this.model._defaults.assigned_user_id = app.user.id;
+                this.model._defaults.assigned_user_name = app.user.attributes.full_name;
             }
         }, this);
 
@@ -149,7 +149,6 @@
         this.context.lastSaveAction = this.SAVEACTIONS.SAVE_AND_CREATE;
         this.initiateSave(_.bind(function () {
             this.clear();
-            this.model.set(this.model.relatedAttributes);
             this.resetDuplicateState();
         }, this));
     },
@@ -401,6 +400,7 @@
      */
     clear: function () {
         this.model.clear();
+        this.model.set(this.model._defaults);
         if (!this.disposed) {
             this.render();
         }

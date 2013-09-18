@@ -15,24 +15,7 @@
 $module_name = 'Documents';
 $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
+    'href' => '#bwc/index.php?module='.$module_name.'&action=EditView&return_module='.$module_name.'&return_action=DetailView',
     'label' => 'LNK_NEW_DOCUMENT',
-    'visible' => true,
-    'related' => array(
-        array(
-            'module' => 'Accounts',
-            'link' => 'documents',
-        ),
-        array(
-            'module' => 'Contacts',
-            'link' => 'documents',
-        ),
-        array(
-            'module' => 'Opportunities',
-            'link' => 'documents',
-        ),
-        array(
-            'module' => 'RevenueLineItems',
-            'link' => 'documents',
-        ),
-    ),
+    'visible' => true
 );
