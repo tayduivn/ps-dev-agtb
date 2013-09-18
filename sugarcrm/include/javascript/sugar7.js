@@ -366,12 +366,12 @@
         }
         document.title = title || document.title;
     }, this);
-    
+
     var refreshExternalLogin = function() {
     	var config = app.metadata.getConfig();
         app.api.setExternalLogin(config && config['externalLogin']);
     }
-    
+
     app.events.on("app:sync:complete", refreshExternalLogin, this);
     app.events.on("app:init", refreshExternalLogin, this);
 
@@ -391,5 +391,4 @@
         }
         return true;
     });
-    
 })(SUGAR.App);
