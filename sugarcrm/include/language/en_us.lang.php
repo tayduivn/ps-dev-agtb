@@ -3684,7 +3684,6 @@ $app_strings = array (
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_ACTIVITY_VIEW_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
-    'LBL_TOP' => 'Top',
     'LBL_FEEDBACK' => 'Feedback',
     'LBL_SUPPORT' => 'Support',
     'LBL_LANGUAGE' => 'Language',
@@ -3952,25 +3951,6 @@ $app_strings = array (
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
     'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
-
-    //for portal system tour
-    'LBL_PORTAL_TOUR_SCREEN1_TITLE' => 'Welcome to Portal Tour',
-    'LBL_PORTAL_TOUR_SCREEN1_BODY' => '<ul class="features"><li class="icon-ok">Faster and Interactive user experience</li><li class="icon-ok">Introducing internationalization</li><li class="icon-ok">Dashboard views to track new and updated Bugs, Cases and Knowledge Base articles</li><li class="icon-ok">Global Search</li><li class="icon-ok">Ability to change password</li></ul><p class="small">And much more!</p><p class="small">For a full list visit the <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">What\'s New in Portal</a>. </p>',
-    'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
-    'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
-    'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
-    'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
-    'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
-    'LBL_PORTAL_TOUR_SCREEN2_TITLE' => 'Dashboard',
-    'LBL_PORTAL_TOUR_SCREEN2_BODY' => '<p>The Dashboards represent your home page. It displays a quick synopsis of your company’s Cases, KB Articles, and Bugs.</p> <p>Click the Sugar cube icon on the top left corner of any Portal page to navigate back to the Dashboard.</p> <p>Each Dashboard shows the five last modified records per module. To view additional records, click on the module link.</p>',
-    'LBL_PORTAL_TOUR_SCREEN3_TITLE' => 'Footer',
-    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Language: When you have selected your preferred language, all labels in the Portal will be translated. Note: Language can only be selected from footer during login.</li><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
-    'LBL_PORTAL_TOUR_SCREEN4_TITLE' => 'Search',
-    'LBL_PORTAL_TOUR_SCREEN4_BODY' => '<p>There are two types of search:</p><ul class="features"><li class="icon-ok">Global Search – located in the navigation bar. Here you can search for Cases, Bugs, and Knowledge Base Documents by their names and numbers.</li> <li class="icon-ok">Specific module Search – located in the top of the list view in each module. <br><img src="../themes/default/images/ppt-search.png" height="200" width="530" style="margin-top: 10px;"><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 311px; top: -147px;"></i></li></ul>',
-    'LBL_PORTAL_TOUR_SCREEN5_TITLE' => 'Profile',
-    'LBL_PORTAL_TOUR_SCREEN5_BODY' => '<p>From the profile page you will, for instance, be able to change password, update email address, and change preferred language. </p>',
-    'LBL_PORTAL_TOUR_SCREEN6_TITLE' => 'You\'re Done!',
-    'LBL_PORTAL_TOUR_SCREEN6_BODY' => 'You can always retake the tour or read <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">documentation</a> for more information.',
 
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
