@@ -1726,6 +1726,10 @@ $app_list_strings = array (
     'between' => 'Is Between',
   ),
     'filter_operators_dom' => array(
+        'multienum' => array(
+            '$contains' => 'is any of',
+            '$not_contains' => 'is not any of',
+        ),
         'enum' => array(
             '$in' => 'is any of',
             '$not_in' => 'is not any of',

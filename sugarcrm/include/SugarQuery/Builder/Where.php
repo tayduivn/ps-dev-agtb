@@ -186,6 +186,24 @@ abstract class SugarQuery_Builder_Where
      *
      * @return SugarQuery_Builder_Where
      */
+    public function notContains($field, $value, $bean = false)
+    {
+        $condition = new SugarQuery_Builder_Condition();
+        $condition->setOperator('DOES NOT CONTAIN')->setField($field)->setValues($value);
+        if ($bean instanceof SugarBean) {
+            $condition->setBean($bean);
+        }
+        $this->conditions[] = $condition;
+        return $this;
+    }
+
+    /**
+     * @param $field
+     * @param $value
+     * @param bool $bean
+     *
+     * @return SugarQuery_Builder_Where
+     */
     public function starts($field, $value, $bean = false)
     {
         $condition = new SugarQuery_Builder_Condition();
