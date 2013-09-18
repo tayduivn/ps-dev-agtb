@@ -16,12 +16,12 @@
      * Level Widget.
      *
      * Extends from EnumField widget adding style property according to specific
-     * levels.
+     * severity.
      */
     extendsFrom: 'EnumField',
 
     /**
-     * An object where its keys map to specific levels and values to matching
+     * An object where its keys map to specific severity and values to matching
      * CSS classes.
      *
      * @property {Object}
@@ -44,9 +44,9 @@
     _render: function () {
         app.view.invokeParent(this, {type: 'field', name: 'enum', method: '_render', platform: 'base'});
 
-        var level = this.model.get(this.name);
-        var levelCss = this._styleMapping[level] || this._styleMapping.default;
+        var severity = this.model.get(this.name);
+        var severityCss = this._styleMapping[severity] || this._styleMapping.default;
 
-        this.getFieldElement().addClass(levelCss);
+        this.getFieldElement().addClass(severityCss);
     }
 })

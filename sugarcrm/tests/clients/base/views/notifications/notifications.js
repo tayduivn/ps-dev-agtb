@@ -36,7 +36,7 @@ describe('Notifications', function () {
 
             expect(view.delay / 60 / 1000).toBe(view._defaultOptions.delay);
             expect(view.limit).toBe(view._defaultOptions.limit);
-            expect(view.levelCss).toBe(view._defaultOptions.level_css);
+            expect(view.severityCss).toBe(view._defaultOptions.severity_css);
         });
 
         it('should initialize collection options with default values', function () {
@@ -56,7 +56,7 @@ describe('Notifications', function () {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'level']
+                fields: ['date_entered', 'id', 'name', 'severity']
             });
         });
     });
@@ -65,7 +65,7 @@ describe('Notifications', function () {
         var app, view, customOptions = {
             delay: 10,
             limit: 8,
-            level_css: {
+            severity_css: {
                 alert: 'cstm-label-alert',
                 information: 'cstm-label-info',
                 other: 'cstm-label-inverse',
@@ -96,7 +96,7 @@ describe('Notifications', function () {
 
             expect(view.delay / 60 / 1000).toBe(customOptions.delay);
             expect(view.limit).toBe(customOptions.limit);
-            expect(view.levelCss).toEqual(customOptions.level_css);
+            expect(view.severityCss).toEqual(customOptions.severity_css);
         });
 
         it('should initialize collection options with metadata overridden values', function () {
@@ -116,7 +116,7 @@ describe('Notifications', function () {
                 },
                 limit: view.limit,
                 myItems: true,
-                fields: ['date_entered', 'id', 'name', 'level']
+                fields: ['date_entered', 'id', 'name', 'severity']
             });
         });
     });
@@ -263,23 +263,23 @@ describe('Notifications', function () {
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve level as a label for non-existent level', function () {
-            var appList, label, level;
+        it('should retrieve severity as a label for non-existent severity', function () {
+            var appList, label, severity;
 
             appList = sinon.collection.stub(app.lang, 'getAppListStrings', function () {
                 return {};
             });
 
-            level = 'non-existent';
-            label = view.getLevelLabel(level);
+            severity = 'non-existent';
+            label = view.getSeverityLabel(severity);
 
             expect(appList).toHaveBeenCalledOnce();
-            expect(label).toBe(level);
+            expect(label).toBe(severity);
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve matching label for existent level', function () {
-            var appList, label, level;
+        it('should retrieve matching label for existent severity', function () {
+            var appList, label, severity;
 
             appList = sinon.collection.stub(app.lang, 'getAppListStrings', function () {
                 return {
@@ -287,29 +287,29 @@ describe('Notifications', function () {
                 };
             });
 
-            level = 'alert';
-            label = view.getLevelLabel(level);
+            severity = 'alert';
+            label = view.getSeverityLabel(severity);
 
             expect(appList).toHaveBeenCalledOnce();
             expect(label).toBe('Alert');
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve an empty string for non-existent level', function () {
-            view.levelCss = {};
+        it('should retrieve an empty string for non-existent severity', function () {
+            view.severityCss = {};
 
-            var css = view.getLevelCss('non-existent');
+            var css = view.getSeverityCss('non-existent');
 
             expect(css).toBe('');
         });
 
         // FIXME: refactor this when data providers support is enabled
-        it('should retrieve a css class for existent level', function () {
-            view.levelCss = {
+        it('should retrieve a css class for existent severity', function () {
+            view.severityCss = {
                 alert: 'label-important'
             };
 
-            var css = view.getLevelCss('alert');
+            var css = view.getSeverityCss('alert');
 
             expect(css).toBe('label-important');
         });
