@@ -13,7 +13,7 @@
 
 ({
     backdropHtml: "<div class='drawer-backdrop'></div>",
-    plugins: ['tooltip'],
+    plugins: ['Tooltip'],
     onCloseCallback: null, //callbacks to be called once drawers are closed
     scrollTopPositions: [], //stores scroll positions for main and side pane
 

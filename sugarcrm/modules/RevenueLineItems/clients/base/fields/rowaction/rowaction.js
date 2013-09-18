@@ -18,7 +18,7 @@
      */
     initialize: function(options) {
         this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push("disable-delete");
+        this.plugins.push('DisableDelete');
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
         this.context.on("record:deleted", function(){
             this.deleteCommitWarning();

@@ -17,7 +17,7 @@
          * Once the attached view contains unsaved changes, it will warn the message to user for confirming
          * (this.hasUnsavedChanges must return true when the view contains unsaved changes)
          */
-        app.plugins.register('editable', ['view'], {
+        app.plugins.register('Editable', ['view'], {
             onAttach: function(component, plugin) {
                 this.editableKeyDowned = _.bind(function(evt) {
                     this.editableHandleKeyDown.call(this, evt, evt.data.field);

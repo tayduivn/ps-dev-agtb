@@ -2,8 +2,8 @@ describe("Taggable Plugin", function() {
     var plugin;
 
     beforeEach(function() {
-        SugarTest.loadPlugin('taggable');
-        plugin = SugarTest.app.plugins._get('taggable', 'view');
+        SugarTest.loadPlugin('Taggable');
+        plugin = SugarTest.app.plugins._get('Taggable', 'view');
     });
 
     describe("unformatTags", function() {

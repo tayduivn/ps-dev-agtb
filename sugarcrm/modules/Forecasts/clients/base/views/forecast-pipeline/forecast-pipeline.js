@@ -1,7 +1,7 @@
 ({
     results: {},
     chart: {},
-    plugins: ['Dashlet','tooltip'],
+    plugins: ['Dashlet', 'Tooltip'],
 
     /**
      * Is the forecast Module setup??

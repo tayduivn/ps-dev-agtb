@@ -10,7 +10,7 @@
     'events': {
         'click .icon-favorite': 'toggle'
     },
-    plugins: ['tooltip'],
+    plugins: ['Tooltip'],
     /**
      * {@inheritdoc}
      *

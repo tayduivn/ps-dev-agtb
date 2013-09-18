@@ -11,17 +11,23 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
+/**
+ * Remove any surrounding anchor tags from content displayed within the list view; leaving just the text. It is
+ * undesirable to allow users to click links that navigate them away from the page when in the context of a modal
+ */
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('list-disable-sort', ['view'], {
+        app.plugins.register('ListRemoveLinks', ['view'], {
             onAttach: function (component, plugin) {
-                component.on('init', function () {
-                    _.each(component.meta.panels, function(panel) {
-                        _.each(panel.fields, function(field) {
-                            field.sortable = false;
-                        });
-                    });
-                }, null, component);
+                var removeLinks = function() {
+                    component.$('a:not(.rowaction)').contents().unwrap();
+                };
+
+                component.on('render', removeLinks, null, component);
+                app.events.on("list:preview:decorate", removeLinks, this);
+            },
+            onDetach: function () {
+                app.events.off("list:preview:decorate", null, this);
             }
         });
     });

@@ -20,7 +20,7 @@
 
     className: "omnibar",
 
-    plugins: ['dragdrop_attachments', 'taggable'],
+    plugins: ['DragdropAttachments', 'Taggable'],
 
     initialize: function(options) {
         // regular expression to find all non-breaking spaces
@@ -42,7 +42,7 @@
     },
 
     /**
-     * Initialize taggable plugin so that it knows which record the tags are
+     * Initialize Taggable plugin so that it knows which record the tags are
      * associated with.
      */
     bindDataChange: function() {

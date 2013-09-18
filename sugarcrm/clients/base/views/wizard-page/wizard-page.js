@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['GridBuilder', 'error-decoration'],
+    plugins: ['GridBuilder', 'ErrorDecoration'],
     /**
      * An abstract WizardPageView.  Wizard pages should extend this and provide
      * field metadata, custom logic, etc.  This view is detached from Wizard

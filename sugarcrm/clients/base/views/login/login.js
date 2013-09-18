@@ -1,5 +1,5 @@
 ({
-    plugins: ['error-decoration'],
+    plugins: ['ErrorDecoration'],
     fallbackFieldTemplate: 'edit',
     /**
      * Login form view.

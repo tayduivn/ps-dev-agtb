@@ -8,7 +8,7 @@
      */
     className: 'filter-view search',
 
-    plugins: ['quicksearchfilter'],
+    plugins: ['QuickSearchFilter'],
 
     events: {
         'click .add-on.icon-remove': function() { this.trigger('filter:clear:quicksearch'); }

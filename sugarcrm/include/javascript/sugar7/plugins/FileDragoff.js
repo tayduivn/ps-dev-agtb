@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('file_dragoff', ['view'], {
+        app.plugins.register('FileDragoff', ['view'], {
             events: {
                 'dragstart .dragoff': 'saveAttachment'
             },

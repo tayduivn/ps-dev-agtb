@@ -12,7 +12,7 @@
  */
 ({
     extendsFrom: 'ImageField',
-    plugins: ['file'],
+    plugins: ['File'],
     /**
      * @override
      * @private

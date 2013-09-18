@@ -4,8 +4,8 @@ describe("List Column Ellipsis Plugin", function() {
     beforeEach(function () {
         app = SugarTest.app;
         // Load plugin directly so completely orthogonal to SUGAR.App
-        SugarTest.loadPlugin("list-column-ellipsis");
-        plugin = app.plugins._get('list-column-ellipsis', 'view');
+        SugarTest.loadPlugin('ListColumnEllipsis');
+        plugin = app.plugins._get('ListColumnEllipsis', 'view');
         plugin._fields = {};
         plugin._fields.visible = [{name: 'email'}];
         plugin.trigger= function() {};

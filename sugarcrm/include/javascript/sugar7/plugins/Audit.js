@@ -1,6 +1,6 @@
 (function(app) {
     app.events.on('app:init', function() {
-        app.plugins.register('audit', ['view'], {
+        app.plugins.register('Audit', ['view'], {
             /**
              * {@inheritDoc}
              *

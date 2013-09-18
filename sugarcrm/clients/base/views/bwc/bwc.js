@@ -20,7 +20,7 @@
     idRegex: new RegExp('record=([^&]*)'),
     actionRegex: new RegExp('action=([^&]*)'),
 
-    plugins: ['editable'],
+    plugins: ['Editable'],
 
     /**
      * Enabled actions for warning unsaved changes.

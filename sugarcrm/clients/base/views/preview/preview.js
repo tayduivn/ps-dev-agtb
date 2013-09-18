@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['ellipsis_inline', 'ToggleMoreLess'],
+    plugins: ['EllipsisInline', 'ToggleMoreLess'],
     fallbackFieldTemplate: 'detail',
     /**
      * Events related to the preview view:

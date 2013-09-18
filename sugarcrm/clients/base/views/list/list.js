@@ -26,7 +26,7 @@
  ********************************************************************************/
 ({
     className: 'list-view',
-    plugins: ['ellipsis_inline'],
+    plugins: ['EllipsisInline'],
 
     /**
      * View that displays a list of models pulled from the context's collection.

@@ -1,5 +1,5 @@
 ({
-    plugins: ['dropdown', 'tooltip'],
+    plugins: ['Dropdown', 'Tooltip'],
     events: {
         'click .dropdown-toggle':'toggleDropdown'
     },

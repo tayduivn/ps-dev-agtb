@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('dragdrop_attachments', ['view'], {
+        app.plugins.register('DragdropAttachments', ['view'], {
             events: {
                 'dragenter .attachable': 'expandNewPost',
                 'dragover .attachable': 'dragoverNewPost',

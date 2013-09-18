@@ -1,5 +1,5 @@
 ({
-    plugins: ['prettify'],
+    plugins: ['Prettify'],
 
     _placeComponent: function(component) {
         this.$('#styleguide').append(component.$el);

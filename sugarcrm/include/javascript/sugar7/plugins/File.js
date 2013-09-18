@@ -13,7 +13,7 @@
 
 (function(app) {
     app.events.on('app:init', function() {
-        app.plugins.register('file', ['field'], {
+        app.plugins.register('File', ['field'], {
             /**
              * Asynchronously uploads files on toggle.
              *

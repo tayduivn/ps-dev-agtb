@@ -23,7 +23,7 @@ describe("ForecastWorksheets.View.RecordList", function() {
             eval(d);
             app.events.trigger('app:init');
         });
-        SugarTest.loadFile("../include/javascript/sugar7/plugins", "dirty-collection", "js", function(d) {
+        SugarTest.loadFile('../include/javascript/sugar7/plugins', 'DirtyCollection', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
@@ -81,16 +81,16 @@ describe("ForecastWorksheets.View.RecordList", function() {
     });
 
     it("should have default recordlist plugins defined", function() {
-        expect(_.indexOf(view.plugins, 'ellipsis_inline')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'list-column-ellipsis')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'error-decoration')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'editable')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'tooltip')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'EllipsisInline')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'ListColumnEllipsis')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'ErrorDecoration')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'Editable')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'Tooltip')).not.toEqual(-1);
     });
 
     it("should have additional plugins defined", function() {
-        expect(_.indexOf(view.plugins, 'cte-tabbing')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'dirty-collection')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'CteTabbing')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'DirtyCollection')).not.toEqual(-1);
     });
 
     describe('beforeRenderCallback', function() {

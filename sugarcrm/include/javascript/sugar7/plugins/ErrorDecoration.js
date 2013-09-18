@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('error-decoration', ['view'], {
+        app.plugins.register('ErrorDecoration', ['view'], {
 
             /**
              * Clears validation errors on start and success.

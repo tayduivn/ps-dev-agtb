@@ -17,7 +17,7 @@
      * @extends View.FlexListView
      */
     extendsFrom: 'FlexListView',
-    plugins: ['ellipsis_inline', 'list-column-ellipsis', 'error-decoration', 'editable', 'tooltip'],
+    plugins: ['EllipsisInline', 'ListColumnEllipsis', 'ErrorDecoration', 'Editable', 'Tooltip'],
 
     /**
      * List of current inline edit models.

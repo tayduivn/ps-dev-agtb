@@ -16,7 +16,7 @@
         /**
          * This plugin disallows mass-deleting for closed won/lost items (for use in Opps and Products)
          */
-        app.plugins.register("disable-massdelete", ["view"], {
+        app.plugins.register('DisableMassdelete', ["view"], {
 
             /**
              * override of parent deleteModels. Removes closed lost/won items from the list to be deleted, and

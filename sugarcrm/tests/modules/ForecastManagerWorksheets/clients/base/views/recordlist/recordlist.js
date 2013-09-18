@@ -23,7 +23,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             eval(d);
             app.events.trigger('app:init');
         });
-        SugarTest.loadFile("../include/javascript/sugar7/plugins", "dirty-collection", "js", function(d) {
+        SugarTest.loadFile('../include/javascript/sugar7/plugins', 'DirtyCollection', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
@@ -80,8 +80,8 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
     });
 
     it("should have additional plugins defined", function() {
-        expect(_.indexOf(view.plugins, 'cte-tabbing')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'dirty-collection')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'CteTabbing')).not.toEqual(-1);
+        expect(_.indexOf(view.plugins, 'DirtyCollection')).not.toEqual(-1);
     });
 
     describe('beforeRenderCallback', function() {

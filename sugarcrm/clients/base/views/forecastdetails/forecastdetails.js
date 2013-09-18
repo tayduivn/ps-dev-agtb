@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet', 'ellipsis_inline'],
+    plugins: ['Dashlet', 'EllipsisInline'],
 
     /**
      * Manager totals for likely_adjusted

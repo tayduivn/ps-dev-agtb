@@ -1,5 +1,5 @@
 ({
-    plugins: ['editable'],
+    plugins: ['Editable'],
 
     events: {
         'click [name=btn-stop]': 'pauseUpdate'

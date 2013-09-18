@@ -1,5 +1,5 @@
 ({
-    plugins: ['dropdown'],
+    plugins: ['Dropdown'],
     events: {
       'click .navbar':'closeOpenDrops'
     },

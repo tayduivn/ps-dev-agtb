@@ -20,7 +20,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
         app = SUGAR.App;
         context = app.context.getContext();
         
-        SugarTest.loadFile("../modules/Forecasts/clients/base/plugins", "disable-massdelete", "js", function(d) {
+        SugarTest.loadFile('../modules/Forecasts/clients/base/plugins', 'DisableMassdelete', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
@@ -43,7 +43,7 @@ describe("Forecasts.Base.Plugins.Disable-massdelete", function() {
     });
     
     afterEach(function() {
-        delete app.plugins.plugins['field']['disable-massdelete'];
+        delete app.plugins.plugins['field']['DisableMassdelete'];
         view = null;
         app = null;
         context = null;
