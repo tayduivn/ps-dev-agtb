@@ -103,12 +103,18 @@
      * 404 Not Found handler. 
      */
     app.error.handleNotFoundError = function(error) {
-        app.controller.loadView({
-            layout: "error",
-            errorType: "404",
-            module: "Error",
-            create: true
-        });    
+        var layout = app.controller.layout;
+        if( !_.isObject(layout.error) ||
+            !_.isFunction(layout.error.handleNotFoundError) ||
+            layout.error.handleNotFoundError(error) !== false
+        ) {
+            app.controller.loadView({
+                layout: "error",
+                errorType: "404",
+                module: "Error",
+                create: true
+            });
+        }
     };
 
     /**

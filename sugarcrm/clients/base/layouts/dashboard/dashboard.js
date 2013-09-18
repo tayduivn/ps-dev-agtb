@@ -10,6 +10,15 @@
 ({
     toggled: false,
     className: 'row-fluid',
+    error: {
+        //Dashboard is a special case where a 404 here shouldn't break the page,
+        //it should just send us back to the default homepage
+        handleNotFoundError : function(error) {
+            app.router.redirect("#Home");
+            //Prevent the default error handler
+            return false;
+        }
+    },
     initialize: function (options) {
 
         var context = options.context,
