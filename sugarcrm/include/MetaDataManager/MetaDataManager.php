@@ -592,26 +592,6 @@ class MetaDataManager
         return array_keys($platforms);
     }
 
-     /*
-     * Factory for layouts.
-     *
-     * @param  string $name - Name of the layout.
-     * @param  array  $args Arguments passed in to the constructor.
-     * @return class  The instantiated version of the layout.
-     */
-    public static function getLayout($name, array $args = array())
-    {
-        $cstmName = 'Custom'.$name;
-        $class = false;
-        if (class_exists($cstmName)) {
-            $class = new $cstmName($args);
-        } elseif (class_exists($name)) {
-            $class = new $name($args);
-        }
-
-        return $class;
-    }
-
     /**
      * Recursive decoder that handles decoding of HTML entities in metadata strings
      * before returning them to a client
