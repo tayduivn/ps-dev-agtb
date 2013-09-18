@@ -371,6 +371,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_TEXT' => 'Select how to populate the forecasting worksheet:',
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_OPPORTUNITIES' => 'Opportunities',
     'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_PRODUCT_LINE_ITEMS' => 'Revenue Line Items',
+    'LBL_REVENUELINEITEM_NAME' => 'Revenue Line Item Name',
     'LBL_FORECASTS_CONFIG_WORKSHEET_LAYOUT_DETAIL_MESSAGE' => 'Worksheets will be populated with:',
 
     // ranges config

@@ -158,7 +158,7 @@ class ParserLabel extends ModuleBuilderParser
             $deployedModule = true ;
             $basepath = "custom/modules/$moduleName/language" ;
             if($forRelationshipLabel){
-            	$basepath = "custom/modules/$moduleName/Ext/Language" ;
+                $basepath = "custom/modules/$moduleName/Ext/Language" ;
             }
             if (! is_dir ( $basepath ))
             {
@@ -168,60 +168,49 @@ class ParserLabel extends ModuleBuilderParser
 
         $filename = "$basepath/$language.lang.php" ;
         if($forRelationshipLabel){
-        	$filename = "$basepath/$language.lang.ext.php" ;
+            $filename = "$basepath/$language.lang.ext.php" ;
      	}
         $dir_exists = is_dir ( $basepath ) ;
 
         $mod_strings = array ( ) ;
-
-        if ($dir_exists)
-        {
-            if (file_exists ( $filename ))
-            {
+        $changed = false;
+        
+        if ($dir_exists) {
+            if (file_exists ( $filename )) {
                 // obtain $mod_strings
                 include ($filename) ;
-            }else if($forRelationshipLabel){
-            	$fh = fopen ($filename, 'a');
-            	fclose($fh);
+            } else if ($forRelationshipLabel) {
+                $fh = fopen ($filename, 'a');
+                fclose($fh);
             }
-        } else
-        {
-            return false ;
+            
+            foreach ( $labels as $key => $value ) {
+                if (! isset ( $mod_strings [ $key ] ) || strcmp ( $value, $mod_strings [ $key ] ) != 0) {
+                        $mod_strings [$key] = to_html(strip_tags(from_html($value))); // must match encoding used in view.labels.php
+                        $changed = true ;
+                }
+            }
+            
+        } else {
+            $changed = true;
         }
-
-        	$changed = false ;
-
-        //$charset = (isset($app_strings['LBL_CHARSET'])) ? $app_strings['LBL_CHARSET'] : $GLOBALS['sugar_config']['default_charset'] ;
-
-	        foreach ( $labels as $key => $value )
-	        {
-            if (! isset ( $mod_strings [ $key ] ) || strcmp ( $value, $mod_strings [ $key ] ) != 0)
-	            {
-                    $mod_strings [$key] = to_html(strip_tags(from_html($value))); // must match encoding used in view.labels.php
-	                $changed = true ;
-	            }
-	        }
-
-	        if ($changed)
-	        {
+        
+        if ($changed) {
             $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: writing new mod_strings to $filename" ) ;
 	            $GLOBALS [ 'log' ]->debug ( "ParserLabel->addLabels: mod_strings=".print_r($mod_strings,true) ) ;
-            if (! write_array_to_file ( "mod_strings", $mod_strings, $filename ))
-	            {
+            if (! write_array_to_file ( "mod_strings", $mod_strings, $filename )) {
                 $GLOBALS [ 'log' ]->fatal ( "Could not write $filename" ) ;
-	            } else
-	            {
+	            } else {
 	                // if we have a cache to worry about, then clear it now
-                if ($deployedModule)
-	                {
-                            SugarCache::cleanOpcodes();
-	                    $GLOBALS [ 'log' ]->debug ( "PaserLabel->addLabels: clearing language cache" ) ;
-	                    $cache_key = "module_language." . $language . $moduleName ;
-	                    sugar_cache_clear ( $cache_key ) ;
-	                    LanguageManager::clearLanguageCache ( $moduleName, $language ) ;
-	                }
-	            }
-	        }
+                    if ($deployedModule) {
+                        SugarCache::cleanOpcodes();
+    	                $GLOBALS [ 'log' ]->debug ( "PaserLabel->addLabels: clearing language cache" ) ;
+    	                $cache_key = "module_language." . $language . $moduleName ;
+    	                sugar_cache_clear ( $cache_key ) ;
+    	                LanguageManager::clearLanguageCache ( $moduleName, $language ) ;
+                    }
+                }
+        }
 
         return true ;
     }

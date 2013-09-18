@@ -128,6 +128,17 @@ class RenameModules
             array('name' => 'LBL_NAME', 'type' => 'singular', 'source' => 'Documents'),
             array('name' => 'LBL_TEMPLATE_TYPE', 'type' => 'singular', 'source' => 'Documents'),
         ),
+        'Forecasts' => array(
+            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_FORECASTS_CONFIG_GENERAL_FORECAST_BY_PRODUCT_LINE_ITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+        ),
+        'ForecastManagerWorksheets' => array(
+            array('name' => 'LBL_MY_OPPS_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        ),
+        'ForecastWorksheets' => array(
+            array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+        ),
         'KBDocuments' => array(
             array('name' => 'LBL_CASES', 'type' => 'plural', 'source' => 'Cases'),
             array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
@@ -182,6 +193,15 @@ class RenameModules
             array('name' => 'LBL_LEAD_SOURCE', 'type' => 'singular', 'source' => 'Leads'),
             array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_OPPORTUNITY_NAME', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'TPL_RLI_CREATE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_TOTAL_RLIS', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'WARNING_NO_DELETE_CLOSED_SELECTED', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+        ),
+        'PdfManager' => array(
+            array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
         'ProductTemplates' => array(
             array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
@@ -197,6 +217,10 @@ class RenameModules
             array('name' => 'LBL_QUOTE_ID', 'type' => 'singular', 'source' => 'Quotes'),
             array('name' => 'LBL_RELATED_PRODUCTS', 'type' => 'plural', 'source' => 'Products'),
             array('name' => 'LBL_URL', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LBL_REVENUELINEITEM_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_REVENUELINEITEM_ID', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_REVENUELINEITEM', 'type' => 'singular', 'source' => 'RevenueLineItems'),
         ),
         'ProjectTask' => array(
             array('name' => 'LBL_PARENT_NAME', 'type' => 'singular', 'source' => 'Projects'),
@@ -220,6 +244,19 @@ class RenameModules
             array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
             array('name' => 'LBL_LIST_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_QUOTE_NUM', 'type' => 'singular', 'source' => 'Quotes'),
+            array('name' => 'LBL_LIST_PRODUCT_NAME', 'type' => 'singular', 'source' => 'Products')
+        ),
+        'RevenueLineItems' => array(
+            array('name' => 'LBL_LIST_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_MODULE_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_DEFAULT_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_RLI_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CONVERT_TO_QUOTE_INFO_MESSAGE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CONVERT_INVALID_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CONVERT_INVALID_RLI_PRODUCT', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
         ),
         'Targets' => array(
             array('name' => 'LBL_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
@@ -740,6 +777,7 @@ class RenameModules
         $replaceKey = 'prev_' . $replacementMetaData['type'];
         $search = html_entity_decode_utf8($replacementLabels[$replaceKey], ENT_QUOTES);
         $replace = $replacementLabels[$replacementMetaData['type']];
+        
         if (!empty($modifier)) {
             $search = call_user_func($modifier, $search);
             $replace = call_user_func($modifier, $replace);
