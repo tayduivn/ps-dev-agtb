@@ -453,6 +453,7 @@
             case 'int':
                 fieldDef.auto_increment = false;
                 break;
+            case 'datetimecombo':
             case 'date':
                 fieldDef.type = 'date';
                 //Flag to indicate the value needs to be formatted correctly
