@@ -94,7 +94,8 @@
 
         var defaultOptions = {
             user_id: app.user.get('id'),
-            display_manager: this.isManager, // default to 'self' view for reps, and 'team' view for managers
+            // !! used here to ensure this is true/false, and not 1/0 as it comes from server to ensure passage for ===
+            display_manager: !!this.isManager, // default to 'self' view for reps, and 'team' view for managers
             selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
             timeperiod_id: o.defaultSelections.timeperiod_id.id,
             timeperiod_label: o.defaultSelections.timeperiod_id.label,
