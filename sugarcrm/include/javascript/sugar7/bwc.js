@@ -115,11 +115,11 @@
         _createRelatedRecordUrlParams: function(parentModel, link) {
             var params = {
                 parent_type: parentModel.module,
-                parent_name: parentModel.get("name"),
+                parent_name: parentModel.get('name') || parentModel.get('full_name'),
                 parent_id: parentModel.get("id"),
                 return_module: parentModel.module,
                 return_id: parentModel.get("id"),
-                return_name: parentModel.get("name")
+                return_name: parentModel.get('name') || parentModel.get('full_name')
             };
             //Set relate field values as part of URL so they get pre-filled
             var fields = app.data.getRelateFields(parentModel.module, link);
