@@ -381,7 +381,7 @@
                 id = o.args[1],
                 meta = app.metadata.getModule(module);
             if (meta && meta.isBwcEnabled) {
-                var redirect = "bwc/index.php?module=" + module
+                var redirect = "bwc/index.php?module=" + module + "&action=index";
                 if (o.route == "record" && id) {
                     redirect += "&action=DetailView&record=" + id;
                 }
