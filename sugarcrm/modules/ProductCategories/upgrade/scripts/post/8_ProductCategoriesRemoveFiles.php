@@ -24,7 +24,7 @@ class SugarUpgradeProductCategoriesRemoveFiles extends UpgradeScript
     {
 
         // we only need to remove these files if the from_version is less than 7.0.0
-        if (version_compare($this->from_version, '7.0.0', '<')) {
+        if (version_compare($this->from_version, '7.0', '<')) {
             // files to delete
             $files = array(
                 'modules/ProductCategories/controller.php',

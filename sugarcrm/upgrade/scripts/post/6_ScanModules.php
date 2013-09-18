@@ -124,7 +124,7 @@ class SugarUpgradeScanModules extends UpgradeScript
 
     public function run()
     {
-        if(version_compare($this->from_version, '7.0.0', '>=')) {
+        if(version_compare($this->from_version, '7.0', '>=')) {
             // no need to run this on 7
             return;
         }
