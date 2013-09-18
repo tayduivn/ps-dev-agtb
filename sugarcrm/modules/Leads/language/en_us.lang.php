@@ -132,7 +132,7 @@ $mod_strings = array (
     'LBL_LIST_DATE_ENTERED' => 'Date Created',
     'LBL_LIST_EMAIL_ADDRESS' => 'Email',
     'LBL_LIST_FIRST_NAME' => 'First Name',
-    'LBL_VIEW_FORM_TITLE' => 'Lead View',    
+    'LBL_VIEW_FORM_TITLE' => 'Lead View',
     'LBL_LIST_FORM_TITLE' => 'Lead List',
     'LBL_LIST_LAST_NAME' => 'Last Name',
     'LBL_LIST_LEAD_SOURCE_DESCRIPTION' => 'Lead Source Description',
@@ -170,7 +170,7 @@ $mod_strings = array (
     'LBL_PRIMARY_ADDRESS_POSTALCODE' => 'Primary Address Postal Code',
     'LBL_PRIMARY_ADDRESS_STATE' => 'Primary Address State',
     'LBL_PRIMARY_ADDRESS_STREET_2'=>'Primary Address Street 2',
-    'LBL_PRIMARY_ADDRESS_STREET_3'=>'Primary Address Street 3',   
+    'LBL_PRIMARY_ADDRESS_STREET_3'=>'Primary Address Street 3',
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
     'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{full_name}}</a>.',
@@ -182,7 +182,7 @@ $mod_strings = array (
     'LBL_MODIFIED'=>'Modified By',
 	'LBL_MODIFIED_ID'=>'Modified By Id',
 	'LBL_CREATED'=>'Created By',
-	'LBL_CREATED_ID'=>'Created By Id',    
+	'LBL_CREATED_ID'=>'Created By Id',
     'LBL_SEARCH_FORM_TITLE' => 'Lead Search',
     'LBL_SELECT_CHECKED_BUTTON_LABEL' => 'Select Checked Leads',
     'LBL_SELECT_CHECKED_BUTTON_TITLE' => 'Select Checked Leads',
@@ -231,7 +231,7 @@ $mod_strings = array (
     'LBL_ASSISTANT' => 'Assistant',
     'LBL_REGISTRATION' => 'Registration',
     'LBL_MESSAGE' => 'Please enter your information below. Information and/or an account will be created for you pending approval.',
-    'LBL_SAVED' => 'Thank you for registering. Your account will be created and someone will contact you shortly.', 
+    'LBL_SAVED' => 'Thank you for registering. Your account will be created and someone will contact you shortly.',
     'LBL_CLICK_TO_RETURN' => 'Return to Portal',
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
@@ -283,12 +283,9 @@ $mod_strings = array (
 	'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
 	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
     //Dashlet
-    'LBL_DASHLET_LISTVIEW_NAME' => 'My Leads',
-    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your leads',
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
 
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',
     'TPL_BROWSER_SUGAR7_RECORD_TITLE' => '{{#if last_name}}{{#if first_name}}{{first_name}} {{/if}}{{last_name}} &raquo; {{/if}}{{module}} &raquo; {{appId}}',
 );
-?>

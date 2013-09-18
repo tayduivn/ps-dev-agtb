@@ -181,9 +181,4 @@ $mod_strings = array (
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_FILENAME' => 'Attachment',
-
-    //Dashlet
-    'LBL_DASHLET_LISTVIEW_NAME' => 'My Accounts',
-    'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Listing of your accounts',
 );
-?>

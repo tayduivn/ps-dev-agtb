@@ -51,9 +51,8 @@
      */
     _render: function() {
         var self = this;
-        var options = this.items = this.items || this.enumOptions;
-        if(_.isUndefined(options)){
-            options = this.items = this.loadEnumOptions(false, function(){
+        if(_.isUndefined(this.items)){
+            this.loadEnumOptions(false, function() {
                 //Re-render widget since we have fresh options list
                 if(!this.disposed){
                     this.render();
@@ -72,7 +71,7 @@
             }, this);
             this.items = obj;
         }
-        var optionsKeys = _.isObject(options) ? _.keys(options) : [];
+        var optionsKeys = _.isObject(this.items) ? _.keys(this.items) : [];
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         if (this.defaultOnUndefined && !this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))) {
@@ -137,17 +136,17 @@
     loadEnumOptions: function(fetch, callback) {
         var self = this,
             meta = app.metadata.getModule(this.module, 'fields'),
-            fieldMeta = meta && meta[this.name] ? meta[this.name] : this.def,
-            items = this.def.options || fieldMeta.options;
+            fieldMeta = meta && meta[this.name] ? meta[this.name] : this.def;
+        this.items = this.def.options || fieldMeta.options;
         fetch = fetch || false;
-        if (fetch || _.isUndefined(items)) {
+        if (fetch || _.isUndefined(this.items)) {
             var _key = 'request:' + this.module + ':' + this.name;
             //if previous request is existed, ignore the duplicate request
             if (this.context.get(_key)) {
                 var request = this.context.get(_key);
                 request.xhr.done(_.bind(function(o) {
-                    if (this.enumOptions !== o) {
-                        this.enumOptions = o;
+                    if (this.items !== o) {
+                        this.items = o;
                         callback.call(this);
                     }
                 }, this));
@@ -155,9 +154,9 @@
                 var request = app.api.enumOptions(self.module, self.name, {
                     success: function(o) {
                         if(self.disposed) { return; }
-                        if (self.enumOptions !== o) {
-                            self.enumOptions = o;
-                            fieldMeta.options = self.enumOptions;
+                        if (self.items !== o) {
+                            self.items = o;
+                            fieldMeta.options = self.items;
                             self.context.unset(_key);
                             callback.call(self);
                         }
@@ -166,13 +165,9 @@
                 });
                 this.context.set(_key, request);
             }
-        } else {
-            if (_.isString(items)) {
-                items = app.lang.getAppListStrings(items);
-            }
-            self.enumOptions = items;
+        } else if (_.isString(this.items)) {
+            this.items = app.lang.getAppListStrings(this.items);
         }
-        return items;
     },
 
     /**

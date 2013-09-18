@@ -26,15 +26,13 @@ $viewdefs['ProspectLists']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'display_columns' =>
                                 array(
                                     'name',
                                     'billing_address_country',
                                     'billing_address_city',
                                 ),
-                                'my_items' => '1',
-                                'limit' => 5,
                             ),
                             'context' =>
                             array(
@@ -50,4 +48,3 @@ $viewdefs['ProspectLists']['base']['layout']['list-dashboard'] = array(
     ),
     'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
 );
-

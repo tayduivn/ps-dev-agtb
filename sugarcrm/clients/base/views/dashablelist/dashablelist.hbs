@@ -13,31 +13,26 @@
  */
 }}
 {{#each meta.panels}}
-<table class="table table-striped dataTable">
-    <thead>
-    <tr>
-        {{#each fields}}
-            <th class="{{#isSortable ../../module this}}sorting sorting_{{#eq ../../../collection.orderBy.field name}}{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}"
-                 data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                 <span>
-                    {{str label ../../module}}
-                 </span>
-            </th>
-        {{/each}}
-    </tr>
-    </thead>
-    <tbody>
-    {{#each ../collection.models}}
-    <tr name="{{module}}_{{attributes.id}}" class="single">
-        {{#each ../fields}}
-            <td>
-              {{field ../../../this model=../this template=../../../this.viewName}}
-            </td>
-        {{/each}}
-    </tr>
-    {{/each}}
-    </tbody>
-</table>
+    <table class="table table-striped dataTable">
+        <thead>
+            <tr>
+                {{#each fields}}
+                    <th class="{{#isSortable ../../module this}}sorting sorting_{{#eq ../../../collection.orderBy.field name}}{{../../../../orderBy.direction}}{{/eq}} orderBy{{name}}{{/isSortable}}" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
+                        <span>{{str label ../../module}}</span>
+                    </th>
+                {{/each}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#each ../collection.models}}
+                <tr class="single">
+                    {{#each ../fields}}
+                        <td>{{field ../../../this model=../this template=../../../this.viewName}}</td>
+                    {{/each}}
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
 {{/each}}
 {{#unless collection.length}}
     <div class="block-footer">

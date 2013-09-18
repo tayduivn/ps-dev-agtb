@@ -36,7 +36,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'module' => 'Contacts',
                                 'display_columns' =>
                                 array(
@@ -45,7 +45,6 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                                     'phone_work',
                                     'title',
                                 ),
-                                'my_items' => '1',
                                 'limit' => 15,
                             ),
                             'context' =>
