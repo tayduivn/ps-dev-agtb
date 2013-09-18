@@ -26,7 +26,7 @@ $viewdefs['Home']['base']['view']['about-language-packs'] = array(
             'url' => 'http://www.creasoft.biz',
         ),
         array(
-            'language' => 'Catalan',
+            'language' => 'Catalan (Spanish)',
             'name' => 'REDK Ingenieria del Software, SL',
             'url' => 'http://redk.net',
         ),
@@ -39,11 +39,6 @@ $viewdefs['Home']['base']['view']['about-language-packs'] = array(
             'language' => 'Czech',
             'name' => 'ExtendIT',
             'url' => 'http://extendit.cz',
-        ),
-        array(
-            'language' => 'Danish',
-            'name' => 'Bellcom',
-            'url' => 'http://www.bellcom.dk',
         ),
         array(
             'language' => 'Dutch',
@@ -71,11 +66,6 @@ $viewdefs['Home']['base']['view']['about-language-packs'] = array(
             'url' => 'http://www.qualisys.gr',
         ),
         array(
-            'language' => 'Hebrew',
-            'name' => 'Menahem Lurie Consultancy and IT Management',
-            'url' => 'http://www.cyta.co.il',
-        ),
-        array(
             'language' => 'Hungarian',
             'name' => 'Infoteka',
             'url' => 'http://www.infoteka.hu',
@@ -87,8 +77,8 @@ $viewdefs['Home']['base']['view']['about-language-packs'] = array(
         ),
         array(
             'language' => 'Japanese',
-            'name' => 'OSSCRM',
-            'url' => 'http://www.osscrm.com',
+            'name' => 'CBA',
+            'url' => 'http://www.cba-japan.com',
         ),
         array(
             'language' => 'Korean',
@@ -157,8 +147,8 @@ $viewdefs['Home']['base']['view']['about-language-packs'] = array(
         ),
         array(
             'language' => 'Turkish',
-            'name' => 'Ultima',
-            'url' => 'http://ultima.com.tr',
+            'name' => 'Advocotech',
+            'url' => 'http://advocotek.com',
         ),
     ),
 );
