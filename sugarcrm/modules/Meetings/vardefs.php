@@ -427,9 +427,9 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
       'vname'=>'LBL_QUOTES',
   ),    
 //END SUGARCRM flav=pro ONLY
-  'case' =>
+  'cases' =>
   array (
-  	'name' => 'case',
+  	'name' => 'cases',
     'type' => 'link',
     'relationship' => 'case_meetings',
     'source'=>'non-db',

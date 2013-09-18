@@ -268,9 +268,9 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
         'source' => 'non-db',
         'vname' => 'LBL_PROJECTS'
     ),
-  'case' =>
+  'cases' =>
   array (
-  	'name' => 'case',
+  	'name' => 'cases',
     'type' => 'link',
     'relationship' => 'case_calls',
     'source'=>'non-db',
