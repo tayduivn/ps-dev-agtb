@@ -71,7 +71,7 @@
         }
         if (this.model.isFavorite()) {
             star.addClass('active');
-            this.context.trigger("favorite:active");
+            this.model.trigger("favorite:active");
         }
         else {
             star.removeClass('active');
