@@ -250,12 +250,24 @@
     overflow-y: auto;
   }
 
-  .touch #content {
-    top: 47px;
+  .dashboard {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    overflow-x: visible;
+    overflow-y: visible;
   }
 
+  .touch .dashboard {
+    padding-top: 0 !important;
+    overflow-x: visible;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch
+  }
+
+  // Homepage dashboard
   #content > .row-fluid > .dashboard { /* specific selector to avoid applying it to .side-pane dashboard */
-    padding-top: 61px;
+    padding-top: 61px !important;
     .dashlets.row-fluid > li {
       width: 100%;
       .widget-container {
@@ -270,13 +282,10 @@
     }
   }
 
-  .touch #content > .row-fluid > .dashboard {
-    padding-top: 61px !important;
-  }
-
   #portal #content > .row-fluid > .dashboard {
     padding-top: 0;
   }
+
 
   .main-pane.span8,
   .main-pane.span12 {
@@ -313,18 +322,6 @@
 
   .headerpane .drawerTrig {
     display: none;
-  }
-
-  .dashboard {
-    position: relative;
-    top: auto;
-    bottom: auto;
-  }
-
-  .touch .dashboard {
-    overflow-x: auto;
-    top: auto;
-    padding-top: 0 !important;
   }
 
   .row-fluid .main-pane.span8 .headerpane {
