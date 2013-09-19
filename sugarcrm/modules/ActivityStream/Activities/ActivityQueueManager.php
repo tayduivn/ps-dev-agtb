@@ -78,7 +78,7 @@ class ActivityQueueManager
             // TODO: Don't special case the 'installing' case. This can be
             // removed when we don't need to disable the activity stream when
             // installing. ETA: SugarCore 7.1, see MAR-1314.
-            $isEnabled = ($GLOBALS['installing'] || self::isActivityStreamEnabled()) && self::isAuditable($bean);
+            $isEnabled = (!empty($GLOBALS['installing']) || self::isActivityStreamEnabled()) && self::isAuditable($bean);
         }
         return $isEnabled;
     }
