@@ -100,6 +100,9 @@
 
                 if (text && (text.length > 0)) {
                     html = text.replace(tagRegExp, function(str, module, id, name) {
+                        // The backend mangles special characters, so we must
+                        // tell Handlebars that the string is safe.
+                        name = new Handlebars.SafeString(name);
                         return tagTemplate({module: module, id: id, name: name});
                     });
                 }
