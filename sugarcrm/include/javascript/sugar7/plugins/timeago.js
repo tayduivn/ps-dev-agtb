@@ -8,7 +8,9 @@
                             logger: SUGAR.App.logger,
                             date: SUGAR.App.date,
                             lang: SUGAR.App.lang,
-                            template: SUGAR.App.template
+                            template: SUGAR.App.template,
+                            dateFormat: app.user.getPreference('datepref'),
+                            timeFormat: app.user.getPreference('timepref')
                         });
                     }
                 });
