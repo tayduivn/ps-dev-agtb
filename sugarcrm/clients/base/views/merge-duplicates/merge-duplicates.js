@@ -24,7 +24,7 @@
         'click [data-action=more]' : 'toggleMoreLess',
         'click [data-action=less]' : 'toggleMoreLess',
         'click [data-mode=preview]' : 'togglePreview',
-        'click [data-action=copy]' : 'copy',
+        'click [data-action=copy]' : 'triggerCopy',
     },
 
     /**
@@ -770,22 +770,15 @@
     },
 
     /**
-     * Copy value from selected field to primary record.
+     * Event handler for radio box controls.
      *
-     * Copy additional fields for cases:
-     * 1. field type is 'relate' and 'parent' (def.id_name)
-     *     - def.id_name contains field name for id of related.
-     * 2. field type is 'parent' (def.type_name)
-     *     - def.type_name contains field name for type of related.
-     *
-     * @param {Event} evt
+     * @param {Event} evt Mouse click event.
      */
-    copy: function(evt) {
+    triggerCopy: function(evt) {
         var recordId = this.$(evt.currentTarget).data('record-id'),
             fieldName = this.$(evt.currentTarget).data('field-name'),
             fieldDefs = app.metadata.getModule(this.module).fields,
-            model,
-            defs;
+            model;
 
         if (_.isUndefined(this.primaryRecord) ||
             _.isUndefined(this.primaryRecord.id) ||
@@ -805,15 +798,73 @@
             return;
         }
 
-        defs = fieldDefs[fieldName];
-        _.each(this.relatedFieldsMap, function(relatedField) {
-            if (!_.isUndefined(defs[relatedField]) &&
-                !_.isUndefined((fieldDefs[defs[relatedField]].name))
-            ) {
-                this.primaryRecord.set(defs[relatedField], model.get(defs[relatedField]));
-            }
-        }, this);
+        if (model === this.primaryRecord) {
+            this.revert(fieldName);
+        } else {
+            this.copy(fieldName, model);
+        }
+    },
+
+    /**
+     * Copy value from selected field to primary record.
+     * Also copy additional fields.
+     *
+     * @param {String} fieldName Name of field to copy.
+     * @param {Data.Bean} model Model to copy from.
+     */
+    copy: function(fieldName, model) {
+        this._setRelatedFields(fieldName, model);
         this.primaryRecord.set(fieldName, model.get(fieldName));
+    },
+
+    /**
+     * Revert value of field to latest sync state.
+     *
+     * @param {String} fieldName Name of field to revert.
+     */
+    revert: function(fieldName) {
+        var syncedAttributes = this.primaryRecord.getSyncedAttributes();
+
+        this._setRelatedFields(fieldName, this.primaryRecord, true);
+        this.primaryRecord.set(
+            fieldName,
+            syncedAttributes[fieldName] || this.primaryRecord.get(fieldName)
+        );
+    },
+
+    /**
+     * Copy additional fields to primary model.
+     *
+     * Cases:
+     * 1. field type is 'relate' and 'parent' (def.id_name)
+     *     - def.id_name contains field name for id of related.
+     * 2. field type is 'parent' (def.type_name)
+     *     - def.type_name contains field name for type of related.
+     *
+     * @param {String} fieldName Name of main field to copy.
+     * @param {Data.Bean} model Model from which values should be coped.
+     * @param {Boolean} synced Use last synced attributes of model for copy or not.
+     * @protected
+     */
+    _setRelatedFields: function(fieldName, model, synced) {
+        synced = synced || false;
+
+        var fieldDefs = app.metadata.getModule(this.module).fields,
+            defs = fieldDefs[fieldName],
+            syncedAttributes = synced ? model.getSyncedAttributes() : {};
+
+        _.each(this.relatedFieldsMap, function(relatedField) {
+            if (_.isUndefined(defs[relatedField]) ||
+                _.isUndefined(fieldDefs[defs[relatedField]].name)
+            ) {
+                return;
+            }
+
+            this.primaryRecord.set(
+                defs[relatedField],
+                syncedAttributes[defs[relatedField]] || model.get(defs[relatedField])
+            );
+        }, this);
     },
 
     /**
