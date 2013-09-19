@@ -179,7 +179,7 @@ function _run_sql_file($filename) {
 
     $lastsemi   = strrpos($contents, ';') ;
     $contents   = substr($contents, 0, $lastsemi);
-    $queries    = split(';', $contents);
+    $queries    = explode(';', $contents);
     $db         = DBManagerFactory::getInstance();
 
 	foreach($queries as $query){
@@ -211,7 +211,7 @@ function run_sql_file_for_oracle($filename) {
 
 	$lastsemi   = strrpos($contents, ';') ;
 	$contents   = substr($contents, 0, $lastsemi);
-	$queries    = split(';', $contents);
+	$queries    = explode(';', $contents);
 	$db         = DBManagerFactory::getInstance();
 
 	foreach($queries as $query) {
