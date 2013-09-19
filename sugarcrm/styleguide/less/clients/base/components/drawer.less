@@ -50,7 +50,6 @@ body.noscroll {
 .drawer.inactive {
     .main-pane {
         position: relative;
-        padding-top: 0 !important; //required to override padding-top position changes made by javascript
         top: 5px;
     }
     .side-pane.active {
@@ -80,6 +79,9 @@ body.noscroll {
         }
         .headerpane {
             width: 100%;
+        }
+        .main-pane {
+            margin-top: 0;
         }
     }
 }
