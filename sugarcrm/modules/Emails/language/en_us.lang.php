@@ -205,7 +205,7 @@ $mod_strings = array (
     "LBL_COMPOSE_ADDRESSBOOK"   => "Address Book",
 
 	'NTC_REMOVE_INVITEE'		=> 'Are you sure you want to remove this recipient from the email?',
-	'WARNING_SETTINGS_NOT_CONF'	=> 'Warning: Your email settings are not correctly configured to send email.',
+	'WARNING_SETTINGS_NOT_CONF'	=> 'Your email settings are not correctly configured to send email. An SMTP server must be configured in <a href="#bwc/index.php?module=EmailMan&action=config">Email Settings</a>.',
 	'WARNING_NO_UPLOAD_DIR'		=> 'Attachments may fail: No value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
 	'WARNING_UPLOAD_DIR_NOT_WRITABLE'	=> 'Attachments may fail: An incorrect or unusable value for "upload_tmp_dir" was detected.  Please correct this in your php.ini file.',
     'LBL_MESSAGE_UID'           => 'Message UID',
