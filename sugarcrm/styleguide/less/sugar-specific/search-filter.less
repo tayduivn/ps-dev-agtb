@@ -424,14 +424,13 @@
   }
 }
 .search-filter-dropdown.select2-drop.select2-drop-active {
-  .box-shadow(none);
+  .box-shadow(0px 0px 1px 0px @gray);//uiux-1172, using box-shadow over border because of artifacts
   .border-radius(2px);
-  border-color: @grayLight;
 }
 
 // dropdown menu for filter pills
 .search-filter-dropdown {
-  border: 1px solid @grayLight;
+  border: 0px none;
   width: auto;
   margin-top: 5px;
   .result-selected {
