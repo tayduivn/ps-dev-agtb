@@ -181,6 +181,7 @@ $nonStandardModules = array (
     //'Tracker',
 );
 
+// TODO: Remove the following. (See MAR-1314)
 // Disable the activity stream from creating messages while installing.
 Activity::disable();
 
@@ -672,6 +673,7 @@ $api->getLanguage($rest, array('lang' => 'en_us'));
 $api->getPublicMetadata($rest, array());
 $api->getPublicLanguage($rest, array('lang' => 'en_us'));
 
+// TODO: Remove the following. (See MAR-1314)
 // Restore the activity stream behaviour.
 Activity::enable();
 

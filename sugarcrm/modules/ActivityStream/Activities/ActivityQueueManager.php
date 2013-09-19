@@ -74,8 +74,11 @@ class ActivityQueueManager
         $isEnabled = false;
         $bean = BeanFactory::getBean($moduleName);
 
-        if($bean) {
-            $isEnabled = self::isActivityStreamEnabled() && self::isAuditable($bean);
+        if ($bean) {
+            // TODO: Don't special case the 'installing' case. This can be
+            // removed when we don't need to disable the activity stream when
+            // installing. ETA: SugarCore 7.1, see MAR-1314.
+            $isEnabled = ($GLOBALS['installing'] || self::isActivityStreamEnabled()) && self::isAuditable($bean);
         }
         return $isEnabled;
     }
