@@ -8,7 +8,7 @@
      */
     extendsFrom: 'RecordlistView',
     fallbackFieldTemplate: 'list',
-    plugins: ['EllipsisInline', 'ErrorDecoration', 'Editable'],
+    plugins: ['ErrorDecoration', 'Editable'],
 
     contextEvents: {
         "list:editall:fire": "toggleEdit",

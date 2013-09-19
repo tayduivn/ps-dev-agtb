@@ -7,7 +7,7 @@
         {{/if}}
     </a>
 {{else}}
-    <div class="label label-module label-{{model.attributes.display_parent_type}} pull-left" rel="tooltip" data-container="body" data-placement="right" data-title="{{moduleIconToolTip model.attributes.display_parent_type}}">
+    <div class="label label-module label-{{model.attributes.display_parent_type}} pull-left" rel="tooltip" data-placement="right" title="{{moduleIconToolTip model.attributes.display_parent_type}}">
         {{moduleIconLabel model.attributes.display_parent_type}}
     </div>
 {{/eq}}
@@ -53,10 +53,10 @@
 </ul>
 {{#unless readonly}}
     <div class="actions btn-group">
-        <a class="btn btn-mini comment-btn" rel="tooltip" data-container="body" data-title="{{str 'LBL_COMMENT'}}">
+        <a class="btn btn-mini comment-btn" rel="tooltip" title="{{str 'LBL_COMMENT'}}">
             <i class="icon-comment"></i>
         </a>
-        <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" data-container="body" data-title="{{str preview.label}}" data-module="{{model.attributes.display_parent_type}}" data-id="{{model.attributes.display_parent_id}}">
+        <a class="btn btn-mini preview-btn {{#unless preview.enabled}}disabled{{/unless}}" rel="tooltip" title="{{str preview.label}}" data-module="{{model.attributes.display_parent_type}}" data-id="{{model.attributes.display_parent_id}}">
             <i class="icon-eye-open"></i>
         </a>
     </div>

@@ -35,8 +35,8 @@
         {{#if isManager}}
         <div id="{{cid}}_mgr_toggle" class="span3">
             <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                <button class="btn" rel="tooltip" data-container="body" data-type="self" data-original-title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="top"><i class="icon-user"></i></button>
-                <button class="btn active" rel="tooltip" data-container="body" data-type="team" data-original-title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="top"><i class="icon-group"></i></button>
+                <button class="btn active" rel="tooltip" data-type="self" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-user"></i></button>
+                <button class="btn" rel="tooltip" data-type="team" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-group"></i></button>
             </div>
         </div>
         {{/if}}

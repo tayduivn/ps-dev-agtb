@@ -1,4 +1,5 @@
 ({
+    plugins: ['EllipsisInline'],
     /**
      * @override
      * @param options

@@ -20,6 +20,7 @@
         'click input[name="check"]': 'check',
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected'
     },
+    plugins: ['Tooltip'],
     fields: null, //action button fields
     actionDropDownTag: ".dropdown-toggle",
     fieldTag: "input[name=check]",

@@ -1,5 +1,5 @@
 <li class="dropdown notification-list"
-                rel="Tooltip"
+                rel="tooltip"
                 title="{{str "LBL_NOTIFICATIONS"}}"
                 data-placement="bottom">
     <div class="btn-group">
@@ -15,7 +15,7 @@
                     <li><a class="row-fluid"
                            href="#{{buildRoute model=this action="detail"}}"><span
                             class="span8 ellipsis_inline"
-                            data-original-title="{{this.attributes.name}}"
+                            title="{{this.attributes.name}}"
                             data-placement="bottom"><span
                             class="label {{this.attributes.severityCss}}">{{this.attributes.severityLabel}}</span>{{this.attributes.name}}</span>
                         <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>

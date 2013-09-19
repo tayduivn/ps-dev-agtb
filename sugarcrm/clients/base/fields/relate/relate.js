@@ -14,7 +14,7 @@
     allow_single_deselect: true,
     minChars: 1,
     fieldTag: 'input.select2',
-    plugins: ['QuickSearchFilter', 'Tooltip'],
+    plugins: ['QuickSearchFilter', 'EllipsisInline'],
     /**
      * Initializes field and binds all function calls to this
      * @param {Object} options

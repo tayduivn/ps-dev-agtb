@@ -402,6 +402,8 @@
      * @private
      */
     _createTabAndBackdrop: function($top, $bottom) {
+        var $drawerTab;
+
         //add the expand tab and the backdrop to the top drawer
         this.expandTpl = app.template.getLayout(this.name + '.expand');
         this.expandTabHtml = this.expandTpl();
@@ -410,16 +412,12 @@
             .append(this.expandTabHtml)
             .append(this.backdropHtml);
 
-        $bottom.find('.drawer-tab [rel="tooltip"]')
-            .on('mouseenter', _.bind(function(event) {
-                this.showTooltip(event,$bottom);
-        }, this))
-            .on('mouseleave', _.bind(function(event) {
-                this.hideTooltip(event,$bottom);
-        }, this));
+        //add tooltip
+        $drawerTab = $bottom.find('.drawer-tab');
+        this.addPluginTooltips($drawerTab);
 
         //add expand/collapse tab behavior
-        $bottom.find('.drawer-tab').on('click', _.bind(function(event) {
+        $drawerTab.on('click', _.bind(function(event) {
             if ($('i', event.currentTarget).hasClass('icon-chevron-up')) {
                 this._collapseDrawer($top, $bottom);
             } else {
@@ -436,9 +434,12 @@
      */
     _removeTabAndBackdrop: function($drawer) {
         //remove drawer tab
-        $drawer.find('.drawer-tab')
+        var $drawerTab = $drawer.find('.drawer-tab')
             .off('click')
             .remove();
+
+        //remove tooltip
+        this.removePluginTooltips($drawerTab);
 
         //remove backdrop
         $drawer.find('.drawer-backdrop')
@@ -567,13 +568,7 @@
         $(window).off('resize.drawer');
         app.view.View.prototype._dispose.call(this);
     },
-    showTooltip: function(event,$bottom) {
-        $bottom.find('.drawer-tab [rel="tooltip"]').tooltip("show");
-    },
 
-    hideTooltip: function(event,$bottom) {
-        $bottom.find('.drawer-tab [rel="tooltip"]').tooltip("hide");
-    },
     /**
      * Resize the height of the drawer by expanding.
      */

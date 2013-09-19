@@ -30,10 +30,10 @@
     {{#each value}}
         <div class="row-fluid file-field">
             {{#eq mimeType 'image'}}
-                <a class="span10 ellipsis_inline" href="{{url}}" target="_blank">{{name}}</a>
+                <a class="span10 ellipsis_inline" data-placement="bottom" title="{{name}}" href="{{url}}" target="_blank">{{name}}</a>
             {{/eq}}
             {{#notEq mimeType 'image'}}
-                <a class="span10 ellipsis_inline" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
+                <a class="span10 ellipsis_inline" data-placement="bottom" title="{{name}}" href="javascript:void(0);" data-url="{{url}}" data-action="download">{{name}}</a>
             {{/notEq}}
             <button class="btn icon-remove-sign" data-action="delete"></button>
         </div>

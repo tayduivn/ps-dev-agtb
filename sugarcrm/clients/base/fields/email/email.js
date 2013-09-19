@@ -40,6 +40,7 @@
         opt_out: {lbl: "LBL_EMAIL_OPT_OUT", cl: "opted-out"},
         invalid_email: {lbl: "LBL_EMAIL_INVALID", cl: "invalid"}
     },
+    plugins: ['EllipsisInline', 'Tooltip'],
     initialize: function(options) {
         options     = options || {};
         options.def = options.def || {};
@@ -81,8 +82,6 @@
     removeExistingAddress: function(evt) {
         if (!evt) return;
 
-        this._removeTooltips(evt);
-
         var $deleteButtons = this.$('.removeEmail'),
             $deleteButton = this.$(evt.currentTarget),
             index = $deleteButtons.index($deleteButton);
@@ -90,8 +89,6 @@
     },
     toggleExistingAddressProperty: function(evt) {
         if (!evt) return;
-
-        this._removeTooltips(evt);
 
         var $property = this.$(evt.currentTarget),
             property = $property.data('emailproperty'),
@@ -247,18 +244,6 @@
      * @param {String} fieldName field name.
      */
     bindDomChange: function() {
-        // Bind all tooltips on page
-        function bindAll(sel) {
-            this.$(sel).each(function (index) {
-                $(this).tooltip({
-                    placement:"bottom"
-                });
-            });
-        }
-
-        bindAll('.btn-edit');
-        bindAll('.addEmail');
-        bindAll('.removeEmail');
         if(this.tplName === 'list-edit') {
             app.view.Field.prototype.bindDomChange.call(this);
         }
@@ -418,25 +403,5 @@
                 }
             }
         });
-    },
-    /**
-     * Destroy the tooltips open on this button because they wont go away if we rerender
-     */
-    _removeTooltips: function(evt) {
-        var $el = this.$(evt.currentTarget);
-        if (_.isFunction($el.tooltip)) $el.tooltip('hide');
-    },
-    unbindDom: function() {
-        // Unbind all tooltips on page
-        var unbindTooltips = _.bind(function(sel) {
-            this.$(sel).each(function() {
-                $(this).tooltip('destroy');
-            });
-        }, this);
-        unbindTooltips('.btn-edit');
-        unbindTooltips('.addEmail');
-        unbindTooltips('.removeEmail');
-
-        app.view.Field.prototype.unbindDom.call(this);
     }
 })

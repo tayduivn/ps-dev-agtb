@@ -20,7 +20,7 @@
  * @class View.Views.BaseAttachmentsView
  */
 ({
-    plugins: ['Dashlet', 'Timeago', 'Tooltip'],
+    plugins: ['Dashlet', 'Timeago'],
     events: {
         'click [name=show_more_button]' : 'showMore',
         'click [data-event=create_button]': 'openCreateDrawer',

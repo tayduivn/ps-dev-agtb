@@ -1,8 +1,6 @@
 ({
     events: {
-        'click .btn.layout' : 'layoutClicked',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click .btn.layout' : 'layoutClicked'
     },
     plugins: ['Tooltip'],
     extendsFrom: 'ButtonField',
@@ -94,13 +92,5 @@
                 this.model.changed = {};
             }
         }
-    },
-
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
     }
 })

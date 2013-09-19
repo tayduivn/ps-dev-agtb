@@ -36,7 +36,7 @@
         'click [data-action=delete]': 'deleteFile'
     },
     fileUrl: '',
-    plugins: ['File'],
+    plugins: ['File','EllipsisInline'],
     /**
      * Handler for delete file control
      *

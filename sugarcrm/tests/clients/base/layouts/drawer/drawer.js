@@ -274,6 +274,7 @@ describe("Drawer Layout", function() {
     describe('Close immediately', function() {
         it('Should remove drawers every time it is called', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
 
             drawer.open({
                 layout: {
@@ -306,6 +307,7 @@ describe("Drawer Layout", function() {
         it('Should call the onClose callback function', function() {
             var spy = sinonSandbox.spy();
             sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
 
             drawer.open({
                 layout: {
@@ -325,6 +327,7 @@ describe("Drawer Layout", function() {
 
         it('Should still have transition class on the drawer afterwards', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
 
             drawer.open({
                 layout: {
@@ -348,6 +351,7 @@ describe("Drawer Layout", function() {
 
         it('Should remove scroll positions that has been closed', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', $.noop());
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
 
             drawer.open({
                 layout: {
@@ -379,6 +383,8 @@ describe("Drawer Layout", function() {
     describe('Load', function() {
         it('Should replace the top-most drawer', function() {
             sinonSandbox.stub(drawer, '_animateOpenDrawer', function(){});
+            sinonSandbox.stub(drawer, '_createTabAndBackdrop', function(){});
+            sinonSandbox.stub(drawer, '_removeTabAndBackdrop', function(){});
 
             drawer.open({
                 layout: {

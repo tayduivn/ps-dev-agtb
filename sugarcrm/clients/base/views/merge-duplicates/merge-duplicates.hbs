@@ -16,7 +16,7 @@
     <span class="record-name" data-container="primary-title"></span>
     <button class="btn btn-link btn-invisible pull-right"
             rel="tooltip" data-placement="bottom" data-toggle="proto"
-            data-mode="preview" data-original-title="Preview">
+            data-mode="preview" title="{{str 'LBL_PREVIEW'}}">
         <i class="icon-eye-open"></i>
     </button>
 </h4>
@@ -30,7 +30,7 @@
                             {{#each fields}}
                                 <div class="merge-row merge-row-field-{{type}}">
                                     <label class="ellipsis_inline"
-                                           data-original-title="{{str label ../../../module}}"
+                                           title="{{str label ../../../module}}"
                                            data-placement="right">
                                         {{str label ../../../module}}
                                     </label>
@@ -41,7 +41,7 @@
                         {{#each fields}}
                             <div class="merge-row merge-row-field-{{type}}">
                                 <label class="ellipsis_inline"
-                                       data-original-title="{{str label ../../../module}}"
+                                       title="{{str label ../../../module}}"
                                        data-placement="right">
                                     {{str label ../../../module}}
                                 </label>

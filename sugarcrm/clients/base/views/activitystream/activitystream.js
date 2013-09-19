@@ -8,14 +8,12 @@
         'click .reply-btn': 'addComment',
         'click .preview-btn:not(.disabled)': 'previewRecord',
         'click .comment-btn': 'toggleReplyBar',
-        'click .more': 'fetchComments',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click .more': 'fetchComments'
     },
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['Timeago', 'FileDragoff', 'Taggable'],
+    plugins: ['Timeago', 'FileDragoff', 'Taggable', 'Tooltip'],
     cacheNamePrefix: "user:avatars:",
     cacheNameExpire: ":expiry",
     expiryTime: 36000000,   //1 hour in milliseconds
@@ -247,6 +245,8 @@
                 template: SUGAR.App.template
             });
         }
+
+        this.initializeAllPluginTooltips();
         this.context.trigger('activitystream:post:prepend', this.model);
     },
 
@@ -471,14 +471,6 @@
     toggleReplyBar: function() {
         this.$(".comment-btn").toggleClass("active");
         this.$(".reply-area").toggleClass("hide");
-    },
-
-    showTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(e) {
-        this.$(e.currentTarget).tooltip("hide");
     },
 
     /**

@@ -66,6 +66,8 @@
     // If invalid date flag to leave so sidecar validation will catch downstream
     leaveDirty: false,
 
+    plugins: ['EllipsisInline'],
+
     /**
      * Base initialization
      * @param  {Object} options the options

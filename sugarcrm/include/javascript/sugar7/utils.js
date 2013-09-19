@@ -1,13 +1,40 @@
 (function(app) {
     app.events.on("app:init", function() {
         app.utils = _.extend(app.utils, {
-            handleTooltip: function(event, viewComponent) {
-                var $el = viewComponent.$(event.target);
-                if( $el[0].offsetWidth < $el[0].scrollWidth ) {
-                    $el.tooltip({placement:"top", container: "body"});
-                    $el.tooltip('show');
-                } else {
-                    $el.tooltip('destroy');
+            tooltip: {
+                /**
+                 * Initializes tooltips for given elements
+                 * @param {jQuery} $elements
+                 * @param {object} (optional) options - see bootstrap-tooltip docs
+                 * @returns {jQuery}
+                 */
+                initialize: function($elements, options) {
+                    return $elements.tooltip(_.extend({}, {
+                        container: 'body'
+                    }, options));
+                },
+
+                /**
+                 * Destroy tooltips
+                 * @param {jQuery} $tooltips
+                 */
+                destroy: function($tooltips) {
+                    if ($tooltips) {
+                        _.each($tooltips, function(tooltip) {
+                            if (this.has(tooltip)) {
+                                $(tooltip).tooltip('destroy');
+                            }
+                        }, this);
+                    }
+                },
+
+                /**
+                 * Does the given element have tooltip?
+                 * @param {DOM} element
+                 * @returns {boolean}
+                 */
+                has: function(element) {
+                    return !_.isUndefined($(element).data('tooltip'));
                 }
             },
             /**

@@ -37,6 +37,8 @@
         'click [name=show_more_button]': 'showMoreRecords'
     },
 
+    plugins: ['Tooltip'],
+
     /**
      * @override
      * @param options

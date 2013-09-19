@@ -21,6 +21,7 @@
         'click .btn[name=primary]': 'setPrimaryItem',
         'change input.select2': 'inputChanged'
     },
+    plugins: ['QuickSearchFilter', 'EllipsisInline', 'Tooltip'],
     initialize: function (options) {
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: 'initialize', args:[options]});
 
