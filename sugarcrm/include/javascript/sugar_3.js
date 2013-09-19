@@ -5273,6 +5273,8 @@ SUGAR.MultiEnumAutoComplete.getMultiSelectValuesFromKeys = function(options_inde
     return final_arr;
 }
 
+SUGAR.VERSION_MARK = "";
+
 function convertReportDateTimeToDB(dateValue, timeValue)
 {
     var date_match = dateValue.match(date_reg_format);

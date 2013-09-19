@@ -651,6 +651,8 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
 
+            $version_mark = getVersionedPath(null);
+            echo '<script>SUGAR = SUGAR || {}; SUGAR.VERSION_MARK = ' . json_encode($version_mark) . ';</script>';
 
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
@@ -809,7 +811,7 @@ EOHTML;
         // of the "Powered by SugarCRM" logo. If the display of the logo is
         // not reasonably feasible for technical reasons, the Appropriate
         // Legal Notices must display the words "Powered by SugarCRM".
-        $attribLinkImg = "<img style='margin-top: 2px' border='0' width='120' height='34' src='include/images/poweredby_sugarcrm_65.png' alt='Powered By SugarCRM'>\n";
+        $attribLinkImg = "<img style='margin-top: 2px' border='0' width='120' height='34' src='".getJSPath('include/images/poweredby_sugarcrm_65.png')."' alt='Powered By SugarCRM'>\n";
 
         //END SUGARCRM flav=com  && dep=os ONLY
 
@@ -817,7 +819,7 @@ EOHTML;
         // You are required to leave in all copyright statements in both the
         // code and end-user application as well as the the powered by image.
         // You can not change the url or the image below.
-        $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='120' height='34' src='include/images/poweredby_sugarcrm_65.png' alt='Powered By SugarCRM'></A>\n";
+        $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='120' height='34' src='".getJSPath('include/images/poweredby_sugarcrm_65.png')."' alt='Powered By SugarCRM'></A>\n";
 
           //END SUGARCRM lic=sub ONLY
 		// handle resizing of the company logo correctly on the fly

@@ -22,7 +22,7 @@
  * $Id: EditView.html 16472 2006-08-27 10:33:09 +0000 (Sun, 27 Aug 2006) majed $
  ********************************************************************************/
 *}
-<script type="text/javascript" language="Javascript" src="modules/KBDocuments/kbdocuments.js"></script>
+<script type="text/javascript" language="Javascript" src="{sugar_getjspath file='modules/KBDocuments/kbdocuments.js'}"></script>
 			<form enctype="multipart/form-data" id="FTSFormAdvanced" name="FTSFormAdvanced" method="POST" action="index.php">
 			<input type="hidden" name="module" id="module" value="KBDocuments">
 			<input type="hidden" name="action" id="action" value="SearchHome">

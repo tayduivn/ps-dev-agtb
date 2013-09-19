@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link rel="stylesheet" type="text/css" href="modules/ModuleBuilder/tpls/MB.css" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MB.css'}" />
 <form name='CreateModule'>
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='SaveModule'>

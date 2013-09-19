@@ -239,6 +239,8 @@ class EmailUI {
 		////	END FOLDERS
 		///////////////////////////////////////////////////////////////////////
 
+        $jsPath = getJSPath("include/javascript/sugarwidgets/SugarYUIWidgets.js");
+
 		$out = "";
 		$out .= $this->smarty->fetch("modules/Emails/templates/_baseEmail.tpl");
 		$out .= $tree->generate_header();
@@ -266,7 +268,7 @@ class EmailUI {
 				loader.addModule({
 				    name :"sugarwidgets",
 				    type : "js",
-				    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
+				    fullpath: "{$jsPath}",
 				    varName: "YAHOO.SUGAR",
 				    requires: ["datatable", "dragdrop", "treeview", "tabview", "calendar"]
 				});

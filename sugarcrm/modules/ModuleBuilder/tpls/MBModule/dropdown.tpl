@@ -27,8 +27,8 @@
  ********************************************************************************/
 *}
 <div>&nbsp;
-<link rel="stylesheet" type="text/css" href="modules/ModuleBuilder/tpls/ListEditor.css"></link>
-<link rel="stylesheet" type="text/css" href="modules/ModuleBuilder/tpls/MBModule/dropdown.css"></link> 
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/ListEditor.css'}"></link>
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/MBModule/dropdown.css'}"></link> 
 <form name='dropdown_form' onsubmit = "return false">
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='{$action}'>

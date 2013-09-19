@@ -45,7 +45,7 @@ public function getDetailViewFormat() {
 }	
 
 public function getIconFilePath() {
-   return 'modules/Connectors/connectors/formatters/ext/rest/twitter/tpls/twitter.gif';
+   return getJSPath('modules/Connectors/connectors/formatters/ext/rest/twitter/tpls/twitter.gif');
 }   
 
 }

@@ -67,7 +67,9 @@ var MBLoader = new YAHOO.util.YUILoader({
 MBLoader.addModule({
     name :"sugarwidgets",
     type : "js",
-    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
+{/literal}
+    fullpath: "{sugar_getjspath file='include/javascript/sugarwidgets/SugarYUIWidgets.js'}",
+{literal}
     varName: "YAHOO.SUGAR",
     requires: ["datatable", "dragdrop", "treeview", "tabview"]
 });
@@ -92,7 +94,7 @@ MBLoader.insert();
     {* //BEGIN SUGARCRM flav=pro ONLY*}
     <a href="http://www.sugarcrm.com" target="_blank">
     {* //END SUGARCRM flav=pro ONLY*}
-        <img height="25" width="83" class="img" src="include/images/poweredby_sugarcrm_65.png" border="0" align="absmiddle"/>
+        <img height="25" width="83" class="img" src="{sugar_getjspath file='include/images/poweredby_sugarcrm_65.png'}" border="0" align="absmiddle"/>
      {* //BEGIN SUGARCRM flav=pro ONLY*}
     </a>
      {* //END SUGARCRM flav=pro ONLY*}

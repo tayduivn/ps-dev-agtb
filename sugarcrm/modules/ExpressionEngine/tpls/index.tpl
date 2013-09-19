@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<script src="include/javascript/sugarwidgets/SugarYUILoader.js"></script>
+<script src="{sugar_getjspath file='include/javascript/sugarwidgets/SugarYUILoader.js'}"></script>
 {literal}
 <script type="text/javascript">
 var loader = new YAHOO.util.YUILoader({
@@ -36,7 +36,9 @@ var loader = new YAHOO.util.YUILoader({
 loader.addModule({
     name :"sugarwidgets",
     type : "js",
-    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
+{/literal}
+    fullpath: "{sugar_getjspath file='include/javascript/sugarwidgets/SugarYUIWidgets.js'}",
+{literal}
     varName: "YAHOO.SUGAR",
     requires: ["datatable", "dragdrop", "treeview", "tabview"]
 });

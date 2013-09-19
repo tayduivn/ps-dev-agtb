@@ -47,7 +47,7 @@ studiotabs.reset();
 {/if}
 <input type='hidden' name='view_package' value='{$view_package}'>
 <input type='hidden' name='to_pdf' value='1'>
-<link rel="stylesheet" type="text/css" href="modules/ModuleBuilder/tpls/ListEditor.css"/>
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/ListEditor.css'}"/>
 
 <table id="editor-content" class="list-editor">
 <tr><td colspan=3>{$buttons}</td></tr>

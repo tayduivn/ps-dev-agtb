@@ -47,7 +47,7 @@
                 {/if}
 
             </div>
-            <div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="themes/default/images/pt-screen0-thumb.png" width="220" id="thumbnail_0" class="thumb"></div>
+            <div class="well" style="float: left; width: 220px; margin-left: 20px;"><img src="{sugar_getjspath file='themes/default/images/pt-screen0-thumb.png'}" width="220" id="thumbnail_0" class="thumb"></div>
         </div>
         </div>
         <div class="clear"></div>
@@ -72,7 +72,7 @@
 			</p>
 			</div>
 			<div style="float: left">
-				<img src="themes/default/images/pt-profile-link.png" width="152" height="221">
+				<img src="{sugar_getjspath file='themes/default/images/pt-profile-link.png'}" width="152" height="221">
 			</div>
 		</div>
 	</div>

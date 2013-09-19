@@ -29,7 +29,7 @@
 
 
 *}
-<link rel="stylesheet" type="text/css" href="modules/ModuleBuilder/tpls/ListEditor.css" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ModuleBuilder/tpls/ListEditor.css'}" />
 <table class="preview-content">
 <td>
 

@@ -53,7 +53,7 @@
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
 ModuleBuilder.addToHead("{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}", "css");
-ModuleBuilder.addToHead("include/javascript/jquery/markitup/skins/simple/style.css", "css");
+ModuleBuilder.addToHead("{sugar_getjspath file='include/javascript/jquery/markitup/skins/simple/style.css'}", "css");
 {literal}
 var FBLoader = new YAHOO.util.YUILoader({
     require : ["formulabuilder"],

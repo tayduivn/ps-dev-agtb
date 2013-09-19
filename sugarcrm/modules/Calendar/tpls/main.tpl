@@ -280,7 +280,9 @@ YAHOO.util.Event.onDOMReady(function(){
 	schedulerLoader.addModule({
 		name :"jsclass_scheduler",
 		type : "js",
-		fullpath: "modules/Meetings/jsclass_scheduler.js",
+{/literal}
+		fullpath: "{sugar_getjspath file='modules/Meetings/jsclass_scheduler.js'}",
+{literal}
 		varName: "global_rpcClient",
 		requires: []
 	});
@@ -289,8 +291,8 @@ YAHOO.util.Event.onDOMReady(function(){
 {/literal}	
 </script>
 	
-<script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
-<script type="text/javascript" src="include/javascript/jsclass_async.js"></script>	
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jsclass_base.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/jsclass_async.js'}"></script>	
 	
 <style type="text/css">
 {literal}
