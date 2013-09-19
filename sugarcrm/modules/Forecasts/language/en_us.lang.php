@@ -194,6 +194,7 @@ $mod_strings = array (
     'LBL_BASE_RATE' => 'Base Rate',
 
     'LBL_QUOTA' => 'Quota',
+    'LBL_QUOTA_ADJUSTED' => 'Quota (Adjusted)',
 
     'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
     'LBL_FMT_ROLLUP_FORECAST'=>'(Rollup)',
