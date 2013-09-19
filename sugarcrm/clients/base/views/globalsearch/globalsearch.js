@@ -1,6 +1,9 @@
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view
     id: 'searchForm',
+    preTag: '<strong>',
+    postTag: '</strong>',
+
     plugins: ['dropdown'],
     searchModules: [],
     events: {
@@ -177,6 +180,7 @@
     fireSearchRequest: function (term, plugin) {
         var searchModuleNames = this._getSearchModuleNames(),
             moduleList = searchModuleNames.join(','),
+            self = this,
             params = {
                 q: term,
                 fields: 'name, id',
@@ -199,11 +203,13 @@
 
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {
+                            var text = Handlebars.Utils.escapeExpression(val.text),
+                                safeString = new Handlebars.SafeString(self.preTag + text + self.postTag);
                             if (key !== 'name') { // found in a related field
                                formattedRecord.field_name = app.lang.get(val.label, val.module);
-                               formattedRecord.field_value = val.text;
+                               formattedRecord.field_value = safeString;
                             } else { // if it is a name that is found, we need to replace the name with the highlighted text
-                                formattedRecord.name = val.text;
+                                formattedRecord.name = safeString;
                             }
                         });
                     }
