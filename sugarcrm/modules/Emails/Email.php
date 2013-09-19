@@ -412,6 +412,8 @@ class Email extends SugarBean {
 		global $current_user;
 		global $timedate;
 
+        $saveAsDraft = !empty($request['saveDraft']);
+
 		/**********************************************************************
 		 * Sugar Email PREP
 		 */
@@ -449,7 +451,7 @@ class Email extends SugarBean {
 			$this->db->query($q1);
 		} // if
 
-		if (isset($request['saveDraft'])) {
+		if ($saveAsDraft) {
 			$this->type = 'draft';
 			$this->status = 'draft';
 		} else {
@@ -533,20 +535,24 @@ class Email extends SugarBean {
         $this->description_html = $htmlBody;
 
         $mailConfig = null;
-        if (!isset($request['saveDraft'])) {
-            if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
+        try {
+            if (isset($request["fromAccount"]) && !empty($request["fromAccount"])) {
                 $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
             } else {
                 $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
             }
-            if (is_null($mailConfig)) {
-                throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
+        } catch(Exception $e) {
+            if (!$saveAsDraft) {
+                throw $e;
             }
+        }
+        if (!$saveAsDraft && is_null($mailConfig)) {
+            throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
         try {
             $mailer = null;
-            if (!isset($request['saveDraft'])) {
+            if (!$saveAsDraft) {
                 $mailerFactoryClass = $this->MockMailerFactoryClass;
                 $mailer = $mailerFactoryClass::getMailer($mailConfig);
                 $mailer->setSubject($subject);
@@ -772,12 +778,12 @@ class Email extends SugarBean {
             /**********************************************************************
              * Final Touches
              */
-            if ($this->type == 'draft' && !isset($request['saveDraft'])) {
+            if ($this->type == 'draft' && !$saveAsDraft) {
                 // sending a draft email
                 $this->type   = 'out';
                 $this->status = 'sent';
                 $forceSave    = true;
-            } elseif (isset($request['saveDraft'])) {
+            } elseif ($saveAsDraft) {
                 $this->type   = 'draft';
                 $this->status = 'draft';
                 $forceSave    = true;
@@ -803,7 +809,7 @@ class Email extends SugarBean {
         }
 
 
-		if ((!(empty($orignialId) || isset($request['saveDraft']) || ($this->type == 'draft' && $this->status == 'draft'))) &&
+		if ((!(empty($orignialId) || $saveAsDraft || ($this->type == 'draft' && $this->status == 'draft'))) &&
 			(($_REQUEST['composeType'] == 'reply') || ($_REQUEST['composeType'] == 'replyAll') || ($_REQUEST['composeType'] == 'replyCase')) && ($orignialId != $this->id)) {
 			$originalEmail = BeanFactory::getBean('Emails', $orignialId);
 			$originalEmail->reply_to_status = 1;
@@ -832,12 +838,22 @@ class Email extends SugarBean {
 			$this->type == 'draft' ||
 			(isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
 
-			// saving a draft OR saving a sent email
+            // Set Up From Name and Address Information
             if (!empty($mailConfig)) {
                 $sender = $mailConfig->getFrom();
                 $decodedFromName = mb_decode_mimeheader($sender->getName());
                 $this->from_addr = "{$decodedFromName} <" . $sender->getEmail() . ">";
+            } else {
+                $ret = $current_user->getUsersNameAndEmail();
+                if (empty($ret['email'])) {
+                    $systemReturn  = $current_user->getSystemDefaultNameAndEmail();
+                    $ret['email']  = $systemReturn['email'];
+                    $ret['name']   = $systemReturn['name'];
+                }
+                $decodedFromName = mb_decode_mimeheader($ret['name']);
+                $this->from_addr = "{$decodedFromName} <" . $ret['email'] . ">";
             }
+
 			$this->from_addr_name = $this->from_addr;
 			$this->to_addrs = $_REQUEST['sendTo'];
 			$this->to_addrs_names = $_REQUEST['sendTo'];
