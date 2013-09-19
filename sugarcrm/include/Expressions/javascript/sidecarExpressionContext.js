@@ -112,7 +112,7 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         var def = this.view.getFieldMeta(varname),
             props = includeLabel ? ["css_class", "cell_css"] : ["css_class"],
             el = this.getElement(varname),
-                        parent = $(el).closest('div.record-cell');
+            parent = $(el).closest('div.record-cell');
 
         _.each(props, function(prop) {
             if (!def[prop]) {
@@ -131,20 +131,33 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     },
     removeClass : function(varname, css_class, includeLabel) {
         var def = this.view.getFieldMeta(varname),
+            field = this.view.getField(varname),
             props = includeLabel ? ["css_class", "cell_css"] : ["css_class"],
             el = this.getElement(varname),
             parent = $(el).closest('div.record-cell');
 
-        _.each(props, function(prop) {
-            if (def[prop] && def[prop].indexOf(css_class) != -1) {
-                def[prop] = $.trim((" " + def[prop] + " ").replace(new RegExp(' ' + css_class + ' '), ""));
-            }
+        //Remove it from both the field objects def and the view metadata
+        _.each([field.def, def], function(d) {
+            _.each(props, function(prop) {
+                if (d[prop] && d[prop].indexOf(css_class) != -1) {
+                    d[prop] = $.trim((" " + d[prop] + " ").replace(new RegExp(' ' + css_class + ' '), ""));
+                }
+            });
         });
         this.view.setFieldMeta(varname, def);
 
         $(el).removeClass(css_class);
         if (includeLabel && parent) {
             parent.removeClass(css_class);
+            parent.find("." + css_class).removeClass(css_class);
+
+        }
+    },
+    setFieldDisabled : function(variable, disable) {
+        var set = disable !== false, //default disable to true
+            field = this.view.getField(variable);
+        if (field) {
+            field.setDisabled(set);
         }
     },
     getLink : function(variable) {
@@ -424,31 +437,37 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 {
 	try {
         var model = this.context.view.context.get("model");
+        this.lastTriggeredActions = this.lastTriggeredActions || [];
+
 		//Do not trigger dependencies on models that haven't changed and aren't set to fire on load.
         if (model.inSync && !this.testOnLoad) {
             return;
         }
+
         var actions = this.actions;
 		if (undo && this.falseActions != null)
 			actions = this.falseActions;
 
+        //Clean up any render listeners for out of date actions when a dependency is triggered multiple times
+        _.each(this.lastTriggeredActions, function(action) {
+            this.context.view.off(null, null, action);
+        }, this);
+
         if (actions instanceof SUGAR.forms.AbstractAction)
             actions = [actions];
 
-	    for (var i in actions) {
+        for (var i in actions) {
             var action = actions[i];
             if (typeof action.exec == "function") {
                 action.setContext(this.context);
-                if (this.context.view && _.isEmpty(this.context.view.fields) && action.afterRender)
-                {
-                    this.context.view.once('render', function(){
-                        this.exec();
-                    }, action);
-                } else {
-                    action.exec();
+                action.exec();
+                if (this.testOnLoad && action.afterRender) {
+                    this.context.view.on('render', action.exec, action);
                 }
             }
         }
+
+        this.lastTriggeredActions = actions;
 
 	} catch (e) {
 		if (!SUGAR.isIE && console && console.log){
@@ -458,7 +477,7 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 	}
 };
 
-SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
+SUGAR.forms.Dependency.prototype.getRelatedFields = function() {
     var parser = SEC.parser,
         fields = parser.getRelatedFieldsFromFormula(this.trigger.condition);
     //parse will search a list of actions for formulas with relate fields

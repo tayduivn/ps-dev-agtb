@@ -487,9 +487,9 @@
             this.toggleField(field, false);
             this.toggleField(nextField, true);
             // the field we need to toggle until we reach one that's not
-            if (field.isDisabled() && nextField) {
-                var curField = field;
-                while (curField.isDisabled) {
+            if (nextField.isDisabled()) {
+                var curField = nextField;
+                while (curField.isDisabled()) {
                     if (curField[direction]) {
                         this.toggleField(curField[direction], true);
                         curField = curField[direction];
