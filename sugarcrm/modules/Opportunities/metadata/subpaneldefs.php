@@ -185,6 +185,25 @@ $layout_defs['Opportunities'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
+        'revenuelineitems' => array(
+            'order' => 60,
+            'module' => 'RevenueLineItems',
+            'subpanel_name' => 'ForOpportunities',
+            'sort_order' => 'desc',
+            'sort_by' => 'date_purchased',
+            'title_key' => 'LBL_RLI_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'revenuelineitems',
+            'top_buttons' => array(
+                array(
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                ),
+                array(
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                ),
+            ),
+
+        ),
 
 		'contracts' => array(
 			'order' => 60,
