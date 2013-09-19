@@ -81,6 +81,7 @@
             }
             this.model.set(this.name, value);
         }
+        value = app.utils.deepCopy(value);
         if (!_.isArray(value)) {
             value = [
                 {
