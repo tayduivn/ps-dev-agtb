@@ -92,6 +92,13 @@ class MetadataApi extends SugarApi
                 'ignoreMetaHash' => true,
                 'ignoreSystemStatusError' => true,
             ),
+            'getLegacyMetadata' => array(
+                'reqType' => 'GET',
+                'path' =>array('metadata', 'legacy'),
+                'pathVars' => array(''),
+                'method' => 'getLegacyMetadata',
+                'shortHelp' => 'This method will return the metadata for BWC modules',
+            ),
             'getLanguage' => array(
                 'reqType' => 'GET',
                 'path' => array('lang', '?'),
@@ -212,7 +219,7 @@ class MetadataApi extends SugarApi
         if (empty($data)) {
             $data = $this->loadPrivateMetadata($args, $this->platforms[0]);
         }
-        
+
         if (empty($hash) || $hash != $data['_hash']) {
             $this->cacheMetadataHash($data['_hash']);
             if ($api->generateETagHeader($data['_hash'])) {
@@ -250,7 +257,7 @@ class MetadataApi extends SugarApi
         if (empty($data)) {
             ini_set('max_execution_time', 0);
             $data = $this->loadMetadata($args);
-            
+
             // Bug 60345 - Default currency id of -99 was failing hard on 64bit 5.2.X
             // PHP builds. This was causing metadata to store a different value in the
             // cache than -99. The fix was to add a space arround the -99 to force it
@@ -263,6 +270,47 @@ class MetadataApi extends SugarApi
         return $data;
     }
 
+    /**
+     * Retrieves legacy (Sugar 6.x) metadata.
+     * @deprecated Will be removed in SugarCRM 7.2 (or whenever all modules are
+     * ported to Sidecar).
+     * @param  ServiceBase $api
+     * @param  array       $args
+     * @return array
+     */
+    public function getLegacyMetadata(ServiceBase $api, array $args)
+    {
+        if (empty($args['type'])) {
+            throw new SugarApiExceptionMissingParameter('Missing parameter "type".');
+        }
+
+        if (empty($args['module'])) {
+            throw new SugarApiExceptionMissingParameter('Missing parameter "module".');
+        }
+
+        if (!isModuleBWC($args['module'])) {
+            throw new SugarApiExceptionInvalidParameter('Module "' . $args['module'] . '" is not in backwards compatibility.');
+        }
+
+        $typeVariableMapping = array(
+            // Add as needed (hopefully, we don't rely on BWC even more).
+            'listviewdefs' => 'listViewDefs',
+        );
+
+        if (!isset($typeVariableMapping[$args['type']])) {
+            throw new SugarApiExceptionInvalidParameter('Type "' . $args['module'] . '" is not in in the metadata-type whitelist.');
+        }
+
+        $file = SugarAutoLoader::loadWithMetafiles($args['module'], $args['type']);
+
+        if (is_null($file)) {
+            throw new SugarApiExceptionNotFound($args['type'] . ' metadata was not found for the ' . $args['module'] . ' module.');
+        }
+
+        require $file;
+
+        return $$typeVariableMapping[$args['type']];
+    }
 
     // this is the function for the endpoint of the public metadata api.
     public function getPublicMetadata($api, $args)
@@ -273,7 +321,7 @@ class MetadataApi extends SugarApi
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
         $this->setPlatformList($api);
-        
+
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','labels','views', 'layouts', 'config', 'jssource');
 
@@ -330,7 +378,7 @@ class MetadataApi extends SugarApi
     protected function loadPublicMetadata($args)
     {
         $data = $this->getMetadataCache($this->platforms[0],true);
-        
+
         if (empty($data)) {
             // since this is a public metadata call pass true to the meta data manager to only get public/
             $mm = $this->getMetadataManager( true );
@@ -784,7 +832,7 @@ class MetadataApi extends SugarApi
 
     /**
      * Get the data element of the language file properties for a language
-     * 
+     *
      * @param  string  $lang   The language to get data for
      * @param  boolean $public Whether this is a public metadata request
      * @return string  A JSON string of langauge data
@@ -797,7 +845,7 @@ class MetadataApi extends SugarApi
 
     /**
      * Get the hash element of the language file properties for a language
-     * 
+     *
      * @param  string  $lang   The language to get data for
      * @param  boolean $public Whether this is a public metadata request
      * @return string  The hash of the contents of the language file
@@ -810,7 +858,7 @@ class MetadataApi extends SugarApi
 
     /**
      * Gets the file properties for a language
-     * 
+     *
      * @param  string  $lang   The language to get data for
      * @param  boolean $public Whether this is a public metadata request
      * @return array   Array containing the hash and data for a language file
@@ -823,7 +871,7 @@ class MetadataApi extends SugarApi
         if (empty($hash) || $hash != $resp['hash']) {
             $this->putCachedLanguageHash($this->platforms[0], $lang, $resp['hash'], $public);
         }
-        
+
         return $resp;
     }
 

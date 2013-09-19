@@ -242,7 +242,7 @@ describe('View.BaseDashablelistView', function() {
             view._displayDashlet();
             expect(view.context.get('skipFetch')).toBeFalsy();
             expect(view.context.get('limit')).toBe(5);
-            expect(view.meta.panels).toEqual([{fields: columns}])
+            expect(view.meta.panels).toEqual([{fields: columns}]);
             expect(stubStartAutoRefresh).toHaveBeenCalledOnce();
         });
 
@@ -252,6 +252,7 @@ describe('View.BaseDashablelistView', function() {
 
             beforeEach(function() {
                 sinon.collection.stub(view, 'getFieldMetaForView').returns(fieldMeta);
+                sinon.collection.stub(view, '_getListMeta').returns(fieldMeta);
             });
 
             it('should merge the field metadata onto the display_columns and return those fields', function() {
@@ -307,6 +308,30 @@ describe('View.BaseDashablelistView', function() {
                 expect(_.isObject(filterDef)).toBeTruthy();
                 expect(_.first(_.keys(filterDef))).toBe('$and');
                 expect(filterDef.$and.length).toBe(2);
+            });
+        });
+
+        describe('get correct list view metadata (_getListMeta)', function() {
+            var legacyStub, sidecarStub, metadataStub;
+
+            beforeEach(function() {
+                legacyStub = sinon.collection.stub(app.bwc, 'getLegacyMetadata');
+                sidecarStub = sinon.collection.stub(app.metadata, 'getView');
+                metadataStub = sinon.collection.stub(app.metadata, 'getModule');
+            });
+
+            it('uses legacy metadata when a module is in backwards compatibility mode', function() {
+                metadataStub.returns({isBwcEnabled: true});
+                view._getListMeta('foo');
+                expect(legacyStub).toHaveBeenCalledOnce();
+                expect(sidecarStub).not.toHaveBeenCalled();
+            });
+
+            it('uses Sidecar metadata when a module is not in backwards compatibility mode', function() {
+                metadataStub.returns({isBwcEnabled: false});
+                view._getListMeta('foo');
+                expect(legacyStub).not.toHaveBeenCalled();
+                expect(sidecarStub).toHaveBeenCalledOnce();
             });
         });
     });
