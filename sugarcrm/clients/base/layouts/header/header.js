@@ -59,8 +59,8 @@
     },
 
     _render: function() {
+        var result = app.view.Layout.prototype._render.call(this);
         if(app.api.isAuthenticated()) {
-            var result = app.view.Layout.prototype._render.call(this);
             this.$el.show();
             this.resize();
         } else {
