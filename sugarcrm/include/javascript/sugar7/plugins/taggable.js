@@ -496,7 +496,7 @@
                     $dropdown.empty();
                 }
 
-                return $dropdown
+                return $dropdown;
             },
 
             /**
@@ -544,7 +544,7 @@
                 if ($current.length === 0) {
                     $next = this._getDropdown().children().first();
                 } else {
-                    $next = down ? $current.next() : $current.prev()
+                    $next = down ? $current.next() : $current.prev();
                 }
 
                 if ($next.length > 0) {
