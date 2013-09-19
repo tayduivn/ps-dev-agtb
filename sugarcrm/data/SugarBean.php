@@ -1812,8 +1812,9 @@ class SugarBean
 
         if ($isUpdate) {
             $this->db->update($this);
-        } else {
-            $this->db->insert($this);
+        } elseif ($this->db->insert($this)) {
+            //Now that the record has been saved, we don't want to insert again on further saves
+            $this->new_with_id = false;
         }
 
         if (!empty($auditDataChanges) && is_array($auditDataChanges))
@@ -1855,8 +1856,6 @@ class SugarBean
             'dataChanges' => $auditDataChanges,
         ));
 
-        //Now that the record has been saved, we don't want to insert again on further saves
-        $this->new_with_id = false;
         $this->in_save = false;
         return $this->id;
     }

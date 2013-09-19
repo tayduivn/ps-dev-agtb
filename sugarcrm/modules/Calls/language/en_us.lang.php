@@ -157,6 +157,7 @@ $mod_strings = array (
     'LBL_CREATE_MODULE' => 'Log Call',
     'LBL_RELATED_RECORD_DEFAULT_NAME' => 'Call with {{{this}}}',
     'LBL_SEND_INVITES' => 'Send Invites',
+    'LBL_REMINDER_TITLE' => 'Call:',
 );
 
 

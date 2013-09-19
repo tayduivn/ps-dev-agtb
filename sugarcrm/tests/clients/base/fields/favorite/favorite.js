@@ -188,7 +188,7 @@ describe('favorite field', function() {
             var triggerSpy;
 
             beforeEach(function() {
-                triggerSpy = sinon.spy(field.context, "trigger");
+                triggerSpy = sinon.spy(field.model, "trigger");
             });
 
             afterEach(function() {

@@ -36,7 +36,7 @@
         // when the record is marked as favorite, it is subsequently followed by the current user (on server-side)
         // need to sync the client-side model, so an event is fired on the context from the favorite field upon success
         // set following on the model so we don't have to make a server request to get the latest value
-        this.context.on("favorite:active", function() {
+        this.model.on("favorite:active", function() {
             this.model.set("following", true);
         }, this);
     },
@@ -46,7 +46,6 @@
      * @param value
      */
     format: function(value) {
-
         value = this.model.get("following");
 
         //For record view, the label should be diffent from other views

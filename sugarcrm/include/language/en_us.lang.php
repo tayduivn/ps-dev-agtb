@@ -3145,18 +3145,11 @@ $app_strings = array (
     'LBL_SEARCHFORM'=>'Search Form',
     'LBL_SAVED_SEARCH_ERROR' => 'Please provide a name for this view.',
     'LBL_DISPLAY_LOG' => 'Display Log',
-    'ERROR_JS_ALERT_SYSTEM_CLASS' => 'System',
-    'ERROR_JS_ALERT_TIMEOUT_TITLE' => 'Session Timeout',
-    'ERROR_JS_ALERT_TIMEOUT_MSG_1' => 'Your session is about to timeout in 2 minutes. Please save your work.',
-    'ERROR_JS_ALERT_TIMEOUT_MSG_2' =>'Your session has timed out.',
-    'MSG_JS_ALERT_MTG_REMINDER_AGENDA' => "\nAgenda: ",
-    'MSG_JS_ALERT_MTG_REMINDER_MEETING' => 'Meeting',
-    'MSG_JS_ALERT_MTG_REMINDER_CALL' => 'Call',
-    'MSG_JS_ALERT_MTG_REMINDER_TIME' => 'Time: ',
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
-    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
-  	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_START' => 'starting',
+    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "Click OK to view this call or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "Click OK to view this meeting or click Cancel to dismiss this message.",
  	'MSG_LIST_VIEW_NO_RESULTS_BASIC' => "No results found.",
 	'MSG_LIST_VIEW_NO_RESULTS' => "No results found for <item1>",
  	'MSG_LIST_VIEW_NO_RESULTS_SUBMSG' => "Create <item1> as a new <item2>",
@@ -4212,6 +4205,8 @@ $app_strings = array (
 
     'LBL_PASSWORD_REQUEST_SENT' => 'Your request has been submitted.',
     'LBL_PASSWORD_REQUEST_ERROR' => 'There was a problem retrieving your username and email combination.',
+
+    'LBL_REMINDER_TITLE' => 'Reminder',
 );
 
 $app_list_strings['interactions_options'] = array (

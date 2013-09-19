@@ -19,7 +19,6 @@ $class_map = array(
     'SugarRelationshipFactory' => 'data/Relationships/RelationshipFactory.php',
     'DBManagerFactory' => 'include/database/DBManagerFactory.php',
     'Localization' => 'include/Localization/Localization.php',
-    'JsAlerts' => 'include/javascript/jsAlerts.php',
     'TimeDate' => 'include/TimeDate.php',
     'SugarDateTime' => 'include/SugarDateTime.php',
     'SugarBean' => 'data/SugarBean.php',
