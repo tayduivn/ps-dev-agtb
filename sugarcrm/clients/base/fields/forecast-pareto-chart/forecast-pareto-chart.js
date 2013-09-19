@@ -202,6 +202,7 @@
                 'properties': {
                     'name': this._serverData.title,
                     'quota': parseFloat(this._serverData.quota),
+                    'quotaLabel': app.lang.get('LBL_QUOTA_ADJUSTED', 'Forecasts'),
                     'groupData': records.map(function(record, i) {
                         return {
                             group: i,
@@ -283,6 +284,7 @@
                 'properties': {
                     'name': this._serverData.title,
                     'quota': parseFloat(this._serverData.quota),
+                    'quotaLabel': app.lang.get('LBL_QUOTA', 'Forecasts'),
                     'groupData': this._serverData['x-axis'].map(function(item, i) {
                         return {
                             'group': i,
