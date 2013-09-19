@@ -4162,7 +4162,7 @@ $app_strings = array (
     'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
     'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
     'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
-    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => 'My Teams Opportunities',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
