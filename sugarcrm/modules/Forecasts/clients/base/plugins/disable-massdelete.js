@@ -19,13 +19,12 @@
         app.plugins.register("disable-massdelete", ["view"], {
 
             /**
-             * override of parent confirmDelete. Removes closed lost/won items from the list to be deleted, and 
+             * override of parent deleteModels. Removes closed lost/won items from the list to be deleted, and
              * throws a warning if it removes anything
-             * 
-             * @param evt
+             *
              * @return string message
              */
-            confirmDelete: function(evt) {
+            warnDelete: function() {
                 
                 var closedModels = [],
                     sales_stage_won = null,
@@ -86,10 +85,10 @@
                 }
 
                 if (module.models.length > 0) {
-                    app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'confirmDelete', args: [evt]});
+                    app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'warnDelete'});
                 }
                 return message;
             }
-        })
-    })
+        });
+    });
 })(SUGAR.App);

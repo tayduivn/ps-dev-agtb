@@ -28,11 +28,16 @@
 
         this.delegateListFireEvents();
         this.before('render', this.isVisible);
+
+        //event register for preventing actions
+        // when user escapes the page without confirming deleting
+        app.routing.before("route", this.beforeRouteDelete, this, true);
+        $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
     },
     delegateListFireEvents: function() {
         this.layout.on("list:massupdate:fire", this.show, this);
         this.layout.on("list:massaction:hide", this.hide, this);
-        this.layout.on("list:massdelete:fire", this.confirmDelete, this);
+        this.layout.on("list:massdelete:fire", this.warnDelete, this);
         this.layout.on("list:massexport:fire", this.massExport, this);
         this.layout.on('list:mergeduplicates:fire', this.mergeDuplicates, this);
     },
@@ -366,39 +371,93 @@
         progressView.initCollection(massCollection);
         return massCollection;
     },
-    confirmDelete: function(evt) {
+
+    /**
+     * Popup dialog message to confirm delete action
+     */
+    warnDelete: function() {
         var self = this;
-        this.hideAll();
+        this._modelsToDelete = self.getMassUpdateModel(self.module);
+
+        self._targetUrl = Backbone.history.getFragment();
+        //Replace the url hash back to the current staying page
+        if (self._targetUrl !== self._currentUrl) {
+            app.router.navigate(self._currentUrl, {trigger: false, replace: true});
+        }
+
+        self.hideAll();
+
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE'),
-            onConfirm: function() {
-                var massUpdate = self.getMassUpdateModel(self.module);
-                var lastSelectedModels = _.clone(massUpdate.models);
-                if(massUpdate) {
-                    massUpdate.fetch({
-                        //Don't show alerts for this request
-                        showAlerts: false,
-                        method: 'delete',
-                        error: function() {
-                            app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
-                        },
-                        success: function(data, response) {
-                            if(response.status == 'done') {
-                                //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
-                                //TODO: Need trigger for fetching new record list
-                                app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
-                                self.layout.context.reloadData({showAlerts: false});
-                            } else if (response.status == 'queued') {
-                                app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
-                            }
-                            self.layout.trigger("list:records:deleted", lastSelectedModels);
-                        }
-                    });
-                }
+            onConfirm: _.bind(self.deleteModels, self),
+            onCancel: function() {
+                self._modelsToDelete = null;
             }
         });
     },
+
+    /**
+     * Popup browser dialog message to confirm delete action
+     *
+     * @return {String} the message to be displayed in the browser dialog
+     */
+    warnDeleteOnRefresh: function() {
+        if (this._modelsToDelete) {
+            return app.lang.get('NTC_DELETE_CONFIRMATION_MULTIPLE');
+        }
+    },
+
+    /**
+     * Delete the model once the user confirms the action
+     */
+    deleteModels: function() {
+        var self = this,
+            collection = self._modelsToDelete;
+        var lastSelectedModels = _.clone(collection.models);
+        if(collection) {
+            collection.fetch({
+                //Don't show alerts for this request
+                showAlerts: false,
+                method: 'delete',
+                error: function() {
+                    app.alert.show('error_while_mass_update', {level:'error', title: app.lang.getAppString('ERR_INTERNAL_ERR_MSG'), messages: app.lang.getAppString('ERR_HTTP_500_TEXT'), autoClose: true});
+                },
+                success: function(data, response) {
+                    self.layout.trigger("list:records:deleted", lastSelectedModels);
+                    var redirect = self._targetUrl !== self._currentUrl;
+                    if(response.status == 'done') {
+                        //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
+                        //TODO: Need trigger for fetching new record list
+                        app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
+                        self.layout.context.reloadData({showAlerts: false});
+                    } else if (response.status == 'queued') {
+                        app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
+                    }
+                    self._modelsToDelete = null;
+                    if (redirect) {
+                        self.unbindBeforeRouteDelete();
+                        //Replace the url hash back to the current staying page
+                        app.router.navigate(self._targetUrl, {trigger: true});
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * Pre-event handler before current router is changed
+     *
+     * @return {Boolean} true to continue routing, false otherwise
+     */
+    beforeRouteDelete: function () {
+        if (this._modelsToDelete) {
+            this.warnDelete(this._modelsToDelete);
+            return false;
+        }
+        return true;
+    },
+
     massExport: function(evt) {
         this.hideAll();
         var massExport = this.context.get("mass_collection");
@@ -699,7 +758,17 @@
         }
         app.view.View.prototype.unbindData.call(this);
     },
+
+    /**
+     * Detach the event handlers for warning delete
+     */
+    unbindBeforeRouteDelete: function() {
+        app.routing.offBefore("route", this.beforeRouteDelete, this);
+        $(window).off("beforeunload.delete" + this.cid);
+    },
+
     _dispose: function() {
+        this.unbindBeforeRouteDelete();
         this.$('.select2.mu_attribute').select2('destroy');
         app.view.View.prototype._dispose.call(this);
     }

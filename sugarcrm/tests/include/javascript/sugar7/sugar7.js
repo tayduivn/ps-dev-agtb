@@ -1,5 +1,5 @@
 describe('Sugar7.Routes', function() {
-    var app, router, navigateStub, appController, appUserLastState;
+    var app, navigateStub, appController, appUserLastState;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -21,11 +21,9 @@ describe('Sugar7.Routes', function() {
             app.events.trigger('app:init');
         });
         app.routing.start();
-        router = app.router;
     });
 
     afterEach(function() {
-        app.router = null;
         app.controller = appController;
         app.user.lastState = appUserLastState;
         navigateStub.restore();

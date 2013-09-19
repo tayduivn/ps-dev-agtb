@@ -109,8 +109,10 @@ describe("Record View", function () {
         sinonSandbox = sinon.sandbox.create();
 
         oRouter = SugarTest.app.router;
-        SugarTest.app.router = {buildRoute: function () {
-        }};
+        SugarTest.app.router = {
+            buildRoute: function() {},
+            navigate: function() {}
+        };
         buildRouteStub = sinonSandbox.stub(SugarTest.app.router, 'buildRoute', function (module, id, action, params) {
             return module + '/' + id;
         });
@@ -819,5 +821,43 @@ describe("Record View", function () {
         view.meta.panels[0].fields.push({name: 'favorite', type: 'favorite'});
         var fields = view.getFieldNames();
         expect(_.indexOf(fields, 'my_favorite')).toBeGreaterThan(-1);
+    });
+
+
+    describe("Warning delete", function() {
+        var sinonSandbox, alertShowStub, routerStub;
+        beforeEach(function() {
+            sinonSandbox = sinon.sandbox.create();
+            routerStub = sinonSandbox.stub(app.router, "navigate");
+            sinonSandbox.stub(Backbone.history, "getFragment");
+            alertShowStub = sinonSandbox.stub(app.alert, "show");
+        });
+
+        afterEach(function() {
+            sinonSandbox.restore();
+        });
+
+        it("should not alert warning message if _modelToDelete is not defined", function() {
+            app.routing.triggerBefore("route");
+            expect(alertShowStub).not.toHaveBeenCalled();
+        });
+        it("should return true if _modelToDelete is not defined", function() {
+            sinonSandbox.stub(view, 'warnDelete');
+            expect(view.beforeRouteDelete()).toBeTruthy();
+        });
+        it("should return false if _modelToDelete is defined (to prevent routing to other views)", function() {
+            sinonSandbox.stub(view, 'warnDelete');
+            view._modelToDelete = new Backbone.Model();
+            expect(view.beforeRouteDelete()).toBeFalsy();
+        });
+        it("should redirect the user to the targetUrl", function() {
+            var unbindSpy = sinonSandbox.spy(view, 'unbindBeforeRouteDelete');
+            view._modelToDelete = new Backbone.Model();
+            view._currentUrl = 'Accounts';
+            view._targetUrl = 'Contacts';
+            view.deleteModel();
+            expect(unbindSpy).toHaveBeenCalled();
+            expect(routerStub).toHaveBeenCalled();
+        });
     });
 });

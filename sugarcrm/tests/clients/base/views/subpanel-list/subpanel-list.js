@@ -68,4 +68,40 @@ describe("Subpanel List View", function() {
         });
     });
 
+    describe("Warning unlink", function() {
+        var sinonSandbox, alertShowStub, routerStub;
+        beforeEach(function() {
+            sinonSandbox = sinon.sandbox.create();
+            routerStub = sinonSandbox.stub(app.router, "navigate");
+            sinonSandbox.stub(Backbone.history, "getFragment");
+            alertShowStub = sinonSandbox.stub(app.alert, "show");
+        });
+
+        afterEach(function() {
+            sinonSandbox.restore();
+        });
+
+        it("should not alert warning message if _modelToUnlink is not defined", function() {
+            app.routing.triggerBefore("route");
+            expect(alertShowStub).not.toHaveBeenCalled();
+        });
+        it("should return true if _modelToUnlink is not defined", function() {
+            sinonSandbox.stub(view, 'warnUnlink');
+            expect(view.beforeRouteUnlink()).toBeTruthy();
+        });
+        it("should return false if _modelToUnlink is defined (to prevent routing to other views)", function() {
+            sinonSandbox.stub(view, 'warnUnlink');
+            view._modelToUnlink = new Backbone.Model();
+            expect(view.beforeRouteUnlink()).toBeFalsy();
+        });
+        it("should redirect the user to the targetUrl", function() {
+            var unbindSpy = sinonSandbox.spy(view, 'unbindBeforeRouteUnlink');
+            view._modelToUnlink = new Backbone.Model();
+            view._currentUrl = 'Accounts';
+            view._targetUrl = 'Contacts';
+            view.unlinkModel();
+            expect(unbindSpy).toHaveBeenCalled();
+            expect(routerStub).toHaveBeenCalled();
+        });
+    });
 });

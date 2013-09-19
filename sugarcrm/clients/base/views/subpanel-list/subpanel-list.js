@@ -13,12 +13,12 @@
     contextEvents: {
         "list:editall:fire": "toggleEdit",
         "list:editrow:fire": "editClicked",
-        "list:unlinkrow:fire": "unlinkClicked"
+        "list:unlinkrow:fire": "warnUnlink"
     },
 
     /**
      * @override
-     * @param options
+     * @param {Object} options
      */
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
@@ -33,10 +33,15 @@
         this.layout.on("hide", this.toggleList, this);
         // Listens to parent of subpanel layout (subpanels)
         this.listenTo(this.layout.layout, 'filter:change', this.renderOnFilterChanged);
+
+        //event register for preventing actions
+        //when user escapes the page without confirming deletion
+        app.routing.before("route", this.beforeRouteUnlink, this, true);
+        $(window).on("beforeunload.unlink" + this.cid, _.bind(this.warnUnlinkOnRefresh, this));
     },
     // SP-1383: Subpanel filters hide some panels when related filters are changed
     // So when 'Related' filter changed, this ensures recordlist gets reloaded
-    renderOnFilterChanged: function () {
+    renderOnFilterChanged: function() {
         this.collection.trigger('reset');
         this.render();
     },
@@ -55,26 +60,37 @@
     },
 
     /**
-     * Unlinks (removes) the selected model from the list view's collection
-     * @param model
+     * Unlink (removes) the selected model from the list view's collection
      */
-    unlinkClicked: function(model) {
-        var self = this;
-        app.alert.show('unlink_confirmation', {
-            level: 'confirmation',
-            messages: app.lang.get('NTC_UNLINK_CONFIRMATION'),
-            onConfirm: function() {
-                model.destroy({
-                    //Show alerts for this request
-                    showAlerts: true,
-                    relate: true,
-                    success: function() {
-                        // We trigger reset after removing the model so that
-                        // panel-top will re-render and update the count.
-                        self.collection.remove(model).trigger('reset');
-                        self.render();
-                    }
-                });
+    unlinkModel: function() {
+        var self = this,
+            model = this._modelToUnlink;
+
+        model.destroy({
+            //Show alerts for this request
+            showAlerts: {
+                'process': true,
+                'success': {
+                    messages: self.getUnlinkMessages(self._modelToUnlink).success
+                }
+            },
+            relate: true,
+            success: function() {
+                var redirect = self._targetUrl !== self._currentUrl;
+                self._modelToUnlink = null;
+                self.collection.remove(model, { silent: redirect });
+
+                if (redirect) {
+                    self.unbindBeforeRouteUnlink();
+                    //Replace the url hash back to the current staying page
+                    app.router.navigate(self._targetUrl, {trigger: true});
+                    return;
+                }
+
+                // We trigger reset after removing the model so that
+                // panel-top will re-render and update the count.
+                self.collection.trigger('reset');
+                self.render();
             }
         });
     },
@@ -85,5 +101,87 @@
      */
     toggleList: function(show) {
         this.$el[show ? 'show' : 'hide']();
+    },
+
+    /**
+     * Pre-event handler before current router is changed
+     *
+     * @return {Boolean} true to continue routing, false otherwise
+     */
+    beforeRouteUnlink: function () {
+        if (this._modelToUnlink) {
+            this.warnUnlink(this._modelToUnlink);
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Format the message displayed in the alert
+     *
+     * @param {Bean} model to unlink
+     * @returns {Object} formatted confirmation and success messages
+     */
+    getUnlinkMessages: function(model) {
+        var messages = {},
+            name = model.get('name') || (model.get('first_name') + ' ' + model.get('last_name')) || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+
+        messages.confirmation = app.lang.get('NTC_UNLINK_CONFIRMATION') + context + '?';
+        messages.success = app.lang.get('NTC_UNLINK_SUCCESS') + context + '.';
+        return messages;
+    },
+
+    /**
+     * Popup dialog message to confirm unlink action
+     *
+     * @param {Backbone.Model} model the bean to unlink
+     */
+    warnUnlink: function(model) {
+        var self = this;
+        this._modelToUnlink = model;
+
+        self._targetUrl = Backbone.history.getFragment();
+        //Replace the url hash back to the current staying page
+        if (self._targetUrl !== self._currentUrl) {
+            app.router.navigate(this._currentUrl, {trigger: false, replace: true});
+        }
+
+        app.alert.show('unlink_confirmation', {
+            level: 'confirmation',
+            messages: self.getUnlinkMessages(model).confirmation,
+            onConfirm: _.bind(self.unlinkModel, self),
+            onCancel: function() {
+                self._modelToUnlink = null;
+            }
+        });
+    },
+
+    /**
+     * Popup browser dialog message to confirm unlink action
+     *
+     * @return {String} the message to be displayed in the browser alert
+     */
+    warnUnlinkOnRefresh: function() {
+        if (this._modelToUnlink) {
+            return this.getUnlinkMessages(this._modelToUnlink).confirmation;
+        }
+    },
+
+    /**
+     * Detach the event handlers for warning unlink
+     */
+    unbindBeforeRouteUnlink: function() {
+        app.routing.offBefore("route", this.beforeRouteUnlink, this);
+        $(window).off("beforeunload.unlink" + this.cid);
+    },
+
+    /**
+     * @override
+     * @private
+     */
+    _dispose: function() {
+        this.unbindBeforeRouteUnlink();
+        this._super('_dispose');
     }
 })

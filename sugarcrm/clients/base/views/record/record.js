@@ -63,6 +63,11 @@
         this.on("editable:keydown", this.handleKeyDown, this);
         this.on("editable:mousedown", this.handleMouseDown, this);
 
+        //event register for preventing actions
+        // when user escapes the page without confirming deleting
+        app.routing.before("route", this.beforeRouteDelete, this, true);
+        $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
+
         this.delegateButtonEvents();
 
         if (this.createMode) {
@@ -297,7 +302,7 @@
     },
 
     deleteClicked: function () {
-        this.handleDelete();
+        this.warnDelete();
     },
 
     /**
@@ -438,32 +443,100 @@
         this.inlineEditMode = false;
     },
 
-    handleDelete: function () {
-        var self = this,
-            moduleContext = {
-                module: app.lang.get('LBL_MODULE_NAME_SINGULAR', this.module),
-                name: (this.model.get('name') ||
-                    (this.model.get('first_name') + ' ' + this.model.get('last_name')) || '').trim()
-            };
+    /**
+     * Pre-event handler before current router is changed
+     *
+     * @return {Boolean} true to continue routing, false otherwise
+     */
+    beforeRouteDelete: function () {
+        if (this._modelToDelete) {
+            this.warnDelete();
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Format the message displayed in the alert
+     * @returns {Object} confirmation and success messages
+     */
+    getDeleteMessages: function() {
+        var messages = {},
+            model = this.model,
+            name = model.get('name') || (model.get('first_name') + ' ' + model.get('last_name')) || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+
+        messages.confirmation = app.lang.get('NTC_DELETE_CONFIRMATION') + context + '?';
+        messages.success = app.lang.get('NTC_DELETE_SUCCESS') + context + '.';
+        return messages;
+    },
+
+    /**
+     * Popup dialog message to confirm delete action
+     */
+    warnDelete: function() {
+        var self = this;
+        this._modelToDelete = true;
+
+        self._targetUrl = Backbone.history.getFragment();
+        //Replace the url hash back to the current staying page
+        if (self._targetUrl !== self._currentUrl) {
+            app.router.navigate(self._currentUrl, {trigger: false, replace: true});
+        }
 
         app.alert.show('delete_confirmation', {
             level: 'confirmation',
-            messages: app.lang.get('NTC_RECORD_DELETE_CONFIRMATION', null, moduleContext),
-            onConfirm: function () {
-                self.model.destroy({
-                    //Show alerts for this request
-                    showAlerts: {
-                        'process': true,
-                        'success': {
-                            messages: app.lang.get('NTC_RECORD_DELETE_SUCCESS', null, moduleContext)
-                        }
-                    }
-                });
-                self.context.trigger("record:deleted");
-                app.router.navigate("#" + self.module, {trigger: true});
+            messages: self.getDeleteMessages().confirmation,
+            onConfirm: _.bind(self.deleteModel, self),
+            onCancel: function() {
+                self._modelToDelete = false;
             }
         });
     },
+
+    /**
+     * Popup browser dialog message to confirm delete action
+     *
+     * @return {String} the message to be displayed in the browser dialog
+     */
+    warnDeleteOnRefresh: function() {
+        if (this._modelToDelete) {
+            return this.getDeleteMessages().confirmation;
+        }
+    },
+
+    /**
+     * Delete the model once the user confirms the action
+     */
+    deleteModel: function() {
+        var self = this;
+
+        self.model.destroy({
+            //Show alerts for this request
+            showAlerts: {
+                'process': true,
+                'success': {
+                    messages: self.getDeleteMessages().success
+                }
+            },
+            success: function() {
+                var redirect = self._targetUrl !== self._currentUrl;
+                self._modelToDelete = false;
+                
+                self.context.trigger("record:deleted");
+                if (redirect) {
+                    self.unbindBeforeRouteDelete();
+                    //Replace the url hash back to the current staying page
+                    app.router.navigate(self._targetUrl, {trigger: true});
+                    return;
+                }
+
+                app.router.navigate("#" + self.module, {trigger: true});
+            }
+        });
+
+    },
+
     /**
      * {@inheritdoc}
      * Attach tab handler to jump into the next target field
@@ -542,7 +615,16 @@
         }
     },
 
+    /**
+     * Detach the event handlers for warning delete
+     */
+    unbindBeforeRouteDelete: function() {
+        app.routing.offBefore("route", this.beforeRouteDelete, this);
+        $(window).off("beforeunload.delete" + this.cid);
+    },
+
     _dispose: function () {
+        this.unbindBeforeRouteDelete();
         _.each(this.editableFields, function(field) {
             field.nextField = null;
             field.prevField = null;

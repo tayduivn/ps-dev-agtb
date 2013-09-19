@@ -31,12 +31,17 @@
     contextEvents: {
         "list:editall:fire": "toggleEdit",
         "list:editrow:fire": "editClicked",
-        "list:deleterow:fire": "deleteClicked"
+        "list:deleterow:fire": "warnDelete"
     },
 
+    /**
+     * @override
+     * @param {Object} options
+     */
     initialize: function(options) {
         //Grab the record list of fields to display from the base metadata
         var recordListMeta = this._initializeMetadata();
+        //Allows sub-views to override and use different view metadata if desired
         options.meta = _.extend({}, recordListMeta, options.meta || {});
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'initialize', args:[options]});
 
@@ -51,13 +56,28 @@
         this.toggledModels = {};
 
         this.context._recordListFields = this.getFieldNames();
+
+        this._currentUrl = Backbone.history.getFragment();
+
+        //event register for preventing actions
+        // when user escapes the page without confirming deleting
+        app.routing.before("route", this.beforeRouteDelete, this, true);
+        $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
     },
 
-    // Allows sub-views to override and use different view metadata if desired
+    /**
+     * Retrieve the metadata of the recordlist view
+     *
+     * @returns {Object}
+     * @private
+     */
     _initializeMetadata: function() {
         return app.metadata.getView(null, 'recordlist') || {};
     },
 
+    /**
+     * Add left and right action columns to the list view
+     */
     addActions:function () {
         if (this.actionsAdded) return;
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: 'addActions'});
@@ -100,6 +120,9 @@
         this.actionsAdded = true;
     },
 
+    /**
+     * Add favorite column
+     */
     addFavorite: function() {
         var favoritesEnabled = app.metadata.getModule(this.module, "favoritesEnabled");
         if (favoritesEnabled !== false
@@ -108,6 +131,10 @@
         }
     },
 
+    /**
+     * @override
+     * @private
+     */
     _render:function () {
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_render'});
         this.rowFields = {};
@@ -119,28 +146,104 @@
         }, this);
     },
 
-    deleteClicked: function(model) {
+    /**
+     * Delete the model once the user confirms the action
+     */
+    deleteModel: function() {
         var self = this,
-            deletedModel = _.clone(model);
-        app.alert.show('delete_confirmation', {
-            level: 'confirmation',
-            messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
-            onConfirm: function() {
-                model.destroy({
-                    //Show alerts for this request
-                    showAlerts: true,
-                    success: function() {
-                        self.collection.remove(model);
-                        app.events.trigger("preview:close");
-                        if (!self.disposed) {
-                            self.render();
-                        }
-                        
-                        self.layout.trigger("list:record:deleted", deletedModel);
-                    }
-                });
+            model = this._modelToDelete;
+
+        model.destroy({
+            //Show alerts for this request
+            showAlerts: {
+                'process': true,
+                'success': {
+                    messages: self.getDeleteMessages(self._modelToDelete).success
+                }
+            },
+            success: function() {
+                var redirect = self._targetUrl !== self._currentUrl;
+                self._modelToDelete = null;
+                self.collection.remove(model, { silent: redirect });
+                if (redirect) {
+                    self.unbindBeforeRouteDelete();
+                    //Replace the url hash back to the current staying page
+                    app.router.navigate(self._targetUrl, {trigger: true});
+                    return;
+                }
+                app.events.trigger("preview:close");
+                if (!self.disposed) {
+                    self.render();
+                }
+
+                self.layout.trigger("list:record:deleted", model);
             }
         });
+    },
+
+    /**
+     * Pre-event handler before current router is changed
+     *
+     * @return {Boolean} true to continue routing, false otherwise
+     */
+    beforeRouteDelete: function () {
+        if (this._modelToDelete) {
+            this.warnDelete(this._modelToDelete);
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Format the message displayed in the alert
+     *
+     * @param {Backbone.Model} model to delete
+     * @returns {Object} confirmation and success messages
+     */
+    getDeleteMessages: function(model) {
+        var messages = {},
+            name = model.get('name') || (model.get('first_name') + ' ' + model.get('last_name')) || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+
+        messages.confirmation = app.lang.get('NTC_DELETE_CONFIRMATION') + context + '?';
+        messages.success = app.lang.get('NTC_DELETE_SUCCESS') + context + '.';
+        return messages;
+    },
+
+    /**
+     * Popup dialog message to confirm delete action
+     *
+     * @param {Backbone.Model} model the bean to delete
+     */
+    warnDelete: function(model) {
+        var self = this;
+        this._modelToDelete = model;
+
+        self._targetUrl = Backbone.history.getFragment();
+        //Replace the url hash back to the current staying page
+        if (self._targetUrl !== self._currentUrl) {
+            app.router.navigate(self._currentUrl, {trigger: false, replace: true});
+        }
+
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: self.getDeleteMessages(model).confirmation,
+            onConfirm: _.bind(self.deleteModel, self),
+            onCancel: function() {
+                self._modelToDelete = null;
+            }
+        });
+    },
+
+    /**
+     * Popup browser dialog message to confirm delete action
+     *
+     * @return {String} the message to be displayed in the browser dialog
+     */
+    warnDeleteOnRefresh: function() {
+        if (this._modelToDelete) {
+            return this.getDeleteMessages(this._modelToDelete).confirmation;
+        }
     },
 
     /**
@@ -223,11 +326,20 @@
     },
 
     /**
-     *
+     * Detach the event handlers for warning delete
+     */
+    unbindBeforeRouteDelete: function() {
+        app.routing.offBefore("route", this.beforeRouteDelete, this);
+        $(window).off("beforeunload.delete" + this.cid);
+    },
+
+    /**
+     * @override
      * @private
      */
     _dispose: function(){
-        app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_dispose'});
+        this.unbindBeforeRouteDelete();
+        this._super('_dispose');
         this.rowFields = null;
     },
 

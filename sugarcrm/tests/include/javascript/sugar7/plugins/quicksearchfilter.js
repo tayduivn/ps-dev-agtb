@@ -1,6 +1,6 @@
 describe("Plugins.Quicksearchfilter", function () {
 
-    var app, field, oRouter, buildRouteStub;
+    var app, field;
 
     beforeEach(function () {
         app = SugarTest.app;
@@ -9,7 +9,6 @@ describe("Plugins.Quicksearchfilter", function () {
     afterEach(function () {
         app.cache.cutAll();
         app.view.reset();
-        SugarTest.app.router = oRouter;
         delete Handlebars.templates;
     });
 
