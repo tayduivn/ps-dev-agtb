@@ -116,7 +116,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         $totals['timeperiod_id'] = $timeperiod_id;
         // unset some vars that come from the worksheet to avoid confusion with correct data
         // coming from this endpoint for progress
-        unset($totals['pipeline_opp_count'], $totals['quota'], $totals['included_opp_count'], $totals['pipeline_amount']);
+        unset($totals['pipeline_opp_count'], $totals['quota'], $totals['included_opp_count'], $totals['pipeline_amount'], $totals['closed_amount']);
 
         // combine totals in with other progress data
         $progressData = array_merge($progressData, $totals);
