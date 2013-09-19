@@ -668,6 +668,9 @@ class MetadataApi extends SugarApi
         $configs = array(
             'maxQueryResult' => $sugar_config['list_max_entries_per_page'],
             'maxSubpanelResult' => $sugar_config['list_max_entries_per_subpanel'],
+            'maxRecordFetchSize' => $sugar_config['max_record_fetch_size'],
+            'massUpdateChunkSize' => $sugar_config['mass_update_chunk_size'],
+            'massDeleteChunkSize' => $sugar_config['mass_delete_chunk_size'],
         );
 
         if (isset($administration->settings['honeypot_on'])) {

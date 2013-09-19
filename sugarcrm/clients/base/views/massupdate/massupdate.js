@@ -11,19 +11,47 @@
     defaultOption: null,
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
     massUpdateViewName: 'massupdate-progress',
+
     /**
-     * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
-     * @property {Integer} _defaultSettings.maxRecordsToMerge Default number of records we can merge.
+     * Default settings used when none are supplied through metadata.
+     *
+     * Supported settings:
+     * - {Number} mass_delete_chunk_size Number of records per chunk while
+     *   performing mass delete.
+     * - {Number} mass_update_chunk_size Number of records per chunk while
+     *   performing mass update.
+     * - {Number} max_records_to_merge Default number of records we can merge.
+     *
+     * Example:
+     * <pre><code>
+     * // ...
+     * 'settings' => array(
+     *     'mass_delete_chunk_size' => 20,
+     *     'mass_update_chunk_size' => 20,
+     *     'max_records_to_merge' => 5,
+     *     //...
+     * ),
+     * //...
+     * </code></pre>
+     *
+     * If 'mass_delete_chunk_size' or 'mass_update_chunk_size' aren't supplied
+     * default values fallback to 'app.config.massDeleteChunkSize' and
+     * 'app.config.massUpdateChunkSize' respectively.
+     *
+     * @property {Object}
      * @protected
-    */
+     */
     _defaultSettings: {
-        maxRecordsToMerge: 5
+        max_records_to_merge: 5
     },
 
     initialize: function(options) {
         this.fieldValues = [{}];
         this.setMetadata(options);
-        app.view.View.prototype.initialize.call(this, options);
+
+        this._super('initialize', [options]);
+        this._initSettings();
+
         this.setDefault();
 
         this.delegateListFireEvents();
@@ -34,6 +62,27 @@
         app.routing.before("route", this.beforeRouteDelete, this, true);
         $(window).on("beforeunload.delete" + this.cid, _.bind(this.warnDeleteOnRefresh, this));
     },
+
+    /**
+     * Initialize settings, default settings are used when none are supplied
+     * through metadata.
+     *
+     * @return {View.Views.BaseMassupdateView} Instance of this view.
+     * @protected
+     */
+    _initSettings: function() {
+        this._settings = _.extend(
+            {
+                mass_delete_chunk_size: app.config.massDeleteChunkSize,
+                mass_update_chunk_size: app.config.massUpdateChunkSize
+            },
+            this._defaultSettings,
+            this.meta && this.meta.settings || {}
+        );
+
+        return this;
+    },
+
     delegateListFireEvents: function() {
         this.layout.on("list:massupdate:fire", this.show, this);
         this.layout.on("list:massaction:hide", this.hide, this);
@@ -214,7 +263,6 @@
      */
     getMassUpdateModel: function(baseModule) {
         var massModel = this.context.get('mass_collection'),
-            chunkSize = app.config.maxQueryResult,
             progressView = this.getProgressView(),
             massCollection = massModel ? _.extend({}, massModel, {
                 defaultMethod: 'update',
@@ -259,6 +307,23 @@
                 paused: false,
 
                 /**
+                 * Number of records per chunk, defaults to '20'.
+                 *
+                 * @property {Number} chunkSize Number of records.
+                 * @protected
+                 */
+                 _chunkSize: 20,
+
+                /**
+                 * Set number of records per chunk.
+                 *
+                 * @param {Number} chunkSize Number of records.
+                 */
+                setChunkSize: function(chunkSize) {
+                    this._chunkSize = parseInt(chunkSize, 10);
+                },
+
+                /**
                  * Reset mass job.
                  */
                 resetProgress: function() {
@@ -279,11 +344,11 @@
                  */
                 updateChunk: function() {
                     if (!this.chunks) {
-                        this.chunks = this.slice(0, chunkSize);
+                        this.chunks = this.slice(0, this._chunkSize);
                         this.trigger('massupdate:start');
                     }
                     if (_.isEmpty(this.chunks)) {
-                        this.chunks = this.slice(0, chunkSize);
+                        this.chunks = this.slice(0, this._chunkSize);
                     }
                 },
 
@@ -407,6 +472,7 @@
     warnDelete: function() {
         var self = this;
         this._modelsToDelete = self.getMassUpdateModel(self.module);
+        this._modelsToDelete.setChunkSize(this._settings.mass_delete_chunk_size);
 
         self._targetUrl = Backbone.history.getFragment();
         //Replace the url hash back to the current staying page
@@ -516,6 +582,8 @@
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.getAttributes(),
             self = this;
+
+        massUpdate.setChunkSize(this._settings.mass_update_chunk_size);
 
         this.once('massupdate:validation:complete', function(validate) {
             var errors = validate.errors,
