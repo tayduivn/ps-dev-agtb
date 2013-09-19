@@ -26,7 +26,7 @@ $viewdefs['Prospects']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'type' => 'LBL_MODULE_NAME',
+                                'label' => 'LBL_MODULE_NAME',
                                 'display_columns' =>
                                 array(
                                     'name',
