@@ -16,7 +16,7 @@ $viewdefs['Users']['base']['view']['panel-top'] = array(
         array(
             'type' => 'button',
             'css_class' => 'btn-invisible',
-            'icon' => 'icon-chevron-down',
+            'icon' => 'icon-chevron-up',
         ),
         array(
             'type' => 'actiondropdown',
