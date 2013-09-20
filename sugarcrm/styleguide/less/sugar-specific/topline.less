@@ -18,7 +18,7 @@
       padding-left: 0;
       //this is the font and text
       span {
-        font-size: 20px;
+        font-size: @fontSizeLarge;
         line-height: 28px;
         .rtlMargin(@direction,0 0 0 22px);
         .rtl(@direction,ltr);
@@ -46,7 +46,7 @@
   h2 {
     padding: 0 !important;
     margin: 0;
-    font-size: 20px;
+    font-size: @fontSizeLarge;
     line-height: 28px;
     display: inline-block;
     margin-right: 0px;
@@ -93,7 +93,7 @@
       float: left;
       padding-top: 35px;
       padding-bottom: 5px;
-      padding-right: 20px;
+      padding-right: 10px;
       min-width: 120px;
       .rtlFloat(@direction,right);
       border-right: 1px solid darken(@grayLighter,5%);
@@ -232,7 +232,7 @@
     .last-commit {
         .datapoint {
             float: left;
-            padding: 8px 17px 8px 0px;
+            padding: 8px 7px 8px 0px;
             min-width: 120px;
             .rtlFloat(@direction,right);
             border-right: 1px solid darken(@grayLighter,5%);
