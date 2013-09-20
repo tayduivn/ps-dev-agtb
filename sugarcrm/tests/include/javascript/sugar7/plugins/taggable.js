@@ -88,21 +88,30 @@ describe("Taggable Plugin", function() {
     });
 
     describe("formatTags", function() {
-        it("Should translate text based tags into HTML format", function() {
-            var result,
-                oldRouter = SugarTest.app.router;
+        var oldRouter;
 
+        beforeEach(function() {
+            oldRouter = SugarTest.app.router;
             SugarTest.app.router = {
                 buildRoute: function(module, id, action) {
                     return module + '/' + id;
                 }
             };
+        });
 
-            result = plugin.formatTags('foo @[Accounts:1234:foo bar] bar @[Contacts:321:foo bar]');
-
-            expect($('<div></div>').append(result).html()).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234">foo bar</a></span> bar <span class="label label-Contacts sugar_tag"><a href="#Contacts/321">foo bar</a></span>');
-
+        afterEach(function() {
             SugarTest.app.router = oldRouter;
+        });
+
+        it("Should translate text based tags into HTML format", function() {
+            var result = plugin.formatTags('foo @[Accounts:1234:foo bar] bar @[Contacts:321:foo bar]');
+            expect($('<div></div>').append(result).html()).toBe('foo <span class="label label-Accounts sugar_tag"><a href="#Accounts/1234">foo bar</a></span> bar <span class="label label-Contacts sugar_tag"><a href="#Contacts/321">foo bar</a></span>');
+        });
+
+        it("should unescape html entities in tags", function() {
+            var result = plugin.formatTags('foo @[Accounts:1234:Jim O&#x27;Connor] bar');
+            expect(result).toContain('Jim O&#x27;Connor');
+            expect(result).toNotContain('&amp;');
         });
     });
 
