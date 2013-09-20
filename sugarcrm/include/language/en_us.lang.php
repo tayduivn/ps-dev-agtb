@@ -4091,6 +4091,8 @@ $app_strings = array (
 
     // tabbed dashlet
     'TPL_TABBED_DASHLET_TIME_RELATIVE' => '{{relativetime}} on {{date}} at {{time}}',
+    'TPL_TABBED_DASHLET_USER_BUTTON_LABEL' => 'My History',
+    'TPL_TABBED_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
 
     // history dashlet
     'LBL_HISTORY_DASHLET' => 'History',
@@ -4103,6 +4105,8 @@ $app_strings = array (
     'LBL_PLANNED_ACTIVITIES_DASHLET_DESCRIPTION' => 'The Planned Activities dashlet displays scheduled meetings and calls.',
     'LBL_PLANNED_ACTIVITIES_DASHLET_TODAY_BUTTON_LABEL' => 'Today',
     'LBL_PLANNED_ACTIVITIES_DASHLET_FUTURE_BUTTON_LABEL' => 'Future',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_USER_BUTTON_LABEL' => 'My History',
+    'LBL_PLANNED_ACTIVITIES_DASHLET_GROUP_BUTTON_LABEL' => 'Team History',
 
     // active tasks dashlet
     'LBL_ACTIVE_TASKS_DASHLET' => 'Active Tasks',
