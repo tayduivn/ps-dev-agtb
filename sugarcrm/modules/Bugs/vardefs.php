@@ -194,7 +194,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'type' => 'link',
     'relationship' => 'bug_notes',
     'source'=>'non-db',
-		'vname'=>'LBL_NOTES'
+		'vname'=>'LBL_NOTES',
   ),
    'meetings' => array(
     'name' => 'meetings',
