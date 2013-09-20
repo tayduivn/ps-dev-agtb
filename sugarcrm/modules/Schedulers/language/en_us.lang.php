@@ -37,6 +37,7 @@ $mod_strings = array (
 'LBL_OOTB_CAMPAIGN'		=> 'Run Nightly Mass Email Campaigns',
 'LBL_OOTB_PRUNE'		=> 'Prune Database on 1st of Month',
 'LBL_OOTB_TRACKER'		=> 'Prune Tracker Tables',
+'LBL_OOTB_PRUNE_RECORDLISTS'		=> 'Prune Old Record Lists',
 'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions Table',
 'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
 'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
@@ -159,5 +160,6 @@ $mod_strings = array (
 'LBL_TESTEMAIL' => 'testEmail',
 //END SUGARCRM flav=int ONLY
 'LBL_CLEANJOBQUEUE' => 'Cleanup Job Queue',
+'LBL_CLEANOLDRECORDLISTS' => 'Cleanup Old Record Lists',
 );
-?>
+

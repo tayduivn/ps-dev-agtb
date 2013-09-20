@@ -936,6 +936,18 @@ class Scheduler extends SugarBean {
         $sched14->modified_user_id   = '1';
         $sched14->catch_up           = '0';
         $sched14->save();
+
+        $sched15 = BeanFactory::getBean('Schedulers');
+        $sched15->name               = $mod_strings['LBL_OOTB_PRUNE_RECORDLISTS'];
+        $sched15->job                = 'function::cleanOldRecordLists';
+        $sched15->date_time_start    = create_date(2005,1,1) . ' ' . create_time(0,0,1);
+        $sched15->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
+        $sched15->job_interval       = '*::*::*::*::*';
+        $sched15->status             = 'Active';
+        $sched15->created_by         = '1';
+        $sched15->modified_user_id   = '1';
+        $sched15->catch_up           = '1';
+        $sched15->save();
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS

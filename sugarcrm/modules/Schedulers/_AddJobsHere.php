@@ -64,6 +64,7 @@ $job_strings = array (
     //Add class to build additional TimePeriods as necessary
     16 => 'class::SugarJobCreateNextTimePeriod',
     //END SUGARCRM flav=pro ONLY
+    20 => 'cleanOldRecordLists',
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY
@@ -521,6 +522,25 @@ function performFullFTSIndex()
     return true;
 }
 //END SUGARCRM flav=pro ONLY
+
+/**
+ * Job 20
+ */
+function cleanOldRecordLists() {
+    global $timedate;
+
+	$GLOBALS['log']->info('----->Scheduler fired job of type cleanOldRecordLists()');
+    $delTime = time()-3600; // Nuke anything an hour old. 
+
+    $hourAgo = $timedate->asDb($timedate->getNow()->modify("-1 hour"));
+    
+    $db = DBManagerFactory::getInstance();
+    
+    $query = "DELETE FROM record_list WHERE date_modified < '".$db->quote($hourAgo)."'";
+    $db->query($query,true);
+
+	return true;
+}
 
 
 //BEGIN SUGARCRM flav=int ONLY
