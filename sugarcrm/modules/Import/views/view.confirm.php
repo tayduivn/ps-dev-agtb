@@ -424,11 +424,13 @@ eoq;
         // to be displayed in UTF-8 format
         global $locale;
         $encoding = $importFile->autoDetectCharacterSet();
-        if (!empty($encoding) && $encoding != 'UTF-8') {
-            foreach ($rows as &$row) {
-                if (is_array($row)) {
-                    foreach ($row as &$val) {
+        foreach ($rows as &$row) {
+            if (is_array($row)) {
+                foreach ($row as &$val) {
+                    if (!empty($encoding) && $encoding != 'UTF-8') {
                         $val = $locale->translateCharset(strip_tags($val), $encoding);
+                    } else {
+                        $val = strip_tags($val);
                     }
                 }
             }
