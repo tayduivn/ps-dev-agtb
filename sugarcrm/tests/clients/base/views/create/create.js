@@ -1,7 +1,8 @@
 describe("Create View", function() {
-    var moduleName = 'Contacts',
+    var app,
+        moduleName = 'Contacts',
         viewName = 'create',
-        sinonSandbox, view, context, addComponentStub,
+        sinonSandbox, view, context,
         drawer;
 
     beforeEach(function() {
@@ -109,16 +110,17 @@ describe("Create View", function() {
             ]
         }, moduleName);
         SugarTest.testMetadata.set();
-        SugarTest.app.data.declareModels();
+        app = SugarTest.app;
+        app.data.declareModels();
 
         sinonSandbox = sinon.sandbox.create();
 
-        drawer = SugarTest.app.drawer;
-        SugarTest.app.drawer = {
+        drawer = app.drawer;
+        app.drawer = {
             close: function(){}
         };
 
-        context = SugarTest.app.context.getContext();
+        context = app.context.getContext();
         context.set({
             module: moduleName,
             create: true
@@ -127,16 +129,15 @@ describe("Create View", function() {
 
         view = SugarTest.createView("base", moduleName, viewName, null, context);
         view.enableDuplicateCheck = true;
-        addComponentStub = sinon.stub(view, 'addToLayoutComponents');
+        sinonSandbox.stub(view, 'addToLayoutComponents');
     });
 
     afterEach(function() {
         view.dispose();
         SugarTest.testMetadata.dispose();
-        SugarTest.app.view.reset();
+        app.view.reset();
         sinonSandbox.restore();
-        addComponentStub.restore();
-        SugarTest.app.drawer = drawer;
+        app.drawer = drawer;
     });
 
     describe('Initialize', function() {
@@ -144,16 +145,15 @@ describe("Create View", function() {
         var current_user_name = 'Johnny Appleseed';
         var save_user_id;
         var save_user_name;
-        var getModuleMetadata;
         var fields;  // Must be Set by each Test
         beforeEach(function() {
-            save_user_id = SugarTest.app.user.id;
-            save_user_name = SugarTest.app.user.attributes.full_name;
+            save_user_id = app.user.id;
+            save_user_name = app.user.attributes.full_name;
 
-            SugarTest.app.user.id = current_user_id;
-            SugarTest.app.user.attributes.full_name = current_user_name;
+            app.user.id = current_user_id;
+            app.user.attributes.full_name = current_user_name;
 
-            getModuleMetadata = sinon.stub(SugarTest.app.metadata, 'getModule', function() {
+            sinonSandbox.stub(app.metadata, 'getModule', function() {
                 var meta = {
                     "fields": fields,
                     favoritesEnabled: true,
@@ -166,9 +166,8 @@ describe("Create View", function() {
         });
 
         afterEach(function() {
-            SugarTest.app.user.id = save_user_id;
-            SugarTest.app.user.attributes.full_name = save_user_name;
-            getModuleMetadata.restore();
+            app.user.id = save_user_id;
+            app.user.attributes.full_name = save_user_name;
         });
 
         it("Should create a record view having a Assigned-To field initialized with the Current Signed In User", function() {
@@ -214,9 +213,9 @@ describe("Create View", function() {
             var copied_user_id = '98765',
                 copied_user_name = 'John Doe',
                 bean;
-            var context = SugarTest.app.context.getContext();
+            var context = app.context.getContext();
 
-            bean = SugarTest.app.data.createBean(moduleName, {
+            bean = app.data.createBean(moduleName, {
                 "assigned_user_id" : copied_user_id,
                 "assigned_user_name": copied_user_name
             });
@@ -336,20 +335,19 @@ describe("Create View", function() {
 
     describe('Render', function() {
         it("Should render 6 buttons and 5 fields", function() {
-            var buildGridsFromPanelsMetadataStub = sinon.stub(view, "_buildGridsFromPanelsMetadata", function(panels) {
-                    // The panel grid contains references to the actual fields found in panel.fields, so the fields must
-                    // be modified to include the field attributes that would be calculated during a normal render
-                    // operation and then added to the grid in the correct row and column.
-                    panels[0].grid               = [
-                        [panels[0].fields[0], panels[0].fields[1]]
-                    ];
-                    panels[1].grid               = [
-                        [panels[1].fields[0], panels[1].fields[1]],
-                        [panels[1].fields[2]]
-                    ];
-                }),
-                fields                           = 0,
-                buttons                          = 0;
+            sinonSandbox.stub(view, "_buildGridsFromPanelsMetadata", function(panels) {
+                // The panel grid contains references to the actual fields found in panel.fields, so the fields must
+                // be modified to include the field attributes that would be calculated during a normal render
+                // operation and then added to the grid in the correct row and column.
+                panels[0].grid = [
+                    [panels[0].fields[0], panels[0].fields[1]]
+                ];
+                panels[1].grid = [
+                    [panels[1].fields[0], panels[1].fields[1]],
+                    [panels[1].fields[2]]
+                ];
+            });
+            var fields = 0;
 
             view.render();
 
@@ -361,8 +359,6 @@ describe("Create View", function() {
 
             expect(fields).toBe(5);
             expect(_.values(view.buttons).length).toBe(6);
-
-            buildGridsFromPanelsMetadataStub.restore();
         });
     });
 
@@ -388,8 +384,8 @@ describe("Create View", function() {
                         "email1":"foobar@test.com",
                         "full_name":"Mr Foo Bar"
                     },
-                        model = SugarTest.app.data.createBean(moduleName, data),
-                        collection = SugarTest.app.data.createBeanCollection(moduleName, model);
+                        model = app.data.createBean(moduleName, data),
+                        collection = app.data.createBeanCollection(moduleName, model);
 
                     checkForDuplicateStub.restore();
                     success(collection);
@@ -438,7 +434,7 @@ describe("Create View", function() {
                 first_name: 'First',
                 last_name: 'Last'
             });
-            view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, data));
+            view.context.trigger('list:dupecheck-list-select-edit:fire', app.data.createBean(moduleName, data));
 
             expect(view.buttons[view.saveButtonName].isHidden).toBe(false);
             expect(view.buttons[view.saveButtonName].getFieldElement().text()).toBe('LBL_SAVE_BUTTON_LABEL');
@@ -468,7 +464,7 @@ describe("Create View", function() {
                 last_name: 'Last',
                 title: title
             });
-            view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, selectedDuplicateAttributes));
+            view.context.trigger('list:dupecheck-list-select-edit:fire', app.data.createBean(moduleName, selectedDuplicateAttributes));
             expect(view.model.attributes).toEqual(expectedAttributes);
         });
 
@@ -487,21 +483,17 @@ describe("Create View", function() {
                 first_name: 'First',
                 last_name: 'Last'
             });
-            view.context.trigger('list:dupecheck-list-select-edit:fire', SugarTest.app.data.createBean(moduleName, data));
+            view.context.trigger('list:dupecheck-list-select-edit:fire', app.data.createBean(moduleName, data));
 
             expect(view.model.get('first_name')).toBe('Foo');
             expect(view.model.get('last_name')).toBe('Bar');
 
-            var render = sinon.stub(view, 'render', function() {
-                return;
-            });
+            var render = sinonSandbox.stub(view, 'render');
             view.buttons[view.restoreButtonName].getFieldElement().click();
 
             expect(view.model.get('first_name')).toBe('First');
             expect(view.model.get('last_name')).toBe('Last');
             expect(view.model.isCopy()).toBe(true);
-
-            render.restore();
         });
     });
 
@@ -509,18 +501,17 @@ describe("Create View", function() {
         it("Should retrieve custom save options and params options should be appended to request url", function() {
             var moduleName = "Contacts",
                 bean,
-                app = SugarTest.app,
                 dm = app.data,
                 ajaxSpy = sinon.spy($, 'ajax');
 
             bean = dm.createBean(moduleName, { id: "1234" });
 
-            var checkFileStub = sinon.stub(SugarTest.app.file, 'checkFileFieldsAndProcessUpload', function(success) {
-                    success();
-                }),
-                getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions', function() {
-                    return {'params': {'param1': true, 'param2': false}};
-                });
+            sinonSandbox.stub(app.file, 'checkFileFieldsAndProcessUpload', function(success) {
+                success();
+            });
+            var getCustomSaveOptionsStub = sinonSandbox.stub(view, 'getCustomSaveOptions', function() {
+                return {'params': {'param1': true, 'param2': false}};
+            });
 
             view.render();
             view.model = bean;
@@ -536,7 +527,6 @@ describe("Create View", function() {
 
             SugarTest.server.respond();
             expect(getCustomSaveOptionsStub.calledOnce).toBe(true);
-            checkFileStub.restore();
             getCustomSaveOptionsStub.restore();
 
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?param1=true&param2=false&viewed=1');
@@ -546,13 +536,12 @@ describe("Create View", function() {
         it("Should not append options to url if custom options method not overridden", function() {
             var moduleName = "Contacts",
                 bean,
-                app = SugarTest.app,
                 dm = app.data,
-                ajaxSpy = sinon.spy($, 'ajax');
+                ajaxSpy = sinonSandbox.spy($, 'ajax');
 
             bean = dm.createBean(moduleName, { id: "1234" });
 
-            var checkFileStub = sinon.stub(SugarTest.app.file, 'checkFileFieldsAndProcessUpload', function(success) {
+            var checkFileStub = sinon.stub(app.file, 'checkFileFieldsAndProcessUpload', function(success) {
                     success();
                 }),
                 getCustomSaveOptionsStub = sinon.stub(view, 'getCustomSaveOptions');
@@ -575,13 +564,11 @@ describe("Create View", function() {
             getCustomSaveOptionsStub.restore();
 
             expect(ajaxSpy.getCall(0).args[0].url).toContain('?viewed=1');
-            ajaxSpy.restore();
         });
 
         it("Should build correct success message if model is returned from the API", function() {
-            var app = SugarTest.app,
-                moduleName = 'Contacts',
-                labelSpy = sinon.spy(app.lang, 'get'),
+            var moduleName = 'Contacts',
+                labelSpy = sinonSandbox.spy(app.lang, 'get'),
                 model = {
                     attributes: {
                         id: '123',
@@ -598,17 +585,14 @@ describe("Create View", function() {
             expect(messageContext.module).toEqual(moduleName);
             expect(messageContext.moduleSingularLower).toEqual(view.moduleSingular.toLowerCase());
             expect(messageContext.name).toEqual(model.attributes.name);
-            labelSpy.restore();
         });
 
         it("Should build generic message if model is not returned from the API", function() {
-            var app = SugarTest.app,
-                moduleName = 'Contacts',
-                labelSpy = sinon.spy(app.lang, 'get');
+            var moduleName = 'Contacts',
+                labelSpy = sinonSandbox.spy(app.lang, 'get');
 
             view.buildSuccessMessage();
             expect(labelSpy.calledWith('LBL_RECORD_SAVED', moduleName)).toBeTruthy();
-            labelSpy.restore();
         });
     });
 
@@ -620,13 +604,13 @@ describe("Create View", function() {
 
         it("Should save data when save button is clicked, form data are valid, and no duplicates are found.", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
-                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(app.data.createBeanCollection(moduleName));
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function() {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function() {
                     flag = true;
                 });
 
@@ -644,25 +628,21 @@ describe("Create View", function() {
                 expect(validateStub.calledOnce).toBe(true);
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.calledOnce).toBe(true);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
             });
         });
 
         it("Should close drawer once save is complete", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
-                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(app.data.createBeanCollection(moduleName));
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
+                drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
                     flag = true;
                     return;
                 });
@@ -679,25 +659,20 @@ describe("Create View", function() {
 
             runs(function() {
                 expect(drawerCloseStub.calledOnce).toBe(true);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
-                drawerCloseStub.restore();
             });
         });
 
         it("Should not save data when save button is clicked but form data are invalid", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     flag = true;
                     callback(true);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
                     flag = true;
-                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                    success(app.data.createBeanCollection(moduleName));
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function() {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function() {
                     return;
                 });
 
@@ -715,19 +690,15 @@ describe("Create View", function() {
                 expect(validateStub.calledOnce).toBeTruthy();
                 expect(checkForDuplicateStub.called).toBeFalsy();
                 expect(saveModelStub.called).toBeFalsy();
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
             });
         });
 
         it("Should not save data when save button is clicked but duplicates are found", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
                     flag = true;
 
                     var data = {
@@ -738,12 +709,12 @@ describe("Create View", function() {
                         "email1":"foobar@test.com",
                         "full_name":"Mr Foo Bar"
                     },
-                        model = SugarTest.app.data.createBean(moduleName, data),
-                        collection = SugarTest.app.data.createBeanCollection(moduleName, model);
+                        model = app.data.createBean(moduleName, data),
+                        collection = app.data.createBeanCollection(moduleName, model);
 
                     success(collection);
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function() {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function() {
                     return;
                 });
 
@@ -761,10 +732,6 @@ describe("Create View", function() {
                 expect(validateStub.calledOnce).toBe(true);
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.called).toBe(false);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
             });
         });
     });
@@ -772,10 +739,10 @@ describe("Create View", function() {
     describe('Ignore Duplicate and Save', function() {
         it("Should save data and not run duplicate check when ignore duplicate and save button is clicked.", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
                     flag = true;
 
                     var data = {
@@ -786,15 +753,15 @@ describe("Create View", function() {
                             "email1":"foobar@test.com",
                             "full_name":"Mr Foo Bar"
                         },
-                        model = SugarTest.app.data.createBean(moduleName, data),
-                        collection = SugarTest.app.data.createBeanCollection(moduleName, model);
+                        model = app.data.createBean(moduleName, data),
+                        collection = app.data.createBeanCollection(moduleName, model);
 
                     success(collection);
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
+                drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
                     flag = true;
                     return;
                 });
@@ -825,11 +792,6 @@ describe("Create View", function() {
                 expect(checkForDuplicateStub.calledOnce).toBe(true);
                 expect(saveModelStub.calledOnce).toBe(true);
                 expect(drawerCloseStub.calledOnce).toBe(true);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
-                drawerCloseStub.restore();
             });
         });
     });
@@ -837,20 +799,20 @@ describe("Create View", function() {
     describe('Save and Create Another', function() {
         it("Should save, clear out the form, but not close the drawer.", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
 
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
-                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(app.data.createBeanCollection(moduleName));
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
+                drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
                     return;
                 }),
-                clearStub = sinon.stub(view.model, 'clear', function() {
+                clearStub = sinonSandbox.stub(view.model, 'clear', function() {
                     flag = true;
                 });
 
@@ -873,12 +835,6 @@ describe("Create View", function() {
                 expect(saveModelStub.calledOnce).toBe(true);
                 expect(drawerCloseStub.called).toBe(false);
                 expect(clearStub.calledOnce).toBe(true);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
-                drawerCloseStub.restore();
-                clearStub.restore();
             });
         });
     });
@@ -886,16 +842,16 @@ describe("Create View", function() {
     describe('Save and View', function() {
         it("Should save, close the modal, and navigate to the detail view.", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate', function(success, error) {
-                    success(SugarTest.app.data.createBeanCollection(moduleName));
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate', function(success, error) {
+                    success(app.data.createBeanCollection(moduleName));
                 }),
-                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                navigateStub = sinon.stub(SugarTest.app, 'navigate', function() {
+                navigateStub = sinonSandbox.stub(app, 'navigate', function() {
                     flag = true;
                 });
 
@@ -913,11 +869,6 @@ describe("Create View", function() {
             runs(function() {
                 expect(saveModelStub.calledOnce).toBe(true);
                 expect(navigateStub.calledOnce).toBe(true);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
-                navigateStub.restore();
             });
         });
     });
@@ -925,14 +876,14 @@ describe("Create View", function() {
     describe('Disable Duplicate Check', function() {
         it("Should save data and not run duplicate check when duplicate check is disabled", function() {
             var flag = false,
-                validateStub = sinon.stub(view, 'validateModelWaterfall', function(callback) {
+                validateStub = sinonSandbox.stub(view, 'validateModelWaterfall', function(callback) {
                     callback(null);
                 }),
-                checkForDuplicateStub = sinon.stub(view, 'checkForDuplicate'),
-                saveModelStub = sinon.stub(view, 'saveModel', function(success) {
+                checkForDuplicateStub = sinonSandbox.stub(view, 'checkForDuplicate'),
+                saveModelStub = sinonSandbox.stub(view, 'saveModel', function(success) {
                     success();
                 }),
-                drawerCloseStub = sinon.stub(SugarTest.app.drawer, 'close', function() {
+                drawerCloseStub = sinonSandbox.stub(app.drawer, 'close', function() {
                     flag = true;
                 });
 
@@ -952,12 +903,22 @@ describe("Create View", function() {
                 expect(checkForDuplicateStub.called).toBe(false);
                 expect(saveModelStub.calledOnce).toBe(true);
                 expect(drawerCloseStub.calledOnce).toBe(true);
-
-                saveModelStub.restore();
-                validateStub.restore();
-                checkForDuplicateStub.restore();
-                drawerCloseStub.restore();
             });
+        });
+    });
+
+    describe('renderDupeCheckList', function() {
+        it('should set dupelisttype to dupecheck-list-edit', function() {
+            view.renderDupeCheckList();
+            expect(view.context.get('dupelisttype')).toEqual('dupecheck-list-edit');
+        });
+
+        it('should render dupecheck layout only if dupecheckList not already defined', function() {
+            var createLayoutSpy = sinonSandbox.spy(app.view, 'createLayout');
+            view.renderDupeCheckList();
+            expect(createLayoutSpy).toHaveBeenCalledOnce();
+            view.renderDupeCheckList();
+            expect(createLayoutSpy).not.toHaveBeenCalledTwice();
         });
     });
 });
