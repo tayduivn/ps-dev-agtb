@@ -65,11 +65,10 @@
         if (this.def.isMultiSelect && !_.isUndefined(this.items['']) && this.items[''] === '') {
             var obj = {};
             _.each(this.items, function(value, key) {
-               if (key ==='') {
-                   key = this.BLANK_VALUE_ID;
-                   value = app.lang.getAppString('LBL_BLANK_VALUE');
+               // Only work on key => value pairs that are not both blank
+               if (key !== '' && value !== '') {
+                   obj[key] = value;
                }
-               obj[key] = value;
             }, this);
             this.items = obj;
         }
@@ -311,7 +310,9 @@
     unformat: function(value){
         if (this.def.isMultiSelect && _.isArray(value) && _.indexOf(value, this.BLANK_VALUE_ID) > -1) {
             value = _.clone(value);
-            value[_.indexOf(value, this.BLANK_VALUE_ID)] = '';
+
+            // Delete empty values from the options array
+            delete value[this.BLANK_VALUE_ID];
         }
         if(this.def.isMultiSelect && _.isNull(value)){
             return [];  // Returning value that is null equivalent to server.  Backbone.js won't sync attributes with null values.
@@ -329,7 +330,9 @@
     format: function(value){
         if (this.def.isMultiSelect && _.isArray(value) && _.indexOf(value, '') > -1) {
             value = _.clone(value);
-            value[_.indexOf(value, '')] = this.BLANK_VALUE_ID;
+
+            // Delete empty values from the select list
+            delete value[''];
         }
         if(this.def.isMultiSelect && _.isString(value)){
             return this.convertMultiSelectDefaultString(value);
@@ -346,7 +349,10 @@
     convertMultiSelectDefaultString: function(defaultString) {
         var result = defaultString.split(",");
         _.each(result, function(value, key) {
-            result[key] = value.replace(/\^/g,"");
+            // Remove empty values in the selection
+            if (value !== '^^') {
+                result[key] = value.replace(/\^/g,"");
+            }
         });
         return result;
     },
