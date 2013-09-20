@@ -53,6 +53,7 @@
             this.onCancel = options.onCancel;
             this.onLinkClick = options.onLinkClick;
             this.alertLevel = options.level;
+            this.templateOptions = options.templateOptions;
             this.name = 'alert';
         },
 
@@ -60,7 +61,7 @@
             if(_.isUndefined(options)) {
                 return this;
             }
-            var template = this.getAlertTemplate(options.level, options.messages, options.title);
+            var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
             this.$el.html(template);
             this.show(options.level);
         },
@@ -108,9 +109,10 @@
          * @param level
          * @param messages
          * @param title (optional)
+         * @param templateOptions (optional) additional custom options passed to template function
          * @return {String}
          */
-        getAlertTemplate: function(level, messages, title) {
+        getAlertTemplate: function(level, messages, title, templateOptions) {
             var template,
                 alertClasses = this.getAlertClasses(level);
 
@@ -134,12 +136,12 @@
                 default:
                     template = app.template.empty;
             }
-
-            return template({
+            var seed = _.extend({}, {
                 alertClass: alertClasses,
                 title: this.getTranslatedLabels(title),
                 messages: this.getTranslatedLabels(messages)
-            });
+            }, templateOptions);
+            return template(seed);
         },
 
         /**
