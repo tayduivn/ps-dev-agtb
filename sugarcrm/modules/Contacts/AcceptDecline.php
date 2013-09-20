@@ -19,6 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once 'include/utils.php';
 
 global $sugar_config, $dbconfig, $beanList, $beanFiles, $app_strings, $app_list_strings, $current_user;
 
@@ -61,11 +62,12 @@ if(empty($focus)) {
 }
 
 $focus->set_accept_status($current_entity,$_REQUEST['accept_status']);
+$url  = $sugar_config['site_url'] . '#' . buildSidecarRoute($currentModule, $focus->id);
 
 print $app_strings['LBL_STATUS_UPDATED']."<BR><BR>";
 print $app_strings['LBL_STATUS']. " ". $app_list_strings['dom_meeting_accept_status'][$_REQUEST['accept_status']];
 print "<BR><BR>";
 
-print "<a href='?module=$currentModule&action=DetailView&record=$focus->id'>".$app_strings['LBL_MEETING_GO_BACK']."</a><br>";
+print "<a href='{$url}'>" . $app_strings['LBL_MEETING_GO_BACK'] . "</a><br />";
 sugar_cleanup();
 exit;
