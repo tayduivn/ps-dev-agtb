@@ -127,11 +127,31 @@
             context: {
                 create: true,
                 module: module,
-                prepopulate: {
-                    related: this.model
-                }
+                prepopulate: this._prePopulateDrawer(module)
             }
         });
+    },
+
+    /**
+     * Pre-populates data for new records created via drawer based on supplied
+     * module name.
+     *
+     * Override this method to provide custom data.
+     *
+     * @param {String} module Module name.
+     * @return {Array} Array of pre-populated data.
+     * @protected
+     */
+    _prePopulateDrawer: function(module) {
+        var data = {
+            related: this.model
+        };
+
+        if (module === 'Emails') {
+            data['to_addresses'] = this.model;
+        }
+
+        return data;
     },
 
     /**
