@@ -4147,6 +4147,10 @@ $app_strings = array (
     //organization chart
     'LBL_ORG_CHART' => 'Organization Chart',
     'LBL_ORG_CHART_DESC' => 'Displays the employee structure of your organization.',
+    'LBL_ORG_CHART_TOOLTIP_TOGGLE'=> 'Toggle orientation',
+    'LBL_ORG_CHART_TOOLTIP_NODES'=> 'Show all nodes',
+    'LBL_ORG_CHART_TOOLTIP_ZOOM'=> 'Zoom to fit',
+
 
     //cases summary chart
     'LBL_CASE_SUMMARY_CHART' => 'Case Summary',
