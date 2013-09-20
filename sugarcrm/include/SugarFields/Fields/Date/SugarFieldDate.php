@@ -28,4 +28,26 @@ class SugarFieldDate extends SugarFieldDatetime {
         return $timedate->to_display_date($db->fromConvert($value, 'date'), false);
     }
 
+    /**
+     * @param $value
+     * @param $fieldName
+     * @param SugarBean $bean
+     * @param SugarQuery $q
+     * @param SugarQuery_Builder_Where $where
+     * @param $op
+     * @return bool
+     */
+    public function fixForFilter(&$value, $fieldName, SugarBean $bean, SugarQuery $q, SugarQuery_Builder_Where $where, $op) {
+        return true;
+    }
+
+    /**
+     * pass value through
+     * @param $value
+     * @return string
+     */
+    public function apiUnformat($value) {
+        return $value;
+    }
+
 }
