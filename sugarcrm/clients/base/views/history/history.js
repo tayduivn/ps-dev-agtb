@@ -129,7 +129,11 @@
                 module: module,
                 prepopulate: this._prePopulateDrawer(module)
             }
-        });
+        }, _.bind(function(context, newModel) {
+            if (newModel && newModel.id) {
+                this.layout.loadData();
+            }
+        }, this));
     },
 
     /**
