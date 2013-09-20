@@ -53,9 +53,6 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
     public function setupMockClass()
     {
         $this->mock = $this->getMock('RevenueLineItemsCurrencyRateUpdate', array('getClosedStages'));
-        $this->mock->expects($this->once())
-            ->method('getClosedStages')
-            ->will($this->returnValue(array('Closed Won', 'Closed Lost')));
         // we want to use our mock database for these tests, so replace it
         SugarTestReflection::setProtectedValue($this->mock, 'db', $this->db);
     }
@@ -73,6 +70,10 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testDoCustomUpdateRate()
     {
+        $this->mock->expects($this->once())
+            ->method('getClosedStages')
+            ->will($this->returnValue(array('Closed Won', 'Closed Lost')));
+
         // setup the query strings we are expecting and what they should return
         $this->db->queries['get_rate'] = array(
             'match' => "/SELECT conversion_rate FROM currencies WHERE id = 'abc'/",
@@ -96,6 +97,10 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testDoCustomUpdateUsDollarRate()
     {
+        $this->mock->expects($this->once())
+            ->method('getClosedStages')
+            ->will($this->returnValue(array('Closed Won', 'Closed Lost')));
+
         // setup the query strings we are expecting and what they should return
         $this->db->queries['rate_update'] = array(
             'match' => "/UPDATE mytable SET amount_usdollar = 1\.234 \/ base_rate/",
@@ -108,5 +113,31 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
         $this->assertEquals(true, $result);
         $this->assertEquals(1, $this->db->queries['rate_update']['runCount']);
     }
+
+    /**
+     * @group opportunities
+     */
+    public function testDoPostUpdateAction()
+    {
+        // setup the query strings we are expecting and what they should return
+        $this->db->queries['post_select'] = array(
+            'match' => "/SELECT opportunity_id/",
+            'rows' => array(
+                array('likely'=>'1000', 'best'=>'1000', 'worst'=>'1000', 'opp_id'=>'abc123'),
+                array('likely'=>'2000', 'best'=>'2000', 'worst'=>'2000', 'opp_id'=>'abc123'),
+            )
+        );
+        $this->db->queries['post_update'] = array(
+            'match' => "/UPDATE opportunities/",
+        );
+
+        // run our tests with mockup data
+        $result = $this->mock->doPostUpdateAction();
+        // make sure we get the expected result and the expected run counts
+        $this->assertEquals(true, $result);
+        $this->assertEquals(1, $this->db->queries['post_select']['runCount']);
+        $this->assertGreaterThan(0, $this->db->queries['post_update']['runCount']);
+    }
+
 
 }

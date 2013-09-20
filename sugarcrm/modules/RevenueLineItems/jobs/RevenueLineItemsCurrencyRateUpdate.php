@@ -32,6 +32,12 @@ require_once('include/SugarCurrency/CurrencyRateUpdateAbstract.php');
 class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
 {
     /**
+     * @const CHUNK_SIZE
+     * number of SQL queries to group together for SQLRunner
+     */
+    const CHUNK_SIZE = 100;
+
+    /**
      * constructor
      *
      * @access public
@@ -130,6 +136,66 @@ class RevenueLineItemsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
             )
         );
         return !empty($result);
+    }
+
+    /**
+     * do post update process to update the opportunity RLIs, ENT only
+     */
+    public function doPostUpdateAction()
+    {
+        //BEGIN SUGARCRM flav=ent ONLY
+        $sql = "SELECT opportunity_id               AS opp_id,
+                          Sum(likely_case)             AS likely,
+                          Sum(worst_case)              AS worst,
+                          Sum(best_case)               AS best
+                   FROM   (SELECT rli.opportunity_id,
+                                  (rli.likely_case/rli.base_rate) as likely_case,
+                                  (rli.worst_case/rli.base_rate) as worst_case,
+                                  (rli.best_case/rli.base_rate) as best_case
+                           FROM   revenue_line_items AS rli
+                           WHERE  rli.deleted = 0) AS T
+                   GROUP  BY opp_id";
+        $results = $this->db->query($sql);
+
+        $stages = $this->getClosedStages();
+
+        $queries = array();
+        // skip closed opps
+        $sql_tpl = "UPDATE opportunities SET amount = '%s', best_case = '%s', worst_case = '%s' WHERE id = '%s' AND sales_status NOT IN ('%s')";
+        while ($row = $this->db->fetchRow($results)) {
+            $queries[] = sprintf(
+                $sql_tpl,
+                $row['likely'],
+                $row['best'],
+                $row['worst'],
+                $row['opp_id'],
+                implode("','", $stages)
+            );
+        }
+        if (count($queries) < self::CHUNK_SIZE) {
+            // do queries in this process
+            foreach ($queries as $query) {
+                $this->db->query($query);
+            }
+        } else {
+            // schedule queries to SQLRunner job scheduler
+            $chunks = array_chunk($queries, self::CHUNK_SIZE);
+            global $timedate, $current_user;
+            foreach ($chunks as $chunk) {
+                $job = BeanFactory::getBean('SchedulersJobs');
+                $job->name = "SugarJobSQLRunner: " . $timedate->getNow()->asDb();
+                $job->target = "class::SugarJobSQLRunner";
+                $job->data = serialize($chunk);
+                $job->retry_count = 0;
+                $job->assigned_user_id = $current_user->id;
+                $jobQueue = new SugarJobQueue();
+                $jobQueue->submitJob($job);
+            }
+
+        }
+
+        //END SUGARCRM flav=ent ONLY
+        return true;
     }
 
     /**

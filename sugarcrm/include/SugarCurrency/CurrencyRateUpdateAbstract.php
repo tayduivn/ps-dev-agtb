@@ -109,6 +109,7 @@ abstract class CurrencyRateUpdateAbstract
             $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate','unable to load database manager')));
             return false;
         }
+        $this->doPreUpdateAction();
         $dbTables = $this->db->getTablesArray();
         // loop each defined table and update each rate column according to the currency id
         foreach($this->rateColumnDefinitions as $tableName=>$tableColumns) {
@@ -144,7 +145,36 @@ abstract class CurrencyRateUpdateAbstract
                 return false;
             }
         }
+        $this->doPostUpdateAction();
         return true;
+    }
+
+    /**
+     * doPreUpdateAction
+     *
+     * Override this method in your extended class
+     * to do custom actions before the update.
+     *
+     * @access protected
+     * @return boolean true if pre update action was done
+     */
+    protected function doPreUpdateAction()
+    {
+        return false;
+    }
+
+    /**
+     * doPostUpdateAction
+     *
+     * Override this method in your extended class
+     * to do custom actions after the update.
+     *
+     * @access protected
+     * @return boolean true if post update action was done
+     */
+    protected function doPostUpdateAction()
+    {
+        return false;
     }
 
     /**

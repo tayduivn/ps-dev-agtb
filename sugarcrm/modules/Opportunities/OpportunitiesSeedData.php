@@ -53,7 +53,7 @@ class OpportunitiesSeedData {
         {
             return array();
         }
-    
+
         $opp_ids = array();
         $timedate = TimeDate::getInstance();
     
@@ -98,13 +98,13 @@ class OpportunitiesSeedData {
     
             // figure out which one to use
             $seed = rand(1, 15);
-            if ($seed%5 == 0) {
-                $opp->currency_id = $currency->id;
-                $opp->base_rate = $currency->conversion_rate;
+            if ($seed%2 == 0) {
+                $currency_id = $currency->id;
+                $base_rate = $currency->conversion_rate;
             } else {
                 // use the base rate
-                $opp->currency_id = '-99';
-                $opp->base_rate = 1;
+                $currency_id = '-99';
+                $base_rate = '1.0';
             }
 
             $opp->name = $account->name;
@@ -130,7 +130,7 @@ class OpportunitiesSeedData {
     
             $opp->id = create_guid();
             $opp->new_with_id = true;
-    
+
             // we need to save the opp before we create the rlis
             $opp->save();
 
@@ -194,8 +194,8 @@ class OpportunitiesSeedData {
                 $rli->discount_price = $discount_price;
                 $rli->cost_price = $cost_price;
                 $rli->quantity = rand(1, 100);
-                $rli->currency_id = $opp->currency_id;
-                $rli->base_rate = $opp->base_rate;
+                $rli->currency_id = $currency_id;
+                $rli->base_rate = $base_rate;
                 //BEGIN SUGARCRM flav=pro && flav != ent ONLY
                 $rli->sales_stage = $opp->sales_stage;
                 $rli->probability = $opp->probability;
