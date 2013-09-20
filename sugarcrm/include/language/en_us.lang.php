@@ -3252,7 +3252,12 @@ $app_strings = array (
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
     'LBL_DASHLET_ATTACHMENTS_NAME' => 'Notes & Attachments',
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Revenue Line Items',
+    //END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
+    //END SUGARCRM flav=pro && flav!=ent ONLY
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
     'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
