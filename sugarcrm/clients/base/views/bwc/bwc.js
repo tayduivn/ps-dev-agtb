@@ -258,12 +258,14 @@
         var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
         var href = elem.attr('href');
         var module = this.moduleRegex.exec(href);
+        var dataSidecarRewrite = elem.attr('data-sidecar-rewrite');
 
         if (
             !_.isArray(module) ||
             _.isEmpty(module[1]) ||
             _.isUndefined(app.metadata.getModule(module[1])) ||
-            app.metadata.getModule(module[1]).isBwcEnabled
+            app.metadata.getModule(module[1]).isBwcEnabled  ||
+            dataSidecarRewrite == "false"
         ) {
             return;
         }
