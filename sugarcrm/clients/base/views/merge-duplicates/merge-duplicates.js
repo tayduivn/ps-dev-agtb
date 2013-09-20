@@ -696,6 +696,32 @@
     },
 
     /**
+     * Enable/disable radio buttons according to ACL access to fields for all models.
+     */
+    checkCopyRadioButtons: function() {
+        if (!this.primaryRecord) {
+            return;
+        }
+        _.each(this.mergeFields, function(field) {
+            var model = this.primaryRecord,
+                element = this.$('[data-field-name=' + field.name + '][data-record-id=' + model.id + ']'),
+                elements = this.$('[data-field-name=' + field.name + '][data-record-id!=' + model.id + ']'),
+                editAccess = app.acl.hasAccessToModel('edit', model, field.name);
+
+            element.prop('disabled', !editAccess);
+            if (!editAccess) {
+                elements.prop('disabled', true);
+                return;
+            }
+            _.each(elements, function(domElement) {
+                var el = $(domElement),
+                    readAccess = app.acl.hasAccessToModel('read', this.collection.get(el.data('record-id')), field.name);
+                el.prop('disabled', !readAccess);
+            }, this);
+        }, this);
+    },
+
+    /**
      * Prepare primary record for edit mode.
      *
      * Toggle primary record in edit mode, setup panel title and
@@ -731,6 +757,7 @@
         this.$('.primary-edit-mode').removeClass('primary-edit-mode');
         this.$('[data-record-id=' + this.primaryRecord.id + ']').addClass('primary-edit-mode');
         this.$('[data-record-id=' + this.primaryRecord.id + '] input[type=radio]').attr('checked', true);
+        this.checkCopyRadioButtons();
     },
 
     /**
@@ -789,12 +816,13 @@
             return;
         }
 
-        if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName)) {
+        model = this.collection.get(recordId);
+        if (_.isUndefined(model)) {
             return;
         }
 
-        model = this.collection.get(recordId);
-        if (_.isUndefined(model)) {
+        if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName) ||
+            !app.acl.hasAccessToModel('read', model, fieldName)) {
             return;
         }
 
