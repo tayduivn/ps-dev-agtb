@@ -176,33 +176,17 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //set up outer part of the query
         $query = "select sum(amount) as amount, sum(recordcount) as recordcount, sum(closed) as closed from(";
         
-        //build up two subquery strings so we can unify the sales stage loops
-        //all manager opps 
-        $queryMgrOpps = "SELECT " .
-                            "sum(o.{$amountColumn}/o.base_rate) AS amount, count(*) as recordcount, 0 as closed " .
-                        "FROM {$tableName} o " .
-                        "INNER JOIN users u  " .
-                            "ON o.assigned_user_id = u.id " .
-                        "INNER JOIN timeperiods t " .
-                            "ON t.id = {$db->quoted($timeperiod_id)} " . 
-                        "WHERE " .
-                            "o.assigned_user_id = {$db->quoted($user_id)} " .                            
-                            "AND o.deleted = 0 " .
-                            "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
-                            "AND t.end_date_timestamp >= o.date_closed_timestamp ";
-        
-        $queryClosedMgrOpps = "SELECT " .
-                                  "0 as amount, 0 as recordcount, sum(o.{$amountColumn}/o.base_rate) AS closed " .
-                              "FROM {$tableName} o " .
-                              "INNER JOIN users u  " .
-                                  "ON o.assigned_user_id = u.id " .
-                              "INNER JOIN timeperiods t " .
-                                  "ON t.id = {$db->quoted($timeperiod_id)} " . 
-                              "WHERE " .
-                                  "o.assigned_user_id = {$db->quoted($user_id)} " .                            
-                                  "AND o.deleted = 0 " .
-                                  "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
-                                  "AND t.end_date_timestamp >= o.date_closed_timestamp ";
+        $queryMgrOpps = "";
+        //only commiteed manager
+        $subQuery = "(select (pipeline_amount / base_rate) as amount, " .
+                                 "pipeline_opp_count as recordcount, " .
+                                 "(closed_amount / base_rate) as closed from forecasts " .
+                         "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
+                            "and user_id = {$db->quoted($user_id)} " .
+                            "and forecast_type = 'Direct' " .
+                         "order by date_entered desc ";
+        $queryMgrOpps .= $db->limitQuery($subQuery, 0, 1, false, "", false);
+        $queryMgrOpps .= ") ";
         
         //only committed direct reportee (manager) opps
         $queryRepOpps = "";
@@ -243,24 +227,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                 $queryRepOpps .= "union all ";
             }
         }
-        
-        //per requirements, exclude the sales stages won from amount, but find them for the closed total
-        if (count($excluded_sales_stages_won)) {
-            foreach ($excluded_sales_stages_won as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";                
-            }
-            $queryClosedMgrOpps .= "AND o.sales_stage IN ('" . implode("', '", $excluded_sales_stages_won) . "') ";
-        }       
-
-        //per the requirements, exclude the sales stages for closed lost
-        if (count($excluded_sales_stages_lost)) {
-            foreach ($excluded_sales_stages_lost as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
-            }
-        }
-        
+         
         //Union the two together if we have two separate queries
-        $query .= $queryMgrOpps . " union all " . $queryClosedMgrOpps;
+        $query .= $queryMgrOpps;
         if ($queryRepOpps != "") {
             $query .= " union all " . $queryRepOpps;
         }

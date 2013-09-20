@@ -848,7 +848,7 @@
                 amount_base = app.currency.convertWithRate(amount, base_rate),
                 best_base = app.currency.convertWithRate(best, base_rate);
 
-            if (won) {
+            if (won && _.include(commit_stages_in_included_total, commit_stage)) {
                 wonAmount = app.math.add(wonAmount, amount_base);
                 wonBest = app.math.add(wonBest, best_base);
                 wonWorst = app.math.add(wonWorst, worst_base);
