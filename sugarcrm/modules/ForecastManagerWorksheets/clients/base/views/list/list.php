@@ -47,7 +47,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                 array(
                     'name' => 'quota',
                     'type' => 'currency',
-                    'label' => 'LBL_QUOTA',
+                    'label' => 'LBL_QUOTA_ADJUSTED',
                     'sortable' => true,
                     'default' => true,
                     'enabled' => true,

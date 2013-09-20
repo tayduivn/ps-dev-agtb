@@ -142,12 +142,12 @@
                 this.view.$el.find(".info .last-commit .datapoints div.datapoint").height(lastCommitHeight);
             }
             //adjust height of last commit datapoints
-            var index = this.$el.index() + 1;
+            var index = this.$el.index();
             var width = this.$el.find("div.datapoint").outerWidth();
             var datapointLength = this.view.$el.find(".info .last-commit .datapoints div.datapoint").length;
             var sel = this.view.$el.find('.last-commit .datapoints div.datapoint:nth-child('+index+')');
             if (datapointLength > 2 && index <= 2 || datapointLength == 2 && index == 1) {
-                $(sel).width(width-18);
+                $(sel).width(width-8);
             }  else {
                 $(sel).width(width);
             }

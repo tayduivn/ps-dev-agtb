@@ -60,6 +60,22 @@ class ForecastsApi extends SugarApi
                 'shortHelp' => 'Forecast list endpoint returns an empty set',
                 'longHelp' => 'include/api/help/module_record_favorite_put_help.html',
             ),
+            'getQuotaRollup' => array(
+                'reqType' => 'GET',
+                'path'      => array('Forecasts', '?', 'quotas', 'rollup', '?'),
+                'pathVars'  => array('', 'timeperiod_id', '', 'quota_type', 'user_id'),
+                'method' => 'getQuota',
+                'shortHelp' => 'Returns the rollup quota for the user by timeperiod',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsQuotasApiGet.html',
+            ),
+            'getQuotaDirect' => array(
+                'reqType' => 'GET',
+                'path'      => array('Forecasts', '?', 'quotas', 'direct', '?'),
+                'pathVars'  => array('', 'timeperiod_id', '', 'quota_type', 'user_id'),
+                'method' => 'getQuota',
+                'shortHelp' => 'Returns the direct quota for the user by timeperiod',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastsQuotasApiGet.html',
+            ),
         );
         return $parentApi;
     }
@@ -245,5 +261,32 @@ class ForecastsApi extends SugarApi
             MetaDataManager::clearAPICache();
             throw new SugarApiExceptionInvalidHash();
         }
+    }
+
+    /**
+     * Returns the Quota for a given timeperiod_id, user_id, and quota_type
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function getQuota($api, $args) {
+        if(!SugarACL::checkAccess('Quotas', 'access')) {
+            throw new SugarApiExceptionNotAuthorized();
+        }
+
+        /* @var $quotaBean Quota */
+        $quotaBean = BeanFactory::getBean('Quotas');
+
+        $isRollup = ($args['quota_type'] == 'rollup');
+
+        // add the manager's rollup quota to the data returned
+        $data = $quotaBean->getRollupQuota($args['timeperiod_id'], $args['user_id'], $isRollup);
+
+        // add if the manager is a top-level manager or not
+        $data['isTopLevelManager'] = User::isTopLevelManager($args['user_id']);
+
+        return $data;
     }
 }

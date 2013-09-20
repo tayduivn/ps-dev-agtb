@@ -8008,7 +8008,7 @@ nv.models.paretoChart = function () {
 
       if (showLegend) {
 
-        var quotaLegend = {'key':'Quota', 'type':'dash', 'color':'#444', 'values':{'series':0,'x':0,'y':0}};
+        var quotaLegend = {'key': chartData.properties.quotaLabel, 'type':'dash', 'color':'#444', 'values':{'series':0,'x':0,'y':0}};
 
         // bar series legend
         gEnter.append('g').attr('class', 'nv-legendWrap nv-barLegend');

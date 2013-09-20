@@ -47,6 +47,11 @@ $viewdefs['Forecasts']['base']['view']['info'] = array(
     ),
     'datapoints' => array(
         array(
+            'name' => 'quota',
+            'label' => 'LBL_QUOTA',
+            'type' => 'quotapoint'
+        ),
+        array(
             'name' => 'worst_case',
             'label' => 'LBL_WORST',
             'type' => 'datapoint'
