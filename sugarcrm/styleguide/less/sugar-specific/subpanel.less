@@ -13,15 +13,14 @@
   }
   &.empty {
     .label {
-      background-color: lighten(@grayLight, 5%);
-      .box-shadow(0 2px 0 @grayLight);
+      background-color: darken(@grayLighter, 15%);
     }
     h4 {
       color: @grayLight;
     }
   }
   tbody {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid darken(@grayLighter, 15%);
   }
   .more{
     height: 32px;
@@ -32,7 +31,7 @@
 }
 
 .subpanel-header {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid darken(@grayLighter, 15%);
   height: 44px;
   display: block;
   cursor: pointer;
@@ -62,7 +61,6 @@
   margin-top: 7px;
 }
 
-//UIUX-849: remove space below subpanel
 .main-content .filtered .results {
   margin-bottom: 0;
 }
