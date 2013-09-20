@@ -467,6 +467,12 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'label' => 'LBL_MODULE_NAME_SINGULAR'
                 ),
                 array(
+                    'name' => 'favorite',
+                    'label' => 'LBL_FAVORITE',
+                    'type' => 'favorite',
+                    'dismiss_label' => true,
+                ),
+                array(
                     'type' => 'badge',
                     'name' => 'badge',
                     'readonly' => true,
