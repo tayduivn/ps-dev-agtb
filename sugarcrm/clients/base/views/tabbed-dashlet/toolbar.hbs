@@ -7,8 +7,8 @@
         </div>
         <div class="span4">
             <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}" value="user" data-action="visibility-switcher"><i class="icon-user"></i></button>
-                <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}" value="group" data-action="visibility-switcher"><i class="icon-group"></i></button>
+                <button class="btn{{#eq settings.attributes.visibility "user"}} active{{/eq}}" value="user" data-action="visibility-switcher rel="tooltip" data-container="body" data-placement="bottom" title="{{str "TPL_TABBED_DASHLET_USER_BUTTON_LABEL" this.module}}"><i class="icon-user"></i></button>
+                <button class="btn{{#eq settings.attributes.visibility "group"}} active{{/eq}}" value="group" data-action="visibility-switcher" rel="tooltip" data-container="body" data-placement="bottom" title="{{str "TPL_TABBED_DASHLET_GROUP_BUTTON_LABEL" this.module}}"><i class="icon-group"></i></button>
             </div>
         </div>
     </div>

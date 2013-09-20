@@ -1,3 +1,4 @@
+//FILE SUGARCRM flav=ent ONLY
 describe("PortalCreateView", function() {
     var app,
         moduleName = 'Contacts',

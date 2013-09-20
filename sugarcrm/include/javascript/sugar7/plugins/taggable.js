@@ -100,6 +100,9 @@
 
                 if (text && (text.length > 0)) {
                     html = text.replace(tagRegExp, function(str, module, id, name) {
+                        // The backend mangles special characters, so we must
+                        // tell Handlebars that the string is safe.
+                        name = new Handlebars.SafeString(name);
                         return tagTemplate({module: module, id: id, name: name});
                     });
                 }
@@ -493,7 +496,7 @@
                     $dropdown.empty();
                 }
 
-                return $dropdown
+                return $dropdown;
             },
 
             /**
@@ -541,7 +544,7 @@
                 if ($current.length === 0) {
                     $next = this._getDropdown().children().first();
                 } else {
-                    $next = down ? $current.next() : $current.prev()
+                    $next = down ? $current.next() : $current.prev();
                 }
 
                 if ($next.length > 0) {
