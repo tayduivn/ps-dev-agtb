@@ -272,7 +272,7 @@ class OutboundEmailConfigurationPeer
             $addr          = $v->get_stored_options('from_addr');
             $storedOptions = unserialize(base64_decode($v->stored_options));
 
-            $outbound_config_id = $storedOptions["outbound_email"];
+            $outbound_config_id = empty($storedOptions["outbound_email"]) ? null : $storedOptions["outbound_email"];
             $oe                 = null;
 
             if (!empty($outbound_config_id)) {
