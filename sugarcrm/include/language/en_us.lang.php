@@ -3679,6 +3679,19 @@ $app_strings = array (
     'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
     'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
         'All changes will be lost. Are you sure you want to continue?',
+    'LBL_MERGE_DUPLICATES_TITLE' => 'Merge Related Records',
+    'TPL_MERGE_DUPLICATES_PROGRESS_STATUS' => 'Merged: {{percent}}%.',
+    'TPL_MERGE_DUPLICATES_FAIL_TO_ATTEMPT' =>
+        'Merge Related {{objectName}} failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MERGE_DUPLICATES_FAIL' =>
+        'Merge Related {{objectName}} failed.',
+    'LBL_MERGE_DUPLICATES_WARNING_CLOSE' =>
+        'Merge Related Records incomplete. Some records remain unmerged.',
+    'LBL_MERGE_DUPLICATES_FAIL_PROCESS' =>
+        'Merge Related Records incomplete. Some records remain unmerged. Do you want to continue?',
+    'TPL_MERGE_DUPLICATES_STAT' =>
+    '{{#with stat}}{{records}} records were merged successfully. ' .
+        '{{total}} related records were added.{{/with}}',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
