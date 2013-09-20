@@ -128,7 +128,7 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
 
         $selectFields = array($id);
-        if (in_array(array('team_id', 'team_set_id'), array_keys($fieldDefinitions))) {
+        if (isset($bean->field_defs['team_id'])) {
             $selectFields += array('team_id', 'team_set_id');
         }
 
