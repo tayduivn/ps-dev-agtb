@@ -159,7 +159,6 @@
             this._alertsCollections[module] = app.data.createBeanCollection(module);
             this._alertsCollections[module].options = {
                 limit: this.meta.remindersLimit,
-                myItems: true,
                 fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
             };
             this._intervals[module] = {};
@@ -284,7 +283,10 @@
 
             this._alertsCollections[module].filterDef = _.extend({},
                 this.meta.remindersFilterDef || {},
-                {'date_start': {'$dateBetween': [startDate, endDate]}}
+                {
+                    'date_start': {'$dateBetween': [startDate, endDate]},
+                    'users.id': {'$equals': app.user.get('id')}
+                }
             );
             this._alertsCollections[module].fetch({
                 silent: true,

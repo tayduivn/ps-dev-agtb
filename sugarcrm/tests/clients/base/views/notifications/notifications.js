@@ -368,7 +368,6 @@ describe('Notifications', function () {
             _.each(['Calls', 'Meetings'], function(module) {
                 expect(view._alertsCollections[module].options).toEqual({
                     limit: 100,
-                    myItems: true,
                     fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
                 });
             });
