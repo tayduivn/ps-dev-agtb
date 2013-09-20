@@ -18,6 +18,14 @@ class SugarFieldFullname extends SugarFieldBase
         return $this->fetch($this->findTemplate('DetailView'));
     }
 
+    public function getNormalizedDefs($vardef, $defs)
+    {
+         $vardef = parent::getNormalizedDefs($vardef, $defs);
+         if(!empty($defs['name_format_map'])) {
+             $vardef['fields'] = array_unique(array_values($defs['name_format_map']));
+         }
+         return $vardef;
+    }
     /**
      * @see SugarFieldBase::importSanitize()
      */

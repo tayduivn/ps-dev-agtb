@@ -69,21 +69,21 @@ class MetaDataHacks
      * @param  array $fielddefs
      * @return array
      */
-    public function normalizeFieldDefs(array $fieldDefs)
+    public function normalizeFieldDefs(array $defs)
     {
         $this->getSugarFieldHandler();
 
-        foreach ($fieldDefs as $name => $def) {
+        foreach ($defs['fields'] as $name => $def) {
             if (isset($def['type'])) {
                 $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
 
                 $field = $this->sfh->getSugarField($type);
 
-                $fieldDefs[$name] = $field->getNormalizedDefs($def);
+                $defs['fields'][$name] = $field->getNormalizedDefs($def, $defs);
             }
         }
 
-        return $fieldDefs;
+        return $defs['fields'];
     }
 
     /**

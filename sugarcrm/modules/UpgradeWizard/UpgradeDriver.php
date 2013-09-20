@@ -962,7 +962,7 @@ abstract class UpgradeDriver
         SugarApplication::preLoadLanguages();
         $timedate = TimeDate::getInstance();
         if(empty($locale)) {
-            if(method_exists(array('Localization', 'getObject'))) {
+            if(method_exists('Localization', 'getObject')) {
                 $locale = Localization::getObject();
             } else {
                 $locale = new Localization();

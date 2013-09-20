@@ -92,9 +92,9 @@ class MetaDataManager
     /**
      * Stack of flag that tells this class to clear the metadata cache on shutdown
      * of the request. The stack is keyed on whether a delete module client cache
-     * was requested or not, so a cache clear will happen no more than twice (and 
-     * more than likely will only happen once). 
-     * 
+     * was requested or not, so a cache clear will happen no more than twice (and
+     * more than likely will only happen once).
+     *
      * @var array
      */
     protected static $clearCacheOnShutdown = array();
@@ -617,7 +617,7 @@ class MetaDataManager
 
         // Bug 56505 - multiselect fields default value wrapped in '^' character
         if (!empty($data['fields'])) {
-            $data['fields'] = $this->metaDataHacks->normalizeFieldDefs($data['fields']);
+            $data['fields'] = $this->metaDataHacks->normalizeFieldDefs($data);
         }
 
         if (!isset($data['relationships'])) {
@@ -939,17 +939,17 @@ class MetaDataManager
         if (defined('SUGAR_PHPUNIT_RUNNER') && SUGAR_PHPUNIT_RUNNER === true) {
             self::clearAPICacheOnShutdown($deleteModuleClientCache);
         } elseif (($key === 0 && empty(self::$clearCacheOnShutdown)) || !isset(self::$clearCacheOnShutdown[$key])) {
-            // Will only clear cache if 
+            // Will only clear cache if
             //  - A) delete module cache is false and there is no stack of clears, OR
             //  - B) delete module cache is true and it hasn't already been called with true
-            // 
+            //
             // This prevents calling this once each for true and false when a true
             // would handle what a false would anyway
             register_shutdown_function(array('MetaDataManager', 'clearAPICacheOnShutdown'), $deleteModuleClientCache, getcwd());
             self::$clearCacheOnShutdown[$key] = true;
         }
     }
-    
+
     /**
      * Clears the API metadata cache of all cache files
      *

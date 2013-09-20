@@ -35,7 +35,7 @@
     		module = context.get("module");
     	
     	if(module) {
-    		var meta = App.metadata.getModule(module);
+    		var meta = app.metadata.getModule(module);
     		if(meta && meta.nameFormat) {
     			this.formatMap = meta.nameFormat;
     		}
@@ -43,11 +43,15 @@
         var formatPlaceholder = app.user.getPreference('default_locale_name_format') || '';
         // extract fields list from format
         options.def.fields = _.reduce(formatPlaceholder.split(''), function(fields, letter) {
+    		// only letters a-z may be significant in the format, 
+    		// everything else is translated verbatim
         	if(letter >= 'a' && letter <= 'z' && this.formatMap[letter]) {
-        		fields.push(this.formatMap[letter]);
+        		// clone because we'd rewrite it later and we don't want to mess with actual metadata
+        		fields.push(_.clone(meta.fields[this.formatMap[letter]] || this.formatMap[letter]));
         	}
         	return fields;
         }, [], this);
+        options.def.fields = app.metadata._patchFields(module, meta, options.def.fields);
 		this._super('initialize',[options]);
     },
 
@@ -106,11 +110,6 @@
      */
     format: function(name) {
         return app.utils.formatNameModel(this.context.get("module"), this.model.attributes);
-    	return app.utils.formatNameLocale({
-            first_name: this.model.get('first_name'),
-            last_name: this.model.get('last_name'),
-            salutation: this.model.get('salutation')
-        });
     },
 
     /**
