@@ -137,7 +137,13 @@ class One2MBeanRelationship extends One2MRelationship
 
         if ($save && !$rhs->deleted) {
             $rhs->in_relationship_update = true;
-            $rhs->save();
+            // Rather than calling full save on the related bean just update the
+            // parent id field to empty it. This saves a significant amount of
+            // in mass updating and mass deleting
+            $sql = "UPDATE {$rhs->table_name} 
+                    SET {$rhsID} = NULL
+                    WHERE id = '{$rhs->id}'";
+            $rhs->db->query($sql);
         }
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes") {
