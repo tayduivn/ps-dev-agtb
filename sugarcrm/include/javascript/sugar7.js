@@ -81,7 +81,7 @@
 
                     var frame = $('#bwc-frame');
                     if (frame.length === 1 &&
-                        'index.php' + frame.get(0).contentWindow.location.search === url
+                    		app.utils.rmIframeMark('index.php' + frame.get(0).contentWindow.location.search) === url
                         ) {
                         // update hash link only
                         return;

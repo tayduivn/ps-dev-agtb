@@ -44,4 +44,31 @@ describe("Sugar7 utils", function() {
             expect(targetCol.models[0].get('id')).toEqual('targetMdl');
         });
     });
+    
+    describe('Handling iframe URLs', function() {
+		
+    	it('Add frame mark to URL', function() {
+    		var withMark = app.utils.addIframeMark('/sugar7/index.php?module=Administration&action=Home'); 
+    		expect(withMark).toBe('/sugar7/index.php?module=Administration&action=Home&bwcFrame=1');
+    		withMark = app.utils.addIframeMark('/sugar7/index.php'); 
+    		expect(withMark).toBe('/sugar7/index.php?bwcFrame=1');
+    		withMark = app.utils.addIframeMark('/sugar7/index.php?bwcFrame=1'); 
+    		expect(withMark).toBe('/sugar7/index.php?bwcFrame=1');
+    	});
+    	
+    	it('Remove frame mark from URL', function() {
+    		var noMark = app.utils.rmIframeMark('/sugar7/index.php?module=Administration&action=Home&bwcFrame=1');
+    		expect(noMark).toBe('/sugar7/index.php?module=Administration&action=Home'); 
+    		noMark = app.utils.rmIframeMark('/sugar7/index.php?bwcFrame=1');
+    		expect(noMark).toBe('/sugar7/index.php?'); 
+    		noMark = app.utils.rmIframeMark('/sugar7/index.php?module=Administration&bwcFrame=1&action=Home');
+    		expect(noMark).toBe('/sugar7/index.php?module=Administration&action=Home'); 
+    		noMark = app.utils.rmIframeMark('/sugar7/index.php?module=Administration&action=Home');
+    		expect(noMark).toBe('/sugar7/index.php?module=Administration&action=Home'); 
+    		noMark = app.utils.rmIframeMark('/sugar7/index.php');
+    		expect(noMark).toBe('/sugar7/index.php'); 
+    	});
+    });
+    
+
 });
