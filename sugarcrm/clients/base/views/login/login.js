@@ -89,6 +89,20 @@
                 ]
             });
         }
+        var config = app.metadata.getConfig();
+        if (typeof config.system_status != undefined 
+            && typeof config.system_status.level != undefined
+            && (config.system_status.level == 'maintenance'
+                || config.system_status.level == 'admin_only')) {
+            app.alert.show('admin_only', {
+                level:'warning',
+                title: '',
+                messages: [
+                    '',
+                    app.lang.getAppString(config.system_status.message),
+                ]
+            });            
+        }
         return this;
     },
 

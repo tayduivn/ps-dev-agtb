@@ -293,6 +293,15 @@
         var showWizard = false;
         if (app.user && app.user.has('show_wizard')) {
             showWizard = app.user.get('show_wizard');
+            if (showWizard) {
+                // If the license settings need to be input, don't show the wizard
+                var system_config = app.metadata.getConfig();
+                if (typeof(system_config.system_status) != 'undefined'
+                    && typeof(system_config.system_status.level) != 'undefined'
+                    && system_config.system_status.level == 'admin_only') {
+                    showWizard = false;
+                }
+            }
         }
         if (showWizard) {
             var callbacks = {

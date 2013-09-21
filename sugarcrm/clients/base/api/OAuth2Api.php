@@ -30,6 +30,7 @@ class OAuth2Api extends SugarApi
                 'noLoginRequired' => true,
                 'keepSession' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'oauth_logout' => array(
                 'reqType' => 'POST',
@@ -40,6 +41,7 @@ class OAuth2Api extends SugarApi
                 'longHelp' => 'include/api/help/oauth2_logout_post_help.html',
                 'keepSession' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'oauth_bwc_login' => array(
                 'reqType' => 'POST',
@@ -50,6 +52,7 @@ class OAuth2Api extends SugarApi
                 'longHelp' => 'include/api/help/oauth2_bwc_login_post_help.html',
                 'keepSession' => true,
                 'ignoreMetaHash' => true,
+                'ignoreSystemStatusError' => true,
             ),
             'oauth_sudo' => array(
                 'reqType' => 'POST',
@@ -101,6 +104,19 @@ class OAuth2Api extends SugarApi
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             // have API throw login exception wil full data
             $api->needLogin($e);
+        }
+
+        $loginStatus = apiCheckLoginStatus();
+        if ($loginStatus !== true && $loginStatus['level'] != 'warning') {
+            if (($loginStatus['level'] == 'admin_only' || $loginStatus['level'] == 'maintenance')
+                 && $GLOBALS['current_user']->isAdmin() ) {
+                // Let them through
+            } else {
+                // This is no good, they shouldn't be allowed in.
+                $e = new SugarApiExceptionMaintenance($systemStatus['message'], null, null, 0, $systemStatus['level']);
+                $e->setExtraData("url", $systemStatus['url']);
+                throw $e;
+            }
         }
 
         // Adding the setcookie() here instead of calling $api->setHeader() because

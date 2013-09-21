@@ -183,6 +183,23 @@ class RestService extends ServiceBase
                 $isLoggedIn = $this->authenticateUserForDownload($_COOKIE[self::DOWNLOAD_COOKIE]);
             }
 
+            // Make sure the system is ready for them
+            // This section of code is a portion of the code referred
+            // to as Critical Control Software under the End User
+            // License Agreement.  Neither the Company nor the Users
+            // may modify any portion of the Critical Control Software.
+            $systemStatus = apiCheckSystemStatus();
+            if ($systemStatus !== true
+                && $systemStatus['level'] != 'warning'
+                && !($systemStatus['level'] == 'maintenance' && isset($this->user) && $this->user->isAdmin())
+                && empty($route['ignoreSystemStatusError'])) {
+                // The system is unhappy and the route isn't flagged to let them through
+                $e = new SugarApiExceptionMaintenance($systemStatus['message'], null, null, 0, $systemStatus['level']);
+                $e->setExtraData("url", $systemStatus['url']);
+                throw $e;
+            }
+            //END REQUIRED CODE DO NOT MODIFY
+
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 if (!$isLoggedIn) {
                     if (!$loginException) {
@@ -201,6 +218,7 @@ class RestService extends ServiceBase
                     }
                 }
             }
+
 
             if ($isLoggedIn) {
                 // This is needed to load in the app_strings and the app_list_strings and the such
@@ -300,23 +318,6 @@ class RestService extends ServiceBase
             $this->handleErrorOutput('php_error_before_api');
 
             $this->response->setContent($apiClass->$apiMethod($this,$argArray));
-
-            if(!empty($GLOBALS['sugar_config']['maintenanceMode']) && !empty($GLOBALS['current_user']->id)) {
-                // if we're in maintenance and we're not admin - bail!
-                if(!$GLOBALS['current_user']->isAdmin()) {
-                    if(session_id()) {
-                        session_destroy();
-                    }
-                    if($GLOBALS['sugar_config']['maintenanceMode'] === true) {
-                        $url = 'maintenance.php';
-                    } else {
-                        $url = $GLOBALS['sugar_config']['maintenanceMode'];
-                    }
-                    $e = new SugarApiExceptionMaintenance();
-                    $e->setExtraData("url", $url);
-                    throw $e;
-                }
-            }
 
             $this->respond($route, $argArray);
             
@@ -625,6 +626,7 @@ class RestService extends ServiceBase
             LogicHook::initialize()->call_custom_logic('', 'after_session_start');
             
             $this->user = $GLOBALS['current_user'];
+            $this->user->setupSession();
         }
 
         return $valid;

@@ -588,6 +588,10 @@ class User extends Person {
         $this->savePreferencesToDB();
         //CurrentUserApi needs a consistent timestamp/format of the data modified for hash purposes.
         $this->hashTS = $this->date_modified;
+
+        // In case this new/updated user changes the system status, reload it here
+        apiLoadSystemStatus(true);
+
         return $this->id;
 	}
 
@@ -2389,5 +2393,14 @@ EOQ;
 
     public function getUserMDHash() {
         return md5($this->hashTS);
+    }
+
+    public function setupSession() {
+        if (!isset($_SESSION[$this->user_name.'_get_developer_modules_for_user'])) {
+            $this->getDeveloperModules();
+        }
+        if (!isset($_SESSION[$this->user_name.'_get_admin_modules_for_user'])) {
+            $this->getAdminModules();
+        }
     }
 }

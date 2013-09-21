@@ -746,6 +746,14 @@ class MetaDataManager
                 // Valid is either a platform hash that matches the session hash
                 // OR no platform hash and no session hash
                 $platformHash = empty($hashes['meta_hash_' . $platform]) ? null : $hashes['meta_hash_' . $platform];
+                if (!empty($platformHash)) {
+                    // The system status hash is caculated so we only need
+                    // the old hash and the system status
+                    $systemStatus = apiCheckSystemStatus();
+                    if ($systemStatus !== true) {
+                        $platformHash = md5($platformHash.serialize($systemStatus));
+                    }
+                }
 
                 return ($platformHash && $platformHash == $hash);
             } else {
