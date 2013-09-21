@@ -285,6 +285,70 @@ class SugarQuery
     }
 
     /**
+     * Add a join based on a link from the target bean
+     *
+     * @param SugarBean $bean
+     * @param string $link_name
+     * @param array $options
+     *
+     * @return SugarQuery
+     */
+    public function joinSubpanel($bean, $link_name, $options = array())
+    {
+        if (!isset($options['alias'])) {
+            $options['alias'] = $bean->table_name;
+        }
+
+        if (!empty($this->links[$options['alias']])) {
+            return $this->links[$options['alias']];
+        }
+
+        $alias = $options['alias'];
+        $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
+        $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
+        $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
+
+
+        $bean->load_relationship($link_name);
+        if(empty($bean->$link_name)) {
+            throw new SugarApiExceptionInvalidParameter("Invalid link $link_name");
+        }
+
+        $bean->$link_name->buildJoinSugarQuery(
+            $this,
+            array(
+                'joinTableAlias' => $this->from->table_name,
+                'myAlias' => $alias,
+                'joinType' => $joinType,
+                'ignoreRole' => $ignoreRole,
+                'reverse' => true,
+            )
+        );
+        
+        if ($team_security === true) {
+            $bean->addVisibilityQuery(
+                $this,
+                array("table_alias" => $alias, 'as_condition' => true)
+            );
+        }
+
+
+        if ($bean->hasCustomFields()) {
+            $table_cstm = $bean->get_custom_table_name();
+            $alias_cstm = "{$alias}_cstm";
+            $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
+                ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
+        }
+        
+
+        $this->join[$options['alias']]->addLinkName($link_name);
+        $this->join[$options['alias']]->on()->equals($options['alias'].'.id',$bean->id);
+        $this->links[$options['alias']] = $this->join[$options['alias']];
+        return $this->join[$options['alias']];
+    }
+
+
+    /**
      * Compile this SugarQuery into a standard SQL-92 Query string
      * @return string
      */

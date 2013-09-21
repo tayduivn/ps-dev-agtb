@@ -488,10 +488,13 @@ class M2MRelationship extends SugarRelationship
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
-        if ($linkIsLHS) {
-            $startingTable = $link->getFocus()->table_name;
-        } else {
-            $startingTable = $link->getFocus()->table_name;
+        if (!empty($options['reverse'])) {
+            $linkIsLHS = !$linkIsLHS;
+        }
+        
+        $startingTable = $link->getFocus()->table_name;
+        if($options['joinTableAlias'] != $startingTable) {
+            $startingTable = strtolower($options['joinTableAlias']);
         }
 
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
@@ -502,27 +505,15 @@ class M2MRelationship extends SugarRelationship
 
         $joinKey = $linkIsLHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
 
-        
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
-        
-        $targetTableWithAlias = $targetTable;
-        
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
 
-        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
-        
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';        
         $join = '';
 
-        if($options['joinTableAlias'] != $startingTable)
-        {
-            $startingTable = strtolower($options['joinTableAlias']);
-        }
-        if($options['myAlias'] == $joinTable)
-        {
+        if($options['myAlias'] == $joinTable) {
             $targetTable_alias = $joinTable . '_link';
-        }
-        else
-        {
+        } else {
             $targetTable_alias = strtolower($options['myAlias']);
         }
 

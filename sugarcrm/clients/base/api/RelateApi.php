@@ -86,22 +86,12 @@ class RelateApi extends FilterApi {
             throw new SugarApiExceptionNotAuthorized('No access to list records for module: ' . $linkModuleName);
         }
 
-        $rf = SugarRelationshipFactory::getInstance();
-        $relObj = $record->$linkName->getRelationshipObject();
-        $relDef = $rf->getRelationshipDef($relObj->name);
-        $relatedLinkName = $record->$linkName->getRelatedModuleLinkName();
-
-        if ($record->$linkName->getSide() == REL_LHS) {
-            $column = $relDef['lhs_key'];
-        } else {
-            $column = $relDef['rhs_key'];
-        }
-
         $options = $this->parseArguments($api, $args, $linkSeed);
 
         // If they don't have fields selected we need to include any link fields
         // for this relationship
         if (empty($args['fields']) && is_array($linkSeed->field_defs)) {
+            $relatedLinkName = $record->$linkName->getRelatedModuleLinkName();
             $options['linkDataFields'] = array();
             foreach ($linkSeed->field_defs as $field => $def) {
                 if (empty($def['rname_link']) || empty($def['link'])) {
@@ -124,14 +114,13 @@ class RelateApi extends FilterApi {
         } else {
             $ignoreRole = false;
         }
-        $q->join($relatedLinkName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
+
+        $q->joinSubpanel($record, $linkName, array('joinType' => 'INNER', 'ignoreRole' => $ignoreRole));
 
         if (!isset($args['filter']) || !is_array($args['filter'])) {
             $args['filter'] = array();
         }
         self::addFilters($args['filter'], $q->where(), $q);
-
-        $q->where()->equals($relatedLinkName . '.' . $column, $record->id);
 
         return array($args, $q, $options, $linkSeed);
     }

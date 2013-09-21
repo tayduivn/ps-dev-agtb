@@ -317,6 +317,9 @@ class One2MBeanRelationship extends One2MRelationship
         if (!$linkIsLHS) {
             $startingTable = $this->def['rhs_table'];
         }
+        if (!empty($options['reverse'])) {
+            $linkIsLHS = !$linkIsLHS;
+        }
 
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];

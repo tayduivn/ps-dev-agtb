@@ -107,6 +107,9 @@ class One2OneBeanRelationship extends One2MBeanRelationship
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
+        if (!empty($options['reverse'])) {
+            $linkIsLHS = !$linkIsLHS;
+        }
 
         $startingTable = $link->getFocus()->table_name;
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
