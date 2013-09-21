@@ -102,6 +102,13 @@ class One2OneBeanRelationship extends One2MBeanRelationship
      * Build a Join for an existing SugarQuery
      * @param Link2 $link
      * @param SugarQuery $sugar_query
+     * @param Array $options array of additional paramters. Possible parameters include
+     *  - 'myAlias' String name of starting table alias
+     *  - 'joinTableAlias' String alias to use for the related table in the final result
+     *  - 'reverse' Boolean true if this join should be built in reverse for subpanel style queries where the select is
+     *              on the related table
+     *  - 'ignoreRole' Boolean true if the role column of the relationship should be ignored for this join .
+     *
      * @return SugarQuery
      */
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
@@ -111,9 +118,8 @@ class One2OneBeanRelationship extends One2MBeanRelationship
             $linkIsLHS = !$linkIsLHS;
         }
 
-        $startingTable = $link->getFocus()->table_name;
+        $startingTable = !empty($options['myAlias']) ? $options['myAlias'] : $link->getFocus()->table_name;
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
-
 
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
 
@@ -122,14 +128,19 @@ class One2OneBeanRelationship extends One2MBeanRelationship
 
         $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $sugar_query->joinTable($targetTable, array('alias' => $options['myAlias'], 'joinType' => $join_type))
-            ->on()->equalsField("{$startingTable}.{$startingKey}","{$options['myAlias']}.{$targetKey}")
-            ->equals("{$options['myAlias']}.deleted","0");
+        $joinParams = array('joinType' => $join_type);
+        $jta = $targetTable;
+        if (!empty($options['joinTableAlias'])) {
+            $jta = $joinParams['alias'] = $options['joinTableAlias'];
+        }
+        $sugar_query->joinTable($targetTable, $joinParams)
+            ->on()->equalsField("{$startingTable}.{$startingKey}","{$jta}.{$targetKey}")
+            ->equals("{$jta}.deleted","0");
 
         if (empty($options['ignoreRole'])) {
-            $this->buildSugarQueryRoleWhere($sugar_query, $options['myAlias']);
+            $this->buildSugarQueryRoleWhere($sugar_query, $jta);
         }
         
-        return $sugar_query->join[$options['myAlias']];
+        return $sugar_query->join[$jta];
     }
 }

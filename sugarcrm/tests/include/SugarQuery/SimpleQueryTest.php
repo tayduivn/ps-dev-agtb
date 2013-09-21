@@ -203,11 +203,12 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         // get the new contact
 
         $sq = new SugarQuery();
-        $sq->select(
-            array("first_name", "last_name", array("accounts.name", 'aname'))
-        );
         $sq->from(BeanFactory::getBean('Contacts'));
-        $sq->join('accounts');
+        $accounts = $sq->join('accounts')->joinName();
+        $sq->select(
+            array("first_name", "last_name", array("$accounts.name", 'aname'))
+        );
+
         $sq->where()->equals("id", $contact_id);
 
         $result = $sq->execute();
@@ -286,9 +287,10 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $sq = new SugarQuery();
         $sq->select(array(array("users.first_name", 'fname')));
         $sq->from(BeanFactory::getBean('Users'));
-        $sq->join('email_addresses');
-        $sq->where()->starts("email_addresses.email_address", "test");
+        $email_addresses = $sq->join('email_addresses')->joinName();
+        $sq->where()->starts("$email_addresses.email_address", "test");
         $sq->where()->equals('users.id', $current_user->id);
+
 
         $result = $sq->execute();
         $this->assertEquals(
@@ -386,9 +388,9 @@ class SimpleQueryTest extends Sugar_PHPUnit_Framework_TestCase
         unset($account);
         // get the new contact
         $sq = new SugarQuery();
-        $sq->select(array('accounts.name', 'accounts.id'));
         $sq->from(BeanFactory::getBean('Notes'));
-        $sq->join('accounts');
+        $accounts = $sq->join('accounts')->joinName();
+        $sq->select(array("$accounts.name", "$accounts.id"));
         $sq->where()->equals("id", $note_id);
 
         $result = $sq->execute();

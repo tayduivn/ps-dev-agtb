@@ -6707,6 +6707,10 @@ class SugarBean
         $relatedBeanName   = BeanFactory::getObjectName($relatedModuleName);
         $relatedLinkName   = $link->getRelatedModuleLinkName();
 
+        if (empty($relatedBeanName) || empty($dictionary[$relatedBeanName])) {
+            $GLOBALS['log']->fatal("Cannot load field defs for $relatedBeanName");
+            return $result;
+        }
         // iterate over related bean fields
         foreach ($dictionary[$relatedBeanName]['fields'] as $def) {
             if (!empty($def['formula'])) {

@@ -364,7 +364,6 @@ class FilterApi extends SugarApi
         $seed->call_custom_logic("before_filter", array($q, $options));
         $GLOBALS['log']->info("Filter SQL: " . $q->compileSql());
         $idRows = $q->execute();
-        // return $idRows;
 
         $data = array();
         $data['next_offset'] = -1;
@@ -451,27 +450,34 @@ class FilterApi extends SugarApi
      */
     protected static function verifyField(SugarQuery $q, $field)
     {
+        $ret = array();
         if (strpos($field, '.')) {
             // It looks like it's a related field that it's searching by
-            list($relatedTable, $field) = explode('.', $field);
+            list($linkName, $field) = explode('.', $field);
 
-            $q->from->load_relationship($relatedTable);
-            if(empty($q->from->$relatedTable)) {
+            $q->from->load_relationship($linkName);
+            if(empty($q->from->$linkName)) {
                 throw new SugarApiExceptionInvalidParameter("Invalid link $relatedTable for field $field");
             }
 
-            if($q->from->$relatedTable->getType() == "many") {
+            if($q->from->$linkName->getType() == "many") {
                 // FIXME: we have a problem here: we should allow 'many' links for related to match against parent object
                 // but allowing 'many' in  other links may lead to duplicates. So for now we allow 'many'
                 // but we should figure out how to find if 'many' is permittable or not.
                 // throw new SugarApiExceptionInvalidParameter("Cannot use condition against multi-link $relatedTable");
             }
 
-            $q->join($relatedTable, array('joinType' => 'LEFT'));
+            $join = $q->join($linkName, array('joinType' => 'LEFT'));
+            $table = $join->joinName();
+            $ret['field'] = "$table.$field";
 
-            $bean = $q->getTableBean($relatedTable);
+            $bean = $q->getTableBean($table);
+            if (empty($bean))
+                $bean = $q->getTableBean($linkName);
+            if (empty($bean) && $q->getFromBean() && $q->getFromBean()->$linkName)
+                $bean = BeanFactory::getBean($q->getFromBean()->$linkName->getRelatedModuleName());
             if(empty($bean)) {
-                throw new SugarApiExceptionInvalidParameter("Cannot use condition against $relatedTable - unknown module");
+                throw new SugarApiExceptionInvalidParameter("Cannot use condition against $linkName - unknown module");
             }
 
         } else {
@@ -488,9 +494,6 @@ class FilterApi extends SugarApi
         }
 
         $field_def = $defs[$field];
-        if(empty($field_def['source']) || $field_def['source'] == 'db' || $field_def['source'] == 'custom_fields') {
-            return array('bean' => $bean, 'def' => $field_def);
-        }
 
         if($field_def['source'] == 'relate') {
             $relfield = $field_def['rname'];
@@ -498,7 +501,10 @@ class FilterApi extends SugarApi
             return self::verifyField($q, "$link.$relfield");
         }
 
-        return array('bean' => $bean, 'def' => $field_def);
+        $ret['bean'] = $bean;
+        $ret['def'] = $field_def;
+
+        return $ret;
     }
 
     /**
@@ -539,6 +545,12 @@ class FilterApi extends SugarApi
                 } else {
                     // Looks like just a normal field, parse it's options
                     $fieldInfo = self::verifyField($q, $field);
+
+                    //If the field was a related field and we added a join, we need to adjust the table name used
+                    //to get the right join table alias
+                    if (!empty($fieldInfo['field'])) {
+                        $field = $fieldInfo['field'];
+                    }
                     $fieldType = !empty($fieldInfo['def']['custom_type']) ? $fieldInfo['def']['custom_type'] : $fieldInfo['def']['type'];
                     $sugarField = $sfh->getSugarField($fieldType);
                     if (!is_array($filter)) {
@@ -649,8 +661,8 @@ class FilterApi extends SugarApi
         if ($link == '' || $link == '_this') {
             $linkPart = '';
         } else {
-            $q->join($link, array('joinType' => 'LEFT'));
-            $linkPart = $link . '.';
+            $join = $q->join($link, array('joinType' => 'LEFT'));
+            $linkPart = $join->joinName() . '.';
         }
 
         $where->equals($linkPart . 'assigned_user_id', self::$current_user->id);
@@ -695,8 +707,9 @@ class FilterApi extends SugarApi
         if ($link == '' || $link == '_this') {
             $link_name = 'favorites';
         } else {
-            $q->join($link, array('joinType' => 'LEFT'));
-            $sfOptions['joinTo'] = $link;
+            $joinTo = $q->join($link, array('joinType' => 'LEFT'));
+            $sfOptions['joinTo'] = $joinTo;
+            $sfOptions['joinModule'] = $q->getFromBean()->module_name;
             $link_name = "sf_".$link;
         }
 

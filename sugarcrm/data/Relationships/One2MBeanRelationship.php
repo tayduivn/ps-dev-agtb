@@ -306,51 +306,51 @@ class One2MBeanRelationship extends One2MRelationship
      *
      * @param Link2 $link
      * @param SugarQuery $sugar_query
+     * @param Array $options array of additional paramters. Possible parameters include
+     *  - 'myAlias' String name of starting table alias
+     *  - 'joinTableAlias' String alias to use for the related table in the final result
+     *  - 'reverse' Boolean true if this join should be built in reverse for subpanel style queries where the select is
+     *              on the related table
+     *  - 'ignoreRole' Boolean true if the role column of the relationship should be ignored for this join .
      *
      * @return SugarQuery
      */
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
-        $startingTable = $this->def['lhs_table'];
-
-        if (!$linkIsLHS) {
-            $startingTable = $this->def['rhs_table'];
-        }
         if (!empty($options['reverse'])) {
             $linkIsLHS = !$linkIsLHS;
         }
 
+        $startingTable = $linkIsLHS ? $this->def['lhs_table'] : $this->def['rhs_table'];
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
 
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
         $join_type = isset($options['joinType']) ? $options['joinType'] : 'INNER';
 
-        $joinTable = $sugar_query->joinTable(
-            $targetTable,
-            array('alias' => $options['myAlias'], 'joinType' => $join_type)
-        );
+        $joinParams = array('joinType' => $join_type);
+        $jta = $targetTable;
+        if (!empty($options['joinTableAlias'])) {
+            $jta = $joinParams['alias'] = $options['joinTableAlias'];
+        }
+
+        $joinTable = $sugar_query->joinTable($targetTable, $joinParams);
+
         $joinTable->on()->equalsField(
-            "{$startingTable}.{$startingKey}", 
-            "{$options['myAlias']}.{$targetKey}")
-            ->equals("{$options['myAlias']}.deleted", "0");
-        
-        if (!empty($this->def["relationship_role_column"]) 
+            "{$startingTable}.{$startingKey}",
+            "{$jta}.{$targetKey}")
+            ->equals("{$jta}.deleted", "0");
+
+        if (empty($options['ignoreRole']) && !empty($this->def["relationship_role_column"])
             && !empty($this->def["relationship_role_column_value"])) {
             $sugar_query->where()->equals(
-                $this->def["relationship_role_column"],
+                "{$jta}.{$this->def["relationship_role_column"]}",
                 $this->def["relationship_role_column_value"]);
         }
-        
 
-        if (empty($options['ignoreRole'])) {
-            $this->buildSugarQueryRoleWhere(
-                $sugar_query,
-                ($linkIsLHS) ? $targetTable : $startingTable
-                );
-        }
-        return $sugar_query->join[$options['myAlias']];
+
+        return $sugar_query->join[$jta];
     }
 
 

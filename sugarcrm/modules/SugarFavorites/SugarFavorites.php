@@ -231,8 +231,8 @@ class SugarFavorites extends Basic
                 $alias = $bean->getTableName();
             }
         } else {
-            $alias = $joinTo;
-            $bean = $sugar_query->getTableBean($joinTo);
+            $alias = $joinTo->joinName();
+            $bean = $sugar_query->getTableBean($alias);
         }
 
         $sfAlias = "sf_" . $bean->getTableName();

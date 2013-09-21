@@ -182,10 +182,11 @@ class AdvancedQueryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->notes[] = $note;
 
         $sq = new SugarQuery();
-        $sq->select(array(array("accounts.name", "a_name"), array("notes.name", "n_name")));
         $sq->from($account);
         $sq->where()->equals("id",$account_id, $account);
-        $sq->join('notes');
+        $notes = $sq->join('notes')->joinName();
+        $sq->select(array(array("accounts.name", "a_name"), array("$notes.name", "n_name")));
+
 
         $results = $sq->execute();
 

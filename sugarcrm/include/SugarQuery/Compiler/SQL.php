@@ -416,11 +416,11 @@ class SugarQuery_Compiler_SQL
         if ($data['type'] == 'relate' 
             || (isset($data['source']) && $data['source'] == 'non-db'
                 // For some reason the full_name field has 'link' => true
-                && isset($data['link']) && $data['link'] !== true)) { 
+                && isset($data['link']) && $data['link'] !== true)
+        ) {
             $this->jtcount++;
             $params = array(
                 'joinType' => 'LEFT',
-                'alias' => 'jt' . $this->jtcount
             );
 
             if (!empty($data['id_name']) && $data['id_name'] != $field 
@@ -478,8 +478,8 @@ class SugarQuery_Compiler_SQL
 
             // Role column fields
             if (!empty($data['rname_link'])) {
-                $linkAlias = $jalias . '_link';
-                return array("{$linkAlias}.{$data['rname_link']}", $field);
+                $relTableAlias = !empty($join->relationshipTableAlias) ? $join->relationshipTableAlias : $jalias;
+                return array("{$relTableAlias}.{$data['rname_link']}", $field);
             }
             
             // Exists only checks

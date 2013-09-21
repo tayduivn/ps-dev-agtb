@@ -87,6 +87,8 @@ class SugarQuery
     public $join = array();
 
     protected $joined_tables = array();
+
+    protected $jt_index = 0;
     /**
      * @var DBManager
      */
@@ -259,12 +261,12 @@ class SugarQuery
      * @param string $link_name
      * @param array $options
      *
-     * @return SugarQuery
+     * @return SugarQuery_Builder_Join
      */
     public function join($link_name, $options = array())
     {
         if (!isset($options['alias'])) {
-            $options['alias'] = $link_name;
+            $options['alias'] = $this->getJoinTableAlias($link_name);
         }
 
         if (!empty($this->links[$link_name])) {
@@ -281,7 +283,27 @@ class SugarQuery
         }
         $this->join[$options['alias']]->addLinkName($link_name);
         $this->links[$link_name] = $this->join[$options['alias']];
+
         return $this->join[$options['alias']];
+    }
+
+    /**
+     *
+     * Used to get a unique join table alias to prevent conflicts when joining the same table multiple times
+     * or joining a table against itself
+     *
+     * @param string $table_name (optional)
+     *
+     * @return string
+     */
+    public function getJoinTableAlias($table_name = "")
+    {
+        $alias = "jt" . $this->jt_index++;
+        if (!empty($table_name)) {
+            $alias .= "_" . $table_name;
+        }
+
+        return $alias;
     }
 
     /**
@@ -295,43 +317,35 @@ class SugarQuery
      */
     public function joinSubpanel($bean, $link_name, $options = array())
     {
-        if (!isset($options['alias'])) {
-            $options['alias'] = $bean->table_name;
+        if (!empty($this->links[$link_name])) {
+            return $this->links[$link_name];
         }
 
-        if (!empty($this->links[$options['alias']])) {
-            return $this->links[$options['alias']];
-        }
-
-        $alias = $options['alias'];
+        //Force a unique join table alias for self referencing relationships and multiple joins against the same table
+        $alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $this->getJoinTableAlias($bean->table_name);
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
-        $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
+        $team_security = false; //(!empty($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
-
-        $bean->load_relationship($link_name);
-        if(empty($bean->$link_name)) {
-            throw new SugarApiExceptionInvalidParameter("Invalid link $link_name");
+        if (!$bean->load_relationship($link_name)) {
+            throw new SugarApiExceptionInvalidParameter("Unable to load link $link_name");
         }
 
-        $bean->$link_name->buildJoinSugarQuery(
-            $this,
-            array(
-                'joinTableAlias' => $this->from->table_name,
-                'myAlias' => $alias,
-                'joinType' => $joinType,
-                'ignoreRole' => $ignoreRole,
-                'reverse' => true,
-            )
+        $joinParams = array(
+            'joinTableAlias' => $alias,
+            'joinType' => $joinType,
+            'ignoreRole' => $ignoreRole,
+            'reverse' => true,
         );
-        
-        if ($team_security === true) {
-            $bean->addVisibilityQuery(
-                $this,
-                array("table_alias" => $alias, 'as_condition' => true)
-            );
+        if (!empty($options['myAlias'])) {
+            $joinParams['myAlias'] = $options['myAlias'];
         }
 
+        $bean->$link_name->buildJoinSugarQuery($this, $joinParams);
+
+        if ($team_security === true) {
+            $bean->addVisibilityQuery($this, array("table_alias" => $alias, 'as_condition' => true));
+        }
 
         if ($bean->hasCustomFields()) {
             $table_cstm = $bean->get_custom_table_name();
@@ -339,12 +353,12 @@ class SugarQuery
             $this->joinTable($table_cstm, array('alias' => $alias_cstm, 'joinType' => "LEFT"))
                 ->on()->equalsField("$alias_cstm.id_c", "{$alias}.id");
         }
-        
 
-        $this->join[$options['alias']]->addLinkName($link_name);
-        $this->join[$options['alias']]->on()->equals($options['alias'].'.id',$bean->id);
-        $this->links[$options['alias']] = $this->join[$options['alias']];
-        return $this->join[$options['alias']];
+        $this->join[$alias]->addLinkName($link_name);
+        $this->join[$alias]->on()->equals($alias . '.id', $bean->id);
+        $this->links[$link_name] = $this->join[$alias];
+
+        return $this->join[$alias];
     }
 
 
@@ -539,8 +553,7 @@ class SugarQuery
         $bean->$join->buildJoinSugarQuery(
             $this,
             array(
-                'joinTableAlias' => $bean->table_name,
-                'myAlias' => $alias,
+                'joinTableAlias' => $alias,
                 'joinType' => $joinType,
                 'ignoreRole' => $ignoreRole,
             )
@@ -624,4 +637,28 @@ class SugarQuery
         return $this->table_beans[$table_name];
     }
 
+    /**
+     * Returns the SugarBean Object that is the subject of this query.
+     * @return null|SugarBean
+     */
+    public function getFromBean() {
+        if (is_array($this->from)) {
+            return $this->from[0];
+        }
+
+        return $this->from;
+    }
+
+    /**
+     * @param $link_name name of link field to check for an existing join against.
+     *
+     * @return null|SugarQuery_Builder_Join
+     */
+    public function getJoinForLink($link_name) {
+        if (!empty($this->links[$link_name])) {
+            return $this->links[$link_name];
+        }
+
+        return null;
+    }
 }
