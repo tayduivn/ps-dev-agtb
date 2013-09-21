@@ -29,10 +29,13 @@ $viewdefs['Tasks']['base']['view']['inactive-tasks'] = array(
             'filter' => array(
                 'module' => array(
                     'Accounts',
+                    'Bugs',
+                    'Cases',
                     'Contacts',
                     'Home',
                     'Leads',
                     'Opportunities',
+                    'Prospects',
                 ),
                 'view' => 'record',
             ),
