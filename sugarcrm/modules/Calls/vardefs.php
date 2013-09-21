@@ -331,6 +331,18 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
 		'vname'=>'LBL_USERS',
   ),
+  'accept_status_users' => array(
+      'massupdate' => false,
+      'name' => 'accept_status_users',
+      'type' => 'enum',
+      'studio' => 'false',
+      'source' => 'non-db',
+      'vname' => 'LBL_ACCEPT_STATUS',
+      'options' => 'dom_meeting_accept_status',
+      'importable' => 'false',
+      'link' => 'users',
+      'rname_link' => 'accept_status',
+  ),
  'notes' =>
   array (
   	'name' => 'notes',
