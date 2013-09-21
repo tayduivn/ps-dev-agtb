@@ -375,6 +375,18 @@ $dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
     'source'=>'non-db',
 		'vname'=>'LBL_USERS',
   ),
+  'accept_status_users' => array(
+      'massupdate' => false,
+      'name' => 'accept_status_users',
+      'type' => 'enum',
+      'studio' => 'false',
+      'source' => 'non-db',
+      'vname' => 'LBL_ACCEPT_STATUS',
+      'options' => 'dom_meeting_accept_status',
+      'importable' => 'false',
+      'link' => 'users',
+      'rname_link' => 'accept_status',
+  ),
   'accounts' =>
   array (
   	'name' => 'accounts',
