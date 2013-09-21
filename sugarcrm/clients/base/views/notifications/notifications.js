@@ -42,8 +42,8 @@
      * Supported options:
      * - delay: How often (minutes) should the pulling mechanism run.
      * - limit: Limit imposed to the number of records pulled.
-     * - level_css: An object where its keys map to a specific notification
-     * level and values to a matching CSS class.
+     * - severity_css: An object where its keys map to a specific notification
+     * severity and values to a matching CSS class.
      *
      * @property {Object}
      * @protected
@@ -51,7 +51,7 @@
     _defaultOptions: {
         delay: 5,
         limit: 4,
-        level_css: {
+        severity_css: {
             alert: 'label-important',
             information: 'label-info',
             other: 'label-inverse',
@@ -66,7 +66,7 @@
     initialize: function(options) {
         options.module = 'Notifications';
 
-        app.view.View.prototype.initialize.call(this, options);
+        this._super('initialize', [options]);
         app.events.on('app:sync:complete', this._bootstrap, this);
         app.events.on('app:logout', this.stopPulling, this);
     },
@@ -97,7 +97,7 @@
 
         this.delay = options.delay * 60 * 1000;
         this.limit = options.limit;
-        this.levelCss = options.level_css;
+        this.severityCss = options.severity_css;
 
         return this;
     },
@@ -116,7 +116,7 @@
             },
             limit: this.limit,
             myItems: true,
-            fields: ['date_entered', 'id', 'name', 'level']
+            fields: ['date_entered', 'id', 'name', 'severity']
         };
 
         this.collection.sync = _.wrap(
@@ -173,25 +173,26 @@
     },
 
     /**
-     * Retrieve label according to supplied level.
+     * Retrieve label according to supplied severity.
      *
-     * @param {String} level Notification level.
-     * @return {String} Matching label or level if supplied level doesn't exist.
+     * @param {String} severity Notification severity.
+     * @return {String} Matching label or severity if supplied severity
+     *   doesn't exist.
      */
-    getLevelLabel: function(level) {
-        var list = app.lang.getAppListStrings('notifications_level_list');
-        return list[level] || level;
+    getSeverityLabel: function(severity) {
+        var list = app.lang.getAppListStrings('notifications_severity_list');
+        return list[severity] || severity;
     },
 
     /**
-     * Retrieve CSS class according to supplied level.
+     * Retrieve CSS class according to supplied severity.
      *
-     * @param {String} level Notification level.
-     * @return {String} Matching css class or an empty string if supplied level
-     * doesn't exist.
+     * @param {String} severity Notification severity.
+     * @return {String} Matching css class or an empty string if supplied
+     * severity doesn't exist.
      */
-    getLevelCss: function(level) {
-        return this.levelCss[level] || '';
+    getSeverityCss: function(severity) {
+        return this.severityCss[severity] || '';
     },
 
     /**
@@ -445,10 +446,10 @@
     },
 
     /**
-     * If notifications collection is available and has models, two 'level'
+     * If notifications collection is available and has models, two 'severity'
      * related properties are injected into each model:
-     * - levelCss: Model level matching CSS class.
-     * - levelLabel: Model level label.
+     * - severityCss: Model severity matching CSS class.
+     * - severityLabel: Model severity label.
      *
      * {@inheritDoc}
      */
@@ -458,16 +459,16 @@
         }
 
         if (!_.isObject(this.collection)) {
-            app.view.View.prototype._renderHtml.call(this);
+            this._super('_renderHtml');
             return;
         }
 
         _.each(this.collection.models, function(model) {
-            model.set('levelCss', this.getLevelCss(model.get('level')));
-            model.set('levelLabel', this.getLevelLabel(model.get('level')));
+            model.set('severityCss', this.getSeverityCss(model.get('severity')));
+            model.set('severityLabel', this.getSeverityLabel(model.get('severity')));
         }, this);
 
-        app.view.View.prototype._renderHtml.call(this);
+        this._super('_renderHtml');
     },
 
     /**
@@ -484,6 +485,6 @@
         }, this);
         this._alertsCollections = {};
 
-        app.view.View.prototype._dispose.call(this);
+        this._super('_dispose');
     }
 })

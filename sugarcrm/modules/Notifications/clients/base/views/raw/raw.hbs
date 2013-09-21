@@ -20,7 +20,7 @@
         <ul class="notification-list">
             {{#each ../../collection.models}}
                 <li name="{{module}}_{{attributes.id}}"
-                    class="single tr-{{attributes.level}}">
+                    class="single tr-{{attributes.severity}}">
                     {{#each ../fields}}
                         {{field ../../../../this model=../this template="detail"}}
                     {{/each}}

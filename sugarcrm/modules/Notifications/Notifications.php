@@ -51,7 +51,7 @@ class Notifications extends Basic
     public $assigned_user_name;
     public $assigned_user_link;
     public $is_read;
-    public $level;
+    public $severity;
     public $disable_custom_fields = true;
     //BEGIN SUGARCRM flav=pro ONLY
     public $disable_row_level_security = true;
