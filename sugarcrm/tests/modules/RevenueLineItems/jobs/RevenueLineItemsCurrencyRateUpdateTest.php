@@ -135,8 +135,10 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
         $result = $this->mock->doPostUpdateAction();
         // make sure we get the expected result and the expected run counts
         $this->assertEquals(true, $result);
+        //BEGIN SUGARCRM flav=ent ONLY
         $this->assertEquals(1, $this->db->queries['post_select']['runCount']);
         $this->assertGreaterThan(0, $this->db->queries['post_update']['runCount']);
+        //END SUGARCRM flav=ent ONLY
     }
 
 
