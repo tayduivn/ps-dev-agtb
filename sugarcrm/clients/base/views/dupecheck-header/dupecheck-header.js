@@ -25,20 +25,17 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        if(this.collection){
-            this.collection.on("reset", function() {
-                this.updateCount();
-            }, this);
-        }
-    },
+        this.context.on('dupecheck:collection:reset', this.updateCount, this);
+     },
 
     updateCount: function() {
-        translatedString = app.lang.get(
+        var translatedString = app.lang.get(
             'LBL_DUPLICATES_FOUND',
             this.module,
-            {'duplicateCount': this.collection.length}
+            {'duplicateCount': this.context.get('collection').length}
         );
         this.$('span.duplicate_count').text(translatedString);
     }

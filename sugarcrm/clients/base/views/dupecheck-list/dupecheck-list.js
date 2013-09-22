@@ -35,14 +35,21 @@
             this.model = this.copyModel(this.context.get('dupeCheckModel'));
         }
 
-        // Create an empty collection since we need it for sync
         this.collection = app.data.createBeanCollection(this.module);
+        this.context.set('collection', this.collection);
 
         //save off the collection's sync so we can run our own and then run the original
         //this is so we can switch the endpoint out
         this.collectionSync = this.collection.sync;
         this.collection.sync = _.bind(this.sync, this);
     },
+
+    bindDataChange: function() {
+        this.collection.on("reset", function() {
+            this.context.trigger('dupecheck:collection:reset');
+        }, this);
+        this._super('bindDataChange');
+   },
 
     _renderHtml: function() {
         var classesToAdd = 'duplicates highlight';
