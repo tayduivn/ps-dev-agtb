@@ -1,25 +1,17 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2012 SugarCRM, Inc.; All Rights
- *Reserved.
- ********************************************************************************/
+/**
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 
 
 /**
@@ -30,8 +22,8 @@ class SugarSearchEngineHighlighter
 {
     protected $_module;
 
-    public static $preTag = '<strong>';
-    public static $postTag = '</strong>';
+    public static $preTag = '';
+    public static $postTag = '';
     public static $fragmentSize = 20;
     public static $fragmentNumber = 2;
 
@@ -40,7 +32,7 @@ class SugarSearchEngineHighlighter
     }
 
     /**
-     * Setter for module name
+     * Setter for module name.
      *
      * @param $module
      */
@@ -49,22 +41,17 @@ class SugarSearchEngineHighlighter
         $this->_module = $module;
     }
 
-    public function processHighlightText($resultArray)
+    public function processHighlightText(array $resultArray)
     {
         $ret = array();
-        foreach ($resultArray as $field=>$fragments)
-        {
+        foreach ($resultArray as $field => $fragments) {
             $ret[$field] = array('text' => '', 'module' => $this->_module, 'label' => $this->getLabel($field));
             $first = true;
-            foreach ($fragments as $frament)
-            {
-                if (!$first)
-                {
-                    $ret[$field]['text'] .= '...' . $frament;
-                }
-                else
-                {
-                    $ret[$field]['text'] = $frament;
+            foreach ($fragments as $fragment) {
+                if (!$first) {
+                    $ret[$field]['text'] .= '...' . $fragment;
+                } else {
+                    $ret[$field]['text'] = $fragment;
                 }
                 $first = false;
             }
@@ -75,16 +62,13 @@ class SugarSearchEngineHighlighter
 
     public function getLabel($field)
     {
-        if(empty($this->_module))
-        {
+        if (empty($this->_module)) {
             return $field;
-        }
-        else
-        {
-            $tmpBean = BeanFactory::getBean($this->_module, null);
+        } else {
+            $tmpBean = BeanFactory::getBean($this->_module);
             $field_defs = $tmpBean->field_defs;
-            $field_def = isset($field_defs[$field]) ? $field_defs[$field] : FALSE;
-            if($field_def === FALSE || (!isset($field_def['vname']) && !isset($field_def['label']))) {
+            $field_def = isset($field_defs[$field]) ? $field_defs[$field] : false;
+            if ($field_def === false || (!isset($field_def['vname']) && !isset($field_def['label']))) {
                 return $field;
             }
 
