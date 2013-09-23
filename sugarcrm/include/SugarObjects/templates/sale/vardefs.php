@@ -105,7 +105,8 @@ $vardefs = array(
           'currency_id' =>
           array (
             'name' => 'currency_id',
-            'type' => 'id',
+            'type' => 'currency_id',
+            'dbType' => 'id',
             'group'=>'currency_id',
             'vname' => 'LBL_CURRENCY',
             'function'=>array('name'=>'getCurrencyDropDown', 'returns'=>'html'),

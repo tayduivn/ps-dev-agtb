@@ -59,7 +59,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
   array (
     'name' => 'currency_id',
     'vname' => 'LBL_CURRENCY_ID',
-    'type' => 'id',
+    'type' => 'currency_id',
+    'dbType' => 'id',
     'required'=>false,
     'do_report'=>false,
     'reportable'=>false,

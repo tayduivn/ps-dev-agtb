@@ -64,7 +64,8 @@ $dictionary['ForecastManagerWorksheet'] = array(
         array(
             'name' => 'currency_id',
             'vname' => 'LBL_CURRENCY_ID',
-            'type' => 'id',
+            'type' => 'currency_id',
+            'dbType' => 'id',
         ),
         'base_rate' =>
         array(
