@@ -33,14 +33,14 @@
                     origSuccess();
                 }
                 if (!_.isEmpty(this.model.get('quote_id'))) {
-                     app.alert.show('save_rli_quote_notice', {
+                    app.alert.show('save_rli_quote_notice', {
                         level: 'info',
                         messages: app.lang.get(
                             'SAVE_RLI_QUOTE_NOTICE',
                             'RevenueLineItems'
                         ),
                         autoClose: true
-                     });
+                    });
                 }
             }, this)
         };
@@ -60,7 +60,20 @@
      * Bind to model to make it so that it will re-render once it has loaded.
      */
     bindDataChange: function() {
+        this.model.on('duplicate:before', this._handleDuplicateBefore, this);
+
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'bindDataChange'});
+    },
+
+    /**
+     * Handle what should happen before a duplicate is created
+     *
+     * @param {Backbone.Model} new_model
+     * @private
+     */
+    _handleDuplicateBefore: function(new_model) {
+        new_model.unset('quote_id');
+        new_model.unset('quote_name');
     },
 
     delegateButtonEvents: function() {
