@@ -495,7 +495,7 @@ class FilterApi extends SugarApi
 
         $field_def = $defs[$field];
 
-        if($field_def['source'] == 'relate') {
+        if(!empty($field_def['source']) && $field_def['source'] == 'relate') {
             $relfield = $field_def['rname'];
             $link = $field_def['link'];
             return self::verifyField($q, "$link.$relfield");

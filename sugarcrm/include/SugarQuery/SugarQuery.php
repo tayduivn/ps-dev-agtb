@@ -324,7 +324,7 @@ class SugarQuery
         //Force a unique join table alias for self referencing relationships and multiple joins against the same table
         $alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $this->getJoinTableAlias($bean->table_name);
         $joinType = (!empty($options['joinType'])) ? $options['joinType'] : 'INNER';
-        $team_security = false; //(!empty($options['team_security'])) ? $options['team_security'] : true;
+        $team_security = (!empty($options['team_security'])) ? $options['team_security'] : true;
         $ignoreRole = (!empty($options['ignoreRole'])) ? $options['ignoreRole'] : false;
 
         if (!$bean->load_relationship($link_name)) {
