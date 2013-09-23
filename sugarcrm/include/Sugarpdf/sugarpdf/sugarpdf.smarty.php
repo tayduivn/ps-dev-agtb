@@ -83,6 +83,10 @@ class SugarpdfSmarty extends Sugarpdf{
     private function _initSmartyInstance(){
         if ( !($this->ss instanceof Sugar_Smarty) ) {
             $this->ss = new Sugar_Smarty();
+            // TODO: Remove after MAR-1064 is merged.
+            // Enable enhanced security for user-provided templates. This
+            // includes disabling the {php} Smarty tag.
+            $this->ss->security = true;
             $this->ss->assign('MOD', $GLOBALS['mod_strings']);
             $this->ss->assign('APP', $GLOBALS['app_strings']);
         }
