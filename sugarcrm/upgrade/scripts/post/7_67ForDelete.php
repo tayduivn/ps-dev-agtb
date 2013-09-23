@@ -38,6 +38,8 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'modules/SugarFeed',
             // remove the old FTS Logic Hook
             'custom/Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
+            // remove the old base metadata file template for the dashablelist view
+            'include/SugarObjects/templates/basic/clients/base/views/dashablelist/dashablelist.php',
         );
         $this->fileToDelete($files);
     }
