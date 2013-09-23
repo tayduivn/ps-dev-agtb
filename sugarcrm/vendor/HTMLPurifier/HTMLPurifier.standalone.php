@@ -16923,6 +16923,7 @@ class HTMLPurifier_Array implements ArrayAccess
 
         $current = &$this->head;
         $goUp = true;
+        $index = 0;
 
         if ($this->offset <= $offset && $this->offsetItem instanceof HTMLPurifier_ArrayNode) {
             $current = &$this->offsetItem;
@@ -16998,8 +16999,12 @@ class HTMLPurifier_Array implements ArrayAccess
         if ($result['correct']) {
             $this->count --;
             $item = $result['value'];
-            $item->prev->next = &$result['value']->next;
-            $item->next->prev = &$result['value']->prev;
+            if ($item->prev instanceof HTMLPurifier_ArrayNode) {
+                $item->prev->next = &$result['value']->next;
+            }
+            if ($item->next instanceof HTMLPurifier_ArrayNode) {
+                $item->next->prev = &$result['value']->prev;
+            }
             if ($offset == 0) {
                 $this->head = &$item->next;
             }

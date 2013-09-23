@@ -246,6 +246,23 @@ class HTMLPurifier_ArrayTest extends Sugar_PHPUnit_Framework_TestCase
         unset($object[0]);
         $this->assertEquals(array(), $object->getArray());
     }
+
+    /**
+     * Testing behavior when Array goes to zero size
+     */
+    public function testZeroSize()
+    {
+        $object = new HTMLPurifier_ArrayMock(array(1));
+
+        $object->remove(0);
+        $this->assertNull($object->getHead());
+        $this->assertNull($object->getOffsetItem());
+        $this->assertEquals(0, $object->getCount());
+        $this->assertEquals(array(), $object->getArray());
+
+        $object->insertBefore(0, 1);
+        $this->assertEquals(array(1), $object->getArray());
+    }
 }
 
 /**
