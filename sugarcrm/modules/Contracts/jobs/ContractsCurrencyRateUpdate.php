@@ -30,6 +30,7 @@ class ContractsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function __construct()
     {
+        parent::__construct();
         // set rate field definitions
         $this->addRateColumnDefinition('contracts', 'base_rate');
         // set usdollar field definitions

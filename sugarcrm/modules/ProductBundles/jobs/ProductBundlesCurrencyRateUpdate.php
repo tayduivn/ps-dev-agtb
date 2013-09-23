@@ -30,6 +30,7 @@ class ProductBundlesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function __construct()
     {
+        parent::__construct();
         // set rate field definitions
         $this->addRateColumnDefinition('product_bundles', 'base_rate');
         // set usdollar field definitions

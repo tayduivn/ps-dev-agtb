@@ -218,7 +218,7 @@ abstract class CurrencyRateUpdateAbstract
         }
 
         // setup SQL statement
-        $query = sprintf("UPDATE %s SET %s = '%s' WHERE currency_id = '%s'",
+        $query = sprintf("UPDATE %s SET %s = %s WHERE currency_id = '%s'",
             $table,
             $column,
             $rate,

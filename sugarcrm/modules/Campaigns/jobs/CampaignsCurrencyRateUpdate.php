@@ -30,6 +30,7 @@ class CampaignsCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function __construct()
     {
+        parent::__construct();
         // set rate field definitions
         $this->addRateColumnDefinition('campaigns', 'base_rate');
     }
