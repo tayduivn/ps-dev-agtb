@@ -3252,12 +3252,7 @@ $app_strings = array (
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
     'LBL_DASHLET_ATTACHMENTS_NAME' => 'Notes & Attachments',
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
-    //BEGIN SUGARCRM flav=ent ONLY
-    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Revenue Line Items',
-    //END SUGARCRM flav=ent ONLY
-    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
-    //END SUGARCRM flav=pro && flav!=ent ONLY
+
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
     'LBL_DASHLET_FORECAST_NAME' => 'In Forecast',
     'LBL_DASHLET_FORECAST_PARETO_CHART_NAME' => 'Forecast Pareto Chart',
@@ -4170,12 +4165,21 @@ $app_strings = array (
     'LBL_CASE_SUMMARY_CHART_DESC' => 'Shows an overview of related cases.',
 
     //top 10 opportunities chart
-    'LBL_TOP10_OPPORTUNITIES_CHART' => 'Top 10 sales opportunities',
-    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten opportunities in a bubble chart.',
-    'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
-    'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Revenue Line Items',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Revenue Line Items in a bubble chart.',
+    'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Revenue Line Items',
+    'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Revenue Line Items",
+    //END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
+    'LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME' => 'Top 10 Sales Opportunities',
+    'LBL_TOP10_OPPORTUNITIES_CHART_DESC' => 'Displays top ten Opportunities in a bubble chart.',
     'LBL_TOP10_OPPORTUNITIES_MY_OPP' => 'My Opportunities',
     'LBL_TOP10_OPPORTUNITIES_MY_TEAMS_OPP' => "My Team's Opportunities",
+    //END SUGARCRM flav=pro && flav!=ent ONLY
+    'LBL_TOP10_OPPORTUNITIES_FILTER_DURATIONS' => 'Default date filter',
+    'LBL_TOP10_OPPORTUNITIES_DEFAULT_DATASET' => 'Default dataset',
+
 
     // Activity stream
     'LBL_TIME_RELATIVE_ACTIVITIES' => '{{relativetime}} on {{date}} at {{time}}',
@@ -4301,8 +4305,14 @@ $app_list_strings['top10_opportunities_duration_options'] = array (
 );
 // see sugarcrm/clients/base/views/bubblechart/bubblechart.php
 $app_list_strings['top10_opportunities_filter_assigned_options'] = array (
+    //BEGIN SUGARCRM flav=ent ONLY
+    'my' => 'My Revenue Line Items',
+    'group' => 'Group Revenue Line Items',
+    //END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     'my' => 'My Opportunities',
     'group' => 'Group Opportunities',
+    //END SUGARCRM flav=pro && flav!=ent ONLY
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
