@@ -33,6 +33,7 @@
 
 {$STYLESHEET}
 
+<script type="text/javascript" src='{sugar_getjspath file="$CACHE_DIR/include/javascript/sugar_grp1_jquery.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_3.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="$CACHE_DIR/include/javascript/sugar_grp1_yui.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/calendar.js"}'></script>
