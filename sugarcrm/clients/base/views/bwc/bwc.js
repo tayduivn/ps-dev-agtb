@@ -128,10 +128,17 @@
             }
             self._rewriteLinksForSidecar(this.contentWindow);
             self._rewriteNewWindowLinks(this.contentWindow);
-            this.contentWindow.$('html').addClass($('html').prop('class'));
+            self._cloneBodyClasses(this.contentWindow);
         });
     },
 
+    /**
+     * Clone classes, added by Modernizr, "top frame" into "bwc frame";
+     * necessary for various overrides on iPhone and Android.
+     */
+    _cloneBodyClasses: function(contentWindow) {
+        contentWindow.$('html').addClass($('html').prop('class'));
+    },
     /**
      * Update the controller context to mach our bwc module.
      *
