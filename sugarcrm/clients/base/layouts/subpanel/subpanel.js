@@ -18,12 +18,6 @@
                 opts.meta.last_state.id = opts.def.override_subpanel_list_view;
             }
         }
-
-        // add the ability to add back in the mass update if it's required, currently used by the RLI Subpanel on
-        // Opportunities
-        if (opts.meta && opts.def && opts.def.include_mass_update_view) {
-            opts.meta.components.push({view: 'massupdate'});
-        }
         app.view.invokeParent(this, {type: 'layout', name: 'panel', method: 'initialize', args:[opts]});
     }
 })
