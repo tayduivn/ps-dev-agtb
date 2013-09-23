@@ -54,8 +54,10 @@
      * @override
      */
     beforeNext: function(callback) {
+        this.getField("next_button").setDisabled(true);  //temporarily disable
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
+                var self = this;
                 if (isValid) {
                     var payload = this._prepareRequestPayload();
                     app.alert.show('wizardlocale', {
@@ -69,6 +71,7 @@
                     payload['ut'] = true;
                     app.user.updatePreferences(payload, function(err) {
                         app.alert.dismiss('wizardlocale');
+                        self.updateButtons();  //re-enable buttons
                         if (err) {
                             app.logger.debug("Wizard locale update failed: " + err);
                             callback(false);
