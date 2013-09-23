@@ -24,22 +24,7 @@
             // this is a hacky way to add the class but it needs to be done for proper spacing
             this.getField('save_draft_button').$el.addClass('btn-group');
             this.getField('commit_button').setDisabled();
-
-            this.addCommitTooltip();
         }, this);
-    },
-
-    /**
-     * Adds the tooltip message to the Commit Button
-     */
-    addCommitTooltip: function() {
-        var cbEl = this.getField('commit_button').$el;
-        // if the element exists and doesn't already have tooltip text, add it
-        if(cbEl && !(cbEl.attr('rel') == 'tooltip')) {
-            cbEl.attr('data-original-title', app.lang.get('LBL_COMMIT_TOOLTIP', 'Forecasts'));
-            cbEl.attr('data-placement', 'bottom');
-            cbEl.attr('rel', 'tooltip');
-        }
     },
 
     /**
@@ -71,7 +56,6 @@
             if(wasDraft === true) {
                 // re-enable the commit button if we only saved a draft
                 this.getField('commit_button').setDisabled(false);
-                this.addCommitTooltip();
             }
         }, this);
 
