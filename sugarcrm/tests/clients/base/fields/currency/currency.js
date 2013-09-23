@@ -425,4 +425,45 @@ describe('Base.Fields.Currency', function() {
             expect(field.transactionValue).toEqual('$0.00');
         });
     });
+    describe('_valueChangeHandler', function() {
+        var field;
+        beforeEach(function() {
+            field = SugarTest.createField(
+                'base',
+                'amount',
+                'currency',
+                'detail',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            field.action = 'detail'
+            sinon.stub(field, 'render', function() {});
+            sinon.stub(field, 'setCurrencyValue', function() {});
+        });
+
+        afterEach(function() {
+            field.render.restore();
+            field.setCurrencyValue.restore();
+            field = null;
+        });
+
+        it('should call render', function() {
+            field.action = 'detail'
+            field._valueChangeHandler({}, '123');
+            expect(field.render).toHaveBeenCalled();
+            expect(field.setCurrencyValue).not.toHaveBeenCalled();
+        });
+
+        it('should call setCurrencyValue', function() {
+            field.action = 'edit';
+            field._valueChangeHandler({}, '123');
+            expect(field.render).not.toHaveBeenCalled();
+            expect(field.setCurrencyValue).toHaveBeenCalled();
+        });
+    });
 });
