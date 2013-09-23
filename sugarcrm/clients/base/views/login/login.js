@@ -90,8 +90,8 @@
             });
         }
         var config = app.metadata.getConfig();
-        if (typeof config.system_status != undefined 
-            && typeof config.system_status.level != undefined
+        if (config.system_status
+            && config.system_status.level
             && (config.system_status.level == 'maintenance'
                 || config.system_status.level == 'admin_only')) {
             app.alert.show('admin_only', {
