@@ -296,8 +296,8 @@
             if (showWizard) {
                 // If the license settings need to be input, don't show the wizard
                 var system_config = app.metadata.getConfig();
-                if (typeof(system_config.system_status) != 'undefined'
-                    && typeof(system_config.system_status.level) != 'undefined'
+                if (system_config.system_status
+                    && system_config.system_status.level
                     && system_config.system_status.level == 'admin_only') {
                     showWizard = false;
                 }
