@@ -435,6 +435,8 @@ $mod_strings = array (
     'LBL_DASHLET_FORECAST_NOT_SETUP_ADMIN' => 'Forecasts has not been configured and needs to be setup in order to use this widget. <a href="#Forecasts/config">Please click here to configure Forecasting</a>.',
     'LBL_DASHLET_MY_PIPELINE' => 'My Pipeline',
     'LBL_DASHLET_MY_TEAMS_PIPELINE' => "My Team's Pipeline",
+    'LBL_DASHLET_PIPELINE_CHART_NAME' => 'Forecast Pipeline Chart',
+    'LBL_DASHLET_PIPELINE_CHART_DESC' => 'Displays current pipeline chart.',
     'LBL_FORECAST_DETAILS_DEFICIT' => 'Deficit',
     'LBL_FORECAST_DETAILS_SURPLUS' => 'Surplus',
     'LBL_FORECAST_DETAILS_SHORT' => 'Short by',
