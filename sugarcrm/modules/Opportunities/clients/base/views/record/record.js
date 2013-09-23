@@ -47,7 +47,6 @@
         alert.$el.find('a[href]').on('click.open', _.bind(function() {
             // remove the event handler
             alert.$el.find('a[href]').off('click.open');
-            app.alert.dismiss('opp-rli-create');
             this.openRLICreate();
         }, this));
     },
@@ -56,6 +55,9 @@
      * Open a new Drawer with the RLI Create Form
      */
     openRLICreate: function() {
+        // close RLI warning alert
+        app.alert.dismiss('opp-rli-create');
+
         var model = this.createLinkModel(this.createdModel || this.model, 'revenuelineitems');
 
         app.drawer.open({
@@ -88,6 +90,6 @@
         if (!_.isUndefined(rli_ctx) && _.isFunction(rli_ctx.loadData)) {
             rli_ctx.loadData();
         }
-    },
+    }
 
 })

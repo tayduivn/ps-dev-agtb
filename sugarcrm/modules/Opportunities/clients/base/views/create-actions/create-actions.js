@@ -70,7 +70,6 @@
             title: app.lang.get('LBL_ALERT_TITLE_WARNING') + ':',
             messages: app.lang.get('TPL_RLI_CREATE', 'Opportunities'),
             onLinkClick: _.bind(function() {
-                app.alert.dismiss('opp-rli-create');
                 app.alert.dismiss('create-success');
                 this.openRLICreate();
             }, this)
@@ -81,6 +80,9 @@
      * Open a new Drawer with the RLI Create Form
      */
     openRLICreate: function() {
+        // close RLI warning alert
+        app.alert.dismiss('opp-rli-create');
+
         var model = this.createLinkModel(this.createdModel || this.model, 'revenuelineitems');
 
         app.drawer.open({

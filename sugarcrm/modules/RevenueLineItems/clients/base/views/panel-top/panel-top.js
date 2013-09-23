@@ -14,5 +14,14 @@
                 return false;
             });
         }
+    },
+    /**
+     * {@inheritdoc}
+     */
+    createRelatedClicked: function(event) {
+        // close RLI warning alert
+        app.alert.dismiss('opp-rli-create');
+
+        app.view.invokeParent(this, {type: 'view', name: 'panel-top', method: 'createRelatedClicked', args: [event]});
     }
 })
