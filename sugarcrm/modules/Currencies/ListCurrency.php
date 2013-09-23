@@ -25,19 +25,28 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 	var $focus = null;
 	var $list = null;
 	var $javascript = '<script>';
-	function lookupCurrencies(){
 
+     /**
+      * Look up the currencies in the system and set the list
+      *
+      * @param bool $activeOnly     only return active currencies to the list
+      */
+     public function lookupCurrencies($activeOnly = false)
+     {
+         $this->focus = BeanFactory::getBean('Currencies');
+         $where = '';
+         if ($activeOnly === true) {
+             $where = $this->focus->table_name . '.status = "Active"';
+         }
+         $this->list = $this->focus->get_full_list('name', $where);
+         $this->focus->retrieve('-99');
+         if (is_array($this->list)) {
+             $this->list = array_merge(Array($this->focus), $this->list);
+         } else {
+             $this->list = Array($this->focus);
+         }
 
-		$this->focus = BeanFactory::getBean('Currencies');
-		$this->list = $this->focus->get_full_list('name');
-		$this->focus->retrieve('-99');
-	  	if(is_array($this->list)){
-		$this->list = array_merge(Array($this->focus), $this->list);
-	  	}else{
-	  		$this->list = Array($this->focus);
-	  	}
-
-	}
+     }
 
      /**
       * handle creating or updating a currency record
