@@ -75,7 +75,8 @@
     _defaultSettings: {
         limit: 5,
         my_items: '1',
-        favorites: '0'
+        favorites: '0',
+        intelligent: '0'
     },
 
     /**
@@ -111,6 +112,11 @@
     _availableColumns: {},
 
     /**
+     * Flag indicates if dashlet is intelligent.
+     */
+    intelligent: null,
+
+    /**
      * {@inheritDoc}
      *
      * Append lastStateID on metadata in order to active user cache.
@@ -121,7 +127,40 @@
                 id: 'dashable-list'
             }
         });
+        this.checkIntelligence();
         this._super('initialize', [options]);
+    },
+
+    /**
+     * Check if dashlet can be intelligent.
+     */
+    checkIntelligence: function () {
+        if (app.controller.context.get('layout') !== 'record' ||
+            _. contains(this.moduleBlacklist, app.controller.context.get('module'))
+        ) {
+            this.intelligent = '0';
+        } else {
+            this.intelligent = '1';
+        }
+    },
+
+    /**
+     * Show/hide `linked_fields` field.
+     *
+     * @param {String} visible Show field if `1` or hide otherwise.
+     * @param {String} intelligent Flag displayed if dashlet is in intelligent mode.
+     */
+    setLinkedFieldVisibility: function(visible, intelligent) {
+        var field = this.getField('linked_fields');
+        intelligent = intelligent || '1';
+        if (!field) {
+            return;
+        }
+        if (visible === '1' && intelligent === '1' && !_.isEmpty(field.items)) {
+            field.show();
+        } else {
+            field.hide();
+        }
     },
 
     /**
@@ -139,9 +178,30 @@
                 var label = (model.get('my_items') == '1') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
                 model.set('label', app.lang.get(label, moduleName, {module: moduleName}));
                 this._updateDisplayColumns();
+                this.updateLinkedFields(moduleName);
+            }, this);
+            this.settings.on('change:intelligent', function(model, intelligent) {
+                this.setLinkedFieldVisibility('1', intelligent);
             }, this);
         }
         this._initializeSettings();
+
+        if (this.settings.get('intelligent') === '1') {
+
+            var link = this.settings.get('linked_fields'),
+                model = app.controller.context.get('model'),
+                module = this.settings.get('module'),
+                options = {
+                    link: {
+                        name: link,
+                        bean: model
+                    },
+                    relate: true
+                };
+            this.collection = app.data.createBeanCollection(module, null, options);
+            this.context.set('collection', this.collection);
+        }
+
         // the pivot point for the various dashlet paths
         if (this.meta.config) {
             this._configureDashlet();
@@ -173,6 +233,18 @@
      * @private
      */
     _initializeSettings: function() {
+        if (this.intelligent === '0') {
+            _.each(this.dashletConfig.panels, function(panel) {
+                panel.fields = panel.fields.filter(function(el) {return el.name !== 'intelligent'; });
+            }, this);
+            this.settings.set('intelligent', '0');
+            this.model.set('intelligent', '0');
+        } else {
+            if (_.isUndefined(this.settings.get('intelligent'))) {
+                this.settings.set('intelligent', this._defaultSettings.intelligent);
+            }
+        }
+        this.setLinkedFieldVisibility('1', this.settings.get('intelligent'));
         if (!this.settings.get('limit')) {
             this.settings.set('limit', this._defaultSettings.limit);
         }
@@ -230,6 +302,48 @@
     },
 
     /**
+     * Update options for `linked_fields` based on current selected module.
+     * If there are no options field is hidden.
+     *
+     * @param {String} moduleName Name of selected module.
+     */
+    updateLinkedFields: function(moduleName) {
+        var linked = this.getLinkedFields(moduleName),
+            displayColumn = this.getField('linked_fields'),
+            intelligent = this.model.get('intelligent');
+        if (displayColumn) {
+            displayColumn.items = linked;
+            this.setLinkedFieldVisibility('1', intelligent);
+        } else {
+            this.setLinkedFieldVisibility('0', intelligent);
+        }
+        this.settings.set('linked_fields', _.keys(linked));
+    },
+
+    /**
+     * Returns object with linked fields.
+     *
+     * @param {String} moduleName Name of module to find linked fields with.
+     * @return {Object} Hash with linked fields labels.
+     */
+    getLinkedFields: function(moduleName) {
+        var fieldDefs  = app.metadata.getModule(this.layout.module).fields;
+        var relates =  _.filter(fieldDefs, function(field) {
+                if (!_.isUndefined(field.type) && (field.type === 'link')) {
+                    if (app.data.getRelatedModule(this.layout.module, field.name) === moduleName) {
+                        return true;
+                    }
+                }
+                return false;
+            }, this),
+            result = {};
+        _.each(relates, function(field) {
+            result[field.name] = app.lang.get(field.vname || field.name, this.layout.module);
+        }, this);
+        return result;
+    },
+
+    /**
      * Perform any necessary setup before the user can configure the dashlet.
      *
      * Modifies the dashlet configuration panel metadata to allow it to be
@@ -239,7 +353,8 @@
      */
     _configureDashlet: function() {
         var availableModules = this._getAvailableModules(),
-            availableColumns = this._getAvailableColumns();
+            availableColumns = this._getAvailableColumns(),
+            relates = this.getLinkedFields(this.module);
         _.each(this.getFieldMetaForView(this.meta), function(field) {
             switch(field.name) {
                 case 'module':
@@ -249,6 +364,9 @@
                 case 'display_columns':
                     // load the list of available columns into the metadata
                     field.options = availableColumns;
+                    break;
+                case 'linked_fields':
+                    field.options = relates;
                     break;
             }
         });
@@ -377,6 +495,9 @@
             fields = this.getFieldMetaForView(this._getListMeta(this.settings.get('module')));
         if (!this.settings.get('display_columns')) {
             this._updateDisplayColumns();
+        }
+        if (!this.settings.get('linked_fields')) {
+            this.updateLinkedFields(this.model.module);
         }
         _.each(this.settings.get('display_columns'), function(name) {
             var field = _.find(fields, function(field) {
