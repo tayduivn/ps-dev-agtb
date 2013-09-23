@@ -416,6 +416,27 @@ class Opportunity extends SugarBean
         return '';
     }
 
+    /**
+     * To check whether currency_id field is changed during save.
+     * @return bool true if currency_id is changed, false otherwise
+     */
+    protected function isCurrencyIdChanged() {
+        // if both are defined, compare
+        if (isset($this->currency_id) && isset($this->fetched_row['currency_id'])) {
+            if ($this->currency_id != $this->fetched_row['currency_id']) {
+                return true;
+            }
+        }
+        // one is not defined, the other one is not empty, means changed
+        if (!isset($this->currency_id) && !empty($this->fetched_row['currency_id'])) {
+            return true;
+        }
+        if (!isset($this->fetched_row['currency_id']) && !empty($this->currency_id)) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
     builds a generic search based on the query string using or
@@ -452,7 +473,7 @@ class Opportunity extends SugarBean
         }
 
         // if stage is not closed won/lost, update base_rate with currency rate
-        if (!in_array($this->sales_stage, $this->getClosedStages()) || !isset($this->base_rate)) {
+        if (!in_array($this->sales_stage, $this->getClosedStages()) || !isset($this->base_rate) || $this->isCurrencyIdChanged()) {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
             $this->base_rate = $currency->conversion_rate;
         }
