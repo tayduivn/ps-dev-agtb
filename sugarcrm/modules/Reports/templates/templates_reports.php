@@ -50,6 +50,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	global $current_language;
 	global $mod_strings, $app_strings, $timedate;
 	global $sugar_config, $sugar_version;
+    global $app_list_strings;
 
 	$sort_by = '';
 	$sort_dir = '';
