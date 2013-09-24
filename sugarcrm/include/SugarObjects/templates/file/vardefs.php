@@ -47,6 +47,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 'name'=>
   array(
 	'name'=>'name',
+    'vname' => 'LBL_NAME',
 	'source'=>'non-db',
 	'type'=>'varchar',
 	'db_concat_fields'=> array(0=>'document_name'),
