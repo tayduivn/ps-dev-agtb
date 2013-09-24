@@ -145,6 +145,10 @@ $viewdefs['base']['view']['planned-activities'] = array(
                 'name' => 'accept_status_users',
                 'type' => 'invitation-actions',
             ),
+            'overdue_badge' => array(
+                'name' => 'date_start',
+                'type' => 'overdue-badge',
+            ),
         ),
         array(
             'filter_applied_to' => 'date_start',
@@ -159,6 +163,10 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'invitation_actions' => array(
                 'name' => 'accept_status_users',
                 'type' => 'invitation-actions',
+            ),
+            'overdue_badge' => array(
+                'name' => 'date_start',
+                'type' => 'overdue-badge',
             ),
         ),
     ),

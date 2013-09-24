@@ -23,6 +23,9 @@
  * - {Array} invitation_actions field def for the invitation actions buttonset
  *           triggers showing invitation actions buttons and corresponding collection
  *
+ * - {Array} overdue_badge field def to support overdue calculation, and showing
+ *   an overdue badge when appropriate.
+ *
  * @class View.Views.BasePlannedActivitiesView
  * @alias SUGAR.App.view.views.BasePlannedActivitiesView
  * @extends View.Views.BaseHistoryView
@@ -221,21 +224,14 @@
             return;
         }
 
-        var tab = this.tabs[this.settings.get('activeTab')],
-            now = new Date();
+        var tab = this.tabs[this.settings.get('activeTab')];
 
-        if (!this.collection.length || (tab.invitations && tab.invitations.dataFetched)) {
-            this._super('_renderHtml');
-            return;
+        if (tab.overdue_badge) {
+            this.overdueBadge = tab.overdue_badge;
         }
 
-        // FIXME move this to a field
-        _.each(this.collection.models, function(model) {
-            var date = new Date(model.get(tab.record_date));
-            model.set('overdue', date < now);
-        }, this);
-
-        if (!tab.invitations) {
+        if (!this.collection.length || !tab.invitations ||
+            tab.invitations.dataFetched) {
             this._super('_renderHtml');
             return;
         }
