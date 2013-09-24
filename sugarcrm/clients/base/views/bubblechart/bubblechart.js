@@ -155,7 +155,7 @@
                 };
             }),
             properties: {
-                title: app.lang.getAppString('LBL_TOP10_OPPORTUNITIES_CHART'),
+                title: app.lang.getAppString('LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME'),
                 value: data.records.length
             }
         };
