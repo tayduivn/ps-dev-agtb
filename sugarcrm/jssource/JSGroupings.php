@@ -270,6 +270,8 @@
                     'include/javascript/sugar7/plugins/EllipsisInline.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ListColumnEllipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleMoreLess.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/MetadataEventDriven.js' =>
+                        'include/javascript/sugar_sidecar.min.js',
                     //BEGIN SUGARCRM flav=pro ONLY
                     //load SFA specific plugins. Remove this in favor of a custom plugin loader.
                     'modules/Forecasts/clients/base/plugins/DisableDelete.js'  => 'include/javascript/sugar_sidecar.min.js',

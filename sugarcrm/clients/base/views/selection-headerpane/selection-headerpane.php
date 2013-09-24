@@ -36,9 +36,7 @@ $viewdefs['base']['view']['selection-headerpane'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'events' => array(
-                'click' => 'function(evt) {
-                    app.drawer.close();
-                }'
+                'click' => 'selection:closedrawer:fire',
             ),
             'css_class' => 'btn-invisible btn-link',
         ),

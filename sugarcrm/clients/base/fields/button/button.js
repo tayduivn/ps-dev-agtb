@@ -27,7 +27,9 @@
 ({
     tagName: "span",
     fieldTag: "a",
-    plugins: ['Tooltip'],
+
+    plugins: ['Tooltip', 'MetadataEventDriven'],
+
     initialize: function(options) {
         var self = this;
         this.events = _.extend({}, this.events, options.def.events, {

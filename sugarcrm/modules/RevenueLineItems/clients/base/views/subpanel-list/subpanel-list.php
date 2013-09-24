@@ -167,9 +167,7 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-list'] = array(
                 'label' => 'LBL_GENERATE_QUOTE',
                 'primary' => true,
                 'events' => array (
-                    'click' => 'function(e) {
-                                    this.view.layout.trigger("list:massquote:fire");
-                                }'
+                    'click' => 'list:massquote:fire',
                 ),
                 'acl_action' => 'massquote',
             ),

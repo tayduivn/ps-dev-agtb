@@ -38,9 +38,7 @@ $viewdefs['Prospects']['base']['view']['recordlist'] = array(
                 'label' => 'LBL_MASS_UPDATE',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massupdate:fire");
-                    }'
+                    'click' => 'list:massupdate:fire',
                 ),
                 'acl_action' => 'massupdate',
             ),
@@ -50,9 +48,7 @@ $viewdefs['Prospects']['base']['view']['recordlist'] = array(
                 'label' => 'LBL_MERGE',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:mergeduplicates:fire");
-                    }'
+                    'click' => 'list:mergeduplicates:fire',
                 ),
                 'acl_action' => 'edit',
             ),
@@ -62,9 +58,7 @@ $viewdefs['Prospects']['base']['view']['recordlist'] = array(
                 'label' => 'LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massaddtolist:fire");
-                    }'
+                    'click' => 'list:massaddtolist:fire',
                 ),
                 'acl_module' => 'ProspectLists',
                 'acl_action' => 'edit',
@@ -76,9 +70,7 @@ $viewdefs['Prospects']['base']['view']['recordlist'] = array(
                 'acl_action' => 'delete',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massdelete:fire");
-                    }'
+                    'click' => 'list:massdelete:fire',
                 ),
             ),
             array(
@@ -88,9 +80,7 @@ $viewdefs['Prospects']['base']['view']['recordlist'] = array(
                 'acl_action' => 'export',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massexport:fire");
-                    }'
+                    'click' => 'list:massexport:fire',
                 ),
             ),
         ),

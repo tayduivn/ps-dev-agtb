@@ -37,9 +37,7 @@ $viewdefs['portal']['view']['recordlist'] = array(
                 'label' => 'LBL_MASS_UPDATE',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massupdate:fire");
-                    }'
+                    'click' => 'list:massupdate:fire',
                 ),
                 'acl_action' => 'massupdate',
             ),
@@ -50,9 +48,7 @@ $viewdefs['portal']['view']['recordlist'] = array(
                 'acl_action' => 'delete',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massdelete:fire");
-                    }'
+                    'click' => 'list:massdelete:fire',
                 ),
             ),
             array(
@@ -62,9 +58,7 @@ $viewdefs['portal']['view']['recordlist'] = array(
                 'acl_action' => 'export',
                 'primary' => true,
                 'events' => array(
-                    'click' => 'function(e){
-                    this.view.layout.trigger("list:massexport:fire");
-                    }'
+                    'click' => 'list:massexport:fire',
                 ),
             ),
         ),
