@@ -44,7 +44,8 @@
      */
     app.error.handleNeedLoginError = function(error) {
         backToLogin(true);
-        alertUser("needs_login_error" , "LBL_INVALID_CREDS_TITLE", "LBL_INVALID_CREDS");
+        // Login can fail for many reasons such as lock out, bad credentials, etc.  Server message to provides details.
+        alertUser("needs_login_error" , "LBL_INVALID_CREDS_TITLE", error.message);
     };
 
     /**

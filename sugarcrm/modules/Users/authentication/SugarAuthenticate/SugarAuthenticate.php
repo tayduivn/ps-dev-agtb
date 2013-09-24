@@ -59,7 +59,7 @@ class SugarAuthenticate{
 	 * @return boolean
 	 */
 	function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array ()){
-		global $mod_strings;
+		global $app_strings;
 		unset($_SESSION['login_error']);
 		//BEGIN SUGARCRM flav=pro ONLY
 		$res = $GLOBALS['sugar_config']['passwordsetting'];
@@ -72,7 +72,7 @@ class SugarAuthenticate{
 		//BEGIN SUGARCRM flav=pro ONLY
 		$usr->reloadPreferences();
 		// if there is too many login attempts
-		if (!empty($usr_id) && $res['lockoutexpiration'] > 0 && $usr->getPreference('loginfailed')>=($res['lockoutexpirationlogin']) && !($usr->portal_only)){
+		if (!empty($usr->id) && $res['lockoutexpiration'] > 0 && $usr->getPreference('loginfailed')>=($res['lockoutexpirationlogin']) && !($usr->portal_only)){
 		    // if there is a lockout time set
 		    if ($res['lockoutexpiration'] == '2'){
 		    	// lockout date is now if not set
@@ -89,21 +89,21 @@ class SugarAuthenticate{
 				// Test if the user is still locked out and return a error message
 			    if (TimeDate::getInstance()->nowDb() < $expiretime){
 			    	$usr->setPreference('lockout','1');
-			        $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
-			        $_SESSION['waiting_error']=$mod_strings['LBL_LOGIN_LOGIN_TIME_ALLOWED'].' ';
+			        $_SESSION['login_error'] = $app_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'] . ' ';
+			        $_SESSION['login_error'] .= $app_strings['LBL_LOGIN_LOGIN_TIME_ALLOWED'] . ' ';
 			        $lol= strtotime($expiretime)-strtotime(TimeDate::getInstance()->nowDb());
 					        switch (true) {
 				    case (floor($lol/86400) !=0):
-				        $_SESSION['waiting_error'].=floor($lol/86400).$mod_strings['LBL_LOGIN_LOGIN_TIME_DAYS'];
+				        $_SESSION['login_error'] .= floor($lol/86400).$app_strings['LBL_LOGIN_LOGIN_TIME_DAYS'];
 				        break;
 				    case (floor($lol/3600)!=0):
-				        $_SESSION['waiting_error'].=floor($lol/3600).$mod_strings['LBL_LOGIN_LOGIN_TIME_HOURS'];
+				        $_SESSION['login_error'] .= floor($lol/3600).$app_strings['LBL_LOGIN_LOGIN_TIME_HOURS'];
 				        break;
 				    case (floor($lol/60)!=0):
-				        $_SESSION['waiting_error'].=floor($lol/60).$mod_strings['LBL_LOGIN_LOGIN_TIME_MINUTES'];
+				        $_SESSION['login_error'] .= floor($lol/60).$app_strings['LBL_LOGIN_LOGIN_TIME_MINUTES'];
 				        break;
 			        case (floor($lol)!=0):
-				        $_SESSION['waiting_error'].=floor($lol).$mod_strings['LBL_LOGIN_LOGIN_TIME_SECONDS'];
+				        $_SESSION['login_error'] .= floor($lol).$app_strings['LBL_LOGIN_LOGIN_TIME_SECONDS'];
 				        break;
 					}
 					$usr->savePreferencesToDB();
@@ -118,8 +118,8 @@ class SugarAuthenticate{
 		    }
 		    else{
 		    	$usr->setPreference('lockout','1');
-			    $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
-		        $_SESSION['waiting_error']=$mod_strings['LBL_LOGIN_ADMIN_CALL'];
+			    $_SESSION['login_error']=$app_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
+		        $_SESSION['waiting_error']=$app_strings['LBL_LOGIN_ADMIN_CALL'];
 		        $usr->savePreferencesToDB();
 		        return false;
 			}
@@ -140,7 +140,7 @@ class SugarAuthenticate{
 		}
 		else
 		{
-			if(!empty($usr_id) && isset($res['lockoutexpiration']) && $res['lockoutexpiration'] > 0){
+			if(!empty($usr->id) && isset($res['lockoutexpiration']) && $res['lockoutexpiration'] > 0){
 				if (($logout=$usr->getPreference('loginfailed'))=='')
 	        		$usr->setPreference('loginfailed','1');
 	    		else
