@@ -46,7 +46,7 @@
     },
     _render: function () {
         var self = this;
-        app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
+        this._super('_render');
 
         if (this.tplName === 'edit') {
             this.$(this.fieldTag).each(function (index, el) {
@@ -95,7 +95,8 @@
             var primaryTeam = _.find(value, function (team) {
                 return team.primary;
             });
-            return primaryTeam.name;
+            // If there is no primary team discovered return an empty string
+            return !_.isUndefined(primaryTeam) && !_.isUndefined(primaryTeam.name) ? primaryTeam.name : "";
         }
         // Place the add button as needed
         if (_.isArray(value) && value.length > 0) {
