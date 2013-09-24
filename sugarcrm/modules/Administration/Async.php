@@ -12,7 +12,10 @@ switch($_REQUEST['adminAction']) {
 	////	REPAIRXSS
 	case "refreshEstimate":
 		include("include/modules.php"); // provide $moduleList
-		$target = $_REQUEST['bean'];
+        $target = '';
+        if (!empty($_REQUEST['bean'])) {
+            $target = $_REQUEST['bean'];
+        }
 
 		$count = 0;
 		$toRepair = array();
