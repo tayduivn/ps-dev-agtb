@@ -154,9 +154,9 @@ $mod_strings = array (
     'LBL_LV_WEIGH'=> 'Weighted Amount',
     'LBL_LV_COMMIT'=> 'Committed Amount',
 
-    'LBL_COMMIT_NOTE'=> 'Enter amounts that you would like to commit for the selected Time Period:',
-
-    'LBL_COMMIT_MESSAGE'=> 'Do you want to commit these amounts?',
+    'LBL_COMMIT_NOTE' => 'Enter amounts that you would like to commit for the selected Time Period:',
+    'LBL_COMMIT_TOOLTIP' => 'To enable Commit: Change a value in the worksheet',
+    'LBL_COMMIT_MESSAGE' => 'Do you want to commit these amounts?',
     'ERR_FORECAST_AMOUNT' => 'Commit Amount is required and must be a number.',
 
     // js error strings

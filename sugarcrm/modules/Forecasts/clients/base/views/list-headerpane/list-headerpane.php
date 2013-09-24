@@ -45,6 +45,7 @@ $viewdefs['Forecasts']['base']['view']['list-headerpane'] = array(
                             this.view.context.trigger("button:commit_button:click");
                         }'
                     ),
+                    'tooltip' => 'LBL_COMMIT_TOOLTIP',
                     'css_class' => 'btn-primary',
                     'icon' => 'icon-upload',
                     'acl_action' => 'current_user',

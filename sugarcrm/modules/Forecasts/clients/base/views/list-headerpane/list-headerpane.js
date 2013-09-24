@@ -26,6 +26,9 @@
         }, this);
     },
 
+    /**
+     * @inheritdoc
+     */
     bindDataChange: function() {
         this.context.on('change:selectedUser', function(model, changed) {
             //if(_.isUndefined(model.previous('selectedUser')) || model.previous('selectedUser').id !== changed.id) {
