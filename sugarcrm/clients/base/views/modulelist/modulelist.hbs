@@ -2,8 +2,8 @@
     {{#each module_list}}
         {{#eq name 'Home'}}
         <li class="dropdown home" data-module="Home">
-            <div class="btn-group">
-                <a class="cube btn btn-invisible btn-link" href="#Home" rel="tooltip" data-container="body" title="{{str "LBL_TABGROUP_HOME"}}" data-route="#Home"></a>
+            <div class="btn-group" title="{{str "LBL_TABGROUP_HOME"}}">
+                <a class="cube btn btn-invisible btn-link" href="#Home" data-route="#Home"></a>
             {{#if menu}}
                 <a data-toggle="dropdown" role="button" href="javascript: void(0);" class="btn btn-invisible btn-link dropdown-toggle dtoggle"><b class="icon-caret-down"></b></a>
                 <div class="dropdown-menu scroll">

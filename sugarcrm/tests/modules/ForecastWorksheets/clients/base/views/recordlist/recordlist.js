@@ -81,11 +81,9 @@ describe("ForecastWorksheets.View.RecordList", function() {
     });
 
     it("should have default recordlist plugins defined", function() {
-        expect(_.indexOf(view.plugins, 'EllipsisInline')).not.toEqual(-1);
         expect(_.indexOf(view.plugins, 'ListColumnEllipsis')).not.toEqual(-1);
         expect(_.indexOf(view.plugins, 'ErrorDecoration')).not.toEqual(-1);
         expect(_.indexOf(view.plugins, 'Editable')).not.toEqual(-1);
-        expect(_.indexOf(view.plugins, 'Tooltip')).not.toEqual(-1);
     });
 
     it("should have additional plugins defined", function() {

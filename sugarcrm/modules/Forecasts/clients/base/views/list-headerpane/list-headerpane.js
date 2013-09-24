@@ -15,7 +15,6 @@
      * Who is my parent
      */
     extendsFrom: 'HeaderpaneView',
-    plugins: ['Tooltip'],
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'headerpane', method: 'initialize', args: [options]});
 

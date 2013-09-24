@@ -26,6 +26,7 @@
  ********************************************************************************/
 ({
     extendsFrom:'ResultsView',
+    plugins: ['Tooltip'],
     sidebarClosed: false,
     closeSidebar: function () {
         if (!this.sidebarClosed) {

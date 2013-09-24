@@ -126,7 +126,7 @@
         var cssClass = [],
             container = '',
             caretIcon = this.def['icon'] ? this.def['icon'] : 'icon-caret-down',
-            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" data-container="body" title="Actions">' +
+            caret = '<a class="' + caretCss + '" data-toggle="dropdown" href="javascript:void(0);" data-placement="bottom" rel="tooltip" title="Actions">' +
                 '<span class="' + caretIcon + '"></span>' +
                 '</a>',
             dropdown = '<ul class="dropdown-menu">';

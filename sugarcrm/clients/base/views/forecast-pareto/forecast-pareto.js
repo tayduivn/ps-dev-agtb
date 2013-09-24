@@ -15,7 +15,7 @@
  * Dashlet that displays a chart
  */
 ({
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'Tooltip'],
 
     values: new Backbone.Model(),
 

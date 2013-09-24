@@ -4,6 +4,7 @@
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
 
+    plugins: ['EllipsisInline'],
 
     _render: function() {
         var result, self = this;

@@ -25,6 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
+    plugins: ['EllipsisInline'],
     format:function(value){
         if (value && !value.match(/^([a-zA-Z]+):\/\//)) {
             value = "http://" + value;

@@ -14,9 +14,7 @@
     plugins: ['Dashlet', 'Tooltip'],
 
     events: {
-        'click .toggle-control': 'switchChart' ,
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click .toggle-control': 'switchChart'
     },
 
     filterAssigned: null,
@@ -249,13 +247,6 @@
             nv.utils.unResizeOnPrint(this.chart.render);
         }
         app.view.View.prototype._dispose.call(this);
-    },
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
     }
 
 })

@@ -11,6 +11,8 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
+    plugins: ['EllipsisInline'],
+
     _render: function() {
         if (this.view.name === 'record') {
             this.def.link = false;

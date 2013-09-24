@@ -65,7 +65,7 @@
     /**
      * The plugins used by this view.
      */
-    plugins: ['ellipsis_inline', 'Dashlet'],
+    plugins: ['Dashlet'],
 
     /**
      * The default settings for a list view dashlet.

@@ -7,10 +7,10 @@
      * @extends Layout
      */
     events: {
-        "click .toggle-actions a.btn": "toggleView",
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        "click .toggle-actions a.btn": "toggleView"
     },
+
+    plugins: ['Tooltip'],
 
     /**
      * @override
@@ -208,28 +208,5 @@
         this.componentsList = {};
         this.toggleComponents = null;
         app.view.Layout.prototype._dispose.call(this);
-    },
-
-    /**
-     * Show bootstrap tooltip
-     * @param {Event} e
-     */
-    showTooltip: function (e) {
-        var $el = this.$(e.currentTarget);
-
-        //Hotfix for the top left checkall (actionmenu) tooltip
-        if ($el.hasClass('checkall')) {
-            $el.tooltip({container: this.$el, trigger: 'manual'}).tooltip('show');
-        } else {
-            $el.tooltip('show');
-        }
-    },
-
-    /**
-     * Hide bootstrap tooltip
-     * @param {Event} e
-     */
-    hideTooltip: function (e) {
-        this.$(e.currentTarget).tooltip('hide');
     }
 })

@@ -29,12 +29,12 @@
 {{#each value}}
 <div class="control-group email">
     {{#if hasAnchor}}
-	    <a rel="tooltip" data-original-title="{{email_address}}{{#notEq flagLabel ''}}, {{flagLabel}}{{/notEq}}" data-placement="bottom" class="ellipsis_inline{{#if ../../useSugarEmailClient}} composeEmail{{/if}}" href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>
+	    <a title="{{email_address}}{{#notEq flagLabel ''}}, {{flagLabel}}{{/notEq}}" data-placement="bottom" class="ellipsis_inline{{#if ../../useSugarEmailClient}} composeEmail{{/if}}" href="{{#if ../../useSugarEmailClient}}javascript:void(0);{{else}}mailto:{{email_address}}{{/if}}">{{email_address}}</a>
     {{else}}
 	    {{#eq flagClass 'invalid'}}
-		    <del rel="tooltip" data-original-title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</del>
+		    <del title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</del>
 	    {{else}}
-	        <span rel="tooltip" data-original-title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</span>
+	        <span title="{{email_address}}, {{flagLabel}}" data-placement="bottom" class="ellipsis_inline">{{email_address}}</span>
 	    {{/eq}}
     {{/if}}
 </div>

@@ -24,7 +24,7 @@
     },
 
     results: {},
-    plugins: ['Dashlet'],
+    plugins: ['Dashlet', 'Tooltip'],
 
     // user configurable
     nodetemplate: {},

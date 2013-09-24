@@ -42,6 +42,8 @@
 
     serverTimeFormat: 'H:i:s',
 
+    plugins: ['EllipsisInline'],
+
     /**
      * Renders widget, sets up date and time pickers, etc.
      * @param  {String} value

@@ -29,6 +29,7 @@
     maxDisplayLength: 450,
     isTruncated: false,
     lastMode: null,
+    plugins: ['EllipsisInline'],
 
     events: {
         'click .show-more-text': 'toggleMoreText'

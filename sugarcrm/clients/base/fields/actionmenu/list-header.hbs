@@ -1,5 +1,5 @@
 <div class="btn-group">
-    <div rel="tooltip" data-container="body" data-original-title="{{str "LBL_LISTVIEW_ACTIONS"}}" class="btn checkall"><input type="checkbox" name="check" class="toggle-all" {{#if selected}}checked{{/if}}></div>
+    <div rel="tooltip" title="{{str "LBL_LISTVIEW_ACTIONS"}}" class="btn checkall"><input type="checkbox" name="check" class="toggle-all" {{#if selected}}checked{{/if}}></div>
     <a class="btn dropdown-toggle {{#unless action_enabled}}disabled{{/unless}}" data-toggle="dropdown" href="javascript:void(0);"><span class="icon-caret-down"></span></a>
     {{actionPlaceHolder}}
 </div>

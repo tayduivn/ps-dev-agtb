@@ -27,6 +27,7 @@
 ({
     tagName: "span",
     fieldTag: "a",
+    plugins: ['Tooltip'],
     initialize: function(options) {
         var self = this;
         this.events = _.extend({}, this.events, options.def.events, {

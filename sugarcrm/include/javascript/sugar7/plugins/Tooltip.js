@@ -1,54 +1,78 @@
 (function(app) {
     app.events.on('app:init', function() {
-        app.plugins.register('Tooltip', ['layout', 'view'], {
+        app.plugins.register('Tooltip', ['layout', 'view', 'field'], {
+            _$pluginTooltips: null, //array of all initialized tooltips
+            _pluginTooltipCssSelector: '[rel=tooltip]', //CSS selector used to find tooltips
+
+            /**
+             * Initialize tooltips on render and destroy tooltip before render for views and fields.
+             * Initialize tooltips on initialize for layouts.
+             */
             onAttach: function() {
-                if (!_.isFunction($.fn.tooltip)) {
-                    return;
-                }
-
-                this.events = _.extend({}, this.events, {
-                    'mouseenter [rel="tooltip"]': 'onShowRecordViewTooltip',
-                    'mouseleave [rel="tooltip"]': 'onHideRecordViewTooltip',
-                    'click [rel="tooltip"]': 'unbindTooltip'
-                });
-
-                this.on('render', function() {
-                    _.each(this.fields, function(field) {
-                        field.before('render', this.unbindTooltip, this);
+                if ((this instanceof app.view.View) || (this instanceof app.view.Field)) {
+                    this.before('render', function() {
+                        this.destroyAllPluginTooltips();
                     }, this);
-                }, this);
+                    this.on('render', function() {
+                        this.initializeAllPluginTooltips();
+                    }, this);
+                } else if (this instanceof app.view.Layout) {
+                    this.on('init', function() {
+                        this.initializeAllPluginTooltips();
+                    }, this);
+                }
             },
 
             /**
-             * Creates tooltips for all controls on the record view and shows them
-             * @param {Window.Event} mouse event.
-             */
-            onShowRecordViewTooltip: function(e) {
-                this.$(e.currentTarget).tooltip({}).tooltip('show');
-            },
-            /**
-             * Hides tooltips for all controls on the record view and destroy them
-             * @param {Window.Event} mouse event.
-             */
-            onHideRecordViewTooltip: function(e) {
-                this.$(e.currentTarget).tooltip('hide');
-            },
-
-            /**
-             * Destroy the jQuery tooltip plugin.
-             */
-            unbindTooltip: function() {
-                this.$('[rel=tooltip]').tooltip('destroy');
-            },
-
-            /**
-             * Destory all tooltips that have been created
+             * Destroy tooltips on dispose.
              */
             onDetach: function() {
-                if (!_.isFunction($.fn.tooltip)) {
-                    return;
-                }
-                this.unbindTooltip();
+                this.destroyAllPluginTooltips();
+            },
+
+            /**
+             * Create all tooltips in this component.
+             */
+            initializeAllPluginTooltips: function() {
+                this.removePluginTooltips();
+                this.addPluginTooltips();
+            },
+
+            /**
+             * Destroy all tooltips that have been created in this component.
+             */
+            destroyAllPluginTooltips: function() {
+                this.removePluginTooltips();
+                this._$pluginTooltips = null;
+            },
+
+            /**
+             * Create tooltips within a given element.
+             * @param {jQuery} $element (optional)
+             */
+            addPluginTooltips: function($element) {
+                var $tooltips = this._getPluginTooltips($element);
+                this._$pluginTooltips  = this._$pluginTooltips || [];
+                this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
+            },
+
+            /**
+             * Destroy tooltips within a given element.
+             * @param {jQuery} $element (optional)
+             */
+            removePluginTooltips: function($element) {
+                var $tooltips = this._getPluginTooltips($element);
+                app.utils.tooltip.destroy($tooltips);
+            },
+
+            /**
+             * Within a given element, get all elements that have 'rel' attribute with 'tooltip' as its value.
+             * @param {jQuery} $element
+             * @returns {jQuery}
+             * @private
+             */
+            _getPluginTooltips: function($element) {
+                return $element ? $element.find(this._pluginTooltipCssSelector) : this.$(this._pluginTooltipCssSelector);
             }
         });
     });

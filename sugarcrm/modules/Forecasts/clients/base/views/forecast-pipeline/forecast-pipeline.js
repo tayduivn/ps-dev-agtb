@@ -14,9 +14,7 @@
     forecastAdmin: false,
 
     events: {
-        'click button.btn': 'handleTypeButtonClick',
-        'mouseenter [rel="tooltip"]': 'showTooltip',
-        'mouseleave [rel="tooltip"]': 'hideTooltip'
+        'click button.btn': 'handleTypeButtonClick'
     },
 
     initialize: function(options) {
@@ -135,14 +133,6 @@
                 complete: options ? options.complete : null
             });
         }
-    },
-
-    showTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("show");
-    },
-
-    hideTooltip: function(event) {
-        this.$(event.currentTarget).tooltip("hide");
     },
 
     resizeOnPrint: function(chart) {

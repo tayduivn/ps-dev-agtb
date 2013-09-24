@@ -27,6 +27,8 @@
 ({
     fieldTag: "input",
 
+    plugins: ['EllipsisInline'],
+
     /**
      * Whether the value of this enum should be defaulted to the first item when model attribute is undefined
      * Set to false to prevent this defaulting
