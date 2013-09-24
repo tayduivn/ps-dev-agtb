@@ -12,7 +12,7 @@
  */
 ({
 
-    plugins: ['tooltip'], // FIXME: Tooltip once SC-1084 is merged
+    plugins: ['Tooltip'],
 
     events: {
         'click [data-action]': 'toggleStatus'
