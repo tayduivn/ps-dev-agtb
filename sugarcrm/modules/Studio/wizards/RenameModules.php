@@ -377,7 +377,12 @@ class RenameModules
 
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
         if($redirect) {
-            SugarApplication::redirect('index.php?action=wizard&module=Studio&wizard=StudioWizard&option=RenameTabs');
+            echo "
+                <script>
+                    var app = window.parent.SUGAR.App;
+                    app.api.call('read', app.api.buildURL('ping'));
+                </script>";
+
         }
     }
 
