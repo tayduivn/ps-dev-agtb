@@ -269,6 +269,7 @@
      * @param {String|Array} value single email address or set of email addresses
      */
     format: function(value) {
+        value = app.utils.deepCopy(value);
         if (_.isArray(value) && value.length > 0) {
             // got an array of email addresses
             _.each(value, function(email) {
