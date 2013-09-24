@@ -43,13 +43,16 @@
      */
     beforeNext: function(callback) {
         var self = this;
+        this.getField("next_button").setDisabled(true); // temporarily disable
         this.model.doValidate(this.fieldsToValidate,
             _.bind(function(isValid) {
+                var self = this;
                 if (isValid) {
                     var payload = self._prepareRequestPayload();
                     app.alert.show('wizardprofile', {level: 'process', title: app.lang.getAppString('LBL_LOADING'), autoClose: false});
                     app.user.updateProfile(payload, function(err) {
                         app.alert.dismiss('wizardprofile');
+                        self.updateButtons(); //re-enable buttons
                         if (err) {
                             app.logger.debug("Wizard profile update failed: " + err);
                             callback(false);
