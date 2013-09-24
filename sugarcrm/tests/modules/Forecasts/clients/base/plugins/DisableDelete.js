@@ -19,7 +19,7 @@ describe("Forecasts.Base.Plugins.Disable-delete", function() {
         app = SUGAR.App;
         context = app.context.getContext();
         
-        SugarTest.loadFile("../modules/Forecasts/clients/base/plugins", "disable-delete", "js", function(d) {
+        SugarTest.loadFile('../modules/Forecasts/clients/base/plugins', 'DisableDelete', 'js', function(d) {
             app.events.off('app:init');
             eval(d);
             app.events.trigger('app:init');
@@ -49,7 +49,7 @@ describe("Forecasts.Base.Plugins.Disable-delete", function() {
     });
     
     afterEach(function() {
-        delete app.plugins.plugins['field']['disable-delete'];
+        delete app.plugins.plugins['field']['DisableDelete'];
         field = null;
         app = null;
         context = null;

@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('timeago', ['view'], {
+        app.plugins.register('Timeago', ['view'], {
             onAttach: function(component, plugin) {
                 component.on('render', function() {
                     if ($.fn.timeago) {

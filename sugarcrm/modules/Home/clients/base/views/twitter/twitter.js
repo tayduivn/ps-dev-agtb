@@ -1,5 +1,5 @@
 ({
-    plugins: ['Dashlet', 'timeago'],
+    plugins: ['Dashlet', 'Timeago'],
     limit : 20,
     events: {
         'click .connect-twitter': 'onConnectTwitterClick'

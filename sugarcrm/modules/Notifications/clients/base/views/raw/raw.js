@@ -12,7 +12,7 @@
  */
 
 ({
-    plugins: ['timeago'],
+    plugins: ['Timeago'],
 
     events: {
         'click span.name': 'toggleName'

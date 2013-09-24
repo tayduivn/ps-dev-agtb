@@ -18,7 +18,7 @@
  * @extends View.Views.BaseListView
  */
 ({
-    plugins: ['editable', 'error-decoration', 'tooltip', 'ellipsis_inline'],
+    plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline'],
     extendsFrom: 'ListView',
     events: {
         'click [data-action=more]' : 'toggleMoreLess',

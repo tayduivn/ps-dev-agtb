@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on('app:init', function () {
-        app.plugins.register('prettify', ['layout', 'view'], {
+        app.plugins.register('Prettify', ['layout', 'view'], {
             /**
              * Has content been prettified
              */

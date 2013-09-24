@@ -12,7 +12,7 @@
         'paste': 'throttledSearch'
     },
 
-    plugins: ['quicksearchfilter'],
+    plugins: ['QuickSearchFilter'],
 
     // Defining tagName, className and attributes allows us to avoid a template and an extra element
     tagName: 'input',

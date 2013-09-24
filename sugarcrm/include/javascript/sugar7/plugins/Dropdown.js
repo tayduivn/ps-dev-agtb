@@ -6,7 +6,7 @@
  */
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('dropdown', ['view', 'layout'], {
+        app.plugins.register('Dropdown', ['view', 'layout'], {
 
             events:{
                 'mouseleave .dropdown-menu': 'hideMenu'

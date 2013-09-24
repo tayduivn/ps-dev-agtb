@@ -1,6 +1,6 @@
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('ellipsis_inline', ['view'], {
+        app.plugins.register('EllipsisInline', ['view'], {
 
             events:{
                 'mouseenter .ellipsis_inline':'addTooltip',

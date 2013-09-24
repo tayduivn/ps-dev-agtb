@@ -126,8 +126,8 @@
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins);
-        this.plugins.push('cte-tabbing');
-        this.plugins.push('dirty-collection');
+        this.plugins.push('CteTabbing');
+        this.plugins.push('DirtyCollection');
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         this.selectedUser = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
         this.selectedTimeperiod = this.context.get('selectedTimePeriod') || this.context.parent.get('selectedTimePeriod') || '';

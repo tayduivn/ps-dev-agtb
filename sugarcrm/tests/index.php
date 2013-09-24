@@ -14,16 +14,16 @@
     <script type="text/javascript" src="../include/javascript/sugar7/alert.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/bwc.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/utils.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/dropdown.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/error-decoration.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/quicksearchfilter.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/taggable.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/Dropdown.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/ErrorDecoration.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/QuickSearchFilter.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/Taggable.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/GridBuilder.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-disable-sort.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/editable.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListDisableSort.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/Editable.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/ToggleMoreLess.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/list-remove-links.js"></script>
-    <script type="text/javascript" src="../include/javascript/sugar7/plugins/file.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/ListRemoveLinks.js"></script>
+    <script type="text/javascript" src="../include/javascript/sugar7/plugins/File.js"></script>
     <script type="text/javascript" src="../include/javascript/sugar7/plugins/LinkedModel.js"></script>
 
     <!-- customized beans -->

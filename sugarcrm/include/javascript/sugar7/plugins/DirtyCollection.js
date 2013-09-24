@@ -18,7 +18,7 @@
          *
          * This is currently only used in the Forecasts Module
          */
-        app.plugins.register('dirty-collection', ['view'], {
+        app.plugins.register('DirtyCollection', ['view'], {
 
             /**
              * A Collection to keep track of all the dirty models

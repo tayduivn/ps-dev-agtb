@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 ({
-    plugins: ['error-decoration'],
+    plugins: ['ErrorDecoration'],
 
     /**
      * Sign Up form view.

@@ -11,7 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
-    plugins: ['Dashlet','tooltip'],
+    plugins: ['Dashlet', 'Tooltip'],
 
     events: {
         'click .toggle-control': 'switchChart' ,

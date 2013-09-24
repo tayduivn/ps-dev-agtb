@@ -5,12 +5,12 @@
 
     plugins: [
         'SugarLogic',
-        'ellipsis_inline',
-        'error-decoration',
+        'EllipsisInline',
+        'ErrorDecoration',
         'GridBuilder',
-        'editable',
-        'tooltip',
-        'audit',
+        'Editable',
+        'Tooltip',
+        'Audit',
         'ToggleMoreLess'
     ],
 

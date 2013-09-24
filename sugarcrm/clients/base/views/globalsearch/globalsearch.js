@@ -4,7 +4,7 @@
     preTag: '<strong>',
     postTag: '</strong>',
 
-    plugins: ['dropdown'],
+    plugins: ['Dropdown'],
     searchModules: [],
     events: {
         'click .typeahead a': 'clearSearch',

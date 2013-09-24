@@ -32,7 +32,7 @@ describe('File Plugin', function() {
 
     it('should have the plugin defined', function() {
         _.each(fields, function(field) {
-            expect(_.indexOf(field.plugins, 'file')).not.toEqual(-1);
+            expect(_.indexOf(field.plugins, 'File')).not.toEqual(-1);
         });
     });
 

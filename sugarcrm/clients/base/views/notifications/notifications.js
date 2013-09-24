@@ -4,7 +4,7 @@
     className: 'nav pull-right megamenu',
 
     // FIXME: dropdown plugin should not be needed when SC-1214 gets fixed
-    plugins: ['dropdown', 'timeago', 'ellipsis_inline', 'tooltip'],
+    plugins: ['Dropdown', 'Timeago', 'EllipsisInline', 'Tooltip'],
 
     // FIXME: open event should not be needed when SC-1214 gets fixed
     events: {

@@ -16,7 +16,7 @@
         /**
          * This plugin disables the delete button for closed won/lost items (for use in Opps and Products)
          */
-        app.plugins.register("disable-delete", ["field"], {
+        app.plugins.register('DisableDelete', ["field"], {
 
             /**
              * Attach code for when the plugin is registered on a view

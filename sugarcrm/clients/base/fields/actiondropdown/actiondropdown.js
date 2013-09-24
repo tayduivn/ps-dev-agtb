@@ -41,7 +41,7 @@
         'change [data-toggle=dropdownmenu]' : 'dropdownSelected',
         'touchstart [data-toggle=dropdownmenu]' : 'renderDropdown'
     },
-    plugins: ['tooltip'],
+    plugins: ['Tooltip'],
 
     /**
      * {@inheritDoc}
@@ -113,7 +113,7 @@
     },
     getPlaceholder: function() {
         // Covers the use case where you have an actiondropdown field on listview right column,
-        // and list-column-ellipsis plugin is disabled.
+        // and ListColumnEllipsis plugin is disabled.
         // Actiondropdown will be rendered empty if viewName equals to list-header.
         if (this.options.viewName === 'list-header') return app.view.Field.prototype.getPlaceholder.call(this);
 

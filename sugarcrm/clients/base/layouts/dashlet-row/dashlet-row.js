@@ -3,7 +3,7 @@
     events: {
         'click .remove-row': 'removeClicked'
     },
-    plugins: ['tooltip'],
+    plugins: ['Tooltip'],
     initialize: function(options) {
         this.index = options.meta.index;
         options.meta = this.setMetadata(options.meta);

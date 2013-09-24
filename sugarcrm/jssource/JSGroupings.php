@@ -248,7 +248,7 @@
                    'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/select2-release-3.3.2/select2.js' => 'include/javascript/sugar_sidecar.min.js',
                    //To fix some issues on select2 plugin.
-                   'include/javascript/sugar7/plugins/select2.js'  => 'include/javascript/sugar_sidecar.min.js',
+                   'include/javascript/sugar7/plugins/Select2.js'  => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.timepicker.js'=> 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.jstree.js' => 'include/javascript/sugar_sidecar.min.js',
                    'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
@@ -262,38 +262,37 @@
 
                     // Plugins for Sugar 7.
                     'include/javascript/sugar7/plugins/Dashlet.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/tooltip.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/audit.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/dragdrop_attachments.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/file_dragoff.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/dropdown.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/ellipsis_inline.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/list-column-ellipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Tooltip.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Audit.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/DragdropAttachments.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/FileDragoff.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Dropdown.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/EllipsisInline.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ListColumnEllipsis.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/ToggleMoreLess.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //BEGIN SUGARCRM flav=pro ONLY
                     //load SFA specific plugins. Remove this in favor of a custom plugin loader.
-                    'modules/Forecasts/clients/base/plugins/disable-delete.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'modules/Forecasts/clients/base/plugins/disable-massdelete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'modules/Forecasts/clients/base/plugins/DisableDelete.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'modules/Forecasts/clients/base/plugins/DisableMassdelete.js'  => 'include/javascript/sugar_sidecar.min.js',
                     //END SUGARCRM flav=pro ONLY
-                    'include/javascript/sugar7/plugins/taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/error-decoration.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/quicksearchfilter.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/click-to-edit.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Taggable.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Timeago.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ErrorDecoration.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/QuickSearchFilter.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ClickToEdit.js'  => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/GridBuilder.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/list-disable-sort.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/editable.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/list-remove-links.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/file.js' => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ListDisableSort.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Editable.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/ListRemoveLinks.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/File.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/sugar7/plugins/LinkedModel.js' => 'include/javascript/sugar_sidecar.min.js',
                     // Support Portal features for Sugar7
                     //BEGIN SUGARCRM flav=ent ONLY
                     'modules/Contacts/clients/base/lib/bean.js' => 'include/javascript/sugar_sidecar.min.js',
                     //END SUGARCRM flav=ent ONLY
-                    'include/javascript/sugar7/plugins/click-to-edit.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/dirty-collection.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
-                    'include/javascript/sugar7/plugins/overscroll.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/DirtyCollection.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Prettify.js'  => 'include/javascript/sugar_sidecar.min.js',
+                    'include/javascript/sugar7/plugins/Overscroll.js'  => 'include/javascript/sugar_sidecar.min.js',
                 )
            ),
            //BEGIN SUGARCRM flav=ent ONLY

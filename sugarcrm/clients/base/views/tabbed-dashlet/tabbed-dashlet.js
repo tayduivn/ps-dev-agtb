@@ -58,7 +58,7 @@
  * @alias SUGAR.App.view.views.BaseTabbedDashletView
  */
 ({
-    plugins: ['Dashlet', 'timeago'],
+    plugins: ['Dashlet', 'Timeago'],
 
     events: {
         'click [data-action=show-more]': 'showMore',

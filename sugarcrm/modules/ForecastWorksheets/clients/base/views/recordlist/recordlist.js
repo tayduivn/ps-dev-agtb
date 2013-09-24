@@ -139,7 +139,7 @@
         // we need to make a clone of the plugins and then push to the new object. this prevents double plugin
         // registration across ExtendedComponents
         this.plugins = _.clone(this.plugins);
-        this.plugins.push('cte-tabbing', 'dirty-collection');
+        this.plugins.push('CteTabbing', 'DirtyCollection');
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'initialize', args: [options]});
         // we need to get the flex-list template from the ForecastWorksheets module so it can use the filteredCollection
         // for display

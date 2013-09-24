@@ -4,7 +4,7 @@
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
-    plugins: ['tooltip'],
+    plugins: ['Tooltip'],
     extendsFrom: 'ButtonField',
     getFieldElement: function() {
         return this.$el;

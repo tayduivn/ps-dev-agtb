@@ -18,7 +18,7 @@
             tagRegExp = /@\[([\w]+):([\d\w\-]+):(.+?)\]/g,
             nbspRegExp = /&nbsp;/g;
 
-        app.plugins.register('taggable', ['view'], {
+        app.plugins.register('Taggable', ['view'], {
             events: {
                 'keydown .taggable': '_onKeydown',
                 'keyup .taggable': '_onKeyup',

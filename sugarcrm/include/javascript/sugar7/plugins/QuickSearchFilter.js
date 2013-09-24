@@ -1,6 +1,6 @@
 (function(app) {
     app.events.on("app:init", function() {
-        app.plugins.register('quicksearchfilter', ['layout', 'view', 'field'], {
+        app.plugins.register('QuickSearchFilter', ['layout', 'view', 'field'], {
             _moduleSearchFields: {},
             _getQuickSearchFieldsByPriority: function(searchModule) {
                 var meta = app.metadata.getModule(searchModule),

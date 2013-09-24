@@ -18,7 +18,7 @@
      */
     initialize: function(options) {
         this.plugins = _.clone(this.plugins) || [];
-        this.plugins.push("disable-massdelete");
+        this.plugins.push('DisableMassdelete');
         app.view.invokeParent(this, {type: 'view', name: 'massupdate', method: 'initialize', args: [options]});
     },
 

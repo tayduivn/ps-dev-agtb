@@ -14,7 +14,7 @@
     recentRowTemplate: Handlebars.compile(
         '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
-    plugins: ['dropdown'],
+    plugins: ['Dropdown'],
     events: {
         'click .dtoggle': 'toggleDropdown',
         'click .more .icon-chevron-down': 'showMore',

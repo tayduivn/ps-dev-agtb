@@ -6,7 +6,7 @@
         'mouseenter [rel="tooltip"]': 'showTooltip',
         'mouseleave [rel="tooltip"]': 'hideTooltip'
     },
-    plugins: ['tooltip'],
+    plugins: ['Tooltip'],
     _render: function() {
         app.view.Field.prototype._render.call(this);
         // Broadcast when we've fully rendered sidebar toggle

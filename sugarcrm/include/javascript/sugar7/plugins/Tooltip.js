@@ -1,6 +1,6 @@
 (function(app) {
     app.events.on('app:init', function() {
-        app.plugins.register('tooltip', ['layout', 'view'], {
+        app.plugins.register('Tooltip', ['layout', 'view'], {
             onAttach: function() {
                 if (!_.isFunction($.fn.tooltip)) {
                     return;

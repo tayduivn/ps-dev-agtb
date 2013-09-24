@@ -13,7 +13,7 @@
 
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('list-column-ellipsis', ['view'], {
+        app.plugins.register('ListColumnEllipsis', ['view'], {
 
             events: {
                 'click [data-field-toggle]': 'toggleColumn'

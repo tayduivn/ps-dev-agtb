@@ -15,12 +15,12 @@
         /**
          * We register two plug-ins here.
          *
-         * cte-tabbing
+         * CteTabbing
          * This is a view plugin that enable a view (specifcly recordlist) to listen for events from the
-         * 'click-to-edit' plugin to support moving the editable to the next editable field or the previous one
+         * 'ClickToEdit' plugin to support moving the editable to the next editable field or the previous one
          * depending on if shift+tab is pressed
          *
-         * click-to-edit
+         * ClickToEdit
          * This is a field plugin that allows the field to become editable on click.  Current types that are supported:
          *  - Int
          *  - Currency
@@ -28,7 +28,7 @@
          *  - Date
          * Others may work work but have not been tested or inline validation written for them.
          */
-        app.plugins.register('cte-tabbing', ['view'], {
+        app.plugins.register('CteTabbing', ['view'], {
             /**
              * Attach code for when the plugin is regisred on a view
              *
@@ -71,10 +71,10 @@
             }
         });
 
-        app.plugins.register('click-to-edit', ['field'], {
+        app.plugins.register('ClickToEdit', ['field'], {
 
             /**
-             * Custom Events for making the click-to-edit work on a field
+             * Custom Events for making the ClickToEdit work on a field
              */
             events: {
                 'mouseenter div.clickToEdit': 'showClickToEdit',
