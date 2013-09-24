@@ -230,6 +230,7 @@ describe("date field", function() {
                     'val': function() {
                         return 'arbitrary_value';
                     },
+                    'attr': function() {},
                     'datepicker': datepickerStub
                 };
             });
