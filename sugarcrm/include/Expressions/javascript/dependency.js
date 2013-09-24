@@ -895,6 +895,9 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
     },
     parseDate: function(date, type) {
         return SUGAR.util.DateUtils.parse(date, type);
+    },
+    getElement : function(variable) {
+        return AH.getElement(variable, this.formName);
     }
 });
 
