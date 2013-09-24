@@ -135,7 +135,7 @@
 
     /**
      * Handler for when the the value changes on the model, if the action is not edit, then
-     * re-render the field, otherwise just update the value vai jQuery
+     * re-render the field, otherwise just update the value via jQuery
      *
      * @param {Object} model
      * @param {string} value
