@@ -26,7 +26,7 @@ class SugarUpgradePopulateBaseRateProductTemplates extends UpgradeScript
     public function run()
     {
         // only run this when coming from a 6.x upgrade
-        if (!version_compare($this->from_version, '7.0.0RC2', "<")) {
+        if (!version_compare($this->from_version, '7.0.0', "<")) {
             return;
         }
 
