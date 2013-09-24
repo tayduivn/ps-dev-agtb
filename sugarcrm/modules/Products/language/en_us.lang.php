@@ -82,6 +82,7 @@ $mod_strings = array(
     'LBL_STATUS' => 'Status:',
     'LBL_TAX_CLASS' => 'Tax Class:',
     'LBL_MANUFACTURER' => 'Manufacturer:',
+    'LBL_MANUFACTURER_NAME' => 'Manufacturer Name:',
     'LBL_SUPPORT_DESCRIPTION' => 'Support Desc:',
     'LBL_SUPPORT_TERM' => 'Support Term:',
     'LBL_SUPPORT_NAME' => 'Support Title:',
