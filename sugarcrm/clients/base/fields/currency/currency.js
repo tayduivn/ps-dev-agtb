@@ -106,9 +106,7 @@
 
         // we do not call the parent which re-renders,
         // but instead update the value on the field directly
-        this.model.on('change:' + this.name, function(model, value) {
-            this.setCurrencyValue(value);
-        }, this);
+        this.model.on('change:' + this.name, this._valueChangeHandler, this);
 
         var currencyField = this.def.currency_field || 'currency_id';
         var baseRateField = this.def.base_rate_field || 'base_rate';
@@ -133,6 +131,23 @@
             }
             this._lastCurrencyId = currencyId;
         }, this);
+    },
+
+    /**
+     * Handler for when the the value changes on the model, if the action is not edit, then
+     * re-render the field, otherwise just update the value via jQuery
+     *
+     * @param {Object} model
+     * @param {string} value
+     * @private
+     */
+    _valueChangeHandler: function(model, value)
+    {
+        if (this.action != 'edit') {
+            this.render();
+        } else {
+            this.setCurrencyValue(value);
+        }
     },
 
     /**
