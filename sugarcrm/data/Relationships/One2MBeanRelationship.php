@@ -348,10 +348,12 @@ class One2MBeanRelationship extends One2MRelationship
             "{$jta}.{$targetKey}")
             ->equals("{$jta}.deleted", "0");
 
+        $relTable =  $linkIsLHS ? $jta : $startingTable;
+
         if (empty($options['ignoreRole']) && !empty($this->def["relationship_role_column"])
             && !empty($this->def["relationship_role_column_value"])) {
             $sugar_query->where()->equals(
-                "{$jta}.{$this->def["relationship_role_column"]}",
+                "{$relTable}.{$this->def["relationship_role_column"]}",
                 $this->def["relationship_role_column_value"]);
         }
 
