@@ -44,6 +44,12 @@ $viewdefs['Tasks']['base']['view']['recordlist']['rowactions']['actions'] = arra
         'acl_action' => 'edit',
     ),
     array(
+        'type' => 'follow',
+        'name' => 'follow_button',
+        'event' => 'list:follow:fire',
+        'acl_action' => 'view',
+    ),
+    array(
         'type' => 'closebutton',
         'name' => 'record-close',
         'label' => 'LBL_CLOSE_BUTTON_TITLE',
