@@ -42,9 +42,64 @@
         this.addPreviewEvents();
 
         //add debounce in initialize so that subclasses will not all use the same prototype function
-        this.resize = _.bind(_.debounce(this.resize, 300), this);
+        this.resize = _.bind(_.debounce(this.resize, 200), this);
         this.bindResize();
+
+        //add an event delegate for right action dropdown buttons onclick events
+        if (this.rightColumns.length) {
+            this.events = _.extend({}, this.events, {
+                'click.right-actions .actions [data-toggle=dropdown]': 'delegateDropdown'
+            });
+        }
     },
+
+    delegateDropdown: function(e) {
+        var $button = this.$(e.currentTarget).first(), // the dropdown button
+            $buttonGroup = $button.parents('.btn-group'), // the button group
+            menuHeight = $button.height() + $button.next('ul').height(), // height of menu and group
+            windowHeight = $(window).height() - 65; // height of window less padding
+
+        // fn to detect menu colliding with window bottom
+        var needsDropupClass = function(b) {
+                return (
+                     windowHeight < b.offset().top + menuHeight
+                );
+            };
+
+        // fn to turn off event listeners and reenable tooltips
+        var resetDropdownDelegate = function() {
+                $(this).tooltip('enable');
+                $(this).parents('.main-pane').off('scroll.right-actions');
+                $(this).off('resetDropdownDelegate.right-actions');
+            };
+
+        // reset any existing delegates
+        this.$('.actions [data-toggle=dropdown]')
+            .trigger('resetDropdownDelegate.right-actions');
+
+        // don't process already open dropdowns
+        if (!$buttonGroup.hasClass('open')) {
+            $button.tooltip('destroy'); // remove tooltip from dropdown button
+            $button.tooltip('disable'); // disable tooltip for dropdown button
+            $buttonGroup.toggleClass('dropup', needsDropupClass($button)); // detect window bottom collision
+            $button.on('resetDropdownDelegate.right-actions', resetDropdownDelegate); // listen for delegate reset
+            // add a listener to scrolling container
+            $button.parents('.main-pane')
+                .on('scroll.right-actions', _.bind(_.debounce(function() {
+                    // if the dropdown is closed...
+                    if (!$buttonGroup.hasClass('open')) {
+                        // reset delegate
+                        // $('.actions [data-toggle=dropdown]')
+                        //     .trigger('resetDropdownDelegate.right-actions');
+                        $button.off('resetDropdownDelegate.right-actions');
+                        return;
+                    }
+                    // detect window bottom collision on scroll
+                    $buttonGroup.toggleClass('dropup', needsDropupClass($button));
+                }, 30), this));
+        }
+    },
+
     addPreviewEvents: function () {
         //When clicking on eye icon, we need to trigger preview:render with model&collection
         this.context.on("list:preview:fire", function (model) {
@@ -84,7 +139,7 @@
 
         if(this.visibleFieldsLastStateKey) {
             visibleFieldsLastState = app.user.lastState.get(this.visibleFieldsLastStateKey);
-            if(!_.isArray(visibleFieldsLastState) || visibleFieldsLastState.length == 0) {
+            if(!_.isArray(visibleFieldsLastState) || visibleFieldsLastState.length === 0) {
                 visibleFieldsLastState = false;
             }
         }
@@ -256,5 +311,12 @@
         }
         var toggle = $content.get(0).scrollWidth > $content.width() + 1;
         this.$el.toggleClass('scroll-width', toggle);
+    },
+
+    _dispose: function() {
+        // remove all right action dropdown delegate handlers
+        this.$('.actions [data-toggle=dropdown]')
+            .trigger('resetDropdownDelegate.right-actions');
+        this._super('_dispose');
     }
 })
