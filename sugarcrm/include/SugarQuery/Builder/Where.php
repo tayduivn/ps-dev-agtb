@@ -397,12 +397,13 @@ abstract class SugarQuery_Builder_Where
      */
     public function dateRange($field, $value, $bean = false)
     {
+        //Gets us an array with "from/to" dates, each set to very beginning or end of day as appropriate
         $dates = TimeDate::getInstance()->parseDateRange($value, null, true);
-
         if (is_array($dates)) {
             $where = $this->queryAnd();
-            $where->gte($field, TimeDate::getInstance()->asDb($dates[0]), $bean);
-            $where->lte($field, TimeDate::getInstance()->asDb($dates[1]), $bean);
+            //We don't want `asDb` to set timezone since we've already set up our "from/to" dates
+            $where->lte($field, TimeDate::getInstance()->asDb($dates[1], false), $bean);
+            $where->gte($field, TimeDate::getInstance()->asDb($dates[0], false), $bean);
         }
         return $this;
     }

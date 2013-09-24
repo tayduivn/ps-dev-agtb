@@ -1796,7 +1796,7 @@ $app_list_strings = array (
             '$between' => 'is between',
         ),
         'date' => array(
-            '$starts' => 'is equal to',
+            '$equals' => 'is equal to',
             '$lt' => 'before',
             '$gt' => 'after',
             'last_7_days' => 'last 7 days',

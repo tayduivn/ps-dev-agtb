@@ -522,11 +522,14 @@ class TimeDate
      * Format DateTime object as DB datetime
      *
      * @param DateTime $date
+     * @param boolean $setGMT Set timezone to GMT (defaults to true)
      * @return string
      */
-    public function asDb(DateTime $date)
+    public function asDb(DateTime $date, $setGMT = true)
     {
-        $date->setTimezone(self::$gmtTimezone);
+        if ($setGMT) {
+            $date->setTimezone(self::$gmtTimezone);
+        }
         return $date->format($this->get_db_date_time_format());
     }
 
