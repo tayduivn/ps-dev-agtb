@@ -179,18 +179,18 @@ $dictionary['User'] = array(
             'name' => 'name',
             'rname' => 'name',
             'vname' => 'LBL_NAME',
-            'type' => 'name',
+            'type' => 'fullname',
+            'fields' => array('first_name', 'last_name'),
             'source' => 'non-db',
-            'len' => '510',
-			'fields' => array('first_name', 'last_name'),
+            'sort_on' => 'last_name',
+            'sort_on2' => 'first_name',
             'db_concat_fields' => array(
                 0 => 'first_name',
                 1 => 'last_name'
             ) ,
-            'sort_on' => 'last_name',
-
-            'importable' => 'false',
-        ) ,
+            'len' => '510',
+            'studio' => array('formula' => false),
+        ),
         'is_admin' => array(
             'name' => 'is_admin',
             'vname' => 'LBL_IS_ADMIN',
