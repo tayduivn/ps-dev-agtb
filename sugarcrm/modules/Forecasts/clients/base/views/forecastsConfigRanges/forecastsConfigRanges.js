@@ -431,7 +431,7 @@
                 '<p><b>{{str "LBL_FORECASTS_CUSTOM_NO_BASED_TITLE" "Forecasts"}}</b></p>'+
                 '<div id="plhCustomWithoutProbability">'+
                 '   <div class="btn-group" id="btnAddCustomRangeWithoutProbability"><a class="btn" href="javascript:void(0)" data-type="custom_without_probability" data-category="{{category}}"><i class="icon-plus"></i></a></div>'+
-                '</div><br />';
+                '</div>';
         showElement.append( Handlebars.compile(template)({category: category}) );
     },
 
