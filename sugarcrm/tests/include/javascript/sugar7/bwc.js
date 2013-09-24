@@ -95,4 +95,162 @@ describe("sugar7.extensions.bwc", function() {
         });
 
     });
+
+    describe("getLegacyMetadata", function() {
+        var metadataConverterStub, bwcModuleStub;
+
+        beforeEach(function() {
+            metadataConverterStub = sinon.stub(app.bwc, "_getLegacyMetadataConverter");
+            bwcModuleStub = sinon.stub(app.metadata, "getModule");
+        });
+
+        afterEach(function() {
+            metadataConverterStub.restore();
+            bwcModuleStub.restore();
+        });
+
+        describe("undefined behaviours", function() {
+            it("should return undefined when requested vardef type isn't known", function() {
+                metadataConverterStub.returns(false);
+                bwcModuleStub.returns({isBwcEnabled: true});
+                expect(app.bwc.getLegacyMetadata("foo", "bar")).toBeUndefined();
+            });
+
+            it("should return undefined when module isn't in BWC mode", function() {
+                metadataConverterStub.returns(true);
+                bwcModuleStub.returns({isBwcEnabled: false});
+                expect(app.bwc.getLegacyMetadata("foo", "bar")).toBeUndefined();
+            });
+        });
+
+        describe("well-defined behaviours", function() {
+            var apiStub;
+
+            beforeEach(function() {
+                apiStub = sinon.stub(app.api, "call");
+            });
+
+            afterEach(function() {
+                apiStub.restore();
+            });
+
+            it("should fetch the right url", function() {
+                metadataConverterStub.returns(true);
+                bwcModuleStub.returns({isBwcEnabled: true});
+
+                app.bwc.getLegacyMetadata("foo", "bar");
+                var call = apiStub.getCall(0);
+
+                expect(apiStub).toHaveBeenCalledOnce();
+                expect(call.args[1]).toContain("module=foo");
+                expect(call.args[1]).toContain("type=bar");
+            });
+
+            it("should process the correct JSON", function() {
+                var stub = sinon.stub();
+                metadataConverterStub.returns(stub);
+                bwcModuleStub.returns({isBwcEnabled: true});
+
+                app.bwc.getLegacyMetadata("foo", "bar");
+                expect(apiStub).toHaveBeenCalledOnce();
+                apiStub.getCall(0).args[3].success({foo: {id: {}}});
+                expect(stub).toHaveBeenCalledOnce();
+                expect(stub.getCall(0).args[0]).toEqual({id: {}});
+            });
+        });
+    });
+
+    describe("legacy metadata converters", function() {
+        describe("listviewdefs", function() {
+            var converter;
+
+            beforeEach(function() {
+                converter = app.bwc._getLegacyMetadataConverter("listviewdefs");
+            });
+
+            it("should normalize the name property", function() {
+                var original = {
+                    nAmE: {},
+                    email: {}
+                };
+
+                var expected = {
+                    panels: [{
+                        label: 'LBL_PANEL_DEFAULT',
+                        fields: [
+                            {
+                                name: 'name',
+                                'default': false,
+                                enabled: true
+                            },
+                            {
+                                name: 'email',
+                                'default': false,
+                                enabled: true
+                            }
+                        ]
+                    }]
+                };
+
+                expect(converter(original)).toEqual(expected);
+            });
+
+            it("should normalize the default property", function() {
+                var original = {
+                    name: {
+                        'default': 0
+                    },
+                    email: {
+                        'default': 1
+                    }
+                };
+
+                var expected = {
+                    panels: [{
+                        label: 'LBL_PANEL_DEFAULT',
+                        fields: [
+                            {
+                                name: 'name',
+                                'default': false,
+                                enabled: true
+                            },
+                            {
+                                name: 'email',
+                                'default': true,
+                                enabled: true
+                            }
+                        ]
+                    }]
+                };
+
+                expect(converter(original)).toEqual(expected);
+            });
+
+            it("should copy other properties to the new def", function() {
+                var original = {
+                    name: {
+                        asdf: 0,
+                        testfoo: 'bar'
+                    }
+                };
+
+                var expected = {
+                    panels: [{
+                        label: 'LBL_PANEL_DEFAULT',
+                        fields: [
+                            {
+                                name: 'name',
+                                'default': false,
+                                enabled: true,
+                                asdf: 0,
+                                testfoo: 'bar'
+                            }
+                        ]
+                    }]
+                };
+
+                expect(converter(original)).toEqual(expected);
+            });
+        });
+    });
 });
