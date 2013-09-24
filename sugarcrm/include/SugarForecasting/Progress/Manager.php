@@ -92,7 +92,22 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
 
         //top level manager has to receive special treatment, but all others can be routed through quota function.
         if ($targetedUser->reports_to_id != "") {
-            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), false);
+
+            // get reportee quota data and add to manager's quota
+            $reportees = User::getReporteesWithLeafCount($this->getArg('user_id'), false);
+            $reporteeQuotas = '0';
+            foreach($reportees as $key=>$value){
+                $qAmt = $quota->getRollupQuota($this->getArg('timeperiod_id'), $key, true);
+                // if there's quota data, add it up
+                if(isset($qAmt) && !empty($qAmt)) {
+                    $reporteeQuotas = SugarMath::init($reporteeQuotas, 6)->add((string)$qAmt['amount'])->result();
+                }
+            }
+            if ($reporteeQuotas != '0' && isset($quotaData['amount'])) {
+                // add in the reportee quotas to the manager's quota
+                $quotaData['amount'] = SugarMath::init($quotaData['amount'], 6)->add($reporteeQuotas)->result();
+            }
         } else {
             $quotaData["amount"] = $this->getQuotaTotalFromData();
         }

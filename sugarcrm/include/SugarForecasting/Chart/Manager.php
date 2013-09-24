@@ -155,13 +155,26 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
 
         if (!empty($targetedUser->reports_to_id)) {
-            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), false);
+
+            $reportees = User::getReporteesWithLeafCount($this->getArg('user_id'), false);
+            $reporteeQuotas = '0';
+            foreach($reportees as $key=>$value){
+                $qAmt = $quota->getRollupQuota($this->getArg('timeperiod_id'), $key, true);
+                // if there's quota data, add it up
+                if(isset($qAmt) && !empty($qAmt)) {
+                    $reporteeQuotas = SugarMath::init($reporteeQuotas, 6)->add((string)$qAmt['amount'])->result();
+                }
+            }
+            if ($reporteeQuotas != '0' && isset($quotaData['amount'])) {
+                // add in the reportee quotas to the manager's quota
+                $quotaData['amount'] = SugarMath::init($quotaData['amount'], 6)->add($reporteeQuotas)->result();
+            }
+
             return SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id']);
         }
         // get the quota from the loaded data for a manager that has no manager
         return $this->getQuotaTotalFromData();
-
-
     }
 
     /**
