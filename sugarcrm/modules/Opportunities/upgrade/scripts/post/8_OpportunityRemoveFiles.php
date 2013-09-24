@@ -24,14 +24,15 @@ class SugarUpgradeOpportunityRemoveFiles extends UpgradeScript
     {
 
         // we only need to remove these files if the from_version is less than 7.0.0 but greater or equal than 6.7.0
-        if (version_compare($this->from_version, '7.0.0', '<')
-            && version_compare($this->from_version, '6.7.0', '>=')
+        if (version_compare($this->from_version, '7.0', '<')
+            && version_compare($this->from_version, '6.7', '>=')
         ) {
             // files to delete
             $files = array(
                 'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.hbt',
                 'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.js',
-                'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.php'
+                'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.php',
+                'modules/Opportunities/Ext/LogicHooks/OpportunitySetCurrencyToBase.php',
             );
 
             $this->fileToDelete($files);
