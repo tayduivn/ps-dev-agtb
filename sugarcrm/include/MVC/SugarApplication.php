@@ -536,7 +536,9 @@ class SugarApplication
     protected $whiteListActions
         = array(
             'index', 'ListView', 'DetailView', 'EditView', 'oauth', 'authorize', 'Authenticate', 'Login',
-            'SupportPortal', 'LogView'
+            'SupportPortal',
+            'LogView',
+            "SugarpdfSettings",
         );
 
     /**
