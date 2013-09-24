@@ -162,17 +162,21 @@ function validate_manifest( $manifest ){
     if (!$acceptable_sugar_versions) {
         throw new Exception($mod_strings['ERROR_VERSION_MISSING']);
     }
-    
+
     $version_ok = false;
     $matches_empty = true;
-    
+
     // For cases in which the manifest was written incorrectly we need to create
-    // a comparator. For now we will assume that major and minor version 
+    // a comparator. For now we will assume that major and minor version
     // matches are acceptable. -rgonzalez
     if (!isset($acceptable_sugar_versions['exact_matches']) && !isset($acceptable_sugar_versions['regex_matches'])) {
         $acceptable_sugar_versions = addAcceptableVersionRegex($acceptable_sugar_versions);
+        if(empty($acceptable_sugar_versions['regex_matches']) && !empty($manifest['built_in_version'])) {
+            $built_version = explode('.', $manifest['built_in_version']);
+            $acceptable_sugar_versions['regex_matches'] = array("{$built_version[0]}\.([0-9]+)\.([0-9]+)");
+        }
     }
-    
+
     if( isset($acceptable_sugar_versions['exact_matches']) ){
         $matches_empty = false;
         foreach( $acceptable_sugar_versions['exact_matches'] as $match ){
@@ -251,7 +255,7 @@ function getDiffFiles($unzip_dir, $install_file, $is_install = true, $previous_v
 /**
  * Accessor function that gets acceptable sugar versions from a manifest. Addresses
  * an issue since 6.7 in which manifests were written incorrectly.
- * 
+ *
  * @param array $manifest Array of details for a package
  * @return Array
  */
@@ -263,7 +267,7 @@ function getAcceptableSugarVersions($manifest)
 /**
  * Accessor function that gets acceptable sugar flavors from a manifest. Addresses
  * an issue since 6.7 in which manifests were written incorrectly.
- * 
+ *
  * @param array $manifest Array of details for a package
  * @return Array
  */
@@ -275,28 +279,28 @@ function getAcceptableSugarFlavors($manifest)
 /**
  * Accessor function that gets acceptable sugar properties from a manifest. Addresses
  * an issue since 6.7 in which manifests were written incorrectly.
- * 
+ *
  * @param array $manifest Array of details for a package
  * @return Array
  */
-function getAcceptableSugarValues($manifest, $property) 
+function getAcceptableSugarValues($manifest, $property)
 {
     if (isset($manifest[$property])) {
         return $manifest[$property];
     }
-    
+
     foreach ($manifest as $key => $val) {
         if (is_array($val) && isset($val[$property])) {
             return $val[$property];
         }
     }
-    
+
     return array();
 }
 
 /**
  * Adds version regex strings to the acceptable sugar versions array when needed
- * 
+ *
  * @param array $versions The versions array that was passed in
  */
 function addAcceptableVersionRegex($versions)
@@ -321,8 +325,8 @@ function addAcceptableVersionRegex($versions)
             $regex[$index] = $version;
         }
     }
-    
+
     $versions['regex_matches'] = $regex;
-    
+
     return $versions;
 }
