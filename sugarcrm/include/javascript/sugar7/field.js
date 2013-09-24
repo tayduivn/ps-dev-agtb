@@ -337,6 +337,7 @@
                     $ftag = this.$(ftag),
                     errorMessages = [],
                     $tooltip;
+
                 // Add error styling
                 this.$el.closest('.record-cell').addClass('error');
                 this.$el.addClass('error');

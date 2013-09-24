@@ -40,7 +40,7 @@
             //retrieve the field by name
             var field = self.getField(fieldName);
             var ftag = this.fieldTag || '';
-            console.log(field);
+
             if (field) {
                 var controlGroup = field.$el.parents('.control-group:first');
 
