@@ -1,8 +1,4 @@
 ({
-    tagName: 'ul',
-
-    className: 'nav pull-right megamenu',
-
     // FIXME: dropdown plugin should not be needed when SC-1214 gets fixed
     plugins: ['Dropdown', 'Timeago', 'EllipsisInline', 'Tooltip'],
 

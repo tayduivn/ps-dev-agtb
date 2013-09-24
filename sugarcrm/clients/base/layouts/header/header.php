@@ -20,16 +20,16 @@ $viewdefs['base']['layout']['header'] = array(
             'view' => 'modulelist',
         ),
         array(
-            'view' => 'quickcreate',
-        ),
-        array(
-            'view' => 'profileactions',
+            'view' => 'globalsearch',
         ),
         array(
             'view' => 'notifications',
         ),
         array(
-            'view' => 'globalsearch',
+            'view' => 'profileactions',
+        ),
+        array(
+            'view' => 'quickcreate',
         ),
     ),
     'last_state' => array(
