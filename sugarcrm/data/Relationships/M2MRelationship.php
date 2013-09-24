@@ -482,16 +482,25 @@ class M2MRelationship extends SugarRelationship
     /**
      * Build a Join using an existing SugarQuery Object
      * @param Link2 $link 
-     * @param SugarQuery $sugar_query 
+     * @param SugarQuery $sugar_query
+     * @param Array $options array of additional paramters. Possible parameters include
+     *  - 'myAlias' String name of starting table alias
+     *  - 'joinTableAlias' String alias to use for the related table in the final result
+     *  - 'reverse' Boolean true if this join should be built in reverse for subpanel style queries where the select is
+     *              on the related table
+     *  - 'ignoreRole' Boolean true if the role column of the relationship should be ignored for this join .
      * @return SugarQuery
      */
     public function buildJoinSugarQuery(Link2 $link, $sugar_query, $options)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
-        if ($linkIsLHS) {
-            $startingTable = $link->getFocus()->table_name;
-        } else {
-            $startingTable = $link->getFocus()->table_name;
+        if (!empty($options['reverse'])) {
+            $linkIsLHS = !$linkIsLHS;
+        }
+        
+        $startingTable = $linkIsLHS ? $this->def['lhs_table'] : $this->def['rhs_table'];
+        if (!empty($options['myAlias'])) {
+            $startingTable = $options['myAlias'];
         }
 
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
@@ -502,44 +511,28 @@ class M2MRelationship extends SugarRelationship
 
         $joinKey = $linkIsLHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
 
-        
         $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
-        
-        $targetTableWithAlias = $targetTable;
-        
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
 
-        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';
-        
-        $join = '';
+        $join_type= isset($options['joinType']) ? $options['joinType'] : 'INNER';        
 
-        if($options['joinTableAlias'] != $startingTable)
-        {
-            $startingTable = strtolower($options['joinTableAlias']);
-        }
-        if($options['myAlias'] == $joinTable)
-        {
-            $targetTable_alias = $joinTable . '_link';
-        }
-        else
-        {
-            $targetTable_alias = strtolower($options['myAlias']);
-        }
+        $joinTable_alias = $sugar_query->getJoinTableAlias($joinTable);
+        $targetTable_alias = !empty($options['joinTableAlias']) ? $options['joinTableAlias'] : $targetTable;
 
-        $joinTable_alias = $targetTable_alias . '_link';
-
-        $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type))
+        $relTableJoin = $sugar_query->joinTable($joinTable, array('alias'=>$joinTable_alias, 'joinType' => $join_type))
                     ->on()->equalsField("{$startingTable}.{$startingKey}","{$joinTable_alias}.{$startingJoinKey}")
                     ->equals("{$joinTable_alias}.deleted","0");
         
-        $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type))
+        $targetTableJoin = $sugar_query->joinTable($targetTable, array('alias' => $targetTable_alias, 'joinType' => $join_type))
                     ->on()->equalsField("{$targetTable_alias}.{$targetKey}", "{$joinTable_alias}.{$joinKey}")
                     ->equals("{$targetTable_alias}.deleted","0");
 
+        $sugar_query->join[$targetTable_alias]->relationshipTableAlias = $joinTable_alias;
+
         if (empty($options['ignoreRole'])) {
-            $this->buildSugarQueryRoleWhere($sugar_query,$joinTable_alias);
+            $this->buildSugarQueryRoleWhere($sugar_query, $targetTable_alias);
         }
-        return array($joinTable_alias => $sugar_query->join[$joinTable_alias], $targetTable_alias => $sugar_query->join[$targetTable_alias]);
+        return array($joinTable_alias => $relTableJoin, $targetTable_alias => $targetTableJoin);
     }
 
 

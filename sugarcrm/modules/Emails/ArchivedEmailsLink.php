@@ -121,10 +121,19 @@ class ArchivedEmailsLink extends Link2
      */
     public function buildJoinSugarQuery($sugar_query, $options = array())
     {
-        $join_type = isset($options['joinType']) ? $options['joinType'] : 'INNER';
-        $sugar_query->joinTable('emails', array('alias' => $options['myAlias'], 'joinType' => $join_type));
+        $joinParams = array('joinType' => isset($options['joinType']) ? $options['joinType'] : 'INNER');
+        $jta = 'emails';
+        if (!empty($options['joinTableAlias'])) {
+            $jta = $joinParams['alias'] = $options['joinTableAlias'];
+        }
+        if (!empty($options['reverse'])) {
+            $sugar_query->joinRaw($this->getEmailsJoin($options), $joinParams);
+            return $sugar_query->join[$jta];
+        }
+
+        $sugar_query->joinTable('emails', $joinParams);
         $sugar_query->joinRaw($this->getEmailsJoin($options));
-        return $sugar_query->join[$options['myAlias']];
+        return $sugar_query->join[$jta];
     }
 
     /**

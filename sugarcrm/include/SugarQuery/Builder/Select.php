@@ -125,27 +125,30 @@ class SugarQuery_Builder_Select
 
         $fieldName = is_array($field) ?  $field[0] : $field;
         $seed = !empty($query->from) && is_array($query->from) ? $query->from[0] : $query->from;
-        if (!empty($seed))
+        if (!empty($seed) && isset($seed->field_defs[$fieldName]))
         {
-            if (isset($seed->field_defs[$fieldName]))
+            $def = $seed->field_defs[$fieldName];
+            //Simple DB fields can be placed in the select normally
+            if (!isset($def['source']) || $def['source'] == 'db')
             {
-                $def = $seed->field_defs[$fieldName];
-                //Simple DB fields can be placed in the select normally
-                if (!isset($def['source']) || $def['source'] == 'db')
-                {
-                    $this->select[] = $field;
-                } else
-                {
-                    //Here is where we need to start implementing the harder code.
-                    //Similar to what we have in create_new_list_query, we will need joins, additional alias's, ect
-                    //I'm not sure how well we can do thins like track what tables are already joined in the query
-                    //And determine if we need to join them a second time or re-use the existing join.
-                }
-            } else {
                 $this->select[] = $field;
+            } else
+            {
+                //Here is where we need to start implementing the harder code.
+                //Similar to what we have in create_new_list_query, we will need joins, additional alias's, ect
+                //I'm not sure how well we can do thins like track what tables are already joined in the query
+                //And determine if we need to join them a second time or re-use the existing join.
             }
         } else
         {
+            if (strpos($field, '.')) {
+                // It looks like it's a related field that we need to select by the correct join name
+                list($linkName, $column) = explode('.', $field);
+                $join = $query->getJoinForLink($linkName);
+                if (!empty($join)) {
+                    $field = $join->joinName() . ".$column";
+                }
+            }
             $this->select[] = $field;
         }
 
