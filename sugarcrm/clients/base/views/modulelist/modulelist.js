@@ -11,6 +11,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 ({
+    className: 'module-list',
     recentRowTemplate: Handlebars.compile(
         '{{#each models}}<li><a tabindex="-1" class="recentLink actionLink" href="#{{buildRoute model=this}}" data-route="#{{buildRoute model=this}}"><i class="icon-time active"></i>{{getFieldValue this "name"}}</a></li>{{/each}}'
     ),
@@ -78,9 +79,9 @@
     _dispose: function(){
         app.user.off("change:module_list", this.render);
         $('.navbar').off('mouseleave', _.bind(function(){
-                this.hideMenu();
-                this.hideMore();
-        }        , this));
+            this.hideMenu();
+            this.hideMore();
+        }, this));
         app.view.View.prototype._dispose.call(this);
     },
     handleViewChange: function() {
@@ -98,22 +99,23 @@
         event.stopPropagation();
         this.hideMore();
         var self = this;
-        var $currentTarget = $(event.currentTarget), showCallback = false,
+        var $currentTarget = $(event.currentTarget),
+            showCallback = false,
             numberMenuItems = $currentTarget.siblings('.dropdown-menu').find('ul').find('li').length,
-        toggleCallback = _.once(function() {
+            toggleCallback = _.once(function() {
                 self.toggleDropdownHTML($currentTarget);
-        }), module = $currentTarget.parent().parent().data('module'), moduleMeta = app.metadata.getModule(module);
+            }),
+            module = $currentTarget.parent().parent().data('module'),
+            moduleMeta = app.metadata.getModule(module);
 
         if (moduleMeta && moduleMeta.menu && moduleMeta.menu.header && moduleMeta.menu.header.meta) {
             var accessCount = 0;
             _.each(moduleMeta.menu.header.meta, function (menu) {
                 var aclAction = menu.acl_action || '';
                 var aclModule = menu.acl_module || module;
-
                 if (app.acl.hasAccess(aclAction, aclModule)) {
                     accessCount++;
                 }
-
             });
 
             numberMenuItems = accessCount;
@@ -132,8 +134,8 @@
         if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
             // clear any open dropdown styling
             this.$('.open').toggleClass('open');
-            var module = $currentTarget.parent().parent().data('module');
-            var moduleMeta = app.metadata.getModule(module);
+            module = $currentTarget.parent().parent().data('module');
+            moduleMeta = app.metadata.getModule(module);
             if (module == 'Home') {
                 this.populateDashboards();
             }
@@ -224,11 +226,11 @@
                 }
 
             }});
-    }, 
+    },
     /**
      * Populates recently created dashboards on open menu
      */
-    
+
     populateDashboards:function () {
         var self = this,
             sync = function(method, model, options) {
@@ -289,7 +291,6 @@
         var actions, meta, returnList = [], self = this, listLength,
             fullModuleList = app.metadata.getFullModuleList();
         _.each(module_list, function(value, key) {
-
             if (!_.isString(fullModuleList[value])) {
                 return;
             }
@@ -297,7 +298,6 @@
                 label: app.lang.get('LBL_MODULE_NAME', value),
                 name: key
             };
-
             meta = app.metadata.getModule(key);
             if (meta && meta.menu && meta.menu.header) {
                 actions.menu = self.filterAvailableMenuActions(meta.menu.header.meta);
@@ -309,7 +309,6 @@
         });
         return returnList;
     },
-
     /**
      * Filters menu metadata by acls
      * @param Array menuMeta
@@ -324,8 +323,6 @@
         });
         return result;
     },
-
-
     /**
      * Reset the module list to the full list
      */

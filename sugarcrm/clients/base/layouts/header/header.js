@@ -35,25 +35,21 @@
     resize: function() {
         var totalWidth = 0,
             modulelist, maxMenuWidth, componentElement,
-            container = this.$('.container-fluid');
+            container = this.$('.navbar-inner');
 
         _.each(this._components, function(component) {
             componentElement = component.$el.children().first();
             if (component.name !== 'modulelist') {
                 // only calculate width for visible components
                 if (componentElement.is(':visible')) {
-                    totalWidth += componentElement.outerWidth(true);
+                    totalWidth += component.$el.outerWidth(true);
                 }
             } else {
                 modulelist = component.$el;
-                modulelist.hide();
             }
         });
 
-        maxMenuWidth = container.first().width();
-        if(modulelist) {
-            modulelist.show();
-        }
+        maxMenuWidth = container.parent('.navbar-fixed-top').width();
 
         this.trigger('view:resize', maxMenuWidth - totalWidth);
     },

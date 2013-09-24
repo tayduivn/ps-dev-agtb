@@ -1,28 +1,30 @@
-<li class="dropdown notification-list"
-                rel="tooltip"
-                title="{{str "LBL_NOTIFICATIONS"}}"
-                data-placement="bottom">
-    <div class="btn-group">
-        <button class="btn {{#if this.collection.length}}btn-danger{{else}}btn-inverse{{/if}} dropdown-toggle dtoggle"
-                data-toggle="dropdown"
-                data-action="open">
-            {{this.collection.length}}
-            {{#if this.collection.next_offset}}{{#notEq this.collection.next_offset "-1"}}+{{/notEq}}{{/if}}
-        </button>
-        <div class="dropdown-menu scroll pull-right">
-            <ul role="menu">
-                {{#each this.collection.models}}
-                    <li><a class="row-fluid"
-                           href="#{{buildRoute model=this action="detail"}}"><span
-                            class="span8 ellipsis_inline"
-                            title="{{this.attributes.name}}"
-                            data-placement="bottom"><span
-                            class="label {{this.attributes.severityCss}}">{{this.attributes.severityLabel}}</span>{{this.attributes.name}}</span>
-                        <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
-                    </a></li>
-                {{/each}}
-                <li><a class="row-fluid" href="#{{module}}"><span class="span12">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>
-            </ul>
+<ul class="nav megamenu">
+    <li class="dropdown notification-list"
+            rel="tooltip"
+            title="{{str "LBL_NOTIFICATIONS"}}"
+            data-placement="bottom">
+        <div class="btn-group">
+            <button class="btn {{#if this.collection.length}}btn-danger{{else}}btn-inverse{{/if}} dropdown-toggle dtoggle"
+                    data-toggle="dropdown"
+                    data-action="open">
+                {{this.collection.length}}
+                {{#if this.collection.next_offset}}{{#notEq this.collection.next_offset "-1"}}+{{/notEq}}{{/if}}
+            </button>
+            <div class="dropdown-menu scroll pull-right">
+                <ul role="menu">
+                    {{#each this.collection.models}}
+                        <li><a class="row-fluid"
+                               href="#{{buildRoute model=this action="detail"}}"><span
+                                class="span8 ellipsis_inline"
+                                title="{{this.attributes.name}}"
+                                data-placement="bottom"><span
+                                class="label {{this.attributes.severityCss}}">{{this.attributes.severityLabel}}</span>{{this.attributes.name}}</span>
+                            <time class="span4 pull-right">{{timeago this.attributes.date_entered "{{relativetime}}"}}</time>
+                        </a></li>
+                    {{/each}}
+                    <li><a class="row-fluid" href="#{{module}}"><span class="span12">{{str "LBL_SHOW_NOTIFICATIONS" module}}</span></a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-</li>
+    </li>
+</ul>
