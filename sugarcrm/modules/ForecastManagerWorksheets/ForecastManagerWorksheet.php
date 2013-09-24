@@ -219,15 +219,11 @@ class ForecastManagerWorksheet extends SugarBean
 
         $copyMap = array(
             'likely_case',
-            array('likely_case_adjusted' => 'likely_adjusted'),
             'best_case',
-            array('best_case_adjusted' => 'best_adjusted'),
             'worst_case',
-            array('worst_case_adjusted' => 'worst_adjusted'),
             'currency_id',
             'base_rate',
             'timeperiod_id',
-            'quota',
             'opp_count',
             'pipeline_opp_count',
             'pipeline_amount',
@@ -261,9 +257,9 @@ class ForecastManagerWorksheet extends SugarBean
                     ) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
 
                 $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, $getRollupQuota);
-
                 $data['quota'] = $quota['amount'];
             }
+            $copyMap[] = "quota";
         }
 
         $this->copyValues($copyMap, $data);
