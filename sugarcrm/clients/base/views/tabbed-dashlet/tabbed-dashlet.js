@@ -404,7 +404,7 @@
         if (this.meta.config) {
             this._super('_renderHtml');
             return;
-        };
+        }
 
         var tab = this.tabs[this.settings.get('activeTab')];
 

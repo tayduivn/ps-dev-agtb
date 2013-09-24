@@ -11,14 +11,21 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 /**
+ * {@inheritDoc}
+ *
  * Planned Activities dashlet takes advantage of the tabbed dashlet abstraction
  * by using its metadata driven capabilities to configure its tabs in order to
  * display planned activities of specific modules.
  *
+ * Besides the metadata properties inherited from Tabbed dashlet, Planned Activities
+ * dashlet also supports other properties:
+ *
+ * - {Array} invitation_actions field def for the invitation actions buttonset
+ *           triggers showing invitation actions buttons and corresponding collection
+ *
  * @class View.Views.BasePlannedActivitiesView
  * @alias SUGAR.App.view.views.BasePlannedActivitiesView
  * @extends View.Views.BaseHistoryView
- * @inheritdoc
  */
 ({
     extendsFrom: 'HistoryView',
@@ -32,6 +39,49 @@
         });
 
         return this;
+    },
+
+    /**
+     * {@inheritDoc}
+     * @protected
+     */
+    _initTabs: function() {
+        // FIXME: this should be replaced with this._super('_initTabs'); which
+        // is currently throwing an error with the following message: "Attempt
+        // to call different parent method from child method"
+        app.view.invokeParent(this, {
+            type: 'view',
+            name: 'tabbed-dashlet',
+            method: '_initTabs',
+            platform: 'base'
+        });
+
+        _.each(this.tabs, function(tab) {
+            if (!tab.invitation_actions) {
+                return;
+            }
+            tab.invitations = this._createInvitationsCollection(tab);
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * Create invites collection to set the accept status on the given link.
+     *
+     * @param {Object} tab Tab properties.
+     * @return {Data.BeanCollection} A new instance of bean collection.
+     * @protected
+     */
+    _createInvitationsCollection: function(tab) {
+        return app.data.createBeanCollection(tab.module, null, {
+            link: {
+                name: tab.link,
+                bean: app.data.createBean('Users', {
+                    id: app.user.get('id')
+                })
+            }
+        });
     },
 
     /**
@@ -65,7 +115,6 @@
                 today: {$lte: today + ' 23:59:59'},
                 future: {$gt: today + ' 23:59:59'}
             };
-
         filter[tab.filter_applied_to] = defaultFilters[this.settings.get('date')];
 
         filters.push(filter);
@@ -91,31 +140,102 @@
     /**
      * {@inheritDoc}
      *
+     * On load of new data, make sure we reload invitations related data, if
+     * it is defined for the current tab.
+     */
+    loadData: function() {
+        if (this.disposed || this.meta.config) {
+            return;
+        }
+        
+        var tab = this.tabs[this.settings.get('activeTab')];
+        if (tab.invitations) {
+            tab.invitations.dataFetched = false;
+        }
+        this._super('loadData');
+    },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Force reload of invitations information (if they exist for this tab)
+     * after showMore is clicked.
+     */
+    showMore: function() {
+        var tab = this.tabs[this.settings.get('activeTab')];
+        if (tab.invitations) {
+            tab.invitations.dataFetched = false;
+        }
+        this._super('showMore');
+    },
+
+    /**
+     * Fetch the invitation actions collection for
+     * showing the invitation actions buttons
+     * @param tab
+     * @private
+     */
+    _fetchInvitationActions: function(tab) {
+        this.invitationActions = tab.invitation_actions;
+        tab.invitations.filterDef = {
+            'id': {'$in': this.collection.pluck('id')}
+        };
+
+        var self = this;
+        tab.invitations.fetch({
+            relate: true,
+            success: function(collection) {
+                if (self.disposed) {
+                    return;
+                }
+
+                _.each(collection.models, function(invitation) {
+                    var model = this.collection.get(invitation.get('id'));
+                    model.set('invitation', invitation);
+                }, self);
+
+                self.render();
+            },
+            complete: function() {
+                tab.invitations.dataFetched = true;
+            }
+        });
+    },
+    /**
+     * {@inheritDoc}
+     *
      * New model related properties are injected into each model:
      *
      * - {Boolean} overdue True if record is prior to now.
+     * - {Bean} invitation The invitation bean that relates the data with the
+     *   Users' invitation statuses. This is the model supplied to the
+     *   `invitation-actions` field.
      */
     _renderHtml: function() {
         if (this.meta.config) {
             app.view.View.prototype._renderHtml.call(this);
             return;
-        };
+        }
 
         var tab = this.tabs[this.settings.get('activeTab')],
             now = new Date();
 
+        if (!this.collection.length || (tab.invitations && tab.invitations.dataFetched)) {
+            this._super('_renderHtml');
+            return;
+        }
+
+        // FIXME move this to a field
         _.each(this.collection.models, function(model) {
             var date = new Date(model.get(tab.record_date));
-
             model.set('overdue', date < now);
         }, this);
 
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'history',
-            method: '_renderHtml',
-            platform: 'base'
-        });
+        if (!tab.invitations) {
+            this._super('_renderHtml');
+            return;
+        }
 
+        this._fetchInvitationActions(tab);
     }
 })
