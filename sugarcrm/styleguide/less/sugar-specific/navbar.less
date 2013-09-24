@@ -7,368 +7,268 @@
   }
 }
 
-[data-module="Home"] > .btn-group > .dropdown-toggle {
-  margin-right: 40px;
-}
-
-
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
-.cube.btn.btn-invisible {
-  background: url('@{baseUrl}/img/badge_256nmd.png') 17px 11px no-repeat;
-  background-size: 21px;
-  float: left;
-  height: 32px;
-  width: 28px;
-  z-index: 2000;
-  display: block;
-  &.hide {
-    display: none;
-  }
-}
 
 .navbar {
   color: #58595B;
+
+  // General layout
+  // ==============
   .navbar-inner {
     border: none;
-    height: 44px;
     @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @BorderColor;
     .box-shadow(@shadow);
+    width: 100%;
+    display: table;
+    //height: 44px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
   }
-  &> .navbar-inner {
-    &> .container-fluid {
-      padding-left: 0;
-      width: 100%;
+  .nav-collapse {
+    display: table-row;
+    > div {
+      display: table-cell;
+      float: none;
+      vertical-align: top;
+      &.module-list {
+        width: 100%;
+        ul.nav.megamenu {
+          max-height: 44px;
+          white-space: nowrap;
+          > li.dropdown {
+            float: none;
+            display: inline-block;
+          }
+        }
+      }
     }
   }
-  .cube:hover {
-    text-decoration: none;
-  }
-  // Website or project name
-  .brand {
-    color: @white;
-  }
-  // Plain text in topbar
-  .navbar-text {
-    a:hover {
-      color: @white;
-      background: red !important;
+
+  // First navbar element
+  // ====================
+
+
+  // Nav links (both module list and other)
+  // ======================================
+  ul.nav.megamenu {
+    margin: 0;
+    float: none;
+
+    > li.dropdown {
+      border-left: 1px solid #404040;
+      border-right: none;
+      padding: 0;
+
+      &.active {
+        border-left-color: lighten(@black, 20%);
+        border-right-color: darken(@white, 75%);
+
+        div.btn-group:not(.open) {
+          //.box-shadow(~"inset 0 -10px 15px rgba(255,255,255,.3)");
+          background-color: rgba(0,0,0,0.21);
+          #gradient > .vertical(@NavigationBar, lighten(@NavigationBar, 26%));
+          border-left-color: lighten(@black,15%);
+          border-right-color: @black;
+          a.btn.btn-invisible.btn-link {
+            text-decoration: none;
+            color: @navbarLinkColorActive;
+            text-shadow: 0 -1px 0 rgb(0,0,0);
+            .border-radius(~"0 !important");
+            border-left: 0;
+            border-right: 0;
+            outline: none !important;
+          }
+        }
+      }
+      &.open {
+        border-left-color: #404040;
+        border-right-color: transparent;
+        /*Menu position and menu carets*/
+        .dropdown-menu {
+          top: 42px;
+          left: auto;
+          margin-top: 0;
+          padding-top: 8px;
+          overflow: hidden;
+          border: none;
+          background: none;
+          .box-shadow(none);
+          .dropdownMinWidth();
+          .border-radius(4px);
+          &> ul {
+            background: @white;
+            border: 1px solid rgba(0,0,0,.2);;
+            .border-radius(2px);
+            max-height: 330px;
+            overflow-y: auto;
+            overflow-x: hidden;
+          }
+          &:before {
+            border-bottom-color: rgba(0,0,0,.2);
+          }
+          li,
+          li.divider {
+            padding: 0;
+          }
+          li a {
+            display: block;
+            padding: 6px 8px 8px;
+            text-indent: 32px;
+            position: relative;
+            i[class^="icon-"] {
+              position: relative;
+              top: -1px;
+              text-indent: -26px;
+              color: @grayLight;
+              vertical-align: middle;
+            }
+          }
+          .recentContainer {
+            border-top:1px solid @grayLight;
+            position: relative;
+          }
+          .recentContainer,
+          .favoritesContainer {
+            text-indent: 40px;
+            line-height: 18px;
+            li:first-child > a {
+              border-top: 1px solid @grayLight;
+              .border-radius(0);
+            }
+          }
+        }
+      }
+
+      /*This is the actual content in nav item*/
+      div.btn-group {
+        padding: 8px;
+        margin: 0;
+        border-left: 1px solid @black;
+        border-right: none;
+
+        /*This is the link text or image*/
+        &> a.btn.btn-invisible.btn-link {
+          margin: 0;
+          padding: 0;
+          border: none;
+          text-shadow: none;
+          color: lighten(@black,80%);
+          &:hover {
+            text-decoration: none;
+          }
+          &:active {
+            .box-shadow(none) !important;
+            border-color: transparent;
+            background: none;
+          }
+        }
+        &.open {
+          .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
+          border-left-color: @black;
+          border-right-color: transparent;
+          a.dropdown-toggle {
+            background: none;
+            border-left: none;
+            border-right: none;
+            border: none;
+            .box-shadow(none);
+            &> i {
+              color: @white;
+            }
+          }
+        }
+      }
+
     }
+
+    &#module_list {
+
+      > li.dropdown {
+        border-left: none;
+        border-right: none;
+        div.btn-group {
+          border-left: none;
+          border-right: none;
+        }
+        &.open {
+          .dropdown-menu {
+            left: 0;
+            right: auto;
+          }
+        }
+      }
+      > li.dropdown.home {
+        div.btn-group {
+          padding: 8px 8px 8px 16px;
+          .dropdown-toggle {
+            padding: 5px 2px;
+            margin-right: 0;
+          }
+        }
+        .cube {
+          background: url('@{baseUrl}/img/badge_256nmd.png') 4px 4px no-repeat;
+          background-size: 21px;
+          height: 28px;
+          width: 28px;
+          z-index: 2000;
+          &.hide {
+            display: none;
+          }
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+      > li.dropdown.more {
+        div.btn-group {
+          padding: 8px 0;
+          .dropdown-toggle {
+            padding: 5px 7px;
+          }
+        }
+        &:hover {
+          b[class^="icon-"] {
+            color: @white !important;
+          }
+        }
+      }
+      > li.dropdown:not(.home):not(.more) {
+        /*These are used of calculating size only*/
+        > a.moreLink {
+          color: @black;
+          text-shadow: none;
+          padding: 8px 28px 8px 8px;
+          border-left: none;
+          border-right: none;
+          &.hide {
+            display: none;
+          }
+        }
+        div.btn-group {
+          padding: 8px;
+
+          /*Both routelink and dropdown toggle*/
+          &> a.btn.btn-invisible.btn-link {
+            padding: 4px 0;
+            /*Module list caret*/
+            &.dropdown-toggle {
+              padding: 5px 8px;
+              margin-right: -5px;
+            }
+          }
+        }
+      }
+    }
+
   }
+
   a [class^="icon-"] {
     color: @white;
     font-size: 14px;
   }
-  a:hover .icon-favorite {
-    color: @yellow_favorite !important;
-  }
-  // fix red message button position
-  .dropdown .btn {
-    margin-top: 8px;
-    margin-bottom: 7px;
-  }
-  // TBS override
-  .pull-right > li > .dropdown-menu {
-    right: -7px;
-  }
-  .btn-group {
-    margin: 0 10px 0; // make buttons vertically centered in navbar
-  }
-  // Menu position and menu carets
-  .dropdown-menu {
-    a [class^="icon-"] {
-      position: relative;
-      top: -1px;
-      text-indent: -26px;
-      color: @grayLight;
-      vertical-align: middle;
-    }
-    .dropdownMinWidth();
-    margin-top: 0;
-    top: 50px;
-    /*right: -8px;*/
-    left: auto;
-    .border-radius(4px);
-    &:before {
-      border-bottom-color: rgba(0,0,0,.2);
-    }
-    li a {
-      display: block;
-      padding: 6px 8px 8px;
-      text-indent: 32px;
-      position: relative;
-    }
-    li,
-    li.divider {
-      padding: 0;
-    }
-    .recentContainer {
-      border-top:1px solid @grayLight;
-      /* bottom: -1px; */
-      position: relative;
-    }
 
-    .recentContainer,
-    .favoritesContainer {
-      text-indent: 40px;
-      line-height: 18px;
-      li:first-child > a {
-        border-top: 1px solid @grayLight;
-        .border-radius(0);
-      }
-    }
-  }
-
-  .divider-vertical {
-    height: 44px;
-    width: 1px;
-    margin: 0;
-    overflow: hidden;
-    background-color: #1A1A1A;
-    border-left: none;
-    border-right: 1px solid #404040;
-  }
-  .container-fluid {
-    margin-top: 0;
-    padding-left: 5px;
-  }
-
-  // Links
-  .nav {
-    > li {
-      > a {
-        color: lighten(@black,80%);
-        padding: 12px 8px;
-        line-height: 19px;
-        text-shadow: 0 -1px 1px rgba(0,0,0,.25);
-        // Hover
-        &:hover {
-          background-color:  lighten(@NavigationBar,20%); // "transparent" is default to differentiate :hover from .active
-          text-shadow: 0 -1px 0 rgb(0,0,0);
-        }
-        &.btn {
-          padding: 4px 8px;
-          margin-top: 8px;
-        }
-      }
-    }
-
-    &.megamenu {
-      > li.dropdown {
-        border-left: 1px solid transparent;
-        border-right: 1px solid transparent;
-        &.home {
-          width: 64px;
-          &.active {
-            &.open {
-              .cube {
-                background-position: 17px 11px;
-              }
-            }
-          }
-          &> .btn-group {
-            width: 100%;
-          }
-        }
-        &.open {
-          &.active {
-            .cube {
-              background-position: 15px 11px;
-            }
-          }
-          border-left: 1px solid @black;
-          border-right: 1px solid @grayDark;
-
-          /* override twitter bootstrap effect, here we need this outside ul since ul itself we make scrollable */
-          .dropdown-menu {
-            background: none;
-            border: none;
-            .box-shadow(none);
-            top: 42px;
-            padding-top: 8px;
-            overflow: hidden;
-            &> ul {
-              background: @white;
-              border: 1px solid rgba(0,0,0,.2);;
-              .border-radius(2px);
-              max-height: 330px;
-              overflow-y: auto;
-              overflow-x: hidden;
-            }
-          }
-        }
-        &.active {
-          border-right-color: darken(@white, 75%);
-          border-left-color: lighten(@black, 20%);
-          div.btn-group:not(.open) {
-            //.box-shadow(~"inset 0 -10px 15px rgba(255,255,255,.3)");
-            background-color: rgba(0,0,0,0.21);
-            #gradient > .vertical(@NavigationBar, lighten(@NavigationBar, 26%));
-            border-left-color: lighten(@black,15%);
-            border-right-color: @black;
-          }
-        }
-        div.btn-group {
-          margin: 0;
-          a.btn-invisible.btn-link {
-            text-shadow: none;
-            color: lighten(@black,80%);
-            margin-top: 0;
-            margin-bottom: 0;
-            line-height: 32px;
-            &:hover {
-              text-decoration: none;
-            }
-            &:not(.dropdown-toggle) {
-              padding-right: 1px;
-              padding-left: 7px;
-            }
-            &.dropdown-toggle {
-              padding-left: 6px;
-              padding-right: 6px;
-            }
-          }
-          border-left: 1px solid transparent;
-          border-right: 1px solid transparent;
-          &.open {
-            .box-shadow(~"inset 2px 4px 12px rgba(255,255,255,.25)");
-            border-left-color: lighten(@gray,5%);
-            border-right-color: @black;
-            .dropdown-toggle {
-              background: none;
-              border-color: transparent;
-              .box-shadow(none);
-              &> i {
-                color: @white;
-              }
-            }
-          }
-        }
-        &.more {
-          &:hover {
-            b[class^="icon-"] {
-              color: @white !important;
-            }
-            ul.dropdown-menu.more-drop-container {
-              li.dropdown {
-                div.btn-group {
-                  height:34px;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Secondary (floated right) nav in topbar
-      &.pull-right {
-        &> li {
-          border-left: 1px solid darken(@white, 75%) !important;
-          border-right-color: transparent !important;
-          &:not(#createList) {
-            margin-right: -3px;
-          }
-          &> div {
-            border-left: 1px solid @black !important;
-            &> a {
-              margin-left: 4px;
-              margin-right: 0;
-              padding-left: 0;
-              padding-right: 0;
-              line-height: 19px;
-              &:active {
-                .box-shadow(none) !important;
-                border-color: transparent;
-                background: none;
-              }
-            }
-          }
-          &#createList {
-            width: 40px;
-            &> div {
-              width: 100%;
-              &> a {
-                //margin-left: 10px;
-                margin-bottom: 2px;
-                padding-left: 0;
-                width: 26px;
-                &:hover {
-                  i {
-                    color: @white !important;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      &:not(.pull-right) {
-        > li.dropdown div.btn-group {
-          padding-right: 8px;
-          a.btn-invisible.btn-link.dropdown-toggle {
-              margin-right: -8px;
-          }
-        }
-
-        > li.dropdown.home > .btn-group {
-          padding-right: 0;
-        }
-      }
-    }
-
-    // Active nav items
-    .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link,
-    .active > a,
-    .active > a:hover {
-      text-decoration: none;
-      color: @navbarLinkColorActive;
-      text-shadow: 0 -1px 0 rgb(0,0,0);
-    }
-
-    .active > a,
-    .active > a:hover {
-      padding-bottom: 13px;
-      font-weight: bold;
-    }
-
-    .active:not(.open) > .btn-group > .btn.btn-invisible.btn-link {
-      padding-bottom: 6px;
-      .border-radius(~"0 !important");
-      border-left: 0;
-      border-right: 0;
-      padding-left: 8px;
-      outline: none !important;
-    }
-  }
-  .avatar {
-    margin: 4px 4px 4px 0;
-    float: left;
-    .border-radius(3px);
-    height: 26px;
-    width: 26px;
-    @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
-    .box-shadow(@shadow);
-  }
-  .profileactions-profile .avatar {
-    position: absolute;
-    left: 11px;
-    top: 2px;
-    height: 20px;
-    width: 20px;
-    .box-shadow(none);
-  }
-  form .btn {
-    margin-left: -11px;
-    line-height: 16px;
-  }
-  //fix position and size
-  .icon-plus.icon-md {
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    left: 1px;
-    top: 1px;
-  }
   .btn-group:hover > .routeLink {
     color: @navbarLinkColorActive !important;
   }
@@ -380,6 +280,52 @@
   }
   .dropdown .icon-caret-down {
     color: @gray;
+  }
+}
+
+
+#userActions {
+  .dropdown-menu {
+    min-width: 0;
+  }
+  &> div.btn-group {
+    padding-right: 6px;
+  }
+  .avatar {
+    .border-radius(3px);
+    height: 28px;
+    width: 28px;
+    min-width: 28px;
+    @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
+    .box-shadow(@shadow);
+  }
+  .profileactions-profile .avatar {
+    position: absolute;
+    left: 11px;
+    height: 20px;
+    width: 20px;
+    min-width: 20px;
+    .box-shadow(none);
+  }
+}
+
+#createList {
+  border-right: none;
+  &> div.btn-group {
+    border-right: none;
+    &> a.dropdown-toggle {
+      &:hover {
+        i {
+          color: @white !important;
+        }
+      }
+    }
+  }
+  .icon-plus.icon-md {
+    width: 28px;
+    height: 28px;
+    line-height: 24px;
+    top: 0;
   }
 }
 
@@ -433,6 +379,3 @@
   font-weight: normal;
 }
 
-.moreLink.hide {
-  display: none;
-}
