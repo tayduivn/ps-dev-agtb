@@ -82,7 +82,7 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' nowrap>
 				{if $pageData.access.edit && $pageData.bean.moduleDir != "Employees"}
-					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}' title="{sugar_translate label="LBL_EDIT_INLINE"}">{sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>
+					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href="javascript:parent.SUGAR.App.router.navigate(parent.SUGAR.App.router.buildRoute('{$pageData.bean.moduleDir}', '{$rowData.ID}'), {$smarty.ldelim}trigger: true{$smarty.rdelim});" title="{sugar_translate label="LBL_EDIT_INLINE"}">{sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>
 				{/if}
 			</td>
 			{/if}
