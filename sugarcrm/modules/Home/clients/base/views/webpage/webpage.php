@@ -3,15 +3,15 @@
 $viewdefs['Home']['base']['view']['webpage'] = array(
     'dashlets' => array(
         array(
-            'name' => 'Web Page',
-            'description' => 'Web Page',
+            'name' => 'LBL_DASHLET_WEBPAGE_NAME',
+            'description' => 'LBL_DASHLET_WEBPAGE_DESC',
             'config' => array(
                 'url' => 'http://www.sugarcrm.com',
                 'module' => 'Home',
                 'limit' => 3,
             ),
             'preview' => array(
-                'title' => 'Web Page',
+                'title' => 'LBL_DASHLET_WEBPAGE_NAME',
                 'url' => 'www.sugarcrm.com',
                 'limit' => '3',
                 'module' => 'Home',
