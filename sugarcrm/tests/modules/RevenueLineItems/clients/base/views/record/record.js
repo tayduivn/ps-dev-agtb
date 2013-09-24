@@ -137,4 +137,24 @@ describe("RevenueLineItems.Base.View.Record", function() {
         });
     });
 
+    describe('_handleDuplicateBefore', function() {
+        var new_model;
+        beforeEach(function() {
+            new_model = new Backbone.Model();
+        });
+
+        afterEach(function() {
+            new_model = undefined;
+        });
+
+        it('should unset quote_id and quote_name', function() {
+            new_model.set({quote_id: '123', quote_name: 'name'});
+
+            view._handleDuplicateBefore(new_model);
+
+            expect(new_model.attributes.quote_id).toBeUndefined();
+            expect(new_model.attributes.quote_name).toBeUndefined();
+        });
+    });
+
 })
