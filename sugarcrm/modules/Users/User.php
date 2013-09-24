@@ -2403,4 +2403,18 @@ EOQ;
             $this->getAdminModules();
         }
     }
+    /**
+     * Checks if the passed email is primary.
+     *
+     * @param string $email
+     * @return bool Returns TRUE if the passed email is primary.
+     */
+    public function isPrimaryEmail($email)
+    {
+        if (!empty($this->email1) && !empty($email) && strcasecmp($this->email1, $email) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -82,7 +82,8 @@ class PasswordApi extends SugarApi
             $usr_id = $usr->retrieve_user_id($username);
             $usr->retrieve($usr_id);
 
-            if ($usr->email1 != $useremail) {
+            if (!$usr->isPrimaryEmail($useremail))
+            {
                 throw new SugarApiExceptionRequestMethodFailure(translate(
                     'LBL_PROVIDE_USERNAME_AND_EMAIL',
                     'Users'
@@ -143,5 +144,4 @@ class PasswordApi extends SugarApi
             throw new SugarApiExceptionMissingParameter('Error: Empty argument', $args);
         }
     }
-
 }

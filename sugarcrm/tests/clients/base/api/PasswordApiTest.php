@@ -84,11 +84,16 @@ class PasswordApiTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRequestPasswordCorrect()
     {
         $this->passwordApi->usr->expects($this->any())->method('sendEmailForPassword')->will(
-            $this->returnValue(
-                array(
-                    'status' => true,
-                )
+        $this->returnValue(
+            array(
+                'status' => true,
             )
+        )
+    );
+        $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
+                $this->returnValue(
+                    true
+                )
         );
 
         $this->args['email'] = 'test@test.com';
