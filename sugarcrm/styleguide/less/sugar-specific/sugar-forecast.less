@@ -58,6 +58,44 @@
   }
 }
 
+.show_custom_bucketsFields {
+  .noUiSliderEnds {
+    width: 240px;
+    .noUiSlider {
+      width: 240px;
+    }
+  }
+
+  input[disabled="disabled"] {
+    visibility: hidden;
+  }
+
+  #plhCustomProbabilityRanges {
+    div.clearfix {
+      &>div:not(:last-child) {
+        margin-top: 35px;
+      }
+    }
+  }
+
+  #plhCustomWithoutProbability {
+    div.clearfix {
+      &>div {
+        margin-top: 15px;
+      }
+    }
+  }
+
+  #plhCustomWithoutProbability, #plhCustomProbabilityRanges {
+    div.clearfix {
+      div.btn_group {
+        float: left;
+        margin-top: 32px;
+      }
+    }
+  }
+}
+
 .forecast-details {
   margin: 0;
   .row-fluid  {
