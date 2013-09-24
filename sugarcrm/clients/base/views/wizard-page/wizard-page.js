@@ -214,13 +214,7 @@
                 if (success) {
                     self.progress = self.layout.nextPage();
                 } else {
-                    //If no validation error and this happens throw up a generic error
                     app.logger.debug("There was an unknown issue after calling beforeNext from wizard");
-                    app.alert.show('server-error', {
-                        level: 'error',
-                        messages: 'ERR_AJAX_LOAD_FAILURE',
-                        autoClose: true
-                    });
                 }
             });
         } else {
@@ -229,11 +223,6 @@
                     self.finish();
                 } else {
                     app.logger.debug("There was an unknown issue after calling beforeFinish from wizard");
-                    app.alert.show('server-error', {
-                        level: 'error',
-                        messages: 'ERR_AJAX_LOAD_FAILURE',
-                        autoClose: true
-                    });
                 }
             });
         }
