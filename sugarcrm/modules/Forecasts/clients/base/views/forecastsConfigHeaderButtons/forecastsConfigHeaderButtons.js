@@ -178,8 +178,6 @@
                     this.showSavedConfirmation();
                     // close the drawer and return to Forecasts
                     app.drawer.close(this.context, this.context.get('model'));
-                    // ping the server to reload the metadata since it changed
-                    app.api.call("read", app.api.buildURL('ping'));
                 } else {
                     // only reason this should not be inDrawer is if user came here from the Admin module or something
                     // where it might not be a drawer.  NOT SURE, but this handles that scenario
