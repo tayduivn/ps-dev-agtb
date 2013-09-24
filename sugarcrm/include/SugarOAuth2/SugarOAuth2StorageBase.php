@@ -205,4 +205,19 @@ class SugarOAuth2StorageBase extends SugarOAuth2StoragePlatform {
         }
         return $userBean;
     }
+
+    /**
+     * Sets any additional data as needed when we load a download token
+     *
+     * @param array $tokenData The token data generated in the base app
+     * @param OAuthToken $token The token bean that the download token is attached to
+     * @param OAuthKey $clientBean The oauth key associated with the download token
+     *
+     * @return array The completely filled in token data
+     */
+    public function getDownloadTokenData(array $tokenData, OAuthToken $tokenBean, OAuthKey $clientBean)
+    {
+        return $tokenData;
+    }
+
 }

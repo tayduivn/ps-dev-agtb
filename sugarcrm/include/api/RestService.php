@@ -179,8 +179,11 @@ class RestService extends ServiceBase
 
             // Get the request args early for use in current user api
             $argArray = $this->getRequestArgs($route);
-            if ( !$isLoggedIn && !empty($route['allowDownloadCookie']) && isset($_COOKIE[self::DOWNLOAD_COOKIE])) {
-                $isLoggedIn = $this->authenticateUserForDownload($_COOKIE[self::DOWNLOAD_COOKIE]);
+            if ( !$isLoggedIn 
+                 && !empty($route['allowDownloadCookie']) 
+                 && !empty($_GET['platform']) // Don't default to base for the cookie check
+                 && isset($_COOKIE[self::DOWNLOAD_COOKIE.'_'.$this->platform])) {
+                $isLoggedIn = $this->authenticateUserForDownload($_COOKIE[self::DOWNLOAD_COOKIE.'_'.$this->platform], $this->platform);
             }
 
             // Make sure the system is ready for them
@@ -564,12 +567,17 @@ class RestService extends ServiceBase
             $sessionId = $_POST['oauth_token'];
         } elseif ( isset($_GET['oauth_token']) ) {
             $sessionId = $_GET['oauth_token'];
+        } elseif ( isset($_POST['OAuth-Token']) ) {
+            $sessionId = $_POST['OAuth-Token'];
+        } elseif ( isset($_GET['OAuth-Token']) ) {
+            $sessionId = $_GET['OAuth-Token'];
         } elseif ( function_exists('apache_request_headers') ) {
             // Some PHP implementations don't populate custom headers by default
             // So we have to go for a hunt
             $headers = apache_request_headers();
             foreach ($headers as $key => $value) {
-                if ( strtolower($key) == 'oauth_token' ) {
+                $check = strtolower($key);
+                if ( $check == 'oauth_token' || $check == 'oauth-token') {
                     $sessionId = $value;
                     break;
                 }
@@ -583,27 +591,17 @@ class RestService extends ServiceBase
      * Handles authentication of the current user from the download token
      *
      * @param string $token The download autentication token.
+     * @param string $platform the platform for the download 
      * @returns bool Was the login successful
-     * @throws SugarApiExceptionNeedLogin
      */
-    protected function authenticateUserForDownload($token)
+    protected function authenticateUserForDownload($token, $platform)
     {
         $valid = false;
 
         if (!empty($token)) {
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer->setPlatform($platform);
 
-            // TODO: Temporary fix until we get per-platform download tokens in 7.1
-            // If this code still exists in 7.1 or later email a daily insult to: rob@sugar
-            $tokenSeed = BeanFactory::newBean('OAuthTokens');
-            $tokenBean = $tokenSeed->retrieve_by_string_fields(array('download_token'=>$token));
-            if (!empty($tokenBean->contact_id)) {
-                $tokenData['user_id'] = $tokenBean->assigned_user_id;
-                $_SESSION['type'] = 'support_portal';
-                $_SESSION['contact_id'] = $tokenBean->contact_id;
-                $_SESSION['portal_user_id'] = $tokenBean->assigned_user_id;
-                $oauthServer->setPlatform('portal');
-            }
             $tokenData = $oauthServer->verifyDownloadToken($token);
             
             $GLOBALS['current_user'] = BeanFactory::getBean('Users',$tokenData['user_id']);
