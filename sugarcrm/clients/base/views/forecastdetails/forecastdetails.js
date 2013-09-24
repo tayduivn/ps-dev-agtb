@@ -152,7 +152,14 @@
 
             // use the object version of user not a Model
             this.selectedUser = app.user.toJSON();
-            this.shouldRollup = this.isManagerView();
+
+            if(this.currentModule == 'Forecasts') {
+                // On Forecasts, this is based on whether user is viewing manager or rep worksheet
+                this.shouldRollup = this.isManagerView();
+            } else {
+                // On Home, the dashlet should default to manager data for managers, and rep for non-manager
+                this.shouldRollup = this.selectedUser.is_manager;
+            }
 
             this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
