@@ -118,7 +118,7 @@
             }
             // update the base rate in the model
             this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
-            // convert the value to new currency
+            // convert the value to new currency on the model
             if (model.has(this.name)) {
                 this.model.set(
                     this.name,
@@ -126,8 +126,15 @@
                         app.currency.unformatAmountLocale(model.get(this.name)),
                         this._lastCurrencyId,
                         currencyId
-                    )
+                    ),
+                    // we don't want to affect other bindings like sugar logic
+                    // when updating a value upon a currency_id change,
+                    // so set the model silently, then update the field value
+                    // directly (see next func call)
+                    { silent: true }
                 );
+                // now format the new value directly on the field
+                this.setCurrencyValue(model.get(this.name));
             }
             this._lastCurrencyId = currencyId;
         }, this);
