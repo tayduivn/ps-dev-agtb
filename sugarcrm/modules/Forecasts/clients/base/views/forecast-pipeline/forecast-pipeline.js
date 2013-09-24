@@ -1,3 +1,15 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     results: {},
     chart: {},
@@ -12,6 +24,16 @@
      * Is the user a forecast Admin? This is only used if forecasts is not setup
      */
     forecastAdmin: false,
+
+    /**
+     * The open state of the sidepanel
+     */
+    state: "open",
+
+    /**
+     * Visible state of the preview window
+     */
+    preview_open: false,
 
     events: {
         'click button.btn': 'handleTypeButtonClick'
@@ -58,7 +80,23 @@
     bindDataChange: function() {
         this.settings.on('change', function(model) {
             // reload the chart
-            this.loadData({});
+            // reload the chart
+            if(this.state == 'open' && !this.preview_open) {
+                this.loadData({});
+            }
+        }, this);
+
+        app.events.on('preview:open', function() {
+            this.preview_open = true;
+        }, this);
+        app.events.on('preview:close', function() {
+            this.preview_open = false;
+        }, this);
+        app.events.on('app:toggle:sidebar', function(state) {
+            this.state = state;
+            if (this.state == 'open' && !this.preview_open) {
+                this.chart.update();
+            }
         }, this);
     },
 
@@ -73,6 +111,10 @@
     },
     
     renderChart: function() {
+        if (this.state != 'open' || this.preview_open) {
+            return;
+        }
+
         if(this.disposed) {
             return;
         }
@@ -90,12 +132,6 @@
             d3.select('svg#' + this.cid)
                 .datum(this.results)
                 .transition().duration(500).call(this.chart);
-
-            app.events.on('app:toggle:sidebar', function(state) {
-                if(state == 'open') {
-                    this.chart.update();
-                }
-            }, this);
 
             nv.utils.windowResize(this.chart.update);
             this.resizeOnPrint(this.chart);
