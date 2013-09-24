@@ -1938,42 +1938,44 @@ class SugarBean
             return;
         }
 
-        $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
-        if (!empty($dictionary[$this->object_name]['related_calc_fields'])) {
-            $links = $dictionary[$this->object_name]['related_calc_fields'];
-            foreach($links as $lname) {
-                if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2)) {
-                    continue;
-                }
+        // If linkName is empty then we need to handle all links
+        if (empty($linkName)) {
+            $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
+            if (!empty($dictionary[$this->object_name]['related_calc_fields'])) {
+                $links = $dictionary[$this->object_name]['related_calc_fields'];
+                foreach($links as $lname) {
+                    if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2)) {
+                        continue;
+                    }
 
-                $this->addParentRecordsToResave($lname);
+                    $this->addParentRecordsToResave($lname);
 
-                $influencing_fields = $this->get_fields_influencing_linked_bean_calc_fields($lname);
-                $data_changes = $this->db->getDataChanges($this);
-                $changed_fields = array_keys($data_changes);
+                    $influencing_fields = $this->get_fields_influencing_linked_bean_calc_fields($lname);
+                    $data_changes = $this->db->getDataChanges($this);
+                    $changed_fields = array_keys($data_changes);
 
-                // if fetched_row is empty we have a new record, so don't check for changed_fields
-                // if deleted is 1, we need to update all related items
-                // the only time we want to check if any of the influcenceing fields have changed is when, it's a, non-deleted record
-                // and when we are updating a row.
-                if (!empty($this->fetched_row) && $this->deleted == 0 && !array_intersect($influencing_fields, $changed_fields)) {
-                    continue;
-                }
+                    // if fetched_row is empty we have a new record, so don't check for changed_fields
+                    // if deleted is 1, we need to update all related items
+                    // the only time we want to check if any of the influcenceing fields have changed is when, it's a, non-deleted record
+                    // and when we are updating a row.
+                    if (!empty($this->fetched_row) && $this->deleted == 0 && !array_intersect($influencing_fields, $changed_fields)) {
+                        continue;
+                    }
 
-                $beans = $this->$lname->getBeans();
-                //Resave any related beans
-                if(!empty($beans))  {
-                    foreach($beans as $rBean) {
-                        if (empty($rBean->deleted)) {
-                            SugarRelationship::addToResaveList($rBean);
+                    $beans = $this->$lname->getBeans();
+                    //Resave any related beans
+                    if(!empty($beans))  {
+                        foreach($beans as $rBean) {
+                            if (empty($rBean->deleted)) {
+                                SugarRelationship::addToResaveList($rBean);
+                            }
                         }
                     }
                 }
             }
-        }
-
-        if ($this->has_calc_field_with_link($linkName)) {
-            //Save will updated the saved_beans array
+        } 
+        else if ($this->has_calc_field_with_link($linkName)) {
+            //Save will update the saved_beans array
             SugarRelationship::addToResaveList($this);
         }
 

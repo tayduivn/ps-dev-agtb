@@ -126,7 +126,7 @@ class Bug62026Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1, $account->$field, 'Add relationship does not update count()');
 
         // Check unlinking task with account
-        $task->accounts->delete($account);
+        $task->accounts->delete($task->id, $account);
         SugarRelationship::resaveRelatedBeans();
         $account = $account->retrieve($account->id);
         $this->assertEquals(0, $account->$field, 'Delete relationship does not update count()');
