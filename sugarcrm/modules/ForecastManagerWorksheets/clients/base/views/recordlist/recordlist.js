@@ -599,9 +599,9 @@
         } else {
             if (this.selectedUser.isManager && this.selectedUser.showOpps == true && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
-                    this.showNavigationMessage('manager_to_rep');
+                    this.processNavigationMessageReturn(this.showNavigationMessage('manager_to_rep'));
                 } else if (this.displayNavigationMessage) {
-                    this.showNavigationMessage('user_switch');
+                    this.processNavigationMessageReturn(this.showNavigationMessage('user_switch'));
                 }
                 // viewing managers opp worksheet so hide the manager worksheet
                 this.layout.hide();
