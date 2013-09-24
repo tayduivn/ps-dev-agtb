@@ -80,6 +80,11 @@ class ModuleScanner{
         'reflector',
         'reflectionexception',
         'lua',
+	    'ziparchive',
+	    'splfileinfo',
+	    'splfileobject',
+	    'pclzip',
+
     );
 	private $blackList = array(
     'popen',
@@ -95,6 +100,7 @@ class ModuleScanner{
     'disk_free_space',
     'disk_total_space',
     'diskfreespace',
+	'dir',
     'fclose',
     'feof',
     'fflush',
@@ -124,6 +130,7 @@ class ModuleScanner{
     'is_link',
     'is_readable',
     'is_uploaded_file',
+	'opendir',
     'parse_ini_string',
     'pathinfo',
     'pclose',
@@ -133,6 +140,7 @@ class ModuleScanner{
     'realpath_cache_size',
     'realpath',
     'rewind',
+	'readdir',
     'set_file_buffer',
     'tmpfile',
     'umask',
@@ -380,8 +388,12 @@ class ModuleScanner{
         'xml_set_processing_instruction_handler',
         'xml_set_start_namespace_decl_handler',
         'xml_set_unparsed_entity_decl_handler',
+
+	    // unzip
+	    'unzip',
+	    'unzip_file',
 );
-    private $methodsBlackList = array('setlevel');
+    private $methodsBlackList = array('setlevel', 'put' => array('sugarautoloader'), 'unlink' => array('sugarautoloader'));
 
 	public function printToWiki(){
 		echo "'''Default Extensions'''<br>";
@@ -397,27 +409,41 @@ class ModuleScanner{
 
 	}
 
-	public function __construct(){
-	    if(!empty($GLOBALS['sugar_config']['moduleInstaller'])) {
-	        $this->config = $GLOBALS['sugar_config']['moduleInstaller'];
-	    }
+    public function __construct()
+    {
+        $params = array(
+            'blackListExempt'      => 'MODULE_INSTALLER_PACKAGE_SCAN_BLACK_LIST_EXEMPT',
+            'blackList'            => 'MODULE_INSTALLER_PACKAGE_SCAN_BLACK_LIST',
+            'classBlackListExempt' => 'MODULE_INSTALLER_PACKAGE_SCAN_CLASS_BLACK_LIST_EXEMPT',
+            'classBlackList'       => 'MODULE_INSTALLER_PACKAGE_SCAN_CLASS_BLACK_LIST',
+            'validExt'             => 'MODULE_INSTALLER_PACKAGE_SCAN_VALID_EXT',
+            'methodsBlackList'     => 'MODULE_INSTALLER_PACKAGE_SCAN_METHOD_LIST',
+        );
 
-		if(!empty($this->config['blackListExempt'])){
-			$this->blackListExempt = array_merge($this->blackListExempt, $this->config['blackListExempt']);
-		}
-		if(!empty($this->config['blackList'])){
-			$this->blackList = array_merge($this->blackList, $this->config['blackList']);
-		}
-        if(!empty($this->config['classBlackListExempt'])){
-            $this->classBlackListExempt = array_merge($this->classBlackListExempt, $this->config['classBlackListExempt']);
-        }
-        if(!empty($this->config['classBlackList'])){
-            $this->classBlackList = array_merge($this->classBlackList, $this->config['classBlackList']);
-        }
-	  if(!empty($this->config['validExt'])){
-			$this->validExt = array_merge($this->validExt, $this->config['validExt']);
-		}
+        $disableConfigOverride = defined('MODULE_INSTALLER_DISABLE_CONFIG_OVERRIDE')
+            && MODULE_INSTALLER_DISABLE_CONFIG_OVERRIDE;
 
+        $disableDefineOverride = defined('MODULE_INSTALLER_DISABLE_DEFINE_OVERRIDE')
+            && MODULE_INSTALLER_DISABLE_DEFINE_OVERRIDE;
+
+        if (!$disableConfigOverride && !empty($GLOBALS['sugar_config']['moduleInstaller'])) {
+            $this->config = $GLOBALS['sugar_config']['moduleInstaller'];
+        }
+
+        foreach ($params as $param => $constName) {
+
+            if (!$disableConfigOverride && isset($this->config[$param]) && is_array($this->config[$param])) {
+                $this->{$param} = array_merge($this->{$param}, $this->config[$param]);
+            }
+
+            if (!$disableDefineOverride && defined($constName)) {
+                $value = constant($constName);
+                $value = explode(',', $value);
+                $value = array_map('trim', $value);
+                $value = array_filter($value, 'strlen');
+                $this->{$param} = array_merge($this->{$param}, $value);
+            }
+        }
 	}
 
 	private $issues = array();
@@ -544,6 +570,21 @@ class ModuleScanner{
                             if ($lastToken !== false &&
                             ($lastToken[0] == T_OBJECT_OPERATOR ||  $lastToken[0] == T_DOUBLE_COLON))
                             {
+                                // check static blacklist for methods
+                                if(!empty($this->methodsBlackList[$token[1]])) {
+                                    if($this->methodsBlackList[$token[1]] == '*') {
+                                        $issues[]= translate('ML_INVALID_METHOD') . ' ' .$token[1].  '()';
+                                        break;
+                                    } else {
+                                        if($lastToken[0] == T_DOUBLE_COLON && $index > 2 && $tokens[$index-2][0] == T_STRING) {
+                                            $classname = strtolower($tokens[$index-2][1]);
+                                            if(in_array($classname, $this->methodsBlackList[$token[1]])) {
+                                                $issues[]= translate('ML_INVALID_METHOD') . ' ' .$classname . '::' . $token[1]. '()';
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
                                 //this is a method call, check the black list
                                 if(in_array($token[1], $this->methodsBlackList)){
                                     $issues[]= translate('ML_INVALID_METHOD') . ' ' .$token[1].  '()';

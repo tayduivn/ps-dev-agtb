@@ -88,11 +88,13 @@ if($install_type == 'module' && $mode != 'Uninstall'){
 }
 
 //Scan the unzip dir for unsafe files
-if(!empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan']) && $install_type != 'patch'){
+if (((defined('MODULE_INSTALLER_PACKAGE_SCAN') && MODULE_INSTALLER_PACKAGE_SCAN)
+    || !empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan'])) && $install_type != 'patch') {
 	require_once('ModuleInstall/ModuleScanner.php');
 	$ms = new ModuleScanner();
 	$ms->scanPackage($unzip_dir);
 	if($ms->hasIssues()){
+	    rmdir_recursive($unzip_dir);
 		$ms->displayIssues();
 		sugar_cleanup(true);
 	}
