@@ -57,6 +57,7 @@ include("metadata/roles_modulesMetaData.php");
 include("metadata/roles_usersMetaData.php");
 include("metadata/outboundEmailMetaData.php");
 include("metadata/addressBookMetaData.php");
+include("metadata/recordListMetaData.php");
 
 
 //BEGIN SUGARCRM flav=pro ONLY

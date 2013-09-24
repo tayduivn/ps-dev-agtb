@@ -41,23 +41,13 @@ class ExportApi extends SugarApi {
      */
     public function registerApiRest() {
         return array(
-            'exportPost' => array(
-                'reqType' => 'POST',
-                'path' => array('<module>','export'),
-                'pathVars' => array('module',''),
-                'method' => 'export',
-                'jsonParams' => array('filter'),
-                'rawReply' => true,
-                'shortHelp' => 'Returns a record set in CSV format along with HTTP headers to indicate content type.',
-                'longHelp' => 'include/api/help/module_export_post_help.html',
-            ),
             'exportGet' => array(
                 'reqType' => 'GET',
-                'path' => array('<module>','export'),
-                'pathVars' => array('module',''),
+                'path' => array('<module>','export','?'),
+                'pathVars' => array('module','','record_list_id'),
                 'method' => 'export',
-                'jsonParams' => array('filter'),
                 'rawReply' => true,
+                'allowDownloadCookie' => true,
                 'shortHelp' => 'Returns a record set in CSV format along with HTTP headers to indicate content type.',
                 'longHelp' => 'include/api/help/module_export_get_help.html',
             ),

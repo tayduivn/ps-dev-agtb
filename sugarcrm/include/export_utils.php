@@ -177,10 +177,12 @@ function exportFromApi($args, $sample=false) {
 
     $type = clean_string($args['module']);
 
-    $records = null;
-    if (!empty($args['uid'])) {
-        $records = $args['uid'];
+    require_once('clients/base/api/RecordListApi.php');
+    $recordList = RecordListApi::loadRecordList($args['record_list_id']);
+    if (empty($recordList)) {
+        throw new SugarApiExceptionNotFound();
     }
+    $records = $recordList['records'];
 
     $members = isset($args['members']) ? $args['members'] : false;
 
