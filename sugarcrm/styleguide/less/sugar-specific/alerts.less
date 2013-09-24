@@ -58,9 +58,13 @@
 .alert-top {
   position: fixed;
   top: 38px;
+  height: 0;
   width: 100%;
   z-index: 1060;
   text-align: center;
+  &> div {
+    height: 0;
+  }
 }
 .alert-top .alert {
   text-align: left;
@@ -77,6 +81,7 @@
 .alert-top .alert-process {
   display: inline-block;
   width: auto;
+  height: 1.6em;
 }
 .alert-top .alert:first-child {
   margin-top: 0;
