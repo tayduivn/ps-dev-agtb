@@ -77,8 +77,8 @@ class Bug56425Test extends Sugar_PHPUnit_Framework_TestCase
                     'relationship_name' => 'users_contacts_relationship'
                 ),
                 array(
-                    'Contacts' => 'Activities:Users',
-                    'Users' => 'Activities:Contacts'
+                    'Contacts' => 'Users',
+                    'Users' => 'Contacts'
                 )
             ),
             array(
@@ -89,8 +89,8 @@ class Bug56425Test extends Sugar_PHPUnit_Framework_TestCase
                     'relationship_name' => 'users_contacts_relationship'
                 ),
                 array(
-                    'Contacts' => 'Activities 123:Users',
-                    'Users' => 'Activities 123:Contacts'
+                    'Contacts' => 'Users',
+                    'Users' => 'Contacts'
                 )
             ),
             array(
@@ -112,8 +112,8 @@ class Bug56425Test extends Sugar_PHPUnit_Framework_TestCase
                     'rhs_label' => 'rhs_label',
                 ),
                 array(
-                    'lhs_module' => 'rhs_label:rhs_module',
-                    'rhs_module' => 'rhs_label:lhs_module'
+                    'lhs_module' => 'rhs_module',
+                    'rhs_module' => 'lhs_module'
                 )
             )
         );
