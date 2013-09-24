@@ -107,14 +107,18 @@
      * {@inheritDoc}
      */
     _getFilters: function(index) {
+        var today = new Date();
+        today.setHours(23, 59, 59);
+        today.toISOString();
+
         var tab = this.tabs[index],
-            today = app.date.format(new Date(), 'Y-m-d'),
             filter = {},
             filters = [],
             defaultFilters = {
-                today: {$lte: today + ' 23:59:59'},
-                future: {$gt: today + ' 23:59:59'}
+                today: {$lte: today},
+                future: {$gt: today}
             };
+
         filter[tab.filter_applied_to] = defaultFilters[this.settings.get('date')];
 
         filters.push(filter);

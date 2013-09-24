@@ -57,8 +57,11 @@
 
         // FIXME: since there's no way to do this metadata driven (at the
         // moment) and for the sake of simplicity only filters with 'date_due'
-        // value 'today' are replaced by todays' date
-        var today = app.date.format(new Date(), 'Y-m-d 23:59:59');
+        // value 'today' are replaced by today's date
+        var today = new Date();
+        today.setHours(23, 59, 59);
+        today.toISOString();
+
         _.each(_.pluck(_.pluck(this.tabs, 'filters'), 'date_due'), function(filter) {
             _.each(filter, function(value, operator) {
                 if (value === 'today') {
