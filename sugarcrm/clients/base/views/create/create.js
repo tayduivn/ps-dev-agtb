@@ -478,13 +478,20 @@
     },
 
     /**
+     * Sets the dupecheck list type
+     *
+     * @param {String} type view to load
+     */
+    setDupeCheckType: function(type) {
+        this.context.set('dupelisttype', type);
+    },
+
+    /**
      * Render duplicate check list table
      */
     renderDupeCheckList: function () {
-        this.context.set({
-            'dupelisttype': 'dupecheck-list-edit',
-            'collection': this.createDuplicateCollection(this.model)
-        });
+        this.setDupeCheckType('dupecheck-list-edit');
+        this.context.set('collection', this.createDuplicateCollection(this.model));
 
         if (_.isNull(this.dupecheckList)) {
             this.dupecheckList = app.view.createLayout({

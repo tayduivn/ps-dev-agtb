@@ -1,7 +1,7 @@
 ({
     extendsFrom: 'ToggleLayout',
 
-    TOGGLE_DUPECHECK: 'create-dupecheck',
+    TOGGLE_DUPECHECK: 'dupecheck',
     TOGGLE_CREATE: 'create',
 
     availableToggles: {
@@ -109,6 +109,7 @@
             context = this.context.getChildContext({
             'module': this.meta.module,
             'forceNew': true,
+            'skipFetch': true,
             'dupelisttype': 'dupecheck-list-select',
             'collection': this.createDuplicateCollection(leadsModel, this.meta.module)
         });
@@ -121,7 +122,7 @@
             module: context.module
         });
         this.duplicateView.context.on('change:selection_model', this.handleDupeSelectedChange, this);
-        this.duplicateView.collection.on('reset', this.dupeCheckComplete, this);
+        this.duplicateView.collection.once('reset', this.dupeCheckComplete, this);
         this.addComponent(this.duplicateView);
     },
 

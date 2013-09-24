@@ -35,9 +35,13 @@
         this.context.on('dupecheck:fetch:fire', this.fetchDuplicates, this);
     },
 
-    /**
-     * {@inheritDoc}
-     */
+    bindDataChange: function() {
+        this.collection.on('reset', function() {
+            this.context.trigger('dupecheck:collection:reset');
+        }, this);
+        this._super('bindDataChange');
+   },
+
     _renderHtml: function() {
         var classesToAdd = 'duplicates highlight';
         app.view.invokeParent(this, {type: 'view', name: 'flex-list', method: '_renderHtml'});
