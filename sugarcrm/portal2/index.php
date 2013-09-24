@@ -55,6 +55,7 @@ ensureCache($minifyUtils, $rootDir);
         <link href="./assets/loading.css" rel="stylesheet" type="text/css">
 
         <!-- App Scripts -->
+        <script language="javascript" src="../include/javascript/modernizr.js"></script>
         <script src='../cache/include/javascript/sugar_sidecar.min.js'></script>
         <script language="javascript" src="../include/javascript/sugar7/bwc.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/utils.js"></script>
@@ -62,7 +63,7 @@ ensureCache($minifyUtils, $rootDir);
         <script language="javascript" src="../include/javascript/sugar7/hacks.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/alert.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/hbs-helpers.js"></script>
-        <script language="javascript" src="../include/javascript/modernizr.js"></script>
+
 
         <!-- Portal specific JS -->
         <script src='portal.js'></script>
