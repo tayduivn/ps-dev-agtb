@@ -119,9 +119,12 @@ class RevenueLineItemsCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_Tes
      */
     public function testDoPostUpdateAction()
     {
-         $this->mock->expects($this->once())
-            ->method('getClosedStages')
-            ->will($this->returnValue(array('Closed Won', 'Closed Lost')));
+         $this->mock
+             //BEGIN SUGARCRM flav=ent ONLY
+             ->expects($this->once())
+             //END SUGARCRM flav=ent ONLY
+             ->method('getClosedStages')
+             ->will($this->returnValue(array('Closed Won', 'Closed Lost')));
             
         // setup the query strings we are expecting and what they should return
         $this->db->queries['post_select'] = array(
