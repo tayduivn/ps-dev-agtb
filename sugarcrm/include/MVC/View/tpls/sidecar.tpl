@@ -70,7 +70,7 @@
         <script src='{$sugarSidecarPath}'></script>
         <script src='{$SLFunctionsPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
-        <script src='{$configFile}'></script>
+        <script src='{$configFile}?hash={$configHash}'></script>
         <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
 
         {literal}
