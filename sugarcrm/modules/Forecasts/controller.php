@@ -135,7 +135,7 @@ class ForecastsController extends SugarController
             $db->query("UPDATE config SET value = 0 WHERE category = 'Forecasts' and name in ('is_setup', 'has_commits')");
             MetaDataManager::clearAPICache();
             //MetaDataManager::refreshModulesCache(array('Forecasts'));
-            header("Location: index.php?module=Forecasts#config");
+            echo '<script>' . navigateToSidecar(buildSidecarRoute("Forecasts")) . ';</script>';
             exit();
         }
 
