@@ -97,10 +97,13 @@ class VisibilityAction extends AbstractAction{
 				if (hide)
 				{
 					context.addClass(this.target, inv_class, true);
+					//Disable the field to prevent tabbing into the edit mode of the field
+					context.setFieldDisabled(this.target, true);
 				}
 				else
 				{
 					context.removeClass(this.target, inv_class, true);
+					context.setFieldDisabled(this.target, false);
 					if (wasHidden)
 						SUGAR.forms.FlashField(target, null, this.target);
 				}
