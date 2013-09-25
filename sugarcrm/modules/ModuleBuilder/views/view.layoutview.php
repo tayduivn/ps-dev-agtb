@@ -212,6 +212,8 @@ class ViewLayoutView extends SugarView
         $smarty->assign ( 'fieldwidth', 150 ) ;
         // Bug 57260 - LBL_PANEL_DEFAULT not translated for undeployed modules in layout editor
         $smarty->assign ( 'translate', true ) ;
+        // If we are on record view don't allow adding of panels
+        $smarty->assign('single_panel', $this->editLayout == MB_RECORDVIEW);
 
         if ($this->fromModuleBuilder)
         {
