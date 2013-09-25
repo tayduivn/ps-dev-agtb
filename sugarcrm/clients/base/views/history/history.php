@@ -171,7 +171,7 @@ $viewdefs['base']['view']['history'] = array(
                 'singular' => 'LBL_HISTORY_DASHLET_EMAIL_SINGULAR',
                 'plural' => 'LBL_HISTORY_DASHLET_EMAIL_PLURAL',
             ),
-            'link' => 'emails',
+            'link' => 'archived_emails',
             'module' => 'Emails',
             'order_by' => 'date_entered:desc',
         ),
