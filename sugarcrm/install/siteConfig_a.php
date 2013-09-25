@@ -172,10 +172,10 @@ $out .=<<<EOQ
     <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_SITECFG_ADMIN_PASS']}</b><br>
        </td>
-       <td align="left"><input type="password" name="setup_site_admin_password" value="{$_SESSION['setup_site_admin_password']}" size="20" /></td></tr>
+       <td align="left"><input type="password" name="setup_site_admin_password" value="{$_SESSION['setup_site_admin_password']}" autocomplete="off" size="20" /></td></tr>
     <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_SITECFG_ADMIN_PASS_2']}</td>
-       <td align="left"><input type="password" name="setup_site_admin_password_retype" value="{$_SESSION['setup_site_admin_password_retype']}" size="20" /></td></tr>
+       <td align="left"><input type="password" name="setup_site_admin_password_retype" value="{$_SESSION['setup_site_admin_password_retype']}" autocomplete="off" size="20" /></td></tr>
 
 EOQ;
 
