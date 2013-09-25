@@ -51,7 +51,8 @@
         if (this.tplName === 'edit') {
             this.$(this.fieldTag).each(function (index, el) {
                 var plugin = $(el).data("select2");
-                if (plugin && !plugin.setTeamIndex) {
+                // If there is a plugin but no team index, set it
+                if (!_.isUndefined(plugin) && _.isUndefined(plugin.setTeamIndex)) {
                     plugin.setTeamIndex = function () {
                         self.currentIndex = $(this).data("index");
                     };
