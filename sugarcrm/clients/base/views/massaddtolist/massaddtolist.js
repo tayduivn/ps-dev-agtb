@@ -108,29 +108,18 @@
      * @param massUpdateModel - contains the attributes of what records are being updated
      */
     buildSaveSuccessMessages: function(massUpdateModel) {
-        var doneLabel, queuedLabel, numberUpdated,
+        var doneLabel = 'TPL_MASS_ADD_TO_LIST_SUCCESS',
+            queuedLabel = 'TPL_MASS_ADD_TO_LIST_QUEUED',
             listName = this.model.get(this.addToListField.name),
             listId = this.model.get(this.addToListField.id_name),
             listUrl = '#' + app.router.buildRoute(this.listModule, listId);
 
-        if (massUpdateModel.getAttributes().massupdate_params.entire) {
-            doneLabel = 'LBL_MASS_ADD_TO_LIST_SUCCESS_ENTIRE';
-            queuedLabel = 'LBL_MASS_ADD_TO_LIST_QUEUED_ENTIRE';
-            numberUpdated = '';
-        } else {
-            doneLabel = 'LBL_MASS_ADD_TO_LIST_SUCCESS_SUBSET';
-            queuedLabel = 'LBL_MASS_ADD_TO_LIST_QUEUED_SUBSET';
-            numberUpdated = massUpdateModel.getAttributes().massupdate_params.uid.length;
-        }
-
         return {
             done: app.lang.get(doneLabel, null, {
-                numberUpdated: numberUpdated,
                 listName: listName,
                 listUrl: listUrl
             }),
             queued: app.lang.get(queuedLabel, null, {
-                numberUpdated: numberUpdated,
                 listName: listName,
                 listUrl: listUrl
             })
