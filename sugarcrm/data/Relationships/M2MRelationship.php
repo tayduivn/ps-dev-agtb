@@ -530,7 +530,7 @@ class M2MRelationship extends SugarRelationship
         $sugar_query->join[$targetTable_alias]->relationshipTableAlias = $joinTable_alias;
 
         if (empty($options['ignoreRole'])) {
-            $this->buildSugarQueryRoleWhere($sugar_query, $targetTable_alias);
+            $this->buildSugarQueryRoleWhere($sugar_query, $joinTable_alias);
         }
         return array($joinTable_alias => $relTableJoin, $targetTable_alias => $targetTableJoin);
     }
