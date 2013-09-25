@@ -122,6 +122,13 @@ describe('Base.View.Bwc', function() {
             expect(navigateStub).toHaveBeenCalled();
         });
 
+        it('convertToSidecarUrl should put BWC module URLs through bwc/ route', function() {
+            var href = 'index.php?module=Documents&offset=1&stamp=1&return_module=Documents&action=DetailView&record=1';
+            sinon.collection.stub(app.metadata, "getModule", function(){return {isBwcEnabled: true}});
+            var result = view.convertToSidecarUrl(href);
+            expect(result).toEqual("bwc/index.php?module=Documents&offset=1&stamp=1&return_module=Documents&action=DetailView&record=1")
+        });
+
         it('should NOT check for Home module if no url', function() {
             var context = app.context.getContext();
             context.set({ url: undefined, module: 'Documents'});
