@@ -49,21 +49,20 @@
             return this;
         }
 
-        var today = app.date.format(new Date(), 'Y-m-d');
-        var filterTypes = {
-            'today': {
-                'date_entered': {
-                    '$dateBetween': [today + ' 00:00:00', today + ' 23:59:59']
-                }
-            },
-            'recent': {
-                'date_entered': {
-                    '$lt': today
-                }
-            }
+        var startDate = new Date();
+        startDate.setHours(0, 0, 0);
+        startDate.toISOString();
+
+        var endDate = new Date();
+        endDate.setHours(23, 59, 59);
+        endDate.toISOString();
+
+        var defaultFilters = {
+            today: {date_entered: {$dateBetween: [startDate, endDate]}},
+            recent: {date_entered: {$lt: startDate}}
         };
 
-        this.collection.filterDef.push(filterTypes[this.meta.filter_type]);
+        this.collection.filterDef.push(defaultFilters[this.meta.filter_type]);
 
         return this;
     },

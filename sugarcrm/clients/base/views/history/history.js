@@ -46,16 +46,15 @@
      * @protected
      */
     _getFilters: function(index) {
+        var today = new Date();
+        today.setDate(today.getDate() - this.settings.get('filter'));
+        today.toISOString();
+
         var tab = this.tabs[index],
             filter = {},
-            filterDate = new Date(),
             filters = [];
 
-        filterDate.setDate(filterDate.getDate() - this.settings.get('filter'));
-
-        filter[tab.filter_applied_to] = {
-            $gte: app.date.format(filterDate, 'Y-m-d H:i:s')
-        };
+        filter[tab.filter_applied_to] = {$gte: today};
 
         filters.push(filter);
 
