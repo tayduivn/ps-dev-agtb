@@ -697,7 +697,7 @@ describe("Emails.Views.Compose", function() {
             }, this);
         });
     });
-    
+
     describe('InitializeSendEmailModel', function() {
         beforeEach(function() {
             view.model.off('change');
@@ -738,7 +738,7 @@ describe("Emails.Views.Compose", function() {
         beforeEach(function() {
             var mockHtml = '<div><div class="drawer">' +
                 '<div class="headerpane"></div>' +
-                '<div class="record"><div class="mceLayout"></div></div>' +
+                '<div class="record"><div class="mceLayout"><div class="mceIframeContainer"><iframe frameborder="0"></iframe></div></div></div>' +
                 '<div class="show-hide-toggle"></div>' +
                 '</div></div>',
                 drawerHeight = view.MIN_EDITOR_HEIGHT + 300,
@@ -748,7 +748,7 @@ describe("Emails.Views.Compose", function() {
             view.$el = $(mockHtml);
             $drawer = view.$('.drawer');
             $drawer.height(drawerHeight);
-            $editor = view.$('.mceLayout');
+            $editor = view.$('.mceLayout .mceIframeContainer iframe');
             $editor.height(editorHeight);
 
             view.$('.headerpane').height(otherHeight);
