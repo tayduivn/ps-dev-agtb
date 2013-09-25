@@ -54,6 +54,11 @@
                 var $tooltips = this._getPluginTooltips($element);
                 this._$pluginTooltips  = this._$pluginTooltips || [];
                 this._$pluginTooltips.push(app.utils.tooltip.initialize($tooltips));
+
+                //hide tooltip when clicked
+                $tooltips.on('click.tooltip', function() {
+                    $(this).tooltip('hide');
+                });
             },
 
             /**

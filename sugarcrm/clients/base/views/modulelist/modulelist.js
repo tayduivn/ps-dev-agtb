@@ -17,9 +17,7 @@
     ),
     plugins: ['Dropdown'],
     events: {
-        'click .dtoggle': 'toggleDropdown',
-        'click .more .icon-chevron-down': 'showMore',
-        'mouseleave .more-drop-container' : 'hideMore',
+        'click [data-toggle=dropdown]': 'getRecentlyViewedAndFavoriteRecords',
         'click .actionLink' : 'handleMenuEvent',
         "click a[data-route]": "handleRouteEvent"
     },
@@ -52,16 +50,6 @@
         }
     },
 
-    showMore: function(event) {
-        event.stopPropagation();
-        this.hideMenu();
-        var $currentTarget = this.$('.more').find('.dropdown-toggle:first');
-        this.toggleDropdownHTML($currentTarget);
-        this.$('.more-drop-container').show();
-    },
-    hideMore: function(event) {
-        this.$('.more-drop-container').hide();
-    },
     initialize: function(options) {
         this.activeModule = this._setActiveModule(this);
         app.events.on("app:sync:complete", this.render, this);
@@ -71,71 +59,25 @@
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
         }
-        $('.navbar').on('mouseleave', _.bind(function(){
-            this.hideMenu();
-            this.hideMore();
-        }, this));
     },
     _dispose: function(){
         app.user.off("change:module_list", this.render);
-        $('.navbar').off('mouseleave', _.bind(function(){
-            this.hideMenu();
-            this.hideMore();
-        }, this));
         app.view.View.prototype._dispose.call(this);
     },
     handleViewChange: function() {
-        this.closeOpenDrops();
         this.activeModule.set(app.controller.context.get("module"));
         this.layout.trigger("header:update:route");
-        // ensure our events are on dropdowns
-        _.defer(this.delegateDropDowns, this);
     },
     /**
-     * toggles dropdowns on mouseover
+     * Populates the recently viewed and favorite records
      * @param event
      */
-    toggleDropdown:function (event) {
-        event.stopPropagation();
-        this.hideMore();
-        var self = this;
+    getRecentlyViewedAndFavoriteRecords:function (event) {
         var $currentTarget = $(event.currentTarget),
-            showCallback = false,
-            numberMenuItems = $currentTarget.siblings('.dropdown-menu').find('ul').find('li').length,
-            toggleCallback = _.once(function() {
-                self.toggleDropdownHTML($currentTarget);
-            }),
             module = $currentTarget.parent().parent().data('module'),
             moduleMeta = app.metadata.getModule(module);
 
-        if (moduleMeta && moduleMeta.menu && moduleMeta.menu.header && moduleMeta.menu.header.meta) {
-            var accessCount = 0;
-            _.each(moduleMeta.menu.header.meta, function (menu) {
-                var aclAction = menu.acl_action || '';
-                var aclModule = menu.acl_module || module;
-                if (app.acl.hasAccess(aclAction, aclModule)) {
-                    accessCount++;
-                }
-            });
-
-            numberMenuItems = accessCount;
-        }
-
-        if (numberMenuItems < 1) {
-            showCallback= toggleCallback;
-        }
-
-        if ($currentTarget.next('.dropdown-menu').is(":visible")) {
-            $currentTarget.next('.dropdown-menu').dropdown('toggle');
-            $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
-            return false;
-        }
-
         if (!$currentTarget.parent().parent().hasClass('more-drop-container') && !$currentTarget.hasClass('actionLink')) {
-            // clear any open dropdown styling
-            this.$('.open').toggleClass('open');
-            module = $currentTarget.parent().parent().data('module');
-            moduleMeta = app.metadata.getModule(module);
             if (module == 'Home') {
                 this.populateDashboards();
             }
@@ -146,10 +88,6 @@
                 }
                 this.populateRecents(module);
             }
-            if (numberMenuItems >= 1) {
-                toggleCallback();
-            }
-
         }
     },
     clearFavoritesRecents: function(module){
@@ -328,7 +266,6 @@
      */
     resetMenu: function() {
         this.$('.more').before(this.$('#module_list .more-drop-container').children());
-        this.closeOpenDrops();
     },
     /**
      * Resize the module list to the specified width and move the extra module names to the dropdown.
@@ -376,16 +313,6 @@
         $moduleList.remove();
         this.$el.append($moduleListClone);
         $cloneContainer.remove();
-        // ensure our events are on dropdowns
-        _.defer(this.delegateDropDowns, this);
-    },
-    /**
-     * Offs bootstrap dropdown events and redelegates our own
-     * @param view
-     */
-    delegateDropDowns: function(view) {
-        view.$('.dtoggle').off();
-        view.delegateEvents();
     },
 
     /**

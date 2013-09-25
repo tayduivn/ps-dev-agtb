@@ -10,7 +10,8 @@
                  */
                 initialize: function($elements, options) {
                     return $elements.tooltip(_.extend({}, {
-                        container: 'body'
+                        container: 'body',
+                        trigger: 'hover' //show tooltip on hover only (not on focus)
                     }, options));
                 },
 
