@@ -100,6 +100,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
             //push the pipeline numbers back into the args
             $args['pipeline_opp_count'] = $forecast->pipeline_opp_count;
             $args['pipeline_amount'] = $forecast->pipeline_amount;
+            $worksheet_totals['closed_amount'] = $forecast->closed_amount;
         } else {
             $forecast->pipeline_opp_count = $worksheet_totals['pipeline_opp_count'];
             $forecast->pipeline_amount = $worksheet_totals['pipeline_amount'];

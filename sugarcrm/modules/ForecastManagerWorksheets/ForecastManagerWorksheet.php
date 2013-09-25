@@ -66,14 +66,14 @@ class ForecastManagerWorksheet extends SugarBean
 
         $sql = 'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                 likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
-                timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount ' .
+                timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount, closed_amount ' .
             'FROM ' . $this->table_name . ' ' .
             'WHERE assigned_user_id = "' . $manager->id . '" AND user_id != "' . $manager->id . '" ' .
             'AND timeperiod_id = "' . $db->quote($timeperiod) . '" AND draft = 1 AND deleted = 0 ' .
             'UNION ALL ' .
             'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                     likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
-                    timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount ' .
+                    timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount, closed_amount ' .
             'FROM ' . $this->table_name . ' ' .
             'WHERE assigned_user_id = "' . $manager->id . '" AND user_id = "' . $manager->id . '" ' .
             'AND timeperiod_id = "' . $db->quote($timeperiod) . '" AND draft = 1 AND deleted = 0';

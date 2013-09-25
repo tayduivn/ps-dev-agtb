@@ -223,9 +223,10 @@ class ForecastsSeedData
                     $forecast->forecast_type = 'Rollup';
                     $forecast->pipeline_opp_count = $totals['pipeline_opp_count'];
                     $forecast->pipeline_amount = $totals['pipeline_amount'];
+                    $forecast->closed_amount = $totals['closed_amount'];
                     $forecast->date_entered = $timedate->asDb($timedate->getNow());
+                    
                     $forecast->save();
-
                     self::createManagerWorksheet($commit_type_array[0], $forecast->toArray());
 
                 }
