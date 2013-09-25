@@ -62,18 +62,17 @@
         app.view.Layout.prototype._addComponentsFromDef.call(this, components, context, context.get("module"));
     },
     /**
-     * {@inheritdoc}
-     * Set default skipFetch as false
-     *
-     * @param def array metadata defining this component
-     * @param context default context to pass to the new component (unless overriden by the metadata)
-     * @param module defualt module to create this component from (unless overriden by the metadata)
-     * @return {*}
+     * {@inheritDoc}
+     * Set default skipFetch as false.
+     * Able to get the custom title label from the dashlet component.
      */
     createComponentFromDef: function(def, context, module) {
         //pass the parent context only to the main dashlet component
         if (def.view && !_.isUndefined(def.view.toolbar)) {
             var dashlet = _.first(this._components);
+            if (_.isFunction(dashlet.getLabel)) {
+                def.view.label = dashlet.getLabel();
+            }
             context = dashlet.context;
         }
         //set default skipFetch as false
