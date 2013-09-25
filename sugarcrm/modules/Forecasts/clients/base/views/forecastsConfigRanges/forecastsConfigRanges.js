@@ -116,7 +116,10 @@
         this.categoryRangesField = this.fieldsMeta.category_ranges;
 
         // Set this model equal to the latest config metadata
-        this.model.set(app.metadata.getModule('Forecasts', 'config'));
+        // using jQuery's deep clone extend() because otherwise the range updates actually update
+        // the values in config itself
+        this.model.set($.extend(true, {}, app.metadata.getModule('Forecasts', 'config')));
+        
         this.updateTitleValues(this.model);
         this.forecastByModule = app.lang.getAppListStrings('moduleList')[this.model.get('forecast_by')];
 
