@@ -69,7 +69,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 
 	if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && $reporter->report_def['summary_order_by'][0]['group_function'] == 'count') {
 
-	  $summary_sort_by = 'count';
+            $summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".'count';
 	} else if ( isset($reporter->report_def['summary_order_by'][0]['name'])) {
 		$summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".$reporter->report_def['summary_order_by'][0]['name'];
 
@@ -683,7 +683,7 @@ function template_reports_report(&$reporter,&$args) {
 
 	if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && $reporter->report_def['summary_order_by'][0]['group_function'] == 'count') {
 
-	  $summary_sort_by = 'count';
+            $summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".'count';
 	} else if ( isset($reporter->report_def['summary_order_by'][0]['name'])) {
 		$summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".$reporter->report_def['summary_order_by'][0]['name'];
 

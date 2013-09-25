@@ -1895,13 +1895,9 @@ return str_replace(' > ','_',
                 $column_key .= ":" . $display_column['column_function'];
             }
 
-            if ($column_key == 'self:count') {
-                $column_key = 'count';
-            }
-
             if (!empty($this->report_def['summary_order_by'][0])) {
                 if (!empty($this->report_def['summary_order_by'][0]['group_function']) && $this->report_def['summary_order_by'][0]['group_function'] == 'count') {
-                    $order_by_key = 'count';
+                    $order_by_key = $this->report_def['summary_order_by'][0]['table_key'] . ":" . 'count';
                 }
                 else {
                     $order_by_key = $this->report_def['summary_order_by'][0]['table_key'] . ":" . $this->report_def['summary_order_by'][0]['name'];
