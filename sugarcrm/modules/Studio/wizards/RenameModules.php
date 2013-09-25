@@ -199,6 +199,7 @@ class RenameModules
             array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'WARNING_NO_DELETE_CLOSED_SELECTED', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'TPL_RLI_CREATE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
         ),
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
