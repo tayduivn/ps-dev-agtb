@@ -14,7 +14,7 @@
   margin-top: 8px;
   float: none;
   width: 100%;
-  
+
   .btn-group .dropdown-toggle {
     box-shadow: none;
   }
@@ -29,7 +29,7 @@
     .box-sizing(border-box);
     padding: 4px 10px;
     width: 100%;
-    height: 28px;	// Due to `border-box`.    
+    height: 28px;	// Due to `border-box`.
     line-height: @baseLineHeight;
     background: @white;
     .border-radius(4px);
@@ -161,7 +161,7 @@
 
   // Links
   .nav {
-    
+
     > li {
       > a {
         color: lighten(@black,80%);
@@ -301,7 +301,7 @@
       &.pull-right { // xxx
       	margin-left: 5px;	// [moey] So that the subtle vertical bar is
       						//   nicely spaced from the search field / form.
-        
+
         &> li {
           border-left: 1px solid darken(@white, 75%) !important;
           border-right-color: transparent !important;
@@ -456,17 +456,4 @@
 
 .moreLink.hide {
   display: none;
-}
-
-// [moey] Added @media in this file, mimicing what is already in 
-//   sugarone-specific/forms.less i.e. it also has @media.
-@media (max-width: 768px) {
-	
-	// [moey] I didn't directly make this change in sugar-specific/responsive-sugar.less
-	//   because it's also used for Sugar7.
-	#searchForm .navbar-search .search-query {
-		.box-sizing(border-box !important);
-		width: 100% !important;
-		height: 28px;	// Due to `border-box`.		
-	}
 }
