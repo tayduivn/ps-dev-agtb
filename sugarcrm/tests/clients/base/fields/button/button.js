@@ -16,37 +16,6 @@ describe("Base.Field.Button", function() {
         Address = null;
     });
 
-    it('should bind custom event handlers', function() {
-        var def = {
-            'events' : {
-                'click .btn' : 'function() { this.callback = "stuff excuted"; }',
-                'blur .btn' : 'function() { this.callback = "blur excuted"; }'
-            }
-        };
-
-        field = SugarTest.createField("base","button", "button", "edit", def);
-
-        field._loadTemplate = function() {  this.template = function(){ return '<a class="btn" href="javascript:void(0);"></a>'}; };
-
-        field.render();
-        expect(field.callback).toBeUndefined();
-        field.$(".btn").trigger('click');
-        expect(field.callback).toBe("stuff excuted");
-        field.$(".btn").trigger('blur');
-        expect(field.callback).not.toBe("stuff excuted");
-        expect(field.callback).toBe("blur excuted");
-        delete field.callback;
-        field.$(".btn").trigger('undefined');
-        expect(field.callback).not.toBe("stuff excuted");
-        expect(field.callback).not.toBe("blur excuted");
-        expect(field.callback).toBeUndefined();
-
-        delete field.callback;
-        field.setDisabled(true);
-        field.$(".btn").trigger('click .btn');
-        expect(field.callback).not.toBe("stuff excuted");
-    });
-
     it("should setDisabled with CSS 'disabled'", function() {
         var def = {
             'events' : {
