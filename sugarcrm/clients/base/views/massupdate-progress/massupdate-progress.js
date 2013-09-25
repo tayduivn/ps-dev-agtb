@@ -45,6 +45,7 @@
             FAIL_TO_ATTEMPT: 'TPL_MASSUPDATE_FAIL_TO_ATTEMPT',
             WARNING_CLOSE: 'TPL_MASSUPDATE_WARNING_CLOSE',
             WARNING_INCOMPLETE: 'TPL_MASSUPDATE_WARNING_INCOMPLETE',
+            WARNING_PERMISSION: 'TPL_MASSUPDATE_WARNING_PERMISSION',
             SUCCESS: 'TPL_MASSUPDATE_SUCCESS',
             TITLE: 'TPL_MASSUPDATE_TITLE'
         },
@@ -54,6 +55,7 @@
             FAIL_TO_ATTEMPT: 'TPL_MASSDELETE_FAIL_TO_ATTEMPT',
             WARNING_CLOSE: 'TPL_MASSDELETE_WARNING_CLOSE',
             WARNING_INCOMPLETE: 'TPL_MASSDELETE_WARNING_INCOMPLETE',
+            WARNING_PERMISSION: 'TPL_MASSDELETE_WARNING_PERMISSION',
             SUCCESS: 'TPL_MASSDELETE_SUCCESS',
             TITLE: 'TPL_MASSDELETE_TITLE'
         }
@@ -137,6 +139,7 @@
     checkAvailable: function() {
         if (this.collection.chunks.length === this.collection.length) {
             this.unbindData();
+            this.collection.on('massupdate:end', this.hideProgress, this);
             return false;
         }
         return true;
@@ -309,17 +312,17 @@
      * Start displaying the progress view.
      */
     showProgress: function() {
+        this.initLabels();
+        this.totalRecord = this.collection.length;
         if (this.triggerBefore('start') === false) {
             return false;
         }
         this._startTime = new Date().getTime();
-        this.totalRecord = this.collection.length;
 
         //restore back previous button status.
         var stopButton = this.getField('btn-stop');
         stopButton.setDisabled(false);
 
-        this.initLabels();
         var title = app.lang.get(this.LABELSET.TITLE, this.module, {
             module: this.module
         });
@@ -334,8 +337,20 @@
      * Reset current mass job.
      */
     hideProgress: function() {
-        var size = this.getCompleteRecords();
-        if (this.totalRecord !== size) {
+        var size = this.getCompleteRecords(),
+            discardSize = this.collection.discards.length;
+        if (discardSize > 0) {
+            //permission warning
+            app.alert.show('massupdate_final_notice', {
+                level: 'warning',
+                messages: app.lang.get(this.LABELSET['WARNING_PERMISSION'], this.module, {
+                    num: this.totalRecord - discardSize,
+                    remain: discardSize
+                }),
+                autoClose: true,
+                autoCloseDelay: 8000
+            });
+        } else if (this.totalRecord !== size) {
             //incomplete
             app.alert.show('massupdate_final_notice', {
                 level: 'warning',
