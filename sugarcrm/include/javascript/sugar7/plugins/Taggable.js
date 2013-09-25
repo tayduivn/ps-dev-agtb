@@ -1,4 +1,6 @@
 (function (app) {
+    // This plugin depends on QuickSearchFilter. You must add that plugin to
+    // your view as well.
     app.events.on("app:init", function () {
         var tagTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag"><a href="#{{buildRoute module=module id=id}}">{{name}}</a></span>'),
             tagInEditTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag" contenteditable="false"><a>{{name}}</a></span>'),
@@ -377,7 +379,7 @@
                     referenceSearchFields = ['name', 'first_name', 'last_name'],
                     tagAction = searchTerm.charAt(0); // @ or # character
 
-                searchTerm = searchTerm.substr(1);
+                searchTerm = $.trim(searchTerm.substr(1));
 
                 // Do not perform search if the number of characters typed so far in typeahead is less than what is
                 // specified in taggableSearchAfter and if search term is the same as the last searched term.
@@ -393,21 +395,19 @@
                         this._resetTaggable();
                     } else {
                         if (tagAction === mention) {
-                            _.extend(searchParams, {
-                                module_list: 'Users',
-                                has_access_module: this._taggableModuleName,
-                                has_access_record: this._taggableModelId
-                            });
-
-                            // We cannot use the filter API here as we need to
-                            // support users typing in full names, which are not
-                            // stored in the database as fields.
-                            app.api.search(searchParams, {
-                                success: _.bind(function(response) {
-                                    if (this._taggableEnabled && response) {
-                                        this._populateTagList(app.data.createBeanCollection("Users", response.records), searchTerm);
+                            // This plugin depends on QuickSearchFilter because
+                            // of this branch.
+                            app.data.createBeanCollection("Users").fetch({
+                                success: _.bind(function(collection, resp) {
+                                    if (this._taggableEnabled && resp) {
+                                        this._populateTagList(collection, searchTerm);
                                     }
-                                }, this)
+                                }, this),
+                                filter: this.getFilterDef("Users", searchTerm),
+                                params: {
+                                    has_access_module: this._taggableModuleName,
+                                    has_access_record: this._taggableModelId
+                                }
                             });
                         } else if (tagAction === reference) {
                             searchParams.search_fields = referenceSearchFields.join();

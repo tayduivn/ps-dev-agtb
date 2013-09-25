@@ -13,7 +13,7 @@
 
     tagName: "li",
     className: "activitystream-posts-comments-container",
-    plugins: ['Timeago', 'FileDragoff', 'Taggable', 'Tooltip'],
+    plugins: ['Timeago', 'FileDragoff', 'QuickSearchFilter', 'Taggable', 'Tooltip'],
     cacheNamePrefix: "user:avatars:",
     cacheNameExpire: ":expiry",
     expiryTime: 36000000,   //1 hour in milliseconds
