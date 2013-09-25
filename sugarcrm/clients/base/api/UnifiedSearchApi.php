@@ -464,7 +464,9 @@ class UnifiedSearchApi extends SugarListApi {
                             $customWhere[$module][] = "{$prefix}.{$field} LIKE '{$options['query']}%'";
                         }
                     }
-                    $searchOptions['custom_where_module'][$module] = '(' . implode(' OR ', $customWhere[$module]) . ')';
+                    if (isset($customWhere[$module])) {
+                        $searchOptions['custom_where_module'][$module] = '(' . implode(' OR ', $customWhere[$module]) . ')';
+                    }
                 }
             }
         }
