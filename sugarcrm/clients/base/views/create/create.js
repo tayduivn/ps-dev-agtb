@@ -103,6 +103,12 @@
         this.setButtonStates(this.STATE.CREATE);
 
         this.renderDupeCheckList();
+
+        //SP-1502: Broadcast model changes so quickcreate field can keep track of unsaved changes
+        app.events.trigger('create:model:changed', false);
+        this.model.on('change', function() {
+            app.events.trigger('create:model:changed', this.hasUnsavedChanges());
+        }, this);
     },
 
     /**

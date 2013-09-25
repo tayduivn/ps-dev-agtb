@@ -198,9 +198,11 @@
 
     /**
      * Remove all drawers and reset
+     * @param trigger Indicates whether to triggerBefore (defaults to true if anything other than `false`)
      */
-    reset: function() {
-        if(!this.triggerBefore("reset", {drawer: this})) {
+    reset: function(triggerBefore) {
+        triggerBefore = triggerBefore === false ? false : true;
+        if(triggerBefore && !this.triggerBefore("reset", {drawer: this})) {
             return false;
         }
 
