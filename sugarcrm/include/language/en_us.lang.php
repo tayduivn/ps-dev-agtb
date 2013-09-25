@@ -2391,13 +2391,6 @@ $app_strings = array (
     'LBL_EMAIL_YES'                         => 'Yes',
     'LBL_EMAIL_TEST_OUTBOUND_SETTINGS'      => 'Send Test Email',
     'LBL_EMAIL_TEST_OUTBOUND_SETTINGS_SENT' => 'Test Email Sent',
-    'LBL_EMAIL_CHECK_INTERVAL_DOM'          => array(
-        '-1' => "Manually",
-        '5' => 'Every 5 minutes',
-        '15' => 'Every 15 minutes',
-        '30' => 'Every 30 minutes',
-        '60' => 'Every hour'
-    ),
 
 
     'LBL_EMAIL_MESSAGE_NO'                  => 'Message No',
@@ -5148,7 +5141,7 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
   );
-$app_strings ['documentation'] = array (
+$app_list_strings ['documentation'] = array (
     'LBL_DOCS' => 'Documentation',
     'ULT' => '01_Sugar_Ultimate',
     'ENT' => '02_Sugar_Enterprise',
@@ -5197,4 +5190,12 @@ $app_list_strings['web_hook_request_method_list'] = array(
     'GET' => 'GET',
     'PUT' => 'PUT',
     'DELETE' => 'DELETE',
+);
+
+$app_list_strings['LBL_EMAIL_CHECK_INTERVAL_DOM'] = array(
+    '-1' => "Manually",
+    '5' => 'Every 5 minutes',
+    '15' => 'Every 15 minutes',
+    '30' => 'Every 30 minutes',
+    '60' => 'Every hour'
 );
