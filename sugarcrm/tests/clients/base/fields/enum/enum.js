@@ -206,13 +206,13 @@ describe("enum field", function() {
                 field.render();
                 expect(field.items['']).toBeUndefined();
             });
-        it('should prevent focus otherwise the dropdown is opened and it\'s impossible to remove an item', function() {
-            field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
-            var jQueryStub = sinon.stub(field, '$');
-            field.focus();
-            expect(jQueryStub).not.toHaveBeenCalled();
-            jQueryStub.restore();
+            it('should prevent focus otherwise the dropdown is opened and it\'s impossible to remove an item', function() {
+                field = SugarTest.createField("base", fieldName, "enum", "detail", {isMultiSelect: true, options: "bugs_type_dom"});
+                var jQueryStub = sinon.stub(field, '$');
+                field.focus();
+                expect(jQueryStub).not.toHaveBeenCalled();
+                jQueryStub.restore();
+            });
         });
-
     });
 });
