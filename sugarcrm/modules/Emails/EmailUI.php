@@ -184,7 +184,7 @@ class EmailUI {
 		);
 		$this->smarty->assign('charset', $charset);
 
-		$emailCheckInterval = array('options' => $app_strings['LBL_EMAIL_CHECK_INTERVAL_DOM'], 'selected' => $emailSettings['emailCheckInterval']);
+		$emailCheckInterval = array('options' => $app_list_strings['LBL_EMAIL_CHECK_INTERVAL_DOM'], 'selected' => $emailSettings['emailCheckInterval']);
 		$this->smarty->assign('emailCheckInterval', $emailCheckInterval);
 		$this->smarty->assign('attachmentsSearchOptions', $app_list_strings['checkbox_dom']);
 		$this->smarty->assign('sendPlainTextChecked', ($emailSettings['sendPlainText'] == 1) ? 'CHECKED' : '');

@@ -38,7 +38,7 @@
         <div style="float: left;">
             <div style="float: left; width: 300px;">
 				{$APP.LBL_TOUR_FEATURES_670}
-				<p>{$APP.LBL_TOUR_VISIT} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a>.</p>
+				<p>{$APP.LBL_TOUR_VISIT} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$appList.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a>.</p>
 
                 {if $view_calendar_url}
                 <div style="border-top: 1px solid #F5F5F5;padding-top: 3px;" >
@@ -66,7 +66,7 @@
 		<div style="float: left;"> 
 			<div style="float: left; width: 360px; margin-right: 50px;">
 			<p>
-			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$APP.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
+			{$APP.LBL_TOUR_REFERENCE_1} <a href="javascript:void window.open('http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/{$appList.documentation.$sugarFlavor}')">{$APP.LNK_TOUR_DOCUMENTATION}</a> {$APP.LBL_TOUR_REFERENCE_2}
 <br>
 				<i class="icon-arrow-right icon-lg" style="float: right; position: relative; right: -33px; top: -30px;"></i>
 			</p>
