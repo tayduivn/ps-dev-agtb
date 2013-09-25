@@ -54,6 +54,7 @@ describe("Base.Field.QuickCreate", function() {
     it('should show confirmation when drawers are open and not open drawer if not confirmed', function() {
         alertConfirm = false;
         mockDrawerCount = 1;
+        field.createHasChanges = true;
         field._handleActionLink(event);
 
         expect(alertShowStub.callCount).toBe(1);
@@ -61,9 +62,21 @@ describe("Base.Field.QuickCreate", function() {
         expect(app.drawer.open.callCount).toBe(0);
     });
 
+    it('should NOT show confirmation when drawers are open and but create view does NOT have changes', function() {
+        alertConfirm = false;
+        mockDrawerCount = 1;
+        field.createHasChanges = false;
+        field._handleActionLink(event);
+
+        expect(alertShowStub.callCount).toBe(0);
+        expect(app.drawer.reset.callCount).toBe(1);
+        expect(app.drawer.open.callCount).toBe(1);
+    });
+
     it('should reset drawers and open new drawer if confirmed', function() {
         alertConfirm = true;
         mockDrawerCount = 2;
+        field.createHasChanges = true;
         field._handleActionLink(event);
 
         expect(alertShowStub.callCount).toBe(1);

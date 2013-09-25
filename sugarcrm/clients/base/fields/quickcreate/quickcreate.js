@@ -30,7 +30,19 @@
     },
 
     plugins: ['LinkedModel'],
-
+    initialize: function (options) {
+        app.view.Field.prototype.initialize.call(this, options);
+        //Listen to create view model changes to keep track of unsaved changes
+        app.events.on("create:model:changed", this.createModelChanged, this);
+    },
+    /**
+     * Keeps track of if the create view's model has changed.
+     * @param hasChanged
+     */
+    createHasChanges: false,
+    createModelChanged: function(hasChanged) {
+        this.createHasChanges = hasChanged;
+    },
     /**
      * When menu item is clicked, warn if open drawers, reset drawers and open create
      * @param evt
@@ -38,23 +50,27 @@
      */
     _handleActionLink: function(evt) {
         var $actionLink = $(evt.currentTarget),
-            module = $actionLink.data('module');
+            module = $actionLink.data('module'),
+            moduleMeta = app.metadata.getModule(this.context.get('module'));
         this.actionLayout = $actionLink.data('layout');
-
-        if (app.drawer.count() > 0) {
+        if (this.createHasChanges) {
             app.alert.show('send_confirmation', {
                 level: 'confirmation',
                 messages: 'LBL_WARN_UNSAVED_EDITS',
                 onConfirm: _.bind(function() {
-                    app.drawer.reset();
+                    app.drawer.reset(false);
                     this.createRelatedRecord(module);
                 }, this)
             });
+        } else if (moduleMeta && moduleMeta.isBwcEnabled) {
+            // TODO: SP-1568 - We don't yet deal with bwc model changed attributes so
+            // this will navigate to new create page WITHOUT alert for unsaved changes
+            this.createRelatedRecord(module);
         } else {
+            app.drawer.reset();
             this.createRelatedRecord(module);
         }
     },
-
     /**
      * Route to Create Related record UI for a BWC module.
      *
