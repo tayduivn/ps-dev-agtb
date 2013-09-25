@@ -72,8 +72,10 @@
              * @param {String} module Module name.
              */
             createRelatedRecord: function(module) {
-                var moduleMeta = app.metadata.getModule(module);
-                if (moduleMeta && moduleMeta.isBwcEnabled) {
+                var bwcExceptions = ['Emails'],
+                    moduleMeta = app.metadata.getModule(module);
+
+                if (moduleMeta && moduleMeta.isBwcEnabled && !_.contains(bwcExceptions, module)) {
                     this.routeToBwcCreate(module);
                 } else {
                     this.openCreateDrawer(module);
