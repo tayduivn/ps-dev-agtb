@@ -41,7 +41,7 @@
         app.view.View.prototype.initialize.call(this, options);
         this.bwcModel = app.data.createBean('bwc');
     },
-    
+
     /**
      * {@inheritDoc}
      *
@@ -92,7 +92,6 @@
             app.router.navigate('#Home', {trigger: true});
             return;
         }
-
         app.view.View.prototype._render.call(this);
         return this;
     },
@@ -129,6 +128,7 @@
             self._rewriteLinksForSidecar(this.contentWindow);
             self._rewriteNewWindowLinks(this.contentWindow);
             self._cloneBodyClasses(this.contentWindow);
+            self._resizeIframe(this.contentWindow);
         });
     },
 
@@ -169,6 +169,15 @@
         var app = window.parent.SUGAR.App;
         app.controller.context.set('module', module);
         app.events.trigger('app:view:change', this.layout, {module: module});
+    },
+
+    /**
+     * Dynamically adjust height of IFRAME, iOS hack, UIUX-1165
+     */
+    _resizeIframe: function(contentWindow) {
+        if (Modernizr.touch) {
+            $('.bwc-frame').css('height', contentWindow.$("#main").height());
+        }
     },
 
     /**
