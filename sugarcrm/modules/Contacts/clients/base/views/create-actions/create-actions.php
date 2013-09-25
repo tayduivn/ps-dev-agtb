@@ -31,10 +31,29 @@ $viewdefs['Contacts']['base']['view']['create-actions'] = array(
             'showOn'    => 'select',
         ),
         array(
-            'name'    => 'save_button',
-            'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'type'    => 'actiondropdown',
+            'name'    => 'main_dropdown',
             'primary' => true,
+            'switch_on_click' => true,
+            'buttons' => array(
+                array(
+                    'type'  => 'rowaction',
+                    'name'  => 'save_button',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'name'   => 'save_view_button',
+                    'label'  => 'LBL_SAVE_AND_VIEW',
+                    'showOn' => 'create',
+                ),
+                array(
+                    'type'   => 'rowaction',
+                    'name'   => 'save_create_button',
+                    'label'  => 'LBL_SAVE_AND_CREATE_ANOTHER',
+                    'showOn' => 'create',
+                ),
+            ),
         ),
         array(
             'name' => 'sidebar_toggle',
