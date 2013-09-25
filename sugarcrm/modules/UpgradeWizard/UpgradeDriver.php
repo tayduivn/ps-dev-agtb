@@ -1450,6 +1450,8 @@ abstract class UpgradeDriver
 
     }
 
+    const VERSION_FILE = 'upgrader_version.json';
+
     /**
      * Get version and build number for this package
      * @return array($version, $build)
@@ -1458,13 +1460,16 @@ abstract class UpgradeDriver
     {
         $version = self::$version;
         $build = self::$build;
-        if(file_exists('upgrader_version.php')) {
-            @include 'upgrader_version.php';
-            if(!empty($upgrader_version)) {
-                $version = $upgrader_version;
+        if(file_exists(self::VERSION_FILE)) {
+            $data = json_decode(file_get_contents(self::VERSION_FILE), true);
+            if(empty($data)) {
+                return array($version, $build);
             }
-            if(!empty($sugar_build)) {
-                $build = $sugar_build;
+            if(!empty($data['upgrader_version'])) {
+                $version = $data['upgrader_version'];
+            }
+            if(!empty($data['sugar_build'])) {
+                $build = $data['sugar_build'];
             }
         }
         return array($version, $build);
