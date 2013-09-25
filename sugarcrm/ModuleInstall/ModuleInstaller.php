@@ -2451,7 +2451,7 @@ private function dir_file_count($path){
             'loadCss' => false,
             'themeName' => 'default',
             'clientID' => 'sugar',
-            'timeout' => isset($sugar_config['api']['timeout']) ? $sugar_config['api']['timeout'] : 30,
+            'serverTimeout' => isset($sugar_config['api']['timeout']) ? $sugar_config['api']['timeout'] : 180,
             'metadataTypes' => array(
                 "currencies",
                 "full_module_list",
