@@ -47,6 +47,7 @@ class SidecarView extends SugarView
         }
         $this->ss->assign("configFile", $this->configFile);
         $config = ModuleInstaller::getBaseConfig();
+        $this->ss->assign('configHash', md5(serialize($config)));
 
         require_once("jssource/minify_utils.php");
         $minifyUtils = new SugarMinifyUtils();
