@@ -358,7 +358,9 @@ class SugarFieldTeamset extends SugarFieldBase {
 		if(empty($displayParams['formName'])){
 			$displayParams['formName'] = 'search_form';
 		}
-    	$this->view->displayParams = $displayParams;
+		if (!empty($this->view) && !empty($displayParams)) {
+			$this->view->displayParams = $displayParams;
+		}
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
     	$this->ss->assign('renderView', 'renderSearchView');
 		return $this->fetch($this->findTemplate('Teamset'));
