@@ -43,16 +43,16 @@ ensureCache($minifyUtils, $rootDir);
         <meta http-equiv="X-UA-Compatible" content="IE=9, IE=10">
         <meta name="viewport" content="initial-scale=1.0">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
+        <!-- CSS -->
+        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+        <script language="javascript" src="../include/javascript/modernizr.js"></script>
+
         <? if(inDeveloperMode()): ?>
             <script type="text/javascript" src="../sidecar/minified/sidecar.js"></script>
         <? else: ?>
             <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
         <? endif; ?>
-
-        <!-- CSS -->
-        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
 
         <!-- App Scripts -->
         <script language="javascript" src="../include/javascript/modernizr.js"></script>
@@ -63,7 +63,6 @@ ensureCache($minifyUtils, $rootDir);
         <script language="javascript" src="../include/javascript/sugar7/hacks.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/alert.js"></script>
         <script language="javascript" src="../include/javascript/sugar7/hbs-helpers.js"></script>
-
 
         <!-- Portal specific JS -->
         <script src='portal.js'></script>
