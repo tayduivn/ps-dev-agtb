@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 
 /*
  * By installing or using this file, you are confirming on behalf of the entity
@@ -14,43 +15,43 @@
  */
 
 $viewdefs['base']['layout']['themeroller'] = array(
-    'type' => 'simple',
-    'components' =>
-    array(
+    'components' => array(
         array(
-            'layout' =>
-            array(
-                'type' => 'fluid',
-                'components' =>
-                array(
+            'layout' => array(
+                'components' => array(
                     array(
-                        'layout' =>
-                        array(
-                            'type' => 'simple',
-                            'span' => 7,
-                            'components' =>
-                            array(
-                                array(
-                                    'view' => 'themeroller',
-                                ),
+                        'layout' => array(
+                            'components' => array(
+                                    array(
+                                        'view' => 'themeroller',
+                                        'primary' => true,
+                                    ),
                             ),
+                            'type' => 'simple',
+                            'name' => 'main-pane',
+                            'span' => 8,
                         ),
                     ),
                     array(
-                        'layout' =>
-                        array(
-                            'type' => 'simple',
-                            'span' => 5,
-                            'components' =>
-                            array(
+                        'layout' => array(
+                            'components' => array(
                                 array(
                                     'view' => 'themerollerpreview',
                                 ),
                             ),
+                            'type' => 'simple',
+                            'name' => 'side-pane',
+                            'span' => 4,
                         ),
                     ),
                 ),
+                'type' => 'default',
+                'name' => 'sidebar',
+                'span' => 12,
             ),
         ),
     ),
+    'type' => 'simple',
+    'name' => 'base',
+    'span' => 12,
 );
