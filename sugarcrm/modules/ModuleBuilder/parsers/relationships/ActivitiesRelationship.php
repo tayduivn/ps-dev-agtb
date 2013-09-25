@@ -93,17 +93,9 @@ class ActivitiesRelationship extends OneToManyRelationship
                 }
             }
 
-            $rhs_display_label = '';
-            if (!empty($this->rhs_label)) {
-                $rhs_display_label .= $this->rhs_label . ':';
-            }
-            $rhs_display_label .= translate($this->rhs_module);
+            $rhs_display_label = translate($this->rhs_module);
 
-            $lhs_display_label = '';
-            if (!empty($this->rhs_label)) {
-                $lhs_display_label .= $this->rhs_label . ':';
-            }
-            $lhs_display_label .= translate($this->lhs_module);
+            $lhs_display_label = translate($this->lhs_module);
 
             $labelDefinitions[] = array (
                 'module' => $this->lhs_module ,
