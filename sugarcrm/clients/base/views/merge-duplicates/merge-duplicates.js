@@ -84,7 +84,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['image', 'file', 'currency', 'email', 'team_list', 'teamset', 'link', 'id'],
+    fieldTypesBlacklist: ['image', 'currency', 'email', 'team_list', 'teamset', 'link', 'id'],
 
     /**
      * Attribute combos allowed to merge.
@@ -835,7 +835,9 @@
 
     /**
      * Copy value from selected field to primary record.
-     * Also copy additional fields.
+     *
+     * Setups new value current field and additional fields.
+     * Also triggers `duplicate:field` event on the primary model.
      *
      * @param {String} fieldName Name of field to copy.
      * @param {Data.Bean} model Model to copy from.
@@ -843,10 +845,18 @@
     copy: function(fieldName, model) {
         this._setRelatedFields(fieldName, model);
         this.primaryRecord.set(fieldName, model.get(fieldName));
+
+        this.primaryRecord.trigger(
+            'duplicate:field:' + fieldName,
+            model !== this.primaryRecord ? model : null
+        );
     },
 
     /**
      * Revert value of field to latest sync state.
+     *
+     * Revert original values.
+     * Also triggers `duplicate:field` event on the primary model.
      *
      * @param {String} fieldName Name of field to revert.
      */
@@ -856,8 +866,12 @@
         this._setRelatedFields(fieldName, this.primaryRecord, true);
         this.primaryRecord.set(
             fieldName,
-            syncedAttributes[fieldName] || this.primaryRecord.get(fieldName)
+            !_.isUndefined(syncedAttributes[fieldName]) ?
+                syncedAttributes[fieldName] :
+                this.primaryRecord.get(fieldName)
         );
+
+        this.primaryRecord.trigger('duplicate:field:' + fieldName, null);
     },
 
     /**
@@ -890,7 +904,9 @@
 
             this.primaryRecord.set(
                 defs[relatedField],
-                syncedAttributes[defs[relatedField]] || model.get(defs[relatedField])
+                !_.isUndefined(syncedAttributes[defs[relatedField]]) ?
+                    syncedAttributes[defs[relatedField]] :
+                    model.get(defs[relatedField])
             );
         }, this);
     },
