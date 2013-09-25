@@ -1226,7 +1226,8 @@ tmpMetadata = {
                 ]
             }
         }
-    }
+    },
+    'logo_url': 'company_logo.jpg'
 };
 
 if (_.has(fixtures, 'metadata')) {

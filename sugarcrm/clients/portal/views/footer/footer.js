@@ -51,9 +51,7 @@
         this.isAuthenticated = app.api.isAuthenticated();
         this.currentLang = app.lang.getLanguage() || "en_us";
 
-        if (app.config && app.config.logoURL) {
-            this.logoURL=app.config.logoURL;
-        }
+        this.logoUrl = app.metadata.getLogoUrl();
         app.view.View.prototype._renderHtml.call(this);
     },
     systemTour: function() {

@@ -70,9 +70,7 @@
      * @private
      */
     _render: function() {
-        if (app.config && app.config.logoURL) {
-            this.logoURL = app.config.logoURL;
-        }
+        this.logoUrl = app.metadata.getLogoUrl();
         app.view.View.prototype._render.call(this);
         this.refreshAddtionalComponents();
         /**

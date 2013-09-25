@@ -45,10 +45,26 @@ class MetadataPortalApi extends MetadataApi {
     }
 
     /**
-     * Override to allow only Portal modules
+     * Override to replace logo url by portal logo url
+     *
      * @param ServiceBase $api
      * @param array $args
-     * @return array|void
+     * @return array
+     */
+    public function getPublicMetadata(ServiceBase $api, array $args)
+    {
+        $meta = parent::getPublicMetadata($api, $args);
+        $meta['logo_url'] = $this->loadPortalLogoUrl();
+        return $meta;
+    }
+
+    /**
+     * Override to allow only Portal modules
+     * Override to replace logo url by portal logo url
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
      */
     public function getAllMetadata(ServiceBase $api, array $args)
     {
@@ -61,7 +77,9 @@ class MetadataPortalApi extends MetadataApi {
             }
         }
         $args['module_filter'] = implode(',', $portalModuleList);
-        return parent::getAllMetadata($api, $args);
+        $meta = parent::getAllMetadata($api, $args);
+        $meta['logo_url'] = $this->loadPortalLogoUrl();
+        return $meta;
     }
 
     /**
@@ -88,6 +106,7 @@ class MetadataPortalApi extends MetadataApi {
     protected function loadMetadata(array $args)
     {
         $data = parent::loadMetadata($args);
+
         if (!empty($data['modules'])) {
             foreach ($data['modules'] as $modKey => $modMeta) {
                 if (!empty($modMeta['isBwcEnabled'])) {
@@ -113,4 +132,19 @@ class MetadataPortalApi extends MetadataApi {
         return $public;
     }
 
+    /**
+     * Retrieves the portal logo if defined, otherwise the company logo url
+     *
+     * @return string url of the portal logo
+     */
+    protected function loadPortalLogoUrl() {
+        global $sugar_config;
+        $config = $this->getConfigs();
+        if (!empty($config['logoURL'])) {
+            return $config['logoURL'];
+        } else {
+            $themeObject = SugarThemeRegistry::current();
+            return $sugar_config['site_url'] . '/' . $themeObject->getImageURL('company_logo.png');
+        }
+    }
 }

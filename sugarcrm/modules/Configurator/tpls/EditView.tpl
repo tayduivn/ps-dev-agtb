@@ -30,6 +30,14 @@
 // $Id: EditView.tpl 54689 2010-02-21 02:43:22Z jmertic $
 
 *}
+{literal}
+<style>
+    #company_logo_image {
+        height: 24px;
+        width: 180px;
+    }
+</style>
+{/literal}
 <form name="ConfigureSettings" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (add_checks(document.ConfigureSettings) && check_form('ConfigureSettings'));">
 <input type='hidden' name='action' value='SaveConfig'/>
 <input type='hidden' name='module' value='Configurator'/>
@@ -132,7 +140,7 @@
         {$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}
         </td>
         <td width='35%' >
-            <img id="company_logo_image" src='{$company_logo}' alt=$mod_strings.LBL_LOGO>
+            <img id="company_logo_image" src='{$company_logo}' alt="{$mod_strings.LBL_LOGO}" onload="init_logo()">
         </td>
         //BEGIN SUGARCRM flav!=com ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
@@ -150,7 +158,7 @@
         </td>
         <td  width='35%'>
             <div id="container_upload"></div>
-            <input type='text' id='company_logo' name='company_logo' style="display:none">
+            <input type='text' id='company_logo' name='company_logo' style="display:none;">
         </td>
     </tr>
     <tr>
