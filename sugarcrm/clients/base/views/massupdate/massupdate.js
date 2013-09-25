@@ -236,6 +236,13 @@
                 chunks: null,
 
                 /**
+                 * Discarded records due to the permission.
+                 *
+                 * @property
+                 */
+                discards: [],
+
+                /**
                  * Current trial attempt number.
                  *
                  * @property
@@ -347,7 +354,7 @@
                         }
                     },
                         method = options.method || this.defaultMethod,
-                        data = this.getAttributes(options.attributes),
+                        data = this.getAttributes(options.attributes, method),
                         url = app.api.buildURL(baseModule, this.module, data, options.params);
                     app.api.call(method, url, data, callbacks);
                 },
@@ -357,14 +364,37 @@
                  * @param {Object} attributes Collection attributes.
                  * @return {Object} MassUpdate data format.
                  */
-                getAttributes: function(attributes) {
+                getAttributes: function(attributes, action) {
                     return {
                         massupdate_params: _.extend({
-                            'uid': (this.entire) ? null : _.pluck(this.chunks, 'id'),
+                            'uid': (this.entire) ? null : this.getAvailableList(action),
                             'entire': this.entire,
                             'filter': (this.entire) ? this.filterDef : null
                         }, attributes)
                     };
+                },
+
+                /**
+                 * Check the access role for entire selection.
+                 * Return only available model ids and store the discarded ids.
+                 *
+                 * @param action
+                 * @return {Array} List of available model ids.
+                 */
+                getAvailableList: function(action) {
+                    var action2permission = {
+                            'update': 'edit',
+                            'delete': 'delete'
+                        },
+                        list = [];
+                    _.each(this.chunks, function(model) {
+                        if (app.acl.hasAccessToModel(action2permission[action], model) !== false) {
+                            list.push(model.id);
+                        } else {
+                            this.discards.push(model.id);
+                        }
+                    }, this);
+                    return list;
                 }
             }) : null;
         progressView.initCollection(massCollection);
@@ -428,7 +458,6 @@
                     if(response.status == 'done') {
                         //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                         //TODO: Need trigger for fetching new record list
-                        app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
                         self.layout.context.reloadData({showAlerts: false});
                     } else if (response.status == 'queued') {
                         app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
@@ -571,7 +600,6 @@
                             success: function(data, response) {
                                 self.hide();
                                 if(response.status == 'done') {
-                                    app.alert.show('massupdate_success_notice', {level: 'success', messages: successMessages[response.status], autoClose: true});
                                     //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                     //TODO: Need trigger for fetching new record list
                                     self.collection.fetch({
