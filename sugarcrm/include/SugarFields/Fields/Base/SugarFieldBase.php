@@ -667,7 +667,11 @@ class SugarFieldBase {
         if (isset($vardef['default'])) {
             $vardef['default'] = $this->normalizeDefaultValue($vardef['default']);
         }
-        
+
+        if (isset($vardef['default_value'])) {
+            $vardef['default_value'] = $this->normalizeDefaultValue($vardef['default_value']);
+        }
+
         return $vardef;
     }
 

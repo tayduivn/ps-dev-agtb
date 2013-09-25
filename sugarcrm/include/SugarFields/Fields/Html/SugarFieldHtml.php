@@ -37,5 +37,14 @@ class SugarFieldHtml extends SugarFieldBase {
             return from_html($vardef['value']);
         }
     }
+
+    /**
+     * Normalizes a default value
+     *
+     * @param mixed $value The value to normalize
+     * @return string
+     */
+    public function normalizeDefaultValue($value) {
+        return htmlspecialchars_decode($value, ENT_QUOTES);
+    }
 }
-?>

@@ -30,6 +30,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class TemplateHTML extends TemplateField{
     var $data_type = 'html';
     var $type = 'html';
+    // Size and Len need to be empty to prevent validation errors on the client
+    var $size = '';
+    var $len = '';
     
     function save($df){
 		$this->ext3 = 'text';
