@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $module_name = '<module_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['base']['view']['record'] = array(
     'panels' => array(
         array(
@@ -149,7 +150,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'name' => 'description',
                     'span' => 12,
                 ),
-                $module_name . '_type', 
+                $_module_name . '_type', 
                 'industry',
                 'annual_revenue',
                 'ticker_symbol',

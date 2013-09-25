@@ -146,7 +146,8 @@ class ParserFactory
                     $client = MB_WIRELESS;
                 }
             //END SUGARCRM flav=pro ONLY
-                if (isModuleBWC($moduleName)) {
+                // When it comes to search, mobile is like BWC
+                if (isModuleBWC($moduleName) || $client == MB_WIRELESS) {
                     require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
                     return new SearchViewMetaDataParser($view, $moduleName, $packageName, $client) ;
                 }

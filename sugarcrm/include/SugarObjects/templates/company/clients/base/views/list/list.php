@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $module_name = '<module_name>';
-$OBJECT_NAME = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['base']['view']['list'] = array(
     'panels' => array(
         array(
@@ -56,7 +56,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'width' => '10',
                 ),
                 array(
-                    'name' => $module_name . '_type',
+                    'name' => $_module_name . '_type',
                     'label' => 'LBL_TYPE',
                     'enabled' => true,
                     'width' => '10',

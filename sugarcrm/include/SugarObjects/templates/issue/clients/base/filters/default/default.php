@@ -27,11 +27,11 @@
  */
 
 $module_name = '<module_name>';
-$_object_name = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['base']['filter']['default'] = array(
     'default_filter' => 'all_records',
     'fields' => array(
-        $_object_name. '_number' => array(), 
+        $_module_name. '_number' => array(), 
         'name' => array(), 
         'resolution' => array(),
         'status' => array(),
