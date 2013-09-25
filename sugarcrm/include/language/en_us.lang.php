@@ -3236,6 +3236,7 @@ $app_strings = array (
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
+    'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
 
     'LBL_DASHLET_NEWS_NAME' => 'News',
     'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',

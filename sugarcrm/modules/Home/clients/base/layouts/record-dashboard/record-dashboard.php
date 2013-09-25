@@ -36,8 +36,7 @@ $viewdefs['Home']['base']['layout']['record-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_MODULE_NAME',
-                                'module' => 'Contacts',
+                                'label' => 'TPL_DASHLET_MY_MODULE',
                                 'display_columns' =>
                                 array(
                                     'full_name',

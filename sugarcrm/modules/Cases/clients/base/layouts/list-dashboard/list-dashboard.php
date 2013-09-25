@@ -20,7 +20,7 @@ $viewdefs['Cases']['base']['layout']['list-dashboard'] = array(
                         array(
                             'view' => array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_MODULE_NAME',
+                                'label' => 'TPL_DASHLET_MY_MODULE',
                                 'display_columns' => array(
                                     'bug_number',
                                     'name',
