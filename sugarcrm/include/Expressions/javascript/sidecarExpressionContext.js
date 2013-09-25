@@ -612,11 +612,17 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function () {
             onAttach: function() {
                 this.on("init", function(){
                     this.deps = [];
-                    var slContext = new SUGAR.expressions.SidecarExpressionContext(this);
-                    _.each(this.options.meta.dependencies, function(dep) {
+                    var slContext = new SUGAR.expressions.SidecarExpressionContext(this),
+                        meta = _.extend({}, this.meta, this.options.meta);
+
+                    _.each(meta.dependencies, function(dep) {
                         var newDep = SUGAR.forms.Dependency.fromMeta(dep, slContext);
-                        if (newDep)
+                        if (newDep) {
                             this.deps.push(newDep);
+                            if (this.context.isCreate()) {
+                                SUGAR.forms.Trigger.fire.apply(newDep.trigger);
+                            }
+                        }
                     }, this);
                 });
            }
