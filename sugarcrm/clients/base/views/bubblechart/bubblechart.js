@@ -50,48 +50,50 @@
         };
 
         this.tooltiptemplate = app.template.getView(this.name + '.tooltiptemplate');
+    },
 
+    initDashlet: function(view) {
         this.filterAssigned = this.settings.get('filter_assigned');
 
-        this.setDateRange();
+       this.setDateRange();
 
-        this.chart = nv.models.bubbleChart()
-            .x(function (d) {
-                return d3.time.format('%Y-%m-%d').parse(d.x);
-            })
-            .y(function (d) {
-                return d.y;
-            })
-            .tooltipContent(function (key, x, y, e, graph) {
-                e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
-                e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);
-                return self.tooltiptemplate(e.point).replace(/(\r\n|\n|\r)/gm,"");
-            })
-            .showTitle(false)
-            .tooltips(true)
-            .showLegend(true)
-            .bubbleClick(function (e) {
-                self.chart.dispatch.tooltipHide(e);
-                app.router.navigate(app.router.buildRoute('RevenueLineItems', e.point.id), {trigger: true});
-            })
-            .colorData('class', {step:2})
-            .groupBy(function (d) {
-                return (self.filterAssigned === 'my') ? d.sales_stage_short : d.assigned_user_name;
-            })
-            .filterBy(function (d) {
-                return d.probability;
-            });
+       this.chart = nv.models.bubbleChart()
+           .x(function (d) {
+               return d3.time.format('%Y-%m-%d').parse(d.x);
+           })
+           .y(function (d) {
+               return d.y;
+           })
+           .tooltipContent(function (key, x, y, e, graph) {
+               e.point.close_date = d3.time.format('%x')(d3.time.format('%Y-%m-%d').parse(e.point.x));
+               e.point.amount = e.point.currency_symbol + d3.format(',.2d')(e.point.base_amount);
+               return self.tooltiptemplate(e.point).replace(/(\r\n|\n|\r)/gm,"");
+           })
+           .showTitle(false)
+           .tooltips(true)
+           .showLegend(true)
+           .bubbleClick(function (e) {
+               self.chart.dispatch.tooltipHide(e);
+               app.router.navigate(app.router.buildRoute('RevenueLineItems', e.point.id), {trigger: true});
+           })
+           .colorData('class', {step:2})
+           .groupBy(function (d) {
+               return (self.filterAssigned === 'my') ? d.sales_stage_short : d.assigned_user_name;
+           })
+           .filterBy(function (d) {
+               return d.probability;
+           });
 
-        this.on('data-changed', function () {
-            this.updateChart();
-        }, this);
-        this.settings.on('change:filter_duration', this.changeFilter, this);
+       this.on('data-changed', function () {
+           this.updateChart();
+       }, this);
+       this.settings.on('change:filter_duration', this.changeFilter, this);
 
-        app.events.on('app:toggle:sidebar', function(state) {
-            if(state == 'open') {
-                this.chart.render();
-            }
-        }, this);
+       app.events.on('app:toggle:sidebar', function(state) {
+           if(state == 'open') {
+               this.chart.render();
+           }
+       }, this);
     },
 
     /**

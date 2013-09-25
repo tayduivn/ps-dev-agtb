@@ -45,7 +45,9 @@
         // check to make sure that forecast is configured
         this.forecastSetup = app.metadata.getModule('Forecasts', 'config').is_setup;
         this.forecastAdmin = (_.isUndefined(app.user.getAcls()['Forecasts'].admin));
+    },
 
+    initDashlet: function(view) {
         // set the default button state
         this.settings.set({'display_type': 'self'}, {silent: true});
 
@@ -56,7 +58,7 @@
                     this.settings.set({'selectedTimePeriod': o.id}, {silent: true});
                     this.layout.loadData();
                 }, this),
-                complete: options ? options.complete : null
+                complete: view.options ? view.options.complete : null
             });
         }
 
