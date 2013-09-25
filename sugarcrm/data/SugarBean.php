@@ -1092,9 +1092,10 @@ class SugarBean
             if (isset($dictionary[$key]['relationships']))
             {
                 $RelationshipDefs = $dictionary[$key]['relationships'];
-                foreach ($RelationshipDefs as $rel_name)
+                foreach ($RelationshipDefs as $rel_name => $rel_data)
                 {
-                    Relationship::delete($rel_name,$db);
+                    $relationship = BeanFactory::getBean('Relationships');
+                    $relationship->delete($rel_name,$db);
                 }
             }
         }
