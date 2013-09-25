@@ -80,6 +80,7 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
     /**
      * @group 53218
+     * @large
      */
     public function testWorkFlowConditionModules()
     {
@@ -89,9 +90,10 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->assertContains('Users (products_users_1)', $relations);
         $this->assertContains('products_users_1', $relations);
     }
-	
+
     /**
      * @group 53218
+     * @large
      */
     public function testDuplicateRelations()
     {
