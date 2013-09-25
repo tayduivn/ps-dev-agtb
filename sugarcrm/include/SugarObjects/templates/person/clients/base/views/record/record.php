@@ -92,7 +92,9 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 ),
                 array(
                     'name' => 'full_name',
-                    'type' => 'fieldset-with-labels',
+                    'label' => 'LBL_NAME',
+                    'dismiss_label' => true,
+                    'type' => 'fullname',
                     'fields' => array('salutation', 'first_name', 'last_name'),
                 ),
                 array(
