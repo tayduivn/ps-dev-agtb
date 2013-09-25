@@ -231,6 +231,11 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
             linkValues = this.view.model.get(link) || {},
             currId;
 
+        //Do not attempt to load related values of a new record
+        if (!this.view.model.get("id")) {
+            return "";
+        }
+
         if (ftype == "related"){
             return this._handleRelateExpression(link, field);
         }
