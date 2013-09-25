@@ -52,7 +52,7 @@ class SugarFieldMultienum extends SugarFieldEnum
                 foreach ($params[$index] as $k => $v) {
                     // If there is a listSource entry for this field but a selected 
                     // value does not exist in the source list for this field, unset it
-                    if (!empty($listSource) && !isset($listSource[$v])) {
+                    if ($v == '' || (!empty($listSource) && !isset($listSource[$v]))) {
                         unset($params[$index][$k]);
                     }
                 }
@@ -202,23 +202,6 @@ class SugarFieldMultienum extends SugarFieldEnum
      * @return array
      */
     protected function getNormalizedFieldValues($bean, $fieldName) {
-        // Default return value
-        $return = array();
-        
-        // if we have data in this field, clean it up
-        if(!empty($bean->$fieldName)) {
-            // Fix the issue of empty values in list at the front or end of the 
-            // list of selected options for this field
-            $values = explode('^,^', trim(str_replace('^^', '^ ^', $bean->$fieldName), '^'));
-            foreach ($values as $value) {
-                if ($value == ' ') {
-                    $value = '';
-                }
-                
-                $return[] = $value;
-            }
-        }
-        
-        return $return;
+        return empty($bean->$fieldName) ? array() : unencodeMultienum($bean->$fieldName);
     }
 }

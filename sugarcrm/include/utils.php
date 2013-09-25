@@ -4783,6 +4783,10 @@ function unencodeMultienum($string)
        return $string;
     }
     if (substr($string, 0 ,1) == "^" && substr($string, -1) == "^") {
+          // Remove empty values from beginning and end of the string
+          $string = preg_replace('/^(\^\^,\^)|(\^,\^\^)$/', '^', $string);
+
+          // Get the inner part of the string without leading|trailing ^ chars
           $string = substr(substr($string, 1), 0, strlen($string) -2);
     }
 
