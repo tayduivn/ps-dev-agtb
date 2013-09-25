@@ -632,7 +632,9 @@ class SugarFieldTeamset extends SugarFieldBase {
             $teamList = array();
         }
         foreach ( $teamList as $idx => $team ) {
-            if ($team['id']==$bean->team_id) {
+            // Check team name as well for cases in which team_name is selected
+            // but team_id is not
+            if ($team['id'] == $bean->team_id || $team['name'] == $bean->team_name) {
                 $teamList[$idx]['primary'] = true;
             } else {
                 $teamList[$idx]['primary'] = false;
