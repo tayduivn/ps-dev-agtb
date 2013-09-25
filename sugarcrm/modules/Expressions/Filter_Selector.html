@@ -90,7 +90,7 @@ function return_filter_values(){
 	} else {
 		window.opener.document.getElementById(return_prefix + '_rhs_value').value = get_value(parent_type + '__field_value');
 		var field_value_inner_text = get_inner_text(parent_type + '__field_value');
-		selected_text += ' ' + get_inner_text(parent_type + '__operator') + ' ';
+		selected_text += ' ' + get_inner_text(parent_type + '__operator') + ' ' + field_value_inner_text + ' ';
 	}
 	
 	var windowOpenerOperator = window.opener.document.getElementById(return_prefix + '_operator');
