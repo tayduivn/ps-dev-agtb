@@ -32,6 +32,7 @@
  * - {String} order_by Sort records by field.
  * - {String} record_date Date field to be used to print record date, defaults
  *   to 'date_entered' if none supplied.
+ * - {Array} row_actions Row actions to be applied to each record.
  *
  * Example:
  * <pre><code>
@@ -105,6 +106,7 @@
      */
     _initEvents: function() {
         this.settings.on('change:filter', this.loadData, this);
+        this.context.on('tabbed-dashlet:unlink-record:fire', this.unlinkRecord, this);
 
         return this;
     },
@@ -397,6 +399,34 @@
     },
 
     /**
+     * Unlink the selected record from the list view collection.
+     *
+     * @param {Data.Bean} model Selected model.
+     */
+    unlinkRecord: function(model) {
+        var self = this;
+        app.alert.show('unlink_confirmation', {
+            level: 'confirmation',
+            // FIXME: replace label by new one
+            messages: app.lang.get('NTC_UNLINK_CONFIRMATION'),
+            onConfirm: function() {
+                model.destroy({
+                    showAlerts: true,
+                    relate: true,
+                    success: function() {
+                        if (self.disposed) {
+                            return;
+                        }
+
+                        self.collection.remove(model).trigger('reset');
+                        self.render();
+                    }
+                });
+            }
+        });
+    },
+
+    /**
      * {@inheritDoc}
      *
      * New model related properties are injected into each model:
@@ -422,6 +452,8 @@
         this.toolbarHtml = this._toolbarTpl(this);
         this.tabsHtml = this._tabsTpl(this);
         this.recordsHtml = recordsTpl(this);
+
+        this.row_actions = tab.row_actions;
 
         this._super('_renderHtml');
     },

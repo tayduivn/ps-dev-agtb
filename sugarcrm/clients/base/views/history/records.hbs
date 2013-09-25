@@ -27,6 +27,13 @@
                         &#44;&nbsp;
                         <date class="date">{{timeago attributes.record_date "TPL_TABBED_DASHLET_TIME_RELATIVE"}}</date>
                      </span>
+                    {{#if ../../row_actions}}
+                        <div class="actions pull-right">
+                            {{#each ../../row_actions}}
+                                {{field ../../../this model=../this}}
+                            {{/each}}
+                        </div>
+                    {{/if}}
                 </li>
             {{/each}}
             {{#notEq ../collection.next_offset "-1"}}

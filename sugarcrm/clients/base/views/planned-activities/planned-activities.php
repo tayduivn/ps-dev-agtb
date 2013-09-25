@@ -140,6 +140,16 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'module' => 'Meetings',
             'order_by' => 'date_start:asc',
             'record_date' => 'date_start',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
             'include_child_items' => true,
             'invitation_actions' => array(
                 'name' => 'accept_status_users',
@@ -159,6 +169,16 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'module' => 'Calls',
             'order_by' => 'date_start:asc',
             'record_date' => 'date_start',
+            'row_actions' => array(
+                array(
+                    'type' => 'rowaction',
+                    'icon' => 'icon-unlink',
+                    'css_class' => 'btn',
+                    'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'tooltip' => 'LBL_UNLINK_BUTTON',
+                    'acl_action' => 'edit',
+                ),
+            ),
             'include_child_items' => true,
             'invitation_actions' => array(
                 'name' => 'accept_status_users',

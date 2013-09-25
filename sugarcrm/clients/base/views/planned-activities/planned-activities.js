@@ -41,6 +41,8 @@
             'click [data-action=date-switcher]': 'dateSwitcher'
         });
 
+        this._super('_initEvents');
+
         return this;
     },
 
