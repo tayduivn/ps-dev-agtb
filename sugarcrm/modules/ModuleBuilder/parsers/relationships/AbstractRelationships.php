@@ -51,6 +51,7 @@ class AbstractRelationships
         'SidecarSubpanelDefinitions' => 'sidecarsubpanelbaselayout',
         'Vardefs' => 'vardefs',
         'FieldsToLayouts' => 'layoutfields',
+        'ClientFiles' => 'clientfiles',
         //BEGIN SUGARCRM flav=pro ONLY
         'WirelessSubpanelDefinitions' => 'wireless_subpanels',
         'SidecarMobileSubpanelDefinitions' => 'sidecarsubpanelmobilelayout',
@@ -597,6 +598,34 @@ class AbstractRelationships
 
         return $installDefs;
     }
+
+    /*
+     * Translate a set of client file definitions into files for the Module Loader
+     * @param string $basepath              Basepath location for this module
+     * @param $installDefPrefix             Pathname prefix for the installdefs, for example for ModuleBuilder use "<basepath>/SugarModules"
+     * @param string $relationshipName      Name of this relationship (for uniqueness)
+     * @param array $relationshipMetaData   Set of metadata definitions in the form $relationshipMetaData[$relationshipName]
+     * @return array $installDefs           Set of new installDefs
+     */
+    protected function saveClientFiles ($basepath, $installDefPrefix, $relationshipName, $moduleClientFileList)
+    {
+        $installDefs = array();
+
+        foreach ($moduleClientFileList as $moduleName => $clientFileList) {
+            mkdir_recursive("{$basepath}/{$moduleName}/clients");
+
+            foreach ($clientFileList as $fileName => $contents) {
+                $from = "{$basepath}/{$moduleName}/".$fileName;
+                $to = "modules/{$moduleName}/".$fileName;
+                $installDefs[$moduleName][$to] = $from;
+                SugarAutoloader::ensureDir(dirname($from));
+                sugar_file_put_contents($from, $contents);
+            }
+        }
+        
+        return $installDefs;
+    }
+
 
     public function saveSidecarMobileSubpanelDefinitions($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions, $client='mobile')
     {

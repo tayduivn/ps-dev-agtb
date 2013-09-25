@@ -107,6 +107,7 @@ class ModuleInstaller{
 			'install_connectors',
 			'install_layoutfields',
 			'install_relationships',
+            'install_client_files',
             'enable_manifest_logichooks',
 			'post_execute',
 			'reset_opcodes',
@@ -1366,6 +1367,37 @@ class ModuleInstaller{
                         unlink($file);
                     }
                 }
+                
+                // Need to remove stale dashlets for the Activities relationship
+                if (isset($rel_data['relationships'][$rel_name]) && file_exists('modules/'.$mod)) {
+                    // Not our relationship
+                    $ourRel = $rel_data['relationships'][$rel_name];
+                    
+                    $globPath = 'modules/'.$mod.'/clients/base/views/*';
+                    foreach (glob($globPath, GLOB_NOSORT | GLOB_ONLYDIR) as $viewPath) {
+                        $platform = 'base';
+                        
+                        $view = basename($viewPath);
+                        if ($view != 'history' && $view != 'attachments' && $view != 'planned-activities') {
+                            continue;
+                        }
+                        $viewMetaFile = $viewPath."/".$view.".php";
+                        if (!file_exists($viewMetaFile)) {
+                            continue;
+                        }
+                        include $viewMetaFile;
+                        if (! isset($viewdefs[$ourRel['lhs_module']][$platform]['view'][$view]['tabs'][0]['link'])) {
+                            continue;
+                        }
+                        
+                        foreach ($viewdefs[$ourRel['lhs_module']][$platform]['view'][$view]['tabs'] as $viewTab) {
+                            if ($viewTab['link'] == $rel_name) {
+                                rmdir_recursive(dirname($viewPath));
+                            }
+                        }
+                        
+                    }
+                }
 			}
 
 			foreach (array($filename , "custom" . $filename, $rel_name ."_". $mod. ".php") as $fn) {
@@ -2568,6 +2600,29 @@ private function dir_file_count($path){
         $_REQUEST['upgradeWizard'] = $uw;
     }
 
+
+    public function install_client_files()
+    {
+        if (!is_array($this->installdefs['clientfiles'])) {
+            return;
+        }
+
+        $copyList = array();
+        foreach ($this->installdefs['clientfiles'] as $outer) {
+            foreach ($outer as $to => $from) {
+                $copyList[$to] = $from;
+            }
+        }
+
+        foreach ($copyList as $to => $from) {
+            $contents = file_get_contents($from);
+            SugarAutoloader::ensureDir(dirname($to));
+            SugarAutoloader::put($to, $contents, false);
+        }
+
+        SugarAutoloader::saveMap();
+    }
+
 }
 
     function UpdateSystemTabs($action, $installed_modules){
@@ -2607,4 +2662,5 @@ private function dir_file_count($path){
 		    }
 		    //END SUGARCRM flav=pro ONLY
     }
+
 }

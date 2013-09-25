@@ -76,7 +76,7 @@
     _createInvitationsCollection: function(tab) {
         return app.data.createBeanCollection(tab.module, null, {
             link: {
-                name: tab.link,
+                name: tab.module.toLowerCase(),
                 bean: app.data.createBean('Users', {
                     id: app.user.get('id')
                 })
