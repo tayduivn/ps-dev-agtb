@@ -82,9 +82,7 @@
           }
         }
       }
-      &.open {
-        border-left-color: #404040;
-        border-right-color: transparent;
+      div.btn-group.open {
         /*Menu position and menu carets*/
         .dropdown-menu {
           top: 42px;
@@ -191,11 +189,11 @@
         div.btn-group {
           border-left: none;
           border-right: none;
-        }
-        &.open {
-          .dropdown-menu {
-            left: 0;
-            right: auto;
+          &.open {
+            .dropdown-menu {
+              left: 0;
+              right: auto;
+            }
           }
         }
       }
@@ -205,6 +203,12 @@
           .dropdown-toggle {
             padding: 5px 2px;
             margin-right: 0;
+          }
+          &.open {
+            .dropdown-menu {
+              left: 0;
+              right: auto;
+            }
           }
         }
         .cube {
