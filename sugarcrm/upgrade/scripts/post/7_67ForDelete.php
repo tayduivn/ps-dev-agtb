@@ -41,6 +41,8 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             // remove old popup picker files from RLI
             'modules/RevenueLineItems/Popup_picker.html',
             'modules/RevenueLineItems/Popup_picker.php',
+            // remove phpunit from vendor
+            'vendor/phpunit',
         );
         $this->fileToDelete($files);
     }
