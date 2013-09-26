@@ -138,8 +138,12 @@
                     // directly (see next func call)
                     { silent: true }
                 );
-                // now format the new value directly on the field
-                this.setCurrencyValue(model.get(this.name));
+                // now defer changes to the end of the thread to avoid conflicts
+                // with other events (from SugarLogic, etc.)
+                var self = this;
+                _.defer(function() {
+                    self.model.trigger('change:' + self.name, self.model, self.model.get(self.name));
+                });
             }
             this._lastCurrencyId = currencyId;
         }, this);
