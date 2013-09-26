@@ -186,7 +186,7 @@
             <input type='hidden' name='passwordsetting_SystemGeneratedPasswordON' value='0'>
             <input name='passwordsetting_SystemGeneratedPasswordON' id='SystemGeneratedPassword_checkbox'
                    type='checkbox' value='1' {$SystemGeneratedPasswordON}
-                   onclick='enable_syst_generated_pwd(this);toggleDisplay("SystemGeneratedPassword_warning");'>
+                   onclick='toggleDisplay("SystemGeneratedPassword_warning");'>
         </td>
         {if !($config.passwordsetting.SystemGeneratedPasswordON)}
             {assign var='smtp_warning' value='none'}
@@ -197,69 +197,6 @@
         ;>
         <i>{if $SMTP_SERVER_NOT_SET}&nbsp;&nbsp;&nbsp;&nbsp;{$MOD.ERR_SMTP_SERVER_NOT_SET}<br>{/if}
             &nbsp;&nbsp;&nbsp;&nbsp;{$MOD.LBL_EMAIL_ADDRESS_REQUIRED_FOR_FEATURE}</i>
-        </td>
-    </tr>
-    <tr>
-        <td align="left" scope="row" colspan="4">
-            {$MOD.LBL_PASSWORD_SYST_EXPIRATION}
-        </td>
-    </tr>
-    <tr>
-        <td colspan='4'>
-            <table width="100%" id='syst_generated_pwd_table' border="0" cellspacing="1" cellpadding="0">
-                <tr>
-                    {assign var='systexplogin' value=''}
-                    {assign var='systexptime' value=''}
-                    {assign var='systexpnone' value=''}
-                    {if ($config.passwordsetting.systexpiration) == '0' || $config.passwordsetting.systexpiration==''}
-                        {assign var='systexpnone' value='CHECKED'}
-                    {/if}
-                    {if ($config.passwordsetting.systexpiration) == '1'}
-                        {assign var='systexptime' value='CHECKED'}
-                    {/if}
-                    {if ($config.passwordsetting.systexpiration) == '2'}
-                        {assign var='systexplogin' value='CHECKED'}
-                    {/if}
-                    <td width='30%'>
-                        <input type="radio" name="passwordsetting_systexpiration" value='0' {$systexpnone}
-                               onclick="form.passwordsetting_systexpirationtime.value='';form.passwordsetting_systexpirationlogin.value='';">
-                        {$MOD.LBL_UW_NONE}
-                    </td>
-                    <td width='30%'>
-                        <input type="radio" name="passwordsetting_systexpiration" id="required_sys_pwd_exp_time"
-                               value='1' {$systexptime} onclick="form.passwordsetting_systexpirationlogin.value='';">
-                        {$MOD.LBL_PASSWORD_EXP_IN}
-                        {assign var='sdays' value=''}
-                        {assign var='sweeks' value=''}
-                        {assign var='smonths' value=''}
-                        {if ($config.passwordsetting.systexpirationtype ) == '1'}
-                            {assign var='sdays' value='SELECTED'}
-                        {/if}
-                        {if ($config.passwordsetting.systexpirationtype ) == '7'}
-                            {assign var='sweeks' value='SELECTED'}
-                        {/if}
-                        {if ($config.passwordsetting.systexpirationtype ) == '30'}
-                            {assign var='smonths' value='SELECTED'}
-                        {/if}
-                        <input type='text' maxlength="3" and style="width:2em" name='passwordsetting_systexpirationtime'
-                               value='{$config.passwordsetting.systexpirationtime}'>
-                        <SELECT NAME="passwordsetting_systexpirationtype">
-                            <OPTION VALUE='1' {$sdays}>{$MOD.LBL_DAYS}
-                            <OPTION VALUE='7' {$sweeks}>{$MOD.LBL_WEEKS}
-                            <OPTION VALUE='30' {$smonths}>{$MOD.LBL_MONTHS}
-                        </SELECT>
-                    </td>
-                    <td colspan='2' width='40%'>
-                        <input type="radio" name="passwordsetting_systexpiration" id="required_sys_pwd_exp_login"
-                               value='2' {$systexplogin} onclick="form.passwordsetting_systexpirationtime.value='';">
-                        {$MOD.LBL_PASSWORD_EXP_AFTER}
-                        <input type='text' maxlength="3" and style="width:2em"
-                               name='passwordsetting_systexpirationlogin'
-                               value="{$config.passwordsetting.systexpirationlogin}">
-                        {$MOD.LBL_PASSWORD_LOGINS}
-                    </td>
-                </tr>
-            </table>
         </td>
     </tr>
 </table>
@@ -451,71 +388,6 @@
 </table>
 
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
-
-
-<table id="userGenPassExpId" name="userGenPassExpName" width="100%" border="0" cellspacing="1" cellpadding="0"
-       class="edit view">
-    <tr>
-        <th align="left" scope="row" colspan="4">
-            <h4 scope="row">
-                {$MOD.LBL_PASSWORD_USER_EXPIRATION}
-            </h4>
-        </th>
-    </tr>
-    <tr>
-
-        {assign var='userexplogin' value=''}
-        {assign var='userexptime' value=''}
-        {assign var='userexpnone' value=''}
-        {if ($config.passwordsetting.userexpiration) == '0'}
-            {assign var='userexpnone' value='CHECKED'}
-        {/if}
-        {if ($config.passwordsetting.userexpiration) == '1'}
-            {assign var='userexptime' value='CHECKED'}
-        {/if}
-        {if ($config.passwordsetting.userexpiration) == '2'}
-            {assign var='userexplogin' value='CHECKED'}
-        {/if}
-        <td width='30%'>
-            <input type="radio" name="passwordsetting_userexpiration" value='0' {$userexpnone}
-                   onclick="form.passwordsetting_userexpirationtime.value='';form.passwordsetting_userexpirationlogin.value='';">
-            {$MOD.LBL_UW_NONE}
-        </td>
-        <td width='30%'>
-            <input type="radio" name="passwordsetting_userexpiration" id="required_user_pwd_exp_time"
-                   value='1' {$userexptime} onclick="form.passwordsetting_userexpirationlogin.value='';">
-            {$MOD.LBL_PASSWORD_EXP_IN}
-            {assign var='udays' value=''}
-            {assign var='uweeks' value=''}
-            {assign var='umonths' value=''}
-            {if ($config.passwordsetting.userexpirationtype ) == '1'}
-                {assign var='udays' value='SELECTED'}
-            {/if}
-            {if ($config.passwordsetting.userexpirationtype ) == '7'}
-                {assign var='uweeks' value='SELECTED'}
-            {/if}
-            {if ($config.passwordsetting.userexpirationtype ) == '30'}
-                {assign var='umonths' value='SELECTED'}
-            {/if}
-            <input type='text' maxlength="3" and style="width:2em" name='passwordsetting_userexpirationtime'
-                   value='{$config.passwordsetting.userexpirationtime}'>
-            <SELECT NAME="passwordsetting_userexpirationtype">
-                <OPTION VALUE='1' {$udays}>{$MOD.LBL_DAYS}
-                <OPTION VALUE='7' {$uweeks}>{$MOD.LBL_WEEKS}
-                <OPTION VALUE='30' {$umonths}>{$MOD.LBL_MONTHS}
-            </SELECT>
-        </td>
-        <td colspan='2 width='
-        40%'>
-        <input type="radio" name="passwordsetting_userexpiration" id="required_user_pwd_exp_login"
-               value='2' {$userexplogin} onclick="form.passwordsetting_userexpirationtime.value='';">
-        {$MOD.LBL_PASSWORD_EXP_AFTER}
-        <input type='text' maxlength="3" and style="width:2em" name='passwordsetting_userexpirationlogin'
-               value="{$config.passwordsetting.userexpirationlogin}">
-        {$MOD.LBL_PASSWORD_LOGINS}
-        </td>
-    </tr>
-</table>
 
 <table id="loginLockoutId" name="loginLockoutName" width="100%" border="0" cellspacing="1" cellpadding="0"
        class="edit view">
@@ -892,16 +764,7 @@ function addcheck(form) {{/literal}
     }
     {/literal}
 
-    if (document.getElementById('SystemGeneratedPassword_checkbox').checked) {literal}{{/literal}
-        addToValidate('ConfigurePasswordSettings', 'passwordsetting_systexpirationtime', 'int', form.required_sys_pwd_exp_time.checked, "{$MOD.ERR_PASSWORD_EXPIRE_TIME}");
-        addToValidate('ConfigurePasswordSettings', 'passwordsetting_systexpirationlogin', 'int', form.required_sys_pwd_exp_login.checked, "{$MOD.ERR_PASSWORD_EXPIRE_LOGIN}");
-        {literal}
-    }
-    {/literal}
-
     //BEGIN SUGARCRM flav=pro ONLY
-    addToValidate('ConfigurePasswordSettings', 'passwordsetting_userexpirationtime', 'int', form.required_user_pwd_exp_time.checked, "{$MOD.ERR_PASSWORD_EXPIRE_TIME}");
-    addToValidate('ConfigurePasswordSettings', 'passwordsetting_userexpirationlogin', 'int', form.required_user_pwd_exp_login.checked, "{$MOD.ERR_PASSWORD_EXPIRE_LOGIN}");
 
     addToValidate('ConfigurePasswordSettings', 'passwordsetting_lockoutexpirationlogin', 'int', form.required_lockout_exp_login.checked, "{$MOD.ERR_PASSWORD_LOCKOUT_LOGIN}");
     addToValidate('ConfigurePasswordSettings', 'passwordsetting_lockoutexpirationtime', 'int', form.required_lockout_exp_login.checked, "{$MOD.ERR_PASSWORD_LOCKOUT_TIME}");
@@ -1080,24 +943,7 @@ function forgot_password_enable(check) {
     }
 }
 
-function enable_syst_generated_pwd(check) {
-    var table_fields = document.getElementById('syst_generated_pwd_table');
-    var syst_generated_pwd_input = table_fields.getElementsByTagName('input');
-    var syst_generated_pwd_select = table_fields.getElementsByTagName('select');
-    if (check.checked) {
-        for (i = 0; i < syst_generated_pwd_input.length; i++)
-            syst_generated_pwd_input[i].disabled = '';
-        for (j = 0; j < syst_generated_pwd_select.length; j++)
-            syst_generated_pwd_select[j].disabled = '';
-    } else {
-        for (i = 0; i < syst_generated_pwd_input.length; i++)
-            syst_generated_pwd_input[i].disabled = 'disabled';
-        for (j = 0; j < syst_generated_pwd_select.length; j++)
-            syst_generated_pwd_select[j].disabled = 'disabled';
-    }
-}
 forgot_password_enable(document.getElementById('forgotpassword_checkbox'));
-enable_syst_generated_pwd(document.getElementById('SystemGeneratedPassword_checkbox'));
 if (document.getElementById('system_saml_enabled').checked)enableDisablePasswordTable('system_saml_enabled');
 if (document.getElementById('system_ldap_enabled').checked)enableDisablePasswordTable('system_ldap_enabled');
 
