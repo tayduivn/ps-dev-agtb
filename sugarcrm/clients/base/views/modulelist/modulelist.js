@@ -54,14 +54,12 @@
         this.activeModule = this._setActiveModule(this);
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:view:change", this.handleViewChange, this);
-        app.user.on("change:module_list", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
         }
     },
     _dispose: function(){
-        app.user.off("change:module_list", this.render);
         app.view.View.prototype._dispose.call(this);
     },
     handleViewChange: function() {
