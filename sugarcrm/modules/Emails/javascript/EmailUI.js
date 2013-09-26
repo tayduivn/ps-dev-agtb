@@ -282,13 +282,21 @@ SE.accounts = {
                 shadow	: true
             });
 			EAD.showEvent.subscribe(function() {
-                var el = this.element;
-                var viewH = YAHOO.util.Dom.getViewportHeight();
-                if (this.header && el && viewH - 50 < el.clientHeight) {
-                    var body = this.header.nextElementSibling;
-					body.style.overflow = "auto";
-                    body.style.height = "460px";
-                }
+                var el = this.element,
+                    header = this.header;
+
+                setTimeout(function() {
+                    // Window heights aren't accurate until the DOM reflow has
+                    // completed. For that reason, we wait until the stack has
+                    // been cleared before checking for the heights.
+                    var viewH = YAHOO.util.Dom.getViewportHeight() - 50,
+                        height = parent ? window.innerHeight : viewH;
+                        if (header && el && height < el.clientHeight) {
+                        var body = header.nextElementSibling;
+                        body.style.overflow = "auto";
+                        body.style.height = "460px";
+                    }
+                }, 0);
             }, EAD);
             EAD.setHeader(mod_strings.LBL_EMAIL_ACCOUNTS_INBOUND);
 			Dom.removeClass("editAccountDialogue", "yui-hidden");
