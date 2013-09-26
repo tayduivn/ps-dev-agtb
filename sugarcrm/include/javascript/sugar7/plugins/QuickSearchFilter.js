@@ -63,6 +63,16 @@
                     } else {
                         returnFilter.push(searchFilter.length > 1 ? {'$or': searchFilter} : searchFilter[0]);
                     }
+
+                    // See MAR-1362 for details.
+                    if (searchModule === 'Users' || searchModule === 'Employees') {
+                        returnFilter[0] = ({
+                            '$and': [
+                                {'status': {'$not_equals': 'Inactive'}},
+                                returnFilter[0]
+                            ]
+                        });
+                    }
                 }
                 return returnFilter;
             }
