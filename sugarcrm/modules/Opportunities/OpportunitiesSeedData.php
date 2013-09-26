@@ -151,6 +151,9 @@ class OpportunitiesSeedData {
             $opp_worst_case = 0;
             $opp_amount = 0;
             $opp_units = 0;
+            $opp->total_revenue_line_items = $rlis_to_create;
+            $opp->closed_revenue_line_items = 0;
+    
             // stop obsessive saving
             SugarBean::enterOperation('saving_related');
             BeanFactory::registerBean('Opportunities', $opp);
@@ -209,6 +212,9 @@ class OpportunitiesSeedData {
                 //BEGIN SUGARCRM flav=ent ONLY
                 $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
                 $rli->probability = $app_list_strings['sales_probability_dom'][$rli->sales_stage];
+                if ($rli->sales_stage == "Closed Won" || $rli->sales_stage == "Closed Lost") {
+                    $opp->closed_revenue_line_items++;
+                }
                 //END SUGARCRM flav=ent ONLY
                 $rli->date_closed = $opp->date_closed;
                 $rli->date_closed_timestamp = $opp->date_closed_timestamp;
