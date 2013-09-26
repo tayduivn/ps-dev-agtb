@@ -26,7 +26,7 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_MODULE_NAME',
+                                'label' => 'TPL_DASHLET_MY_MODULE',
                                 'display_columns' =>
                                 array(
                                     'full_name',
@@ -47,7 +47,7 @@ $viewdefs['Tasks']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_MODULE_NAME',
+                                'label' => 'TPL_DASHLET_MY_MODULE',
                                 'display_columns' =>
                                 array(
                                     'bug_number',

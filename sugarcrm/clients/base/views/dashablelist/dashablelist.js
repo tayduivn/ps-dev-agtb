@@ -136,7 +136,8 @@
         if (this.meta.config) {
             // keep the display_columns and label fields in sync with the selected module when configuring a dashlet
             this.settings.on('change:module', function(model, moduleName) {
-                model.set('label', app.lang.get('LBL_MODULE_NAME', moduleName));
+                var label = (model.get('my_items') == '1') ? 'TPL_DASHLET_MY_MODULE' : 'LBL_MODULE_NAME';
+                model.set('label', app.lang.get(label, moduleName, {module: moduleName}));
                 this._updateDisplayColumns();
             }, this);
         }
@@ -150,18 +151,28 @@
     },
 
     /**
+     * Returns a custom label for this dashlet.
+     *
+     * @returns {String}
+     */
+    getLabel: function() {
+        var module = this.settings.get('module') || this.context.get('module');
+        return app.lang.get(this.settings.get('label'), module, {module: module});
+    },
+
+    /**
      * Certain dashlet settings can be defaulted.
      *
      * Builds the available module cache by way of the
-     * {@link BaseDashablelistView#_setDefaultModule} call.
+     * {@link BaseDashablelistView#_setDefaultModule} call. The module is set
+     * after "my_items" because the value of "my_items" could impact the value
+     * of "label" when the label is set in response to the module change while
+     * in configuration mode (see the "module:change" listener in
+     * {@link BaseDashablelistView#initDashlet}).
      *
      * @private
      */
     _initializeSettings: function() {
-        this._setDefaultModule();
-        if (!this.settings.get('label')) {
-            this.settings.set('label', app.lang.get('LBL_MODULE_NAME', this.settings.get('module')));
-        }
         if (!this.settings.get('limit')) {
             this.settings.set('limit', this._defaultSettings.limit);
         }
@@ -170,6 +181,10 @@
         }
         if (!this.settings.get('favorites')) {
             this.settings.set('favorites', this._defaultSettings.favorites);
+        }
+        this._setDefaultModule();
+        if (!this.settings.get('label')) {
+            this.settings.set('label', 'LBL_MODULE_NAME');
         }
     },
 
@@ -189,7 +204,7 @@
         if (!_.contains(availableModules, module)) {
             module = _.first(availableModules);
         }
-        if (!definedModule || definedModule !== module) {
+        if (definedModule !== module) {
             this.settings.set('module', module);
         }
     },

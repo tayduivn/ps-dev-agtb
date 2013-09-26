@@ -26,14 +26,13 @@ $viewdefs['Accounts']['base']['layout']['list-dashboard'] = array(
                             'view' =>
                             array(
                                 'name' => 'dashablelist',
-                                'label' => 'LBL_DASHLET_LISTVIEW_NAME',
+                                'label' => 'TPL_DASHLET_MY_MODULE',
                                 'display_columns' =>
                                 array(
                                     'name',
                                     'billing_address_country',
                                     'billing_address_city',
                                 ),
-                                'my_items' => '1',
                             ),
                             'context' =>
                             array(
