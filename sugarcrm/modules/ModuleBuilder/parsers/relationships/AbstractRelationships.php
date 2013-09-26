@@ -558,7 +558,9 @@ class AbstractRelationships
                 sugar_mkdir($layoutPath, null, true);
             }
 
+
             foreach ( $definitions as $definition ) {
+                $override_array = array();
                 // we currently do not support collections in sidecar
                 if (!empty($definition['collection_list'])) {
                     continue;
@@ -568,8 +570,10 @@ class AbstractRelationships
                     require_once('include/MetaDataManager/MetaDataConverter.php');
                     $mc = new MetaDataConverter();
                     $override_array = array(
-                        'link' => strtolower($definition['module']),
-                        'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
+                        'override_subpanel_list_view' => array(
+                            'link' => $definition['get_subpanel_data'],
+                            'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
+                        )
                     );
                 }
 
@@ -586,7 +590,7 @@ class AbstractRelationships
 
                 if (!empty($override_array)) {
                     write_array_to_file(
-                        "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]['override_subpanel_list_view']",
+                        "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]",
                         $override_array,
                         "{$layoutPath}/_overridesubpanel-for-{$relationshipName}.php"
                     );
