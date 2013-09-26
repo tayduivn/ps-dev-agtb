@@ -60,7 +60,7 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $formBase->handleSave($this->prefix, false);
         $this->contacts[] = $bean;
 
-        $this->assertTrue($bean->sync_contact, "Sync Contact was not set to true");
+        $this->assertTrue($bean->sync_contact == true, "Sync Contact was not set to true");
 
         unset($bean);
         $_POST[$this->prefix . 'sync_contact'] = '0';        
@@ -68,7 +68,7 @@ class ContactsBugFixesTest extends Sugar_PHPUnit_Framework_TestCase
         $bean = $formBase->handleSave($this->prefix, false);
         $this->contacts[] = $bean;
 
-        $this->assertFalse($bean->sync_contact, "Sync Contact was not set to false");
+        $this->assertFalse($bean->sync_contact == true, "Sync Contact was not set to false");
 
 
     }

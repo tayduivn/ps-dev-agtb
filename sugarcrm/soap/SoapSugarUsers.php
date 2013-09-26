@@ -249,7 +249,7 @@ function seamless_login($session){
 		if(!validate_authenticated($session)){
 			return 0;
 		}
-		
+
 		return 1;
 }
 
@@ -347,7 +347,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     }
 	// retrieve the vardef information on the bean's fields.
 	$field_list = array();
-    
+
     require_once 'modules/Currencies/Currency.php';
     $currencies = array();
 
@@ -1279,7 +1279,7 @@ function handle_set_relationship($set_relationship_value, $session='')
 		return $error->get_soap_array();
 	}
 	if($module1 == "Contacts" && $module2 == "Users"){
-		$key = 'contacts_users_id';
+		$key = 'user_sync';
 	}
 	else{
     	$key = array_search(strtolower($module2),$mod->relationship_fields);
@@ -1362,10 +1362,17 @@ function handle_set_relationship($set_relationship_value, $session='')
         return $error->get_soap_array();
     }
 
-    if(($module1 == 'Meetings' || $module1 == 'Calls') && ($module2 == 'Contacts' || $module2 == 'Users')){
+    if(($module1 == 'Meetings' || $module1 == 'Calls') && ($module2 == 'Contacts' || $module2 == 'Users')) {
     	$key = strtolower($module2);
     	$mod->load_relationship($key);
     	$mod->$key->add($module2_id);
+    } else if($module1 == 'Contacts' && $module2 == 'Users') {
+        $mod->load_relationship($key);
+        if($module2_id) {
+            $mod->$key->add($module2_id);
+        } else {
+            $mod->$key->delete($module2_id);
+        }
     }
     else if ($module1 == 'Contacts' && ($module2 == 'Notes' || $module2 == 'Calls' || $module2 == 'Meetings' || $module2 == 'Tasks') && !empty($session)){
         $mod->$key = $module2_id;

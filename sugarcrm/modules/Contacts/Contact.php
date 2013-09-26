@@ -19,15 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Contact.php 54503 2010-02-12 14:44:05Z jmertic $
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once('include/SugarObjects/templates/person/Person.php');
-// Contact is used to store customer information.
+/**
+ *  Contact is used to store customer information.
+ */
 class Contact extends Person {
     var $field_name_map;
 	// Stored fields
