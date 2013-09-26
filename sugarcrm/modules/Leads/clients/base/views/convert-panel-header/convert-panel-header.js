@@ -183,7 +183,7 @@
      * Render the title based on current state Create vs DupeCheck and Complete vs. Incomplete
      */
     renderTitle: function() {
-        this.$('.title').text(this.tpls.title(this.getCurrentState()));
+        this.$('.title').html(this.tpls.title(this.getCurrentState()));
     },
 
     /**
