@@ -9,6 +9,7 @@
         'GridBuilder',
         'Editable',
         'Audit',
+        'FindDuplicates',
         'ToggleMoreLess'
     ],
 
@@ -132,7 +133,6 @@
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
-        this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
 
     _render: function () {
@@ -270,16 +270,6 @@
         }, function (context, newModel) {
             if (newModel && newModel.id) {
                 app.router.navigate("#" + self.model.module + "/" + newModel.id, {trigger: true});
-            }
-        });
-    },
-
-    findDuplicatesClicked: function () {
-        app.drawer.open({
-            layout: 'find-duplicates',
-            context: {
-                dupeCheckModel: this.model,
-                dupelisttype: 'dupecheck-list-multiselect'
             }
         });
     },

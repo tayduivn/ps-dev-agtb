@@ -2697,6 +2697,7 @@ $app_strings = array (
     'LBL_LISTVIEW_LESS_THAN_TEN_SELECT' => 'Please select less than 10 records to proceed.',
     'LBL_LISTVIEW_ALL' => 'All',
     'LBL_LISTVIEW_FILTER_ALL' => 'All {{{moduleName}}}',
+    'LBL_DUPECHECK_FILTER_DEFAULT' => 'All duplicates',
     'LBL_LISTVIEW_NONE' => 'Deselect All',
     'LBL_LISTVIEW_OPTION_CURRENT' => 'Select This Page',
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
@@ -3673,7 +3674,7 @@ $app_strings = array (
     'LBL_MERGE'  => 'Merge',
     'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
     'TPL_MERGE_INVALID_NUMBER_RECORDS' =>
-        'Invalid number of records passed. The valid range is from 2 to {{maxRecords}} records.',
+        'Invalid number of records passed. The valid range is from {{minRecords}} to {{maxRecords}} records.',
     'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
     'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
         'All changes will be lost. Are you sure you want to continue?',

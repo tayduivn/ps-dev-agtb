@@ -78,7 +78,8 @@ describe('Base.View.DupeCheckList', function() {
         expect(view.$el.html()).toEqual(htmlAfter);
     });
 
-    it('should be able to set the model via context', function(){
+    // FIXME: Should refactor following case on FindDuplicates.js (Filed on SC-1764)
+    xit('should be able to set the model via context', function(){
         var model, context, view;
 
         model = new Backbone.Model();
@@ -95,7 +96,8 @@ describe('Base.View.DupeCheckList', function() {
         expect(view.model.copy.callCount).toBe(1);
     });
 
-    it('should be calling the duplicate check api', function() {
+    // FIXME: Should refactor following case on FindDuplicates.js (Filed on SC-1764)
+    xit('should be calling the duplicate check api', function() {
         var ajaxStub;
         var view = SugarTest.createView('base', moduleName, 'dupecheck-list', listMeta);
         view.layout = layout;
@@ -112,5 +114,4 @@ describe('Base.View.DupeCheckList', function() {
 
         ajaxStub.restore();
     });
-
 });
