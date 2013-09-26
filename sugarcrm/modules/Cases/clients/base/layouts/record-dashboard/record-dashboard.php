@@ -38,6 +38,7 @@ $viewdefs['Cases']['base']['layout']['record-dashboard'] = array(
                             'view' => array(
                                 'name' => 'history',
                                 'label' => 'LBL_HISTORY_DASHLET',
+                                'filter' => '7',
                                 'limit' => '10',
                                 'visibility' => 'user',
                             ),
