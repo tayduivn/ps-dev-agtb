@@ -241,8 +241,11 @@
 
         if (!$searchBox.is(':visible')) {
             this.$el.addClass('active');
-            $(window).on('click.globalsearch.data-api', _.bind(function() {
-                this.$el.removeClass('active');
+            $('body').on('click.globalsearch.data-api', _.bind(function(event) {
+                if (!$.contains(this.el, event.target)) {
+                    this.$el.removeClass('active');
+                    $('body').off('click.globalsearch.data-api');
+                }
             }, this));
             $searchBox.focus();
             return;
@@ -269,7 +272,7 @@
     },
 
     unbind: function() {
-        $(window).off('click.globalsearch.data-api');
+        $('body').off('click.globalsearch.data-api');
         this._super('unbind');
     }
 })
