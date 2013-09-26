@@ -53,6 +53,20 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
+                    'type' => 'pdfaction',
+                    'name' => 'download-pdf',
+                    'label' => 'LBL_PDF_VIEW',
+                    'action' => 'download',
+                    'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'pdfaction',
+                    'name' => 'email-pdf',
+                    'label' => 'LBL_PDF_EMAIL',
+                    'action' => 'email',
+                    'acl_action' => 'view',
+                ),
+                array(
                     'type' => 'divider',
                 ),
                 array(

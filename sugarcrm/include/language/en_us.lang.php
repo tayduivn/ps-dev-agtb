@@ -3641,6 +3641,7 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_PDF_VIEW' => 'Download PDF',
     'LBL_PDF_EMAIL' => 'Email PDF',
+    'LBL_NO_PDF_TEMPLATE' => 'No PDF template found.',
     //END SUGARCRM flav=pro ONLY
 
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
