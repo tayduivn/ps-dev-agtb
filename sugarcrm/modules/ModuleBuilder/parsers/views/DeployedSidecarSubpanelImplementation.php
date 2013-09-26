@@ -161,7 +161,9 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
                     continue;
                 }
                 if (is_array($component['override_subpanel_list_view']) && $component['override_subpanel_list_view']['link'] == $this->linkName) {
-                    $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
+                    if ($this->legacySubpanelName == "default") {
+                        $this->sidecarSubpanelName = "subpanel-for-{$this->loadedModule}-{$this->linkName}";
+                    }
                     $this->loadedSubpanelName = $component['override_subpanel_list_view']['view'];
                     $this->loadedSubpanelFileName = file_exists("custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php") ?
                         "custom/modules/{$this->_moduleName}/clients/" . $this->getViewClient() . "/views/{$this->loadedSubpanelName}/{$this->loadedSubpanelName}.php"
@@ -263,7 +265,7 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
         }
 
         // always set the type to subpanel-list for the client
-        if (strpos($this->sidecarSubpanelName, 'subpanel-for-')) {
+        if (strpos($this->sidecarSubpanelName, 'subpanel-for-') !== false) {
             $this->_viewdefs['type'] = 'subpanel-list';
         }
         // TODO: remove this when we have BWC modules converted
