@@ -2722,6 +2722,14 @@ $app_strings = array (
     'TPL_MASSDELETE_WARNING_PERMISSION' => '{{num}} records were deleted successfully. {{remain}} records are ignored due to the permission.',
     'TPL_MASSDELETE_SUCCESS' => '{{num}} records were deleted successfully.',
     'TPL_MASSDELETE_TITLE' => '{{module}} Mass Delete',
+    'TPL_MASSADDTOLIST_PROGRESS_STATUS' => 'Adding {{num}} of {{total}}.',
+    'TPL_MASSADDTOLIST_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
+    'TPL_MASSADDTOLIST_FAIL_TO_ATTEMPT' => 'Mass Add to Target List failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MASSADDTOLIST_WARNING_CLOSE' => 'Mass Add to Target List incomplete. {{num}} records not added.',
+    'TPL_MASSADDTOLIST_WARNING_INCOMPLETE' => 'Mass Add to Target List incomplete. {{num}} records not added.',
+    'TPL_MASSADDTOLIST_SUCCESS' => '{{num}} records were added successfully.',
+    'TPL_MASSADDTOLIST_TITLE' => '{{module}} Mass Add to Target List',
+
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 

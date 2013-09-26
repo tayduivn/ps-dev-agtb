@@ -10,6 +10,7 @@
     fieldValues: null,
     defaultOption: null,
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
+    massUpdateViewName: 'massupdate-progress',
     /**
      * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
      * @property {Integer} _defaultSettings.maxRecordsToMerge Default number of records we can merge.
@@ -190,11 +191,11 @@
      * @return {Backbone.View} MassupdateProgress view component.
      */
     getProgressView: function() {
-        var progressView = this.layout.getComponent('massupdate-progress');
+        var progressView = this.layout.getComponent(this.massUpdateViewName);
         if (!progressView) {
             progressView = app.view.createView({
                 context: this.context,
-                name: 'massupdate-progress',
+                name: this.massUpdateViewName,
                 layout: this.layout
             });
             this.layout._components.push(progressView);

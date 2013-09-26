@@ -33,6 +33,7 @@
     extendsFrom: 'MassupdateView',
     addToListFieldName: 'prospect_lists',
     listModule: 'ProspectLists',
+    massUpdateViewName: 'massaddtolist-progress',
 
     initialize: function(options) {
         var additionalEvents = {};
