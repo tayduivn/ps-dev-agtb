@@ -1,6 +1,7 @@
 #searchForm {
   padding: 8px 6px;
   position: relative;
+  min-width: 28px;
 
   .rtlFloat(@direction,left);
 
@@ -20,14 +21,18 @@
     }
   }
 
+  // Needed by firefox because of navbar table-layout
+  .typeahead-wrapper {
+      position: relative;
+  }
 
-  // Typeahead
+  // Typeahead UL
   .typeahead {
     .border-radius(2px);
     overflow: hidden;
-    right: 6px;
-    left: 6px;
-    top: 48px;
+    right: 0;
+    left: 0;
+    top: 40px;
     li {
       padding: 5px 10px;
       min-width: 120px;
