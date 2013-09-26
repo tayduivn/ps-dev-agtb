@@ -249,6 +249,10 @@
         if (!module) {
             return '';
         }
+        //Route links for BWC modules through bwc/ route
+        if (app.metadata.getModule(module).isBwcEnabled) {
+           return "bwc/" + href;
+        }
         id = (_.isArray(id)) ? id[1] : null;
         action = (_.isArray(action)) ? action[1] : '';
         // fallback to sidecar detail view
@@ -259,7 +263,6 @@
         if (!id && action.toLowerCase() === 'editview') {
             action = 'create';
         }
-
         return app.router.buildRoute(module, id, action);
     },
 
@@ -270,7 +273,8 @@
      */
     convertToSidecarLink: function(elem) {
         elem = $(elem);
-        var baseUrl = app.config.siteUrl || window.location.origin + window.location.pathname;
+        //Relative URL works better on all browsers than trying to include origin
+        var baseUrl = app.config.siteUrl || window.location.pathname;
         var href = elem.attr('href');
         var module = this.moduleRegex.exec(href);
         var dataSidecarRewrite = elem.attr('data-sidecar-rewrite');
@@ -279,12 +283,10 @@
             !_.isArray(module) ||
             _.isEmpty(module[1]) ||
             _.isUndefined(app.metadata.getModule(module[1])) ||
-            app.metadata.getModule(module[1]).isBwcEnabled  ||
-            dataSidecarRewrite == "false"
+            dataSidecarRewrite === "false"
         ) {
             return;
         }
-
         var sidecarUrl = this.convertToSidecarUrl(href);
         elem.attr('href', baseUrl + '#' + sidecarUrl);
         elem.data('sidecarProcessed', true);
