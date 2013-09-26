@@ -41,7 +41,10 @@
     initialize: function(options) {
         this.values.clear({silent: true});
         // after we init, find and bind to the Worksheets Contexts
-        this.on('init', this.findWorksheetContexts, this);
+        this.once('init', this.findWorksheetContexts, this);
+        this.once('render', function() {
+            this.parseCollectionForData();
+        }, this);
         app.view.View.prototype.initialize.call(this, options);
         if (!this.meta.config) {
             var ctx = this.context.parent,

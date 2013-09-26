@@ -28,15 +28,19 @@
     preview_open: false,
 
     /**
-     * @{inheritDoc}
+     * {@inheritdoc}
+     */
+    initialize: function(options) {
+        this.once('render', function() {
+            this.renderChart();
+        }, this);
+        app.view.Field.prototype.initialize.call(this, options);
+    },
+
+    /**
+     * {@inheritDoc}
      */
     bindDataChange: function() {
-        this.once('render', function() {
-            if(!_.isUndefined(this._serverData)) {
-                this.renderChart();
-            }
-        }, this);
-
         app.events.on('preview:open', function() {
             this.preview_open = true;
         }, this);
