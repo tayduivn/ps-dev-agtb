@@ -385,6 +385,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their {{forecastByModule}} to be committed into the forecast into a committed range, excluded range and any others that you setup.',
     'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
 
+    'LBL_FORECASTS_CONFIG_RANGES_ENTER_RANGE' => 'Enter range name...',
+
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).
     'LBL_FORECASTS_CONFIG_WORKSHEET_SCENARIOS' => 'Choose the Scenarios to include on the forecasting worksheet.',
