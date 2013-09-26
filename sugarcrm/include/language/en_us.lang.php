@@ -4045,6 +4045,7 @@ $app_strings = array (
     'LBL_WIZ_DOCUMENTATION' => 'Documentation',
     'LBL_WIZ_KNOWLEDGE_BASE' => 'Knowledge Base',
     'LBL_WIZ_FORUMS' => 'Forums',
+    'LBL_TIMEZONE_DIFFERENT' => 'Your browser\'s timezone does not match your saved timezone <a href="#{{buildRoute module="Users" id=userId}}">Adjust Your Timezone.</a>',
     //Admin wizard links
     'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'Locale Settings',
     'LBL_WIZ_EMAIL_SETTINGS' => 'Email Settings',

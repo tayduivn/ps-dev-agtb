@@ -152,6 +152,15 @@
     postLogin: function(){
         if (!app.user.get('show_wizard')) {
             this.refreshAddtionalComponents();
+            
+            if (new Date().getTimezoneOffset() != (app.user.getPreference('tz_offset_sec')/-60)) {
+                var tpl = Handlebars.compile(app.lang.get('LBL_TIMEZONE_DIFFERENT'));
+
+                app.alert.show('offset_problem', {
+                    messages: tpl({userId: app.user.get('id')}),
+                    closeable: true
+                });
+            }
         }
         app.$contentEl.show();
     },
