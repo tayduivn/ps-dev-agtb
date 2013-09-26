@@ -251,7 +251,9 @@
         }
         //Route links for BWC modules through bwc/ route
         if (app.metadata.getModule(module).isBwcEnabled) {
-           return "bwc/" + href;
+            //Remove any './' nonsense in existing hrefs
+            href = href.replace(/^.\//, '');
+            return "bwc/" + href;
         }
         id = (_.isArray(id)) ? id[1] : null;
         action = (_.isArray(action)) ? action[1] : '';
@@ -283,6 +285,8 @@
             !_.isArray(module) ||
             _.isEmpty(module[1]) ||
             _.isUndefined(app.metadata.getModule(module[1])) ||
+            module[1] === "Administration" || // Leave Administration module links alone for 7.0
+            href.indexOf("javascript:") === 0 || //Leave javascript alone (this is mostly BWC links)
             dataSidecarRewrite === "false"
         ) {
             return;
