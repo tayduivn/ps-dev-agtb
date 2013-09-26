@@ -41,7 +41,10 @@
     initialize: function(options) {
         this.values.clear({silent: true});
         // after we init, find and bind to the Worksheets Contexts
-        this.on('init', this.findWorksheetContexts, this);
+        this.once('init', this.findWorksheetContexts, this);
+        this.once('render', function() {
+            this.parseCollectionForData();
+        }, this);
         app.view.View.prototype.initialize.call(this, options);
         if (!this.meta.config) {
             var ctx = this.context.parent,
@@ -132,7 +135,7 @@
     parseCollectionForData: function(collection) {
         // get the field
         var field = this.getField('paretoChart');
-        if(!field.hasServerData()) {
+        if(field && !field.hasServerData()) {
             // if the field does not have any data, wait for the xhr call to run and then just call this
             // method again
             field.once('chart:pareto:rendered', this.parseCollectionForData, this);
@@ -147,63 +150,67 @@
     },
 
     parseRepWorksheet: function(collection) {
-        var field = this.getField('paretoChart'),
-            serverData = field.getServerData();
+        var field = this.getField('paretoChart');
+        if(field) {
+            var serverData = field.getServerData();
 
-        serverData.data = collection.map(function(item) {
-            var i = {
-                id: item.get('id'),
-                forecast: item.get('commit_stage'),
-                probability: item.get('probability'),
-                sales_stage: item.get('sales_stage'),
-                likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
-                date_closed_timestamp: parseInt(item.get('date_closed_timestamp'))
-            };
+            serverData.data = collection.map(function(item) {
+                var i = {
+                    id: item.get('id'),
+                    forecast: item.get('commit_stage'),
+                    probability: item.get('probability'),
+                    sales_stage: item.get('sales_stage'),
+                    likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
+                    date_closed_timestamp: parseInt(item.get('date_closed_timestamp'))
+                };
 
-            if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
-                i.best = app.currency.convertWithRate(item.get('best_case'), item.get('base_rate'));
-            }
-            if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
-                i.worst = app.currency.convertWithRate(item.get('worst_case'), item.get('base_rate'));
-            }
+                if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
+                    i.best = app.currency.convertWithRate(item.get('best_case'), item.get('base_rate'));
+                }
+                if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
+                    i.worst = app.currency.convertWithRate(item.get('worst_case'), item.get('base_rate'));
+                }
 
-            return i;
-        }, this);
+                return i;
+            }, this);
 
-        field.setServerData(serverData, true);
+            field.setServerData(serverData, true);
+        }
     },
 
     parseManagerWorksheet: function(collection) {
-        var field = this.getField('paretoChart'),
-            serverData = field.getServerData();
+        var field = this.getField('paretoChart');
+        if(field) {
+            var serverData = field.getServerData();
 
-        serverData.data = collection.map(function(item) {
-            var i = {
-                id: item.get('id'),
-                user_id: item.get('user_id'),
-                name: item.get('name'),
-                likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
-                likely_adjusted: app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate')),
-                quota: app.currency.convertWithRate(item.get('quota'), item.get('base_rate'))
-            };
+            serverData.data = collection.map(function(item) {
+                var i = {
+                    id: item.get('id'),
+                    user_id: item.get('user_id'),
+                    name: item.get('name'),
+                    likely: app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate')),
+                    likely_adjusted: app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate')),
+                    quota: app.currency.convertWithRate(item.get('quota'), item.get('base_rate'))
+                };
 
-            if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
-                i.best = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
-                i.best_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
-            }
-            if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
-                i.worst = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
-                i.worst_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
-            }
+                if (!_.isUndefined(this.dashletConfig.dataset.options['best'])) {
+                    i.best = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
+                    i.best_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+                }
+                if (!_.isUndefined(this.dashletConfig.dataset.options['worst'])) {
+                    i.worst = app.currency.convertWithRate(item.get('likely_case'), item.get('base_rate'));
+                    i.worst_adjusted = app.currency.convertWithRate(item.get('likely_case_adjusted'), item.get('base_rate'));
+                }
 
-            return i;
-        }, this);
+                return i;
+            }, this);
 
-        serverData.quota = _.reduce(serverData.data, function(memo, item) {
-            return memo + item.quota;
-        }, 0);
+            serverData.quota = _.reduce(serverData.data, function(memo, item) {
+                return memo + item.quota;
+            }, 0);
 
-        field.setServerData(serverData);
+            field.setServerData(serverData);
+        }
     },
 
     /**
@@ -264,29 +271,30 @@
     mgrWorksheetChanged: function(model) {
         var fieldsChanged = _.keys(model.changed),
             changed = model.changed,
-            field = this.getField('paretoChart'),
-            serverData = field.getServerData();
+            field = this.getField('paretoChart');
+        if(field) {
+            var serverData = field.getServerData();
 
+            if (_.contains(fieldsChanged, 'quota')) {
+                var q = parseInt(serverData.quota, 10);
+                q = app.math.add(app.math.sub(q, model.previous('quota')), model.get('quota'));
+                serverData.quota = q;
+            } else {
+                var f = _.first(fieldsChanged),
+                    fieldChartName = f.replace('_case', '');
 
-        if (_.contains(fieldsChanged, 'quota')) {
-            var q = parseInt(serverData.quota, 10);
-            q = app.math.add(app.math.sub(q, model.previous('quota')), model.get('quota'));
-            serverData.quota = q;
-        } else {
-            var f = _.first(fieldsChanged),
-                fieldChartName = f.replace('_case', '');
+                // find the user
+                _.find(serverData.data, function(record, i, list) {
+                    if (model.get('user_id') == record.user_id) {
+                        list[i][fieldChartName] = changed[f];
+                        return true;
+                    }
+                    return false;
+                });
+            }
 
-            // find the user
-            _.find(serverData.data, function(record, i, list) {
-                if (model.get('user_id') == record.user_id) {
-                    list[i][fieldChartName] = changed[f];
-                    return true;
-                }
-                return false;
-            });
+            field.setServerData(serverData);
         }
-
-        field.setServerData(serverData);
     },
 
     /**
@@ -295,11 +303,11 @@
      * @override
      */
     loadData: function(options) {
-        var f = this.getField('paretoChart');
+        var field = this.getField('paretoChart');
 
-        if (!_.isUndefined(f)) {
-            f.once('chart:pareto:rendered', this.parseCollectionForData, this);
-            f.renderChart(options);
+        if (!_.isUndefined(field)) {
+            field.once('chart:pareto:rendered', this.parseCollectionForData, this);
+            field.renderChart(options);
         }
     },
 
