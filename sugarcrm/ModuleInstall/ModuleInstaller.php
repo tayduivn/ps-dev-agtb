@@ -2603,7 +2603,8 @@ private function dir_file_count($path){
 
     public function install_client_files()
     {
-        if (!is_array($this->installdefs['clientfiles'])) {
+        if (!isset($this->installdefs['clientfiles']) 
+            || !is_array($this->installdefs['clientfiles'])) {
             return;
         }
         

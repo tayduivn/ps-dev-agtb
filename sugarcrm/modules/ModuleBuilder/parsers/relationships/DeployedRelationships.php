@@ -334,6 +334,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $mi->install_vardefs () ;
             $mi->install_layoutdefs () ;
             $mi->install_extensions();
+            $mi->install_client_files();
 
         }
 
