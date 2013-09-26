@@ -279,26 +279,6 @@
 </table>
 {* //END SUGARCRM flav!=com ONLY*}
 
-<!--//BEGIN SUGARCRM flav=ent ONLY -->
-
-
-<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
-
-	<tr>
-	<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_OC_STATUS}</h4></th>
-	</tr>
-	<tr>
-	<td width="25%" scope="row" valign='middle'>{$MOD.DEFAULT_OC_STATUS}&nbsp{sugar_help text=$MOD.LBL_OC_STATUS_DESC WIDTH=400}</td>
-{if !empty($settings.system_oc_active) && $settings.system_oc_active == 'true'}
-			{assign var='system_oc_active_checked' value='CHECKED'}
-		{else}
-			{assign var='system_oc_active_checked' value=''}
-		{/if}
-		<td ><input type='hidden' name='system_oc_active' value='false'><input name='system_oc_active'  type="checkbox" value='true' {$system_oc_active_checked}></td>
-	</tr>
-</table>
-
-<!--//END SUGARCRM flav=ent ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.ADVANCED}</h4></th>
