@@ -3703,7 +3703,7 @@ $app_strings = array (
         '{{#with stat}}{{records}} records were merged successfully. ' .
         '{{total}} related records were added.{{/with}}',
     'TPL_MERGE_DUPLICATES_IDENTICAL' =>
-        'Records are identical. All related records will be added to the Primary record.',
+        'Records are identical. All related records will be moved to the Primary record.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
