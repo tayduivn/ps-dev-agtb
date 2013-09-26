@@ -346,6 +346,14 @@ class RenameModules
         $deleteImage = SugarThemeRegistry::current()->getImage( 'delete_inline', '');
         $smarty->assign('deleteImage',$deleteImage);
         $smarty->display("modules/Studio/wizards/RenameModules.tpl");
+        if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+            require_once ('include/language/jsLanguage.php');
+            jsLanguage::createAppStringsCache($GLOBALS['current_language']);
+        }
+        if (!is_file(sugar_cached('jsLanguage/') . 'Studio' . '/' . $GLOBALS['current_language'] . '.js')) {
+            require_once ('include/language/jsLanguage.php');
+            jsLanguage::createModuleStringsCache('Studio', $GLOBALS['current_language']);
+        }
     }
 
     /**
