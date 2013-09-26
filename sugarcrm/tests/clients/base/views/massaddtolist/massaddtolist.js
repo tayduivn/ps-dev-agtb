@@ -97,8 +97,8 @@ describe("Base.View.Massaddtolist", function() {
             }
         };
         var successMessages = view.buildSaveSuccessMessages(massUpdateModel);
-        expect(successMessages['done']).toBe('LBL_MASS_ADD_TO_LIST_SUCCESS_ENTIRE');
-        expect(successMessages['queued']).toBe('LBL_MASS_ADD_TO_LIST_QUEUED_ENTIRE');
+        expect(successMessages['done']).toBe('TPL_MASS_ADD_TO_LIST_SUCCESS');
+        expect(successMessages['queued']).toBe('TPL_MASS_ADD_TO_LIST_QUEUED');
     });
 
     it("should generate appropriate success messages if a subset selected", function() {
@@ -116,8 +116,8 @@ describe("Base.View.Massaddtolist", function() {
             }
         };
         var successMessages = view.buildSaveSuccessMessages(massUpdateModel);
-        expect(successMessages['done']).toBe('LBL_MASS_ADD_TO_LIST_SUCCESS_SUBSET');
-        expect(successMessages['queued']).toBe('LBL_MASS_ADD_TO_LIST_QUEUED_SUBSET');
+        expect(successMessages['done']).toBe('TPL_MASS_ADD_TO_LIST_SUCCESS');
+        expect(successMessages['queued']).toBe('TPL_MASS_ADD_TO_LIST_QUEUED');
     });
 
 });
