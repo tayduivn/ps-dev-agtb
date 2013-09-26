@@ -78,7 +78,7 @@ class ReportsViewBuildreportmoduletree extends SugarView
                 continue;
             }
 
-			$custom_label = 'LBL_' . strtoupper ( $relationship->relationship_name . '_FROM_' . $relationship->lhs_module  ) . '_TITLE';
+			$custom_label = 'LBL_' . strtoupper ( $relationship->relationship_name . '_FROM_' . $link_module  ) . '_TITLE';
 			$custom_subpanel_label  = 'LBL_' . strtoupper ( $link_module) . '_SUBPANEL_TITLE';
 			//bug 47834
 			$lang = $GLOBALS['current_language'];
