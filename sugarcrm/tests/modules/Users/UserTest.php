@@ -331,6 +331,12 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->restoreSession("isMobile", $os);
     }
 
+    public function testPrimaryEmailShouldBeCaseInsensitive()
+    {
+        $this->_user->email1 = 'example@example.com';
+        $this->assertTrue($this->_user->isPrimaryEmail('EXAMPLE@example.com'));
+    }
+
     private function backUpConfig($name)
     {
         $config = null;
