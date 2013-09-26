@@ -82,22 +82,26 @@
         <script language="javascript" src="include/javascript/sugar7/alert.js"></script>
         <script language="javascript" src="include/javascript/sugar7/hbs-helpers.js"></script>
         <script language="javascript">
-            var App;
-			{/literal}{if $authorization}
-			SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$authorization.access_token}")
-			{if $authorization.refresh_token}
-			SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}")
-			{/if}
-			history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash)
-			{/if}{literal}
-            App = SUGAR.App.init({
-                el: "#sidecar",
-                callback: function(app){
-                    $('#alerts').empty();
-                    app.start();
-                }
-            });
-            App.api.debug = App.config.debugSugarApi;
+            if (parent.window != window && typeof(parent.SUGAR.App.router) != "undefined") {
+                parent.SUGAR.App.router.navigate("#Home", {trigger:true});
+            } else {
+                var App;
+                {/literal}{if $authorization}
+                SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$authorization.access_token}")
+                {if $authorization.refresh_token}
+                SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}")
+                {/if}
+                history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash)
+                {/if}{literal}
+                App = SUGAR.App.init({
+                    el: "#sidecar",
+                    callback: function(app){
+                        $('#alerts').empty();
+                        app.start();
+                    }
+                });
+                App.api.debug = App.config.debugSugarApi;
+            }
         </script>
         {/literal}
 
