@@ -13,9 +13,32 @@
 ({
     extendsFrom: 'RecordView',
 
+    /**
+     * @inheritdoc
+     */
     initialize: function(options) {
         app.view.invokeParent(this, {type: 'view', name: 'record', method: 'initialize', args: [options]});
         this._parsePanelFields(this.meta.panels);
+    },
+
+    /**
+     * @inheritdoc
+     */
+    cancelClicked: function () {
+        /**
+         * todo: this is a sad way to work around some problems with sugarlogic and revertAttributes
+         * but it makes things work now. Probability listens for Sales Stage to change and then by
+         * SugarLogic, it updates probability when sales_stage changes. When the user clicks cancel,
+         * it goes to revertAttributes() which sets the model back how it was, but when you try to
+         * navigate away, it picks up those new changes as unsaved changes to your model, and tries to
+         * falsely warn the user. This sets the model back to those changed attributes (causing them to
+         * show up in this.model.changed) then calls the parent cancelClicked function which does the
+         * exact same thing, but that time, since the model was already set, it doesn't see anything in
+         * this.model.changed, so it doesn't warn the user.
+         */
+        var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
+        this.model.set(changedAttributes);
+        app.view.invokeParent(this, {type: 'view', name: 'record', method: 'cancelClicked'});
     },
 
     /**
