@@ -8,8 +8,8 @@
             tagListContainerHtml = '<ul class="dropdown-menu activitystream-tag-dropdown"></ul>',
             mention = '@',
             reference = '#',
-            keycode_2 = 50,
-            keycode_3 = 51,
+            keycode_at = 64,
+            keycode_hash = 35,
             keycode_esc = 27,
             keycode_enter = 13,
             keycode_tab = 9,
@@ -20,6 +20,7 @@
 
         app.plugins.register('Taggable', ['view'], {
             events: {
+                'keypress .taggable': '_checkForReferenceOrMention',
                 'keydown .taggable': '_onKeydown',
                 'keyup .taggable': '_onKeyup',
                 'mouseover .activitystream-tag-dropdown li': '_setListOptionAsActive',
@@ -128,6 +129,25 @@
             _taggableListOpen: null,
 
             /**
+             * Enable taggable typeahead when @ or # is pressed.
+             *
+             * @param keypress
+             * @private
+             */
+            _checkForReferenceOrMention: function(event) {
+                // When taggable is disabled
+                if (!this._taggableEnabled) {
+                    // enable taggable typeahead when @ or # is pressed
+                    switch (event.which) {
+                        case keycode_at:
+                        case keycode_hash:
+                            this._enableTaggable();
+                            break;
+                    }
+                }
+            },
+
+            /**
              * Listen to keydown events. Perform various actions depending upon what keys have been pressed in
              * varying states.
              *
@@ -135,20 +155,9 @@
              * @private
              */
             _onKeydown: function(event) {
-                // When taggable is disabled and the shift key has been pressed...
-                if (!this._taggableEnabled && (event.shiftKey === true)) {
-                    // enable taggable typeahead when @ or # is pressed
-                    switch (event.keyCode) {
-                        case keycode_2:
-                        case keycode_3:
-                            this._enableTaggable();
-                            break;
-                    }
-                }
-
                 // When taggable is enabled but the tag search result list has not been opened...
                 if (this._taggableEnabled && !this._taggableListOpen) {
-                    switch (event.keyCode) {
+                    switch (event.which) {
                         // reset typeahead when escape, enter, or tab is pressed
                         case keycode_esc:
                         case keycode_enter:
@@ -161,7 +170,7 @@
 
                 // When taggable is enabled and the tag search result list is open...
                 if (this._taggableEnabled && (this._taggableListOpen === true)) {
-                    switch (event.keyCode) {
+                    switch (event.which) {
                         // remove typeahead when escape key is pressed
                         case keycode_esc:
                             event.preventDefault();
@@ -201,7 +210,7 @@
                 if (this._taggableEnabled) {
                     // Do not perform search if enter, tab, up arrow, or down arrow has been pressed while tag search
                     // result is open.
-                    if (this._taggableListOpen && (event.keyCode === keycode_enter || event.keyCode === keycode_tab || event.keyCode == keycode_up || event.keyCode == keycode_down)) {
+                    if (this._taggableListOpen && (event.which === keycode_enter || event.which === keycode_tab || event.which == keycode_up || event.which == keycode_down)) {
                         return;
                     }
 
