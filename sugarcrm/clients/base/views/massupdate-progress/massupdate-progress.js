@@ -231,6 +231,15 @@
     },
 
     /**
+     * Returns number of total elements for progress.
+     *
+     * @return {Number} Number of total elements.
+     */
+    getTotalRecords: function() {
+        return this.collection.length;
+    },
+
+    /**
      * Calculate remaining records.
      *
      * @return {Number} Remaining size.
@@ -319,9 +328,13 @@
         }
         this._startTime = new Date().getTime();
 
+        this.totalRecord = this.getTotalRecords();
+
         //restore back previous button status.
         var stopButton = this.getField('btn-stop');
-        stopButton.setDisabled(false);
+        if (stopButton) {
+            stopButton.setDisabled(false);
+        }
 
         var title = app.lang.get(this.LABELSET.TITLE, this.module, {
             module: this.module
@@ -380,7 +393,7 @@
      * Update current progress status.
      */
     updateProgress: function() {
-        if (this.collection.length === 0) {
+        if (!this.collection || this.collection.length === 0) {
             return;
         }
 
@@ -390,6 +403,7 @@
             percent = (size * 100 / this.totalRecord),
             message = app.lang.get(this.LABELSET['PROGRESS_STATUS'], this.module, {
                 num: size,
+                percent: Math.round(percent),
                 total: this.totalRecord
             });
         if (!_.isEmpty(estimateMessage)) {
