@@ -18,8 +18,8 @@
  * Besides the metadata properties inherited from Tabbed dashlet, Active tasks
  * dashlet also supports other properties:
  *
- * - {Boolean} show_overdue If tab supports overdue calculation, defaults to
- *   false.
+ * - {Array} overdue_badge field def to support overdue calculation, and showing
+ *   an overdue badge when appropriate.
  *
  * @class View.Views.BaseActiveTasksView
  * @alias SUGAR.App.view.views.BaseActiveTasksView
@@ -124,13 +124,11 @@
 
         var tab = this.tabs[this.settings.get('activeTab')];
 
-        _.each(this.collection.models, function(model) {
-            if (tab.show_overdue) {
-                var date = new Date(model.get(tab.record_date)),
-                    now = new Date();
-                model.set('overdue', date < now);
-            }
+        if (tab.overdue_badge) {
+            this.overdueBadge = tab.overdue_badge;
+        }
 
+        _.each(this.collection.models, function(model) {
             var pictureUrl = app.api.buildFileURL({
                 module: 'Users',
                 id: model.get('assigned_user_id'),
