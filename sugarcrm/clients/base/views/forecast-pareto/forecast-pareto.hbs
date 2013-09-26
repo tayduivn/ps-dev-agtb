@@ -33,10 +33,10 @@
             {{/with}}
         </div>
         {{#if isManager}}
-        <div id="{{cid}}_mgr_toggle" class="span3">
+        <div id="{{cid}}-mgr-toggle" class="span3">
             <div class="btn-group pull-right dashlet-group" data-toggle="buttons-radio">
-                <button class="btn active" rel="tooltip" data-type="self" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-user"></i></button>
-                <button class="btn" rel="tooltip" data-type="team" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-group"></i></button>
+                <button class="btn" rel="tooltip" data-type="self" title="{{{str "LBL_DASHLET_MY_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-user"></i></button>
+                <button class="btn active" rel="tooltip" data-type="team" title="{{{str "LBL_DASHLET_MY_TEAMS_FORECAST" 'Forecasts'}}}" data-placement="bottom"><i class="icon-group"></i></button>
             </div>
         </div>
         {{/if}}
@@ -45,4 +45,3 @@
 {{#with dashletConfig.chart}}
     {{field ../this model=../this.values template=detail}}
 {{/with}}
-

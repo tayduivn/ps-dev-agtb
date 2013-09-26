@@ -27,6 +27,11 @@
     displayTimeperiodPivot: true,
 
     /**
+     * Track if they are a manager
+     */
+    isManager: false,
+
+    /**
      * When on a Record view this are fields we should listen to changes in
      */
     validChangedFields: ['amount', 'likely_case', 'best_case', 'worst_case', 'assigned_user_id',
@@ -46,6 +51,7 @@
      */
     initialize: function(options) {
         this.values.clear({silent: true});
+        this.isManager = app.user.get('is_manager');
         // if the parent exists, use it, otherwise use the main context
         this.initOptions = options;
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
@@ -54,18 +60,19 @@
 
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.initOptions.meta.template = undefined;
+
+            // we only want to call this if forecast is setup and configured
+            app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
+                success: _.bind(this.forecastInitCallback, this),
+                complete: this.initOptions ? this.initOptions.complete : null
+            });
+
+            this.values.module = 'Forecasts';
+            this.displayTimeperiodPivot = (options.context.get('module') === 'Home');
         } else {
             // set the no access template
             this.initOptions.meta.template = 'forecast-pareto.no-access';
         }
-
-        app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-            success: _.bind(this.forecastInitCallback, this),
-            complete: this.initOptions ? this.initOptions.complete : null
-        });
-
-        this.values.module = 'Forecasts';
-        this.displayTimeperiodPivot = (options.context.get('module') === 'Home');
 
         app.view.View.prototype.initialize.call(this, this.initOptions);
     },
@@ -97,8 +104,6 @@
      * Callback function for Forecasts/init success
      */
     forecastInitCallback: function(initData) {
-        this.isManager = initData.initData.userData.isManager;
-
         var defaultOptions = {
             user_id: app.user.get('id'),
             // !! used here to ensure this is true/false, and not 1/0 as it comes from server to ensure passage for ===
@@ -119,7 +124,7 @@
 
         this.values.set(defaultOptions);
     },
-/*
+
     /**
      * Overwrite loadData so the default behavior doesn't happen
      *
@@ -152,14 +157,30 @@
      * Called after _render
      */
     toggleRepOptionsVisibility: function() {
+        var mgrToggleOffset;
         if (this.values.get('display_manager') === true) {
+            mgrToggleOffset = 6;
             this.$el.find('div.groupByOptions').addClass('hide');
         } else {
+            mgrToggleOffset = 3;
             this.$el.find('div.groupByOptions').removeClass('hide');
         }
 
+        if (this.displayTimeperiodPivot) {
+            mgrToggleOffset = mgrToggleOffset-3;
+        }
+
         if (this.isManager) {
-            this.$el.find('#' + this.cid + '_mgr_toggle').toggleClass('span3', 'span6');
+            var el = this.$el.find('#' + this.cid + '-mgr-toggle');
+            if(el.length > 0) {
+                var classes = el.attr("class").split(" ").filter(function(item) {
+                    return item.indexOf("offset") === -1 ? item : "";
+                });
+                if(mgrToggleOffset != 0) {
+                    classes.push('offset' + mgrToggleOffset);
+                }
+                el.attr("class", classes.join(" "));
+            }
         }
     },
 
@@ -254,7 +275,7 @@
         // so it looks like it changed, when in fact it didn't so don't worry about this change
         if (!_.isEmpty(changedCurrencyFields)) {
             _.each(changedCurrencyFields, function(field) {
-                if(parseFloat(model.get(field)) == parseFloat(model.previous(field))) {
+                if (parseFloat(model.get(field)) == parseFloat(model.previous(field))) {
                     validChangedFields = _.without(validChangedFields, field);
                 }
             });
@@ -365,7 +386,7 @@
      */
     addRowToChart: function(model) {
         model = model || this.model;
-        if (model.get('assigned_user_id') == app.user.get('id')) {
+        if (model.get('assigned_user_id') == app.user.get('id') && !this.values.get('display_manager')) {
             var field = this.getField('paretoChart'),
                 serverData = field.getServerData(),
             // make sure it doesn't exist in the serverdata
