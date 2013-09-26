@@ -40,6 +40,15 @@ global $sugar_version, $sugar_config;
 global $urlPrefix;
 global $currentModule;
 
+//close window and refresh parent if needed
+if(!empty($_REQUEST['special_action']) && $_REQUEST['special_action'] == "refresh"){
+    echo "<script>
+              window.opener.document.DetailView.action.value = 'DetailView';
+              window.opener.document.DetailView.submit();
+              window.close();
+          </script>";
+    return;
+}
 
 if(!empty($_REQUEST['workflow_id'])) {
     $workflow_object = BeanFactory::retrieveBean('WorkFlow', $_REQUEST['workflow_id']);
@@ -139,15 +148,6 @@ $form->out("embeded");
 	$form->assign("BOTTOM_BLOCK", $ProcessView->bottom_block);
 
 
-//close window and refresh parent if needed
-
-if(!empty($_REQUEST['special_action']) && $_REQUEST['special_action'] == "refresh"){
-
-	$special_javascript = "window.opener.document.DetailView.action.value = 'DetailView'; \n";
-	$special_javascript .= "window.opener.document.DetailView.submit(); \n";
-	$special_javascript .= "window.close();";
-	$form->assign("SPECIAL_JAVASCRIPT", $special_javascript);
-}
 if(!empty($_REQUEST['frame_type']) && $_REQUEST['frame_type']=="Secondary"){
 			echo getClassicModuleTitle($mod_strings['LBL_FILTER_FORM_TITLE'], array($mod_strings['LBL_FILTER_FORM_TITLE'],$mod_strings['LBL_FILTER_FORM_TITLE']), false);
 		} else {
