@@ -27,11 +27,6 @@
     displayTimeperiodPivot: true,
 
     /**
-     * Are we on the home page or not?
-     */
-    isOnHomePage: true,
-
-    /**
      * When on a Record view this are fields we should listen to changes in
      */
     validChangedFields: ['amount', 'likely_case', 'best_case', 'worst_case', 'assigned_user_id',
@@ -53,74 +48,30 @@
         this.values.clear({silent: true});
         // if the parent exists, use it, otherwise use the main context
         this.initOptions = options;
-
         this.forecastConfig = app.metadata.getModule('Forecasts', 'config');
         this.isForecastSetup = this.forecastConfig.is_setup;
         this.forecastsConfigOK = app.utils.checkForecastConfig();
 
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.initOptions.meta.template = undefined;
-            this.initComponent();
         } else {
             // set the no access template
             this.initOptions.meta.template = 'forecast-pareto.no-access';
-            app.view.View.prototype.initialize.call(this, this.initOptions);
         }
-    },
 
-    /**
-     * Handle the call to the Forecast/init call so we can get the defaults back
-     */
-    initComponent: function() {
-        if (this.initOptions.meta.config) {
-            app.view.View.prototype.initialize.call(this, this.initOptions);
-        } else {
-            app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
-                success: _.bind(this.forecastInitCallback, this),
-                complete: this.initOptions ? this.initOptions.complete : null
-            });
-        }
-    },
+        app.api.call('GET', app.api.buildURL('Forecasts/init'), null, {
+            success: _.bind(this.forecastInitCallback, this),
+            complete: this.initOptions ? this.initOptions.complete : null
+        });
 
-    /**
-     * The Callback for the forecast/init xhr call
-     * @param o
-     */
-    forecastInitCallback: function(o) {
-        app.view.View.prototype.initialize.call(this, this.initOptions);
         this.values.module = 'Forecasts';
-        this.isManager = o.initData.userData.isManager;
-        this.displayTimeperiodPivot = (this.context.get('module') === 'Home');
+        this.displayTimeperiodPivot = (options.context.get('module') === 'Home');
 
-        var defaultOptions = {
-            user_id: app.user.get('id'),
-            // !! used here to ensure this is true/false, and not 1/0 as it comes from server to ensure passage for ===
-            display_manager: !!this.isManager, // default to 'self' view for reps, and 'team' view for managers
-            selectedTimePeriod: o.defaultSelections.timeperiod_id.id,
-            timeperiod_id: o.defaultSelections.timeperiod_id.id,
-            timeperiod_label: o.defaultSelections.timeperiod_id.label,
-            dataset: o.defaultSelections.dataset,
-            group_by: o.defaultSelections.group_by,
-            ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
-        };
-
-        if (!this.displayTimeperiodPivot) {
-            this.isOnHomePage = false;
-
-            // if we have a timestamp, use it, otherwise just default to the current time period
-            if (this.model.has('date_closed_timestamp') && this.model.get('date_closed_timestamp') != 0) {
-                defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
-            }
-        }
-
-        this.values.set(defaultOptions);
-        this.bindDataChange();
-        this.render();
+        app.view.View.prototype.initialize.call(this, this.initOptions);
     },
 
     /**
-     * Specific code to run after a dashlet Init Code has ran
-     *
+     * @inheritdoc
      */
     initDashlet: function() {
         var fieldOptions = app.lang.getAppListStrings(this.dashletConfig.dataset.options),
@@ -143,16 +94,47 @@
     },
 
     /**
-     * When loadData is called, find the paretoChart field, if it exist, then have it render the chart
+     * Callback function for Forecasts/init success
+     */
+    forecastInitCallback: function(initData) {
+        this.isManager = initData.initData.userData.isManager;
+
+        var defaultOptions = {
+            user_id: app.user.get('id'),
+            // !! used here to ensure this is true/false, and not 1/0 as it comes from server to ensure passage for ===
+            display_manager: !!this.isManager, // default to 'self' view for reps, and 'team' view for managers
+            selectedTimePeriod: initData.defaultSelections.timeperiod_id.id,
+            timeperiod_id: initData.defaultSelections.timeperiod_id.id,
+            timeperiod_label: initData.defaultSelections.timeperiod_id.label,
+            dataset: initData.defaultSelections.dataset,
+            group_by: initData.defaultSelections.group_by,
+            ranges: _.keys(app.lang.getAppListStrings(this.forecastConfig.buckets_dom))
+        };
+
+        if (!this.displayTimeperiodPivot && this.model.has('date_closed_timestamp')
+            && this.model.get('date_closed_timestamp' != 0)) {
+            // if we have a timestamp, use it, otherwise just default to the current time period
+            defaultOptions.timeperiod_id = this.model.get('date_closed_timestamp');
+        }
+
+        this.values.set(defaultOptions);
+    },
+/*
+    /**
+     * Overwrite loadData so the default behavior doesn't happen
      *
      * @override
      */
     loadData: function(options) {
-        var f = this.getField('paretoChart');
+    },
 
-        if (!_.isUndefined(f)) {
-            f.renderChart(options);
-            f.once('chart:pareto:rendered', function() {
+    _render: function() {
+        app.view.invokeParent(this, {type: 'view', name: 'parent', method: '_render'});
+
+        var chartField = this.getField('paretoChart');
+        if (!_.isUndefined(chartField)) {
+            chartField.renderChart();
+            chartField.once('chart:pareto:rendered', function() {
                 //BEGIN SUGARCRM flav=ent ONLY
                 if (this.forecastConfig.forecast_by == 'RevenueLineItems' &&
                     this.context.get('module') == 'RevenueLineItems') {
@@ -193,7 +175,7 @@
     },
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     bindDataChange: function() {
         // on the off chance that the init has not run yet.
@@ -209,18 +191,18 @@
 
         if (this.isForecastSetup && this.forecastsConfigOK) {
             this.on('render', function() {
-                var f = this.getField('paretoChart'),
-                    dt = this.layout.getComponent('dashlet-toolbar');
+                var chartField = this.getField('paretoChart'),
+                    dashletToolbar = this.layout.getComponent('dashlet-toolbar');
 
-                // if we have a dashlet-toolbar, then make it do the refresh icon while the chart is loading from the
-                // server
-                if (dt) {
-                    f.before('chart:pareto:render', function() {
+                // if we have a dashlet-toolbar, then make it do the refresh icon
+                // while the chart is loading from the server
+                if (chartField && dashletToolbar) {
+                    chartField.before('chart:pareto:render', function() {
                         this.$("[data-action=loading]").removeClass(this.cssIconDefault).addClass(this.cssIconRefresh)
-                    }, {}, dt);
-                    f.on('chart:pareto:rendered', function() {
+                    }, {}, dashletToolbar);
+                    chartField.on('chart:pareto:rendered', function() {
                         this.$("[data-action=loading]").removeClass(this.cssIconRefresh).addClass(this.cssIconDefault)
-                    }, dt);
+                    }, dashletToolbar);
                 }
             }, this);
             this.values.on('change:display_manager', this.toggleRepOptionsVisibility, this);
@@ -228,7 +210,7 @@
                 this.values.set({timeperiod_id: timeperiod});
             }, this);
 
-            if (this.isOnHomePage === false) {
+            if (!this.displayTimeperiodPivot) {
                 this.findModelToListen();
                 this.listenModel.on('change', this.handleDataChange, this);
             }

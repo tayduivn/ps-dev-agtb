@@ -12,7 +12,6 @@
  */
 
 ({
-
     /**
      * The data from the server
      */
@@ -33,7 +32,9 @@
      */
     bindDataChange: function() {
         this.once('render', function() {
-            this.renderChart();
+            if(!_.isUndefined(this._serverData)) {
+                this.renderChart();
+            }
         }, this);
 
         app.events.on('preview:open', function() {
@@ -44,7 +45,8 @@
         }, this);
         app.events.on('app:toggle:sidebar', function(state) {
             this.state = state;
-            if (this.state == 'open' && !this.preview_open) {
+            if (this.state == 'open' && !this.preview_open
+                && !_.isUndefined(this._serverData)) {
                 this.convertDataToChartData();
                 this.generateD3Chart();
             }
@@ -58,7 +60,8 @@
         }, this);
 
         this.model.on('change:group_by change:dataset change:ranges', function() {
-            if (this.state == 'open' && !this.preview_open) {
+            if (this.state == 'open' && !this.preview_open
+                && !_.isUndefined(this._serverData)) {
                 this.convertDataToChartData();
                 this.generateD3Chart();
             }
@@ -80,11 +83,9 @@
      * @param {Object} [options]        Options from the dashlet loaddata call
      */
     renderChart: function(options) {
-        if (this.disposed) {
-            return;
-        }
-
-        if (!this.triggerBefore('chart:pareto:render')) {
+        if (this.disposed || !this.triggerBefore('chart:pareto:render')
+            || _.isUndefined(this.model.get('timeperiod_id'))
+            || _.isUndefined(this.model.get('user_id'))) {
             return;
         }
 
@@ -122,14 +123,12 @@
             }
         }, this);
 
-
-        var params = this.model.toJSON() || {},
-            read_options = {};
+        var read_options = {};
         if (this.model.has('no_data') && this.model.get('no_data') === true) {
             read_options['no_data'] = 1;
         }
 
-        var url = app.api.buildURL(this.buildChartUrl(params), null, null, read_options);
+        var url = app.api.buildURL(this.buildChartUrl(), null, null, read_options);
 
         app.api.call('read', url, {}, options);
     },
@@ -146,8 +145,7 @@
             d3.select('#' + this.chartId + ' svg').remove();
         }
 
-        this.paretoChart
-            .stacked(!params.display_manager);
+        this.paretoChart.stacked(!params.display_manager);
 
         if (this.d3Data.data.length > 0) {
             // if the chart element is hidden by a previous render, but has data now, show it
@@ -181,7 +179,7 @@
      * Utility method to determine which data we need to parse,
      */
     convertDataToChartData: function() {
-        if(this.state == 'closed' || this.preview_open) {
+        if(this.state == 'closed' || this.preview_open || _.isUndefined(this._serverData)) {
             return -1;
         }
 
@@ -360,12 +358,11 @@
     /**
      * Accepts params object and builds the proper endpoint url for charts
      *
-     * @param {Object} params contains a lot of chart options and settings.
      * @return {String} has the proper structure for the chart url.
      */
-    buildChartUrl: function(params) {
-        var baseUrl = params.display_manager ? 'ForecastManagerWorksheets' : 'ForecastWorksheets';
-        return baseUrl + '/chart/' + params.timeperiod_id + '/' + params.user_id;
+    buildChartUrl: function() {
+        var baseUrl = this.model.get('display_manager') ? 'ForecastManagerWorksheets' : 'ForecastWorksheets';
+        return baseUrl + '/chart/' + this.model.get('timeperiod_id') + '/' + this.model.get('user_id');
     },
 
     /**
