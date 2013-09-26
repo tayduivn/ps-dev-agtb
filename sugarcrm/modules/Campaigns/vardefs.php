@@ -138,32 +138,36 @@ $dictionary['Campaign'] = array (
             'default' => '-99',
             'comment' => 'Currency in use for the campaign'
         ),
+        'base_rate' => array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_CURRENCY_RATE',
+            'type' => 'decimal',
+            'len' => '26,6',
+            'required' => true,
+            'studio' => false
+        ),
         'budget' => array (
             'name' => 'budget',
             'vname' => 'LBL_CAMPAIGN_BUDGET',
             'type' => 'currency',
-            'dbType' => 'double',
             'comment' => 'Budgeted amount for the campaign'
         ),
         'expected_cost' => array (
             'name' => 'expected_cost',
             'vname' => 'LBL_CAMPAIGN_EXPECTED_COST',
             'type' => 'currency',
-            'dbType' => 'double',
             'comment' => 'Expected cost of the campaign'
         ),
         'actual_cost' => array (
             'name' => 'actual_cost',
             'vname' => 'LBL_CAMPAIGN_ACTUAL_COST',
             'type' => 'currency',
-            'dbType' => 'double',
             'comment' => 'Actual cost of the campaign'
         ),
         'expected_revenue' => array (
             'name' => 'expected_revenue',
             'vname' => 'LBL_CAMPAIGN_EXPECTED_REVENUE',
             'type' => 'currency',
-            'dbType' => 'double',
             'comment' => 'Expected revenue stemming from the campaign'
         ),
         'campaign_type' => array (

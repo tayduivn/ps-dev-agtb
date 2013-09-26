@@ -38,6 +38,7 @@ class ForecastScheduleCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @access public
      */
     public function __construct() {
+        parent::__construct();
         // set rate field definitions
         $this->addRateColumnDefinition('forecast_schedule','base_rate');
         // set usdollar field definitions

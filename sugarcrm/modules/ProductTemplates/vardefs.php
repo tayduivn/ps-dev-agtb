@@ -287,6 +287,14 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'default'=>'-99',
 		'comment' => 'Currency of the product'
 	),
+        'base_rate' => array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_CURRENCY_RATE',
+            'type' => 'decimal',
+            'len' => '26,6',
+            'required' => true,
+            'studio' => false
+        ),
   'currency_symbol' =>
 	array (
 		'name' => 'currency_symbol',

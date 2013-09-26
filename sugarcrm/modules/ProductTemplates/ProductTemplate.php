@@ -51,6 +51,7 @@ class ProductTemplate extends SugarBean {
 	var $discount_usdollar;
 	var $cost_usdollar;
 	var $currency_id;
+    var $base_rate;
 	var $mft_part_num;
 	var $status;
 	var $date_available;
@@ -491,26 +492,27 @@ class ProductTemplate extends SugarBean {
 	return $the_where;
 }
 
-	function save($check_notify = FALSE) {
+    function save($check_notify = FALSE) {
 
-		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
+        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+        $this->base_rate = $currency->conversion_rate;
 
         // Bug #52052: Calculated Fields don't get into POST (inputs are disabled)
         // So if i.e. "discount_price" is Calculated Fields we have find out it's value first
         $this->updateCalculatedFields();
 
-		//US DOLLAR
-		if(isset($this->discount_price)){
-			$this->discount_usdollar = $currency->convertToDollar($this->discount_price);
-		}
-		if(isset($this->list_price)){
-			$this->list_usdollar = $currency->convertToDollar($this->list_price);
-		}
-		if(isset($this->cost_price)){
-			$this->cost_usdollar = $currency->convertToDollar($this->cost_price);
-		}
-		parent::save($check_notify);
-	}
+        //US DOLLAR
+        if (isset($this->discount_price)) {
+            $this->discount_usdollar = SugarCurrency::convertWithRate($this->discount_price, $this->base_rate);
+        }
+        if (isset($this->list_price)) {
+            $this->list_usdollar = SugarCurrency::convertWithRate($this->list_price, $this->base_rate);
+        }
+        if (isset($this->cost_price)) {
+            $this->cost_usdollar = SugarCurrency::convertWithRate($this->cost_price, $this->base_rate);
+        }
+        parent::save($check_notify);
+    }
 }
 
 function getProductTypes($focus, $field='type_id', $value,$view='DetailView') {

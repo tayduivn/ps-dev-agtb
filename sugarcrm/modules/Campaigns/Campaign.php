@@ -36,6 +36,7 @@ class Campaign extends SugarBean {
 	var $created_by;
 	var $created_by_name;
     var $currency_id;
+    var $base_rate;
 	var $modified_by_name;
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
@@ -233,26 +234,22 @@ class Campaign extends SugarBean {
 		return $the_where;
 	}
 
-	function save($check_notify = FALSE) {
+    function save($check_notify = FALSE) {
 
-			//US DOLLAR
-			if(isset($this->amount) && !empty($this->amount)){
+        // set base rate
+        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+        $this->base_rate = $currency->conversion_rate;
 
-				$currency = BeanFactory::getBean('Currencies', $this->currency_id);
-				$this->amount_usdollar = $currency->convertToDollar($this->amount);
+        $this->unformat_all_fields();
 
-			}
+        // Bug53301
+        if($this->campaign_type != 'NewsLetter') {
+            $this->frequency = '';
+        }
 
-		$this->unformat_all_fields();
+        return parent::save($check_notify);
 
-		// Bug53301
-		if($this->campaign_type != 'NewsLetter') {
-		    $this->frequency = '';
-		}
-		
-		return parent::save($check_notify);
-
-	}
+    }
 
 
 	function mark_deleted($id){
