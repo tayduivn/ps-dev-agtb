@@ -310,9 +310,12 @@
      * @private
      */
     _savePrimary: function() {
-        var self = this;
+        var self = this,
+            fields = this.getFieldNames().filter(function(field) {
+            return app.acl.hasAccessToModel('edit', this.primaryRecord, field);
+        }, this);
         this.primaryRecord.save({}, {
-            fieldsToValidate: this.getFieldNames(),
+            fieldsToValidate: fields,
             success: function() {
                 self.primaryRecord.trigger('mergeduplicates:primary:saved');
             },
