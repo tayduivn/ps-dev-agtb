@@ -5,13 +5,13 @@ $viewdefs['portal']['layout']['header'] = array(
             'view' => 'modulelist',
         ),
         array(
-            'view' => 'quickcreate',
+            'view' => 'globalsearch',
         ),
         array(
             'view' => 'profileactions',
         ),
         array(
-            'view' => 'globalsearch',
+            'view' => 'quickcreate',
         )
     ),
 );
