@@ -590,7 +590,7 @@ class AbstractRelationships
 
                 if (!empty($override_array)) {
                     write_array_to_file(
-                        "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]",
+                        "viewdefs['{$moduleName}']['{$client}']['layout']['subpanels']['components'][]",
                         $override_array,
                         "{$layoutPath}/_overridesubpanel-for-{$relationshipName}.php"
                     );
