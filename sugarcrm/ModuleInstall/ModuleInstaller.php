@@ -2606,7 +2606,9 @@ private function dir_file_count($path){
         if (!is_array($this->installdefs['clientfiles'])) {
             return;
         }
-
+        
+        // clientfiles contains five identical lists of files for each of the
+        // activities relationships, this condenses them so we only copy once.
         $copyList = array();
         foreach ($this->installdefs['clientfiles'] as $outer) {
             foreach ($outer as $to => $from) {
