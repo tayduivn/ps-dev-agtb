@@ -322,13 +322,11 @@
      */
     showProgress: function() {
         this.initLabels();
-        this.totalRecord = this.collection.length;
+        this.totalRecord = this.getTotalRecords();
         if (this.triggerBefore('start') === false) {
             return false;
         }
         this._startTime = new Date().getTime();
-
-        this.totalRecord = this.getTotalRecords();
 
         //restore back previous button status.
         var stopButton = this.getField('btn-stop');
