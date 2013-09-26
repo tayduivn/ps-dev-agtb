@@ -159,7 +159,7 @@
      * extend this one from other "link" field
      */
     buildRoute: function (module, id) {
-        if (_.isEmpty(module) || !this.def.link) {
+        if (_.isEmpty(module) || (!_.isUndefined(this.def.link) && !this.def.link)) {
             return;
         }
         var action = (this.def.link && this.def.route)? this.def.route.action :"view";
