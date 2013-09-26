@@ -67,6 +67,11 @@
         if (this.model.isNew() && (!this.model.isCopy())) {
             // new records are set the user's preferred currency
             this.model.set(currencyField, app.user.get('preferences').currency_id);
+            // set the base rate for the user's preferred currency
+            this.model.set(
+                this.def.base_rate_field || 'base_rate',
+                app.metadata.getCurrency(app.user.get('preferences').currency_id).conversion_rate
+            );
         }
         // hide currency dropdown on list views
         this.hideCurrencyDropdown = this.view.action === 'list';
