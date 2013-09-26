@@ -689,6 +689,42 @@
         if (this.toggled) {
             this.toggleMoreLess();
         }
+
+        this._showAlertIfIdentical();
+    },
+
+    /**
+     * Shows confirmation message if records are identical.
+     * @protected
+     */
+    _showAlertIfIdentical: function() {
+        if (!this.meta || !this.meta.panels) {
+            return;
+        }
+
+        if (!this.collection.length) {
+            return;
+        }
+
+        var self = this,
+            visibleFields = _.first(this.meta.panels);
+
+        if (_.isEmpty(visibleFields.fields)) {
+            app.alert.show('merge_confirmation_identical', {
+                level: 'confirmation',
+                messages: app.lang.get('TPL_MERGE_DUPLICATES_IDENTICAL', this.module),
+                onConfirm: function() {
+                    self.layout.trigger('mergeduplicates:save:fire');
+                },
+                onLinkClick: function(event) {
+                    if ($(event.currentTarget).hasClass('cancel')) {
+                        if (!self.toggled) {
+                            self.toggleMoreLess();
+                        }
+                    }
+                }
+            });
+        }
     },
 
     /**
