@@ -185,7 +185,7 @@ class DownloadFile {
                     if (isset($bean->object_name)) {
                         if ($bean->object_name == 'Document') {
                             // Documents store their file information in DocumentRevisions
-                            $revision = BeanFactory::getBean('DocumentRevisions', $bean->id);
+                            $revision = BeanFactory::retrieveBean('DocumentRevisions', $bean->id);
 
                             if (!empty($revision)) {
                                 $fileid  = $revision->id;
@@ -193,7 +193,7 @@ class DownloadFile {
                                 $fileurl = empty($revision->doc_url) ? '' : $revision->doc_url;
                             } else {
                                 // The id is not a revision id, try the actual document revision id
-                                $revision = BeanFactory::getBean('DocumentRevisions', $bean->document_revision_id);
+                                $revision = BeanFactory::retrieveBean('DocumentRevisions', $bean->document_revision_id);
 
                                 if (!empty($revision)) {
                                     // Revision will hold the file id AND the file name
@@ -266,7 +266,9 @@ class DownloadFile {
                         'uri' => $fileurl,
                         'path' => $filepath,
                     );
-            }
+        } else {
+            return null;
+        }
     }
 
     /**
