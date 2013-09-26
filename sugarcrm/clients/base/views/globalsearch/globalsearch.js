@@ -135,7 +135,6 @@
                 self.fireSearchRequest.call(self, term, this);
             },
             compiler: menuTemplate,
-            minChars: 4, // ignore first three
             throttleMillis: (app.config.requiredElapsed || 500),
             throttle: function(callback, millis) {
                 if(!self.debounceFunction) {
@@ -159,6 +158,10 @@
                     }
                 }
             }
+        });
+        // Prevent the form from being submitted
+        this.$('.navbar-search').submit(function() {
+            return false;
         });
     },
 
@@ -218,11 +221,12 @@
         var searchModuleNames = this._getSearchModuleNames(),
             moduleList = searchModuleNames.join(','),
             self = this,
+            maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 5,
             params = {
                 q: term,
                 fields: 'name, id',
                 module_list: moduleList,
-                max_num: 5
+                max_num: maxNum
             };
         app.api.search(params, {
             success:function(data) {
