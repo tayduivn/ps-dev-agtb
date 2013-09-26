@@ -17,7 +17,7 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @dataProvider productDataProvider
      */
-    public function testConvertProductToRLI($amount, $quantity, $discount)
+    public function testConvertProductToRLI($amount, $quantity, $discount, $discount_select)
     {
         /* @var $product Product */
         $product = $this->getMock('Product', array('save'));
@@ -28,8 +28,12 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
 
         $product->name = 'Hello World';
         $product->total_amount = $amount;
+        $product->discount_price = $amount;
         $product->quantity = $quantity;
         $product->discount_amount = $discount;
+        $product->discount_select = $discount_select;
+
+        SugarTestReflection::callProtectedMethod($product, 'calculateDiscountPrice');
 
         $rli = $product->convertToRevenueLineItem();
 
@@ -37,29 +41,45 @@ class ProductTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($product->name, $rli->name);
         $this->assertEquals(
             SugarMath::init()
-            ->exp(
-                '(?+?)-(?*?)', 
-                array(
-                    $amount, 
-                    $discount, 
-                    $discount, 
-                    $quantity
+                ->exp(
+                    '(?+?)-(?*?)',
+                    array(
+                        $amount,
+                        $discount,
+                        $discount,
+                        $quantity
+                    )
                 )
-            )
-            ->result(), 
+                ->result(),
             $rli->likely_case
         );
+        // lets make sure that the discount_amount is correct
+        $this->assertEquals(
+            SugarMath::init()
+                ->exp(
+                    '(?*?)',
+                    array(
+                        $product->deal_calc,
+                        $quantity
+                    )
+                )
+                ->result(),
+            $rli->discount_amount
+        );
     }
-    
+
     /**
      * productDataProvider
      */
     public function productDataProvider()
     {
         return array(
-           array('100.00', '1', '0'),
-           array('100.00', '10', '0'),
-           array('100.00', '10', '1')
+            array('100.00', '1', '0', null),
+            array('100.00', '10', '0', null),
+            array('100.00', '10', '1', null),
+            array('100.00', '1', '0', 1),
+            array('100.00', '1', '10', 1),
+            array('100.00', '2', '10', 1),
         );
     }
 }
