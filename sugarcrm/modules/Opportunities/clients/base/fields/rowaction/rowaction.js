@@ -20,13 +20,17 @@
         this.plugins = _.clone(this.plugins) || [];
         this.plugins.push('DisableDelete');
         app.view.invokeParent(this, {type: 'field', name: 'rowaction', method: 'initialize', args: [options]});
-        
+
         //Redraw dropdown on change
         this.model.on("change:closed_revenue_line_items", function(){
             this.render();
             //clean up visible buttons
-            this.view.initButtons();
-            this.view.setButtonStates(this.view.STATE.VIEW);
+            if(_.isFunction(this.view.initButtons)) {
+                this.view.initButtons();
+            }
+            if(_.isFunction(this.view.setButtonStates)) {
+                this.view.setButtonStates(this.view.STATE.VIEW);
+            }
         }, this);
     }
 })
