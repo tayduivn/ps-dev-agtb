@@ -28,7 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $module_name = '<module_name>';
-$OBJECT_NAME = '<_object_name>';
 $viewdefs[$module_name]['mobile']['view']['list'] = array(
     'panels' => array(
         array(

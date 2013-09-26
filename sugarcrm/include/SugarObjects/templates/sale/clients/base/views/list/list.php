@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $module_name = '<module_name>';
-$OBJECT_NAME = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['base']['view']['list'] = array(
     'panels' => array(
         array(
@@ -58,7 +58,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => $module_name .'_type',
+                    'name' => $_module_name .'_type',
                     'width' => '15',
                     'label' => 'LBL_TYPE',
                 ),

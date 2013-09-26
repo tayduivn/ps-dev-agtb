@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $module_name = '<module_name>';
-$_object_name = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['mobile']['view']['detail'] = array(
 	'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE',)),
                         	'maxColumns' => '1',
@@ -41,7 +41,7 @@ $viewdefs[$module_name]['mobile']['view']['detail'] = array(
     	array (
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
-                $_object_name . '_number',
+                $_module_name . '_number',
                 'priority',
                 'status',
                 array (
