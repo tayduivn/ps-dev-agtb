@@ -161,6 +161,37 @@
             }
         });
     },
+
+    /**
+     * Escapes the highlighted result from Elasticsearch for any potential XSS.
+     * @param  {String} html
+     * @return {Handlebars.SafeString}
+     */
+    _escapeSearchResults: function(html) {
+        // Change this regex if server-side preTag and postTag change.
+        var highlightedSpanRe = /<strong>.*?<\/strong>/g,
+            higlightSpanTagsRe = /(<strong>)|(<\/strong>)/g,
+            escape = Handlebars.Utils.escapeExpression,
+            // First, all of the HTML is escaped.
+            result = escape(html),
+            // Then, we find all pieces highlighted by the server.
+            highlightedSpan = html.match(highlightedSpanRe),
+            highlightedContent,
+            self = this;
+
+        // For each highlighted part:
+        _.each(highlightedSpan, function(part){
+            highlightedContent = part.replace(higlightSpanTagsRe, '');
+            // We escape the content of each highlight returned from Elastic.
+            highlightedContent = escape(highlightedContent);
+            // And then, we inject the escaped content with our own unescaped
+            // highlighting tags (self.preTag/self.postTag).
+            result = result.replace(escape(part), self.preTag + highlightedContent + self.postTag);
+        });
+
+        return new Handlebars.SafeString(result);
+    },
+
     /**
      * Get the modules that current user selected for search.
      * Empty array for all.
@@ -209,8 +240,7 @@
 
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {
-                            var text = Handlebars.Utils.escapeExpression(val.text),
-                                safeString = new Handlebars.SafeString(self.preTag + text + self.postTag);
+                            var safeString = self._escapeSearchResults(val.text);
                             if (key !== 'name') { // found in a related field
                                formattedRecord.field_name = app.lang.get(val.label, val.module);
                                formattedRecord.field_value = safeString;
