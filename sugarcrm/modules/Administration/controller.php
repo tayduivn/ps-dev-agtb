@@ -67,13 +67,19 @@ class AdministrationController extends SugarController
         $disabled_langs = json_decode($toDecode);
         $toDecode = html_entity_decode  ($_REQUEST['enabled_langs'], ENT_QUOTES);
         $enabled_langs = json_decode($toDecode);
-        $cfg = new Configurator();
-        $cfg->config['disabled_languages'] = join(',', $disabled_langs);
-        // TODO: find way to enforce order
-        $cfg->handleOverride();
+        $languages = LanguageManager::getEnabledAndDisabledLanguages();
 
-        // Clear the metadata cache so changes to languages are picked up right away
-        MetaDataManager::clearAPICache();
+        if (count($sugar_config['languages']) === count($disabled_langs)) {
+            sugar_die(translate('LBL_CAN_NOT_DISABLE_ALL_LANG'));
+        } else {
+            $cfg = new Configurator();
+            $cfg->config['disabled_languages'] = join(',', $disabled_langs);
+            // TODO: find way to enforce order
+            $cfg->handleOverride();
+
+            // Clear the metadata cache so changes to languages are picked up right away
+            MetaDataManager::clearAPICache();
+        }
         
         header("Location: index.php?module=Administration&action=Languages");
     }
