@@ -33,7 +33,9 @@ class DivideExpression extends NumericExpression {
 		$params = $this->getParameters();
 		$numerator   = $params[0]->evaluate();
 		$denominator = $params[1]->evaluate();
-		
+		if($denominator == 0) {
+		    throw new Exception("Division by zero");
+		}
 		return $numerator/$denominator;
 	}
 
@@ -50,7 +52,7 @@ class DivideExpression extends NumericExpression {
 			return numerator/denominator;
 EOQ;
 	}
-	
+
 	/**
 	 * Returns the opreation name that this Expression should be
 	 * called by.
@@ -58,7 +60,7 @@ EOQ;
 	static function getOperationName() {
 		return "divide";
 	}
-	
+
 	/**
 	 * Returns the exact number of parameters needed.
 	 */

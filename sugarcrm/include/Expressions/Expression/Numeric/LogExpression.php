@@ -33,9 +33,12 @@ class LogExpression extends NumericExpression {
 		$params = $this->getParameters();
         $base = $params[1]->evaluate();
         $value = $params[0]->evaluate();
+        if($base == 1) {
+            throw new Exception("Log base can not be 1");
+        }
         return log( $value ) / log ( $base );
 	}
-	
+
 	/**
 	 * Returns the JS Equivalent of the evaluate function.
 	 */
@@ -48,7 +51,7 @@ class LogExpression extends NumericExpression {
             return Math.log( value ) / Math.log ( base );
 EOQ;
 	}
-	
+
 	/**
 	 * Returns the opreation name that this Expression should be
 	 * called by.
@@ -56,7 +59,7 @@ EOQ;
 	static function getOperationName() {
 		return "log";
 	}
-	
+
 	/**
 	 * Returns the exact number of parameters needed.
 	 */

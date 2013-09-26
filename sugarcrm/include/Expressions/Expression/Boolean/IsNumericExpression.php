@@ -34,7 +34,7 @@ class IsNumericExpression extends BooleanExpression
     public function evaluate()
     {
         $params = $this->getParameters()->evaluate();
-        if ($params === '') {
+        if ($params === '' || is_null($params)) {
             return AbstractExpression::$FALSE;
         }
         if (preg_match('/^(\-)?([0-9]+)?(\.[0-9]+)?$/', $params)) {
