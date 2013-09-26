@@ -43,6 +43,8 @@ class SugarUpgrade67ForDelete extends UpgradeScript
             'modules/RevenueLineItems/Popup_picker.php',
             // remove phpunit from vendor
             'vendor/phpunit',
+            // remove the old base metadata file template for the dashablelist view
+            'include/SugarObjects/templates/basic/clients/base/views/dashablelist/dashablelist.php',
         );
         $this->fileToDelete($files);
     }
