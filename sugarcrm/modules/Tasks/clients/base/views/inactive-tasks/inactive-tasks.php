@@ -53,6 +53,7 @@ $viewdefs['Tasks']['base']['view']['inactive-tasks'] = array(
                         'action' => 'createRecord',
                         'params' => array(
                             'module' => 'Tasks',
+                            'link' => 'tasks',
                         ),
                         'label' => 'LBL_CREATE_TASK',
                         'acl_action' => 'create',

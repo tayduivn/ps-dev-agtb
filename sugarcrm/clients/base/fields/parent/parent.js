@@ -26,8 +26,9 @@
                 });
             });
 
-            if(this.model.get('parent_type') !== this.$(this.typeFieldTag).val()) {
-                this.model.set('parent_type', this.$(this.typeFieldTag).val());
+
+            if(this.model.get(this.def.type_name) !== this.$(this.typeFieldTag).val()) {
+                this.model.set(this.def.type_name, this.$(this.typeFieldTag).val());
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {

@@ -21,6 +21,7 @@
  */
 ({
     extendsFrom: 'TabbedDashletView',
+    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
 
     /**
      * {@inheritDoc}
@@ -81,7 +82,7 @@
             return;
         }
 
-        this._openCreateDrawer(params.module, params.layout);
+        this.createRelatedRecord(params.module, params.link);
     },
 
     /**

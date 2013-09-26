@@ -36,9 +36,14 @@
 
                 if (!_.isEmpty(relatedFields)) {
                     model.relatedAttributes = model.relatedAttributes || {};
-
                     _.each(relatedFields, function(field) {
-                        model.set(field.name, parentModel.get(field.rname));
+                        var parentValue = parentModel.get(field.rname);
+                        if (!parentValue && parentModel.fields[field.rname]
+                            && parentModel.fields[field.rname].type == "fullname"
+                        ) {
+                            parentValue =  parentModel.get("full_name");
+                        }
+                        model.set(field.name, parentValue);
                         model.set(field.id_name, parentModel.get('id'));
                         model.relatedAttributes[field.name] = parentModel.get(field.rname);
                         model.relatedAttributes[field.id_name] = parentModel.get('id');
@@ -57,6 +62,7 @@
                         }
                     }, this);
                 }
+                this.populateParentFields(model, parentModel);
 
                 return model;
             },
@@ -71,14 +77,14 @@
              *
              * @param {String} module Module name.
              */
-            createRelatedRecord: function(module) {
+            createRelatedRecord: function(module, link) {
                 var bwcExceptions = ['Emails'],
                     moduleMeta = app.metadata.getModule(module);
 
                 if (moduleMeta && moduleMeta.isBwcEnabled && !_.contains(bwcExceptions, module)) {
                     this.routeToBwcCreate(module);
                 } else {
-                    this.openCreateDrawer(module);
+                    this.openCreateDrawer(module, link);
                 }
             },
 
@@ -103,13 +109,14 @@
              *
              * @param {String} module Module name.
              */
-            openCreateDrawer: function(module) {
+            openCreateDrawer: function(module, link) {
                 var proto = Object.getPrototypeOf(this);
                 if (_.isFunction(proto.openCreateDrawer)) {
                     return proto.openCreateDrawer.call(this, module);
                 }
-                var parentModel = this.context.parent.get('model'),
-                    link = this.context.get('link'),
+                link = link || this.context.get('link');
+                var context = this.context.parent || this.context;
+                var parentModel = context.get('model'),
                     model = this.createLinkModel(parentModel, link),
                     self = this;
                 app.drawer.open({
@@ -130,6 +137,28 @@
                 });
             },
 
+            //If this is being created through a subpanel or dashlet as a child of another record
+            //default to populating the parent field as that record
+            populateParentFields: function(model, parentModel) {
+                var parentModule = parentModel.module || parentModel.get("module") || parentModel.get("_module");
+                _.each(model.fields, function(def, name) {
+                    if (def.type && def.type == "parent") {
+                        if (app.lang.getAppListStrings(def.options)[parentModule]) {
+                            model.set(def.type_name, parentModule);
+                            if (parentModel.get("id")) {
+                                model.set(def.id_name, parentModel.get("id"));
+                                //parent_name is hard coded server side to map to these three name fields
+                                model.set(def.name,
+                                    parentModel.get("full_name")
+                                        || parentModel.get("document_name")
+                                        || parentModel.get("name")
+                                        || ""
+                                );
+                            }
+                        }
+                    }
+                });
+            }
         });
     });
 })(SUGAR.App);
