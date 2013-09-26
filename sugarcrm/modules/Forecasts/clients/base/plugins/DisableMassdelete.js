@@ -54,13 +54,13 @@
                             status = model.get("sales_stage");
                         }
 
-                        if (closed_RLI_count > 0) {
-                            message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
-                            return true;
-                        }
-                        
                         if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
                             message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
+                            return true;
+                        }
+
+                        if (closed_RLI_count > 0) {
+                            message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
                             return true;
                         }
 
@@ -68,7 +68,7 @@
                     });
 
                     if (closedModels.length > 0) {
-                       module.remove(closedModels, {silent:false});
+                       module.remove(closedModels);
                        this.context.set('mass_collection', module);
                         //uncheck items
                         _.each(closedModels, function(item){
