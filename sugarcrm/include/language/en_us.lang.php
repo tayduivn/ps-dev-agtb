@@ -4126,6 +4126,7 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
     'LBL_HISTORY_DASHLET_EMAIL_SINGULAR' => 'Email',
     'LBL_HISTORY_DASHLET_EMAIL_PLURAL' => 'Emails',
+    'LBL_UNASSIGNED' => 'Unassigned',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
