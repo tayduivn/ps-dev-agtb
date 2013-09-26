@@ -139,14 +139,14 @@ class Contact extends Person {
 
 	var $relationship_fields = Array(
         'account_id'=> 'accounts',
-        'bug_id' => 'bugs', 
+        'bug_id' => 'bugs',
         'call_id'=>'calls',
         'case_id'=>'cases',
         'email_id'=>'emails',
         'meeting_id'=>'meetings',
         'note_id'=>'notes',
-        'task_id'=>'tasks', 
-        'opportunity_id'=>'opportunities', 
+        'task_id'=>'tasks',
+        'opportunity_id'=>'opportunities',
     );
 
 
@@ -404,6 +404,9 @@ class Contact extends Person {
 		} else {
 			$this->sync_contact = false;
 		}
+		if(!empty($this->fetched_row)) {
+		    $this->fetched_row['sync_contact'] = $this->sync_contact;
+		}
 
 		/** concating this here because newly created Contacts do not have a
 		 * 'name' attribute constructed to pass onto related items, such as Tasks
@@ -602,4 +605,25 @@ class Contact extends Person {
 			}
 		}
 	}
+
+	/**
+     *
+     * @see parent::save()
+     */
+    public function save($check_notify = false)
+    {
+        if(!is_null($this->sync_contact)) {
+            if(empty($this->fetched_row) || $this->fetched_row['sync_contact'] != $this->sync_contact) {
+                $this->load_relationship('user_sync');
+                if($this->sync_contact) {
+                    // They want to sync_contact
+                    $this->user_sync->add($GLOBALS['current_user']->id);
+                } else {
+                    $this->user_sync->delete($this->id, $GLOBALS['current_user']->id);
+                }
+
+            }
+        }
+        return parent::save($check_notify);
+    }
 }
