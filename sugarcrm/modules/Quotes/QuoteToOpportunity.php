@@ -134,6 +134,7 @@ if ($quote->getRelatedOpportunityCount() > 0) {
         $rli = $product->convertToRevenueLineItem();
         $rli->date_closed = $quote->date_quote_expected_closed;
         $rli->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote' : null;
+        $rli->probability = isset($rli->sales_stage) ? $app_list_strings['sales_probability_dom'][$rli->sales_stage] : 0;
         $rli->assigned_user_id = $quote->assigned_user_id;
         $rli->save();
 
