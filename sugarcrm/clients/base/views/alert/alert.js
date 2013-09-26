@@ -31,7 +31,7 @@
      */
         extendsFrom: app.view.AlertView,
 
-        className: '', //override default class
+        className: 'alert-wrapper', //override default class
 
         events: {
             'click [data-action=cancel]': 'cancelClicked',
@@ -63,6 +63,8 @@
             }
             var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
             this.$el.html(template);
+            this.$el.after('<br>');
+
             this.show(options.level);
         },
 
@@ -209,6 +211,14 @@
         }
 
         return result;
+    },
+
+    /**
+     * Remove br tags after alerts which are needed to stack alerts vertically.
+     */
+    close: function(){
+        this.$el.next('br').remove();
+        this._super('close');
     },
 
     bindDataChange : function() {}
