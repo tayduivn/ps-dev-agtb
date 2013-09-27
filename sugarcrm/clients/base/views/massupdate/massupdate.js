@@ -590,7 +590,24 @@
      */
     getAttributes: function() {
         var values = [this.defaultOption].concat(this.fieldValues),
-            attributes = [];
+            attributes = [],
+            fieldFilter = function(field) {
+                return field && field.name;
+            };
+        values = _.chain(values)
+            //Grab the field arrays from any fields that have child fields
+            //and merge them with the top level field list
+            .union(_.chain(values)
+                .pluck("fields")
+                .compact()
+                .flatten()
+                .value()
+            )
+            //Remove any dupes or empties
+            .uniq(fieldFilter)
+            .filter(fieldFilter)
+            .value();
+
         _.each(values, function(value) {
             attributes = _.union(attributes,
                 _.values(_.pick(value, 'name', 'id_name'))
