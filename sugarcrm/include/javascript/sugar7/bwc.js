@@ -171,7 +171,7 @@
                 return_name: parentModel.get('name') || parentModel.get('full_name')
             };
             //Special case for Contacts->meetings. The parent should be the account rather than the contact
-            if (parentModel.module == "Contacts" && parentModel.get("account_id") && link == "meetings") {
+            if (parentModel.module == "Contacts" && parentModel.get("account_id") && (link == "meetings" || link == 'calls')) {
                 params = _.extend(params, {
                     parent_type: "Accounts",
                     parent_id: parentModel.get("account_id"),
