@@ -43,7 +43,6 @@ $viewdefs['Reports']['base']['view']['list'] = array(
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'default' => true,
                     'sortable' => false,
-                    'module' => 'Employees',
                 ),
                 array (
                     'name'  => 'date_entered',

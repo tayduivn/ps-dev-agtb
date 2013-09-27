@@ -95,7 +95,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'width' => '10',
                     'label' => 'LBL_CREATED',
                     'readonly' => true,
-                    'module' => 'Employees',
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -112,14 +111,12 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'modified_by_name',
                     'width' => '5',
                     'label' => 'LBL_MODIFIED',
                     'readonly' => true,
-                    'module' => 'Employees',
                 ),
             ),
         ),

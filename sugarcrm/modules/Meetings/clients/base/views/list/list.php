@@ -69,7 +69,6 @@ $viewdefs['Meetings']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'enabled' => true,
-                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'direction',

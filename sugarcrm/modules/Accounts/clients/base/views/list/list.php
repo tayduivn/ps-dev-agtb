@@ -72,7 +72,6 @@ $viewdefs['Accounts']['base']['view']['list'] = array(
                     'sortable' => false,
                     'enabled' => true,
                     'default' => true,
-                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'email',
