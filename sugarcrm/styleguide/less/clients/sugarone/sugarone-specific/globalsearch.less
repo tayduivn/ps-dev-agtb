@@ -1,84 +1,93 @@
 #searchForm {
-    position: relative;
-    float: left;
-    display: inline-block;
-    width: ~"-moz-calc(100% - 180px)";
-    width: ~"-webkit-calc(100% - 180px)";
-    width: ~"calc(100% - 180px)";
+  position: relative;
+  float: left;
+  display: inline-block;
+  width: ~"-moz-calc(100% - 180px)";
+  width: ~"-webkit-calc(100% - 180px)";
+  width: ~"calc(100% - 180px)";
 
-    .btn {
-        margin-right: 0;
+  .btn {
+    margin-right: 0;
+  }
+  label {
+    &.hide {
+      display: none;
     }
-    label {
-        &.hide {
-            display: none;
+  }
+  .rtlFloat(@direction,left);
+  .dropdown-menu {
+    // Typeahead
+    &.typeahead {
+      li, a {
+      padding: 0;
+      margin: 0;
+      .border-radius(0);
+      text-indent: 0;
+      }
+      li > a {
+      padding: 10px;
+      }
+    }
+  }
+
+  .advanced .dropdown-menu {
+  	// [moey] Override sugarspecific/globalsearch.less.
+	// This is somehow "redundant" because sugarspecific/globalsearch.less actually
+	// overrides Bootstrap's default style and here we're again override it to
+	// get back to Bootstrap's default.
+  	.border-radius(4px);
+	li {
+	  border-top: 1px solid @grayLighter;
+      &:first-child {
+        border-top: none;
+      }
+      label {
+        margin-bottom: 0;
+        display: inline-block;
+        width: 100%;
+        white-space: nowrap;
+        padding: 10px;
+        .select-module {
+          display: inline-block;
+          margin-right: 6px;
         }
-    }
-    .rtlFloat(@direction,left);
-    .dropdown-menu {
-        // Typeahead
-        &.typeahead {
-          li, a {
-            padding: 0;
-            margin: 0;
-            .border-radius(0);
-            text-indent: 0;
-          }
-          li > a {
-            padding: 10px;
-          }
-        }
-    }
-
-    .advanced .dropdown-menu {
-    	// [moey] Override sugarspecific/globalsearch.less.
-		//   This is somehow "redundant" because sugarspecific/globalsearch.less actually
-		//   overrides Bootstrap's default style and here we're again override it to
-		//   get back to Bootstrap's default.
-    	background-color: @white;
-
-    	top: 24px;
-    	border: 1px solid @grayLight;
-    	.border-radius(4px);
-
-		li {
-			border-top: 1px solid @grayLighter;
-		}
-    }
+      }
+	}
+  }
 }
 .navbar-search {
-    display: inline-block;
-    margin-left: 0;
+  display: inline-block;
+  margin-left: 0;
 }
 
 .searchSuggestions {
-    border: 1px solid #ECECEC;
-    li {
-        background: #F5F5F5;
-        &:not(:last-child) {
-            border-bottom: 1px solid #DFDFDF;
-        }
-        &.selected {
-            background: #F1F1F1;
-            &:before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: -2px;
-                bottom: -1px;
-                width: 3px;
-                background: @linkColor;
-                background: -webkit-linear-gradient(@linkColor, @linkColorHover);
-                background: linear-gradient(@linkColor, @linkColorHover);
-            }
-        }
-        &.listItem:hover {
-            cursor: pointer;
-        }
-        a {
-            &:focus {
-                outline: none;
-            }
-        }
+  border: 1px solid #ECECEC;
+  li {
+    background: #F5F5F5;
+    &:not(:last-child) {
+      border-bottom: 1px solid #DFDFDF;
     }
+    &.selected {
+      background: #F1F1F1;
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: -2px;
+        bottom: -1px;
+        width: 3px;
+        background: @linkColor;
+        background: -webkit-linear-gradient(@linkColor, @linkColorHover);
+        background: linear-gradient(@linkColor, @linkColorHover);
+      }
+    }
+    &.listItem:hover {
+      cursor: pointer;
+    }
+    a {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
 }
