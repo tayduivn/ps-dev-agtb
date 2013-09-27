@@ -236,7 +236,9 @@
             window.clearInterval(this._intervalId);
             this._intervalId = null;
         }
-
+        _.each(['Calls', 'Meetings'], function(module) {
+            this._clearReminders(module);
+        }, this);
         return this;
     },
 
@@ -406,6 +408,10 @@
      * @private
      */
     _showReminderAlert: function(model) {
+        if (!app.api.isAuthenticated()) {
+            delete this._intervals[model.module][model.id];
+            return;
+        }
         var url = app.router.buildRoute(model.module, model.id),
             dateFormat = app.user.getPreference('datepref') + ' ' + app.user.getPreference('timepref'),
             dateValue = app.date.format(new Date(model.get('date_start')), dateFormat),

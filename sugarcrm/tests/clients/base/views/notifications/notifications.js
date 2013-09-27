@@ -209,11 +209,19 @@ describe('Notifications', function () {
             });
             clearInterval = sinon.collection.stub(window, 'clearInterval', $.noop());
 
+            view._intervals = {};
+            view._intervals['Calls'] = {
+                idB: {
+                    timer: 2
+                }
+            };
+
             view.startPulling().stopPulling();
 
             expect(clearInterval).toHaveBeenCalledOnce();
             expect(clearInterval).toHaveBeenCalledWith(intervalId);
             expect(view._intervalId).toBeNull();
+            expect(view._intervals).toEqual({Calls: {}, Meetings: {}});
         });
 
         it('should stop pulling on dispose', function () {
