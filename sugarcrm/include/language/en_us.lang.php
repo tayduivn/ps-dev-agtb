@@ -3042,6 +3042,7 @@ $app_strings = array (
     'LNK_DELETE_ALL' => 'del all',
     'LNK_DELETE' => 'delete',
     'LNK_EDIT' => 'edit',
+    'LNK_VIEW' => 'view',
     'LNK_GET_LATEST'=>'Get latest',
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',

@@ -62,11 +62,16 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		}else
 //END SUGARCRM flav=pro ONLY
         if($layout_def['EditView']) {
+            if (isModuleBWC($layout_def['module'])) {
+                $label = $app_strings['LNK_EDIT'];
+            } else {
+                $label = $app_strings['LNK_VIEW'];
+            }
 			return "<a href='#' onMouseOver=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-			. " class='listViewTdToolsS1' id=\"$unique_id\">". $app_strings['LNK_EDIT'] .'</a>';
+			. " class='listViewTdToolsS1' id=\"$unique_id\">". $label .'</a>';
 		}
 
         return '';
