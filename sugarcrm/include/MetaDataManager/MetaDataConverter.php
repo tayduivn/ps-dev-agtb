@@ -295,6 +295,31 @@ class MetaDataConverter
     }
 
     /**
+     * This converts the sidecar subpanel name to the legacy subpanel name
+     * @param array $def - Sidecar Subpanel Definition
+     * @return string - the Legacy subpanel name
+     */
+    public function toLegacySubpanelName(array $def)
+    {
+        if (isset($def['override_subpanel_list_view'])) {
+            if (is_array($def['override_subpanel_list_view']) && isset($def['override_subpanel_list_view']['view'])) {
+                $legacyName = $def['override_subpanel_list_view']['view'];
+            } else {
+                $legacyName = $def['override_subpanel_list_view'];
+            }
+            $legacyName = str_replace('subpanel-', '', $legacyName);
+            $legacyName = str_replace(' ', '', ucwords(str_replace('-', ' ', $legacyName)));
+            // special awesome condition so aSubpanel doesn't blow up because the bwc is ProspectLists
+            if ($legacyName == 'ForProspectlists') {
+                $legacyName = 'ForProspectLists';
+            }
+        } else {
+            $legacyName = 'default';
+        }
+        return $legacyName;
+    }
+
+    /**
      * @param array $layoutDefs
      * @param SugarBean $bean
      * @return array legacy LayoutDef
@@ -310,13 +335,16 @@ class MetaDataConverter
             }
             $link = new Link2($def['context']['link'], $bean);
             $linkModule = $link->getRelatedModuleName();
+
+            $legacySubpanelName = $this->toLegacySubpanelName($def);
+
             // if we don't have a label at least set the module name as the label
             // similar to configure shortcut bar
             $label = isset($def['label']) ? $def['label'] : translate($linkModule);
             $return[$def['context']['link']] = array(
                 'order' => $order,
-                'module' => $bean->module_dir,
-                'subpanel_name' => 'default',
+                'module' => $linkModule,
+                'subpanel_name' => $legacySubpanelName,
                 'sort_order' => 'asc',
                 'sort_by' => 'id',
                 'title_key' => $label,

@@ -543,10 +543,19 @@ class StudioModule
 
     /**
      * Sets and gets a list of subpanels provided to other modules
-     * 
+     *
      * @return array
      */
     public function getProvidedSubpanels()
+    {
+        if (isModuleBWC($this->module)) {
+            return $this->getBWCProvidedSubpanels();
+        }
+
+        return $this->getSidecarProvidedSubpanels();
+    }
+
+    public function getBWCProvidedSubpanels()
     {
         require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php';
         $this->providedSubpanels = array();
@@ -555,12 +564,40 @@ class StudioModule
             if (is_dir($dir)) {
                 foreach (scandir($dir) as $fileName) {
                     // sanity check to confirm that this is a usable subpanel...
-                    if (substr($fileName, 0, 1) != '.' 
+                    if (substr($fileName, 0, 1) != '.'
                         && substr(strtolower($fileName), -4) == ".php"
                         && AbstractRelationships::validSubpanel("$dir/$fileName")
                     ) {
                         $subname = str_replace('.php', '', $fileName);
                         $this->providedSubpanels[$subname] = $subname;
+                    }
+                }
+            }
+        }
+
+        return $this->providedSubpanels;
+    }
+
+
+    public function getSidecarProvidedSubpanels()
+    {
+        require_once 'modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php';
+        $this->providedSubpanels = array();
+        $subpanelDir = 'modules/' . $this->module . '/clients/base/views/';
+        foreach (array($subpanelDir, "custom/$subpanelDir") as $dir) {
+            if (is_dir($dir)) {
+                foreach (scandir($dir) as $fileName) {
+                    // sanity check to confirm that this is a usable subpanel...
+                    if (stristr($fileName, 'subpanel-')) {
+                        $subpanelName = str_replace('subpanel-', '', $fileName);
+                        if ($subpanelName != 'list') {
+                            $subpanelName = str_replace('-', ' ', $subpanelName);
+                            $subpanelName = ucwords($subpanelName);
+                            $subpanelName = str_replace(' ', '', $subpanelName);
+                        } else {
+                            $subpanelName = 'default';
+                        }
+                        $this->providedSubpanels[$subpanelName] = $subpanelName;
                     }
                 }
             }

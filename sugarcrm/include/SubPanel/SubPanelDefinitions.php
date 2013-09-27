@@ -738,6 +738,10 @@ class SubPanelDefinitions
      */
     function open_layout_defs($reload = false, $layout_def_key = '', $original_only = false)
     {
+        require_once 'include/MetaDataManager/MetaDataManager.php';
+
+        $mm = new MetaDataManager($GLOBALS['current_user']);
+
         $layout_defs [$this->_focus->module_dir] = array();
         $layout_defs [$layout_def_key] = array();
         $def_path = array();
@@ -746,22 +750,22 @@ class SubPanelDefinitions
                 if (isModuleBWC($this->_focus->module_dir)) {
                     $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/'.($this->platform == 'mobile' ? 'wireless.' : '').'subpaneldefs.php');
                     $def_path[] = SugarAutoLoader::loadExtension($this->platform == 'mobile' ? 'wireless_subpanels' : 'layoutdefs', $this->_focus->module_dir);
+                    foreach (SugarAutoLoader::existing($def_path) as $file) {
+                        require $file;
+                    }
                 } else {
-                    $def_path = array('modules/' . $this->_focus->module_dir . '/clients/base/layouts/subpanels/subpanels.php');
-                    $def_path[] = SugarAutoLoader::loadExtension("sidecarsubpanelbaselayout", $this->_focus->module_dir);
+                    $viewdefs = $mm->getModuleLayouts($this->_focus->module_dir);
+                    $viewdefs = !empty($viewdefs['subpanels']['meta']['components']) ? $viewdefs['subpanels']['meta']['components'] : array();
                 }
             }
-            foreach (SugarAutoLoader::existing($def_path) as $file) {
-                require $file;
-            }
+
 
             $layoutDefsKey = !empty($layout_def_key) ? $layout_def_key : $this->_focus->module_dir;
             // convert sidecar subpanels to the array the SubpanelDefinitions are looking for
-            if (!isModuleBWC($this->_focus->module_dir) && isset($viewdefs)) {
+            if ($this->_focus instanceof SugarBean && !isModuleBWC($this->_focus->module_dir) && isset($viewdefs)) {
                 require_once('include/MetaDataManager/MetaDataConverter.php');
                 $metaDataConverter = new MetaDataConverter();
-                $convertLayoutDefs = $viewdefs[$this->_focus->module_dir]['base']['layout']['subpanels']['components'];
-                $layout_defs[$this->_focus->module_dir] = $metaDataConverter->toLegacySubpanelLayoutDefs($convertLayoutDefs, $this->_focus);
+                $layout_defs[$layoutDefsKey] = $metaDataConverter->toLegacySubpanelLayoutDefs($viewdefs, $this->_focus);
             }
 
             $this->layout_defs = $layout_defs[$layoutDefsKey];
