@@ -117,7 +117,7 @@
             filter = {},
             filters = [],
             defaultFilters = {
-                today: {$lte: today},
+                today: {$equals: today},
                 future: {$gt: today}
             };
 
