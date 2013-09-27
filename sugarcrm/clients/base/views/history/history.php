@@ -65,18 +65,6 @@ $viewdefs['base']['view']['history'] = array(
                         'type' => 'dashletaction',
                         'action' => 'createRecord',
                         'params' => array(
-                            'layout' => 'compose',
-                            'link' => 'emails',
-                            'module' => 'Emails',
-                        ),
-                        'label' => 'LBL_COMPOSE_EMAIL_BUTTON_LABEL',
-                        'acl_action' => 'create',
-                        'acl_module' => 'Emails',
-                    ),
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'createRecord',
-                        'params' => array(
                             'link' => 'calls',
                             'module' => 'Calls',
                         ),
