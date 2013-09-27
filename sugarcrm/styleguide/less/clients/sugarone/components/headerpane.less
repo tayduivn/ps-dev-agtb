@@ -63,7 +63,7 @@
 
   //40+1+1=42px=standard height of headerpane elements
   .record-cell {
-    display: inline-block;
+    display: table-cell;
     vertical-align: top;
     font-size: @fontSizeHeader;
     position: relative;
@@ -74,6 +74,7 @@
       font-size: @fontSizeHeader;
       margin-right: 8px;
       padding-top: 19px;
+      display: block;
     }
   }
   .ellipsis_inline {
@@ -212,7 +213,8 @@
     display: table-cell;
     .box-sizing(border-box);
     vertical-align: top;
-    height: 60px;
+    height: 65px;
+    padding-right: 10px;
     .btn-group {
       vertical-align: middle;
     }
