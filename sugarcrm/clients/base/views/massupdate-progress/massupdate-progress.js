@@ -45,7 +45,6 @@
             FAIL_TO_ATTEMPT: 'TPL_MASSUPDATE_FAIL_TO_ATTEMPT',
             WARNING_CLOSE: 'TPL_MASSUPDATE_WARNING_CLOSE',
             WARNING_INCOMPLETE: 'TPL_MASSUPDATE_WARNING_INCOMPLETE',
-            WARNING_PERMISSION: 'TPL_MASSUPDATE_WARNING_PERMISSION',
             SUCCESS: 'TPL_MASSUPDATE_SUCCESS',
             TITLE: 'TPL_MASSUPDATE_TITLE'
         },
@@ -55,7 +54,6 @@
             FAIL_TO_ATTEMPT: 'TPL_MASSDELETE_FAIL_TO_ATTEMPT',
             WARNING_CLOSE: 'TPL_MASSDELETE_WARNING_CLOSE',
             WARNING_INCOMPLETE: 'TPL_MASSDELETE_WARNING_INCOMPLETE',
-            WARNING_PERMISSION: 'TPL_MASSDELETE_WARNING_PERMISSION',
             SUCCESS: 'TPL_MASSDELETE_SUCCESS',
             TITLE: 'TPL_MASSDELETE_TITLE'
         }
@@ -352,12 +350,15 @@
             discardSize = this.collection.discards.length;
         if (discardSize > 0) {
             //permission warning
+            var message = app.lang.get(this.LABELSET['SUCCESS'], this.module, {
+                num: this.totalRecord - discardSize
+            });
+            message += app.lang.get('TPL_MASSUPDATE_WARNING_PERMISSION', this.module, {
+                remain: discardSize
+            });
             app.alert.show('massupdate_final_notice', {
                 level: 'warning',
-                messages: app.lang.get(this.LABELSET['WARNING_PERMISSION'], this.module, {
-                    num: this.totalRecord - discardSize,
-                    remain: discardSize
-                }),
+                messages: message,
                 autoClose: true,
                 autoCloseDelay: 8000
             });
