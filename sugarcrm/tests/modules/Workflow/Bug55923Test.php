@@ -45,7 +45,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @var Opportunity
      */
-    protected $opportunity;
+    protected $meeting;
 
     /**
      * @var DBManager
@@ -55,23 +55,16 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->db = $GLOBALS['db'];
-        $_REQUEST['base_module'] = 'Opportunities';
+        $_REQUEST['base_module'] = 'Meetings';
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        SugarTestForecastUtilities::setUpForecastConfig(
-            array(
-                'forecast_by' => 'Opportunities',
-                'sales_stage_won' => array('won')
-            )
-        );
-
-        $this->hasWorkflowFile = SugarAutoLoader::fileExists('custom/modules/Opportunities/workflow/workflow.php');
+        $this->hasWorkflowFile = SugarAutoLoader::fileExists('custom/modules/Meetings/workflow/workflow.php');
 
         $wf = new WorkFlow();
         $wf->name = 'WF1';
-        $wf->base_module = 'Opportunities';
+        $wf->base_module = 'Meetings';
         $wf->status = 1;
         $wf->type = 'Normal';
         $wf->fire_order = 'alerts_actions';
@@ -81,7 +74,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         $wf->check_logic_hook_file();
 
         $wft = new WorkFlowTriggerShell();
-        $wft->field = 'date_closed';
+        $wft->field = 'date_start';
         $wft->type = 'compare_change';
         $wft->frame_type = 'Primary';
         $wft->parent_id = $wf->id;
@@ -119,10 +112,9 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestForecastUtilities::tearDownForecastConfig();
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
 
-        rmdir_recursive('custom/modules/Opportunities/workflow');
+        rmdir_recursive('custom/modules/Meetings/workflow');
         $this->db->query("delete from workflow where id = '$this->workFlowId'");
         $this->db->query("delete from workflow_triggershells where id = '$this->workFlowTriggerShellId'");
         $this->db->query("delete from workflow_actionshells where id = '$this->workFlowActionShellId'");
@@ -133,7 +125,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
 
         if(!$this->hasWorkflowFile) {
-            SugarAutoLoader::delFromMap('custom/modules/Opportunities/workflow/workflow.php');
+            SugarAutoLoader::delFromMap('custom/modules/Meetings/workflow/workflow.php');
         }
     }
 
@@ -144,8 +136,8 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testWorkFlowTriggersWhenSavingNewOpportunityWithDateClosedChanged()
     {
-        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
-        $this->assertEquals('TRIGGERED', $opportunity->description);
+        $meeting = SugarTestMeetingUtilities::createMeeting("workflow_meeting_test_id");
+        $this->assertEquals('TRIGGERED', $meeting->description);
     }
 
 
