@@ -39,6 +39,7 @@
                     sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
 
                     closedModels = _.filter(module.models, function(model) {
+                        status = null;
                         //BEGIN SUGARCRM flav=ent ONLY
                         //ENT allows sales_status, so we need to check to see if this module has it and use it
                         status = model.get("sales_status");
@@ -53,7 +54,7 @@
                         if (_.isEmpty(status)) {
                             status = model.get("sales_stage");
                         }
-
+                        
                         if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
                             message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
                             return true;
