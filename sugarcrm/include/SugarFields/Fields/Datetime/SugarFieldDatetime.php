@@ -195,6 +195,13 @@ class SugarFieldDatetime extends SugarFieldBase {
             switch($op)
             {
                 case '$gt':
+                    $value = date("Y-m-d", strtotime($value . "+1 day"));
+                    $dateParsed = date_parse($value);
+                    $value = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(0, 0, 0, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+                    break;
                 case '$gte':
                     $value = gmdate(
                         'Y-m-d\TH:i:s',
@@ -202,6 +209,13 @@ class SugarFieldDatetime extends SugarFieldBase {
                     );
                     break;
                 case '$lt':
+                    $value = date("Y-m-d", strtotime($value . "-1 day"));
+                    $dateParsed = date_parse($value);
+                    $value = gmdate(
+                        'Y-m-d\TH:i:s',
+                        gmmktime(23, 59, 59, $dateParsed['month'], $dateParsed['day'], $dateParsed['year'])
+                    );
+                    break;
                 case '$lte':
                     $value = gmdate(
                         'Y-m-d\TH:i:s',

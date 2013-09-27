@@ -110,14 +110,14 @@
      * {@inheritDoc}
      */
     _getFilters: function(index) {
-        var todayDate = new Date();
-        var today = app.date.format(todayDate,'Y-m-d');
+        var todayDate = new Date(),
+            today = app.date.format(todayDate,'Y-m-d');
 
         var tab = this.tabs[index],
             filter = {},
             filters = [],
             defaultFilters = {
-                today: {$equals: today},
+                today: {$lte: today},
                 future: {$gt: today}
             };
 
