@@ -58,7 +58,7 @@
                 this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
                 this.model.trigger("change:metadata");
             };
-            if(value < this.value) {
+            if(value !== this.value) {
                 app.alert.show('resize_confirmation', {
                     level: 'confirmation',
                     messages: app.lang.get('LBL_DASHBOARD_LAYOUT_CONFIRM', this.module),
