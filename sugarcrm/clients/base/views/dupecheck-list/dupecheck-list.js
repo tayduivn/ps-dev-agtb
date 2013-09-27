@@ -58,7 +58,7 @@
      * @param {Object} options Fetch options.
      */
     fetchDuplicates: function(model, options) {
-        this.collection.dupecheckModel = model;
+        this.collection.dupeCheckModel = model;
         this.collection.fetch(options);
     }
 })
