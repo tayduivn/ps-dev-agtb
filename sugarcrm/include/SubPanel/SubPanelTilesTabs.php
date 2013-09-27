@@ -65,26 +65,6 @@ class SubPanelTilesTabs extends SubPanelTiles
 
     function applyUserCustomLayoutToTabs($tabs, $key='All')
     {
-        //WDong Bug: 12258 "All" tab in the middle of a record's detail view is not localized.
-        if($key=='All')
-    	{
-    		$key=translate('LBL_TABGROUP_ALL');
-    	}
-        $usersCustomLayout = SubPanelTilesTabs::getSubpanelGroupLayout($key);
-        if(!empty($usersCustomLayout))
-        {
-            /* Return elements of the custom layout
-             * which occur in $tabs in unchanged order.
-             * Then append elements of $tabs which are
-             * not included in the layout. */
-            $diff = array_diff($tabs, $usersCustomLayout);
-            $tabs = array_intersect($usersCustomLayout, $tabs);
-            foreach($diff as $subpanel)
-            {
-            	$tabs []= $subpanel;
-            }
-        }
-
         return $tabs;
     }
 

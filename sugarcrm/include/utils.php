@@ -379,7 +379,7 @@ function get_sugar_config_defaults()
     'max_dashlets_homepage' => '15',
     'default_max_tabs' => '7',
     'dashlet_display_row_options' => array('1','3','5','10'),
-    'default_subpanel_tabs' =>  true,
+    'default_subpanel_tabs' =>  false,
     'default_subpanel_links' => false,
     'default_swap_last_viewed' => false,
     'default_swap_shortcuts' => false,

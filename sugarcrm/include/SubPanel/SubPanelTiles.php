@@ -67,52 +67,7 @@ class SubPanelTiles
 	 */
     function getSelectedGroup()
     {
-        global $current_user;
-
-        if(isset($_REQUEST['subpanelTabs']))
-            $_SESSION['subpanelTabs'] = $_REQUEST['subpanelTabs'];
-
-        SugarAutoLoader::requireWithCustom('include/tabConfig.php', true) ; // include custom/ too
-
-        $subpanelTabsPref = $current_user->getPreference('subpanel_tabs');
-        if(!isset($subpanelTabsPref)) $subpanelTabsPref = $GLOBALS['sugar_config']['default_subpanel_tabs'];
-        if(!empty($GLOBALS['tabStructure']) && (!empty($_SESSION['subpanelTabs']) || !empty($sugar_config['subpanelTabs']) || !empty($subpanelTabsPref)))
-        {
-            // Determine selected group
-            if(!empty($_REQUEST['subpanel']))
-            {
-                $selected_group = $_REQUEST['subpanel'];
-            }
-            elseif(!empty($_COOKIE[$this->module.'_sp_tab']))
-            {
-                $selected_group = $_COOKIE[$this->module.'_sp_tab'];
-            }
-            elseif(!empty($_SESSION['parentTab']) && !empty($GLOBALS['tabStructure'][$_SESSION['parentTab']]) && in_array($this->module, $GLOBALS['tabStructure'][$_SESSION['parentTab']]['modules']))
-            {
-                $selected_group = $_SESSION['parentTab'];
-            }
-            else
-            {
-                $selected_group = '';
-                foreach($GLOBALS['tabStructure'] as $mainTab => $group)
-                {
-                    if(in_array($this->module, $group['modules']))
-                    {
-                        $selected_group = $mainTab;
-                        break;
-                    }
-                }
-                if(!$selected_group)
-                {
-                    $selected_group = 'All';
-                }
-            }
-        }
-        else
-        {
-        	$selected_group = '';
-        }
-        return $selected_group;
+        return '';
     }
 
     /*
