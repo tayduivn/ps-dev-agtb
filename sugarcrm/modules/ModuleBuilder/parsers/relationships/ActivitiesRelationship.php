@@ -299,6 +299,22 @@ class ActivitiesRelationship extends OneToManyRelationship
 \$coreDefs['dashlets'][0]['preview']['link'] = '{$relationshipName}_notes';
 \$viewdefs['{$this->lhs_module}']['base']['view']['attachments'] = \$coreDefs;\n";
 
+        $files['clients/base/views/active-tasks/active-tasks.php'] = $fileBase .
+            "\$coreDefs = MetaDataFiles::loadSingleClientMetadata('view','active-tasks');
+\$coreDefs['dashlets'][0]['filter']['module'] = array('{$this->lhs_module}');
+\$coreDefs['custom_toolbar']['buttons'][0]['buttons'][0]['params']['link'] = '{$relationshipName}_tasks';
+\$coreDefs['tabs'][0]['link'] = '{$relationshipName}_tasks';
+\$coreDefs['tabs'][1]['link'] = '{$relationshipName}_tasks';
+\$viewdefs['{$this->lhs_module}']['base']['view']['active-tasks'] = \$coreDefs;\n";
+
+        $files['clients/base/views/inactive-tasks/inactive-tasks.php'] = $fileBase .
+            "\$coreDefs = MetaDataFiles::loadSingleClientMetadata('view','inactive-tasks');
+\$coreDefs['dashlets'][0]['filter']['module'] = array('{$this->lhs_module}');
+\$coreDefs['custom_toolbar']['buttons'][0]['buttons'][0]['params']['link'] = '{$relationshipName}_tasks';
+\$coreDefs['tabs'][0]['link'] = '{$relationshipName}_tasks';
+\$coreDefs['tabs'][1]['link'] = '{$relationshipName}_tasks';
+\$viewdefs['{$this->lhs_module}']['base']['view']['inactive-tasks'] = \$coreDefs;\n";
+
         return array($this->lhs_module => $files);
     }
 
