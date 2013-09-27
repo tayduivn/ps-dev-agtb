@@ -49,6 +49,7 @@ $config['builds']['corp']['languages']= array(
 'sr_RS',
 'sk_SK',
 'sq_AL',
+'et_EE',
 );
 $config['builds']['corp']['lic'] = array('sub');
 $config['blackList']['corp'] = array(
