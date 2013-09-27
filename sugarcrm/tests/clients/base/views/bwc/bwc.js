@@ -135,7 +135,6 @@ describe('Base.View.Bwc', function() {
             ele.setAttribute("href", href);
             view.convertToSidecarLink(ele);
             expect(ele.getAttribute("href")).toEqual(href);
-            ele.remove();
         });
 
         it('convertToSidecarLink should leave Administration module URLs alone', function() {
@@ -145,7 +144,6 @@ describe('Base.View.Bwc', function() {
             ele.setAttribute("href", href);
             view.convertToSidecarLink(ele);
             expect(ele.getAttribute("href")).toEqual(href);
-            ele.remove();
         });
 
         it('should NOT check for Home module if no url', function() {
