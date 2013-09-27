@@ -13,11 +13,11 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-$viewdefs['Tasks']['base']['view']['inactive-tasks'] = array(
+$viewdefs['base']['view']['active-tasks'] = array(
     'dashlets' => array(
         array(
-            'name' => 'LBL_INACTIVE_TASKS_DASHLET',
-            'description' => 'LBL_INACTIVE_TASKS_DASHLET_DESCRIPTION',
+            'name' => 'LBL_ACTIVE_TASKS_DASHLET',
+            'description' => 'LBL_ACTIVE_TASKS_DASHLET_DESCRIPTION',
             'config' => array(
                 'limit' => 10,
                 'visibility' => 'user',
@@ -113,23 +113,39 @@ $viewdefs['Tasks']['base']['view']['inactive-tasks'] = array(
         array(
             'active' => true,
             'filters' => array(
-                'status' => array('$equals' => 'Deferred'),
+                'status' => array('$not_in' => array('Completed', 'Deferred')),
+                'date_due' => array('$lte' => 'today'),
             ),
-            'label' => 'LBL_INACTIVE_TASKS_DASHLET_DEFERRED',
+            'label' => 'LBL_ACTIVE_TASKS_DASHLET_DUE_NOW',
             'link' => 'tasks',
             'module' => 'Tasks',
-            'order_by' => 'date_modified:desc',
-            'record_date' => 'date_modified',
+            'order_by' => 'date_due:asc',
+            'record_date' => 'date_due',
+            'overdue_badge' => array(
+                'name' => 'date_due',
+                'type' => 'overdue-badge',
+            ),
         ),
         array(
             'filters' => array(
-                'status' => array('$equals' => 'Completed'),
+                'status' => array('$not_in' => array('Completed', 'Deferred')),
+                'date_due' => array('$gt' => 'today'),
             ),
-            'label' => 'LBL_INACTIVE_TASKS_DASHLET_COMPLETED',
+            'label' => 'LBL_ACTIVE_TASKS_DASHLET_UPCOMING',
             'link' => 'tasks',
             'module' => 'Tasks',
-            'order_by' => 'date_modified:desc',
-            'record_date' => 'date_modified',
+            'order_by' => 'date_due:asc',
+            'record_date' => 'date_due',
+        ),
+        array(
+            'filters' => array(
+                'status' => array('$not_in' => array('Completed', 'Deferred')),
+                'date_due' => array('$is_null' => ''),
+            ),
+            'label' => 'LBL_ACTIVE_TASKS_DASHLET_TODO',
+            'link' => 'tasks',
+            'module' => 'Tasks',
+            'order_by' => 'date_entered:asc',
         ),
     ),
 );
