@@ -244,6 +244,7 @@ function template_summary_list_view(&$reporter,&$args) {
 				$sumArray['group_function'] = 'sum';
 				$reporter->report_def['summary_columns'][] = $sumArray;
 				$addedColumns = $addedColumns + 1;
+                $summary_columns_array[] = array('label' => 'sum');
 			} // if
 			if (!$isCountExists) {
 				$countArray = $avgValueArray;
@@ -252,6 +253,7 @@ function template_summary_list_view(&$reporter,&$args) {
 				$countArray['group_function'] = 'count';
 				$reporter->report_def['summary_columns'][] = $countArray;
 				$addedColumns = $addedColumns + 1;
+                $summary_columns_array[] = array('label' => 'count');
 			} // if
 		} // if		
 	} // if	
