@@ -250,7 +250,7 @@ function upgrade_Flavors5() {
 
 	if (isset ($sql) && !empty ($sql)) {
 		$qry_str = "";
-		foreach (split("\n", $sql) as $line) {
+		foreach (explode("\n", $sql) as $line) {
 			if (!empty ($line) && substr($line, -2) != "*/") {
 				$line .= ";";
 			}
@@ -270,7 +270,7 @@ function upgrade_Flavors5() {
 		),
 		preg_replace('#(/\*.+?\*/\n*)#', '', $qry_str)
 	);
-	foreach (split(";", $qry_str) as $stmt) {
+	foreach (explode(";", $qry_str) as $stmt) {
 		$stmt = trim($stmt);
 		if (!empty ($stmt)) {
 			$db->executeQuery($stmt, 'Executing repair query: ');
