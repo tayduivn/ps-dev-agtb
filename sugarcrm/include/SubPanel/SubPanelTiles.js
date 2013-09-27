@@ -62,10 +62,10 @@ function get_module_name()
 * */
 function subp_nav(m,i,a,t,r){
     //TODO: This function should be removed when bwc is phased out
-    var url,
-        app = window.parent.SUGAR.App;
+    var url, app = window.parent.SUGAR.App;
 
-    //Preseve legacy way if the "go to" module is a bwc
+    //BWC: Preseve legacy way if the "go to" module is a bwc; ignores sidecar
+    //modules which get handled later by subp_nav_sidecar function  below
     if (app.metadata.getModule(m).isBwcEnabled) {
         if (t.href.search(/#/) < 0) {
             //no need to process if url has already been converted
@@ -81,11 +81,25 @@ function subp_nav(m,i,a,t,r){
             url += "&return_relationship=" + r;
         }
         t.href = url;
-    } else {
-        //Sidecar module
+    }
+}
+
+/*
+* m = module
+* i = record id
+* a = action (detail/edit)
+* t = element to be modified
+* */
+function subp_nav_sidecar(m,i,a,t) {
+    var app = window.parent.SUGAR.App, url;
+    if (!app.metadata.getModule(m).isBwcEnabled) {
+        //TODO:`edit` is ignored today (see SP-1618) but we'll want to add action later e.g.:
+        //a = a === 'd' ? '' : 'edit';
+        a = '';
         url = "index.php?module="+m+"&action="+a+"&record="+i;
         url = app.view.views.BaseBwcView.prototype.convertToSidecarUrl(url);
         app.router.navigate(url, {trigger: true});
+        return false;
     }
 }
 

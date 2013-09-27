@@ -65,12 +65,14 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
             if (isModuleBWC($layout_def['module'])) {
                 $label = $app_strings['LNK_EDIT'];
             } else {
+                //TODO:SP-1618 can't nav to inline edit in sidecar
                 $label = $app_strings['LNK_VIEW'];
             }
 			return "<a href='#' onMouseOver=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
+            . " onClick=\"javascript:subp_nav_sidecar('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this);\""
 			. " class='listViewTdToolsS1' id=\"$unique_id\">". $label .'</a>';
 		}
 
