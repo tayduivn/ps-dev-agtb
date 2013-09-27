@@ -95,8 +95,8 @@ class SugarFieldDatetimeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('2013-08-29', '$equals', array('2013-08-29T00:00:00', '2013-08-29T23:59:59')),
-            array('2013-08-29', '$lt', '2013-08-29T23:59:59'),
-            array('2013-08-29', '$gt', '2013-08-29T00:00:00'),
+            array('2013-08-29', '$lt', '2013-08-28T23:59:59'),
+            array('2013-08-29', '$gt', '2013-08-30T00:00:00'),
             array(array('2013-08-19', '2013-08-29'), '$between', array('2013-08-19T00:00:00', '2013-08-29T23:59:59')),
             array('2013-08-29', '$daterange', '2013-08-29'),
         );
