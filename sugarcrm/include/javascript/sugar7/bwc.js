@@ -170,6 +170,18 @@
                 return_id: parentModel.get("id"),
                 return_name: parentModel.get('name') || parentModel.get('full_name')
             };
+            //Special case for Contacts->meetings. The parent should be the account rather than the contact
+            if (parentModel.module == "Contacts" && parentModel.get("account_id") && link == "meetings") {
+                params = _.extend(params, {
+                    parent_type: "Accounts",
+                    parent_id: parentModel.get("account_id"),
+                    account_id: parentModel.get("account_id"),
+                    account_name: parentModel.get("account_name"),
+                    parent_name: parentModel.get("account_name"),
+                    contact_id: parentModel.get("id"),
+                    contact_name: parentModel.get("full_name")
+                });
+            }
             //Set relate field values as part of URL so they get pre-filled
             var fields = app.data.getRelateFields(parentModel.module, link);
             _.each(fields, function(field){
