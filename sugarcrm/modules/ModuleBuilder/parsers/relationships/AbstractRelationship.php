@@ -705,4 +705,9 @@ class AbstractRelationship
 
 		return $title_key;
 	}
+
+    public function buildClientFiles()
+    {
+        return array();
+    }
 }
