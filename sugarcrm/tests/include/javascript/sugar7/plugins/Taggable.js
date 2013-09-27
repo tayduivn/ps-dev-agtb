@@ -116,22 +116,30 @@ describe("Taggable Plugin", function() {
     });
 
     describe("_searchForTags", function() {
-        var searchStub;
+        var searchStub, beanStub;
 
         beforeEach(function() {
             searchStub = sinon.stub(SugarTest.app.api, 'search');
+            beanStub = sinon.mock(SugarTest.app.data);
             plugin.taggableSearchAfter = 3;
         });
 
         afterEach(function() {
             searchStub.restore();
+            beanStub.verify();
         });
 
         it("Should search for users when @ is specified", function() {
+            var spy = sinon.spy();
+            beanStub.expects('createBeanCollection')
+                .once().withExactArgs('Users')
+                .returns({fetch: spy});
+            plugin.getFilterDef = sinon.mock().returns([]);
+
             plugin._searchForTags('@foo');
 
-            expect(searchStub.calledOnce).toBe(true);
-            expect(searchStub.args[0][0].module_list).toBe('Users');
+            expect(spy.calledOnce).toBe(true);
+            plugin.getFilterDef.verify();
         });
 
         it("Should search for all modules except users when # is specified", function() {
@@ -142,20 +150,27 @@ describe("Taggable Plugin", function() {
         });
 
         it("Should not search when trying to search for terms that are less than what is specified by taggableSearchAfter", function() {
+            var spy = sinon.spy();
+            beanStub.expects('createBeanCollection').never().returns({fetch: spy});
             plugin._searchForTags('@fo');
 
-            expect(searchStub.called).toBe(false);
+            expect(spy.called).toBe(false);
         });
 
         it("Should only search once when searching the same terms twice", function() {
+            var spy = sinon.spy();
+            plugin.getFilterDef = sinon.mock().returns([]);
+            beanStub.expects('createBeanCollection').once().returns({fetch: spy});
             plugin._searchForTags('@foo');
             plugin._searchForTags('@foo');
 
-            expect(searchStub.calledOnce).toBe(true);
+            expect(spy.calledOnce).toBe(true);
+            plugin.getFilterDef.verify();
         });
 
         it("Should not search but instead reset taggable when the previous search returned no results and is searching for tags that starts with the same text", function() {
-            var resetTaggableStub = sinon.stub(plugin, '_resetTaggable');
+            var resetTaggableStub = sinon.stub(plugin, '_resetTaggable'),
+                spy = sinon.spy();
 
             plugin._taggableListOpen = false;
             plugin._taggableLastSearchTerm = 'foo';
@@ -163,7 +178,7 @@ describe("Taggable Plugin", function() {
             plugin._searchForTags('@foo bar');
 
             expect(resetTaggableStub.calledOnce).toBe(true);
-            expect(searchStub.called).toBe(false);
+            expect(spy.called).toBe(false);
 
             resetTaggableStub.restore();
         });
