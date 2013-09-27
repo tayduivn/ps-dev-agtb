@@ -40,22 +40,11 @@ var $opportunitiesSearchFields;
 
 public function setUp()
 {
-    $beanList = array();
-    $beanFiles = array();
-    require('include/modules.php');
-    $GLOBALS['beanList'] = $beanList;
-    $GLOBALS['beanFiles'] = $beanFiles;
-    if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php'))
-    {
-        $this->customOpportunitiesSearchFields = file_get_contents('custom/modules/Opportunities/metadata/SearchFields.php');
-        unlink('custom/modules/Opportunities/metadata/SearchFields.php');
-    }
-
-    if(file_exists('modules/Opportunities/metadata/SearchFields.php'))
-    {
-        $this->opportunitiesSearchFields = file_get_contents('modules/Opportunities/metadata/SearchFields.php');
-        unlink('modules/Opportunities/metadata/SearchFields.php');
-    }
+    SugarTestHelper::setUp('beanList');
+    SugarTestHelper::setUp('beanFiles');
+    SugarTestHelper::setUp('files');
+    SugarTestHelper::saveFile('custom/modules/Opportunities/metadata/SearchFields.php');
+    SugarTestHelper::saveFile('modules/Opportunities/metadata/SearchFields.php');
 
 $searchFieldContents = <<<EOQ
 <?php
@@ -88,17 +77,7 @@ EOQ;
 
 public function tearDow()
 {
-    if(!empty($this->customOpportunitiesSearchFields))
-    {
-        file_put_contents('custom/modules/Opportunities/metadata/SearchFields.php', $this->customOpportunitiesSearchFields);
-    } else if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php')) {
-        SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php', true);
-    }
-
-    if(!empty($this->opportunitiesSearchFields))
-    {
-        file_put_contents('modules/Opportunities/metadata/SearchFields.php', $this->opportunitiesSearchFields);
-    }
+    SugarTestHelper::tearDown();
 }
 
 public function testRepairSearchFields()

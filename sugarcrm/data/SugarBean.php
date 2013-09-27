@@ -1974,7 +1974,7 @@ class SugarBean
                     }
                 }
             }
-        } 
+        }
         else if ($this->has_calc_field_with_link($linkName)) {
             //Save will update the saved_beans array
             SugarRelationship::addToResaveList($this);
@@ -4736,7 +4736,7 @@ class SugarBean
             {
                 $parent_fields = array();
             }
-            if(!empty($sugar_config['disable_count_query']) && !empty($limit))
+            if(!empty($sugar_config['disable_count_query']) && !empty($limit) && $limit != -1 && $limit != -99)
             {
             	//C.L. Bug 43535 - Use the $index value to set the $rows_found value here
                 $rows_found = isset($index) ? $index : $row_offset + count($list);

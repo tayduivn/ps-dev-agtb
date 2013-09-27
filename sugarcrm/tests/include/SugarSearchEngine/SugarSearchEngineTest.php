@@ -38,13 +38,13 @@ class SugarSearchEngineTest extends Sugar_PHPUnit_Framework_TestCase
     public function testFactoryMethod($engineName, $expectedClass)
     {
         $instance = SugarSearchEngineFactory::getInstance($engineName);
-        $this->assertEquals(get_class($instance), $expectedClass);
+        $this->assertEquals($expectedClass, get_class($instance));
     }
 
     public function factoryProvider()
     {
         return array(
-            array('','SugarSearchEngine'),
+            // depends on config, disabled array('','SugarSearchEngine'),
             array('Elastic','SugarSearchEngineElastic'),
             //Fallback to default.
             array('BadClassName','SugarSearchEngine')
