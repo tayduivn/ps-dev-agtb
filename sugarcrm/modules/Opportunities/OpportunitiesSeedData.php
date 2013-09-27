@@ -48,7 +48,7 @@ class OpportunitiesSeedData {
     //BEGIN SUGARCRM flav=pro ONLY
            || empty($users)
     //END SUGARCRM flav=pro ONLY
-    
+
         )
         {
             return array();
@@ -56,7 +56,7 @@ class OpportunitiesSeedData {
 
         $opp_ids = array();
         $timedate = TimeDate::getInstance();
-    
+
         // get the additional currencies from the table
         /* @var $currency Currency */
         $currency = SugarCurrency::getCurrencyByISO('EUR');
@@ -79,23 +79,23 @@ class OpportunitiesSeedData {
             $pc_ids[] = $row['id'];
         }
         //END SUGARCRM flav=pro ONLY
-        
+
         while ($records-- > 0) {
             $key = array_rand($accounts);
             $account = $accounts[$key];
-    
+
             /* @var $opp Opportunity */
             $opp = BeanFactory::getBean('Opportunities');
-    
+
             //Create new opportunities
             //BEGIN SUGARCRM flav=pro ONLY
             $opp->team_id = $account->team_id;
             $opp->team_set_id = $account->team_set_id;
             //END SUGARCRM flav=pro ONLY
-    
+
             $opp->assigned_user_id = $account->assigned_user_id;
             $opp->assigned_user_name = $account->assigned_user_name;
-    
+
             // figure out which one to use
             $seed = rand(1, 15);
             if ($seed%2 == 0) {
@@ -111,7 +111,7 @@ class OpportunitiesSeedData {
             $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
             $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
             $opp->sales_status = 'New';
-    
+
             // If the deal is already done, make the date closed occur in the past.
             $opp->date_closed = ($opp->sales_stage == Opportunity::STAGE_CLOSED_WON || $opp->sales_stage == Opportunity::STAGE_CLOSED_WON)
                 ? self::createPastDate()
@@ -121,18 +121,21 @@ class OpportunitiesSeedData {
             $amount = rand(1000, 7500);
             $opp->amount = $amount;
             $opp->probability = $app_list_strings['sales_probability_dom'][$opp->sales_stage];
-    
+
             //BEGIN SUGARCRM flav=pro ONLY
             //Setup forecast seed data
             $opp->best_case = $opp->amount;
             $opp->worst_case = $opp->amount;
             $opp->commit_stage = $opp->probability >= 70 ? 'include' : 'exclude';
-    
+
             $opp->id = create_guid();
             $opp->new_with_id = true;
+            // set the acccount on the opps, just for saving to the worksheet table
+            $opp->account_id = $account->id;
+            $opp->account_name = $account->name;
 
             // we need to save the opp before we create the rlis
-            $opp->save();
+            //$opp->save();
 
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
@@ -143,12 +146,15 @@ class OpportunitiesSeedData {
             //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             $rlis_created = 0;
-    
+
             $opp_best_case = 0;
             $opp_worst_case = 0;
             $opp_amount = 0;
             $opp_units = 0;
-    
+            // stop obsessive saving
+            SugarBean::enterOperation('saving_related');
+            BeanFactory::registerBean('Opportunities', $opp);
+
             while($rlis_created < $rlis_to_create) {
                 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
                 $amount = $opp->amount;
@@ -181,7 +187,7 @@ class OpportunitiesSeedData {
 
                 /* @var $rli RevenueLineItem */
                 $rli = BeanFactory::getBean('RevenueLineItems');
-                
+
                 //BEGIN SUGARCRM flav=pro ONLY
                 $rli->team_id = $opp->team_id;
                 $rli->team_set_id = $opp->team_set_id;
@@ -231,24 +237,22 @@ class OpportunitiesSeedData {
                 $opp_amount += $amount;
                 $opp_best_case += $amount+$rand_best_worst;
                 $opp_worst_case += $amount-$rand_best_worst;
-    
+
                 $rlis_created++;
             }
-    
+            SugarBean::leaveOperation('saving_related');
+
             $opp->amount = $opp_amount;
             $opp->best_case = $opp_best_case;
             $opp->worst_case = $opp_worst_case;
             $opp->name .= ' - ' . $opp_units . ' Units';
-    
+
             //END SUGARCRM flav=pro ONLY
-    
-            // set the acccount on the opps, just for saving to the worksheet table
-            $opp->account_id = $account->id;
-            $opp->account_name = $account->name;
-    
+
+
             // save the opp again
             $opp->save();
-    
+
             //BEGIN SUGARCRM flav=pro ONLY
             // save a draft worksheet for the new forecasts stuff
             /* @var $worksheet ForecastWorksheet */
@@ -257,12 +261,12 @@ class OpportunitiesSeedData {
             //BEGIN SUGARCRM flav=ent ONLY
             $worksheet->saveOpportunityProducts($opp);
             //END SUGARCRM flav=ent ONLY
-    
+
             // Create a linking table entry to assign an account to the opportunity.
             $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
             $opp_ids[] = $opp->id;
         }
-    
+
         return $opp_ids;
     }
 
