@@ -91,21 +91,20 @@
   }
   // Menu position and menu carets
   .dropdown-menu {
+    .dropdownMinWidth();
+    margin-top: 0;
+    top: 33px;
+    left: auto;
+    .border-radius(0,2px,0,2px);
+    &:before {
+      border-bottom-color: rgba(0,0,0,.2);
+    }
     a [class^="icon-"] {
       position: absolute;
       left: 12px;
       text-indent: 0;
       color: @grayLight;
       line-height: 15px;
-    }
-    .dropdownMinWidth();
-    margin-top: 0;
-    top: 33px;
-    /*right: -8px;*/
-    left: auto;
-    .border-radius(0,2px,0,2px);
-    &:before {
-      border-bottom-color: rgba(0,0,0,.2);
     }
     li a {
       display: block;
@@ -120,7 +119,6 @@
       /* bottom: -1px; */
       position: relative;
     }
-
     .recentContainer,
     .favoritesContainer {
       text-indent: 40px;
@@ -132,17 +130,26 @@
     }
   }
 
-  .advanced {
+  div.advanced {
     position: absolute;
     right: 0;
     top: 0;
-    .btn {
-      line-height: 16px;
-      height: 16px;
+    .btn-toolbar {
+      margin: 9px 0;
     }
-
+    .btn {
+      line-height: 18px;
+      height: 18px;
+      border-color: transparent;
+      border-width: 0;
+    }
     .btn-group {
-      margin-right: 8px;
+      margin: 0;
+      a.advanced {
+        .icon-caret-down {
+          color: @grayLight;
+        }
+      }
     }
   }
   .divider-vertical {
@@ -244,10 +251,8 @@
             margin-top: 0;
             margin-bottom: 0;
             line-height: 32px;
-            .caret {
-              border-top-color: @white;
-              border-bottom-color: @white;
-              margin-top: 15px;
+            .icon-caret-down {
+              color: @gray;
             }
             &:hover {
               color: lighten(@black,100%) !important;
@@ -258,8 +263,10 @@
               padding-left: 7px;
             }
             &.dropdown-toggle {
-              padding-left: 6px;
-              padding-right: 6px;
+              padding: 6px 8px;
+              border-top: none;
+              border-bottom: none;
+              margin: 0;
             }
           }
           border-left: 1px solid transparent;
@@ -298,16 +305,11 @@
       }
 
       // Secondary (floated right) nav in topbar
-      &.pull-right { // xxx
-      	margin-left: 5px;	// [moey] So that the subtle vertical bar is
-      						//   nicely spaced from the search field / form.
+      &.pull-right {
 
         &> li {
           border-left: 1px solid darken(@white, 75%) !important;
           border-right-color: transparent !important;
-          &:not(#createList) {
-            margin-right: -3px;
-          }
           &> div {
             border-left: 1px solid @black !important;
             &> a {
@@ -325,13 +327,12 @@
           }
           &#createList {
             width: 40px;
+            border-right: none;
             &> div {
               width: 100%;
               &> a {
-                //margin-left: 10px;
-                margin-bottom: 2px;
-                padding-left: 0;
-                width: 26px;
+                width: 28px;
+                padding: 5px 2px;
                 &:hover {
                   i {
                     color: @white !important;

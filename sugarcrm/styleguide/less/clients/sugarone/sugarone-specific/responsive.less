@@ -18,7 +18,34 @@
 }
 
 @media (max-width: 480px) {
-
+  #searchForm:not(.active) {
+    .search-query {
+      display: inline-block;
+      position: relative;
+      right: auto;
+    }
+    div.advanced .btn-group {
+      .btn {
+        background-image: none;
+        background-color: transparent;
+        border: 1px solid transparent;
+        .box-shadow(none);
+        outline: none;
+        text-shadow: none;
+        border-width: 0;
+        &:hover,
+        &:active,
+        &.active,
+        &.disabled,
+        &[disabled] {
+          background-color: @white;
+        }
+      }
+      a.advanced {
+        display: inline-block;
+      }
+    }
+  }
 }
 
 @media (max-width: 400px) {
