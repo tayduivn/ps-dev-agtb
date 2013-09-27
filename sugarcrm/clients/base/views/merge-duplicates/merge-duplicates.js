@@ -24,7 +24,7 @@
         'click [data-action=more]' : 'toggleMoreLess',
         'click [data-action=less]' : 'toggleMoreLess',
         'click [data-mode=preview]' : 'togglePreview',
-        'click [data-action=copy]' : 'triggerCopy',
+        'click [data-action=copy]' : 'triggerCopy'
     },
 
     /**
@@ -290,8 +290,8 @@
             alternativeModelNames = [];
 
         _.each(alternativeModels, function(model) {
-            alternativeModelNames.push(model.get('name') || model.get('full_name'));
-        });
+            alternativeModelNames.push(this._getRecordTitle(model));
+        }, this);
 
         this.clearValidationErrors(this.getFieldNames());
 
@@ -657,7 +657,17 @@
      * @private
      */
     _getRecordTitle: function(model) {
-        return model.get('name') || model.get('full_name') || '';
+        // let's use the field metadata to create the record
+        // title
+        var field = app.view.createField({
+                view: this,
+                def: model.fields['name'],
+                model: model
+            }),
+            title = field.format(model.get('name'));
+
+        field.dispose();
+        return title;
     },
 
     /**
