@@ -126,15 +126,6 @@ class UserViewHelper {
     protected function setupButtonsAndTabs() {
         global $current_user;
 
-        if (isset($GLOBALS['sugar_config']['show_download_tab'])) {
-            $enable_download_tab = $GLOBALS['sugar_config']['show_download_tab'];
-        }else{
-            $enable_download_tab = true;
-        }
-
-        $this->ss->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
-
-
         $the_query_string = 'module=Users&action=DetailView';
         if(isset($_REQUEST['record'])) {
             $the_query_string .= '&record='.$_REQUEST['record'];
