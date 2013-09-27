@@ -418,9 +418,11 @@ class CurrentUserApi extends SugarApi
         // Grab the user's timezone preference if it's set
         $val = $user->getPreference('timezone');
 
+        $timeDate = TimeDate::getInstance();
+
         // If there is no setting for the user, fall back to the system setting
         if (!$val) {
-            $val = TimeDate::guessTimezone();
+            $val = $timeDate->guessTimezone();
         }
 
         // If there is still no timezone, fallback to UTC
@@ -428,7 +430,12 @@ class CurrentUserApi extends SugarApi
             $val = 'UTC';
         }
 
-        return array('timezone' => $val);
+        $dateTime = new SugarDateTime();
+        $timeDate->tzUser($dateTime, $user);
+        $offset = $timeDate->getIsoOffset($dateTime,array('stripTZColon' => true));
+        $offsetSec = $dateTime->getOffset();
+
+        return array('timezone' => $val, 'tz_offset' => $offset, 'tz_offset_sec' => $offsetSec);
     }
     
     protected function getUserPrefCurrency($user)
@@ -511,6 +518,10 @@ class CurrentUserApi extends SugarApi
             $user_data['preferences'] = array_merge($user_data['preferences'], $val);
         }
         
+        // Handle timezones specially, the fallback is important
+        $timezone = $this->getUserPrefTimezone($current_user);
+        $user_data['preferences'] = array_merge($user_data['preferences'], $timezone);
+
         // Handle language on its own for now
         $lang = $this->getUserPrefLanguage($current_user);
         $user_data['preferences'] = array_merge($user_data['preferences'], $lang);
