@@ -71,6 +71,7 @@ $mod_strings = array (
   'LBL_CAMPAIGN_OBJECTIVE' => 'Objective: ',
   'LBL_CAMPAIGN_CONTENT' => 'Description: ',
   'LBL_CAMPAIGN_DAYS_REMAIN' => 'Days Remaining',
+  'LBL_CURRENCY_RATE' => 'Currency Rate',
   'LBL_START_DATE' => 'Start Date',
   'LBL_END_DATE' => 'End Date',
   'LBL_STATUS' => 'Status',
