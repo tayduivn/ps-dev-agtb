@@ -300,10 +300,6 @@
                                     </table>
                                 </td>
                             </tr>
-							<tr>
-                                <td width="17%" scope="row"><span>{$MOD.LBL_SUBPANEL_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_SUBPANEL_TABS_DESCRIPTION }</td>
-                                <td width="83%" colspan="3"><input type="checkbox" name="user_subpanel_tabs" {$SUBPANEL_TABS} tabindex='13'></td>
-                            </tr>
                         </table>
         </div>
         <div id="locale" style="display:{$HIDE_FOR_GROUP_AND_PORTAL}">
