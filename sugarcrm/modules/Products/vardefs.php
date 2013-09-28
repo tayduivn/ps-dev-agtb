@@ -139,7 +139,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE_ID',
             'required' => false,
             'reportable' => false,
-            'comment' => 'If product created via Quote, this is quote ID'
+            'comment' => 'If product created via Quote, this is quote ID',
         ),
         'currency_symbol' =>  array(
             'name' => 'currency_symbol',
@@ -638,7 +638,8 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE_NAME',
             'source' => 'non-db',
             'comment' => 'Quote Name',
-            'required' => true
+            'required' => true,
+            'importable' => 'required'
         ),
 //BEGIN SUGARCRM flav=pro ONLY
         'assigned_user_id' =>  array(
