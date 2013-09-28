@@ -76,20 +76,14 @@ class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_Abs
             array('field' => 'worst_case', 'action' => 'read')
         );
 
-        $totals['amount'] = SugarMath::init($totals['amount'])->add($totals['includedClosedAmount'])->result();
-
         // if the user doesn't have access to best field, remove the value from totals
         if (!$bestAccess) {
             unset($totals['best_case']);
-        } else {
-            $totals['best_case'] = SugarMath::init($totals['best_case'])->add($totals['includedClosedBest'])->result();
         }
 
         // if the user doesn't have access to worst field, remove the value from totals
         if (!$worstAccess) {
             unset($totals['worst_case']);
-        } else {
-            $totals['worst_case'] = SugarMath::init($totals['worst_case'])->add($totals['includedClosedWorst'])->result();
         }
 
         $totals['user_id'] = $user_id;
