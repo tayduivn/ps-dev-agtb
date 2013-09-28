@@ -3254,6 +3254,7 @@ $app_strings = array (
     'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
     'LBL_DASHLET_ATTACHMENTS_NAME' => 'Notes & Attachments',
+    'LBL_DASHLET_ATTACHMENTS_DESCRIPTION' => 'Notes & Attachments belongs to the record',
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
 
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
