@@ -654,12 +654,16 @@ class SugarAutoLoader
         $filename = self::normalizeFilePath($filename);
         
         // See if this filename would have been skipped by the cache creator. This
-        // is a simple process that captures the number of replacements made using
-        // the exclude list. Beats running a foreach loop to check. This addresses
-        // situations like module loader that call sugar_* file functions that use
-        // the autoloader on files that are in cache, etc.
-        str_replace(self::$exclude, ' ', $filename, $hits);
-        if ($hits) {
+        // addresses situations like module loader that call sugar_* file functions
+        // that use the autoloader on files that are in cache, etc.
+        $excluded = false;
+        foreach (self::$exclude as $path) {
+            if (strpos($filename, $path) === 0) {
+                $excluded = true;
+                break;
+            }
+        }
+        if ($excluded) {
             // This is a filename that would have been skipped, so check the file
             // system for existence
             return file_exists($filename);
