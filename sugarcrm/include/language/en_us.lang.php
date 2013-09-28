@@ -2808,8 +2808,6 @@ $app_strings = array (
 
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
-    'LBL_REVENUELINEITEMS'=>'Revenue Line Items',
-    'LBL_REVENUELINEITEM_NAME'=>'Revenue Line Item Name',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',

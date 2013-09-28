@@ -64,6 +64,8 @@ class RenameModules
             array('name' => 'LBL_CAMPAIGN_ID', 'type' => 'singular', 'source' => 'Campaigns'),
             array('name' => 'LBL_PARENT_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_PROSPECT_LIST', 'type' => 'singular', 'source' => 'Prospects'),
+            array('name' => 'LBL_RLI_SUBPANEL_TITLE', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_REVENUELINEITEMS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
         'Bugs' => array(
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular', 'source' => 'Bugs'),
@@ -199,6 +201,9 @@ class RenameModules
             array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'NOTICE_NO_DELETE_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
             array('name' => 'WARNING_NO_DELETE_CLOSED_SELECTED', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'TPL_RLI_CREATE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_TOTAL_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_CLOSED_RLIS', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
         'PdfManager' => array(
             array('name' => 'LBL_TPL_RLI', 'type' => 'plural', 'source' => 'RevenueLineItems'),
