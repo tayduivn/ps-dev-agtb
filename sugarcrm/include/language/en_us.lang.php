@@ -3698,8 +3698,10 @@ $app_strings = array (
     'LBL_MERGE_DUPLICATES_FAIL_PROCESS' =>
         'Merge Related Records incomplete. Some records remain unmerged. Do you want to continue?',
     'TPL_MERGE_DUPLICATES_STAT' =>
-    '{{#with stat}}{{records}} records were merged successfully. ' .
+        '{{#with stat}}{{records}} records were merged successfully. ' .
         '{{total}} related records were added.{{/with}}',
+    'TPL_MERGE_DUPLICATES_IDENTICAL' =>
+        'Records are identical. All related records will be moved to the Primary record.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
