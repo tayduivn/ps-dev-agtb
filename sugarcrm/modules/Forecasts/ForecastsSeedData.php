@@ -265,6 +265,11 @@ class ForecastsSeedData
         $user = BeanFactory::getBean('Users', $user_id);
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+        if ($data["forecast_type"] == "Rollup") {
+            $data["likely_adjusted"] = $data["likely_case"];
+            $data["best_adjusted"] = $data["best_case"];
+            $data["worst_adjusted"] = $data["worst_case"];
+        }
         $worksheet->reporteeForecastRollUp($user, $data);
     }
 
