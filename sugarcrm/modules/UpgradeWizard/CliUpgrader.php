@@ -69,7 +69,9 @@ class CliUpgrader extends UpgradeDriver
 
     protected static function usage()
     {
+        list($version, $build) = static::getVersion();
 $usage =<<<eoq2
+CLI Upgrader v.$version (build $build)
 Usage:
 php CliUpgrader.php -z upgrade.zip -l logFile -s pathToSugarInstance -u admin-user
 
