@@ -63,6 +63,7 @@ $mod_strings = array (
     'LBL_ASSIGNED_TO' => 'Assigned to:',
     'LBL_CURRENCY_ID' => 'Currency ID:',
     'LBL_CURRENCY' => 'Currency:',
+    'LBL_CURRENCY_RATE' => 'Currency Rate',
     'LBL_ASSIGNED_TO_NAME'=>'Assigned to:',                   
 
     // listview labels
