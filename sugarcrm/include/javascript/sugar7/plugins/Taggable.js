@@ -4,7 +4,7 @@
     app.events.on("app:init", function () {
         var tagTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag"><a href="#{{buildRoute module=module id=id}}">{{name}}</a></span>'),
             tagInEditTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag" contenteditable="false"><a>{{name}}</a></span>'),
-            tagListOptionTemplate = Handlebars.compile('<li{{#if noAccess}} class="disabled"{{/if}}><a><div class="label label-module-mini label-{{module}} pull-left">{{moduleIconLabel module}}</div>{{{htmlName}}}{{#if noAccess}}<div class="pull-right">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>'),
+            tagListOptionTemplate = Handlebars.compile('<li{{#if noAccess}} class="disabled"{{/if}}><a><div class="label label-module-mini label-{{module}} pull-left">{{moduleIconLabel module}}</div>{{{htmlName}}}{{#if noAccess}}<div class="add-on">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>'),
             tagTextTemplate = Handlebars.compile('@[{{module}}:{{id}}:{{name}}]'),
             taggingHtml = '<span class="sugar_tagging">&nbsp;</span>',
             tagListContainerHtml = '<ul class="dropdown-menu activitystream-tag-dropdown"></ul>',
