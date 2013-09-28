@@ -601,25 +601,35 @@ class Product extends SugarBean
         $rli = BeanFactory::getBean('RevenueLineItems');
         $rli->id = create_guid();
         $rli->new_with_id = true;
+        $rli->fetched_row = array();
 
         foreach ($this->getFieldDefinitions() as $field) {
             if ($field['name'] != 'id') {
                 $rli->$field['name'] = $this->$field['name'];
+                // set the fetched row, so we prevent the product_template from fetching again
+                // when the re-save happens because of the relationships
+                $rli->fetched_row[$field['name']] = $this->$field['name'];
             }
         }
 
-        //calculate total discount amount
-        $rli->discount_amount = SugarMath::init($rli->discount_amount)->mul($rli->quantity)->result();
+        if (!empty($this->discount_select)) {
+            // we have a percentage discount, use the deal_calc field to calculated the discount_amount field
+            $rli->discount_amount = SugarMath::init($this->deal_calc)->mul($rli->quantity)->result();
+        } else {
+            // no percentage, so just calculate it
+            $rli->discount_amount = SugarMath::init($rli->discount_amount)->mul($rli->quantity)->result();
+        }
+
         
         // since we don't have a likely_case on products,
         if ($rli->likely_case == '0.00') {
             //undo bad math from quotes.
             $rli->likely_case = SugarMath::init()
                                 ->exp(
-                                    '(?+?)-?', 
+                                    '(?+?)-?',
                                     array(
-                                        $this->total_amount, 
-                                        $this->discount_amount, 
+                                        $this->total_amount,
+                                        $this->discount_amount,
                                         $rli->discount_amount
                                     )
                                 )
@@ -653,13 +663,13 @@ class Product extends SugarBean
         foreach ($this->template_fields as $template_field) {
             // Empty isn't good enough here, if they set a total to 0.00 we need to not
             // copy that from the template
-            if (!empty($this->$template_field) 
+            if (!empty($this->$template_field)
                 || (isset($this->$template_field)
                     && ($this->$template_field === 0 || $this->$template_field === 0.0))) {
                 continue;
             }
             if (isset($template->$template_field)) {
-               $this->$template_field = $template->$template_field;
+                $this->$template_field = $template->$template_field;
             }
         }
     }
@@ -685,8 +695,7 @@ class Product extends SugarBean
             require_once('modules/ProductTemplates/Formulas.php');
             refresh_price_formulas();
             global $price_formulas;
-            if (isset($price_formulas[$this->pricing_formula]))
-            {
+            if (isset($price_formulas[$this->pricing_formula])) {
                 include_once ($price_formulas[$this->pricing_formula]);
                 $formula = new $this->pricing_formula;
                 $this->discount_price = $formula->calculate_price($this->cost_price,$this->list_price,$this->discount_price,$this->pricing_factor);
