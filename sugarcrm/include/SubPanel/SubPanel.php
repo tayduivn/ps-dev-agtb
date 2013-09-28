@@ -271,17 +271,17 @@ class SubPanel
     {
         $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/Layoutdefs/";
         $layoutDefsName = "layout_defs['{$panel->parent_bean->module_dir}']['subpanel_setup']['"
-                        . strtolower($panel->name) . "']";
+            . strtolower($panel->name) . "']";
         $layoutDefsExtName = "layoutdefs";
         $moduleInstallerMethod = "rebuild_layoutdefs";
         //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
         $overrideValue = $filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name;
         $overrideName = 'override_subpanel_name';
-        
         // Set a reasonable default value in case we ARE bwc. Without this BWC
         // $viewName isn't set for BWC modules and throws errors later on.
         $viewName = $panel->_instance_properties['subpanel_name'];
-        if (!isModuleBWC($panel->parent_bean->module_dir)) {
+
+        if(!isModuleBWC($panel->parent_bean->module_dir)) {
             require_once 'include/MetaDataManager/MetaDataConverter.php';
             $mc = new MetaDataConverter();
             $layoutPath = "custom/Extension/modules/{$panel->parent_bean->module_dir}/Ext/clients/base/layouts/subpanels";
@@ -300,7 +300,6 @@ class SubPanel
                 "link" => $panel->name,
                 "view" => $viewName,
             );
-
         }
 
 
