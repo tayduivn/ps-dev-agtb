@@ -53,12 +53,14 @@
      * @private
      */
     _buildDownloadLink: function(templateId) {
-        //IE does not support shart-start url on iframe path
-        return '?#' + app.bwc.buildRoute(this.module, null, 'sugarpdf', {
+        var urlParams = $.param({
+            'action': 'sugarpdf',
+            'module': this.module,
             'sugarpdf': 'pdfmanager',
             'record': this.model.id,
             'pdf_template_id': templateId
         });
+        return '?' + urlParams;
     },
 
     /**
