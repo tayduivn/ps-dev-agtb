@@ -83,60 +83,25 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
     public function getManagerProgress()
     {
-        //get the quota data for user
-        /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
-
-        //grab user that is the target of this call to check if it is the top level manager
-        $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
-
-        //top level manager has to receive special treatment, but all others can be routed through quota function.
-        if ($targetedUser->reports_to_id != "") {
-            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), false);
-
-            // get reportee quota data and add to manager's quota
-            $reportees = User::getReporteesWithLeafCount($this->getArg('user_id'), false);
-            $reporteeQuotas = '0';
-            foreach($reportees as $key=>$value){
-                $qAmt = $quota->getRollupQuota($this->getArg('timeperiod_id'), $key, true);
-                // if there's quota data, add it up
-                if(isset($qAmt) && !empty($qAmt)) {
-                    $reporteeQuotas = SugarMath::init($reporteeQuotas, 6)->add((string)$qAmt['amount'])->result();
-                }
-            }
-            if ($reporteeQuotas != '0' && isset($quotaData['amount'])) {
-                // add in the reportee quotas to the manager's quota
-                $quotaData['amount'] = SugarMath::init($quotaData['amount'], 6)->add($reporteeQuotas)->result();
-            }
-        } else {
-            $quotaData["amount"] = $this->getQuotaTotalFromData();
-        }
-
-        //Get pipeline total and count;
-        $this->getPipelineRevenue();
-
-        //get data
-        $progressData = array(
-            "closed_amount"     => $this->closedAmount,
-            "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
-        );
-
         $user_id = $this->getArg('user_id');
         $timeperiod_id = $this->getArg('timeperiod_id');
 
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
         $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $totals = $mgr_worksheet->worksheetTotals($user_id, $timeperiod_id);
+
+        // pull the quota from the worksheet data since we need the draft records if they exist
+        // to show what could be in draft for the user, if they are the current user.
+        $totals['quota_amount'] = $totals['quota'];
 
         $totals['user_id'] = $user_id;
         $totals['timeperiod_id'] = $timeperiod_id;
         // unset some vars that come from the worksheet to avoid confusion with correct data
         // coming from this endpoint for progress
-        unset($totals['pipeline_opp_count'], $totals['quota'], $totals['included_opp_count'], $totals['pipeline_amount'], $totals['closed_amount']);
+        unset($totals['pipeline_opp_count'], $totals['quota'],
+            $totals['included_opp_count'], $totals['pipeline_amount']);
 
-        // combine totals in with other progress data
-        $progressData = array_merge($progressData, $totals);
-
-        return $progressData;
+        return $totals;
     }
 
     /**

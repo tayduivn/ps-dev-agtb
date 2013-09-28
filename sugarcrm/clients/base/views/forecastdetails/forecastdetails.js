@@ -627,13 +627,14 @@
         var params = {},
             // get Number versions of values for comparison
             caseValueN = parseFloat(caseValue),
-            stageValueN = parseFloat(stageValue);
+            stageValueN = parseFloat(stageValue),
+            openPipeline;
 
         params.label = app.lang.get('LBL_' + caseStr.toUpperCase(), 'Forecasts');
         params.spanCSS = this.spanCSS;
         params.case = caseStr;
         params.shortOrExceed = '&nbsp;';
-        params.deficitAmount = '&nbsp;';
+        params.openPipeline = '&nbsp;';
         params.feedbackLn1 = '';
         params.feedbackLn2 = '';
 
@@ -667,11 +668,15 @@
                     params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
                 }
 
-                var casePlusClosed = app.math.add(caseValue, closedAmt),
-                    deficitAmount = Math.abs(app.math.sub(stageValue, casePlusClosed));
 
-                params.percent = this.getPercent(deficitAmount, stageValue);
-                params.deficitAmount = '(' + app.currency.formatAmountLocale(deficitAmount) + ')';
+                /**
+                 *  The bottom rectangles are supposed to tell the user if there is sufficient open pipeline in the current quarter to cover the deficit or not.
+                 *  If there is surplus (meaning there is no deficit), the open pipeline will actually take the user above quota and that is always represented with green color.
+                 */
+                openPipeline = Math.abs(app.math.sub(caseValue, closedAmt));
+
+                params.percent = this.getPercent(openPipeline, stageValue);
+                params.openPipeline = '(' + app.currency.formatAmountLocale(openPipeline) + ')';
 
             }
 
@@ -681,7 +686,7 @@
                 params.feedbackLn1 += ' ' + params.percent;
             }
 
-            params.feedbackLn2 = params.deficitAmount;
+            params.feedbackLn2 = params.openPipeline;
         }
         else
         {

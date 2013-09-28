@@ -724,14 +724,14 @@ describe("Base.View.Forecastdetails", function() {
         describe("when likely is under quota", function() {
             beforeEach(function() {
                 caseStr = 'likely';
-                caseValue = 10;
+                caseValue = 60;
                 stageValue = 100;
                 closedAmt = 50;
             });
 
             it("should return correct amount", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.amount).toBe('$10.00');
+                expect(result.amount).toBe('$60.00');
             });
 
             it("should return correct shortOrExceed", function() {
@@ -741,12 +741,12 @@ describe("Base.View.Forecastdetails", function() {
 
             it("should return correct percent", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.percent).toBe('40%');
+                expect(result.percent).toBe('10%');
             });
 
-            it("should return correct deficitAmount", function() {
+            it("should return correct openPipeline", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.deficitAmount).toBe('($40.00)');
+                expect(result.openPipeline).toBe('($10.00)');
             });
 
         });
@@ -754,14 +754,14 @@ describe("Base.View.Forecastdetails", function() {
         describe("when likely is over quota", function() {
             beforeEach(function() {
                 caseStr = 'likely';
-                caseValue = 115;
+                caseValue = 165;
                 stageValue = 100;
                 closedAmt = 50;
             });
 
             it("should return correct amount", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.amount).toBe('$115.00');
+                expect(result.amount).toBe('$165.00');
             });
 
             it("should return correct shortOrExceed", function() {
@@ -771,12 +771,12 @@ describe("Base.View.Forecastdetails", function() {
 
             it("should return correct percent", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.percent).toBe('65%');
+                expect(result.percent).toBe('115%');
             });
 
-            it("should return correct deficitAmount", function() {
+            it("should return correct openPipeline", function() {
                 result = view.getDetailsForCase(caseStr, caseValue, stageValue, closedAmt);
-                expect(result.deficitAmount).toBe('($65.00)');
+                expect(result.openPipeline).toBe('($115.00)');
             });
         });
     });
