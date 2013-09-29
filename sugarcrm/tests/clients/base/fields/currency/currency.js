@@ -69,11 +69,13 @@ describe('Base.Fields.Currency', function() {
                 'conversion_rate': '0.900'
             }
         });
+        sinon.stub(_, 'defer', function() {});
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
+        _.defer.restore();
         delete Handlebars.templates;
         model = null;
 

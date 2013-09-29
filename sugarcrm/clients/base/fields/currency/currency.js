@@ -125,10 +125,16 @@
             this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
             // convert the value to new currency on the model
             if (model.has(this.name)) {
+                // if user has removed currency value and hit enter, saving an empty string to the model
+                // make sure we make that value 0 so it doesn't NaN in the next model set
+                var val = model.get(this.name);
+                if(val === '') {
+                    val = 0;
+                }
                 this.model.set(
                     this.name,
                     app.currency.convertAmount(
-                        app.currency.unformatAmountLocale(model.get(this.name)),
+                        app.currency.unformatAmountLocale(val),
                         this._lastCurrencyId,
                         currencyId
                     ),
