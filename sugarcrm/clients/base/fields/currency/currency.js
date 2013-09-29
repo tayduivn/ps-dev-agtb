@@ -63,6 +63,10 @@
      */
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
+        if (this.name.indexOf('_usdollar') >= 0) {
+            // _usdollar fields should always be read-only
+            this.def.readonly = true;
+        }
         var currencyField = this.def.currency_field || 'currency_id';
         if (this.model.isNew() && (!this.model.isCopy())) {
             // new records are set the user's preferred currency
@@ -205,7 +209,7 @@
 
         if (this.name.indexOf('_usdollar') >= 0) {
             // usdollar fields are always in base currency
-            currencyId = '-99';
+            currencyId = app.currency.getBaseCurrencyId();
         } else {
             // TODO review this forecasts requirement and make it work with css defined on metadata
             // force this to recalculate the transaction value if needed

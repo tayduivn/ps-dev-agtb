@@ -477,5 +477,25 @@ describe('Base.Fields.Currency', function() {
             expect(field.render).not.toHaveBeenCalled();
             expect(field.setCurrencyValue).toHaveBeenCalled();
         });
+
+        it('should force _usdollar field to readonly', function() {
+            var field = SugarTest.createField(
+                'base',
+                'amount_usdollar',
+                'currency',
+                'edit',
+                {
+                    related_fields: ['currency_id', 'base_rate'],
+                    currency_field: 'currency_id',
+                    base_rate_field: 'base_rate'
+                },
+                moduleName,
+                model
+            );
+            expect(field.def.readonly).toEqual(true);
+        });
+
+
+
     });
 });
