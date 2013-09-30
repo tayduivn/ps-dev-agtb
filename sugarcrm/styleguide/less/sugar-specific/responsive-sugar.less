@@ -162,11 +162,22 @@
       position: absolute;
       right: 0;
     }
+    .navbar-search {
+      position: relative;
+      width: 120px;
+      height: 28px;
+      right: 0;
+      background: @grayLight;
+      .border-radius(3px);
+    }
   }
 
   #searchForm:not(.active) {
     .search-query {
       display: none;
+    }
+    .navbar-search {
+      width: 28px;
     }
     .advanced {
       .btn-group {
@@ -174,6 +185,7 @@
           display: none;
         }
         .btn {
+          .border-radius(3px);
           .buttonBackground(@btnInverseBackground, @btnInverseBackgroundHighlight);
           .icon-caret-down {
             color: #bbb;
@@ -227,6 +239,9 @@
         min-width: inherit !important;
         width: 120px;
       }
+    }
+    .typeahead {
+      left: auto;
     }
   }
 
@@ -329,6 +344,7 @@
   .row-fluid .main-pane.span8 .headerpane {
     width: 100%;
     border-right: none;
+    z-index: 1;
   }
 
   .side >.preview-pane .preview-headerbar {
