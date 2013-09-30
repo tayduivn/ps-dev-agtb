@@ -218,6 +218,12 @@
 
         // if this.def.auto_populate is true set new data and doesn't show alert message
         if (!_.isUndefined(this.def.auto_populate) && this.def.auto_populate == true) {
+            // if we have a currency_id, set it first to trigger the currency conversion before setting
+            // the values to the model, this prevents double conversion from happening
+            if (!_.isUndefined(newData.currency_id)) {
+                this.model.set({currency_id: newData.currency_id})
+                delete newData.currency_id;
+            }
             this.model.set(newData);
             return;
         }
@@ -242,6 +248,12 @@
             level: 'confirmation',
             messages: messageTpl({values: messages.join(', ')}) + '<br><br>',
             onConfirm: function () {
+                // if we have a currency_id, set it first to trigger the currency conversion before setting
+                // the values to the model, this prevents double conversion from happening
+                if (!_.isUndefined(newData.currency_id)) {
+                    this.model.set({currency_id: newData.currency_id})
+                    delete newData.currency_id;
+                }
                 self.model.set(newData);
             }
         });
