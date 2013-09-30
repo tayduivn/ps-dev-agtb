@@ -90,7 +90,9 @@
                 $el.select2("container").addClass("tleft");
                 $el.on('change', function(ev){
                     var value = ev.val;
-                    self.model.set(self.name, self.unformat(value));
+                    if(self.model && !(self.name == 'currency_id' && _.isUndefined(value))) {
+                        self.model.set(self.name, self.unformat(value));
+                    }
                 });
                 if (this.def.ordered) {
                     $el.select2("container").find("ul.select2-choices").sortable({

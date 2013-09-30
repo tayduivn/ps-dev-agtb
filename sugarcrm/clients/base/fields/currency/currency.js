@@ -96,7 +96,7 @@
             this._currencyField = null;
         }
         app.view.Field.prototype._render.call(this);
-        if (this.action === 'edit' || this.action === 'disabled') {
+        if (this.hideCurrencyDropdown === false && (this.action === 'edit' || this.action === 'disabled')) {
             this.getCurrencyField().setElement(this.$('span[sfuuid="' + this.currencySfId + '"]'));
             this.$el.find('div.select2-container').css('min-width', '8px');
             this.getCurrencyField().render();
