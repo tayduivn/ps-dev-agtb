@@ -67,10 +67,8 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
         context.parent = undefined;
         context.prepare();
 
-        view = SugarTest.createView("base", moduleName, "recordlist", null, context);
         layout = SugarTest.createLayout("base", moduleName, "list", null, null);
-        view.layout = layout;
-
+        view = SugarTest.createView("base", moduleName, "recordlist", null, context, true, layout, true);
     });
 
     afterEach(function() {
