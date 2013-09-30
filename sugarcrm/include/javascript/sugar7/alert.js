@@ -181,8 +181,14 @@
         syncCompleteHandler('success', messages, method, model, options);
     });
 
-    app.events.on('data:sync:error', function(method, model, options) {
-        syncCompleteHandler('error', 'ERR_GENERIC_SERVER_ERROR', method, model, options);
+    app.events.on('data:sync:error', function(method, model, options, error) {
+        //412 errors must be handled by re-sending the update/save after the app finishes the sync.
+        if (!error || error.status != 412) {
+            syncCompleteHandler('error', 'ERR_GENERIC_SERVER_ERROR', method, model, options);
+        } else {
+            //Hide the saving dialog so that only the "loading" screen is visible
+            app.alert.dismiss("data:sync:process");
+        }
     });
 
 })(SUGAR.App);

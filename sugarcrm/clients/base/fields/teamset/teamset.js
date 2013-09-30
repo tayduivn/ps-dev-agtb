@@ -76,7 +76,7 @@
         this._updateAndTriggerChange(team);
     },
     format: function (value) {
-        if (this.model.isNew()) {
+        if (this.model.isNew() && (_.isEmpty(value) || this.model.get(this.name) != value)) {
             //load the default team setting that is specified in the user profile settings
             if (_.isEmpty(value)) {
                 value = app.utils.deepCopy(app.user.getPreference("default_teams"));

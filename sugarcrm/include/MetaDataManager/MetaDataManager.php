@@ -76,6 +76,16 @@ class MetaDataManager
     protected $metaDataHacks;
 
     /**
+     * Stack of flag that tells this class to clear the metadata cache on shutdown
+     * of the request. The stack is keyed on whether a delete module client cache
+     * was requested or not, so a cache clear will happen no more than twice (and 
+     * more than likely will only happen once). 
+     * 
+     * @var array
+     */
+    protected static $clearCacheOnShutdown = array();
+
+    /**
      * The constructor for the class.
      *
      * @param User  $user      A User bean
@@ -615,12 +625,38 @@ class MetaDataManager
     }
 
     /**
-     * Clears the API metadata cache of all cache files
+     * Registers the API metadata cache to be cleared at shutdown
      *
      * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
      * @static
      */
     public static function clearAPICache( $deleteModuleClientCache = true )
+    {
+        // True/false stack for handling both client cache cases
+        $key = $deleteModuleClientCache ? 1 : 0;
+
+        // If we are in unit tests we need to fire this off right away
+        if (defined('SUGAR_PHPUNIT_RUNNER') && SUGAR_PHPUNIT_RUNNER === true) {
+            self::clearAPICacheOnShutdown($deleteModuleClientCache);
+        } elseif (($key === 0 && empty(self::$clearCacheOnShutdown)) || !isset(self::$clearCacheOnShutdown[$key])) {
+            // Will only clear cache if 
+            //  - A) delete module cache is false and there is no stack of clears, OR
+            //  - B) delete module cache is true and it hasn't already been called with true
+            // 
+            // This prevents calling this once each for true and false when a true
+            // would handle what a false would anyway
+            register_shutdown_function(array('MetaDataManager', 'clearAPICacheOnShutdown'), $deleteModuleClientCache);
+            self::$clearCacheOnShutdown[$key] = true;
+        }
+    }
+    
+    /**
+     * Clears the API metadata cache of all cache files
+     *
+     * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
+     * @static
+     */
+    public static function clearAPICacheOnShutdown($deleteModuleClientCache = true)
     {
         if ($deleteModuleClientCache) {
             // Delete this first so there is no race condition between deleting a metadata cache

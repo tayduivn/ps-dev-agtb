@@ -127,6 +127,9 @@
     },
 
     _placeComponent: function(component) {
+        if (this.disposed)
+            return;
+
         if(component.name === "activitystream") {
             this.$el.find(".activitystream-list").append(component.el);
         } else if(component.name === "activitystream-bottom") {

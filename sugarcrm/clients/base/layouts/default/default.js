@@ -36,6 +36,9 @@
      * @returns {number}
      */
     getPaneWidth: function(component) {
+        if (!this.$el) {
+            return 0;
+        }
         var paneSelectors = ['.main-pane', '.side'],
             pane = _.find(paneSelectors, function(selector) {
                 return ($.contains(this.$(selector).get(0), component.el));

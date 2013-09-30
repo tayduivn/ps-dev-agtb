@@ -101,6 +101,9 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
+        if (this.resavingAfterMetadataSync)
+            return false;
+
         return this.model.isNew() && this.model.hasChanged();
     },
 
@@ -213,7 +216,9 @@
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function (error) {
             this.enableButtons();
-            if (!error && !this.disposed) {
+            if (error && error.status == 412 && !error.request.metadataRetry) {
+                this.handleMetadataSyncError(error);
+            } else if (!error && !this.disposed) {
                 this.context.lastSaveAction = null;
                 callback();
             }
@@ -246,9 +251,13 @@
                     callback(false);
                 }
             }, this),
-            error = _.bind(function () {
-                this.alerts.showServerError();
-                callback(true);
+            error = _.bind(function (e) {
+                if (e.status == 412 && !e.request.metadataRetry) {
+                    this.handleMetadataSyncError(e);
+                } else {
+                    this.alerts.showServerError();
+                    callback(true);
+                }
             }, this);
         if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
@@ -265,9 +274,13 @@
         var success = function () {
                 callback(false);
             },
-            error = _.bind(function () {
-                this.alerts.showServerError();
-                callback(true);
+            error = _.bind(function (e) {
+                if (e.status == 412 && !e.request.metadataRetry) {
+                    this.handleMetadataSyncError(e);
+                } else {
+                    this.alerts.showServerError();
+                    callback(true);
+                }
             }, this);
 
         this.saveModel(success, error);

@@ -121,6 +121,9 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
     function save ()
     {
         parent::_save ( $this->relationships, "custom/working/modules/{$this->moduleName}" ) ;
+
+        // Clear out the api metadata cache
+        MetaDataManager::clearAPICache();
     }
 
     /*
