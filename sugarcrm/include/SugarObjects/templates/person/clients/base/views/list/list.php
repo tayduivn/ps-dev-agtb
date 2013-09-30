@@ -141,7 +141,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'default' => false,
                     'enabled' => true,
                     'readonly' => true,
-                    'module' => 'Employees',
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

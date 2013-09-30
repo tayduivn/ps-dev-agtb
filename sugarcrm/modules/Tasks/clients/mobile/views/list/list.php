@@ -60,7 +60,6 @@ $viewdefs['Tasks']['mobile']['view']['list'] = array(
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'module' => 'Employees',
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(

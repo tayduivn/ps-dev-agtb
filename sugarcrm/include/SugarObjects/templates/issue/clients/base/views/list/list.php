@@ -85,7 +85,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'module' => 'Employees',
                 ),
             ),
         ),

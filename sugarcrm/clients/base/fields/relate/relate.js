@@ -159,11 +159,17 @@
      * extend this one from other "link" field
      */
     buildRoute: function (module, id) {
+        var oldModule = module;
+        // This is a workaround until bug 61478 is resolved to keep parity with 6.7
+        if (module === 'Users' && this.context.get('module') !== 'Users') {
+            module = 'Employees';
+        }
+
         if (_.isEmpty(module) || (!_.isUndefined(this.def.link) && !this.def.link)) {
             return;
         }
         var action = (this.def.link && this.def.route)? this.def.route.action :"view";
-        if(app.acl.hasAccess(action, module)) {
+        if(app.acl.hasAccess(action, oldModule)) {
             this.href = '#' + app.router.buildRoute(module, id);
         }
     },

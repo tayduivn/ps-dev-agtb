@@ -202,7 +202,6 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true,
-        'module' => 'Employees',
     )
 );
 //END SUGARCRM flav=ent ONLY

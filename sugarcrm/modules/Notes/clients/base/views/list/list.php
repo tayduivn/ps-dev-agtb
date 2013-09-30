@@ -96,7 +96,6 @@ $viewdefs['Notes']['base']['view']['list'] = array(
                 ),
                 array (
                     'name' => 'created_by_name',
-                    'module' => 'Employees',
                     'type' => 'relate',
                     'label' => 'LBL_CREATED_BY',
                     'width' => '10%',

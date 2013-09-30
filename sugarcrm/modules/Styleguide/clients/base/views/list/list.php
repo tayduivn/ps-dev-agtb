@@ -75,7 +75,6 @@ $viewdefs['Styleguide']['base']['view']['list'] = array(
                     'id' => 'ASSIGNED_USER_ID',
                     'default' => true,
                     'sortable' => false,
-                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'filename',
