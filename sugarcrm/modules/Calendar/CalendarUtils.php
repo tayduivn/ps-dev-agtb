@@ -250,7 +250,6 @@ class CalendarUtils
 		 
 		if (!empty($params['until'])) {
 			$end = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_format(), $until);
-			$end->modify("+1 Day");
 		} else {
 			$end = $start;
 		}
@@ -262,7 +261,8 @@ class CalendarUtils
 
 		$limit = SugarConfig::getInstance()->get('calendar.max_repeat_count',1000);
 
-		while($i < $count || ($count == 0 && $current->format("U") < $end->format("U"))){
+        // current/end check should be inclusive to handle until date 
+		while($i < $count || ($count == 0 && $current->format("U") <= $end->format("U"))){
 			$skip = false;
 			switch($type){
 				case "Daily":
@@ -331,8 +331,16 @@ class CalendarUtils
 		$qu = "SELECT * FROM {$bean->rel_users_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
 		$users_rel_arr = array();
-		while($ro = $db->fetchByAssoc($re))
-			$users_rel_arr[] = $ro['user_id'];
+		// If the bean has a users_arr then related records for those ids will have
+		// already been created. This prevents duplicates of those records for 
+		// users, contacts and leads (handled below)
+		$exclude_users = empty($bean->users_arr) ? array() : array_flip($bean->users_arr);
+		
+		while($ro = $db->fetchByAssoc($re)) {
+			if (!isset($exclude_users[$ro['user_id']])) {
+				$users_rel_arr[] = $ro['user_id'];
+			}
+		}
 		$qu_users = "
 				INSERT INTO {$bean->rel_users_table}
 				(id,user_id,{$lower_name}_id,date_modified)
@@ -343,8 +351,12 @@ class CalendarUtils
 		$qu = "SELECT * FROM {$bean->rel_contacts_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
 		$contacts_rel_arr = array();
-		while($ro = $db->fetchByAssoc($re))
-			$contacts_rel_arr[] = $ro['contact_id'];
+		$exclude_contacts = empty($bean->contacts_arr) ? array() : array_flip($bean->contacts_arr);
+		while($ro = $db->fetchByAssoc($re)) {
+			if (!isset($exclude_contacts[$ro['contact_id']])) {
+				$contacts_rel_arr[] = $ro['contact_id'];
+			}
+		}
 		$qu_contacts = "
 				INSERT INTO {$bean->rel_contacts_table}
 				(id,contact_id,{$lower_name}_id,date_modified)
@@ -355,8 +367,12 @@ class CalendarUtils
 		$qu = "SELECT * FROM {$bean->rel_leads_table} WHERE deleted = 0 AND {$lower_name}_id = '{$id}'";
 		$re = $db->query($qu);
 		$leads_rel_arr = array();
-		while($ro = $db->fetchByAssoc($re))
-			$leads_rel_arr[] = $ro['lead_id'];
+		$exclude_leads = empty($bean->leads_arr) ? array() : array_flip($bean->leads_arr);
+		while($ro = $db->fetchByAssoc($re)) {
+			if (!isset($exclude_leads[$ro['lead_id']])) {
+				$leads_rel_arr[] = $ro['lead_id'];
+			}
+		}
 		$qu_leads = "
 				INSERT INTO {$bean->rel_leads_table}
 				(id,lead_id,{$lower_name}_id,date_modified)
