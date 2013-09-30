@@ -179,11 +179,9 @@ $dictionary['Opportunity'] = array(
             'type' => 'currency_id',
             'dbType' => 'id',
             'group' => 'currency_id',
-            'required' => true,
             'vname' => 'LBL_CURRENCY',
             'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
             'reportable' => false,
-            'default' => '-99',
             'comment' => 'Currency used for display purposes'
         ),
         'currency_name' => array(
