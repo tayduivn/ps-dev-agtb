@@ -116,6 +116,9 @@
 <script>
 $(document).ready(function(){
 	SUGAR.themes.actionMenu();
+    if (window.parent && window.parent.SUGAR && window.parent.SUGAR.App.view) {
+        window.parent.SUGAR.App.view.views.BaseBwcView.prototype._rewriteLinksForSidecar(window);
+    }
 });
 </script>
 {/literal}
