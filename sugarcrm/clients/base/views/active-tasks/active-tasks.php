@@ -126,7 +126,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-ban-circle',
-                    'css_class' => 'btn-mini',
+                    'css_class' => 'btn btn-mini',
                     'event' => 'active-tasks:close-task:fire',
                     'tooltip' => 'LBL_CLOSE_DASHLETS',
                     'acl_action' => 'edit',
@@ -134,7 +134,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn-mini',
+                    'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
@@ -159,7 +159,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-ban-circle',
-                    'css_class' => 'btn-mini',
+                    'css_class' => 'btn btn-mini',
                     'event' => 'active-tasks:close-task:fire',
                     'tooltip' => 'LBL_CLOSE_DASHLETS',
                     'acl_action' => 'edit',
@@ -167,7 +167,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn-mini',
+                    'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
@@ -187,7 +187,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-ban-circle',
-                    'css_class' => 'btn-mini',
+                    'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:close-record:fire',
                     'tooltip' => 'LBL_CLOSE_DASHLETS',
                     'acl_action' => 'edit',
@@ -195,7 +195,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn-mini',
+                    'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',

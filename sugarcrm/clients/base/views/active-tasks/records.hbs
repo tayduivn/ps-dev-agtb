@@ -28,7 +28,7 @@
                             {{field ../../../this model=../../this template='detail'}}
                         {{/with}}
                     {{/if}}
-                    <span class="details">
+                    <div class="details">
                         {{#if attributes.assigned_user_id}}
                             <a href="#{{buildRoute module="Employees" id=attributes.assigned_user_id action="detail"}}">
                                 {{getFieldValue this "assigned_user_name"}}
@@ -38,7 +38,7 @@
                         {{/if}}
                         &#44;&nbsp;
                         <date class="date">{{timeago attributes.record_date "TPL_TABBED_DASHLET_TIME_RELATIVE"}}</date>
-                     </span>
+                    </div>
                 </li>
             {{/each}}
             {{#notEq ../collection.next_offset "-1"}}
