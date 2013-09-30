@@ -125,10 +125,11 @@ $viewdefs['base']['view']['active-tasks'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-ban-circle',
+                    'icon' => 'icon-remove-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'active-tasks:close-task:fire',
-                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -136,6 +137,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),
@@ -158,10 +160,11 @@ $viewdefs['base']['view']['active-tasks'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-ban-circle',
+                    'icon' => 'icon-remove-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'active-tasks:close-task:fire',
-                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -169,6 +172,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),
@@ -186,10 +190,11 @@ $viewdefs['base']['view']['active-tasks'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-ban-circle',
+                    'icon' => 'icon-remove-circle',
                     'css_class' => 'btn btn-mini',
-                    'event' => 'tabbed-dashlet:close-record:fire',
-                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'event' => 'active-tasks:close-task:fire',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_ACTIVE_TASKS_DASHLET_COMPLETE_TASK',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -197,6 +202,7 @@ $viewdefs['base']['view']['active-tasks'] = array(
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),

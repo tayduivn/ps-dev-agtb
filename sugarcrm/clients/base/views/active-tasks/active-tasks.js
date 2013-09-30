@@ -40,23 +40,32 @@
     },
 
     /**
-     * Register dashlet custom events
-     * @returns {*}
-     * @private
+     * {@inheritDoc}
      */
     _initEvents: function(){
-        this._super("_initEvents");
-        this.context.on('active-tasks:close-task:fire', this.closeTask, this);
+        this._super('_initEvents');
+        this.on('active-tasks:close-task:fire', this.closeTask, this);
         return this;
     },
 
     /**
-     * Close the selected task
+     * Complete the selected task
+     * @param model {app.Bean} Task model to be marked as completed
      */
     closeTask: function(model){
-        model.save("status", "Completed");
-        this.collection.remove(model);
-        this.render();
+        var self = this;
+        var name = model.get('name') || '',
+            context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
+        app.alert.show('complete_task_confirmation:' + model.get('id'), {
+            level: 'confirmation',
+            messages: app.utils.formatString(app.lang.get('LBL_ACTIVE_TASKS_DASHLET_CONFIRM_CLOSE'), [context]),
+            onConfirm: function() {
+                model.save({status: 'Completed'}, {
+                    showAlerts: true,
+                    success: self._getRemoveModelCompleteCallback()
+                });
+            }
+        });
     },
 
     /**

@@ -143,10 +143,11 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-ban-circle',
+                    'icon' => 'icon-remove-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'planned-activities:close-record:fire',
-                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_PLANNED_ACTIVITIES_DASHLET_HELD_ACTIVITY',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -154,6 +155,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),
@@ -180,10 +182,11 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
-                    'icon' => 'icon-ban-circle',
+                    'icon' => 'icon-remove-circle',
                     'css_class' => 'btn btn-mini',
                     'event' => 'planned-activities:close-record:fire',
-                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'target' => 'view',
+                    'tooltip' => 'LBL_PLANNED_ACTIVITIES_DASHLET_HELD_ACTIVITY',
                     'acl_action' => 'edit',
                 ),
                 array(
@@ -191,6 +194,7 @@ $viewdefs['base']['view']['planned-activities'] = array(
                     'icon' => 'icon-unlink',
                     'css_class' => 'btn btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
+                    'target' => 'view',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
                 ),

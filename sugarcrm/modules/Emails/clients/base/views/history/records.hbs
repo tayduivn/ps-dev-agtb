@@ -3,10 +3,10 @@
         <ul class="unstyled listed">
             {{#each collection.models}}
                 <li>
-                    <p>
                     {{#notEq attributes.type "inbound"}}
                         <div class="pull-right"><span class="label">{{getDDLabel attributes.type "dom_email_types"}}</span></div>
                     {{/notEq}}
+                    <p>
                     {{#if attributes.assigned_user_id}}
                         <a href="#{{buildRoute module="Employees" id=attributes.assigned_user_id action="detail"}}" class="pull-left avatar42" data-title="{{getFieldValue this "assigned_user_name"}}">
                             <img src="{{getFieldValue this "picture_url"}}" alt="{{getFieldValue this "assigned_user_name"}}">
