@@ -511,9 +511,9 @@
         } else {
             if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
-                    this.showNavigationMessage('rep_to_manager');
+                    this.processNavigationMessageReturn(this.showNavigationMessage('rep_to_manager'));
                 } else if (this.displayNavigationMessage) {
-                    this.showNavigationMessage('user_switch');
+                    this.processNavigationMessageReturn(this.showNavigationMessage('user_switch'));
                 }
                 this.cleanUpDirtyModels();
                 // we need to hide
