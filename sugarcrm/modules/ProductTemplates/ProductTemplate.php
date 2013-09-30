@@ -321,13 +321,14 @@ class ProductTemplate extends SugarBean {
 		}
 
 
-		$currency = BeanFactory::getBean('Currencies', $this->currency_id);
-		if($currency->id != $this->currency_id || $currency->deleted == 1){
-				$this->cost_price = $this->cost_usdollar;
-				$this->discount_price = $this->discount_usdollar;
-				$this->list_price = $this->list_usdollar;
-				$this->currency_id = $currency->id;
-		}
+        $currency = BeanFactory::getBean('Currencies', $this->currency_id);
+        if($currency->id != $this->currency_id || $currency->deleted == 1) {
+                $this->cost_price = $this->cost_usdollar;
+                $this->discount_price = $this->discount_usdollar;
+                $this->list_price = $this->list_usdollar;
+                $this->currency_id = $currency->id;
+                $this->base_rate = $currency->conversion_rate;
+        }
 
  	    if(isset($this->currency_id) && !empty($this->currency_id)) {
 	       $currency->retrieve($this->currency_id);
