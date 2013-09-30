@@ -105,7 +105,7 @@ $viewdefs['base']['view']['attachments'] = array(
         array(
             'type' => 'rowaction',
             'icon' => 'icon-unlink',
-            'css_class' => 'btn',
+            'css_class' => 'btn-mini',
             'event' => 'attachment:unlinkrow:fire',
             'tooltip' => 'LBL_UNLINK_BUTTON',
             'acl_action' => 'edit',

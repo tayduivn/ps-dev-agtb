@@ -42,8 +42,18 @@
         });
 
         this._super('_initEvents');
+        this.context.on('planned-activities:close-record:fire', this.closeRecord, this);
 
         return this;
+    },
+
+    /**
+     * Close selected Call or Meeting as "Held"
+     */
+    closeRecord: function(model){
+        model.save("status", "Held");
+        this.collection.remove(model);
+        this.render();
     },
 
     /**

@@ -152,7 +152,7 @@ $viewdefs['base']['view']['history'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn',
+                    'css_class' => 'btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
@@ -176,7 +176,7 @@ $viewdefs['base']['view']['history'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn',
+                    'css_class' => 'btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
@@ -196,7 +196,7 @@ $viewdefs['base']['view']['history'] = array(
                 array(
                     'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn',
+                    'css_class' => 'btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',

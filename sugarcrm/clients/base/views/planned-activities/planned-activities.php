@@ -143,8 +143,16 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
+                    'icon' => 'icon-ban-circle',
+                    'css_class' => 'btn-mini',
+                    'event' => 'planned-activities:close-record:fire',
+                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn',
+                    'css_class' => 'btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',
@@ -172,8 +180,16 @@ $viewdefs['base']['view']['planned-activities'] = array(
             'row_actions' => array(
                 array(
                     'type' => 'rowaction',
+                    'icon' => 'icon-ban-circle',
+                    'css_class' => 'btn-mini',
+                    'event' => 'planned-activities:close-record:fire',
+                    'tooltip' => 'LBL_CLOSE_DASHLETS',
+                    'acl_action' => 'edit',
+                ),
+                array(
+                    'type' => 'rowaction',
                     'icon' => 'icon-unlink',
-                    'css_class' => 'btn',
+                    'css_class' => 'btn-mini',
                     'event' => 'tabbed-dashlet:unlink-record:fire',
                     'tooltip' => 'LBL_UNLINK_BUTTON',
                     'acl_action' => 'edit',

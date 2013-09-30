@@ -40,6 +40,26 @@
     },
 
     /**
+     * Register dashlet custom events
+     * @returns {*}
+     * @private
+     */
+    _initEvents: function(){
+        this._super("_initEvents");
+        this.context.on('active-tasks:close-task:fire', this.closeTask, this);
+        return this;
+    },
+
+    /**
+     * Close the selected task
+     */
+    closeTask: function(model){
+        model.save("status", "Completed");
+        this.collection.remove(model);
+        this.render();
+    },
+
+    /**
      * {@inheritDoc}
      *
      * FIXME: This should be removed when metadata supports date operators to
