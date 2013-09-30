@@ -66,7 +66,8 @@ $dictionary['ForecastWorksheet'] = array(
             'vname' => 'LBL_OPPORTUNITY_ID',
             'type' => 'id',
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'link' => 'opportunity',
         ),
         'opportunity_name' =>
         array(
@@ -81,7 +82,9 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'opportunity_id',
-            )
+            ),
+            'rname' => 'name',
+            'link' => 'opportunity',
         ),
         'account_name' =>
         array(
@@ -96,7 +99,9 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'account_id',
-            )
+            ),
+            'rname' => 'name',
+            'link' => 'accounts',
         ),
         'account_id' =>
         array(
@@ -446,9 +451,17 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'opportunity',
             'type' => 'link',
-            'relationship' => 'opportunity_worksheets',
+            'relationship' => 'forecastworksheets_opportunities',
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITY',
+        ),
+        'accounts' =>
+        array(
+            'name' => 'accounts',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_accounts',
+            'source' => 'non-db',
+            'vname' => 'LBL_ACCOUNTS',
         ),
         'product' =>
         array(
