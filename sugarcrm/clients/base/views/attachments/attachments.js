@@ -223,10 +223,26 @@
 
         if (!_.isUndefined(relatedFields)) {
             _.each(relatedFields, function(field) {
-                model.set(field.name, parentModel.get(field.rname));
+                var value = parentModel.get(field.rname);
+                //Not all models have a name, fall back through the common alternatives
+                if (field.rname == "name" && !value) {
+                    value = parentModel.get("full_name")
+                            || parentModel.get("document_name")
+                            || "";
+                }
+                model.set(field.name, value);
                 model.set(field.id_name, parentModel.get('id'));
             }, this);
         }
+        //Special case for contacts. Notes should attach to the account rather than the contact
+        if (parentModel.module && parentModel.module == "Contacts" && parentModel.get("account_id")) {
+            model.set({
+                parent_type : "Accounts",
+                parent_id : parentModel.get("account_id"),
+                parent_name : parentModel.get("account_name")
+            })
+        }
+
         var self = this;
         app.drawer.open({
             layout: 'create-actions',
