@@ -217,6 +217,10 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'comment' => 'Product cost ("Cost" in Quote)',
 		'importable' => 'required',
         'required' => true,
+        'related_fields' => array(
+            'base_rate',
+            'currency_id'
+        ),
 	),
 	'discount_price' =>
 	array (
@@ -228,7 +232,11 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'comment' => 'Discounted price ("Unit Price" in Quote)',
 		'importable' => 'required',
         'required' => true,
-	),
+        'related_fields' => array(
+            'base_rate',
+            'currency_id'
+        ),
+    ),
 	'list_price' =>
 	array (
 		'name' => 'list_price',
@@ -238,7 +246,11 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'len' => '26,6',
 	    'importable' => 'required',
         'required' => true,
-		'comment' => 'List price of product ("List" in Quote)'
+		'comment' => 'List price of product ("List" in Quote)',
+        'related_fields' => array(
+            'base_rate',
+            'currency_id'
+        ),
 	),
 	'cost_usdollar' =>
 	array (
@@ -247,11 +259,18 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'type' => 'currency',
 		'len' => '26,6',
 		'comment' => 'Cost expressed in USD',
+        'formula' => 'divide($cost_price,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
 		'studio' => array(
 			'mobile' => false,
 		),
         'readonly' => true,
         'is_base_currency' => true,
+        'related_fields' => array(
+            'base_rate',
+            'currency_id'
+        ),
     ),
 	'discount_usdollar' =>
 	array (
@@ -260,11 +279,18 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'type' => 'currency',
 		'len' => '26,6',
 		'comment' => 'Discount price expressed in USD',
+        'formula' => 'divide($discount_price,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
 		'studio' => array(
 			'mobile' => false,
 		),
         'readonly' => true,
         'is_base_currency' => true,
+        'related_fields' => array(
+            'base_rate',
+            'currency_id'
+        ),
     ),
 	'list_usdollar' =>
 	array (
@@ -272,12 +298,19 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'vname' => 'LBL_LIST_USDOLLAR',
 		'type' => 'currency',
 		'len' => '26,6',
+        'formula' => 'divide($list_price,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
 		'comment' => 'List price expressed in USD',
 		'studio' => array(
 			'mobile' => false,
 		),
         'readonly' => true,
         'is_base_currency' => true,
+        'related_fields' => array(
+            'base_rate',
+            'currency_id'
+        ),
     ),
 	'currency_id' =>
 	array (
