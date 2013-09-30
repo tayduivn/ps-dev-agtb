@@ -575,6 +575,25 @@ function set_entry($session,$module_name, $name_value_list){
 		$error->set_error('no_access');
 		return array('id'=>-1, 'error'=>$error->get_soap_array());
 	}
+    if ($module_name == 'Opportunities') {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts');
+
+        if ($config['is_setup'] == 1 && $seed->deleted == 1) {
+            $status_field = 'sales_stage';
+            //BEGIN SUGARCRM flav=ent ONLY
+            $status_field = 'sales_status';
+            //END SUGARCRM flav=ent ONLY
+
+            $status = array_merge($config['sales_stage_won'], $config['sales_stage_lost']);
+
+            if ($seed->closed_revenue_line_items > 0 || in_array($seed->$status_field, $status)) {
+                $error->set_error('no_access');
+                return array('id'=>-1, 'error'=>$error->get_soap_array());
+            }
+        }
+    }
 	$seed->save();
 	if($seed->deleted == 1){
 			$seed->mark_deleted($seed->id);
@@ -2233,8 +2252,34 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 				$ids[] = $seed->id;
 			}//fi
 		}
-		else
-		{
+		else if ($module_name == 'Opportunities') {
+            static $config;
+            if (!is_array($config)) {
+                /* @var $admin Administration */
+                $admin = BeanFactory::getBean('Administration');
+                $config = $admin->getConfigForModule('Forecasts');
+            }
+
+            if ($config['is_setup'] == 1 && $seed->deleted == 1) {
+                $status_field = 'sales_stage';
+                //BEGIN SUGARCRM flav=ent ONLY
+                $status_field = 'sales_status';
+                //END SUGARCRM flav=ent ONLY
+
+                $status = array_merge($config['sales_stage_won'], $config['sales_stage_lost']);
+
+                if ($seed->closed_revenue_line_items > 0 || in_array($seed->$status_field, $status)) {
+                    $error->set_error('no_access');
+                    return array('id'=>-1, 'error'=>$error->get_soap_array());
+                }
+            }
+
+            if( $seed->ACLAccess('Save') && ($seed->deleted != 1 || $seed->ACLAccess('Delete'))){
+				$seed->save();
+				$ids[] = $seed->id;
+			}
+		}
+        else {
 			if( $seed->ACLAccess('Save') && ($seed->deleted != 1 || $seed->ACLAccess('Delete'))){
 				$seed->save();
 				$ids[] = $seed->id;
