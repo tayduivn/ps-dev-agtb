@@ -94,6 +94,11 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         // to show what could be in draft for the user, if they are the current user.
         $totals['quota_amount'] = $totals['quota'];
 
+        // we should send back the adjusted totals with out the closed_amount included.
+        foreach (array('worst_adjusted', 'likely_adjusted', 'best_adjusted') as $field) {
+            $totals[$field] = SugarMath::init($totals[$field])->sub($totals['closed_amount'])->result();
+        }
+
         $totals['user_id'] = $user_id;
         $totals['timeperiod_id'] = $timeperiod_id;
         // unset some vars that come from the worksheet to avoid confusion with correct data
