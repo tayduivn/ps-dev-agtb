@@ -650,7 +650,8 @@ class Report
                 if ($field_def['type'] == 'relate' && !empty($field_def['ext2'])) {
                     $joinFocus = BeanFactory::getBean($field_def['ext2']);
                     $field_def['secondary_table'] = $joinFocus->table_name;
-                    if(isset($table_data['link_def']) && $table_data['link_def']['module'] == $table_data['module'])
+                    if(isset($table_data['link_def']) && isset($table_data['link_def']['module']) && isset($table_data['module'])
+                        && $table_data['link_def']['module'] == $table_data['module'])
                     {
                         $tmp[$table_data['module']][$field_def['name']]++;
                     }
