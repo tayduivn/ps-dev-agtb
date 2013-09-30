@@ -323,6 +323,11 @@
             }, this);
         }
 
+        this.layout.on('hide', function() {
+            this.totals = {};
+        }, this);
+
+        // call the parent
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
 
@@ -744,8 +749,10 @@
         if (_.isObject(message_result) && message_result.run_action === true) {
             if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
                 this.context.parent.once('forecasts:worksheet:saved', function() {
-                    this.displayLoadingMessage();
-                    this.collection.fetch();
+                    if (this.layout.isVisible()) {
+                        this.displayLoadingMessage();
+                        this.collection.fetch();
+                    }
                 }, this);
                 this.saveWorksheet(true);
             }
