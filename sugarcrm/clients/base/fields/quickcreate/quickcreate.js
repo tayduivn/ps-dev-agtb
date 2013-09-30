@@ -127,7 +127,7 @@
             context: {
                 create: true,
                 module: module,
-                model: model,
+                model: model
             }
         }, _.bind(function (refresh, model) {
             if (refresh) {

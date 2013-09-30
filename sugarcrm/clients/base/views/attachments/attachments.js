@@ -20,10 +20,10 @@
  * @class View.Views.BaseAttachmentsView
  */
 ({
-    plugins: ['Dashlet', 'Timeago'],
+    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
     events: {
         'click [name=show_more_button]' : 'showMore',
-        'click [data-event=create_button]': 'openCreateDrawer',
+        'click [data-event=create_button]': 'createRelatedNote',
         'click [data-event=select_button]': 'openSelectDrawer'
     },
 
@@ -215,51 +215,10 @@
     /**
      * Create new attachment record
      */
-    openCreateDrawer: function() {
-        var parentModel = this.context.get('parentModel'),
-            link = this.context.get('link'),
-            model = app.data.createRelatedBean(parentModel, null, link),
-            relatedFields = app.data.getRelateFields(parentModel.module, link);
-
-        if (!_.isUndefined(relatedFields)) {
-            _.each(relatedFields, function(field) {
-                var value = parentModel.get(field.rname);
-                //Not all models have a name, fall back through the common alternatives
-                if (field.rname == "name" && !value) {
-                    value = parentModel.get("full_name")
-                            || parentModel.get("document_name")
-                            || "";
-                }
-                model.set(field.name, value);
-                model.set(field.id_name, parentModel.get('id'));
-            }, this);
-        }
-        //Special case for contacts. Notes should attach to the account rather than the contact
-        if (parentModel.module && parentModel.module == "Contacts" && parentModel.get("account_id")) {
-            model.set({
-                parent_type : "Accounts",
-                parent_id : parentModel.get("account_id"),
-                parent_name : parentModel.get("account_name")
-            })
-        }
-
-        var self = this;
-        app.drawer.open({
-            layout: 'create-actions',
-            context: {
-                create: true,
-                module: model.module,
-                model: model
-            }
-        }, function(context, model) {
-            if (!model) {
-                return;
-            }
-
-            self.context.resetLoadFlag();
-            self.context.set('skipFetch', false);
-            self.context.loadData();
-        });
+    createRelatedNote: function() {
+        var link =  this.context.get('link'),
+            parentModel = this.context.get('parentModel');
+        this.createRelatedRecord(app.data.getRelatedModule(parentModel.module, link), link);
     },
 
     /**

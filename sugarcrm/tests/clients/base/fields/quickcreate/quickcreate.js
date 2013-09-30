@@ -111,11 +111,15 @@ describe("Base.Field.QuickCreate", function() {
         var parentModel = app.data.createBean('Test'),
             getRelatedModuleStub = sinon.stub(app.data, 'getRelatedModule', function() {
                 return 'Accounts';
-            });
+            }),
+            origParent = field.context.parent;
+
         parentModel.dataFetched = false;
+        field.context.parent = {isCreate:function(){return true}};
 
         var newModel = field.createLinkModel(parentModel, 'test');
         getRelatedModuleStub.restore();
+        field.context.parent = origParent;
         expect(newModel.link).not.toBeDefined();
     });
 });
