@@ -281,7 +281,9 @@
             _.each(this.layout._components, function(component) {
                 var ctx = component.context;
                 if (component.name == 'activitystream' && !ctx.get('modelId') && ctx.get('collection')) {
-                    contextList.push(component.context);
+                    //FIXME: filter layout's _components array has multiple references to same activitystreams layout object
+                    contextList.push(ctx);
+
                 }
             });
         } else {
@@ -299,7 +301,7 @@
                 });
             }
         }
-        return contextList;
+        return _.uniq(contextList);
     },
 
     /**
@@ -466,6 +468,7 @@
             creatable = app.acl.hasAccess("create", "Filters"),
             meta;
         // Short circuit if we don't have the ACLs to create Filter beans.
+
         if (creatable && contexts.length === 1) {
             meta = app.metadata.getModule(contexts[0].get("module"));
             if (_.isObject(meta.filters)) {
