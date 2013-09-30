@@ -42,6 +42,7 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public $oldTime;
 
     public $roles = array();
+    public $serviceMock;
 
     public function setUp()
     {
@@ -70,8 +71,8 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 ),                
             );
         $this->bean = $mock;
-        $serviceMock = SugarTestRestUtilities::getRestServiceMock();
-        $this->beanApiHelper = new SugarBeanApiHelper($serviceMock);
+        $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
+        $this->beanApiHelper = new SugarBeanApiHelper($this->serviceMock);
     }
 
     public function tearDown()
@@ -121,11 +122,29 @@ class SugarBeanApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
         $bean->deleted = 1;
         $bean->name = "Mr. Toad";
+        $bean->assigned_user_id = "seed_toad_id";
         
         $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted'));
 
         $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
+        $this->assertArrayNotHasKey('assigned_user_id',$data,"Did not strip assigned_user_id from a deleted record when we didn't request it");
         $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
+
+
+        $this->serviceMock->user->is_admin = true;
+        $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted','assigned_user_id'));
+
+        $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
+        $this->assertArrayHasKey('assigned_user_id',$data,"Did not fill in assigned_user_id from a deleted record when we did request it");
+        $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
+
+        $this->serviceMock->user->is_admin = false;
+        $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted','assigned_user_id'));
+
+        $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
+        $this->assertArrayNotHasKey('assigned_user_id',$data,"Did not strip the assigned_user_id from a deleted record when requested by a non-admin");
+        $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
+
     }
 
     public function testJsonFieldSave()

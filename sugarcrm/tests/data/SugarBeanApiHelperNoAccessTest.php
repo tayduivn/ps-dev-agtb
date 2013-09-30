@@ -23,6 +23,7 @@ class SugarBeanApiHelperNoAccessTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public $bean;
     public $beanApiHelper;
+    public $apiMock;
 
     protected function setUp()
     {
@@ -48,7 +49,10 @@ class SugarBeanApiHelperNoAccessTest extends Sugar_PHPUnit_Framework_TestCase
              ->method('ACLFieldAccess')
              ->will($this->returnValue(false));
         $this->bean = $mock;
-        $this->beanApiHelper = new SugarBeanApiHelper(new SugarBeanApiHelperNoAccessTest_ServiceMockup());
+
+        $this->apiMock = new SugarBeanApiHelperNoAccessTest_ServiceMockup();
+        $this->apiMock->user = $GLOBALS['current_user'];
+        $this->beanApiHelper = new SugarBeanApiHelper($this->apiMock);
     }
 
     protected function tearDown()
