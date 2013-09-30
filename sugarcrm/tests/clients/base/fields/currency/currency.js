@@ -69,11 +69,13 @@ describe('Base.Fields.Currency', function() {
                 'conversion_rate': '0.900'
             }
         });
+        sinon.stub(_, 'defer', function() {});
     });
 
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
+        _.defer.restore();
         delete Handlebars.templates;
         model = null;
 
@@ -306,6 +308,19 @@ describe('Base.Fields.Currency', function() {
 
         });
 
+        it("should force currency_id to base on usdollar field", function() {
+            model = app.data.createBean(moduleName, {
+                amount: 900.00,
+                currency_id: '12a29c87-a685-dbd1-497f-50abfe93aae6',
+                base_rate: 0.9
+            });
+            field.model = model;
+            field.def.is_base_currency = true;
+            var value = field.format(model.get('amount'));
+            expect(value).toEqual('$900.00');
+
+        });
+
 
         it("should not show transactional amount on render when converted to base rate", function() {
             //convert the field to push a transactionValue as needed
@@ -332,18 +347,6 @@ describe('Base.Fields.Currency', function() {
             field.render();
             expect(field.transactionValue).toEqual('');
         });
-
-        it("should not convert on _usdollar field", function() {
-            var convertWithRate = sinon.spy(app.currency, 'convertWithRate');
-
-            field.def.convertToBase = true;
-            field.name = 'total_usdollar';
-            field.format(123456789.98);
-            expect(convertWithRate.calledOnce).toBeFalsy();
-
-            convertWithRate.restore();
-        });
-
 
         it("transactional amount should be empty when using the base currency and currency_field not set", function() {
             model = app.data.createBean(moduleName, {
@@ -475,5 +478,6 @@ describe('Base.Fields.Currency', function() {
             expect(field.render).not.toHaveBeenCalled();
             expect(field.setCurrencyValue).toHaveBeenCalled();
         });
+
     });
 });

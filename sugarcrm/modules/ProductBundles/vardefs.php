@@ -125,6 +125,8 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'studio' => array(
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'total' =>
   array (
@@ -146,6 +148,8 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'studio' => array(
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
 
   'subtotal_usdollar' =>
@@ -159,6 +163,8 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'studio' => array(
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'shipping_usdollar' =>
   array (
@@ -171,6 +177,8 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'studio' => array(
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'deal_tot' =>
   array (
@@ -192,6 +200,8 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'studio' => array(
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'new_sub' =>
   array (
@@ -213,6 +223,8 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'studio' => array(
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'subtotal' =>
   array (

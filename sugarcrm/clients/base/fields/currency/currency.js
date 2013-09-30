@@ -113,6 +113,11 @@
         // but instead update the value on the field directly
         this.model.on('change:' + this.name, this._valueChangeHandler, this);
 
+        if (this.def.is_base_currency) {
+            // do not add change handler to _usdollar fields
+            return;
+        }
+
         var currencyField = this.def.currency_field || 'currency_id';
         var baseRateField = this.def.base_rate_field || 'base_rate';
         this.model.on('change:' + currencyField, function(model, currencyId, options) {
@@ -125,10 +130,16 @@
             this.model.set(baseRateField, app.metadata.getCurrency(currencyId).conversion_rate);
             // convert the value to new currency on the model
             if (model.has(this.name)) {
+                // if user has removed currency value and hit enter, saving an empty string to the model
+                // make sure we make that value 0 so it doesn't NaN in the next model set
+                var val = model.get(this.name);
+                if(val === '') {
+                    val = 0;
+                }
                 this.model.set(
                     this.name,
                     app.currency.convertAmount(
-                        app.currency.unformatAmountLocale(model.get(this.name)),
+                        app.currency.unformatAmountLocale(val),
                         this._lastCurrencyId,
                         currencyId
                     ),
@@ -138,8 +149,12 @@
                     // directly (see next func call)
                     { silent: true }
                 );
-                // now format the new value directly on the field
-                this.setCurrencyValue(model.get(this.name));
+                // now defer changes to the end of the thread to avoid conflicts
+                // with other events (from SugarLogic, etc.)
+                var self = this;
+                _.defer(function() {
+                    self.model.trigger('change:' + self.name, self.model, self.model.get(self.name));
+                });
             }
             this._lastCurrencyId = currencyId;
         }, this);
@@ -193,9 +208,9 @@
         var baseRate;
         var currencyId;
 
-        if (this.name.indexOf('_usdollar') >= 0) {
-            // usdollar fields are always in base currency
-            currencyId = '-99';
+        if (this.def.is_base_currency) {
+            // usdollar fields are always in base currency, so set the currency id
+            currencyId = app.currency.getBaseCurrencyId();
         } else {
             // TODO review this forecasts requirement and make it work with css defined on metadata
             // force this to recalculate the transaction value if needed

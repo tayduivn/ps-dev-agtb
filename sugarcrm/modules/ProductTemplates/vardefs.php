@@ -250,7 +250,9 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'studio' => array(
 			'mobile' => false,
 		),
-	),
+        'readonly' => true,
+        'is_base_currency' => true,
+    ),
 	'discount_usdollar' =>
 	array (
 		'name' => 'discount_usdollar',
@@ -261,7 +263,9 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'studio' => array(
 			'mobile' => false,
 		),
-	),
+        'readonly' => true,
+        'is_base_currency' => true,
+    ),
 	'list_usdollar' =>
 	array (
 		'name' => 'list_usdollar',
@@ -272,7 +276,9 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'studio' => array(
 			'mobile' => false,
 		),
-	),
+        'readonly' => true,
+        'is_base_currency' => true,
+    ),
 	'currency_id' =>
 	array (
 		'name' => 'currency_id',

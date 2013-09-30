@@ -202,7 +202,9 @@ $dictionary['Contract'] = array(
                 'wireless_advanced_search' => false,
                 'mobile' => false,
             ),
-		),
+            'readonly' => true,
+            'is_base_currency' => true,
+        ),
 		'status' => array (
 			'name' => 'status',
 			'vname' => 'LBL_STATUS',

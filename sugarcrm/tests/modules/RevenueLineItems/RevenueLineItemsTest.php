@@ -119,6 +119,17 @@ class RevenueLineItemsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse($revenuelineitem2->setAccountIdForOpportunity($opp2->id));
     }
 
+    public function testIsCurrencyIdChanged()
+    {
+        $rli = new RevenueLineItem();
+        $rli->currency_id = -99;
+        $rli->fetched_row['currency_id'] = -99;
+        $this->assertFalse(SugarTestReflection::callProtectedMethod($rli, 'isCurrencyIdChanged'));
+
+        $rli->currency_id = 100; // change currency_id to something else
+        $this->assertTrue(SugarTestReflection::callProtectedMethod($rli, 'isCurrencyIdChanged'));
+    }
+
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     /**
      * @group revenuelineitems

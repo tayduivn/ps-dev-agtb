@@ -235,6 +235,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         'wireless_advanced_search' => false,
         'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'shipping' =>
   array (
@@ -260,6 +262,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
       'wireless_advanced_search' => false,
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
     'discount' =>
   array (
@@ -292,6 +296,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
       'wireless_advanced_search' => false,
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'new_sub' =>
   array (
@@ -316,6 +322,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
       'wireless_advanced_search' => false,
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'tax' =>
   array (
@@ -342,6 +350,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
       'wireless_advanced_search' => false,
       'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'total' =>
   array (
@@ -370,6 +380,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
         'wireless_advanced_search' => false,
         'mobile' => false,
     ),
+    'readonly' => true,
+    'is_base_currency' => true,
   ),
   'billing_address_street' =>
   array (

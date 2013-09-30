@@ -143,6 +143,28 @@ class RevenueLineItem extends SugarBean
     }
 
     /**
+     * To check whether currency_id field is changed during save.
+     * @return bool true if currency_id is changed, false otherwise
+     */
+    protected function isCurrencyIdChanged() {
+        // if both are defined, compare
+        if (isset($this->currency_id) && isset($this->fetched_row['currency_id'])) {
+            if ($this->currency_id != $this->fetched_row['currency_id']) {
+                return true;
+            }
+        }
+        // one is not defined, the other one is not empty, means changed
+        if (!isset($this->currency_id) && !empty($this->fetched_row['currency_id'])) {
+            return true;
+        }
+        if (!isset($this->fetched_row['currency_id']) && !empty($this->currency_id)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function save($check_notify = false)
@@ -167,8 +189,11 @@ class RevenueLineItem extends SugarBean
             $this->quantity = 1;
         }
 
-        // always set the base rate to what the conversion_rate is in the currency
-        $this->base_rate = $currency->conversion_rate;
+        // if stage is not closed won/lost, update base_rate with currency rate
+        if (!in_array($this->sales_stage, $this->getClosedStages()) || !isset($this->base_rate) || $this->isCurrencyIdChanged()) {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+            $this->base_rate = $currency->conversion_rate;
+        }
 
         //US DOLLAR
         if (isset($this->discount_price) && (!empty($this->discount_price) || $this->discount_price == '0')) {

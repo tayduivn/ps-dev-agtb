@@ -220,6 +220,17 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         );
     }
 
+    public function testIsCurrencyIdChanged()
+    {
+        $opp = new Opportunity();
+        $opp->currency_id = -99;
+        $opp->fetched_row['currency_id'] = -99;
+        $this->assertFalse(SugarTestReflection::callProtectedMethod($opp, 'isCurrencyIdChanged'));
+
+        $opp->currency_id = 100; // change currency_id to something else
+        $this->assertTrue(SugarTestReflection::callProtectedMethod($opp, 'isCurrencyIdChanged'));
+    }
+
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
     /*
      * This method tests that a product record is created for new opportunity and that the necessary opportunity

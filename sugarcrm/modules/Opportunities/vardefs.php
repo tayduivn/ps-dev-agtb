@@ -171,6 +171,8 @@ $dictionary['Opportunity'] = array(
                 'quickcreate' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'currency_id' => array(
             'name' => 'currency_id',

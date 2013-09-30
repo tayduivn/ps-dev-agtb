@@ -116,6 +116,8 @@ $dictionary['Shipper'] = array(
         'editview' => false,
         'mobile' => false,
       ),
+      'readonly' => true,
+      'is_base_currency' => true,
   ),
   'status' =>
   array (
