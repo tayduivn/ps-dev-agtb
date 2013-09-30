@@ -36,6 +36,7 @@ $viewdefs['Opportunities']['mobile']['layout']['subpanels'] = array(
             'context' => array(
                 'link' => 'revenuelineitems',
             ),
+            'linkable' => false,
         ),
         //END SUGARCRM flav=ent ONLY
         array(
