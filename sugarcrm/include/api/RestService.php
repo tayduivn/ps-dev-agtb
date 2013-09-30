@@ -592,6 +592,18 @@ class RestService extends ServiceBase
 
         if (!empty($token)) {
             $oauthServer = SugarOAuth2Server::getOAuth2Server();
+
+            // TODO: Temporary fix until we get per-platform download tokens in 7.1
+            // If this code still exists in 7.1 or later email a daily insult to: rob@sugar
+            $tokenSeed = BeanFactory::newBean('OAuthTokens');
+            $tokenBean = $tokenSeed->retrieve_by_string_fields(array('download_token'=>$token));
+            if (!empty($tokenBean->contact_id)) {
+                $tokenData['user_id'] = $tokenBean->assigned_user_id;
+                $_SESSION['type'] = 'support_portal';
+                $_SESSION['contact_id'] = $tokenBean->contact_id;
+                $_SESSION['portal_user_id'] = $tokenBean->assigned_user_id;
+                $oauthServer->setPlatform('portal');
+            }
             $tokenData = $oauthServer->verifyDownloadToken($token);
             
             $GLOBALS['current_user'] = BeanFactory::getBean('Users',$tokenData['user_id']);
