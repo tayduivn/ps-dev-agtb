@@ -2991,17 +2991,6 @@ $app_strings = array (
     // END LOGIN PAGE STRINGS
 
     'LBL_SYNC' => 'Sync',
-    'LBL_TABGROUP_ALL' => 'All',
-    'LBL_TABGROUP_ACTIVITIES' => 'Activities',
-    'LBL_TABGROUP_COLLABORATION' => 'Collaboration',
-    'LBL_TABGROUP_HOME' => 'Dashboard',
-    'LBL_TABGROUP_MARKETING' => 'Marketing',
-    'LBL_TABGROUP_MY_PORTALS' => 'My Sites',
-    'LBL_TABGROUP_OTHER' => 'Other',
-    'LBL_TABGROUP_REPORTS' => 'Reports',
-    'LBL_TABGROUP_SALES' => 'Sales',
-    'LBL_TABGROUP_SUPPORT' => 'Support',
-    'LBL_TABGROUP_TOOLS' => 'Tools',
     'LBL_TASKS'=>'Tasks',
     'LBL_TEAMS_LINK'=>'Teams',
     'LBL_THEME_COLOR'=>'Color',
