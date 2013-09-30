@@ -106,11 +106,15 @@ class aSubPanel
                 $loaded = true;
 			}
 
-			if (!$loaded)
-			{
-				$GLOBALS['log']->fatal("Failed to load original or custom subpanel data for $name in ".join(DIRECTORY_SEPARATOR, $def_path));
-                $this->canDisplay = false;
-			}
+            if (!$loaded) {
+                $defaultSubpanelFile = "modules/{$this->_instance_properties['module']}/metadata/subpanels/default.php";
+                if (!file_exists($defaultSubpanelFile)) {
+                    $GLOBALS['log']->fatal("Failed to load original or custom subpanel data for $name in ".join(DIRECTORY_SEPARATOR, $def_path));
+                    $this->canDisplay = false;
+                } else {
+                    require $defaultSubpanelFile;
+                }
+            }
 
             // load module info from the module's bean file
             $this->load_module_info();
