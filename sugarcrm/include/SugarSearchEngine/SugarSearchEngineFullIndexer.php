@@ -147,7 +147,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         }
         $beanName = BeanFactory::getBeanName($module);
         $tableName = self::QUEUE_TABLE;
-        $query = "INSERT INTO {$tableName} (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name}";
+        $query = "INSERT INTO {$tableName} (bean_id,bean_module) SELECT id, '{$beanName}' FROM {$obj->table_name} WHERE deleted = 0";
         $db->query($query, true, "Error populating index queue for fts");
         //For each module we populate the fts queue with, create a consumer to digest the beans as well.
         $this->createJobQueueConsumerForModule($module, $runNow);
