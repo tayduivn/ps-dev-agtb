@@ -314,11 +314,6 @@
             }, this);
 
             ctx.on('forecasts:worksheet:totals', function(data) {
-
-                data.worst_case = data.worst_case - (data.won_amount || 0);
-                data.likely_case = data.likely_case - (data.won_amount || 0);
-                data.best_case = data.best_case - (data.won_amount || 0);
-
                 this.calculateData(this.mapAllTheThings(data, true), true);
             }, this);
 
@@ -537,6 +532,12 @@
                 // unset closed_amount so it doesnt impact totals
                 delete data.closed_amount;
             }
+        }
+
+        if (fromModel) {
+            data.worst = app.math.sub(data.worst, (data.closed_amount || 0));
+            data.likely = app.math.sub(data.likely, (data.closed_amount || 0));
+            data.best = app.math.sub(data.best, (data.closed_amount || 0));
         }
 
         return data;
