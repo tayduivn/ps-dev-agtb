@@ -215,7 +215,11 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
-            'comment' => 'Discounted price ("Unit Price" in Quote)'
+            'comment' => 'Discounted price ("Unit Price" in Quote)',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            )
         ),
         'discount_amount' => array(
             'name' => 'discount_amount',
@@ -223,7 +227,11 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'precision' => 6,
-            'comment' => 'Discounted amount'
+            'comment' => 'Discounted amount',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            )
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
@@ -247,6 +255,9 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'formula' => 'divide($discount_amount,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'discount_select' => array(
             'name' => 'discount_select',
@@ -263,6 +274,10 @@ $dictionary['RevenueLineItem'] = array(
             'group' => 'deal_calc',
             'comment' => 'deal_calc',
             'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            )
         ),
         'deal_calc_usdollar' => array(
             'name' => 'deal_calc_usdollar',
@@ -277,6 +292,13 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($deal_calc,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'list_price' => array(
             'name' => 'list_price',
@@ -284,7 +306,11 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
-            'comment' => 'List price of product ("List" in Quote)'
+            'comment' => 'List price of product ("List" in Quote)',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            )
         ),
         'cost_usdollar' => array(
             'name' => 'cost_usdollar',
@@ -299,6 +325,13 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($cost_price,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'discount_usdollar' => array(
             'name' => 'discount_usdollar',
@@ -313,6 +346,13 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($discount_price,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'list_usdollar' => array(
             'name' => 'list_usdollar',
@@ -327,6 +367,13 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($list_price,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'currency_id' => array(
             'name' => 'currency_id',
@@ -477,7 +524,11 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_BOOK_VALUE',
             'type' => 'currency',
             'len' => '26,6',
-            'comment' => 'Book value of product in use'
+            'comment' => 'Book value of product in use',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            )
         ),
         'book_value_usdollar' => array(
             'name' => 'book_value_usdollar',
@@ -492,6 +543,13 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($book_value,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'book_value_date' => array(
             'name' => 'book_value_date',
@@ -516,6 +574,10 @@ $dictionary['RevenueLineItem'] = array(
             'len' => '26,6',
             'audited' => true,
             'showTransactionalAmount' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
@@ -532,6 +594,10 @@ $dictionary['RevenueLineItem'] = array(
             'len' => '26,6',
             'audited' => true,
             'showTransactionalAmount' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,
@@ -547,6 +613,10 @@ $dictionary['RevenueLineItem'] = array(
             'len' => '26,6',
             'audited' => true,
             'showTransactionalAmount' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
             'studio' => false,

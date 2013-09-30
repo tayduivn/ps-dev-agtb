@@ -40,7 +40,7 @@ $dictionary['Product'] = array(
             'len' => '255',
             'source' => 'non-db',
             'studio' => false
-            ),
+        ),
         'product_template_id' =>  array(
             'name' => 'product_template_id',
             'type' => 'id',
@@ -105,7 +105,11 @@ $dictionary['Product'] = array(
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
             'reportable' => false,
-            'type' => 'currency'
+            'type' => 'currency',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'contact_name' =>  array(
             'name' => 'contact_name',
@@ -242,7 +246,11 @@ $dictionary['Product'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
-            'comment' => 'Product cost ("Cost" in Quote)'
+            'comment' => 'Product cost ("Cost" in Quote)',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'discount_price' =>  array(
             'name' => 'discount_price',
@@ -250,13 +258,21 @@ $dictionary['Product'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
-            'comment' => 'Discounted price ("Unit Price" in Quote)'
+            'comment' => 'Discounted price ("Unit Price" in Quote)',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'discount_amount' =>  array(
             'name' => 'discount_amount',
             'vname' => 'LBL_DISCOUNT_AMOUNT',
             'type' => 'currency',
-            'comment' => 'Discounted amount'
+            'comment' => 'Discounted amount',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'discount_rate_percent' => array(
             'name' => 'discount_rate_percent',
@@ -278,8 +294,9 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'readonly' => true,
-            'is_base_currency' => true,
+            'formula' => 'divide($discount_amount,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'discount_select' =>  array(
             'name' => 'discount_select',
@@ -295,6 +312,10 @@ $dictionary['Product'] = array(
             'group' => 'deal_calc',
             'comment' => 'deal_calc',
             'customCode' => '{$fields.currency_symbol.value}{$fields.deal_calc.value}&nbsp;',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'deal_calc_usdollar' =>  array(
             'name' => 'deal_calc_usdollar',
@@ -307,8 +328,13 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'readonly' => true,
-            'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($deal_calc,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'list_price' =>  array(
             'name' => 'list_price',
@@ -316,7 +342,11 @@ $dictionary['Product'] = array(
             'type' => 'currency',
             'len' => '26,6',
             'audited' => true,
-            'comment' => 'List price of product ("List" in Quote)'
+            'comment' => 'List price of product ("List" in Quote)',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'cost_usdollar' =>  array(
             'name' => 'cost_usdollar',
@@ -330,8 +360,13 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'readonly' => true,
-            'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($cost_price,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'discount_usdollar' =>  array(
             'name' => 'discount_usdollar',
@@ -345,8 +380,6 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'readonly' => true,
-            'is_base_currency' => true,
         ),
         'list_usdollar' =>  array(
             'name' => 'list_usdollar',
@@ -360,8 +393,13 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'readonly' => true,
-            'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($list_price,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'currency_id' =>  array(
             'name' => 'currency_id',
@@ -502,7 +540,11 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_BOOK_VALUE',
             'type' => 'currency',
             'len' => '26,6',
-            'comment' => 'Book value of product in use'
+            'comment' => 'Book value of product in use',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'book_value_usdollar' =>  array(
             'name' => 'book_value_usdollar',
@@ -515,8 +557,13 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
-            'readonly' => true,
-            'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($book_value,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'book_value_date' =>  array(
             'name' => 'book_value_date',
@@ -812,10 +859,10 @@ $dictionary['Product'] = array(
         ),
     ),
     'indices' => array(  array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),  array(
-            'name' => 'idx_user_dateclosed_timestamp',
-            'type' => 'index',
-            'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
-        )
+        'name' => 'idx_user_dateclosed_timestamp',
+        'type' => 'index',
+        'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
+    )
     ),
     'relationships' => array(
         'product_notes' => array(

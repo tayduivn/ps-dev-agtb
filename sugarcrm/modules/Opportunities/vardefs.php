@@ -140,7 +140,11 @@ $dictionary['Opportunity'] = array(
             'enforced' => true,
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
-            'validation' => array('type' => 'range', 'min' => 0)
+            'validation' => array('type' => 'range', 'min' => 0),
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'base_rate' => array(
             'name' => 'base_rate',
@@ -173,6 +177,13 @@ $dictionary['Opportunity'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($amount,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
         'currency_id' => array(
             'name' => 'currency_id',
@@ -324,6 +335,10 @@ $dictionary['Opportunity'] = array(
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
             'audited' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'worst_case' => array(
             'name' => 'worst_case',
@@ -339,6 +354,10 @@ $dictionary['Opportunity'] = array(
             'massupdate' => false,
             //END SUGARCRM flav=ent ONLY
             'audited' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
         ),
         'commit_stage' => array(
             'name' => 'commit_stage',

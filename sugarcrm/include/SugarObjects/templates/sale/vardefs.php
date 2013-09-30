@@ -86,6 +86,10 @@ $vardefs = array(
 		    'duplicate_merge'=>'disabled',
 		    'required' => true,
             'duplicate_on_record_copy' => 'always',
+              'related_fields' => array(
+                  'currency_id',
+                  'base_rate'
+              ),
           ),
 		  'amount_usdollar' =>
 		  array (
@@ -103,6 +107,13 @@ $vardefs = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+              'related_fields' => array(
+                  'currency_id',
+                  'base_rate'
+              ),
+              'formula' => 'divide($amount,$base_rate)',
+              'calculated' => true,
+              'enforced' => true,
 		  ),
           'currency_id' =>
           array (
