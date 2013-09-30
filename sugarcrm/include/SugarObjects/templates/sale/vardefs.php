@@ -101,6 +101,8 @@ $vardefs = array(
             'studio' => array(
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
 		  ),
           'currency_id' =>
           array (

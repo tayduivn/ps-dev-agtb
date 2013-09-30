@@ -56,7 +56,9 @@ $dictionary['RevenueLineItem'] = array(
                 'cost_usdollar' => 'cost_usdollar',
                 'discount_usdollar' => 'discount_usdollar',
                 'tax_class' => 'tax_class',
-                'weight' => 'weight'
+                'weight' => 'weight',
+                'currency_id' => 'currency_id',
+                'base_rate' => 'base_rate',
             ),
         ),
         'account_id' => array(
@@ -241,6 +243,8 @@ $dictionary['RevenueLineItem'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'discount_select' => array(
             'name' => 'discount_select',
@@ -269,6 +273,8 @@ $dictionary['RevenueLineItem'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'list_price' => array(
             'name' => 'list_price',
@@ -289,6 +295,8 @@ $dictionary['RevenueLineItem'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'discount_usdollar' => array(
             'name' => 'discount_usdollar',
@@ -301,6 +309,8 @@ $dictionary['RevenueLineItem'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'list_usdollar' => array(
             'name' => 'list_usdollar',
@@ -313,6 +323,8 @@ $dictionary['RevenueLineItem'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'currency_id' => array(
             'name' => 'currency_id',
@@ -476,6 +488,8 @@ $dictionary['RevenueLineItem'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'book_value_date' => array(
             'name' => 'book_value_date',

@@ -278,6 +278,8 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'discount_select' =>  array(
             'name' => 'discount_select',
@@ -305,6 +307,8 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'list_price' =>  array(
             'name' => 'list_price',
@@ -326,6 +330,8 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'discount_usdollar' =>  array(
             'name' => 'discount_usdollar',
@@ -339,6 +345,8 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'list_usdollar' =>  array(
             'name' => 'list_usdollar',
@@ -352,6 +360,8 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'currency_id' =>  array(
             'name' => 'currency_id',
@@ -505,6 +515,8 @@ $dictionary['Product'] = array(
                 'editview' => false,
                 'mobile' => false,
             ),
+            'readonly' => true,
+            'is_base_currency' => true,
         ),
         'book_value_date' =>  array(
             'name' => 'book_value_date',
