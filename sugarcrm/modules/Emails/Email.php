@@ -634,22 +634,20 @@ class Email extends SugarBean {
 
                             if (!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
                                 $GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
+                            } else {
+                                $note->save();
+                                $validNote = true;
                             }
-
-                            $note->save();
                         } else {
-                            $note                             = new Note();
-                            $note->retrieve($fileGUID);
-                            //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
-                            //$note->x_file_path   = "upload/{$note->id}";
-                            //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
-                            //$note->x_mime_type   = $note->file_mime_type;
+                            $note      = new Note();
+                            $validNote = (bool)$note->retrieve($fileGUID);
                         }
 
-                        $attachment = AttachmentPeer::attachmentFromSugarBean($note);
-                        //print_r($attachment);
-                        if (!is_null($mailer)) {
-                            $mailer->addAttachment($attachment);
+                        if (isset($validNote) && $validNote === true) {
+                            $attachment = AttachmentPeer::attachmentFromSugarBean($note);
+                            if (!is_null($mailer)) {
+                                $mailer->addAttachment($attachment);
+                            }
                         }
                     }
                 }

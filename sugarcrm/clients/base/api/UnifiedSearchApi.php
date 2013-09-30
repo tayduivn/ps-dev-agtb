@@ -139,6 +139,8 @@ class UnifiedSearchApi extends SugarListApi {
         $options['moduleList'] = array();
         if ( !empty($args['module_list']) ) {
             $options['moduleList'] = explode(',',$args['module_list']);
+            // remove any empty moduleList array entries..if someone were to do Contacts, it would not hit elastic because '' is not an elastic module.
+            $options['moduleList'] = array_filter($options['moduleList']);
         }
         $options['primaryModule'] = 'Home';
         if ( !empty($args['primary_module']) ) {

@@ -1,11 +1,17 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
-    // FIXME: dropdown plugin should not be needed when SC-1214 gets fixed
     plugins: ['Dropdown', 'Timeago', 'EllipsisInline', 'Tooltip'],
-
-    // FIXME: open event should not be needed when SC-1214 gets fixed
-    events: {
-        'click [data-action=open]': 'open'
-    },
 
     /**
      * Notifications bean collection.
@@ -159,7 +165,6 @@
             this._alertsCollections[module] = app.data.createBeanCollection(module);
             this._alertsCollections[module].options = {
                 limit: this.meta.remindersLimit,
-                myItems: true,
                 fields: ['date_start', 'id', 'name', 'reminder_time', 'location']
             };
             this._intervals[module] = {};
@@ -284,7 +289,10 @@
 
             this._alertsCollections[module].filterDef = _.extend({},
                 this.meta.remindersFilterDef || {},
-                {'date_start': {'$dateBetween': [startDate, endDate]}}
+                {
+                    'date_start': {'$dateBetween': [startDate, endDate]},
+                    'users.id': {'$equals': app.user.get('id')}
+                }
             );
             this._alertsCollections[module].fetch({
                 silent: true,
@@ -414,22 +422,6 @@
             }
         });
         delete this._intervals[model.module][model.id];
-    },
-
-    /**
-     * FIXME: this should not be needed when SC-1214 gets fixed, toggle
-     * mechanism is handled by default by twitter _bootstrap, '.dtoggle' should
-     * also be removed from navigation bar button
-     *
-     * @deprecated
-     */
-    open: function(event) {
-        if (this.disposed) {
-            return;
-        }
-
-        var $target = this.$(event.target);
-        this.toggleDropdownHTML($target);
     },
 
     /**

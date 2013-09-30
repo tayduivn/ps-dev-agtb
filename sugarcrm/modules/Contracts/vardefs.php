@@ -161,7 +161,14 @@ $dictionary['Contract'] = array(
             'default'=>'-99',
 	    	'comment' => 'The currency in use for the contract'
 	  	),
-
+        'base_rate' => array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_CURRENCY_RATE',
+            'type' => 'decimal',
+            'len' => '26,6',
+            'required' => true,
+            'studio' => false
+        ),
         'currency_name' => array (
             'name' => 'currency_name',
             'type' => 'enum',

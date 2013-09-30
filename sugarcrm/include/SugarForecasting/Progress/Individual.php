@@ -58,6 +58,7 @@ class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_Abs
         $user_id = $this->getArg('user_id');
         $timeperiod_id = $this->getArg('timeperiod_id');
 
+        /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::getBean('ForecastWorksheets');
         $totals = $worksheet->worksheetTotals($timeperiod_id, $user_id,  $forecast_by);
 
@@ -66,22 +67,22 @@ class SugarForecasting_Progress_Individual extends SugarForecasting_Progress_Abs
         $bestAccess = $acl->checkAccess(
             'ForecastWorksheets',
             'field',
-            array('field' => 'best_case', 'action' => 'view')
+            array('field' => 'best_case', 'action' => 'read')
         );
 
         $worstAccess = $acl->checkAccess(
             'ForecastWorksheets',
             'field',
-            array('field' => 'worst_case', 'action' => 'view')
+            array('field' => 'worst_case', 'action' => 'read')
         );
 
         // if the user doesn't have access to best field, remove the value from totals
-        if(!$bestAccess) {
+        if (!$bestAccess) {
             unset($totals['best_case']);
         }
 
         // if the user doesn't have access to worst field, remove the value from totals
-        if(!$worstAccess) {
+        if (!$worstAccess) {
             unset($totals['worst_case']);
         }
 

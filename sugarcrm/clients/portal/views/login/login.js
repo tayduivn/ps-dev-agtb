@@ -43,5 +43,11 @@
     signup : function() {
         app.router.navigate('#signup');
         app.router.start();
+    },
+    /**
+     * @Override
+     */
+    postLogin: function(){
+        app.$contentEl.show();
     }
 })

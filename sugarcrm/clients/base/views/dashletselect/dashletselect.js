@@ -98,7 +98,7 @@
                 };
             }
 
-            component.view = _.extend({}, metadata.preview, component);
+            component.view = _.extend({module: metadata.module}, metadata.preview, component);
             if (contextDef) {
                 component.context = contextDef;
             }
@@ -114,7 +114,7 @@
                         ]
                     }
                 }
-            ]);
+            ], this.context.parent);
             previewLayout.loadData();
             previewLayout.render();
         }

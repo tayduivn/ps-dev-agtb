@@ -26,11 +26,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
+$dictionary['SavedReport'] = array ( 'table' => 'saved_reports',
+    'visibility' => array('ReportVisibility' => true),
     //BEGIN SUGARCRM flav=pro ONLY
-    ,'favorites'=>true
+    'favorites'=>true,
     //END SUGARCRM flav=pro ONLY
-    , 'fields' => array (
+    'fields' => array (
   'id' =>
   array (
     'name' => 'id',

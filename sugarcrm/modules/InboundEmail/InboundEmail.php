@@ -3168,7 +3168,9 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
 
 		$msgPart = '';
-		$bc = $this->buildBreadCrumbs($structure->parts, $type);
+		if(!empty($structure->parts)) {
+		    $bc = $this->buildBreadCrumbs($structure->parts, $type);
+		}
 		//Add an offset if specified
 		if(!empty($bcOffset))
             $bc = $this->addBreadCrumbOffset($bc, $bcOffset);
@@ -4942,7 +4944,7 @@ eoq;
     }
 
 
-    
+
 	/**
 	 * retrieves an array of I-E beans based on the group_id
 	 * @param	string	$groupId	GUID of the group user or Individual

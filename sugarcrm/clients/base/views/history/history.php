@@ -65,18 +65,6 @@ $viewdefs['base']['view']['history'] = array(
                         'type' => 'dashletaction',
                         'action' => 'createRecord',
                         'params' => array(
-                            'layout' => 'compose',
-                            'link' => 'emails',
-                            'module' => 'Emails',
-                        ),
-                        'label' => 'LBL_COMPOSE_EMAIL_BUTTON_LABEL',
-                        'acl_action' => 'create',
-                        'acl_module' => 'Emails',
-                    ),
-                    array(
-                        'type' => 'dashletaction',
-                        'action' => 'createRecord',
-                        'params' => array(
                             'link' => 'calls',
                             'module' => 'Calls',
                         ),
@@ -171,7 +159,7 @@ $viewdefs['base']['view']['history'] = array(
                 'singular' => 'LBL_HISTORY_DASHLET_EMAIL_SINGULAR',
                 'plural' => 'LBL_HISTORY_DASHLET_EMAIL_PLURAL',
             ),
-            'link' => 'emails',
+            'link' => 'archived_emails',
             'module' => 'Emails',
             'order_by' => 'date_entered:desc',
         ),

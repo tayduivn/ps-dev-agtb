@@ -31,6 +31,10 @@
     setLayout: function(value) {
         var span = 12 / value;
         if(this.value) {
+
+            if (value === this.value) {
+                return;
+            }
             var setComponent = function() {
                 var metadata = this.model.get("metadata");
 
@@ -54,11 +58,12 @@
                 this.model.set("metadata", app.utils.deepCopy(metadata), {silent: true});
                 this.model.trigger("change:metadata");
             };
-            if(value < this.value) {
+            if(value !== this.value) {
                 app.alert.show('resize_confirmation', {
                     level: 'confirmation',
                     messages: app.lang.get('LBL_DASHBOARD_LAYOUT_CONFIRM', this.module),
-                    onConfirm: _.bind(setComponent, this)
+                    onConfirm: _.bind(setComponent, this),
+                    onCancel: _.bind(this.render,this) // reverse the toggle done
                 });
             } else {
                 setComponent.call(this);

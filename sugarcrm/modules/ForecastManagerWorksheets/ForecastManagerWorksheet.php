@@ -66,14 +66,14 @@ class ForecastManagerWorksheet extends SugarBean
 
         $sql = 'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                 likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
-                timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount ' .
+                timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount, closed_amount ' .
             'FROM ' . $this->table_name . ' ' .
             'WHERE assigned_user_id = "' . $manager->id . '" AND user_id != "' . $manager->id . '" ' .
             'AND timeperiod_id = "' . $db->quote($timeperiod) . '" AND draft = 1 AND deleted = 0 ' .
             'UNION ALL ' .
             'SELECT name, assigned_user_id, team_id, team_set_id, quota, best_case, best_case_adjusted,
                     likely_case, likely_case_adjusted, worst_case, worst_case_adjusted, currency_id, base_rate,
-                    timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount ' .
+                    timeperiod_id, user_id, opp_count, pipeline_opp_count, pipeline_amount, closed_amount ' .
             'FROM ' . $this->table_name . ' ' .
             'WHERE assigned_user_id = "' . $manager->id . '" AND user_id = "' . $manager->id . '" ' .
             'AND timeperiod_id = "' . $db->quote($timeperiod) . '" AND draft = 1 AND deleted = 0';
@@ -218,37 +218,33 @@ class ForecastManagerWorksheet extends SugarBean
         );
 
         $copyMap = array(
-            'likely_case',
-            array('likely_case_adjusted' => 'likely_adjusted'),
-            'best_case',
-            array('best_case_adjusted' => 'best_adjusted'),
-            'worst_case',
-            array('worst_case_adjusted' => 'worst_adjusted'),
             'currency_id',
             'base_rate',
             'timeperiod_id',
-            'quota',
             'opp_count',
             'pipeline_opp_count',
             'pipeline_amount',
             'closed_amount'
         );
+        
+        if ($data["forecast_type"] == "Direct") {
+            $copyMap[] = "likely_case";
+            $copyMap[] = "best_case";
+            $copyMap[] = "worst_case";
+        } else if ($data["forecast_type"] == "Rollup") {
+            $copyMap[] = array("likely_case" => "likely_adjusted");
+            $copyMap[] = array("best_case" => "best_adjusted");
+            $copyMap[] = array("worst_case" => "worst_adjusted");
+        }
 
         //check to see if the manager has a quota, if not, we need to copy over base values to adjusted values
         $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, true);
 
         // we don't have a row to update, so set the values to the adjusted column
         if (empty($this->id) || $quota['amount'] == 0) {
-            // array key equals value on the bean, array value equals field in the data variable
-            if (!isset($data['likely_adjusted']) || $quota['amount'] == 0) {
-                $copyMap[] = array('likely_case_adjusted' => 'likely_case');
-            }
-            if (!isset($data['best_adjusted']) || $quota['amount'] == 0) {
-                $copyMap[] = array('best_case_adjusted' => 'best_case');
-            }
-            if (!isset($data['worst_adjusted']) || $quota['amount'] == 0) {
-                $copyMap[] = array('worst_case_adjusted' => 'worst_case');
-            }
+            $copyMap[] = array('likely_case_adjusted' => 'likely_case');
+            $copyMap[] = array('best_case_adjusted' => 'best_case');
+            $copyMap[] = array('worst_case_adjusted' => 'worst_case');
         }
         if (empty($this->id)) {
             if (!isset($data['quota']) || empty($data['quota'])) {
@@ -261,9 +257,9 @@ class ForecastManagerWorksheet extends SugarBean
                     ) && isset($data['forecast_type']) && $data['forecast_type'] == 'Rollup');
 
                 $quota = $quotaSeed->getRollupQuota($data['timeperiod_id'], $reportee->id, $getRollupQuota);
-
                 $data['quota'] = $quota['amount'];
             }
+            $copyMap[] = "quota";
         }
 
         $this->copyValues($copyMap, $data);

@@ -39,6 +39,7 @@
                     sales_stage_lost = app.metadata.getModule("Forecasts", "config").sales_stage_lost;
 
                     closedModels = _.filter(module.models, function(model) {
+                        status = null;
                         //BEGIN SUGARCRM flav=ent ONLY
                         //ENT allows sales_status, so we need to check to see if this module has it and use it
                         status = model.get("sales_status");
@@ -53,17 +54,14 @@
                         if (_.isEmpty(status)) {
                             status = model.get("sales_stage");
                         }
-
-                        if (closed_RLI_count > 0) {
-                            if (_.isEmpty(message)) {
-                                message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
-                            }
-                        }
                         
                         if (_.contains(sales_stage_won, status) || _.contains(sales_stage_lost, status)) {
                             message = app.lang.getAppString("WARNING_NO_DELETE_SELECTED");
+                            return true;
                         }
-                        if (!_.isNull(message)) {
+
+                        if (closed_RLI_count > 0) {
+                            message = app.lang.get("WARNING_NO_DELETE_CLOSED_SELECTED", "Opportunities");
                             return true;
                         }
 
@@ -71,7 +69,8 @@
                     });
 
                     if (closedModels.length > 0) {
-                        module.remove(closedModels, {silent:true});
+                       module.remove(closedModels);
+                       this.context.set('mass_collection', module);
                         //uncheck items
                         _.each(closedModels, function(item){
                             var id = item.module + "_" + item.id;

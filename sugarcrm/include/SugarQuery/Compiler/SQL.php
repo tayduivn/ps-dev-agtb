@@ -417,7 +417,8 @@ class SugarQuery_Compiler_SQL
             );
 
             if (!empty($data['id_name']) && $data['id_name'] != $field 
-                && !in_array($data['id_name'], $this->sugar_query->select->select)) {
+                && !in_array($data['id_name'], $this->sugar_query->select->select)
+            ) {
                 $id_field = $this->resolveField(
                     $data['id_name'],
                     $data['id_name']
@@ -431,7 +432,7 @@ class SugarQuery_Compiler_SQL
                 }
             }
 
-            // this is a link field
+            // this is a relate field
             if (!isset($data['link'])) {
                 if (!isset($data['id_name']) || !isset($data['module'])) {
                     $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, relate field exists with no link and no id_name: {$field}");
@@ -451,9 +452,23 @@ class SugarQuery_Compiler_SQL
                     $GLOBALS['log']->error("SQLQuery_Compiler_SQL.resolveField, bwc relate field exists but can't find id_name: {$field}");
                     return false;
                 }
-                
-                $this->sugar_query->joinRaw(" LEFT JOIN {$farBean->table_name} {$data['name']} ON {$idAlias} = {$data['name']}.id ",array('alias'=>$data['name']));
-                return array("{$data['name']}.{$data['rname']}",$field);
+
+                $jta = $this->sugar_query->getJoinTableAlias($data['name']);
+                $this->sugar_query->joinRaw(
+                    " LEFT JOIN {$farBean->table_name} {$jta} ON {$idAlias} = {$jta}.id ",
+                    array('alias'=>$jta)
+                );
+                $rFieldDefs = $farBean->field_defs[$data['rname']];
+                if (!empty($rFieldDefs['fields'])) {
+                    // this is a compound field
+                    $sub_fields = array();
+                    foreach ($rFieldDefs['fields'] as $field) {
+                        $sub_fields[] = array("$jta.$field", $alias ? "{$alias}__{$field}" : "{$data['name']}__{$field}");
+                    }
+                    return $sub_fields;
+                }
+
+                return array("$jta.{$data['rname']}",$field);
                 
             }
             $bean->load_relationship($data['link']);

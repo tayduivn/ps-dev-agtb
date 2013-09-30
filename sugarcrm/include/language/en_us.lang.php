@@ -144,6 +144,7 @@ $app_list_strings = array (
     'Tasks' => 'Task',
     'Calendar' => 'Calendar',
     'Leads' => 'Lead',
+    'Manufacturers' => 'Manufacturer',
     //BEGIN SUGARCRM flav=pro ONLY
     'Contracts'=>'Contract',
     'Quotes' => 'Quote',
@@ -2161,7 +2162,7 @@ $app_strings = array (
     'LBL_EMAIL_FOLDERS_ADD_NEW_FOLDER'      => 'Save',
     'LBL_EMAIL_FOLDERS_ADD_THIS_TO'         => 'Add this folder to',
     'LBL_EMAIL_FOLDERS_CHANGE_HOME'         => 'This folder cannot be changed',
-    'LBL_EMAIL_FOLDERS_DELETE_CONFIRM'      => 'Are you sure you would like to delete this folder?\nThis process cannot be reversed.\nFolder deletions will cascade to all contained folders.',
+    'LBL_EMAIL_FOLDERS_DELETE_CONFIRM'      => 'Are you sure you would like to delete this folder? This process cannot be reversed. Folder deletions will cascade to all contained folders.',
     'LBL_EMAIL_FOLDERS_NEW_FOLDER'          => 'New Folder Name',
     'LBL_EMAIL_FOLDERS_NO_VALID_NODE'       => 'Please select a folder before performing this action.',
     'LBL_EMAIL_FOLDERS_TITLE'               => 'Folder Management',
@@ -2391,13 +2392,6 @@ $app_strings = array (
     'LBL_EMAIL_YES'                         => 'Yes',
     'LBL_EMAIL_TEST_OUTBOUND_SETTINGS'      => 'Send Test Email',
     'LBL_EMAIL_TEST_OUTBOUND_SETTINGS_SENT' => 'Test Email Sent',
-    'LBL_EMAIL_CHECK_INTERVAL_DOM'          => array(
-        '-1' => "Manually",
-        '5' => 'Every 5 minutes',
-        '15' => 'Every 15 minutes',
-        '30' => 'Every 30 minutes',
-        '60' => 'Every hour'
-    ),
 
 
     'LBL_EMAIL_MESSAGE_NO'                  => 'Message No',
@@ -2704,6 +2698,7 @@ $app_strings = array (
     'LBL_LISTVIEW_LESS_THAN_TEN_SELECT' => 'Please select less than 10 records to proceed.',
     'LBL_LISTVIEW_ALL' => 'All',
     'LBL_LISTVIEW_FILTER_ALL' => 'All {{{moduleName}}}',
+    'LBL_DUPECHECK_FILTER_DEFAULT' => 'All duplicates',
     'LBL_LISTVIEW_NONE' => 'Deselect All',
     'LBL_LISTVIEW_OPTION_CURRENT' => 'Select This Page',
     'LBL_LISTVIEW_OPTION_ENTIRE' => 'Select All',
@@ -2715,17 +2710,26 @@ $app_strings = array (
     'TPL_MASSUPDATE_PROGRESS_STATUS' => 'Updating {{num}} of {{total}}.',
     'TPL_MASSUPDATE_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
     'TPL_MASSUPDATE_FAIL_TO_ATTEMPT' => 'Mass Update failed. Initiating new attempt ({{num}} of {{total}}).',
-    'TPL_MASSUPDATE_WARNING_CLOSE' => 'Mass Update incomplete. {{num}} records remain unchanged.',
-    'TPL_MASSUPDATE_WARNING_INCOMPLETE' => 'Mass Update incomplete. {{num}} records remain unchanged.',
-    'TPL_MASSUPDATE_SUCCESS' => '{{num}} records were updated successfully.',
+    'TPL_MASSUPDATE_WARNING_CLOSE' => 'Mass Update incomplete. {{num}} record(s) remain unchanged.',
+    'TPL_MASSUPDATE_WARNING_INCOMPLETE' => 'Mass Update incomplete. {{num}} record(s) remain unchanged.',
+    'TPL_MASSUPDATE_WARNING_PERMISSION' => '{{remain}} record(s) were ignored due to the permission.',
+    'TPL_MASSUPDATE_SUCCESS' => '{{num}} record(s) were updated successfully.',
     'TPL_MASSUPDATE_TITLE' => '{{module}} Mass Update',
     'TPL_MASSDELETE_PROGRESS_STATUS' => 'Deleting {{num}} of {{total}}.',
     'TPL_MASSDELETE_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
     'TPL_MASSDELETE_FAIL_TO_ATTEMPT' => 'Mass Delete failed. Initiating new attempt ({{num}} of {{total}}).',
-    'TPL_MASSDELETE_WARNING_CLOSE' => 'Mass Delete incomplete. {{num}} records remain.',
-    'TPL_MASSDELETE_WARNING_INCOMPLETE' => 'Mass Delete incomplete. {{num}} records remain.',
-    'TPL_MASSDELETE_SUCCESS' => '{{num}} records were deleted successfully.',
+    'TPL_MASSDELETE_WARNING_CLOSE' => 'Mass Delete incomplete. {{num}} record(s) remain.',
+    'TPL_MASSDELETE_WARNING_INCOMPLETE' => 'Mass Delete incomplete. {{num}} record(s) remain.',
+    'TPL_MASSDELETE_SUCCESS' => '{{num}} record(s) were deleted successfully.',
     'TPL_MASSDELETE_TITLE' => '{{module}} Mass Delete',
+    'TPL_MASSADDTOLIST_PROGRESS_STATUS' => 'Adding {{num}} of {{total}}.',
+    'TPL_MASSADDTOLIST_DURATION_FORMAT' => '(about {{time}} {{unit}} left)',
+    'TPL_MASSADDTOLIST_FAIL_TO_ATTEMPT' => 'Mass Add to Target List failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MASSADDTOLIST_WARNING_CLOSE' => 'Mass Add to Target List incomplete. {{num}} records not added.',
+    'TPL_MASSADDTOLIST_WARNING_INCOMPLETE' => 'Mass Add to Target List incomplete. {{num}} records not added.',
+    'TPL_MASSADDTOLIST_SUCCESS' => '{{num}} records were added successfully.',
+    'TPL_MASSADDTOLIST_TITLE' => '{{module}} Mass Add to Target List',
+
     'LBL_LISTVIEW_SELECT_AND_EDIT' => 'Select and edit',
     'LBL_LISTVIEW_ACTIONS' => 'Actions',
 
@@ -2743,10 +2747,8 @@ $app_strings = array (
     'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_MASS_UPDATE_JOB_QUEUED' => 'Your request for mass update has been scheduled.',
     'LBL_MASS_UPDATE_SUCCESS' => 'All records were updated successfully.',
-    'LBL_MASS_ADD_TO_LIST_SUCCESS_SUBSET' => 'You successfully updated {{numberUpdated}} items to the <a href="{{listUrl}}">{{listName}}</a> target list.',
-    'LBL_MASS_ADD_TO_LIST_QUEUED_SUBSET' => 'Your request to update {{numberUpdated}} items to the <a href="{{listUrl}}">{{listName}}</a> target list has been scheduled.',
-    'LBL_MASS_ADD_TO_LIST_SUCCESS_ENTIRE' => 'You successfully updated all records in this result set to the <a href="{{listUrl}}">{{listName}}</a> target list.',
-    'LBL_MASS_ADD_TO_LIST_QUEUED_ENTIRE' => 'Your request to update all records in this result set to the <a href="{{listUrl}}">{{listName}}</a> target list has been scheduled.',
+    'TPL_MASS_ADD_TO_LIST_SUCCESS' => 'Selected records were added to the <a href="{{listUrl}}">{{listName}}</a> target list.',
+    'TPL_MASS_ADD_TO_LIST_QUEUED' => 'Your request to add selected records to the <a href="{{listUrl}}">{{listName}}</a> target list has been scheduled.',
     'LBL_MASS_UPDATE_EMPTY_VALUES' => 'The following attributes have empty values: ',
     'LBL_MASS_UPDATE_EMPTY_CONFIRM' => 'Existing values will be replaced with empty values. Do you want to continue?',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
@@ -2806,8 +2808,6 @@ $app_strings = array (
 
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
     'LBL_PRODUCTS'=>'Products',
-    'LBL_REVENUELINEITEMS'=>'Revenue Line Items',
-    'LBL_REVENUELINEITEM_NAME'=>'Revenue Line Item Name',
     'LBL_QUOTE_TO_OPPORTUNITY_KEY' => 'O',
     'LBL_QUOTE_TO_OPPORTUNITY_LABEL' => 'Create Opportunity from Quote',
     'LBL_QUOTE_TO_OPPORTUNITY_TITLE' => 'Create Opportunity from Quote',
@@ -3040,6 +3040,7 @@ $app_strings = array (
     'LNK_DELETE_ALL' => 'del all',
     'LNK_DELETE' => 'delete',
     'LNK_EDIT' => 'edit',
+    'LNK_VIEW' => 'view',
     'LNK_GET_LATEST'=>'Get latest',
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',
@@ -3243,6 +3244,7 @@ $app_strings = array (
 
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
+    'TPL_DASHLET_MY_MODULE' => 'My {{module}}',
 
     'LBL_DASHLET_NEWS_NAME' => 'News',
     'LBL_DASHLET_NEWS_DESCRIPTION' => 'Google News feed for Related Account',
@@ -3253,6 +3255,7 @@ $app_strings = array (
     'LBL_DASHLET_NEWS_FEED_NAME' => 'News Feed',
     'LBL_DASHLET_ITERACTIONS_NAME' => 'Interactions',
     'LBL_DASHLET_ATTACHMENTS_NAME' => 'Notes & Attachments',
+    'LBL_DASHLET_ATTACHMENTS_DESCRIPTION' => 'Notes & Attachments belongs to the record',
     'LBL_DASHLET_PIPLINE_NAME' => 'Pipeline',
 
     'LBL_DASHLET_RECENT_TWEETS_SUGARCRM_NAME' => 'Recent Tweets - @{{twitter}}',
@@ -3638,6 +3641,7 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_PDF_VIEW' => 'Download PDF',
     'LBL_PDF_EMAIL' => 'Email PDF',
+    'LBL_NO_PDF_TEMPLATE' => 'No PDF template found.',
     //END SUGARCRM flav=pro ONLY
 
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
@@ -3680,10 +3684,25 @@ $app_strings = array (
     'LBL_MERGE'  => 'Merge',
     'TPL_MERGING_RECORDS'  => 'Merging {{mergeCount}} Records',
     'TPL_MERGE_INVALID_NUMBER_RECORDS' =>
-        'Invalid number of records passed. The valid range is from 2 to {{maxRecords}} records.',
+        'Invalid number of records passed. The valid range is from {{minRecords}} to {{maxRecords}} records.',
     'LBL_MERGE_NO_ACCESS' => 'You have no access to perform this action',
     'LBL_MERGE_UNSAVED_CHANGES'=> 'You are about to change primary record without saving any changes you have made. ' .
         'All changes will be lost. Are you sure you want to continue?',
+    'LBL_MERGE_DUPLICATES_TITLE' => 'Merge Related Records',
+    'TPL_MERGE_DUPLICATES_PROGRESS_STATUS' => 'Merged: {{percent}}%.',
+    'TPL_MERGE_DUPLICATES_FAIL_TO_ATTEMPT' =>
+        'Merge Related {{objectName}} failed. Initiating new attempt ({{num}} of {{total}}).',
+    'TPL_MERGE_DUPLICATES_FAIL' =>
+        'Merge Related {{objectName}} failed.',
+    'LBL_MERGE_DUPLICATES_WARNING_CLOSE' =>
+        'Merge Related Records incomplete. Some records remain unmerged.',
+    'LBL_MERGE_DUPLICATES_FAIL_PROCESS' =>
+        'Merge Related Records incomplete. Some records remain unmerged. Do you want to continue?',
+    'TPL_MERGE_DUPLICATES_STAT' =>
+        '{{#with stat}}{{records}} records were merged successfully. ' .
+        '{{total}} related records were added.{{/with}}',
+    'TPL_MERGE_DUPLICATES_IDENTICAL' =>
+        'Records are identical. All related records will be moved to the Primary record.',
 
     //for sugar7 errors
     'LBL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -3722,6 +3741,8 @@ $app_strings = array (
     'LBL_FILE_DELETED' => 'File was successfully deleted',
 
     //theme roller
+    'LBL_PORTAL_THEME' => 'Portal Theme',
+    'LBL_COFIGURE_PORTAL_THEME' => 'Configure Portal Theme',
     'LBL_THEME_PREVIEW' => 'Theme Preview',
     'LBL_LOADING_PREVIEW' => 'Loading Preview',
     'LBL_RESET' => 'Reset',
@@ -3827,7 +3848,7 @@ $app_strings = array (
     'LBL_WARNING' => 'Warning',
     'LBL_CONFIRM' => 'Confirm',
     'LBL_NO_ACCESS' => '(No Access)',
-    'LBL_NO_ACCESS_LOWER' => 'User has no access to record',
+    'LBL_NO_ACCESS_LOWER' => 'No access',
     'LBL_NO_FIELD_ACCESS' => 'No access',
     'LBL_CREATE_RELATED_RECORD' => 'Create Related Record',
     'LBL_ASSOC_RELATED_RECORD' => 'Link Existing Record',
@@ -4027,6 +4048,8 @@ $app_strings = array (
     'LBL_WIZ_DOCUMENTATION' => 'Documentation',
     'LBL_WIZ_KNOWLEDGE_BASE' => 'Knowledge Base',
     'LBL_WIZ_FORUMS' => 'Forums',
+    'TPL_TIMEZONE_DIFFERENT' => 'Your browser\'s timezone does not match your saved timezone {{link}}',
+    'LBL_TIMEZONE_DIFFERENT_LINK' => 'Adjust Your Timezone.',
     //Admin wizard links
     'LBL_WIZ_SYSTEM_LOCALE_SETTINGS' => 'Locale Settings',
     'LBL_WIZ_EMAIL_SETTINGS' => 'Email Settings',
@@ -4105,6 +4128,7 @@ $app_strings = array (
     'LBL_HISTORY_DASHLET_DESCRIPTION' => 'The History dashlet displays meetings held, calls logged, emails received and emails sent.',
     'LBL_HISTORY_DASHLET_EMAIL_SINGULAR' => 'Email',
     'LBL_HISTORY_DASHLET_EMAIL_PLURAL' => 'Emails',
+    'LBL_UNASSIGNED' => 'Unassigned',
 
     // planned activities dashlet
     'LBL_PLANNED_ACTIVITIES_DASHLET' => 'Planned Activities',
@@ -5146,7 +5170,7 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
   );
-$app_strings ['documentation'] = array (
+$app_list_strings ['documentation'] = array (
     'LBL_DOCS' => 'Documentation',
     'ULT' => '01_Sugar_Ultimate',
     'ENT' => '02_Sugar_Enterprise',
@@ -5195,4 +5219,12 @@ $app_list_strings['web_hook_request_method_list'] = array(
     'GET' => 'GET',
     'PUT' => 'PUT',
     'DELETE' => 'DELETE',
+);
+
+$app_list_strings['LBL_EMAIL_CHECK_INTERVAL_DOM'] = array(
+    '-1' => "Manually",
+    '5' => 'Every 5 minutes',
+    '15' => 'Every 15 minutes',
+    '30' => 'Every 30 minutes',
+    '60' => 'Every hour'
 );

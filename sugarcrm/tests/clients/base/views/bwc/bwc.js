@@ -122,6 +122,30 @@ describe('Base.View.Bwc', function() {
             expect(navigateStub).toHaveBeenCalled();
         });
 
+        it('convertToSidecarUrl should put BWC module URLs through bwc/ route', function() {
+            var href = 'index.php?module=Documents&offset=1&stamp=1&return_module=Documents&action=DetailView&record=1';
+            sinon.collection.stub(app.metadata, "getModule", function(){return {isBwcEnabled: true}});
+            var result = view.convertToSidecarUrl(href);
+            expect(result).toEqual("bwc/index.php?module=Documents&offset=1&stamp=1&return_module=Documents&action=DetailView&record=1")
+        });
+
+        it('convertToSidecarLink should leave javascript URLs alone', function() {
+            var ele = document.createElement("A");
+            var href = 'javascript:void alert("Hi!");';
+            ele.setAttribute("href", href);
+            view.convertToSidecarLink(ele);
+            expect(ele.getAttribute("href")).toEqual(href);
+        });
+
+        it('convertToSidecarLink should leave Administration module URLs alone', function() {
+            var href = 'index.php?module=Administration&action=Languages&view=default';
+            sinon.collection.stub(app.metadata, "getModule", function(){return {isBwcEnabled: true}});
+            var ele = document.createElement("A");
+            ele.setAttribute("href", href);
+            view.convertToSidecarLink(ele);
+            expect(ele.getAttribute("href")).toEqual(href);
+        });
+
         it('should NOT check for Home module if no url', function() {
             var context = app.context.getContext();
             context.set({ url: undefined, module: 'Documents'});

@@ -89,6 +89,10 @@
              * @return {Boolean} true only if it contains unsaved changes
              */
             warnUnsavedChanges: function (onConfirm, customMessage) {
+                //When we reload the page after retrying a save, never block it
+                if (this.resavingAfterMetadataSync) {
+                    return false;
+                }
                 this.$(":focus").trigger("change");
                 if (_.isFunction(this.hasUnsavedChanges) && this.hasUnsavedChanges()) {
                     this._targetUrl = Backbone.history.getFragment();
@@ -113,6 +117,10 @@
              * Popup browser dialog message to confirm the unsaved changes
              */
             warnUnsavedChangesOnRefresh: function() {
+                //After a 412, prevent navigating away until after the save, but don't show a warning.
+                if (this.resavingAfterMetadataSync) {
+                    return false;
+                }
                 if (_.isFunction(this.hasUnsavedChanges) && this.hasUnsavedChanges()) {
                     return app.lang.get('LBL_WARN_UNSAVED_EDITS', this.module);
                 }

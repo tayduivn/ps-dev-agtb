@@ -1,3 +1,15 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     // FIXME this needs to be removed so that we can be able to reuse this view
     id: 'searchForm',
@@ -10,13 +22,7 @@
         'click .typeahead a': 'clearSearch',
         'click [data-action=search]': 'showResults',
         'click [data-advanced=options]': 'persistMenu',
-        'click [data-action="select-module"]': 'selectModule',
-        'click .dropdown-toggle': 'toggleDropdown'
-    },
-    // FIXME remove this code
-    toggleDropdown: function(event) {
-        var $currentTarget = this.$(event.currentTarget);
-        this.toggleDropdownHTML($currentTarget);
+        'click [data-action="select-module"]': 'selectModule'
     },
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -129,7 +135,6 @@
                 self.fireSearchRequest.call(self, term, this);
             },
             compiler: menuTemplate,
-            minChars: 4, // ignore first three
             throttleMillis: (app.config.requiredElapsed || 500),
             throttle: function(callback, millis) {
                 if(!self.debounceFunction) {
@@ -154,7 +159,42 @@
                 }
             }
         });
+        // Prevent the form from being submitted
+        this.$('.navbar-search').submit(function() {
+            return false;
+        });
     },
+
+    /**
+     * Escapes the highlighted result from Elasticsearch for any potential XSS.
+     * @param  {String} html
+     * @return {Handlebars.SafeString}
+     */
+    _escapeSearchResults: function(html) {
+        // Change this regex if server-side preTag and postTag change.
+        var highlightedSpanRe = /<strong>.*?<\/strong>/g,
+            higlightSpanTagsRe = /(<strong>)|(<\/strong>)/g,
+            escape = Handlebars.Utils.escapeExpression,
+            // First, all of the HTML is escaped.
+            result = escape(html),
+            // Then, we find all pieces highlighted by the server.
+            highlightedSpan = html.match(highlightedSpanRe),
+            highlightedContent,
+            self = this;
+
+        // For each highlighted part:
+        _.each(highlightedSpan, function(part){
+            highlightedContent = part.replace(higlightSpanTagsRe, '');
+            // We escape the content of each highlight returned from Elastic.
+            highlightedContent = escape(highlightedContent);
+            // And then, we inject the escaped content with our own unescaped
+            // highlighting tags (self.preTag/self.postTag).
+            result = result.replace(escape(part), self.preTag + highlightedContent + self.postTag);
+        });
+
+        return new Handlebars.SafeString(result);
+    },
+
     /**
      * Get the modules that current user selected for search.
      * Empty array for all.
@@ -181,11 +221,12 @@
         var searchModuleNames = this._getSearchModuleNames(),
             moduleList = searchModuleNames.join(','),
             self = this,
+            maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 5,
             params = {
                 q: term,
                 fields: 'name, id',
                 module_list: moduleList,
-                max_num: 5
+                max_num: maxNum
             };
         app.api.search(params, {
             success:function(data) {
@@ -203,8 +244,7 @@
 
                     if ((record._search.highlighted)) { // full text search
                         _.each(record._search.highlighted, function(val, key) {
-                            var text = Handlebars.Utils.escapeExpression(val.text),
-                                safeString = new Handlebars.SafeString(self.preTag + text + self.postTag);
+                            var safeString = self._escapeSearchResults(val.text);
                             if (key !== 'name') { // found in a related field
                                formattedRecord.field_name = app.lang.get(val.label, val.module);
                                formattedRecord.field_value = safeString;
@@ -235,8 +275,11 @@
 
         if (!$searchBox.is(':visible')) {
             this.$el.addClass('active');
-            $(window).on('click.globalsearch.data-api', _.bind(function() {
-                this.$el.removeClass('active');
+            $('body').on('click.globalsearch.data-api', _.bind(function(event) {
+                if (!$.contains(this.el, event.target)) {
+                    this.$el.removeClass('active');
+                    $('body').off('click.globalsearch.data-api');
+                }
             }, this));
             $searchBox.focus();
             return;
@@ -263,7 +306,7 @@
     },
 
     unbind: function() {
-        $(window).off('click.globalsearch.data-api');
+        $('body').off('click.globalsearch.data-api');
         this._super('unbind');
     }
 })

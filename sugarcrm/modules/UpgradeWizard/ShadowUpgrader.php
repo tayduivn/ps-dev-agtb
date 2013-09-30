@@ -36,7 +36,9 @@ class ShadowUpgrader extends CliUpgrader
 
     protected static function usage()
     {
+		list($version, $build) = static::getVersion();
     	$usage =<<<eoq2
+Shadow Upgrader v.$version (build $build)
 php ShadowUpgrader.php -f oldTemplate -t newTemplate -s pathToSugarInstance -z zip -l logFile -u admin-user
 
 Example:

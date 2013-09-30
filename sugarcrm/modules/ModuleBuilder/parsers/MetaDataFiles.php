@@ -1030,4 +1030,39 @@ class MetaDataFiles
     {
         self::$excludedClientFilePaths[$path][] = $file;
     }
+
+    /**
+     * Loads a specific client file's contents
+     *
+     * @param string $type The type of the client data (view/layout/field)
+     * @param string $name The name of the client data (record/history/list)
+     * @param string $platform The platform to search for the client data (defaults to base)
+     *
+     * @return array Contents of the metadata file
+     */
+    public static function loadSingleClientMetadata($type, $name, $platform = 'base')
+    {
+        $fileList = array();
+        $platforms = array();
+        if ($platform != 'base') {
+            $platforms[] = $platform;
+        }
+        $platforms[] = 'base';
+        foreach ($platforms as $platform) {
+            $fileToCheck = "clients/$platform/{$type}s/$name/$name.php";
+            $fileList['custom/'.$fileToCheck] = $platform;
+            $fileList[$fileToCheck] = $platform;
+        }
+
+        foreach ($fileList as $file => $platform) {
+            if (SugarAutoLoader::existing($file)) {
+                require $file;
+                if (isset($viewdefs[$platform][$type][$name])) {
+                    return $viewdefs[$platform][$type][$name];
+                }
+            }
+        }
+
+        return null;
+    }
 }

@@ -12,6 +12,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 $module_name = '<module_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['base']['view']['record'] = array(
     'panels' => array(
         array(
@@ -52,7 +53,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array(
-                    'name' => $module_name . '_number',
+                    'name' => $_module_name . '_number',
                     'readonly' => true,
                 ),
                 'priority',

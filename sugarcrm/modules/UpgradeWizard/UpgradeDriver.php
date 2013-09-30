@@ -124,6 +124,17 @@ abstract class UpgradeDriver
     protected $script_mask = UpgradeScript::UPGRADE_ALL;
 
     /**
+     * Version number
+     * @var string
+     */
+    public static $version = '1.0.0-dev';
+    /**
+     * Build number
+     * @var string
+     */
+    public static $build = '999';
+
+    /**
      * Copy data files
      */
     protected function commit()
@@ -1437,6 +1448,31 @@ abstract class UpgradeDriver
             return copy($file, $target);
         }
 
+    }
+
+    const VERSION_FILE = 'upgrader_version.json';
+
+    /**
+     * Get version and build number for this package
+     * @return array($version, $build)
+     */
+    public static function getVersion()
+    {
+        $version = self::$version;
+        $build = self::$build;
+        if(file_exists(self::VERSION_FILE)) {
+            $data = json_decode(file_get_contents(self::VERSION_FILE), true);
+            if(empty($data)) {
+                return array($version, $build);
+            }
+            if(!empty($data['upgrader_version'])) {
+                $version = $data['upgrader_version'];
+            }
+            if(!empty($data['sugar_build'])) {
+                $build = $data['sugar_build'];
+            }
+        }
+        return array($version, $build);
     }
 }
 

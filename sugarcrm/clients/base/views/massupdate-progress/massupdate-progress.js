@@ -137,6 +137,7 @@
     checkAvailable: function() {
         if (this.collection.chunks.length === this.collection.length) {
             this.unbindData();
+            this.collection.on('massupdate:end', this.hideProgress, this);
             return false;
         }
         return true;
@@ -228,6 +229,15 @@
     },
 
     /**
+     * Returns number of total elements for progress.
+     *
+     * @return {Number} Number of total elements.
+     */
+    getTotalRecords: function() {
+        return this.collection.length;
+    },
+
+    /**
      * Calculate remaining records.
      *
      * @return {Number} Remaining size.
@@ -309,17 +319,19 @@
      * Start displaying the progress view.
      */
     showProgress: function() {
+        this.initLabels();
+        this.totalRecord = this.getTotalRecords();
         if (this.triggerBefore('start') === false) {
             return false;
         }
         this._startTime = new Date().getTime();
-        this.totalRecord = this.collection.length;
 
         //restore back previous button status.
         var stopButton = this.getField('btn-stop');
-        stopButton.setDisabled(false);
+        if (stopButton) {
+            stopButton.setDisabled(false);
+        }
 
-        this.initLabels();
         var title = app.lang.get(this.LABELSET.TITLE, this.module, {
             module: this.module
         });
@@ -334,8 +346,23 @@
      * Reset current mass job.
      */
     hideProgress: function() {
-        var size = this.getCompleteRecords();
-        if (this.totalRecord !== size) {
+        var size = this.getCompleteRecords(),
+            discardSize = this.collection.discards.length;
+        if (discardSize > 0) {
+            //permission warning
+            var message = app.lang.get(this.LABELSET['SUCCESS'], this.module, {
+                num: this.totalRecord - discardSize
+            });
+            message += app.lang.get('TPL_MASSUPDATE_WARNING_PERMISSION', this.module, {
+                remain: discardSize
+            });
+            app.alert.show('massupdate_final_notice', {
+                level: 'warning',
+                messages: message,
+                autoClose: true,
+                autoCloseDelay: 8000
+            });
+        } else if (this.totalRecord !== size) {
             //incomplete
             app.alert.show('massupdate_final_notice', {
                 level: 'warning',
@@ -365,7 +392,7 @@
      * Update current progress status.
      */
     updateProgress: function() {
-        if (this.collection.length === 0) {
+        if (!this.collection || this.collection.length === 0) {
             return;
         }
 
@@ -375,6 +402,7 @@
             percent = (size * 100 / this.totalRecord),
             message = app.lang.get(this.LABELSET['PROGRESS_STATUS'], this.module, {
                 num: size,
+                percent: Math.round(percent),
                 total: this.totalRecord
             });
         if (!_.isEmpty(estimateMessage)) {

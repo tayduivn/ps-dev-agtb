@@ -1,40 +1,30 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 /**
- * This plugin exists because twitter bootstraps dropdown plugin returns false and stops event propagation on
- * dropdown toggling.
+ * Adds the ability to hide the dropdown menu when the mouse leaves.
  *
  * @dependency twitter bootstrap
  */
 (function (app) {
     app.events.on("app:init", function () {
-        app.plugins.register('Dropdown', ['view', 'layout'], {
-
+        app.plugins.register('Dropdown', ['view'], {
             events:{
-                'mouseleave .dropdown-menu': 'hideMenu'
+                'mouseleave .dropdown-menu': 'closeDropdown'
             },
 
-            // NOTE: this is a workaround for bootstrap dropdowns lack of support for events
-            // we manually turn this into a dropdown and get rid of its events and reapply our own
-            toggleDropdownHTML: function($currentTarget) {
-                this.closeOpenDrops();
-                $currentTarget.attr("data-toggle", "dropdown").dropdown('toggle');
-                $currentTarget.off();
-                this.delegateEvents();
-                $currentTarget.closest('.btn-group').closest('li.dropdown').toggleClass('open');
-            },
-            // closes open dropdowns
-            hideMenu: function(event) {
-                $('.open .dtoggle').dropdown('toggle').closest('li.dropdown.open').removeClass('open');
-            },
-            // clears extra drop decoration and closes open dropdowns
-            closeOpenDrops: function(event) {
-                // this is because of the way the dom layers we watch for the bare container fluid spots
-                if (event && !$(event.target).hasClass('container-fluid')) {
-                    event.stopPropagation();
-                    return;
-                }
-                $('.dropdown.open').removeClass('open');
-
-                this.hideMenu();
+            closeDropdown: function(event) {
+                var $target = $(event.currentTarget);
+                $target.trigger('click.bs.dropdown');
             }
         });
     });

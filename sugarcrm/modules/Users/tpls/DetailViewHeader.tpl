@@ -36,19 +36,7 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 {literal}
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
-//BEGIN SUGARCRM flav!=com ONLY
-{if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
-{literal}
-    user_detailview_tabs.addTab( new YAHOO.widget.Tab({
-        label: '{/literal}{$MOD.LBL_DOWNLOADS}{literal}',
-        dataSrc: 'index.php?to_pdf=1&module=Home&action=pluginList',
-        content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
-        cacheData: true
-    }));
-    user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
-{/literal}
-{/if}
-//END SUGARCRM flav!=com ONLY
+
 });
 {literal}
 $(document).ready(function(){

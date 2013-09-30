@@ -28,6 +28,25 @@
     },
 
     /**
+     * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
+     * @property {Number} _defaultSettings.queueFetchConcurrency Determining how many worker functions should be run in parallel for fetch.
+     * @property {Number} _defaultSettings.queueFetchTimeout Timeout for fetch.
+     * @property {Number} _defaultSettings.queueUpdateConcurrency Determining how many worker functions should be run in parallel for update beans.
+     * @property {Number} _defaultSettings.queueUpdateTimeout Timeout for update beans.
+     * @property {Number} _defaultSettings.relatedLinkFetchLimit Max number of records to fetch for related collection.
+     * @property {Number} _defaultSettings.maxAllowAttempt Max number of attemps for merge related.
+     * @protected
+     */
+    _defaultSettings: {
+        queueFetchConcurrency: 2,
+        queueFetchTimeout: 90000,
+        queueUpdateConcurrency: 4,
+        queueUpdateTimeout: 90000,
+        relatedLinkFetchLimit: 20,
+        maxAllowAttempt: 3
+    },
+
+    /**
      * List of fields to generate the metadata on the fly.
      *
      * @property {Array} mergeFields
@@ -84,7 +103,49 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['image', 'file', 'currency', 'email', 'team_list', 'teamset', 'link', 'id'],
+    fieldTypesBlacklist: ['image', 'currency', 'email', 'team_list', 'teamset', 'link', 'id'],
+
+    /**
+     * Links names won't be mergeable.
+     * Those links will be not used in merge related records.
+     *
+     * @property {Array} relatesBlacklist
+     */
+    relatesBlacklist: [
+        'assigned_user_link', 'modified_user_link', 'created_by_link',
+        'teams', 'team_link', 'team_count_link',
+        'campaigns', 'campaign_link',
+        'archived_emails', 'email_addresses', 'email_addresses_primary',
+        'forecastworksheets',
+        'currencies'
+    ],
+
+    /**
+     * Links names for certain module won't be mergeable.
+     * Those links will be not used in merge related records for certain module.
+     *
+     * @property {Object} relatesBlacklistForModule
+     */
+    relatesBlacklistForModule: {
+        Accounts: ['revenuelineitems'],
+        Opportunities: ['accounts'],
+        Leads: ['oldmeetings', 'oldcalls'],
+        Prospects: ['tasks'],
+        Bugs: ['project'],
+        RevenueLineItems: ['campaign_revenuelineitems']
+    },
+
+    /**
+     * @property {Object} mergeStat Contains stat after merging.
+     */
+    mergeStat: null,
+
+    /**
+     * Object used as context for merge duplicates view.
+     *
+     * {Backbone.Model} mergeProgressModel
+     */
+    mergeProgressModel: null,
 
     /**
      * Attribute combos allowed to merge.
@@ -249,9 +310,12 @@
      * @private
      */
     _savePrimary: function() {
-        var self = this;
+        var self = this,
+            fields = this.getFieldNames().filter(function(field) {
+            return app.acl.hasAccessToModel('edit', this.primaryRecord, field);
+        }, this);
         this.primaryRecord.save({}, {
-            fieldsToValidate: this.getFieldNames(),
+            fieldsToValidate: fields,
             success: function() {
                 self.primaryRecord.trigger('mergeduplicates:primary:saved');
             },
@@ -628,6 +692,42 @@
         if (this.toggled) {
             this.toggleMoreLess();
         }
+
+        this._showAlertIfIdentical();
+    },
+
+    /**
+     * Shows confirmation message if records are identical.
+     * @protected
+     */
+    _showAlertIfIdentical: function() {
+        if (!this.meta || !this.meta.panels) {
+            return;
+        }
+
+        if (!this.collection.length) {
+            return;
+        }
+
+        var self = this,
+            visibleFields = _.first(this.meta.panels);
+
+        if (_.isEmpty(visibleFields.fields)) {
+            app.alert.show('merge_confirmation_identical', {
+                level: 'confirmation',
+                messages: app.lang.get('TPL_MERGE_DUPLICATES_IDENTICAL', this.module),
+                onConfirm: function() {
+                    self.layout.trigger('mergeduplicates:save:fire');
+                },
+                onLinkClick: function(event) {
+                    if ($(event.currentTarget).hasClass('cancel')) {
+                        if (!self.toggled) {
+                            self.toggleMoreLess();
+                        }
+                    }
+                }
+            });
+        }
     },
 
     /**
@@ -696,6 +796,32 @@
     },
 
     /**
+     * Enable/disable radio buttons according to ACL access to fields for all models.
+     */
+    checkCopyRadioButtons: function() {
+        if (!this.primaryRecord) {
+            return;
+        }
+        _.each(this.mergeFields, function(field) {
+            var model = this.primaryRecord,
+                element = this.$('[data-field-name=' + field.name + '][data-record-id=' + model.id + ']'),
+                elements = this.$('[data-field-name=' + field.name + '][data-record-id!=' + model.id + ']'),
+                editAccess = app.acl.hasAccessToModel('edit', model, field.name);
+
+            element.prop('disabled', !editAccess);
+            if (!editAccess) {
+                elements.prop('disabled', true);
+                return;
+            }
+            _.each(elements, function(domElement) {
+                var el = $(domElement),
+                    readAccess = app.acl.hasAccessToModel('read', this.collection.get(el.data('record-id')), field.name);
+                el.prop('disabled', !readAccess);
+            }, this);
+        }, this);
+    },
+
+    /**
      * Prepare primary record for edit mode.
      *
      * Toggle primary record in edit mode, setup panel title and
@@ -731,6 +857,7 @@
         this.$('.primary-edit-mode').removeClass('primary-edit-mode');
         this.$('[data-record-id=' + this.primaryRecord.id + ']').addClass('primary-edit-mode');
         this.$('[data-record-id=' + this.primaryRecord.id + '] input[type=radio]').attr('checked', true);
+        this.checkCopyRadioButtons();
     },
 
     /**
@@ -760,12 +887,18 @@
             this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
         }, this);
 
-        this.primaryRecord.on('mergeduplicates:primary:saved', function(model) {
-            this._removeMerged();
+        this.primaryRecord.on('mergeduplicates:primary:saved', function() {
+            this._mergeRelatedRecords();
         }, this);
 
-        this.primaryRecord.on('mergeduplicates:primary:merged', function(model) {
-            app.drawer.close(true);
+        this.primaryRecord.on('mergeduplicates:related:merged', function() {
+            this._onRelatedMerged();
+        }, this);
+
+        this.primaryRecord.on('mergeduplicates:primary:merged', function() {
+            app.alert.dismiss('mergeduplicates_merging');
+            this._showSuccessMessage();
+            app.drawer.close(true, this.primaryRecord);
         }, this);
     },
 
@@ -789,12 +922,13 @@
             return;
         }
 
-        if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName)) {
+        model = this.collection.get(recordId);
+        if (_.isUndefined(model)) {
             return;
         }
 
-        model = this.collection.get(recordId);
-        if (_.isUndefined(model)) {
+        if (!app.acl.hasAccessToModel('edit', this.primaryRecord, fieldName) ||
+            !app.acl.hasAccessToModel('read', model, fieldName)) {
             return;
         }
 
@@ -807,7 +941,9 @@
 
     /**
      * Copy value from selected field to primary record.
-     * Also copy additional fields.
+     *
+     * Setups new value current field and additional fields.
+     * Also triggers `duplicate:field` event on the primary model.
      *
      * @param {String} fieldName Name of field to copy.
      * @param {Data.Bean} model Model to copy from.
@@ -815,10 +951,18 @@
     copy: function(fieldName, model) {
         this._setRelatedFields(fieldName, model);
         this.primaryRecord.set(fieldName, model.get(fieldName));
+
+        this.primaryRecord.trigger(
+            'duplicate:field:' + fieldName,
+            model !== this.primaryRecord ? model : null
+        );
     },
 
     /**
      * Revert value of field to latest sync state.
+     *
+     * Revert original values.
+     * Also triggers `duplicate:field` event on the primary model.
      *
      * @param {String} fieldName Name of field to revert.
      */
@@ -828,8 +972,12 @@
         this._setRelatedFields(fieldName, this.primaryRecord, true);
         this.primaryRecord.set(
             fieldName,
-            syncedAttributes[fieldName] || this.primaryRecord.get(fieldName)
+            !_.isUndefined(syncedAttributes[fieldName]) ?
+                syncedAttributes[fieldName] :
+                this.primaryRecord.get(fieldName)
         );
+
+        this.primaryRecord.trigger('duplicate:field:' + fieldName, null);
     },
 
     /**
@@ -862,9 +1010,408 @@
 
             this.primaryRecord.set(
                 defs[relatedField],
-                syncedAttributes[defs[relatedField]] || model.get(defs[relatedField])
+                !_.isUndefined(syncedAttributes[defs[relatedField]]) ?
+                    syncedAttributes[defs[relatedField]] :
+                    model.get(defs[relatedField])
             );
         }, this);
+    },
+
+    /**
+     * Returns defs of bean fields that are valid link for merge related records.
+     *
+     * @return {Object[]} Defs of fields.
+     * @protected
+     */
+    _getRelatedLinks: function() {
+        var fieldDefs = app.metadata.getModule(this.module).fields,
+            excludedLinks = this._getExcludedRelatedLinks();
+
+        return _.filter(fieldDefs, function(field) {
+            return !_.isUndefined(field.type) && field.type === 'link' &&
+                !_.contains(excludedLinks, field.name) &&
+                this._isValidRelateLink(field) &&
+                this._isValidRelateLinkType(field);
+        }, this);
+    },
+
+    /**
+     * Returns names of links that has been processed using `relate` fields on UI.
+     *
+     * @return {String[]} Names of links.
+     * @protected
+     */
+    _getExcludedRelatedLinks: function() {
+        var excludedLinks = [],
+            fieldDefs = app.metadata.getModule(this.module).fields;
+
+        _.each(this.mergeFields, function(mergeField) {
+            var def = fieldDefs[mergeField.name];
+            if (def.type === 'relate' && !_.isUndefined(def.link)) {
+                excludedLinks.push(def.link);
+            }
+        }, this);
+
+        return excludedLinks;
+    },
+
+    /**
+     * Check is certain link valid for merge related records.
+     *
+     * Returns false in cases:
+     * 1. link name isn't defined
+     * 2. link is in global black list
+     * 3. link is in black list for current module
+     * 4. merge is disabled in link defs
+     *
+     * @param {Object} link Defenition of link field.
+     * @return {boolean} Is link valid for merge related.
+     * @protected
+     */
+    _isValidRelateLink: function(link) {
+        if (!link || !link.name) {
+            return false;
+        }
+
+        if (_.contains(this.relatesBlacklist, link.name)) {
+            return false;
+        }
+
+        if (!_.isUndefined(this.relatesBlacklistForModule[this.module]) &&
+            _.contains(this.relatesBlacklistForModule[this.module], link.name)
+        ) {
+            return false;
+        }
+
+        if (!_.isUndefined(link.duplicate_merge) &&
+            (link.duplicate_merge === 'disabled' ||
+                link.duplicate_merge === 'false' ||
+                link.duplicate_merge === false)
+        ) {
+            return false;
+        }
+
+        return true;
+    },
+
+    /**
+     * Check is certain link valid for merge related records by link type.
+     *
+     * Returns false for cases:
+     * 1. type of link is `one`
+     *
+     * @param {Object} link Defenition of link field.
+     * @return {boolean} Is link valid for merge related by link type.
+     * @protected
+     */
+    _isValidRelateLinkType: function(link) {
+        if (!_.isUndefined(link.link_type) && link.link_type === 'one') {
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Merge related records using queue.
+     * Triggers `mergeduplicates:related:merged` event on finish.
+     * @protected
+     */
+    _mergeRelatedRecords: function() {
+        var self = this,
+            alternativeModels = _.without(this.collection.models, this.primaryRecord),
+            relatedLinks = _.pluck(this._getRelatedLinks(), 'name'),
+            progressView,
+            queue,
+            tasks = [];
+
+        this.mergeStat = {
+            records: this.collection.models.length,
+            total: 0, total_errors: 0, total_fetch_errors: 0
+        };
+
+        this.mergeProgressModel = new Backbone.Model({
+            isStopped: false
+        });
+
+        if (!alternativeModels || !alternativeModels.length) {
+            self.primaryRecord.trigger('mergeduplicates:related:merged');
+            return;
+        }
+
+        if (!relatedLinks || !_.isArray(relatedLinks) || !relatedLinks.length) {
+            self.primaryRecord.trigger('mergeduplicates:related:merged');
+            return;
+        }
+
+        progressView = this._getProgressView();
+        progressView.reset();
+        progressView.setTotalRecords(alternativeModels.length * relatedLinks.length);
+
+        this.mergeProgressModel.trigger('massupdate:start');
+
+        _.each(relatedLinks, function(link) {
+            _.each(alternativeModels, function(model) {
+                tasks.push({
+                    collection: self._createRelatedCollection(model, link)
+                });
+            });
+        });
+        queue = async.queue(function(task, callback) {
+            if (self.mergeProgressModel.get('isStopped')) {
+                callback.call();
+                return;
+            }
+            self._mergeRelatedCollection(task.collection, callback);
+        }, this._defaultSettings.queueFetchConcurrency || 4);
+        queue.drain = function() {
+            self.mergeProgressModel.trigger('massupdate:end');
+            if (!self.mergeProgressModel.get('isStopped')) {
+                self.primaryRecord.trigger('mergeduplicates:related:merged');
+            }
+        };
+        queue.push(tasks, function(err) {});
+    },
+
+    /**
+     * Called when merge related records process is finished.
+     *
+     * @protected
+     */
+    _onRelatedMerged: function() {
+        var self = this;
+
+        if (this.mergeStat.total_fetch_errors > 0 ||
+            this.mergeStat.total_errors > 0
+        ) {
+            app.alert.show('final_confirmation', {
+                level: 'confirmation',
+                messages: app.lang.get('LBL_MERGE_DUPLICATES_FAIL_PROCESS', this.module),
+                onConfirm: function() {
+                    self._onMergeRelatedCompleted();
+                },
+                onCancel: function() {
+                    self.mergeProgressModel.trigger('massupdate:end');
+                },
+                autoClose: false
+            });
+            return;
+        }
+
+        this._onMergeRelatedCompleted();
+    },
+
+    /**
+     * Starts removing models and shows process message.
+     * @protected
+     */
+    _onMergeRelatedCompleted: function() {
+        app.alert.show('mergeduplicates_merging', {
+            level: 'process',
+            title: app.lang.get('LBL_SAVING', this.module)
+        });
+        this._removeMerged();
+    },
+
+    /**
+     * Creates related collection.
+     * Setup additional parameters for merge process.
+     *
+     * @param {Data.Bean} model Model to create related collection.
+     * @param {String} link Relationship link name.
+     * @return {Data.BeanCollection} Created collection.
+     * @protected
+     */
+    _createRelatedCollection: function(model, link) {
+        var relatedCollection = app.data.createRelatedCollection(model, link);
+
+        return _.extend(relatedCollection, {
+            attempt: 0,
+            maxAllowAttempt: this._defaultSettings.maxAllowAttempt || 3,
+            objectName: app.data.getRelatedModule(this.primaryRecord.module, link)
+        });
+    },
+
+    /**
+     * Recursively merge related collection.
+     *
+     * Recursively fetch data from link collection and creates (links) beans
+     * to primary record.
+     *
+     * @param {Data.BeanCollection} collection Collection to merge.
+     * @param {Function} callback Function called on end.
+     * @param {Number} offset Offset to fetch data.
+     * @protected
+     */
+    _mergeRelatedCollection: function(collection, callback, offset) {
+
+        if (this.mergeProgressModel.get('isStopped')) {
+            callback.call();
+            return;
+        }
+
+        offset = offset || 0;
+
+        var self = this,
+            onCollectionMerged = function() {
+                self.mergeProgressModel.trigger('massupdate:item:processed');
+                callback.call();
+            };
+
+        collection.fetch({
+            relate: true,
+            limit: this._defaultSettings.relatedLinkFetchLimit || 20,
+            offset: offset,
+            apiOptions: {
+                timeout: this._defaultSettings.queueFetchTimeout,
+                skipMetadataHash: true
+            },
+            success: function(data, response, options) {
+                if (!data || !data.models || !data.models.length) {
+                    onCollectionMerged.call();
+                    return;
+                }
+
+                var queue, tasks = [];
+                _.each(data.models, function(model) {
+                    tasks.push({
+                        relatedModel: self._createRelatedModel(model, collection.link.name)
+                    });
+                });
+                var queue = async.queue(function(task, callback) {
+                    self._mergeRelatedModel(
+                        task.relatedModel,
+                        collection.link.name,
+                        callback
+                    );
+                }, self._defaultSettings.queueUpdateConcurrency || 10);
+                queue.drain = function() {
+                    if (!_.isUndefined(data.next_offset) && data.next_offset !== -1) {
+                        self._mergeRelatedCollection(collection, callback, data.next_offset);
+                    } else {
+                        onCollectionMerged.call();
+                    }
+                };
+                queue.push(tasks, function(err) {});
+            },
+            error: function() {
+                collection.attempt = collection.attempt + 1;
+                self.mergeProgressModel.trigger('massupdate:item:attempt', collection);
+                if (collection.attempt <= collection.maxAllowAttempt) {
+                    self._mergeRelatedCollection(collection, callback, offset);
+                } else {
+                    self.mergeStat.total_fetch_errors = self.mergeStat.total_fetch_errors + 1;
+                    self.mergeProgressModel.trigger('massupdate:item:fail', collection);
+                    onCollectionMerged.call();
+                }
+            }
+        });
+    },
+
+    /**
+     * Creates related bean.
+     * Setup additional parameters for merge process.
+     *
+     * @param {Data.Bean} model Model that should be linked to primary record.
+     * @param {String} link Name of link.
+     * @private
+     */
+    _createRelatedModel: function(model, link) {
+        var self = this,
+            relatedModel = app.data.createRelatedBean(
+                this.primaryRecord,
+                model.get('id'),
+                link
+            );
+
+        return _.extend(relatedModel, {
+            attempt: 0,
+            maxAllowAttempt: this._defaultSettings.maxAllowAttempt || 3,
+            objectName: app.data.getRelatedModule(
+                self.primaryRecord.module,
+                link
+            )
+        });
+    },
+
+    /**
+     * Merge related bean to primary record.
+     *
+     * @param {Data.Bean} model Model that should be linked to primary record.
+     * @param {String} link Name of link.
+     * @param {Function} callback Function callled on finish.
+     * @private
+     */
+    _mergeRelatedModel: function(model, link, callback) {
+
+        if (this.mergeProgressModel.get('isStopped')) {
+            callback.call();
+            return;
+        }
+
+        var self = this;
+
+        model.save(null, {
+            showAlerts: false,
+            relate: true,
+            apiOptions: {
+                timeout: this._defaultSettings.queueUpdateTimeout,
+                skipMetadataHash: true
+            },
+            success: function() {
+                self.mergeStat.total = self.mergeStat.total + 1;
+                callback.call();
+            },
+            error: function(error) {
+                model.attempt = model.attempt + 1;
+                self.mergeProgressModel.trigger('massupdate:item:attempt', model);
+                if (model.attempt <= model.maxAllowAttempt) {
+                    self._mergeRelatedModel(model, link, callback);
+                } else {
+                    self.mergeStat.total_errors = self.mergeStat.total_errors + 1;
+                    self.mergeProgressModel.trigger('massupdate:item:fail', model);
+                    callback.call();
+                }
+            }
+        });
+    },
+
+    /**
+     * Create the Progress view unless it is initialized.
+     * Return the progress view component in the same layout.
+     *
+     * @return {Backbone.View} MergeDuplicatesProgress view component.
+     * @protected
+     */
+    _getProgressView: function() {
+        var progressView = this.layout.getComponent('merge-duplicates-progress');
+        if (!progressView) {
+            progressView = app.view.createView({
+                context: this.context,
+                name: 'merge-duplicates-progress',
+                layout: this.layout,
+                model: this.mergeProgressModel
+            });
+            this.layout._components.push(progressView);
+            this.layout.$el.append(progressView.$el);
+        }
+        progressView.render();
+        return progressView;
+    },
+
+    /**
+     * Displays alert message with last merge related records stat.
+     *
+     * @protected
+     */
+    _showSuccessMessage: function() {
+        app.alert.show('mergerelated_final_notice', {
+            level: 'success',
+            messages: app.lang.get('TPL_MERGE_DUPLICATES_STAT', this.module, {
+                stat: this.mergeStat
+            }),
+            autoClose: true,
+            autoCloseDelay: 8000
+        });
     },
 
     /**

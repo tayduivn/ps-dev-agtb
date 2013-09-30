@@ -51,6 +51,7 @@ class AbstractRelationships
         'SidecarSubpanelDefinitions' => 'sidecarsubpanelbaselayout',
         'Vardefs' => 'vardefs',
         'FieldsToLayouts' => 'layoutfields',
+        'ClientFiles' => 'clientfiles',
         //BEGIN SUGARCRM flav=pro ONLY
         'WirelessSubpanelDefinitions' => 'wireless_subpanels',
         'SidecarMobileSubpanelDefinitions' => 'sidecarsubpanelmobilelayout',
@@ -244,9 +245,6 @@ class AbstractRelationships
         mkdir_recursive ( $basepath ) ;
         // replace any existing relationships.php
         write_array_to_file ( 'relationships', $definitions, $basepath . '/relationships.php', 'w', $header ) ;
-        
-        // Clear out the api metadata cache
-        MetaDataManager::clearAPICache();
     }
 
     /*
@@ -558,7 +556,9 @@ class AbstractRelationships
                 sugar_mkdir($layoutPath, null, true);
             }
 
+
             foreach ( $definitions as $definition ) {
+                $override_array = array();
                 // we currently do not support collections in sidecar
                 if (!empty($definition['collection_list'])) {
                     continue;
@@ -568,8 +568,10 @@ class AbstractRelationships
                     require_once('include/MetaDataManager/MetaDataConverter.php');
                     $mc = new MetaDataConverter();
                     $override_array = array(
-                        'link' => strtolower($definition['module']),
-                        'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
+                        'override_subpanel_list_view' => array(
+                            'link' => $definition['get_subpanel_data'],
+                            'view' => $mc->fromLegacySubpanelName($definition['subpanel_name']),
+                        )
                     );
                 }
 
@@ -586,7 +588,7 @@ class AbstractRelationships
 
                 if (!empty($override_array)) {
                     write_array_to_file(
-                        "viewdefs['{$moduleName}']['{$client}']['layouts']['subpanels']['components'][]['override_subpanel_list_view']",
+                        "viewdefs['{$moduleName}']['{$client}']['layout']['subpanels']['components'][]",
                         $override_array,
                         "{$layoutPath}/_overridesubpanel-for-{$relationshipName}.php"
                     );
@@ -597,6 +599,34 @@ class AbstractRelationships
 
         return $installDefs;
     }
+
+    /*
+     * Translate a set of client file definitions into files for the Module Loader
+     * @param string $basepath              Basepath location for this module
+     * @param $installDefPrefix             Pathname prefix for the installdefs, for example for ModuleBuilder use "<basepath>/SugarModules"
+     * @param string $relationshipName      Name of this relationship (for uniqueness)
+     * @param array $relationshipMetaData   Set of metadata definitions in the form $relationshipMetaData[$relationshipName]
+     * @return array $installDefs           Set of new installDefs
+     */
+    protected function saveClientFiles ($basepath, $installDefPrefix, $relationshipName, $moduleClientFileList)
+    {
+        $installDefs = array();
+
+        foreach ($moduleClientFileList as $moduleName => $clientFileList) {
+            mkdir_recursive("{$basepath}/{$moduleName}/clients");
+
+            foreach ($clientFileList as $fileName => $contents) {
+                $from = "{$basepath}/{$moduleName}/".$fileName;
+                $to = "modules/{$moduleName}/".$fileName;
+                $installDefs[$moduleName][$to] = $from;
+                SugarAutoloader::ensureDir(dirname($from));
+                sugar_file_put_contents($from, $contents);
+            }
+        }
+        
+        return $installDefs;
+    }
+
 
     public function saveSidecarMobileSubpanelDefinitions($basepath , $installDefPrefix , $relationshipName , $subpanelDefinitions, $client='mobile')
     {

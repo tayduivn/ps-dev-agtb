@@ -217,10 +217,6 @@ SUGAR.expressions.validateRelateFunctions = function(t)
         if (typeof(def) == "string"){
             throw(t.name + ": " + def);
         }
-        if (def.calculated && (typeof(def.calculated) != "string"  || def.calculated.toLowerCase() !== "false"))
-        {
-            throw (t.name + ": Cannot use calculated field " + t.args[1].value)
-        }
         if (t.name != "related" && def.type && SU.arrayIndexOf(["decimal", "int", "float", "currency"], def.type) == -1)
         {
             throw (t.name + ": related field  " + t.args[1].value + " must be a number ");

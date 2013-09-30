@@ -422,7 +422,7 @@ class Team extends SugarBean
             }
 
             // This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
-            $GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
+            $GLOBALS['log']->error("Membership record found (id $managers_membership->id) that does not have a implicit or explicit assignment");
         }
         else
         {

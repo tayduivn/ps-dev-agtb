@@ -53,6 +53,20 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
+                    'type' => 'pdfaction',
+                    'name' => 'download-pdf',
+                    'label' => 'LBL_PDF_VIEW',
+                    'action' => 'download',
+                    'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'pdfaction',
+                    'name' => 'email-pdf',
+                    'label' => 'LBL_PDF_EMAIL',
+                    'action' => 'email',
+                    'acl_action' => 'view',
+                ),
+                array(
                     'type' => 'divider',
                 ),
                 array(
@@ -69,6 +83,13 @@ $viewdefs['Tasks']['base']['view']['record'] = array(
                 ),
                 array(
                     'type' => 'divider',
+                ),
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:find_duplicates_button:click',
+                    'name' => 'find_duplicates_button',
+                    'label' => 'LBL_DUP_MERGE',
+                    'acl_action' => 'edit',
                 ),
                 array(
                     'type' => 'rowaction',

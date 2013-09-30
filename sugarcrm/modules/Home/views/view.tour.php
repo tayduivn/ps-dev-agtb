@@ -11,9 +11,11 @@ class HomeViewTour extends SugarView
         global $sugar_flavor;
         global $current_user;
         global $app_strings;
+        global $app_list_strings;
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Home');
         $this->ss->assign('mod', $mod_strings);
-        $this->ss->assign("sugarFlavor",$sugar_flavor);
+        $this->ss->assign("sugarFlavor", $sugar_flavor);
+        $this->ss->assign("appList", $app_list_strings);
 
        //check the upgrade history to see if this instance has been upgraded, if so then present the calendar url message
        //if no upgrade history exists then we can assume this is an install and we do not show the calendar message

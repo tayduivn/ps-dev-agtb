@@ -83,7 +83,9 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
             if (isset($def['fields']) && is_array($def['fields'])) {
                 foreach ($def['fields'] as $field) {
                     if (!is_array($field) && !empty($this->_fielddefs[$field])) {
+                        $fieldName = $field;
                         $field = self::_trimFieldDefs($this->_fielddefs[$field]);
+                        $field['name'] = $fieldName;
                         $field['default'] = true;
                         $field['enabled'] = true;
                     }
@@ -643,7 +645,9 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser
     {
         // fixing bug #25640: Value of "Relate" custom field is not displayed as a link in list view
         // we should set additional params such as 'link' and 'id' to be stored in custom listviewdefs.php
-        if (isset($this->_fielddefs[$fieldName]['type']) && $this->_fielddefs[$fieldName]['type'] == 'relate') {
+        if (isset($this->_fielddefs[$fieldName]['type']) &&
+            ($this->_fielddefs[$fieldName]['type'] == 'relate' ||
+                $this->_fielddefs[$fieldName]['type'] == 'parent')) {
             $fieldDef['id'] = strtoupper($this->_fielddefs[$fieldName]['id_name']);
             $fieldDef['link'] = true;
         }

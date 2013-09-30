@@ -28,7 +28,7 @@ $searchFields['Reports'] =
         'team_id'=> array(
 			'query_type' => 'format',
 			'operator' => 'subquery',
-			'subquery' => "SELECT team_set_id FROM team_sets_teams WHERE team_id IN ({0})",
+			'subquery' => "SELECT team_set_id FROM team_sets_teams WHERE team_id IN ('{0}')",
 			'db_field' => array(
 				'team_set_id',
 			)

@@ -110,6 +110,13 @@ class SugarBeanApiHelper
             if (isset($bean->deleted) && $bean->deleted == true) {
                 $data['deleted'] = (bool)$bean->deleted;
             }
+            if ($this->api->user->isAdmin()) {
+                // BR-759 requests that assigned_user_id is returned on deleted records
+                // to better sync some external systems
+                if (isset($bean->assigned_user_id) && in_array('assigned_user_id', $fieldList)) {
+                    $data['assigned_user_id'] = $bean->assigned_user_id;
+                }
+            }
         }
 
         return $data;

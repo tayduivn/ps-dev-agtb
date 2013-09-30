@@ -221,8 +221,13 @@ class SugarFieldRelate extends SugarFieldBase {
         /*
          * If we have a related field, use its formatter to format it
          */
+        $rbean = false;
         if(!empty($properties['link']) && !empty($bean->related_beans[$properties['link']])) {
             $rbean = $bean->related_beans[$properties['link']];
+        } else if (!empty($bean->related_beans[$fieldName])) {
+            $rbean = $bean->related_beans[$fieldName];
+        }
+        if (!empty($rbean)) {
             if(empty($rbean->field_defs[$properties['rname']])) {
                 $data[$fieldName] = '';
                 return;

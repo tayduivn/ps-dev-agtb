@@ -23,6 +23,9 @@
  * - {Array} invitation_actions field def for the invitation actions buttonset
  *           triggers showing invitation actions buttons and corresponding collection
  *
+ * - {Array} overdue_badge field def to support overdue calculation, and showing
+ *   an overdue badge when appropriate.
+ *
  * @class View.Views.BasePlannedActivitiesView
  * @alias SUGAR.App.view.views.BasePlannedActivitiesView
  * @extends View.Views.BaseHistoryView
@@ -76,7 +79,7 @@
     _createInvitationsCollection: function(tab) {
         return app.data.createBeanCollection(tab.module, null, {
             link: {
-                name: tab.link,
+                name: tab.module.toLowerCase(),
                 bean: app.data.createBean('Users', {
                     id: app.user.get('id')
                 })
@@ -107,14 +110,17 @@
      * {@inheritDoc}
      */
     _getFilters: function(index) {
+        var todayDate = new Date(),
+            today = app.date.format(todayDate,'Y-m-d');
+
         var tab = this.tabs[index],
-            today = app.date.format(new Date(), 'Y-m-d'),
             filter = {},
             filters = [],
             defaultFilters = {
-                today: {$lte: today + ' 23:59:59'},
-                future: {$gt: today + ' 23:59:59'}
+                today: {$lte: today},
+                future: {$gt: today}
             };
+
         filter[tab.filter_applied_to] = defaultFilters[this.settings.get('date')];
 
         filters.push(filter);
@@ -217,21 +223,14 @@
             return;
         }
 
-        var tab = this.tabs[this.settings.get('activeTab')],
-            now = new Date();
+        var tab = this.tabs[this.settings.get('activeTab')];
 
-        if (!this.collection.length || (tab.invitations && tab.invitations.dataFetched)) {
-            this._super('_renderHtml');
-            return;
+        if (tab.overdue_badge) {
+            this.overdueBadge = tab.overdue_badge;
         }
 
-        // FIXME move this to a field
-        _.each(this.collection.models, function(model) {
-            var date = new Date(model.get(tab.record_date));
-            model.set('overdue', date < now);
-        }, this);
-
-        if (!tab.invitations) {
+        if (!this.collection.length || !tab.invitations ||
+            tab.invitations.dataFetched) {
             this._super('_renderHtml');
             return;
         }

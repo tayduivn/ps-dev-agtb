@@ -28,14 +28,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $module_name = '<module_name>';
-$OBJECT_NAME = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['mobile']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
-                    'name' => $module_name . '_number',
+                    'name' => $_module_name . '_number',
                     'width' => '5',
                     'label' => 'LBL_NUMBER',
                     'link' => true,
@@ -86,7 +86,6 @@ $viewdefs[$module_name]['mobile']['view']['list'] = array(
 		            'label' => 'LBL_ASSIGNED_USER_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'module' => 'Employees',
                 ),
             ),
         ),

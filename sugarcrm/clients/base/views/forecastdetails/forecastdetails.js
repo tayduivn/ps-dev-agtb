@@ -153,7 +153,7 @@
             // use the object version of user not a Model
             this.selectedUser = app.user.toJSON();
 
-            if(this.currentModule == 'Forecasts') {
+            if (this.currentModule != 'Home') {
                 // On Forecasts, this is based on whether user is viewing manager or rep worksheet
                 this.shouldRollup = this.isManagerView();
             } else {
@@ -314,7 +314,12 @@
             }, this);
 
             ctx.on('forecasts:worksheet:totals', function(data) {
-                this.calculateData(this.mapAllTheThings(data, true));
+
+                data.worst_case = data.worst_case - (data.won_amount || 0);
+                data.likely_case = data.likely_case - (data.won_amount || 0);
+                data.best_case = data.best_case - (data.won_amount || 0);
+
+                this.calculateData(this.mapAllTheThings(data, true), true);
             }, this);
 
             // Using LHS Model to store the initial values of the LHS model so we don't have
@@ -499,7 +504,7 @@
         // And this is the mgr view or it's the rep view and the user has access to the field
         if(this.forecastConfig['show_worksheet_' + prop]
             && (this.shouldRollup || (!this.shouldRollup && this.fieldDataAccess[prop]))) {
-            var css = this.getClassBasedOnAmount(this.serverData.get(prop), model.get('quota_amount'), 'background-color');
+            var css = this.getClassBasedOnAmount(app.math.add(this.serverData.get(prop), this.serverData.get('closed_amount')), model.get('quota_amount'), 'background-color');
             this.$el.find('#forecast_details_' + prop + '_feedback').addClass(css);
         }
     },
@@ -569,8 +574,10 @@
      * Handles parsing data objects into model
      *
      * @param data
+     * @param fromModel if this request is from the model or the server
      */
-    calculateData: function(data) {
+    calculateData: function(data, fromModel) {
+        fromModel = fromModel || false;
         // update serverData with changes from data
         this.serverData.set(data);
 
@@ -595,9 +602,9 @@
         d.deficit_label = app.lang.get(deficitLabelKey, 'Forecasts');
 
         // convert detailsForCase params to html template
-        d.worst_details = this.detailsMsgTpl(this.getDetailsForCase('worst', this.worstTotal, d.quota_amount, d.closed_amount));
-        d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount));
-        d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount));
+        d.worst_details = this.detailsMsgTpl(this.getDetailsForCase('worst', this.worstTotal, d.quota_amount, d.closed_amount, fromModel));
+        d.likely_details = this.detailsMsgTpl(this.getDetailsForCase('likely', this.likelyTotal, d.quota_amount, d.closed_amount, fromModel));
+        d.best_details = this.detailsMsgTpl(this.getDetailsForCase('best', this.bestTotal, d.quota_amount, d.closed_amount, fromModel));
 
         if(this.shouldRollup) {
             d.quota_label = app.lang.get('LBL_QUOTA_ADJUSTED', 'Forecasts');
@@ -621,19 +628,22 @@
      * @param caseValue the value of the case
      * @param stageValue the value of the quota or closed amount
      * @param closedAmt the value of closed_amount from the model
+     * @param fromServer if this is coming from the model or the server
      * @return {Object} params for details-msg template
      */
-    getDetailsForCase: function (caseStr, caseValue, stageValue, closedAmt) {
+    getDetailsForCase: function (caseStr, caseValue, stageValue, closedAmt, fromModel) {
         var params = {},
             // get Number versions of values for comparison
-            caseValueN = parseFloat(caseValue),
-            stageValueN = parseFloat(stageValue);
+            caseValueN = app.math.add(caseValue, closedAmt),
+            stageValueN = parseFloat(stageValue),
+            openPipeline = 0,
+            calcValue = 0;
 
         params.label = app.lang.get('LBL_' + caseStr.toUpperCase(), 'Forecasts');
         params.spanCSS = this.spanCSS;
         params.case = caseStr;
         params.shortOrExceed = '&nbsp;';
-        params.deficitAmount = '&nbsp;';
+        params.openPipeline = '&nbsp;';
         params.feedbackLn1 = '';
         params.feedbackLn2 = '';
 
@@ -667,11 +677,20 @@
                     params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
                 }
 
-                var casePlusClosed = app.math.add(caseValue, closedAmt),
-                    deficitAmount = Math.abs(app.math.sub(stageValue, casePlusClosed));
 
-                params.percent = this.getPercent(deficitAmount, stageValue);
-                params.deficitAmount = '(' + app.currency.formatAmountLocale(deficitAmount) + ')';
+                /**
+                 *  The bottom rectangles are supposed to tell the user if there is sufficient open pipeline in the current quarter to cover the deficit or not.
+                 *  If there is surplus (meaning there is no deficit), the open pipeline will actually take the user above quota and that is always represented with green color.
+                 */
+                //if we are exceeding, we need to subtract to get the amount we exceed by
+                if (caseValueN >= stageValueN) {
+                    calcValue = app.math.sub(caseValueN, stageValueN);
+                } else {
+                    calcValue = app.math.sub(stageValueN, caseValueN);
+                }
+
+                params.percent = this.getPercent(calcValue, stageValueN);
+                params.openPipeline = '(' + app.currency.formatAmountLocale(calcValue) + ')';
 
             }
 
@@ -681,7 +700,7 @@
                 params.feedbackLn1 += ' ' + params.percent;
             }
 
-            params.feedbackLn2 = params.deficitAmount;
+            params.feedbackLn2 = params.openPipeline;
         }
         else
         {
@@ -746,10 +765,13 @@
      * @return {String}
      */
     getPercent: function (caseValue, stageValue) {
-        var percent = 0;
-        if(stageValue > 0 && caseValue > 0) {
+        var percent = 0,
+            calcValue = caseValue;
+        if (stageValue > 0 && caseValue > 0) {
+
+
             // divide the numbers and multiply times 100
-            percent = (caseValue / stageValue) * 100;
+            percent = (calcValue / stageValue) * 100;
 
             if (percent > 1) {
                 // round to a whole number

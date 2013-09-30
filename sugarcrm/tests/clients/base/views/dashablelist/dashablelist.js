@@ -74,7 +74,7 @@ describe('View.BaseDashablelistView', function() {
                 sinon.collection.stub(app.lang, 'get').returnsArg(1);
                 view._initializeSettings();
                 expect(view.settings.get('module')).toBe(firstAvailableModule);
-                expect(view.settings.get('label')).toBe(firstAvailableModule);
+                expect(view.settings.get('label')).toBe('LBL_MODULE_NAME');
                 expect(view.settings.get('limit')).toBe(5);
                 expect(view.settings.get('my_items')).toBe('1');
                 expect(view.settings.get('favorites')).toBe('0');
@@ -90,6 +90,24 @@ describe('View.BaseDashablelistView', function() {
             it('should change the module setting to the first available module when the module is unapproved',
                function() {
                    view.settings.set('module', 'Leads');
+                   view._setDefaultModule();
+                   expect(view.settings.get('module')).toBe(firstAvailableModule);
+               }
+            );
+
+            it('should use the module from the context when the module setting is undefined', function() {
+                var module = 'Contacts';
+                view.context.set('module', module);
+                view.settings.unset('module', {silent: true});
+                view._setDefaultModule();
+                expect(view.settings.get('module')).toBe(module);
+            });
+
+            it('should use the first available module when the module setting is undefined and no module is found on ' +
+               'the context',
+               function() {
+                   view.context.unset('module', {silent: true});
+                   view.settings.unset('module', {silent: true});
                    view._setDefaultModule();
                    expect(view.settings.get('module')).toBe(firstAvailableModule);
                }

@@ -53,6 +53,10 @@
             }, this)
             .value();
         this.context.trigger('filteredlist:filter:set', _.pluck(filter, 'label'));
+
+        if (_.isEmpty(filter)) {
+            return;
+        }
         this._filter = filter;
     },
 

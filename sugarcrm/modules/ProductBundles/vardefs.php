@@ -242,6 +242,14 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'default'=>'-99',
     'comment' => 'Currency used'
   ),
+        'base_rate' => array(
+            'name' => 'base_rate',
+            'vname' => 'LBL_CURRENCY_RATE',
+            'type' => 'decimal',
+            'len' => '26,6',
+            'required' => true,
+            'studio' => false
+        ),
     'products' =>
       array (
         'name' => 'products',

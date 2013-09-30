@@ -116,7 +116,10 @@
         this.categoryRangesField = this.fieldsMeta.category_ranges;
 
         // Set this model equal to the latest config metadata
-        this.model.set(app.metadata.getModule('Forecasts', 'config'));
+        // using jQuery's deep clone extend() because otherwise the range updates actually update
+        // the values in config itself
+        this.model.set($.extend(true, {}, app.metadata.getModule('Forecasts', 'config')));
+        
         this.updateTitleValues(this.model);
         this.forecastByModule = app.lang.getAppListStrings('moduleList')[this.model.get('forecast_by')];
 
@@ -400,6 +403,11 @@
         }, { view: this, showElement: showElement, category: element.value });
 
         // if there are custom ranges not based on probability hide add button on the top of block
+        if(this._getLastCustomRangeIndex(element.value, 'custom')) {
+            this.$el.find('#btnAddCustomRange').hide();
+        }
+
+        // if there are custom ranges not based on probability hide add button on the top of block
         if(this._getLastCustomRangeIndex(element.value, 'custom_without_probability')) {
             this.$el.find('#btnAddCustomRangeWithoutProbability').hide();
         }
@@ -592,8 +600,8 @@
      */
     addCustomRange: function(event) {
         var view = this,
-            category = $(event.handleObj.selector).data('category') || null,
-            customType = $(event.handleObj.selector).data('type') || null,
+            category = $(event.currentTarget).data('category') || null,
+            customType = $(event.currentTarget).data('type') || null,
             ranges = view.model.get(category + '_ranges'),
             bucket_dom_options = view.model.get(category + '_options'),
             showElement = ( customType == 'custom' ) ? view.$el.find('#plhCustom') : view.$el.find('#plhCustomWithoutProbability'),
@@ -660,6 +668,7 @@
 
         if(customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
+            view.$el.find('#btnAddCustomRange').hide();
             view.connectSliders.call(view, category, view.fieldRanges);
         } else {
             // hide add button form top of block and for previous ranges not based on probability
@@ -680,8 +689,8 @@
      */
     removeCustomRange : function(event) {
         var view = this,
-            category = $(event.handleObj.selector).data('category') || null,
-            fieldKey = $(event.handleObj.selector).data('key') || null,
+            category = $(event.currentTarget).data('category') || null,
+            fieldKey = $(event.currentTarget).data('key') || null,
             ranges = view.model.get(category + '_ranges'),
             bucket_dom_options = view.model.get(category + '_options'),
             range,
@@ -707,7 +716,7 @@
             // find previous renge and reassign range values form removed to it
             _.each(this.fieldRanges[category], function(item) {
                 if(item.customType == 'custom' && item.customIndex < range.customIndex) {
-                    previousCustomRange = +item.customIndex;
+                    previousCustomRange = item;
                 }
             }, this);
 
@@ -742,20 +751,22 @@
         view.model.unset(category + '_ranges', {silent: true});
         view.model.set(category + '_ranges', ranges);
 
+        lastCustomRangeIndex = view._getLastCustomRangeIndex(category, range.customType);
         if(range.customType == 'custom') {
             // use call to set context back to the view for connecting the sliders
+            if (lastCustomRangeIndex == 0) {
+               view.$el.find('#btnAddCustomRange').show();
+            }
             view.connectSliders.call(view, category, view.fieldRanges);
         } else {
             // show add button for custom range not based on probability
-            lastCustomRangeIndex = view._getLastCustomRangeIndex(category, range.customType);
             if(lastCustomRangeIndex == 0) {
                 view.$el.find('#btnAddCustomRangeWithoutProbability').show();
-            } else {
-                lastCustomRange = view._getLastCustomRange(category, range.customType);
-                if(!_.isUndefined(lastCustomRange.$el)) {
-                    lastCustomRange.$el.find('.addCustomRange').parent().show();
-                }
             }
+        }
+        lastCustomRange = view._getLastCustomRange(category, range.customType);
+        if(!_.isUndefined(lastCustomRange.$el)) {
+            lastCustomRange.$el.find('.addCustomRange').parent().show();
         }
     },
 

@@ -267,7 +267,7 @@ $mod_strings = array (
     'LBL_TOTAL' => 'Total',
     'LBL_EDITABLE_INVALID' => 'Invalid Value for {0}',
     'LBL_EDITABLE_INVALID_RANGE' => 'Value must be between {0} and {1}',
-    'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue or Cancel to discard these changes and continue.',
+    'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and leave page or Cancel to discard these changes and leave page.',
     'LBL_WORKSHEET_COMMIT_CONFIRM' => 'You have saved changes that have not been committed in the rep view. The saved changes will not be visible in the Manager view until you commit.<br>Press OK to commit the changes and continue, or Cancel to not commit the changes and continue.',
     'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but not your Manager view; the team\'s forecast will not be committed until your Manager view is committed.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
@@ -384,6 +384,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their {{forecastByModule}} that are not included in the commit but are upside and have the potential of closing if everything goes well and {{forecastByModule}} that are to be excluded from the forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_RANGES_DESCRIPTION' => 'Custom Ranges: This option gives a user the ability to categorize their {{forecastByModule}} to be committed into the forecast into a committed range, excluded range and any others that you setup.',
     'LBL_FORECASTS_CONFIG_RANGES_EXCLUDE_INFO' => 'The Exclude Range is from 0% to the minimum of the previous Forecast Range by default.',
+
+    'LBL_FORECASTS_CONFIG_RANGES_ENTER_RANGE' => 'Enter range name...',
 
     // scenarios config
     //TODO-sfa refactors the code references for scenarios to be scenarios (SFA-337).

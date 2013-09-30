@@ -432,6 +432,11 @@ describe("Drawer Layout", function() {
             expect(drawer._components.length).toBe(0);
             expect(drawer.onCloseCallback.length).toBe(0);
         });
+        it('should allow caller to bypass triggerBefore', function() {
+            var triggerBeforeStub = sinonSandbox.stub(drawer, 'triggerBefore');
+            drawer.reset(false);
+            expect(triggerBeforeStub).not.toHaveBeenCalled();
+        })
     });
 
     describe('_getDrawers(true)', function() {

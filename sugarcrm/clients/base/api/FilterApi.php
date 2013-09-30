@@ -307,12 +307,17 @@ class FilterApi extends SugarApi
         }
 
         foreach ($bean->field_defs as $field => $fieldDef) {
-            if ($fieldDef['type'] == 'relate' && !empty($fieldDef['link'])) {
+            if ($fieldDef['type'] == 'relate' && (!empty($fieldDef['link']) || !empty($fieldDef['module']))) {
                 if (empty($data[$field]) && empty($relates[$field])) {
                     continue;
                 }
 
-                $rbean = $bean->getRelatedBean($fieldDef['link']);
+                if (!empty($fieldDef['link'])) {
+                    $rbean = $bean->getRelatedBean($fieldDef['link']);
+                } else {
+                    $rbean = BeanFactory::getBean($fieldDef['module']);
+                }
+
                 if (empty($rbean)) {
                     continue;
                 }
@@ -335,6 +340,10 @@ class FilterApi extends SugarApi
                     if (!empty($reldata)) {
                         $rbean->populateFromRow($reldata, true);
                     }
+                    if (empty($fieldDef['link'])) {
+                        $bean->related_beans[$fieldDef['name']] = $rbean;
+                    }
+
                 }
 
                 if (empty($rbean->id) && !empty($fieldDef['id_name']) && !empty($data[$fieldDef['id_name']])) {

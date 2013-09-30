@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 $module_name = '<module_name>';
-$OBJECT_NAME = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['base']['view']['list'] = array(
     'panels' => array(
         array(
@@ -58,7 +58,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => $module_name .'_type',
+                    'name' => $_module_name .'_type',
                     'width' => '15',
                     'label' => 'LBL_TYPE',
                 ),
@@ -95,7 +95,6 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'width' => '10',
                     'label' => 'LBL_CREATED',
                     'readonly' => true,
-                    'module' => 'Employees',
                 ),
                 //BEGIN SUGARCRM flav=pro ONLY
                 array(
@@ -112,14 +111,12 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'label' => 'LBL_ASSIGNED_TO_NAME',
                     'default' => true,
                     'enabled' => true,
-                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'modified_by_name',
                     'width' => '5',
                     'label' => 'LBL_MODIFIED',
                     'readonly' => true,
-                    'module' => 'Employees',
                 ),
             ),
         ),

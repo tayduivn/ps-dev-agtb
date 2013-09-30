@@ -212,8 +212,13 @@ abstract class CurrencyRateUpdateAbstract
         // get the conversion rate
         $rate = $this->db->getOne(sprintf("SELECT conversion_rate FROM currencies WHERE id = '%s'", $currencyId));
 
+        if(empty($rate)) {
+            $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate','unknown currency: ' . $currencyId)));
+            return false;
+        }
+
         // setup SQL statement
-        $query = sprintf("UPDATE %s SET %s = %d WHERE currency_id = '%s'",
+        $query = sprintf("UPDATE %s SET %s = %s WHERE currency_id = '%s'",
             $table,
             $column,
             $rate,

@@ -56,6 +56,7 @@
             layout : "convert",
             context: {
                 forceNew: true,
+                skipFetch: true,
                 module: 'Leads',
                 leadsModel: model
             }

@@ -43,31 +43,29 @@ ensureCache($minifyUtils, $rootDir);
         <meta http-equiv="X-UA-Compatible" content="IE=9, IE=10">
         <meta name="viewport" content="initial-scale=1.0">
         <link rel="SHORTCUT ICON" href="../themes/default/images/sugar_icon.ico">
+        <!-- CSS -->
+        <link rel="stylesheet" href="./assets/loading.css" type="text/css">
+        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" type="text/css"/>
+        <script src="../include/javascript/modernizr.js"></script>
+
         <? if(inDeveloperMode()): ?>
-            <script type="text/javascript" src="../sidecar/minified/sidecar.js"></script>
+            <script src="../sidecar/minified/sidecar.js"></script>
         <? else: ?>
-            <script type="text/javascript" src="../sidecar/minified/sidecar.min.js"></script>
+            <script src="../sidecar/minified/sidecar.min.js"></script>
         <? endif; ?>
 
-        <!-- CSS -->
-        <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
-
         <!-- App Scripts -->
-        <script src='../cache/include/javascript/sugar_sidecar.min.js'></script>
-        <script language="javascript" src="../include/javascript/sugar7/bwc.js"></script>
-        <script language="javascript" src="../include/javascript/sugar7/utils.js"></script>
-        <script language="javascript" src="../include/javascript/sugar7/field.js"></script>
-        <script language="javascript" src="../include/javascript/sugar7/hacks.js"></script>
-        <script language="javascript" src="../include/javascript/sugar7/alert.js"></script>
-        <script language="javascript" src="../include/javascript/sugar7/hbs-helpers.js"></script>
-        <script language="javascript" src="../include/javascript/modernizr.js"></script>
+        <script src="../cache/include/javascript/sugar_sidecar.min.js"></script>
+        <script src="../include/javascript/sugar7/bwc.js"></script>
+        <script src="../include/javascript/sugar7/utils.js"></script>
+        <script src="../include/javascript/sugar7/field.js"></script>
+        <script src="../include/javascript/sugar7/hacks.js"></script>
+        <script src="../include/javascript/sugar7/alert.js"></script>
+        <script src="../include/javascript/sugar7/hbs-helpers.js"></script>
 
         <!-- Portal specific JS -->
-        <script src='portal.js'></script>
-        <script src='config.js'></script>
-
+        <script src="portal.js"></script>
+        <script src="config.js"></script>
     </head>
     <body>
         <div id="sidecar">
@@ -86,10 +84,10 @@ ensureCache($minifyUtils, $rootDir);
                 <div id="drawers"></div>
             </div>
         </div>
-        <script language="javascript">
+        <script>
             var syncResult, view, layout, html;
             var App = SUGAR.App.init({
-                el: "#sidecar",
+                el: '#sidecar',
                 callback: function(app){
                     $('#alerts').empty();
                     app.start();

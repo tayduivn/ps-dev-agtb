@@ -23,6 +23,9 @@ $viewdefs['base']['view']['notifications'] = array(
         'status' => array(
             '$equals' => 'Planned'
         ),
+        'accept_status_users' => array(
+            '$not_equals' => 'decline'
+        )
     ),
     'remindersLimit' => 100,
 );

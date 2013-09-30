@@ -50,10 +50,19 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
           'default' => true,
         ),
         array(
-          'label' => 'LBL_LIKELY',
-          'enabled' => true,
-          'default' => true,
-          'name' => 'amount',
+            'name' => 'amount',
+            'type' => 'currency',
+            'label' => 'LBL_LIKELY',
+            'related_fields' => array(
+                'amount',
+                'currency_id',
+                'base_rate',
+            ),
+            'currency_field' => 'currency_id',
+            'base_rate_field' => 'base_rate',
+            'width' => 10,
+            'enabled' => true,
+            'default' => true,
         ),
         array(
           'name' => 'assigned_user_name',

@@ -37,6 +37,24 @@
     },
     fileUrl: '',
     plugins: ['File','EllipsisInline'],
+
+    /**
+     * Contains id of {Data.Bean} from which file should be duplicated.
+     *
+     * @property {String} _duplicateModuleId
+     * @protected
+     */
+    _duplicateModuleId: null,
+
+    /**
+     * Set ups id of {Data.Bean} from which file should be duplicated.
+     *
+     * @param {String} modelId Id of model
+     */
+    duplicateFromModel: function(modelId) {
+        this._duplicateModuleId = modelId;
+    },
+
     /**
      * Handler for delete file control
      *
@@ -85,6 +103,23 @@
             }
         });
     },
+
+    /**
+     * {@inheritDoc}
+     *
+     * Override field templates for merge-duplicate view.
+     */
+    _loadTemplate: function() {
+        this._super('_loadTemplate');
+        if (this.view.name === 'merge-duplicates') {
+            this.template = app.template.getField(this.type,
+                'merge-duplicates-' + this.tplName,
+                this.module, this.tplName
+            ) || app.template.empty;
+            this.tplName = 'list';
+        }
+    },
+
     _render: function() {
         // This array will contain objects accessible in the view
         this.model = this.model || this.view.model;
@@ -137,11 +172,28 @@
             }
         }, {iframe: this.$el});
     },
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
-     * Override standard method because we cannot set a value of a type `file` input
-     * prevent rendering input[type=file] if it's in edit mode
+     * Overrides `change` event for file field.
+     * We should call `render` method when change event is triggered if:
+     * 1. it is not duplicate-merge view and field isn't in edit mode. If it is
+     * in edit mode we cannot set a value of a type `file` input.
+     * 2. it is duplicate-merge view and field is in edit mode. Because
+     * for this view we display file field as label (not input[type=file])
+     * in edit mode we should update view on change.
+     *
+     * Add handler for `duplicate:field` event to setup id of model from which file
+     * field should be duplicated. We need two handlers for `duplicate:field` and
+     * `duplicate:field:[fieldName]` to have ability to handle event when call is
+     * for all fields from model or for certain field. e.g. in merge-duplicates
+     * view we trigger this event for certain field and for copy bean we trigger
+     * it for all fields.
+     *
+     * Also add handler for `data:sync:start` event
+     * to add additional parameter in request (options.params) if file should be
+     * duplicated from another model.
      */
     bindDataChange: function() {
         if (!this.model) {
@@ -150,8 +202,38 @@
         this.model.on('change:' + this.name, function() {
             if (_.isUndefined(this.options.viewName) || this.options.viewName !== 'edit') {
                 this.render();
+            } else if (this.view.name === 'merge-duplicates' &&
+                this.options.viewName &&
+                this.options.viewName === 'edit'
+            ) {
+                this.render();
+            }
+            this.duplicateFromModel(null);
+        }, this);
+
+        this.model.on('duplicate:field', this._onDuplicate, this);
+        this.model.on('duplicate:field:' + this.name, this._onDuplicate, this);
+        this.model.on('data:sync:start', function(method, options) {
+            if (!_.isNull(this._duplicateModuleId) &&
+                (method == 'update' || method == 'create')
+            ) {
+                options.params = options.params || {};
+                options.params[this.name + '_duplicateModuleId'] = this._duplicateModuleId;
             }
         }, this);
+    },
+
+    /**
+     * Handler for `duplicate:field` event triggered on model. Set ups id of
+     * model from which file field should be duplicated.
+     *
+     * @param {Data.Bean} model Model from which file should be duplicated.
+     * @private
+     */
+    _onDuplicate: function(model) {
+        if (model instanceof Backbone.Model) {
+            this.duplicateFromModel(model.get('id'));
+        }
     },
 
     /**

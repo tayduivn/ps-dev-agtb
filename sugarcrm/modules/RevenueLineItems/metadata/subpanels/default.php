@@ -23,65 +23,54 @@ $subpanel_layout = array(
     'fill_in_additional_fields'=>true,
 
     'list_fields' => array(
-        'name'=>array(
+        'name' =>
+        array (
             'vname' => 'LBL_LIST_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '28%',
-            'sort_by'=>'products.name'
+            'width' => '10%',
+            'sort_by' => 'products.name',
+            'default' => true,
         ),
-        'status'=>array(
-            'vname' => 'LBL_LIST_STATUS',
-            'width' => '8%',
+        'sales_stage' =>
+        array (
+            'type' => 'enum',
+            'vname' => 'LBL_SALES_STAGE',
+            'width' => '10%',
+            'default' => true,
         ),
-        'account_name'=>array(
-            'vname' => 'LBL_LIST_ACCOUNT_NAME',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'target_record_key' => 'account_id',
-            'target_module' => 'Accounts',
-            'module' => 'Accounts',
-            'width' => '15%',
-            'sortable'=>false,
+        'probability' =>
+        array (
+            'type' => 'int',
+            'vname' => 'LBL_PROBABILITY',
+            'width' => '10%',
+            'default' => true,
         ),
-        'contact_name'=>array(
-            'vname' => 'LBL_LIST_CONTACT_NAME',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'target_record_key' => 'contact_id',
-            'target_module' => 'Contacts',
-            'module' => 'Contacts',
-            'width' => '15%',
-            'sortable'=>false,
+        'date_closed' =>
+        array (
+            'type' => 'date',
+            'related_fields' =>
+            array (
+                0 => 'date_closed_timestamp',
+            ),
+            'vname' => 'LBL_DATE_CLOSED',
+            'width' => '10%',
+            'default' => true,
         ),
-        'date_purchased'=>array(
-            'vname' => 'LBL_LIST_DATE_PURCHASED',
+        'commit_stage' =>
+        array (
+            'type' => 'enum',
+            'default' => true,
+            'vname' => 'LBL_COMMIT_STAGE_FORECAST',
             'width' => '10%',
         ),
-        'discount_price'=>array(
-            'vname' => 'LBL_LIST_DISCOUNT_PRICE',
+        'quantity' =>
+        array (
+            'vname' => 'LBL_QUANTITY',
             'width' => '10%',
+            'default' => true,
         ),
-        'date_support_expires'=>array(
-            'vname' => 'LBL_LIST_SUPPORT_EXPIRES',
-            'width' => '10%',
-        ),
-        'edit_button'=>array(
-            'vname' => 'LBL_EDIT_BUTTON',
-            'widget_class' => 'SubPanelEditButton',
-            'module' => 'Products',
-            'width' => '4%',
-        ),
-        'remove_button'=>array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'module' => 'Leads',
-            'width' => '4%',
-        ),
-        'remove_button'=>array(
-            'vname' => 'LBL_REMOVE',
-            'widget_class' => 'SubPanelRemoveButton',
-            'module' => 'Leads',
-            'width' => '4%',
-        ),
-        'discount_usdollar'=>array(
+        'discount_usdollar' =>
+        array (
             'usage' => 'query_only',
         ),
     ),

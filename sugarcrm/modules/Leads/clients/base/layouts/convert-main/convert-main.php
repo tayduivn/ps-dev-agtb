@@ -54,6 +54,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'primary_address_country' => 'primary_address_country',
                 'campaign_id' => 'campaign_id',
                 'campaign_name' => 'campaign_name',
+                'email' => 'email',
             ),
             'hiddenFields' =>
             array(
@@ -85,6 +86,7 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'shipping_address_country' => 'primary_address_country',
                 'campaign_id' => 'campaign_id',
                 'campaign_name' => 'campaign_name',
+                'email' => 'email',
             ),
         ),
         array(

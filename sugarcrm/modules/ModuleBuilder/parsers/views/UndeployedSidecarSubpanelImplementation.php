@@ -58,6 +58,10 @@ class UndeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementa
 
         if (file_exists($template_subpanel_def)) {
             include $template_subpanel_def;
+            if (isset($viewdefs['<module_name>'])) {
+                $viewdefs[$this->module->key_name] = $viewdefs['<module_name>'];
+                unset($viewdefs['<module_name>']);
+            }
         }
 
         if ($subpanelName != 'default' && !stristr($subpanelName, 'for')) {
@@ -94,8 +98,8 @@ class UndeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementa
      */
     public function getNewViewDefs(array $viewDefs)
     {
-        if (isset($viewDefs[$this->_moduleName][$this->_viewClient]['view'][$this->sidecarSubpanelName])) {
-            return $viewDefs[$this->_moduleName][$this->_viewClient]['view'][$this->sidecarSubpanelName];
+        if (isset($viewDefs[$this->module->key_name][$this->client]['view'][$this->sidecarSubpanelName])) {
+            return $viewDefs[$this->module->key_name][$this->client]['view'][$this->sidecarSubpanelName];
         }
 
         return array();

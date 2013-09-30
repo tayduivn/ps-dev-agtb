@@ -368,6 +368,7 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
     'buttons' => array(
         array(
             'type' => 'button',
+            'event' => 'button:cancel_button:click',
             'name' => 'cancel_button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
@@ -403,6 +404,20 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'acl_action' => 'view',
                 ),
                 array(
+                    'type' => 'pdfaction',
+                    'name' => 'download-pdf',
+                    'label' => 'LBL_PDF_VIEW',
+                    'action' => 'download',
+                    'acl_action' => 'view',
+                ),
+                array(
+                    'type' => 'pdfaction',
+                    'name' => 'email-pdf',
+                    'label' => 'LBL_PDF_EMAIL',
+                    'action' => 'email',
+                    'acl_action' => 'view',
+                ),
+                array(
                     'type' => 'divider',
                 ),
                 //BEGIN SUGARCRM flav=ent ONLY
@@ -417,6 +432,13 @@ $viewdefs['RevenueLineItems']['base']['view']['record'] = array(
                     'type' => 'divider',
                 ),
                 //END SUGARCRM flav=ent ONLY
+                array(
+                    'type' => 'rowaction',
+                    'event' => 'button:find_duplicates_button:click',
+                    'name' => 'find_duplicates_button',
+                    'label' => 'LBL_DUP_MERGE',
+                    'acl_action' => 'edit',
+                ),
                 array(
                     'type' => 'rowaction',
                     'event' => 'button:duplicate_button:click',

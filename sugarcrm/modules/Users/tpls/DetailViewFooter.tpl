@@ -247,18 +247,6 @@
             </tr>
             </table>
         </div>
-        <div id='edit_tabs'>
-            <table width="100%" border="0" cellspacing="0" cellpadding="0"  class="detail view">
-            <tr>
-            <th colspan='4' align="left" width="100%" valign="top"><h4><slot>{$MOD.LBL_LAYOUT_OPTIONS}</slot></h4></th>
-            </tr>
-            <tr>
-            <td width="15%" scope="row"><slot>{$MOD.LBL_SUBPANEL_TABS|strip_semicolon}:</slot></td>
-            <td><slot><input class="checkbox" type="checkbox" disabled {$SUBPANEL_TABS}></slot></td>
-            <td><slot>{$MOD.LBL_SUBPANEL_TABS_DESCRIPTION}&nbsp;</slot></td>
-            </tr>
-            </table>
-        </div>
     </div>
 {if $SHOW_ROLES}
     {$ROLE_HTML}

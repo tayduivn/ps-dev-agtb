@@ -357,6 +357,13 @@
                     var tooltipOpts = {placement: 'top', trigger: 'click' };
                     $tooltip.tooltip(tooltipOpts);
                 }
+                // Select2 sometimes has hidden fields, this prevents errors for said fields from showing on screen
+                $ftag.each(function() {
+                    if($(this).hasClass("select2-offscreen")) {
+                        $(this).parent("div.input-append.error").addClass("select2-offscreen");
+                    }
+                });
+
             },
 
             /**

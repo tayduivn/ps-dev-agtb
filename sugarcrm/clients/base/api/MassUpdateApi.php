@@ -116,9 +116,9 @@ class MassUpdateApi extends SugarApi {
         $mu_params = $args['massupdate_params'];
         $mu_params['module'] = $args['module'];
 
-        // should have either uid or entire specified
+        // should pass success status once uid is empty.
         if (empty($mu_params['uid']) && empty($mu_params['entire'])) {
-            throw new SugarApiExceptionMissingParameter("You must mass update at least one record");
+            return array('status'=>'done');
         }
 
         if (isset($mu_params['entire']) && empty($mu_params['entire'])) {

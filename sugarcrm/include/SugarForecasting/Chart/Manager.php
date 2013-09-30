@@ -155,13 +155,16 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
 
         if (!empty($targetedUser->reports_to_id)) {
-            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
-            return SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id']);
+            // pull the worksheet data since we need the draft records if they exist to show what could be in draft
+            // for the user, if they are the current user.
+            /* @var $mgr_worksheet ForecastManagerWorksheet */
+            $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
+            $totals = $mgr_worksheet->worksheetTotals($targetedUser->id, $this->getArg('timeperiod_id'));
+
+            return $totals['quota'];
         }
         // get the quota from the loaded data for a manager that has no manager
         return $this->getQuotaTotalFromData();
-
-
     }
 
     /**

@@ -360,32 +360,39 @@ describe('Base.Fields.ForecastParetoChart', function() {
 
     });
 
-    describe('tests buildChartUrl function', function() {
-        it('should return properly formatted url', function() {
-            var params = {
-                    timeperiod_id: 'a',
-                    user_id: 'b',
-                    display_manager: false
-                },
-                result = field.buildChartUrl(params);
+    describe('buildChartUrl', function() {
+        beforeEach(function() {
+        });
 
+        afterEach(function() {
+            field.model.unset('timeperiod_id', {silent: true});
+            field.model.unset('user_id', {silent: true});
+            field.model.unset('display_manager', {silent: true});
+        });
+
+        it('should return url for rep', function() {
+            field.model.set({
+                timeperiod_id: 'a',
+                user_id: 'b',
+                display_manager: false
+            }, {silent: true});
+
+            var result = field.buildChartUrl();
             result = result.split('/');
             expect(result[0]).toBe('ForecastWorksheets');
             expect(result[1]).toBe('chart');
             expect(result[2]).toBe('a');
             expect(result[3]).toBe('b');
         });
-    });
 
-    describe('tests buildChartUrl function for manager', function() {
-        it('should return properly formatted url', function() {
-            var params = {
-                    timeperiod_id: 'a',
-                    user_id: 'b',
-                    display_manager: true
-                },
-                result = field.buildChartUrl(params);
+        it('should return url for manager', function() {
+            field.model.set({
+                timeperiod_id: 'a',
+                user_id: 'b',
+                display_manager: true
+            }, {silent: true});
 
+            var result = field.buildChartUrl();
             result = result.split('/');
             expect(result[0]).toBe('ForecastManagerWorksheets');
             expect(result[1]).toBe('chart');

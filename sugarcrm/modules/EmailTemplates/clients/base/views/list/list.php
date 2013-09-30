@@ -55,7 +55,6 @@ $viewdefs['EmailTemplates']['base']['view']['list'] = array(
                     'name'  => 'assigned_user_name',
                     'label' => 'LBL_LIST_ASSIGNED_USER',
                     'default' => true,
-                    'module' => 'Employees',
                 ),
                 array(
                     'name' => 'date_modified',

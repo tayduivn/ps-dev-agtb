@@ -127,10 +127,27 @@
     };
 
     /**
+     * 424 Handle validation error 
+     */
+    app.error.handleValidationErrorOld = app.error.handleValidationError;
+    app.error.handleValidationError = function(error) {
+        var layout = app.controller.layout;
+        if( !_.isObject(layout.error) ||
+            !_.isFunction(layout.error.handleValidationError) ||
+            layout.error.handleValidationError(error) !== false
+        ) {
+            return app.error.handleValidationErrorOld(error);
+        }
+    };
+
+    /**
      * 412 Header precondition failure error.
      */
-    app.error.handleHeaderPreconditionFailed = function(error) {
-        app.sync();
+    app.error.handleHeaderPreconditionFailed = function(error, b, c, d) {
+        //Only kick off a sync if we are not already in the process of syncing
+        if (app.isSynced) {
+            app.sync();
+        }
     };
 
     /**

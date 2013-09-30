@@ -250,7 +250,9 @@
 
         // custom success handler
         options.success = _.bind(function(model, data, options) {
-            this.collection.reset(data);
+            if(!this.disposed) {
+                this.collection.reset(data);
+            }
         }, this);
 
         callbacks = app.data.getSyncCallbacks(method, model, options);

@@ -33,12 +33,12 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('mod_strings', array('Administration', 'Leads'));        
+        SugarTestHelper::setUp('mod_strings', array('Administration', 'Leads'));
         $this->calls = array();
         $this->files = array();
         $this->dir = 'custom/Extension/modules/Leads/Ext/Vardefs';
         $this->search_engine_name = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
-        $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);        
+        $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
         parent::setUp();
     }
 
@@ -56,7 +56,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM leads_cstm WHERE id_c IN {$leadIds}");
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    
+
         foreach($this->files AS $file) {
             //unlink($file);
         }
@@ -77,11 +77,12 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group elastic
+     * @large
      */
     public function testBoostSearch() {
         if($this->search_engine_name != 'Elastic') {
             $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
-        }        
+        }
         $lead = new Lead();
         $lead->name = 'test' . create_guid();
         $lead->account_name = "5678";
@@ -105,14 +106,14 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         $lead_description_id = $lead->id;
         $this->leads[] = $lead;
         $this->search_engine->indexBean($lead, FALSE);
-        
+
         $GLOBALS['db']->commit();
 
         // set Calls Name is High Boost
         if(!is_dir($this->dir)) {
             sugar_mkdir($this->dir, null, true);
         }
-        
+
 
         $filename = 'sugarfield_account_name.php';
         $this->files[] = $this->dir . '/' . $filename;
@@ -120,7 +121,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         $file_contents = '<?php
         $dictionary[\'Lead\'][\'fields\'][\'account_name\'][\'full_text_search\']=array (
   \'boost\' => \'3\',
-); 
+);
 ?>';
         file_put_contents($this->dir . '/' . $filename, $file_contents);
 
@@ -130,7 +131,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         $file_contents = '<?php
         $dictionary[\'Lead\'][\'fields\'][\'account_description\'][\'full_text_search\']=array (
   \'boost\' => \'1\',
-); 
+);
 ?>';
 
         file_put_contents($this->dir . '/' . $filename, $file_contents);
@@ -158,17 +159,17 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         // check the first one only.
-        $this->assertEquals($new_results[0]->getId(), $lead_name_id, "The First Result wasn't the Lead with the Name");    
+        $this->assertEquals($lead_name_id, $new_results[0]->getId(),  "The First Result wasn't the Lead with the Name");
 
-        
+
         // set description as high boost and name as low boost
 
         $filename = 'sugarfield_account_name.php';
-        
+
         $file_contents = '<?php
         $dictionary[\'Lead\'][\'fields\'][\'account_name\'][\'full_text_search\']=array (
   \'boost\' => \'1\',
-); 
+);
 ?>';
         file_put_contents($this->dir . '/' . $filename, $file_contents);
 
@@ -177,7 +178,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         $file_contents = '<?php
         $dictionary[\'Lead\'][\'fields\'][\'account_description\'][\'full_text_search\']=array (
   \'boost\' => \'3\',
-); 
+);
 ?>';
         file_put_contents($this->dir . '/' . $filename, $file_contents);
 
@@ -204,7 +205,7 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         // check the first one only.
-        $this->assertEquals($new_results[0]->getId(), $lead_description_id, "The First Result wasn't the Lead with the Description");     
+        $this->assertEquals($lead_description_id, $new_results[0]->getId(),  "The First Result wasn't the Lead with the Description");
     }
 
 

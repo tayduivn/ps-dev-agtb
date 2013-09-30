@@ -1,3 +1,15 @@
+/*
+ * By installing or using this file, you are confirming on behalf of the entity
+ * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
+ * http://www.sugarcrm.com/master-subscription-agreement
+ *
+ * If Company is not bound by the MSA, then by installing or using this file
+ * you are agreeing unconditionally that Company will be bound by the MSA and
+ * certifying that you have authority to bind Company accordingly.
+ *
+ * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
+ */
 ({
     extendsFrom: 'RecordView',
     editAllMode: false,
@@ -28,6 +40,9 @@
         createViewEvents['click a[name=' + this.saveAndViewButtonName + ']'] = 'saveAndView';
         createViewEvents['click a[name=' + this.restoreButtonName + ']'] = 'restoreModel';
         this.events = _.extend({}, this.events, createViewEvents);
+        this.plugins = _.union(this.plugins || [], [
+            'FindDuplicates'
+        ]);
 
         //add states for create view
         this.STATE = _.extend({}, this.STATE, {
@@ -86,6 +101,9 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
+        if (this.resavingAfterMetadataSync)
+            return false;
+
         return this.model.isNew() && this.model.hasChanged();
     },
 
@@ -103,6 +121,12 @@
         this.setButtonStates(this.STATE.CREATE);
 
         this.renderDupeCheckList();
+
+        //SP-1502: Broadcast model changes so quickcreate field can keep track of unsaved changes
+        app.events.trigger('create:model:changed', false);
+        this.model.on('change', function() {
+            app.events.trigger('create:model:changed', this.hasUnsavedChanges());
+        }, this);
     },
 
     /**
@@ -192,7 +216,9 @@
             _.bind(this.createRecordWaterfall, this)
         ], _.bind(function (error) {
             this.enableButtons();
-            if (!error && !this.disposed) {
+            if (error && error.status == 412 && !error.request.metadataRetry) {
+                this.handleMetadataSyncError(error);
+            } else if (!error && !this.disposed) {
                 this.context.lastSaveAction = null;
                 callback();
             }
@@ -225,9 +251,13 @@
                     callback(false);
                 }
             }, this),
-            error = _.bind(function () {
-                this.alerts.showServerError();
-                callback(true);
+            error = _.bind(function (e) {
+                if (e.status == 412 && !e.request.metadataRetry) {
+                    this.handleMetadataSyncError(e);
+                } else {
+                    this.alerts.showServerError();
+                    callback(true);
+                }
             }, this);
         if (this.skipDupeCheck() || !this.enableDuplicateCheck) {
             callback(false);
@@ -244,9 +274,13 @@
         var success = function () {
                 callback(false);
             },
-            error = _.bind(function () {
-                this.alerts.showServerError();
-                callback(true);
+            error = _.bind(function (e) {
+                if (e.status == 412 && !e.request.metadataRetry) {
+                    this.handleMetadataSyncError(e);
+                } else {
+                    this.alerts.showServerError();
+                    callback(true);
+                }
             }, this);
 
         this.saveModel(success, error);
@@ -470,11 +504,12 @@
      */
     renderDupeCheckList: function () {
         this.setDupeCheckType('dupecheck-list-edit');
+        this.context.set('collection', this.createDuplicateCollection(this.model));
 
         if (_.isNull(this.dupecheckList)) {
             this.dupecheckList = app.view.createLayout({
                 context: this.context,
-                name: 'dupecheck',
+                name: 'create-dupecheck',
                 module: this.module
             });
             this.addToLayoutComponents(this.dupecheckList);

@@ -44,16 +44,11 @@ function getSystemInfo($send_usage_info=true){
 		} // if
 
 		//get user count.
-
-		//BEGIN SUGARCRM dep=os ONLY
-		$users_where = "is_group=0 AND portal_only=0 ";
-		//END SUGARCRM dep=os ONLY
-
-		//BEGIN SUGARCRM dep=od ONLY
-		$users_where = "is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ";
-		//END SUGARCRM dep=od ONLY
-
-		$info['users']=$db->getOne("select count(id) count from users WHERE status='Active' AND $users_where", false, 'fetching active users count');
+                $query = "SELECT count(id) as total from users WHERE " . User::getLicensedUsersWhere();
+                $result = $db->getOne($query, false, 'fetching active users count');
+                if ($result !== false) {
+                    $info['users'] = $result;
+                }
 
 	    $administration = Administration::getSettings('system');
 		$info['system_name'] = (!empty($administration->settings['system_name']))?substr($administration->settings['system_name'], 0 ,255):'';

@@ -9,6 +9,7 @@
         'GridBuilder',
         'Editable',
         'Audit',
+        'FindDuplicates',
         'ToggleMoreLess'
     ],
 
@@ -87,6 +88,9 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
+        if (this.resavingAfterMetadataSync)
+            return false;
+
         var changedAttributes = this.model.changedAttributes(this.model.getSyncedAttributes());
 
         if (_.isEmpty(changedAttributes)) {
@@ -132,7 +136,6 @@
         this.context.on('button:save_button:click', this.saveClicked, this);
         this.context.on('button:delete_button:click', this.deleteClicked, this);
         this.context.on('button:duplicate_button:click', this.duplicateClicked, this);
-        this.context.on('button:find_duplicates_button:click', this.findDuplicatesClicked, this);
     },
 
     _render: function () {
@@ -274,16 +277,6 @@
         });
     },
 
-    findDuplicatesClicked: function () {
-        app.drawer.open({
-            layout: 'find-duplicates',
-            context: {
-                dupeCheckModel: this.model,
-                dupelisttype: 'dupecheck-list-multiselect'
-            }
-        });
-    },
-
     editClicked: function () {
         this.setButtonStates(this.STATE.EDIT);
         this.toggleEdit(true);
@@ -408,8 +401,13 @@
                     this.render();
                 }
             }, this),
-            error: _.bind(function() {
-                this.editClicked();
+            error: _.bind(function(error) {
+                if (error.status == 412 && !error.request.metadataRetry) {
+                    this.handleMetadataSyncError(error);
+                }
+                else {
+                    this.editClicked();
+                }
             }, this),
             viewed: true
         };
@@ -429,6 +427,22 @@
         if (!self.disposed) {
             self.render();
         }
+    },
+
+    handleMetadataSyncError: function(error){
+        var self = this;
+       //On a metadata sync error, retry the save after the app is synced
+       self.resavingAfterMetadataSync = true;
+       app.once("app:sync:complete", function(){
+           error.request.metadataRetry = true;
+           self.model.once("sync", function(){
+               self.resavingAfterMetadataSync = false;
+               //self.model.changed = {};
+               app.router.refresh();
+           });
+           //add a new sucess callback to refresh the page after the save completes
+           error.request.execute(null, app.api.getMetadataHash());
+       });
     },
 
     getCustomSaveOptions: function(options) {
@@ -558,9 +572,9 @@
             this.toggleField(field, false);
             this.toggleField(nextField, true);
             // the field we need to toggle until we reach one that's not
-            if (field.isDisabled() && nextField) {
-                var curField = field;
-                while (curField.isDisabled) {
+            if (nextField.isDisabled()) {
+                var curField = nextField;
+                while (curField.isDisabled()) {
                     if (curField[direction]) {
                         this.toggleField(curField[direction], true);
                         curField = curField[direction];
@@ -773,12 +787,12 @@
      * is set to 100% on view.  On edit, the first field is set to 100%.
      */
     adjustHeaderpaneFields: function() {
-        var $ellipsisCell,
-            ellipsisCellWidth,
-            $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
         if (!this.disposed && !_.isEmpty($recordCells) && this.getContainerWidth() > 0) {
-            $ellipsisCell = $(this._getCellToEllipsify($recordCells));
-            if (!_.isEmpty($ellipsisCell)) {
+            var ellipsisCellWidth,
+                $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar'),
+                $ellipsisCell = $(this._getCellToEllipsify($recordCells));
+
+                if (!_.isEmpty($ellipsisCell)) {
                 if ($ellipsisCell.hasClass('edit')) {
                     // make the ellipsis cell widen to 100% on edit
                     $ellipsisCell.css({'width': '100%'});

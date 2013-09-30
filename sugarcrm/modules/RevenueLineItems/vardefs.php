@@ -121,6 +121,22 @@ $dictionary['RevenueLineItem'] = array(
             ),
             'comment' => 'Manufacturer of product'
         ),
+        'manufacturer_name' =>
+        array (
+            'name' => 'manufacturer_name',
+            'rname'=> 'name',
+            'id_name'=> 'manufacturer_id',
+            'type' => 'relate',
+            'vname' =>'LBL_MANUFACTURER_NAME',
+            'join_name' => 'manufacturers',
+            'link' => 'manufacturer_link',
+            'table' => 'manufacturers',
+            'isnull' => 'true',
+            'source'=>'non-db',
+            'module' => 'Manufacturers',
+            'dbType' => 'varchar',
+            'len' => '255',
+        ),
         'category_id' => array(
             'name' => 'category_id',
             'vname' => 'LBL_CATEGORY',
@@ -669,13 +685,6 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
             'comment' => 'Quote Name'
         ),
-        'manufacturer_name' => array(
-            'name' => 'manufacturer_name',
-            'type' => 'varchar',
-            'vname' => 'LBL_MANUFACTURER',
-            'source' => 'non-db',
-            'comment' => 'Manufacturer Name'
-        ),
 //BEGIN SUGARCRM flav=pro ONLY
         'assigned_user_id' => array(
             'name' => 'assigned_user_id',
@@ -745,7 +754,7 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'type_name',
             'rname' => 'name',
             'id_name' => 'type_id',
-            'vname' => 'LBL_TYPE',
+            'vname' => 'LBL_PRODUCT_TYPE',
             'join_name' => 'types',
             'type' => 'relate',
             'link' => 'revenuelineitem_types_link',

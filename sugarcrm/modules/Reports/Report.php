@@ -650,7 +650,8 @@ class Report
                 if ($field_def['type'] == 'relate' && !empty($field_def['ext2'])) {
                     $joinFocus = BeanFactory::getBean($field_def['ext2']);
                     $field_def['secondary_table'] = $joinFocus->table_name;
-                    if(isset($table_data['link_def']) && $table_data['link_def']['module'] == $table_data['module'])
+                    if(isset($table_data['link_def']) && isset($table_data['link_def']['module']) && isset($table_data['module'])
+                        && $table_data['link_def']['module'] == $table_data['module'])
                     {
                         $tmp[$table_data['module']][$field_def['name']]++;
                     }
@@ -2288,21 +2289,6 @@ return str_replace(' > ','_',
             $row['group_header'] = $this->group_header;
             $row['group_column_is_invisible'] = $this->group_column_is_invisible;
         }
-
-
-        // fix for bug47120
-         // RTA - check each column for access, and blank value if no access
-         $col_module = $this->report_def['module'];
-         $is_owner = !empty($this->assigned_user_id) && $this->report_def['assigned_user_id'] == $GLOBALS['current_user']->id;
-         $count=0;
-         foreach($this->report_def['display_columns'] as $column) {
-           if (ACLField::hasAccess($column['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
-             // blank out the value in the column
-           $row['cells'][$count]="";
-           }
-           $count++;
-         }
-         // end of fix
 
         return $row;
     }

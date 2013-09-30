@@ -54,6 +54,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         'iframe' => 'iframe',
         'image' => 'image',
         'relate' => 'relate',
+        'parent' => 'parent',
         'email' => 'email',
     );
     

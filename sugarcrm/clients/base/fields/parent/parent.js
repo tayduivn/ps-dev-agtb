@@ -3,9 +3,6 @@
     extendsFrom: 'RelateField',
     fieldTag: 'input.select2[name=parent_name]',
     typeFieldTag: 'select.select2[name=parent_type]',
-
-    plugins: ['EllipsisInline'],
-
     _render: function() {
         var result, self = this;
         app.view.invokeParent(this, {type: 'field', name: 'relate', method: '_render'});
@@ -29,8 +26,28 @@
                 });
             });
 
-            if(this.model.get('parent_type') !== this.$(this.typeFieldTag).val()) {
-                this.model.set('parent_type', this.$(this.typeFieldTag).val());
+
+            if(this.model.get(this.def.type_name) !== this.$(this.typeFieldTag).val()) {
+                this.model.set(this.def.type_name, this.$(this.typeFieldTag).val());
+            }
+
+            //If this is being created through a subpanel or dashlet as a child of another record
+            //default to populating the parent field as that record
+            if (this.context.parent && this.context.isCreate() && !this.model.get(this.def.id_name)) {
+                var parentModule = this.context.parent.get("module");
+                if (app.lang.getAppListStrings(this.def.options)[parentModule]) {
+                    this.model.set(this.def.type_name, parentModule);
+                    var parentModel = this.context.parent.get("model") ;
+                    if (parentModel && parentModel.get("id")) {
+                        this.model.set(this.def.id_name, parentModel.get("id"));
+                        this.model.set(this.def.name,
+                            parentModel.get("full_name")
+                            || parentModel.get("document_name")
+                            || parentModel.get("name")
+                            || ""
+                        );
+                    }
+                }
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {

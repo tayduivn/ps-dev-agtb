@@ -46,16 +46,15 @@
      * @protected
      */
     _getFilters: function(index) {
+        var filterDate = new Date();
+        filterDate.setDate(filterDate.getDate() - this.settings.get('filter'));
+        var filterStr = app.date.format(filterDate, 'Y-m-d');
+
         var tab = this.tabs[index],
             filter = {},
-            filterDate = new Date(),
             filters = [];
 
-        filterDate.setDate(filterDate.getDate() - this.settings.get('filter'));
-
-        filter[tab.filter_applied_to] = {
-            $gte: app.date.format(filterDate, 'Y-m-d H:i:s')
-        };
+        filter[tab.filter_applied_to] = {$gte: filterStr};
 
         filters.push(filter);
 

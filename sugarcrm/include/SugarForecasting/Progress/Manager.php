@@ -83,45 +83,25 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
      */
     public function getManagerProgress()
     {
-        //get the quota data for user
-        /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
-
-        //grab user that is the target of this call to check if it is the top level manager
-        $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
-
-        //top level manager has to receive special treatment, but all others can be routed through quota function.
-        if ($targetedUser->reports_to_id != "") {
-            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
-        } else {
-            $quotaData["amount"] = $this->getQuotaTotalFromData();
-        }
-
-        //Get pipeline total and count;
-        $this->getPipelineRevenue();
-
-        //get data
-        $progressData = array(
-            "closed_amount"     => $this->closedAmount,
-            "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
-        );
-
         $user_id = $this->getArg('user_id');
         $timeperiod_id = $this->getArg('timeperiod_id');
 
+        /* @var $mgr_worksheet ForecastManagerWorksheet */
         $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
         $totals = $mgr_worksheet->worksheetTotals($user_id, $timeperiod_id);
+
+        // pull the quota from the worksheet data since we need the draft records if they exist
+        // to show what could be in draft for the user, if they are the current user.
+        $totals['quota_amount'] = $totals['quota'];
 
         $totals['user_id'] = $user_id;
         $totals['timeperiod_id'] = $timeperiod_id;
         // unset some vars that come from the worksheet to avoid confusion with correct data
         // coming from this endpoint for progress
-        unset($totals['pipeline_opp_count'], $totals['quota'], $totals['included_opp_count'], $totals['pipeline_amount']);
+        unset($totals['pipeline_opp_count'], $totals['quota'],
+            $totals['included_opp_count'], $totals['pipeline_amount']);
 
-        // combine totals in with other progress data
-        $progressData = array_merge($progressData, $totals);
-
-        return $progressData;
+        return $totals;
     }
 
     /**
@@ -176,33 +156,17 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         //set up outer part of the query
         $query = "select sum(amount) as amount, sum(recordcount) as recordcount, sum(closed) as closed from(";
         
-        //build up two subquery strings so we can unify the sales stage loops
-        //all manager opps 
-        $queryMgrOpps = "SELECT " .
-                            "sum(o.{$amountColumn}/o.base_rate) AS amount, count(*) as recordcount, 0 as closed " .
-                        "FROM {$tableName} o " .
-                        "INNER JOIN users u  " .
-                            "ON o.assigned_user_id = u.id " .
-                        "INNER JOIN timeperiods t " .
-                            "ON t.id = {$db->quoted($timeperiod_id)} " . 
-                        "WHERE " .
-                            "o.assigned_user_id = {$db->quoted($user_id)} " .                            
-                            "AND o.deleted = 0 " .
-                            "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
-                            "AND t.end_date_timestamp >= o.date_closed_timestamp ";
-        
-        $queryClosedMgrOpps = "SELECT " .
-                                  "0 as amount, 0 as recordcount, sum(o.{$amountColumn}/o.base_rate) AS closed " .
-                              "FROM {$tableName} o " .
-                              "INNER JOIN users u  " .
-                                  "ON o.assigned_user_id = u.id " .
-                              "INNER JOIN timeperiods t " .
-                                  "ON t.id = {$db->quoted($timeperiod_id)} " . 
-                              "WHERE " .
-                                  "o.assigned_user_id = {$db->quoted($user_id)} " .                            
-                                  "AND o.deleted = 0 " .
-                                  "AND t.start_date_timestamp <= o.date_closed_timestamp " . 
-                                  "AND t.end_date_timestamp >= o.date_closed_timestamp ";
+        $queryMgrOpps = "";
+        //only commiteed manager
+        $subQuery = "(select (pipeline_amount / base_rate) as amount, " .
+                                 "pipeline_opp_count as recordcount, " .
+                                 "(closed_amount / base_rate) as closed from forecasts " .
+                         "where timeperiod_id = {$db->quoted($timeperiod_id)} " .
+                            "and user_id = {$db->quoted($user_id)} " .
+                            "and forecast_type = 'Direct' " .
+                         "order by date_entered desc ";
+        $queryMgrOpps .= $db->limitQuery($subQuery, 0, 1, false, "", false);
+        $queryMgrOpps .= ") ";
         
         //only committed direct reportee (manager) opps
         $queryRepOpps = "";
@@ -243,24 +207,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
                 $queryRepOpps .= "union all ";
             }
         }
-        
-        //per requirements, exclude the sales stages won from amount, but find them for the closed total
-        if (count($excluded_sales_stages_won)) {
-            foreach ($excluded_sales_stages_won as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";                
-            }
-            $queryClosedMgrOpps .= "AND o.sales_stage IN ('" . implode("', '", $excluded_sales_stages_won) . "') ";
-        }       
-
-        //per the requirements, exclude the sales stages for closed lost
-        if (count($excluded_sales_stages_lost)) {
-            foreach ($excluded_sales_stages_lost as $exclusion) {
-                $queryMgrOpps .= "AND o.sales_stage != {$db->quoted($exclusion)} ";
-            }
-        }
-        
+         
         //Union the two together if we have two separate queries
-        $query .= $queryMgrOpps . " union all " . $queryClosedMgrOpps;
+        $query .= $queryMgrOpps;
         if ($queryRepOpps != "") {
             $query .= " union all " . $queryRepOpps;
         }

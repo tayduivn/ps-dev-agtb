@@ -972,7 +972,7 @@ class MetadataApi extends SugarApi
         $currencies = array();
         require_once 'modules/Currencies/ListCurrency.php';
         $lcurrency = new ListCurrency();
-        $lcurrency->lookupCurrencies();
+        $lcurrency->lookupCurrencies(true);
         if (!empty($lcurrency->list)) {
             foreach ($lcurrency->list as $current) {
                 $currency = array();
@@ -989,7 +989,7 @@ class MetadataApi extends SugarApi
                 // PHP builds when writing to the cache because of how PHP was
                 // handling negative int array indexes. This was causing metadata
                 // to store a different value in the cache than -99. The fix was
-                // to add a space arround the -99 to force it to string.
+                // to add a space around the -99 to force it to string.
                 $id = $current->id == -99 ? '-99 ': $current->id;
                 $currencies[$id] = $currency;
             }

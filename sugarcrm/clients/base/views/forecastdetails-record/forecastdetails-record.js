@@ -170,7 +170,7 @@
             }
 
             if(_.contains(this.closedWonIds, ctxMdl.get('id'))) {
-                this.processSalesStatus(ctxMdl);
+                this.processSalesStage(ctxMdl);
             }
         }
     },

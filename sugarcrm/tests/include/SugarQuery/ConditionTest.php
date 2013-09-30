@@ -61,7 +61,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
             // create a new contact
             $opp = BeanFactory::newBean('Opportunities');
             $opp->name = "SugarQuery Unit Test {$x}";
-            $opp->amount = $x;
+            $opp->probability = $x;
             $opp->date_modified = date('Y-m-d');
             $opp->date_closed = date('Y-m-d');
             $opp->save();
@@ -102,16 +102,15 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from($this->opportunity_bean);
-        $sq->where()->equals('amount', 200, $this->opportunity_bean);
+        $sq->where()->equals('probability', 200, $this->opportunity_bean);
 
         $result = $sq->execute();
-
         $this->assertEquals(count($result), 1, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach ($result AS $opp) {
-            $this->assertEquals(200, $opp['amount'], "The amount was not less than 2000 it was: {$opp['amount']}");
+            $this->assertEquals(200, $opp['probability'], "The amount does not equal to 200 it was: {$opp['probability']}");
         }
     }
 
@@ -119,7 +118,7 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from($this->opportunity_bean);
         $sq->where()->contains('name', 'Query Unit Test 10', $this->opportunity_bean);
 
@@ -158,16 +157,16 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->lt('amount', 200, $this->opportunity_bean);
+        $sq->where()->lt('probability', 200, $this->opportunity_bean);
 
         $result = $sq->execute();
 
         $this->assertEquals(count($result), 100, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach ($result AS $opp) {
-            $this->assertLessThan(200, $opp['amount'], "The amount was not less than 2000 it was: {$opp['amount']}");
+            $this->assertLessThan(200, $opp['probability'], "The amount was not less than 2000 it was: {$opp['probability']}");
         }
     }
 
@@ -175,9 +174,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->lte('amount', 200, $this->opportunity_bean);
+        $sq->where()->lte('probability', 200, $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -186,8 +185,8 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         foreach ($result AS $opp) {
             $this->assertLessThanOrEqual(
                 200,
-                $opp['amount'],
-                "The amount was not less than 2000 it was: {$opp['amount']}"
+                $opp['probability'],
+                "The amount was not less than 2000 it was: {$opp['probability']}"
             );
         }
     }
@@ -196,16 +195,16 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->gt('amount', 200, $this->opportunity_bean);
+        $sq->where()->gt('probability', 200, $this->opportunity_bean);
 
         $result = $sq->execute();
 
         $this->assertEquals(count($result), 100, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach ($result AS $opp) {
-            $this->assertGreaterThan(200, $opp['amount'], "The amount was not less than 2000 it was: {$opp['amount']}");
+            $this->assertGreaterThan(200, $opp['probability'], "The amount was not less than 2000 it was: {$opp['probability']}");
         }
     }
 
@@ -213,16 +212,16 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->gte('amount', 200, $this->opportunity_bean);
+        $sq->where()->gte('probability', 200, $this->opportunity_bean);
 
         $result = $sq->execute();
 
         $this->assertEquals(count($result), 101, "Wrong row count, actually received: " . count($result) . " back.");
 
         foreach ($result AS $opp) {
-            $this->assertGreaterThanOrEqual(200, $opp['amount'], "Wrong amount value detected.");
+            $this->assertGreaterThanOrEqual(200, $opp['probability'], "Wrong amount value detected.");
         }
     }
 
@@ -291,9 +290,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->in('amount', array(100, 101, 102, 103, 104, 105), $this->opportunity_bean);
+        $sq->where()->in('probability', array(100, 101, 102, 103, 104, 105), $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -303,9 +302,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         //With a null value
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->in('amount', array('', 100, 101, 102, 103, 104, 105), $this->opportunity_bean);
+        $sq->where()->in('probability', array('', 100, 101, 102, 103, 104, 105), $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -315,9 +314,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         //With only a null value
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->in('amount', array(''), $this->opportunity_bean);
+        $sq->where()->in('probability', array(''), $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -328,9 +327,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->notIn('amount', array(100, 101, 102, 103, 104, 105));
+        $sq->where()->notIn('probability', array(100, 101, 102, 103, 104, 105));
 
         $result = $sq->execute();
 
@@ -340,9 +339,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         //With a null value
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->notIn('amount', array('', 100, 101, 102, 103, 104, 105));
+        $sq->where()->notIn('probability', array('', 100, 101, 102, 103, 104, 105));
 
         $result = $sq->execute();
 
@@ -352,9 +351,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
         //With only a null value
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->notIn('amount', array(''));
+        $sq->where()->notIn('probability', array(''));
 
         $result = $sq->execute();
 
@@ -365,9 +364,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->between('amount', 110, 120, $this->opportunity_bean);
+        $sq->where()->between('probability', 110, 120, $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -378,9 +377,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->notNull('amount', $this->opportunity_bean);
+        $sq->where()->notNull('probability', $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -392,9 +391,9 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array("name", "amount"));
+        $sq->select(array("name", "probability"));
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->where()->isNull('amount', $this->opportunity_bean);
+        $sq->where()->isNull('probability', $this->opportunity_bean);
 
         $result = $sq->execute();
 
@@ -427,24 +426,24 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
     public function testOrderByLimit()
     {
         $sq = new SugarQuery();
-        $sq->select("name", "amount");
+        $sq->select("name", "probability");
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->orderBy("amount", "ASC");
+        $sq->orderBy("probability", "ASC");
         $sq->limit(2);
 
         $result = $sq->execute();
 
         $this->assertEquals(count($result), 2, "Wrong row count, actually received: " . count($result) . " back.");
 
-        $low = $result[0]['amount'];
-        $high = $result[1]['amount'];
+        $low = $result[0]['probability'];
+        $high = $result[1]['probability'];
 
         $this->assertGreaterThan($low, $high, "{$high} is not greater than {$low}");
 
         $sq = new SugarQuery();
-        $sq->select("name", "amount");
+        $sq->select("name", "probability");
         $sq->from(BeanFactory::newBean('Opportunities'));
-        $sq->orderBy("amount", "ASC");
+        $sq->orderBy("probability", "ASC");
         $sq->limit(2);
         $sq->offset(1);
 
@@ -452,8 +451,8 @@ class ConditionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($result), 2, "Wrong row count, actually received: " . count($result) . " back.");
 
-        $low = $result[0]['amount'];
-        $high = $result[1]['amount'];
+        $low = $result[0]['probability'];
+        $high = $result[1]['probability'];
 
         $this->assertGreaterThan($low, $high, "{$high} is not greater than {$low}");
 

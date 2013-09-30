@@ -31,7 +31,8 @@ class SugarUpgradeOpportunityRemoveFiles extends UpgradeScript
             $files = array(
                 'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.hbt',
                 'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.js',
-                'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.php'
+                'modules/Opportunities/clients/base/views/forecastInspector/forecastInspector.php',
+                'modules/Opportunities/Ext/LogicHooks/OpportunitySetCurrencyToBase.php',
             );
 
             $this->fileToDelete($files);

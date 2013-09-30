@@ -1,15 +1,17 @@
 (function (app) {
+    // This plugin depends on QuickSearchFilter. You must add that plugin to
+    // your view as well.
     app.events.on("app:init", function () {
         var tagTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag"><a href="#{{buildRoute module=module id=id}}">{{name}}</a></span>'),
             tagInEditTemplate = Handlebars.compile('<span class="label label-{{module}} sugar_tag" contenteditable="false"><a>{{name}}</a></span>'),
-            tagListOptionTemplate = Handlebars.compile('<li{{#if noAccess}} class="disabled"{{/if}}><a><div class="label label-module-mini label-{{module}} pull-left">{{firstChars module 2}}</div>{{{htmlName}}}{{#if noAccess}}<div class="pull-right">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>'),
+            tagListOptionTemplate = Handlebars.compile('<li{{#if noAccess}} class="disabled"{{/if}}><a><div class="label label-module-mini label-{{module}} pull-left">{{moduleIconLabel module}}</div>{{{htmlName}}}{{#if noAccess}}<div class="add-on">{{str "LBL_NO_ACCESS_LOWER"}}</div>{{/if}}</a></li>'),
             tagTextTemplate = Handlebars.compile('@[{{module}}:{{id}}:{{name}}]'),
             taggingHtml = '<span class="sugar_tagging">&nbsp;</span>',
             tagListContainerHtml = '<ul class="dropdown-menu activitystream-tag-dropdown"></ul>',
             mention = '@',
             reference = '#',
-            keycode_2 = 50,
-            keycode_3 = 51,
+            keycode_at = 64,
+            keycode_hash = 35,
             keycode_esc = 27,
             keycode_enter = 13,
             keycode_tab = 9,
@@ -20,6 +22,7 @@
 
         app.plugins.register('Taggable', ['view'], {
             events: {
+                'keypress .taggable': '_checkForReferenceOrMention',
                 'keydown .taggable': '_onKeydown',
                 'keyup .taggable': '_onKeyup',
                 'mouseover .activitystream-tag-dropdown li': '_setListOptionAsActive',
@@ -128,6 +131,25 @@
             _taggableListOpen: null,
 
             /**
+             * Enable taggable typeahead when @ or # is pressed.
+             *
+             * @param keypress
+             * @private
+             */
+            _checkForReferenceOrMention: function(event) {
+                // When taggable is disabled
+                if (!this._taggableEnabled) {
+                    // enable taggable typeahead when @ or # is pressed
+                    switch (event.which) {
+                        case keycode_at:
+                        case keycode_hash:
+                            this._enableTaggable();
+                            break;
+                    }
+                }
+            },
+
+            /**
              * Listen to keydown events. Perform various actions depending upon what keys have been pressed in
              * varying states.
              *
@@ -135,20 +157,9 @@
              * @private
              */
             _onKeydown: function(event) {
-                // When taggable is disabled and the shift key has been pressed...
-                if (!this._taggableEnabled && (event.shiftKey === true)) {
-                    // enable taggable typeahead when @ or # is pressed
-                    switch (event.keyCode) {
-                        case keycode_2:
-                        case keycode_3:
-                            this._enableTaggable();
-                            break;
-                    }
-                }
-
                 // When taggable is enabled but the tag search result list has not been opened...
                 if (this._taggableEnabled && !this._taggableListOpen) {
-                    switch (event.keyCode) {
+                    switch (event.which) {
                         // reset typeahead when escape, enter, or tab is pressed
                         case keycode_esc:
                         case keycode_enter:
@@ -161,7 +172,7 @@
 
                 // When taggable is enabled and the tag search result list is open...
                 if (this._taggableEnabled && (this._taggableListOpen === true)) {
-                    switch (event.keyCode) {
+                    switch (event.which) {
                         // remove typeahead when escape key is pressed
                         case keycode_esc:
                             event.preventDefault();
@@ -201,7 +212,7 @@
                 if (this._taggableEnabled) {
                     // Do not perform search if enter, tab, up arrow, or down arrow has been pressed while tag search
                     // result is open.
-                    if (this._taggableListOpen && (event.keyCode === keycode_enter || event.keyCode === keycode_tab || event.keyCode == keycode_up || event.keyCode == keycode_down)) {
+                    if (this._taggableListOpen && (event.which === keycode_enter || event.which === keycode_tab || event.which == keycode_up || event.which == keycode_down)) {
                         return;
                     }
 
@@ -377,7 +388,7 @@
                     referenceSearchFields = ['name', 'first_name', 'last_name'],
                     tagAction = searchTerm.charAt(0); // @ or # character
 
-                searchTerm = searchTerm.substr(1);
+                searchTerm = $.trim(searchTerm.substr(1));
 
                 // Do not perform search if the number of characters typed so far in typeahead is less than what is
                 // specified in taggableSearchAfter and if search term is the same as the last searched term.
@@ -393,21 +404,19 @@
                         this._resetTaggable();
                     } else {
                         if (tagAction === mention) {
-                            _.extend(searchParams, {
-                                module_list: 'Users',
-                                has_access_module: this._taggableModuleName,
-                                has_access_record: this._taggableModelId
-                            });
-
-                            // We cannot use the filter API here as we need to
-                            // support users typing in full names, which are not
-                            // stored in the database as fields.
-                            app.api.search(searchParams, {
-                                success: _.bind(function(response) {
-                                    if (this._taggableEnabled && response) {
-                                        this._populateTagList(app.data.createBeanCollection("Users", response.records), searchTerm);
+                            // This plugin depends on QuickSearchFilter because
+                            // of this branch.
+                            app.data.createBeanCollection("Users").fetch({
+                                success: _.bind(function(collection, resp) {
+                                    if (this._taggableEnabled && resp) {
+                                        this._populateTagList(collection, searchTerm);
                                     }
-                                }, this)
+                                }, this),
+                                filter: this.getFilterDef("Users", searchTerm),
+                                params: {
+                                    has_access_module: this._taggableModuleName,
+                                    has_access_record: this._taggableModelId
+                                }
                             });
                         } else if (tagAction === reference) {
                             searchParams.search_fields = referenceSearchFields.join();

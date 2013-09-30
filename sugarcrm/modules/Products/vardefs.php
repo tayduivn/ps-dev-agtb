@@ -139,7 +139,7 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE_ID',
             'required' => false,
             'reportable' => false,
-            'comment' => 'If product created via Quote, this is quote ID'
+            'comment' => 'If product created via Quote, this is quote ID',
         ),
         'currency_symbol' =>  array(
             'name' => 'currency_symbol',
@@ -160,6 +160,22 @@ $dictionary['Product'] = array(
                 'include' => 'modules/ProductTemplates/ProductTemplate.php'
             ),
             'comment' => 'Manufacturer of product'
+        ),
+        'manufacturer_name' =>
+        array (
+            'name' => 'manufacturer_name',
+            'rname'=> 'name',
+            'id_name'=> 'manufacturer_id',
+            'type' => 'relate',
+            'vname' =>'LBL_MANUFACTURER_NAME',
+            'join_name' => 'manufacturers',
+            'link' => 'manufacturer_link',
+            'table' => 'manufacturers',
+            'isnull' => 'true',
+            'source'=>'non-db',
+            'module' => 'Manufacturers',
+            'dbType' => 'varchar',
+            'len' => '255',
         ),
         'category_id' =>  array(
             'name' => 'category_id',
@@ -622,14 +638,8 @@ $dictionary['Product'] = array(
             'vname' => 'LBL_QUOTE_NAME',
             'source' => 'non-db',
             'comment' => 'Quote Name',
-            'required' => true
-        ),
-        'manufacturer_name' =>  array(
-            'name' => 'manufacturer_name',
-            'type' => 'varchar',
-            'vname' => 'LBL_MANUFACTURER',
-            'source' => 'non-db',
-            'comment' => 'Manufacturer Name'
+            'required' => true,
+            'importable' => 'required'
         ),
 //BEGIN SUGARCRM flav=pro ONLY
         'assigned_user_id' =>  array(

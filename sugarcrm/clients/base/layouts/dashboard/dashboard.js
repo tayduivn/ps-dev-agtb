@@ -17,6 +17,9 @@
             app.router.redirect("#Home");
             //Prevent the default error handler
             return false;
+        },
+        handleValidationError : function(error) {
+            return false;
         }
     },
     initialize: function (options) {

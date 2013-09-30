@@ -10,6 +10,7 @@
     fieldValues: null,
     defaultOption: null,
     fieldPlaceHolderTag: '[name=fieldPlaceHolder]',
+    massUpdateViewName: 'massupdate-progress',
     /**
      * @property {Object} _defaultSettings The default settings to be applied to merge duplicates.
      * @property {Integer} _defaultSettings.maxRecordsToMerge Default number of records we can merge.
@@ -38,7 +39,6 @@
         this.layout.on("list:massaction:hide", this.hide, this);
         this.layout.on("list:massdelete:fire", this.warnDelete, this);
         this.layout.on("list:massexport:fire", this.massExport, this);
-        this.layout.on('list:mergeduplicates:fire', this.mergeDuplicates, this);
     },
     setMetadata: function(options) {
         options.meta.panels = options.meta.panels || [{fields:[]}];
@@ -191,11 +191,11 @@
      * @return {Backbone.View} MassupdateProgress view component.
      */
     getProgressView: function() {
-        var progressView = this.layout.getComponent('massupdate-progress');
+        var progressView = this.layout.getComponent(this.massUpdateViewName);
         if (!progressView) {
             progressView = app.view.createView({
                 context: this.context,
-                name: 'massupdate-progress',
+                name: this.massUpdateViewName,
                 layout: this.layout
             });
             this.layout._components.push(progressView);
@@ -234,6 +234,13 @@
                  * @property
                  */
                 chunks: null,
+
+                /**
+                 * Discarded records due to the permission.
+                 *
+                 * @property
+                 */
+                discards: [],
 
                 /**
                  * Current trial attempt number.
@@ -347,7 +354,7 @@
                         }
                     },
                         method = options.method || this.defaultMethod,
-                        data = this.getAttributes(options.attributes),
+                        data = this.getAttributes(options.attributes, method),
                         url = app.api.buildURL(baseModule, this.module, data, options.params);
                     app.api.call(method, url, data, callbacks);
                 },
@@ -357,14 +364,37 @@
                  * @param {Object} attributes Collection attributes.
                  * @return {Object} MassUpdate data format.
                  */
-                getAttributes: function(attributes) {
+                getAttributes: function(attributes, action) {
                     return {
                         massupdate_params: _.extend({
-                            'uid': (this.entire) ? null : _.pluck(this.chunks, 'id'),
+                            'uid': (this.entire) ? null : this.getAvailableList(action),
                             'entire': this.entire,
                             'filter': (this.entire) ? this.filterDef : null
                         }, attributes)
                     };
+                },
+
+                /**
+                 * Check the access role for entire selection.
+                 * Return only available model ids and store the discarded ids.
+                 *
+                 * @param action
+                 * @return {Array} List of available model ids.
+                 */
+                getAvailableList: function(action) {
+                    var action2permission = {
+                            'update': 'edit',
+                            'delete': 'delete'
+                        },
+                        list = [];
+                    _.each(this.chunks, function(model) {
+                        if (app.acl.hasAccessToModel(action2permission[action], model) !== false) {
+                            list.push(model.id);
+                        } else {
+                            this.discards.push(model.id);
+                        }
+                    }, this);
+                    return list;
                 }
             }) : null;
         progressView.initCollection(massCollection);
@@ -428,7 +458,6 @@
                     if(response.status == 'done') {
                         //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                         //TODO: Need trigger for fetching new record list
-                        app.alert.show('massupdate_success_notice', {level: 'success', title: app.lang.getAppString('LBL_DELETED'), autoClose: true});
                         self.layout.context.reloadData({showAlerts: false});
                     } else if (response.status == 'queued') {
                         app.alert.show('jobqueue_notice', {level: 'success', title: app.lang.getAppString('LBL_MASS_UPDATE_JOB_QUEUED'), autoClose: true});
@@ -483,66 +512,6 @@
         }
     },
 
-    /**
-     * Merge records handler.
-     */
-    mergeDuplicates: function() {
-        this.hide();
-        var mergeCollection = this.context.get('mass_collection'),
-            models = this.validateModelsForMerge(mergeCollection.models),
-            msg;
-
-        if (!models.length || models.length < 2 || models.length > this._defaultSettings.maxRecordsToMerge) {
-            if (models.length === mergeCollection.models.length) {
-                msg = app.lang.get('TPL_MERGE_INVALID_NUMBER_RECORDS',
-                    this.module,
-                    {maxRecords: this._defaultSettings.maxRecordsToMerge}
-                );
-            } else {
-                msg = app.lang.get('LBL_MERGE_NO_ACCESS', this.module);
-            }
-            app.alert.show('invalid-record-count', {
-                level: 'error',
-                messages: msg,
-                autoClose: true
-            });
-            return;
-        }
-
-        if (models) {
-            app.drawer.open({
-                layout: 'merge-duplicates',
-                context: {
-                    selectedDuplicates: models
-                }
-            }, _.bind(function(refresh) {
-                if (refresh) {
-                    this.collection.fetch();
-                    mergeCollection.reset();
-                }
-            }, this));
-        }
-    },
-
-    /**
-     * Check access for models selected for merge.
-     *
-     * @param {Data.Bean[]} models Models to check access for merge.
-     * @return {Data.Bean[]} Models with access.
-     */
-    validateModelsForMerge: function(models) {
-        var result = [];
-        _.each(models, function(model) {
-            var hasAccess = _.every(['view', 'edit', 'delete'], function(acl) {
-                return app.acl.hasAccessToModel(acl, model);
-            });
-            if (hasAccess) {
-                result.push(model);
-            }
-        }, this);
-        return result;
-    },
-
     save: function() {
         var massUpdate = this.getMassUpdateModel(this.module),
             attributes = this.getAttributes(),
@@ -571,7 +540,6 @@
                             success: function(data, response) {
                                 self.hide();
                                 if(response.status == 'done') {
-                                    app.alert.show('massupdate_success_notice', {level: 'success', messages: successMessages[response.status], autoClose: true});
                                     //TODO: Since self.layout.trigger("list:search:fire") is deprecated by filterAPI,
                                     //TODO: Need trigger for fetching new record list
                                     self.collection.fetch({
@@ -622,7 +590,24 @@
      */
     getAttributes: function() {
         var values = [this.defaultOption].concat(this.fieldValues),
-            attributes = [];
+            attributes = [],
+            fieldFilter = function(field) {
+                return field && field.name;
+            };
+        values = _.chain(values)
+            //Grab the field arrays from any fields that have child fields
+            //and merge them with the top level field list
+            .union(_.chain(values)
+                .pluck("fields")
+                .compact()
+                .flatten()
+                .value()
+            )
+            //Remove any dupes or empties
+            .uniq(fieldFilter)
+            .filter(fieldFilter)
+            .value();
+
         _.each(values, function(value) {
             attributes = _.union(attributes,
                 _.values(_.pick(value, 'name', 'id_name'))

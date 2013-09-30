@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $module_name = '<module_name>';
-$_object_name = '<_object_name>';
+$_module_name = '<_module_name>';
 $viewdefs[$module_name]['mobile']['view']['edit'] = array(
 	'templateMeta' => array('maxColumns' => '1',
                             'widths' => array(
@@ -42,7 +42,7 @@ $viewdefs[$module_name]['mobile']['view']['edit'] = array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
-                    'name' => $_object_name . '_number',
+                    'name' => $_module_name . '_number',
                     'displayParams' => array(
                         'required' => false,
                         'wireless_detail_only' => true,

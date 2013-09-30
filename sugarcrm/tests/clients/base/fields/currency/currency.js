@@ -63,6 +63,12 @@ describe('Base.Fields.Currency', function() {
         model.isCopy = function() {
             return (model.isCopied === true);
         };
+
+        sinon.stub(app.metadata, 'getCurrency', function() {
+            return {
+                'conversion_rate': '0.900'
+            }
+        });
     });
 
     afterEach(function() {
@@ -70,6 +76,8 @@ describe('Base.Fields.Currency', function() {
         app.view.reset();
         delete Handlebars.templates;
         model = null;
+
+        app.metadata.getCurrency.restore();
 
         moduleName = null;
         metadata = null;
@@ -160,8 +168,7 @@ describe('Base.Fields.Currency', function() {
         it('should make new record default to user preferred currency if record not copied', function() {
             model = app.data.createBean(moduleName, {
                 amount: 123456789.12,
-                currency_id: '-99',
-                base_rate: 1.0
+                currency_id: '-99'
             });
             field = SugarTest.createField(
                 'base',
@@ -177,6 +184,7 @@ describe('Base.Fields.Currency', function() {
                 model
             );
             expect(field.model.get('currency_id')).toEqual('abc123');
+            expect(field.model.get('base_rate')).toEqual('0.900');
         });
 
         it('should not make new record default to user preferred currency if record is copied', function() {
@@ -369,9 +377,11 @@ describe('Base.Fields.Currency', function() {
             var convertAmount = sandbox.stub(app.currency, 'convertAmount', function() {
                 return false;
             });
+/*
             sandbox.stub(app.metadata, 'getCurrency', function() {
                 return false;
             });
+*/
 
             field.model.set('currency_id', '-99');
             expect(convertAmount.calledOnce).toBeTruthy();

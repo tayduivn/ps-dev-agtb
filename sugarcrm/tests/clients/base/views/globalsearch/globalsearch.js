@@ -104,6 +104,23 @@ describe("Global Search", function() {
         expect(view.$('input:checkbox[data-module="all"]').attr('checked')).toBeDefined();
     });
 
+    describe('_escapeSearchResults', function() {
+        it('should escape highlighted search results properly', function() {
+            var sanitizer = _.bind(view._escapeSearchResults, view);
+
+            //the purpose of the tests is to make sure that sanitizer only leaves <strong> element unescaped
+            expect(sanitizer('<strong>f1vlad</strong> is the best driver<script>alert("Speeding! 9001$ fine!")</script>').toString())
+                .toEqual('<strong>f1vlad</strong> is the best driver&lt;script&gt;alert(&quot;Speeding! 9001$ fine!&quot;)&lt;/script&gt;');
+
+            expect(sanitizer('<strong>f1v<b>l</b>ad</strong> is the <i>boss</i> says <strong>f1vlad</strong>').toString())
+                .toEqual('<strong>f1v&lt;b&gt;l&lt;/b&gt;ad</strong> is the &lt;i&gt;boss&lt;/i&gt; says <strong>f1vlad</strong>');
+
+            expect(sanitizer('disnayland ftw <b>abc</b><i>porque</i><e>mexicana quesadilla</e>').toString())
+                .toEqual('disnayland ftw &lt;b&gt;abc&lt;/b&gt;&lt;i&gt;porque&lt;/i&gt;&lt;e&gt;mexicana quesadilla&lt;/e&gt;');
+
+        });
+    });
+
     it('Should return search results', function() {
 
         sinon.collection.stub(SugarTest.app.metadata, 'getModule', function(module) {

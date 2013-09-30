@@ -57,7 +57,7 @@ $mod_strings = array (
 	'LBL_ADDRESS_INFORMATION' => 'Address Information',
 	'LBL_ANNUAL_REVENUE' => 'Annual Revenue:',
 	'LBL_ANY_ADDRESS' => 'Any Address:',
-	'LBL_ANY_EMAIL' => 'Any Email:',
+	'LBL_ANY_EMAIL' => 'Email:',
 	'LBL_ANY_PHONE' => 'Any Phone:',
 	'LBL_ASSIGNED_TO_NAME' => 'Assigned to:',
 	'LBL_ASSIGNED_TO_ID' => 'Assigned User:',
@@ -181,4 +181,5 @@ $mod_strings = array (
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_FILENAME' => 'Attachment',
+    'LBL_REVENUELINEITEMS' => 'Revenue Line Items'
 );
