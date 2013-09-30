@@ -528,6 +528,7 @@
         var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON();
         if (user.isManager && user.showOpps == false) {
             if (!this.layout.isVisible()) {
+                this.layout.once('show', this.calculateTotals, this);
                 this.layout.show();
             }
 
@@ -782,7 +783,7 @@
      * @triggers forecasts:worksheet:totals
      */
     calculateTotals: function() {
-        if (this.isVisible()) {
+        if (this.layout.isVisible()) {
             this.totals = this.getCommitTotals();
             this.totals['display_total_label_in'] = _.first(this._fields.visible).name;
             _.each(this._fields.visible, function(field) {

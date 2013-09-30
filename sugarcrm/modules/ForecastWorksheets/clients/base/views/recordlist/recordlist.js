@@ -431,6 +431,7 @@
         if (!(showOpps || !isManager) && this.layout.isVisible()) {
             this.layout.hide();
         } else if ((showOpps || !isManager) && !this.layout.isVisible()) {
+            this.layout.once('show', this.calculateTotals, this);
             this.layout.show();
         }
 
@@ -680,8 +681,7 @@
      */
     calculateTotals: function() {
         // fire an event on the parent context
-        if (this.isVisible()) {
-
+        if (this.layout.isVisible()) {
             this.totals = this.getCommitTotals();
             var calcFields = ['worst_case', 'best_case', 'likely_case'],
                 fields = _.filter(this._fields.visible, function(field) {
