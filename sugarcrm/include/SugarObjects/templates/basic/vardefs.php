@@ -213,6 +213,7 @@ $vardefs = array(
 ),
 'indices' => array (
        'id'=>array('name' =>strtolower($module).'pk', 'type' =>'primary', 'fields'=>array('id')),
+       'date_modified'=>array('name' =>strtolower($table_name).'mod', 'type' =>'index', 'fields'=>array('date_modified')),
        ),
 'relationships'=>array(
 	strtolower($module).'_modified_user' =>
