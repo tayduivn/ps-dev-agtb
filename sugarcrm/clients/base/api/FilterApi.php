@@ -323,6 +323,10 @@ class FilterApi extends SugarApi
                 }
 
                 if (!empty($data[$field])) {
+                    if (empty($fieldDef['rname'])) {
+                        $GLOBALS['log']->fatal("Field $field has invalid metadata, has source of relate but is missing rname");
+                        continue;
+                    }
                     // we have direct data - populate it
                     $rbean->populateFromRow(
                         array($fieldDef['rname'] => $data[$field]),
@@ -505,6 +509,9 @@ class FilterApi extends SugarApi
         $field_def = $defs[$field];
 
         if(!empty($field_def['source']) && $field_def['source'] == 'relate') {
+            if (empty($field_def['rname']) || empty($field_def['link'])) {
+                throw new SugarApiExceptionInvalidParameter("Field $field has invalid metadata, has source of relate but is missing rname or link");
+            }
             $relfield = $field_def['rname'];
             $link = $field_def['link'];
             return self::verifyField($q, "$link.$relfield");

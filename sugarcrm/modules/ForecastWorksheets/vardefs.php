@@ -66,7 +66,8 @@ $dictionary['ForecastWorksheet'] = array(
             'vname' => 'LBL_OPPORTUNITY_ID',
             'type' => 'id',
             'audited' => false,
-            'studio' => false
+            'studio' => false,
+            'link' => 'opportunity',
         ),
         'opportunity_name' =>
         array(
@@ -81,7 +82,9 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'opportunity_id',
-            )
+            ),
+            'rname' => 'name',
+            'link' => 'opportunity',
         ),
         'account_name' =>
         array(
@@ -96,7 +99,9 @@ $dictionary['ForecastWorksheet'] = array(
             'sortable' => true,
             'related_fields' => array(
                 'account_id',
-            )
+            ),
+            'rname' => 'name',
+            'link' => 'accounts',
         ),
         'account_id' =>
         array(
@@ -116,6 +121,7 @@ $dictionary['ForecastWorksheet'] = array(
         'campaign_name' => array(
             'name' => 'campaign_name',
             'id_name' => 'campaign_id',
+            'rname' => 'name',
             'vname' => 'LBL_CAMPAIGN',
             'type' => 'relate',
             'dbType' => 'varchar',
@@ -136,6 +142,7 @@ $dictionary['ForecastWorksheet'] = array(
         'product_template_name' => array(
             'name' => 'product_template_name',
             'id_name' => 'product_template_id',
+            'rname' => 'name',
             'vname' => 'LBL_PRODUCT',
             'type' => 'relate',
             'dbType' => 'varchar',
@@ -156,6 +163,7 @@ $dictionary['ForecastWorksheet'] = array(
         'category_name' =>  array(
             'name' => 'category_name',
             'id_name' => 'category_id',
+            'rname' => 'name',
             'vname' => 'LBL_CATEGORY_NAME',
             'type' => 'relate',
             'module' => 'ProductCategories',
@@ -446,9 +454,17 @@ $dictionary['ForecastWorksheet'] = array(
         array(
             'name' => 'opportunity',
             'type' => 'link',
-            'relationship' => 'opportunity_worksheets',
+            'relationship' => 'forecastworksheets_opportunities',
             'source' => 'non-db',
             'vname' => 'LBL_OPPORTUNITY',
+        ),
+        'accounts' =>
+        array(
+            'name' => 'accounts',
+            'type' => 'link',
+            'relationship' => 'forecastworksheets_accounts',
+            'source' => 'non-db',
+            'vname' => 'LBL_ACCOUNTS',
         ),
         'product' =>
         array(

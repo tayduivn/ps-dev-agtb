@@ -28,6 +28,8 @@ $mod_strings = array (
     'LBL_ACCOUNT_NAME' => 'Account Name:',
     'LBL_SALES_STATUS' => 'Status',
     'LBL_REVENUELINEITEM_NAME' => 'Revenue Line Item Name',
+    'LNK_OPPORTUNITY' => 'Opportunity',
+    'LNK_ACCOUNTS' => 'Account',
 
     //var defs
     'LBL_TIMEPERIOD_NAME' => 'Time Period',
