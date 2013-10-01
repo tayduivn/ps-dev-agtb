@@ -104,7 +104,11 @@ $dictionary['Shipper'] = array(
       'type' => 'currency',
       'len' => '26,6',
       'audited'=>true,
-      'comment' => 'Default cost (Shown)'
+      'comment' => 'Default cost (Shown)',
+      'related_fields' => array(
+          'currency_id',
+          'base_rate'
+      ),
   ),
   'default_cost_usdollar' =>
   array (
@@ -118,6 +122,13 @@ $dictionary['Shipper'] = array(
       ),
       'readonly' => true,
       'is_base_currency' => true,
+      'related_fields' => array(
+          'currency_id',
+          'base_rate'
+      ),
+      'formula' => 'divide($default_cost,$base_rate)',
+      'calculated' => true,
+      'enforced' => true,
   ),
   'status' =>
   array (

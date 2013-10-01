@@ -218,8 +218,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'importable' => 'required',
         'required' => true,
         'related_fields' => array(
-            'base_rate',
-            'currency_id'
+            'currency_id',
+            'base_rate'
         ),
 	),
 	'discount_price' =>
@@ -233,10 +233,10 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'importable' => 'required',
         'required' => true,
         'related_fields' => array(
-            'base_rate',
-            'currency_id'
+            'currency_id',
+            'base_rate'
         ),
-    ),
+	),
 	'list_price' =>
 	array (
 		'name' => 'list_price',
@@ -248,69 +248,71 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'required' => true,
 		'comment' => 'List price of product ("List" in Quote)',
         'related_fields' => array(
-            'base_rate',
-            'currency_id'
+            'currency_id',
+            'base_rate'
         ),
 	),
 	'cost_usdollar' =>
-	array (
-		'name' => 'cost_usdollar',
-		'vname' => 'LBL_COST_USDOLLAR',
-		'type' => 'currency',
+    array (
+        'name' => 'cost_usdollar',
+        'vname' => 'LBL_COST_USDOLLAR',
+        'type' => 'currency',
 		'len' => '26,6',
-		'comment' => 'Cost expressed in USD',
+        'comment' => 'Cost expressed in USD',
+        'studio' => array(
+            'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
         'formula' => 'divide($cost_price,$base_rate)',
         'calculated' => true,
         'enforced' => true,
-		'studio' => array(
-			'mobile' => false,
-		),
+
+    ),
+    'discount_usdollar' =>
+    array (
+        'name' => 'discount_usdollar',
+        'vname' => 'LBL_DISCOUNT_USDOLLAR',
+        'type' => 'currency',
+		'len' => '26,6',
+        'comment' => 'Discount price expressed in USD',
+        'studio' => array(
+            'mobile' => false,
+        ),
         'readonly' => true,
         'is_base_currency' => true,
         'related_fields' => array(
-            'base_rate',
-            'currency_id'
+            'currency_id',
+            'base_rate'
         ),
-    ),
-	'discount_usdollar' =>
-	array (
-		'name' => 'discount_usdollar',
-		'vname' => 'LBL_DISCOUNT_USDOLLAR',
-		'type' => 'currency',
-		'len' => '26,6',
-		'comment' => 'Discount price expressed in USD',
         'formula' => 'divide($discount_price,$base_rate)',
         'calculated' => true,
         'enforced' => true,
-		'studio' => array(
-			'mobile' => false,
-		),
+
+    ),
+    'list_usdollar' =>
+    array (
+        'name' => 'list_usdollar',
+        'vname' => 'LBL_LIST_USDOLLAR',
+        'type' => 'currency',
+		'len' => '26,6',
+        'comment' => 'List price expressed in USD',
+        'studio' => array(
+            'mobile' => false,
+        ),
         'readonly' => true,
         'is_base_currency' => true,
         'related_fields' => array(
-            'base_rate',
-            'currency_id'
+            'currency_id',
+            'base_rate'
         ),
-    ),
-	'list_usdollar' =>
-	array (
-		'name' => 'list_usdollar',
-		'vname' => 'LBL_LIST_USDOLLAR',
-		'type' => 'currency',
-		'len' => '26,6',
         'formula' => 'divide($list_price,$base_rate)',
         'calculated' => true,
         'enforced' => true,
-		'comment' => 'List price expressed in USD',
-		'studio' => array(
-			'mobile' => false,
-		),
-        'readonly' => true,
-        'is_base_currency' => true,
-        'related_fields' => array(
-            'base_rate',
-            'currency_id'
-        ),
     ),
 	'currency_id' =>
 	array (

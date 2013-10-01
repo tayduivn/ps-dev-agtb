@@ -185,8 +185,12 @@ $dictionary['Contract'] = array(
 			'dbType' => 'decimal',
 			'type' => 'currency',
 			'len' => '26,6',
-			'comment' => 'The overall value of the contract'
-		),
+			'comment' => 'The overall value of the contract',
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+        ),
 		'total_contract_value_usdollar' => array (
 			'name' => 'total_contract_value_usdollar',
 			'vname' => 'LBL_TOTAL_CONTRACT_VALUE_USDOLLAR',
@@ -204,6 +208,13 @@ $dictionary['Contract'] = array(
             ),
             'readonly' => true,
             'is_base_currency' => true,
+            'related_fields' => array(
+                'currency_id',
+                'base_rate'
+            ),
+            'formula' => 'divide($total_contract_value,$base_rate)',
+            'calculated' => true,
+            'enforced' => true,
         ),
 		'status' => array (
 			'name' => 'status',

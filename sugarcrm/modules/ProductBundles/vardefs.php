@@ -112,138 +112,205 @@ $dictionary['ProductBundle'] = array('table' => 'product_bundles', 'comment' => 
     'type' => 'decimal',
     'len' => '26,6',
     'disable_num_format' => true,
-    'comment' => 'Tax rate applied to items in the group'
+    'comment' => 'Tax rate applied to items in the group',
+    'related_fields' => array(
+        'currency_id',
+        'base_rate'
+    ),
   ),
   'tax_usdollar' =>
-  array (
-    'name' => 'tax_usdollar',
-    'vname' => 'LBL_TAX_USDOLLAR',
+    array (
+        'name' => 'tax_usdollar',
+        'vname' => 'LBL_TAX_USDOLLAR',
     'type' => 'decimal',
-    'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Total tax for all items in group in USD',
-    'studio' => array(
-      'mobile' => false,
+        'len' => '26,6',
+        'disable_num_format' => true,
+        'comment' => 'Total tax for all items in group in USD',
+        'studio' => array(
+        'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+        'formula' => 'divide($tax,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
     ),
-    'readonly' => true,
-    'is_base_currency' => true,
-  ),
   'total' =>
   array (
-    'name' => 'total',
-    'vname' => 'LBL_TOTAL',
+        'name' => 'total',
+        'vname' => 'LBL_TOTAL',
     'type' => 'decimal',
-    'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Total amount for all items in the group'
+        'len' => '26,6',
+        'disable_num_format' => true,
+        'comment' => 'Total amount for all items in the group',
+        'related_fields' => array(
+          'currency_id',
+          'base_rate'
+        ),
   ),
    'total_usdollar' =>
-  array (
-    'name' => 'total_usdollar',
-    'vname' => 'LBL_TOTAL_USDOLLAR',
+    array (
+        'name' => 'total_usdollar',
+        'vname' => 'LBL_TOTAL_USDOLLAR',
     'type' => 'decimal',
-    'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Total amount for all items in the group in USD',
-    'studio' => array(
-      'mobile' => false,
+        'len' => '26,6',
+        'disable_num_format' => true,
+        'comment' => 'Total amount for all items in the group in USD',
+        'studio' => array(
+          'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+          'currency_id',
+          'base_rate'
+        ),
+        'formula' => 'divide($total,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
     ),
-    'readonly' => true,
-    'is_base_currency' => true,
-  ),
 
   'subtotal_usdollar' =>
-  array (
-    'name' => 'subtotal_usdollar',
-    'vname' => 'LBL_SUBTOTAL_USDOLLAR',
+    array (
+        'name' => 'subtotal_usdollar',
+        'vname' => 'LBL_SUBTOTAL_USDOLLAR',
     'type' => 'decimal',
-    'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Group total minus tax and shipping in USD',
-    'studio' => array(
-      'mobile' => false,
+        'len' => '26,6',
+        'disable_num_format' => true,
+        'comment' => 'Group total minus tax and shipping in USD',
+        'studio' => array(
+        'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+        'formula' => 'divide($subtotal,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
     ),
-    'readonly' => true,
-    'is_base_currency' => true,
-  ),
   'shipping_usdollar' =>
   array (
-    'name' => 'shipping_usdollar',
-    'vname' => 'LBL_SHIPPING',
+        'name' => 'shipping_usdollar',
+        'vname' => 'LBL_SHIPPING',
     'type' => 'decimal',
-    'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Shipping charge for group in USD',
-    'studio' => array(
-      'mobile' => false,
-    ),
-    'readonly' => true,
-    'is_base_currency' => true,
+        'len' => '26,6',
+        'disable_num_format' => true,
+        'comment' => 'Shipping charge for group in USD',
+        'studio' => array(
+        'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+          'currency_id',
+          'base_rate'
+        ),
+      'formula' => 'divide($shipping,$base_rate)',
+      'calculated' => true,
+      'enforced' => true,
   ),
   'deal_tot' =>
-  array (
-    'name' => 'deal_tot',
-    'vname' => 'LBL_DEAL_TOT',
+    array(
+        'name' => 'deal_tot',
+        'vname' => 'LBL_DEAL_TOT',
     'type' => 'decimal',
     'len' => '26,2',
-    'disable_num_format' => true,
-    'comment' => 'discount amount'
-  ),
+        'disable_num_format' => true,
+        'comment' => 'discount amount',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+    ),
   'deal_tot_usdollar' =>
-  array (
-    'name' => 'deal_tot_usdollar',
-    'vname' => 'LBL_DEAL_TOT',
+    array(
+        'name' => 'deal_tot_usdollar',
+        'vname' => 'LBL_DEAL_TOT',
     'type' => 'decimal',
     'len' => '26,2',
-    'disable_num_format' => true,
-    'comment' => 'discount amount',
-    'studio' => array(
-      'mobile' => false,
+        'disable_num_format' => true,
+        'comment' => 'discount amount',
+        'studio' => array(
+            'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+        'formula' => 'divide($deal_tot,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
     ),
-    'readonly' => true,
-    'is_base_currency' => true,
-  ),
   'new_sub' =>
-  array (
-    'name' => 'new_sub',
-    'vname' => 'LBL_NEW_SUB',
+    array(
+        'name' => 'new_sub',
+        'vname' => 'LBL_NEW_SUB',
     'type' => 'decimal',
     'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Group total minus discount and tax and shipping'
-  ),
-  'new_sub_usdollar' =>
-  array (
-    'name' => 'new_sub_usdollar',
-    'vname' => 'LBL_NEW_SUB',
-    'type' => 'decimal',
-    'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Group total minus discount and tax and shipping',
-    'studio' => array(
-      'mobile' => false,
+        'disable_num_format' => true,
+        'comment' => 'Group total minus discount and tax and shipping',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
     ),
-    'readonly' => true,
-    'is_base_currency' => true,
-  ),
+  'new_sub_usdollar' =>
+    array (
+        'name' => 'new_sub_usdollar',
+        'vname' => 'LBL_NEW_SUB',
+    'type' => 'decimal',
+        'len' => '26,6',
+        'disable_num_format' => true,
+        'comment' => 'Group total minus discount and tax and shipping',
+        'studio' => array(
+            'mobile' => false,
+        ),
+        'readonly' => true,
+        'is_base_currency' => true,
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+        'formula' => 'divide($new_sub,$base_rate)',
+        'calculated' => true,
+        'enforced' => true,
+
+    ),
   'subtotal' =>
-  array (
-    'name' => 'subtotal',
-    'vname' => 'LBL_SUBTOTAL',
+    array(
+        'name' => 'subtotal',
+        'vname' => 'LBL_SUBTOTAL',
     'type' => 'decimal',
     'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Group total minus tax and shipping'
-  ),
+        'disable_num_format' => true,
+        'comment' => 'Group total minus tax and shipping',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+    ),
   'shipping' =>
-  array (
-    'name' => 'shipping',
-    'vname' => 'LBL_SHIPPING',
+    array(
+        'name' => 'shipping',
+        'vname' => 'LBL_SHIPPING',
     'type' => 'decimal',
     'len' => '26,6',
-    'disable_num_format' => true,
-    'comment' => 'Shipping charge for group'
-  ),
+        'disable_num_format' => true,
+        'comment' => 'Shipping charge for group',
+        'related_fields' => array(
+            'currency_id',
+            'base_rate'
+        ),
+    ),
   'currency_id' =>
   array (
     'name' => 'currency_id',
