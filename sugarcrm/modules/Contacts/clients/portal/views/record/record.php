@@ -30,7 +30,7 @@ $viewdefs['Contacts']['portal']['view']['record'] = array(
                 array(
                     'name' => 'full_name',
                     'type' => 'fieldset-with-labels',
-                    'fields' => array('first_name', 'last_name'),
+                    'fields' => array('salutation','first_name', 'last_name'),
                 ),
             ),
         ),
