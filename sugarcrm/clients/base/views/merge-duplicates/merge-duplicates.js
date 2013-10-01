@@ -291,7 +291,7 @@
             alternativeModelNames = [];
 
         _.each(alternativeModels, function(model) {
-            alternativeModelNames.push(this._getRecordTitle(model));
+            alternativeModelNames.push(app.utils.getRecordName(model));
         }, this);
 
         this.clearValidationErrors(this.getFieldNames());
@@ -657,27 +657,6 @@
     },
 
     /**
-     * Returns the title for model.
-     *
-     * @param {Data.Bean} model
-     * @return {String} record's title.
-     * @private
-     */
-    _getRecordTitle: function(model) {
-        // let's use the field metadata to create the record
-        // title
-        var field = app.view.createField({
-                view: this,
-                def: model.fields['name'],
-                model: model
-            }),
-            title = field.format(model.get('name'));
-
-        field.dispose();
-        return title;
-    },
-
-    /**
      * {@inheritDoc}
      *
      * Add additional fields for specific types like 'parent' and 'relate'.
@@ -867,7 +846,7 @@
         }
 
         this.toggleFields(this.rowFields[this.primaryRecord.id], true);
-        this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
+        this.updatePrimaryTitle(app.utils.getRecordName(this.primaryRecord));
         if (this.isPreviewOpen) {
             this.updatePreviewRecord(this.primaryRecord);
         }
@@ -901,7 +880,7 @@
         this.primaryRecord = model;
 
         this.primaryRecord.on('change', function(model) {
-            this.updatePrimaryTitle(this._getRecordTitle(this.primaryRecord));
+            this.updatePrimaryTitle(app.utils.getRecordName(this.primaryRecord));
         }, this);
 
         this.primaryRecord.on('mergeduplicates:primary:saved', function() {

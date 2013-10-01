@@ -124,11 +124,11 @@
      */
     getUnlinkMessages: function(model) {
         var messages = {},
-            name = model.get('name') || (model.get('first_name') + ' ' + model.get('last_name')) || '',
+            name = app.utils.getRecordName(model),
             context = app.lang.get('LBL_MODULE_NAME_SINGULAR', model.module).toLowerCase() + ' ' + name.trim();
 
-        messages.confirmation = app.lang.get('NTC_UNLINK_CONFIRMATION') + context + '?';
-        messages.success = app.lang.get('NTC_UNLINK_SUCCESS') + context + '.';
+        messages.confirmation = app.utils.formatString(app.lang.get('NTC_UNLINK_CONFIRMATION_FORMATTED'), [context]);
+        messages.success = app.utils.formatString(app.lang.get('NTC_UNLINK_SUCCESS'), [context]);
         return messages;
     },
 
