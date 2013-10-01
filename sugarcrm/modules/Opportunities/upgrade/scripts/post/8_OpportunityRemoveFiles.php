@@ -13,7 +13,7 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 /**
- * Removes files that are no longer valid in 7.0 fore the Opportunities module.
+ * Removes files that are no longer valid in 7.0 for the Opportunities module.
  */
 class SugarUpgradeOpportunityRemoveFiles extends UpgradeScript
 {
@@ -24,7 +24,7 @@ class SugarUpgradeOpportunityRemoveFiles extends UpgradeScript
     {
 
         // we only need to remove these files if the from_version is less than 7.0.0 but greater or equal than 6.7.0
-        if (version_compare($this->from_version, '7.0', '<')
+        if (version_compare($this->from_version, '7.0.0', '<')
             && version_compare($this->from_version, '6.7', '>=')
         ) {
             // files to delete
