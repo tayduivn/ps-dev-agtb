@@ -196,6 +196,7 @@ $fields = array(
         'name' => 'sales_status',
         'enabled' => true,
         'default' => true,
+        'readonly' => true,
     ),
     array(
         'name' => 'amount',
