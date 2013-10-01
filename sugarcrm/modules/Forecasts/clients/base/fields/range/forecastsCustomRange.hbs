@@ -4,8 +4,8 @@
             <input type="checkbox" {{#if isExclude}}
                 disabled="disabled"
             {{else}}
-               value="1" {{#if in_included_total}}checked="true"{{/if}} name="in_included_total_{{def.name}}" data-key="{{def.name}}" data-category="{{category}}
-            {{/if}}">
+               value="1" {{#if in_included_total}}checked="true"{{/if}} name="in_included_total_{{def.name}}" data-key="{{def.name}}" data-category="{{category}}"
+            {{/if}}>
             <input type="text" placeholder="{{str "LBL_FORECASTS_CONFIG_RANGES_ENTER_RANGE" module}}" class="span12" value="{{label}}" data-key="{{def.name}}" data-category="{{category}}">
         </div>
         <div class="noUiSliderEnds pull-right">
@@ -22,9 +22,9 @@
                 disabled="disabled"
                {{/eq}}
                 {{#eq customType 'custom'}}
-                    value="1" {{#if in_included_total}}checked="true"{{/if}} name="in_included_total_{{def.name}}" data-key="{{def.name}}" data-category="{{category}}
-               {{/eq}}
-               ">
+                    value="1" {{#if in_included_total}}checked="true"{{/if}} name="in_included_total_{{def.name}}" data-key="{{def.name}}" data-category="{{category}}"
+                {{/eq}}
+            >
             <input type="text" placeholder="{{str "LBL_FORECASTS_CONFIG_RANGES_ENTER_RANGE" module}}" class="span12" value="{{label}}" data-key="{{def.name}}" data-category="{{category}}">
         </div>
         <div class="btn-group">
