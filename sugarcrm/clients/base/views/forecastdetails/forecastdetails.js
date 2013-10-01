@@ -314,11 +314,6 @@
             }, this);
 
             ctx.on('forecasts:worksheet:totals', function(data) {
-
-                data.worst_case = data.worst_case - (data.won_amount || 0);
-                data.likely_case = data.likely_case - (data.won_amount || 0);
-                data.best_case = data.best_case - (data.won_amount || 0);
-
                 this.calculateData(this.mapAllTheThings(data, true), true);
             }, this);
 
@@ -539,6 +534,12 @@
             }
         }
 
+        if (fromModel) {
+            data.worst = app.math.sub(data.worst, (data.closed_amount || 0));
+            data.likely = app.math.sub(data.likely, (data.closed_amount || 0));
+            data.best = app.math.sub(data.best, (data.closed_amount || 0));
+        }
+
         return data;
     },
 
@@ -659,33 +660,23 @@
             params.amount = app.currency.formatAmountLocale(caseValue);
             params.labelAmount = params.label + ': ' + params.amount.toString();
 
-            if(caseValueN == 0 && stageValueN == 0)
-            {
+            if (caseValueN == 0 && stageValueN == 0) {
                 // if we have no data
                 params.amount = app.lang.get('LBL_FORECAST_DETAILS_NO_DATA', "Forecasts");
-            }
-            else if(caseValueN != 0 && stageValueN != 0 && caseValueN == stageValueN)
-            {
+            } else if (caseValueN != 0 && stageValueN != 0 && caseValueN == stageValueN) {
                 // if the values are equal but we have data
                 params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_MEETING_QUOTA', "Forecasts");
-            }
-            else
-            {
-                if(caseValueN > stageValueN) {
-                    params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_EXCEED', "Forecasts");
-                } else {
-                    params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
-                }
-
-
+            } else {
                 /**
                  *  The bottom rectangles are supposed to tell the user if there is sufficient open pipeline in the current quarter to cover the deficit or not.
                  *  If there is surplus (meaning there is no deficit), the open pipeline will actually take the user above quota and that is always represented with green color.
                  */
                 //if we are exceeding, we need to subtract to get the amount we exceed by
-                if (caseValueN >= stageValueN) {
+                if (caseValueN > stageValueN) {
+                    params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_EXCEED', "Forecasts");
                     calcValue = app.math.sub(caseValueN, stageValueN);
                 } else {
+                    params.shortOrExceed = app.lang.get('LBL_FORECAST_DETAILS_SHORT', "Forecasts");
                     calcValue = app.math.sub(stageValueN, caseValueN);
                 }
 
@@ -696,14 +687,12 @@
 
             params.feedbackLn1 = params.shortOrExceed;
 
-            if(params.percent) {
+            if (params.percent) {
                 params.feedbackLn1 += ' ' + params.percent;
             }
 
             params.feedbackLn2 = params.openPipeline;
-        }
-        else
-        {
+        } else {
             params.amount = this.noDataAccessTemplate;
             params.labelAmount = params.label + ': ' + app.lang.get('LBL_NO_FIELD_ACCESS');
         }

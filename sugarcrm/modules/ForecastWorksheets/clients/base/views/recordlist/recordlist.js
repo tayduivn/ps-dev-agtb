@@ -323,6 +323,11 @@
             }, this);
         }
 
+        this.layout.on('hide', function() {
+            this.totals = {};
+        }, this);
+
+        // call the parent
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
 
@@ -431,6 +436,7 @@
         if (!(showOpps || !isManager) && this.layout.isVisible()) {
             this.layout.hide();
         } else if ((showOpps || !isManager) && !this.layout.isVisible()) {
+            this.layout.once('show', this.calculateTotals, this);
             this.layout.show();
         }
 
@@ -510,9 +516,9 @@
         } else {
             if ((!this.selectedUser.showOpps && this.selectedUser.isManager) && this.layout.isVisible()) {
                 if (this.displayNavigationMessage && this.dirtyUser.id == this.selectedUser.id) {
-                    this.showNavigationMessage('rep_to_manager');
+                    this.processNavigationMessageReturn(this.showNavigationMessage('rep_to_manager'));
                 } else if (this.displayNavigationMessage) {
-                    this.showNavigationMessage('user_switch');
+                    this.processNavigationMessageReturn(this.showNavigationMessage('user_switch'));
                 }
                 this.cleanUpDirtyModels();
                 // we need to hide
@@ -680,8 +686,7 @@
      */
     calculateTotals: function() {
         // fire an event on the parent context
-        if (this.isVisible()) {
-
+        if (this.layout.isVisible()) {
             this.totals = this.getCommitTotals();
             var calcFields = ['worst_case', 'best_case', 'likely_case'],
                 fields = _.filter(this._fields.visible, function(field) {
@@ -744,8 +749,10 @@
         if (_.isObject(message_result) && message_result.run_action === true) {
             if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
                 this.context.parent.once('forecasts:worksheet:saved', function() {
-                    this.displayLoadingMessage();
-                    this.collection.fetch();
+                    if (this.layout.isVisible()) {
+                        this.displayLoadingMessage();
+                        this.collection.fetch();
+                    }
                 }, this);
                 this.saveWorksheet(true);
             }

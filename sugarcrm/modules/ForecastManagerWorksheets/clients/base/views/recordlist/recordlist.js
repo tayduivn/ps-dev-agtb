@@ -364,6 +364,10 @@
             this.calculateTotals();
         }, this);
 
+        this.layout.on('hide', function() {
+            this.totals = {};
+        }, this);
+
         // call the parent
         app.view.invokeParent(this, {type: 'view', name: 'recordlist', method: 'bindDataChange'});
     },
@@ -446,8 +450,10 @@
         if (_.isObject(message_result) && message_result.run_action === true) {
             if (message_result.message == 'LBL_WORKSHEET_SAVE_CONFIRM') {
                 this.context.parent.once('forecasts:worksheet:saved', function() {
-                    this.displayLoadingMessage();
-                    this.collection.fetch();
+                    if (this.layout.isVisible()) {
+                        this.displayLoadingMessage();
+                        this.collection.fetch();
+                    }
                 }, this);
                 this.saveWorksheet(true);
             }
@@ -528,12 +534,13 @@
         var user = this.selectedUser || this.context.parent.get('selectedUser') || app.user.toJSON();
         if (user.isManager && user.showOpps == false) {
             if (!this.layout.isVisible()) {
+                this.layout.once('show', this.calculateTotals, this);
                 this.layout.show();
             }
 
-            // insert the footer
             if (!_.isEmpty(this.totals) && this.layout.isVisible()) {
                 var tpl = app.template.getView('recordlist.totals', this.module);
+                this.$el.find('tfoot').remove();
                 this.$el.find('tbody').after(tpl(this));
             }
 
@@ -772,7 +779,6 @@
                 }, this));
             }
         }
-
         this.collection.reset(records);
     },
 
@@ -782,7 +788,7 @@
      * @triggers forecasts:worksheet:totals
      */
     calculateTotals: function() {
-        if (this.isVisible()) {
+        if (this.layout.isVisible()) {
             this.totals = this.getCommitTotals();
             this.totals['display_total_label_in'] = _.first(this._fields.visible).name;
             _.each(this._fields.visible, function(field) {
