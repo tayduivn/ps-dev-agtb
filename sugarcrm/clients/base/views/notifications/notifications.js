@@ -297,6 +297,8 @@
             this._alertsCollections[module].fetch({
                 silent: true,
                 merge: true,
+                //Notifications should never trigger a metadata refresh
+                apiOptions: {skipMetadataHash: true},
                 success: _.bind(function(data) {
                     if (!this.disposed) {
                         this._parseReminders(data);

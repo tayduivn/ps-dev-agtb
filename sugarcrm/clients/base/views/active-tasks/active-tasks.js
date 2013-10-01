@@ -27,6 +27,7 @@
  */
 ({
     extendsFrom: 'TabbedDashletView',
+    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
 
     /**
      * {@inheritDoc}
@@ -79,33 +80,7 @@
      * @param {String} params.module Module name.
      */
     createRecord: function(event, params) {
-        this._openCreateDrawer(params.module, params.layout);
-    },
-
-    /**
-     * Opens create record drawer.
-     *
-     * @param {String} module Module name.
-     * @param {String} layout Layout name, defaults to 'create-actions' if none
-     *   supplied.
-     * @protected
-     */
-    _openCreateDrawer: function(module, layout) {
-        layout = layout || 'create-actions';
-        app.drawer.open({
-            layout: layout,
-            context: {
-                create: true,
-                module: module,
-                prepopulate: {
-                    related: this.model
-                }
-            }
-        }, _.bind(function(context, newModel) {
-            if (newModel && newModel.id) {
-                this.layout.loadData();
-            }
-        }, this));
+        this.createRelatedRecord(params.module, params.link);
     },
 
     /**

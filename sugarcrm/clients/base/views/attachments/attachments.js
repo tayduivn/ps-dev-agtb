@@ -20,10 +20,10 @@
  * @class View.Views.BaseAttachmentsView
  */
 ({
-    plugins: ['Dashlet', 'Timeago'],
+    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
     events: {
         'click [name=show_more_button]' : 'showMore',
-        'click [data-event=create_button]': 'openCreateDrawer',
+        'click [data-event=create_button]': 'createRelatedNote',
         'click [data-event=select_button]': 'openSelectDrawer'
     },
 
@@ -215,35 +215,10 @@
     /**
      * Create new attachment record
      */
-    openCreateDrawer: function() {
-        var parentModel = this.context.get('parentModel'),
-            link = this.context.get('link'),
-            model = app.data.createRelatedBean(parentModel, null, link),
-            relatedFields = app.data.getRelateFields(parentModel.module, link);
-
-        if (!_.isUndefined(relatedFields)) {
-            _.each(relatedFields, function(field) {
-                model.set(field.name, parentModel.get(field.rname));
-                model.set(field.id_name, parentModel.get('id'));
-            }, this);
-        }
-        var self = this;
-        app.drawer.open({
-            layout: 'create-actions',
-            context: {
-                create: true,
-                module: model.module,
-                model: model
-            }
-        }, function(context, model) {
-            if (!model) {
-                return;
-            }
-
-            self.context.resetLoadFlag();
-            self.context.set('skipFetch', false);
-            self.context.loadData();
-        });
+    createRelatedNote: function() {
+        var link =  this.context.get('link'),
+            parentModel = this.context.get('parentModel');
+        this.createRelatedRecord(app.data.getRelatedModule(parentModel.module, link), link);
     },
 
     /**
