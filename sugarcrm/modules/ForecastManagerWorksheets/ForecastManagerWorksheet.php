@@ -242,9 +242,15 @@ class ForecastManagerWorksheet extends SugarBean
 
         // we don't have a row to update, so set the values to the adjusted column
         if (empty($this->id) || $quota['amount'] == 0) {
-            $copyMap[] = array('likely_case_adjusted' => 'likely_case');
-            $copyMap[] = array('best_case_adjusted' => 'best_case');
-            $copyMap[] = array('worst_case_adjusted' => 'worst_case');
+            if ($data["forecast_type"] == "Rollup") {
+                $copyMap[] = array('likely_case_adjusted' => 'likely_adjusted');
+                $copyMap[] = array('best_case_adjusted' => 'best_adjusted');
+                $copyMap[] = array('worst_case_adjusted' => 'worst_adjusted');
+            } else if ($data["forecast_type"] == "Direct") {
+                $copyMap[] = array('likely_case_adjusted' => 'likely_case');
+                $copyMap[] = array('best_case_adjusted' => 'best_case');
+                $copyMap[] = array('worst_case_adjusted' => 'worst_case');
+            }
         }
         if (empty($this->id)) {
             if (!isset($data['quota']) || empty($data['quota'])) {
