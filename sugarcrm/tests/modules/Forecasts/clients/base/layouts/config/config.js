@@ -13,7 +13,7 @@
 
 describe("Forecasts.Layout.Config", function() {
     var app, layout, layoutProtoInitStub, aclStub, codeBlockSpy, moduleName = 'Forecasts';
-
+    var context;
     beforeEach(function() {
         app = SUGAR.App;
         SugarTest.testMetadata.init();
@@ -23,12 +23,20 @@ describe("Forecasts.Layout.Config", function() {
                 Forecasts: {}
             };
         });
-
         app.data.reset();
         app.data.declareModel(moduleName, SugarTest.app.metadata.getModule(moduleName));
+
         app.user.set({'id': 'test_userid', full_name: 'Selected User', type: 'admin'});
 
-        layout = SugarTest.createLayout('base', 'Forecasts', 'config', null, null, true);
+        context = app.context.getContext();
+        context.set({
+                module: 'Forecasts',
+                layout: 'config',
+                skipFetch: true
+            });
+        context.prepare();
+
+        layout = SugarTest.createLayout('base', 'Forecasts', 'config',null, context, true);
         layoutProtoInitStub = sinon.stub(app.view.Layout.prototype, 'initialize', function() {});
         codeBlockSpy = sinon.spy(layout, 'codeBlockForecasts', function() {});
     });

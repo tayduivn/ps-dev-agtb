@@ -173,6 +173,7 @@ describe("Base.View.Massupdate", function() {
                 }
                 return;
             });
+            sinonSandbox.stub(view.layout.context,'reloadData');
             view._currentUrl = 'Accounts';
             view._targetUrl = 'Contacts';
             view.deleteModels();
