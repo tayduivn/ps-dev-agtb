@@ -80,8 +80,12 @@
             //load the default team setting that is specified in the user profile settings
             if (_.isEmpty(value)) {
                 value = app.utils.deepCopy(app.user.getPreference("default_teams"));
+                this.model.set(this.name, value);
+                this.model.setDefaultAttribute(this.name, value);
+            } else {
+                this.model.set(this.name, value);
+                this.model.removeDefaultAttribute(this.name)
             }
-            this.model.set(this.name, value);
         }
         value = app.utils.deepCopy(value);
         if (!_.isArray(value)) {

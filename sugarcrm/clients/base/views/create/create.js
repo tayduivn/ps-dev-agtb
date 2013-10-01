@@ -101,10 +101,24 @@
      * @link {app.plugins.view.editable}
      */
     hasUnsavedChanges: function() {
-        if (this.resavingAfterMetadataSync)
+        if (this.resavingAfterMetadataSync) {
             return false;
+        }
+        //Are any "meangingful changes" (takes any set default attributes
+        //that should be ignored in to account).
+        var intersection, numDiffKeys,
+            modelHasChanged = this.model.hasChanged(),
+            changedAndDefaultsHashesDiffer = true,
+            changed = _.keys(this.model.changedAttributes()),
+            defaults = _.keys(this.model.getDefaultAttributes());
 
-        return this.model.isNew() && this.model.hasChanged();
+        //If exact same keys and values changedAndDefaultsDiffer will be falsy
+        numDiffKeys = _.difference(changed, defaults).length;
+        if (numDiffKeys === 0) {
+            //same keys so additionally check if any differing values
+            changedAndDefaultsHashesDiffer = _.difference(_.values(changed), _.values(defaults)).length > 0;
+        }
+        return this.model.isNew() && modelHasChanged && changedAndDefaultsHashesDiffer;
     },
 
     handleSync: function () {

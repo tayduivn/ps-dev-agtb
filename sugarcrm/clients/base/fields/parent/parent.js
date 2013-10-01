@@ -58,8 +58,10 @@
             if (plugin) {
                 plugin.focusser.on('focus', _.bind(_.debounce(this.handleFocus, 0), this));
             }
-            if(this.model.get(this.def.type_name) !== this.$(this.typeFieldTag).val()) {
-                this.model.set(this.def.type_name, this.$(this.typeFieldTag).val());
+            var domParentTypeVal = this.$(this.typeFieldTag).val();
+            if(this.model.get(this.def.type_name) !== domParentTypeVal) {
+                this.model.set(this.def.type_name, domParentTypeVal);
+                this.model.setDefaultAttribute(this.def.type_name, domParentTypeVal);
             }
 
             if(app.acl.hasAccessToModel('edit', this.model, this.name) === false) {
@@ -110,6 +112,7 @@
             if(app.acl.hasAccess(this.action, this.model.module, this.model.get('assigned_user_id'), this.name)) {
                 if(model.module) {
                     this.model.set('parent_type', model.module, {silent: silent});
+                    this.model.removeDefaultAttribute('parent_type');
                 }
                 this.model.set('parent_id', model.id, {silent: silent});
                 this.model.set('parent_name', model.value, {silent: silent});

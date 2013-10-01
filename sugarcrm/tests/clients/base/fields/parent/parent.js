@@ -52,6 +52,7 @@ describe("Base.Field.Parent", function() {
             expected_name = 'blahblah',
             expected_module = 'Accounts';
 
+        field.model.removeDefaultAttribute = sinon.stub();
         field.setValue({id: expected_id, value: expected_name, module: expected_module});
         var actual_id = field.model.get('parent_id'),
             actual_name = field.model.get('parent_name'),

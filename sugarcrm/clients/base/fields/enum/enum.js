@@ -83,6 +83,7 @@
             if (defaultValue) {
                 // call with {silent: true} on, so it won't re-render the field, since we haven't rendered the field yet
                 this.model.set(this.name, defaultValue, {silent: true});
+                this.model.setDefaultAttribute(this.name, defaultValue);
             }
         }
         app.view.Field.prototype._render.call(this);
@@ -108,6 +109,7 @@
                     }
                     if(self.model && !(self.name == 'currency_id' && _.isUndefined(value))) {
                         self.model.set(self.name, self.unformat(value));
+                        self.model.removeDefaultAttribute(self.name)
                     }
                 });
                 if (this.def.ordered) {
