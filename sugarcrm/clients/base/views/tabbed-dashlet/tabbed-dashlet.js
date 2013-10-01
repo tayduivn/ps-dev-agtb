@@ -254,7 +254,6 @@
         var tab = this.tabs[index],
             options = {
                 limit: this.settings.get('limit'),
-                myItems: this.settings.get('visibility') === 'user',
                 offset: 0,
                 params: {
                     order_by: tab.order_by || null,
@@ -262,6 +261,10 @@
                 }
             };
 
+        if (tab.module != 'Meetings' && tab.module != 'Calls') {
+            options.myItems = this.settings.get('visibility') === 'user';
+        }
+        
         return options;
     },
 
@@ -283,6 +286,14 @@
             filters.push(filter);
         });
 
+        if ((tab.module === 'Meetings' || tab.module === 'Calls')
+            && this.settings.get('visibility') === 'user') {
+            filters.push({
+                "$or":[{"assigned_user_id":app.user.id},
+                       {"users.id":app.user.id}]
+            });
+        }
+        
         return filters;
     },
 
