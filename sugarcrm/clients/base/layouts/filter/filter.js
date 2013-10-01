@@ -236,7 +236,11 @@
     applyFilter: function(query, dynamicFilterDef) {
         //If the quicksearch field is not empty, append a remove icon so the user can clear the search easily
         this._toggleClearQuickSearchIcon(!_.isEmpty(query));
-
+        // reset the selected on filter apply
+        var massCollection = this.context.get('mass_collection');
+        if (massCollection && massCollection.models && massCollection.models.length > 0) {
+            massCollection.reset([],{silent: true});
+        }
         var self = this,
             ctxList = this.getRelevantContextList();
         _.each(ctxList, function(ctx) {
