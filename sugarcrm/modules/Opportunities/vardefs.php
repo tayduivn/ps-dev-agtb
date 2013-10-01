@@ -193,7 +193,8 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CURRENCY',
             'function' => array('name' => 'getCurrencyDropDown', 'returns' => 'html'),
             'reportable' => false,
-            'comment' => 'Currency used for display purposes'
+            'comment' => 'Currency used for display purposes',
+            'default' => '-99'
         ),
         'currency_name' => array(
             'name' => 'currency_name',
