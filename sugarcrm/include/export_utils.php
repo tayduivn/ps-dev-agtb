@@ -665,7 +665,7 @@ function generateSearchWhere($module, $query)
            //for some modules, such as iframe, it has massupdate, but it doesn't have search function, the where sql should be empty.
             return;
         }
-        $searchForm = new SearchForm($seed, $module);
+        $searchForm = getSearchForm($seed, $module);
         $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
     }
     $searchForm->populateFromArray(unserialize(base64_decode($query)));
@@ -675,6 +675,23 @@ function generateSearchWhere($module, $query)
     $ret_array['where'] = $where;
     $ret_array['searchFields'] = $searchForm->searchFields;
     return $ret_array;
+}
+
+/**
+ * Get search form - module specific, custom or default
+ * @param SugarBean $bean
+ * @param string $module
+ * @return SearchForm
+ */
+function getSearchForm($bean, $module)
+{
+    if (SugarAutoLoader::requireWithCustom("modules/$module/{$module}SearchForm.php")) {
+        $searchFormClass = SugarAutoLoader::customClass("{$module}SearchForm");
+    } else {
+        SugarAutoLoader::requireWithCustom('include/SearchForm/SearchForm2.php');
+        $searchFormClass = SugarAutoLoader::customClass('SearchForm');
+    }
+    return new $searchFormClass($bean, $module);
 }
 /**
   * calls export method to build up a delimited string and some sample instructional text on how to use this file
