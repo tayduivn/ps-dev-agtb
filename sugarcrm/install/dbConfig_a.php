@@ -248,14 +248,14 @@ $outFTS =<<<EOQ3
             $ftsTypeDropdown
         </td>
 </tr>
-<tr id='fts_host_row' style='display:none;'>
+<tr id='fts_host_row'>
         <td width='1%'></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_HOST']}</b></td>
         <td  width='35%'nowrap align="left">
          <input type="text" name="fts_host" id="fts_host" value="localhost" />
         </td>
 </tr>
-<tr id='fts_port_row' style='display:none;'>
+<tr id='fts_port_row'>
 <td width='1%'></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_PORT']}</b></td>
         <td  width='35%'nowrap align="left">
@@ -291,25 +291,6 @@ $out4 =<<<EOQ4
 <br>
 
 <script>
-
-$('#fts_type').change(function(){
-    if($(this).val() == '')
-        hideFTSSettings();
-    else
-        showFTSSettings();
-});
-
-function showFTSSettings()
-{
-    $('#fts_port_row').show();
-    $('#fts_host_row').show();
-}
-
-function hideFTSSettings()
-{
-    $('#fts_port_row').hide();
-    $('#fts_host_row').hide();
-}
 
 function toggleDBUser(){
      if(typeof(document.getElementById('dbUSRData')) !='undefined'
@@ -424,13 +405,9 @@ EOQ4;
 
 //BEGIN SUGARCRM flav=pro ONLY
 $out4 .= <<<FTSTEST
-var ftsType = $('#fts_type').val();
-if(ftsType != "")
-{
-    postData += "&fts_type=" + ftsType;
+    postData += "&fts_type=" + $('#fts_type').val();
     postData += "&fts_host=" + $('#fts_host').val();
     postData += "&fts_port=" + $('#fts_port').val();
-}
 FTSTEST;
 //END SUGARCRM flav=pro ONLY
 

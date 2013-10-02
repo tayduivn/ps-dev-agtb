@@ -324,7 +324,6 @@ $app_list_strings = array (
   ),
   'sales_stage_default_key' => 'Prospecting',
   'fts_type' => array (
-      '' => '',
       'Elastic' => 'ElasticSearch',
   ),
   'sales_stage_dom' =>
