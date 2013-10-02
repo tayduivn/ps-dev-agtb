@@ -33,6 +33,8 @@
 
         className: 'alert-wrapper', //override default class
 
+        plugins: ['Tooltip'],
+
         events: {
             'click [data-action=cancel]': 'cancelClicked',
             'click [data-action=confirm]': 'confirmClicked',
@@ -49,6 +51,7 @@
         },
 
         initialize: function(options) {
+            app.plugins.attach(this, 'view');
             this.onConfirm = options.onConfirm;
             this.onCancel = options.onCancel;
             this.onLinkClick = options.onLinkClick;
@@ -62,7 +65,10 @@
          * Render the custom alert view template.
          */
         render: function(options) {
-            if(_.isUndefined(options)) {
+            if (!this.triggerBefore('render')) {
+                return false;
+            }
+            if (_.isUndefined(options)) {
                 return this;
             }
             var template = this.getAlertTemplate(options.level, options.messages, options.title, this.templateOptions);
@@ -70,6 +76,7 @@
             this.$el.after('<br>');
 
             this.show(options.level);
+            this.trigger('render');
         },
 
         show: function(level) {
@@ -81,6 +88,7 @@
         },
 
         cancel: function() {
+            this.trigger('dismiss');
             app.alert.dismiss(this.key);
         },
 
