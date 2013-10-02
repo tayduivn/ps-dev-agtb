@@ -90,6 +90,12 @@
 			{html_options name='default_time_format' selected=$config.default_time_format options=$config.time_formats}
 		</td>
 	</tr><tr>
+		<td  scope="row">{$MOD.LBL_LOCALE_DEFAULT_LANGUAGE}: </td>
+		<td  >
+			{html_options name='default_language' selected=$config.default_language options=$LANGUAGES}
+		</td>
+	</tr>
+	</tr><tr>
 		<td  scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}: </td>
 		<td>
             {html_options name='default_locale_name_format' id="default_locale_name_format" selected=$config.default_locale_name_format options=$NAMEFORMATS}
