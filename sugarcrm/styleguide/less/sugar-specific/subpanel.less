@@ -43,9 +43,9 @@
     font-weight: normal;
     white-space: nowrap;
     width: 65%;
-    width: ~"-moz-calc(100% - 202px)";
-    width: ~"-webkit-calc(100% - 202px)";
-    width: ~"calc(100% - 202px)";
+    width: ~"-moz-calc(100% - 180px)";
+    width: ~"-webkit-calc(100% - 180px)";
+    width: ~"calc(100% - 180px)";
     padding-right: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -59,9 +59,12 @@
     width: 28px;
     .box-sizing(border-box);
   }
-  .btn-toolbar > .btn-group {
-    margin-left: 16px;
-    margin-right: 10px;
+  .btn-toolbar {
+    padding-left: 0;
+    > .btn-group {
+      margin-left: 16px;
+      margin-right: 10px;
+    }
   }
 }
 
