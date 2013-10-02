@@ -324,13 +324,15 @@ class UndeployedRelationships extends AbstractRelationships implements Relations
     }
 
     /*
-     * Add any relate fields to the DetailView and EditView of the appropriate module immediately (don't wait for a build)
+     * Add any relate fields to the Record View of the appropriate module immediately (don't wait for a build)
      * @param AbstractRelationship $relationship The relationship whose fields we are to add or remove
      * @param boolean $actionAdd True if we are to add; false if to remove
-     * return null
+     * return bool
      */
     private function updateUndeployedLayout ($relationship , $actionAdd = true)
     {
+        // Use the parser factory to get the parser instead of direction instantiation
+        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
         
         // many-to-many relationships don't have fields so if we have a many-to-many we can just skip this...
         if ($relationship->getType () == MB_MANYTOMANY)
@@ -339,16 +341,15 @@ class UndeployedRelationships extends AbstractRelationships implements Relations
         $successful = true ;
         $layoutAdditions = $relationship->buildFieldsToLayouts () ;
         
-        require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
         foreach ( $layoutAdditions as $deployedModuleName => $fieldName )
         {
-            foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
+            foreach ( array ( MB_RECORDVIEW ) as $view )
             {
                 $parsedName = AbstractRelationships::parseDeployedModuleName ( $deployedModuleName ) ;
                 if (isset ( $parsedName [ 'packageName' ] ))
                 {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": " . (($actionAdd) ? "adding" : "removing") . " $fieldName on $view layout for undeployed module {$parsedName [ 'moduleName' ]} in package {$parsedName [ 'packageName' ]}" ) ;
-                    $parser = new GridLayoutMetaDataParser ( $view, $parsedName [ 'moduleName' ], $parsedName [ 'packageName' ] ) ;
+                    $parser = ParserFactory::getParser($view, $parsedName['moduleName'], $parsedName['packageName']);
                     
                     if (($actionAdd) ? $parser->addField ( array ( 'name' => $fieldName ) ) : $parser->removeField ( $fieldName ))
                     {

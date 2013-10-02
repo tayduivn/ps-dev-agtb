@@ -2005,7 +2005,7 @@ private function dir_file_count($path){
      * return null
      */
 	function addFieldsToLayout($layoutAdditions) {
-	    require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParser.php' ;
+	    require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
 
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
@@ -2016,12 +2016,18 @@ private function dir_file_count($path){
         {
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) )
             {
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW, ) as $view )
-                {
+                // Handle decision making on views for BWC/non-BWC modules
+                if (isModuleBWC($deployedModuleName)) {
+                    $views = array(MB_EDITVIEW, MB_DETAILVIEW);
+                } else {
+                    $views = array(MB_RECORDVIEW);
+                }
+                
+                foreach($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
-                    $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
-                    $parser->addField ( array ( 'name' => $fieldName ) ) ;
-                    $parser->handleSave ( false ) ;
+                    $parser = ParserFactory::getParser($view, $deployedModuleName);
+                    $parser->addField(array('name' => $fieldName));
+                    $parser->handleSave(false);
                 }
             }
         }
