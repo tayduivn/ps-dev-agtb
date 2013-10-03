@@ -156,6 +156,7 @@ $dictionary['Contact'] = array(
         'report_to_name' => array(
             'name' => 'report_to_name',
             'rname' => 'name',
+            'db_concat_fields' => array('first_name', 'last_name'),
             'id_name' => 'reports_to_id',
             'vname' => 'LBL_REPORTS_TO',
             'type' => 'relate',
