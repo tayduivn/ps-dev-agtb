@@ -74,7 +74,6 @@ class ACLController
 	{
 			global $current_user;
 			if(is_admin($current_user))return false;
-			if($current_user->isAdminForModule($category))return false;
 			return ACLAction::userNeedsOwnership($current_user->id, $category, $value,$type);
 	}
 

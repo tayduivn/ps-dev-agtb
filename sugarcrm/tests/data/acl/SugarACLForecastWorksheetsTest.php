@@ -35,8 +35,6 @@ class SugarACLForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('getForecastByBean')
             ->will($this->returnValue($beanMock));
         
-        SugarTestReflection::setProtectedValue($acl_class, 'isAdminForBean', null);
-
         $context = array('field' => 'test_field', 'action' => 'write', 'user' => $userMock);
 
         $ret = $acl_class->checkAccess('ForecastWorksheets', 'field', $context);
@@ -63,8 +61,6 @@ class SugarACLForecastWorksheetsTest extends Sugar_PHPUnit_Framework_TestCase
         $acl_class->expects($this->once())
             ->method('getForecastByBean')
             ->will($this->returnValue($beanMock));
-
-        SugarTestReflection::setProtectedValue($acl_class, 'isAdminForBean', null);
 
         $context = array('field' => 'test_field', 'action' => 'write', 'user' => $userMock);
 
