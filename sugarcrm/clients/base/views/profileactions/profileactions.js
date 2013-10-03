@@ -62,7 +62,6 @@
                 // if all three acls checks are not met, it will only
                 // push if the menu item is not admin, which skips the admin menu
                 if(app.acl.hasAccess('admin', 'Administration') ||
-                    app.acl.hasAccessToAny('admin') ||
                     app.acl.hasAccessToAny('developer') ||
                     item['acl_action'] !== 'admin') {
                     result.push(item);
