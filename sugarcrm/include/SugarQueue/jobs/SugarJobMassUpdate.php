@@ -58,7 +58,7 @@ class SugarJobMassUpdate implements RunnableSchedulerJob
     {
         //TODO: Creation of Activities are turned off for mass update.
         //TODO: It will be turned on when job queue, asynchronous processing, activity Stream performance has been handled after 7.0
-        $GLOBALS['ACTIVITY_FROM_MASS_UPDATE'] = true;
+        Activity::disable();
 
         if (!empty($GLOBALS['sugar_config']['massupdate_chunk_size'])) {
             $this->chunkSize = $GLOBALS['sugar_config']['massupdate_chunk_size'];
