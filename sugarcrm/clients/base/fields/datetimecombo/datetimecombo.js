@@ -42,7 +42,30 @@
 
     serverTimeFormat: 'H:i:s',
 
-    plugins: ['EllipsisInline'],
+    plugins: ['EllipsisInline', 'FieldDuplicate'],
+
+    /**
+     * Handler to refresh field state.
+     *
+     * Called from {@link app.plugins._onFieldDuplicate}.
+     */
+    onFieldDuplicate: function() {
+        if (this.disposed) {
+            return;
+        }
+
+        if (this.view.name === 'merge-duplicates' &&
+            this.options.viewName &&
+            this.options.viewName === 'edit'
+        ) {
+            if (_.isEmpty(this.model.get(this.name))) {
+                this.$('[rel=datepicker]').val('');
+                this.$('[rel=timepicker]').val('');
+            } else {
+                this.format(this.model.get(this.name));
+            }
+        }
+    },
 
     /**
      * Renders widget, sets up date and time pickers, etc.

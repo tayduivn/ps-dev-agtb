@@ -80,7 +80,8 @@
                                                            data-action="copy"
                                                            data-field-name="{{name}}"
                                                            data-record-id="{{../../../id}}" />
-                                                    <label>{{field ../../../../this model=../../../this}}</label>
+                                                    {{! FIXME see SC-2065}}
+                                                    <label for="">{{field ../../../../this model=../../../this}}</label>
                                                 </div>
                                             </div>
                                         {{/each}}
@@ -93,7 +94,8 @@
                                                        data-action="copy"
                                                        data-field-name="{{name}}"
                                                        data-record-id="{{../../../id}}" />
-                                                <label>{{field ../../../../this model=../../../this}}</label>
+                                                {{! FIXME see SC-2065}}
+                                                <label for="">{{field ../../../../this model=../../../this}}</label>
                                             </div>
                                         </div>
                                     {{/each}}
