@@ -208,6 +208,7 @@ class OpportunitiesSeedData {
                 //BEGIN SUGARCRM flav=pro && flav != ent ONLY
                 $rli->sales_stage = $opp->sales_stage;
                 $rli->probability = $opp->probability;
+                $rli->commit_stage = $opp->commit_stage;
                 //END SUGARCRM flav=pro && flav != ent ONLY
                 //BEGIN SUGARCRM flav=ent ONLY
                 $rli->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
@@ -215,13 +216,13 @@ class OpportunitiesSeedData {
                 if ($rli->sales_stage == "Closed Won" || $rli->sales_stage == "Closed Lost") {
                     $opp->closed_revenue_line_items++;
                 }
+                $rli->commit_stage = $rli->probability >= 70 ? 'include' : 'exclude';
                 //END SUGARCRM flav=ent ONLY
                 $rli->date_closed = $opp->date_closed;
                 $rli->date_closed_timestamp = $opp->date_closed_timestamp;
                 $rli->assigned_user_id = $opp->assigned_user_id;
                 $rli->opportunity_id = $opp->id;
                 $rli->account_id = $account->id;
-                $rli->commit_stage = $opp->commit_stage;
                 $rli->lead_source = array_rand($app_list_strings['lead_source_dom']);
                 //BEGIN SUGARCRM flav=pro ONLY
                 // if this is an even number, assign a product template

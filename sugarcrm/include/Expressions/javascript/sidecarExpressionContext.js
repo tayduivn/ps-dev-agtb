@@ -153,13 +153,6 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
 
         }
     },
-    setFieldDisabled : function(variable, disable) {
-        var set = disable !== false, //default disable to true
-            field = this.view.getField(variable);
-        if (field) {
-            field.setDisabled(set);
-        }
-    },
     getLink : function(variable) {
         var model = this.view.context.get("model");
         if (model && model.fields && model.fields[variable])
@@ -362,6 +355,25 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
     },
     parseDate: function(date, type) {
         return SUGAR.App.date.parse(date);
+    },
+    setFieldDisabled: function(target, disabled) {
+        disabled = (_.isUndefined(disabled)) ? true : disabled;
+        var field = this.view.getField(target);
+        if (field) {
+            field.setDisabled(disabled);
+            // if disabled is false
+            // and the currentState of the field is not edit
+            // and the currentState of the view is edit but not inlineEditMode
+            // then we switch to field into edit mode and add the field to the editableFields list
+            if (_.isEqual(disabled, false)
+                && !_.isEqual(field.currentState, 'edit')
+                && _.isEqual(this.view.currentState, 'edit')
+                && !_.isEqual(this.view.inlineEditMode, true)
+            ) {
+                field.setMode('edit');
+                this.view.editableFields.push(field);
+            }
+        }
     }
 });
 

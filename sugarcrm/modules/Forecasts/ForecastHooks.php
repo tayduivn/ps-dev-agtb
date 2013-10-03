@@ -27,4 +27,32 @@ class ForecastHooks extends AbstractForecastHooks
     {
         $forecast->date_modified = $forecast->fetched_row['date_modified'];
     }
+
+    /**
+     * If the commit_stage field is empty on a bean but the probability is not and Forecasts is setup, then try and
+     * match the commit_stage to where the probability falls in the ranges defined by the forecast config.
+     *
+     * @param RevenueLineItem|Opportunity|SugarBean $bean
+     * @param string $event
+     * @param array $params
+     */
+    public function setCommitStageIfEmpty($bean, $event, $params = array())
+    {
+        // only run on before_save logic hooks
+        if ($event != 'before_save') {
+            return;
+        }
+        if (static::isForecastSetup() && empty($bean->commit_stage) && $bean->probability !== '') {
+            //Retrieve Forecasts_category_ranges and json decode as an associative array
+            $forecast_ranges = isset(static::$settings['forecast_ranges']) ? static::$settings['forecast_ranges'] : '';
+            $category_ranges = isset(static::$settings[$forecast_ranges . '_ranges']) ?
+                (array)static::$settings[$forecast_ranges . '_ranges'] : array();
+            foreach ($category_ranges as $key => $entry) {
+                if ($bean->probability >= $entry['min'] && $bean->probability <= $entry['max']) {
+                    $bean->commit_stage = $key;
+                    break;
+                }
+            }
+        }
+    }
 }
