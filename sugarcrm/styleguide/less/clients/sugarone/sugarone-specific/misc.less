@@ -267,23 +267,23 @@ hr.soften {
 }
 
 .record-cell[data-name="title"], .record-cell[data-name="account_name"]  {
-    font-size: 12px !important;
+  font-size: 12px !important;
 }
 
 .record-cell[data-name="date_modified_by"] {
-    position: absolute !important;
-    right: 0;
-    bottom: -28px;
-    text-align: right;
+  position: absolute !important;
+  right: 0;
+  bottom: -28px;
+  text-align: right;
 }
 .record .record-cell[data-name="date_modified_by"][data-type="date"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="datetimecombo"] .normal > span,  .record .record-cell[data-name="date_modified_by"][data-type="fieldset"] .normal > span,  .record .record-cell[data-name="date_modified_by"] .record-label {
-        display: inline !important;
-    }
-    .record .record-cell[data-name="date_modified_by"] .normal {
-        font-size: @fontSizeSmall;
-        color: @grayLight;
-        display: inline !important;
-    }
+  display: inline !important;
+}
+.record .record-cell[data-name="date_modified_by"] .normal {
+  font-size: @fontSizeSmall;
+  color: @grayLight;
+  display: inline !important;
+}
 
 // Just a thought - ideally, we could adjust this position
 //   based on which module / view we're on. The reason is not
@@ -292,16 +292,19 @@ hr.soften {
 	top: 0;
 }
 
+.side .dashboard {
+  top: 0;
+}
 .main-pane .dashboard {
-    .border-radius(0);
-    .box-shadow(none);
+  .border-radius(0);
+  .box-shadow(none);
 }
 
 .record {position: relative;}
 
 .btn.btn-invisible.addEventBtn, .gdocNew {
-    top: 4px;
-    right: 70px;
+  top: 4px;
+  right: 70px;
 }
 
 
@@ -320,13 +323,12 @@ hr.soften {
 }
 
 .life {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: @fontSizeSmall;
-    color: @grayLight;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: @fontSizeSmall;
+  color: @grayLight;
 }
-
 
 .logo {
   background: url('@{baseUrl}/img/sugar-red-sm.png') 0 0 no-repeat;
@@ -346,7 +348,6 @@ hr.soften {
   margin-right: 15px;
 }
 
-
 .no-link {
   text-decoration: none;
   color: @textColor;
@@ -362,9 +363,9 @@ hr.soften {
 
 .filter.controls {margin-left: 0 !important;}
 .subpanel {
-    #gradient > .vertical(lighten(@grayLighter, 3%), @grayLighter);
-    border-bottom: 1px solid darken(@grayLighter, 5%);
-    border-top: 1px solid @white;
+  #gradient > .vertical(lighten(@grayLighter, 3%), @grayLighter);
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  border-top: 1px solid @white;
 
 }
 .subpanel.out {
@@ -421,7 +422,7 @@ hr.soften {
 }
 
 .subpanel-controls {
-    margin-top: 7px;
+  margin-top: 7px;
 }
 
 /* BWC layout and views */
@@ -594,7 +595,6 @@ hr.soften {
       &.done-btn {
         min-width: 80px;
       }
-
     }
   }
 }
@@ -628,11 +628,9 @@ hr.soften {
   position: relative;
 }
 
-
 .dropdown-menu.scroll {
 -webkit-overflow-scrolling: touch;
 }
-
 
 .icon-spin {
   display: inline-block;
@@ -672,7 +670,6 @@ hr.soften {
   padding-top: 0;
 }
 
-
 //from activity stream
 ul.unstyled, ol.unstyled {
   margin: 0 !important;
@@ -691,7 +688,6 @@ ul.unstyled, ol.unstyled {
   border-top: 1px solid darken(@grayLighter, 15%);
   .box-shadow(inset 0 1px 2px rgba(0,0,0,.05));
 }
-
 
 .tab-pane .block-footer {
   background: none;
