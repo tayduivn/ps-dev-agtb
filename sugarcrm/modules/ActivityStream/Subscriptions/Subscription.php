@@ -69,7 +69,7 @@ class Subscription extends Basic
     public static function getSubscribedRecords(User $user, $type = 'array', $params = array())
     {
         $query = self::getQueryObject($params);
-        $query->select(array('parent_id'));
+        $query->select(array('parent_id', 'parent_type'));
         $query->where()->equals('created_by', $user->id);
 
         return $query->execute($type);
@@ -195,24 +195,26 @@ class Subscription extends Basic
     /**
      * Returns a query object for subscription queries.
      * @param Array $params
-     * //BEGIN SUGARCRM flav=pro ONLY
      *        disable_row_level_security
-     * //END SUGARCRM flav=pro ONLY
      * @return SugarQuery
      */
     protected static function getQueryObject($params = array())
     {
         $subscription = BeanFactory::getBean('Subscriptions');
-        //BEGIN SUGARCRM flav=pro ONLY
         // Pro+ versions able to override visibility on subscriptions (Portal)
         // to allow Contact change activity messages to be linked to subscribers
         if (!empty($params['disable_row_level_security'])) {
             $subscription->disable_row_level_security = true;
         }
-        //END SUGARCRM flav=pro ONLY
         $query = new SugarQuery();
         $query->from($subscription);
         $query->where()->equals('deleted', '0');
+        if (!empty($params['limit'])) {
+            $query->limit($params['limit'] + 1);
+        }
+        if (!empty($params['offset'])) {
+            $query->offset($params['offset']);
+        }
         return $query;
     }
 

@@ -138,6 +138,14 @@ class CurrentUserApi extends SugarApi
                 'longHelp' => 'include/api/help/me_preference_preference_name_delete_help.html',
                 'keepSession' => true,
             ),
+            'getMyFollowedRecords' => array(
+                'reqType' => 'GET',
+                'path' => array('me','following'),
+                'pathVars' => array('',''),
+                'method' => 'getMyFollowedRecords',
+                'shortHelp' => 'This method retrieves all followed methods for the user.',
+                'longHelp' => 'include/api/help/me_getfollowed_help.html',
+            ),
         );
     }
     
@@ -772,5 +780,43 @@ class CurrentUserApi extends SugarApi
         
         // Set this back to what it was
         $_SESSION['unique_key'] = $uniqueKey;
+    }
+
+    /**
+     * Get all of the records a user follows.
+     * @param $api
+     * @param $args
+     * @return array - records user follows
+     */
+    public function getMyFollowedRecords($api, $args)
+    {
+        $current_user = $this->getUserBean();
+
+        $options = array();
+        $options['limit'] = !empty($args['limit']) ? $args['limit'] : 20;
+        $options['offset'] = 0;
+
+        if (!empty($args['offset'])) {
+            if ($args['offset'] == 'end') {
+                $options['offset'] = 'end';
+            } else {
+                $options['offset'] = (int) $args['offset'];
+            }
+        }
+        $records = Subscription::getSubscribedRecords($current_user, 'array', $options);
+        $beans = array();
+
+        $data = array();
+        $data['next_offset'] = -1;
+        foreach ($records as $i => $record) {
+            if ($i == $options['limit']) {
+                $data['next_offset'] = (int) ($options['limit'] + $options['offset']);
+                continue;
+            }
+            $beans[] = BeanFactory::getBean($record['parent_type'], $record['parent_id']);
+        }
+
+        $data['records'] = $this->formatBeans($api, $args, $beans);
+        return $data;
     }
 }

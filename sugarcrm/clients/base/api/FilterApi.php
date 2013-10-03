@@ -570,6 +570,8 @@ class FilterApi extends SugarApi
                     self::addCreatorFilter($q, $where, $filter);
                 } elseif ($field == '$tracker') {
                     self::addTrackerFilter($q, $where, $filter);
+                } elseif ($field == '$following') {
+                    self::addFollowFilter($q, $where, $filter);
                 } else {
                     // Looks like just a normal field, parse it's options
                     $fieldInfo = self::verifyField($q, $field);
@@ -694,6 +696,17 @@ class FilterApi extends SugarApi
         }
 
         $where->equals($linkPart . 'assigned_user_id', self::$current_user->id);
+    }
+
+    /**
+     * Add a Following Filter
+     * @param SugarQuery $q
+     * @param SugarQuery_Builder_Where $where
+     * @param $filter
+     */
+    protected static function addFollowFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter)
+    {
+        $q->joinRaw("JOIN subscriptions AS subs ON subs.deleted = 0 AND subs.parent_type = '{$q->getFromBean()->module_dir}' AND subs.created_by = '{$GLOBALS['current_user']->id}'");
     }
 
     /**

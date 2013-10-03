@@ -86,6 +86,7 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '" . $GLOBALS['current_user']->id . "'");
         //END SUGARCRM flav=pro ONLY
+        $GLOBALS['db']->query("DELETE FROM subscriptions WHERE created_by = '{$GLOBALS['current_user']->id}'");
     }
 
     public static function tearDownAfterClass()
@@ -307,6 +308,26 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(10, $reply['next_offset'], "Empty filter did not return at least 10 results.");
 
     }
+
+    public function testFollowerFilter()
+    {
+
+        Subscription::subscribeUserToRecord($GLOBALS['current_user'], self::$accounts[1]);
+
+        $reply = $this->filterApi->filterList(
+            $this->serviceMock,
+            array(
+                'module' => 'Accounts',
+                'filter' => array(array('$following' => '')),
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC'
+            )
+        );
+
+        $this->assertNotEmpty($reply['records']);
+    }
+
+
 
     //BEGIN SUGARCRM flav=pro ONLY
     public function testFavoriteFilter()
