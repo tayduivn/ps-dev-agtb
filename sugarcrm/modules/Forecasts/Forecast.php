@@ -317,6 +317,18 @@ class Forecast extends SugarBean
 
         parent::save($check_notify);
     }
+
+    /**
+     * Getter for the commit_stage dropdown that gets configured in Forecasts config
+     *
+     * @return array|string
+     */
+    public function getCommitStageDropdown()
+    {
+        $adminBean = BeanFactory::getBean('Administration');
+        $config = $adminBean->getConfigForModule($this->module_name);
+        return translate($config['buckets_dom']);
+    }
 }
 function getTimePeriodsDropDownForForecasts(){
     return TimePeriod::get_timeperiods_dom();

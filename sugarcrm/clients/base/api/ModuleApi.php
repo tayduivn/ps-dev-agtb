@@ -127,7 +127,15 @@ class ModuleApi extends SugarApi {
             if(!empty($includeFile)) {
                 require_once($includeFile);
             }
-            $value = $funcName();
+
+            $func = $funcName;
+            if (isset($vardef['function_bean'])) {
+                $funcBean =  BeanFactory::getBean($vardef['function_bean']);
+                if (method_exists($funcBean, $funcName)) {
+                    $func = array($funcBean, $funcName);
+                }
+            }
+            $value = call_user_func($func);
             $cache_age = 60;
         }
         else {

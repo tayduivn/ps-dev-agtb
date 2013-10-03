@@ -439,6 +439,13 @@ class EditView
                   		require_once($this->fieldDefs[$name]['function']['include']);
                   	}
 
+                    if (isset($this->fieldDefs[$name]['function_bean'])) {
+                        $funcBean =  BeanFactory::getBean($this->fieldDefs[$name]['function_bean']);
+                        if (method_exists($funcBean, $function)) {
+                            $function = array($funcBean, $function);
+                        }
+                    }
+
 	       	 		if(!empty($this->fieldDefs[$name]['function']['returns']) && $this->fieldDefs[$name]['function']['returns'] == 'html'){
 						if(!empty($this->fieldDefs[$name]['function']['include'])){
 								require_once($this->fieldDefs[$name]['function']['include']);

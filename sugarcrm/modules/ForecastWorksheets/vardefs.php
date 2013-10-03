@@ -350,7 +350,9 @@ $dictionary['ForecastWorksheet'] = array(
             'len' => '50',
             'comment' => 'Forecast commit ranges: Include, Likely, Omit etc.',
             'sortable' => true,
-            'studio' => false
+            'studio' => false,
+            'function' => 'getCommitStageDropdown',
+            'function_bean' => 'Forecasts',
         ),
         'draft' =>
         array(

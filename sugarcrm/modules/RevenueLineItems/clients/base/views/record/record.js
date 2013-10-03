@@ -173,12 +173,6 @@
                     }
                     return true;
                 }, this);
-            } else {
-                _.each(panel.fields, function(field) {
-                    if (field.name == "commit_stage") {
-                        field.options = app.metadata.getModule("Forecasts", "config").buckets_dom;
-                    }
-                }, this);
             }
         }, this);
     }
