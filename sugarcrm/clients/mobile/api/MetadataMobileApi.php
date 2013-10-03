@@ -25,6 +25,22 @@ require_once 'clients/mobile/api/CurrentUserMobileApi.php';
 
 // An API to let the user in to the metadata
 class MetadataMobileApi extends MetadataApi {
+    protected static $blackListModuleDataKeys = array(
+        'menu'
+    );
+    protected static $allowedModuleViews = array(
+        'list',
+        'edit',
+        'detail',
+    );
+    protected static $allowedModuleLayouts = array(
+        'list',
+        'edit',
+        'detail',
+        'subpanels',
+    );
+
+
     protected function getModules() {
         // The current user API gets the proper list of modules, we'll re-use it here
         $currentUserApi = new CurrentUserMobileApi();
@@ -34,5 +50,42 @@ class MetadataMobileApi extends MetadataApi {
         	$modules[] = 'Users';
         }
         return $modules;
+    }
+
+
+    /**
+     * The same as MetadataApi::loadMetadata except that the result is filtered to remove
+     * unnecesary elements for nomad/mobile
+     *
+     * @return array|void
+     */
+    protected function loadMetadata(array $args) {
+        $data = parent::loadMetadata($args);
+
+        if (!empty($data['modules'])) {
+            foreach($data['modules'] as $module=> $mData) {
+                //blacklist certain data types alltogether
+                foreach(self::$blackListModuleDataKeys as $key) {
+                    unset($data['modules'][$module][$key]);
+                }
+                //views and layouts should be white-list filtered
+                if (!empty($mData['views'])) {
+                    foreach($mData['views'] as $key => $def) {
+                        if (!in_array($key, self::$allowedModuleViews)) {
+                            unset($data['modules'][$module]['views'][$key]);
+                        }
+                    }
+                }
+                if (!empty($mData['layouts'])) {
+                    foreach($mData['layouts'] as $key => $def) {
+                        if (!in_array($key, self::$allowedModuleLayouts)) {
+                            unset($data['modules'][$module]['layouts'][$key]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 }
