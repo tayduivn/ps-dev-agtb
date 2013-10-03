@@ -101,7 +101,19 @@ class FilterApi extends SugarApi
     public function filterById(ServiceBase $api, array $args)
     {
         $filter = BeanFactory::getBean('Filters', $args['record']);
-        $filter_definition = json_decode($filter->filter_definition, true);
+
+        // Bad filter ID in request
+        if (empty($filter->id)) {
+            throw new SugarApiExceptionNotFound("Could not find filter: {$args['record']}");
+        }
+
+        // Rather than using a retardly long ternary...
+        if (empty($filter->filter_definition)) {
+            $filter_definition = array();
+        } else {
+            $filter_definition = json_decode($filter->filter_definition, true);
+        }
+
         $args = array_merge($args, $filter_definition);
         unset($args['record']);
         return $this->filterList($api, $args);
