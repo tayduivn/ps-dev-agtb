@@ -35,12 +35,11 @@ class ViewFtsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testTranslateModulesList()
     {
-        $this->markTestIncomplete("Test array is wrong, test fails, needs to be resolved");
         $view = new ViewFtsStub();
         $modules = array('Accounts', 'Bugs');
         $results = $view->translateModulesList($modules);
         $match = array(0=>array('module'=>'Accounts', 'label'=>'Accounts'),
-                                           1=>array('module'=>'Bugs', 'label'=>'Bug Tracker'));
+                                           1=>array('module'=>'Bugs', 'label'=>'Bugs'));
         // Don't use array_diff, it doesn't compare in depth
         $this->assertEquals($match, $results, 'unexpected results');
     }
