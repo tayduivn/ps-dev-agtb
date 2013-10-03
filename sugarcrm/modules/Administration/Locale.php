@@ -43,6 +43,9 @@ $errors			= array();
 ///////////////////////////////////////////////////////////////////////////////
 ////	HANDLE CHANGES
 if(isset($_REQUEST['process']) && $_REQUEST['process'] == 'true') {
+
+    $previousDefaultLanguage = $sugar_config['default_language'];
+
 	if(isset($_REQUEST['collation']) && !empty($_REQUEST['collation'])) {
 		//kbrill Bug #14922
 		if(array_key_exists('collation', $sugar_config['dbconfigoption']) && $_REQUEST['collation'] != $sugar_config['dbconfigoption']['collation']) {
@@ -58,16 +61,23 @@ if(isset($_REQUEST['process']) && $_REQUEST['process'] == 'true') {
         $locale->removeInvalidLocaleNameFormatUpgradeNotice();
     }
 
-    //Rebuild language cache then using ping to trigger refresh of client metadata if necessary
-    $mm = MetaDataManager::getManager();
-    $mm->rebuildLanguagesCache();
-    echo("
+    if ($previousDefaultLanguage === $sugar_config['default_language']) {
+        header('Location: index.php?module=Administration&action=index');
+    } else {
+        //Rebuild language cache then using ping to trigger refresh of client metadata if necessary
+        $mm = MetaDataManager::getManager();
+        $mm->rebuildLanguagesCache();
+
+        //Call Ping API to refresh the language list.
+        die("
             <script>
             var app = window.parent.SUGAR.App;
             app.api.call('read', app.api.buildURL('ping'));
             app.router.navigate('#bwc/index.php?module=Administration&action=index', {trigger:true, replace:true});
-            </script>"
-    );
+            </script>
+        ");
+    }
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -590,7 +590,6 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'activity_enable
       array(
             'name' => 'preferred_language',
             'type' => 'enum',
-            'default' => 'en_us',
             'vname' => 'LBL_PREFERRED_LANGUAGE',
             'options' => 'available_language_dom',
       ),
