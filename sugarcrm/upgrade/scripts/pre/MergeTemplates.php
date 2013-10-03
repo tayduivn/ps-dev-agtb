@@ -15,7 +15,8 @@ class SugarUpgradeMergeTemplates extends UpgradeScript
         }
         $this->log("**** Merge started ");
         require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
-        $merger = new SugarMerge($this->context['new_source_dir']);
+        require_once($this->context['new_source_dir'].'/modules/UpgradeWizard/SugarMerge/SugarMerge7.php');
+        $merger = new SugarMerge7($this->context['new_source_dir']);
         $merger->mergeAll();
         $this->log("**** Merge finished ");
     }
