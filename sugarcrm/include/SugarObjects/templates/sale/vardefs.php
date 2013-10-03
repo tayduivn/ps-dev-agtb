@@ -136,6 +136,7 @@ $vardefs = array(
             'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
             'studio' => false,
             'duplicate_merge' => 'disabled',
+            'massupdate' => false
         ),
         'currency_symbol' =>
         array(
@@ -152,6 +153,7 @@ $vardefs = array(
             'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
             'studio' => false,
             'duplicate_merge' => 'disabled',
+            'massupdate' => false
         ),
         'date_closed' =>
         array(
