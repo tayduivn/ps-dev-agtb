@@ -21,7 +21,6 @@
  */
 ({
     extendsFrom: 'TabbedDashletView',
-    plugins: ['LinkedModel', 'Dashlet', 'Timeago'],
 
     /**
      * {@inheritDoc}
@@ -48,13 +47,7 @@
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
 
-        app.view.invokeParent(this, {
-            type: 'view',
-            name: 'tabbed-dashlet',
-            method: 'initialize',
-            platform: 'base',
-            args: [options]
-        });
+        this._super('initialize', [options]);
     },
 
     /**

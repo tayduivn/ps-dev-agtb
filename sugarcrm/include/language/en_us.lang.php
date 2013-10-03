@@ -4629,15 +4629,23 @@ $app_list_strings['top10_opportunities_duration_options'] = array (
     12 => 'This Year',
 );
 // see sugarcrm/clients/base/views/bubblechart/bubblechart.php
-$app_list_strings['top10_opportunities_filter_assigned_options'] = array (
+$app_list_strings['top10_opportunities_visibility_options'] = array (
     //BEGIN SUGARCRM flav=ent ONLY
-    'my' => 'My Revenue Line Items',
+    'user' => 'My Revenue Line Items',
     'group' => 'Group Revenue Line Items',
     //END SUGARCRM flav=ent ONLY
     //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    'my' => 'My Opportunities',
+    'user' => 'My Opportunities',
     'group' => 'Group Opportunities',
     //END SUGARCRM flav=pro && flav!=ent ONLY
+);
+$app_list_strings['forecast_pipeline_visibility_options'] = array (
+    'user' => 'My Pipeline',
+    'group' => 'My Team\'s Pipeline',
+);
+$app_list_strings['forecast_pareto_visibility_options'] = array (
+    'user' => 'My Forecast',
+    'group' => 'My Team\'s Forecast',
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

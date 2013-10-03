@@ -13,35 +13,36 @@
 ({
     plugins: ['Dashlet', 'Tooltip'],
 
-    events: {
-        'click .toggle-control': 'switchChart'
-    },
-
-    filterAssigned: null,
     dateRange: [],
     dataset: {},
     params: {},
     chart: {},
     tooltiptemplate: {},
 
+    /**
+     * Track if current user is manager.
+     */
+    isManager: false,
+
     initialize: function (options) {
+        this.isManager = app.user.get('is_manager');
+        this._initPlugins();
         app.view.View.prototype.initialize.call(this, options);
 
-        var self = this,
-            fields = [
-                'id',
-                'name',
-                'account_name',
-                'likely_case',
-                'base_rate',
-                'currency_id',
-                'assigned_user_name',
-                'date_closed',
-                'probability',
-                'account_id',
-                'sales_stage',
-                'commit_stage'
-            ];
+        var fields = [
+            'id',
+            'name',
+            'account_name',
+            'likely_case',
+            'base_rate',
+            'currency_id',
+            'assigned_user_name',
+            'date_closed',
+            'probability',
+            'account_id',
+            'sales_stage',
+            'commit_stage'
+        ];
 
         this.params = {
             'fields': fields.join(','),
@@ -54,10 +55,16 @@
 
     initDashlet: function(view) {
         var self = this;
-
-        this.filterAssigned = this.settings.get('filter_assigned');
-
         this.setDateRange();
+
+        if (!this.isManager && this.meta.config) {
+            // FIXME: Dashlet's config page is rendered from meta.panels directly.
+            // See the "dashletconfiguration-edit.hbs" file.
+            this.meta.panels = _.chain(this.meta.panels).filter(function(panel) {
+                panel.fields = _.without(panel.fields, _.findWhere(panel.fields, {name: 'visibility'}));
+                return panel;
+            }).value();
+        }
 
         this.chart = nv.models.bubbleChart()
             .x(function (d) {
@@ -80,7 +87,9 @@
             })
             .colorData('class', {step:2})
             .groupBy(function (d) {
-                return (self.filterAssigned === 'my') ? d.sales_stage_short : d.assigned_user_name;
+                return (self.isManager && self.getVisibility() === 'user') ?
+                    d.sales_stage_short :
+                    d.assigned_user_name;
             })
             .filterBy(function (d) {
                 return d.probability;
@@ -196,7 +205,7 @@
                 }
             ];
 
-        if (this.filterAssigned === 'my') {
+        if (!this.isManager || this.getVisibility() === 'user') {
             _filter.push({'$owner': ''});
         }
 
@@ -236,17 +245,6 @@
         this.loadData();
     },
 
-    /**
-     * Trigger data load event only when dataset toggle changes.
-     */
-    switchChart: function (e) {
-        if (this.filterAssigned === e.currentTarget.value) {
-            return;
-        }
-        this.filterAssigned = e.currentTarget.value;
-        this.loadData();
-    },
-
     _dispose: function () {
         this.on('data-changed', null, this);
         if (!_.isEmpty(this.chart)) {
@@ -254,6 +252,22 @@
             nv.utils.unResizeOnPrint(this.chart.render);
         }
         app.view.View.prototype._dispose.call(this);
+    },
+
+    /**
+     * Initialize plugins.
+     * Only manager can toggle visibility.
+     *
+     * @return {View.Views.BaseBubbleChart} Instance of this view.
+     * @protected
+     */
+    _initPlugins: function() {
+        if (this.isManager) {
+            this.plugins = _.union(this.plugins, [
+                'ToggleVisibility'
+            ]);
+        }
+        return this;
     }
 
 })

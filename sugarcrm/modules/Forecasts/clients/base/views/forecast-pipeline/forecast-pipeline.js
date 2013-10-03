@@ -40,11 +40,14 @@
      */
     forecastsNotSetUpMsg: undefined,
 
-    events: {
-        'click button.btn': 'handleTypeButtonClick'
-    },
+    /**
+     * Track if current user is manager.
+     */
+    isManager: false,
 
     initialize: function(options) {
+        this.isManager = app.user.get('is_manager');
+        this._initPlugins();
         app.view.View.prototype.initialize.call(this, options);
 
         // check to make sure that forecast is configured
@@ -57,9 +60,14 @@
     },
 
     initDashlet: function(view) {
-        // set the default button state
-        this.settings.set({'display_type': 'self'}, {silent: true});
-
+        if (!this.isManager && this.meta.config) {
+            // FIXME: Dashlet's config page is rendered from meta.panels directly.
+            // See the "dashletconfiguration-edit.hbs" file.
+            this.meta.panels = _.chain(this.meta.panels).filter(function(panel) {
+                panel.fields = _.without(panel.fields, _.findWhere(panel.fields, {name: 'visibility'}));
+                return panel;
+            }).value();
+        }
         // get the current timeperiod
         if(this.forecastSetup) {
             app.api.call('GET', app.api.buildURL('TimePeriods/current'), null, {
@@ -83,14 +91,6 @@
             .fmtValueLabel(function(d) {
                 return d.label;
             });
-    },
-
-    handleTypeButtonClick: function(e) {
-        var $el = $(e.currentTarget),
-            displayType = $el.data('type');
-        if (this.settings.get('display_type') !== displayType) {
-            this.settings.set({'display_type': displayType});
-        }
     },
 
     bindDataChange: function() {
@@ -177,8 +177,8 @@
 //END SUGARCRM flav=ent ONLY
         if (this.settings.has('selectedTimePeriod')) {
             url_base += '/' + timePeriod;
-            if (this.settings.has('display_type')) {
-                url_base += '/' + this.settings.get('display_type');
+            if (this.isManager) {
+                url_base += '/' + this.getVisibility();
             }
             var url = app.api.buildURL(url_base);
             app.api.call('GET', url, null, {
@@ -214,5 +214,21 @@
         }
 
         window.onafterprint = resizeChart;
+    },
+
+    /**
+     * Initialize plugins.
+     * Only manager can toggle visibility.
+     *
+     * @return {View.Views.BaseForecastPipeline} Instance of this view.
+     * @protected
+     */
+    _initPlugins: function() {
+        if (this.isManager) {
+            this.plugins = _.union(this.plugins, [
+                'ToggleVisibility'
+            ]);
+        }
+        return this;
     }
 })

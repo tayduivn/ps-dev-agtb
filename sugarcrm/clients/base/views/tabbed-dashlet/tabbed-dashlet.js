@@ -59,12 +59,11 @@
  * @alias SUGAR.App.view.views.BaseTabbedDashletView
  */
 ({
-    plugins: ['Dashlet', 'Timeago'],
+    plugins: ['Dashlet', 'Timeago', 'ToggleVisibility'],
 
     events: {
         'click [data-action=show-more]': 'showMore',
-        'click [data-action=tab-switcher]': 'tabSwitcher',
-        'click [data-action=visibility-switcher]': 'visibilitySwitcher'
+        'click [data-action=tab-switcher]': 'tabSwitcher'
     },
 
     /**
@@ -284,9 +283,9 @@
             };
 
         if (tab.module != 'Meetings' && tab.module != 'Calls') {
-            options.myItems = this.settings.get('visibility') === 'user';
+            options.myItems = this.getVisibility() === 'user';
         }
-        
+
         return options;
     },
 
@@ -309,7 +308,7 @@
         });
 
         if ((tab.module === 'Meetings' || tab.module === 'Calls')
-            && this.settings.get('visibility') === 'user') {
+            && this.getVisibility() === 'user') {
             filters.push({
                 "$or":[{"assigned_user_id":app.user.id},
                        {"users.id":app.user.id}]
@@ -448,21 +447,6 @@
         this.settings.set('activeTab', index);
         this.collection = this.tabs[index].collection;
         this.render();
-    },
-
-    /**
-     * Event handler for visibility switcher.
-     *
-     * @param {Event} event Click event.
-     */
-    visibilitySwitcher: function(event) {
-        var visibility = this.$(event.currentTarget).val();
-        if (visibility === this.settings.get('visibility')) {
-            return;
-        }
-
-        this.settings.set('visibility', visibility);
-        this.layout.loadData();
     },
 
     /**
