@@ -54,6 +54,7 @@ class FormulaHelper
                     $fieldArray[$fieldName] = array($fieldName, 'boolean');
                     break;
                 case "varchar":
+                case "fullname":
                 case "name":
                 case "phone":
                 case "text":
