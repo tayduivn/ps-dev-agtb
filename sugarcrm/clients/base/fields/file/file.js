@@ -64,6 +64,16 @@
      */
     deleteFile: function(e) {
         var self = this;
+
+        if (this.model.isNew()) {
+            this.model.unset(this.name);
+            if (this.disposed) {
+                return;
+            }
+            this.render();
+            return;
+        }
+
         app.alert.show('delete_file_confirmation', {
             level: 'confirmation',
             messages: app.lang.get('LBL_FILE_DELETE_CONFIRM', self.module),
