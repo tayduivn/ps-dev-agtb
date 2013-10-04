@@ -57,5 +57,21 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                 //END SUGARCRM flav=pro ONLY
             ),
         ),
+        array(
+            'name' => 'panel_hidden',
+            'label' => 'LBL_SHOW_MORE',
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
+                array(
+                    'name' => 'description',
+                    'span' => 12,
+                ),
+                'date_modified',
+                'date_entered',
+            ),
+        ),
     ),
 );
