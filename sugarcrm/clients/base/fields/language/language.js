@@ -51,6 +51,9 @@
             this.model.set(this.name, app.lang.defaultLanguage);
         }
         this._super('_render');
+        if (!this.items[this.model.get(this.name)]) {
+            this.model.set(this.name, app.lang.defaultLanguage);
+        }
         return this;
     }
 })

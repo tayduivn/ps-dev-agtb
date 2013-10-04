@@ -9,7 +9,7 @@ describe("BaseLanguageField", function() {
         SugarTest.loadComponent('base', 'field', 'enum');
         SugarTest.loadComponent('base', 'field', 'language');
         SugarTest.testMetadata.set();
-        field = SugarTest.createField("base", fieldName, "language", "edit", {options: "available_languages_dom"});
+        field = SugarTest.createField("base", fieldName, "language", "edit", {options: "available_language_dom"});
         _oDefaultLanguage = app.lang.defaultLanguage;
     });
 
@@ -37,5 +37,16 @@ describe("BaseLanguageField", function() {
         expect(field.model.get(fieldName)).toBeUndefined();
         field.render();
         expect(field.model.get(fieldName)).toEqual('test_TEST');
+    });
+
+    it("should set the default based if the user\'s preferred language is disabled", function() {
+        app.lang.defaultLanguage = 'it_IT';
+        field.model.set(fieldName, 'en_us');
+        field.items = {
+            'fr_FR': 'French',
+            'it_IT': 'Italiano'
+        };
+        field.render();
+        expect(field.model.get(fieldName)).toEqual('it_IT');
     });
 });

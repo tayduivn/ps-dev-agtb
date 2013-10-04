@@ -67,21 +67,35 @@ class AdministrationController extends SugarController
         $disabled_langs = json_decode($toDecode);
         $toDecode = html_entity_decode  ($_REQUEST['enabled_langs'], ENT_QUOTES);
         $enabled_langs = json_decode($toDecode);
-        $languages = LanguageManager::getEnabledAndDisabledLanguages();
 
         if (count($sugar_config['languages']) === count($disabled_langs)) {
             sugar_die(translate('LBL_CAN_NOT_DISABLE_ALL_LANG'));
         } else {
             $cfg = new Configurator();
+            if (in_array($sugar_config['default_language'], $disabled_langs)) {
+                reset($enabled_langs);
+                $cfg->config['default_language'] = current($enabled_langs);
+            }
+            if (in_array($GLOBALS['current_user']->preferred_language, $disabled_langs)) {
+                $GLOBALS['current_user']->preferred_language = current($enabled_langs);
+                $GLOBALS['current_user']->save();
+            }
             $cfg->config['disabled_languages'] = join(',', $disabled_langs);
             // TODO: find way to enforce order
             $cfg->handleOverride();
 
             // Clear the metadata cache so changes to languages are picked up right away
-            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_LANGUAGES));
+            MetaDataManager::refreshLanguagesCache($enabled_langs);
         }
-        
-        header("Location: index.php?module=Administration&action=Languages");
+
+        //Call Ping API to refresh the language list.
+        die("
+            <script>
+            var app = window.parent.SUGAR.App;
+            app.api.call('read', app.api.buildURL('ping'));
+            app.router.navigate('#bwc/index.php?module=Administration&action=Languages', {trigger:true, replace:true});
+            </script>"
+        );
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
