@@ -56,7 +56,13 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
                     'name' => 'date_closed',
                     'span' => 12,
                 ),
-                'amount',
+                array(
+                    'name' => 'amount',
+                    'related_fields' => array(
+                        'currency_id',
+                        'base_rate'
+                    ),
+                ),
                 'sales_stage',
             ),
         ),

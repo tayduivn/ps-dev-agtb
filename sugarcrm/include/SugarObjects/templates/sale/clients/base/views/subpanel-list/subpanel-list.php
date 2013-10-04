@@ -43,6 +43,10 @@ $viewdefs[$module_name]['base']['view']['subpanel-list'] = array(
           'enabled' => true,
           'default' => true,
           'name' => 'amount',
+          'related_fields' => array(
+              'currency_id',
+              'base_rate'
+          ),
         ),
         array(
           'name' => 'assigned_user_name',

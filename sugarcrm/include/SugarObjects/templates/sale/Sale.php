@@ -30,7 +30,10 @@ class Sale extends Basic
     public function __construct()
     {
         parent::__construct();
-
+        // initialize currency
+        $currency = SugarCurrency::getBaseCurrency();
+        $this->currency_id = $currency->id;
+        $this->base_rate = $currency->conversion_rate;
     }
 
     public function create_new_list_query(
@@ -64,32 +67,23 @@ class Sale extends Basic
     public function fill_in_additional_list_fields()
     {
         parent::fill_in_additional_list_fields();
-
-        //Ensure that the amount_usdollar field is not null.
         if (empty($this->amount_usdollar) && !empty($this->amount)) {
-            $this->amount_usdollar = $this->amount;
+            $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
         }
     }
 
     public function fill_in_additional_detail_fields()
     {
         parent::fill_in_additional_detail_fields();
-        //Ensure that the amount_usdollar field is not null.
         if (empty($this->amount_usdollar) && !empty($this->amount)) {
-            $this->amount_usdollar = $this->amount;
+            $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
         }
     }
 
     public function save($check_notify = false)
     {
-        //"amount_usdollar" is really amount_basecurrency. We need to save a copy of the amount in the base currency.
-        if (isset($this->amount) && !number_empty($this->amount)) {
-            if (!number_empty($this->currency_id)) {
-                $currency = BeanFactory::getBean('Currencies', $this->currency_id);
-                $this->amount_usdollar = $currency->convertToDollar($this->amount);
-            } else {
-                $this->amount_usdollar = $this->amount;
-            }
+        if (!empty($this->amount)) {
+            $this->amount_usdollar = SugarCurrency::convertWithRate($this->amount, $this->base_rate);
         }
         return parent::save($check_notify);
     }
