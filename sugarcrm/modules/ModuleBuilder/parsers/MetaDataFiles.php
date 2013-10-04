@@ -780,7 +780,7 @@ class MetaDataFiles
             sugar_mkdir($basePath,null,true);
 
             $output = "<?php\n\$clientCache['".$module."']['".$platforms[0]."']['".$type."'] = ".var_export($moduleResults,true).";\n\n";
-            sugar_file_put_contents($basePath.'/'.$type.'.php',$output);
+            sugar_file_put_contents_atomic($basePath.'/'.$type.'.php', $output);
         }
     }
 
