@@ -44,7 +44,6 @@
 (function($){
 	var methods = {
 		init: function(options){
-
 			var menuNode = this;
 			if(!this.hasClass("SugarActionMenu")){
 				//tag this element as a sugarmenu
@@ -92,7 +91,11 @@
 					//make sure the node we found isn't the main item of the list -- we don't want
 					//to show it then.
 					if(menuNode.sugarActionMenu("findItem", newItemA.html()) == -1){
-                        parent.prepend(newItemA);
+                        //don't prepend if it's a legacy create..we've pointed those back to sidecar
+                        //see SubPanelTiles.js#subp_nav_sidecar and SugarWidgetSubPanelTopButton.php
+                        if (!(parent.get(0).nodeName.toLowerCase() === 'form' && parent.data('legacy-subpanel-create'))) {
+                            parent.prepend(newItemA);
+                        }
                     }
 
                     //make sub sliding menu

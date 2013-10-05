@@ -93,6 +93,61 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         return $widgetID;
     }
 
+    /**
+     * This is a shim for while we're still in bwc when the current module is a
+     * sidecar (not bwc) module. See SP-1630: Clicking Create from BWC subpanels
+     * for sidecar should open sidecar create view.
+     * @param $defines
+     * @return a sidecar compatable button or falsy
+     */
+    function _get_form_sidecar($defines) {
+        global $app_strings;
+        global $subpanel_item_count;
+        global $current_language;
+
+        $sidecarReadySubPanelCreates = array(
+            "SubPanelTopCreateButton",
+            "SubPanelTopButtonQuickCreate",
+            "SubPanelTopCreateAccountNameButton",
+            "SubPanelTopCreateLeadNameButton",
+            "SubPanelTopCreateNoteButton",
+            "SubPanelTopCreateTaskButton"
+        );
+
+        $module = $defines['module'];
+        $label = $app_strings['LBL_CREATE_BUTTON_LABEL'];
+
+        //Sometimes module is 'History' but the child module is Notes. For the
+        //purposes of determining whether to redirect to sidecar create or not,
+        //treat History (a bwc) as a Note (a sidecar).
+        if ($defines['widget_class'] == 'SubPanelTopCreateNoteButton' && $defines['child_module_name'] == 'Notes') {
+            $module = 'Notes';
+            $modStringsNotes = return_module_language($current_language, 'Notes');
+            $label = $modStringsNotes['LNK_NEW_NOTE'];
+        }
+
+        //Not bwc and in our white-listed subpanel create button widgets
+        if (!isModuleBWC($module) && in_array($defines['widget_class'], $sidecarReadySubPanelCreates)) {
+            $wid = $this->getWidgetId();
+            $id = $wid."_create_".$subpanel_item_count;//bug 51512
+            $parentId = $defines['focus']->id;
+            $relationship_name = $this->get_subpanel_relationship_name($defines);
+            $form = 'form' . $relationship_name;
+
+            //Normalize Activities which should result in Create Tasks
+            if ($module == "Activities") {
+                $module = "Tasks";
+                $label = $app_strings['LBL_CREATE_TASK'];
+            }
+
+            $button = '<form data-legacy-subpanel-create="1" action="index.php" method="post" name="form" id="' . $form . "\">\n".
+                "<a href='#' onClick=\"javascript:subp_nav_sidecar('" .$module. "','" .$parentId. "','c');\"".
+                " class='create_from_bwc_to_sidecar' id=\"$id\">". $label .'</a>';
+            return $button;
+        }
+        return false;
+    }
+
     function &_get_form($defines, $additionalFormFields = null, $asUrl = false)
     {
         global $app_strings;
@@ -237,9 +292,9 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 
             return $returnLink;
         } else {
-
             $form = 'form' . $relationship_name;
             $button = '<form action="index.php" method="post" name="form" id="' . $form . "\">\n";
+
             foreach($formValues as $key => $value) {
                 $button .= "<input type='hidden' name='" . $key . "' value='" . $value . "' />\n";
             }
@@ -251,8 +306,13 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 }
             }
 
+            //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
+            $sidecarButton = $this->_get_form_sidecar($defines);
+            if ($sidecarButton) {
+                return $sidecarButton;
+            }
 
-        return $button;
+            return $button;
         }
     }
 

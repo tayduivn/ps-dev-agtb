@@ -164,6 +164,12 @@ class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButt
 			}
 		}
 
+        //SP-1630: Clicking Create from BWC subpanels for sidecar should open sidecar create view
+        $sidecarButton = $this->_get_form_sidecar($defines);
+        if ($sidecarButton) {
+            return $sidecarButton;
+        }
+
 		return $button;
 	}
 
