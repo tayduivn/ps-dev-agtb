@@ -437,8 +437,7 @@ class ActivityQueueManager
         //then check the full list of data changes in case the assigned_user_id field is not audited
         if (!$assignmentChanged) {
             $assignmentChanges = $bean->db->getDataChanges($bean, array('field_filter'=>array('assigned_user_id')));
-            $assignmentChanged = isset($assignmentChanges['dataChanges'])
-                && isset($assignmentChanges['dataChanges']['assigned_user_id']);
+            $assignmentChanged = isset($assignmentChanges['assigned_user_id']);
         }
 
         return $assignmentChanged;

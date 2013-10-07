@@ -453,12 +453,9 @@ class ActivityQueueManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @covers ActivityQueueManager::assignmentChanged
      * @dataProvider dataProviderAssignedUserChanged
      */
-    public function testAssignmentChanged($auditedChanges, $allChanges, $expected, $assertMessage)
+    public function testAssignmentChanged($auditedChanges, $allDataChanges, $expected, $assertMessage)
     {
         $bean = BeanFactory::getBean('Contacts');
-        $allDataChanges = array(
-            'dataChanges' => $allChanges,
-        );
 
         //mock out db manager
         $dbManagerClass = get_class($bean->db);
