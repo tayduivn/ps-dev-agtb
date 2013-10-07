@@ -28,7 +28,7 @@ require_once('data/SugarBean.php');
  */
 class BeanFactory {
     protected static $loadedBeans = array();
-    protected static $maxLoaded = 10;
+    protected static $maxLoaded = 100;
     protected static $total = 0;
     protected static $loadOrder = array();
     protected static $touched = array();
@@ -62,6 +62,7 @@ class BeanFactory {
     	if (isset($params) && !is_array($params)) {
     		$params = array('encode' => $params);
     	}
+
 
         // Pull values from $params array
         if (defined('ENTRY_POINT_TYPE') && constant('ENTRY_POINT_TYPE') == 'api') {
@@ -108,7 +109,7 @@ class BeanFactory {
                     } else {
                         return null;
                     }
-                } else if ($encode) {
+                } else if ($can_cache) {
                     self::registerBean($module, $bean, $id);
                 }
             } else {
