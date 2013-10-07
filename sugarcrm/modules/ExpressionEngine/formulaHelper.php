@@ -54,7 +54,6 @@ class FormulaHelper
                     $fieldArray[$fieldName] = array($fieldName, 'boolean');
                     break;
                 case "varchar":
-                case "fullname":
                 case "name":
                 case "phone":
                 case "text":
@@ -62,6 +61,11 @@ class FormulaHelper
                 case "encrypt":
                 case "enum":
                     $fieldArray[$fieldName] = array($fieldName, 'string');
+                    break;
+                case 'fullname':
+                    if ($forRelatedField) {
+                        $fieldArray[$fieldName] = array($fieldName, 'string');
+                    }
                     break;
                 case "date":
                 case "datetime":
