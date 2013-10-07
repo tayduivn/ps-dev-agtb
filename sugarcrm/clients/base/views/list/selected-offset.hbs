@@ -1,0 +1,15 @@
+<div>
+    {{#if offset}}
+        {{#eq offset -1}}
+            {{str 'TPL_LISTVIEW_SELECTED_ALL' this.module this}}
+        {{/eq}}
+        {{#notEq offset -1}}
+            {{str 'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' this.module this}}
+        {{/notEq}}
+    {{else}}
+        {{str 'TPL_LISTVIEW_SELECTED_ALL' this.module this}}
+    {{/if}}
+    <button type="button" class="btn-link" data-action="clear">
+        {{str 'LBL_LISTVIEW_SELECTED_CLEAR'}}
+    </button>
+</div>

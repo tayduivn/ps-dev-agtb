@@ -39,6 +39,7 @@
             this.context.set('mass_collection', massCollection);
         }
         this.def.disable_select_all_alert = !!this.def.disable_select_all_alert;
+        this._initTemplates();
     },
     check: function (evt) {
         this.toggleSelect(this.$(this.fieldTag).is(":checked"));
@@ -211,15 +212,11 @@
         if (!massCollection) {
             return;
         }
-        //if filtered size is more than maximum allow, it will execute with the first set.
-        var label = (offset >= 0) ?
-                'TPL_LISTVIEW_SELECTED_FIRST_OFFSET' :
-                'TPL_LISTVIEW_SELECTED_ALL',
-            message = app.lang.get(label, this.module, {
-                num: massCollection.length
-            }),
-            allSelected = $('<div>').html(message);
-        allSelected.find('a').on('click', function(evt) {
+        var allSelected = $(this._selectedOffsetTpl({
+            offset: offset,
+            num: massCollection.length
+        }));
+        allSelected.find('[data-action=clear]').on('click', function(evt) {
             massCollection.reset();
         });
         this.view.layout.trigger('list:alert:show', allSelected);
@@ -237,8 +234,10 @@
          * @return {HTMLElement}
          */
         var buildAlertForReset = function() {
-            var alert = $('<div>').html(app.lang.get('TPL_LISTVIEW_SELECTED_ALL'));
-            alert.find('a').on('click', function() {
+            var alert = $(self._selectedOffsetTpl({
+                num: massCollection.length
+            }));
+            alert.find('[data-action=clear]').on('click', function() {
                 massCollection.reset();
             });
             return alert;
@@ -248,12 +247,11 @@
          * @return {HTMLElement}
          */
         var buildAlertForEntire = function() {
-            var alert = selectAll = $('<div>').html(
-                app.lang.get('TPL_LISTVIEW_SELECT_ALL_RECORDS', this.module, {
-                    num: massCollection.length
-                })
-            );
-            alert.find('a').on('click', function() {
+            var alert = $('<div></div>').html(self._selectAllTpl({
+                num: massCollection.length,
+                link: self._selectAllLinkTpl
+            }));
+            alert.find('[data-action=select-all]').on('click', function() {
                 massCollection.entire = true;
                 self.getTotalRecords();
                 $(this).off('click');
@@ -409,5 +407,26 @@
      * No need to unbind DOM changes to a model.
      */
     unbindDom: function () {
+    },
+
+    /**
+     * Initialize templates.
+     *
+     * @return {Field.ActionMenuField} Instance of this field.
+     * @template
+     * @protected
+     */
+    _initTemplates: function() {
+        this._selectedOffsetTpl = app.template.getView('list.selected-offset') ||
+            app.template.getView('list.selected-offset', this.module);
+
+        this._selectAllLinkTpl = new Handlebars.SafeString(
+            '<button type="button" class="btn-link" data-action="select-all">' +
+            app.lang.get('LBL_LISTVIEW_SELECT_ALL_RECORDS') +
+            '</button>'
+        );
+        this._selectAllTpl = app.template.compile(null, app.lang.get('TPL_LISTVIEW_SELECT_ALL_RECORDS'));
+
+        return this;
     }
 })
