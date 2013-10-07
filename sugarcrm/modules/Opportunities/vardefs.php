@@ -203,13 +203,14 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CURRENCY_NAME',
             'type' => 'relate',
             'link' => 'currencies',
-            'isnull' => 'true',
+            'isnull' => true,
             'table' => 'currencies',
             'module' => 'Currencies',
             'source' => 'non-db',
             'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
-            'studio' => 'false',
+            'studio' => false,
             'duplicate_merge' => 'disabled',
+            'massupdate' => false
         ),
         'currency_symbol' => array(
             'name' => 'currency_symbol',
@@ -218,13 +219,14 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_CURRENCY_SYMBOL',
             'type' => 'relate',
             'link' => 'currencies',
-            'isnull' => 'true',
+            'isnull' => true,
             'table' => 'currencies',
             'module' => 'Currencies',
             'source' => 'non-db',
             'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
-            'studio' => 'false',
+            'studio' => false,
             'duplicate_merge' => 'disabled',
+            'massupdate' => false
         ),
         'date_closed' => array(
             'name' => 'date_closed',
