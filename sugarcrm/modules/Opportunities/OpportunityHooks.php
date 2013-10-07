@@ -78,7 +78,7 @@ class OpportunityHooks
      */
     public static function setSalesStatus(Opportunity $bean, $event, $args)
     {
-        if (static::isForecastSetup()) {
+        if (static::isForecastSetup() && $bean->ACLFieldAccess('sales_status', 'write')) {
             // we have a new bean so set the value to new and dump out
             if (empty($bean->fetched_row)) {
                 $bean->sales_status = Opportunity::STATUS_NEW;

@@ -45,7 +45,6 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderSetOpportunitySalesStatus
      * @group opportunities
      */
     public function testSetOpportunitySalesStatusOnNewOpp()
@@ -70,9 +69,9 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
      * @group opportunities
      * @group revenuelineitems
      */
-    public function testSetOpportunitySalesStatus($won_count, $lost_count, $total_count, $status)
+    public function testSetOpportunitySalesStatusWithAccess($won_count, $lost_count, $total_count, $status)
     {
-        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
+        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
         $oppMock->id = 'test';
         $oppMock->fetched_row['id'] = 'test';
 
@@ -137,9 +136,49 @@ class OpportunityHooksTest extends Sugar_PHPUnit_Framework_TestCase
             ->method('get_linked_beans')
             ->will($this->returnValueMap($map));
 
+        $oppMock->expects($this->any())
+            ->method('ACLFieldAccess')
+            ->will($this->returnValue(true));
+
         $hookMock::setSalesStatus($oppMock, 'before_save', array());
 
         // assert the status is what it should be
         $this->assertEquals($oppMock->sales_status, $status);
+    }
+
+    public function testSetOpportunitySalesStatusWithoutAccess()
+    {
+        $oppMock = $this->getMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
+
+        /* @var $hookMock OpportunityHooks */
+        $hookMock = $this->getMockClass('OpportunityHooks', array('isForecastSetup'));
+
+        $hookMock::staticExpects($this->any())
+            ->method('isForecastSetup')
+            ->will($this->returnValue(true));
+
+        $closed_won = array('won');
+        $closed_lost = array('lost');
+
+        $hr = new ReflectionClass($hookMock);
+        $hr->setStaticPropertyValue(
+            'settings',
+            array(
+                'is_setup' => 1,
+                'sales_stage_won' => $closed_won,
+                'sales_stage_lost' => $closed_lost
+            )
+        );
+
+        $oppMock->expects($this->any())
+            ->method('ACLFieldAccess')
+            ->will($this->returnValue(false));
+
+        $oppMock->sales_status = 'testing1';
+
+        $hookMock::setSalesStatus($oppMock, 'before_save', array());
+
+        // assert the status is what it should be
+        $this->assertEquals('testing1', $oppMock->sales_status);
     }
 }

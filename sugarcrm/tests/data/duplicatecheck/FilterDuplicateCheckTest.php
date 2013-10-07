@@ -86,6 +86,9 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFindDuplicates_NoBeanId_AddFilterForEditsIsNotCalled() {
         $bean = self::getMock("Lead");
+        $bean->expects(self::any())
+            ->method('ACLFieldAccess')
+            ->will(self::returnValue(true));
 
         $filterDuplicateCheckMock = self::getMock(
             "FilterDuplicateCheck",
@@ -125,6 +128,9 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFindDuplicates_HasBeanId_AddFilterForEditsIsCalled() {
         $bean     = self::getMock("Lead");
+        $bean->expects(self::any())
+            ->method('ACLFieldAccess')
+            ->will(self::returnValue(true));
         $bean->id = 1;
 
         $filterDuplicateCheckMock = self::getMock(
@@ -165,6 +171,9 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testFindDuplicates_RankAndSortDuplicatesReordersTheResults() {
         $bean               = self::getMock("Lead");
+        $bean->expects(self::any())
+            ->method('ACLFieldAccess')
+            ->will(self::returnValue(true));
         $bean->last_name    = "Griffin";
         $bean->first_name   = "Pete";
         $bean->account_name = "Petoria";
@@ -224,6 +233,9 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testBuildDupeCheckFilter_ReplacesFirstName_ReplacesLastName_RemovesAccountName() {
         $bean             = self::getMock("Lead");
+        $bean->expects(self::any())
+            ->method('ACLFieldAccess')
+            ->will(self::returnValue(true));
         $bean->last_name  = "Griffin";
         $bean->first_name = "Peter";
         $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
@@ -279,6 +291,9 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testBuildDupeCheckFilter_NoDataForAllFieldsInSection_RemovesWholeSection() {
         $bean             = self::getMock("Lead");
+        $bean->expects(self::any())
+            ->method('ACLFieldAccess')
+            ->will(self::returnValue(true));
         $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
 
         $expected = array(
@@ -314,6 +329,9 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAddFilterForEdits_AddsANotEqualsFilterToTheFilterArrayToPreventMatchesOnTheSpecifiedId() {
         $bean                       = self::getMock("Lead");
+        $bean->expects(self::any())
+            ->method('ACLFieldAccess')
+            ->will(self::returnValue(true));
         $bean->id                   = "1";
         $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
         $filter                     = $filterDuplicateCheckCaller->buildDupeCheckFilterCaller(); // need to build the filter first
@@ -341,6 +359,39 @@ class FilterDuplicateCheckTest extends Sugar_PHPUnit_Framework_TestCase
         self::assertEquals($expected[0]['$and'][0]["id"]['$not_equals'],
                            $actual[0]['$and'][0]["id"]['$not_equals'],
                            "The additional not-equals filter was not added.");
+    }
+
+    public function testBuildDupeCheckFilterCallerRemovesFieldsUserDoesntHaveAccessTo()
+    {
+        $bean                       = self::getMock("Lead", array('ACLFieldAccess'));
+        $bean->expects($this->exactly(2))
+            ->method('ACLFieldAccess')
+            ->will(
+                $this->onConsecutiveCalls(true, false)
+            );
+        $bean->name = 'Fred';
+
+        $metadata = array(
+            'filter_template' => array(
+                array(
+                    '$and' => array(
+                        array('name' => array('$starts' => '$name')),
+                        array('sales_status' => array('$not_equals' => 'Closed Lost'))
+                    )
+                ),
+            )
+        );
+
+        $filterDuplicateCheckCaller = new FilterDuplicateCheck($bean, $metadata);
+
+
+        $filter = SugarTestReflection::callProtectedMethod(
+            $filterDuplicateCheckCaller,
+            'buildDupeCheckFilter',
+            array($metadata['filter_template'])
+        );
+
+        $this->assertEquals(1, count($filter));
     }
 }
 

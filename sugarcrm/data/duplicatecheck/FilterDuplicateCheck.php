@@ -107,15 +107,20 @@ class FilterDuplicateCheck extends DuplicateCheckStrategy
                         unset($filterDef[$field]);
                     }
                 } else {
-                    foreach ($filter as $op => &$value) {
-                        $inField = $this->getIncomingFieldFromPlaceholder($value);
-                        if ($inField !== false) {
-                            if (isset($this->bean->$inField) && !empty($this->bean->$inField)) {
-                                $value = $this->bean->$inField;
-                            } else {
-                                unset($filterDef[$field]);
+                    // make sure we have read access to this field
+                    if ($this->bean->ACLFieldAccess($field, 'read')) {
+                        foreach ($filter as $op => &$value) {
+                            $inField = $this->getIncomingFieldFromPlaceholder($value);
+                            if ($inField !== false) {
+                                if (isset($this->bean->$inField) && !empty($this->bean->$inField)) {
+                                    $value = $this->bean->$inField;
+                                } else {
+                                    unset($filterDef[$field]);
+                                }
                             }
                         }
+                    } else {
+                        unset($filterDef[$field]);
                     }
                 }
             }
