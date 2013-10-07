@@ -144,7 +144,7 @@
             _.each(value, function(file) {
                 var fileObj = {
                     name: file.name,
-                    url: file.uri
+                    url: this.formatUri(file.uri)
                 };
                 attachments.push(fileObj);
             }, this);
@@ -171,6 +171,14 @@
             attachments.push(fileObj);
         }
         return (this.tplName === "list") ? _.first(attachments) : attachments;
+    },
+    /**
+     * This is overriden by portal in order to prepend site url
+     * @param {String} uri
+     * @returns {String} formatted uri
+     */
+    formatUri: function(uri) {
+        return uri;
     },
     startDownload: function(e) {
         var uri = this.$(e.currentTarget).data('url');
