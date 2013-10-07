@@ -101,6 +101,9 @@
      * @private
      */
     _render: function(){
+        if (Modernizr.touch) {
+            app.$contentEl.addClass('content-overflow-visible');
+        }
         if (this._components) {
             this._components[this._currentIndex].render();
         }
@@ -137,6 +140,9 @@
      * Disposes of layout then calls finished callback if registered
      */
     finished: function(){
+        if (Modernizr.touch) {
+            app.$contentEl.removeClass('content-overflow-visible');
+        }
         var callbacks = this.context.get("callbacks"); //save callbacks first
         this.dispose();
         if (callbacks && callbacks.complete) {
