@@ -552,7 +552,7 @@ describe("Base.View.Forecastdetails", function() {
 
     describe("isManagerView()", function() {
         it("selectedUser is a manager and showOpps is undefined", function() {
-            view.selectedUser.isManager = true;
+            view.selectedUser.is_manager= true;
             view.currentModule = "Forecasts";
 
             result = view.isManagerView();
@@ -561,7 +561,7 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("selectedUser is a manager and showOpps is true", function() {
-            view.selectedUser.isManager = true;
+            view.selectedUser.is_manager= true;
             view.selectedUser.showOpps = true;
             view.currentModule = "Forecasts";
 
@@ -571,7 +571,7 @@ describe("Base.View.Forecastdetails", function() {
         });
 
         it("selectedUser is a manager and showOpps is false", function() {
-            view.selectedUser.isManager = true;
+            view.selectedUser.is_manager= true;
             view.selectedUser.showOpps = false;
             view.currentModule = "Forecasts";
 
@@ -580,18 +580,8 @@ describe("Base.View.Forecastdetails", function() {
             expect(result).toBeTruthy();
         });
 
-        it("selectedUser is a manager and but we aren't in Forecasts", function() {
-            view.selectedUser.isManager = true;
-            view.selectedUser.showOpps = false;
-            view.currentModule = "Home";
-
-            result = view.isManagerView();
-
-            expect(result).toBeFalsy();
-        });
-
         it("selectedUser is not a manager and showOpps is undefined", function() {
-            view.selectedUser.isManager = false;
+            view.selectedUser.is_manager= false;
             view.currentModule = "Forecasts";
             result = view.isManagerView();
 
@@ -808,6 +798,196 @@ describe("Base.View.Forecastdetails", function() {
 
         it("should build oldTotals properly - id2", function() {
             expect(view.oldTotals.models.get('id2').quota).toEqual(500);
+        });
+    });
+
+    describe('checkShowTargetQuota()', function() {
+        beforeEach(function() {
+
+        });
+
+        afterEach(function() {
+
+        });
+
+        describe('shouldRollup is true', function() {
+            beforeEach(function() {
+                view.shouldRollup = true;
+            });
+
+            afterEach(function() {
+                view.shouldRollup = undefined;
+            });
+
+            describe('is_manager is true', function() {
+                beforeEach(function() {
+                    view.selectedUser.is_manager = true;
+                });
+
+                afterEach(function() {
+                    view.selectedUser.is_manager = undefined;
+                });
+
+                describe('is_top_level_manager is true', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = true;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+
+                describe('is_top_level_manager is false', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = false;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be true', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeTruthy();
+                    });
+                });
+            });
+
+            describe('is_manager is false', function() {
+                beforeEach(function() {
+                    view.selectedUser.is_manager = false;
+                });
+
+                afterEach(function() {
+                    view.selectedUser.is_manager = undefined;
+                });
+
+                describe('is_top_level_manager is true', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = true;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+
+                describe('is_top_level_manager is false', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = false;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+            });
+        });
+
+        describe('shouldRollup is false', function() {
+            beforeEach(function() {
+                view.shouldRollup = false;
+            });
+
+            afterEach(function() {
+                view.shouldRollup = undefined;
+            });
+
+            describe('is_manager is true', function() {
+                beforeEach(function() {
+                    view.selectedUser.is_manager = true;
+                });
+
+                afterEach(function() {
+                    view.selectedUser.is_manager = undefined;
+                });
+
+                describe('is_top_level_manager is true', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = true;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+
+                describe('is_top_level_manager is false', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = false;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+            });
+
+            describe('is_manager is false', function() {
+                beforeEach(function() {
+                    view.selectedUser.is_manager = false;
+                });
+
+                afterEach(function() {
+                    view.selectedUser.is_manager = undefined;
+                });
+
+                describe('is_top_level_manager is true', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = true;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+
+                describe('is_top_level_manager is false', function() {
+                    beforeEach(function() {
+                        view.selectedUser.is_top_level_manager = false;
+                    });
+
+                    afterEach(function() {
+                        view.selectedUser.is_top_level_manager = undefined;
+                    });
+
+                    it('showTargetQuota should be false', function() {
+                        view.checkShowTargetQuota();
+                        expect(view.showTargetQuota).toBeFalsy();
+                    });
+                });
+            });
         });
     });
 });

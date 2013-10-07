@@ -61,9 +61,17 @@
      */
     getProjectedURL: function() {
         var method = this.shouldRollup ? "progressManager" : "progressRep",
-            url = 'Forecasts/' + this.model.get('selectedTimePeriod') + '/' + method + '/' + this.selectedUserId;
+            url = 'Forecasts/' + this.model.get('selectedTimePeriod') + '/' + method + '/' + this.selectedUserId,
+            params = {};
 
-        return app.api.buildURL(url, 'create');
+        // if this is a manager view, send the target_quota param to the endpoint
+        if(this.shouldRollup) {
+            params = {
+                target_quota: (this.showTargetQuota) ? 1 : 0
+            };
+        }
+
+        return app.api.buildURL(url, 'create', null, params);
     },
 
     /**

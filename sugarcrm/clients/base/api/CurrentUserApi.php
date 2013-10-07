@@ -173,6 +173,10 @@ class CurrentUserApi extends SugarApi
         $user_data['picture'] = $current_user->picture;
         $user_data['acl'] = $this->getAcls($platform);
         $user_data['is_manager'] = User::isManager($current_user->id);
+        $user_data['is_top_level_manager'] = false;
+        if($user_data['is_manager']) {
+            $user_data['is_top_level_manager'] = User::isTopLevelManager($current_user->id);
+        }
 
         //BEGIN SUGARCRM flav=pro ONLY
         require_once 'modules/Teams/TeamSetManager.php';

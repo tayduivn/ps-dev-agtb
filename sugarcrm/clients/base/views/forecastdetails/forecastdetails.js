@@ -115,6 +115,12 @@
     fieldDataAccess: {},
 
     /**
+     * Managers that are not top-level managers should also
+     * show the target quota (exact quota assigned by their mgr)
+     */
+    showTargetQuota: false,
+
+    /**
      * {@inheritdoc}
      */
     initialize: function(options) {
@@ -160,6 +166,9 @@
                 // On Home, the dashlet should default to manager data for managers, and rep for non-manager
                 this.shouldRollup = this.selectedUser.is_manager;
             }
+
+            // once selectedUser & shouldRollup is set, check if user is a sub-manager
+            this.checkShowTargetQuota();
 
             this.isForecastAdmin = _.isUndefined(app.user.getAcls()['Forecasts'].admin);
 
@@ -231,6 +240,7 @@
             opportunities : 0,
             closed_amount : undefined,
             quota_amount : undefined,
+            target_quota_amount: undefined,
             deficit_amount: undefined,
             worst_details: undefined,
             likely_details: undefined,
@@ -240,6 +250,7 @@
             show_details_worst: this.forecastConfig.show_worksheet_worst,
             spanCSS: this.spanCSS,
             quota_amount_str: undefined,
+            target_quota_amount_str: undefined,
             closed_amount_str: undefined,
             deficit_class: undefined,
             deficit_amount_str: undefined,
@@ -259,10 +270,18 @@
      * @return {*} url to call
      */
     getProjectedURL: function() {
-        var method = this.shouldRollup ? "progressManager" : "progressRep",
-            url = 'Forecasts/' + this.model.get('selectedTimePeriod') + '/' + method + '/' + this.selectedUser.id;
+        var method = this.shouldRollup ? 'progressManager' : 'progressRep',
+            url = 'Forecasts/' + this.model.get('selectedTimePeriod') + '/' + method + '/' + this.selectedUser.id,
+            params = {};
 
-        return app.api.buildURL(url, 'create');
+        // if this is a manager view, send the target_quota param to the endpoint
+        if(this.shouldRollup) {
+            params = {
+                target_quota: (this.showTargetQuota) ? 1 : 0
+            };
+        }
+
+        return app.api.buildURL(url, 'create', null, params);
     },
 
     /**
@@ -512,9 +531,9 @@
     mapAllTheThings: function(data, fromModel) {
         if(this.shouldRollup) {
             // Manager View
-            data.likely = data.likely_adjusted;
-            data.best = data.best_adjusted;
-            data.worst = data.worst_adjusted;
+            data.likely = data.likely_adjusted || data.likely_case;
+            data.best = data.best_adjusted || data.best_case;
+            data.worst = data.worst_adjusted || data.worst_case;
         } else {
             // Rep View
             if(fromModel) {
@@ -593,6 +612,13 @@
 
         d.quota_amount_str = app.currency.formatAmountLocale(d.quota_amount);
         d.closed_amount_str = app.currency.formatAmountLocale(d.closed_amount);
+
+        if(this.showTargetQuota) {
+            d.target_quota_amount_str = app.currency.formatAmountLocale(d.target_quota_amount);
+        } else {
+            this.serverData.unset('target_quota_amount_str');
+        }
+        d.showTargetQuota = this.showTargetQuota;
 
         // handle deficit
         d.deficit_amount = Math.abs(app.math.sub(d.quota_amount, d.closed_amount));
@@ -776,12 +802,23 @@
     },
 
     /**
+     * Checks the selectedUser to see if they are a sub-manager
+     */
+    checkShowTargetQuota: function() {
+        if(this.shouldRollup && this.selectedUser.is_manager && !this.selectedUser.is_top_level_manager) {
+            this.showTargetQuota = true;
+        } else {
+            this.showTargetQuota = false;
+        }
+    },
+
+    /**
      * checks the selectedUser to make sure it's a manager and if we should show the manager view
      * @return {Boolean}
      */
     isManagerView: function () {
         var isMgrView = false;
-        if(this.currentModule == 'Forecasts' && this.selectedUser.isManager == true
+        if(this.selectedUser.is_manager == true
             && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false))
         {
             isMgrView = true;
@@ -812,12 +849,15 @@
         this.selectedUser.first_name = selectedUser.first_name;
         this.selectedUser.full_name = selectedUser.full_name;
         this.selectedUser.id = selectedUser.id;
-        this.selectedUser.isManager = selectedUser.isManager;
+        this.selectedUser.is_manager = selectedUser.is_manager || selectedUser.isManager; // todo: remove the || isManager in SFA-1863
         this.selectedUser.reportees = selectedUser.reportees;
         this.selectedUser.showOpps = selectedUser.showOpps;
         this.selectedUser.user_name = selectedUser.user_name;
 
         this.shouldRollup = this.isManagerView();
+
+        // update showTargetQuota on every user change
+        this.checkShowTargetQuota();
 
         // setting the model will trigger loadData()
         this.model.set({selectedUser: selectedUser});
