@@ -802,14 +802,6 @@ describe("Base.View.Forecastdetails", function() {
     });
 
     describe('checkShowTargetQuota()', function() {
-        beforeEach(function() {
-
-        });
-
-        afterEach(function() {
-
-        });
-
         describe('shouldRollup is true', function() {
             beforeEach(function() {
                 view.shouldRollup = true;
