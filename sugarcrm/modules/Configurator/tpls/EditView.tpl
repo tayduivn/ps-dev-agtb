@@ -162,25 +162,6 @@
         </td>
     </tr>
     <tr>
-            <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
-            <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
-    </tr>
-
-    <tr>
-        <td  scope="row" nowrap>{$MOD.LBL_DISALBE_CONVERT_LEAD}: &nbsp;{sugar_help text=$MOD.LBL_DISALBE_CONVERT_LEAD_DESC}</td>
-        {if !empty($config.disable_convert_lead)}
-            {assign var='disable_convert_lead' value='CHECKED'}
-        {else}
-            {assign var='disable_convert_lead' value=''}
-        {/if}
-        <td>
-            <input type='hidden' name='disable_convert_lead' value='false'>
-            <input name='disable_convert_lead'  type="checkbox" value="true" {$disable_convert_lead}>
-        </td>
-        <td colspan="2">&nbsp;</td>
-    </tr>
-
-    <tr>
         <td  scope="row" nowrap>{$MOD.LBL_ENABLE_ACTION_MENU}: &nbsp;{sugar_help text=$MOD.LBL_ENABLE_ACTION_MENU_DESC}</td>
     {if isset($config.enable_action_menu) && $config.enable_action_menu != "true" }
         {assign var='enable_action_menu' value=''}
@@ -193,10 +174,6 @@
         </td>
         <td colspan="2">&nbsp;</td>
     </tr>
-
-
-
-
 </table>
 
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
