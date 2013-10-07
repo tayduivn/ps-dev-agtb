@@ -26,6 +26,14 @@
     /**
      * {@inheritDoc}
      */
+    _defaultSettings: {
+        limit: 10, // max number of rows to show
+        visibility: 'user' // default to show
+    },
+
+    /**
+     * {@inheritDoc}
+     */
     initialize: function(options) {
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';

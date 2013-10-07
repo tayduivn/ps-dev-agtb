@@ -26,9 +26,6 @@ $viewdefs['Prospects']['base']['layout']['record-dashboard'] = array(
                             'view' => array(
                                 'name' => 'planned-activities',
                                 'label' => 'LBL_PLANNED_ACTIVITIES_DASHLET',
-                                'limit' => '10',
-                                'date' => 'today',
-                                'visibility' => 'user',
                             ),
                             'width' => 12,
                         ),

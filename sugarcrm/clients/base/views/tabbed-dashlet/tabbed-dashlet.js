@@ -68,6 +68,14 @@
     },
 
     /**
+     * Default settings used when none are provided via metadata
+     *
+     * @template
+     * @protected
+     */
+    _defaultSettings: {},
+
+    /**
      * {@inheritDoc}
      */
     initDashlet: function() {
@@ -81,6 +89,7 @@
         this._initEvents();
         this._initTabs();
         this._initTemplates();
+        this._initSettings();
     },
 
     /**
@@ -168,6 +177,22 @@
             app.template.getView(this.name + '.toolbar') ||
             app.template.getView('tabbed-dashlet.toolbar', this.module) ||
             app.template.getView('tabbed-dashlet.toolbar');
+
+        return this;
+    },
+
+    /**
+     * Sets up settings, starting with defaults
+
+     * @return {View.Views.BaseTabbedDashletView} Instance of this view.
+     * @protected
+     */
+    _initSettings: function() {
+        var settings = _.extend({},
+            this._defaultSettings,
+            this.settings.attributes);
+
+        this.settings.set(settings);
 
         return this;
     },

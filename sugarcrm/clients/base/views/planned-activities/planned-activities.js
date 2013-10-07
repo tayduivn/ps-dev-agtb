@@ -36,6 +36,15 @@
     /**
      * {@inheritDoc}
      */
+    _defaultSettings: {
+        date: 'today', // what date to show activities
+        limit: 10, // max number of rows to show
+        visibility: 'user' // default to show
+    },
+
+    /**
+     * {@inheritDoc}
+     */
     _initEvents: function() {
         this.events = _.extend(this.events, {
             'click [data-action=date-switcher]': 'dateSwitcher'

@@ -26,6 +26,15 @@
     /**
      * {@inheritDoc}
      */
+    _defaultSettings: {
+        filter: 7, // number of days to go back
+        limit: 10, // max number of rows to show
+        visibility: 'user' // default to show
+    },
+
+    /**
+     * {@inheritDoc}
+     */
     initialize: function(options) {
         options.meta = options.meta || {};
         options.meta.template = 'tabbed-dashlet';
