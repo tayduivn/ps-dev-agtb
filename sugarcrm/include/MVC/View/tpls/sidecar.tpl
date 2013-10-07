@@ -41,7 +41,7 @@
         <!--[if lt IE 10]>
         <link rel="stylesheet" type="text/css" href="themes/default/css/ie.css">
         <![endif]-->
-        <script language="javascript" src="include/javascript/modernizr.js"></script>
+        {sugar_getscript file="include/javascript/modernizr.js"}
     </head>
     <body>
         <div id="sugarcrm">
@@ -63,24 +63,24 @@
         </div>
         <!-- App Scripts -->
         {if !empty($developerMode)}
-            <script src='sidecar/minified/sidecar.js'></script>
+            {sugar_getscript file="sidecar/minified/sidecar.js"}
         {else}
-            <script src='sidecar/minified/sidecar.min.js'></script>
+            {sugar_getscript file="sidecar/minified/sidecar.min.js"}
         {/if}
         <script src='{$sugarSidecarPath}'></script>
         <script src='{$SLFunctionsPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}?hash={$configHash}'></script>
-        <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
+        {sugar_getscript file="include/javascript/jquery/jquery.dataTables.min.js"}
 
+        {sugar_getscript file="include/javascript/sugar7.js"}
+        {sugar_getscript file="include/javascript/sugar7/bwc.js"}
+        {sugar_getscript file="include/javascript/sugar7/utils.js"}
+        {sugar_getscript file="include/javascript/sugar7/field.js"}
+        {sugar_getscript file="include/javascript/sugar7/hacks.js"}
+        {sugar_getscript file="include/javascript/sugar7/alert.js"}
+        {sugar_getscript file="include/javascript/sugar7/hbs-helpers.js"}
         {literal}
-        <script language="javascript" src="include/javascript/sugar7.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/bwc.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/utils.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/field.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/hacks.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/alert.js"></script>
-        <script language="javascript" src="include/javascript/sugar7/hbs-helpers.js"></script>
         <script language="javascript">
             if (parent.window != window && typeof(parent.SUGAR.App.router) != "undefined") {
                 parent.SUGAR.App.router.navigate("#Home", {trigger:true});
