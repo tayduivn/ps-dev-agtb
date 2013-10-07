@@ -701,11 +701,6 @@ $dictionary['Product'] = array(
             'importable' => 'required'
         ),
 //BEGIN SUGARCRM flav=pro ONLY
-        'assigned_user_id' =>  array(
-            'name' => 'assigned_user_id',
-            'vname' => 'LBL_ASSIGNED_USER_ID',
-            'type' => 'id',
-        ),
         'opportunity_id' =>  array(
             'name' => 'opportunity_id',
             'type' => 'id',
@@ -762,6 +757,10 @@ $dictionary['Product'] = array(
             'module' => 'Users',
             'bean_name' => 'User',
             'source' => 'non-db',
+            'duplicate_merge' => 'enabled',
+            'rname' => 'user_name',
+            'id_name' => 'assigned_user_id',
+            'table' => 'users',
         ),
 //END SUGARCRM flav=pro ONLY
         'type_name' =>  array(
