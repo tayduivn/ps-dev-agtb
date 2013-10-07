@@ -1800,13 +1800,16 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
+        $dataChanges = $this->db->getDataChanges($this);
+
         //construct the SQL to create the audit record if auditing is enabled.
         $auditDataChanges=array();
         if ($this->is_AuditEnabled()) {
             if ($isUpdate && !isset($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
             } else {
-                $auditDataChanges=$this->db->getAuditDataChanges($this);
+                $auditFields = $this->getAuditEnabledFieldDefinitions();
+                $auditDataChanges = array_intersect_key($dataChanges, $auditFields);
             }
         }
         $this->_sendNotifications($check_notify);
@@ -1829,15 +1832,16 @@ class SugarBean
         //BEGIN SUGARCRM flav=pro ONLY
         $this->updateRelatedCalcFields();
         //END SUGARCRM flav=pro ONLY
+
+        // populate fetched row with newest changes in the bean
+        foreach ($dataChanges as $change) {
+            $this->fetched_row[$change['field_name']] = $change['after'];
+        }
+
         // the reason we need to skip this is so that any RelatedBeans that are targeted to be saved
         // after the delete happens, wait to be saved till them.
         if (!static::inOperation('delete')) {
             SugarRelationship::resaveRelatedBeans();
-        }
-
-        // populate fetched row with current bean values
-        foreach ($auditDataChanges as $change) {
-            $this->fetched_row[$change['field_name']] = $change['after'];
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
