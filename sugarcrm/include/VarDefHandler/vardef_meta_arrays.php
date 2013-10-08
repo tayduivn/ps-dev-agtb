@@ -165,7 +165,22 @@ $vardef_meta_array = array (
 		//end inclusion
 		),
 		'exclusion' =>	array(
-		'name' => array('direct_reports', 'accept_status'),
+			'name' => array(
+				'direct_reports',
+				'accept_status',
+				'team_count_link',
+				'activities',
+				'team_link',
+				'email_addresses_primary',
+				'email_addresses',
+				'archived_emails',
+			),
+			'module' => array(
+				'Forecasts',
+				'Documents',
+				'Products',
+				'CampaignLog',
+			),
 		//end exclusion
 		),
 
