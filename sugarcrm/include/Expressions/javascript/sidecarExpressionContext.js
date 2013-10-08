@@ -227,20 +227,17 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         return null;
     },
     getRelatedField : function(link, ftype, field){
-        var linkDef = _.extend({}, this.getLink(link)),
-            linkValues = this.view.model.get(link) || {},
-            currId;
-
-        //Do not attempt to load related values of a new record
-        if (!this.view.model.get("id")) {
-            return "";
-        }
+        var linkValues = this.view.model.get(link) || {};
 
         if (ftype == "related"){
             return this._handleRelateExpression(link, field);
         }
         //Run server side ajax Call
         else {
+            //Do not attempt to load related values of a new record
+            if (!this.view.model.get("id")) {
+                return "";
+            }
             if (typeof(linkValues[ftype]) == "undefined" || typeof(linkValues[ftype][field]) == "undefined")
             {
                 var params = {link: link, type: ftype};
@@ -276,15 +273,17 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
                 (relContext.get("model") && relContext.get("model").get("id") != this.view.model.get(rField.id_name))
             )) {
             //Nuke the context info now since its no longer valid
-            fields = [];
-            relContext.set({fields:fields, model:null});
+            relContext.set({model:null});
+            relContext.resetLoadFlag();
             //We are using a relate field but its empty for now, so abort.
             if (this.view.model.get(rField.id_name) == "")
                 return "";
         }
 
-        if (field && !_.contains(fields, field)) {
-            fields.push(field);
+        if (field && (!relContext.isDataFetched() || _.isUndefined(relContext.get("model").get(field)))) {
+            if (!_.contains(fields, field)) {
+                fields.push(field);
+            }
             this._loadRelatedData(link, fields, relContext, rField);
         }
         else if (rField && relContext.get("model")) {
@@ -325,7 +324,7 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         relContext.prepare();
         //Call set in case fields was not already on the context
         relContext.set({
-            'fields' : fields,
+            'fields' : _.union(relContext.get("fields") || [], fields),
             //Force skipFetch false if this context had the data we wanted, we wouldn't be here.
             skipFetch : false
         });
@@ -341,6 +340,17 @@ SUGAR.util.extend(SEC, SE.ExpressionContext, {
         }});
         if (rField) relContext.attributes.link = link;
 
+    },
+    //PreSetup but don't load any related contexts we might need
+    _setupLinks : function(relatedFields){
+        _.each(relatedFields, function(field) {
+            if (field.link && field.relate && field.type == "related") {
+                var relContext = this.view.context.getChildContext({link:field.link});
+                if (relContext) {
+                    relContext.set("fields", _.union(relContext.get("fields") || [], [field.relate]));
+                }
+            }
+        }, this);
     },
     fireOnLoad : function(dep) {
         //Disable fire on load for now as we no longer have edit vs detail views and
@@ -643,6 +653,7 @@ SUGAR.forms.Dependency.prototype.getRelatedFields = function() {
                         var newDep = SUGAR.forms.Dependency.fromMeta(dep, slContext);
                         if (newDep) {
                             this.deps.push(newDep);
+                            slContext._setupLinks(newDep.getRelatedFields());
                             if (this.context.isCreate()) {
                                 SUGAR.forms.Trigger.fire.apply(newDep.trigger);
                             }

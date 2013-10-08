@@ -628,13 +628,13 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	{
 		return {
 			type:"variable",
-			name:YAHOO.lang.trim(expr).substr(1)
+			name:$.trim(expr).substr(1)
 		}
 	}
 	//Related Field
 	if(/^[$]\w+\.\w+$/.test(expr))
 	{
-		expr = YAHOO.lang.trim(expr);
+		expr = $.trim(expr);
 		return {
 			type:"variable",
 			name: expr.substr(1, expr.indexOf('.') - 1),
@@ -676,7 +676,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 
 		// the last parameter
 		if ( i == length ) {
-			argument = YAHOO.lang.trim(argument);
+			argument = $.trim(argument);
 			if (argument != "")
 				args[args.length] = this.tokenize(argument);
 			break;
@@ -722,7 +722,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 
 		// argument splitting
 		else if ( currChar == ',' && level == 0 ) {
-			argument = YAHOO.lang.trim(argument);
+			argument = $.trim(argument);
 			if (argument == "")
 				throw ("Syntax Error: Unexpected ','");
 				args[args.length] = this.tokenize(argument);
@@ -1131,8 +1131,8 @@ SUGAR.util.DateUtils = {
 		}
 		var jsDate = new Date("Jan 1, 1970 00:00:00");
 		var part = "";
-		var dateRemain = YAHOO.lang.trim(date);
-		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
+		var dateRemain = $.trim(date);
+		oldFormat = $.trim(oldFormat) + " "; // Trailing space to read as last separator.
 		for (var j = 0; j < oldFormat.length; j++) {
 			var c = oldFormat.charAt(j);
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
