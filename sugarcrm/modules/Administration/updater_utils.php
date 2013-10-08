@@ -425,7 +425,7 @@ function shouldCheckSugar(){
 	  //BEGIN SUGARCRM lic=sub ONLY
 	(empty($license->settings['license_last_validation_fail']) ||  $license->settings['license_last_validation_fail'] < $timedate->getNow()->modify("-6 hours")->asDb(false))  &&
 	  //END SUGARCRM lic=sub ONLY
-	get_CheckUpdates_config_setting() == 'automatic' ){
+    (get_CheckUpdates_config_setting() == 'automatic' || !empty($GLOBALS['sugar_config']['hide_admin_licensing']))) {
 		return true;
 	}
 
