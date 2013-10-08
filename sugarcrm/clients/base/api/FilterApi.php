@@ -706,7 +706,9 @@ class FilterApi extends SugarApi
      */
     protected static function addFollowFilter(SugarQuery $q, SugarQuery_Builder_Where $where, $filter)
     {
-        $q->joinRaw("JOIN subscriptions AS subs ON subs.deleted = 0 AND subs.parent_type = '{$q->getFromBean()->module_dir}' AND subs.created_by = '{$GLOBALS['current_user']->id}'");
+        global $current_user;
+        $q->joinRaw("JOIN subscriptions AS subs ON subs.deleted = 0 AND subs.parent_type = '{$q->getFromBean()->module_dir}' AND subs.created_by = '{$current_user->id}'", array('alias' => 'subs'));
+        $q->where()->equalsField("subs.parent_id", "id");
     }
 
     /**

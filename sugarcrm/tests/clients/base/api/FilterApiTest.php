@@ -325,6 +325,7 @@ class RestFilterTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $this->assertNotEmpty($reply['records']);
+        $this->assertEquals(1, count($reply['records']));
     }
 
 

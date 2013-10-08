@@ -244,7 +244,11 @@ abstract class SugarQuery_Builder_Where
      */
     public function in($field, $vals, $bean = false)
     {
-        $isNull = in_array('', $vals);
+        $isNull = false;
+        if (is_array($vals)) {
+            $isNull = in_array('', $vals);
+        }
+
         if ($isNull) {
             $vals = array_filter($vals, 'strlen');
             if (count($vals) > 0) {
