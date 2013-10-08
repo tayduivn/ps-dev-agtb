@@ -86,48 +86,49 @@
             }
         }
         app.view.Field.prototype._render.call(this);
-        // if displaying the noaccess template, we shouldn't setup select2 as it won't be used
-        if (this.tplName != 'noaccess') {
-            var select2Options = this.getSelect2Options(optionsKeys);
-            var $el = this.$(this.fieldTag);
-            if (!_.isEmpty(optionsKeys)) {
-                if (this.tplName === 'edit' || this.tplName === 'list-edit') {
-                    $el.select2(select2Options);
-                    $el.select2("container").addClass("tleft");
-                    $el.on('change', function(ev){
-                        var value = ev.val;
-                        if(self.model && !(self.name == 'currency_id' && _.isUndefined(value))) {
-                            self.model.set(self.name, self.unformat(value));
+        // if displaying the noaccess template, just exit the method
+        if (this.tplName == 'noaccess') {
+            return this;
+        }
+        var select2Options = this.getSelect2Options(optionsKeys);
+        var $el = this.$(this.fieldTag);
+        if (!_.isEmpty(optionsKeys)) {
+            if (this.tplName === 'edit' || this.tplName === 'list-edit') {
+                $el.select2(select2Options);
+                $el.select2("container").addClass("tleft");
+                $el.on('change', function(ev){
+                    var value = ev.val;
+                    if(self.model && !(self.name == 'currency_id' && _.isUndefined(value))) {
+                        self.model.set(self.name, self.unformat(value));
+                    }
+                });
+                if (this.def.ordered) {
+                    $el.select2("container").find("ul.select2-choices").sortable({
+                        containment: 'parent',
+                        start: function() {
+                            $el.select2("onSortStart");
+                        },
+                        update: function() {
+                            $el.select2("onSortEnd");
                         }
                     });
-                    if (this.def.ordered) {
-                        $el.select2("container").find("ul.select2-choices").sortable({
-                            containment: 'parent',
-                            start: function() {
-                                $el.select2("onSortStart");
-                            },
-                            update: function() {
-                                $el.select2("onSortEnd");
-                            }
-                        });
-                    }
-                } else if(this.tplName === 'disabled') {
-                    $el.select2(select2Options);
-                    $el.select2('disable');
                 }
-                //Setup selected value in Select2 widget
-                if(this.value){
-                    // To make pills load properly when autoselecting a string val
-                    // from a list val needs to be an array
-                    if (!_.isArray(this.value)) {
-                        this.value = [this.value];
-                    }
-                    $el.select2('val', this.value);
-                }
-            } else {
-                // Set loading message in place of empty DIV while options are loaded via API
-                this.$el.html(app.lang.get("LBL_LOADING"));
+            } else if(this.tplName === 'disabled') {
+                $el.select2(select2Options);
+                $el.select2('disable');
             }
+            //Setup selected value in Select2 widget
+            if(this.value){
+                // To make pills load properly when autoselecting a string val
+                // from a list val needs to be an array
+                if (!_.isArray(this.value)) {
+                    this.value = [this.value];
+                }
+                $el.select2('val', this.value);
+            }
+        } else {
+            // Set loading message in place of empty DIV while options are loaded via API
+            this.$el.html(app.lang.get("LBL_LOADING"));
         }
         return this;
     },
