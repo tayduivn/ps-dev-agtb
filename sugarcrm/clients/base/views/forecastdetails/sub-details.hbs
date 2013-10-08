@@ -13,6 +13,17 @@
  ********************************************************************************/
 
 }}
+{{#if showTargetQuota}}
+    <div class="row-fluid">
+        <span class="span6">
+            {{str "LBL_TARGET_QUOTA" "Forecasts"}}
+        </span>
+        <span class="span6 tright">
+            {{target_quota_amount_str}}
+        </span>
+    </div>
+{{/if}}
+
 <div class="row-fluid">
     <span class="span6">
         {{quota_label}}

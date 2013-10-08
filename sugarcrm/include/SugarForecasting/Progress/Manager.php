@@ -85,6 +85,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
     {
         $user_id = $this->getArg('user_id');
         $timeperiod_id = $this->getArg('timeperiod_id');
+        $getTargetQuota = (bool)$this->getArg('target_quota');
 
         /* @var $mgr_worksheet ForecastManagerWorksheet */
         $mgr_worksheet = BeanFactory::getBean('ForecastManagerWorksheets');
@@ -93,6 +94,14 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Manager
         // pull the quota from the worksheet data since we need the draft records if they exist
         // to show what could be in draft for the user, if they are the current user.
         $totals['quota_amount'] = $totals['quota'];
+
+        // add the target quota to the return data if passed target_quota=true as a param
+        if($getTargetQuota) {
+            /* @var $quotaBean Quota */
+            $quotaBean = BeanFactory::getBean('Quotas');
+            $quota = $quotaBean->getRollupQuota($timeperiod_id, $user_id, true);
+            $totals['target_quota_amount'] = $quota['amount'];
+        }
 
         // we should send back the adjusted totals with out the closed_amount included.
         foreach (array('worst_adjusted', 'likely_adjusted', 'best_adjusted') as $field) {
