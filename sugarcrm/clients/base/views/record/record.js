@@ -809,12 +809,20 @@
      * is set to 100% on view.  On edit, the first field is set to 100%.
      */
     adjustHeaderpaneFields: function() {
-        if (!this.disposed && !_.isEmpty($recordCells) && this.getContainerWidth() > 0) {
-            var ellipsisCellWidth,
-                $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar'),
-                $ellipsisCell = $(this._getCellToEllipsify($recordCells));
+        var $ellipsisCell,
+            ellipsisCellWidth,
+            $recordCells;
 
-                if (!_.isEmpty($ellipsisCell)) {
+        if (this.disposed) {
+            return;
+        }
+
+        $recordCells = this.$('.headerpane h1').children('.record-cell, .btn-toolbar');
+
+        if (!_.isEmpty($recordCells) && this.getContainerWidth() > 0) {
+            $ellipsisCell = $(this._getCellToEllipsify($recordCells));
+
+            if (!_.isEmpty($ellipsisCell)) {
                 if ($ellipsisCell.hasClass('edit')) {
                     // make the ellipsis cell widen to 100% on edit
                     $ellipsisCell.css({'width': '100%'});
