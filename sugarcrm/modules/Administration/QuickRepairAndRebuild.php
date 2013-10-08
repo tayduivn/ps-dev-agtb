@@ -445,7 +445,7 @@ class RepairAndClear
         $this->clearMetadataAPICache();
 
         //Remove cached js component files
-        $this->_clearCache(sugar_cached('javascript/'), '.js');
+        $this->_clearCache(sugar_cached('include/javascript/'), '.js');
     }
 
     /**
