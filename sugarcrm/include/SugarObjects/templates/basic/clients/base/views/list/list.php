@@ -45,7 +45,7 @@ $viewdefs[$module_name]['base']['view']['list'] = array(
                     'name' => 'team_name',
                     'label' => 'LBL_TEAM',
                     'width' => 9,
-                    'default' => true,
+                    'default' => false,
                     'enabled' => true,
                 ),
                 //END SUGARCRM flav=pro ONLY

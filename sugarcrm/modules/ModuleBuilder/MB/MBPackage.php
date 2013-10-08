@@ -329,6 +329,8 @@ function buildInstall($path){
                 $this->modules[$module]->renameMetaData($this->modules[$module]->getModuleDir(), $old_name);
                 $this->modules[$module]->renameLanguageFiles($this->modules[$module]->getModuleDir());
                 if($save)$this->modules[$module]->save();
+                $this->modules[$module]->cleanupLayout();
+
             }
 
     }
