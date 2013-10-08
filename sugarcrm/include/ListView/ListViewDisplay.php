@@ -294,8 +294,11 @@ class ListViewDisplay {
 	protected function buildExportLink($loc = 'top')
 	{
 		global $app_strings;
-		return "<a href='javascript:void(0)' id=\"export_listview_". $loc ." \" onclick=\"return sListView.send_form(true, '{$this->seed->module_dir}', 'index.php?entryPoint=export','{$app_strings['LBL_LISTVIEW_NO_SELECTED']}')\">{$app_strings['LBL_EXPORT']}</a>";
-    }
+        return "<a href='javascript:void(0)' id=\"export_listview_". $loc ." \" onclick=\"return sListView.send_form("
+            . "true, '{$this->seed->module_dir}', 'index.php?entryPoint=export', "
+            . "SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED')"
+            . ")\">{$app_strings['LBL_EXPORT']}</a>";
+	}
 
 	/**
 	 * Builds the massupdate link
@@ -366,8 +369,11 @@ class ListViewDisplay {
 	protected function buildDeleteLink($loc = 'top')
 	{
 		global $app_strings;
-        return "<a href='javascript:void(0)' id=\"delete_listview_". $loc ."\" onclick=\"return sListView.send_mass_update('selected', '{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
-	}
+        return "<a href='javascript:void(0)' id=\"delete_listview_". $loc ."\" onclick=\""
+            . "return sListView.send_mass_update('selected', "
+            . "SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED')"
+            . ", 1)\">{$app_strings['LBL_DELETE_BUTTON_LABEL']}</a>";
+ 	}
 	/**
 	 * Display the selected object span object
 	 *
