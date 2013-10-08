@@ -111,7 +111,7 @@ function write_array_to_file( $the_name, $the_array, $the_file, $mode="w", $head
                     var_export_helper( $the_array ) .
                     ";";
 
-    if(sugar_file_put_contents($the_file, $the_string, LOCK_EX) !== false) {
+    if(sugar_file_put_contents_atomic($the_file, $the_string) !== false) {
         if(substr($the_file, 0, 7) === 'custom/') {
             // record custom writes to file map
             SugarAutoLoader::addToMap($the_file);

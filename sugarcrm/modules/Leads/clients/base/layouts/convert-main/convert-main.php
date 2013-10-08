@@ -87,6 +87,8 @@ $viewdefs['Leads']['base']['layout']['convert-main'] = array(
                 'campaign_id' => 'campaign_id',
                 'campaign_name' => 'campaign_name',
                 'email' => 'email',
+                'phone_office' => 'phone_work',
+                'phone_fax' => 'phone_fax',
             ),
         ),
         array(

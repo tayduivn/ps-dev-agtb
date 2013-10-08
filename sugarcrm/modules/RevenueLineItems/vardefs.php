@@ -105,13 +105,6 @@ $dictionary['RevenueLineItem'] = array(
             'reportable' => false,
             'comment' => 'If product created via Quote, this is quote ID'
         ),
-        'currency_symbol' => array(
-            'name' => 'currency_symbol',
-            'type' => 'varchar',
-            'vname' => 'LBL_CURRENCY_SYMBOL_NAME',
-            'source' => 'non-db',
-            'importable' => 'false',
-        ),
         'manufacturer_id' => array(
             'name' => 'manufacturer_id',
             'vname' => 'LBL_MANUFACTURER',
@@ -749,11 +742,35 @@ $dictionary['RevenueLineItem'] = array(
         // Added for Meta-Data framework
         'currency_name' => array(
             'name' => 'currency_name',
-            'type' => 'varchar',
-            'vname' => 'LBL_CURRENCY',
+            'rname' => 'name',
+            'id_name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_NAME',
+            'type' => 'relate',
+            'link' => 'currencies',
+            'isnull' => true,
+            'table' => 'currencies',
+            'module' => 'Currencies',
             'source' => 'non-db',
-            'comment' => 'Currency String of the loaded currency_id',
-            'importable' => 'false',
+            'function' => array('name' => 'getCurrencyNameDropDown', 'returns' => 'html'),
+            'studio' => false,
+            'duplicate_merge' => 'disabled',
+            'massupdate' => false
+        ),
+        'currency_symbol' => array(
+            'name' => 'currency_symbol',
+            'rname' => 'symbol',
+            'id_name' => 'currency_id',
+            'vname' => 'LBL_CURRENCY_SYMBOL',
+            'type' => 'relate',
+            'link' => 'currencies',
+            'isnull' => true,
+            'table' => 'currencies',
+            'module' => 'Currencies',
+            'source' => 'non-db',
+            'function' => array('name' => 'getCurrencySymbolDropDown', 'returns' => 'html'),
+            'studio' => false,
+            'duplicate_merge' => 'disabled',
+            'massupdate' => false
         ),
         'quote_name' => array(
             'name' => 'quote_name',
@@ -772,11 +789,6 @@ $dictionary['RevenueLineItem'] = array(
             'comment' => 'Quote Name'
         ),
 //BEGIN SUGARCRM flav=pro ONLY
-        'assigned_user_id' => array(
-            'name' => 'assigned_user_id',
-            'vname' => 'LBL_ASSIGNED_USER_ID',
-            'type' => 'id',
-        ),
         'opportunity_id' => array(
             'name' => 'opportunity_id',
             'type' => 'id',
@@ -834,6 +846,10 @@ $dictionary['RevenueLineItem'] = array(
             'module' => 'Users',
             'bean_name' => 'User',
             'source' => 'non-db',
+            'duplicate_merge' => 'enabled',
+            'rname' => 'user_name',
+            'id_name' => 'assigned_user_id',
+            'table' => 'users',
         ),
 //END SUGARCRM flav=pro ONLY
         'type_name' => array(

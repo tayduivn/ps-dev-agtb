@@ -675,12 +675,18 @@ class MetaDataManager
             }
         }
 
-        // clear the platform cache from sugar_cache to avoid out of date data
+        // clear the platform cache from sugar_cache to avoid out of date data as well as platform component files
         $platforms = self::getPlatformList();
         foreach ($platforms as $platform) {
             $platformKey = $platform == "base" ?  "base" : implode(",", array($platform, "base"));
             $hashKey = "metadata:$platformKey:hash";
             sugar_cache_clear($hashKey);
+            $jsFiles = glob(sugar_cached("javascript/{$platform}/").'*');
+            if (is_array($jsFiles) ) {
+                foreach ($jsFiles as $jsFile) {
+                    unlink($jsFile);
+                }
+            }
         }
     }
 
