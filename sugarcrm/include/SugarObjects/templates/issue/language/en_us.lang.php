@@ -45,6 +45,7 @@ $mod_strings = array (
   'LBL_DATE_MODIFIED'=>'Date Modified:',
   'LBL_MODIFIED_BY' => 'Last Modified by:',
   'LBL_ASSIGNED_USER' => 'Assigned User:',
+  'LBL_ASSIGNED_USER_NAME' => 'Assigned to',
   'LBL_SYSTEM_ID' =>'System Id:',
   //BEGIN SUGARCRM flav=pro ONLY
   'LBL_TEAM_NAME' =>'Team Name:',
