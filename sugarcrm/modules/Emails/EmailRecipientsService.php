@@ -159,7 +159,7 @@ class EmailRecipientsService
             while($row = $inboundEmail->db->fetchByAssoc($result)) {
                 $records[] = array(
                     "id"     => $row["id"],
-                    "module" => $row["module"],
+                    "_module" => $row["module"],
                     "name"   => $GLOBALS["locale"]->getLocaleFormattedName($row["first_name"], $row["last_name"]),
                     "email"  => $row["email_address"],
                 );

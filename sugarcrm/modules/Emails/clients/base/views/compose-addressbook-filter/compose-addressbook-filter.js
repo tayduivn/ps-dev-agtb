@@ -39,10 +39,12 @@
      * Builds the list of allowed modules to provide the data to the select2 field.
      */
     buildModuleFilterList: function() {
-        var allowedModules     = this.context.get('allowed_modules');
+        var allowedModules = this.collection.allowed_modules;
+
         this._moduleFilterList = [
             {id: this._allModulesId, text: app.lang.get('LBL_TABGROUP_ALL')}
         ];
+
         _.each(allowedModules, function(module) {
             this._moduleFilterList.push({id: module, text: app.lang.get('LBL_MODULE_NAME', module)});
         }, this);
@@ -164,11 +166,11 @@
      * Triggers an event that makes a call to search the address book and filter the data set.
      */
     applyFilter: function() {
-        var searchAllModules = (this._selectedModule !== this._allModulesId),
+        var searchAllModules = (this._selectedModule === this._allModulesId),
             // pass an empty array when all modules are being searched
-            module = searchAllModules ? this._selectedModule : [],
+            module = searchAllModules ? [] : [this._selectedModule],
             // determine if the filter is dirty so the "clearQuickSearchIcon" can be added/removed appropriately
-            isDirty = (!_.isEmpty(this._currentSearch) || searchAllModules);
+            isDirty = !_.isEmpty(this._currentSearch);
         this._toggleClearQuickSearchIcon(isDirty);
         this.context.trigger('compose:addressbook:search', module, this._currentSearch);
     },

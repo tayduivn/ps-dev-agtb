@@ -167,17 +167,16 @@
                 more: false
             },
             options = {},
-            callbacks = {};
+            callbacks = {},
+            url;
 
         // add the search term to the URL params
         options.q = query.term;
-        // add the allowed modules to the URL params
-        options.module_list = 'Accounts,Contacts,Leads,Prospects,Users';
-        // add the necessary fields to the URL params
-        options.fields = 'name,email';
         // the first 10 results should be enough
         // if more results are needed, then the address book should be used
         options.max_num = 10;
+        // build the URL for fetching recipients that match the search term
+        url = app.api.buildURL('Mail', 'recipients/find', null, options);
         // create the callbacks
         callbacks.success = function(result) {
             // the api returns objects formatted such that sidecar can convert them to beans
@@ -195,7 +194,7 @@
             // execute the select2 callback to add any new recipients
             query.callback(data);
         };
-        app.api.search(options, callbacks);
+        app.api.call('read', url, null, callbacks);
     }, 300),
 
     /**
@@ -231,7 +230,15 @@
      * @return {String}
      */
     formatResult: function(recipient) {
-        return this.formatSelection(recipient); // do the same as formatSelection by default
+        var format;
+
+        if (recipient.name) {
+            format = '"' + recipient.name + '" &lt;' + recipient.email + '&gt;';
+        } else {
+            format = recipient.email;
+        }
+
+        return format;
     },
 
     /**

@@ -2545,7 +2545,7 @@ eoq;
 			//BEGIN SUGARCRM flav=pro ONLY
 			$person->add_team_security_where_clause($t);
 			//END SUGARCRM flav=pro ONLY
-			$t .= " WHERE {$where}";
+			$t .= " WHERE {$where} AND ea.invalid_email = 0 AND ea.opt_out = 0";
 		} // if
 		return $t;
     }
