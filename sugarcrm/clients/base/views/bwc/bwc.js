@@ -280,6 +280,7 @@
         var href = elem.attr('href');
         var module = this.moduleRegex.exec(href);
         var dataSidecarRewrite = elem.attr('data-sidecar-rewrite');
+        var action = this.actionRegex.exec(href);
 
         if (
             !_.isArray(module) ||
@@ -287,7 +288,8 @@
             _.isUndefined(app.metadata.getModule(module[1])) ||
             module[1] === "Administration" || // Leave Administration module links alone for 7.0
             href.indexOf("javascript:") === 0 || //Leave javascript alone (this is mostly BWC links)
-            dataSidecarRewrite === "false"
+            dataSidecarRewrite === 'false' ||
+            (_.isArray(action) && action[1] === 'sugarpdf') //Leave PDF downloads for bwc modules
         ) {
             return;
         }
