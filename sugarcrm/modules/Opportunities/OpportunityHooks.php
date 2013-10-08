@@ -79,6 +79,13 @@ class OpportunityHooks
     public static function setSalesStatus(Opportunity $bean, $event, $args)
     {
         if (static::isForecastSetup()) {
+            // we have a new bean so set the value to new and dump out
+            if (empty($bean->fetched_row)) {
+                $bean->sales_status = Opportunity::STATUS_NEW;
+                return;
+            }
+
+            // we don't have a new row, so figure out what we need to set it to
             $closed_won = static::$settings['sales_stage_won'];
             $closed_lost = static::$settings['sales_stage_lost'];
 
