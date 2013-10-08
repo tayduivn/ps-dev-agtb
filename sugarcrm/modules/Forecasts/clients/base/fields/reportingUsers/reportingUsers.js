@@ -52,7 +52,7 @@
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
 
-        this.reporteesEndpoint = app.api.buildURL("/Forecasts/reportees/");
+        this.reporteesEndpoint = app.api.buildURL("Forecasts/reportees") + '/';
 
         this.selectedUser = this.context.get('selectedUser') || app.user.toJSON();
         this.currentTreeUrl = this.reporteesEndpoint + this.selectedUser.id;

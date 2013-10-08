@@ -442,7 +442,7 @@ class MetadataApi extends SugarApi
         $path = "cache/javascript/$platform/components_$hash.js";
         if (!file_exists($path)) {
             mkdir_recursive(dirname($path));
-            file_put_contents($path, $js);
+            sugar_file_put_contents_atomic($path, $js);
         }
 
         return $this->getUrlForCacheFile($path);
