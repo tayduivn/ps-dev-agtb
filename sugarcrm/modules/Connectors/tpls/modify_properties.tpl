@@ -34,9 +34,9 @@
 {literal}
 
 <script language="javascript">
- 	var _tabView;
- 	var _timer;
- 	var _sourceArray = new Array();
+var _tabView;
+var _timer;
+var _sourceArray = new Array();
 var SourceTabs = {
 
     init : function() {
