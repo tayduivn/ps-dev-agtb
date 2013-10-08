@@ -103,7 +103,7 @@
      *
      * TODO: remove types that have properly implementation for merge interface
      */
-    fieldTypesBlacklist: ['image', 'currency', 'email', 'team_list', 'teamset', 'link', 'id'],
+    fieldTypesBlacklist: ['image', 'email', 'team_list', 'teamset', 'link', 'id'],
 
     /**
      * Links names won't be mergeable.
@@ -161,6 +161,7 @@
         { type: 'text', source: 'db' },
         { type: 'date', source: 'db' },
         { type: 'time', source: 'db' },
+        { type: 'currency', source: 'db' },
         { type: 'int', source: 'db' },
         { type: 'long', source: 'db' },
         { type: 'double', source: 'db' },
@@ -371,9 +372,15 @@
                     fields.push(fieldDefs[def[relatedField]].name);
                 }
             });
-            fields.push(fieldDefs[def.name].name);
+            var related_fields = mergeField.related_fields || def.related_fields || undefined;
+            if(!_.isUndefined(related_fields) && _.isArray(related_fields)) {
+                _.each(related_fields, function(rField) {
+                    fields.push(rField);
+                });
+            }
+            fields.push(def.name);
         }, this);
-        return fields;
+        return _.unique(fields);
     },
 
     /**

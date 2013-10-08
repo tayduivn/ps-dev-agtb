@@ -84,10 +84,71 @@ describe('View.Views.BaseMergeDuplicatesView', function() {
                 name: 'birth'
             },
             expectedResult: true
+        },
+        {
+            field: {
+                type: 'currency',
+                source: 'db',
+                name: 'amount'
+            },
+            expectedResult: true
         }
     ], function(data) {
         it('should show as editable on merge view', function() {
             expect(view.validMergeField(data.field)).toBe(data.expectedResult);
+        });
+    });
+
+    describe('getFieldNames', function() {
+        beforeEach(function() {
+            view.mergeFields = [
+                {
+                    type: 'text',
+                    name: 'name'
+                },
+                {
+                    type: 'currency',
+                    name: 'amount',
+                    related_fields: [
+                        'currency_id',
+                        'base_rate'
+                    ]
+                }
+            ];
+            sinon.stub(app.metadata, 'getModule', function() {
+                return {
+                    fields: {
+                        name: {
+                            type: 'text',
+                            name: 'name'
+                        },
+                        amount: {
+                            type: 'currency',
+                            name: 'amount',
+                            related_fields: [
+                                'currency_id',
+                                'base_rate'
+                            ]
+                        }
+                    }
+                }
+            });
+        });
+
+        afterEach(function() {
+            view.mergeFields = undefined;
+            app.metadata.getModule.restore();
+        });
+
+        it('should contain related_fields', function() {
+            var fields = view.getFieldNames();
+            expect(fields.length).toEqual(4);
+        });
+
+        it('should contain related_fields from getModule', function() {
+            delete view.mergeFields[1].related_fields;
+            var fields = view.getFieldNames();
+            expect(fields.length).toEqual(4);
         });
     });
 
