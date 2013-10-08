@@ -5,6 +5,11 @@
         'click .connect-twitter': 'onConnectTwitterClick'
     },
     initDashlet: function() {
+        // if config view overide with module specific
+        if (this.meta.config) {
+            this.dashletConfig = app.metadata.getView(app.controller.context.get('module'), this.name) || this.dashletConfig;
+        }
+
         var limit = this.settings.get("limit") || this.limit;
             this.settings.set("limit", limit);
         this.cacheKey = "twitter.dashlet.current_user_cache";
@@ -39,15 +44,21 @@
         if (this.disposed || this.meta.config) {
             return;
         }
-
-        var twitter = this.settings.get('twitter') ||
+        var twitter =
                 this.model.get('twitter') ||
                 this.model.get('name') ||
                 this.model.get('account_name') ||
                 this.model.get('full_name'),
             limit = parseInt(this.settings.get("limit"), 10) || this.limit,
             self = this;
+
         this.screen_name = this.settings.get('twitter') || false;
+        //workaround because home module acutally pulls a dashboard instead of an
+        //empty home model
+        if (_.isNull(this.context.parent)) {
+            twitter = this.settings.get('twitter');
+        }
+
         if (!twitter || this.viewName === 'config') {
             return false;
         }
