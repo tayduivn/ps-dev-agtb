@@ -282,6 +282,7 @@ $viewdefs['Leads']['base']['view']['record'] = array(
                 'phone_work',
                 'campaign_name',
                 'phone_fax',
+                'twitter',
                 array(
                     'name' => 'description',
                     'span' => 12,

@@ -150,6 +150,7 @@ $viewdefs['Accounts']['base']['view']['record'] = array(
                 'email',
                 'phone_fax',
                 'campaign_name',
+                'twitter',
                 array(
                     'name' => 'description',
                     'span' => 12,

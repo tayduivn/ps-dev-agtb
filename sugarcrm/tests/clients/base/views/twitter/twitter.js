@@ -80,4 +80,20 @@ describe("Twitter View", function() {
         expect(view.current_twitter_user_name).toEqual('testName');
         expect(view.current_twitter_user_pic).toEqual('testURL');
     });
+
+    it("should pull twitter field from config when context parent is null", function() {
+        // workaround since dashlet config not testable atm
+        view.meta.config = false;
+        var apiStub = sinonSandbox.stub(SugarTest.app.api, 'call');
+        var settingsStub = sinonSandbox.stub(view.settings, 'get', function(){return 'bob';});
+
+        view.loadData();
+
+        expect(apiStub.getCall(1).args[1].indexOf("bob")).toBeGreaterThan(-1);
+
+        view.context.parent = new Backbone.Model();
+        view.model.set('name','test');
+        view.loadData();
+        expect(apiStub.getCall(3).args[1].indexOf("bob")).toEqual(-1);
+    });
 });

@@ -249,6 +249,7 @@ $viewdefs['Prospects']['base']['view']['record'] = array(
                 ),
                 'phone_work',
                 'assigned_user_name',
+                'twitter',
                 array(
                     'name' => 'description',
                     'span' => 12,

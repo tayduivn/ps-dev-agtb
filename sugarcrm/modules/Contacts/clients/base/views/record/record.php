@@ -257,6 +257,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array(
                 ),
                 'phone_fax',
                 'phone_work',
+                'twitter',
                 array(
                     'name' => 'description',
                     'span' => 12,
