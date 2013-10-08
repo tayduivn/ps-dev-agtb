@@ -56,6 +56,54 @@ describe("sugar7.extensions.bwc", function() {
         expect(actual).toEqual(expected);
     });
 
+    describe('_handleRelatedRecordSpecialCases', function() {
+        var parentModel;
+        beforeEach(function() {
+            parentModel = new Backbone.Model({
+                id: '101-model-id',
+                name: 'parent product name',
+                account_id: 'abc-111-2222',
+                account_name: 'parent account name',
+                assigned_user_name: 'admin',
+                full_name: 'John Smith'
+            });
+            parentModel.module = 'Contacts';
+        });
+        afterEach(function() {
+            parentModel = null;
+        });
+
+        it('should handle Contacts with meetings link special case', function() {
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "meetings");
+            expect(params['parent_type']).toBe('Accounts');
+            expect(params['parent_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_name']).toBe(parentModel.get('account_name'));
+            expect(params['parent_name']).toBe(parentModel.get('account_name'));
+            expect(params['contact_id']).toBe(parentModel.get('id'));
+            expect(params['contact_name']).toBe(parentModel.get('full_name'));
+        });
+
+        it('should handle Contacts with calls link special case', function() {
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "calls");
+            expect(params['parent_type']).toBe('Accounts');
+            expect(params['parent_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_name']).toBe(parentModel.get('account_name'));
+            expect(params['parent_name']).toBe(parentModel.get('account_name'));
+            expect(params['contact_id']).toBe(parentModel.get('id'));
+            expect(params['contact_name']).toBe(parentModel.get('full_name'));
+        });
+
+        //Fix for SP-1600: Account information is not populated during Quote creation via Opportunity Quote Subpanel
+        it('should handle Opportunities with quotes link special case', function() {
+            parentModel.module = 'Opportunities';
+            var params = app.bwc._handleRelatedRecordSpecialCases({}, parentModel, "quotes");
+            expect(params['account_id']).toBe(parentModel.get('account_id'));
+            expect(params['account_name']).toBe(parentModel.get('account_name'));
+        });
+    });
+
     describe('_createRelatedRecordUrlParams', function() {
         var parentModel, relateFieldStub;
 

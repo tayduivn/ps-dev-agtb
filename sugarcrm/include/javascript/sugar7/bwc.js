@@ -155,7 +155,6 @@
             }
             return href + $.param(params);
         },
-
         /**
          * For BWC modules, we need to get URL params for creating the related record
          * @returns {Object} BWC URL parameters
@@ -170,18 +169,10 @@
                 return_id: parentModel.get("id"),
                 return_name: parentModel.get('name') || parentModel.get('full_name')
             };
-            //Special case for Contacts->meetings. The parent should be the account rather than the contact
-            if (parentModel.module == "Contacts" && parentModel.get("account_id") && (link == "meetings" || link == 'calls')) {
-                params = _.extend(params, {
-                    parent_type: "Accounts",
-                    parent_id: parentModel.get("account_id"),
-                    account_id: parentModel.get("account_id"),
-                    account_name: parentModel.get("account_name"),
-                    parent_name: parentModel.get("account_name"),
-                    contact_id: parentModel.get("id"),
-                    contact_name: parentModel.get("full_name")
-                });
-            }
+
+            //Handle special cases
+            params = this._handleRelatedRecordSpecialCases(params, parentModel, link);
+
             //Set relate field values as part of URL so they get pre-filled
             var fields = app.data.getRelateFields(parentModel.module, link);
             _.each(fields, function(field){
@@ -197,6 +188,35 @@
                     }, this);
                 }
             });
+            return params;
+        },
+        /**
+         * Handles special cases when building the related record URL.
+         * @returns {Object} BWC URL parameters taking edge cases in to consideration
+         * @private
+         */
+        _handleRelatedRecordSpecialCases: function(params, parentModel, link) {
+            //Special case for Contacts->meetings. The parent should be the account rather than the contact
+            if (parentModel.module == "Contacts" && parentModel.get("account_id") && (link == "meetings" || link == 'calls')) {
+                params = _.extend(params, {
+                    parent_type: "Accounts",
+                    parent_id: parentModel.get("account_id"),
+                    account_id: parentModel.get("account_id"),
+                    account_name: parentModel.get("account_name"),
+                    parent_name: parentModel.get("account_name"),
+                    contact_id: parentModel.get("id"),
+                    contact_name: parentModel.get("full_name")
+                });
+            }
+            //SP-1600: Account information is not populated during Quote creation via Opportunity Quote Subpanel
+            if (parentModel.module === 'Opportunities' && parentModel.get('account_id') && link == 'quotes') {
+                //Note that the bwc view will automagically give us billing/shipping and only
+                //expects us to set account_id and account_name here
+                params = _.extend(params, {
+                    account_id: parentModel.get("account_id"),
+                    account_name: parentModel.get("account_name")
+                });
+            }
             return params;
         },
 
