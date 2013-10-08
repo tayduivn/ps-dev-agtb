@@ -4108,8 +4108,8 @@ $app_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     //These are for the timeperiod name formats
     'LBL_ANNUAL_TIMEPERIOD_FORMAT' => 'Year {0}',
-    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} {1}',
-    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0}',
+    'LBL_QUARTER_TIMEPERIOD_FORMAT' => 'Q{0} ({1} - {2})',
+    'LBL_MONTH_TIMEPERIOD_FORMAT' => '{0} - {1}',
     //END SUGARCRM flav=pro ONLY
 
     //quickcreate modal dialog
