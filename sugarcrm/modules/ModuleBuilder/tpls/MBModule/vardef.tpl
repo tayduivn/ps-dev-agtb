@@ -28,6 +28,7 @@
 $dictionary['{{$class.name}}'] = array(
 	'table'=>'{{$class.table_name}}',
 	'audited'=>{{$class.audited}},
+	'activity_enabled'=>{{$class.activity_enabled}},
 	{{if !($class.templates|strstr:"file")}}
 	'duplicate_merge'=>true,
 	{{/if}}

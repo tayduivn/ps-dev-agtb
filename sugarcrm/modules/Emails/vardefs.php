@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Email'] = array(
     'table' => 'emails',
     'acl_fields'=>false,
+    'activity_enabled' => true,
     'comment' => 'Contains a record of emails sent to and from the Sugar application',
 	'fields' => array (
 		'id' => array (

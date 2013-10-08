@@ -14,6 +14,7 @@
 $dictionary['RevenueLineItem'] = array(
     'table' => 'revenue_line_items',
     'audited' => true,
+    'activity_enabled' => true,
     //BEGIN SUGARCRM flav=ent ONLY
     'unified_search' => true,
     'full_text_search' => true,
