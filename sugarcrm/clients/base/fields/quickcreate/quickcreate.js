@@ -136,6 +136,12 @@
             }
         }, _.bind(function (refresh, model) {
             if (refresh) {
+                // When user quick creates a model he has no access, it loads the 404 page so we need to redirect him to
+                // his previous page manually
+                if (model && !model.id) {
+                    app.router.refresh();
+                    return;
+                }
                 if (model && relatedContext) {
                     // Refresh the subpanel.
                     this.context.trigger('panel-top:refresh', relatedContext.link);
