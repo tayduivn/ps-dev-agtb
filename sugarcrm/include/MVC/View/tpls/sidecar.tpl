@@ -71,15 +71,7 @@
         <script src='{$SLFunctionsPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}?hash={$configHash}'></script>
-        {sugar_getscript file="include/javascript/jquery/jquery.dataTables.min.js"}
-
-        {sugar_getscript file="include/javascript/sugar7.js"}
-        {sugar_getscript file="include/javascript/sugar7/bwc.js"}
-        {sugar_getscript file="include/javascript/sugar7/utils.js"}
-        {sugar_getscript file="include/javascript/sugar7/field.js"}
-        {sugar_getscript file="include/javascript/sugar7/hacks.js"}
-        {sugar_getscript file="include/javascript/sugar7/alert.js"}
-        {sugar_getscript file="include/javascript/sugar7/hbs-helpers.js"}
+        {sugar_getscript file="cache/include/javascript/sugar_grp7.min.js"}
         {literal}
         <script language="javascript">
             if (parent.window != window && typeof(parent.SUGAR.App.router) != "undefined") {
