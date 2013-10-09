@@ -212,7 +212,7 @@ $vardefs = array(
 
 ),
 'indices' => array (
-       'id'=>array('name' =>strtolower($module).'pk', 'type' =>'primary', 'fields'=>array('id')),
+       'id'=>array('name' =>preg_replace('/[^a-z_\-]/i', '', strtolower($module)).'pk', 'type' =>'primary', 'fields'=>array('id')),
        'date_modified'=>array('name' =>strtolower($table_name).'mod', 'type' =>'index', 'fields'=>array('date_modified')),
        ),
 'relationships'=>array(

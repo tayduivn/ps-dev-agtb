@@ -875,7 +875,7 @@ $dictionary['Product'] = array(
         ),
     ),
     'indices' => array(  array('name' => 'idx_products', 'type' => 'index', 'fields' => array('name', 'deleted')),  array(
-        'name' => 'idx_user_dateclosed_timestamp',
+        'name' => 'idx_prod_user_dc_timestamp',
         'type' => 'index',
         'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
     )

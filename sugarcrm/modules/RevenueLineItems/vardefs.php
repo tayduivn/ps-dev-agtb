@@ -932,7 +932,7 @@ $dictionary['RevenueLineItem'] = array(
     'indices' => array(
         array('name' => 'idx_revenuelineitem', 'type' => 'index', 'fields' => array('name', 'deleted')),
         array(
-            'name' => 'idx_user_dateclosed_timestamp',
+            'name' => 'idx_rli_user_dc_timestamp',
             'type' => 'index',
             'fields' => array('id', 'assigned_user_id', 'date_closed_timestamp')
         )
