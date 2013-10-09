@@ -251,7 +251,7 @@ $mod_strings = array (
     'LBL_FILENAME' => 'Attachment',
 
     //Dashlet
-    'LBL_TWITTER' => 'Twitter ID',
+    'LBL_TWITTER' => 'Twitter Account',
 
     //Document title
     'TPL_BROWSER_SUGAR7_RECORDS_TITLE' => '{{module}} &raquo; {{appId}}',

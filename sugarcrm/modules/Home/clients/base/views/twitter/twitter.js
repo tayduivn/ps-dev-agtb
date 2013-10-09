@@ -63,7 +63,8 @@
             return false;
         }
 
-        twitter = twitter.replace(" ", "");
+        twitter = twitter.replace(/ /g, "");
+
         this.twitter = twitter;
         var currentUserUrl = app.api.buildURL('connector/twitter/currentUser');
         if (!self.current_twitter_user_name) {
@@ -84,7 +85,6 @@
         var url = app.api.buildURL('connector/twitter','',{id:twitter},{count:limit});
         app.api.call('READ', url, {},{
             success:function (data) {
-
                 if (self.disposed) {
                     return;
                 }
@@ -123,25 +123,30 @@
 
                 self.tweets = tweets;
                 if (!this.disposed) {
+                    self.template = app.template.get(self.name + '.Home');
                     self.render();
                 }
             },
             error: function(xhr,status,error){
-                if (xhr.status == 424) {
+                self.showGeneric = true;
+                self.errorLBL = app.lang.get('ERROR_UNABLE_TO_RETRIEVE_DATA');
+                self.template = app.template.get(self.name + '.twitter-need-configure.Home');
+                if (xhr.status === 404) {
+                    self.showGeneric = true;
+                    self.errorLBL = app.lang.get('LBL_ERROR_CANNOT_FIND_TWITTER') + self.twitter;
+                } else if (xhr.status === 424) {
                     app.cache.cut(self.key);
                     self.needConnect = false;
+                    self.showGeneric = false;
                     if (xhr.code && xhr.code === 'ERROR_NEED_AUTHORIZE') {
                         self.needConnect = true;
                     } else if (xhr.code && xhr.code === 'ERROR_NEED_OAUTH') {
                         self.needOAuth = true;
-                    } else {
-                        self.showGeneric = true;
                     }
                     self.showAdmin = app.acl.hasAccess('admin', 'Administration');
-                    self.template = app.template.get(self.name + '.twitter-need-configure.Home');
-                    if (!self.disposed) {
-                        app.view.View.prototype._render.call(self);
-                    }
+                }
+                if (!self.disposed) {
+                    app.view.View.prototype._render.call(self);
                 }
             },
             complete: (options) ? options.complete : null
