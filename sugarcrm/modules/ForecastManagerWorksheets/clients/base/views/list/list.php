@@ -34,7 +34,7 @@ $viewdefs['ForecastManagerWorksheets']['base']['view']['list'] = array(
                     'enabled' => true,
                     'related_fields' => array(
                         'user_id',
-                        'isManager',
+                        'is_manager',
                         'show_history_log',
                         'draft',
                         'pipeline_opp_count',

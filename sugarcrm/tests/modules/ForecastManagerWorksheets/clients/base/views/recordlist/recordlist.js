@@ -95,18 +95,18 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             });
 
             it('should return true when user is manager', function() {
-                view.selectedUser.isManager = true;
+                view.selectedUser.is_manager = true;
                 var ret = view.beforeRenderCallback();
                 expect(ret).toBeTruthy();
             });
             it('should return true when user is manager and showOpps is true and call show', function() {
-                view.selectedUser.isManager = true;
+                view.selectedUser.is_manager = true;
                 view.selectedUser.showOpps = true;
                 var ret = view.beforeRenderCallback();
                 expect(ret).toBeFalsy();
             });
             it('should return false when user is not a manager', function() {
-                view.selectedUser.isManager = false;
+                view.selectedUser.is_manager = false;
                 var ret = view.beforeRenderCallback();
                 expect(ret).toBeFalsy();
             });
@@ -127,14 +127,14 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             });
 
             it('should return false when user is manager and showOpps is true', function() {
-                view.selectedUser.isManager = true;
+                view.selectedUser.is_manager = true;
                 view.selectedUser.showOpps = true;
                 var ret = view.beforeRenderCallback();
                 expect(ret).toBeFalsy();
                 expect(layoutHideStub).toHaveBeenCalled();
             });
             it('should return false when user is not a manager', function() {
-                view.selectedUser.isManager = false;
+                view.selectedUser.is_manager = false;
                 view.selectedUser.showOpps = false;
                 var ret = view.beforeRenderCallback();
                 expect(ret).toBeFalsy();
@@ -165,7 +165,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                 return true;
             });
 
-            view.selectedUser.isManager = true;
+            view.selectedUser.is_manager = true;
             view.selectedUser.showOpps = false;
             view.renderCallback();
 
@@ -182,7 +182,7 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
                 };
             });
 
-            view.selectedUser.isManager = true;
+            view.selectedUser.is_manager = true;
             view.selectedUser.showOpps = false;
             view.renderCallback();
 
@@ -268,12 +268,12 @@ describe("ForecastManagerWorksheets.View.RecordList", function() {
             view.updateSelectedUser({id: 'test_user2'});
             expect(view.canEdit).toBeFalsy();
         });
-        it("should call collection.fetch() isManager is False", function() {
-            view.updateSelectedUser({id: 'test_user2', isManager: false});
+        it("should call collection.fetch() is_manager is False", function() {
+            view.updateSelectedUser({id: 'test_user2', is_manager: false});
             expect(collectionFetchStub).toHaveBeenCalled();
         });
-        it("should call collection.fetch() with isManager is True and showOpps is True", function() {
-            view.updateSelectedUser({id: 'test_userid', isManager: true, showOpps: true});
+        it("should call collection.fetch() with is_manager is True and showOpps is True", function() {
+            view.updateSelectedUser({id: 'test_userid', is_manager: true, showOpps: true});
             expect(collectionFetchStub).toHaveBeenCalled();
         });
     });

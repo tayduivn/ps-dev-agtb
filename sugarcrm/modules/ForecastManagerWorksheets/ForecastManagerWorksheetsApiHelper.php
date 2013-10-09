@@ -102,7 +102,7 @@ class ForecastManagerWorksheetsApiHelper extends SugarBeanApiHelper
             }
         }
         if (!empty($bean->user_id)) {
-            $data['isManager'] = User::isManager($bean->user_id);
+            $data['is_manager'] = User::isManager($bean->user_id);
         }
 
         return $data;

@@ -38,6 +38,7 @@
                     return !_.isUndefined($(element).data('tooltip'));
                 }
             },
+
             /**
              * Takes two Forecasts models and returns HTML for the history log
              *
@@ -64,7 +65,6 @@
                     worst_difference = this.getDifference(oldestModel, newestModel, 'worst_case'),
                     worst_direction = this.getDirection(worst_difference),
                     args = [],
-                    text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED',
                     best_arrow = this.getArrowDirectionSpan(best_direction),
                     likely_arrow = this.getArrowDirectionSpan(likely_direction),
                     worst_arrow = this.getArrowDirectionSpan(worst_direction),
@@ -73,7 +73,6 @@
                     lang_string_key = '',
                     final_args = [],
                     labels = [],
-                    setup_or_updated_lang_key = (is_first_commit) ? '_SETUP' : '_UPDATED',
                     likely_args = {
                         changed: likely_difference != 0,
                         show: app.metadata.getModule('Forecasts', 'config').show_worksheet_likely
@@ -344,31 +343,13 @@
              * @return {Boolean}
              */
             isRequiredLink: function(module, link){
-                var relatedFields = app.data.getRelateFields(module, link);
-                var requiredField = _.some(relatedFields, function(field){
-                    return field.required === true;
-                }, this);
+                var relatedFields = app.data.getRelateFields(module, link),
+                    requiredField = _.some(relatedFields, function(field){
+                        return field.required === true;
+                    }, this);
                 return requiredField;
             },
 
-            /**
-             * Get the Datasets for the specified app list string that are only present via the specified config key list string combination
-             *
-             * @param app_list_dataset_name {String} variable to pull from app list strings for the datasets needed
-             * @param cfg_key_prefix {String} config key part to prepend to the values of the app list string dataset, and will create a key to match within the config vars
-             * @return {Object}
-             */
-            getAppConfigDatasets: function(app_list_dataset_name, cfg_key_prefix) {
-                var ds = app.metadata.getStrings('app_list_strings')[app_list_dataset_name] || [];
-
-                var returnDs = {};
-                _.each(ds, function(value, key) {
-                    if(app.metadata.getModule('Forecasts', 'config')[cfg_key_prefix + key] == 1) {
-                        returnDs[key] = value
-                    }
-                }, this);
-                return returnDs;
-            },
             /**
              * Contains a list of column names from metadata and maps them to correct config param
              * e.g. 'likely_case' column is controlled by the Forecast config.show_worksheet_likely param
@@ -432,6 +413,7 @@
                 }
                 return returnValue;
             },
+
             /**
              * If the passed in User is a Manager, then get his direct reportees, and then set the user
              * on the context, if they are not a Manager, just set user to the context
@@ -440,7 +422,7 @@
              */
             getSelectedUsersReportees: function(selectedUser, context) {
 
-                if(selectedUser.isManager) {
+                if(selectedUser.is_manager) {
                     // make sure the reportee's array is there
                     if(_.isUndefined(selectedUser.reportees)) {
                         selectedUser.reportees = [];
@@ -464,8 +446,8 @@
                     // update context with selected user which will trigger checkRender
                     context.set("selectedUser", selectedUser);
                 }
-
             },
+
             /**
              * Makes sure that Sales Stage Won/Lost values from the database Forecasts config settings
              * exist in the sales_stage_dom
@@ -490,6 +472,12 @@
 
                 return forecastConfigOK;
             },
+
+            /**
+             * Returns if the current browser has touch events
+             *
+             * @returns {Boolean}
+             */
             isTouchDevice: function() {
                 return Modernizr.touch;
             },

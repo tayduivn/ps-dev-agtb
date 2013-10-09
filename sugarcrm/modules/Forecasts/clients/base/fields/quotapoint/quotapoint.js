@@ -124,7 +124,7 @@
      * @return {*} url to call
      */
     getQuotasURL: function() {
-        var method = (this.selectedUser.isManager && this.selectedUser.showOpps) ? 'direct' : 'rollup',
+        var method = (this.selectedUser.is_manager && this.selectedUser.showOpps) ? 'direct' : 'rollup',
             url = 'Forecasts/' + this.selectedTimePeriod + '/quotas/' + method + '/' + this.selectedUser.id;
 
         return app.api.buildURL(url, 'read');
@@ -154,7 +154,7 @@
         this.quotaAmount = quotaData.formatted_amount;
 
         // Check to see if we need to add an event listener to the context for the worksheet totals
-        this.toggleTotalsListeners(quotaData.isTopLevelManager);
+        this.toggleTotalsListeners(quotaData.is_top_level_manager);
 
         // update the UI
         if (!this.disposed) {

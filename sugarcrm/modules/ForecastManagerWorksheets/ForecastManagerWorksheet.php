@@ -42,7 +42,7 @@ class ForecastManagerWorksheet extends SugarBean
     public $module_dir = 'ForecastManagerWorksheets';
     public $table_name = 'forecast_manager_worksheets';
     public $disable_custom_fields = true;
-    public $isManager = false;
+    public $is_manager = false;
     public $draft_save_type = '';
 
     /**
@@ -403,7 +403,7 @@ class ForecastManagerWorksheet extends SugarBean
      */
     public function saveWorksheet($check_notify = false)
     {
-        $this->isManager = User::isManager($this->user_id);
+        $this->is_manager = User::isManager($this->user_id);
 
         // save to the manager worksheet table (new table)
         // get the user object
@@ -495,7 +495,7 @@ class ForecastManagerWorksheet extends SugarBean
             }
         }
         if (!empty($this->user_id)) {
-            $this->isManager = User::isManager($this->user_id);
+            $this->is_manager = User::isManager($this->user_id);
         }
     }
 

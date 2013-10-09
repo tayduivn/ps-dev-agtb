@@ -27,7 +27,7 @@
 
         var ctx = this.context.parent || this.context,
             su = ctx.get('selectedUser') || app.user.toJSON(),
-            isManager = this.model.get('isManager'),
+            isManager = this.model.get('is_manager'),
             showOpps = (su.id == this.model.get('user_id')) ? 1 : 0,
             forecastType = app.utils.getForecastType(isManager, showOpps),
             args_filter = [],

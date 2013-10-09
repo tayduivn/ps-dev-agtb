@@ -99,7 +99,7 @@
             this.context.on('change:selectedUser', function(model, changed) {
                 var update = {
                     'selectedUserId': changed.id,
-                    'forecastType': app.utils.getForecastType(changed.isManager, changed.showOpps)
+                    'forecastType': app.utils.getForecastType(changed.is_manager, changed.showOpps)
                 }
                 this.model.set(update);
             }, this);
@@ -204,7 +204,7 @@
 
         // set the selected user and forecast type on the model
         this.model.set('selectedUserId', change.id, {silent: true});
-        this.model.set('forecastType', app.utils.getForecastType(change.isManager, change.showOpps));
+        this.model.set('forecastType', app.utils.getForecastType(change.is_manager, change.showOpps));
         // bind the collection sync to our custom sync
         this.collection.sync = _.bind(this.sync, this);
 
@@ -272,7 +272,7 @@
      */
     commitForecast: function(user, worksheet_type, forecast_totals) {
         var forecast = new this.collection.model(),
-            forecastType = app.utils.getForecastType(user.isManager, user.showOpps),
+            forecastType = app.utils.getForecastType(user.is_manager, user.showOpps),
             forecastData = {};
 
 

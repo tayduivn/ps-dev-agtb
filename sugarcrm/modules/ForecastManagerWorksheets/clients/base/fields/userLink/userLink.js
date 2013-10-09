@@ -52,7 +52,7 @@
             full_name: '',
             first_name: '',
             last_name: '',
-            isManager: false,
+            is_manager: false,
             showOpps: false,
             reportees: []
         };
@@ -65,7 +65,7 @@
                 selectedUser.full_name = data.full_name;
                 selectedUser.first_name = data.first_name;
                 selectedUser.last_name = data.last_name;
-                selectedUser.isManager = data.isManager;
+                selectedUser.is_manager = data.is_manager;
 
                 var su = this.context.get('selectedUser') || this.context.parent.get('selectedUser') || app.user.toJSON();
                 // get the current selected user, if the id's match up set the showOpps to be true)

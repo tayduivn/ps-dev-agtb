@@ -64,7 +64,7 @@
      * @private
      */
     _dispose: function() {
-        if (app.user.get('isManager') && !_.isEmpty(this.jsTree)) {
+        if (app.user.get('is_manager') && !_.isEmpty(this.jsTree)) {
             this.jsTree.off();
         }
         app.view.Field.prototype._dispose.call(this);
@@ -74,7 +74,7 @@
      * Only run the render if the user is a manager as that is the only time we want the tree to display.
      */
     render: function() {
-        if (app.user.get('isManager')) {
+        if (app.user.get('is_manager')) {
             app.view.Field.prototype.render.call(this);
         }
     },
@@ -98,13 +98,13 @@
         // handle the case for user clicking MyOpportunities first
         this.selectedUser = selectedUser;
         if (selectedUser.showOpps) {
-            var nodeId = (selectedUser.isManager ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
+            var nodeId = (selectedUser.is_manager ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
             this.selectJSTreeNode(nodeId)
             // check before render if we're trying to re-render tree with a fresh root user
             // otherwise do not re-render tree
             // also make sure we're not re-rendering tree for a rep
         } else if (this.currentRootId != selectedUser.id) {
-            if (selectedUser.isManager) {
+            if (selectedUser.is_manager) {
                 // if user is a manager we'll be re-rendering the tree
                 // no need to re-render the tree if not a manager because the dataset
                 // stays the same
@@ -207,7 +207,7 @@
 
         var treeData = this._recursiveReplaceHTMLChars(data, this),
             selectedUser = this.context.get('selectedUser'),
-            nodeId = (selectedUser.isManager && selectedUser.showOpps ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
+            nodeId = (selectedUser.is_manager && selectedUser.showOpps ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
         treeData.ctx = this.context;
 
         this.jsTree = $(".jstree-sugar").jstree({
@@ -253,7 +253,7 @@
                     'full_name': userData.full_name,
                     'first_name': userData.first_name,
                     'last_name': userData.last_name,
-                    'isManager': (nodeType != 'rep'),
+                    'is_manager': (nodeType != 'rep'),
                     'showOpps': showOpps,
                     'reportees': []
                 };
