@@ -44,8 +44,15 @@ global $current_user;
 $current_user = BeanFactory::getBean('Users');
 $current_user->getSystemUser();
 
-$modules = ($argc > 1) ?  array($argv[1]) : array();
-$clearData = ($argc == 2) ?  $argv[2] : TRUE;
+// Pop off the filename
+array_shift($argv); 
+
+// Don't wipe the index if we're just doing individual modules
+$clearData = empty($argv);
+
+// Allows for php -f silentFTSIndex.php Bugs Cases
+$modules = $argv;
+
 require_once('include/SugarSearchEngine/SugarSearchEngineFullIndexer.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 try {
