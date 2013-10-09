@@ -196,6 +196,7 @@ abstract class UpgradeDriver
      */
     public function cleanCaches()
     {
+        $this->log("Cleaning cache");
         if(is_callable(array('SugarAutoLoader', 'buildCache'))) {
             SugarAutoLoader::buildCache();
         } else {
@@ -209,6 +210,31 @@ abstract class UpgradeDriver
         $this->cleanDir($this->cacheDir("Expressions"));
         $this->cleanDir($this->cacheDir("themes"));
         $this->cleanDir($this->cacheDir("include/api"));
+        $this->cleanDir($this->cacheDir("api/metadata"));
+        $this->log("Cache cleaned");
+    }
+
+    /**
+     * This function prebuilds the metadata cache
+     *
+     * The cache is prebuilt only for en_us and base platform for now.
+     */
+    public function prewarmCache()
+    {
+        $this->log("Populating metadata cache");
+        if(empty($GLOBALS['app_list_strings'])) {
+            $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
+        }
+        require_once 'include/api/RestService.php';
+        require_once 'clients/base/api/MetadataApi.php';
+        $rest = new RestService();
+        $rest->platform = 'base';
+        $api = new MetadataApi();
+        $api->getAllMetadata($rest, array());
+        $api->getLanguage($rest, array('lang' => 'en_us'));
+        $api->getPublicMetadata($rest, array());
+        $api->getPublicLanguage($rest, array('lang' => 'en_us'));
+        $this->log("Metadata cache populated");
     }
 
     /**
@@ -222,6 +248,7 @@ abstract class UpgradeDriver
 
     public function __construct()
     {
+        // empty ctor, init() does actual initialization
     }
 
     /**
@@ -955,7 +982,7 @@ abstract class UpgradeDriver
         if(!defined('sugarEntry')) define('sugarEntry', true);
         $this->log("Initializig SugarCRM environment");
         global $beanFiles, $beanList, $objectList, $timedate, $moduleList, $modInvisList, $sugar_config, $locale,
-            $sugar_version, $sugar_flavor, $db, $locale, $installing, $bwcModules, $app_list_strings;
+            $sugar_version, $sugar_flavor, $sugar_build, $sugar_db_version, $sugar_timestamp, $db, $locale, $installing, $bwcModules, $app_list_strings;
         $installing = true;
         include('include/entryPoint.php');
         $GLOBALS['current_language'] = $this->config['default_language'];
@@ -1426,6 +1453,7 @@ abstract class UpgradeDriver
                     }
                     $this->saveConfig();
                     $this->cleanCaches();
+                    $this->prewarmCache();
                     break;
                 case "cleanup":
                     // Remove temp files
