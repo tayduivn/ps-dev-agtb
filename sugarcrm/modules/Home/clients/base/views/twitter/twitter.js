@@ -71,7 +71,8 @@
             return false;
         }
 
-        twitter = twitter.replace(" ", "");
+        twitter = twitter.replace(/ /g, "");
+
         this.twitter = twitter;
         var currentUserUrl = app.api.buildURL('connector/twitter/currentUser');
         if (app.user.get('connectors')) {
