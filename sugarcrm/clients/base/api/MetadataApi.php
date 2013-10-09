@@ -377,7 +377,7 @@ class MetadataApi extends SugarApi
 
     /**
      * Given a platform and language, returns the language JSON contents
-     * 
+     *
      * @param ServiceBase $api
      * @param array $args
      */

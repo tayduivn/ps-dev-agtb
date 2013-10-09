@@ -1479,6 +1479,12 @@ class MetaDataManager
             'maxRecordFetchSize' => $sugar_config['max_record_fetch_size'],
             'massUpdateChunkSize' => $sugar_config['mass_update_chunk_size'],
             'massDeleteChunkSize' => $sugar_config['mass_delete_chunk_size'],
+            'mergeRelateFetchConcurrency' => $sugar_config['merge_relate_fetch_concurrency'],
+            'mergeRelateFetchTimeout' => $sugar_config['merge_relate_fetch_timeout'],
+            'mergeRelateFetchLimit' => $sugar_config['merge_relate_fetch_limit'],
+            'mergeRelateUpdateConcurrency' => $sugar_config['merge_relate_update_concurrency'],
+            'mergeRelateUpdateTimeout' => $sugar_config['merge_relate_update_timeout'],
+            'mergeRelateMaxAttempt' => $sugar_config['merge_relate_max_attempt'],
         );
 
         if (isset($administration->settings['honeypot_on'])) {
