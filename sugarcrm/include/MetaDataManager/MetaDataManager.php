@@ -645,7 +645,7 @@ class MetaDataManager
             // 
             // This prevents calling this once each for true and false when a true
             // would handle what a false would anyway
-            register_shutdown_function(array('MetaDataManager', 'clearAPICacheOnShutdown'), $deleteModuleClientCache);
+            register_shutdown_function(array('MetaDataManager', 'clearAPICacheOnShutdown'), $deleteModuleClientCache, getcwd());
             self::$clearCacheOnShutdown[$key] = true;
         }
     }
@@ -654,10 +654,18 @@ class MetaDataManager
      * Clears the API metadata cache of all cache files
      *
      * @param bool $deleteModuleClientCache Should we also delete the client file cache of the modules
+     * @param string $workingDirectory directory to chdir into before starting the clears
      * @static
      */
-    public static function clearAPICacheOnShutdown($deleteModuleClientCache = true)
+    public static function clearAPICacheOnShutdown($deleteModuleClientCache = true, $workingDirectory = "")
     {
+        //shutdown functions are not always called from the same working directory as the script that registered it
+        //Need to chdir to ensure we can find the correct files
+        if (!empty($workingDirectory)) {
+            chdir($workingDirectory);
+        }
+
+
         if ($deleteModuleClientCache) {
             // Delete this first so there is no race condition between deleting a metadata cache
             // and the module client cache being stale.
