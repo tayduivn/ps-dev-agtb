@@ -468,6 +468,9 @@
                     return;
                 }
                 break;
+            case 'relate':
+                fieldDef.auto_populate = true;
+                break;
         }
         data.isRequired = fieldDef.required;
 
