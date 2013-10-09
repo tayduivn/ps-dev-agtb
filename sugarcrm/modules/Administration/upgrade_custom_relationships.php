@@ -115,6 +115,11 @@ function upgrade_custom_relationships($modules = array())
     // Phase 2: Module builder has been incorrectly adding the id 
     // field attributes to created relationships
     foreach(glob('custom/Extension/modules/*/Ext/Vardefs/*.php') as $fileToFix) {
+        // continue to the next if it's not an existing file or it's a directory
+        if(!file_exists($fileToFix) || is_dir($fileToFix)) {
+            continue;
+        }
+
         $filename = basename($fileToFix);
         $dictionary = array();
 
