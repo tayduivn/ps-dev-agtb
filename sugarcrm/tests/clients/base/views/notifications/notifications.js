@@ -185,43 +185,32 @@ describe('Notifications', function () {
             expect(view.render).not.toHaveBeenCalled();
         });
 
-        it('should set interval only once on multiple start pulling calls', function () {
-            var pull, _pullReminders, setInterval;
-
-            pull = sinon.collection.stub(view, 'pull', $.noop());
-            _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop());
-            setInterval = sinon.collection.stub(window, 'setInterval', $.noop());
+        it('should set timeout twice once on multiple start pulling calls', function () {
+            var pull = sinon.collection.stub(view, 'pull', $.noop()),
+                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
+                setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop());
 
             view.startPulling().startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
             expect(_pullReminders).toHaveBeenCalledOnce();
-            expect(setInterval).toHaveBeenCalledOnce();
+            expect(setTimeout).toHaveBeenCalledTwice();
         });
 
-        it('should clear interval on stop pulling', function () {
-            var pull, _pullReminders, setInterval, clearInterval, intervalId = 1;
-
-            pull = sinon.collection.stub(view, 'pull', $.noop());
-            _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop());
-            setInterval = sinon.collection.stub(window, 'setInterval', function () {
-                return intervalId;
-            });
-            clearInterval = sinon.collection.stub(window, 'clearInterval', $.noop());
-
-            view._intervals = {};
-            view._intervals['Calls'] = {
-                idB: {
-                    timer: 2
-                }
-            };
+        it('should clear intervals on stop pulling', function () {
+            var pull = sinon.collection.stub(view, 'pull', $.noop()),
+                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
+                setTimeout = sinon.collection.stub(window, 'setTimeout', function () {
+                    return intervalId;
+                }),
+                clearInterval = sinon.collection.stub(window, 'clearInterval', $.noop()),
+                intervalId = 1;
 
             view.startPulling().stopPulling();
 
-            expect(clearInterval).toHaveBeenCalledOnce();
-            expect(clearInterval).toHaveBeenCalledWith(intervalId);
+            expect(clearInterval).toHaveBeenCalledTwice();
             expect(view._intervalId).toBeNull();
-            expect(view._intervals).toEqual({Calls: {}, Meetings: {}});
+            expect(view._remindersIntervalId).toBeNull();
         });
 
         it('should stop pulling on dispose', function () {
@@ -233,25 +222,23 @@ describe('Notifications', function () {
         });
 
         it('should stop pulling if authentication expires', function () {
-            var app = SugarTest.app, isAuthenticated, pull, _pullReminders,
-                setInterval, stopPulling;
-
-            pull = sinon.collection.stub(view, 'pull', $.noop());
-            _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop());
-            setInterval = sinon.collection.stub(window, 'setInterval', function (fn) {
-                fn();
-            });
-            isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
-                return false;
-            });
-            stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
+            var app = SugarTest.app,
+                isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                    return false;
+                }),
+                pull = sinon.collection.stub(view, 'pull', $.noop()),
+                _pullReminders = sinon.collection.stub(view, '_pullReminders', $.noop()),
+                setTimeout = sinon.collection.stub(window, 'setTimeout', function (fn) {
+                    fn();
+                }),
+                stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
 
             view.startPulling();
 
             expect(pull).toHaveBeenCalledOnce();
-            expect(setInterval).toHaveBeenCalledOnce();
-            expect(isAuthenticated).toHaveBeenCalledOnce();
-            expect(stopPulling).toHaveBeenCalledOnce();
+            expect(setTimeout).toHaveBeenCalledTwice();
+            expect(isAuthenticated).toHaveBeenCalledTwice();
+            expect(stopPulling).toHaveBeenCalledTwice();
         });
     });
 
@@ -383,52 +370,8 @@ describe('Notifications', function () {
             expect(view.reminderMaxTime).toBe(86700); // 1 day + 5 minutes
         });
 
-        it('should not pull reminders if disposed', function() {
-            // not calling dispose() directly due to it setting inherently the
-            // collection to null
-            view.disposed = true;
-            view._pullReminders();
 
-            expect(view._parseReminders).not.toHaveBeenCalled();
-            view.disposed = false;
-        });
-
-        it('should not pull reminders if disposed after fetch', function() {
-
-            var now = new Date('2013-09-04T23:45:56+02:00'),
-                clock = sinon.useFakeTimers(now.getTime(), 'Date'),
-                startDate = now.toISOString(),
-                endDate = new Date('2013-09-05T23:45:56+02:00').toISOString();
-
-            _.each(['Calls', 'Meetings'], function(module) {
-                view._alertsCollections = view._alertsCollections || {};
-                view._alertsCollections[module] = {
-                    off: $.noop,
-                    fetch: $.noop
-                };
-
-                sinon.collection.stub(view._alertsCollections[module], 'fetch', function(o) {
-                    // not calling dispose() directly due to it setting inherently the
-                    // collection to null
-                    view.disposed = true;
-                    o.success();
-                });
-            });
-
-            view.reminderMaxTime = 86400; // -1 day
-            view._pullReminders();
-
-            _.each(['Calls', 'Meetings'], function(module) {
-                expect(view._alertsCollections[module].filterDef['date_start']).toEqual({
-                    '$dateBetween': [startDate, endDate]
-                });
-                expect(view._alertsCollections[module].fetch).toHaveBeenCalledOnce();
-            });
-            expect(view._parseReminders).not.toHaveBeenCalled();
-            view.disposed = false;
-        });
-
-        describe('Parse reminders', function() {
+        describe('Check reminders', function() {
 
             var reminderModule = 'Meetings';
 
@@ -452,305 +395,47 @@ describe('Notifications', function () {
                 delete Handlebars.templates;
             });
 
+            it ('Shouldn\'t check reminders if authentication expires', function() {
+                var isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                        return false;
+                    }),
+                    setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
+                    stopPulling = sinon.collection.stub(view, 'stopPulling', $.noop());
 
-            it('should parse reminders if new ones are sent', function() {
+                view.checkReminders();
 
-                var parseReminderStub = sinon.collection.stub(view, '_parseReminder', $.noop),
-                    clearRemindersStub = sinon.collection.stub(view, '_clearReminders', $.noop);
-
-                var data = new app.data.createBeanCollection(reminderModule, [
-                    {
-                        'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                        'name': 'Discuss pricing',
-                        'date_modified': '2013-09-05T00:59:00+02:00',
-                        'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                        'date_start': '2013-09-05T03:45:00+02:00'
-                    }
-                ]);
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {};
-
-                view._parseReminders(data);
-
-                expect(parseReminderStub).toHaveBeenCalled();
-                expect(clearRemindersStub).not.toHaveBeenCalled();
+                expect(setTimeout).not.toHaveBeenCalled();
+                expect(isAuthenticated).toHaveBeenCalledOnce();
+                expect(stopPulling).toHaveBeenCalledOnce();
             });
 
-            it('should clear old reminders if they no longer exist', function() {
+            it('Should show reminder if need', function() {
 
-                var parseReminderStub = sinon.collection.stub(view, '_parseReminder', $.noop),
-                    clearTimeoutStub = sinon.collection.stub(window, 'clearTimeout', $.noop);
-
-                var data = new app.data.createBeanCollection(reminderModule, [
-                    {
-                        'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                        'name': 'Discuss pricing',
-                        'date_modified': '2013-09-05T00:59:00+02:00',
-                        'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                        'date_start': '2013-09-05T03:45:00+02:00'
-                    },
-                    {
-                        'id': '21cd1096-0241-45f6-e3f6-522aa353f676',
-                        'name': 'Discuss pricing',
-                        'date_modified': '2013-09-05T00:59:00+02:00',
-                        'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                        'date_start': '2013-09-05T03:45:00+02:00'
-                    }
-                ]);
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {
-                    idA: {
-                        timer: 1
-                    },
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 2
-                    },
-                    '21cd1096-0241-45f6-e3f6-522aa353f676': {
-                        timer: 3
-                    },
-                    idB: {
-                        timer: 4
-                    },
-                    idC: {
-                        timer: 5
-                    }
-                };
-
-                view._parseReminders(data);
-
-                expect(view._intervals[reminderModule]).toEqual({
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 2
-                    },
-                    '21cd1096-0241-45f6-e3f6-522aa353f676': {
-                        timer: 3
-                    }
-                });
-                expect(parseReminderStub).toHaveBeenCalled();
-                expect(clearTimeoutStub).toHaveBeenCalled();
-            });
-
-            it('should define reminder if new', function() {
-
-                var now = new Date('2013-09-04T23:45:56+02:00'),
+                var now = new Date('2013-09-04T22:45:56+02:00'),
+                    dateStart = new Date('2013-09-04T23:16:16+02:00'),
                     clock = sinon.useFakeTimers(now.getTime(), 'Date'),
-                    setTimeoutStub = sinon.collection.stub(window, 'setTimeout', function() {
-                        return 3;
-                    });
-
-                var model = new app.data.createBean(reminderModule, {
-                    'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                    'name': 'Discuss pricing',
-                    'date_modified': '2013-09-05T00:59:00+02:00',
-                    'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                    'date_start': '2013-09-05T03:45:00+02:00',
-                    'reminder_time': '1800'
-                });
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {
-                    idB: {
-                        timer: 2
-                    }
-                };
-
-                view._parseReminder(model);
-
-                expect(view._intervals[reminderModule]).toEqual({
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 3,
-                        prevAttr: {
-                            'date_start': '2013-09-05T03:45:00+02:00',
-                            'reminder_time': '1800'
-                        }
-                    },
-                    idB: {
-                        timer: 2
-                    }
-                });
-
-                //var interval = model.get('date_start') - now.getTime(),
-                //    delay = interval - model.get('reminder_time') * 1000; // in milliseconds
-                // 12544000 = new Date('2013-09-05T03:45:00+02:00').getTime()
-                //            - new Date('2013-09-04T23:45:56+02:00').getTime() - 1800 * 1000
-                expect(setTimeoutStub.args[0][1]).toEqual(12544000);
-
-                clock.restore();
-            });
-
-            it('should redefine reminder if reminder time is updated', function() {
-
-                var now = new Date('2013-09-04T23:45:56+02:00'),
-                    clock = sinon.useFakeTimers(now.getTime(), 'Date'),
-                    clearTimeoutStub = sinon.collection.stub(window, 'clearTimeout', $.noop),
-                    setTimeoutStub = sinon.collection.stub(window, 'setTimeout', function() {
-                        return 3;
-                    });
-
-                var model = new app.data.createBean(reminderModule, {
-                    'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                    'name': 'Discuss pricing',
-                    'date_modified': '2013-09-05T00:59:00+02:00',
-                    'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                    'date_start': '2013-09-05T03:45:00+02:00',
-                    'reminder_time': '1800'
-                });
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 1,
-                        prevAttr: {
-                            'date_start': '2013-09-05T03:45:00+02:00',
-                            'reminder_time': '2000'
-                        }
-                    },
-                    idB: {
-                        timer: 2
-                    }
-                };
-
-                view._parseReminder(model);
-
-                expect(view._intervals[reminderModule]).toEqual({
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 3,
-                        prevAttr: {
-                            'date_start': '2013-09-05T03:45:00+02:00',
-                            'reminder_time': '1800'
-                        }
-                    },
-                    idB: {
-                        timer: 2
-                    }
-                });
-                expect(clearTimeoutStub).toHaveBeenCalled();
-                expect(setTimeoutStub).toHaveBeenCalled();
-
-                clock.restore();
-            });
-
-            it('should redefine reminder if date start is updated', function() {
-
-                var now = new Date('2013-09-04T23:45:56+02:00'),
-                    clock = sinon.useFakeTimers(now.getTime(), 'Date'),
-                    clearTimeoutStub = sinon.collection.stub(window, 'clearTimeout', $.noop),
-                    setTimeoutStub = sinon.collection.stub(window, 'setTimeout', function() {
-                        return 3;
-                    });
-
-                var model = new app.data.createBean(reminderModule, {
-                    'id': '105b0b4a-1337-e0db-b448-522784b92270',
-                    'name': 'Discuss pricing',
-                    'date_modified': '2013-09-05T00:59:00+02:00',
-                    'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                    'date_start': '2013-09-05T03:30:00+02:00',
-                    'reminder_time': '1800'
-                });
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 1,
-                        prevAttr: {
-                            'date_start': '2013-09-05T03:45:00+02:00',
-                            'reminder_time': '1800'
-                        }
-                    },
-                    idB: {
-                        timer: 2
-                    }
-                };
-
-                view._parseReminder(model);
-
-                expect(view._intervals[reminderModule]).toEqual({
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 3,
-                        prevAttr: {
-                            'date_start': '2013-09-05T03:30:00+02:00',
-                            'reminder_time': '1800'
-                        }
-                    },
-                    idB: {
-                        timer: 2
-                    }
-                });
-                expect(clearTimeoutStub).toHaveBeenCalled();
-                expect(setTimeoutStub).toHaveBeenCalled();
-
-                clock.restore();
-            });
-
-            it('should clear interval after triggering alert', function() {
-
-                var clock = sinon.useFakeTimers(),
+                    setTimeout = sinon.collection.stub(window, 'setTimeout', $.noop()),
+                    _showReminderAlert = sinon.collection.stub(view, '_showReminderAlert'),
+                    isAuthenticated = sinon.collection.stub(app.api, 'isAuthenticated', function () {
+                        return true;
+                    }),
                     model = new app.data.createBean(reminderModule, {
                         'id': '105b0b4a-1337-e0db-b448-522784b92270',
                         'name': 'Discuss pricing',
                         'date_modified': '2013-09-05T00:59:00+02:00',
-                        'description': 'Meeting to discuss project plan and hash out the details of implementation',
-                        'date_start': '2013-09-05T03:45:00+02:00'
-                    });
-
-                sinon.collection.stub(window, 'clearTimeout', $.noop);
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {
-                    idA: {
-                        timer: 1
-                    },
-                    '105b0b4a-1337-e0db-b448-522784b92270': {
-                        timer: 2
-                    },
-                    idC: {
-                        timer: 3
-                    }
-                };
-
-                view._showReminderAlert(model);
-
-                expect(view._intervals[reminderModule]).toEqual({
-                    idA: {
-                        timer: 1
-                    },
-                    idC: {
-                        timer: 3
-                    }
+                        'description': 'Meeting',
+                        'date_start': dateStart.toISOString(),
+                        'reminder_time': '1800'
                 });
+
+                view._initReminders();
+                view._alertsCollections[reminderModule].add(model);
+                view.dateStarted = now.getTime();
+                view.checkReminders();
+
+                expect(_showReminderAlert).toHaveBeenCalledWith(model);
+                
                 clock.restore();
-            });
-
-            it('should clear reminders and alerts if disposed', function() {
-
-                var clearTimeoutStub = sinon.collection.stub(window, 'clearTimeout', $.noop);
-
-                view._intervals = {};
-                view._intervals[reminderModule] = {
-                    idA: {
-                        timer: 1
-                    },
-                    idB: {
-                        timer: 2
-                    },
-                    idC: {
-                        timer: 3
-                    }
-                };
-                view._alertsCollections = {};
-                view._alertsCollections[reminderModule] = {
-                    off: $.noop
-                };
-                var offStub = sinon.collection.stub(view._alertsCollections[reminderModule], 'off', $.noop);
-
-                view.dispose();
-
-                expect(view._alertsCollections).toEqual({});
-                expect(view._intervals[reminderModule]).toEqual({});
-                expect(offStub).toHaveBeenCalled();
-                expect(clearTimeoutStub).toHaveBeenCalled();
             });
         });
     });
