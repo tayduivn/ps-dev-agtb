@@ -140,7 +140,9 @@ class One2OneBeanRelationship extends One2MBeanRelationship
         if (empty($options['ignoreRole'])) {
             $this->buildSugarQueryRoleWhere($sugar_query, $jta);
         }
-        
+
+        $this->addCustomToSugarQuery($sugar_query, $options, $linkIsLHS, $jta);
+
         return $sugar_query->join[$jta];
     }
 }
