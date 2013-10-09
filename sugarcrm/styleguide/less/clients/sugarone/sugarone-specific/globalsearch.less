@@ -31,13 +31,8 @@
   }
 
   .advanced .dropdown-menu {
-  	// [moey] Override sugarspecific/globalsearch.less.
-	// This is somehow "redundant" because sugarspecific/globalsearch.less actually
-	// overrides Bootstrap's default style and here we're again override it to
-	// get back to Bootstrap's default.
-  	.border-radius(4px);
-	li {
-	  border-top: 1px solid @grayLighter;
+    .border-radius(@borderRadiusSmall);
+  li {
       &:first-child {
         border-top: none;
       }
@@ -52,7 +47,7 @@
           margin-right: 6px;
         }
       }
-	}
+  }
   }
 }
 .navbar-search {
@@ -61,14 +56,15 @@
 }
 
 .searchSuggestions {
-  border: 1px solid #ECECEC;
+  border: 1px solid @grayLight;
+  box-shadow: @shadowWidget;
   li {
-    background: #F5F5F5;
+    background: @white;
     &:not(:last-child) {
-      border-bottom: 1px solid #DFDFDF;
+      border-bottom: 1px solid @grayLighter;
     }
     &.selected {
-      background: #F1F1F1;
+      background: @grayLighter;
       &:before {
         content: '';
         position: absolute;
