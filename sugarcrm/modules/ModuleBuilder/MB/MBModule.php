@@ -932,7 +932,7 @@ class MBModule
     {
         // hardcoded list of types for now, as also hardcoded in a different form in getNodes
         // TODO: replace by similar mechanism to StudioModule to determine the list of available views for this module
-        $views = array ( 'editview' , 'detailview' , 'listview' , 'basic_search' , 'advanced_search' , 'dashlet' , 'popuplist');
+        $views = array ('recordview' , 'editview' , 'detailview' , 'listview' , 'basic_search' , 'advanced_search' , 'dashlet' , 'popuplist');
     	//BEGIN SUGARCRM flav=pro ONLY
     	foreach ($this->getWirelessLayouts() as $layout)
     		$views[] = $layout['type'];
@@ -1005,6 +1005,16 @@ class MBModule
             }
         }
         return $field;
+    }
+
+    /**
+     * remove team field in recordview when team_security is disabled
+     */
+    public function cleanupLayout()
+    {
+        if(empty($this->config['team_security'])){
+            $this->removeFieldFromLayouts("team_name");
+        }
     }
 
 }
