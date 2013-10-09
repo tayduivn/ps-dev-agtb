@@ -112,7 +112,7 @@
              * otherwise `false`.
              */
             showNoData: function() {
-                return this.def.readonly && app.acl.hasAccessToModel('read', this.model, this.name) && this.name && !this.model.has(this.name);
+                return this.def.readonly && app.acl.hasAccessToModel('readonly', this.model, this.name) && this.name && !this.model.has(this.name);
             },
 
             /**
