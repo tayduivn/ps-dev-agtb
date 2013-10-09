@@ -224,6 +224,8 @@ class MetaDataManager
         }
 
         $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
+        // Add the _hash for the fields array
+        $data['fields']['_hash'] = md5(serialize($data['fields']));
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
