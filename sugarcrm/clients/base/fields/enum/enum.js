@@ -77,7 +77,7 @@
         //or the default value. The default value fallbacks to the first option if no other is selected.
         // if the user has write access to the model for the field we are currently on
         if (this.defaultOnUndefined && !this.def.isMultiSelect && _.isUndefined(this.model.get(this.name))
-            && app.acl.hasAccessToModel('edit', this.model, this.name)
+            && app.acl.hasAccessToModel('write', this.model, this.name)
             ) {
             var defaultValue = _.first(optionsKeys);
             if (defaultValue) {
