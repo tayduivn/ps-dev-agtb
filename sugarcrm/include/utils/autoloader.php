@@ -65,6 +65,18 @@ class SugarAutoLoader
 	    'SugarJob' => 'include/SugarQueue/jobs/',
 	);
 
+    /**
+     * Namespace directory mapping
+     *
+     * Order is important on overlapping prefixes, first match wins !
+     *   'Sugarcrm\\lib\\' => 'include'
+     *   'Sugarcrm\\' => ''
+     *
+     * @var array nsPrefix => directory
+     */
+    public static $namespaceMap = array(
+    );
+
 	/**
 	 * Class loading directories
 	 * Classes in these dirs are loaded by class name:
@@ -146,6 +158,9 @@ class SugarAutoLoader
 	 */
     public static function autoload($class)
 	{
+        // work around for PHP 5.3.0 - 5.3.2 https://bugs.php.net/50731
+        $class = ltrim($class, '\\');
+
 		$uclass = ucfirst($class);
 		if(!empty(self::$noAutoLoad[$class])){
 			return false;
@@ -160,6 +175,20 @@ class SugarAutoLoader
 			}
 			return false;
 		}
+
+        // try namespaces
+        if (false !== strpos($class, '\\')) {
+            if ($file = self::getFilenameForFQCN($class)) {
+                if ($file = self::requireWithCustom($file)) {
+                    self::$classMap[$class] = $file;
+                    self::$classMapDirty = true;
+                    return true;
+                }
+            }
+            self::$classMap[$class] = false;
+            self::$classMapDirty = true;
+            return false;
+        }
 
 		if(empty(self::$moduleMap)){
 			if(isset($GLOBALS['beanFiles'])){
@@ -252,6 +281,33 @@ class SugarAutoLoader
         self::$classMapDirty = true;
         return false;
 	}
+
+    /**
+     * PSR-0 autoloader interoperability
+     * https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+     *
+     * Return filename for given Fully Qualified Class Name
+     *
+     * @param string $class FQCN without leading backslash
+     * @return mixed(string|boolean)
+     */
+    public static function getFilenameForFQCN($class)
+    {
+        foreach (self::$namespaceMap as $prefix => $path) {
+            if (strpos($class, $prefix) === 0) {
+                $path = empty($path) ? '' : $path . DIRECTORY_SEPARATOR;
+                $suffix = str_replace($prefix, '', $class);
+                if (false !== $pos = strrpos($suffix, '\\')) {
+                    $path .= str_replace('\\', DIRECTORY_SEPARATOR, substr($suffix, 0, $pos)) . DIRECTORY_SEPARATOR;
+                    $path .= str_replace('_', DIRECTORY_SEPARATOR, substr($suffix, $pos + 1)) . '.php';
+                } else {
+                    $path .= str_replace('_', DIRECTORY_SEPARATOR, $suffix) . '.php';
+                }
+                return $path;
+            }
+        }
+        return false;
+    }
 
 	/**
 	 * Load layout class from include/MetaDataManager/layouts

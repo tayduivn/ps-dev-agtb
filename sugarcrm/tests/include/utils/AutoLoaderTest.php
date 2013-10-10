@@ -137,4 +137,71 @@ class AutoLoaderTests extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(count($class_map) > 0, "Class map is empty");
         $this->assertArrayHasKey('chicken', $class_map, "Class map was not rebuilt");
     }
+
+    /**
+     *
+     * Test prefix/directory namespace mapping to filename
+     * @dataProvider providerTestGetFilenameForFQCN
+     */
+    public function testGetFilenameForFQCN($prefix, $dir, $fqcn, $fileName)
+    {
+        SugarAutoLoader::$classMap = array();
+        SugarAutoLoader::$namespaceMap[$prefix] = $dir;
+        $this->assertSame($fileName, SugarAutoLoader::getFilenameForFQCN($fqcn));
+    }
+
+    public function providerTestGetFilenameForFQCN()
+    {
+        return array(
+            array(
+                'Sugarcrm\\lib\\',
+                'include',
+                'Sugarcrm\\lib\\SugarLogger\\SugarLogger',
+                'include/SugarLogger/SugarLogger.php',
+            ),
+          array(
+                'Sugarcrm\\',
+                '',
+                'Sugarcrm\\modules\\Accounts\\Account',
+                'modules/Accounts/Account.php',
+            ),
+            array(
+                'Monolog\\',
+                'vendor/Monolog/src/Monolog',
+                'Monolog\Logger',
+                'vendor/Monolog/src/Monolog/Logger.php',
+            ),
+            array(
+                'Acme\\',
+                'vendor/Acme',
+                'Acme\Coyote\Bad_Ass',
+                'vendor/Acme/Coyote/Bad/Ass.php',
+            ),
+            array(
+                'Acme\\',
+                'vendor/Acme',
+                'Acme\Road_Runner\Smart_Ass',
+                'vendor/Acme/Road_Runner/Smart/Ass.php',
+            ),
+        );
+    }
+
+    /**
+     *
+     * Test actual class loading using namespaces
+     */
+    public function testAutoloadNamespaces()
+    {
+        $fqcn = 'Sugarcrm\\modules\\Accounts\\Bogus';
+        $fileName = 'modules/Accounts/Bogus.php';
+        $content = "<?php\nnamespace Sugarcrm\\modules\\Accounts;\nclass Bogus { }\n";
+        file_put_contents($fileName, $content);
+
+        SugarAutoLoader::buildCache();
+        SugarAutoLoader::$classMap = array();
+
+        class_exists($fqcn);
+        $this->assertEquals($fileName, SugarAutoLoader::$classMap[$fqcn]);
+        unlink($fileName);
+    }
 }
