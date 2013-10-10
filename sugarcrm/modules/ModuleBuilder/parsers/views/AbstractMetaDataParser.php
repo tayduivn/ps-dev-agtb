@@ -115,7 +115,7 @@ abstract class AbstractMetaDataParser
                     return $def['studio']['visible'];
                 }
             } else {
-                return ($def [ 'studio' ] != 'false' && $def [ 'studio' ] != 'hidden' && $def [ 'studio' ] !== false) ;
+                return $def['studio'] !== false && $def['studio'] !== 'false' && $def['studio'] !== 'hidden';
 			}
         }
 
