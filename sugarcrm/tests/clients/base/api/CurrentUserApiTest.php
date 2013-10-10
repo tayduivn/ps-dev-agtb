@@ -89,6 +89,6 @@ class CurrentUserApiMock extends CurrentUserApi
 {
     public function getBasicInfo()
     {
-        return parent::getBasicUserInfo();
+        return parent::getBasicUserInfo('base');
     }
 }

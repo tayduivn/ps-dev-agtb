@@ -74,6 +74,12 @@ class RestBug57887Test extends RestTestBase
                 $this->_backedUp[$filename] = $file;
             }
         }
+        
+        // Add the current metadata file to the restore list
+        if (file_exists($this->_metadataFile)) {
+            $filename = $tempdir . basename($this->_metadataFile);
+            $this->_backedUp[$filename] = $this->_metadataFile;
+        }
     }
 
     public function tearDown()
@@ -94,20 +100,15 @@ class RestBug57887Test extends RestTestBase
     /**
      * @group rest
      */
-    public function testCacheIsClearedAfterLayoutIsSaved()
+    public function testCacheIsRefreshedAfterLayoutIsSaved()
     {
-        // Login to set our auth token for the mobile platform
-        $this->_restLogin('', '', 'mobile');
+        // Build the cache
+        $mm = MetaDataManager::getManager('mobile');
+        $data = $mm->getMetadata();
+        $cacheFile = $mm->getMetadataCacheFileName();
 
-        // Make an API Metadata call to build the cache
-        $restReply = $this->_restCall('metadata?module_filter=Accounts&type_filter=modules&platform=mobile');
-
-        // Confirm cache file exists - this is a loose test, but since the cache
-        // is only alive per request, this is the closest way to confirm. Not
-        // perfect, but does a decent job if it.
-        $dir = $this->getMetadataCacheDir();
-        $files = glob($dir . '*.php');
-        $this->assertNotEmpty($files, "The cache metadata file does not exist");
+        // Confirm cache file exists
+        $this->assertFileExists($cacheFile, "The cache metadata file does not exist");
 
         // Confirm custom file does not exist in the file map cache
         $exists = SugarAutoLoader::fileExists($this->_metadataFile);
@@ -118,20 +119,15 @@ class RestBug57887Test extends RestTestBase
         $parser->_viewdefs['panels'] = $this->_newDefs;
         $parser->handleSave(false);
 
-        // Confirm metadata cache file is missing
-        $dir = $this->getMetadataCacheDir();
-        $files = glob($dir . '*.php');
-        $this->assertEmpty($files, "The cache metadata file should not exist");
-
         // Confirm custom file is in the file map cache
         $exists = (bool) SugarAutoLoader::fileExists($this->_metadataFile);
         $this->assertTrue($exists, "The custom file was not found in the file map cache");
 
-        // Make an API Metadata call to fetch newest
-        $restReply = $this->_restCall('metadata?module_filter=Accounts&type_filter=modules&platform=mobile');
-
-        // Confirm that the change was picked up and returned accordingly
-        $panels = $restReply['reply']['modules']['Accounts']['views']['detail']['meta']['panels'];
+        // Confirm metadata cache is now updated and that the change was picked 
+        // up and returned accordingly
+        $mm = MetaDataManager::getManager('mobile');
+        $data = $mm->getMetadata();
+        $panels = $data['modules']['Accounts']['views']['detail']['meta']['panels'];
         $fields = $panels[0]['fields'];
         $this->assertEquals(3, count($fields), "Fields array should only contain 3 elements");
         $this->assertEquals('date_modified', $fields[2]['name'], "The third field name should be date_modified");

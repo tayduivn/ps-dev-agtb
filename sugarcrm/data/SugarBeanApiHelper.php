@@ -132,7 +132,7 @@ class SugarBeanApiHelper
     {
         $acl = array('fields' => (object) array());
         if (SugarACL::moduleSupportsACL($bean->module_dir)) {
-            $mm = new MetaDataManager($this->api->user);
+            $mm = MetaDataManager::getManager($this->api->platform);
             $moduleAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, false, true);
 
             $beanAcl = $mm->getAclForModule($bean->module_dir, $this->api->user, $bean, true);

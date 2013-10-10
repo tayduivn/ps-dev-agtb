@@ -154,8 +154,8 @@ class Configurator {
                 }
             }
         }
-        // Clear System metadata only
-        MetaDataManager::clearAPICache(false);
+        // Clear metadata config section only
+        MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
     }
 
 	function saveConfig() {

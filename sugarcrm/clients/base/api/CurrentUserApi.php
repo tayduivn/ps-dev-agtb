@@ -16,6 +16,7 @@ require_once 'data/BeanFactory.php';
 require_once 'include/SugarFields/SugarFieldHandler.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 require_once 'include/TimeDate.php';
+require_once 'include/api/SugarApi.php';
 
 class CurrentUserApi extends SugarApi
 {
@@ -148,6 +149,17 @@ class CurrentUserApi extends SugarApi
             ),
         );
     }
+
+    /**
+     * Gets a MetaDataManager object
+     * @param string $platform The platform to get the manager for
+     * @param boolean $public Flag to describe visibility for metadata
+     * @return MetaDataManager
+     */
+    protected function getMetaDataManager($platform = '', $public = false)
+    {
+        return MetaDataManager::getManager($platform, $public);
+    }
     
     /**
      * Retrieves the current user info
@@ -161,13 +173,8 @@ class CurrentUserApi extends SugarApi
         $current_user = $this->getUserBean();
 
         // Get the basics
-        $user_data = $this->getBasicUserInfo();
+        $user_data = $this->getBasicUserInfo($api->platform);
 
-        if (isset($args['platform'])) {
-            $platform = array(basename($args['platform']),'base');
-        } else {
-            $platform = array('base');
-        }
         // Fill in the rest
         $user_data['type'] = self::TYPE_USER;
         if ($current_user->isAdmin()) {
@@ -179,7 +186,7 @@ class CurrentUserApi extends SugarApi
         $user_data['full_name'] = $current_user->full_name;
         $user_data['user_name'] = $current_user->user_name;
         $user_data['picture'] = $current_user->picture;
-        $user_data['acl'] = $this->getAcls($platform);
+        $user_data['acl'] = $this->getAcls($api->platform);
         $user_data['is_manager'] = User::isManager($current_user->id);
         $user_data['is_top_level_manager'] = false;
         if($user_data['is_manager']) {
@@ -309,13 +316,6 @@ class CurrentUserApi extends SugarApi
         return $user_data;
     }
 
-    protected function getMetadataManager( $platform = 'base', $public = false)
-    {
-        $current_user = $this->getUserBean();
-
-        return new MetaDataManager($current_user, $platform, $public);
-    }
-
     /**
      * Gets acls given full module list passed in.
      * @param string The platform e.g. portal, mobile, base, etc.
@@ -325,7 +325,7 @@ class CurrentUserApi extends SugarApi
     {
         // in this case we should always have current_user be the user
         global $current_user;
-        $mm = $this->getMetadataManager($platform);
+        $mm = $this->getMetaDataManager($platform);
         $fullModuleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
         $acls = array();
         foreach ($fullModuleList as $modName) {
@@ -517,9 +517,10 @@ class CurrentUserApi extends SugarApi
      * Gets the basic user data that all users that are logged in will need. Client
      * specific user information will be filled in within the client API class.
      *
+     * @param string $platform The platform for this request
      * @return array
      */
-    protected function getBasicUserInfo()
+    protected function getBasicUserInfo($platform)
     {
         global $current_user;
         
@@ -541,7 +542,7 @@ class CurrentUserApi extends SugarApi
         $user_data['preferences'] = array_merge($user_data['preferences'], $lang);
         
         // Set the user module list
-        $user_data['module_list'] = $this->getModuleList();
+        $user_data['module_list'] = $this->getModuleList($platform);
         
         return $user_data;
     }
@@ -716,57 +717,14 @@ class CurrentUserApi extends SugarApi
     }
 
     /**
-     * Gets display module list per user defined tabs
+     * Gets the module list for the current user and platform
+     * 
+     * @param string $platform The platform for this request
      * @return array
      */
-    public function getModuleList()
+    public function getModuleList($platform = '')
     {
-        $current_user = $this->getUserBean();
-        // Loading a standard module list
-        require_once 'modules/MySettings/TabController.php';
-        $controller = new TabController();
-        $moduleList = $this->list2Array(reset($controller->get_tabs($current_user)));
-        //If `Home` is not the first item of the list
-        if ($moduleList[0] !== 'Home') {
-            //Remove it if it is at a random position
-            if (($key = array_search('Home', $moduleList)) !== false) {
-                unset($moduleList[$key]);
-            }
-            //Add it to the first position
-            array_unshift($moduleList, 'Home');
-        }
-        return $moduleList;
-    }
-    /**
-     * Filters a list of modules against the display modules
-     * @param $moduleList
-     * @return array
-     */
-    protected function filterDisplayModules($moduleList)
-    {
-        $current_user = $this->getUserBean();
-        // Loading a standard module list
-        require_once 'modules/MySettings/TabController.php';
-        $controller = new TabController();
-        $ret = array_intersect_key($controller->get_user_tabs($current_user), $moduleList);
-
-        return $this->list2Array($ret);
-
-    }
-
-    /**
-     * converts hash into flat array preserving order
-     * @param $ret
-     * @return array
-     */
-    public function list2Array($ret)
-    {
-        $output = array();
-        foreach ($ret as $mod => $lbl) {
-            $output[] = $mod;
-        }
-
-        return $output;
+        return $this->getMetaDataManager($platform)->getUserModuleList();
     }
     
     /**

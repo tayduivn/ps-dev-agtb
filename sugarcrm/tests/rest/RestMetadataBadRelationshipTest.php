@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
+require_once 'data/Relationships/RelationshipFactory.php';
 /**
  * Bug 57782 and 57780
  */
@@ -55,6 +56,13 @@ class RestMetadataBadRelationshipTest extends RestTestBase
      * @group rest
      */
     public function testBadRelationship() {
+        /**
+         * For full suite runs immediately after installation (like for CI), the
+         * relationship cache will have already been created. The cache needs to
+         * be cleared prior to this run so that this gets picked up properly for
+         * testing;
+         */
+        SugarRelationshipFactory::deleteCache();
 
         // write out a bad relationship vardef
         $metadata = '<?php

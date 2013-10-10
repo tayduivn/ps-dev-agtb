@@ -36,6 +36,9 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         
         $this->testCacheFile = sugar_cached('api/metadata/metadata_unit_test.php');
+        
+        // Start fresh
+        MetaDataManager::clearAPICache(true);
     }
 
     public function tearDown()
@@ -46,25 +49,48 @@ class CurrencyCacheClearTest extends Sugar_PHPUnit_Framework_TestCase
         }
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        
+        // End fresh
+        MetaDataManager::clearAPICache(true);
     }
 
 
     public function testResetMetadataCache()
     {
-        MetaDataManager::clearAPICache(true);
-
-        mkdir_recursive(dirname($this->testCacheFile));
-        file_put_contents($this->testCacheFile,"<!-- This is for unit tests. -->");
-
-        $this->assertTrue(file_exists($this->testCacheFile),"Didn't create the fake metadata cache file.");
-
-        // We don't actually need to update, just calling the save is enough
+        // Get the private metadata manager for $platform
+        $mm = MetaDataManager::getManager();
+        
+        // Cache file path... we will need this for tests in here
+        $file = $mm->getMetadataCacheFileName();
+        
+        // Get the current metadata to ensure there is a cache built
+        $data = $mm->getMetadata();
+        
+        // Assert that there is a private base metadata file
+        $this->assertFileExists($file, "Metadata cache file was not created");
+        $time = filemtime($file);
+        
+        // Test that currencies are in the metadata
+        $this->assertArrayHasKey('currencies', $data, "currencies key not found in metadata");
+        
+        // Force a change in filemtime by sleeping. Not ideal, but it works
+        sleep(1);
+        
+        // A save call on a Currency bean will refresh the currency section of the metadata
         $defaultCurrency = BeanFactory::newBean('Currencies');
         $defaultCurrency = $defaultCurrency->retrieve('-99');
-
         $defaultCurrency->save();
-
-        $this->assertFalse(file_exists($this->testCacheFile),"Didn't clear out the fake metadata cache file.");
-
+        
+        // Test the file first
+        $this->assertFileExists($file, "Metadata cache file was not found after refresh.");
+        
+        // Test the time on the new file
+        $this->assertGreaterThan($time, filemtime($file), "Second cache file make time is not greater than the first.");
+        
+        // Test that currencies are still there
+        $data = $mm->getMetadata();
+        
+        // Test that currencies are in the metadata
+        $this->assertArrayHasKey('currencies', $data, "currencies key not found in metadata");
     }
 }

@@ -152,19 +152,27 @@ class Bug58560Test extends RestTestBase
     
     /**
      * @group 58560
-     * @dataProvider _testFieldFileProvider
      */
-    public function testCustomFieldMetaDataFilesSaved($suffix)
+    public function testCustomFieldMetaDataFilesSaved()
     {
         $field = self::$_deleteFieldRequestVars['name'];
-        $name = self::_getFieldName($suffix);
-        $file = 'custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_' . $name . '.php';
-        $this->assertFileExists($file, "Custom field vardefs file not found");
         
-        require $file;
-        
-        $this->assertNotEmpty($dictionary['Account']['fields'][$name]['group'], "The group setting was not saved");
-        $this->assertEquals($dictionary['Account']['fields'][$name]['group'], $field, "Field group was not saved correctly");
+        // Eliminating the repetitive rebuilding of metadata cache in action_saveField
+        // phpUnit should NOT be running setUpBeforeClass and tearDownAfterClass
+        // for each test case, but it appears it is doing just that so this test
+        // is being pulled out of the data provider and hit in a loop. Not ideal
+        // but necessary.
+        foreach ($this->_testFieldFileProvider() as $params) {
+            $suffix = $params['suffix'];
+            $name = self::_getFieldName($suffix);
+            $file = 'custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_' . $name . '.php';
+            $this->assertFileExists($file, "Custom field vardefs file not found");
+            
+            require $file;
+            
+            $this->assertNotEmpty($dictionary['Account']['fields'][$name]['group'], "The group setting was not saved");
+            $this->assertEquals($dictionary['Account']['fields'][$name]['group'], $field, "Field group was not saved correctly");
+        }
     }
     
     /**

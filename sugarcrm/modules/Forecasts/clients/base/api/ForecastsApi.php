@@ -257,7 +257,8 @@ class ForecastsApi extends SugarApi
                 }
                 $admin->saveSetting('Forecasts', $config, $val, $api->platform);
             }
-            MetaDataManager::clearAPICache();
+            MetaDataManager::refreshModulesCache(array("Forecasts"));
+            MetaDataManager::refreshSectionCache(array(MetaDataManager::MM_CONFIG));
             throw new SugarApiExceptionInvalidHash();
         }
     }

@@ -27,6 +27,24 @@ require_once('tests/rest/RestTestPortalBase.php');
 
 class Bug57679Test extends RestTestPortalBase
 {
+    /**
+     * The old value for num_portal_users if it is set but empty
+     * @var string
+     */
+    protected $_oldNumUsers = null;
+    
+    /**
+     * Flag for whether the num_portal_users setting was created
+     * @var boolean
+     */
+    protected $_createdSetting = false;
+    
+    /**
+     * Admin object
+     * @var Admin
+     */
+    protected $_admin;
+    
     public function setUp()
     {
         parent::setUp();
@@ -47,10 +65,36 @@ class Bug57679Test extends RestTestPortalBase
             $kbdoc->save();
             $this->kbdocs[] = $kbdoc;
         }
+        
+        // Make sure portal is setup
+        $this->_admin = new Administration();
+        $this->_admin->retrieveSettings();
+        if (isset($this->_admin->settings['license_num_portal_users'])) {
+            if (empty($this->_admin->settings['license_num_portal_users'])) {
+                // 0 or ''
+                $this->_oldNumUsers = $this->_admin->settings['license_num_portal_users'];
+            }
+        } else {
+            $this->_createdSetting = true;
+            $this->_admin->settings['license_num_portal_users'] = 50;
+            $this->_admin->saveSetting('license', 'num_portal_users', '50');
+        }
     }
     
     public function tearDown()
     {
+        // If we created the num portal users setting, delete it
+        if ($this->_createdSetting) {
+            $sql = "DELETE FROM config WHERE category = 'license' AND name = 'num_portal_users'";
+            $GLOBALS['db']->query($sql);
+        } else {
+            // If there was an old empty non-null value, set it back
+            if ($this->_oldNumUsers !== null) {
+                $this->_admin->settings['license_num_portal_users'] = $this->_oldNumUsers;
+                $this->_admin->saveSetting('license', 'num_portal_users', $this->_oldNumUsers);
+            }
+        }
+        
         parent::tearDown(); // This handles cleanup of created kbdocs
     }
     

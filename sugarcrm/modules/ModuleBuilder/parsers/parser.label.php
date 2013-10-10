@@ -208,6 +208,7 @@ class ParserLabel extends ModuleBuilderParser
     	                $cache_key = "module_language." . $language . $moduleName ;
     	                sugar_cache_clear ( $cache_key ) ;
     	                LanguageManager::clearLanguageCache ( $moduleName, $language ) ;
+                        MetaDataManager::refreshLanguagesCache($language);
                     }
                 }
         }

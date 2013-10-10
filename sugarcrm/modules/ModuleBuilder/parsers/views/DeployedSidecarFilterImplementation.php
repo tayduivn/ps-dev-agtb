@@ -137,7 +137,7 @@ class DeployedSidecarFilterImplementation extends AbstractMetaDataImplementation
             $this->sidecarFile
         );
 
-        // clear the cache
-        MetaDataManager::clearAPICache();
+        // clear the cache for this module
+        MetaDataManager::refreshModulesCache(array($this->_moduleName));
     }
 }

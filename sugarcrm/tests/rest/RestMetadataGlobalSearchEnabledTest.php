@@ -32,7 +32,7 @@ class RestMetadataGlobalSearchEnabledTest extends RestTestBase
      */
     public function testGlobalSearchEnabled($platform, $seed, $vardefs, $expects, $failMessage)
     {
-        $mm = new MetaDataManager($GLOBALS['current_user'], array($platform));
+        $mm = MetaDataManager::getManager(array($platform));
         $actual = $mm->getGlobalSearchEnabled($seed, $vardefs, $platform);
         $this->assertEquals($expects, $actual, $failMessage);
     }

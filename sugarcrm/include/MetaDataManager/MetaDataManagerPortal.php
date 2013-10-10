@@ -27,6 +27,64 @@ require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
 
 class MetaDataManagerPortal extends MetaDataManager
 {
+
+    /**
+     * Override to replace logo url by portal logo url
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     */
+    public function getPublicMetadata(ServiceBase $api, array $args)
+    {
+        $meta = parent::getPublicMetadata($api, $args);
+        $meta['logo_url'] = $this->loadPortalLogoUrl();
+        $meta['_hash'] = $this->hashChunk($meta);
+        return $meta;
+    }
+
+    /**
+     * Override to allow only Portal modules
+     * Override to replace logo url by portal logo url
+     *
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     */
+    protected function getAllMetadata($args = array(), $buildCache = true) 
+    {
+        $portalModuleList = $this->findPortalModules();
+        if (!empty($args['module_filter'])) {
+            //If need be, update module filter to get intersection with Portal enabled modules
+            $intersection = array_intersect($portalModuleList, explode(',', $args['module_filter']));
+            if (!empty($intersection)) { //If we set filter to empty list, then we'd load ALL metadata. (NO.)
+                $portalModuleList = $intersection;
+            }
+        }
+        $args['module_filter'] = implode(',', $portalModuleList);
+        $meta = parent::getAllMetadata($args, $buildCache);
+        $meta['logo_url'] = $this->loadPortalLogoUrl();
+        $meta['_hash'] = $this->hashChunk($meta);
+        return $meta;
+    }
+
+    /**
+     * Find all modules with Portal metadata
+     * @return array List of Portal module names
+     */
+    public function findPortalModules()
+    {
+        $modules = array();
+        foreach (SugarAutoLoader::getDirFiles("modules", true) as $mdir) {
+            // strip modules/ from name
+            $mname = substr($mdir, 8);
+            if (SugarAutoLoader::fileExists("$mdir/clients/portal/")) {
+                $modules[] = $mname;
+            }
+        }
+        return $modules;
+    }
+
     /**
      * Gets configs
      * 
@@ -60,7 +118,12 @@ class MetaDataManagerPortal extends MetaDataManager
         
         return $public;
     }
-    
+
+    /**
+     * Gets the module list for the current user
+     * 
+     * @return array The list of modules for portal
+     */
     public function getUserModuleList() {
         // Use SugarPortalBrowser to get the portal modules that would appear
         // in Studio
@@ -71,6 +134,47 @@ class MetaDataManagerPortal extends MetaDataManager
         // visible tabs array for the current user
         $controller = new TabController();
         $ret = array_intersect_key($controller->get_user_tabs($this->getCurrentUser()), $pb->modules);
+
+        // Needed for portal
+        $ret['Home'] = true;
         return array_keys($ret);
+    }
+
+    /**
+     * Retrieves the portal logo if defined, otherwise the company logo url
+     *
+     * @return string url of the portal logo
+     */
+    protected function loadPortalLogoUrl() {
+        global $sugar_config;
+        $config = $this->getConfigs();
+        if (!empty($config['logoURL'])) {
+            return $config['logoURL'];
+        } else {
+            $themeObject = SugarThemeRegistry::current();
+            return $sugar_config['site_url'] . '/' . $themeObject->getImageURL('company_logo.png');
+        }
+    }
+
+    /**
+     * Load Portal specific metadata (heavily pruned to only show modules enabled for Portal)
+     * @return array Portal metadata
+     */
+    protected function loadMetadata($args = array())
+    {
+        $data = parent::loadMetadata($args);
+
+        if (!empty($data['modules'])) {
+            foreach ($data['modules'] as $modKey => $modMeta) {
+                if (!empty($modMeta['isBwcEnabled'])) {
+                    // portal has no concept of bwc so get rid of it
+                    unset($data['modules'][$modKey]['isBwcEnabled']);
+                }
+            }
+        }
+
+        // Rehash the hash
+        $data['_hash'] = $this->hashChunk($data);
+        return $data;
     }
 }

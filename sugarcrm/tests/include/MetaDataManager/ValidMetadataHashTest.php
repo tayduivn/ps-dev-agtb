@@ -58,7 +58,8 @@ class ValidMetadataHashTest extends Sugar_PHPUnit_Framework_TestCase
             $this->markTestSkipped("Can't test metadata hashing with bad system status.");
         }
 
-        $mm = new MetaDataManager($GLOBALS['current_user']);
+        // Get the base metadata manager
+        $mm = MetaDataManager::getManager();
         $this->assertTrue(
             $mm->isMetadataHashValid($this->baseHash, "base"),
             "Base metadata hash shoudl have been valid but was not"
@@ -67,6 +68,9 @@ class ValidMetadataHashTest extends Sugar_PHPUnit_Framework_TestCase
             $mm->isMetadataHashValid("invalid Hash", "base"),
             "Base metadata hash should have been invalid, but was valid"
         );
+
+        // Get the portal metadata manager
+        $mm = MetaDataManager::getManager(array('portal'));
         $this->assertTrue(
             $mm->isMetadataHashValid($this->portalHash, "portal"),
             "Portal metadata hash shoudl have been valid but was not"

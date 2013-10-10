@@ -134,7 +134,7 @@ class ConfigModuleApi extends ModuleApi
             }
         }
 
-        MetaDataManager::clearAPICache();
+        MetaDataManager::refreshModulesCache(array($module));
 
         return $admin->getConfigForModule($module, $api->platform);
     }

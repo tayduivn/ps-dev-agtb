@@ -134,9 +134,6 @@ class LanguageManager
 				closedir($dir);
 			}
 		}
-        
-        // Handle metadata cache clearing
-        MetaDataManager::clearAPICache();        
 	}
 
 	/**

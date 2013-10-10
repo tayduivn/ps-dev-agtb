@@ -903,7 +903,7 @@ class RestService extends ServiceBase
         // the current metadata hash to see if the current hash is valid
         if (isset($this->request_headers[self::HEADER_META_HASH])) {
             $mm = $this->getMetadataManager();
-            $return = $mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH], $this->platform);
+            $return = $mm->isMetadataHashValid($this->request_headers[self::HEADER_META_HASH]);
         }
         
         // If the user metadata hash header was sent, use it to compare against 
@@ -929,7 +929,7 @@ class RestService extends ServiceBase
      */
     protected function getMetadataManager()
     {
-        return new MetaDataManager($this->user, $this->platform);
+        return MetaDataManager::getManager(array($this->platform));
     }
 }
 

@@ -49,6 +49,8 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        // Needed for some of the cache refreshes that happen downstream
+        SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
@@ -59,6 +61,7 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         self::$common_obj = null;
+        SugarTestHelper::tearDown();
     }
 
     public function setUp()

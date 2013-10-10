@@ -659,19 +659,11 @@ installerHook('post_installModules');
 installLog("Populating file cache");
 SugarAutoLoader::buildCache();
 
-// prepare the metadata
+// Build the base platform metadata caches after everything else is done.
 installLog("Populating metadata cache");
-global $app_list_strings;
 $app_list_strings = return_app_list_strings_language('en_us');
-require_once 'include/api/RestService.php';
-require_once 'clients/base/api/MetadataApi.php';
-$rest = new RestService();
-$rest->platform = 'base';
-$api = new MetadataApi();
-$api->getAllMetadata($rest, array());
-$api->getLanguage($rest, array('lang' => 'en_us'));
-$api->getPublicMetadata($rest, array());
-$api->getPublicLanguage($rest, array('lang' => 'en_us'));
+require_once 'include/MetaDataManager/MetaDataManager.php';
+MetaDataManager::setupMetadata(array('base'), array('en_us'));
 
 // TODO: Remove the following. (See MAR-1314)
 // Restore the activity stream behaviour.

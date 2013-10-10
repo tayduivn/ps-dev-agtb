@@ -34,7 +34,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
         global $current_user;
 
         // Get the basics
-        $user_data = $this->getBasicUserInfo();
+        $user_data = $this->getBasicUserInfo($api->platform);
         // Fill in the portal specific stuff
         $contact = $this->getPortalContact();
         $user_data['type'] = 'support_portal';
@@ -171,16 +171,5 @@ class CurrentUserPortalApi extends CurrentUserApi {
         }
         
         return $acls;
-    }
-
-    public function getModuleList() {
-        // Use SugarPortalBrowser to get the portal modules that would appear
-        // in Studio
-        require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
-        $pb = new SugarPortalBrowser();
-        $pb->loadModules();
-        $moduleList = $this->filterDisplayModules($pb->modules);
-        array_unshift($moduleList, 'Home');
-        return $moduleList;
     }
 }

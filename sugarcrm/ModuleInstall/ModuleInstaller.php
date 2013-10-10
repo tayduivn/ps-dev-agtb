@@ -41,9 +41,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-require_once('include/utils/progress_bar_utils.php');
-
-require_once('ModuleInstall/ModuleScanner.php');
+require_once 'include/utils/progress_bar_utils.php';
+require_once 'ModuleInstall/ModuleScanner.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
 
 define('DISABLED_PATH', 'Disabled');
@@ -205,6 +205,14 @@ class ModuleInstaller{
 
                 // Rebuild roles so the ACLs for new modules are fresh immediately
                 $this->updateRoles();
+
+                // Get the newest app_list_strings
+                $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+
+                // Rebuild the metadata api cache for the base platform. This 
+                // will more than likely cause a rebuild lag on other clients
+                // but seems a reasonable trade off when deploying a new package.
+                MetaDataManager::refreshCache(array('base'), true);
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
@@ -2005,8 +2013,6 @@ private function dir_file_count($path){
      * return null
      */
 	function addFieldsToLayout($layoutAdditions) {
-	    require_once 'modules/ModuleBuilder/parsers/ParserFactory.php' ;
-
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
@@ -2035,8 +2041,6 @@ private function dir_file_count($path){
 	}
 
 	function removeFieldsFromLayout($layoutAdditions) {
-	require_once 'modules/ModuleBuilder/parsers/views/GridLayoutMetaDataParser.php' ;
-
         // these modules either lack editviews/detailviews or use custom mechanisms for the editview/detailview.
         // In either case, we don't want to attempt to add a relate field to them
         // would be better if GridLayoutMetaDataParser could handle this gracefully, so we don't have to maintain this list here
@@ -2046,10 +2050,16 @@ private function dir_file_count($path){
         {
             if ( ! in_array( strtolower ( $deployedModuleName ) , $invalidModules ) )
             {
-                foreach ( array ( MB_EDITVIEW , MB_DETAILVIEW ) as $view )
-                {
+                // Handle decision making on views for BWC/non-BWC modules
+                if (isModuleBWC($deployedModuleName)) {
+                    $views = array(MB_EDITVIEW, MB_DETAILVIEW);
+                } else {
+                    $views = array(MB_RECORDVIEW);
+                }
+                
+                foreach($views as $view) {
                     $GLOBALS [ 'log' ]->debug ( get_class ( $this ) . ": adding $fieldName to $view layout for module $deployedModuleName" ) ;
-                    $parser = new GridLayoutMetaDataParser ( $view, $deployedModuleName ) ;
+                    $parser = ParserFactory::getParser($view, $deployedModuleName);
                     $parser->removeField ( $fieldName ) ;
                     $parser->handleSave ( false ) ;
                 }
