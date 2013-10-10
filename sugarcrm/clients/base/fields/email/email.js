@@ -267,7 +267,7 @@
             value = [{
                 email_address:value,
                 primary_address:true,
-                hasAnchor:false,
+                hasAnchor:true,
                 _wasNotArray:true
             }];
         }

@@ -240,7 +240,7 @@ describe("Email field", function() {
             var expected = {
                     email_address:   "foo@bar.com",
                     primary_address: true,
-                    hasAnchor:       false,
+                    hasAnchor:       true,
                     _wasNotArray:    true,
                     flagLabel: "LBL_EMAIL_PRIMARY",
                     flagClass: "primary"

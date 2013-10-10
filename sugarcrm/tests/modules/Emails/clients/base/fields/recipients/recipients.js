@@ -172,7 +172,7 @@ describe("Emails.fields.recipients", function() {
             it("Should call the query callback with one record when the api call is successful and returns one record.", function() {
                 var records = [{email: "will@example.com", name: "Will Westin"}];
 
-                apiSearchStub = sinon.stub(app.api, "search", function(options, callbacks) {
+                apiSearchStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
                     callbacks.success({records: records});
                     callbacks.complete();
                 });
@@ -185,7 +185,7 @@ describe("Emails.fields.recipients", function() {
             });
 
             it("Should call the query callback with no records when the api call results in an error.", function() {
-                apiSearchStub = sinon.stub(app.api, "search", function(options, callbacks) {
+                apiSearchStub = sinon.stub(app.api, "call", function(method, url, data, callbacks) {
                     callbacks.error();
                     callbacks.complete();
                 });
@@ -197,8 +197,8 @@ describe("Emails.fields.recipients", function() {
                 expect(actual).toBe(0);
             });
 
-            it("Should make a call to the Search API.", function() {
-                apiSearchStub = sinon.stub(app.api, "search");
+            it("Should make a call to the Mail API.", function() {
+                apiSearchStub = sinon.stub(app.api, "call");
 
                 field.loadOptions(query);
                 jasmine.Clock.tick(301);
@@ -242,11 +242,11 @@ describe("Emails.fields.recipients", function() {
         });
 
         describe('format options the user can select', function() {
-            it("Should return the recipient's name when it exists.", function() {
+            it("Should return the recipient's name and email address when they both exist.", function() {
                 var recipient = {email: "will@example.com", name: "Will Westin"},
                     actual    = field.formatResult(recipient);
 
-                expect(actual).toEqual(recipient.name);
+                expect(actual).toEqual('"Will Westin" &lt;will@example.com&gt;');
             });
 
             it("Should return the recipient's email address when name doesn't exist.", function() {
