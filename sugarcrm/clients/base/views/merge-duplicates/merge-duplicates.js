@@ -18,7 +18,7 @@
  * @extends View.Views.BaseListView
  */
 ({
-    plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline'],
+    plugins: ['Editable', 'ErrorDecoration', 'Tooltip', 'EllipsisInline', 'MergeDuplicates'],
     extendsFrom: 'ListView',
     events: {
         'click [data-action=more]' : 'toggleMoreLess',
@@ -265,15 +265,29 @@
      * @private
      */
     _prepareRecords: function() {
-        var records = this.checkAccessToModels(this.context.get('selectedDuplicates')),
-            primary;
+        var records = this._validateModelsForMerge(this.context.get('selectedDuplicates'));
 
-        primary = (this.context.has('primaryRecord')) ?
-            _.findWhere(records, {id: this.context.get('primaryRecord').id}) :
-            _.first(records);
+        this.setPrimaryRecord(this._findPrimary(records));
+        return records;
+    },
 
-        this.setPrimaryRecord(primary);
-        return [primary].concat(_.without(records, primary));
+    /**
+     * Find primary model from models chosen for merge.
+     *
+     * If primary model has no access to edit it finds first model that can
+     * be edited and sets it as primary.
+     *
+     * @param {Data.Bean[]} models Set of models to merge.
+     * @return {Data.Bean} Primary model
+     * @protected
+     */
+    _findPrimary: function(models) {
+        var primary = this.context.has('primaryRecord') &&
+            _.findWhere(models, {id: this.context.get('primaryRecord').id});
+
+        return primary || _.find(models, function(model) {
+            return app.acl.hasAccessToModel('edit', model);
+        });
     },
 
     /**
@@ -315,25 +329,6 @@
                 return _.indexOf(ids, model.get('id'));
             };
         }
-    },
-
-    /**
-     * Check access for models selected for merge.
-     *
-     * @param {Data.Bean[]} models Models to check access for merge.
-     * @return {Data.Bean[]} Models with access.
-     */
-    checkAccessToModels: function(models) {
-        var result = [];
-        _.each(models, function(model) {
-            var hasAccess = _.every(['view', 'edit', 'delete'], function(acl) {
-                return app.acl.hasAccessToModel(acl, model);
-            });
-            if (hasAccess) {
-                result.push(model);
-            }
-        }, this);
-        return result;
     },
 
     /**
@@ -820,6 +815,10 @@
             },
             stop: _.bind(self._onStopSorting, self)
         });
+
+        mergeContainer.find('[data-container=primary-label].disabled').sortable(
+            'option', 'disabled', true
+        );
     },
 
     /**
@@ -841,6 +840,7 @@
             self.$('[data-container=primary-label]').sortable('cancel');
             return;
         }
+
         if (self.primaryRecord && self.primaryRecord.id !== droppedTo.data('record-id')) {
             var changedAttributes = self.primaryRecord.changedAttributes(
                 self.primaryRecord.getSyncedAttributes()
@@ -1527,7 +1527,10 @@
         }
         this.collection.on('reset', function(coll) {
             if (coll.length) {
-                this.setPrimaryRecord(coll.at(0));
+                _.each(coll.models, function(model) {
+                    model.readonly = !app.acl.hasAccessToModel('edit', model);
+                }, this);
+                this.setPrimaryRecord(this._findPrimary(coll.models));
             }
             if (this.disposed) {
                 return;
