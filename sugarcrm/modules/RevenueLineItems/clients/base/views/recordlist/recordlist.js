@@ -24,22 +24,20 @@
     },
 
     /**
-     * Event handler to make sure that before the merge drawer shows, that we make sure that the models
-     * all contain the same Opportunities
+     * Event handler to make sure that before the merge drawer shows, make sure that all the models contain the first
+     * records opportunity_id
      *
      * @param {Array} mergeModels
      * @returns {boolean}
      * @private
      */
     _checkMergeModels: function(mergeModels) {
-        var opp_ids = _.uniq(
-            _.map(mergeModels, function(model) {
-                return model.get('opportunity_id')
-            }),
-            true
-        );
+        var primaryRecordOppId = _.first(mergeModels).get('opportunity_id');
+        var invalid_models = _.find(mergeModels, function(model) {
+            return !_.isEqual(model.get('opportunity_id'), primaryRecordOppId);
+        });
 
-        if (!_.isEqual(opp_ids.length, 1)) {
+        if (!_.isUndefined(invalid_models)) {
             app.alert.show("merge_duplicates_different_opps_warning", {
                 level: "warning",
                 messages: app.lang.get('WARNING_MERGE_RLIS_WITH_DIFFERENT_OPPORTUNITIES', this.module)
