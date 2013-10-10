@@ -33,7 +33,7 @@
     initialize: function(options) {
         var self = this;
         this.events = _.extend({}, this.events, options.def.events, {
-            'click a' : 'preventClick',
+            'click .disabled' : 'preventClick'
         });
 
         app.view.Field.prototype.initialize.call(this, options);
@@ -80,9 +80,6 @@
     preventClick: function(evt) {
         if(this.isDisabled()) {
             return false;
-        }
-        if(_.isEmpty(this.def.route)) {
-            evt.preventDefault();
         }
     },
     /**
