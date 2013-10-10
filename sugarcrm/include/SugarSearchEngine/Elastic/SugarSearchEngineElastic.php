@@ -53,7 +53,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if (empty($this->_config['timeout'])) {
             $this->_config['timeout'] = 15;
         }
-        $this->_client = new Elastica_Client($this->_config);
+        $this->_client = new \Elastica\Client($this->_config);
         parent::__construct();
     }
 
@@ -64,7 +64,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function checkException($e)
     {
-        if ($e instanceof Elastica_Exception_Client) {
+        if ($e instanceof \Elastica\Exception\ClientException) {
             $error = $e->getError();
             switch ($error) {
                 case CURLE_UNSUPPORTED_PROTOCOL:
@@ -147,7 +147,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      *
      * @param SugarBean $bean
      * @param $searchFields
-     * @return Elastica_Document|null
+     * @return mixed(\Elastica\Document|null)
      */
     public function createIndexDocument($bean, $searchFields = null)
     {
@@ -221,7 +221,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         if (empty($keyValues)) {
             return null;
         } else {
-            return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
+            return new \Elastica\Document($bean->id, $keyValues, $this->getIndexType($bean));
         }
     }
 
@@ -243,8 +243,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         $this->logger->info("Preforming single bean index");
         try {
-            $index = new Elastica_Index($this->_client, $this->_indexName);
-            $type = new Elastica_Type($index, $this->getIndexType($bean));
+            $index = new \Elastica\Index($this->_client, $this->_indexName);
+            $type = new \Elastica\Type($index, $this->getIndexType($bean));
             $doc = $this->createIndexDocument($bean);
             if ($doc != null) {
                 $type->addDocument($doc);
@@ -274,8 +274,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         try {
             $this->logger->info("Going to delete {$bean->id}");
-            $index = new Elastica_Index($this->_client, $this->_indexName);
-            $type = new Elastica_Type($index, $this->getIndexType($bean));
+            $index = new \Elastica\Index($this->_client, $this->_indexName);
+            $type = new \Elastica\Type($index, $this->getIndexType($bean));
             $type->deleteById($bean->id);
         } catch (Exception $e) {
             $this->reportException("Unable to delete index", $e);
@@ -296,7 +296,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         }
 
         try {
-            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $index = new \Elastica\Index($this->_client, $this->_indexName);
             $batchedDocs = array();
             $x = 0;
             foreach ($docs as $singleDoc) {
@@ -424,7 +424,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      * search engine.
      * @param SugarBean $bean
      * @param $searchFields
-     * @return Elastica_Document|null
+     * @return mixed(\Elastica\Document|null)
      */
     protected function constructHighlightArray($fields, $options)
     {
@@ -514,7 +514,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * This function constructs and returns team filter for elasticsearch query.
      *
-     * @return Elastica_Filter_Or
+     * @return \Elastica\Filter\Terms
      */
     protected function constructTeamFilter()
     {
@@ -524,7 +524,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Term filters dont' work for terms with '-' present so we need to clean
         $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
 
-        $termFilter = new Elastica_Filter_Terms('team_set_id', $teamIDS);
+        $termFilter = new \Elastica\Filter\Terms('team_set_id', $teamIDS);
 
         return $termFilter;
     }
@@ -532,11 +532,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * This function constructs and returns type term filter for elasticsearch query.
      *
-     * @return Elastica_Filter_Term
+     * @return \Elastica\Filter\Term
      */
     protected function getTypeTermFilter($module)
     {
-        $typeTermFilter = new Elastica_Filter_Term();
+        $typeTermFilter = new \Elastica\Filter\Term();
         $typeTermFilter->setTerm('_type', $module);
 
         return $typeTermFilter;
@@ -545,11 +545,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * This function constructs and returns owner term filter for elasticsearch query.
      *
-     * @return Elastica_Filter_Term
+     * @return \Elastica\Filter\Term
      */
     protected function getOwnerTermFilter()
     {
-        $ownerTermFilter = new Elastica_Filter_Term();
+        $ownerTermFilter = new \Elastica\Filter\Term();
         $ownerTermFilter->setTerm('doc_owner', $this->formatGuidFields($GLOBALS['current_user']->id));
 
         return $ownerTermFilter;
@@ -558,7 +558,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * This function constructs and returns module level filter for elasticsearch query.
      *
-     * @return Elastica_Filter_And
+     * @return \Elastica\Filter\BoolAnd
      */
     protected function constructModuleLevelFilter($module)
     {
@@ -568,7 +568,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
 
-        $moduleFilter = new Elastica_Filter_And();
+        $moduleFilter = new \Elastica\Filter\BoolAnd();
 
         if ($hasAdminAccess) {
             $typeTermFilter = $this->getTypeTermFilter($module);
@@ -603,11 +603,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * This function constructs and returns main filter for elasticsearch query.
      *
-     * @return Elastica_Filter_Or
+     * @return \Elastica\Filter\BoolOr
      */
     protected function constructMainFilter($finalTypes, $options = array())
     {
-        $mainFilter = new Elastica_Filter_Or();
+        $mainFilter = new \Elastica\Filter\BoolOr();
         foreach ($finalTypes as $module) {
             $moduleFilter = $this->constructModuleLevelFilter($module);
             // if we want myitems add more to the module filter
@@ -641,12 +641,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     /**
      * Construct a favorites filter
      * @param object $moduleFilter
-     * @return object $moduleFilter
+     * @return \Elastica\Filter\Term $moduleFilter
      */
 
     protected function constructMyFavoritesFilter()
     {
-        $ownerTermFilter = new Elastica_Filter_Term();
+        $ownerTermFilter = new \Elastica\Filter\Term();
         // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
 
         $ownerTermFilter->setTerm('user_favorites', $this->formatGuidFields($GLOBALS['current_user']->id));
@@ -663,7 +663,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function constructRangeFilter($moduleFilter, $filter)
     {
-        $filter = new Elastica_Filter_Range($filter['fieldname'], $filter['range']);
+        $filter = new \Elastica\Filter\Range($filter['fieldname'], $filter['range']);
         $moduleFilter->addFilter($filter);
         return $moduleFilter;
     }
@@ -707,11 +707,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         try {
             // trying to match everything, make a MatchAll query
             if ($queryString == '*') {
-                $queryObj = new Elastica_Query_MatchAll();
+                $queryObj = new \Elastica\Query\MatchAll();
 
             } else {
                 $qString = html_entity_decode($queryString, ENT_QUOTES);
-                $queryObj = new Elastica_Query_QueryString($qString);
+                $queryObj = new \Elastica\Query\QueryString($qString);
                 $queryObj->setAnalyzeWildcard(true);
                 $queryObj->setAutoGeneratePhraseQueries(false);
 
@@ -725,9 +725,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     $queryObj->setFields($fields);
                 }
             }
-            $s = new Elastica_Search($this->_client);
+            $s = new \Elastica\Search($this->_client);
             //Only search across our index.
-            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $index = new \Elastica\Index($this->_client, $this->_indexName);
             $s->addIndex($index);
 
             $finalTypes = array();
@@ -748,7 +748,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             // main filter
             $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
-            $query = new Elastica_Query($queryObj);
+            $query = new \Elastica\Query($queryObj);
             $query->setFilter($mainFilter);
 
             if (isset($options['sort']) && is_array($options['sort'])) {
@@ -766,7 +766,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
             //Add a type facet so we can see how our results are grouped.
             if (!empty($options['apply_module_facet'])) {
-                $typeFacet = new Elastica_Facet_Terms('_type');
+                $typeFacet = new \Elastica\Facet\Terms('_type');
                 $typeFacet->setField('_type');
                 // need to add filter for facet too
                 if (isset($mainFilter)) {
@@ -810,7 +810,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         try {
             // create an elastic index
-            $index = new Elastica_Index($this->_client, $this->_indexName);
+            $index = new \Elastica\Index($this->_client, $this->_indexName);
             $index->create(array(), $recreate);
 
              // create field mappings
@@ -829,7 +829,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
     /**
      * Get Elastica client
-     * @return Elastica_Client
+     * @return \Elastica\Client
      */
     public function getClient()
     {

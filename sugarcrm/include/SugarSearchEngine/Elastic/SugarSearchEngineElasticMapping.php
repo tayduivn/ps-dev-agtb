@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights
  *Reserved.
  ********************************************************************************/
+
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMappingHelper.php');
 
@@ -55,15 +56,15 @@ class SugarSearchEngineElasticMapping
 
         if (is_array($properties) && count($properties) > 0)
         {
-            $index = new Elastica_Index($this->sse->getClient(), $this->sse->getIndexName());
-            $type = new Elastica_Type($index, $module);
-            $mapping = new Elastica_Type_Mapping($type, $properties);
+            $index = new \Elastica\Index($this->sse->getClient(), $this->sse->getIndexName());
+            $type = new \Elastica\Type($index, $module);
+            $mapping = new \Elastica\Type\Mapping($type, $properties);
             $mapping->setProperties($properties);
             try
             {
                 $mapping->send();
             }
-            catch (Elastica_Exception_Response $e)
+            catch (\Elastica\Exception\ResponseException $e)
             {
                 $GLOBALS['log']->error("elastic response exception when creating mapping, message= " . $e->getMessage());
                 return false;
