@@ -58,7 +58,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
     {
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
 		$usa = new UnifiedSearchAdvanced();
-        global $mod_strings, $app_strings, $app_list_strings;
+        global $mod_strings, $app_strings, $app_list_strings, $current_user;
 
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $app_strings);
@@ -103,7 +103,23 @@ class AdministrationViewGlobalsearchsettings extends SugarView
         $sugar_smarty->assign("fts_scheduled", !empty($schedulerID) && !$schedulerCompleted);
         $sugar_smarty->assign('justRequestedAScheduledIndex', $justRequestedAScheduledIndex);
         //End FTS
+        if (is_admin($current_user))
+        {
+            if (!empty($GLOBALS['sugar_config']['fts_disable_notification']))
+            {
+                displayAdminError(translate('LBL_FTS_DISABLED', 'Administration'));
+            }
+
+            // if fts indexing is done, show the notification to admin
+            $admin = Administration::getSettings();
+            if (!empty($admin->settings['info_fts_index_done'])) {
+                displayAdminError(translate('LBL_FTS_INDEXING_DONE', 'Administration'));
+                // reset flag
+                $admin->saveSetting('info', 'fts_index_done', 0);
+            }
+        }
         //END SUGARCRM flav=pro ONLY
+
         echo $sugar_smarty->fetch(SugarAutoLoader::existingCustomOne('modules/Administration/templates/GlobalSearchSettings.tpl'));
 
     }
