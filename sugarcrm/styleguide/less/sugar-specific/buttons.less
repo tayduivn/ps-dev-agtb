@@ -1,11 +1,10 @@
 
 .btn {
-  *line-height: 20px; //tbs=18px
-  font-weight: 500;
   font-size: @baseFontSize;
   .box-shadow(none);
   margin-left: 8px;
   border: 1px solid rgba(0,0,0,.1);
+  letter-spacing: normal;
   /* keeps button widths with icons the same regardless of icon width */
   > [class^="icon-"],
   > [class*=" icon-"] {
@@ -33,8 +32,6 @@
   &.active,
   &:not(.disabled):active,
   &.active:hover {
-    background-image: none;
-    .outline(none);
     color: @gray;
     text-shadow: none;
     background-color: darken(@grayLighter, 5%);
