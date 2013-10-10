@@ -1134,7 +1134,13 @@ class Report
         $where_clause = "";
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
-        $where_clause = $this->focus->addVisibilityWhere($where_clause, $this->visibilityOpts);
+        // Bug63958 Go back to using where clause team restrictions instead of INNER JOINS for performance reasons on SugarInternal
+        $as_condition = $this->focus->db->supports("fix:report_as_condition");
+        $options = $this->visibilityOpts;
+        if ($as_condition) {
+            $options['as_condition'] = true;
+        }
+        $where_clause = $this->focus->addVisibilityFrom($where_clause, $options);
 //         if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($this->focus->module_dir) && !$this->focus->disable_row_level_security) {
 //             if (!empty($where_clause)) {
 //                 $where_clause .= " AND";
@@ -1569,7 +1575,6 @@ return str_replace(' > ','_',
         $this->full_table_list['self']['params']['join_table_link_alias'] = $this->focus->table_name . "_l";
 
         $this->from = "\nFROM " . $this->focus->table_name . "\n";
-        $this->focus->addVisibilityFrom($this->from, $this->visibilityOpts);
 
         $this->jtcount = 0;
         foreach ($this->full_table_list as $table_key => $table_def)
