@@ -141,6 +141,10 @@ abstract class SugarApi {
 
         $bean = BeanFactory::retrieveBean($args['module'],$args['record'], $options);
 
+        if ($api->action == 'save' && ($bean == false || $bean->deleted == 1)) {
+            throw new SugarApiExceptionNotAuthorized('SUGAR_API_EXCEPTION_RECORD_NOT_AUTHORIZED', array('save'));
+        }
+
         if ( $bean == FALSE || $bean->deleted == 1) {
             // Couldn't load the bean
             throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);

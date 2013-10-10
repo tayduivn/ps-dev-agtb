@@ -155,6 +155,7 @@ class ModuleApi extends SugarApi {
     }
 
     public function createRecord($api, $args) {
+        $api->action = 'save';
         $this->requireArgs($args,array('module'));
 
         $bean = BeanFactory::newBean($args['module']);
@@ -192,6 +193,7 @@ class ModuleApi extends SugarApi {
     }
 
     public function updateRecord($api, $args) {
+        $api->action = 'save';
         $this->requireArgs($args,array('module','record'));
 
         $bean = $this->loadBean($api, $args, 'save');
@@ -257,6 +259,7 @@ class ModuleApi extends SugarApi {
      */
     protected function getLoadedAndFormattedBean($api, $args, SugarBean $bean)
     {
+        $addAcl = false;
         // Load the bean fresh to ensure the cache entry from the create process
         // doesn't get in the way of visibility checks
         try {
@@ -268,11 +271,19 @@ class ModuleApi extends SugarApi {
             // with the current user or from edits made to records that do the same
             // thing.
             $args['fields'] = 'id,date_modified';
+            $addAcl = true;
         }
 
         $api->action = 'view';
         $data = $this->formatBean($api, $args, $bean);
 
+        if ($addAcl) {
+            $data['_acl'] = array(
+                'access' => 'no',
+                'view' => 'no',
+            );
+        }
+        
         return $data;
     }
 }
