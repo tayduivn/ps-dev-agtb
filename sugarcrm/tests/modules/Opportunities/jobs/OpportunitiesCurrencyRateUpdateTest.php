@@ -34,6 +34,7 @@ class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCa
 
     public function setUp()
     {
+        SugarTestHelper::setUp('app_strings');
         $this->db = new SugarTestDatabaseMock();
         $this->db->setUp();
         $this->setupMockClass();
@@ -42,6 +43,7 @@ class OpportunitiesCurrencyRateUpdateTest extends Sugar_PHPUnit_Framework_TestCa
 
     public function tearDown()
     {
+        SugarTestHelper::tearDown();
         $this->tearDownMockClass();
         $this->db->tearDown();
         parent::tearDown();
