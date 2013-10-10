@@ -10,7 +10,6 @@ $viewdefs['Products']['mobile']['layout']['subpanels'] = array(
         ),
         array(
             'layout' => 'subpanel',
-            'creatable' => false,
             'label' => 'LBL_RELATED_PRODUCTS',
             'context' => array(
                 'link' => 'related_products',
