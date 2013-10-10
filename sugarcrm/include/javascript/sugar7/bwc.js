@@ -23,10 +23,14 @@
                 }]
             };
 
-            var fields;
             _.each(meta, function(value, key) {
-                var fieldOverrides = {};
-                fieldOverrides.name = key.toLowerCase();
+                var fieldOverrides = {name: key.toLowerCase()};
+                // assume the type comes from the name if no type was defined
+                fieldOverrides.type = value['type'] || fieldOverrides.name;
+                // need to map "team_name" to "teamset" as is seen in sugar7/hacks.js
+                if (fieldOverrides.type === 'team_name') {
+                    fieldOverrides.type = 'teamset';
+                }
                 if (app.config.platform === 'portal') {
                     fieldOverrides['default'] = true;
                 } else {
