@@ -37,6 +37,10 @@
                     return;
                 }
 
+                if (!this.triggerBefore('mergeduplicates', models)) {
+                    return;
+                }
+                
                 app.drawer.open({
                     layout: 'merge-duplicates',
                     context: {
