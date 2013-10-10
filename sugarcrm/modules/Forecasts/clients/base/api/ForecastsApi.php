@@ -137,7 +137,7 @@ class ForecastsApi extends SugarApi
 
         $returnInitData["initData"]['forecasts_setup'] = (isset($forecastsSettings['is_setup'])) ? $forecastsSettings['is_setup'] : 0;
 
-        $defaultSelections["ranges"] = array("include");
+        $defaultSelections["ranges"] = $forecastsSettings['commit_stages_included'];
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
 
