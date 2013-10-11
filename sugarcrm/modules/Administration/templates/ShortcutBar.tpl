@@ -112,11 +112,6 @@
                 SUGAR.saveShortcutBar = function() {
                     var enabledTable = SUGAR.prodEnabledTable;
                     var modules = [];
-                    if (enabledTable.getRecordSet().getLength() > 11) //Max 10 + empty line
-                    {
-                        alert('{/literal}{sugar_translate label="LBL_ERROR_PROD_BAR_NUM_MODULES"}{literal}');
-                        return false;
-                    }
                     for (var i = 0; i < enabledTable.getRecordSet().getLength(); i++) {
                         var data = enabledTable.getRecord(i).getData();
                         if (data.module && data.module != '')

@@ -16,5 +16,6 @@ $module_name = 'Notes';
 $viewdefs[$module_name]['base']['menu']['quickcreate'] = array(
     'layout' => 'create',
     'label' => 'LNK_NEW_NOTE',
-    'visible' => true
+    'visible' => true,
+    'order' => 9,
 );

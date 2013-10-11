@@ -17,5 +17,6 @@ $module_name = 'Bugs';
 $viewdefs[$module_name]['portal']['menu']['quickcreate'] = array(
     'layout' => 'create',
     'label' => 'LNK_NEW_BUG',
-    'visible' => true
+    'visible' => true,
+    'order' => 1,
 );
