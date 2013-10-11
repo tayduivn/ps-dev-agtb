@@ -340,6 +340,7 @@ class RenameModules
         ),
         'ProductTemplates' => array(
             array('name' => 'LBL_PRODUCT_ID', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'RevenueLineItems'),
         ),
         'Products' => array(
             array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
