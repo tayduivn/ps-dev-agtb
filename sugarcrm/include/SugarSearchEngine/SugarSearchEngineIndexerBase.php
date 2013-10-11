@@ -89,19 +89,20 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
      */
     public function __construct(SugarSearchEngineAbstractBase $engine = null)
     {
-        if($engine != null)
+        if ($engine != null) {
             $this->SSEngine = $engine;
-        else
+        } else {
             $this->SSEngine = SugarSearchEngineFactory::getInstance();
+        }
 
         $this->db = DBManagerFactory::getInstance('fts');
-
         $this->table_name = self::QUEUE_TABLE;
 
-        $this->max_bulk_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_threshold', $this->max_bulk_threshold);
-        $this->max_bulk_query_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_query_threshold', $this->max_bulk_query_threshold);
-        $this->max_bulk_delete_threshold = SugarConfig::getInstance()->get('search_engine.max_bulk_delete_threshold', $this->max_bulk_delete_threshold);
-        $this->postpone_job_time = SugarConfig::getInstance()->get('search_engine.postpone_job_time', $this->postpone_job_time);
+        $config = SugarConfig::getInstance();
+        $this->max_bulk_threshold = $config->get('search_engine.max_bulk_threshold', $this->max_bulk_threshold);
+        $this->max_bulk_query_threshold = $config->get('search_engine.max_bulk_query_threshold', $this->max_bulk_query_threshold);
+        $this->max_bulk_delete_threshold = $config->get('search_engine.max_bulk_delete_threshold', $this->max_bulk_delete_threshold);
+        $this->postpone_job_time = $config->get('search_engine.postpone_job_time', $this->postpone_job_time);
     }
 
     /**
