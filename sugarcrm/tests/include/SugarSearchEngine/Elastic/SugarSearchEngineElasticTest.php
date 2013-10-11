@@ -275,7 +275,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
             ->constructMainFilter(array())
             ->toArray();
 
-        $this->assertArrayNotHasKey('should', $filter['bool']);
+        $this->assertArrayNotHasKey('bool', $filter);
     }
 }
 
