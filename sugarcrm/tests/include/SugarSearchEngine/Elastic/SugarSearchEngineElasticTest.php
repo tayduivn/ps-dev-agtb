@@ -243,7 +243,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 
         $stub->expects($this->any())
             ->method('constructModuleLevelFilter')
-            ->will($this->returnValue(new Elastica_Filter_Bool()));
+            ->will($this->returnValue(new \Elastica\Filter\Bool()));
 
         $filter = $stub
             ->constructMainFilter(array('Accounts', 'Opportunities', 'Contacts'), $options)
@@ -260,11 +260,11 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
 
         $stub->expects($this->any())
             ->method('constructModuleLevelFilter')
-            ->will($this->returnValue(new Elastica_Filter_Bool()));
+            ->will($this->returnValue(new \Elastica\Filter\Bool()));
 
         $result = $stub->constructMainFilter(array('Accounts', 'Opportunities'));
 
-        $this->assertInstanceOf('Elastica_Filter_Bool', $result);
+        $this->assertInstanceOf('Elastica\\Filter\\Bool', $result);
     }
 
     public function testConstructMainFilterNoModules()
