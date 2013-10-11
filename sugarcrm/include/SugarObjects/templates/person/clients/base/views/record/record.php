@@ -212,6 +212,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array(
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => array(
+                'twitter',
                 array(
                     'name' => 'description',
                     'span' => 12,
