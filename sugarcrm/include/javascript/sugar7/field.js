@@ -398,6 +398,32 @@
             },
 
             /**
+             * {@inheritDoc}
+             * Attach focus handler in order to pass the current element's location.
+             */
+            bindDomChange: function() {
+                this.$(this.fieldTag).on('focus', _.bind(this.handleFocus, this));
+                _fieldProto.bindDomChange.call(this);
+            },
+
+            /**
+             * {@inheritDoc}
+             * Calculate current offset location and pass it to the parent's view.
+             */
+            handleFocus: function(evt) {
+                var left = this.$el.offset().left,
+                    right = this.$el.outerWidth() + left,
+                    top = this.$el.offset().top,
+                    bottom = this.$el.outerHeight() + top;
+                this.view.trigger('field:focus:location', {
+                    left: left,
+                    right: right,
+                    top: top,
+                    bottom: bottom
+                });
+            },
+
+            /**
              * Handle click event for bad links
              * @param {Object} evt Click event
              * @private

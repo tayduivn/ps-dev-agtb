@@ -128,6 +128,11 @@
 
                     self.setValue(attributes);
                 });
+            //FIXME: Once select2 upgrades to 3.4.3, this code should use on('select2-focus')
+            var plugin = this.$(this.fieldTag).data('select2');
+            if (plugin) {
+                plugin.focusser.on('focus', _.bind(_.debounce(this.handleFocus, 0), this));
+            }
         } else if (this.tplName === 'disabled') {
             this.$(this.fieldTag).select2({
                 width: '100%',

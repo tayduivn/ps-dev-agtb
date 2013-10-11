@@ -58,6 +58,7 @@
         //fire resize scroll-width on column add/remove
         this.on('list:toggle:column', this.resize, this);
         this.on('mergeduplicates:complete', this.refreshCollection, this);
+        this.on('field:focus:location', this.setPanelPosition, this);
         if (this.layout) {
             this.layout.on('list:mergeduplicates:fire', this.mergeDuplicatesClicked, this);
         }
@@ -156,6 +157,47 @@
                 this.rowFields[field.model.id].push(field);
             }
         }, this);
+    },
+
+    /**
+     * Set the position of the current list panel.
+     *
+     * @param {Object} location Location of the focused element.
+     */
+    setPanelPosition: function(location) {
+        this.setScrollAtRightBorder(location.right);
+    },
+
+    /**
+     * Set the position of scrollable panel
+     * at the left border of the focused element.
+     *
+     * @param {Number} left Left position of the focused element.
+     */
+    setScrollAtLeftBorder: function(left) {
+        var scrollPanel = this.$('.flex-list-view-content'),
+            actionEl = scrollPanel.find('thead th:first'),
+            leftBorderPosition = actionEl.outerWidth(),
+            scrollLeft = scrollPanel.scrollLeft();
+
+        left += scrollLeft - leftBorderPosition;
+        scrollPanel.scrollLeft(left);
+    },
+
+    /**
+     * Set the position of scrollable panel
+     * at the right border of the focused element.
+     *
+     * @param {Number} right Right position of the focused element.
+     */
+    setScrollAtRightBorder: function(right) {
+        var scrollPanel = this.$('.flex-list-view-content'),
+            actionEl = scrollPanel.find('thead th:last'),
+            rightBorderPosition = actionEl.position().left,
+            scrollLeft = scrollPanel.scrollLeft();
+
+        right += scrollLeft - rightBorderPosition;
+        scrollPanel.scrollLeft(right);
     },
 
     /**
