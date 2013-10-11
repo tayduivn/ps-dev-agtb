@@ -207,7 +207,7 @@ class SugarSearchEngineElasticTest extends Sugar_PHPUnit_Framework_TestCase
         $ftsCountAfter = $this->_db->getOne($ftsQueueQuery);
         
         $msg = "Expected Account bean id {$this->account->id} to be added to fts_queue table";
-        $this->assertEquals($ftsCountBefore['total'], ($ftsCountAfter['total'] - 1), $msg);
+        $this->assertEquals($ftsCountBefore, ($ftsCountAfter - 1), $msg);
     }
 
     public function constructMainFilterDataProvider()
