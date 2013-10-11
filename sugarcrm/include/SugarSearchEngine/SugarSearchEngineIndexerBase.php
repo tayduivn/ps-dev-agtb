@@ -121,27 +121,27 @@ abstract class SugarSearchEngineIndexerBase implements RunnableSchedulerJob
         $ftsQuery = new SugarQuery();
         $ftsQuery->from($bean);
 
-        // fields filter (team fields taken from old method, needs to get abstracted out)
-        $fieldsFilter = array(
-            'team_id',
-            'team_set_id',
-        );
-
         // add fts enabled fields to the filter
+        $fieldsFilter = array('id');
         foreach ($fieldDefs as $value) {
+            // skip nondb fields
+            if (!empty($value['source']) && $value['source'] == 'non-db') {
+                continue;
+            }
             // filter email1 field and add the join.
             if ($value['name'] == 'email1') {
                 $ftsQuery->join('email_addresses_primary', array('alias' => 'email1'));
+                $fieldsFilter[] = 'email1.email_address';
+            } else {
+                $fieldsFilter[] = $value['name'];
             }
-
-            $fieldsFilter[] = $value['name'];
         }
 
         $ftsQuery->select($fieldsFilter);
 
         $join = $ftsQuery->joinTable($queueTableName)->on();
         $join->equalsField($queueTableName . '.bean_id', 'id');
-        $join->equals($queueTableName . '.bean_id', 0);
+        $join->equals($queueTableName . '.processed', 0);
 
         return $ftsQuery->compileSql();
     }
