@@ -318,9 +318,6 @@
       }
     }
 
-
-
-
     &[data-type="fieldset"] {
       .error {
         .input-append.date {
@@ -334,11 +331,17 @@
       }
     }
 
-    &[data-type="date"],
     &[data-type="datetimecombo"] {
       input[type="text"] {
-          width: 110px;
+          width: 40%;
+          width: ~"-moz-calc(100% / 2 - 12px)";
+          width: ~"-webkit-calc(100% / 2 - 12px)";
+          width: ~"calc(100% / 2 - 12px)";
       }
+    }
+
+    &[data-type="date"],
+    &[data-type="datetimecombo"] {
       .add-on {
         z-index: 2;
         padding: 4px 0px 4px 4px;
