@@ -7,7 +7,7 @@ require_once 'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php';
  *
  * Class for testing the SugarSearchEngineSyncIndexer class.
  */
-class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineSyncIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var db
