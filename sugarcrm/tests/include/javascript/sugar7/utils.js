@@ -69,6 +69,42 @@ describe("Sugar7 utils", function() {
     		expect(noMark).toBe('/sugar7/index.php'); 
     	});
     });
-    
+
+    describe('getRecordName', function() {
+        var model;
+        beforeEach(function() {
+            model = new Backbone.Model();
+        });
+        it('should get document_name for Documents module', function() {
+            model.module = 'Documents';
+            model.set({
+                document_name: 'Awesome Document',
+                name: 'document.zip'
+            });
+            expect(app.utils.getRecordName(model)).toEqual('Awesome Document');
+        });
+        it('get full_name when available', function() {
+            model.module = 'Contacts';
+            model.set({
+                full_name: 'Awesome Name'
+            });
+            expect(app.utils.getRecordName(model)).toEqual('Awesome Name');
+        });
+        it('build full name based on first name and last name', function() {
+            model.module = 'Users';
+            model.set({
+                first_name: 'Awesome',
+                last_name: 'Name'
+            });
+            expect(app.utils.getRecordName(model)).toEqual('Awesome Name');
+        });
+        it('get name otherwise', function() {
+            model.module = 'Leads';
+            model.set({
+                name: 'Simple Name'
+            });
+            expect(app.utils.getRecordName(model)).toEqual('Simple Name');
+        });
+    });
 
 });

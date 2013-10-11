@@ -587,6 +587,30 @@
                 }
 
                 return retCollection;
+            },
+            /**
+             * Extracts the full record name from a model.
+             *
+             * @param {Bean} the model concerned.
+             * @return {String} the record name.
+             */
+            getRecordName: function(model) {
+                // Special case for `Documents`
+                if (model.module === 'Documents' && model.has('document_name')) {
+                    return model.get('document_name');
+
+                // Special case for `Person` type modules
+                } else if (model.has('full_name')) {
+                    return model.get('full_name');
+
+                // Special case for `Person` type modules
+                } else if (model.has('first_name') && model.has('last_name')) {
+                    return model.get('first_name') + ' ' + model.get('last_name');
+
+                // Default behavior
+                } else {
+                    return model.get('name') || '';
+                }
             }
         });
     });
