@@ -242,21 +242,21 @@ $outFTS =<<<EOQ3
 <tr><th colspan="3" align="left">{$mod_strings['LBL_FTS_TABLE_TITLE']}</th></tr>
 <tr><td colspan='3'>{$mod_strings['LBL_FTS_HELP']}</td></tr>
 <tr>
-        <td width='1%'></td>
+        <td width='1%'><span class="required">*</span></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_TYPE']}</b></td>
         <td  width='35%'nowrap align="left">
             $ftsTypeDropdown
         </td>
 </tr>
 <tr id='fts_host_row'>
-        <td width='1%'></td>
+        <td width='1%'><span class="required">*</span></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_HOST']}</b></td>
         <td  width='35%'nowrap align="left">
          <input type="text" name="fts_host" id="fts_host" value="localhost" />
         </td>
 </tr>
 <tr id='fts_port_row'>
-<td width='1%'></td>
+        <td width='1%'><span class="required">*</span></td>
         <td nowrap width='60%'><b>{$mod_strings['LBL_FTS_PORT']}</b></td>
         <td  width='35%'nowrap align="left">
          <input type="text" name="fts_port" id="fts_port" maxlength="10" value="9200" />
