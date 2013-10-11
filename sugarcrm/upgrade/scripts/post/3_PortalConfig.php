@@ -21,6 +21,9 @@ class SugarUpgradePortalConfig extends UpgradeScript
             $this->fail(sprintf($this->mod_strings['ERROR_UW_PORTAL_CONFIG_DB'], 'portal', $fieldKey, $fieldValue));
         }
 
+        // Remove # of fields displayed in detail view (not used anymore in 7.0)
+        $this->db->query("DELETE FROM config WHERE category='portal' and platform='support' and name='fieldsToDisplay'");
+
         require_once 'ModuleInstall/ModuleInstaller.php';
         $this->putFile('portal2/config.js', ModuleInstaller::getJSConfig(ModuleInstaller::getPortalConfig()));
     }
