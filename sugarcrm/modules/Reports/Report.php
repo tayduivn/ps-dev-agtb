@@ -2078,6 +2078,17 @@ return str_replace(' > ','_',
         if ($db_row == 0 || sizeof($db_row) == 0) {
             return 0;
         }
+
+        // Call custom hooks
+        if (isset($this->full_bean_list) && is_array($this->full_bean_list)
+            && array_key_exists('self', $this->full_bean_list) && is_object($this->full_bean_list['self'])
+            && method_exists($this->full_bean_list['self'], 'call_custom_logic')) {
+            $this->full_bean_list['self']->call_custom_logic(
+                'process_report_row',
+                array('row' => &$db_row, 'reporter' => $this)
+            );
+        }
+
         if ($result_field_name == 'summary_result') {
             if (!empty($this->child_filter) && !empty($db_row[$this->child_filter_name])) {
                 $this->child_filter_by = $db_row[$this->child_filter_name];
