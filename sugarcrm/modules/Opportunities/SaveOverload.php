@@ -34,19 +34,6 @@ function perform_save($focus)
     /* @var $admin Administration */
     $admin = BeanFactory::getBean('Administration');
     $settings = $admin->getConfigForModule('Forecasts');
-    //Determine the default commit_stage based on the probability
-    if ($settings['is_setup'] && empty($focus->commit_stage) && $focus->probability !== '') {
-        //Retrieve Forecasts_category_ranges and json decode as an associative array
-        $forecast_ranges = isset($settings['forecast_ranges']) ? $settings['forecast_ranges'] : '';
-        $category_ranges = isset($settings[$forecast_ranges . '_ranges']) ?
-            (array)$settings[$forecast_ranges . '_ranges'] : array();
-        foreach ($category_ranges as $key => $entry) {
-            if ($focus->probability >= $entry['min'] && $focus->probability <= $entry['max']) {
-                $focus->commit_stage = $key;
-                break;
-            }
-        }
-    }
 
     // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
     if (is_null($focus->best_case) || strval($focus->best_case) === "") {

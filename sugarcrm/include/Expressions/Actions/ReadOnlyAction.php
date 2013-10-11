@@ -35,7 +35,7 @@ class ReadOnlyAction extends AbstractAction{
 	 * @return string javascript.
 	 */
 	static function getJavascriptClass() {
-		return  "
+        return "
 		SUGAR.forms.ReadOnlyAction = function(target, expr) {
 			if (_.isObject(target)){
                 expr = target.value;
@@ -56,10 +56,7 @@ class ReadOnlyAction extends AbstractAction{
 					set = val == SUGAR.expressions.Expression.TRUE;
 				
 				if (context.view) {
-					var field = context.view.getField(this.target);
-					if (field) {
-						field.setDisabled(set);
-					}
+					context.setFieldDisabled(this.target, set);
 					context.view.setFieldMeta(this.target, {'readonly':set});
 				}
 				else {
