@@ -2,7 +2,7 @@
 /*
  * By installing or using this file, you are confirming on behalf of the entity
  * subscribed to the SugarCRM Inc. product ("Company") that Company is bound by
- * the SugarCRM Inc. Master Subscription Agreement (“MSA”), which is viewable at:
+ * the SugarCRM Inc. Master Subscription Agreement ("MSA"), which is viewable at:
  * http://www.sugarcrm.com/master-subscription-agreement
  *
  * If Company is not bound by the MSA, then by installing or using this file
@@ -12,25 +12,9 @@
  * Copyright  2004-2013 SugarCRM Inc.  All rights reserved.
  */
 
-
-class OpportunityHooks
+require_once('modules/Forecasts/AbstractForecastHooks.php');
+class OpportunityHooks extends AbstractForecastHooks
 {
-    public static $settings;
-
-    /**
-     * Utility Method to make sure Forecast is setup and usable
-     *
-     * @return bool
-     */
-    public static function isForecastSetup()
-    {
-        /* @var $admin Administration */
-        if (empty(static::$settings)) {
-            $admin = BeanFactory::getBean('Administration');
-            static::$settings = $admin->getConfigForModule('Forecasts');
-        }
-        return static::$settings['is_setup'] == 1;
-    }
 
     /**
      * This is a general hook that takes the Opportunity and saves it to the forecast worksheet record.
