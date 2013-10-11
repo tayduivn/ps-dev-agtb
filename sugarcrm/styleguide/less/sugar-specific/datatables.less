@@ -111,10 +111,10 @@ table.dataTable {
         }
       }
     }
-    & > tr[data-forecast="include"] {
+    & > tr.included {
       & > td {
         font-weight: bold;
-        &[data-field-name="commit_stage"] {
+        &.commit_stage_field {
           & > span:before {
             width: 6px;
             background-color: @blue;
