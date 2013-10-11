@@ -40,15 +40,12 @@ class LeadsStudioModule extends StudioModule
     function getLayouts()
     {
         $layouts = parent::getLayouts();
-        
-        $layouts = array_merge(array( translate("LBL_CONVERTLEAD", "Leads") => array ( 
-            'name' => translate("LBL_CONVERTLEAD", "Leads") , 
-            'action' => "module=Leads&action=Editconvert&to_pdf=1" , 
-            'imageTitle' => 'icon_ConvertLead' , 
-            'help' => 'layoutsBtn' , 
-            'size' => '48')), $layouts);
-        
-        return $layouts ;
 
+        // MAR-1410 - Removing the old Lead Convert admin screen from Studio
+        // Old admin screen does not work for the new lead convert process and needs to be redone
+        // Leaving this file here so we can add the new admin screen
+        // TODO: Add new admin screen (eta: 7.1/7.2)
+
+        return $layouts ;
     }
 }
